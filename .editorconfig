@@ -1,0 +1,5 @@
+root = true
+
+[*.{swift,m,h,c}]
+indent_style = tab
+indent_size = 4
