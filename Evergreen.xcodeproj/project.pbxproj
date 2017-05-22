@@ -26,6 +26,8 @@
 		84B06FEA1ED3803A00F0B54B /* RSFeedFinder.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FE61ED3803200F0B54B /* RSFeedFinder.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B06FFD1ED3818D00F0B54B /* RSTree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FFA1ED3818000F0B54B /* RSTree.framework */; };
 		84B06FFE1ED3818D00F0B54B /* RSTree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FFA1ED3818000F0B54B /* RSTree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84B0700A1ED3822600F0B54B /* RSTextDrawing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; };
+		84B0700B1ED3822600F0B54B /* RSTextDrawing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -211,6 +213,27 @@
 			remoteGlobalIDString = 842A0BE01CFCB9BC00BF746C;
 			remoteInfo = RSTree;
 		};
+		84B070061ED3821900F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8439D9FB1C8937C800E5E4B4;
+			remoteInfo = RSTextDrawing;
+		};
+		84B070081ED3821900F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8439DA051C8937C800E5E4B4;
+			remoteInfo = RSTextDrawingTests;
+		};
+		84B0700C1ED3822600F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8439D9FA1C8937C800E5E4B4;
+			remoteInfo = RSTextDrawing;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -221,6 +244,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				84B06FB31ED37DBD00F0B54B /* RSDatabase.framework in Embed Frameworks */,
+				84B0700B1ED3822600F0B54B /* RSTextDrawing.framework in Embed Frameworks */,
 				84B06FEA1ED3803A00F0B54B /* RSFeedFinder.framework in Embed Frameworks */,
 				84B06FFE1ED3818D00F0B54B /* RSTree.framework in Embed Frameworks */,
 				84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */,
@@ -250,6 +274,7 @@
 		84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DB5.xcodeproj; path = Frameworks/DB5/DB5.xcodeproj; sourceTree = "<group>"; };
 		84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSFeedFinder.xcodeproj; path = Frameworks/RSFeedFinder/RSFeedFinder.xcodeproj; sourceTree = "<group>"; };
 		84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTree.xcodeproj; path = Frameworks/RSTree/RSTree.xcodeproj; sourceTree = "<group>"; };
+		84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTextDrawing.xcodeproj; path = Frameworks/RSTextDrawing/RSTextDrawing.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,6 +283,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */,
+				84B0700A1ED3822600F0B54B /* RSTextDrawing.framework in Frameworks */,
 				84B06FE91ED3803A00F0B54B /* RSFeedFinder.framework in Frameworks */,
 				84B06FFD1ED3818D00F0B54B /* RSTree.framework in Frameworks */,
 				84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */,
@@ -291,6 +317,7 @@
 				84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */,
 				84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */,
 				84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */,
+				84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */,
 				84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */,
 				84B06FB61ED37E8B00F0B54B /* RSWeb.xcodeproj */,
 				84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */,
@@ -382,6 +409,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		84B070021ED3821800F0B54B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84B070071ED3821900F0B54B /* RSTextDrawing.framework */,
+				84B070091ED3821900F0B54B /* RSTextDrawingTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -404,6 +440,7 @@
 				84B06FD21ED37F7D00F0B54B /* PBXTargetDependency */,
 				84B06FEC1ED3803A00F0B54B /* PBXTargetDependency */,
 				84B070001ED3818D00F0B54B /* PBXTargetDependency */,
+				84B0700D1ED3822600F0B54B /* PBXTargetDependency */,
 			);
 			name = Evergreen;
 			productName = Evergreen;
@@ -478,6 +515,10 @@
 				{
 					ProductGroup = 84B06FE11ED3803200F0B54B /* Products */;
 					ProjectRef = 84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */;
+				},
+				{
+					ProductGroup = 84B070021ED3821800F0B54B /* Products */;
+					ProjectRef = 84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */;
 				},
 				{
 					ProductGroup = 84B06FF51ED3818000F0B54B /* Products */;
@@ -627,6 +668,20 @@
 			remoteRef = 84B06FFB1ED3818000F0B54B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		84B070071ED3821900F0B54B /* RSTextDrawing.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RSTextDrawing.framework;
+			remoteRef = 84B070061ED3821900F0B54B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84B070091ED3821900F0B54B /* RSTextDrawingTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RSTextDrawingTests.xctest;
+			remoteRef = 84B070081ED3821900F0B54B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -708,6 +763,11 @@
 			isa = PBXTargetDependency;
 			name = RSTree;
 			targetProxy = 84B06FFF1ED3818D00F0B54B /* PBXContainerItemProxy */;
+		};
+		84B0700D1ED3822600F0B54B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RSTextDrawing;
+			targetProxy = 84B0700C1ED3822600F0B54B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
