@@ -1,0 +1,31 @@
+class SomeViewController: NSViewController {
+
+	@IBOutlet weak var textField: NSTextField
+	private var NSTimer: fetchDataTimer?
+	private var currentText: String? {
+		didSet {
+			invalidateTimer()
+			if currentText.length > 3 {
+				restartTimer()
+			}
+		}
+	}
+	
+	func textDidChange(notification: NSNotification) {
+
+		currentText = textField.stringValue
+	}
+
+	func invalidateTimer() {
+	
+		if let timer = timer {
+			if timer.isValid {
+				timer.invalidate()
+			}
+		self.timer = nil
+		}
+	}
+	
+	
+
+}

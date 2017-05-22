@@ -12,6 +12,8 @@
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849C64691ED37A5D003D8FC0 /* Main.storyboard */; };
 		849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */; };
+		84B06F821ED37BDD00F0B54B /* RSXML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F7D1ED37BCA00F0B54B /* RSXML.framework */; };
+		84B06F831ED37BDD00F0B54B /* RSXML.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F7D1ED37BCA00F0B54B /* RSXML.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -22,7 +24,49 @@
 			remoteGlobalIDString = 849C645F1ED37A5D003D8FC0;
 			remoteInfo = Evergreen;
 		};
+		84B06F7C1ED37BCA00F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84F22C0D1B52DDEA000060CE;
+			remoteInfo = RSXML;
+		};
+		84B06F7E1ED37BCA00F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84F22C171B52DDEA000060CE;
+			remoteInfo = RSXMLTests;
+		};
+		84B06F801ED37BCA00F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84AD0C051E11B7D200B38510;
+			remoteInfo = RSXMLiOS;
+		};
+		84B06F841ED37BDD00F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 84F22C0C1B52DDEA000060CE;
+			remoteInfo = RSXML;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		84B06F681ED37B9000F0B54B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				84B06F831ED37BDD00F0B54B /* RSXML.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -34,6 +78,7 @@
 		849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EvergreenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvergreenTests.swift; sourceTree = "<group>"; };
 		849C64771ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSXML.xcodeproj; path = Frameworks/RSXML/RSXML.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84B06F821ED37BDD00F0B54B /* RSXML.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +106,7 @@
 				849C64621ED37A5D003D8FC0 /* Evergreen */,
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				849C64611ED37A5D003D8FC0 /* Products */,
+				84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -93,6 +140,16 @@
 			path = EvergreenTests;
 			sourceTree = "<group>";
 		};
+		84B06F771ED37BCA00F0B54B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84B06F7D1ED37BCA00F0B54B /* RSXML.framework */,
+				84B06F7F1ED37BCA00F0B54B /* RSXMLTests.xctest */,
+				84B06F811ED37BCA00F0B54B /* RSXML.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -103,10 +160,12 @@
 				849C645C1ED37A5D003D8FC0 /* Sources */,
 				849C645D1ED37A5D003D8FC0 /* Frameworks */,
 				849C645E1ED37A5D003D8FC0 /* Resources */,
+				84B06F681ED37B9000F0B54B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				84B06F851ED37BDD00F0B54B /* PBXTargetDependency */,
 			);
 			name = Evergreen;
 			productName = Evergreen;
@@ -165,6 +224,12 @@
 			mainGroup = 849C64571ED37A5D003D8FC0;
 			productRefGroup = 849C64611ED37A5D003D8FC0 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 84B06F771ED37BCA00F0B54B /* Products */;
+					ProjectRef = 84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				849C645F1ED37A5D003D8FC0 /* Evergreen */,
@@ -172,6 +237,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		84B06F7D1ED37BCA00F0B54B /* RSXML.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RSXML.framework;
+			remoteRef = 84B06F7C1ED37BCA00F0B54B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84B06F7F1ED37BCA00F0B54B /* RSXMLTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RSXMLTests.xctest;
+			remoteRef = 84B06F7E1ED37BCA00F0B54B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84B06F811ED37BCA00F0B54B /* RSXML.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RSXML.framework;
+			remoteRef = 84B06F801ED37BCA00F0B54B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		849C645E1ED37A5D003D8FC0 /* Resources */ = {
@@ -217,6 +306,11 @@
 			isa = PBXTargetDependency;
 			target = 849C645F1ED37A5D003D8FC0 /* Evergreen */;
 			targetProxy = 849C64721ED37A5D003D8FC0 /* PBXContainerItemProxy */;
+		};
+		84B06F851ED37BDD00F0B54B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RSXML;
+			targetProxy = 84B06F841ED37BDD00F0B54B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -401,6 +495,7 @@
 				849C647C1ED37A5D003D8FC0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		849C647D1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "EvergreenTests" */ = {
 			isa = XCConfigurationList;
@@ -409,6 +504,7 @@
 				849C647F1ED37A5D003D8FC0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
