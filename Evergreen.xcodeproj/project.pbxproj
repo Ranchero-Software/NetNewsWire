@@ -14,8 +14,10 @@
 		849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */; };
 		84B06F821ED37BDD00F0B54B /* RSXML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F7D1ED37BCA00F0B54B /* RSXML.framework */; };
 		84B06F831ED37BDD00F0B54B /* RSXML.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F7D1ED37BCA00F0B54B /* RSXML.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		84B06F921ED37CB300F0B54B /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F8D1ED37CA100F0B54B /* RSDatabase.framework */; };
-		84B06F931ED37CB300F0B54B /* RSDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F8D1ED37CA100F0B54B /* RSDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; };
+		84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */; };
+		84B06FB31ED37DBD00F0B54B /* RSDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,30 +56,58 @@
 			remoteGlobalIDString = 84F22C0C1B52DDEA000060CE;
 			remoteInfo = RSXML;
 		};
-		84B06F8C1ED37CA100F0B54B /* PBXContainerItemProxy */ = {
+		84B06F9C1ED37DA000F0B54B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 84B06F861ED37CA000F0B54B /* RSDatabase.xcodeproj */;
+			containerPortal = 84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 84F22C551B52E0D9000060CE;
 			remoteInfo = RSDatabase;
 		};
-		84B06F8E1ED37CA100F0B54B /* PBXContainerItemProxy */ = {
+		84B06F9E1ED37DA000F0B54B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 84B06F861ED37CA000F0B54B /* RSDatabase.xcodeproj */;
+			containerPortal = 84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 84F22C5F1B52E0D9000060CE;
 			remoteInfo = RSDatabaseTests;
 		};
-		84B06F901ED37CA100F0B54B /* PBXContainerItemProxy */ = {
+		84B06FA01ED37DA000F0B54B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 84B06F861ED37CA000F0B54B /* RSDatabase.xcodeproj */;
+			containerPortal = 84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 8400ABF71E0CFBD800AA7C57;
 			remoteInfo = RSDatabaseiOS;
 		};
-		84B06F941ED37CB300F0B54B /* PBXContainerItemProxy */ = {
+		84B06FA81ED37DAD00F0B54B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 84B06F861ED37CA000F0B54B /* RSDatabase.xcodeproj */;
+			containerPortal = 84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84CFF4F41AC3C69700CEA6C8;
+			remoteInfo = RSCore;
+		};
+		84B06FAA1ED37DAD00F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84CFF4FF1AC3C69700CEA6C8;
+			remoteInfo = RSCoreTests;
+		};
+		84B06FAC1ED37DAD00F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 842DD7BC1E14993900E061EB;
+			remoteInfo = RSCoreiOS;
+		};
+		84B06FB01ED37DBD00F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 84CFF4F31AC3C69700CEA6C8;
+			remoteInfo = RSCore;
+		};
+		84B06FB41ED37DBD00F0B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 84F22C541B52E0D9000060CE;
 			remoteInfo = RSDatabase;
@@ -91,7 +121,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				84B06F931ED37CB300F0B54B /* RSDatabase.framework in Embed Frameworks */,
+				84B06FB31ED37DBD00F0B54B /* RSDatabase.framework in Embed Frameworks */,
+				84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */,
 				84B06F831ED37BDD00F0B54B /* RSXML.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -110,7 +141,8 @@
 		849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvergreenTests.swift; sourceTree = "<group>"; };
 		849C64771ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSXML.xcodeproj; path = Frameworks/RSXML/RSXML.xcodeproj; sourceTree = "<group>"; };
-		84B06F861ED37CA000F0B54B /* RSDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSDatabase.xcodeproj; path = Frameworks/RSDatabase/RSDatabase.xcodeproj; sourceTree = "<group>"; };
+		84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSDatabase.xcodeproj; path = Frameworks/RSDatabase/RSDatabase.xcodeproj; sourceTree = "<group>"; };
+		84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = Frameworks/RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,7 +150,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84B06F921ED37CB300F0B54B /* RSDatabase.framework in Frameworks */,
+				84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */,
+				84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */,
 				84B06F821ED37BDD00F0B54B /* RSXML.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -143,7 +176,8 @@
 				849C646C1ED37A5D003D8FC0 /* Info.plist */,
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				849C64611ED37A5D003D8FC0 /* Products */,
-				84B06F861ED37CA000F0B54B /* RSDatabase.xcodeproj */,
+				84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */,
+				84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */,
 				84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */,
 			);
 			sourceTree = "<group>";
@@ -176,12 +210,22 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		84B06F871ED37CA000F0B54B /* Products */ = {
+		84B06F971ED37DA000F0B54B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84B06F8D1ED37CA100F0B54B /* RSDatabase.framework */,
-				84B06F8F1ED37CA100F0B54B /* RSDatabaseTests.xctest */,
-				84B06F911ED37CA100F0B54B /* RSDatabase.framework */,
+				84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */,
+				84B06F9F1ED37DA000F0B54B /* RSDatabaseTests.xctest */,
+				84B06FA11ED37DA000F0B54B /* RSDatabase.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84B06FA31ED37DAC00F0B54B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84B06FA91ED37DAD00F0B54B /* RSCore.framework */,
+				84B06FAB1ED37DAD00F0B54B /* RSCoreTests.xctest */,
+				84B06FAD1ED37DAD00F0B54B /* RSCore.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -202,7 +246,8 @@
 			);
 			dependencies = (
 				84B06F851ED37BDD00F0B54B /* PBXTargetDependency */,
-				84B06F951ED37CB300F0B54B /* PBXTargetDependency */,
+				84B06FB11ED37DBD00F0B54B /* PBXTargetDependency */,
+				84B06FB51ED37DBD00F0B54B /* PBXTargetDependency */,
 			);
 			name = Evergreen;
 			productName = Evergreen;
@@ -263,8 +308,12 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 84B06F871ED37CA000F0B54B /* Products */;
-					ProjectRef = 84B06F861ED37CA000F0B54B /* RSDatabase.xcodeproj */;
+					ProductGroup = 84B06FA31ED37DAC00F0B54B /* Products */;
+					ProjectRef = 84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */;
+				},
+				{
+					ProductGroup = 84B06F971ED37DA000F0B54B /* Products */;
+					ProjectRef = 84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */;
 				},
 				{
 					ProductGroup = 84B06F771ED37BCA00F0B54B /* Products */;
@@ -301,25 +350,46 @@
 			remoteRef = 84B06F801ED37BCA00F0B54B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84B06F8D1ED37CA100F0B54B /* RSDatabase.framework */ = {
+		84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = RSDatabase.framework;
-			remoteRef = 84B06F8C1ED37CA100F0B54B /* PBXContainerItemProxy */;
+			remoteRef = 84B06F9C1ED37DA000F0B54B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84B06F8F1ED37CA100F0B54B /* RSDatabaseTests.xctest */ = {
+		84B06F9F1ED37DA000F0B54B /* RSDatabaseTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = RSDatabaseTests.xctest;
-			remoteRef = 84B06F8E1ED37CA100F0B54B /* PBXContainerItemProxy */;
+			remoteRef = 84B06F9E1ED37DA000F0B54B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84B06F911ED37CA100F0B54B /* RSDatabase.framework */ = {
+		84B06FA11ED37DA000F0B54B /* RSDatabase.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = RSDatabase.framework;
-			remoteRef = 84B06F901ED37CA100F0B54B /* PBXContainerItemProxy */;
+			remoteRef = 84B06FA01ED37DA000F0B54B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84B06FA91ED37DAD00F0B54B /* RSCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RSCore.framework;
+			remoteRef = 84B06FA81ED37DAD00F0B54B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84B06FAB1ED37DAD00F0B54B /* RSCoreTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RSCoreTests.xctest;
+			remoteRef = 84B06FAA1ED37DAD00F0B54B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84B06FAD1ED37DAD00F0B54B /* RSCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RSCore.framework;
+			remoteRef = 84B06FAC1ED37DAD00F0B54B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -374,10 +444,15 @@
 			name = RSXML;
 			targetProxy = 84B06F841ED37BDD00F0B54B /* PBXContainerItemProxy */;
 		};
-		84B06F951ED37CB300F0B54B /* PBXTargetDependency */ = {
+		84B06FB11ED37DBD00F0B54B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RSCore;
+			targetProxy = 84B06FB01ED37DBD00F0B54B /* PBXContainerItemProxy */;
+		};
+		84B06FB51ED37DBD00F0B54B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RSDatabase;
-			targetProxy = 84B06F941ED37CB300F0B54B /* PBXContainerItemProxy */;
+			targetProxy = 84B06FB41ED37DBD00F0B54B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -487,6 +562,7 @@
 		849C647B1ED37A5D003D8FC0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
@@ -501,6 +577,7 @@
 		849C647C1ED37A5D003D8FC0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
