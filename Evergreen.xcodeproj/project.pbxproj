@@ -1,0 +1,416 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64631ED37A5D003D8FC0 /* AppDelegate.swift */; };
+		849C64661ED37A5D003D8FC0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64651ED37A5D003D8FC0 /* ViewController.swift */; };
+		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
+		849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849C64691ED37A5D003D8FC0 /* Main.storyboard */; };
+		849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		849C64721ED37A5D003D8FC0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 849C645F1ED37A5D003D8FC0;
+			remoteInfo = Evergreen;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		849C64631ED37A5D003D8FC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		849C64651ED37A5D003D8FC0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		849C64671ED37A5D003D8FC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		849C646A1ED37A5D003D8FC0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		849C646C1ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EvergreenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvergreenTests.swift; sourceTree = "<group>"; };
+		849C64771ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		849C645D1ED37A5D003D8FC0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		849C646E1ED37A5D003D8FC0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		849C64571ED37A5D003D8FC0 = {
+			isa = PBXGroup;
+			children = (
+				849C64621ED37A5D003D8FC0 /* Evergreen */,
+				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
+				849C64611ED37A5D003D8FC0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		849C64611ED37A5D003D8FC0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				849C64601ED37A5D003D8FC0 /* Evergreen.app */,
+				849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		849C64621ED37A5D003D8FC0 /* Evergreen */ = {
+			isa = PBXGroup;
+			children = (
+				849C64631ED37A5D003D8FC0 /* AppDelegate.swift */,
+				849C64651ED37A5D003D8FC0 /* ViewController.swift */,
+				849C64671ED37A5D003D8FC0 /* Assets.xcassets */,
+				849C64691ED37A5D003D8FC0 /* Main.storyboard */,
+				849C646C1ED37A5D003D8FC0 /* Info.plist */,
+			);
+			path = Evergreen;
+			sourceTree = "<group>";
+		};
+		849C64741ED37A5D003D8FC0 /* EvergreenTests */ = {
+			isa = PBXGroup;
+			children = (
+				849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */,
+				849C64771ED37A5D003D8FC0 /* Info.plist */,
+			);
+			path = EvergreenTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		849C645F1ED37A5D003D8FC0 /* Evergreen */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 849C647A1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "Evergreen" */;
+			buildPhases = (
+				849C645C1ED37A5D003D8FC0 /* Sources */,
+				849C645D1ED37A5D003D8FC0 /* Frameworks */,
+				849C645E1ED37A5D003D8FC0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Evergreen;
+			productName = Evergreen;
+			productReference = 849C64601ED37A5D003D8FC0 /* Evergreen.app */;
+			productType = "com.apple.product-type.application";
+		};
+		849C64701ED37A5D003D8FC0 /* EvergreenTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 849C647D1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "EvergreenTests" */;
+			buildPhases = (
+				849C646D1ED37A5D003D8FC0 /* Sources */,
+				849C646E1ED37A5D003D8FC0 /* Frameworks */,
+				849C646F1ED37A5D003D8FC0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				849C64731ED37A5D003D8FC0 /* PBXTargetDependency */,
+			);
+			name = EvergreenTests;
+			productName = EvergreenTests;
+			productReference = 849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		849C64581ED37A5D003D8FC0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0820;
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = "Ranchero Software";
+				TargetAttributes = {
+					849C645F1ED37A5D003D8FC0 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 9C84TZ7Q6Z;
+						ProvisioningStyle = Automatic;
+					};
+					849C64701ED37A5D003D8FC0 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 9C84TZ7Q6Z;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 849C645F1ED37A5D003D8FC0;
+					};
+				};
+			};
+			buildConfigurationList = 849C645B1ED37A5D003D8FC0 /* Build configuration list for PBXProject "Evergreen" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 849C64571ED37A5D003D8FC0;
+			productRefGroup = 849C64611ED37A5D003D8FC0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				849C645F1ED37A5D003D8FC0 /* Evergreen */,
+				849C64701ED37A5D003D8FC0 /* EvergreenTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		849C645E1ED37A5D003D8FC0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
+				849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		849C646F1ED37A5D003D8FC0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		849C645C1ED37A5D003D8FC0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				849C64661ED37A5D003D8FC0 /* ViewController.swift in Sources */,
+				849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		849C646D1ED37A5D003D8FC0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		849C64731ED37A5D003D8FC0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 849C645F1ED37A5D003D8FC0 /* Evergreen */;
+			targetProxy = 849C64721ED37A5D003D8FC0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		849C64691ED37A5D003D8FC0 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				849C646A1ED37A5D003D8FC0 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		849C64781ED37A5D003D8FC0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		849C64791ED37A5D003D8FC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		849C647B1ED37A5D003D8FC0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
+				INFOPLIST_FILE = Evergreen/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Evergreen;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		849C647C1ED37A5D003D8FC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
+				INFOPLIST_FILE = Evergreen/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Evergreen;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		849C647E1ED37A5D003D8FC0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
+				INFOPLIST_FILE = EvergreenTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.EvergreenTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Evergreen.app/Contents/MacOS/Evergreen";
+			};
+			name = Debug;
+		};
+		849C647F1ED37A5D003D8FC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
+				INFOPLIST_FILE = EvergreenTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.EvergreenTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Evergreen.app/Contents/MacOS/Evergreen";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		849C645B1ED37A5D003D8FC0 /* Build configuration list for PBXProject "Evergreen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				849C64781ED37A5D003D8FC0 /* Debug */,
+				849C64791ED37A5D003D8FC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		849C647A1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "Evergreen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				849C647B1ED37A5D003D8FC0 /* Debug */,
+				849C647C1ED37A5D003D8FC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		849C647D1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "EvergreenTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				849C647E1ED37A5D003D8FC0 /* Debug */,
+				849C647F1ED37A5D003D8FC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 849C64581ED37A5D003D8FC0 /* Project object */;
+}
