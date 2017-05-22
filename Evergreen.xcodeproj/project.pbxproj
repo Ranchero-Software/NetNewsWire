@@ -70,11 +70,11 @@
 
 /* Begin PBXFileReference section */
 		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		849C64631ED37A5D003D8FC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		849C64651ED37A5D003D8FC0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		849C64671ED37A5D003D8FC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		849C64631ED37A5D003D8FC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Evergreen/AppDelegate.swift; sourceTree = "<group>"; };
+		849C64651ED37A5D003D8FC0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Evergreen/ViewController.swift; sourceTree = "<group>"; };
+		849C64671ED37A5D003D8FC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Evergreen/Assets.xcassets; sourceTree = "<group>"; };
 		849C646A1ED37A5D003D8FC0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		849C646C1ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		849C646C1ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Evergreen/Info.plist; sourceTree = "<group>"; };
 		849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EvergreenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvergreenTests.swift; sourceTree = "<group>"; };
 		849C64771ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -103,7 +103,11 @@
 		849C64571ED37A5D003D8FC0 = {
 			isa = PBXGroup;
 			children = (
-				849C64621ED37A5D003D8FC0 /* Evergreen */,
+				849C64631ED37A5D003D8FC0 /* AppDelegate.swift */,
+				849C64651ED37A5D003D8FC0 /* ViewController.swift */,
+				849C64671ED37A5D003D8FC0 /* Assets.xcassets */,
+				849C64691ED37A5D003D8FC0 /* Main.storyboard */,
+				849C646C1ED37A5D003D8FC0 /* Info.plist */,
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				849C64611ED37A5D003D8FC0 /* Products */,
 				84B06F761ED37BCA00F0B54B /* RSXML.xcodeproj */,
@@ -117,18 +121,6 @@
 				849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		849C64621ED37A5D003D8FC0 /* Evergreen */ = {
-			isa = PBXGroup;
-			children = (
-				849C64631ED37A5D003D8FC0 /* AppDelegate.swift */,
-				849C64651ED37A5D003D8FC0 /* ViewController.swift */,
-				849C64671ED37A5D003D8FC0 /* Assets.xcassets */,
-				849C64691ED37A5D003D8FC0 /* Main.storyboard */,
-				849C646C1ED37A5D003D8FC0 /* Info.plist */,
-			);
-			path = Evergreen;
 			sourceTree = "<group>";
 		};
 		849C64741ED37A5D003D8FC0 /* EvergreenTests */ = {
@@ -321,6 +313,7 @@
 				849C646A1ED37A5D003D8FC0 /* Base */,
 			);
 			name = Main.storyboard;
+			path = Evergreen;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
