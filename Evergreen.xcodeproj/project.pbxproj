@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8471A2C41ED4CEBF008F099E /* DataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2B71ED4CEAD008F099E /* DataModel.framework */; };
+		8471A2C51ED4CEBF008F099E /* DataModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2B71ED4CEAD008F099E /* DataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64631ED37A5D003D8FC0 /* AppDelegate.swift */; };
 		849C64661ED37A5D003D8FC0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64651ED37A5D003D8FC0 /* ViewController.swift */; };
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
@@ -31,6 +33,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8471A2B61ED4CEAD008F099E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84C7AE921D68C558009FB883;
+			remoteInfo = DataModel;
+		};
+		8471A2C61ED4CEBF008F099E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 84C7AE911D68C558009FB883;
+			remoteInfo = DataModel;
+		};
 		849C64721ED37A5D003D8FC0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
@@ -249,6 +265,7 @@
 				84B06FFE1ED3818D00F0B54B /* RSTree.framework in Embed Frameworks */,
 				84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */,
 				84B06FD01ED37F7D00F0B54B /* DB5.framework in Embed Frameworks */,
+				8471A2C51ED4CEBF008F099E /* DataModel.framework in Embed Frameworks */,
 				84B06FC31ED37E9600F0B54B /* RSWeb.framework in Embed Frameworks */,
 				84B06F831ED37BDD00F0B54B /* RSXML.framework in Embed Frameworks */,
 			);
@@ -258,6 +275,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DataModel.xcodeproj; path = Frameworks/DataModel/DataModel.xcodeproj; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64631ED37A5D003D8FC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Evergreen/AppDelegate.swift; sourceTree = "<group>"; };
 		849C64651ED37A5D003D8FC0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Evergreen/ViewController.swift; sourceTree = "<group>"; };
@@ -288,6 +306,7 @@
 				84B06FFD1ED3818D00F0B54B /* RSTree.framework in Frameworks */,
 				84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */,
 				84B06FCF1ED37F7D00F0B54B /* DB5.framework in Frameworks */,
+				8471A2C41ED4CEBF008F099E /* DataModel.framework in Frameworks */,
 				84B06FC21ED37E9600F0B54B /* RSWeb.framework in Frameworks */,
 				84B06F821ED37BDD00F0B54B /* RSXML.framework in Frameworks */,
 			);
@@ -303,6 +322,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8471A2B31ED4CEAD008F099E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8471A2B71ED4CEAD008F099E /* DataModel.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		849C64571ED37A5D003D8FC0 = {
 			isa = PBXGroup;
 			children = (
@@ -313,6 +340,7 @@
 				849C646C1ED37A5D003D8FC0 /* Info.plist */,
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				849C64611ED37A5D003D8FC0 /* Products */,
+				8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */,
 				84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */,
 				84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */,
 				84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */,
@@ -441,6 +469,7 @@
 				84B06FEC1ED3803A00F0B54B /* PBXTargetDependency */,
 				84B070001ED3818D00F0B54B /* PBXTargetDependency */,
 				84B0700D1ED3822600F0B54B /* PBXTargetDependency */,
+				8471A2C71ED4CEBF008F099E /* PBXTargetDependency */,
 			);
 			name = Evergreen;
 			productName = Evergreen;
@@ -501,6 +530,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 8471A2B31ED4CEAD008F099E /* Products */;
+					ProjectRef = 8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */;
+				},
+				{
 					ProductGroup = 84B06FC71ED37F7200F0B54B /* Products */;
 					ProjectRef = 84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */;
 				},
@@ -542,6 +575,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		8471A2B71ED4CEAD008F099E /* DataModel.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DataModel.framework;
+			remoteRef = 8471A2B61ED4CEAD008F099E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		84B06F7D1ED37BCA00F0B54B /* RSXML.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -724,6 +764,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8471A2C71ED4CEBF008F099E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DataModel;
+			targetProxy = 8471A2C61ED4CEBF008F099E /* PBXContainerItemProxy */;
+		};
 		849C64731ED37A5D003D8FC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 849C645F1ED37A5D003D8FC0 /* Evergreen */;
