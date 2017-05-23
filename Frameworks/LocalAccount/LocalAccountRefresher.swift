@@ -76,7 +76,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 			account.update(feed, parsedFeed: parsedFeed) {
 				
 				if let httpResponse = response as? HTTPURLResponse {
-					let conditionalGetInfo = HTTPConditionalGetInfo(URLResponse: httpResponse)
+					let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 					if !conditionalGetInfo.isEmpty || feed.conditionalGetInfo != nil {
 						feed.conditionalGetInfo = conditionalGetInfo
 					}
