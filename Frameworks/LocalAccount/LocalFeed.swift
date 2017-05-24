@@ -132,7 +132,7 @@ public extension LocalFeed {
 			self.unreadCount = unreadCount
 		}
 
-		if let conditionalGetInfoPlist = diskDictionary[feedConditionalGetInfoKey] as? NSDictionary {
+		if let conditionalGetInfoPlist = diskDictionary[feedConditionalGetInfoKey] as? [String: String] {
 			if conditionalGetInfoPlist.count > 0 {
 				self.conditionalGetInfo = HTTPConditionalGetInfo(plist: conditionalGetInfoPlist)
 			}
@@ -162,7 +162,7 @@ public extension LocalFeed {
 		d.setOptionalStringValue(username, feedUsernameKey)
 		d.setOptionalStringValue(contentHash, feedContentHashKey)
 
-		if let conditionalGetInfoPlist = conditionalGetInfo?.plist as? NSDictionary {
+		if let conditionalGetInfoPlist = conditionalGetInfo?.plist {
 			d.setObjectWithStringKey(conditionalGetInfoPlist, feedConditionalGetInfoKey)
 		}
 

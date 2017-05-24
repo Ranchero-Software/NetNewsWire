@@ -27,7 +27,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 	
 	public func refreshFeeds(_ feeds: NSSet) {
 		
-		downloadSession.refreshObjects(feeds)
+		downloadSession.downloadObjects(feeds)
 	}
 
 	// MARK: DownloadSessionDelegate
