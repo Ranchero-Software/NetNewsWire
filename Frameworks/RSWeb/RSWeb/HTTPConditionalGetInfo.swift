@@ -18,6 +18,22 @@ public struct HTTPConditionalGetInfo {
 		}
 	}
 	
+	public var plist: [String: String]? {
+		get {
+			if isEmpty {
+				return nil
+			}
+			var d = [String: String]()
+			if let lastModified = lastModified {
+				d[HTTPResponseHeader.lastModified] = lastModified
+			}
+			if let etag = etag {
+				d[HTTPResponseHeader.etag] = etag
+			}
+			return d
+		}
+	}
+	
 	public init(lastModified: String?, etag: String?) {
 		
 		self.lastModified = lastModified
@@ -30,6 +46,11 @@ public struct HTTPConditionalGetInfo {
 		let etag = urlResponse.valueForHTTPHeaderField(HTTPResponseHeader.etag)
 		
 		self.init(lastModified: lastModified, etag: etag)
+	}
+	
+	public init(plist: [String: String]) {
+		
+		self.init(lastModified: plist[HTTPResponseHeader.lastModified], etag: plist[HTTPResponseHeader.etag])
 	}
 
 	public func addRequestHeadersToURLRequest(_ urlRequest: NSMutableURLRequest) {
