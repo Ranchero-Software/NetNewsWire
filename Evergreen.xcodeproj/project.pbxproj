@@ -11,6 +11,7 @@
 		842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
 		842E45DF1ED8C582000A8B52 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DE1ED8C582000A8B52 /* Defaults.swift */; };
 		842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */; };
+		842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */; };
 		8471A2C41ED4CEBF008F099E /* DataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2B71ED4CEAD008F099E /* DataModel.framework */; };
 		8471A2C51ED4CEBF008F099E /* DataModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2B71ED4CEAD008F099E /* DataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8471A2F51ED4D062008F099E /* LocalAccount.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2F21ED4D04D008F099E /* LocalAccount.framework */; };
@@ -307,6 +308,7 @@
 		842E45DC1ED8C54B000A8B52 /* Browser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Browser.swift; path = Evergreen/Browser.swift; sourceTree = "<group>"; };
 		842E45DE1ED8C582000A8B52 /* Defaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Defaults.swift; path = Evergreen/Preferences/Defaults.swift; sourceTree = "<group>"; };
 		842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardDelegateProtocol.swift; sourceTree = "<group>"; };
+		842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowSplitView.swift; sourceTree = "<group>"; };
 		8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DataModel.xcodeproj; path = Frameworks/DataModel/DataModel.xcodeproj; sourceTree = "<group>"; };
 		8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LocalAccount.xcodeproj; path = Frameworks/LocalAccount/LocalAccount.xcodeproj; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -368,6 +370,7 @@
 			isa = PBXGroup;
 			children = (
 				842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */,
+				842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */,
 			);
 			name = MainWindow;
 			path = Evergreen/MainWindow;
@@ -838,6 +841,7 @@
 				842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */,
 				842E45CE1ED8C308000A8B52 /* AppConstants.swift in Sources */,
 				849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */,
+				842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
