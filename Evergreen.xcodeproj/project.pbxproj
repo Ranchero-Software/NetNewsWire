@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		842E45CE1ED8C308000A8B52 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppConstants.swift */; };
 		8471A2C41ED4CEBF008F099E /* DataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2B71ED4CEAD008F099E /* DataModel.framework */; };
 		8471A2C51ED4CEBF008F099E /* DataModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2B71ED4CEAD008F099E /* DataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8471A2F51ED4D062008F099E /* LocalAccount.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2F21ED4D04D008F099E /* LocalAccount.framework */; };
@@ -299,6 +300,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		842E45CD1ED8C308000A8B52 /* AppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppConstants.swift; path = Evergreen/AppConstants.swift; sourceTree = "<group>"; };
 		8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DataModel.xcodeproj; path = Frameworks/DataModel/DataModel.xcodeproj; sourceTree = "<group>"; };
 		8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LocalAccount.xcodeproj; path = Frameworks/LocalAccount/LocalAccount.xcodeproj; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -368,10 +370,11 @@
 		849C64571ED37A5D003D8FC0 = {
 			isa = PBXGroup;
 			children = (
-				849C64631ED37A5D003D8FC0 /* AppDelegate.swift */,
-				849C64651ED37A5D003D8FC0 /* ViewController.swift */,
 				849C64671ED37A5D003D8FC0 /* Assets.xcassets */,
 				849C64691ED37A5D003D8FC0 /* Main.storyboard */,
+				842E45CD1ED8C308000A8B52 /* AppConstants.swift */,
+				849C64631ED37A5D003D8FC0 /* AppDelegate.swift */,
+				849C64651ED37A5D003D8FC0 /* ViewController.swift */,
 				849C646C1ED37A5D003D8FC0 /* Info.plist */,
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				849C64611ED37A5D003D8FC0 /* Products */,
@@ -804,6 +807,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				849C64661ED37A5D003D8FC0 /* ViewController.swift in Sources */,
+				842E45CE1ED8C308000A8B52 /* AppConstants.swift in Sources */,
 				849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
