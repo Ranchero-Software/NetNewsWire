@@ -96,7 +96,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 		if data.isEmpty {
 			return true
 		}
-		if let mimeType = RSMimeTypeForData(data), RSMimeTypeIsMedia(mimeType) {
+		if data.isDefinitelyNotFeed() {
 			return false
 		}
 		
@@ -125,6 +125,13 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 //
 //		print("Not modified response for \(feed.url).")
 	}
+}
 
-
+private extension Data {
+	
+	func isDefinitelyNotFeed() -> Bool {
+		
+		// We only detect a few image types for now. This should get fleshed-out at some later date.
+		return (self as NSData).rs_dataIsImage()
+	}
 }

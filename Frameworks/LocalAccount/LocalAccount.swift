@@ -95,7 +95,7 @@ public final class LocalAccount: Account, PlistProvider  {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .RSProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		
 		DispatchQueue.main.async() { () -> Void in
 			self.updateUnreadCounts(feedIDs: self.flattenedFeedIDs)
@@ -332,7 +332,7 @@ public final class LocalAccount: Account, PlistProvider  {
 
 	dynamic func refreshProgressDidChange(_ notification: Notification) {
 
-		guard let progress = notification.object as? RSProgress, progress === refresher.progress else {
+		guard let progress = notification.object as? DownloadProgress, progress === refresher.progress else {
 			return
 		}
 
