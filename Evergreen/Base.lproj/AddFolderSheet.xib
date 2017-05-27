@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="AddFolderWindowController" customModule="Seneca" customModuleProvider="target">
+            <connections>
+                <outlet property="accountPopupButton" destination="8HL-br-Pw6" id="MiU-3T-yqH"/>
+                <outlet property="folderNameTextField" destination="1xA-Eb-rIK" id="M56-jU-Gqs"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="bw1-oV-4if"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Add Folder" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="480" height="133"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="133"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CWJ-Gi-Q6q">
+                        <rect key="frame" x="18" y="94" width="91" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Folder Name:" id="k8o-om-Rgh">
+                            <font key="font" metaFont="systemBold"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1xA-Eb-rIK" userLabel="Folder Name Text Field">
+                        <rect key="frame" x="115" y="90" width="345" height="22"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="v4n-IU-EZ9">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hNa-g7-hfw">
+                        <rect key="frame" x="46" y="64" width="63" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Account:" id="t6T-ar-V3d">
+                            <font key="font" metaFont="systemBold"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8HL-br-Pw6" userLabel="Account Popup">
+                        <rect key="frame" x="113" y="58" width="350" height="26"/>
+                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="SDZ-cp-t7j" id="U9R-SI-VBz">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="0ND-cQ-uAN">
+                                <items>
+                                    <menuItem title="Item 1" state="on" id="SDZ-cp-t7j"/>
+                                    <menuItem title="Item 2" id="Aat-NW-hPO"/>
+                                    <menuItem title="Item 3" id="CVJ-R1-O8v"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7gd-Tw-TDU">
+                        <rect key="frame" x="359" y="13" width="107" height="32"/>
+                        <buttonCell key="cell" type="push" title="Add Folder" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="F5a-Q7-NMn">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="addFolder:" target="-2" id="YCa-zg-aEU"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8jI-Pc-wYo">
+                        <rect key="frame" x="252" y="13" width="107" height="32"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="VXk-Yp-k6W">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancel:" target="-2" id="cY4-8Y-SpL"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="7gd-Tw-TDU" firstAttribute="baseline" secondItem="8jI-Pc-wYo" secondAttribute="baseline" id="4C3-oB-bIU"/>
+                    <constraint firstAttribute="trailing" secondItem="8HL-br-Pw6" secondAttribute="trailing" constant="20" id="Hsp-d3-EZ8"/>
+                    <constraint firstItem="7gd-Tw-TDU" firstAttribute="leading" secondItem="8jI-Pc-wYo" secondAttribute="trailing" constant="12" id="LCd-Z9-1yt"/>
+                    <constraint firstItem="8HL-br-Pw6" firstAttribute="top" secondItem="1xA-Eb-rIK" secondAttribute="bottom" constant="8" id="P9q-WR-eeU"/>
+                    <constraint firstAttribute="trailing" secondItem="7gd-Tw-TDU" secondAttribute="trailing" constant="20" id="Q0o-PD-2W3"/>
+                    <constraint firstItem="1xA-Eb-rIK" firstAttribute="leading" secondItem="CWJ-Gi-Q6q" secondAttribute="trailing" constant="8" id="RzN-26-eSD"/>
+                    <constraint firstItem="8HL-br-Pw6" firstAttribute="leading" secondItem="hNa-g7-hfw" secondAttribute="trailing" constant="8" id="YC6-cj-Bac"/>
+                    <constraint firstItem="CWJ-Gi-Q6q" firstAttribute="baseline" secondItem="1xA-Eb-rIK" secondAttribute="baseline" constant="-1" id="aMO-CX-eU5"/>
+                    <constraint firstAttribute="trailing" secondItem="1xA-Eb-rIK" secondAttribute="trailing" constant="20" id="gpu-6m-nAZ"/>
+                    <constraint firstItem="8HL-br-Pw6" firstAttribute="baseline" secondItem="hNa-g7-hfw" secondAttribute="baseline" id="iVf-cc-IJb"/>
+                    <constraint firstAttribute="bottom" secondItem="7gd-Tw-TDU" secondAttribute="bottom" constant="20" id="iq8-xu-Rd8"/>
+                    <constraint firstItem="CWJ-Gi-Q6q" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="m5R-l0-h8O"/>
+                    <constraint firstItem="7gd-Tw-TDU" firstAttribute="top" secondItem="8HL-br-Pw6" secondAttribute="bottom" constant="20" id="oSi-Ir-nO9"/>
+                    <constraint firstItem="7gd-Tw-TDU" firstAttribute="width" secondItem="8jI-Pc-wYo" secondAttribute="width" id="q49-aI-mMb"/>
+                    <constraint firstItem="CWJ-Gi-Q6q" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="22" id="uKg-MN-alz"/>
+                    <constraint firstItem="CWJ-Gi-Q6q" firstAttribute="trailing" secondItem="hNa-g7-hfw" secondAttribute="trailing" id="zFB-3f-LMj"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="460" y="153.5"/>
+        </window>
+    </objects>
+</document>
