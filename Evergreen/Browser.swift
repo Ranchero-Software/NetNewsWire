@@ -21,7 +21,7 @@ func openInBrowser(_ urlString: String) {
 func openInBrowser(_ urlString: String, inBackground: Bool) {
 	
 	if let url = URL(string: urlString) {
-		let _ = MacWebBrowser.openURL(url, inBackground: inBackground)
+		MacWebBrowser.openURL(url, inBackground: inBackground)
 	}
 }
 

@@ -400,7 +400,33 @@
                                     <items>
                                         <menuItem title="Evergreen Help" keyEquivalent="?" id="FKE-Sm-Kum">
                                             <connections>
-                                                <action selector="showHelp:" target="Ady-hI-5gd" id="y7X-2Q-9no"/>
+                                                <action selector="showHelp:" target="Voe-Tx-rLC" id="WJP-8V-s4K"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="iyN-Fr-QXC"/>
+                                        <menuItem title="Add Evergreen News Feed" id="cmP-uH-mS8">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="addAppNews:" target="Ady-hI-5gd" id="xHC-9j-EpT"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="rK6-cL-4Vj"/>
+                                        <menuItem title="Website" id="q2Z-9K-GBd">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openWebsite:" target="Ady-hI-5gd" id="rmL-lt-p8g"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="GitHub Repository" id="QfD-Xw-sdF">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openRepository:" target="Ady-hI-5gd" id="7xZ-V2-iPD"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Bug Tracker" id="mE2-pM-rQF">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openBugTracker:" target="Ady-hI-5gd" id="fZQ-ng-gIm"/>
                                             </connections>
                                         </menuItem>
                                     </items>

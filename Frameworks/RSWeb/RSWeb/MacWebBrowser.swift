@@ -10,7 +10,7 @@ import Cocoa
 
 public class MacWebBrowser {
 	
-	public class func openURL(_ url: URL, inBackground: Bool) -> Bool {
+	@discardableResult public class func openURL(_ url: URL, inBackground: Bool) -> Bool {
 		
 		guard let preparedURL = url.preparedForOpeningInBrowser() else {
 			return false

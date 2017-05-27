@@ -12,6 +12,7 @@ import DataModel
 import RSTextDrawing
 import RSTree
 import RSXML
+import RSWeb
 
 var currentTheme: VSTheme!
 
@@ -282,6 +283,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 			return
 		}
 		addFeed(appNewsURLString, "Evergreen News")
+	}
+
+	@IBAction func openWebsite(_ sender: AnyObject) {
+
+		openInBrowser("http://ranchero.com/evergreen/", inBackground: false)
+	}
+
+	@IBAction func openRepository(_ sender: AnyObject) {
+
+		openInBrowser("https://github.com/brentsimmons/Evergreen", inBackground: false)
+	}
+
+	@IBAction func openBugTracker(_ sender: AnyObject) {
+
+		openInBrowser("https://github.com/brentsimmons/Evergreen/issues", inBackground: false)
+	}
+
+	@IBAction func showHelp(_ sender: AnyObject) {
+
+		openInBrowser("http://ranchero.com/evergreen/help/1.0/", inBackground: false)
 	}
 }
 
