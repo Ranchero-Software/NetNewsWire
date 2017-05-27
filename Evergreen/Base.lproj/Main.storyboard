@@ -369,6 +369,25 @@
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem title="Article" id="FPs-q4-hLT" userLabel="Article">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Article" id="NQW-Ph-lw2">
+                                    <items>
+                                        <menuItem title="Mark as Read" keyEquivalent="U" id="ijT-zA-eRz"/>
+                                        <menuItem title="Mark All as Read" keyEquivalent="k" id="q3p-nE-m2k">
+                                            <connections>
+                                                <action selector="markAllAsRead:" target="Ady-hI-5gd" id="QA9-LC-pNt"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="MIk-hC-LEn"/>
+                                        <menuItem title="Open in Browser" keyEquivalent="" id="8ZT-ew-JNc">
+                                            <connections>
+                                                <action selector="openArticleInBrowser:" target="Ady-hI-5gd" id="RXp-cV-hyU"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Window" id="aUF-d1-5bR">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Window" systemMenu="window" id="Td7-aD-5lo">
@@ -392,9 +411,6 @@
                                         </menuItem>
                                         <menuItem title="Feed Directory" id="iDZ-cW-hZ0">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="showFeedList:" target="Ady-hI-5gd" id="Eyf-JS-YG0"/>
-                                            </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
                                         <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
