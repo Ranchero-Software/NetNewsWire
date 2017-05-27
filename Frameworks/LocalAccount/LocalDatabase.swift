@@ -45,9 +45,6 @@ final class LocalDatabase {
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "LocalCreateStatements", ofType: "sql")!
 		let createStatements = try! NSString(contentsOfFile: createStatementsPath, encoding: String.Encoding.utf8.rawValue)
 		queue.createTables(usingStatements: createStatements as String)
-		queue.run { (database) in
-			let _ = database.executeUpdate("drop index dateArrivedIndex;", withArgumentsIn: [])
-		}
 		queue.vacuumIfNeeded()
 	}
 
