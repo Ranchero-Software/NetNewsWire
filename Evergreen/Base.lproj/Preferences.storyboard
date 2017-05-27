@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="mPU-HG-I4u">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="NTj-pB-UZ0">
+            <objects>
+                <windowController showSeguePresentationStyle="single" id="mPU-HG-I4u" customClass="PreferencesWindowController" customModule="Rainier" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="2C0-LP-36T">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" topStrut="YES"/>
+                        <rect key="contentRect" x="128" y="512" width="480" height="273"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+                    </window>
+                    <connections>
+                        <segue destination="5hy-V0-Rya" kind="relationship" relationship="window.shadowedContentViewController" id="eQS-3L-XgF"/>
+                    </connections>
+                </windowController>
+                <customObject id="Q6y-w1-UqW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-61" y="129"/>
+        </scene>
+        <!--General-->
+        <scene sceneID="R4l-Wg-k7x">
+            <objects>
+                <viewController title="General" storyboardIdentifier="General" id="iuH-lz-18x" sceneMemberID="viewController">
+                    <view key="view" id="WnV-px-wCT">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="223"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ucw-vG-yLt">
+                                <rect key="frame" x="98" y="185" width="92" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Refresh feeds:" id="F7c-lm-g97">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SFF-mL-yc8">
+                                <rect key="frame" x="194" y="179" width="212" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" title="Every 30 minutes" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rZU-Tg-xwo" id="Jwn-HD-eP6">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="v0m-Z7-oG3">
+                                        <items>
+                                            <menuItem title="Manually only" id="doa-Wq-4Uq"/>
+                                            <menuItem isSeparatorItem="YES" id="OcH-tD-W9Y"/>
+                                            <menuItem title="Every 10 minutes" id="zmy-xe-mVw"/>
+                                            <menuItem title="Every 30 minutes" state="on" id="rZU-Tg-xwo"/>
+                                            <menuItem title="Every hour" id="Qjt-qr-WER"/>
+                                            <menuItem title="Every 2 hours" id="o1h-xo-elW"/>
+                                            <menuItem title="Every 4 hours" id="7e2-TV-hth"/>
+                                            <menuItem title="Every 8 hours" id="7gV-gL-Nue"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wsb-Lr-8Q7">
+                                <rect key="frame" x="114" y="145" width="76" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Web pages:" id="CgU-dE-Qtb">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ubm-Pk-l7x">
+                                <rect key="frame" x="194" y="144" width="211" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Open in background in browser" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="t0a-LN-rCv">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="mAF-gO-1PI" name="value" keyPath="values.openInBrowserInBackground" id="hKH-w2-y6N">
+                                        <dictionary key="options">
+                                            <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                            <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="37V-fn-0pB">
+                                <rect key="frame" x="80" y="104" width="110" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Sidebar font size:" id="3fQ-t1-Q7u">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jDZ-h5-3Jf">
+                                <rect key="frame" x="194" y="99" width="124" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" title="Medium" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="dnp-1z-Uvr" id="rIw-e4-7Aq">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="o7F-Qd-W5X">
+                                        <items>
+                                            <menuItem title="Small" id="W5Y-pQ-VJH"/>
+                                            <menuItem title="Medium" state="on" id="dnp-1z-Uvr"/>
+                                            <menuItem title="Large" id="Nxt-uw-D4P"/>
+                                            <menuItem title="Very Large" id="IzO-QD-xth"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="mAF-gO-1PI" name="selectedIndex" keyPath="values.sidebarFontSize" id="HM0-fC-V0e">
+                                        <dictionary key="options">
+                                            <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                            <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButton>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jZa-qi-vJE">
+                                <rect key="frame" x="75" y="63" width="115" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Timeline font size:" id="W38-nc-va6">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZiV-it-cLB">
+                                <rect key="frame" x="194" y="58" width="124" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" title="Medium" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="KBG-NC-Npp" id="GXY-Lm-RXR">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="Mp5-tg-0Sm">
+                                        <items>
+                                            <menuItem title="Small" id="DW6-5v-CHd"/>
+                                            <menuItem title="Medium" state="on" id="KBG-NC-Npp"/>
+                                            <menuItem title="Large" id="pu9-sC-1Gu"/>
+                                            <menuItem title="Very Large" id="Dtx-X2-XO6"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="mAF-gO-1PI" name="selectedIndex" keyPath="values.timelineFontSize" id="Aze-zk-HxT">
+                                        <dictionary key="options">
+                                            <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                            <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButton>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PWb-nl-apa">
+                                <rect key="frame" x="87" y="22" width="103" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Article font size:" id="LLW-Wb-ZoV">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yun-nK-7NI">
+                                <rect key="frame" x="194" y="17" width="124" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" title="Medium" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="FFd-Jt-Lnz" id="TkT-fo-bT9">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="qqy-w5-kEQ">
+                                        <items>
+                                            <menuItem title="Small" id="kum-vW-RC1"/>
+                                            <menuItem title="Medium" state="on" id="FFd-Jt-Lnz"/>
+                                            <menuItem title="Large" id="Vym-ki-9jl"/>
+                                            <menuItem title="Very Large" id="Sk0-Bz-8sN"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="mAF-gO-1PI" name="selectedIndex" keyPath="values.articleFontSize" id="1e0-rF-4xY">
+                                        <dictionary key="options">
+                                            <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                            <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButton>
+                        </subviews>
+                    </view>
+                </viewController>
+                <customObject id="bSQ-tq-wd3" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="mAF-gO-1PI"/>
+            </objects>
+            <point key="canvasLocation" x="-61" y="475"/>
+        </scene>
+        <!--Container-->
+        <scene sceneID="fzS-hg-3TF">
+            <objects>
+                <viewController id="5hy-V0-Rya" userLabel="Container" sceneMemberID="viewController">
+                    <view key="view" id="n2N-K1-BAa">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="AmS-bK-IAF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="504" y="115"/>
+        </scene>
+    </scenes>
+</document>

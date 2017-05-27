@@ -53,6 +53,7 @@
 		849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A979E1ED9F130007D329B /* SidebarCell.swift */; };
 		849A97A21ED9F180007D329B /* FeedTitleDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A01ED9F180007D329B /* FeedTitleDownloader.swift */; };
 		849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
+		849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849A97A41ED9F94D007D329B /* Preferences.storyboard */; };
 		849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64631ED37A5D003D8FC0 /* AppDelegate.swift */; };
 		849C64661ED37A5D003D8FC0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64651ED37A5D003D8FC0 /* ViewController.swift */; };
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
@@ -385,6 +386,7 @@
 		849A979E1ED9F130007D329B /* SidebarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarCell.swift; sourceTree = "<group>"; };
 		849A97A01ED9F180007D329B /* FeedTitleDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedTitleDownloader.swift; path = AddFeed/FeedTitleDownloader.swift; sourceTree = "<group>"; };
 		849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FolderTreeControllerDelegate.swift; path = AddFeed/FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
+		849A97A51ED9F94D007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Evergreen/Base.lproj/Preferences.storyboard; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64631ED37A5D003D8FC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Evergreen/AppDelegate.swift; sourceTree = "<group>"; };
 		849C64651ED37A5D003D8FC0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Evergreen/ViewController.swift; sourceTree = "<group>"; };
@@ -435,6 +437,7 @@
 		842E45E01ED8C587000A8B52 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				849A97A41ED9F94D007D329B /* Preferences.storyboard */,
 				842E45DE1ED8C582000A8B52 /* Defaults.swift */,
 				849A97841ED9ECCD007D329B /* PreferencesWindowController.swift */,
 			);
@@ -1046,6 +1049,7 @@
 				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
 				849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */,
 				849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */,
+				849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1180,6 +1184,14 @@
 				849A97941ED9EF7A007D329B /* Base */,
 			);
 			name = IndeterminateProgressWindow.xib;
+			sourceTree = "<group>";
+		};
+		849A97A41ED9F94D007D329B /* Preferences.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				849A97A51ED9F94D007D329B /* Base */,
+			);
+			name = Preferences.storyboard;
 			sourceTree = "<group>";
 		};
 		849C64691ED37A5D003D8FC0 /* Main.storyboard */ = {
