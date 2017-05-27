@@ -59,7 +59,6 @@
 		849A97AF1ED9FA08007D329B /* FeedList.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849A97AD1ED9FA08007D329B /* FeedList.storyboard */; };
 		849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849A97B01ED9FA69007D329B /* MainWindow.storyboard */; };
 		849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64631ED37A5D003D8FC0 /* AppDelegate.swift */; };
-		849C64661ED37A5D003D8FC0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64651ED37A5D003D8FC0 /* ViewController.swift */; };
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849C64691ED37A5D003D8FC0 /* Main.storyboard */; };
 		849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */; };
@@ -397,7 +396,6 @@
 		849A97B11ED9FA69007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Evergreen/Base.lproj/MainWindow.storyboard; sourceTree = SOURCE_ROOT; };
 		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64631ED37A5D003D8FC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Evergreen/AppDelegate.swift; sourceTree = "<group>"; };
-		849C64651ED37A5D003D8FC0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Evergreen/ViewController.swift; sourceTree = "<group>"; };
 		849C64671ED37A5D003D8FC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Evergreen/Assets.xcassets; sourceTree = "<group>"; };
 		849C646A1ED37A5D003D8FC0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		849C646C1ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
@@ -633,7 +631,6 @@
 				849C64691ED37A5D003D8FC0 /* Main.storyboard */,
 				842E45CD1ED8C308000A8B52 /* AppConstants.swift */,
 				849C64631ED37A5D003D8FC0 /* AppDelegate.swift */,
-				849C64651ED37A5D003D8FC0 /* ViewController.swift */,
 				842E45DC1ED8C54B000A8B52 /* Browser.swift */,
 				842E45E11ED8C681000A8B52 /* MainWindow */,
 				842E45E01ED8C587000A8B52 /* Preferences */,
@@ -1094,7 +1091,6 @@
 				849A97981ED9EFAA007D329B /* Node-Extensions.swift in Sources */,
 				849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */,
 				849A97831ED9EC63007D329B /* StatusBarView.swift in Sources */,
-				849C64661ED37A5D003D8FC0 /* ViewController.swift in Sources */,
 				842E45DF1ED8C582000A8B52 /* Defaults.swift in Sources */,
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
 				849A97921ED9EF65007D329B /* IndeterminateProgressWindowController.swift in Sources */,
