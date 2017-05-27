@@ -71,6 +71,10 @@ typedef struct {
 + (NSString *)rs_stringWithNumberOfTabs:(NSInteger)numberOfTabs;
 - (NSString *)rs_stringByPrependingNumberOfTabs:(NSInteger)numberOfTabs;
 
+// Remove leading http:// or https://
+
+- (NSString *)rs_stringByStrippingHTTPOrHTTPSScheme;
+
 @end
 
 NS_ASSUME_NONNULL_END

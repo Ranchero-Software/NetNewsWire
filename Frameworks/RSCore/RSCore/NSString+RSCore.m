@@ -366,5 +366,13 @@ NSString *RSStringReplaceAll(NSString *stringToSearch, NSString *searchFor, NSSt
 }
 
 
+- (NSString *)rs_stringByStrippingHTTPOrHTTPSScheme {
+
+	NSString *s = [self rs_stringByStrippingPrefix:@"http://" caseSensitive:NO];
+	s = [s rs_stringByStrippingPrefix:@"https://" caseSensitive:NO];
+	return s;
+}
+
+
 @end
 

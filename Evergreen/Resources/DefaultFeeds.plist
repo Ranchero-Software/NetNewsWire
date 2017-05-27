@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>note</key>
+		<string>By Brent Simmons, Evergreen developer</string>
+		<key>editedName</key>
+		<string>Inessential</string>
+		<key>home</key>
+		<string>http://inessential.com/</string>
+		<key>url</key>
+		<string>http://inessential.com/xml/rss.xml</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://daringfireball.net/</string>
+		<key>editedName</key>
+		<string>Daring Fireball</string>
+		<key>url</key>
+		<string>http://daringfireball.net/feeds/main</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>https://www.natashatherobot.com/</string>
+		<key>editedName</key>
+		<string>Natasha the Robot</string>
+		<key>url</key>
+		<string>https://www.natashatherobot.com/feed/</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://www.imore.com/</string>
+		<key>editedName</key>
+		<string>iMore</string>
+		<key>url</key>
+		<string>http://www.imore.com/rss.xml</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://becky.coffee/</string>
+		<key>note</key>
+		<string>iOS developer &amp; corgi enthusiast</string>
+		<key>editedName</key>
+		<string>Becky Hansmeyer</string>
+		<key>url</key>
+		<string>http://beckyhansmeyer.com/feed/</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://shapeof.com/</string>
+		<key>note</key>
+		<string>By Gus Mueller, Acorn developer</string>
+		<key>editedName</key>
+		<string>The Shape of Everything</string>
+		<key>url</key>
+		<string>http://shapeof.com/rss.xml</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://redqueencoder.com/</string>
+		<key>note</key>
+		<string>Janie Clayton</string>
+		<key>editedName</key>
+		<string>The Red Queen Coder</string>
+		<key>url</key>
+		<string>http://redqueencoder.com/feed/</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>https://medium.com/@jaimeejaimee</string>
+		<key>editedName</key>
+		<string>jaimeejaimee</string>
+		<key>note</key>
+		<string>Jaimee Newberry</string>
+		<key>url</key>
+		<string>https://medium.com/feed/@jaimeejaimee</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://sixcolors.com</string>
+		<key>note</key>
+		<string>By Jason Snell &amp; friends</string>
+		<key>editedName</key>
+		<string>Six Colors</string>
+		<key>url</key>
+		<string>http://feedpress.me/sixcolors</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://www.loopinsight.com/</string>
+		<key>note</key>
+		<string>Jim Dalrymple and Dave Mark</string>
+		<key>editedName</key>
+		<string>Loop Insight</string>
+		<key>url</key>
+		<string>http://www.loopinsight.com/feed/</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://katiefloyd.com/</string>
+		<key>editedName</key>
+		<string>Katie Floyd</string>
+		<key>url</key>
+		<string>http://feed.katiefloyd.com/</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://ashleynh.me/</string>
+		<key>editedName</key>
+		<string>Ashley Nelson-Hornstein</string>
+		<key>url</key>
+		<string>http://blog.ashleynh.me/rss/</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://ranchero.com/evergreen/</string>
+		<key>editedName</key>
+		<string>Evergreen News</string>
+		<key>url</key>
+		<string>http://ranchero.com/evergreen/feed.json</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://scripting.com/</string>
+		<key>editedName</key>
+		<string>Scripting News</string>
+		<key>note</key>
+		<string>Dave Winer</string>
+		<key>url</key>
+		<string>http://scripting.com/rss.xml</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://ericasadun.com/</string>
+		<key>editedName</key>
+		<string>Erica Sadun</string>
+		<key>note</key>
+		<string>Lots of Swift goodness.</string>
+		<key>url</key>
+		<string>http://ericasadun.com/feed/</string>
+	</dict>
+	<dict>
+		<key>home</key>
+		<string>http://onefoottsunami.com/</string>
+		<key>editedName</key>
+		<string>One Foot Tsunami</string>
+		<key>note</key>
+		<string>Paul Kafasis</string>
+		<key>url</key>
+		<string>http://onefoottsunami.com/feed/atom/</string>
+	</dict>
+</array>
+</plist>

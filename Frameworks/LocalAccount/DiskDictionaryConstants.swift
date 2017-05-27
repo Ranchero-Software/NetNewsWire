@@ -1,6 +1,6 @@
 //
 //  DiskDictionaryConstants.swift
-//  Rainier
+//  Evergreen
 //
 //  Created by Brent Simmons on 4/9/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.

@@ -8,6 +8,8 @@
 
 import Foundation
 
+let appName = "Evergreen"
+
 extension Notification.Name {
 	
 	static let SidebarSelectionDidChange = Notification.Name("SidebarSelectionDidChangeNotification")

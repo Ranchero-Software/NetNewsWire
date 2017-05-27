@@ -1,0 +1,86 @@
+body {
+	color: #444;
+	background-color: white;
+	margin-top: 42px;
+	margin-bottom: 100px;
+	margin-left: 80px;
+	margin-right: 80px;
+	font-family: -apple-system;
+	font-size: 18px;
+}
+a {
+	text-decoration: none;
+}
+a, a:link, a:visited {
+	color: #015cdc;
+}
+a:hover {
+	text-decoration: underline;
+}
+#articleDateline {
+	color: rgba(0, 0, 0, 0.2);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	padding-bottom: 6px;
+	padding-top: 6px;
+	margin-bottom: 25px;
+}
+#articleDateline a:link, #articleDateline a:visited {
+	color: rgba(0, 0, 0, 0.4);
+}
+#articleDescription {
+	line-height: 1.5em;
+}
+h1 {
+	line-height: 1.15em;
+	font-weight: medium;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-family: -apple-system, "Helvetica Neue"
+}
+code, pre {
+	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
+	font-size: 14px;
+	color: #666;
+}
+pre  {
+	white-space: pre-wrap;
+}
+img {
+	max-width: 100%;
+}
+
+/*Block ads and junk*/
+
+iframe[src*="feedads"],
+iframe[src*="doubleclick"],
+iframe[src*="plusone.google"] {
+	display: none !important;
+}
+
+a[href*=".ads."],
+a[href*="feedads"],
+a[href*="feedburner"],
+a[href*="doubleclick"],
+a[href*="//ads."],
+a[href*="api.tweetmeme"],
+a[href*="delicious.com/post?"],
+a[href*="digg.com/submit?"],
+a[href*="google.com/bookmarks/mark?"],
+a[href*="posterous.com/share?"],
+a[href*="tumblr.com/share?"],
+a[href*="linkedin.com/shareArticle?"],
+a[href*="facebook.com/share.php?"],
+a[href*="http://twitter.com/home?"],
+a[href*="addtoany.com/share_save"] {
+	display: none !important;
+}
+
+img[src*=".ads."],
+img[src*="//ads."],
+img[src*="doubleclick"],
+img[src*="feedads"],
+img[src*="feedburner"],
+img[src*="share-buttons"] {
+	display: none !important;
+}

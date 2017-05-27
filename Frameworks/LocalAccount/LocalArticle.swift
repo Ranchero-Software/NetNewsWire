@@ -1,6 +1,6 @@
 //
 //  LocalArticle.swift
-//  Rainier
+//  Evergreen
 //
 //  Created by Brent Simmons on 4/23/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
@@ -25,7 +25,7 @@ public final class LocalArticle: NSObject, Article {
 		get {
 			if _body == nil, let d = bodyData {
 //				print(title)
-				if let s = NSString(data: d, encoding: String.Encoding.utf8.rawValue) as? String {
+				if let s = NSString(data: d, encoding: String.Encoding.utf8.rawValue) as String? {
 					_body = s
 					bodyData = nil
 				}
