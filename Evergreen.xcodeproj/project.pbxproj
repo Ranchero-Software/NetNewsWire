@@ -56,6 +56,7 @@
 		849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849A97A41ED9F94D007D329B /* Preferences.storyboard */; };
 		849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97A71ED9F9AA007D329B /* AddFeedSheet.xib */; };
 		849A97AC1ED9F9BC007D329B /* AddFolderSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97AA1ED9F9BC007D329B /* AddFolderSheet.xib */; };
+		849A97AF1ED9FA08007D329B /* FeedList.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849A97AD1ED9FA08007D329B /* FeedList.storyboard */; };
 		849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64631ED37A5D003D8FC0 /* AppDelegate.swift */; };
 		849C64661ED37A5D003D8FC0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64651ED37A5D003D8FC0 /* ViewController.swift */; };
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
@@ -391,6 +392,7 @@
 		849A97A51ED9F94D007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Evergreen/Base.lproj/Preferences.storyboard; sourceTree = "<group>"; };
 		849A97A81ED9F9AA007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/AddFeedSheet.xib; sourceTree = SOURCE_ROOT; };
 		849A97AB1ED9F9BC007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/AddFolderSheet.xib; sourceTree = SOURCE_ROOT; };
+		849A97AE1ED9FA08007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Evergreen/Base.lproj/FeedList.storyboard; sourceTree = SOURCE_ROOT; };
 		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64631ED37A5D003D8FC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Evergreen/AppDelegate.swift; sourceTree = "<group>"; };
 		849C64651ED37A5D003D8FC0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Evergreen/ViewController.swift; sourceTree = "<group>"; };
@@ -584,6 +586,7 @@
 		849A978B1ED9EE4D007D329B /* Feed List */ = {
 			isa = PBXGroup;
 			children = (
+				849A97AD1ED9FA08007D329B /* FeedList.storyboard */,
 				849A978C1ED9EE4D007D329B /* FeedListWindowController.swift */,
 			);
 			name = "Feed List";
@@ -1054,6 +1057,7 @@
 				849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */,
 				842E45E71ED8C747000A8B52 /* DB5.plist in Resources */,
 				849A97AC1ED9F9BC007D329B /* AddFolderSheet.xib in Resources */,
+				849A97AF1ED9FA08007D329B /* FeedList.storyboard in Resources */,
 				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
 				849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */,
 				849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */,
@@ -1216,6 +1220,14 @@
 				849A97AB1ED9F9BC007D329B /* Base */,
 			);
 			name = AddFolderSheet.xib;
+			sourceTree = "<group>";
+		};
+		849A97AD1ED9FA08007D329B /* FeedList.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				849A97AE1ED9FA08007D329B /* Base */,
+			);
+			name = FeedList.storyboard;
 			sourceTree = "<group>";
 		};
 		849C64691ED37A5D003D8FC0 /* Main.storyboard */ = {
