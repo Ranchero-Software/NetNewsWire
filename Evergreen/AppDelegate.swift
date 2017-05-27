@@ -212,10 +212,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		feedListWindowController!.showWindow(self)
 	}
 
-	//    @IBAction func exportOPML(_ sender: AnyObject) {
-	//
-	//    }
-
 	@IBAction func importOPMLFromFile(_ sender: AnyObject) {
 
 		let panel = NSOpenPanel()
@@ -236,6 +232,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 				}
 			}
 		}
+	}
+
+	@IBAction func importOPMLFromURL(_ sender: AnyObject) {
+
 	}
 
 	@IBAction func exportOPML(_ sender: AnyObject) {
@@ -283,10 +283,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		}
 		addFeed(appNewsURLString, "Evergreen News")
 	}
-
-	//    @IBAction func importOPMLFromURL(_ sender: AnyObject) {
-	//
-	//    }
 }
 
 private extension AppDelegate {
