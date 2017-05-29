@@ -17,9 +17,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0d11</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>429</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSAppTransportSecurity</key>
@@ -33,5 +33,9 @@
 	<string>Main</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>SUFeedURL</key>
+	<string>https:/ranchero.com/downloads/evergreen-beta.xml</string>
+	<key>UserAgent</key>
+	<string>Evergreen</string>
 </dict>
 </plist>
