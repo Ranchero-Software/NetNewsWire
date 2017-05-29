@@ -34,7 +34,7 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUFeedURL</key>
-	<string>https:/ranchero.com/downloads/evergreen-beta.xml</string>
+	<string>https://ranchero.com/downloads/evergreen-beta.xml</string>
 	<key>UserAgent</key>
 	<string>Evergreen</string>
 </dict>

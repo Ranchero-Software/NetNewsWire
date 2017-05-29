@@ -133,26 +133,15 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Eki-rz-tWi">
-                                <rect key="frame" x="341" y="3" width="120" height="25"/>
-                                <buttonCell key="cell" type="roundTextured" title="Suggest a Feed" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NlF-yy-XlC">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="xZa-zG-xyU" firstAttribute="top" secondItem="mUl-Ne-X0C" secondAttribute="bottom" constant="5" id="3xc-U9-cye"/>
                             <constraint firstItem="AlZ-hg-343" firstAttribute="leading" secondItem="xZa-zG-xyU" secondAttribute="trailing" constant="8" id="7BO-sj-paT"/>
                             <constraint firstAttribute="trailing" secondItem="mUl-Ne-X0C" secondAttribute="trailing" id="H43-RT-2Xx"/>
                             <constraint firstItem="mUl-Ne-X0C" firstAttribute="top" secondItem="2UK-Ne-RFU" secondAttribute="top" id="Ixg-tX-GKm"/>
-                            <constraint firstItem="Eki-rz-tWi" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="AlZ-hg-343" secondAttribute="trailing" constant="40" id="QM6-Tl-y1a"/>
                             <constraint firstItem="mUl-Ne-X0C" firstAttribute="leading" secondItem="2UK-Ne-RFU" secondAttribute="leading" id="Ula-VU-rkw"/>
                             <constraint firstAttribute="bottom" secondItem="xZa-zG-xyU" secondAttribute="bottom" constant="5" id="Ws6-vQ-weM"/>
-                            <constraint firstAttribute="trailing" secondItem="Eki-rz-tWi" secondAttribute="trailing" constant="40" id="XAH-eO-JV7"/>
                             <constraint firstItem="AlZ-hg-343" firstAttribute="width" secondItem="xZa-zG-xyU" secondAttribute="width" id="d4B-qS-aef"/>
-                            <constraint firstItem="Eki-rz-tWi" firstAttribute="width" secondItem="xZa-zG-xyU" secondAttribute="width" id="loC-co-dfC"/>
-                            <constraint firstAttribute="bottom" secondItem="Eki-rz-tWi" secondAttribute="bottom" constant="5" id="nZB-cH-FsT"/>
                             <constraint firstItem="xZa-zG-xyU" firstAttribute="leading" secondItem="2UK-Ne-RFU" secondAttribute="leading" constant="20" id="wYI-VE-jdx"/>
                             <constraint firstAttribute="bottom" secondItem="AlZ-hg-343" secondAttribute="bottom" constant="5" id="x8o-I5-xTz"/>
                         </constraints>
