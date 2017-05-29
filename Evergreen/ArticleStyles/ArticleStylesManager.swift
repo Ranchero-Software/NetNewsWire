@@ -52,14 +52,14 @@ public final class ArticleStylesManager {
 	init() {
 
 		UserDefaults.standard.register(defaults: [styleKey: defaultStyleName])
-
-		let defaultStylesFolder = (Bundle.main.resourcePath! as NSString).appendingPathComponent(stylesInResourcesFolderName)
-		do {
-			try FileManager.default.rs_copyFiles(inFolder: defaultStylesFolder, destination: folderPath)
-		}
-		catch {
-			print(error)
-		}
+//
+//		let defaultStylesFolder = (Bundle.main.resourcePath! as NSString).appendingPathComponent(stylesInResourcesFolderName)
+//		do {
+//			try FileManager.default.rs_copyFiles(inFolder: defaultStylesFolder, destination: folderPath)
+//		}
+//		catch {
+//			print(error)
+//		}
 
 		currentStyle = ArticleStyle.defaultStyle
 
