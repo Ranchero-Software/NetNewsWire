@@ -17,7 +17,7 @@ import RSWeb
 var currentTheme: VSTheme!
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	let windowControllers = NSMutableArray()
 	var preferencesWindowController: NSWindowController?
