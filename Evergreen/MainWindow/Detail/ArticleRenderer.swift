@@ -60,7 +60,15 @@ class ArticleRenderer {
 			return nil
 		}
 
-		if let url = URL(string: s!) {
+		var urlComponents = URLComponents(string: s!)
+		if urlComponents == nil {
+			return nil
+		}
+
+		// Can’t use url-with-fragment as base URL. The webview won’t load. See scripting.com/rss.xml for example.
+		urlComponents!.fragment = nil
+
+		if let url = urlComponents!.url {
 			if url.scheme == "http" || url.scheme == "https" {
 				return url
 			}
