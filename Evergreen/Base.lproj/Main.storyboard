@@ -341,6 +341,28 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View" id="HyV-fh-RgO">
                                     <items>
+                                        <menuItem title="Sort Articles by Oldest on Top" id="J5R-XG-4yB">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="dZt-2W-gxf"/>
+                                        <menuItem title="Hide Read Items" id="eM3-PP-aaA">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                        <menuItem title="Hide Read Feeds and Folders" id="uho-73-GLg">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="zyA-cZ-x2T"/>
+                                        <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="toggleSidebar:" target="Ady-hI-5gd" id="dOo-rp-1f6"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="jKG-b2-ZWf"/>
+                                        <menuItem title="Actual Size" keyEquivalent="0" id="2Uf-24-faK"/>
+                                        <menuItem title="Zoom In" keyEquivalent="+" id="kyn-nW-09r"/>
+                                        <menuItem title="Zoom Out" keyEquivalent="-" id="7p4-We-ncc"/>
+                                        <menuItem isSeparatorItem="YES" id="kLs-vX-PHq"/>
                                         <menuItem title="Show Toolbar" keyEquivalent="t" id="snW-S8-Cw5">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
@@ -354,12 +376,6 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="hB3-LF-h0Y"/>
-                                        <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
-                                            <connections>
-                                                <action selector="toggleSourceList:" target="Ady-hI-5gd" id="iwa-gc-5KM"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem title="Enter Full Screen" keyEquivalent="f" id="4J7-dP-txa">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
@@ -425,6 +441,7 @@
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="bGu-Ws-7LM"/>
                                         <menuItem title="Main Window" keyEquivalent="0" id="wfx-4y-Nc9">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
                                             <connections>
                                                 <action selector="showMainWindow:" target="Ady-hI-5gd" id="TY8-J6-NUD"/>
                                             </connections>
