@@ -20,9 +20,9 @@ a:hover {
 #articleDateline {
 	color: rgba(0, 0, 0, 0.2);
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-	border-top: 1px solid rgba(0, 0, 0, 0.1);
+/*	border-top: 1px solid rgba(0, 0, 0, 0.1);*/
 	padding-bottom: 6px;
-	padding-top: 6px;
+	padding-top: 0px;
 	margin-bottom: 25px;
 }
 #articleDateline a:link, #articleDateline a:visited {
