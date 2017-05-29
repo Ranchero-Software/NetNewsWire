@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>Evergreen Betas</title>
+        <link>https://ranchero.com/downloads/evergreen-beta.xml</link>
+        <description>Most recent Evergreen changes with links to updates.</description>
+        <language>en</language>
+        
+          <item>
+            <title>Version 1.011</title>
+            <description><![CDATA[
+            <p>First Evergreen release.</p>
+						]]></description>
+            <pubDate>Mon, 29 May 2017 15:10:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d11.zip" sparkle:version="500" sparkle:shortVersionString="1.0d11" length="4659981" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.12</sparkle:minimumSystemVersion>
+        </item>
+
+    </channel>
+</rss>
