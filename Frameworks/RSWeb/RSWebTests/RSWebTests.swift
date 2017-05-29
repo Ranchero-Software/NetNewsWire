@@ -3,7 +3,7 @@
 //  RSWebTests
 //
 //  Created by Brent Simmons on 12/22/16.
-//  Copyright © 2016 Ranchero Software. All rights reserved.
+//  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
 import XCTest

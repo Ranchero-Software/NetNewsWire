@@ -3,7 +3,7 @@
 //  RSWeb
 //
 //  Created by Brent Simmons on 3/12/16.
-//  Copyright © 2016 Ranchero Software. All rights reserved.
+//  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
 import Foundation

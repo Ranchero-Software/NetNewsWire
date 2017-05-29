@@ -3,7 +3,7 @@
 //  RSTextDrawing
 //
 //  Created by Brent Simmons on 3/6/16.
-//  Copyright © 2016 Ranchero Software. All rights reserved.
+//  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
 @import Cocoa;

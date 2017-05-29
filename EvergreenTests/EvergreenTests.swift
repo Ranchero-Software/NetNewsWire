@@ -3,7 +3,7 @@
 //  EvergreenTests
 //
 //  Created by Brent Simmons on 5/22/17.
-//  Copyright © 2017 Ranchero Software. All rights reserved.
+//  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
 import XCTest
