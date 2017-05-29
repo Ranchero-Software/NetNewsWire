@@ -95,7 +95,7 @@ public final class LocalAccount: Account, PlistProvider  {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
 		
 		DispatchQueue.main.async() { () -> Void in
 			self.updateUnreadCounts(feedIDs: self.flattenedFeedIDs)
