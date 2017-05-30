@@ -3,9 +3,9 @@ body {
 	margin-bottom: 0px;
 	margin-left: 0px;
 	margin-right: 0px;
-	line-height: 1.55em;
-	font-family: "Helvetica Neue", Helvetica, sans-serif;
-	font-size: 18px;
+	line-height: 1.6em;
+	font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
+	font-size: 1.2em;
 	color: #333;
 	background-color: white;
 }
@@ -15,7 +15,7 @@ a {
 	}
 #banner {
 	line-height: 2em;
-	padding-top: 34px;
+	padding-top: 17px;
 	padding-bottom: 1px;
 	background-color: #445088;
 	text-align: center;
@@ -64,12 +64,10 @@ a:visited {
 	backgrxound-color: #6A7DD4;
 	}
 code, pre {
-	font-family: Menlo, monospace;
+	font-family: "SF Mono", Menlo, "Courier", monospace;
 	font-size: 14px;
-	color: maroon;
+	color: #666;
 	}
-
-
 @media (max-width: 700px) {
   #innerbanner {
     text-align: center;
