@@ -40,9 +40,39 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		super.init()
 	}
 
+	private func evergreenImage() -> NSImage? {
+		var image: NSImage? = nil
+		let imageWidth = 1024
+		let imageHeight = 1024
+		let imageSize = NSMakeSize(CGFloat(imageWidth), CGFloat(imageHeight))
+
+		if let drawingContext = CGContext(data: nil, width: imageWidth, height: imageHeight, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue) {
+
+			let graphicsContext = NSGraphicsContext(cgContext: drawingContext, flipped: false)
+			NSGraphicsContext.saveGraphicsState()
+			NSGraphicsContext.setCurrent(graphicsContext)
+
+			let targetRect = NSRect(origin: NSZeroPoint, size: imageSize)
+			NSString(string: "🌲").draw(in: targetRect, withAttributes: [NSFontAttributeName: NSFont.systemFont(ofSize: 1000)])
+
+			NSGraphicsContext.restoreGraphicsState()
+
+			if let coreImage = drawingContext.makeImage() {
+				image = NSImage(cgImage: coreImage, size: imageSize)
+			}
+		}
+
+		return image
+	}
+
 	// MARK: NSApplicationDelegate
 
 	func applicationDidFinishLaunching(_ note: Notification) {
+
+		if let appIconImage = evergreenImage() {
+			appIconImage.setName("NSApplicationIcon")
+			NSApplication.shared().applicationIconImage = appIconImage
+		}
 
 		registerDefaults()
 
