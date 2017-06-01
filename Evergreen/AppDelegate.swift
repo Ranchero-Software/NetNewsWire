@@ -317,7 +317,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	@IBAction func openWebsite(_ sender: AnyObject) {
 
-		openInBrowser("http://ranchero.com/evergreen/", inBackground: false)
+		openInBrowser("https://ranchero.com/evergreen/", inBackground: false)
 	}
 
 	@IBAction func openRepository(_ sender: AnyObject) {
@@ -332,7 +332,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	@IBAction func showHelp(_ sender: AnyObject) {
 
-		openInBrowser("http://ranchero.com/evergreen/help/1.0/", inBackground: false)
+		openInBrowser("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
 	}
 }
 

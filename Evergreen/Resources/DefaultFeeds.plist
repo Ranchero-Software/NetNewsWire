@@ -114,7 +114,7 @@
 	</dict>
 	<dict>
 		<key>home</key>
-		<string>http://ranchero.com/evergreen/</string>
+		<string>https://ranchero.com/evergreen/</string>
 		<key>editedName</key>
 		<string>Evergreen News</string>
 		<key>url</key>
