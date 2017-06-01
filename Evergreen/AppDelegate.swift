@@ -26,7 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	var addFeedController: AddFeedController?
 	var addFolderWindowController: AddFolderWindowController?
 	let themeLoader = VSThemeLoader()
-	private let appNewsURLString = "https://ranchero.com/evergreen/json.feed"
+	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
 
 	var unreadCount = 0 {
 		didSet {
