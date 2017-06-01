@@ -48,6 +48,7 @@ pre  {
 }
 img {
 	max-width: 100%;
+	height: auto;
 }
 
 /*Block ads and junk*/
