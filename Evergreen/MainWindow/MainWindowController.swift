@@ -69,6 +69,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		if item.action == #selector(openArticleInBrowser(_:)) {
 			return currentLink != nil
 		}
+        
+        if item.action == #selector(showShareWindow(_:)) {
+            if let link = currentLink {
+                return URL(string: link) != nil
+            } else {
+                return false
+            }
+        }
 		
 		if item.action == #selector(nextUnread(_:)) {
 			return canGoToNextUnread()
@@ -89,6 +97,13 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			openInBrowser(link)
 		}		
 	}
+    
+    @IBAction func showShareWindow(_ sender: AnyObject) {
+        if let link = currentLink, let url = URL(string: link) {
+            let picker = NSSharingServicePicker(items: [url])
+            picker.show(relativeTo: sender.bounds, of: sender as! NSView, preferredEdge: NSRectEdge.minY)
+        }
+    }
 	
 	@IBAction func nextUnread(_ sender: AnyObject?) {
 		
