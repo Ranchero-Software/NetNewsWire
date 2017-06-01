@@ -118,7 +118,7 @@
 		<key>editedName</key>
 		<string>Evergreen News</string>
 		<key>url</key>
-		<string>http://ranchero.com/evergreen/feed.json</string>
+		<string>https://ranchero.com/evergreen/feed.json</string>
 	</dict>
 	<dict>
 		<key>home</key>
