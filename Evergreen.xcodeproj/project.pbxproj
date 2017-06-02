@@ -1578,6 +1578,7 @@
 				9451C1F41EE076F200605914 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
