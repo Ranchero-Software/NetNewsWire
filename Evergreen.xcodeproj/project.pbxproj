@@ -880,7 +880,7 @@
 				TargetAttributes = {
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = PZ4HKYD5WL;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Manual;
 					};
 					849C64701ED37A5D003D8FC0 = {
@@ -1444,7 +1444,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = PZ4HKYD5WL;
+				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks/Vendor",
@@ -1465,7 +1465,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = PZ4HKYD5WL;
+				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks/Vendor",
