@@ -66,27 +66,26 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		
-		if item.action == #selector(openArticleInBrowser(_:)) {
-			return currentLink != nil
-		}
+        guard let action = item.action else { return true }
         
-        if item.action == #selector(showShareWindow(_:)) {
-            if let link = currentLink {
-                return URL(string: link) != nil
-            } else {
-                return false
-            }
+        switch action {
+            
+        case #selector(openArticleInBrowser(_:)):
+            return currentLink != nil
+            
+        case #selector(showShareWindow(_:)):
+            guard let link = currentLink else { return false }
+            return URL(string: link) != nil
+            
+        case #selector(nextUnread(_:)):
+            return canGoToNextUnread()
+            
+        case #selector(markAllAsRead(_:)):
+            return canMarkAllAsRead()
+            
+        default:
+            return true
         }
-		
-		if item.action == #selector(nextUnread(_:)) {
-			return canGoToNextUnread()
-		}
-		
-		if item.action == #selector(markAllAsRead(_:)) {
-			return canMarkAllAsRead()
-		}
-		
-		return true
 	}
 
 	// MARK: Actions
@@ -99,10 +98,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
     
     @IBAction func showShareWindow(_ sender: AnyObject) {
-        if let link = currentLink, let url = URL(string: link) {
-            let picker = NSSharingServicePicker(items: [url])
-            picker.show(relativeTo: sender.bounds, of: sender as! NSView, preferredEdge: NSRectEdge.minY)
-        }
+        guard let link = currentLink,
+            let url = URL(string: link),
+            let view = sender as? NSView else { return }
+        
+        let picker = NSSharingServicePicker(items: [url])
+        picker.show(relativeTo: sender.bounds, of: view, preferredEdge: NSRectEdge.minY)
     }
 	
 	@IBAction func nextUnread(_ sender: AnyObject?) {
