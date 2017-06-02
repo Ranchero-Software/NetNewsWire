@@ -26,7 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	var addFeedController: AddFeedController?
 	var addFolderWindowController: AddFolderWindowController?
 	let themeLoader = VSThemeLoader()
-	private let appNewsURLString = "https://ranchero.com/evergreen/json.feed"
+	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
 
 	var unreadCount = 0 {
 		didSet {
@@ -317,7 +317,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	@IBAction func openWebsite(_ sender: AnyObject) {
 
-		openInBrowser("http://ranchero.com/evergreen/", inBackground: false)
+		openInBrowser("https://ranchero.com/evergreen/", inBackground: false)
 	}
 
 	@IBAction func openRepository(_ sender: AnyObject) {
@@ -332,7 +332,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	@IBAction func showHelp(_ sender: AnyObject) {
 
-		openInBrowser("http://ranchero.com/evergreen/help/1.0/", inBackground: false)
+		openInBrowser("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
 	}
 }
 

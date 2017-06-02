@@ -46,8 +46,9 @@ code, pre {
 pre  {
 	white-space: pre-wrap;
 }
-img {
+img, video {
 	max-width: 100%;
+	height: auto;
 }
 
 /*Block ads and junk*/
