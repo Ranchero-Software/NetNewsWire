@@ -7,7 +7,51 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		84469CE21EFA2F3E004A6B28 /* ParserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469CE11EFA2F3E004A6B28 /* ParserData.swift */; };
+		84469CEF1EFA3000004A6B28 /* RSOPMLAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CE51EFA3000004A6B28 /* RSOPMLAttributes.h */; };
+		84469CF01EFA3000004A6B28 /* RSOPMLAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469CE61EFA3000004A6B28 /* RSOPMLAttributes.m */; };
+		84469CF11EFA3000004A6B28 /* RSOPMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CE71EFA3000004A6B28 /* RSOPMLDocument.h */; };
+		84469CF21EFA3000004A6B28 /* RSOPMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469CE81EFA3000004A6B28 /* RSOPMLDocument.m */; };
+		84469CF31EFA3000004A6B28 /* RSOPMLFeedSpecifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CE91EFA3000004A6B28 /* RSOPMLFeedSpecifier.h */; };
+		84469CF41EFA3000004A6B28 /* RSOPMLFeedSpecifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469CEA1EFA3000004A6B28 /* RSOPMLFeedSpecifier.m */; };
+		84469CF51EFA3000004A6B28 /* RSOPMLItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CEB1EFA3000004A6B28 /* RSOPMLItem.h */; };
+		84469CF61EFA3000004A6B28 /* RSOPMLItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469CEC1EFA3000004A6B28 /* RSOPMLItem.m */; };
+		84469CF71EFA3000004A6B28 /* RSOPMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CED1EFA3000004A6B28 /* RSOPMLParser.h */; };
+		84469CF81EFA3000004A6B28 /* RSOPMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469CEE1EFA3000004A6B28 /* RSOPMLParser.m */; };
+		84469CFC1EFA3069004A6B28 /* RSSAXParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CFA1EFA3069004A6B28 /* RSSAXParser.h */; };
+		84469CFD1EFA3069004A6B28 /* RSSAXParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469CFB1EFA3069004A6B28 /* RSSAXParser.m */; };
+		84469D071EFA307E004A6B28 /* RSHTMLLinkParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CFF1EFA307E004A6B28 /* RSHTMLLinkParser.h */; };
+		84469D081EFA307E004A6B28 /* RSHTMLLinkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D001EFA307E004A6B28 /* RSHTMLLinkParser.m */; };
+		84469D091EFA307E004A6B28 /* RSHTMLMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D011EFA307E004A6B28 /* RSHTMLMetadata.h */; };
+		84469D0A1EFA307E004A6B28 /* RSHTMLMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D021EFA307E004A6B28 /* RSHTMLMetadata.m */; };
+		84469D0B1EFA307E004A6B28 /* RSHTMLMetadataParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D031EFA307E004A6B28 /* RSHTMLMetadataParser.h */; };
+		84469D0C1EFA307E004A6B28 /* RSHTMLMetadataParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D041EFA307E004A6B28 /* RSHTMLMetadataParser.m */; };
+		84469D0D1EFA307E004A6B28 /* RSSAXHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D051EFA307E004A6B28 /* RSSAXHTMLParser.h */; };
+		84469D0E1EFA307E004A6B28 /* RSSAXHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D061EFA307E004A6B28 /* RSSAXHTMLParser.m */; };
+		84469D161EFA30A2004A6B28 /* NSString+RSXML.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D101EFA30A2004A6B28 /* NSString+RSXML.h */; };
+		84469D171EFA30A2004A6B28 /* NSString+RSXML.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D111EFA30A2004A6B28 /* NSString+RSXML.m */; };
+		84469D181EFA30A2004A6B28 /* RSDateParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D121EFA30A2004A6B28 /* RSDateParser.h */; };
+		84469D191EFA30A2004A6B28 /* RSDateParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D131EFA30A2004A6B28 /* RSDateParser.m */; };
+		84469D1A1EFA30A2004A6B28 /* RSXMLInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D141EFA30A2004A6B28 /* RSXMLInternal.h */; };
+		84469D1B1EFA30A2004A6B28 /* RSXMLInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D151EFA30A2004A6B28 /* RSXMLInternal.m */; };
+		84469D271EFA3134004A6B28 /* RSAtomParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D1D1EFA3134004A6B28 /* RSAtomParser.h */; };
+		84469D281EFA3134004A6B28 /* RSAtomParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D1E1EFA3134004A6B28 /* RSAtomParser.m */; };
+		84469D291EFA3134004A6B28 /* RSFeedParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D1F1EFA3134004A6B28 /* RSFeedParser.h */; };
+		84469D2A1EFA3134004A6B28 /* RSFeedParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D201EFA3134004A6B28 /* RSFeedParser.m */; };
+		84469D2B1EFA3134004A6B28 /* RSParsedArticle.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D211EFA3134004A6B28 /* RSParsedArticle.h */; };
+		84469D2C1EFA3134004A6B28 /* RSParsedArticle.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D221EFA3134004A6B28 /* RSParsedArticle.m */; };
+		84469D2D1EFA3134004A6B28 /* RSParsedFeed.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D231EFA3134004A6B28 /* RSParsedFeed.h */; };
+		84469D2E1EFA3134004A6B28 /* RSParsedFeed.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D241EFA3134004A6B28 /* RSParsedFeed.m */; };
+		84469D2F1EFA3134004A6B28 /* RSRSSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D251EFA3134004A6B28 /* RSRSSParser.h */; };
+		84469D301EFA3134004A6B28 /* RSRSSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D261EFA3134004A6B28 /* RSRSSParser.m */; };
+		84469D321EFA31CF004A6B28 /* FeedParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D311EFA31CF004A6B28 /* FeedParser.swift */; };
 		84D81BDC1EFA28E700652332 /* RSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D81BDA1EFA28E700652332 /* RSParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		84D81BDE1EFA2B7D00652332 /* ParsedFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */; };
+		84D81BE01EFA2BAE00652332 /* FeedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDF1EFA2BAE00652332 /* FeedType.swift */; };
+		84D81BE21EFA2D0900652332 /* ParsedAuthor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE11EFA2D0900652332 /* ParsedAuthor.swift */; };
+		84D81BE41EFA2D3D00652332 /* ParsedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE31EFA2D3D00652332 /* ParsedItem.swift */; };
+		84D81BE61EFA2DFB00652332 /* ParsedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */; };
+		84D81BE81EFA2E6700652332 /* ParsedHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE71EFA2E6700652332 /* ParsedHub.swift */; };
 		84FF5F8E1EFA285800C15A01 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FF5F841EFA285800C15A01 /* RSParser.framework */; };
 		84FF5F931EFA285800C15A01 /* RSParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF5F921EFA285800C15A01 /* RSParserTests.swift */; };
 /* End PBXBuildFile section */
@@ -23,8 +67,52 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		84469CE11EFA2F3E004A6B28 /* ParserData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParserData.swift; sourceTree = "<group>"; };
+		84469CE51EFA3000004A6B28 /* RSOPMLAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLAttributes.h; sourceTree = "<group>"; };
+		84469CE61EFA3000004A6B28 /* RSOPMLAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSOPMLAttributes.m; sourceTree = "<group>"; };
+		84469CE71EFA3000004A6B28 /* RSOPMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLDocument.h; sourceTree = "<group>"; };
+		84469CE81EFA3000004A6B28 /* RSOPMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSOPMLDocument.m; sourceTree = "<group>"; };
+		84469CE91EFA3000004A6B28 /* RSOPMLFeedSpecifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLFeedSpecifier.h; sourceTree = "<group>"; };
+		84469CEA1EFA3000004A6B28 /* RSOPMLFeedSpecifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSOPMLFeedSpecifier.m; sourceTree = "<group>"; };
+		84469CEB1EFA3000004A6B28 /* RSOPMLItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLItem.h; sourceTree = "<group>"; };
+		84469CEC1EFA3000004A6B28 /* RSOPMLItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSOPMLItem.m; sourceTree = "<group>"; };
+		84469CED1EFA3000004A6B28 /* RSOPMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLParser.h; sourceTree = "<group>"; };
+		84469CEE1EFA3000004A6B28 /* RSOPMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSOPMLParser.m; sourceTree = "<group>"; };
+		84469CFA1EFA3069004A6B28 /* RSSAXParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSSAXParser.h; sourceTree = "<group>"; };
+		84469CFB1EFA3069004A6B28 /* RSSAXParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSSAXParser.m; sourceTree = "<group>"; };
+		84469CFF1EFA307E004A6B28 /* RSHTMLLinkParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSHTMLLinkParser.h; sourceTree = "<group>"; };
+		84469D001EFA307E004A6B28 /* RSHTMLLinkParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSHTMLLinkParser.m; sourceTree = "<group>"; };
+		84469D011EFA307E004A6B28 /* RSHTMLMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSHTMLMetadata.h; sourceTree = "<group>"; };
+		84469D021EFA307E004A6B28 /* RSHTMLMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSHTMLMetadata.m; sourceTree = "<group>"; };
+		84469D031EFA307E004A6B28 /* RSHTMLMetadataParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSHTMLMetadataParser.h; sourceTree = "<group>"; };
+		84469D041EFA307E004A6B28 /* RSHTMLMetadataParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSHTMLMetadataParser.m; sourceTree = "<group>"; };
+		84469D051EFA307E004A6B28 /* RSSAXHTMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSSAXHTMLParser.h; sourceTree = "<group>"; };
+		84469D061EFA307E004A6B28 /* RSSAXHTMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSSAXHTMLParser.m; sourceTree = "<group>"; };
+		84469D101EFA30A2004A6B28 /* NSString+RSXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+RSXML.h"; sourceTree = "<group>"; };
+		84469D111EFA30A2004A6B28 /* NSString+RSXML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+RSXML.m"; sourceTree = "<group>"; };
+		84469D121EFA30A2004A6B28 /* RSDateParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDateParser.h; sourceTree = "<group>"; };
+		84469D131EFA30A2004A6B28 /* RSDateParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDateParser.m; sourceTree = "<group>"; };
+		84469D141EFA30A2004A6B28 /* RSXMLInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSXMLInternal.h; sourceTree = "<group>"; };
+		84469D151EFA30A2004A6B28 /* RSXMLInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSXMLInternal.m; sourceTree = "<group>"; };
+		84469D1D1EFA3134004A6B28 /* RSAtomParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSAtomParser.h; sourceTree = "<group>"; };
+		84469D1E1EFA3134004A6B28 /* RSAtomParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSAtomParser.m; sourceTree = "<group>"; };
+		84469D1F1EFA3134004A6B28 /* RSFeedParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSFeedParser.h; sourceTree = "<group>"; };
+		84469D201EFA3134004A6B28 /* RSFeedParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSFeedParser.m; sourceTree = "<group>"; };
+		84469D211EFA3134004A6B28 /* RSParsedArticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSParsedArticle.h; sourceTree = "<group>"; };
+		84469D221EFA3134004A6B28 /* RSParsedArticle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSParsedArticle.m; sourceTree = "<group>"; };
+		84469D231EFA3134004A6B28 /* RSParsedFeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSParsedFeed.h; sourceTree = "<group>"; };
+		84469D241EFA3134004A6B28 /* RSParsedFeed.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSParsedFeed.m; sourceTree = "<group>"; };
+		84469D251EFA3134004A6B28 /* RSRSSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSRSSParser.h; sourceTree = "<group>"; };
+		84469D261EFA3134004A6B28 /* RSRSSParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSRSSParser.m; sourceTree = "<group>"; };
+		84469D311EFA31CF004A6B28 /* FeedParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedParser.swift; path = Feeds/FeedParser.swift; sourceTree = "<group>"; };
 		84D81BD91EFA28E700652332 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84D81BDA1EFA28E700652332 /* RSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSParser.h; sourceTree = "<group>"; };
+		84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedFeed.swift; path = Feeds/ParsedFeed.swift; sourceTree = "<group>"; };
+		84D81BDF1EFA2BAE00652332 /* FeedType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedType.swift; path = Feeds/FeedType.swift; sourceTree = "<group>"; };
+		84D81BE11EFA2D0900652332 /* ParsedAuthor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedAuthor.swift; path = Feeds/ParsedAuthor.swift; sourceTree = "<group>"; };
+		84D81BE31EFA2D3D00652332 /* ParsedItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedItem.swift; path = Feeds/ParsedItem.swift; sourceTree = "<group>"; };
+		84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedAttachment.swift; path = Feeds/ParsedAttachment.swift; sourceTree = "<group>"; };
+		84D81BE71EFA2E6700652332 /* ParsedHub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedHub.swift; path = Feeds/ParsedHub.swift; sourceTree = "<group>"; };
 		84FF5F841EFA285800C15A01 /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84FF5F8D1EFA285800C15A01 /* RSParserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RSParserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		84FF5F921EFA285800C15A01 /* RSParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSParserTests.swift; sourceTree = "<group>"; };
@@ -50,10 +138,103 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		84469CE31EFA2FB0004A6B28 /* Feeds */ = {
+			isa = PBXGroup;
+			children = (
+				84D81BDF1EFA2BAE00652332 /* FeedType.swift */,
+				84469D311EFA31CF004A6B28 /* FeedParser.swift */,
+				84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */,
+				84D81BE11EFA2D0900652332 /* ParsedAuthor.swift */,
+				84D81BE31EFA2D3D00652332 /* ParsedItem.swift */,
+				84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */,
+				84D81BE71EFA2E6700652332 /* ParsedHub.swift */,
+				84469D1C1EFA3134004A6B28 /* XML */,
+			);
+			name = Feeds;
+			sourceTree = "<group>";
+		};
+		84469CE41EFA3000004A6B28 /* OPML */ = {
+			isa = PBXGroup;
+			children = (
+				84469CED1EFA3000004A6B28 /* RSOPMLParser.h */,
+				84469CEE1EFA3000004A6B28 /* RSOPMLParser.m */,
+				84469CE71EFA3000004A6B28 /* RSOPMLDocument.h */,
+				84469CE81EFA3000004A6B28 /* RSOPMLDocument.m */,
+				84469CE51EFA3000004A6B28 /* RSOPMLAttributes.h */,
+				84469CE61EFA3000004A6B28 /* RSOPMLAttributes.m */,
+				84469CE91EFA3000004A6B28 /* RSOPMLFeedSpecifier.h */,
+				84469CEA1EFA3000004A6B28 /* RSOPMLFeedSpecifier.m */,
+				84469CEB1EFA3000004A6B28 /* RSOPMLItem.h */,
+				84469CEC1EFA3000004A6B28 /* RSOPMLItem.m */,
+			);
+			path = OPML;
+			sourceTree = "<group>";
+		};
+		84469CF91EFA3069004A6B28 /* SAX */ = {
+			isa = PBXGroup;
+			children = (
+				84469CFA1EFA3069004A6B28 /* RSSAXParser.h */,
+				84469CFB1EFA3069004A6B28 /* RSSAXParser.m */,
+			);
+			path = SAX;
+			sourceTree = "<group>";
+		};
+		84469CFE1EFA307E004A6B28 /* HTML */ = {
+			isa = PBXGroup;
+			children = (
+				84469CFF1EFA307E004A6B28 /* RSHTMLLinkParser.h */,
+				84469D001EFA307E004A6B28 /* RSHTMLLinkParser.m */,
+				84469D011EFA307E004A6B28 /* RSHTMLMetadata.h */,
+				84469D021EFA307E004A6B28 /* RSHTMLMetadata.m */,
+				84469D031EFA307E004A6B28 /* RSHTMLMetadataParser.h */,
+				84469D041EFA307E004A6B28 /* RSHTMLMetadataParser.m */,
+				84469D051EFA307E004A6B28 /* RSSAXHTMLParser.h */,
+				84469D061EFA307E004A6B28 /* RSSAXHTMLParser.m */,
+			);
+			path = HTML;
+			sourceTree = "<group>";
+		};
+		84469D0F1EFA30A2004A6B28 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				84469D101EFA30A2004A6B28 /* NSString+RSXML.h */,
+				84469D111EFA30A2004A6B28 /* NSString+RSXML.m */,
+				84469D121EFA30A2004A6B28 /* RSDateParser.h */,
+				84469D131EFA30A2004A6B28 /* RSDateParser.m */,
+				84469D141EFA30A2004A6B28 /* RSXMLInternal.h */,
+				84469D151EFA30A2004A6B28 /* RSXMLInternal.m */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		84469D1C1EFA3134004A6B28 /* XML */ = {
+			isa = PBXGroup;
+			children = (
+				84469D1D1EFA3134004A6B28 /* RSAtomParser.h */,
+				84469D1E1EFA3134004A6B28 /* RSAtomParser.m */,
+				84469D251EFA3134004A6B28 /* RSRSSParser.h */,
+				84469D261EFA3134004A6B28 /* RSRSSParser.m */,
+				84469D1F1EFA3134004A6B28 /* RSFeedParser.h */,
+				84469D201EFA3134004A6B28 /* RSFeedParser.m */,
+				84469D211EFA3134004A6B28 /* RSParsedArticle.h */,
+				84469D221EFA3134004A6B28 /* RSParsedArticle.m */,
+				84469D231EFA3134004A6B28 /* RSParsedFeed.h */,
+				84469D241EFA3134004A6B28 /* RSParsedFeed.m */,
+			);
+			name = XML;
+			path = Feeds/XML;
+			sourceTree = "<group>";
+		};
 		84FF5F7A1EFA285800C15A01 = {
 			isa = PBXGroup;
 			children = (
 				84D81BDA1EFA28E700652332 /* RSParser.h */,
+				84469CE11EFA2F3E004A6B28 /* ParserData.swift */,
+				84469CE31EFA2FB0004A6B28 /* Feeds */,
+				84469CE41EFA3000004A6B28 /* OPML */,
+				84469CFE1EFA307E004A6B28 /* HTML */,
+				84469CF91EFA3069004A6B28 /* SAX */,
+				84469D0F1EFA30A2004A6B28 /* Utilities */,
 				84D81BD91EFA28E700652332 /* Info.plist */,
 				84FF5F911EFA285800C15A01 /* RSParserTests */,
 				84FF5F851EFA285800C15A01 /* Products */,
@@ -85,7 +266,25 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84469D271EFA3134004A6B28 /* RSAtomParser.h in Headers */,
+				84469CF71EFA3000004A6B28 /* RSOPMLParser.h in Headers */,
+				84469CEF1EFA3000004A6B28 /* RSOPMLAttributes.h in Headers */,
+				84469CF51EFA3000004A6B28 /* RSOPMLItem.h in Headers */,
+				84469D2D1EFA3134004A6B28 /* RSParsedFeed.h in Headers */,
+				84469D181EFA30A2004A6B28 /* RSDateParser.h in Headers */,
+				84469D1A1EFA30A2004A6B28 /* RSXMLInternal.h in Headers */,
 				84D81BDC1EFA28E700652332 /* RSParser.h in Headers */,
+				84469D0B1EFA307E004A6B28 /* RSHTMLMetadataParser.h in Headers */,
+				84469CFC1EFA3069004A6B28 /* RSSAXParser.h in Headers */,
+				84469D071EFA307E004A6B28 /* RSHTMLLinkParser.h in Headers */,
+				84469D291EFA3134004A6B28 /* RSFeedParser.h in Headers */,
+				84469D0D1EFA307E004A6B28 /* RSSAXHTMLParser.h in Headers */,
+				84469D2B1EFA3134004A6B28 /* RSParsedArticle.h in Headers */,
+				84469D2F1EFA3134004A6B28 /* RSRSSParser.h in Headers */,
+				84469CF31EFA3000004A6B28 /* RSOPMLFeedSpecifier.h in Headers */,
+				84469CF11EFA3000004A6B28 /* RSOPMLDocument.h in Headers */,
+				84469D091EFA307E004A6B28 /* RSHTMLMetadata.h in Headers */,
+				84469D161EFA30A2004A6B28 /* NSString+RSXML.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,6 +339,7 @@
 				TargetAttributes = {
 					84FF5F831EFA285800C15A01 = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 0830;
 					};
 					84FF5F8C1EFA285800C15A01 = {
 						CreatedOnToolsVersion = 9.0;
@@ -186,6 +386,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84469D081EFA307E004A6B28 /* RSHTMLLinkParser.m in Sources */,
+				84469D1B1EFA30A2004A6B28 /* RSXMLInternal.m in Sources */,
+				84D81BE21EFA2D0900652332 /* ParsedAuthor.swift in Sources */,
+				84469D0E1EFA307E004A6B28 /* RSSAXHTMLParser.m in Sources */,
+				84469CF41EFA3000004A6B28 /* RSOPMLFeedSpecifier.m in Sources */,
+				84469CF01EFA3000004A6B28 /* RSOPMLAttributes.m in Sources */,
+				84469D301EFA3134004A6B28 /* RSRSSParser.m in Sources */,
+				84469D191EFA30A2004A6B28 /* RSDateParser.m in Sources */,
+				84469CFD1EFA3069004A6B28 /* RSSAXParser.m in Sources */,
+				84469CE21EFA2F3E004A6B28 /* ParserData.swift in Sources */,
+				84469CF21EFA3000004A6B28 /* RSOPMLDocument.m in Sources */,
+				84469CF61EFA3000004A6B28 /* RSOPMLItem.m in Sources */,
+				84469D2A1EFA3134004A6B28 /* RSFeedParser.m in Sources */,
+				84D81BE41EFA2D3D00652332 /* ParsedItem.swift in Sources */,
+				84469D0C1EFA307E004A6B28 /* RSHTMLMetadataParser.m in Sources */,
+				84469D0A1EFA307E004A6B28 /* RSHTMLMetadata.m in Sources */,
+				84469D171EFA30A2004A6B28 /* NSString+RSXML.m in Sources */,
+				84469D2C1EFA3134004A6B28 /* RSParsedArticle.m in Sources */,
+				84469D2E1EFA3134004A6B28 /* RSParsedFeed.m in Sources */,
+				84469CF81EFA3000004A6B28 /* RSOPMLParser.m in Sources */,
+				84469D321EFA31CF004A6B28 /* FeedParser.swift in Sources */,
+				84469D281EFA3134004A6B28 /* RSAtomParser.m in Sources */,
+				84D81BE61EFA2DFB00652332 /* ParsedAttachment.swift in Sources */,
+				84D81BDE1EFA2B7D00652332 /* ParsedFeed.swift in Sources */,
+				84D81BE81EFA2E6700652332 /* ParsedHub.swift in Sources */,
+				84D81BE01EFA2BAE00652332 /* FeedType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +545,7 @@
 		84FF5F991EFA285800C15A01 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -327,19 +554,21 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = RSParser/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.RSParser;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		84FF5F9A1EFA285800C15A01 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -348,19 +577,20 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = RSParser/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.RSParser;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
 		84FF5F9C1EFA285800C15A01 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				INFOPLIST_FILE = RSParserTests/Info.plist;
@@ -374,6 +604,7 @@
 		84FF5F9D1EFA285800C15A01 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				INFOPLIST_FILE = RSParserTests/Info.plist;
