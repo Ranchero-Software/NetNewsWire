@@ -50,7 +50,6 @@ public struct RSSInJSONParser {
 		}
 		catch { throw error }
 	}
-
 }
 
 private extension RSSInJSONParser {
@@ -83,39 +82,9 @@ private extension RSSInJSONParser {
 			datePublished = RSDateWithString(datePublishedString as NSString)
 		}
 
-		let authorEmailAddress = itemDictionary["author"] as? String
-		var authors: [ParsedAuthor] = nil
-		if authorEmailAddress != nil {
-			let parsedAuthor = ParsedAuthor(name: nil, url: nil, avatarURL: nil, emailAddress: authorEmailAddress)
-			authors = [parsedAuthor]
-		}
-
-		var tags: [String]? = nil
-		if let categoryObject = itemDictionary["category"] as? JSONDictionary {
-			if let oneTag = categoryObject["#value"] {
-				tags = [oneTag]
-			}
-		}
-		else if let categoryArray = itemDictionary["category"] as? JSONArray {
-			tags = categoryArray.flatMap{ (oneCategoryDictionary) in
-				return oneCategoryDictionary["#value"]
-			}
-		}
-
-		var attachments: [ParsedAttachment]? = nil
-		if let enclosureObject = itemDictionary["enclosure"] as? JSONDictionary {
-			if let attachmentURL = enclosureObject["url"] as? String {
-				var attachmentSize = enclosureObject["length"] as? Int
-				if attachmentSize == nil {
-					if let attachmentSizeString = enclosureObject["length"] as? String {
-						attachmentSize = (attachmentSizeString as NSString).integerValue
-					}
-				}
-				let type = enclosureObject["type"] as? String
-				let oneAttachment = ParsedAttachment(url: attachmentURL, mimeType: type, title: nil, sizeInBytes: attachmentSize, durationInSeconds: nil)
-				attachments = [oneAttachment]
-			}
-		}
+		let authors = parseAuthors(itemDictionary)
+		let tags = parseTags(itemDictionary)
+		let attachments = parseAttachments(itemDictionary)
 
 		var uniqueID: String? = itemDictionary["guid"] as? String
 		if uniqueID == nil {
@@ -154,5 +123,48 @@ private extension RSSInJSONParser {
 		}
 
 		return ParsedItem(uniqueID: uniqueID, url: nil, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: authors, tags: tags, attachments: attachments)
+	}
+
+	static func parseAuthors(_ itemDictionary: JSONDictionary) -> [ParsedAuthor]? {
+
+		guard let authorEmailAddress = itemDictionary["author"] as? String else {
+			return nil
+		}
+		let parsedAuthor = ParsedAuthor(name: nil, url: nil, avatarURL: nil, emailAddress: authorEmailAddress)
+		return [parsedAuthor]
+	}
+
+	static func parseTags(_ itemDictionary: JSONDictionary) -> [String]? {
+
+		if let categoryObject = itemDictionary["category"] as? JSONDictionary {
+			return categoryObject["#value"]
+		}
+		else if let categoryArray = itemDictionary["category"] as? JSONArray {
+			return categoryArray.flatMap{ (categoryObject) in
+				return categoryObject["#value"]
+			}
+		}
+		return nil
+	}
+
+	static func parseAttachments(_ itemDictionary: JSONDictionary) -> [ParsedAttachment]? {
+
+		guard let enclosureObject = itemDictionary["enclosure"] as? JSONDictionary else {
+			return nil
+		}
+		guard let attachmentURL = enclosureObject["url"] as? String else {
+			return nil
+		}
+
+		var attachmentSize = enclosureObject["length"] as? Int
+		if attachmentSize == nil {
+			if let attachmentSizeString = enclosureObject["length"] as? String {
+				attachmentSize = (attachmentSizeString as NSString).integerValue
+			}
+		}
+
+		let type = enclosureObject["type"] as? String
+		let oneAttachment = ParsedAttachment(url: attachmentURL, mimeType: type, title: nil, sizeInBytes: attachmentSize, durationInSeconds: nil)
+		return [oneAttachment]
 	}
 }
