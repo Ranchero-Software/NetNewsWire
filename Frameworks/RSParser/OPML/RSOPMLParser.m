@@ -1,6 +1,6 @@
 //
 //  RSOPMLParser.m
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 7/12/15.
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
@@ -8,24 +8,24 @@
 
 #import "RSOPMLParser.h"
 #import <libxml/xmlstring.h>
-#import "RSXMLData.h"
 #import "RSSAXParser.h"
 #import "RSOPMLItem.h"
 #import "RSOPMLDocument.h"
 #import "RSOPMLAttributes.h"
-#import "RSXMLError.h"
+#import <RSParser/RSParser-Swift.h>
+#import "RSOPMLError.h"
 
 
-void RSParseOPML(RSXMLData *xmlData, RSParsedOPMLBlock callback) {
+void RSParseOPML(ParserData *parserData, RSParsedOPMLBlock callback) {
 
-	NSCParameterAssert(xmlData);
+	NSCParameterAssert(parserData);
 	NSCParameterAssert(callback);
 
 	dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
 
 		@autoreleasepool {
 
-			RSOPMLParser *parser = [[RSOPMLParser alloc] initWithXMLData:xmlData];
+			RSOPMLParser *parser = [[RSOPMLParser alloc] initWithParserData:parserData];
 
 			RSOPMLDocument *document = parser.OPMLDocument;
 			NSError *error = parser.error;
@@ -50,17 +50,30 @@ void RSParseOPML(RSXMLData *xmlData, RSParsedOPMLBlock callback) {
 
 @implementation RSOPMLParser
 
+#pragma mark - Class Methods
+
++ (RSOPMLDocument *)parseOPMLWithParserData:(ParserData *)parserData error:(NSError **)error {
+
+	RSOPMLParser *parser = [[RSOPMLParser alloc] initWithParserData:parserData];
+
+	RSOPMLDocument *document = parser.OPMLDocument;
+	if (parser.error) {
+		*error = parser.error;
+		return nil;
+	}
+	return document;
+}
 
 #pragma mark - Init
 
-- (instancetype)initWithXMLData:(RSXMLData *)XMLData {
+- (instancetype)initWithParserData:(ParserData *)parserData {
 
 	self = [super init];
 	if (!self) {
 		return nil;
 	}
 
-	[self parse:XMLData];
+	[self parse:parserData];
 
 	return self;
 }
@@ -68,22 +81,22 @@ void RSParseOPML(RSXMLData *xmlData, RSParsedOPMLBlock callback) {
 
 #pragma mark - Private
 
-- (void)parse:(RSXMLData *)XMLData {
+- (void)parse:(ParserData *)parserData {
 
 	@autoreleasepool {
 
-		if (![self canParseData:XMLData.data]) {
+		if (![self canParseData:parserData.data]) {
 
 			NSString *filename = nil;
-			NSURL *url = [NSURL URLWithString:XMLData.urlString];
+			NSURL *url = [NSURL URLWithString:parserData.url];
 			if (url && url.isFileURL) {
 				filename = url.path.lastPathComponent;
 			}
-			if ([XMLData.urlString hasPrefix:@"http"]) {
-				filename = XMLData.urlString;
+			if ([parserData.url hasPrefix:@"http"]) {
+				filename = parserData.url;
 			}
 			if (!filename) {
-				filename = XMLData.urlString;
+				filename = parserData.url;
 			}
 			self.error = RSOPMLWrongFormatError(filename);
 			return;
@@ -95,7 +108,7 @@ void RSParseOPML(RSXMLData *xmlData, RSParsedOPMLBlock callback) {
 		self.OPMLDocument = [RSOPMLDocument new];
 		[self pushItem:self.OPMLDocument];
 
-		[parser parseData:XMLData.data];
+		[parser parseData:parserData.data];
 		[parser finishParsing];
 	}
 }

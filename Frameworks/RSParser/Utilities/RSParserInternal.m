@@ -1,5 +1,5 @@
 //
-//  RSXMLInternal.m
+//  RSParserInternal.m
 //  RSParser
 //
 //  Created by Brent Simmons on 12/26/16.
@@ -7,7 +7,7 @@
 //
 
 #import <CommonCrypto/CommonDigest.h>
-#import "RSXMLInternal.h"
+#import "RSParserInternal.h"
 
 
 static BOOL RSParserIsNil(id obj) {

@@ -10,14 +10,14 @@
 #import "RSHTMLLinkParser.h"
 #import "RSSAXHTMLParser.h"
 #import "RSSAXParser.h"
-#import "RSXMLData.h"
-#import "RSXMLInternal.h"
+#import "RSParserInternal.h"
+#import <RSParser/RSParser-Swift.h>
 
 
 @interface RSHTMLLinkParser() <RSSAXHTMLParserDelegate>
 
 @property (nonatomic, readonly) NSMutableArray *links;
-@property (nonatomic, readonly) RSXMLData *xmlData;
+@property (nonatomic, readonly) ParserData *parserData;
 @property (nonatomic, readonly) NSMutableArray *dictionaries;
 @property (nonatomic, readonly) NSURL *baseURL;
 
@@ -38,19 +38,19 @@
 
 #pragma mark - Class Methods
 
-+ (NSArray *)htmlLinksWithData:(RSXMLData *)xmlData {
++ (NSArray *)HTMLMetadataWithParserData:(ParserData *)parserData {
 
-	RSHTMLLinkParser *parser = [[self alloc] initWithXMLData:xmlData];
+	RSHTMLLinkParser *parser = [[self alloc] initWithParserData:parserData];
 	return parser.links;
 }
 
 
 #pragma mark - Init
 
-- (instancetype)initWithXMLData:(RSXMLData *)xmlData {
+- (instancetype)initWithParserData:(ParserData *)parserData {
 
-	NSParameterAssert(xmlData.data);
-	NSParameterAssert(xmlData.urlString);
+	NSParameterAssert(parserData.data);
+	NSParameterAssert(parserData.url);
 
 	self = [super init];
 	if (!self) {
@@ -58,9 +58,9 @@
 	}
 
 	_links = [NSMutableArray new];
-	_xmlData = xmlData;
+	_parserData = parserData;
 	_dictionaries = [NSMutableArray new];
-	_baseURL = [NSURL URLWithString:xmlData.urlString];
+	_baseURL = [NSURL URLWithString:parserData.url];
 
 	[self parse];
 
@@ -73,7 +73,7 @@
 - (void)parse {
 
 	RSSAXHTMLParser *parser = [[RSSAXHTMLParser alloc] initWithDelegate:self];
-	[parser parseData:self.xmlData.data];
+	[parser parseData:self.parserData.data];
 	[parser finishParsing];
 }
 
@@ -127,7 +127,7 @@ static const NSInteger kAnchorLength = 2;
 	[self.links addObject:link];
 
 	NSDictionary *d = [SAXParser attributesDictionary:attributes];
-	if (!RSParser_IsEmpty(d)) {
+	if (!RSParserObjectIsEmpty(d)) {
 		[self handleLinkAttributes:d];
 	}
 

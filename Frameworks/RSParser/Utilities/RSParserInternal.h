@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-BOOL RSParser_IsEmpty(id _Nullable obj);
+BOOL RSParserObjectIsEmpty(id _Nullable obj);
 BOOL RSParserStringIsEmpty(NSString * _Nullable s);
 
 

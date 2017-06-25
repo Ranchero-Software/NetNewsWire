@@ -1,13 +1,13 @@
 //
 //  RSOPMLFeedSpecifier.m
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 2/28/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
 #import "RSOPMLFeedSpecifier.h"
-#import "RSXMLInternal.h"
+#import "RSParserInternal.h"
 
 
 @implementation RSOPMLFeedSpecifier

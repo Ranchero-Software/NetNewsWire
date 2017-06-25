@@ -1,6 +1,6 @@
 //
 //  RSParsedArticle.h
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 12/6/14.
 //  Copyright (c) 2014 Ranchero Software LLC. All rights reserved.

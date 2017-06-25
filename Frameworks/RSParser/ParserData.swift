@@ -8,14 +8,15 @@
 
 import Foundation
 
-public final class ParserData {
+@objc public final class ParserData: NSObject {
 
-	let url: String
-	let data: Data
+	public let url: String
+	public let data: Data
 
 	public init(url: String, data: Data) {
 
 		self.url = url
 		self.data = data
+		super.init()
 	}
 }

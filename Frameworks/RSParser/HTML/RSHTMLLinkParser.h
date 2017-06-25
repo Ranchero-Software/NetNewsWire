@@ -10,12 +10,12 @@
 
 /*Returns all <a href="some_url">some_text</a> as RSHTMLLink object array.*/
 
-@class RSXMLData;
+@class ParserData;
 @class RSHTMLLink;
 
 @interface RSHTMLLinkParser : NSObject
 
-+ (NSArray <RSHTMLLink *> *)htmlLinksWithData:(RSXMLData *)xmlData;
++ (NSArray <RSHTMLLink *> *)htmlLinksWithParserData:(ParserData *)parserData;
 
 @end
 

@@ -8,36 +8,42 @@
 
 @import Foundation;
 
-#import <RSParser/NSData+RSParser.h>
+// To parse RSS, Atom, JSON Feed, and RSS-in-JSON the easy way, see FeedParser.swift.
+
+// Dates
+
 #import <RSParser/RSDateParser.h>
+
+// OPML
+
+#import <RSParser/RSOPMLParser.h>
+#import <RSParser/RSOPMLDocument.h>
+#import <RSParser/RSOPMLItem.h>
+#import <RSParser/RSOPMLAttributes.h>
+#import <RSParser/RSOPMLFeedSpecifier.h>
+#import <RSParser/RSOPMLError.h>
+
+// For writing your own XML parser.
+
+#import <RSParser/RSSAXParser.h>
+
+// You should use FeedParser (Swift) instead of these two specific parsers
+// and the objects they create.
+// But they’re available if you want them.
+
+#import <RSParser/RSRSSParser.h>
+#import <RSParser/RSAtomParser.h>
+#import <RSParser/RSParsedFeed.h>
+#import <RSParser/RSParsedArticle.h>
+
+// HTML
+
+#import <RSParser/RSHTMLMetadataParser.h>
+#import <RSParser/RSHTMLMetadata.h>
+#import <RSParser/RSHTMLLinkParser.h>
+#import <RSParser/RSSAXHTMLParser.h> // For writing your own HTML parser.
+
+// Utilities
+
+#import <RSParser/NSData+RSParser.h>
 #import <RSParser/NSString+RSParser.h>
-
-//#import <RSXML/RSSAXParser.h>
-//#import <RSXML/RSXMLData.h>
-//
-//#import <RSXML/RSFeedParser.h>
-//#import <RSXML/FeedParser.h>
-//#import <RSXML/RSAtomParser.h>
-//#import <RSXML/RSRSSParser.h>
-//#import <RSXML/RSParsedFeed.h>
-//#import <RSXML/RSParsedArticle.h>
-//
-//#import <RSXML/RSOPMLParser.h>
-//#import <RSXML/RSOPMLDocument.h>
-//#import <RSXML/RSOPMLItem.h>
-//#import <RSXML/RSOPMLAttributes.h>
-//#import <RSXML/RSOPMLFeedSpecifier.h>
-//
-//#import <RSXML/RSXMLError.h>
-//
-//#import <RSXML/NSString+RSXML.h>
-//#import <RSXML/RSDateParser.h>
-//
-//// HTML
-//
-//#import <RSXML/RSSAXHTMLParser.h>
-//
-//#import <RSXML/RSHTMLMetadataParser.h>
-//#import <RSXML/RSHTMLMetadata.h>
-//#import <RSXML/RSHTMLLinkParser.h>
-

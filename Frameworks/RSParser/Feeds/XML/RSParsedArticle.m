@@ -1,13 +1,14 @@
 //
 //  RSParsedArticle.m
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 12/6/14.
 //  Copyright (c) 2014 Ranchero Software LLC. All rights reserved.
 //
 
 #import "RSParsedArticle.h"
-#import "RSXMLInternal.h"
+#import "RSParserInternal.h"
+#import "NSString+RSParser.h"
 
 
 @implementation RSParsedArticle
@@ -89,7 +90,7 @@
 	NSAssert(!RSParserStringIsEmpty(self.feedURL), nil);
 	[s appendString:self.feedURL];
 
-	return [s rsxml_md5HashString];
+	return [s rsparser_md5Hash];
 }
 
 - (void)calculateArticleID {

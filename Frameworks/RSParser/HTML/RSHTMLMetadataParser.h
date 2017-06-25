@@ -10,17 +10,13 @@
 
 
 @class RSHTMLMetadata;
-@class RSXMLData;
+@class ParserData;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RSHTMLMetadataParser : NSObject
 
-+ (RSHTMLMetadata *)HTMLMetadataWithXMLData:(RSXMLData *)xmlData;
-
-- (instancetype)initWithXMLData:(RSXMLData *)xmlData;
-
-@property (nonatomic, readonly) RSHTMLMetadata *metadata;
++ (RSHTMLMetadata *)HTMLMetadataWithParserData:(ParserData *)parserData;
 
 
 @end

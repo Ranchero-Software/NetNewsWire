@@ -1,6 +1,6 @@
 //
 //  RSOPMLItem.m
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 2/28/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
@@ -9,7 +9,7 @@
 #import "RSOPMLItem.h"
 #import "RSOPMLAttributes.h"
 #import "RSOPMLFeedSpecifier.h"
-#import "RSXMLInternal.h"
+#import "RSParserInternal.h"
 
 
 @interface RSOPMLItem ()

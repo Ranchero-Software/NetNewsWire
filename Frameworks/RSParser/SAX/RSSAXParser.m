@@ -9,7 +9,7 @@
 #import <libxml/tree.h>
 #import <libxml/xmlstring.h>
 #import "RSSAXParser.h"
-#import "RSXMLInternal.h"
+#import "RSParserInternal.h"
 
 
 @interface RSSAXParser ()

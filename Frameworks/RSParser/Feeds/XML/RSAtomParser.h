@@ -6,8 +6,13 @@
 //  Copyright (c) 2015 Ranchero Software LLC. All rights reserved.
 //
 
-#import "FeedParser.h"
+@import Foundation;
 
-@interface RSAtomParser : NSObject <FeedParser>
+@class ParserData;
+@class RSParsedFeed;
+
+@interface RSAtomParser : NSObject
+
++ (RSParsedFeed *)parseFeedWithData:(ParserData *)parserData;
 
 @end

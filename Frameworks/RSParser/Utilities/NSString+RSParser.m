@@ -6,6 +6,7 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
+#import <CommonCrypto/CommonDigest.h>
 #import "NSString+RSParser.h"
 
 

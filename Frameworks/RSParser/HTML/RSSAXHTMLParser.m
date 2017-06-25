@@ -11,7 +11,7 @@
 #import <libxml/tree.h>
 #import <libxml/xmlstring.h>
 #import <libxml/HTMLparser.h>
-#import "RSXMLInternal.h"
+#import "RSParserInternal.h"
 
 
 @interface RSSAXHTMLParser ()

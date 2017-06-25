@@ -9,12 +9,11 @@
 #import <libxml/xmlstring.h>
 #import "RSAtomParser.h"
 #import "RSSAXParser.h"
-#import "FeedParser.h"
 #import "RSParsedFeed.h"
 #import "RSParsedArticle.h"
-#import "RSXMLData.h"
-#import "NSString+RSXML.h"
+#import "NSString+RSParser.h"
 #import "RSDateParser.h"
+#import <RSParser/RSParser-Swift.h>
 
 
 @interface RSAtomParser () <RSSAXParserDelegate>
@@ -44,57 +43,24 @@
 
 #pragma mark - Class Methods
 
-+ (BOOL)canParseFeed:(RSXMLData *)xmlData {
++ (RSParsedFeed *)parseFeedWithData:(ParserData *)parserData {
 
-	// Checking for '<feed' and '<entry' within first n characters should do it.
-
-	@autoreleasepool {
-
-		NSData *feedData = xmlData.data;
-		
-		NSString *s = [[NSString alloc] initWithBytesNoCopy:(void *)feedData.bytes length:feedData.length encoding:NSUTF8StringEncoding freeWhenDone:NO];
-		if (!s) {
-			s = [[NSString alloc] initWithData:feedData encoding:NSUTF8StringEncoding];
-		}
-		if (!s) {
-			s = [[NSString alloc] initWithData:feedData encoding:NSUnicodeStringEncoding];
-		}
-		if (!s) {
-			return NO;
-		}
-
-		static const NSInteger numberOfCharactersToSearch = 4096;
-		NSRange rangeToSearch = NSMakeRange(0, numberOfCharactersToSearch);
-		if (s.length < numberOfCharactersToSearch) {
-			rangeToSearch.length = s.length;
-		}
-
-		NSRange feedRange = [s rangeOfString:@"<feed" options:NSLiteralSearch range:rangeToSearch];
-		NSRange entryRange = [s rangeOfString:@"<entry" options:NSLiteralSearch range:rangeToSearch];
-		if (feedRange.length < 1 || entryRange.length < 1) {
-			return NO;
-		}
-
-		if (feedRange.location > entryRange.location) {
-			return NO; // Wrong order.
-		}
-	}
-	
-	return YES;
+	RSAtomParser *parser = [[[self class] alloc] initWithParserData:parserData];
+	return [parser parseFeed];
 }
 
 
 #pragma mark - Init
 
-- (instancetype)initWithXMLData:(RSXMLData *)xmlData {
+- (instancetype)initWithParserData:(ParserData *)parserData {
 	
 	self = [super init];
 	if (!self) {
 		return nil;
 	}
 	
-	_feedData = xmlData.data;
-	_urlString = xmlData.urlString;
+	_feedData = parserData.data;
+	_urlString = parserData.url;
 	_parser = [[RSSAXParser alloc] initWithDelegate:self];
 	_attributesStack = [NSMutableArray new];
 	_articles = [NSMutableArray new];
@@ -105,7 +71,7 @@
 
 #pragma mark - API
 
-- (RSParsedFeed *)parseFeed:(NSError **)error {
+- (RSParsedFeed *)parseFeed {
 
 	[self parse];
 
@@ -315,7 +281,7 @@ static const NSInteger kSelfLength = 5;
 
 - (NSString *)currentStringWithHTMLEntitiesDecoded {
 	
-	return [self.parser.currentStringWithTrimmedWhitespace rs_stringByDecodingHTMLEntities];
+	return [self.parser.currentStringWithTrimmedWhitespace rsparser_stringByDecodingHTMLEntities];
 }
 
 

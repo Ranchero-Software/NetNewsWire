@@ -1,6 +1,6 @@
 //
 //  RSHTMLMetadataParser.m
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 3/6/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
@@ -8,16 +8,15 @@
 
 #import <libxml/xmlstring.h>
 #import "RSHTMLMetadataParser.h"
-#import "RSXMLData.h"
 #import "RSHTMLMetadata.h"
 #import "RSSAXHTMLParser.h"
 #import "RSSAXParser.h"
-#import "RSXMLInternal.h"
-
+#import "RSParserInternal.h"
+#import <RSParser/RSParser-Swift.h>
 
 @interface RSHTMLMetadataParser () <RSSAXHTMLParserDelegate>
 
-@property (nonatomic, readonly) RSXMLData *xmlData;
+@property (nonatomic, readonly) ParserData *parserData;
 @property (nonatomic, readwrite) RSHTMLMetadata *metadata;
 @property (nonatomic) NSMutableArray *dictionaries;
 @property (nonatomic) BOOL didFinishParsing;
@@ -30,26 +29,26 @@
 
 #pragma mark - Class Methods
 
-+ (RSHTMLMetadata *)HTMLMetadataWithXMLData:(RSXMLData *)xmlData {
++ (RSHTMLMetadata *)HTMLMetadataWithParserData:(ParserData *)parserData {
 
-	RSHTMLMetadataParser *parser = [[self alloc] initWithXMLData:xmlData];
+	RSHTMLMetadataParser *parser = [[self alloc] initWithParserData:parserData];
 	return parser.metadata;
 }
 
 
 #pragma mark - Init
 
-- (instancetype)initWithXMLData:(RSXMLData *)xmlData {
+- (instancetype)initWithParserData:(ParserData *)parserData {
 
-	NSParameterAssert(xmlData.data);
-	NSParameterAssert(xmlData.urlString);
+	NSParameterAssert(parserData.data);
+	NSParameterAssert(parserData.url);
 
 	self = [super init];
 	if (!self) {
 		return nil;
 	}
 
-	_xmlData = xmlData;
+	_parserData = parserData;
 	_dictionaries = [NSMutableArray new];
 
 	[self parse];
@@ -63,10 +62,10 @@
 - (void)parse {
 
 	RSSAXHTMLParser *parser = [[RSSAXHTMLParser alloc] initWithDelegate:self];
-	[parser parseData:self.xmlData.data];
+	[parser parseData:self.parserData.data];
 	[parser finishParsing];
 
-	self.metadata = [[RSHTMLMetadata alloc] initWithURLString:self.xmlData.urlString dictionaries:[self.dictionaries copy]];
+	self.metadata = [[RSHTMLMetadata alloc] initWithURLString:self.parserData.url dictionaries:[self.dictionaries copy]];
 }
 
 
@@ -121,7 +120,7 @@ static const NSInteger kLinkLength = 5;
 	}
 
 	NSDictionary *d = [SAXParser attributesDictionary:attributes];
-	if (!RSParser_IsEmpty(d)) {
+	if (!RSParserObjectIsEmpty(d)) {
 		[self handleLinkAttributes:d];
 	}
 }

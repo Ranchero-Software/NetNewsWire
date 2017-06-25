@@ -13,6 +13,7 @@
 static BOOL bytesAreProbablyHTML(const char *bytes, NSUInteger numberOfBytes);
 static BOOL bytesAreProbablyXML(const char *bytes, NSUInteger numberOfBytes);
 static BOOL bytesStartWithStringIgnoringWhitespace(const char *string, const char *bytes, NSUInteger numberOfBytes);
+static BOOL didFindString(const char *string, const char *bytes, NSUInteger numberOfBytes);
 
 @implementation NSData (RSParser)
 
@@ -55,7 +56,7 @@ static BOOL bytesStartWithStringIgnoringWhitespace(const char *string, const cha
 		return NO;
 	}
 
-	return didFindString("<rss", bytes, length);
+	return didFindString("<rss", self.bytes, self.length);
 }
 
 - (BOOL)isProbablyAtom {
@@ -64,7 +65,7 @@ static BOOL bytesStartWithStringIgnoringWhitespace(const char *string, const cha
 		return NO;
 	}
 
-	return didFindString("<feed", bytes, length);
+	return didFindString("<feed", self.bytes, self.length);
 }
 
 @end
@@ -81,8 +82,8 @@ static BOOL bytesStartWithStringIgnoringWhitespace(const char *string, const cha
 	NSUInteger i = 0;
 	for (i = 0; i < numberOfBytes; i++) {
 
-		const char *ch = bytes[i];
-		if (ch == ' ' || ch = '\r' || ch == '\n' || ch == '\t') {
+		const char ch = bytes[i];
+		if (ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t') {
 			continue;
 		}
 
@@ -110,7 +111,7 @@ static BOOL bytesAreProbablyHTML(const char *bytes, NSUInteger numberOfBytes) {
 		return YES;
 	}
 
-	if (didFindString("<", bytes, numberOfBytes) {
+	if (didFindString("<", bytes, numberOfBytes)) {
 		if (didFindString("doctype html", bytes, numberOfBytes)) {
 			return YES;
 		}
@@ -127,6 +128,6 @@ static BOOL bytesAreProbablyHTML(const char *bytes, NSUInteger numberOfBytes) {
 
 static BOOL bytesAreProbablyXML(const char *bytes, NSUInteger numberOfBytes) {
 
-	return bytesStartWithStringIgnoringWhiteSpace("<?xml", bytes, numberOfBytes);
+	return bytesStartWithStringIgnoringWhitespace("<?xml", bytes, numberOfBytes);
 }
 

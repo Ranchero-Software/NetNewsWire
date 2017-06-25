@@ -7,7 +7,7 @@
 //
 
 #import "RSHTMLMetadata.h"
-#import "RSXMLInternal.h"
+#import "RSParserInternal.h"
 
 static NSString *urlStringFromDictionary(NSDictionary *d);
 static NSString *absoluteURLStringWithRelativeURLString(NSString *relativeURLString, NSString *baseURLString);
