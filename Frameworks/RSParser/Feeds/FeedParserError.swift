@@ -14,7 +14,9 @@ public struct FeedParserError: Error {
 
 		case rssChannelNotFound
 		case rssItemsNotFound
-
+		case jsonFeedVersionNotFound
+		case jsonFeedItemsNotFound
+		case jsonFeedTitleNotFound
 	}
 
 	public let errorType: FeedParserErrorType

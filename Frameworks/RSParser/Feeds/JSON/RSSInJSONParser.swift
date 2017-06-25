@@ -104,7 +104,7 @@ private extension RSSInJSONParser {
 			if let externalURL = externalURL {
 				s += externalURL
 			}
-			if let authorEmailAddress = authorEmailAddress {
+			if let authorEmailAddress = authors?.first?.emailAddress {
 				s += authorEmailAddress
 			}
 			if let oneAttachmentURL = attachments?.first?.url {
