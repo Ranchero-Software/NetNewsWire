@@ -38,7 +38,7 @@
 
 #pragma mark - Class Methods
 
-+ (NSArray *)HTMLMetadataWithParserData:(ParserData *)parserData {
++ (NSArray *)htmlLinksWithParserData:(ParserData *)parserData {
 
 	RSHTMLLinkParser *parser = [[self alloc] initWithParserData:parserData];
 	return parser.links;

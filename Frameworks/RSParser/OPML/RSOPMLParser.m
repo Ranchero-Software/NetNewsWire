@@ -16,29 +16,6 @@
 #import "RSOPMLError.h"
 
 
-void RSParseOPML(ParserData *parserData, RSParsedOPMLBlock callback) {
-
-	NSCParameterAssert(parserData);
-	NSCParameterAssert(callback);
-
-	dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
-
-		@autoreleasepool {
-
-			RSOPMLParser *parser = [[RSOPMLParser alloc] initWithParserData:parserData];
-
-			RSOPMLDocument *document = parser.OPMLDocument;
-			NSError *error = parser.error;
-
-			dispatch_async(dispatch_get_main_queue(), ^{
-
-				callback(document, error);
-			});
-		}
-	});
-}
-
-
 @interface RSOPMLParser () <RSSAXParserDelegate>
 
 @property (nonatomic, readwrite) RSOPMLDocument *OPMLDocument;
