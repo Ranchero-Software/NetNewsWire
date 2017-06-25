@@ -45,6 +45,11 @@
 		84469D2F1EFA3134004A6B28 /* RSRSSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D251EFA3134004A6B28 /* RSRSSParser.h */; };
 		84469D301EFA3134004A6B28 /* RSRSSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D261EFA3134004A6B28 /* RSRSSParser.m */; };
 		84469D321EFA31CF004A6B28 /* FeedParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D311EFA31CF004A6B28 /* FeedParser.swift */; };
+		84469D351EFF1190004A6B28 /* NSData+RSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469D331EFF1190004A6B28 /* NSData+RSParser.h */; };
+		84469D361EFF1190004A6B28 /* NSData+RSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469D341EFF1190004A6B28 /* NSData+RSParser.m */; };
+		84469D381EFF2645004A6B28 /* RSSInJSONParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D371EFF2645004A6B28 /* RSSInJSONParser.swift */; };
+		84469D401EFF29A9004A6B28 /* FeedParserError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D3F1EFF29A9004A6B28 /* FeedParserError.swift */; };
+		84469D421EFF2B2D004A6B28 /* JSONTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D411EFF2B2D004A6B28 /* JSONTypes.swift */; };
 		84D81BDC1EFA28E700652332 /* RSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D81BDA1EFA28E700652332 /* RSParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84D81BDE1EFA2B7D00652332 /* ParsedFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */; };
 		84D81BE01EFA2BAE00652332 /* FeedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDF1EFA2BAE00652332 /* FeedType.swift */; };
@@ -105,6 +110,11 @@
 		84469D251EFA3134004A6B28 /* RSRSSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSRSSParser.h; sourceTree = "<group>"; };
 		84469D261EFA3134004A6B28 /* RSRSSParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSRSSParser.m; sourceTree = "<group>"; };
 		84469D311EFA31CF004A6B28 /* FeedParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedParser.swift; path = Feeds/FeedParser.swift; sourceTree = "<group>"; };
+		84469D331EFF1190004A6B28 /* NSData+RSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+RSParser.h"; sourceTree = "<group>"; };
+		84469D341EFF1190004A6B28 /* NSData+RSParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+RSParser.m"; sourceTree = "<group>"; };
+		84469D371EFF2645004A6B28 /* RSSInJSONParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RSSInJSONParser.swift; path = Feeds/JSON/RSSInJSONParser.swift; sourceTree = "<group>"; };
+		84469D3F1EFF29A9004A6B28 /* FeedParserError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedParserError.swift; path = Feeds/FeedParserError.swift; sourceTree = "<group>"; };
+		84469D411EFF2B2D004A6B28 /* JSONTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONTypes.swift; path = Feeds/JSON/JSONTypes.swift; sourceTree = "<group>"; };
 		84D81BD91EFA28E700652332 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84D81BDA1EFA28E700652332 /* RSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSParser.h; sourceTree = "<group>"; };
 		84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedFeed.swift; path = Feeds/ParsedFeed.swift; sourceTree = "<group>"; };
@@ -148,6 +158,8 @@
 				84D81BE31EFA2D3D00652332 /* ParsedItem.swift */,
 				84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */,
 				84D81BE71EFA2E6700652332 /* ParsedHub.swift */,
+				84469D3F1EFF29A9004A6B28 /* FeedParserError.swift */,
+				84469D391EFF2649004A6B28 /* JSON */,
 				84469D1C1EFA3134004A6B28 /* XML */,
 			);
 			name = Feeds;
@@ -197,6 +209,8 @@
 		84469D0F1EFA30A2004A6B28 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				84469D331EFF1190004A6B28 /* NSData+RSParser.h */,
+				84469D341EFF1190004A6B28 /* NSData+RSParser.m */,
 				84469D101EFA30A2004A6B28 /* NSString+RSXML.h */,
 				84469D111EFA30A2004A6B28 /* NSString+RSXML.m */,
 				84469D121EFA30A2004A6B28 /* RSDateParser.h */,
@@ -223,6 +237,15 @@
 			);
 			name = XML;
 			path = Feeds/XML;
+			sourceTree = "<group>";
+		};
+		84469D391EFF2649004A6B28 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				84469D411EFF2B2D004A6B28 /* JSONTypes.swift */,
+				84469D371EFF2645004A6B28 /* RSSInJSONParser.swift */,
+			);
+			name = JSON;
 			sourceTree = "<group>";
 		};
 		84FF5F7A1EFA285800C15A01 = {
@@ -273,6 +296,7 @@
 				84469D2D1EFA3134004A6B28 /* RSParsedFeed.h in Headers */,
 				84469D181EFA30A2004A6B28 /* RSDateParser.h in Headers */,
 				84469D1A1EFA30A2004A6B28 /* RSXMLInternal.h in Headers */,
+				84469D351EFF1190004A6B28 /* NSData+RSParser.h in Headers */,
 				84D81BDC1EFA28E700652332 /* RSParser.h in Headers */,
 				84469D0B1EFA307E004A6B28 /* RSHTMLMetadataParser.h in Headers */,
 				84469CFC1EFA3069004A6B28 /* RSSAXParser.h in Headers */,
@@ -392,6 +416,7 @@
 				84469D0E1EFA307E004A6B28 /* RSSAXHTMLParser.m in Sources */,
 				84469CF41EFA3000004A6B28 /* RSOPMLFeedSpecifier.m in Sources */,
 				84469CF01EFA3000004A6B28 /* RSOPMLAttributes.m in Sources */,
+				84469D381EFF2645004A6B28 /* RSSInJSONParser.swift in Sources */,
 				84469D301EFA3134004A6B28 /* RSRSSParser.m in Sources */,
 				84469D191EFA30A2004A6B28 /* RSDateParser.m in Sources */,
 				84469CFD1EFA3069004A6B28 /* RSSAXParser.m in Sources */,
@@ -400,14 +425,17 @@
 				84469CF61EFA3000004A6B28 /* RSOPMLItem.m in Sources */,
 				84469D2A1EFA3134004A6B28 /* RSFeedParser.m in Sources */,
 				84D81BE41EFA2D3D00652332 /* ParsedItem.swift in Sources */,
+				84469D421EFF2B2D004A6B28 /* JSONTypes.swift in Sources */,
 				84469D0C1EFA307E004A6B28 /* RSHTMLMetadataParser.m in Sources */,
 				84469D0A1EFA307E004A6B28 /* RSHTMLMetadata.m in Sources */,
 				84469D171EFA30A2004A6B28 /* NSString+RSXML.m in Sources */,
 				84469D2C1EFA3134004A6B28 /* RSParsedArticle.m in Sources */,
 				84469D2E1EFA3134004A6B28 /* RSParsedFeed.m in Sources */,
 				84469CF81EFA3000004A6B28 /* RSOPMLParser.m in Sources */,
+				84469D401EFF29A9004A6B28 /* FeedParserError.swift in Sources */,
 				84469D321EFA31CF004A6B28 /* FeedParser.swift in Sources */,
 				84469D281EFA3134004A6B28 /* RSAtomParser.m in Sources */,
+				84469D361EFF1190004A6B28 /* NSData+RSParser.m in Sources */,
 				84D81BE61EFA2DFB00652332 /* ParsedAttachment.swift in Sources */,
 				84D81BDE1EFA2B7D00652332 /* ParsedFeed.swift in Sources */,
 				84D81BE81EFA2E6700652332 /* ParsedHub.swift in Sources */,

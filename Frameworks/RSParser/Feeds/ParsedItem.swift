@@ -24,4 +24,23 @@ public struct ParsedItem {
 	public let authors: [ParsedAuthor]?
 	public let tags: [String]?
 	public let attachments: [ParsedAttachment]?
+
+	init(uniqueID: String?, url: String?, externalURL: String?, title: String?, contentHTML: String?, contentText: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [ParsedAuthor]?, tags: [String]?, attachments: [ParsedAttachment]?) {
+
+		self.uniqueID = uniqueID
+		self.url = url
+		self.externalURL = externalURL
+		self.title = title
+		self.contentHTML = contentHTML
+		self.contentText = contentText
+		self.summary = summary
+		self.imageURL = imageURL
+		self.bannerImageURL = bannerImageURL
+		self.datePublished = datePublished
+		self.dateModified = dateModified
+		self.authors = authors
+		self.tags = tags
+		self.attachments = attachments
+	}
 }
+

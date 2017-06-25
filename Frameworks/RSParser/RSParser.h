@@ -8,6 +8,8 @@
 
 @import Foundation;
 
+#import <RSParser/NSData+RSParser.h>
+#import <RSParser/RSParser.h>
 
 //#import <RSXML/RSSAXParser.h>
 //#import <RSXML/RSXMLData.h>

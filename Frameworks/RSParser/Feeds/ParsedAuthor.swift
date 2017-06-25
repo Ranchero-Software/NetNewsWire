@@ -14,4 +14,12 @@ public struct ParsedAuthor {
 	public let url: String?
 	public let avatarURL: String?
 	public let emailAddress: String?
+
+	init(name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
+
+		self.name = name
+		self.url = url
+		self.avatarURL = avatarURL
+		self.emailAddress = emailAddress
+	}
 }
