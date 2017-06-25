@@ -23,43 +23,43 @@ NSString *OPMLXMLURLKey = @"xmlUrl";
 
 - (NSString *)opml_text {
 
-	return [self rsxml_objectForCaseInsensitiveKey:OPMLTextKey];
+	return [self rsparser_objectForCaseInsensitiveKey:OPMLTextKey];
 }
 
 
 - (NSString *)opml_title {
 
-	return [self rsxml_objectForCaseInsensitiveKey:OPMLTitleKey];
+	return [self rsparser_objectForCaseInsensitiveKey:OPMLTitleKey];
 }
 
 
 - (NSString *)opml_description {
 
-	return [self rsxml_objectForCaseInsensitiveKey:OPMLDescriptionKey];
+	return [self rsparser_objectForCaseInsensitiveKey:OPMLDescriptionKey];
 }
 
 
 - (NSString *)opml_type {
 
-	return [self rsxml_objectForCaseInsensitiveKey:OPMLTypeKey];
+	return [self rsparser_objectForCaseInsensitiveKey:OPMLTypeKey];
 }
 
 
 - (NSString *)opml_version {
 
-	return [self rsxml_objectForCaseInsensitiveKey:OPMLVersionKey];
+	return [self rsparser_objectForCaseInsensitiveKey:OPMLVersionKey];
 }
 
 
 - (NSString *)opml_htmlUrl {
 
-	return [self rsxml_objectForCaseInsensitiveKey:OPMLHMTLURLKey];
+	return [self rsparser_objectForCaseInsensitiveKey:OPMLHMTLURLKey];
 }
 
 
 - (NSString *)opml_xmlUrl {
 
-	return [self rsxml_objectForCaseInsensitiveKey:OPMLXMLURLKey];
+	return [self rsparser_objectForCaseInsensitiveKey:OPMLXMLURLKey];
 }
 
 

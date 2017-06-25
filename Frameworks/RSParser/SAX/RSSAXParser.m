@@ -1,6 +1,6 @@
 //
 //  RSSAXParser.m
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 3/25/15.
 //  Copyright (c) 2015 Ranchero Software, LLC. All rights reserved.
@@ -152,7 +152,7 @@ static xmlSAXHandler saxHandlerStruct;
 - (NSString *)currentString {
 
 	NSData *d = self.currentCharacters;
-	if (RSXMLIsEmpty(d)) {
+	if (RSParserObjectIsEmpty(d)) {
 		return nil;
 	}
 

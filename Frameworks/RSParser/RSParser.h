@@ -9,7 +9,8 @@
 @import Foundation;
 
 #import <RSParser/NSData+RSParser.h>
-#import <RSParser/RSParser.h>
+#import <RSParser/RSDateParser.h>
+#import <RSParser/NSString+RSParser.h>
 
 //#import <RSXML/RSSAXParser.h>
 //#import <RSXML/RSXMLData.h>

@@ -14,28 +14,28 @@
 
 - (instancetype)initWithTitle:(NSString *)title feedDescription:(NSString *)feedDescription homePageURL:(NSString *)homePageURL feedURL:(NSString *)feedURL {
 
-	NSParameterAssert(!RSXMLIsEmpty(feedURL));
+	NSParameterAssert(!RSParserStringIsEmpty(feedURL));
 	
 	self = [super init];
 	if (!self) {
 		return nil;
 	}
 
-	if (RSXMLIsEmpty(title)) {
+	if (RSParserStringIsEmpty(title)) {
 		_title = nil;
 	}
 	else {
 		_title = title;
 	}
 
-	if (RSXMLIsEmpty(feedDescription)) {
+	if (RSParserStringIsEmpty(feedDescription)) {
 		_feedDescription = nil;
 	}
 	else {
 		_feedDescription = feedDescription;
 	}
 
-	if (RSXMLIsEmpty(homePageURL)) {
+	if (RSParserStringIsEmpty(homePageURL)) {
 		_homePageURL = nil;
 	}
 	else {

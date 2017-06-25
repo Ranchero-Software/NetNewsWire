@@ -1,24 +1,24 @@
 //
-//  NSString+RSXML.m
-//  RSXML
+//  NSString+RSParser.m
+//  RSParser
 //
 //  Created by Brent Simmons on 9/25/15.
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-#import "NSString+RSXML.h"
+#import "NSString+RSParser.h"
 
 
-@interface NSScanner (RSXML)
+@interface NSScanner (RSParser)
 
 - (BOOL)rs_scanEntityValue:(NSString * _Nullable * _Nullable)decodedEntity;
 
 @end
 
 
-@implementation NSString (RSXML)
+@implementation NSString (RSParser)
 
-- (NSString *)rs_stringByDecodingHTMLEntities {
+- (NSString *)rsparser_stringByDecodingHTMLEntities {
 	
 	@autoreleasepool {
 		
@@ -60,7 +60,7 @@
 
 
 static NSDictionary *RSEntitiesDictionary(void);
-static NSString *RSXMLStringWithValue(unichar value);
+static NSString *RSParserStringWithValue(unichar value);
 
 - (NSString * _Nullable)rs_stringByDecodingEntity {
 	
@@ -87,7 +87,7 @@ static NSString *RSXMLStringWithValue(unichar value);
 		scanner.charactersToBeSkipped = [NSCharacterSet characterSetWithCharactersInString:@"#x"];
 		unsigned int hexValue = 0;
 		if ([scanner scanHexInt:&hexValue]) {
-			return RSXMLStringWithValue((unichar)hexValue);
+			return RSParserStringWithValue((unichar)hexValue);
 		}
 		return nil;
 	}
@@ -98,15 +98,33 @@ static NSString *RSXMLStringWithValue(unichar value);
 		if (value < 1) {
 			return nil;
 		}
-		return RSXMLStringWithValue((unichar)value);
+		return RSParserStringWithValue((unichar)value);
 	}
 
 	return nil;
 }
 
+- (NSData *)_rsparser_md5HashData {
+
+	NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
+	unsigned char hash[CC_MD5_DIGEST_LENGTH];
+	CC_MD5(data.bytes, (CC_LONG)data.length, hash);
+
+	return [NSData dataWithBytes:(const void *)hash length:CC_MD5_DIGEST_LENGTH];
+}
+
+- (NSString *)rsparser_md5Hash {
+
+	NSData *md5Data = [self _rsparser_md5HashData];
+	const Byte *bytes = md5Data.bytes;
+	return [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]];
+}
+
+
+
 @end
 
-@implementation NSScanner (RSXML)
+@implementation NSScanner (RSParser)
 
 - (BOOL)rs_scanEntityValue:(NSString * _Nullable * _Nullable)decodedEntity {
 	
@@ -144,7 +162,7 @@ static NSString *RSXMLStringWithValue(unichar value);
 
 @end
 
-static NSString *RSXMLStringWithValue(unichar value) {
+static NSString *RSParserStringWithValue(unichar value) {
 	
 	return [[NSString alloc] initWithFormat:@"%C", value];
 }
@@ -169,7 +187,7 @@ static NSDictionary *RSEntitiesDictionary(void) {
 		  @"#150": @"-",
 		  @"#151": @"—",
 		  @"#153": @"™",
-		  @"#160": RSXMLStringWithValue(160),
+		  @"#160": RSParserStringWithValue(160),
 		  @"#161": @"¡",
 		  @"#162": @"¢",
 		  @"#163": @"£",
@@ -277,7 +295,7 @@ static NSDictionary *RSEntitiesDictionary(void) {
 		  @"#8220": @"“",
 		  @"#8221": @"”",
 		  @"#8230": @"…",
-		  @"#8617": RSXMLStringWithValue(8617),
+		  @"#8617": RSParserStringWithValue(8617),
 		  @"AElig": @"Æ",
 		  @"Aacute": @"Á",
 		  @"Acirc": @"Â",
@@ -394,14 +412,14 @@ static NSDictionary *RSEntitiesDictionary(void) {
 		  @"yen": @"¥",
 		  @"yuml": @"ÿ",
 		  @"infin": @"∞",
-		  @"nbsp": RSXMLStringWithValue(160),
-		  @"#x21A9": RSXMLStringWithValue(8617),
-		  @"#xFE0E": RSXMLStringWithValue(65038),
-		  @"#x2019": RSXMLStringWithValue(8217),
-		  @"#x2026": RSXMLStringWithValue(8230),
-		  @"#x201C": RSXMLStringWithValue(8220),
-		  @"#x201D": RSXMLStringWithValue(8221),
-		  @"#x2014": RSXMLStringWithValue(8212)};
+		  @"nbsp": RSParserStringWithValue(160),
+		  @"#x21A9": RSParserStringWithValue(8617),
+		  @"#xFE0E": RSParserStringWithValue(65038),
+		  @"#x2019": RSParserStringWithValue(8217),
+		  @"#x2026": RSParserStringWithValue(8230),
+		  @"#x201C": RSParserStringWithValue(8220),
+		  @"#x201D": RSParserStringWithValue(8221),
+		  @"#x2014": RSParserStringWithValue(8212)};
 	});
 	
 	return entitiesDictionary;

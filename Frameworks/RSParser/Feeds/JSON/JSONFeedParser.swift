@@ -12,10 +12,12 @@ import Foundation
 
 public struct JSONFeedParser {
 
-	public static func parse(parserData: ParserData) throws -> ParsedFeed? {
+	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
 
 		do {
-			let parsedObject = try JSONSerialization.jsonObject(with: parserData.data)
+			guard let parsedObject = try JSONSerialization.jsonObject(with: parserData.data) as? JSONDictionary else {
+				throw FeedParserError(.invalidJSON)
+			}
 
 			guard let version = parsedObject["version"] as? String, version.hasPrefix("https://jsonfeed.org/version/") else {
 				throw FeedParserError(.jsonFeedVersionNotFound)
@@ -27,13 +29,13 @@ public struct JSONFeedParser {
 				throw FeedParserError(.jsonFeedTitleNotFound)
 			}
 
+			let authors = parseAuthors(parsedObject)
 			let homePageURL = parsedObject["home_page_url"] as? String
-			let feedURL = parsedObject["feed_url"] ?? parserData.url
+			let feedURL = parsedObject["feed_url"] as? String ?? parserData.url
 			let feedDescription = parsedObject["description"] as? String
 			let nextURL = parsedObject["next_url"] as? String
 			let iconURL = parsedObject["icon_url"] as? String
 			let faviconURL = parsedObject["favicon_url"] as? String
-			let authors = parseAuthors(parsedObject)
 			let expired = parsedObject["expired"] as? Bool ?? false
 			let hubs = parseHubs(parsedObject)
 
@@ -48,15 +50,15 @@ public struct JSONFeedParser {
 
 private extension JSONFeedParser {
 
-	func parseAuthors(_ dictionary: JSONDictionary) -> [ParsedAuthor]? {
+	static func parseAuthors(_ dictionary: JSONDictionary) -> [ParsedAuthor]? {
 
 		guard let authorDictionary = dictionary["author"] as? JSONDictionary else {
 			return nil
 		}
 
-		let name = authorDictionary["name"]
-		let url = authorDictionary["url"]
-		let avatar = authorDictionary["avatar"]
+		let name = authorDictionary["name"] as? String
+		let url = authorDictionary["url"] as? String
+		let avatar = authorDictionary["avatar"] as? String
 		if name == nil && url == nil && avatar == nil {
 			return nil
 		}
@@ -64,14 +66,14 @@ private extension JSONFeedParser {
 		return [parsedAuthor]
 	}
 
-	func parseHubs(_ dictionary: JSONDictionary) -> [ParsedHub]? {
+	static func parseHubs(_ dictionary: JSONDictionary) -> [ParsedHub]? {
 
 		guard let hubsArray = dictionary["hubs"] as? JSONArray else {
 			return nil
 		}
 
 		let hubs = hubsArray.flatMap { (oneHubDictionary) -> ParsedHub? in
-			guard let oneHubURL = oneHubDictionary["url"], let oneHubType = oneHubDictionary["type"] else {
+			guard let oneHubURL = oneHubDictionary["url"] as? String, let oneHubType = oneHubDictionary["type"] as? String else {
 				return nil
 			}
 			return ParsedHub(type: oneHubType, url: oneHubURL)
@@ -79,14 +81,14 @@ private extension JSONFeedParser {
 		return hubs.isEmpty ? nil : hubs
 	}
 
-	func parseItems(_ itemsArray: JSONArray) -> [ParsedItem] {
+	static func parseItems(_ itemsArray: JSONArray) -> [ParsedItem] {
 
 		return itemsArray.flatMap { (oneItemDictionary) -> ParsedItem? in
 			return parseItem(oneItemDictionary)
 		}
 	}
 
-	func parseItem(_ itemDictionary: JSONDictionary) -> ParsedItem? {
+	static func parseItem(_ itemDictionary: JSONDictionary) -> ParsedItem? {
 
 		guard let uniqueID = parseUniqueID(itemDictionary) else {
 			return nil
@@ -105,8 +107,8 @@ private extension JSONFeedParser {
 		let imageURL = itemDictionary["image"] as? String
 		let bannerImageURL = itemDictionary["banner_image"] as? String
 
-		let datePublished = parseDate(itemDictionary["date_published"])
-		let dateModified = parseDate(itemDictionary["date_modified"])
+		let datePublished = parseDate(itemDictionary["date_published"] as? String)
+		let dateModified = parseDate(itemDictionary["date_modified"] as? String)
 
 		let authors = parseAuthors(itemDictionary)
 		let tags = itemDictionary["tags"] as? [String]
@@ -115,7 +117,7 @@ private extension JSONFeedParser {
 		return ParsedItem(uniqueID: uniqueID, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
 	}
 
-	func parseUniqueID(_ itemDictionary: JSONDictionary) -> String? {
+	static func parseUniqueID(_ itemDictionary: JSONDictionary) -> String? {
 
 		if let uniqueID = itemDictionary["id"] as? String {
 			return uniqueID // Spec says it must be a string
@@ -130,7 +132,7 @@ private extension JSONFeedParser {
 		return nil
 	}
 
-	func parseDate(_ dateString: String?) -> Date? {
+	static func parseDate(_ dateString: String?) -> Date? {
 
 		guard let dateString = dateString, !dateString.isEmpty else {
 			return nil
@@ -138,7 +140,7 @@ private extension JSONFeedParser {
 		return RSDateWithString(dateString)
 	}
 
-	func parseAttachments(_ itemDictionary: JSONDictionary) -> [ParsedAttachment]? {
+	static func parseAttachments(_ itemDictionary: JSONDictionary) -> [ParsedAttachment]? {
 
 		guard let attachmentsArray = itemDictionary["attachments"] as? JSONArray else {
 			return nil
@@ -148,7 +150,7 @@ private extension JSONFeedParser {
 		}
 	}
 
-	func parseAttachment(_ attachmentObject: JSONDictionary) -> ParsedAttachment? {
+	static func parseAttachment(_ attachmentObject: JSONDictionary) -> ParsedAttachment? {
 
 		guard let url = attachmentObject["url"] as? String else {
 			return nil
@@ -160,7 +162,7 @@ private extension JSONFeedParser {
 		let title = attachmentObject["title"] as? String
 		let sizeInBytes = attachmentObject["size_in_bytes"] as? Int
 		let durationInSeconds = attachmentObject["duration_in_seconds"] as? Int
-		
+
 		return ParsedAttachment(url: url, mimeType: mimeType, title: title, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds)
 	}
 }

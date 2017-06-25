@@ -1,6 +1,6 @@
 //
 //  RSRSSParser.m
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 1/6/15.
 //  Copyright (c) 2015 Ranchero Software LLC. All rights reserved.
@@ -256,7 +256,7 @@ static const NSInteger kTrueLength = 5;
 
 	self.currentArticle.guid = self.parser.currentStringWithTrimmedWhitespace;
 
-	NSString *isPermaLinkValue = [self.currentAttributes rsxml_objectForCaseInsensitiveKey:@"ispermalink"];
+	NSString *isPermaLinkValue = [self.currentAttributes rsparser_objectForCaseInsensitiveKey:@"ispermalink"];
 	if (!isPermaLinkValue || ![isPermaLinkValue isEqualToString:@"false"]) {
 		self.currentArticle.permalink = [self urlString:self.currentArticle.guid];
 	}

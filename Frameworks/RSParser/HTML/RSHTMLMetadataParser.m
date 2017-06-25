@@ -76,21 +76,21 @@ static NSString *kRelKey = @"rel";
 
 - (NSString *)linkForDictionary:(NSDictionary *)d {
 
-	NSString *link = [d rsxml_objectForCaseInsensitiveKey:kHrefKey];
+	NSString *link = [d rsparser_objectForCaseInsensitiveKey:kHrefKey];
 	if (link) {
 		return link;
 	}
 
-	return [d rsxml_objectForCaseInsensitiveKey:kSrcKey];
+	return [d rsparser_objectForCaseInsensitiveKey:kSrcKey];
 }
 
 
 - (void)handleLinkAttributes:(NSDictionary *)d {
 
-	if (RSXMLStringIsEmpty([d rsxml_objectForCaseInsensitiveKey:kRelKey])) {
+	if (RSParserStringIsEmpty([d rsparser_objectForCaseInsensitiveKey:kRelKey])) {
 		return;
 	}
-	if (RSXMLStringIsEmpty([self linkForDictionary:d])) {
+	if (RSParserStringIsEmpty([self linkForDictionary:d])) {
 		return;
 	}
 
@@ -121,7 +121,7 @@ static const NSInteger kLinkLength = 5;
 	}
 
 	NSDictionary *d = [SAXParser attributesDictionary:attributes];
-	if (!RSXMLIsEmpty(d)) {
+	if (!RSParser_IsEmpty(d)) {
 		[self handleLinkAttributes:d];
 	}
 }

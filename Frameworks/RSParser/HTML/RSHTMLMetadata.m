@@ -1,6 +1,6 @@
 //
 //  RSHTMLMetadata.m
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 3/6/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
@@ -114,12 +114,12 @@ static NSString *kTypeKey = @"type";
 			continue;
 		}
 
-		NSString *oneType = [oneDictionary rsxml_objectForCaseInsensitiveKey:kTypeKey];
+		NSString *oneType = [oneDictionary rsparser_objectForCaseInsensitiveKey:kTypeKey];
 		if (!typeIsFeedType(oneType)) {
 			continue;
 		}
 
-		if (RSXMLStringIsEmpty(urlStringFromDictionary(oneDictionary))) {
+		if (RSParserStringIsEmpty(urlStringFromDictionary(oneDictionary))) {
 			continue;
 		}
 
@@ -142,18 +142,18 @@ static NSString *kTypeKey = @"type";
 
 static NSString *relValue(NSDictionary *d) {
 
-	return [d rsxml_objectForCaseInsensitiveKey:kRelKey];
+	return [d rsparser_objectForCaseInsensitiveKey:kRelKey];
 }
 
 
 static NSString *urlStringFromDictionary(NSDictionary *d) {
 
-	NSString *urlString = [d rsxml_objectForCaseInsensitiveKey:kHrefKey];
+	NSString *urlString = [d rsparser_objectForCaseInsensitiveKey:kHrefKey];
 	if (urlString) {
 		return urlString;
 	}
 
-	return [d rsxml_objectForCaseInsensitiveKey:kSrcKey];
+	return [d rsparser_objectForCaseInsensitiveKey:kSrcKey];
 }
 
 
@@ -172,7 +172,7 @@ static NSString *absoluteURLStringWithRelativeURLString(NSString *relativeURLStr
 static NSString *absoluteURLStringWithDictionary(NSDictionary *d, NSString *baseURLString) {
 
 	NSString *urlString = urlStringFromDictionary(d);
-	if (RSXMLStringIsEmpty(urlString)) {
+	if (RSParserStringIsEmpty(urlString)) {
 		return nil;
 	}
 	return absoluteURLStringWithRelativeURLString(urlString, baseURLString);
@@ -213,8 +213,8 @@ static BOOL typeIsFeedType(NSString *type) {
 	}
 
 	_urlString = absoluteURLStringWithDictionary(d, baseURLString);
-	_sizes = [d rsxml_objectForCaseInsensitiveKey:kSizesKey];
-	_rel = [d rsxml_objectForCaseInsensitiveKey:kRelKey];
+	_sizes = [d rsparser_objectForCaseInsensitiveKey:kSizesKey];
+	_rel = [d rsparser_objectForCaseInsensitiveKey:kRelKey];
 
 	return self;
 }
@@ -234,8 +234,8 @@ static BOOL typeIsFeedType(NSString *type) {
 	}
 
 	_urlString = absoluteURLStringWithDictionary(d, baseURLString);
-	_title = [d rsxml_objectForCaseInsensitiveKey:kTitleKey];
-	_type = [d rsxml_objectForCaseInsensitiveKey:kTypeKey];
+	_title = [d rsparser_objectForCaseInsensitiveKey:kTitleKey];
+	_type = [d rsparser_objectForCaseInsensitiveKey:kTypeKey];
 
 	return self;
 }

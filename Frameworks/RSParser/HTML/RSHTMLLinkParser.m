@@ -1,6 +1,6 @@
 //
 //  RSHTMLLinkParser.m
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 8/7/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
@@ -88,7 +88,7 @@ static NSString *kHrefKey = @"href";
 
 - (NSString *)urlStringFromDictionary:(NSDictionary *)d {
 
-	NSString *href = [d rsxml_objectForCaseInsensitiveKey:kHrefKey];
+	NSString *href = [d rsparser_objectForCaseInsensitiveKey:kHrefKey];
 	if (!href) {
 		return nil;
 	}
@@ -102,7 +102,7 @@ static NSString *kTitleKey = @"title";
 
 - (NSString *)titleFromDictionary:(NSDictionary *)d {
 
-	return [d rsxml_objectForCaseInsensitiveKey:kTitleKey];
+	return [d rsparser_objectForCaseInsensitiveKey:kTitleKey];
 }
 
 
@@ -127,7 +127,7 @@ static const NSInteger kAnchorLength = 2;
 	[self.links addObject:link];
 
 	NSDictionary *d = [SAXParser attributesDictionary:attributes];
-	if (!RSXMLIsEmpty(d)) {
+	if (!RSParser_IsEmpty(d)) {
 		[self handleLinkAttributes:d];
 	}
 

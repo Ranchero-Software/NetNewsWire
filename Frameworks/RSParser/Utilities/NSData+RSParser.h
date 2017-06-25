@@ -15,6 +15,11 @@
 - (BOOL)isProbablyXML;
 - (BOOL)isProbablyJSON;
 
+- (BOOL)isProbablyJSONFeed;
+- (BOOL)isProbablyRSSInJSON;
+- (BOOL)isProbablyRSS;
+- (BOOL)isProbablyAtom;
+
 @end
 
 

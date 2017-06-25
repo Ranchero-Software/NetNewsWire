@@ -39,7 +39,7 @@ static BOOL bytesStartWithStringIgnoringWhitespace(const char *string, const cha
 	return didFindString("https://jsonfeed.org/version/", self.bytes, self.length);
 }
 
-- (BOOL)isProbablyRSSInJSONFeed {
+- (BOOL)isProbablyRSSInJSON {
 
 	if (![self isProbablyJSON]) {
 		return NO;

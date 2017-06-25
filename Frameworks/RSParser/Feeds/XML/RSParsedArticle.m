@@ -56,16 +56,16 @@
 		datePublishedTimeStampString = [NSString stringWithFormat:@"%.0f", self.datePublished.timeIntervalSince1970];
 	}
 	
-	if (!RSXMLStringIsEmpty(self.guid)) {
+	if (!RSParserStringIsEmpty(self.guid)) {
 		[s appendString:self.guid];
 	}
 
-	else if (!RSXMLStringIsEmpty(self.link) && self.datePublished != nil) {
+	else if (!RSParserStringIsEmpty(self.link) && self.datePublished != nil) {
 		[s appendString:self.link];
 		[s appendString:datePublishedTimeStampString];
 	}
 
-	else if (!RSXMLStringIsEmpty(self.title) && self.datePublished != nil) {
+	else if (!RSParserStringIsEmpty(self.title) && self.datePublished != nil) {
 		[s appendString:self.title];
 		[s appendString:datePublishedTimeStampString];
 	}
@@ -74,19 +74,19 @@
 		[s appendString:datePublishedTimeStampString];
 	}
 
-	else if (!RSXMLStringIsEmpty(self.link)) {
+	else if (!RSParserStringIsEmpty(self.link)) {
 		[s appendString:self.link];
 	}
 
-	else if (!RSXMLStringIsEmpty(self.title)) {
+	else if (!RSParserStringIsEmpty(self.title)) {
 		[s appendString:self.title];
 	}
 	
-	else if (!RSXMLStringIsEmpty(self.body)) {
+	else if (!RSParserStringIsEmpty(self.body)) {
 		[s appendString:self.body];
 	}
 
-	NSAssert(!RSXMLStringIsEmpty(self.feedURL), nil);
+	NSAssert(!RSParserStringIsEmpty(self.feedURL), nil);
 	[s appendString:self.feedURL];
 
 	return [s rsxml_md5HashString];

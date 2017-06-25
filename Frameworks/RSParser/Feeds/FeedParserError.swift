@@ -17,6 +17,7 @@ public struct FeedParserError: Error {
 		case jsonFeedVersionNotFound
 		case jsonFeedItemsNotFound
 		case jsonFeedTitleNotFound
+		case invalidJSON
 	}
 
 	public let errorType: FeedParserErrorType

@@ -55,7 +55,7 @@
 	}
 
 	NSString *feedURL = self.attributes.opml_xmlUrl;
-	if (RSXMLIsEmpty(feedURL)) {
+	if (RSParserObjectIsEmpty(feedURL)) {
 		return nil;
 	}
 
