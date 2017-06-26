@@ -34,7 +34,7 @@
 	RSOPMLParser *parser = [[RSOPMLParser alloc] initWithParserData:parserData];
 
 	RSOPMLDocument *document = parser.OPMLDocument;
-	if (parser.error) {
+	if (parser.error && error) {
 		*error = parser.error;
 		return nil;
 	}
