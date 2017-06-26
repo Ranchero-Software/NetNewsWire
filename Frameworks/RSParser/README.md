@@ -1,6 +1,6 @@
 # RSParser
 
-(Note: I haven’t written tests yet. It’s possible that none of this works.)
+(Note: Tests are still incomplete. It’s possible that none of this works.)
 
 (Also note: this framework is intended to supersede my [RSXML](https://github.com/brentsimmons/RSXML) framework. Use this one instead. Well, once it’s working, that is.)
 

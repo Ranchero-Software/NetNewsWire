@@ -69,6 +69,8 @@
 		849A03DE1F00837A00122600 /* FeedParserTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A03DD1F00837A00122600 /* FeedParserTypeTests.swift */; };
 		849A03E01F0088F600122600 /* OPMLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A03DF1F0088F600122600 /* OPMLTests.swift */; };
 		849A03E21F00902C00122600 /* RSDateParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 849A03E11F00902C00122600 /* RSDateParserTests.m */; };
+		849A03E41F00912100122600 /* HTMLMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A03E31F00912100122600 /* HTMLMetadataTests.swift */; };
+		849A03E61F00952400122600 /* HTMLLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A03E51F00952400122600 /* HTMLLinkTests.swift */; };
 		84D81BDC1EFA28E700652332 /* RSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D81BDA1EFA28E700652332 /* RSParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84D81BDE1EFA2B7D00652332 /* ParsedFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */; };
 		84D81BE01EFA2BAE00652332 /* FeedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDF1EFA2BAE00652332 /* FeedType.swift */; };
@@ -153,6 +155,8 @@
 		849A03DD1F00837A00122600 /* FeedParserTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedParserTypeTests.swift; sourceTree = "<group>"; };
 		849A03DF1F0088F600122600 /* OPMLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OPMLTests.swift; sourceTree = "<group>"; };
 		849A03E11F00902C00122600 /* RSDateParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDateParserTests.m; sourceTree = "<group>"; };
+		849A03E31F00912100122600 /* HTMLMetadataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataTests.swift; sourceTree = "<group>"; };
+		849A03E51F00952400122600 /* HTMLLinkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLLinkTests.swift; sourceTree = "<group>"; };
 		84D81BD91EFA28E700652332 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84D81BDA1EFA28E700652332 /* RSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSParser.h; sourceTree = "<group>"; };
 		84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedFeed.swift; path = Feeds/ParsedFeed.swift; sourceTree = "<group>"; };
@@ -357,6 +361,8 @@
 				849A03DD1F00837A00122600 /* FeedParserTypeTests.swift */,
 				849A03DF1F0088F600122600 /* OPMLTests.swift */,
 				849A03E11F00902C00122600 /* RSDateParserTests.m */,
+				849A03E31F00912100122600 /* HTMLMetadataTests.swift */,
+				849A03E51F00952400122600 /* HTMLLinkTests.swift */,
 				849A03C41F0081EA00122600 /* Resources */,
 				84FF5F941EFA285800C15A01 /* Info.plist */,
 			);
@@ -545,8 +551,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				849A03E01F0088F600122600 /* OPMLTests.swift in Sources */,
+				849A03E61F00952400122600 /* HTMLLinkTests.swift in Sources */,
 				849A03E21F00902C00122600 /* RSDateParserTests.m in Sources */,
 				849A03DE1F00837A00122600 /* FeedParserTypeTests.swift in Sources */,
+				849A03E41F00912100122600 /* HTMLMetadataTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
