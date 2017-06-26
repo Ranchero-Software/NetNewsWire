@@ -55,6 +55,19 @@
 		84469D401EFF29A9004A6B28 /* FeedParserError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D3F1EFF29A9004A6B28 /* FeedParserError.swift */; };
 		84469D421EFF2B2D004A6B28 /* JSONTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D411EFF2B2D004A6B28 /* JSONTypes.swift */; };
 		84469D441F002CEF004A6B28 /* JSONFeedParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D431F002CEF004A6B28 /* JSONFeedParser.swift */; };
+		849A03D01F0081EA00122600 /* DaringFireball.html in Resources */ = {isa = PBXBuildFile; fileRef = 849A03C51F0081EA00122600 /* DaringFireball.html */; };
+		849A03D11F0081EA00122600 /* DaringFireball.rss in Resources */ = {isa = PBXBuildFile; fileRef = 849A03C61F0081EA00122600 /* DaringFireball.rss */; };
+		849A03D21F0081EA00122600 /* EMarley.rss in Resources */ = {isa = PBXBuildFile; fileRef = 849A03C71F0081EA00122600 /* EMarley.rss */; };
+		849A03D31F0081EA00122600 /* furbo.html in Resources */ = {isa = PBXBuildFile; fileRef = 849A03C81F0081EA00122600 /* furbo.html */; };
+		849A03D41F0081EA00122600 /* inessential.html in Resources */ = {isa = PBXBuildFile; fileRef = 849A03C91F0081EA00122600 /* inessential.html */; };
+		849A03D51F0081EA00122600 /* KatieFloyd.rss in Resources */ = {isa = PBXBuildFile; fileRef = 849A03CA1F0081EA00122600 /* KatieFloyd.rss */; };
+		849A03D61F0081EA00122600 /* manton.rss in Resources */ = {isa = PBXBuildFile; fileRef = 849A03CB1F0081EA00122600 /* manton.rss */; };
+		849A03D71F0081EA00122600 /* OneFootTsunami.atom in Resources */ = {isa = PBXBuildFile; fileRef = 849A03CC1F0081EA00122600 /* OneFootTsunami.atom */; };
+		849A03D81F0081EA00122600 /* scriptingNews.rss in Resources */ = {isa = PBXBuildFile; fileRef = 849A03CD1F0081EA00122600 /* scriptingNews.rss */; };
+		849A03D91F0081EA00122600 /* sixcolors.html in Resources */ = {isa = PBXBuildFile; fileRef = 849A03CE1F0081EA00122600 /* sixcolors.html */; };
+		849A03DA1F0081EA00122600 /* Subs.opml in Resources */ = {isa = PBXBuildFile; fileRef = 849A03CF1F0081EA00122600 /* Subs.opml */; };
+		849A03DE1F00837A00122600 /* FeedParserTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A03DD1F00837A00122600 /* FeedParserTypeTests.swift */; };
+		849A03E01F0088F600122600 /* OPMLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A03DF1F0088F600122600 /* OPMLTests.swift */; };
 		84D81BDC1EFA28E700652332 /* RSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D81BDA1EFA28E700652332 /* RSParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84D81BDE1EFA2B7D00652332 /* ParsedFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */; };
 		84D81BE01EFA2BAE00652332 /* FeedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDF1EFA2BAE00652332 /* FeedType.swift */; };
@@ -63,7 +76,6 @@
 		84D81BE61EFA2DFB00652332 /* ParsedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */; };
 		84D81BE81EFA2E6700652332 /* ParsedHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE71EFA2E6700652332 /* ParsedHub.swift */; };
 		84FF5F8E1EFA285800C15A01 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FF5F841EFA285800C15A01 /* RSParser.framework */; };
-		84FF5F931EFA285800C15A01 /* RSParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF5F921EFA285800C15A01 /* RSParserTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +138,19 @@
 		84469D3F1EFF29A9004A6B28 /* FeedParserError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedParserError.swift; path = Feeds/FeedParserError.swift; sourceTree = "<group>"; };
 		84469D411EFF2B2D004A6B28 /* JSONTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONTypes.swift; path = Feeds/JSON/JSONTypes.swift; sourceTree = "<group>"; };
 		84469D431F002CEF004A6B28 /* JSONFeedParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONFeedParser.swift; path = Feeds/JSON/JSONFeedParser.swift; sourceTree = "<group>"; };
+		849A03C51F0081EA00122600 /* DaringFireball.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DaringFireball.html; sourceTree = "<group>"; };
+		849A03C61F0081EA00122600 /* DaringFireball.rss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DaringFireball.rss; sourceTree = "<group>"; };
+		849A03C71F0081EA00122600 /* EMarley.rss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = EMarley.rss; sourceTree = "<group>"; };
+		849A03C81F0081EA00122600 /* furbo.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = furbo.html; sourceTree = "<group>"; };
+		849A03C91F0081EA00122600 /* inessential.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = inessential.html; sourceTree = "<group>"; };
+		849A03CA1F0081EA00122600 /* KatieFloyd.rss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = KatieFloyd.rss; sourceTree = "<group>"; };
+		849A03CB1F0081EA00122600 /* manton.rss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = manton.rss; sourceTree = "<group>"; };
+		849A03CC1F0081EA00122600 /* OneFootTsunami.atom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = OneFootTsunami.atom; sourceTree = "<group>"; };
+		849A03CD1F0081EA00122600 /* scriptingNews.rss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = scriptingNews.rss; sourceTree = "<group>"; };
+		849A03CE1F0081EA00122600 /* sixcolors.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = sixcolors.html; sourceTree = "<group>"; };
+		849A03CF1F0081EA00122600 /* Subs.opml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Subs.opml; sourceTree = "<group>"; };
+		849A03DD1F00837A00122600 /* FeedParserTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedParserTypeTests.swift; sourceTree = "<group>"; };
+		849A03DF1F0088F600122600 /* OPMLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OPMLTests.swift; sourceTree = "<group>"; };
 		84D81BD91EFA28E700652332 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84D81BDA1EFA28E700652332 /* RSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSParser.h; sourceTree = "<group>"; };
 		84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedFeed.swift; path = Feeds/ParsedFeed.swift; sourceTree = "<group>"; };
@@ -136,7 +161,6 @@
 		84D81BE71EFA2E6700652332 /* ParsedHub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedHub.swift; path = Feeds/ParsedHub.swift; sourceTree = "<group>"; };
 		84FF5F841EFA285800C15A01 /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84FF5F8D1EFA285800C15A01 /* RSParserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RSParserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		84FF5F921EFA285800C15A01 /* RSParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSParserTests.swift; sourceTree = "<group>"; };
 		84FF5F941EFA285800C15A01 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -279,6 +303,24 @@
 			name = JSON;
 			sourceTree = "<group>";
 		};
+		849A03C41F0081EA00122600 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				849A03C51F0081EA00122600 /* DaringFireball.html */,
+				849A03C61F0081EA00122600 /* DaringFireball.rss */,
+				849A03C71F0081EA00122600 /* EMarley.rss */,
+				849A03C81F0081EA00122600 /* furbo.html */,
+				849A03C91F0081EA00122600 /* inessential.html */,
+				849A03CA1F0081EA00122600 /* KatieFloyd.rss */,
+				849A03CB1F0081EA00122600 /* manton.rss */,
+				849A03CC1F0081EA00122600 /* OneFootTsunami.atom */,
+				849A03CD1F0081EA00122600 /* scriptingNews.rss */,
+				849A03CE1F0081EA00122600 /* sixcolors.html */,
+				849A03CF1F0081EA00122600 /* Subs.opml */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		84FF5F7A1EFA285800C15A01 = {
 			isa = PBXGroup;
 			children = (
@@ -310,7 +352,9 @@
 		84FF5F911EFA285800C15A01 /* RSParserTests */ = {
 			isa = PBXGroup;
 			children = (
-				84FF5F921EFA285800C15A01 /* RSParserTests.swift */,
+				849A03DD1F00837A00122600 /* FeedParserTypeTests.swift */,
+				849A03DF1F0088F600122600 /* OPMLTests.swift */,
+				849A03C41F0081EA00122600 /* Resources */,
 				84FF5F941EFA285800C15A01 /* Info.plist */,
 			);
 			path = RSParserTests;
@@ -401,6 +445,7 @@
 					};
 					84FF5F8C1EFA285800C15A01 = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 0830;
 					};
 				};
 			};
@@ -434,6 +479,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				849A03D51F0081EA00122600 /* KatieFloyd.rss in Resources */,
+				849A03D81F0081EA00122600 /* scriptingNews.rss in Resources */,
+				849A03D21F0081EA00122600 /* EMarley.rss in Resources */,
+				849A03DA1F0081EA00122600 /* Subs.opml in Resources */,
+				849A03D61F0081EA00122600 /* manton.rss in Resources */,
+				849A03D11F0081EA00122600 /* DaringFireball.rss in Resources */,
+				849A03D01F0081EA00122600 /* DaringFireball.html in Resources */,
+				849A03D71F0081EA00122600 /* OneFootTsunami.atom in Resources */,
+				849A03D41F0081EA00122600 /* inessential.html in Resources */,
+				849A03D31F0081EA00122600 /* furbo.html in Resources */,
+				849A03D91F0081EA00122600 /* sixcolors.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,7 +541,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84FF5F931EFA285800C15A01 /* RSParserTests.swift in Sources */,
+				849A03E01F0088F600122600 /* OPMLTests.swift in Sources */,
+				849A03DE1F00837A00122600 /* FeedParserTypeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,6 +610,7 @@
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -603,6 +661,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -659,13 +718,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				INFOPLIST_FILE = RSParserTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.RSParserTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -673,13 +733,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				INFOPLIST_FILE = RSParserTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.RSParserTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
