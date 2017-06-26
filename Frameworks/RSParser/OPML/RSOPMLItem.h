@@ -14,7 +14,7 @@
 @interface RSOPMLItem : NSObject
 
 @property (nonatomic) NSDictionary *attributes;
-@property (nonatomic) NSArray *children;
+@property (nonatomic) NSArray <RSOPMLItem *> *children;
 
 - (void)addChild:(RSOPMLItem *)child;
 
