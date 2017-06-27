@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840FDCB21F01FED00041F61B /* RSSParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FDCB11F01FED00041F61B /* RSSParserTests.swift */; };
 		84285AA81F005D53002E8708 /* RSSParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84285AA71F005D53002E8708 /* RSSParser.swift */; };
 		84285AAA1F006456002E8708 /* RSParsedFeedTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84285AA91F006456002E8708 /* RSParsedFeedTransformer.swift */; };
 		84285AAC1F006754002E8708 /* AtomParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84285AAB1F006754002E8708 /* AtomParser.swift */; };
@@ -73,6 +74,7 @@
 		849A03E61F00952400122600 /* HTMLLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A03E51F00952400122600 /* HTMLLinkTests.swift */; };
 		849A03E81F01F88600122600 /* ScriptingNews.json in Resources */ = {isa = PBXBuildFile; fileRef = 849A03E71F01F88600122600 /* ScriptingNews.json */; };
 		849A03EA1F01F92B00122600 /* inessential.json in Resources */ = {isa = PBXBuildFile; fileRef = 849A03E91F01F92B00122600 /* inessential.json */; };
+		849A03EC1F01FCDC00122600 /* RSSInJSONParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A03EB1F01FCDC00122600 /* RSSInJSONParserTests.swift */; };
 		84D81BDC1EFA28E700652332 /* RSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D81BDA1EFA28E700652332 /* RSParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84D81BDE1EFA2B7D00652332 /* ParsedFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */; };
 		84D81BE01EFA2BAE00652332 /* FeedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDF1EFA2BAE00652332 /* FeedType.swift */; };
@@ -94,6 +96,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		840FDCB11F01FED00041F61B /* RSSParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSParserTests.swift; sourceTree = "<group>"; };
 		84285AA71F005D53002E8708 /* RSSParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSParser.swift; sourceTree = "<group>"; };
 		84285AA91F006456002E8708 /* RSParsedFeedTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSParsedFeedTransformer.swift; sourceTree = "<group>"; };
 		84285AAB1F006754002E8708 /* AtomParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomParser.swift; sourceTree = "<group>"; };
@@ -161,6 +164,7 @@
 		849A03E51F00952400122600 /* HTMLLinkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLLinkTests.swift; sourceTree = "<group>"; };
 		849A03E71F01F88600122600 /* ScriptingNews.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ScriptingNews.json; sourceTree = "<group>"; };
 		849A03E91F01F92B00122600 /* inessential.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = inessential.json; sourceTree = "<group>"; };
+		849A03EB1F01FCDC00122600 /* RSSInJSONParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSInJSONParserTests.swift; sourceTree = "<group>"; };
 		84D81BD91EFA28E700652332 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84D81BDA1EFA28E700652332 /* RSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSParser.h; sourceTree = "<group>"; };
 		84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedFeed.swift; path = Feeds/ParsedFeed.swift; sourceTree = "<group>"; };
@@ -365,6 +369,8 @@
 			isa = PBXGroup;
 			children = (
 				849A03DD1F00837A00122600 /* FeedParserTypeTests.swift */,
+				849A03EB1F01FCDC00122600 /* RSSInJSONParserTests.swift */,
+				840FDCB11F01FED00041F61B /* RSSParserTests.swift */,
 				849A03DF1F0088F600122600 /* OPMLTests.swift */,
 				849A03E11F00902C00122600 /* RSDateParserTests.m */,
 				849A03E31F00912100122600 /* HTMLMetadataTests.swift */,
@@ -558,10 +564,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				849A03EC1F01FCDC00122600 /* RSSInJSONParserTests.swift in Sources */,
 				849A03E01F0088F600122600 /* OPMLTests.swift in Sources */,
 				849A03E61F00952400122600 /* HTMLLinkTests.swift in Sources */,
 				849A03E21F00902C00122600 /* RSDateParserTests.m in Sources */,
 				849A03DE1F00837A00122600 /* FeedParserTypeTests.swift in Sources */,
+				840FDCB21F01FED00041F61B /* RSSParserTests.swift in Sources */,
 				849A03E41F00912100122600 /* HTMLMetadataTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -19,8 +19,10 @@ public struct RSSInJSONParser {
 			guard let parsedObject = try JSONSerialization.jsonObject(with: parserData.data) as? JSONDictionary else {
 				throw FeedParserError(.invalidJSON)
 			}
-
-			guard let channelObject = parsedObject["channel"] as? JSONDictionary else {
+			guard let rssObject = parsedObject["rss"] as? JSONDictionary else {
+				throw FeedParserError(.rssChannelNotFound)
+			}
+			guard let channelObject = rssObject["channel"] as? JSONDictionary else {
 				throw FeedParserError(.rssChannelNotFound)
 			}
 
