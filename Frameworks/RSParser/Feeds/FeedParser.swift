@@ -8,54 +8,14 @@
 
 import Foundation
 
-// FeedParser handles the various syndication feed types.
-// It might be a good idea to do a plugin-style architecture here instead —
-// but feed formats don’t appear all that often, so it’s probably not necessary.
+// FeedParser handles RSS, Atom, JSON Feed, and RSS-in-JSON.
+// You don’t need to know the type of feed.
 
 public struct FeedParser {
 
-	static let minNumberOfBytesRequired = 128
+	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
 
-	public static func feedType(_ parserData: ParserData) -> FeedType {
-
-		// Can call with partial data — while still downloading, for instance.
-		// If there’s not enough data, return .unknown. Ask again when there’s more data.
-		// If it’s definitely not a feed, return .notAFeed.
-		//
-		// This should be fast enough to call on the main thread.
-
-		if parserData.data.count < minNumberOfBytesRequired {
-			return .unknown
-		}
-
-		let nsdata = parserData.data as NSData
-		if nsdata.isProbablyJSONFeed() {
-			return .jsonFeed
-		}
-		if nsdata.isProbablyRSSInJSON() {
-			return .rssInJSON
-		}
-
-		if nsdata.isProbablyHTML() {
-			return .notAFeed
-		}
-
-		if nsdata.isProbablyRSS() {
-			return .rss
-		}
-		if nsdata.isProbablyAtom() {
-			return .atom
-		}
-
-		return .notAFeed
-	}
-
-	public static func parseFeed(_ parserData: ParserData) throws -> ParsedFeed? {
-
-		// All the concrete parsers return a ParsedFeed struct.
-		// Related: ParsedItem, ParsedAuthor, ParsedHub, ParsedAttachment.
-		//
-		// This is probably fast enough to call on the main thread —
+		// This is generally fast enough to call on the main thread —
 		// but it’s probably a good idea to use a background queue if
 		// you might be doing a lot of parsing. (Such as in a feed reader.)
 

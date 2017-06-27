@@ -16,28 +16,28 @@ class FeedParserTypeTests: XCTestCase {
 	func testDaringFireballHTMLType() {
 
 		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
-		let type = FeedParser.feedType(d)
+		let type = feedType(d)
 		XCTAssertTrue(type == .notAFeed)
 	}
 
 	func testFurboHTMLType() {
 
 		let d = parserData("furbo", "html", "http://furbo.org/")
-		let type = FeedParser.feedType(d)
+		let type = feedType(d)
 		XCTAssertTrue(type == .notAFeed)
 	}
 	
 	func testInessentialHTMLType() {
 
 		let d = parserData("inessential", "html", "http://inessential.com/")
-		let type = FeedParser.feedType(d)
+		let type = feedType(d)
 		XCTAssertTrue(type == .notAFeed)
 	}
 
 	func testSixColorsHTMLType() {
 
 		let d = parserData("sixcolors", "html", "https://sixcolors.com/")
-		let type = FeedParser.feedType(d)
+		let type = feedType(d)
 		XCTAssertTrue(type == .notAFeed)
 	}
 	
@@ -46,28 +46,28 @@ class FeedParserTypeTests: XCTestCase {
 	func testEMarleyRSSType() {
 
 		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
-		let type = FeedParser.feedType(d)
+		let type = feedType(d)
 		XCTAssertTrue(type == .rss)
 	}
 
 	func testScriptingNewsRSSType() {
 
 		let d = parserData("scriptingNews", "rss", "http://scripting.com/")
-		let type = FeedParser.feedType(d)
+		let type = feedType(d)
 		XCTAssertTrue(type == .rss)
 	}
 	
 	func testKatieFloydRSSType() {
 
 		let d = parserData("KatieFloyd", "rss", "https://katiefloyd.com/")
-		let type = FeedParser.feedType(d)
+		let type = feedType(d)
 		XCTAssertTrue(type == .rss)
 	}
 
 	func testMantonRSSType() {
 
 		let d = parserData("manton", "rss", "http://manton.org/")
-		let type = FeedParser.feedType(d)
+		let type = feedType(d)
 		XCTAssertTrue(type == .rss)
 	}
 
@@ -77,28 +77,77 @@ class FeedParserTypeTests: XCTestCase {
 
 		// File extension is .rss, but it’s really an Atom feed.
 		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
-		let type = FeedParser.feedType(d)
+		let type = feedType(d)
 		XCTAssertTrue(type == .atom)
 	}
 
 	func testOneFootTsunamiAtomType() {
 
 		let d = parserData("OneFootTsunami", "atom", "http://onefoottsunami.com/")
-		let type = FeedParser.feedType(d)
+		let type = feedType(d)
 		XCTAssertTrue(type == .atom)
 	}
 
+	// MARK: RSS-in-JSON
+
+	func testScriptingNewsJSONType() {
+
+		let d = parserData("ScriptingNews", "json", "http://scripting.com/")
+		let type = feedType(d)
+		XCTAssertTrue(type == .rssInJSON)
+	}
+
+	// MARK: JSON Feed
+
+	func testInessentialJSONFeedType() {
+
+		let d = parserData("inessential", "json", "http://inessential.com/")
+		let type = feedType(d)
+		XCTAssertTrue(type == .jsonFeed)
+	}
+	
 	// MARK: Performance
 	
 	func testFeedTypePerformance() {
 
-		// I get 0.000079 on my 2012 iMac. feedType is fast, at least in this case.
+		// 0.000 on my 2012 iMac.
 
 		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
 		self.measure {
-			let _ = FeedParser.feedType(d)
+			let _ = feedType(d)
 		}
 	}
+
+	func testFeedTypePerformance2() {
+
+		// 0.000 on my 2012 iMac.
+
+		let d = parserData("inessential", "json", "http://inessential.com/")
+		self.measure {
+			let _ = feedType(d)
+		}
+	}
+
+	func testFeedTypePerformance3() {
+
+		// 0.000 on my 2012 iMac.
+
+		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
+		self.measure {
+			let _ = feedType(d)
+		}
+	}
+
+	func testFeedTypePerformance4() {
+
+		// 0.001 on my 2012 iMac.
+
+		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
+		self.measure {
+			let _ = feedType(d)
+		}
+	}
+
 }
 
 func parserData(_ filename: String, _ fileExtension: String, _ url: String) -> ParserData {

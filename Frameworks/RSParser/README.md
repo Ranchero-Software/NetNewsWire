@@ -65,3 +65,11 @@ Normally I avoid this kind of thing *strenuously*. I prefer to work at the highe
 But my more-than-a-decade of experience parsing XML has led me to this solution, which — last time I checked, which was, admittedly, a few years ago — was not only fastest but also uses the least memory. (The two things are related, of course: creating objects is bad for performance, so this code attempts to do the minimum possible.)
 
 All that low-level stuff is encapsulated, however. If you just want to parse one of the popular feed formats, see `FeedParser`, which makes it easy and Swift-y.
+
+## Thread safety
+
+Everything here is thread-safe.
+
+Everything’s pretty fast, too, so you probably could just use the main thread/queue. But it’s totally a-okay to use a non-serial background queue.
+
+
