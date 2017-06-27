@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		840FDCB21F01FED00041F61B /* RSSParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FDCB11F01FED00041F61B /* RSSParserTests.swift */; };
+		840FDCB41F0217410041F61B /* JSONFeedParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FDCB31F0217410041F61B /* JSONFeedParserTests.swift */; };
+		840FDCB61F0217D20041F61B /* AtomParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FDCB51F0217D20041F61B /* AtomParserTests.swift */; };
+		840FDCB81F0218670041F61B /* DaringFireball.atom in Resources */ = {isa = PBXBuildFile; fileRef = 840FDCB71F0218670041F61B /* DaringFireball.atom */; };
+		840FDCBA1F02186D0041F61B /* DaringFireball.json in Resources */ = {isa = PBXBuildFile; fileRef = 840FDCB91F02186D0041F61B /* DaringFireball.json */; };
 		84285AA81F005D53002E8708 /* RSSParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84285AA71F005D53002E8708 /* RSSParser.swift */; };
 		84285AAA1F006456002E8708 /* RSParsedFeedTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84285AA91F006456002E8708 /* RSParsedFeedTransformer.swift */; };
 		84285AAC1F006754002E8708 /* AtomParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84285AAB1F006754002E8708 /* AtomParser.swift */; };
@@ -97,6 +101,10 @@
 
 /* Begin PBXFileReference section */
 		840FDCB11F01FED00041F61B /* RSSParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSParserTests.swift; sourceTree = "<group>"; };
+		840FDCB31F0217410041F61B /* JSONFeedParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONFeedParserTests.swift; sourceTree = "<group>"; };
+		840FDCB51F0217D20041F61B /* AtomParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomParserTests.swift; sourceTree = "<group>"; };
+		840FDCB71F0218670041F61B /* DaringFireball.atom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DaringFireball.atom; sourceTree = "<group>"; };
+		840FDCB91F02186D0041F61B /* DaringFireball.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DaringFireball.json; sourceTree = "<group>"; };
 		84285AA71F005D53002E8708 /* RSSParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSParser.swift; sourceTree = "<group>"; };
 		84285AA91F006456002E8708 /* RSParsedFeedTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSParsedFeedTransformer.swift; sourceTree = "<group>"; };
 		84285AAB1F006754002E8708 /* AtomParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomParser.swift; sourceTree = "<group>"; };
@@ -321,6 +329,8 @@
 			isa = PBXGroup;
 			children = (
 				849A03C51F0081EA00122600 /* DaringFireball.html */,
+				840FDCB71F0218670041F61B /* DaringFireball.atom */,
+				840FDCB91F02186D0041F61B /* DaringFireball.json */,
 				849A03C61F0081EA00122600 /* DaringFireball.rss */,
 				849A03C71F0081EA00122600 /* EMarley.rss */,
 				849A03C81F0081EA00122600 /* furbo.html */,
@@ -370,7 +380,9 @@
 			children = (
 				849A03DD1F00837A00122600 /* FeedParserTypeTests.swift */,
 				849A03EB1F01FCDC00122600 /* RSSInJSONParserTests.swift */,
+				840FDCB31F0217410041F61B /* JSONFeedParserTests.swift */,
 				840FDCB11F01FED00041F61B /* RSSParserTests.swift */,
+				840FDCB51F0217D20041F61B /* AtomParserTests.swift */,
 				849A03DF1F0088F600122600 /* OPMLTests.swift */,
 				849A03E11F00902C00122600 /* RSDateParserTests.m */,
 				849A03E31F00912100122600 /* HTMLMetadataTests.swift */,
@@ -502,6 +514,7 @@
 			files = (
 				849A03D51F0081EA00122600 /* KatieFloyd.rss in Resources */,
 				849A03D81F0081EA00122600 /* scriptingNews.rss in Resources */,
+				840FDCBA1F02186D0041F61B /* DaringFireball.json in Resources */,
 				849A03D21F0081EA00122600 /* EMarley.rss in Resources */,
 				849A03DA1F0081EA00122600 /* Subs.opml in Resources */,
 				849A03D61F0081EA00122600 /* manton.rss in Resources */,
@@ -512,6 +525,7 @@
 				849A03D41F0081EA00122600 /* inessential.html in Resources */,
 				849A03D31F0081EA00122600 /* furbo.html in Resources */,
 				849A03E81F01F88600122600 /* ScriptingNews.json in Resources */,
+				840FDCB81F0218670041F61B /* DaringFireball.atom in Resources */,
 				849A03D91F0081EA00122600 /* sixcolors.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -566,10 +580,12 @@
 			files = (
 				849A03EC1F01FCDC00122600 /* RSSInJSONParserTests.swift in Sources */,
 				849A03E01F0088F600122600 /* OPMLTests.swift in Sources */,
+				840FDCB41F0217410041F61B /* JSONFeedParserTests.swift in Sources */,
 				849A03E61F00952400122600 /* HTMLLinkTests.swift in Sources */,
 				849A03E21F00902C00122600 /* RSDateParserTests.m in Sources */,
 				849A03DE1F00837A00122600 /* FeedParserTypeTests.swift in Sources */,
 				840FDCB21F01FED00041F61B /* RSSParserTests.swift in Sources */,
+				840FDCB61F0217D20041F61B /* AtomParserTests.swift in Sources */,
 				849A03E41F00912100122600 /* HTMLMetadataTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
