@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSXML
+import RSParser
 
 private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom"]
 
@@ -21,9 +21,9 @@ class HTMLFeedFinder {
 
 	fileprivate var feedSpecifiersDictionary = [String: FeedSpecifier]()
 
-	init(xmlData: RSXMLData) {
+	init(parserData: ParserData) {
 
-		let metadata = RSHTMLMetadataParser(xmlData: xmlData).metadata
+		let metadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
 
 		for oneFeedLink in metadata.feedLinks {
 			if let oneURLString = oneFeedLink.urlString {
@@ -32,7 +32,7 @@ class HTMLFeedFinder {
 			}
 		}
 
-		if let bodyLinks = RSHTMLLinkParser.htmlLinks(with: xmlData) {
+		if let bodyLinks = RSHTMLLinkParser.htmlLinks(with: parserData) {
 			for oneBodyLink in bodyLinks {
 
 				if linkMightBeFeed(oneBodyLink) {

@@ -8,7 +8,7 @@
 
 import Foundation
 import RSCore
-import RSXML
+import RSParser
 import RSDatabase
 import DataModel
 
@@ -182,7 +182,7 @@ final class LocalDatabase {
 				unreadCounts[oneFeedID] = self.unreadCount(oneFeedID, database)
 			}
 			
-			DispatchQueue.main.async() { () -> Void in
+			DispatchQueue.main.async() {
 				completion(unreadCounts)
 			}
 		}
@@ -191,14 +191,14 @@ final class LocalDatabase {
 
 	// MARK: Updating Articles
 
-	func updateFeedWithParsedFeed(_ feed: LocalFeed, parsedFeed: RSParsedFeed, completionHandler: @escaping RSVoidCompletionBlock) {
+	func updateFeedWithParsedFeed(_ feed: LocalFeed, parsedFeed: ParsedFeed, completionHandler: @escaping RSVoidCompletionBlock) {
 
-		if parsedFeed.articles.isEmpty {
+		if parsedFeed.items.isEmpty {
 			completionHandler()
 			return
 		}
 
-		let parsedArticlesDictionary = self.articlesDictionary(parsedFeed.articles as NSSet) as! [String: RSParsedArticle]
+		let parsedArticlesDictionary = self.articlesDictionary(parsedFeed.articles as NSSet) as! [String: ParsedItem]
 
 		fetchArticlesForFeedAsync(feed) { (articles) -> Void in
 
@@ -259,7 +259,7 @@ private extension LocalDatabase {
 
 	// MARK: Updating Articles
 	
-	func updateArticles(_ articles: [String: LocalArticle], parsedArticles: [String: RSParsedArticle], feed: LocalFeed, completionHandler: @escaping RSVoidCompletionBlock) {
+	func updateArticles(_ articles: [String: LocalArticle], parsedArticles: [String: ParsedItem], feed: LocalFeed, completionHandler: @escaping RSVoidCompletionBlock) {
 		
 		statusesManager.ensureStatusesForParsedArticles(Set(parsedArticles.values)) {
 			
@@ -282,7 +282,7 @@ private extension LocalDatabase {
 		return d
 	}
 	
-	func updateExistingArticles(_ articles: [String: LocalArticle], _ parsedArticles: [String: RSParsedArticle]) -> Set<NSDictionary> {
+	func updateExistingArticles(_ articles: [String: LocalArticle], _ parsedArticles: [String: ParsedItem]) -> Set<NSDictionary> {
 		
 		var articleChanges = Set<NSDictionary>()
 		
@@ -299,12 +299,12 @@ private extension LocalDatabase {
 
 	// MARK: Creating Articles
 	
-	func createNewArticlesWithParsedArticles(_ parsedArticles: Set<RSParsedArticle>, feedID: String) -> Set<LocalArticle> {
+	func createNewArticlesWithParsedArticles(_ parsedArticles: Set<ParsedItem>, feedID: String) -> Set<LocalArticle> {
 		
 		return Set(parsedArticles.map { LocalArticle(account: account, feedID: feedID, parsedArticle: $0) })
 	}
 	
-	func articlesWithParsedArticles(_ parsedArticles: Set<RSParsedArticle>, feedID: String) -> Set<LocalArticle> {
+	func articlesWithParsedArticles(_ parsedArticles: Set<ParsedItem>, feedID: String) -> Set<LocalArticle> {
 		
 		var localArticles = Set<LocalArticle>()
 		
@@ -316,7 +316,7 @@ private extension LocalDatabase {
 		return localArticles
 	}
 	
-	func createNewArticles(_ existingArticles: [String: LocalArticle], parsedArticles: [String: RSParsedArticle], feedID: String) -> Set<LocalArticle> {
+	func createNewArticles(_ existingArticles: [String: LocalArticle], parsedArticles: [String: ParsedItem], feedID: String) -> Set<LocalArticle> {
 		
 		let newParsedArticles = parsedArticlesMinusExistingArticles(parsedArticles, existingArticles: existingArticles)
 		let newArticles = createNewArticlesWithParsedArticles(newParsedArticles, feedID: feedID)
@@ -326,13 +326,13 @@ private extension LocalDatabase {
 		return newArticles
 	}
 	
-	func parsedArticlesMinusExistingArticles(_ parsedArticles: [String: RSParsedArticle], existingArticles: [String: LocalArticle]) -> Set<RSParsedArticle> {
+	func parsedArticlesMinusExistingArticles(_ parsedArticles: [String: ParsedItem], existingArticles: [String: LocalArticle]) -> Set<ParsedItem> {
 		
-		var result = Set<RSParsedArticle>()
+		var result = Set<ParsedItem>()
 		
 		for oneParsedArticle in parsedArticles.values {
 			
-			if let _ = existingArticles[oneParsedArticle.articleID] {
+			if let _ = existingArticles[oneParsedArticle.databaseID] {
 				continue
 			}
 			result.insert(oneParsedArticle)

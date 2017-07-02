@@ -10,7 +10,8 @@ import Foundation
 
 public struct ParsedItem {
 
-	public let uniqueID: String?
+	public let uniqueID: String
+	public let feedURL: String
 	public let url: String?
 	public let externalURL: String?
 	public let title: String?
@@ -25,9 +26,10 @@ public struct ParsedItem {
 	public let tags: [String]?
 	public let attachments: [ParsedAttachment]?
 
-	init(uniqueID: String?, url: String?, externalURL: String?, title: String?, contentHTML: String?, contentText: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [ParsedAuthor]?, tags: [String]?, attachments: [ParsedAttachment]?) {
+	init(uniqueID: String, feedURL: String, url: String?, externalURL: String?, title: String?, contentHTML: String?, contentText: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [ParsedAuthor]?, tags: [String]?, attachments: [ParsedAttachment]?) {
 
 		self.uniqueID = uniqueID
+		self.feedURL = feedURL
 		self.url = url
 		self.externalURL = externalURL
 		self.title = title

@@ -18,11 +18,8 @@ public func FolderPostChildrenDidChangeNotification(_ folder: Folder) {
 	NotificationCenter.default.post(name: NSNotification.Name(rawValue: FolderChildrenDidChangeNotification), object: folder)
 }
 
-public protocol Folder: class, UnreadCountProvider, DisplayNameProvider {
+public protocol Container: class {
 	
-	// TODO: get rid of children, flattenedFeeds, and some default implementations in favor of faster, specific ones.
-	
-//	var children: NSSet {get}
 	var account: Account? {get}
 	
 	var hasAtLeastOneFeed: Bool {get} //Recursive

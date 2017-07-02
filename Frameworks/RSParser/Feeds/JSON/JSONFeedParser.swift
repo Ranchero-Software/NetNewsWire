@@ -39,7 +39,7 @@ public struct JSONFeedParser {
 			let expired = parsedObject["expired"] as? Bool ?? false
 			let hubs = parseHubs(parsedObject)
 
-			let items = parseItems(itemsArray)
+			let items = parseItems(itemsArray, parserData.url)
 
 			return ParsedFeed(type: .jsonFeed, title: title, homePageURL: homePageURL, feedURL: feedURL, feedDescription: feedDescription, nextURL: nextURL, iconURL: iconURL, faviconURL: faviconURL, authors: authors, expired: expired, hubs: hubs, items: items)
 
@@ -81,14 +81,14 @@ private extension JSONFeedParser {
 		return hubs.isEmpty ? nil : hubs
 	}
 
-	static func parseItems(_ itemsArray: JSONArray) -> [ParsedItem] {
+	static func parseItems(_ itemsArray: JSONArray, _ feedURL: String) -> [ParsedItem] {
 
 		return itemsArray.flatMap { (oneItemDictionary) -> ParsedItem? in
-			return parseItem(oneItemDictionary)
+			return parseItem(oneItemDictionary, feedURL)
 		}
 	}
 
-	static func parseItem(_ itemDictionary: JSONDictionary) -> ParsedItem? {
+	static func parseItem(_ itemDictionary: JSONDictionary, _ feedURL: String) -> ParsedItem? {
 
 		guard let uniqueID = parseUniqueID(itemDictionary) else {
 			return nil
@@ -114,7 +114,7 @@ private extension JSONFeedParser {
 		let tags = itemDictionary["tags"] as? [String]
 		let attachments = parseAttachments(itemDictionary)
 
-		return ParsedItem(uniqueID: uniqueID, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
+		return ParsedItem(uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
 	}
 
 	static func parseUniqueID(_ itemDictionary: JSONDictionary) -> String? {

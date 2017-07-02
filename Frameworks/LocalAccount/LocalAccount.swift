@@ -8,7 +8,7 @@
 
 import Foundation
 import RSCore
-import RSXML
+import RSParser
 import RSWeb
 import DataModel
 
@@ -130,7 +130,7 @@ public final class LocalAccount: Account, PlistProvider  {
 
 	public func importOPML(_ opmlDocument: Any) {
 		
-		if let opmlItems = (opmlDocument as? RSOPMLDocument)?.children as? [RSOPMLItem] {
+		if let opmlItems = (opmlDocument as? RSOPMLDocument)?.children {
 			performDataModelBatchUpdates {
 				importOPMLItems(opmlItems)
 			}
@@ -369,7 +369,7 @@ public final class LocalAccount: Account, PlistProvider  {
 	
 	// MARK: Updating
 	
-	func update(_ feed: LocalFeed, parsedFeed: RSParsedFeed, completionHandler: @escaping RSVoidCompletionBlock) {
+	func update(_ feed: LocalFeed, parsedFeed: ParsedFeed, completionHandler: @escaping RSVoidCompletionBlock) {
 		
 		if let titleFromFeed = parsedFeed.title {
 			if feed.name != titleFromFeed {
@@ -377,7 +377,7 @@ public final class LocalAccount: Account, PlistProvider  {
 				self.diskSaver.dirty = true
 			}
 		}
-		if let linkFromFeed = parsedFeed.link {
+		if let linkFromFeed = parsedFeed.homePageURL {
 			if feed.homePageURL != linkFromFeed {
 				feed.homePageURL = linkFromFeed
 				self.diskSaver.dirty = true
@@ -562,7 +562,7 @@ private extension LocalAccount {
 
 		for oneItem in items {
 
-			if oneItem.isFolder, let childItems = oneItem.children as? [RSOPMLItem] {
+			if oneItem.isFolder, let childItems = oneItem.children {
 				importOPMLTopLevelFolder(oneItem, childItems)
 			}
 		}
@@ -592,7 +592,7 @@ private extension LocalAccount {
 
 		for oneItem in items {
 
-			if oneItem.isFolder, let childItems = oneItem.children as? [RSOPMLItem] {
+			if oneItem.isFolder, let childItems = oneItem.children {
 				importOPMLItemsIntoFolder(childItems, folder)
 				continue
 			}

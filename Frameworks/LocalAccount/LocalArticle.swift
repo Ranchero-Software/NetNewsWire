@@ -8,8 +8,9 @@
 
 import Foundation
 import DataModel
+import RSParser
 
-public final class LocalArticle: NSObject, Article {
+public final class LocalArticle: Article, Hashable {
 
 	public let account: Account?
 	public let feedID: String
@@ -46,18 +47,12 @@ public final class LocalArticle: NSObject, Article {
 
 	private let _hash: Int
 	
-	public override var hashValue: Int {
-		get {
-			return _hash
-		}
-	}
-	
 	public init(account: Account, feedID: String, articleID: String) {
 
 		self.account = account
 		self.feedID = feedID
 		self.articleID = articleID
-		self._hash = articleID.hashValue
+		self._hash = databaseID.hashValue
 	}
 	
 	public override func isEqual(_ object: Any?) -> Bool {
@@ -84,7 +79,7 @@ public final class LocalArticle: NSObject, Article {
 
 import RSCore
 import RSDatabase
-import RSXML
+import RSParser
 
 // Database columns *and* value keys.
 
@@ -103,18 +98,18 @@ private let mergeablePropertyNames = [articleGuidKey, articleTitleKey, articleBo
 
 public extension LocalArticle {
 
-	convenience init(account: Account, feedID: String, parsedArticle: RSParsedArticle) {
+	convenience init(account: Account, feedID: String, parsedItem: ParsedItem) {
 
-		self.init(account: account, feedID: feedID, articleID: parsedArticle.articleID)
+		self.init(account: account, feedID: feedID, articleID: parsedItem.databaseID)
 		
-		self.guid = parsedArticle.guid
-		self.title = parsedArticle.title
-		self.body = parsedArticle.body
-		self.datePublished = parsedArticle.datePublished
-		self.dateModified = parsedArticle.dateModified
-		self.link = parsedArticle.link
-		self.permalink = parsedArticle.permalink
-		self.author = parsedArticle.author
+		self.guid = parsedItem.uniqueID
+		self.title = parsedItem.title
+		self.body = (parsedItem.contentHTML ?? parsedItem.contentText) ?? ""
+		self.datePublished = parsedItem.datePublished
+		self.dateModified = parsedItem.dateModified
+		self.link = parsedItem.externalURL
+		self.permalink = parsedItem.url
+		self.authors = parsedItem.authors
 	}
 
 	private enum ColumnIndex: Int {
@@ -145,7 +140,7 @@ public extension LocalArticle {
 		}
 	}
 
-	func updateWithParsedArticle(_ parsedArticle: RSParsedArticle) -> NSDictionary? {
+	func updateWithParsedArticle(_ parsedArticle: ParsedItem) -> NSDictionary? {
 
 		let d: NSDictionary = rs_mergeValues(withObjectReturningChanges: parsedArticle, propertyNames: mergeablePropertyNames) as NSDictionary
 		if d.count < 1 {

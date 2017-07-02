@@ -23,8 +23,9 @@
 		84D37AD81D68CFD500110870 /* DataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D37AD71D68CFD500110870 /* DataModel.framework */; };
 		84D37ADA1D68CFEE00110870 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D37AD91D68CFEE00110870 /* RSCore.framework */; };
 		84D37ADC1D68CFFC00110870 /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D37ADB1D68CFFC00110870 /* RSDatabase.framework */; };
-		84D37ADE1D68D00700110870 /* RSXML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D37ADD1D68D00700110870 /* RSXML.framework */; };
 		84D37AE21D68D07700110870 /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D37AE11D68D07700110870 /* RSWeb.framework */; };
+		84F466591F0352F000225386 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84F466581F0352F000225386 /* RSParser.framework */; };
+		84F4665B1F07321400225386 /* LocalAuthor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F4665A1F07321400225386 /* LocalAuthor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,8 @@
 		84D37ADB1D68CFFC00110870 /* RSDatabase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSDatabase.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Rainier-cidsoqwawkdqqphkdtrqrojskege/Build/Products/Debug/RSDatabase.framework"; sourceTree = "<group>"; };
 		84D37ADD1D68D00700110870 /* RSXML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSXML.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Rainier-cidsoqwawkdqqphkdtrqrojskege/Build/Products/Debug/RSXML.framework"; sourceTree = "<group>"; };
 		84D37AE11D68D07700110870 /* RSWeb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSWeb.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Rainier-cidsoqwawkdqqphkdtrqrojskege/Build/Products/Debug/RSWeb.framework"; sourceTree = "<group>"; };
+		84F466581F0352F000225386 /* RSParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSParser.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Evergreen-edcdqyvewhytnmcfaiesnqiqeynn/Build/Products/Debug/RSParser.framework"; sourceTree = "<group>"; };
+		84F4665A1F07321400225386 /* LocalAuthor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalAuthor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,8 +69,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84F466591F0352F000225386 /* RSParser.framework in Frameworks */,
 				84D37AE21D68D07700110870 /* RSWeb.framework in Frameworks */,
-				84D37ADE1D68D00700110870 /* RSXML.framework in Frameworks */,
 				84D37ADC1D68CFFC00110870 /* RSDatabase.framework in Frameworks */,
 				84D37ADA1D68CFEE00110870 /* RSCore.framework in Frameworks */,
 				84D37AD81D68CFD500110870 /* DataModel.framework in Frameworks */,
@@ -104,6 +107,7 @@
 				8471A2E01ED4CFF3008F099E /* LocalFolder.swift */,
 				8471A2E21ED4CFFB008F099E /* LocalFeed.swift */,
 				8471A2E41ED4D007008F099E /* LocalArticle.swift */,
+				84F4665A1F07321400225386 /* LocalAuthor.swift */,
 				8471A2E61ED4D012008F099E /* LocalArticleStatus.swift */,
 				8471A2E81ED4D01B008F099E /* DiskDictionaryConstants.swift */,
 				8442EB3F1D68C8B200D709AE /* Database */,
@@ -135,6 +139,7 @@
 		84D37AD61D68CFD500110870 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				84F466581F0352F000225386 /* RSParser.framework */,
 				84D37AE11D68D07700110870 /* RSWeb.framework */,
 				84D37ADD1D68D00700110870 /* RSXML.framework */,
 				84D37ADB1D68CFFC00110870 /* RSDatabase.framework */,
@@ -265,6 +270,7 @@
 				8471A2FE1ED4D0AD008F099E /* LocalStatusesManager.swift in Sources */,
 				8471A2DD1ED4CFE4008F099E /* LocalAccount.swift in Sources */,
 				8471A2DF1ED4CFEB008F099E /* LocalAccountRefresher.swift in Sources */,
+				84F4665B1F07321400225386 /* LocalAuthor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

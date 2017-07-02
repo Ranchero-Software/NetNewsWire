@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSXML
+import RSParser
 import RSWeb
 import RSCore
 
@@ -89,8 +89,8 @@ private extension FeedFinder {
 
 	func possibleFeedsInHTMLPage(htmlData: Data, urlString: String) -> Set<FeedSpecifier> {
 
-		let xmlData = RSXMLData(data: htmlData, urlString: urlString)
-		var feedSpecifiers = HTMLFeedFinder(xmlData: xmlData).feedSpecifiers
+		let parserData = ParserData(url: urlString, data: htmlData)
+		var feedSpecifiers = HTMLFeedFinder(parserData: parserData).feedSpecifiers
 
 		if feedSpecifiers.isEmpty {
 			// Odds are decent it’s a WordPress site, and just adding /feed/ will work.
@@ -201,8 +201,8 @@ private extension FeedFinder {
 	}
 
 	func isFeed(_ data: Data, _ urlString: String) -> Bool {
-		
-		let xmlData = RSXMLData(data: data, urlString: urlString)
-		return RSCanParseFeed(xmlData)
+
+		let parserData = ParserData(url: urlString, data: data)
+		return FeedParser.canParse(parserData)
 	}
 }

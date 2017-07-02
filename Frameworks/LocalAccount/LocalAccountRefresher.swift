@@ -8,7 +8,7 @@
 
 import Foundation
 import RSCore
-import RSXML
+import RSParser
 import RSWeb
 
 final class LocalAccountRefresher: DownloadSessionDelegate {
@@ -67,8 +67,8 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 			return
 		}
 		
-		let xmlData = RSXMLData(data: data, urlString: feed.url)
-		RSParseFeed(xmlData) { (parsedFeed, error) in
+		let parserData = ParserData(url: feed.url, data: data)
+		FeedParser.parse(parserData) { (parsedFeed, error) in
 			
 			guard let account = self.account, let parsedFeed = parsedFeed, error == nil else {
 				return
@@ -101,8 +101,8 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 		}
 		
 		if data.count > 4096 {
-			let xmlData = RSXMLData(data: data, urlString: feed.url)
-			return RSCanParseFeed(xmlData)
+			let parserData = ParserData(url: feed.url, data: data)
+			return FeedParser.canParse(parserData)
 		}
 		
 		return true		

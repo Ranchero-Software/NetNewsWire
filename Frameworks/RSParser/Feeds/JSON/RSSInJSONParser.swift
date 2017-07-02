@@ -47,7 +47,7 @@ public struct RSSInJSONParser {
 			let feedURL = parserData.url
 			let feedDescription = channelObject["description"] as? String
 
-			let items = parseItems(itemsObject!)
+			let items = parseItems(itemsObject!, parserData.url)
 
 			return ParsedFeed(type: .rssInJSON, title: title, homePageURL: homePageURL, feedURL: feedURL, feedDescription: feedDescription, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
 
@@ -58,15 +58,15 @@ public struct RSSInJSONParser {
 
 private extension RSSInJSONParser {
 
-	static func parseItems(_ itemsObject: JSONArray) -> [ParsedItem] {
+	static func parseItems(_ itemsObject: JSONArray, _ feedURL: String) -> [ParsedItem] {
 
 		return itemsObject.flatMap{ (oneItemDictionary) -> ParsedItem? in
 
-			return parsedItemWithDictionary(oneItemDictionary)
+			return parsedItemWithDictionary(oneItemDictionary, feedURL)
 		}
 	}
 
-	static func parsedItemWithDictionary(_ itemDictionary: JSONDictionary) -> ParsedItem? {
+	static func parsedItemWithDictionary(_ itemDictionary: JSONDictionary, _ feedURL: String) -> ParsedItem? {
 
 		let externalURL = itemDictionary["link"] as? String
 		let title = itemDictionary["title"] as? String
@@ -126,7 +126,10 @@ private extension RSSInJSONParser {
 			uniqueID = (s as NSString).rsparser_md5Hash()
 		}
 
-		return ParsedItem(uniqueID: uniqueID, url: nil, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: authors, tags: tags, attachments: attachments)
+		if let uniqueID = uniqueID {
+			return ParsedItem(uniqueID: uniqueID, feedURL: feedURL, url: nil, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: authors, tags: tags, attachments: attachments)
+		}
+		return nil
 	}
 
 	static func parseAuthors(_ itemDictionary: JSONDictionary) -> [ParsedAuthor]? {

@@ -9,7 +9,7 @@
 import Foundation
 import RSCore
 import RSDatabase
-import RSXML
+import RSParser
 import DataModel
 
 final class LocalStatusesManager {
@@ -43,9 +43,9 @@ final class LocalStatusesManager {
 		}
 	}
 	
-	func ensureStatusesForParsedArticles(_ parsedArticles: Set<RSParsedArticle>, _ callback: @escaping RSVoidCompletionBlock) {
+	func ensureStatusesForParsedArticles(_ parsedArticles: [ParsedItem], _ callback: @escaping RSVoidCompletionBlock) {
 		
-		var articleIDs = Set(parsedArticles.map { $0.articleID })
+		var articleIDs = Set(parsedArticles.map { $0.databaseID })
 		articleIDs = articleIDsMissingStatuses(articleIDs)
 		if articleIDs.isEmpty {
 			callback()
@@ -56,7 +56,7 @@ final class LocalStatusesManager {
 			
 			let statuses = self.fetchStatusesForArticleIDs(articleIDs, database: database)
 			
-			DispatchQueue.main.async { () -> Void in
+			DispatchQueue.main.async {
 				
 				self.cacheStatuses(statuses)
 				
@@ -209,3 +209,11 @@ private extension LocalStatusesManager {
 	}
 }
 
+extension ParsedItem {
+
+	var databaseID: String {
+		get {
+			return "\(feedURL) \(uniqueID)"
+		}
+	}
+}

@@ -1,6 +1,6 @@
 //
 //  RSDateParserTests.m
-//  RSXML
+//  RSParser
 //
 //  Created by Brent Simmons on 12/26/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.

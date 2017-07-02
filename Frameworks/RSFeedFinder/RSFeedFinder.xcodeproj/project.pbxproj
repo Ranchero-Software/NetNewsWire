@@ -16,11 +16,11 @@
 		8430C47C1D58033D00E02399 /* sixcolors.html in Resources */ = {isa = PBXBuildFile; fileRef = 8430C4791D58033D00E02399 /* sixcolors.html */; };
 		8444267C1D5138A00092EDD4 /* FeedFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444267B1D5138A00092EDD4 /* FeedFinder.swift */; };
 		84B06FEF1ED3808F00F0B54B /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FEE1ED3808F00F0B54B /* RSWeb.framework */; };
-		84B06FF11ED380A700F0B54B /* RSXML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FF01ED380A700F0B54B /* RSXML.framework */; };
 		84B06FF31ED3812600F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FF21ED3812600F0B54B /* RSCore.framework */; };
 		84BAAE231C8E6B3B009F5239 /* RSFeedFinder.h in Headers */ = {isa = PBXBuildFile; fileRef = 84BAAE221C8E6B3B009F5239 /* RSFeedFinder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84BAAE2A1C8E6B3B009F5239 /* RSFeedFinder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BAAE1F1C8E6B3B009F5239 /* RSFeedFinder.framework */; };
 		84BAAE2F1C8E6B3B009F5239 /* RSFeedFinderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BAAE2E1C8E6B3B009F5239 /* RSFeedFinderTests.m */; };
+		84F466571F03523100225386 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84F466561F03523100225386 /* RSParser.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +54,7 @@
 		84E697E51C8E6C10009C585A /* RSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSCore.framework; path = ../RSCore/build/Debug/RSCore.framework; sourceTree = "<group>"; };
 		84E697E71C8E6C16009C585A /* RSXML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSXML.framework; path = ../RSXML/build/Debug/RSXML.framework; sourceTree = "<group>"; };
 		84E697E91C8E6C20009C585A /* RSWeb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSWeb.framework; path = ../RSWeb/build/Debug/RSWeb.framework; sourceTree = "<group>"; };
+		84F466561F03523100225386 /* RSParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSParser.framework; path = ../RSParser/build/Debug/RSParser.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,8 +62,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84F466571F03523100225386 /* RSParser.framework in Frameworks */,
 				84B06FF31ED3812600F0B54B /* RSCore.framework in Frameworks */,
-				84B06FF11ED380A700F0B54B /* RSXML.framework in Frameworks */,
 				84B06FEF1ED3808F00F0B54B /* RSWeb.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -81,6 +82,7 @@
 		84B06FED1ED3808E00F0B54B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				84F466561F03523100225386 /* RSParser.framework */,
 				84B06FF21ED3812600F0B54B /* RSCore.framework */,
 				84B06FF01ED380A700F0B54B /* RSXML.framework */,
 				84B06FEE1ED3808F00F0B54B /* RSWeb.framework */,

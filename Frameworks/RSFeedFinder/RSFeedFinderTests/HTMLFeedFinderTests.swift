@@ -8,7 +8,7 @@
 
 import XCTest
 @testable import RSFeedFinder
-import RSXML
+import RSParser
 
 class HTMLFeedFinderTests: XCTestCase {
 

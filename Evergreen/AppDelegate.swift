@@ -11,7 +11,7 @@ import DB5
 import DataModel
 import RSTextDrawing
 import RSTree
-import RSXML
+import RSParser
 import RSWeb
 
 var currentTheme: VSTheme!
@@ -353,7 +353,7 @@ private extension AppDelegate {
 			return
 		}
 
-		let xmlData = RSXMLData(data: opmlData, urlString: url.absoluteString)
+		let parserData = ParserData(data: opmlData, urlString: url.absoluteString)
 		RSParseOPML(xmlData) { (opmlDocument, error) in
 
 			if let error = error {

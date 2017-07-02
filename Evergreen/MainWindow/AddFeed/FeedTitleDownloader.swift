@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSXML
+import RSParser
 import RSWeb
 
 func downloadTitleForFeed(_ url: URL, _ completionHandler: @escaping (_ title: String?) -> ()) {
@@ -19,9 +19,8 @@ func downloadTitleForFeed(_ url: URL, _ completionHandler: @escaping (_ title: S
 			return
 		}
 
-		let xmlData = RSXMLData(data: data, urlString: url.absoluteString)
-		RSParseFeed(xmlData) { (parsedFeed : RSParsedFeed?, error: Error?) in
-
+		let parserData = ParserData(url: url.absoluteString, data: data)
+		FeedParser.parse(parserData) { (parsedFeed, error) in
 			completionHandler(parsedFeed?.title)
 		}
 	}
