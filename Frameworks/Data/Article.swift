@@ -11,24 +11,24 @@ import Foundation
 public final class Article: Hashable {
 
 	weak var account: Account?
-	let feedID: String
-	let articleID: String //Calculated: unique per account
+	public let feedID: String
+	public let articleID: String //Calculated: unique per account
 
-	var uniqueID: String //guid: unique per feed
-	var title: String?
-	var contentHTML: String?
-	var contentText: String?
-	var url: String?
-	var externalURL: String?
-	var summary: String?
-	var imageURL: String?
-	var bannerImageURL: String?
-	var datePublished: Date?
-	var dateModified: Date?
-	var authors: [Author]?
-	var tags: [String]?
-	var attachments: [Attachment]?
-	var status: ArticleStatus?
+	public var uniqueID: String //guid: unique per feed
+	public var title: String?
+	public var contentHTML: String?
+	public var contentText: String?
+	public var url: String?
+	public var externalURL: String?
+	public var summary: String?
+	public var imageURL: String?
+	public var bannerImageURL: String?
+	public var datePublished: Date?
+	public var dateModified: Date?
+	public var authors: [Author]?
+	public var tags: [String]?
+	public var attachments: [Attachment]?
+	public var status: ArticleStatus?
 	public let hashValue: Int
 	
 	public var accountInfo: [String: Any]? //If account needs to store more data

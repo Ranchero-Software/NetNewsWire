@@ -1,5 +1,5 @@
- //
-//  LocalStatusesManager.swift
+//
+//  StatusesManager.swift
 //  Evergreen
 //
 //  Created by Brent Simmons on 5/8/16.
@@ -9,12 +9,12 @@
 import Foundation
 import RSCore
 import RSDatabase
-//import RSParser
+import RSParser
 import Data
 
-final class LocalStatusesManager {
+final class StatusesManager {
 	
-	var cachedStatuses = [String: LocalArticleStatus]()
+	var cachedStatuses = [String: ArticleStatus]()
 	let queue: RSDatabaseQueue
 	
 	init(queue: RSDatabaseQueue) {
@@ -22,30 +22,29 @@ final class LocalStatusesManager {
 		self.queue = queue
 	}
 	
-	func markArticles(_ articles: Set<LocalArticle>, statusKey: ArticleStatusKey, flag: Bool) {
+	func markArticles(_ articles: Set<Article>, statusKey: ArticleStatusKey, flag: Bool) {
 		
 		assertNoMissingStatuses(articles)
-		let statusArray = articles.map { $0.status! as! LocalArticleStatus }
-		let statuses = Set(statusArray)
+		let statuses = Set(articles.flatMap { $0.status })
 		markArticleStatuses(statuses, statusKey: statusKey, flag: flag)
 	}
 
-	func attachCachedUniqueStatuses(_ articles: Set<LocalArticle>) {
+	func attachCachedStatuses(_ articles: Set<Article>) {
 		
-		articles.forEach { (oneLocalArticle) in
+		articles.forEach { (oneArticle) in
 			
-			if let cachedStatus = cachedStatusForArticleID(oneLocalArticle.articleID) {
-				oneLocalArticle.status = cachedStatus
+			if let cachedStatus = cachedStatusForArticleID(oneArticle.articleID) {
+				oneArticle.status = cachedStatus
 			}
-			else if let oneLocalArticleStatus = oneLocalArticle.status as? LocalArticleStatus {
-				cacheStatus(oneLocalArticleStatus)
+			else if let oneArticleStatus = oneArticle.status as? ArticleStatus {
+				cacheStatus(oneArticleStatus)
 			}
 		}
 	}
 	
 	func ensureStatusesForParsedArticles(_ parsedArticles: [ParsedItem], _ callback: @escaping RSVoidCompletionBlock) {
 		
-		var articleIDs = Set(parsedArticles.map { $0.databaseID })
+		var articleIDs = Set(parsedArticles.map { $0.articleID })
 		articleIDs = articleIDsMissingStatuses(articleIDs)
 		if articleIDs.isEmpty {
 			callback()
@@ -67,7 +66,7 @@ final class LocalStatusesManager {
 		}
 	}
 
-	func assertNoMissingStatuses(_ articles: Set<LocalArticle>) {
+	func assertNoMissingStatuses(_ articles: Set<Article>) {
 		
 		for oneArticle in articles {
 			if oneArticle.status == nil {
@@ -82,11 +81,11 @@ final class LocalStatusesManager {
 
 private let statusesTableName = "statuses"
 
-private extension LocalStatusesManager {
+private extension StatusesManager {
 	
 	// MARK: Marking
 	
-	func markArticleStatuses(_ statuses: Set<LocalArticleStatus>, statusKey: ArticleStatusKey, flag: Bool) {
+	func markArticleStatuses(_ statuses: Set<ArticleStatus>, statusKey: ArticleStatusKey, flag: Bool) {
 		
 		// Ignore the statuses where status.[statusKey] == flag. Update the remainder and save in database.
 		
@@ -107,25 +106,25 @@ private extension LocalStatusesManager {
 
 	// MARK: Fetching
 	
-	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, database: FMDatabase) -> Set<LocalArticleStatus> {
+	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, database: FMDatabase) -> Set<ArticleStatus> {
 		
 		guard !articleIDs.isEmpty else {
-			return Set<LocalArticleStatus>()
+			return Set<ArticleStatus>()
 		}
 		
 		guard let resultSet = database.rs_selectRowsWhereKey(articleIDKey, inValues: Array(articleIDs), tableName: statusesTableName) else {
-			return Set<LocalArticleStatus>()
+			return Set<ArticleStatus>()
 		}
 		
-		return localArticleStatusesWithResultSet(resultSet)
+		return articleStatusesWithResultSet(resultSet)
 	}
 
-	func localArticleStatusesWithResultSet(_ resultSet: FMResultSet) -> Set<LocalArticleStatus> {
+	func articleStatusesWithResultSet(_ resultSet: FMResultSet) -> Set<ArticleStatus> {
 		
-		var statuses = Set<LocalArticleStatus>()
+		var statuses = Set<ArticleStatus>()
 		
 		while(resultSet.next()) {
-			if let oneArticleStatus = LocalArticleStatus(row: resultSet) {
+			if let oneArticleStatus = ArticleStatus(row: resultSet) {
 				statuses.insert(oneArticleStatus)
 			}
 		}
@@ -135,7 +134,7 @@ private extension LocalStatusesManager {
 	
 	// MARK: Saving
 	
-	func saveStatuses(_ statuses: Set<LocalArticleStatus>) {
+	func saveStatuses(_ statuses: Set<ArticleStatus>) {
 		
 		let statusArray = statuses.map { (oneStatus) -> NSDictionary in
 			return oneStatus.databaseDictionary
@@ -164,7 +163,7 @@ private extension LocalStatusesManager {
 
 		let now = Date()
 		let statuses = articleIDs.map { (oneArticleID) -> LocalArticleStatus in
-			return LocalArticleStatus(articleID: oneArticleID, read: false, starred: false, userDeleted: false, dateArrived: now)
+			return ArticleStatus(articleID: oneArticleID, read: false, starred: false, userDeleted: false, dateArrived: now)
 		}
 		cacheStatuses(Set(statuses))
 
@@ -181,17 +180,17 @@ private extension LocalStatusesManager {
 
 	// MARK: Cache
 	
-	func cachedStatusForArticleID(_ articleID: String) -> LocalArticleStatus? {
+	func cachedStatusForArticleID(_ articleID: String) -> ArticleStatus? {
 		
 		return cachedStatuses[articleID]
 	}
 	
-	func cacheStatus(_ status: LocalArticleStatus) {
+	func cacheStatus(_ status: ArticleStatus) {
 		
 		cacheStatuses(Set([status]))
 	}
 	
-	func cacheStatuses(_ statuses: Set<LocalArticleStatus>) {
+	func cacheStatuses(_ statuses: Set<ArticleStatus>) {
 		
 		statuses.forEach { (oneStatus) in
 			if let _ = cachedStatuses[oneStatus.articleID] {

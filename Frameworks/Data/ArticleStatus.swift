@@ -15,13 +15,14 @@ public enum ArticleStatusKey: String {
 	case userDeleted = "userDeleted"
 }
 
-public final class ArticleStatus {
+public final class ArticleStatus: Hashable {
 	
 	public var read = false
 	public var starred = false
 	public var userDeleted = false
 	public var dateArrived: Date
 	var accountInfo: AccountInfo?
+	public let hashValue: Int
 	
 	init(read: Bool, starred: Bool, userDeleted: Bool, dateArrived: Date, accountInfo: AccountInfo?) {
 		
@@ -30,6 +31,7 @@ public final class ArticleStatus {
 		self.userDeleted = userDeleted
 		self.dateArrived = dateArrived
 		self.accountInfo = accountInfo
+		self.hashValue = dateArrived.hashValue
 	}
 	
 	func boolStatusForKey(_ key: String) -> Bool {
@@ -68,5 +70,10 @@ public final class ArticleStatus {
 			}
 			accountInfo![key] = status
 		}
+	}
+	
+	public class func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
+		
+		return lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred
 	}
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol AccountDelegate {
+public protocol AccountDelegate: class {
 
 	func canAddItem(_ item: AnyObject, toContainer: Container) -> Bool
 

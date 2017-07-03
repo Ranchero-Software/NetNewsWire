@@ -8,8 +8,8 @@
 
 import Foundation
 import RSCore
-//import RSParser
 import RSDatabase
+import RSParser
 import Data
 
 let sqlLogging = false
@@ -20,7 +20,7 @@ func logSQL(_ sql: String) {
 	}
 }
 
-typealias LocalArticleResultBlock = (Set<LocalArticle>) -> Void
+typealias ArticleResultBlock = (Set<Article>) -> Void
 
 private let articlesTableName = "articles"
 
@@ -28,43 +28,34 @@ final class LocalDatabase {
 
 	fileprivate let queue: RSDatabaseQueue
 	private let databaseFile: String
-	fileprivate let statusesManager: LocalStatusesManager
-	fileprivate let articleCache: LocalArticleCache
+	fileprivate let statusesManager: StatusesManager
+	fileprivate let articleCache = ArticlesManager()
 	fileprivate var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	fileprivate let minimumNumberOfArticles = 10
+	fileprivate weak var delegate: AccountDelegate?
 	
-	var account: LocalAccount!
+	init(databaseFile: String, delegate: AccountDelegate) {
 
-	init(databaseFile: String) {
-
+		self.delegate = delegate
 		self.databaseFile = databaseFile
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
-		self.statusesManager = LocalStatusesManager(queue: self.queue)
-		self.articleCache = LocalArticleCache(statusesManager: self.statusesManager)
+		self.statusesManager = StatusesManager(queue: self.queue)
 		
-		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "LocalCreateStatements", ofType: "sql")!
+		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
 		let createStatements = try! NSString(contentsOfFile: createStatementsPath, encoding: String.Encoding.utf8.rawValue)
 		queue.createTables(usingStatements: createStatements as String)
 		queue.vacuumIfNeeded()
 	}
 
-	// MARK: API
-
-	func startup() {
-
-		assert(account != nil)
-//		deleteOldArticles(articleIDsInFeeds)
-	}
-
 	// MARK: Fetching Articles
 
-	func fetchArticlesForFeed(_ feed: LocalFeed) -> Set<LocalArticle> {
+	func fetchArticlesForFeed(_ feed: Feed) -> Set<Article> {
 
 //		if let articles = articleCache.cachedArticlesForFeedID(feed.feedID) {
 //			return articles
 //		}
 
-		var fetchedArticles = Set<LocalArticle>()
+		var fetchedArticles = Set<Article>()
 		let feedID = feed.feedID
 
 		queue.fetchSync { (database: FMDatabase!) -> Void in
@@ -76,7 +67,7 @@ final class LocalDatabase {
 		return filteredArticles(articles, feedCounts: [feed.feedID: fetchedArticles.count])
 	}
 
-	func fetchArticlesForFeedAsync(_ feed: LocalFeed, _ resultBlock: @escaping LocalArticleResultBlock) {
+	func fetchArticlesForFeedAsync(_ feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
 
 //		if let articles = articleCache.cachedArticlesForFeedID(feed.feedID) {
 //			resultBlock(articles)
@@ -138,18 +129,18 @@ final class LocalDatabase {
 
 	}
 
-	func fetchUnreadArticlesForFolder(_ folder: LocalFolder) -> Set<LocalArticle> {
+	func fetchUnreadArticlesForFolder(_ folder: Folder) -> Set<Article> {
 		
 		return fetchUnreadArticlesForFeedIDs(Array(folder.flattenedFeedIDs))
 	}
 	
-	func fetchUnreadArticlesForFeedIDs(_ feedIDs: [String]) -> Set<LocalArticle> {
+	func fetchUnreadArticlesForFeedIDs(_ feedIDs: [String]) -> Set<Article> {
 		
 		if feedIDs.isEmpty {
 			return Set<LocalArticle>()
 		}
 		
-		var fetchedArticles = Set<LocalArticle>()
+		var fetchedArticles = Set<Article>()
 		var counts = [String: Int]()
 		
 		queue.fetchSync { (database: FMDatabase!) -> Void in
@@ -191,14 +182,14 @@ final class LocalDatabase {
 
 	// MARK: Updating Articles
 
-	func updateFeedWithParsedFeed(_ feed: LocalFeed, parsedFeed: ParsedFeed, completionHandler: @escaping RSVoidCompletionBlock) {
+	func updateFeedWithParsedFeed(_ feed: Feed, parsedFeed: ParsedFeed, completionHandler: @escaping RSVoidCompletionBlock) {
 
 		if parsedFeed.items.isEmpty {
 			completionHandler()
 			return
 		}
 
-		let parsedArticlesDictionary = self.articlesDictionary(parsedFeed.articles as NSSet) as! [String: ParsedItem]
+		let parsedArticlesDictionary = self.articlesDictionary(parsedFeed.items as NSSet) as! [String: ParsedItem]
 
 		fetchArticlesForFeedAsync(feed) { (articles) -> Void in
 
@@ -211,7 +202,7 @@ final class LocalDatabase {
 	
 	func markArticles(_ articles: NSSet, statusKey: ArticleStatusKey, flag: Bool) {
 		
-		statusesManager.markArticles(articles as! Set<LocalArticle>, statusKey: statusKey, flag: flag)
+		statusesManager.markArticles(articles as! Set<Article>, statusKey: statusKey, flag: flag)
 	}
 }
 
@@ -221,7 +212,7 @@ private extension LocalDatabase {
 	
 	// MARK: Saving Articles
 	
-	func saveUpdatedAndNewArticles(_ articleChanges: Set<NSDictionary>, newArticles: Set<LocalArticle>) {
+	func saveUpdatedAndNewArticles(_ articleChanges: Set<NSDictionary>, newArticles: Set<Article>) {
 		
 		if articleChanges.isEmpty && newArticles.isEmpty {
 			return
@@ -259,7 +250,7 @@ private extension LocalDatabase {
 
 	// MARK: Updating Articles
 	
-	func updateArticles(_ articles: [String: LocalArticle], parsedArticles: [String: ParsedItem], feed: LocalFeed, completionHandler: @escaping RSVoidCompletionBlock) {
+	func updateArticles(_ articles: [String: Article], parsedArticles: [String: ParsedItem], feed: Feed, completionHandler: @escaping RSVoidCompletionBlock) {
 		
 		statusesManager.ensureStatusesForParsedArticles(Set(parsedArticles.values)) {
 			
@@ -282,7 +273,7 @@ private extension LocalDatabase {
 		return d
 	}
 	
-	func updateExistingArticles(_ articles: [String: LocalArticle], _ parsedArticles: [String: ParsedItem]) -> Set<NSDictionary> {
+	func updateExistingArticles(_ articles: [String: Article], _ parsedArticles: [String: ParsedItem]) -> Set<NSDictionary> {
 		
 		var articleChanges = Set<NSDictionary>()
 		
@@ -299,14 +290,14 @@ private extension LocalDatabase {
 
 	// MARK: Creating Articles
 	
-	func createNewArticlesWithParsedArticles(_ parsedArticles: Set<ParsedItem>, feedID: String) -> Set<LocalArticle> {
+	func createNewArticlesWithParsedArticles(_ parsedArticles: Set<ParsedItem>, feedID: String) -> Set<Article> {
 		
 		return Set(parsedArticles.map { LocalArticle(account: account, feedID: feedID, parsedArticle: $0) })
 	}
 	
-	func articlesWithParsedArticles(_ parsedArticles: Set<ParsedItem>, feedID: String) -> Set<LocalArticle> {
+	func articlesWithParsedArticles(_ parsedArticles: Set<ParsedItem>, feedID: String) -> Set<Article> {
 		
-		var localArticles = Set<LocalArticle>()
+		var localArticles = Set<Article>()
 		
 		for oneParsedArticle in parsedArticles {
 			let oneLocalArticle = LocalArticle(account: self.account, feedID: feedID, parsedArticle: oneParsedArticle)
@@ -316,7 +307,7 @@ private extension LocalDatabase {
 		return localArticles
 	}
 	
-	func createNewArticles(_ existingArticles: [String: LocalArticle], parsedArticles: [String: ParsedItem], feedID: String) -> Set<LocalArticle> {
+	func createNewArticles(_ existingArticles: [String: Article], parsedArticles: [String: ParsedItem], feedID: String) -> Set<Article> {
 		
 		let newParsedArticles = parsedArticlesMinusExistingArticles(parsedArticles, existingArticles: existingArticles)
 		let newArticles = createNewArticlesWithParsedArticles(newParsedArticles, feedID: feedID)
@@ -326,7 +317,7 @@ private extension LocalDatabase {
 		return newArticles
 	}
 	
-	func parsedArticlesMinusExistingArticles(_ parsedArticles: [String: ParsedItem], existingArticles: [String: LocalArticle]) -> Set<ParsedItem> {
+	func parsedArticlesMinusExistingArticles(_ parsedArticles: [String: ParsedItem], existingArticles: [String: Article]) -> Set<ParsedItem> {
 		
 		var result = Set<ParsedItem>()
 		
@@ -343,7 +334,7 @@ private extension LocalDatabase {
 	
 	// MARK: Fetching Articles
 	
-	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]?) -> Set<LocalArticle> {
+	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]?) -> Set<Article> {
 		
 		let sql = "select * from articles natural join statuses where \(whereClause);"
 		logSQL(sql)
@@ -355,14 +346,14 @@ private extension LocalDatabase {
 		return Set<LocalArticle>()
 	}
 
-	func articlesWithResultSet(_ resultSet: FMResultSet) -> Set<LocalArticle> {
+	func articlesWithResultSet(_ resultSet: FMResultSet) -> Set<Article> {
 
-		var fetchedArticles = Set<LocalArticle>()
+		var fetchedArticles = Set<Article>()
 
 		while (resultSet.next()) {
 
-			if let oneArticle = LocalArticle(account: self.account, row: resultSet) {
-				oneArticle.status = LocalArticleStatus(row: resultSet)
+			if let oneArticle = Article(account: self.account, row: resultSet) {
+				oneArticle.status = ArticleStatus(row: resultSet)
 				fetchedArticles.insert(oneArticle)
 			}
 		}
@@ -370,7 +361,7 @@ private extension LocalDatabase {
 		return fetchedArticles
 	}
 
-	func fetchArticlesForFeedID(_ feedID: String, database: FMDatabase) -> Set<LocalArticle> {
+	func fetchArticlesForFeedID(_ feedID: String, database: FMDatabase) -> Set<Article> {
 		
 		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject])
 	}
@@ -430,7 +421,7 @@ private extension LocalDatabase {
 	
 	// MARK: Filtering out old articles
 	
-	func articleIsOlderThanCutoffDate(_ article: LocalArticle) -> Bool {
+	func articleIsOlderThanCutoffDate(_ article: Article) -> Bool {
 		
 		if let dateArrived = article.status?.dateArrived {
 			return dateArrived < articleArrivalCutoffDate
@@ -438,12 +429,12 @@ private extension LocalDatabase {
 		return false
 	}
 	
-	func articleShouldBeSavedForever(_ article: LocalArticle) -> Bool {
+	func articleShouldBeSavedForever(_ article: Article) -> Bool {
 		
 		return article.status.starred
 	}
 	
-	func articleShouldAppearToUser(_ article: LocalArticle, _ numberOfArticlesInFeed: Int) -> Bool {
+	func articleShouldAppearToUser(_ article: Article, _ numberOfArticlesInFeed: Int) -> Bool {
 
 		if numberOfArticlesInFeed <= minimumNumberOfArticles {
 			return true
@@ -453,9 +444,9 @@ private extension LocalDatabase {
 	
 	private static let minimumNumberOfArticlesInFeed = 10
 	
-	func filteredArticles(_ articles: Set<LocalArticle>, feedCounts: [String: Int]) -> Set<LocalArticle> {
+	func filteredArticles(_ articles: Set<Article>, feedCounts: [String: Int]) -> Set<Article> {
 
-		var articlesSet = Set<LocalArticle>()
+		var articlesSet = Set<Article>()
 
 		for oneArticle in articles {
 			if let feedCount = feedCounts[oneArticle.feedID], articleShouldAppearToUser(oneArticle, feedCount) {
@@ -469,12 +460,12 @@ private extension LocalDatabase {
 	
 	typealias FeedCountCallback = (Int) -> Void
 	
-	func feedIDsFromArticles(_ articles: Set<LocalArticle>) -> Set<String> {
+	func feedIDsFromArticles(_ articles: Set<Article>) -> Set<String> {
 		
 		return Set(articles.map { $0.feedID })
 	}
 	
-	func deletePossibleOldArticles(_ articles: Set<LocalArticle>) {
+	func deletePossibleOldArticles(_ articles: Set<Article>) {
 		
 		let feedIDs = feedIDsFromArticles(articles)
 		if feedIDs.isEmpty {
@@ -506,7 +497,7 @@ private extension LocalDatabase {
 		}
 	}
 	
-	func deleteOldArticlesInFeed(_ feed: LocalFeed) {
+	func deleteOldArticlesInFeed(_ feed: Feed) {
 		
 		numberOfArticlesInFeedID(feed.feedID) { (numberOfArticlesInFeed) in
 			

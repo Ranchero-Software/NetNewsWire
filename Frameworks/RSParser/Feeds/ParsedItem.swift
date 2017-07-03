@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ParsedItem {
+public struct ParsedItem: Hashable {
 
 	public let uniqueID: String
 	public let feedURL: String
@@ -25,7 +25,8 @@ public struct ParsedItem {
 	public let authors: [ParsedAuthor]?
 	public let tags: [String]?
 	public let attachments: [ParsedAttachment]?
-
+	public let hashValue: Int
+	
 	init(uniqueID: String, feedURL: String, url: String?, externalURL: String?, title: String?, contentHTML: String?, contentText: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [ParsedAuthor]?, tags: [String]?, attachments: [ParsedAttachment]?) {
 
 		self.uniqueID = uniqueID
@@ -43,6 +44,12 @@ public struct ParsedItem {
 		self.authors = authors
 		self.tags = tags
 		self.attachments = attachments
+		self.hashValue = uniqueID.hashValue
+	}
+	
+	public static func ==(lhs: ParsedItem, rhs: ParsedItem) -> Bool {
+		
+		return lhs.hashValue == rhs.hashValue && lhs.uniqueID == rhs.uniqueID && lhs.feedURL == rhs.feedURL
 	}
 }
 
