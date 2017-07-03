@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		844BEE411F0AB3AB004AB7CD /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEE371F0AB3AA004AB7CD /* Database.framework */; };
 		844BEE461F0AB3AB004AB7CD /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */; };
-		844BEE481F0AB3AB004AB7CD /* Database.h in Headers */ = {isa = PBXBuildFile; fileRef = 844BEE3A1F0AB3AA004AB7CD /* Database.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,7 +23,6 @@
 
 /* Begin PBXFileReference section */
 		844BEE371F0AB3AA004AB7CD /* Database.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Database.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		844BEE3A1F0AB3AA004AB7CD /* Database.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Database.h; sourceTree = "<group>"; };
 		844BEE3B1F0AB3AA004AB7CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		844BEE401F0AB3AB004AB7CD /* DatabaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DatabaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTests.swift; sourceTree = "<group>"; };
@@ -71,7 +69,6 @@
 		844BEE391F0AB3AA004AB7CD /* Database */ = {
 			isa = PBXGroup;
 			children = (
-				844BEE3A1F0AB3AA004AB7CD /* Database.h */,
 				844BEE3B1F0AB3AA004AB7CD /* Info.plist */,
 			);
 			path = Database;
@@ -93,7 +90,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				844BEE481F0AB3AB004AB7CD /* Database.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,7 +325,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = Database/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Database;
@@ -350,7 +346,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = Database/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Database;
@@ -405,6 +401,7 @@
 				844BEE4D1F0AB3AB004AB7CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		844BEE4E1F0AB3AB004AB7CD /* Build configuration list for PBXNativeTarget "DatabaseTests" */ = {
 			isa = XCConfigurationList;
@@ -413,6 +410,7 @@
 				844BEE501F0AB3AB004AB7CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
