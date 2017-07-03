@@ -15,5 +15,5 @@ import Foundation
 
 public protocol PlistProvider: class {
 
-	var plist: AnyObject? {get}
+	func plist() -> AnyObject?
 }

@@ -1,5 +1,5 @@
 //
-//  Folder.swift
+//  AccountDelegate.swift
 //  DataModel
 //
 //  Created by Brent Simmons on 7/1/17.
@@ -8,7 +8,9 @@
 
 import Foundation
 
-public class Folder: Container {
+public protocol AccountDelegate {
 
-	
+	func canAddItem(_ item: AnyObject, toContainer: Container) -> Bool
+
 }
+

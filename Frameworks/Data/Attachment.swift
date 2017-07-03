@@ -25,8 +25,8 @@ public struct Attachment: Equatable {
 		self.durationInSeconds = durationInSeconds
 	}
 
-	public class func ==(lhs: Attachment, rhs: Attachment) -> Bool {
+	public static func ==(lhs: Attachment, rhs: Attachment) -> Bool {
 
-		return lhs.url == rhs.url && lhs.mimeType == rhs.mimeType && lhs.title == rhs.title && lhs.sizeInBytes == rhs.sizeInBytes && lhs.durationInSeconds == rhs.durationInSeconds
+		return lhs.sizeInBytes == rhs.sizeInBytes && lhs.url == rhs.url && lhs.mimeType == rhs.mimeType && lhs.title == rhs.title && lhs.durationInSeconds == rhs.durationInSeconds
 	}
 }

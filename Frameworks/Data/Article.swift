@@ -25,11 +25,12 @@ public final class Article: Hashable {
 	var bannerImageURL: String?
 	var datePublished: Date?
 	var dateModified: Date?
-	var authors: [Authors]?
+	var authors: [Author]?
 	var tags: [String]?
 	var attachments: [Attachment]?
 	var status: ArticleStatus?
-
+	public let hashValue: Int
+	
 	public var accountInfo: [String: Any]? //If account needs to store more data
 
 	var feed: Feed? {
@@ -38,7 +39,7 @@ public final class Article: Hashable {
 		}
 	}
 
-	init(account: Account, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Authors]?, tags: [String]?, attachments: [Attachment]?) {
+	init(account: Account, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: [String]?, attachments: [Attachment]?) {
 
 		self.account = account
 		self.feedID = feedID
@@ -53,11 +54,11 @@ public final class Article: Hashable {
 		self.bannerImageURL = bannerImageURL
 		self.datePublished = datePublished
 		self.dateModified = dateModified
-		self.dateArrived = dateArrived
 		self.authors = authors
 		self.tags = tags
 		self.attachments = attachments
-
+		
+		self.articleID = "\(feedID) \(uniqueID)"
 		self.hashValue = account.hashValue + feedID.hashValue + uniqueID.hashValue
 	}
 
@@ -71,7 +72,7 @@ public extension Article {
 
 	public var logicalDatePublished: Date? {
 		get {
-			return (datePublished ?? dateModified) && status?.dateArrived
+			return (datePublished ?? dateModified) ?? status?.dateArrived
 		}
 	}
 }

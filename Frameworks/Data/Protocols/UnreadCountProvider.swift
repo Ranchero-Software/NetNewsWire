@@ -17,12 +17,11 @@ public protocol UnreadCountProvider {
 
 public func calculateUnreadCount<T: Collection>(_ children: T) -> Int {
 
-	var updatedUnreadCount = 0
-
-	children.forEach { (oneChild) in
+	let updatedUnreadCount = children.reduce(0) { (result, oneChild) -> Int in
 		if let oneUnreadCountProvider = oneChild as? UnreadCountProvider {
-			updatedUnreadCount += oneUnreadCountProvider.unreadCount
+			return result + oneUnreadCountProvider.unreadCount
 		}
+		return result
 	}
 
 	return updatedUnreadCount

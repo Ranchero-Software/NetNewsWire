@@ -14,7 +14,8 @@ public struct Author: Hashable {
 	public let url: String?
 	public let avatarURL: String?
 	public let emailAddress: String?
-
+	public let hashValue: Int
+	
 	public init?(name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
 
 		if name == nil && url == nil && emailAddress == nil {
@@ -25,14 +26,14 @@ public struct Author: Hashable {
 		self.avatarURL = avatarURL
 		self.emailAddress = emailAddress
 
-		let s = name ?? ""
+		var s = name ?? ""
 		s += url ?? ""
 		s += avatarURL ?? ""
-		s += emailAddres ?? ""
+		s += emailAddress ?? ""
 		self.hashValue = s.hashValue
 	}
-
-	public class func ==(lhs: Author, rhs: Author) {
+	
+	public static func ==(lhs: Author, rhs: Author) -> Bool {
 
 		return lhs.hashValue == rhs.hashValue && lhs.name == rhs.name && lhs.url == rhs.url && lhs.avatarURL == rhs.avatarURL && lhs.emailAddress == rhs.emailAddress
 	}
