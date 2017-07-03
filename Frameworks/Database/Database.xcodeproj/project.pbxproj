@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		844BEE411F0AB3AB004AB7CD /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEE371F0AB3AA004AB7CD /* Database.framework */; };
 		844BEE461F0AB3AB004AB7CD /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */; };
+		84E156EA1F0AB80500F8CC05 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156E91F0AB80500F8CC05 /* Database.swift */; };
+		84E156EC1F0AB80E00F8CC05 /* ArticleCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156EB1F0AB80E00F8CC05 /* ArticleCache.swift */; };
+		84E156EE1F0AB81400F8CC05 /* StatusesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156ED1F0AB81400F8CC05 /* StatusesManager.swift */; };
+		84E156F01F0AB81F00F8CC05 /* CreateStatements.sql in Resources */ = {isa = PBXBuildFile; fileRef = 84E156EF1F0AB81F00F8CC05 /* CreateStatements.sql */; };
+		84E156FD1F0AB86100F8CC05 /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E156F81F0AB83600F8CC05 /* Data.framework */; };
+		84E156FF1F0AB86700F8CC05 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E156FE1F0AB86700F8CC05 /* RSCore.framework */; };
+		84E1570C1F0AB8A500F8CC05 /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E157071F0AB89B00F8CC05 /* RSDatabase.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -19,14 +26,56 @@
 			remoteGlobalIDString = 844BEE361F0AB3AA004AB7CD;
 			remoteInfo = Database;
 		};
+		84E156F71F0AB83600F8CC05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84E156F11F0AB83600F8CC05 /* Data.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 844BEE5B1F0AB3C8004AB7CD;
+			remoteInfo = Data;
+		};
+		84E156F91F0AB83600F8CC05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84E156F11F0AB83600F8CC05 /* Data.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 844BEE641F0AB3C9004AB7CD;
+			remoteInfo = DataTests;
+		};
+		84E157061F0AB89B00F8CC05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84E157001F0AB89B00F8CC05 /* RSDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84F22C551B52E0D9000060CE;
+			remoteInfo = RSDatabase;
+		};
+		84E157081F0AB89B00F8CC05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84E157001F0AB89B00F8CC05 /* RSDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84F22C5F1B52E0D9000060CE;
+			remoteInfo = RSDatabaseTests;
+		};
+		84E1570A1F0AB89B00F8CC05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84E157001F0AB89B00F8CC05 /* RSDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8400ABF71E0CFBD800AA7C57;
+			remoteInfo = RSDatabaseiOS;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		844BEE371F0AB3AA004AB7CD /* Database.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Database.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		844BEE3B1F0AB3AA004AB7CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		844BEE401F0AB3AB004AB7CD /* DatabaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DatabaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTests.swift; sourceTree = "<group>"; };
 		844BEE471F0AB3AB004AB7CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84E156E81F0AB75600F8CC05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84E156E91F0AB80500F8CC05 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		84E156EB1F0AB80E00F8CC05 /* ArticleCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleCache.swift; sourceTree = "<group>"; };
+		84E156ED1F0AB81400F8CC05 /* StatusesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusesManager.swift; sourceTree = "<group>"; };
+		84E156EF1F0AB81F00F8CC05 /* CreateStatements.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CreateStatements.sql; sourceTree = "<group>"; };
+		84E156F11F0AB83600F8CC05 /* Data.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Data.xcodeproj; path = ../Data/Data.xcodeproj; sourceTree = "<group>"; };
+		84E156FE1F0AB86700F8CC05 /* RSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSCore.framework; path = ../RSCore/build/Debug/RSCore.framework; sourceTree = "<group>"; };
+		84E157001F0AB89B00F8CC05 /* RSDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSDatabase.xcodeproj; path = ../RSDatabase/RSDatabase.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +83,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84E1570C1F0AB8A500F8CC05 /* RSDatabase.framework in Frameworks */,
+				84E156FF1F0AB86700F8CC05 /* RSCore.framework in Frameworks */,
+				84E156FD1F0AB86100F8CC05 /* Data.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,9 +103,14 @@
 		844BEE2D1F0AB3AA004AB7CD = {
 			isa = PBXGroup;
 			children = (
-				844BEE391F0AB3AA004AB7CD /* Database */,
+				84E156E91F0AB80500F8CC05 /* Database.swift */,
+				84E156EB1F0AB80E00F8CC05 /* ArticleCache.swift */,
+				84E156ED1F0AB81400F8CC05 /* StatusesManager.swift */,
+				84E156EF1F0AB81F00F8CC05 /* CreateStatements.sql */,
+				84E156E81F0AB75600F8CC05 /* Info.plist */,
 				844BEE441F0AB3AB004AB7CD /* DatabaseTests */,
 				844BEE381F0AB3AA004AB7CD /* Products */,
+				84E156FB1F0AB83A00F8CC05 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -66,14 +123,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		844BEE391F0AB3AA004AB7CD /* Database */ = {
-			isa = PBXGroup;
-			children = (
-				844BEE3B1F0AB3AA004AB7CD /* Info.plist */,
-			);
-			path = Database;
-			sourceTree = "<group>";
-		};
 		844BEE441F0AB3AB004AB7CD /* DatabaseTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -81,6 +130,35 @@
 				844BEE471F0AB3AB004AB7CD /* Info.plist */,
 			);
 			path = DatabaseTests;
+			sourceTree = "<group>";
+		};
+		84E156F21F0AB83600F8CC05 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84E156F81F0AB83600F8CC05 /* Data.framework */,
+				84E156FA1F0AB83600F8CC05 /* DataTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84E156FB1F0AB83A00F8CC05 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				84E156FE1F0AB86700F8CC05 /* RSCore.framework */,
+				84E157001F0AB89B00F8CC05 /* RSDatabase.xcodeproj */,
+				84E156F11F0AB83600F8CC05 /* Data.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		84E157011F0AB89B00F8CC05 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84E157071F0AB89B00F8CC05 /* RSDatabase.framework */,
+				84E157091F0AB89B00F8CC05 /* RSDatabaseTests.xctest */,
+				84E1570B1F0AB89B00F8CC05 /* RSDatabase.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -145,6 +223,7 @@
 					844BEE361F0AB3AA004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
 						DevelopmentTeam = 9C84TZ7Q6Z;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 					844BEE3F1F0AB3AB004AB7CD = {
@@ -164,6 +243,16 @@
 			mainGroup = 844BEE2D1F0AB3AA004AB7CD;
 			productRefGroup = 844BEE381F0AB3AA004AB7CD /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 84E156F21F0AB83600F8CC05 /* Products */;
+					ProjectRef = 84E156F11F0AB83600F8CC05 /* Data.xcodeproj */;
+				},
+				{
+					ProductGroup = 84E157011F0AB89B00F8CC05 /* Products */;
+					ProjectRef = 84E157001F0AB89B00F8CC05 /* RSDatabase.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				844BEE361F0AB3AA004AB7CD /* Database */,
@@ -172,11 +261,50 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		84E156F81F0AB83600F8CC05 /* Data.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Data.framework;
+			remoteRef = 84E156F71F0AB83600F8CC05 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84E156FA1F0AB83600F8CC05 /* DataTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DataTests.xctest;
+			remoteRef = 84E156F91F0AB83600F8CC05 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84E157071F0AB89B00F8CC05 /* RSDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RSDatabase.framework;
+			remoteRef = 84E157061F0AB89B00F8CC05 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84E157091F0AB89B00F8CC05 /* RSDatabaseTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RSDatabaseTests.xctest;
+			remoteRef = 84E157081F0AB89B00F8CC05 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84E1570B1F0AB89B00F8CC05 /* RSDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RSDatabase.framework;
+			remoteRef = 84E1570A1F0AB89B00F8CC05 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXResourcesBuildPhase section */
 		844BEE351F0AB3AA004AB7CD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84E156F01F0AB81F00F8CC05 /* CreateStatements.sql in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,6 +322,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84E156EA1F0AB80500F8CC05 /* Database.swift in Sources */,
+				84E156EC1F0AB80E00F8CC05 /* ArticleCache.swift in Sources */,
+				84E156EE1F0AB81400F8CC05 /* StatusesManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +448,7 @@
 		844BEE4C1F0AB3AB004AB7CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -331,6 +463,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Database;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -338,6 +471,7 @@
 		844BEE4D1F0AB3AB004AB7CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -359,6 +493,7 @@
 		844BEE4F1F0AB3AB004AB7CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
 				INFOPLIST_FILE = DatabaseTests/Info.plist;
@@ -372,6 +507,7 @@
 		844BEE501F0AB3AB004AB7CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
 				INFOPLIST_FILE = DatabaseTests/Info.plist;
