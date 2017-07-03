@@ -21,20 +21,22 @@ public final class ArticleStatus: Hashable {
 	public var starred = false
 	public var userDeleted = false
 	public var dateArrived: Date
-	var accountInfo: AccountInfo?
+	public let articleID: String
+	public var accountInfo: AccountInfo?
 	public let hashValue: Int
 	
-	init(read: Bool, starred: Bool, userDeleted: Bool, dateArrived: Date, accountInfo: AccountInfo?) {
+	public init(articleID: String, read: Bool, starred: Bool, userDeleted: Bool, dateArrived: Date, accountInfo: AccountInfo?) {
 		
+		self.articleID = articleID
 		self.read = read
 		self.starred = starred
 		self.userDeleted = userDeleted
 		self.dateArrived = dateArrived
 		self.accountInfo = accountInfo
-		self.hashValue = dateArrived.hashValue
+		self.hashValue = articleID.hashValue
 	}
 	
-	func boolStatusForKey(_ key: String) -> Bool {
+	public func boolStatus(forKey key: String) -> Bool {
 		
 		if let articleStatusKey = ArticleStatusKey(rawValue: key) {
 			switch articleStatusKey {
@@ -52,7 +54,7 @@ public final class ArticleStatus: Hashable {
 		return false
 	}
 	
-	func setBoolStatusForKey(_ status: Bool, key: String) {
+	public func setBoolStatus(_ status: Bool, forKey key: String) {
 		
 		if let articleStatusKey = ArticleStatusKey(rawValue: key) {
 			switch articleStatusKey {
@@ -74,6 +76,6 @@ public final class ArticleStatus: Hashable {
 	
 	public class func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
 		
-		return lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred
+		return lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred
 	}
 }

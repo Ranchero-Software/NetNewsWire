@@ -12,9 +12,9 @@ import RSDatabase
 import RSParser
 import Data
 
-let sqlLogging = false
+private let sqlLogging = false
 
-func logSQL(_ sql: String) {
+private func logSQL(_ sql: String) {
 	if sqlLogging {
 		print("SQL: \(sql)")
 	}
@@ -22,9 +22,7 @@ func logSQL(_ sql: String) {
 
 typealias ArticleResultBlock = (Set<Article>) -> Void
 
-private let articlesTableName = "articles"
-
-final class LocalDatabase {
+final class Database {
 
 	fileprivate let queue: RSDatabaseQueue
 	private let databaseFile: String
@@ -51,10 +49,6 @@ final class LocalDatabase {
 
 	func fetchArticlesForFeed(_ feed: Feed) -> Set<Article> {
 
-//		if let articles = articleCache.cachedArticlesForFeedID(feed.feedID) {
-//			return articles
-//		}
-
 		var fetchedArticles = Set<Article>()
 		let feedID = feed.feedID
 
@@ -63,16 +57,11 @@ final class LocalDatabase {
 			fetchedArticles = self.fetchArticlesForFeedID(feedID, database: database)
 		}
 
-		let articles = articleCache.uniquedArticles(fetchedArticles)
+		let articles = articleCache.uniquedArticles(fetchedArticles, statusesManager: statusesManager)
 		return filteredArticles(articles, feedCounts: [feed.feedID: fetchedArticles.count])
 	}
 
 	func fetchArticlesForFeedAsync(_ feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
-
-//		if let articles = articleCache.cachedArticlesForFeedID(feed.feedID) {
-//			resultBlock(articles)
-//			return
-//		}
 
 		let feedID = feed.feedID
 
@@ -82,7 +71,7 @@ final class LocalDatabase {
 
 			DispatchQueue.main.async() { () -> Void in
 
-				let articles = self.articleCache.uniquedArticles(fetchedArticles)
+				let articles = self.articleCache.uniquedArticles(fetchedArticles, statusesManager: self.statusesManager)
 				let filteredArticles = self.filteredArticles(articles, feedCounts: [feed.feedID: fetchedArticles.count])
 				resultBlock(filteredArticles)
 			}
@@ -131,13 +120,13 @@ final class LocalDatabase {
 
 	func fetchUnreadArticlesForFolder(_ folder: Folder) -> Set<Article> {
 		
-		return fetchUnreadArticlesForFeedIDs(Array(folder.flattenedFeedIDs))
+		return fetchUnreadArticlesForFeedIDs(folder.flattenedFeedIDs())
 	}
 	
 	func fetchUnreadArticlesForFeedIDs(_ feedIDs: [String]) -> Set<Article> {
 		
 		if feedIDs.isEmpty {
-			return Set<LocalArticle>()
+			return Set<Article>()
 		}
 		
 		var fetchedArticles = Set<Article>()
@@ -158,7 +147,7 @@ final class LocalDatabase {
 			}
 		}
 		
-		let articles = articleCache.uniquedArticles(fetchedArticles)
+		let articles = articleCache.uniquedArticles(fetchedArticles, statusesManager: statusesManager)
 		return filteredArticles(articles, feedCounts: counts)
 	}
 	
@@ -193,7 +182,7 @@ final class LocalDatabase {
 
 		fetchArticlesForFeedAsync(feed) { (articles) -> Void in
 
-			let articlesDictionary = self.articlesDictionary(articles as NSSet) as! [String: LocalArticle]
+			let articlesDictionary = self.articlesDictionary(articles as NSSet) as! [String: Article]
 			self.updateArticles(articlesDictionary, parsedArticles: parsedArticlesDictionary, feed: feed, completionHandler: completionHandler)
 		}
 	}
@@ -208,7 +197,7 @@ final class LocalDatabase {
 
 // MARK: Private
 
-private extension LocalDatabase {
+private extension Database {
 	
 	// MARK: Saving Articles
 	
@@ -222,7 +211,7 @@ private extension LocalDatabase {
 		articleCache.cacheArticles(newArticles)
 		
 		let newArticleDictionaries = newArticles.map { (oneArticle) in
-			return oneArticle.databaseDictionary
+			return oneArticle.databaseDictionary()
 		}
 		
 		queue.update { (database: FMDatabase!) -> Void in
@@ -232,7 +221,7 @@ private extension LocalDatabase {
 				for oneDictionary in articleChanges {
 					
 					let oneArticleDictionary = oneDictionary.mutableCopy() as! NSMutableDictionary
-					let articleID = oneArticleDictionary[articleIDKey]!
+					let articleID = oneArticleDictionary[DatabaseKey.articleID]!
 					oneArticleDictionary.removeObject(forKey: articleIDKey)
 					
 					let _ = database.rs_updateRows(with: oneArticleDictionary as [NSObject: AnyObject], whereKey: articleIDKey, equalsValue: articleID, tableName: articlesTableName)
@@ -292,7 +281,7 @@ private extension LocalDatabase {
 	
 	func createNewArticlesWithParsedArticles(_ parsedArticles: Set<ParsedItem>, feedID: String) -> Set<Article> {
 		
-		return Set(parsedArticles.map { LocalArticle(account: account, feedID: feedID, parsedArticle: $0) })
+		return Set(parsedArticles.map { Article(account: account, feedID: feedID, parsedArticle: $0) })
 	}
 	
 	func articlesWithParsedArticles(_ parsedArticles: Set<ParsedItem>, feedID: String) -> Set<Article> {
@@ -300,7 +289,7 @@ private extension LocalDatabase {
 		var localArticles = Set<Article>()
 		
 		for oneParsedArticle in parsedArticles {
-			let oneLocalArticle = LocalArticle(account: self.account, feedID: feedID, parsedArticle: oneParsedArticle)
+			let oneLocalArticle = Article(account: self.account, feedID: feedID, parsedArticle: oneParsedArticle)
 			localArticles.insert(oneLocalArticle)
 		}
 		
@@ -343,7 +332,7 @@ private extension LocalDatabase {
 			return articlesWithResultSet(resultSet)
 		}
 		
-		return Set<LocalArticle>()
+		return Set<Article>()
 	}
 
 	func articlesWithResultSet(_ resultSet: FMResultSet) -> Set<Article> {
@@ -496,46 +485,4 @@ private extension LocalDatabase {
 			}
 		}
 	}
-	
-	func deleteOldArticlesInFeed(_ feed: Feed) {
-		
-		numberOfArticlesInFeedID(feed.feedID) { (numberOfArticlesInFeed) in
-			
-			if numberOfArticlesInFeed <= LocalDatabase.minimumNumberOfArticlesInFeed {
-				return
-			}
-			
-			
-			
-			
-		}
-		
-	}
-	
-	// MARK: Deleting Articles
-	
-//	func deleteOldArticles(_ articleIDsInFeeds: Set<String>) {
-//		
-//		queue.update { (database: FMDatabase!) -> Void in
-//			
-////			let cutoffDate = NSDate.rs_dateWithNumberOfDaysInThePast(60)
-////			let articles = self.fetchArticlesWithWhereClause(database, whereClause: "statuses.dateArrived < ? limit 200", parameters: [cutoffDate])
-//			
-////			var articleIDsToDelete = Set<String>()
-////			
-////			for oneArticle in articles {
-//				// TODO
-////				if !localAccountShouldIncludeArticle(oneArticle, articleIDsInFeed: articleIDsInFeeds) {
-////					articleIDsToDelete.insert(oneArticle.articleID)
-////				}
-////			}
-//			
-////			if !articleIDsToDelete.isEmpty {
-////				database.rs_deleteRowsWhereKey(articleIDKey, inValues: Array(articleIDsToDelete), tableName: articlesTableName)
-////			}
-//		}
-//	}
-
-	
-	
 }

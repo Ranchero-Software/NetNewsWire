@@ -22,7 +22,7 @@ final class StatusesManager {
 		self.queue = queue
 	}
 	
-	func markArticles(_ articles: Set<Article>, statusKey: ArticleStatusKey, flag: Bool) {
+	func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
 		
 		assertNoMissingStatuses(articles)
 		let statuses = Set(articles.flatMap { $0.status })
@@ -36,7 +36,7 @@ final class StatusesManager {
 			if let cachedStatus = cachedStatusForArticleID(oneArticle.articleID) {
 				oneArticle.status = cachedStatus
 			}
-			else if let oneArticleStatus = oneArticle.status as? ArticleStatus {
+			else if let oneArticleStatus = oneArticle.status {
 				cacheStatus(oneArticleStatus)
 			}
 		}
@@ -85,7 +85,7 @@ private extension StatusesManager {
 	
 	// MARK: Marking
 	
-	func markArticleStatuses(_ statuses: Set<ArticleStatus>, statusKey: ArticleStatusKey, flag: Bool) {
+	func markArticleStatuses(_ statuses: Set<ArticleStatus>, statusKey: String, flag: Bool) {
 		
 		// Ignore the statuses where status.[statusKey] == flag. Update the remainder and save in database.
 		
@@ -93,8 +93,8 @@ private extension StatusesManager {
 		
 		statuses.forEach { (oneStatus) in
 			
-			if oneStatus.boolStatusForKey(statusKey) != flag {
-				oneStatus.setBoolStatusForKey(flag, articleStatusKey: statusKey)
+			if oneStatus.boolStatus(forKey: statusKey) != flag {
+				oneStatus.setBoolStatus(flag, forKey: statusKey)
 				articleIDs.insert(oneStatus.articleID)
 			}
 		}
@@ -112,7 +112,7 @@ private extension StatusesManager {
 			return Set<ArticleStatus>()
 		}
 		
-		guard let resultSet = database.rs_selectRowsWhereKey(articleIDKey, inValues: Array(articleIDs), tableName: statusesTableName) else {
+		guard let resultSet = database.rs_selectRowsWhereKey(DatabaseKey.articleID, inValues: Array(articleIDs), tableName: statusesTableName) else {
 			return Set<ArticleStatus>()
 		}
 		
@@ -137,7 +137,7 @@ private extension StatusesManager {
 	func saveStatuses(_ statuses: Set<ArticleStatus>) {
 		
 		let statusArray = statuses.map { (oneStatus) -> NSDictionary in
-			return oneStatus.databaseDictionary
+			return oneStatus.databaseDictionary()
 		}
 		
 		queue.update { (database: FMDatabase!) -> Void in
@@ -210,9 +210,9 @@ private extension StatusesManager {
 
 extension ParsedItem {
 
-	var databaseID: String {
+	var articleID: String {
 		get {
-			return "\(feedURL) \(uniqueID)"
+			return "\(feedURL) \(uniqueID)" //Must be same as Article.articleID
 		}
 	}
 }
