@@ -80,6 +80,7 @@
 		84B0700B1ED3822600F0B54B /* RSTextDrawing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; };
 		84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9451C1EE1EE076F200605914 /* EvergreenUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9451C1ED1EE076F200605914 /* EvergreenUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -314,6 +315,13 @@
 			remoteGlobalIDString = 8439D9FA1C8937C800E5E4B4;
 			remoteInfo = RSTextDrawing;
 		};
+		9451C1F01EE076F200605914 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 849C645F1ED37A5D003D8FC0;
+			remoteInfo = Evergreen;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -407,6 +415,9 @@
 		84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTree.xcodeproj; path = Frameworks/RSTree/RSTree.xcodeproj; sourceTree = "<group>"; };
 		84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTextDrawing.xcodeproj; path = Frameworks/RSTextDrawing/RSTextDrawing.xcodeproj; sourceTree = "<group>"; };
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
+		9451C1EB1EE076F200605914 /* EvergreenUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EvergreenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9451C1ED1EE076F200605914 /* EvergreenUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvergreenUITests.swift; sourceTree = "<group>"; };
+		9451C1EF1EE076F200605914 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -429,6 +440,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		849C646E1ED37A5D003D8FC0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9451C1E81EE076F200605914 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -648,7 +666,7 @@
 				849A97961ED9EFAA007D329B /* Extensions */,
 				849A97991ED9EFB6007D329B /* Resources */,
 				84FB9A2C1EDCD6A4003D53B9 /* Frameworks */,
-				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
+				9451C1F51EE0778700605914 /* Tests */,
 				849C64611ED37A5D003D8FC0 /* Products */,
 				84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */,
 				8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */,
@@ -668,6 +686,7 @@
 			children = (
 				849C64601ED37A5D003D8FC0 /* Evergreen.app */,
 				849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */,
+				9451C1EB1EE076F200605914 /* EvergreenUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -756,6 +775,24 @@
 			path = Evergreen/Extensions;
 			sourceTree = "<group>";
 		};
+		9451C1EC1EE076F200605914 /* EvergreenUITests */ = {
+			isa = PBXGroup;
+			children = (
+				9451C1ED1EE076F200605914 /* EvergreenUITests.swift */,
+				9451C1EF1EE076F200605914 /* Info.plist */,
+			);
+			path = EvergreenUITests;
+			sourceTree = "<group>";
+		};
+		9451C1F51EE0778700605914 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
+				9451C1EC1EE076F200605914 /* EvergreenUITests */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -805,13 +842,31 @@
 			productReference = 849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		9451C1EA1EE076F200605914 /* EvergreenUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9451C1F21EE076F200605914 /* Build configuration list for PBXNativeTarget "EvergreenUITests" */;
+			buildPhases = (
+				9451C1E71EE076F200605914 /* Sources */,
+				9451C1E81EE076F200605914 /* Frameworks */,
+				9451C1E91EE076F200605914 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9451C1F11EE076F200605914 /* PBXTargetDependency */,
+			);
+			name = EvergreenUITests;
+			productName = EvergreenUITests;
+			productReference = 9451C1EB1EE076F200605914 /* EvergreenUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		849C64581ED37A5D003D8FC0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0820;
+				LastSwiftUpdateCheck = 0830;
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
@@ -823,6 +878,12 @@
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 9C84TZ7Q6Z;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 849C645F1ED37A5D003D8FC0;
+					};
+					9451C1EA1EE076F200605914 = {
+						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -885,6 +946,7 @@
 			targets = (
 				849C645F1ED37A5D003D8FC0 /* Evergreen */,
 				849C64701ED37A5D003D8FC0 /* EvergreenTests */,
+				9451C1EA1EE076F200605914 /* EvergreenUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -1073,6 +1135,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9451C1E91EE076F200605914 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1126,6 +1195,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9451C1E71EE076F200605914 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9451C1EE1EE076F200605914 /* EvergreenUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1186,6 +1263,11 @@
 			isa = PBXTargetDependency;
 			name = RSTextDrawing;
 			targetProxy = 84B0700C1ED3822600F0B54B /* PBXContainerItemProxy */;
+		};
+		9451C1F11EE076F200605914 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 849C645F1ED37A5D003D8FC0 /* Evergreen */;
+			targetProxy = 9451C1F01EE076F200605914 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1414,6 +1496,36 @@
 			};
 			name = Release;
 		};
+		9451C1F31EE076F200605914 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = EvergreenUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.EvergreenUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = Evergreen;
+			};
+			name = Debug;
+		};
+		9451C1F41EE076F200605914 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = EvergreenUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.EvergreenUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = Evergreen;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1440,6 +1552,15 @@
 			buildConfigurations = (
 				849C647E1ED37A5D003D8FC0 /* Debug */,
 				849C647F1ED37A5D003D8FC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9451C1F21EE076F200605914 /* Build configuration list for PBXNativeTarget "EvergreenUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9451C1F31EE076F200605914 /* Debug */,
+				9451C1F41EE076F200605914 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
