@@ -8,7 +8,7 @@
 
 import Foundation
 import RSParser
-import DataModel
+import Data
 
 extension ParsedAuthor: Author {
 }

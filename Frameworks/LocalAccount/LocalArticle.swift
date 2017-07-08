@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import DataModel
+import Data
 import RSParser
 
 public final class LocalArticle: Article, Hashable {

@@ -8,7 +8,7 @@
 
 import Foundation
 import RSWeb
-import DataModel
+import Data
 import RSCore
 
 public final class LocalFeed: Feed, PlistProvider, Hashable {

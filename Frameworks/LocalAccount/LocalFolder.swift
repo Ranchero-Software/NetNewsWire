@@ -8,7 +8,7 @@
 
 import Foundation
 import RSCore
-import DataModel
+import Data
 
 let folderIDKey = "folderID"
 private let folderNameKey = "name"

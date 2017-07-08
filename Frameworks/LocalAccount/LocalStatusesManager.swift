@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSDatabase
 import RSParser
-import DataModel
+import Data
 
 final class LocalStatusesManager {
 	

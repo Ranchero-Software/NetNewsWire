@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSParser
 import RSDatabase
-import DataModel
+import Data
 
 let sqlLogging = false
 

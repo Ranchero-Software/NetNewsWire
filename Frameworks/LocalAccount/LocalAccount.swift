@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSParser
 import RSWeb
-import DataModel
+import Data
 
 private let localAccountType = "OnMyMac"
 

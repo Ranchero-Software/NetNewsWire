@@ -8,7 +8,7 @@
 
 import Foundation
 import RSDatabase
-import DataModel
+import Data
 
 public final class LocalArticleStatus: ArticleStatus, Hashable {
 
