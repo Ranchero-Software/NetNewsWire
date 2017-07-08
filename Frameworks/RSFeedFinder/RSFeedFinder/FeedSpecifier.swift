@@ -75,7 +75,6 @@ public struct FeedSpecifier: Hashable {
 		
 		return currentBestFeed
 	}
-
 }
 
 private extension FeedSpecifier {
