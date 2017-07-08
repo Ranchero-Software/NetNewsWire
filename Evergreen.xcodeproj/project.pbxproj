@@ -13,8 +13,6 @@
 		842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */; };
 		842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */; };
 		842E45E71ED8C747000A8B52 /* DB5.plist in Resources */ = {isa = PBXBuildFile; fileRef = 842E45E61ED8C747000A8B52 /* DB5.plist */; };
-		8471A2C41ED4CEBF008F099E /* DataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2B71ED4CEAD008F099E /* DataModel.framework */; };
-		8471A2C51ED4CEBF008F099E /* DataModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2B71ED4CEAD008F099E /* DataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8471A2F51ED4D062008F099E /* LocalAccount.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2F21ED4D04D008F099E /* LocalAccount.framework */; };
 		8471A2F61ED4D062008F099E /* LocalAccount.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2F21ED4D04D008F099E /* LocalAccount.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
@@ -83,20 +81,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8471A2B61ED4CEAD008F099E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84C7AE921D68C558009FB883;
-			remoteInfo = DataModel;
-		};
-		8471A2C61ED4CEBF008F099E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 84C7AE911D68C558009FB883;
-			remoteInfo = DataModel;
-		};
 		8471A2F11ED4D04D008F099E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */;
@@ -332,7 +316,6 @@
 				84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */,
 				84B06FD01ED37F7D00F0B54B /* DB5.framework in Embed Frameworks */,
 				8471A2F61ED4D062008F099E /* LocalAccount.framework in Embed Frameworks */,
-				8471A2C51ED4CEBF008F099E /* DataModel.framework in Embed Frameworks */,
 				84B06FC31ED37E9600F0B54B /* RSWeb.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -347,7 +330,6 @@
 		842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardDelegateProtocol.swift; sourceTree = "<group>"; };
 		842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowSplitView.swift; sourceTree = "<group>"; };
 		842E45E61ED8C747000A8B52 /* DB5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DB5.plist; path = Evergreen/Resources/DB5.plist; sourceTree = "<group>"; };
-		8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DataModel.xcodeproj; path = Frameworks/DataModel/DataModel.xcodeproj; sourceTree = "<group>"; };
 		8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LocalAccount.xcodeproj; path = Frameworks/LocalAccount/LocalAccount.xcodeproj; sourceTree = "<group>"; };
 		849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderWindowController.swift; sourceTree = "<group>"; };
 		849A97511ED9EAC0007D329B /* AddFeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedController.swift; path = AddFeed/AddFeedController.swift; sourceTree = "<group>"; };
@@ -423,7 +405,6 @@
 				84B06FCF1ED37F7D00F0B54B /* DB5.framework in Frameworks */,
 				84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */,
 				8471A2F51ED4D062008F099E /* LocalAccount.framework in Frameworks */,
-				8471A2C41ED4CEBF008F099E /* DataModel.framework in Frameworks */,
 				84B06FC21ED37E9600F0B54B /* RSWeb.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -464,14 +445,6 @@
 			);
 			name = MainWindow;
 			path = Evergreen/MainWindow;
-			sourceTree = "<group>";
-		};
-		8471A2B31ED4CEAD008F099E /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8471A2B71ED4CEAD008F099E /* DataModel.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		8471A2ED1ED4D04D008F099E /* Products */ = {
@@ -651,7 +624,6 @@
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				849C64611ED37A5D003D8FC0 /* Products */,
 				84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */,
-				8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */,
 				8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */,
 				84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */,
 				84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */,
@@ -778,7 +750,6 @@
 				84B06FEC1ED3803A00F0B54B /* PBXTargetDependency */,
 				84B070001ED3818D00F0B54B /* PBXTargetDependency */,
 				84B0700D1ED3822600F0B54B /* PBXTargetDependency */,
-				8471A2C71ED4CEBF008F099E /* PBXTargetDependency */,
 				8471A2F81ED4D062008F099E /* PBXTargetDependency */,
 				849B897F1F0349D000578A8D /* PBXTargetDependency */,
 			);
@@ -841,10 +812,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 8471A2B31ED4CEAD008F099E /* Products */;
-					ProjectRef = 8471A2B21ED4CEAD008F099E /* DataModel.xcodeproj */;
-				},
-				{
 					ProductGroup = 84B06FC71ED37F7200F0B54B /* Products */;
 					ProjectRef = 84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */;
 				},
@@ -890,13 +857,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		8471A2B71ED4CEAD008F099E /* DataModel.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = DataModel.framework;
-			remoteRef = 8471A2B61ED4CEAD008F099E /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		8471A2F21ED4D04D008F099E /* LocalAccount.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -1132,11 +1092,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8471A2C71ED4CEBF008F099E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DataModel;
-			targetProxy = 8471A2C61ED4CEBF008F099E /* PBXContainerItemProxy */;
-		};
 		8471A2F81ED4D062008F099E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = LocalAccount;
