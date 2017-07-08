@@ -18,7 +18,7 @@ public class MacWebBrowser {
 		
 		if (inBackground) {
 			do {
-			 try NSWorkspace.shared().open(preparedURL, options: [.withoutActivation], configuration: [String: Any]())
+				try NSWorkspace.shared.open(preparedURL, options: [.withoutActivation], configuration: [:])
 				return true
 			}
 			catch {
@@ -26,7 +26,7 @@ public class MacWebBrowser {
 			}
 		}
 		
-		return NSWorkspace.shared().open(preparedURL)
+		return NSWorkspace.shared.open(preparedURL)
 	}
 }
 
