@@ -10,8 +10,8 @@ import Foundation
 
 @objc public final class ParserData: NSObject {
 
-	public let url: String
-	public let data: Data
+	@objc public let url: String
+	@objc public let data: Data
 
 	public init(url: String, data: Data) {
 
