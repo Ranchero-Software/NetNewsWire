@@ -298,6 +298,20 @@
 			remoteGlobalIDString = 8439D9FA1C8937C800E5E4B4;
 			remoteInfo = RSTextDrawing;
 		};
+		84BB4B671F1174D400858766 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84BB4B611F1174D400858766 /* Data.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 844BEE5B1F0AB3C8004AB7CD;
+			remoteInfo = Data;
+		};
+		84BB4B691F1174D400858766 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84BB4B611F1174D400858766 /* Data.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 844BEE641F0AB3C9004AB7CD;
+			remoteInfo = DataTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -388,6 +402,7 @@
 		84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSFeedFinder.xcodeproj; path = Frameworks/RSFeedFinder/RSFeedFinder.xcodeproj; sourceTree = "<group>"; };
 		84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTree.xcodeproj; path = Frameworks/RSTree/RSTree.xcodeproj; sourceTree = "<group>"; };
 		84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTextDrawing.xcodeproj; path = Frameworks/RSTextDrawing/RSTextDrawing.xcodeproj; sourceTree = "<group>"; };
+		84BB4B611F1174D400858766 /* Data.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Data.xcodeproj; path = Frameworks/Data/Data.xcodeproj; sourceTree = "<group>"; };
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -623,6 +638,7 @@
 				84FB9A2C1EDCD6A4003D53B9 /* Frameworks */,
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				849C64611ED37A5D003D8FC0 /* Products */,
+				84BB4B611F1174D400858766 /* Data.xcodeproj */,
 				84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */,
 				8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */,
 				84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */,
@@ -719,6 +735,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		84BB4B621F1174D400858766 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84BB4B681F1174D400858766 /* Data.framework */,
+				84BB4B6A1F1174D400858766 /* DataTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		84FB9A2C1EDCD6A4003D53B9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -811,6 +836,10 @@
 			productRefGroup = 849C64611ED37A5D003D8FC0 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 84BB4B621F1174D400858766 /* Products */;
+					ProjectRef = 84BB4B611F1174D400858766 /* Data.xcodeproj */;
+				},
 				{
 					ProductGroup = 84B06FC71ED37F7200F0B54B /* Products */;
 					ProjectRef = 84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */;
@@ -1002,6 +1031,20 @@
 			fileType = wrapper.cfbundle;
 			path = RSTextDrawingTests.xctest;
 			remoteRef = 84B070081ED3821900F0B54B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84BB4B681F1174D400858766 /* Data.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Data.framework;
+			remoteRef = 84BB4B671F1174D400858766 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84BB4B6A1F1174D400858766 /* DataTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DataTests.xctest;
+			remoteRef = 84BB4B691F1174D400858766 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
