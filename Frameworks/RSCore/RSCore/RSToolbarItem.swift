@@ -45,7 +45,7 @@ private extension RSToolbarItem {
 			}
 		}
 
-		if let appDelegate = NSApplication.shared().delegate {
+		if let appDelegate = NSApplication.shared.delegate {
 			if let validated = validateWithResponder(appDelegate) {
 				return validated
 			}

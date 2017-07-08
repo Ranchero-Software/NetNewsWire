@@ -11,9 +11,10 @@ import Cocoa
 public extension NSWindow {
 	
 	public func makeFirstResponderUnlessDescendantIsFirstResponder(_ responder: NSResponder) {
-		
-		if !firstResponder.hasAncestor(responder) {
-			makeFirstResponder(responder)
+
+		if let fr = firstResponder, fr.hasAncestor(responder) {
+			return
 		}
+		makeFirstResponder(responder)
 	}
 }

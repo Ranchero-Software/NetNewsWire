@@ -53,7 +53,7 @@ public final class DiskSaver: NSObject {
 		coalescedSaveTimer = Timer.scheduledTimer(timeInterval: coalescedSaveInterval, target: self, selector: #selector(saveToDisk), userInfo: nil, repeats: false)
 	}
 	
-	public dynamic func saveToDisk() {
+	@objc public dynamic func saveToDisk() {
 		
 		invalidateSaveTimer()
 		if !dirty {
