@@ -84,6 +84,7 @@
 		844BEE961F0AB4F8004AB7CD /* DisplayNameProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayNameProvider.swift; sourceTree = "<group>"; };
 		844BEE971F0AB4F8004AB7CD /* UnreadCountProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadCountProvider.swift; sourceTree = "<group>"; };
 		844BEE9C1F0AB512004AB7CD /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
+		84BB4B7C1F1177AD00858766 /* ArticleCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCache.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +119,7 @@
 				844BEE841F0AB4DB004AB7CD /* ArticleStatus.swift */,
 				844BEE861F0AB4E3004AB7CD /* BatchUpdates.swift */,
 				844BEE881F0AB4E7004AB7CD /* Notifications.swift */,
+				84BB4B7B1F1177AD00858766 /* Database */,
 				844BEE8A1F0AB4EF004AB7CD /* OPML */,
 				844BEE931F0AB4F8004AB7CD /* Protocols */,
 				844BEE761F0AB444004AB7CD /* Info.plist */,
@@ -183,6 +185,14 @@
 				844BEE9C1F0AB512004AB7CD /* RSCore.xcodeproj */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		84BB4B7B1F1177AD00858766 /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				84BB4B7C1F1177AD00858766 /* ArticleCache.swift */,
+			);
+			path = Database;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

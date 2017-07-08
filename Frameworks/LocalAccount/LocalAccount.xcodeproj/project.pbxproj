@@ -14,7 +14,6 @@
 		8471A2E51ED4D007008F099E /* LocalArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471A2E41ED4D007008F099E /* LocalArticle.swift */; };
 		8471A2E71ED4D012008F099E /* LocalArticleStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471A2E61ED4D012008F099E /* LocalArticleStatus.swift */; };
 		8471A2E91ED4D01B008F099E /* DiskDictionaryConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471A2E81ED4D01B008F099E /* DiskDictionaryConstants.swift */; };
-		8471A2FA1ED4D098008F099E /* LocalArticleCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471A2F91ED4D098008F099E /* LocalArticleCache.swift */; };
 		8471A2FC1ED4D0A1008F099E /* LocalDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471A2FB1ED4D0A1008F099E /* LocalDatabase.swift */; };
 		8471A2FE1ED4D0AD008F099E /* LocalStatusesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471A2FD1ED4D0AD008F099E /* LocalStatusesManager.swift */; };
 		8471A3001ED4D0B8008F099E /* LocalCreateStatements.sql in Resources */ = {isa = PBXBuildFile; fileRef = 8471A2FF1ED4D0B8008F099E /* LocalCreateStatements.sql */; };
@@ -47,7 +46,6 @@
 		8471A2E61ED4D012008F099E /* LocalArticleStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalArticleStatus.swift; sourceTree = "<group>"; };
 		8471A2E81ED4D01B008F099E /* DiskDictionaryConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskDictionaryConstants.swift; sourceTree = "<group>"; };
 		8471A2EA1ED4D02F008F099E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8471A2F91ED4D098008F099E /* LocalArticleCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalArticleCache.swift; sourceTree = "<group>"; };
 		8471A2FB1ED4D0A1008F099E /* LocalDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalDatabase.swift; sourceTree = "<group>"; };
 		8471A2FD1ED4D0AD008F099E /* LocalStatusesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStatusesManager.swift; sourceTree = "<group>"; };
 		8471A2FF1ED4D0B8008F099E /* LocalCreateStatements.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LocalCreateStatements.sql; sourceTree = "<group>"; };
@@ -91,7 +89,6 @@
 		8442EB3F1D68C8B200D709AE /* Database */ = {
 			isa = PBXGroup;
 			children = (
-				8471A2F91ED4D098008F099E /* LocalArticleCache.swift */,
 				8471A2FB1ED4D0A1008F099E /* LocalDatabase.swift */,
 				8471A2FD1ED4D0AD008F099E /* LocalStatusesManager.swift */,
 				8471A2FF1ED4D0B8008F099E /* LocalCreateStatements.sql */,
@@ -263,7 +260,6 @@
 				8471A2E91ED4D01B008F099E /* DiskDictionaryConstants.swift in Sources */,
 				8471A2E11ED4CFF3008F099E /* LocalFolder.swift in Sources */,
 				8471A2E51ED4D007008F099E /* LocalArticle.swift in Sources */,
-				8471A2FA1ED4D098008F099E /* LocalArticleCache.swift in Sources */,
 				8471A2E71ED4D012008F099E /* LocalArticleStatus.swift in Sources */,
 				8471A2FC1ED4D0A1008F099E /* LocalDatabase.swift in Sources */,
 				8471A2E31ED4CFFB008F099E /* LocalFeed.swift in Sources */,
