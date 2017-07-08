@@ -15,7 +15,6 @@
 		8471A2E71ED4D012008F099E /* LocalArticleStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471A2E61ED4D012008F099E /* LocalArticleStatus.swift */; };
 		8471A2E91ED4D01B008F099E /* DiskDictionaryConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471A2E81ED4D01B008F099E /* DiskDictionaryConstants.swift */; };
 		8471A2FC1ED4D0A1008F099E /* LocalDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471A2FB1ED4D0A1008F099E /* LocalDatabase.swift */; };
-		8471A2FE1ED4D0AD008F099E /* LocalStatusesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471A2FD1ED4D0AD008F099E /* LocalStatusesManager.swift */; };
 		8471A3001ED4D0B8008F099E /* LocalCreateStatements.sql in Resources */ = {isa = PBXBuildFile; fileRef = 8471A2FF1ED4D0B8008F099E /* LocalCreateStatements.sql */; };
 		84C7AEB11D68C79A009FB883 /* LocalAccount.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C7AEA71D68C79A009FB883 /* LocalAccount.framework */; };
 		84C7AEB61D68C79A009FB883 /* LocalAccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C7AEB51D68C79A009FB883 /* LocalAccountTests.swift */; };
@@ -47,7 +46,6 @@
 		8471A2E81ED4D01B008F099E /* DiskDictionaryConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskDictionaryConstants.swift; sourceTree = "<group>"; };
 		8471A2EA1ED4D02F008F099E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8471A2FB1ED4D0A1008F099E /* LocalDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalDatabase.swift; sourceTree = "<group>"; };
-		8471A2FD1ED4D0AD008F099E /* LocalStatusesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStatusesManager.swift; sourceTree = "<group>"; };
 		8471A2FF1ED4D0B8008F099E /* LocalCreateStatements.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LocalCreateStatements.sql; sourceTree = "<group>"; };
 		84C7AEA71D68C79A009FB883 /* LocalAccount.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LocalAccount.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C7AEB01D68C79A009FB883 /* LocalAccountTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LocalAccountTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,7 +88,6 @@
 			isa = PBXGroup;
 			children = (
 				8471A2FB1ED4D0A1008F099E /* LocalDatabase.swift */,
-				8471A2FD1ED4D0AD008F099E /* LocalStatusesManager.swift */,
 				8471A2FF1ED4D0B8008F099E /* LocalCreateStatements.sql */,
 			);
 			name = Database;
@@ -263,7 +260,6 @@
 				8471A2E71ED4D012008F099E /* LocalArticleStatus.swift in Sources */,
 				8471A2FC1ED4D0A1008F099E /* LocalDatabase.swift in Sources */,
 				8471A2E31ED4CFFB008F099E /* LocalFeed.swift in Sources */,
-				8471A2FE1ED4D0AD008F099E /* LocalStatusesManager.swift in Sources */,
 				8471A2DD1ED4CFE4008F099E /* LocalAccount.swift in Sources */,
 				8471A2DF1ED4CFEB008F099E /* LocalAccountRefresher.swift in Sources */,
 				84F4665B1F07321400225386 /* LocalAuthor.swift in Sources */,

@@ -85,6 +85,7 @@
 		844BEE971F0AB4F8004AB7CD /* UnreadCountProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadCountProvider.swift; sourceTree = "<group>"; };
 		844BEE9C1F0AB512004AB7CD /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		84BB4B7C1F1177AD00858766 /* ArticleCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCache.swift; sourceTree = "<group>"; };
+		84BB4B801F1178E400858766 /* StatusesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusesManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +192,7 @@
 			isa = PBXGroup;
 			children = (
 				84BB4B7C1F1177AD00858766 /* ArticleCache.swift */,
+				84BB4B801F1178E400858766 /* StatusesManager.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
