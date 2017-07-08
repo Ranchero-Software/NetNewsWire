@@ -24,7 +24,7 @@ public final class Folder: UnreadCountProvider {
 	
 	// MARK: Notifications
 	
-	dynamic public func unreadCountDidChange(_ note: Notification) {
+	@objc dynamic public func unreadCountDidChange(_ note: Notification) {
 		
 		guard let obj = note.object else {
 			return
