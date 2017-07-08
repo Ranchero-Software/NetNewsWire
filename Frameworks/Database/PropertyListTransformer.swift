@@ -25,6 +25,25 @@ struct PropertyListTransformer {
 		return propertyList(withData: rawAccountInfo) as? AccountInfo
 	}
 	
+	static func tagsWithRow(_ row: FMResultSet) -> [String]? {
+		
+		guard let d = row.data(forColumn: DatabaseKey.tags) else {
+			return nil
+		}
+		return propertyList(withData: d) as? [String]
+	}
+	
+	static func attachmentsWithRow(_ row: FMResultSet) -> [Attachment]? {
+		
+		guard let d = row.data(forColumn: DatabaseKey.attachments) else {
+			return nil
+		}
+		guard let plist = propertyList(withData: d) as? [Any] else {
+			return nil
+		}
+		return Attachment.attachments(with: plist)
+	}
+	
 	static func propertyListWithRow(_ row: FMResultSet, column: String) -> Any? {
 		
 		guard let rawData = row.data(forColumn: column) else {

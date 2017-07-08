@@ -11,9 +11,9 @@ import Foundation
 public final class Article: Hashable {
 
 	weak var account: Account?
+	
 	public let feedID: String
 	public let articleID: String //Calculated: unique per account
-
 	public var uniqueID: String //guid: unique per feed
 	public var title: String?
 	public var contentHTML: String?
@@ -28,10 +28,10 @@ public final class Article: Hashable {
 	public var authors: [Author]?
 	public var tags: [String]?
 	public var attachments: [Attachment]?
+	public var accountInfo: [String: Any]? //If account needs to store more data
+	
 	public var status: ArticleStatus?
 	public let hashValue: Int
-	
-	public var accountInfo: [String: Any]? //If account needs to store more data
 
 	var feed: Feed? {
 		get {
@@ -39,7 +39,7 @@ public final class Article: Hashable {
 		}
 	}
 
-	init(account: Account, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: [String]?, attachments: [Attachment]?) {
+	init(account: Account, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: [String]?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
 
 		self.account = account
 		self.feedID = feedID
@@ -57,6 +57,7 @@ public final class Article: Hashable {
 		self.authors = authors
 		self.tags = tags
 		self.attachments = attachments
+		self.accountInfo = accountInfo
 		
 		self.articleID = "\(feedID) \(uniqueID)"
 		self.hashValue = account.hashValue + feedID.hashValue + uniqueID.hashValue

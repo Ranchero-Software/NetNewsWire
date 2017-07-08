@@ -14,6 +14,7 @@
 		845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580751F0AF670003CCFA1 /* Article+Database.swift */; };
 		845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580771F0AF678003CCFA1 /* Folder+Database.swift */; };
 		8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */; };
+		8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */; };
 		846146271F0ABC7B00870CB3 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846146241F0ABC7400870CB3 /* RSParser.framework */; };
 		84E156EA1F0AB80500F8CC05 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156E91F0AB80500F8CC05 /* Database.swift */; };
 		84E156EC1F0AB80E00F8CC05 /* ArticlesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156EB1F0AB80E00F8CC05 /* ArticlesManager.swift */; };
@@ -93,6 +94,7 @@
 		845580751F0AF670003CCFA1 /* Article+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Article+Database.swift"; path = "Extensions/Article+Database.swift"; sourceTree = "<group>"; };
 		845580771F0AF678003CCFA1 /* Folder+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Folder+Database.swift"; path = "Extensions/Folder+Database.swift"; sourceTree = "<group>"; };
 		845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ArticleStatus+Database.swift"; path = "Extensions/ArticleStatus+Database.swift"; sourceTree = "<group>"; };
+		8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Attachment+Database.swift"; path = "Extensions/Attachment+Database.swift"; sourceTree = "<group>"; };
 		8461461E1F0ABC7300870CB3 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		84E156E81F0AB75600F8CC05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84E156E91F0AB80500F8CC05 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
@@ -134,7 +136,6 @@
 				845580661F0AEBCD003CCFA1 /* Constants.swift */,
 				84E156EB1F0AB80E00F8CC05 /* ArticlesManager.swift */,
 				84E156ED1F0AB81400F8CC05 /* StatusesManager.swift */,
-				845580711F0AEE49003CCFA1 /* PropertyListTransformer.swift */,
 				8461462A1F0AC44100870CB3 /* Extensions */,
 				84E156EF1F0AB81F00F8CC05 /* CreateStatements.sql */,
 				84E156E81F0AB75600F8CC05 /* Info.plist */,
@@ -177,6 +178,8 @@
 				845580771F0AF678003CCFA1 /* Folder+Database.swift */,
 				845580751F0AF670003CCFA1 /* Article+Database.swift */,
 				845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */,
+				8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */,
+				845580711F0AEE49003CCFA1 /* PropertyListTransformer.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -393,6 +396,7 @@
 				84E156EA1F0AB80500F8CC05 /* Database.swift in Sources */,
 				84E156EC1F0AB80E00F8CC05 /* ArticlesManager.swift in Sources */,
 				84E156EE1F0AB81400F8CC05 /* StatusesManager.swift in Sources */,
+				8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */,
 				845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */,
 				845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,

@@ -10,13 +10,13 @@ import Foundation
 
 public struct Attachment: Equatable {
 
-	public let url: String?
+	public let url: String
 	public let mimeType: String?
 	public let title: String?
 	public let sizeInBytes: Int?
 	public let durationInSeconds: Int?
 
-	init(url: String?, mimeType: String?, title: String?, sizeInBytes: Int?, durationInSeconds: Int?) {
+	init(url: String, mimeType: String?, title: String?, sizeInBytes: Int?, durationInSeconds: Int?) {
 
 		self.url = url
 		self.mimeType = mimeType
