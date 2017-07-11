@@ -43,7 +43,18 @@ struct PropertyListTransformer {
 		}
 		return Attachment.attachments(with: plist)
 	}
-	
+
+	static func authorsWithRow(_ row: FMResultSet) -> [Author]? {
+
+		guard let d = row.data(forColumn: DatabaseKey.authors) else {
+			return nil
+		}
+		guard let plist = propertyList(withData: d) as? [Any] else {
+			return nil
+		}
+		return Author.authors(with: plist)
+	}
+
 	static func propertyListWithRow(_ row: FMResultSet, column: String) -> Any? {
 		
 		guard let rawData = row.data(forColumn: column) else {

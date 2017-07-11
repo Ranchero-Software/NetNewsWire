@@ -26,7 +26,7 @@ public final class Article: Hashable {
 	public var datePublished: Date?
 	public var dateModified: Date?
 	public var authors: [Author]?
-	public var tags: [String]?
+	public var tags: Set<String>?
 	public var attachments: [Attachment]?
 	public var accountInfo: [String: Any]? //If account needs to store more data
 	
@@ -39,7 +39,7 @@ public final class Article: Hashable {
 		}
 	}
 
-	init(account: Account, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: [String]?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
+	init(account: Account, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: Set<String>?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
 
 		self.account = account
 		self.feedID = feedID
