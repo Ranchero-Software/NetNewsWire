@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		843079FA1F0AB57F00B4B7F7 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEEA31F0AB512004AB7CD /* RSCore.framework */; };
+		843A08BA1F148A4400D9C438 /* ArticleID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843A08B91F148A4400D9C438 /* ArticleID.swift */; };
 		844BEE651F0AB3C9004AB7CD /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEE5B1F0AB3C8004AB7CD /* Data.framework */; };
 		844BEE6A1F0AB3C9004AB7CD /* DataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE691F0AB3C9004AB7CD /* DataTests.swift */; };
 		844BEE791F0AB4B8004AB7CD /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE781F0AB4B8004AB7CD /* Account.swift */; };
@@ -61,6 +62,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		843A08B91F148A4400D9C438 /* ArticleID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleID.swift; sourceTree = "<group>"; };
 		844BEE5B1F0AB3C8004AB7CD /* Data.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Data.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		844BEE641F0AB3C9004AB7CD /* DataTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DataTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		844BEE691F0AB3C9004AB7CD /* DataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTests.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				844BEE781F0AB4B8004AB7CD /* Account.swift */,
 				844BEE7A1F0AB4BE004AB7CD /* Folder.swift */,
 				844BEE7C1F0AB4C4004AB7CD /* Feed.swift */,
+				843A08B91F148A4400D9C438 /* ArticleID.swift */,
 				844BEE7E1F0AB4CA004AB7CD /* Article.swift */,
 				844BEE801F0AB4D0004AB7CD /* Author.swift */,
 				844BEE821F0AB4D6004AB7CD /* Attachment.swift */,
@@ -336,6 +339,7 @@
 				844BEE9A1F0AB4F8004AB7CD /* DisplayNameProvider.swift in Sources */,
 				844BEE8F1F0AB4EF004AB7CD /* Account+OPMLRepresentable.swift in Sources */,
 				844BEE991F0AB4F8004AB7CD /* Container.swift in Sources */,
+				843A08BA1F148A4400D9C438 /* ArticleID.swift in Sources */,
 				844BEE7B1F0AB4BE004AB7CD /* Folder.swift in Sources */,
 				844BEE981F0AB4F8004AB7CD /* AccountDelegate.swift in Sources */,
 				844BEE831F0AB4D6004AB7CD /* Attachment.swift in Sources */,
