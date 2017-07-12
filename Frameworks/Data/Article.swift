@@ -12,7 +12,9 @@ public final class Article: Hashable {
 
 	weak var account: Account?
 	
-	public let articleID: ArticleID
+	public let articleID: String // Unique per database
+	public let feedID: String // Likely a URL, but not necessarily
+	public let uniqueID: String // Unique per feed (RSS guid, for example)
 	public var title: String?
 	public var contentHTML: String?
 	public var contentText: String?
@@ -33,14 +35,16 @@ public final class Article: Hashable {
 
 	var feed: Feed? {
 		get {
-			return account?.existingFeed(with: articleID.feedID)
+			return account?.existingFeed(with: feedID)
 		}
 	}
 
-	init(account: Account, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: Set<String>?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
+	init(account: Account, articleID: String, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: Set<String>?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
 		
 		self.account = account
-		self.articleID = ArticleID(feedID: feedID, uniqueID: uniqueID)
+		self.articleID = articleID
+		self.feedID = feedID
+		self.uniqueID = uniqueID
 		self.title = title
 		self.contentHTML = contentHTML
 		self.contentText = contentText
