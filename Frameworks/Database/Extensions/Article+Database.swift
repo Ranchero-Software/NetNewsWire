@@ -35,9 +35,9 @@ extension Article {
 		let authors = PropertyListTransformer.authorsWithRow(row)
 		let tags = PropertyListTransformer.tagsWithRow(row)
 		let attachments = PropertyListTransformer.attachmentsWithRow(row)
-		let accountInfo = PropertyListTransformer.accountInfoWithRow(row)
+		let accountInfo = accountInfoWithRow(row)
 		
-		self.init(account: account, feedID: feed, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo]
+		self.init(account: account, feedID: feed, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
 	}
 
 	func databaseDictionary() -> NSDictionary {

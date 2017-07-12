@@ -222,16 +222,16 @@ private extension Database {
 					
 					let oneArticleDictionary = oneDictionary.mutableCopy() as! NSMutableDictionary
 					let articleID = oneArticleDictionary[DatabaseKey.articleID]!
-					oneArticleDictionary.removeObject(forKey: articleIDKey)
+					oneArticleDictionary.removeObject(forKey: DatabaseKey.articleID)
 					
-					let _ = database.rs_updateRows(with: oneArticleDictionary as [NSObject: AnyObject], whereKey: articleIDKey, equalsValue: articleID, tableName: articlesTableName)
+					let _ = database.rs_updateRows(with: oneArticleDictionary as [NSObject: AnyObject], whereKey: DatabaseKey.articleID, equalsValue: articleID, tableName: DatabaseTableName.articles)
 				}
 				
 			}
 			if !newArticleDictionaries.isEmpty {
 				
 				for oneNewArticleDictionary in newArticleDictionaries {
-					let _ = database.rs_insertRow(with: oneNewArticleDictionary as [NSObject: AnyObject], insertType: RSDatabaseInsertOrReplace, tableName: articlesTableName)
+					let _ = database.rs_insertRow(with: oneNewArticleDictionary as [NSObject: AnyObject], insertType: RSDatabaseInsertOrReplace, tableName: DatabaseTableName.articles)
 				}
 			}
 		}
@@ -256,7 +256,7 @@ private extension Database {
 		
 		var d = [String: AnyObject]()
 		for oneArticle in articles {
-			let oneArticleID = (oneArticle as AnyObject).value(forKey: articleIDKey) as! String
+			let oneArticleID = (oneArticle as AnyObject).value(forKey: DatabaseKey.articleID) as! String
 			d[oneArticleID] = oneArticle as AnyObject
 		}
 		return d

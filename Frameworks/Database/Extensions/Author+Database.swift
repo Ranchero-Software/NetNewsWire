@@ -7,33 +7,18 @@
 //
 
 import Foundation
+import Data
+import RSDatabase
 
 extension Author {
 
-	private static let 
-	convenience init?(databaseDictionary d: [String: Any]) {
-
-		guard let url = d[DatabaseKey.url] as? String else {
-			return nil
-		}
-		let mimeType = d[DatabaseKey.mimeType] as? String
-		let title = d[DatabaseKey.title] as? String
-		let durationInSeconds = d[DatabaseKey.durationInSeconds] as? Int
-
-		self.init(url: url, mimeType: mimeType, title: title, durationInSeconds: durationInSeconds)
-
+	init?(row: FMResultSet) {
 		
+		let name = row.string(forColumn: DatabaseKey.name)
+		let url = row.string(forColumn: DatabaseKey.url)
+		let avatarURL = row.string(forColumn: DatabaseKey.avatarURL)
+		let emailAddress = row.string(forColumn: DatabaseKey.emailAddress)
 
 		self.init(name: name, url: url, avatarURL: avatarURL, emailAddress: emailAddress)
-	}
-
-	class func attachments(with plist: [Any]) -> [Attachment]? {
-
-		return plist.flatMap{ (oneDictionary) -> Attachment? in
-			if let d = oneDictionary as? [String: Any] {
-				return Attachment(databaseDictionary: d)
-			}
-			return nil
-		}
 	}
 }

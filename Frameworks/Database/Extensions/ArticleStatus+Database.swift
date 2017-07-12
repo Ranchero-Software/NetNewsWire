@@ -27,7 +27,7 @@ extension ArticleStatus {
 			dateArrived = NSDate.distantPast
 		}
 		
-		let accountInfoPlist = PropertyListTransformer.accountInfoWithRow(row)
+		let accountInfoPlist = accountInfoWithRow(row)
 		
 		self.init(articleID: articleID!, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived!, accountInfo: accountInfoPlist)
 	}

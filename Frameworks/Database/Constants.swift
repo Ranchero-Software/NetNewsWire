@@ -51,5 +51,10 @@ public struct DatabaseKey {
 
 	// Tag
 	static let tagName = "tagName"
+	
+	// Author
+	static let name = "name"
+	static let avatarURL = "avatarURL"
+	static let emailAddress = "emailAddress"
 }
 

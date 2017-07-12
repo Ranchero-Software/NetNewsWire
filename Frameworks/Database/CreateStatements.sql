@@ -9,7 +9,7 @@ CREATE TABLE if not EXISTS tags(tagName TEXT NOT NULL, articleID TEXT NOT NULL, 
 
 CREATE TABLE if not EXISTS attachments(articleID TEXT NOT NULL, url TEXT NOT NULL, mimeType TEXT, title TEXT, sizeInBytes INTEGER, durationInSeconds INTEGER, PRIMARY KEY(articleID, url));
 
-CREATE INDEX if not EXISTS feedIndex on articles (feedID);
+CREATE INDEX if not EXISTS articles_feedID_index on articles (feedID);
 
 CREATE INDEX if not EXISTS tags_tagName_index on tags(tagName COLLATE NOCASE);
 

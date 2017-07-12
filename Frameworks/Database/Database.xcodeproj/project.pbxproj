@@ -10,7 +10,7 @@
 		844BEE411F0AB3AB004AB7CD /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEE371F0AB3AA004AB7CD /* Database.framework */; };
 		844BEE461F0AB3AB004AB7CD /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */; };
 		845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580661F0AEBCD003CCFA1 /* Constants.swift */; };
-		845580721F0AEE49003CCFA1 /* PropertyListTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580711F0AEE49003CCFA1 /* PropertyListTransformer.swift */; };
+		845580721F0AEE49003CCFA1 /* AccountInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580711F0AEE49003CCFA1 /* AccountInfo.swift */; };
 		845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580751F0AF670003CCFA1 /* Article+Database.swift */; };
 		845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580771F0AF678003CCFA1 /* Folder+Database.swift */; };
 		8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */; };
@@ -113,7 +113,7 @@
 		844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTests.swift; sourceTree = "<group>"; };
 		844BEE471F0AB3AB004AB7CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		845580661F0AEBCD003CCFA1 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		845580711F0AEE49003CCFA1 /* PropertyListTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PropertyListTransformer.swift; sourceTree = "<group>"; };
+		845580711F0AEE49003CCFA1 /* AccountInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountInfo.swift; sourceTree = "<group>"; };
 		845580751F0AF670003CCFA1 /* Article+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Article+Database.swift"; path = "Extensions/Article+Database.swift"; sourceTree = "<group>"; };
 		845580771F0AF678003CCFA1 /* Folder+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Folder+Database.swift"; path = "Extensions/Folder+Database.swift"; sourceTree = "<group>"; };
 		845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ArticleStatus+Database.swift"; path = "Extensions/ArticleStatus+Database.swift"; sourceTree = "<group>"; };
@@ -206,7 +206,7 @@
 				845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */,
 				8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */,
 				84BB4BA31F119D4A00858766 /* Author+Database.swift */,
-				845580711F0AEE49003CCFA1 /* PropertyListTransformer.swift */,
+				845580711F0AEE49003CCFA1 /* AccountInfo.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -462,7 +462,7 @@
 				845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */,
 				845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
-				845580721F0AEE49003CCFA1 /* PropertyListTransformer.swift in Sources */,
+				845580721F0AEE49003CCFA1 /* AccountInfo.swift in Sources */,
 				8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */,
 				84BB4BA41F119D4A00858766 /* Author+Database.swift in Sources */,
 				84BB4BA91F11A32800858766 /* TagsManager.swift in Sources */,

@@ -8,15 +8,18 @@
 
 import Foundation
 import RSDatabase
+import Data
 
 // Tags — and the non-existence of tags — are cached, once fetched, for the lifetime of the run.
 // This uses some extra memory but cuts way down on the amount of database time spent
 // maintaining the tags table.
 
+typealias TagNameSet = Set<String>
+
 final class TagsManager {
 
-	private var articleIDCache = [String: <String>]() // articleID: tag
-	private var articleIDsWithNoTags = Set<String>()
+	private var articleIDCache = [String: TagNameSet]() // articleID: tags
+	private var articleIDsWithNoTags = TagNameSet()
 
 	private let queue: RSDatabaseQueue
 
@@ -52,8 +55,6 @@ final class TagsManager {
 		}
 	}
 }
-
-typealias TagNameSet = Set<String>
 
 private extension TagsManager {
 
@@ -183,7 +184,7 @@ private extension TagsManager {
 		}
 	}
 
-	func fetchTagsForArticleIDs(_ articleIDs: Set<String>, database: FMDatabase) -> TagsTable] {
+	func fetchTagsForArticleIDs(_ articleIDs: Set<String>, database: FMDatabase) -> TagsTable {
 
 		var tagSpecifiers = TagsTable()
 
@@ -193,7 +194,7 @@ private extension TagsManager {
 
 		while rs.next() {
 
-			guard let oneTagName = rs.string(forColumn: DatabaseKey.tagName), oneArticleID = rs.string(forColumn: DatabaseKey.articleID) else {
+			guard let oneTagName = rs.string(forColumn: DatabaseKey.tagName), let oneArticleID = rs.string(forColumn: DatabaseKey.articleID) else {
 				continue
 			}
 			if tagSpecifiers[oneArticleID] == nil {
