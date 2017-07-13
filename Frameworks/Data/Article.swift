@@ -12,7 +12,7 @@ public final class Article: Hashable {
 
 	weak var account: Account?
 	
-	public let articleID: String // Unique per database
+	public let databaseID: String
 	public let feedID: String // Likely a URL, but not necessarily
 	public let uniqueID: String // Unique per feed (RSS guid, for example)
 	public var title: String?
@@ -39,10 +39,10 @@ public final class Article: Hashable {
 		}
 	}
 
-	init(account: Account, articleID: String, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: Set<String>?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
+	init(account: Account, databaseID: String, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: Set<String>?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
 		
 		self.account = account
-		self.articleID = articleID
+		self.databaseID = databaseID
 		self.feedID = feedID
 		self.uniqueID = uniqueID
 		self.title = title

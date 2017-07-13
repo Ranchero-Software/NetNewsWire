@@ -7,16 +7,18 @@
 //
 
 import Foundation
+import RSCore
 
 public struct Author: Hashable {
 
+	public let databaseID: String // calculated
 	public let name: String?
 	public let url: String?
 	public let avatarURL: String?
 	public let emailAddress: String?
 	public let hashValue: Int
 	
-	public init?(name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
+	public init?(databaseID: String?, name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
 
 		if name == nil && url == nil && emailAddress == nil {
 			return nil
@@ -31,10 +33,14 @@ public struct Author: Hashable {
 		s += avatarURL ?? ""
 		s += emailAddress ?? ""
 		self.hashValue = s.hashValue
+		
+		if databaseID == nil {
+			self.databaseID = (s as NSString).rs_md5Hash()
+		}
 	}
 	
 	public static func ==(lhs: Author, rhs: Author) -> Bool {
 
-		return lhs.hashValue == rhs.hashValue && lhs.name == rhs.name && lhs.url == rhs.url && lhs.avatarURL == rhs.avatarURL && lhs.emailAddress == rhs.emailAddress
+		return lhs.hashValue == rhs.hashValue && lhs.databaseID == rhs.databaseID
 	}
 }

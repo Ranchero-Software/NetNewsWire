@@ -14,11 +14,12 @@ extension Author {
 
 	init?(row: FMResultSet) {
 		
+		let databaseID = row.string(forColumn: DatabaseKey.databaseID)
 		let name = row.string(forColumn: DatabaseKey.name)
 		let url = row.string(forColumn: DatabaseKey.url)
 		let avatarURL = row.string(forColumn: DatabaseKey.avatarURL)
 		let emailAddress = row.string(forColumn: DatabaseKey.emailAddress)
 
-		self.init(name: name, url: url, avatarURL: avatarURL, emailAddress: emailAddress)
+		self.init(databaseID: databaseID, name: name, url: url, avatarURL: avatarURL, emailAddress: emailAddress)
 	}
 }
