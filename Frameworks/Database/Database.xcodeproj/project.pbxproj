@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		840405CF1F1A963700DF0296 /* AttachmentsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840405CE1F1A963700DF0296 /* AttachmentsManager.swift */; };
+		840405CF1F1A963700DF0296 /* AttachmentsTable..swift in Sources */ = {isa = PBXBuildFile; fileRef = 840405CE1F1A963700DF0296 /* AttachmentsTable..swift */; };
 		844BEE411F0AB3AB004AB7CD /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEE371F0AB3AA004AB7CD /* Database.framework */; };
 		844BEE461F0AB3AB004AB7CD /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */; };
 		845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580661F0AEBCD003CCFA1 /* Constants.swift */; };
@@ -109,7 +109,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		840405CE1F1A963700DF0296 /* AttachmentsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsManager.swift; sourceTree = "<group>"; };
+		840405CE1F1A963700DF0296 /* AttachmentsTable..swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsTable..swift; sourceTree = "<group>"; };
 		844BEE371F0AB3AA004AB7CD /* Database.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Database.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		844BEE401F0AB3AB004AB7CD /* DatabaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DatabaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTests.swift; sourceTree = "<group>"; };
@@ -165,7 +165,7 @@
 				84E156EB1F0AB80E00F8CC05 /* ArticlesManager.swift */,
 				84E156ED1F0AB81400F8CC05 /* StatusesManager.swift */,
 				84F20F8E1F180D8700D8E682 /* AuthorsManager.swift */,
-				840405CE1F1A963700DF0296 /* AttachmentsManager.swift */,
+				840405CE1F1A963700DF0296 /* AttachmentsTable..swift */,
 				84BB4BA81F11A32800858766 /* TagsManager.swift */,
 				8461462A1F0AC44100870CB3 /* Extensions */,
 				84E156EF1F0AB81F00F8CC05 /* CreateStatements.sql */,
@@ -466,7 +466,7 @@
 				8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */,
 				84F20F8F1F180D8700D8E682 /* AuthorsManager.swift in Sources */,
 				845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */,
-				840405CF1F1A963700DF0296 /* AttachmentsManager.swift in Sources */,
+				840405CF1F1A963700DF0296 /* AttachmentsTable..swift in Sources */,
 				845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
 				845580721F0AEE49003CCFA1 /* AccountInfo.swift in Sources */,

@@ -1,5 +1,5 @@
 //
-//  AttachmentsManager.swift
+//  AttachmentsTable.swift
 //  Database
 //
 //  Created by Brent Simmons on 7/15/17.
@@ -29,12 +29,11 @@ import Data
 // * They don’t take up much space.
 // * It seriously cuts down on the number of database reads and writes.
 
-final class AttachmentsManager {
+final class AttachmentsTable: DatabaseTable {
 
 	private var cachedAttachments = [String: Attachment]() // Attachment.databaseID key
 	private var cachedAttachmentsByArticle = [String: Set<Attachment>]() // Article.databaseID key
 	private var articlesWithNoAttachments = Set<String>() // Article.databaseID
-	private let table = DatabaseTable(name: DatabaseTableName.attachments)
 
 	func fetchAttachmentsForArticles(_ articles: Set<Article>, database: FMDatabase) {
 
@@ -101,23 +100,43 @@ final class AttachmentsManager {
 			}
 		}
 
-		if !articlesWithPossiblyAllAttachmentsDeleted.isEmpty {
-			deleteAttachmentsForArticles(articlesWithPossiblyAllAttachmentsDeleted)
-		}
+		deleteAttachmentsForArticles(articlesWithPossiblyAllAttachmentsDeleted, database)
+		deleteAttachments(attachmentsToDelete, database)
+		saveAttachments(attachmentsToSave, database)
 	}
 }
 
 private extension AttachmentsManager {
 
-	func deleteAttachmentsForArticles(_ articles: Set<Article>, database: FMDatabase) {
+	func deleteAttachmentsForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
 
+		if articles.isEmpty {
+			return
+		}
+		articles.forEach { uncacheAttachmentsForArticle($0) }
+		
 		let articleIDs = articles.map { $0.databaseID }
-		articlesWithNoAttachments.formUnion(Set(articleIDs))
-		articleIDs.forEach { cachedAttachmentsByArticle[$0] = nil }
-
-		let _ = database.rs_deleteRowsWhereKey(DatabaseKey.articleID, inValues: articleIDs, tableName: DatabaseTableName.attachments)
+		deleteRowsWhere(key: DatabaseKey.articleID, equalsAnyValue: articlesIDs, in: database)
 	}
 
+	func deleteAttachments(_ attachments: Set<Attachment>, _ database: FMDatabase) {
+		
+		if attachments.isEmpty {
+			return
+		}
+		let databaseIDs = attachments.map { $0.databaseID }
+		deleteRowsWhere(key: DatabaseKey.databaseID, equalsAnyValue: databaseIDs, in: database)
+	}
+	
+	func saveAttachments(_ attachments: Set<Attachment>, _ database: FMDatabase) {
+		
+		if attachments.isEmpty {
+			return
+		}
+
+
+	}
+	
 	func addCachedAttachmentsToArticle(_ article: Article) {
 
 		if let _ = article.attachments {
@@ -149,14 +168,6 @@ private extension AttachmentsManager {
 		assert(article.attachments == nil || article.attachments.isEmpty)
 		articlesWithNoAttachments.insert(article.databaseID)
 		cachedAttachmentsByArticle[article.databaseID] = nil
-
-		var attachmentDatabaseIDsToUncache = Set<String>()
-		for (databaseID, attachment) in cachedAttachments {
-			if attachment.articleID == article.databaseID {
-				attachmentDatabaseIDsToUncache.insert(databaseID)
-			}
-		}
-		attachmentDatabaseIDsToUncache.forEach { uncacheAttachmentWithDatabaseID($0) }
 	}
 
 	func cacheAttachmentsForArticle(_ article: Article) {
