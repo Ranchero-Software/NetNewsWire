@@ -7,9 +7,11 @@ CREATE TABLE if not EXISTS authorLookup (authorID TEXT NOT NULL, articleID TEXT 
 
 CREATE TABLE if not EXISTS tags(tagName TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(tagName, articleID));
 
-CREATE TABLE if not EXISTS attachments(articleID TEXT NOT NULL, url TEXT NOT NULL, mimeType TEXT, title TEXT, sizeInBytes INTEGER, durationInSeconds INTEGER, PRIMARY KEY(articleID, url));
+CREATE TABLE if not EXISTS attachments(databaseID TEXT NOT NULL PRIMARY KEY, articleID TEXT NOT NULL, url TEXT NOT NULL, mimeType TEXT, title TEXT, sizeInBytes INTEGER, durationInSeconds INTEGER);
 
 CREATE INDEX if not EXISTS articles_feedID_index on articles (feedID);
 
-CREATE INDEX if not EXISTS tags_tagName_index on tags(tagName COLLATE NOCASE);
+CREATE INDEX if not EXISTS tags_tagName_index on tags (tagName COLLATE NOCASE);
+
+CREATE INDEX if not EXISTS attachments_articleID_index on attachments (articleID);
 

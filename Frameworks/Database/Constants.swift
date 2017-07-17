@@ -13,11 +13,13 @@ public struct DatabaseTableName {
 	static let articles = "articles"
 	static let statuses = "statuses"
 	static let tags = "tags"
+	static let attachments = "attachments"
 }
 
 public struct DatabaseKey {
 	
 	// Shared
+	static let databaseID = "databaseID"
 	static let articleID = "articleID"
 	static let accountInfo = "accountInfo"
 	static let url = "url"

@@ -33,9 +33,12 @@ public struct Author: Hashable {
 		s += avatarURL ?? ""
 		s += emailAddress ?? ""
 		self.hashValue = s.hashValue
-		
-		if databaseID == nil {
-			self.databaseID = (s as NSString).rs_md5Hash()
+
+		if let databaseID = databaseID {
+			self.databaseID = databaseID
+		}
+		else {
+			self.databaseID = databaseIDWithString(s)
 		}
 	}
 	

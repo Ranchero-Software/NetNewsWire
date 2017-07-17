@@ -8,29 +8,28 @@
 
 import Foundation
 import Data
+import RSDatabase
 
 extension Attachment {
-	
-	init?(databaseDictionary d: [String: Any]) {
-		
-		guard let url = d[DatabaseKey.url] as? String else {
-			return nil
-		}
-		let mimeType = d[DatabaseKey.mimeType] as? String
-		let title = d[DatabaseKey.title] as? String
-		let sizeInBytes = d[DatabaseKey.sizeInBytes] as? Int
-		let durationInSeconds = d[DatabaseKey.durationInSeconds] as? Int
-		
-		self.init(url: url, mimeType: mimeType, title: title, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds)
+
+	init?(databaseID: String, row: FMResultSet) {
+
+		let articleID = row.string(forColumn: DatabaseKey.articleID)
+		let url = row.string(forColumn: DatabaseKey.url)
+		let mimeType = row.string(forColumn: DatabaseKey.mimeType)
+		let title = row.string(forColumn: DatabaseKey.title)
+		let sizeInBytes = optionalIntForColumn(row, DatabaseKey.sizeInBytes)
+		let durationInSeconds = optionalIntForColumn(row, DatabaseKey.durationInSeconds)
+
+		init(databaseID: databaseID, articleID: articleID, url: url, mimeType: mimeType, title: title, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds)
 	}
-	
-	static func attachments(with plist: [Any]) -> [Attachment]? {
-		
-		return plist.flatMap{ (oneDictionary) -> Attachment? in
-			if let d = oneDictionary as? [String: Any] {
-				return Attachment(databaseDictionary: d)
-			}
+
+	private func optionalIntForColumn(_ row: FMResultSet, _ columnName: String) -> Int? {
+
+		let intValue = row.long(forColumn: columnName)
+		if intValue < 1 {
 			return nil
 		}
+		return intValue
 	}
 }
