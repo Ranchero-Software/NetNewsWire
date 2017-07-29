@@ -17,12 +17,16 @@ public protocol DatabaseTable {
 }
 
 extension DatabaseTable {
-	
+
+	// MARK: Fetching
+
 	public func selectRowsWhere(key: String, equals value: Any, in database: FMDatabase) -> FMResultSet? {
 		
-		return database.rs_selectRowsWhereKey(key, equalsValue: value, tableName: self.name)
+		return database.rs_selectRowsWhereKey(key, equalsValue: value, tableName: name)
 	}
-	
+
+	// MARK: Deleting
+
 	public func deleteRowsWhere(key: String, equalsAnyValue values: [Any], in database: FMDatabase) {
 		
 		if values.isEmpty {
@@ -32,7 +36,29 @@ extension DatabaseTable {
 		database.rs_deleteRowsWhereKey(key, inValues: values, tableName: name)
 	}
 
-	// MARK: Counts
+	// MARK: Updating
+
+	public func updateRowsWithValue(_ value: Any, valueKey: String, whereKey: String, matches: [Any]) {
+
+		queue.update { (database: FMDatabase!) in
+
+			let _ = database.rs_updateRows(withValue: value, valueKey: valueKey, whereKey: whereKey, inValues: matches, tableName: self.name)
+		}
+	}
+
+	// MARK: Saving
+
+	public func insertRows(_ dictionaries: [NSDictionary], insertType: RSDatabaseInsertType) {
+
+		queue.update { (database: FMDatabase!) -> Void in
+
+			dictionaries.forEach { (oneDictionary) in
+				let _ = database.rs_insertRow(with: oneDictionary as [NSObject: AnyObject], insertType: insertType, tableName: self.name)
+			}
+		}
+	}
+
+	// MARK: Counting
 
 	func numberWithCountResultSet(_ resultSet: FMResultSet?) -> Int {
 

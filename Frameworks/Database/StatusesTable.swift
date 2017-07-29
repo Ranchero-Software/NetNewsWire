@@ -138,25 +138,13 @@ private extension StatusesManager {
 	
 	func saveStatuses(_ statuses: Set<ArticleStatus>) {
 		
-		let statusArray = statuses.map { (oneStatus) -> NSDictionary in
-			return oneStatus.databaseDictionary()
-		}
-		
-		queue.update { (database: FMDatabase!) -> Void in
-			
-			statusArray.forEach { (oneStatusDictionary) in
-				
-				let _ = database.rs_insertRow(with: oneStatusDictionary as [NSObject: AnyObject], insertType: RSDatabaseInsertOrIgnore, tableName: "statuses")
-			}
-		}
+		let statusArray = statuses.map { $0.databaseDictionary() }
+		insertRows(statusArray, insertType: .insertOrIgnore)
 	}
 	
 	private func updateArticleStatusesInDatabase(_ articleIDs: Set<String>, statusKey: ArticleStatusKey, flag: Bool) {
-		
-		queue.update { (database: FMDatabase!) -> Void in
-			
-			let _ = database.rs_updateRows(withValue: NSNumber(value: flag), valueKey: statusKey.rawValue, whereKey: articleIDKey, inValues: Array(articleIDs), tableName: statusesTableName)
-		}
+
+		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey.rawValue, whereKey: DatabaseKey.articleID, matches: Array(articleIDs))
 	}
 	
 	// MARK: Creating
