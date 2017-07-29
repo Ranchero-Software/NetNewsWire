@@ -31,6 +31,12 @@ import Data
 
 final class AttachmentsTable: DatabaseTable {
 
+	let name: String
+
+	init(name: String) {
+		self.name = name
+	}
+
 	private var cachedAttachments = [String: Attachment]() // Attachment.databaseID key
 	private var cachedAttachmentsByArticle = [String: Set<Attachment>]() // Article.databaseID key
 	private var articlesWithNoAttachments = Set<String>() // Article.databaseID

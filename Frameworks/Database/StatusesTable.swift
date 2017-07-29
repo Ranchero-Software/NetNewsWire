@@ -1,5 +1,5 @@
 //
-//  StatusesManager.swift
+//  StatusesTable.swift
 //  Evergreen
 //
 //  Created by Brent Simmons on 5/8/16.
@@ -12,14 +12,14 @@ import RSDatabase
 import RSParser
 import Data
 
-final class StatusesManager {
+final class StatusesTable: DatabaseTable {
 	
 	var cachedStatuses = [String: ArticleStatus]()
-	let queue: RSDatabaseQueue
+	let name: String
 	
-	init(queue: RSDatabaseQueue) {
+	init(name: String) {
 		
-		self.queue = queue
+		self.name = name
 	}
 	
 	func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {

@@ -1,5 +1,5 @@
 //
-//  ArticlesManager.swift
+//  ArticlesTable.swift
 //  Evergreen
 //
 //  Created by Brent Simmons on 5/9/16.
@@ -9,7 +9,14 @@
 import Foundation
 import Data
 
-final class ArticlesManager {
+final class ArticlesTable: DatabaseTable {
+
+	let name: String
+
+	init(name: String) {
+
+		self.name = name
+	}
 	
 	private let cachedArticles: NSMapTable<NSString, Article> = NSMapTable.weakToWeakObjects()
 	

@@ -16,16 +16,16 @@ import Data
 
 typealias TagNameSet = Set<String>
 
-final class TagsManager {
+final class TagsTable: DatabaseTable {
+
+	let name: String
 
 	private var articleIDCache = [String: TagNameSet]() // articleID: tags
 	private var articleIDsWithNoTags = TagNameSet()
 
-	private let queue: RSDatabaseQueue
+	init(name: String) {
 
-	init(queue: RSDatabaseQueue) {
-
-		self.queue = queue
+		self.name = name
 	}
 
 	func saveTagsForArticles(_ articles: Set<Article>) {

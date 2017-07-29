@@ -1,5 +1,5 @@
 //
-//  AuthorsManager.swift
+//  AuthorsTable.swift
 //  Database
 //
 //  Created by Brent Simmons on 7/13/17.
@@ -9,8 +9,15 @@
 import Foundation
 import Data
 
-final class AuthorsManager {
-	
+final class AuthorsTable: DatabaseTable {
+
+	let name: String
+
+	init(name: String) {
+
+		self.name = name
+	}
+
 	var cachedAuthors = [String: Author]()
 	
 	func cachedAuthor(_ databaseID: String) -> Author? {

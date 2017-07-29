@@ -26,6 +26,7 @@ final class Database {
 
 	fileprivate let queue: RSDatabaseQueue
 	private let databaseFile: String
+	private let attachmentsTable = AttachmentsTable(DatabaseTableName.attachments)
 	fileprivate let statusesManager: StatusesManager
 	fileprivate let articleCache = ArticlesManager()
 	fileprivate var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
