@@ -196,9 +196,15 @@ private extension AttachmentsManager {
 		cachedAttachments[attachment.databaseID] = attachment
 	}
 
-	func uncacheAttachmentWithDatabaseID(_ databaseID: String) {
+	func uncacheAttachments(_ attachments: Set<Attachment>) {
+		
+		attachments.removeO
+		attachments.forEach { uncacheAttachment($0) }
+	}
+	
+	func uncacheAttachment(_ attachment: Attachment) {
 
-		cachedAttachments[databaseID] = nil
+		cachedAttachments[attachment.databaseID] = nil
 	}
 
 	func saveAttachmentsForArticle(_ article: Article, database: FMDatabase) {
