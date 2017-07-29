@@ -26,7 +26,7 @@ final class Database {
 
 	fileprivate let queue: RSDatabaseQueue
 	private let databaseFile: String
-	private let attachmentsTable = AttachmentsTable(DatabaseTableName.attachments)
+	private let attachmentsTable: AttachmentsTable
 	fileprivate let statusesManager: StatusesManager
 	fileprivate let articleCache = ArticlesManager()
 	fileprivate var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
@@ -38,6 +38,7 @@ final class Database {
 		self.delegate = delegate
 		self.databaseFile = databaseFile
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
+		self.attachmentsTable = AttachmentsTable(name: DatabaseTableName.attachments, queue: queue)
 		self.statusesManager = StatusesManager(queue: self.queue)
 		
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
@@ -358,23 +359,6 @@ private extension Database {
 	
 	// MARK: Unread counts
 	
-	func numberWithCountResultSet(_ resultSet: FMResultSet?) -> Int {
-		
-		guard let resultSet = resultSet else {
-			return 0
-		}
-		if resultSet.next() {
-			return Int(resultSet.int(forColumnIndex: 0))
-		}
-		return 0
-	}
-	
-	func numberWithSQLAndParameters(_ sql: String, parameters: [Any], _ database: FMDatabase) -> Int {
-		
-		let resultSet = database.executeQuery(sql, withArgumentsIn: parameters)
-		return numberWithCountResultSet(resultSet)
-	}
-	
 	func numberOfArticles(_ feedID: String, _ database: FMDatabase) -> Int {
 		
 		let sql = "select count(*) from articles where feedID = ?;"
@@ -448,8 +432,7 @@ private extension Database {
 		return articlesSet
 	}
 	
-	typealias FeedCountCallback = (Int) -> Void
-	
+
 	func feedIDsFromArticles(_ articles: Set<Article>) -> Set<String> {
 		
 		return Set(articles.map { $0.feedID })
@@ -460,30 +443,6 @@ private extension Database {
 		let feedIDs = feedIDsFromArticles(articles)
 		if feedIDs.isEmpty {
 			return
-		}
-	}
-	
-	func numberOfArticlesInFeedID(_ feedID: String, callback: @escaping FeedCountCallback) {
-
-		queue.fetch { (database: FMDatabase!) -> Void in
-			
-			let sql = "select count(*) from articles where feedID = ?;"
-			logSQL(sql)
-			
-			var numberOfArticles = -1
-			
-			if let resultSet = database.executeQuery(sql, withArgumentsIn: [feedID]) {
-				
-				while (resultSet.next()) {
-					
-					numberOfArticles = resultSet.long(forColumnIndex: 0)
-					break
-				}
-			}
-
-			DispatchQueue.main.async() {
-				callback(numberOfArticles)
-			}
 		}
 	}
 }

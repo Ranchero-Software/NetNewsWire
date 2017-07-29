@@ -31,4 +31,21 @@ extension DatabaseTable {
 		
 		database.rs_deleteRowsWhereKey(key, inValues: values, tableName: name)
 	}
+
+	// MARK: Counts
+
+	func numberWithCountResultSet(_ resultSet: FMResultSet?) -> Int {
+
+		if let resultSet = resultSet, resultSet.next() {
+			return Int(resultSet.int(forColumnIndex: 0))
+		}
+		return 0
+	}
+
+	func numberWithSQLAndParameters(_ sql: String, _ parameters: [Any], in database: FMDatabase) -> Int {
+
+		let resultSet = database.executeQuery(sql, withArgumentsIn: parameters)
+		return numberWithCountResultSet(resultSet)
+	}
 }
+
