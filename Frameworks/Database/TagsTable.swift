@@ -19,13 +19,15 @@ typealias TagNameSet = Set<String>
 final class TagsTable: DatabaseTable {
 
 	let name: String
+	let queue: RSDatabaseQueue
 
 	private var articleIDCache = [String: TagNameSet]() // articleID: tags
-	private var articleIDsWithNoTags = TagNameSet()
+	private var articleIDsWithNoTags = Set<String>
 
-	init(name: String) {
+	init(name: String, queue: RSDatabaseQueue) {
 
 		self.name = name
+		self.queue = queue
 	}
 
 	func saveTagsForArticles(_ articles: Set<Article>) {

@@ -12,10 +12,12 @@ import Data
 final class ArticlesTable: DatabaseTable {
 
 	let name: String
+	let queue: RSDatabaseQueue
 
-	init(name: String) {
+	init(name: String, queue: RSDatabaseQueue) {
 
 		self.name = name
+		self.queue = queue
 	}
 	
 	private let cachedArticles: NSMapTable<NSString, Article> = NSMapTable.weakToWeakObjects()

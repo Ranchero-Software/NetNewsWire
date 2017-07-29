@@ -16,12 +16,14 @@ final class StatusesTable: DatabaseTable {
 	
 	var cachedStatuses = [String: ArticleStatus]()
 	let name: String
-	
-	init(name: String) {
-		
+	let queue: RSDatabaseQueue
+
+	init(name: String, queue: RSDatabaseQueue) {
+
 		self.name = name
+		self.queue = queue
 	}
-	
+
 	func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
 		
 		assertNoMissingStatuses(articles)

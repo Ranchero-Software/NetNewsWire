@@ -12,10 +12,12 @@ import Data
 final class AuthorsTable: DatabaseTable {
 
 	let name: String
+	let queue: RSDatabaseQueue
 
-	init(name: String) {
+	init(name: String, queue: RSDatabaseQueue) {
 
 		self.name = name
+		self.queue = queue
 	}
 
 	var cachedAuthors = [String: Author]()

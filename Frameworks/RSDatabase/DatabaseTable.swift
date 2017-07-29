@@ -10,9 +10,10 @@ import Foundation
 
 public protocol DatabaseTable {
 	
-	public var name: String {get}
+	var name: String {get}
+	var queue: RSDatabaseQueue {get}
 	
-	public init(name: String)
+	init(name: String, queue: RSDatabaseQueue)
 }
 
 extension DatabaseTable {

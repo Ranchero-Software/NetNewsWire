@@ -32,9 +32,12 @@ import Data
 final class AttachmentsTable: DatabaseTable {
 
 	let name: String
+	let queue: RSDatabaseQueue
 
-	init(name: String) {
+	init(name: String, queue: RSDatabaseQueue) {
+
 		self.name = name
+		self.queue = queue
 	}
 
 	private var cachedAttachments = [String: Attachment]() // Attachment.databaseID key
