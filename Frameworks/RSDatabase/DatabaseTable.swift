@@ -16,13 +16,18 @@ public protocol DatabaseTable {
 	init(name: String, queue: RSDatabaseQueue)
 }
 
-extension DatabaseTable {
+public extension DatabaseTable {
 
 	// MARK: Fetching
 
 	public func selectRowsWhere(key: String, equals value: Any, in database: FMDatabase) -> FMResultSet? {
 		
 		return database.rs_selectRowsWhereKey(key, equalsValue: value, tableName: name)
+	}
+
+	public func selectRowsWhere(key: String, inValues values: [Any], in database: FMDatabase) -> FMResultSet? {
+
+		return database.rs_selectRowsWhereKey(key, inValues: values, tableName: name)
 	}
 
 	// MARK: Deleting

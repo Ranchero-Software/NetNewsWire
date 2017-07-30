@@ -16,7 +16,7 @@ final class StatusesTable: DatabaseTable {
 
 	let name: String
 	let queue: RSDatabaseQueue
-	let cache = ObjectCache<ArticleStatus>(keyPathForID: \ArticleStatus.articleID)
+	private let cache = ObjectCache<ArticleStatus>(keyPathForID: \ArticleStatus.articleID)
 
 	init(name: String, queue: RSDatabaseQueue) {
 
@@ -35,7 +35,7 @@ final class StatusesTable: DatabaseTable {
 		
 		articles.forEach { (oneArticle) in
 			
-			if let cachedStatus = cache[oneArticle.articleID] {
+			if let cachedStatus = cache[oneArticle.databaseID] {
 				oneArticle.status = cachedStatus
 			}
 			else if let oneArticleStatus = oneArticle.status {
@@ -59,7 +59,7 @@ final class StatusesTable: DatabaseTable {
 			
 			DispatchQueue.main.async {
 
-				cache.addObjectsNotCached(Array(statuses))
+				self.cache.addObjectsNotCached(Array(statuses))
 
 				let newArticleIDs = self.articleIDsMissingStatuses(articleIDs)
 				self.createStatusForNewArticleIDs(newArticleIDs)
@@ -79,11 +79,7 @@ final class StatusesTable: DatabaseTable {
 	}
 }
 
-// MARK: - Private
-
-private let statusesTableName = "statuses"
-
-private extension StatusesManager {
+private extension StatusesTable {
 	
 	// MARK: Marking
 	
@@ -110,15 +106,11 @@ private extension StatusesManager {
 	
 	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, database: FMDatabase) -> Set<ArticleStatus> {
 		
-		guard !articleIDs.isEmpty else {
-			return Set<ArticleStatus>()
+		if !articleIDs.isEmpty, let resultSet = selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) {
+			return articleStatusesWithResultSet(resultSet)
 		}
 		
-		guard let resultSet = database.rs_selectRowsWhereKey(DatabaseKey.articleID, inValues: Array(articleIDs), tableName: statusesTableName) else {
-			return Set<ArticleStatus>()
-		}
-		
-		return articleStatusesWithResultSet(resultSet)
+		return Set<ArticleStatus>()
 	}
 
 	func articleStatusesWithResultSet(_ resultSet: FMResultSet) -> Set<ArticleStatus> {
@@ -139,12 +131,12 @@ private extension StatusesManager {
 	func saveStatuses(_ statuses: Set<ArticleStatus>) {
 		
 		let statusArray = statuses.map { $0.databaseDictionary() }
-		insertRows(statusArray, insertType: .insertOrIgnore)
+		insertRows(statusArray, insertType: .orIgnore)
 	}
 	
-	private func updateArticleStatusesInDatabase(_ articleIDs: Set<String>, statusKey: ArticleStatusKey, flag: Bool) {
+	private func updateArticleStatusesInDatabase(_ articleIDs: Set<String>, statusKey: String, flag: Bool) {
 
-		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey.rawValue, whereKey: DatabaseKey.articleID, matches: Array(articleIDs))
+		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs))
 	}
 	
 	// MARK: Creating
@@ -152,7 +144,7 @@ private extension StatusesManager {
 	func createStatusForNewArticleIDs(_ articleIDs: Set<String>) {
 
 		let now = Date()
-		let statuses = articleIDs.map { (oneArticleID) -> LocalArticleStatus in
+		let statuses = articleIDs.map { (oneArticleID) -> ArticleStatus in
 			return ArticleStatus(articleID: oneArticleID, read: false, starred: false, userDeleted: false, dateArrived: now)
 		}
 		cache.addObjectsNotCached(statuses)

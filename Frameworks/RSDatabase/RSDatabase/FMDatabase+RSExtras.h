@@ -10,11 +10,11 @@
 
 @import Foundation;
 
-typedef enum _RSDatabaseInsertType {
-    RSDatabaseInsert,
-    RSDatabaseInsertOrReplace,
+typedef NS_ENUM(NSInteger, RSDatabaseInsertType) {
+	RSDatabaseInsertNormal,
+	RSDatabaseInsertOrReplace,
 	RSDatabaseInsertOrIgnore
-} RSDatabaseInsertType;
+};
 
 NS_ASSUME_NONNULL_BEGIN
 
