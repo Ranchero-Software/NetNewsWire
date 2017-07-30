@@ -33,6 +33,7 @@
 		84419AE71B5ABD7F00C26BB2 /* RSDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 84419ADD1B5ABD7F00C26BB2 /* RSDatabaseQueue.m */; };
 		84419B051B5ABFF700C26BB2 /* FMResultSet+RSExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 84419B031B5ABFF700C26BB2 /* FMResultSet+RSExtras.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84419B061B5ABFF700C26BB2 /* FMResultSet+RSExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 84419B041B5ABFF700C26BB2 /* FMResultSet+RSExtras.m */; };
+		844D97411F2D32F300CEDDEA /* ObjectCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D97401F2D32F300CEDDEA /* ObjectCache.swift */; };
 		849BF8C61C94FB8E0071D1DA /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 849BF8C51C94FB8E0071D1DA /* libsqlite3.tbd */; };
 		84DDF1961C94FC45005E6CF5 /* FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DDF18B1C94FC45005E6CF5 /* FMDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84DDF1971C94FC45005E6CF5 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DDF18C1C94FC45005E6CF5 /* FMDatabase.m */; };
@@ -68,6 +69,7 @@
 		84419ADD1B5ABD7F00C26BB2 /* RSDatabaseQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RSDatabaseQueue.m; path = RSDatabase/RSDatabaseQueue.m; sourceTree = "<group>"; };
 		84419B031B5ABFF700C26BB2 /* FMResultSet+RSExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "FMResultSet+RSExtras.h"; path = "RSDatabase/FMResultSet+RSExtras.h"; sourceTree = "<group>"; };
 		84419B041B5ABFF700C26BB2 /* FMResultSet+RSExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "FMResultSet+RSExtras.m"; path = "RSDatabase/FMResultSet+RSExtras.m"; sourceTree = "<group>"; };
+		844D97401F2D32F300CEDDEA /* ObjectCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ObjectCache.swift; path = RSDatabase/ObjectCache.swift; sourceTree = "<group>"; };
 		849BF8C51C94FB8E0071D1DA /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		84DDF18B1C94FC45005E6CF5 /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
 		84DDF18C1C94FC45005E6CF5 /* FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabase.m; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				84419AD81B5ABD7400C26BB2 /* NSString+RSDatabase.h */,
 				84419AD91B5ABD7400C26BB2 /* NSString+RSDatabase.m */,
 				840405DA1F1C158C00DF0296 /* DatabaseTable.swift */,
+				844D97401F2D32F300CEDDEA /* ObjectCache.swift */,
 				84DDF18A1C94FC45005E6CF5 /* FMDB */,
 				84F22C5A1B52E0D9000060CE /* Info.plist */,
 				849BF8C51C94FB8E0071D1DA /* libsqlite3.tbd */,
@@ -368,6 +371,7 @@
 				84DDF1A01C94FC45005E6CF5 /* FMResultSet.m in Sources */,
 				84419B061B5ABFF700C26BB2 /* FMResultSet+RSExtras.m in Sources */,
 				84DDF1991C94FC45005E6CF5 /* FMDatabaseAdditions.m in Sources */,
+				844D97411F2D32F300CEDDEA /* ObjectCache.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

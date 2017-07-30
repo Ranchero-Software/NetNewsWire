@@ -13,10 +13,10 @@ import RSParser
 import Data
 
 final class StatusesTable: DatabaseTable {
-	
-	var cachedStatuses = [String: ArticleStatus]()
+
 	let name: String
 	let queue: RSDatabaseQueue
+	let cache = ObjectCache<ArticleStatus>(keyPathForID: \ArticleStatus.articleID)
 
 	init(name: String, queue: RSDatabaseQueue) {
 
@@ -35,11 +35,11 @@ final class StatusesTable: DatabaseTable {
 		
 		articles.forEach { (oneArticle) in
 			
-			if let cachedStatus = cachedStatusForArticleID(oneArticle.articleID) {
+			if let cachedStatus = cache[oneArticle.articleID] {
 				oneArticle.status = cachedStatus
 			}
 			else if let oneArticleStatus = oneArticle.status {
-				cacheStatus(oneArticleStatus)
+				cache.add(oneArticleStatus)
 			}
 		}
 	}
@@ -169,11 +169,6 @@ private extension StatusesManager {
 	}
 
 	// MARK: Cache
-	
-	func cachedStatusForArticleID(_ articleID: String) -> ArticleStatus? {
-		
-		return cachedStatuses[articleID]
-	}
 	
 	func cacheStatus(_ status: ArticleStatus) {
 		
