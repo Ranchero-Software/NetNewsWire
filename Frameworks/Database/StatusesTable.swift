@@ -58,9 +58,9 @@ final class StatusesTable: DatabaseTable {
 			let statuses = self.fetchStatusesForArticleIDs(articleIDs, database: database)
 			
 			DispatchQueue.main.async {
-				
-				self.cacheStatuses(statuses)
-				
+
+				cache.addObjectsNotCached(Array(statuses))
+
 				let newArticleIDs = self.articleIDsMissingStatuses(articleIDs)
 				self.createStatusForNewArticleIDs(newArticleIDs)
 				callback()
@@ -155,7 +155,7 @@ private extension StatusesManager {
 		let statuses = articleIDs.map { (oneArticleID) -> LocalArticleStatus in
 			return ArticleStatus(articleID: oneArticleID, read: false, starred: false, userDeleted: false, dateArrived: now)
 		}
-		cacheStatuses(Set(statuses))
+		cache.addObjectsNotCached(statuses)
 
 		queue.update { (database: FMDatabase!) -> Void in
 
@@ -168,28 +168,11 @@ private extension StatusesManager {
 		}
 	}
 
-	// MARK: Cache
-	
-	func cacheStatus(_ status: ArticleStatus) {
-		
-		cacheStatuses(Set([status]))
-	}
-	
-	func cacheStatuses(_ statuses: Set<ArticleStatus>) {
-		
-		statuses.forEach { (oneStatus) in
-			if let _ = cachedStatuses[oneStatus.articleID] {
-				return
-			}
-			cachedStatuses[oneStatus.articleID] = oneStatus
-		}
-	}
-	
 	// MARK: Utilities
 	
 	func articleIDsMissingStatuses(_ articleIDs: Set<String>) -> Set<String> {
 		
-		return Set(articleIDs.filter { cachedStatusForArticleID($0) == nil })
+		return Set(articleIDs.filter { cache[$0] == nil })
 	}
 }
 

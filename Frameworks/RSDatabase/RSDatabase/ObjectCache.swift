@@ -20,12 +20,26 @@ public final class ObjectCache<T> {
 
 	public func addObjects(_ objects: [T]) {
 
-		objects.forEach { addObject($0) }
+		objects.forEach { add($0) }
+	}
+
+	public func addObjectsNotCached(_ objects: [T]) {
+
+		objects.forEach { addIfNotCached($0) }
 	}
 
 	public func add(_ object: T) {
 
 		let identifier = identifierForObject(object)
+		self[identifier] = object
+	}
+
+	public func addIfNotCached(_ object: T) {
+
+		let identifier = identifierForObject(object)
+		if let _ = self[identifier] {
+			return
+		}
 		self[identifier] = object
 	}
 
@@ -40,12 +54,29 @@ public final class ObjectCache<T> {
 		self[identifier] = nil
 	}
 
+	public func uniquedObjects(_ objects: [T]) -> [T] {
+
+		// Return cached version of each object.
+		// When an object is not already cached, cache it,
+		// then consider that version the unique version.
+
+		return objects.map({ (object) -> T in
+
+			let identifier = identifierForObject(object)
+			if let cachedObject = self[identifier] {
+				return cachedObject
+			}
+			add(object)
+			return object
+		})
+	}
+
 	public subscript(_ identifier: String) -> T? {
 		get {
 			return dictionary[identifier]
 		}
 		set {
-			dictionary[identifier] = T
+			dictionary[identifier] = newValue
 		}
 	}
 }
