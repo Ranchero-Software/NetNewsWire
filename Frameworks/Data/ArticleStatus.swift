@@ -35,7 +35,12 @@ public final class ArticleStatus: Hashable {
 		self.accountInfo = accountInfo
 		self.hashValue = articleID.hashValue
 	}
-	
+
+	public convenience init(articleID: String, dateArrived: Date) {
+
+		init(articleID: articleID, read: false, starred: false, userDeleted: false, dateArrived: dateArrived, accountInfo: nil)
+	}
+
 	public func boolStatus(forKey key: String) -> Bool {
 		
 		if let articleStatusKey = ArticleStatusKey(rawValue: key) {

@@ -8,6 +8,8 @@
 
 import Foundation
 
+// Not thread-safe.
+
 public final class ObjectCache<T> {
 
 	private let keyPathForID: KeyPath<T,String>
@@ -60,7 +62,7 @@ public final class ObjectCache<T> {
 		// When an object is not already cached, cache it,
 		// then consider that version the unique version.
 
-		return objects.map({ (object) -> T in
+		return objects.map { (object) -> T in
 
 			let identifier = identifierForObject(object)
 			if let cachedObject = self[identifier] {
@@ -68,7 +70,15 @@ public final class ObjectCache<T> {
 			}
 			add(object)
 			return object
-		})
+		}
+	}
+
+	public func objectWithIDIsCached(_ identifier: String) -> Bool {
+
+		if let _ = self[identifier] {
+			return true
+		}
+		return false
 	}
 
 	public subscript(_ identifier: String) -> T? {

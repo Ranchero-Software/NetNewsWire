@@ -45,7 +45,11 @@ final class StatusesTable: DatabaseTable {
 	}
 	
 	func ensureStatusesForParsedArticles(_ parsedArticles: [ParsedItem], _ callback: @escaping RSVoidCompletionBlock) {
-		
+
+		// 1. Check cache for statuses
+		// 2. Fetch statuses not found in cache
+		// 3. Create, save, and cache statuses not found in database
+
 		var articleIDs = Set(parsedArticles.map { $0.articleID })
 		articleIDs = articleIDsMissingStatuses(articleIDs)
 		if articleIDs.isEmpty {
@@ -62,18 +66,11 @@ final class StatusesTable: DatabaseTable {
 				self.cache.addObjectsNotCached(Array(statuses))
 
 				let newArticleIDs = self.articleIDsMissingStatuses(articleIDs)
-				self.createStatusForNewArticleIDs(newArticleIDs)
-				callback()
-			}
-		}
-	}
+				if !newArticleIDs.isEmpty {
+					self.createAndSaveStatusesForArticleIDs(newArticleIDs)
+				}
 
-	func assertNoMissingStatuses(_ articles: Set<Article>) {
-		
-		for oneArticle in articles {
-			if oneArticle.status == nil {
-				assertionFailure("All articles must have a status at this point.")
-				return
+				callback()
 			}
 		}
 	}
@@ -81,24 +78,13 @@ final class StatusesTable: DatabaseTable {
 
 private extension StatusesTable {
 	
-	// MARK: Marking
-	
-	func markArticleStatuses(_ statuses: Set<ArticleStatus>, statusKey: String, flag: Bool) {
-		
-		// Ignore the statuses where status.[statusKey] == flag. Update the remainder and save in database.
-		
-		var articleIDs = Set<String>()
-		
-		statuses.forEach { (oneStatus) in
-			
-			if oneStatus.boolStatus(forKey: statusKey) != flag {
-				oneStatus.setBoolStatus(flag, forKey: statusKey)
-				articleIDs.insert(oneStatus.articleID)
+	func assertNoMissingStatuses(_ articles: Set<Article>) {
+
+		for oneArticle in articles {
+			if oneArticle.status == nil {
+				assertionFailure("All articles must have a status at this point.")
+				return
 			}
-		}
-		
-		if !articleIDs.isEmpty {
-			updateArticleStatusesInDatabase(articleIDs, statusKey: statusKey, flag: flag)
 		}
 	}
 
@@ -126,45 +112,56 @@ private extension StatusesTable {
 		return statuses
 	}
 	
-	// MARK: Saving
+	// MARK: Updating
 	
-	func saveStatuses(_ statuses: Set<ArticleStatus>) {
-		
-		let statusArray = statuses.map { $0.databaseDictionary() }
-		insertRows(statusArray, insertType: .orIgnore)
+	func markArticleStatuses(_ statuses: Set<ArticleStatus>, statusKey: String, flag: Bool) {
+
+		// Ignore the statuses where status.[statusKey] == flag. Update the remainder and save in database.
+
+		var articleIDsToUpdate = Set<String>()
+
+		statuses.forEach { (oneStatus) in
+
+			if oneStatus.boolStatus(forKey: statusKey) == flag {
+				return
+			}
+
+			oneStatus.setBoolStatus(flag, forKey: statusKey)
+			articleIDsToUpdate.insert(oneStatus.articleID)
+		}
+
+		if !articleIDsToUpdate.isEmpty {
+			updateArticleStatusesInDatabase(articleIDsToUpdate, statusKey: statusKey, flag: flag)
+		}
 	}
-	
+
 	private func updateArticleStatusesInDatabase(_ articleIDs: Set<String>, statusKey: String, flag: Bool) {
 
 		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs))
 	}
 	
 	// MARK: Creating
-	
-	func createStatusForNewArticleIDs(_ articleIDs: Set<String>) {
+
+	func saveStatuses(_ statuses: Set<ArticleStatus>) {
+
+		let statusArray = statuses.map { $0.databaseDictionary() }
+		insertRows(statusArray, insertType: .orIgnore)
+	}
+
+	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>) {
 
 		let now = Date()
-		let statuses = articleIDs.map { (oneArticleID) -> ArticleStatus in
-			return ArticleStatus(articleID: oneArticleID, read: false, starred: false, userDeleted: false, dateArrived: now)
-		}
+		let statuses = articleIDs.map { ArticleStatus(articleID: $0, dateArrived: now) }
 		cache.addObjectsNotCached(statuses)
 
-		queue.update { (database: FMDatabase!) -> Void in
-
-			let falseValue = NSNumber(value: false)
-
-			articleIDs.forEach { (oneArticleID) in
-
-				let _ = database.executeUpdate("insert or ignore into  statuses (read, articleID, starred, userDeleted, dateArrived) values (?, ?, ?, ?, ?)", withArgumentsIn:[falseValue, oneArticleID as NSString, falseValue, falseValue, now])
-			}
-		}
+		saveStatuses(Set(statuses))
 	}
 
 	// MARK: Utilities
 	
 	func articleIDsMissingStatuses(_ articleIDs: Set<String>) -> Set<String> {
 		
-		return Set(articleIDs.filter { cache[$0] == nil })
+		return Set(articleIDs.filter { !objectWithIDIsCached[$0] })
 	}
 }
 
