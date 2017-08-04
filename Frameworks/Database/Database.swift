@@ -26,9 +26,11 @@ final class Database {
 
 	fileprivate let queue: RSDatabaseQueue
 	private let databaseFile: String
+	private let articlesTable: ArticlesTable
+	private let authorsTable: AuthorsTable
 	private let attachmentsTable: AttachmentsTable
-	fileprivate let statusesManager: StatusesManager
-	fileprivate let articleCache = ArticlesManager()
+	private let statusesTable: StatusesTable
+	private let tagsTable: TagsTable
 	fileprivate var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	fileprivate let minimumNumberOfArticles = 10
 	fileprivate weak var delegate: AccountDelegate?
@@ -38,8 +40,12 @@ final class Database {
 		self.delegate = delegate
 		self.databaseFile = databaseFile
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
+
+		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, queue: queue)
+		self.authorsTable = AuthorsTable(name: DatabaseTableName.authors, queue: queue)
 		self.attachmentsTable = AttachmentsTable(name: DatabaseTableName.attachments, queue: queue)
-		self.statusesManager = StatusesManager(queue: self.queue)
+		self.statusesTable = StatusesTable(name: DatabaseTableName.statuses, queue: queue)
+		self.tagsTable = TagsTable(name: DatabaseTableName.tags, queue: queue)
 		
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
 		let createStatements = try! NSString(contentsOfFile: createStatementsPath, encoding: String.Encoding.utf8.rawValue)
@@ -327,7 +333,7 @@ private extension Database {
 	
 	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]?) -> Set<Article> {
 		
-		let sql = "select * from articles natural join statuses where \(whereClause);"
+		let sql = "select * from articles where \(whereClause);"
 		logSQL(sql)
 		
 		if let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) {
@@ -344,10 +350,15 @@ private extension Database {
 		while (resultSet.next()) {
 
 			if let oneArticle = Article(account: self.account, row: resultSet) {
-				oneArticle.status = ArticleStatus(row: resultSet)
 				fetchedArticles.insert(oneArticle)
 			}
 		}
+		resultSet.close()
+		
+		statusesTable.attachStatuses(fetchedArticles, database)
+		authorsTable.attachAuthors(fetchedArticles, database)
+		tagsTable.attachTags(fetchedArticles, database)
+		attachmentsTable.attachAttachments(fetchedArticles, database)
 
 		return fetchedArticles
 	}

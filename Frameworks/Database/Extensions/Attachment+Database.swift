@@ -21,7 +21,7 @@ extension Attachment {
 		let sizeInBytes = optionalIntForColumn(row, DatabaseKey.sizeInBytes)
 		let durationInSeconds = optionalIntForColumn(row, DatabaseKey.durationInSeconds)
 
-		init(databaseID: databaseID, articleID: articleID, url: url, mimeType: mimeType, title: title, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds)
+		self.init(databaseID: databaseID, articleID: articleID, url: url, mimeType: mimeType, title: title, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds)
 	}
 
 	private func optionalIntForColumn(_ row: FMResultSet, _ columnName: String) -> Int? {

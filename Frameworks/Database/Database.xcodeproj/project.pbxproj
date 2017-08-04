@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840405CE1F1A963700DF0296 /* AttachmentsTable.swift */; };
+		843CB9961F34174100EE6581 /* Author+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F20F901F1810DD00D8E682 /* Author+Database.swift */; };
 		844BEE411F0AB3AB004AB7CD /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEE371F0AB3AA004AB7CD /* Database.framework */; };
 		844BEE461F0AB3AB004AB7CD /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */; };
 		845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580661F0AEBCD003CCFA1 /* Constants.swift */; };
@@ -163,9 +164,9 @@
 				84E156E91F0AB80500F8CC05 /* Database.swift */,
 				845580661F0AEBCD003CCFA1 /* Constants.swift */,
 				84E156EB1F0AB80E00F8CC05 /* ArticlesTable.swift */,
-				84E156ED1F0AB81400F8CC05 /* StatusesTable.swift */,
 				84F20F8E1F180D8700D8E682 /* AuthorsTable.swift */,
 				840405CE1F1A963700DF0296 /* AttachmentsTable.swift */,
+				84E156ED1F0AB81400F8CC05 /* StatusesTable.swift */,
 				84BB4BA81F11A32800858766 /* TagsTable.swift */,
 				8461462A1F0AC44100870CB3 /* Extensions */,
 				84E156EF1F0AB81F00F8CC05 /* CreateStatements.sql */,
@@ -467,6 +468,7 @@
 				84F20F8F1F180D8700D8E682 /* AuthorsTable.swift in Sources */,
 				845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */,
 				840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */,
+				843CB9961F34174100EE6581 /* Author+Database.swift in Sources */,
 				845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
 				845580721F0AEE49003CCFA1 /* AccountInfo.swift in Sources */,

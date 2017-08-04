@@ -33,6 +33,8 @@ final class AttachmentsTable: DatabaseTable {
 
 	let name: String
 	let queue: RSDatabaseQueue
+	private let cacheByArticleID = ObjectCache<Attachment>(keyPathForID: \Attachment.articleID)
+	private let cacheByDatabaseID = ObjectCache<Attachment>(keyPathForID: \Attachment.databaseID)
 
 	init(name: String, queue: RSDatabaseQueue) {
 
@@ -115,7 +117,7 @@ final class AttachmentsTable: DatabaseTable {
 	}
 }
 
-private extension AttachmentsManager {
+private extension AttachmentsTable {
 
 	func deleteAttachmentsForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
 

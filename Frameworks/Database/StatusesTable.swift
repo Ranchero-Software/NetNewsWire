@@ -31,6 +31,25 @@ final class StatusesTable: DatabaseTable {
 		markArticleStatuses(statuses, statusKey: statusKey, flag: flag)
 	}
 
+	func attachStatuses(_ articles: Set<Article>, _ database: FMDatabase) {
+
+		attachCachedStatuses(articles)
+		let articlesNeedingStatuses = articlesMissingStatuses(articles)
+		if articlesNeedingStatuses.isEmpty {
+			return
+		}
+
+		fetchAndCacheStatusesForArticles(Set(articlesNeedingStatuses))
+		attachCachedStatuses(articlesNeedingStatuses)
+
+		// It shouldn’t happen that an Article in the database has no corresponding ArticleStatus,
+		// but the case should be handled anyway.
+
+		
+
+
+	}
+
 	func attachCachedStatuses(_ articles: Set<Article>) {
 		
 		articles.forEach { (oneArticle) in
@@ -90,7 +109,7 @@ private extension StatusesTable {
 
 	// MARK: Fetching
 	
-	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, database: FMDatabase) -> Set<ArticleStatus> {
+	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> Set<ArticleStatus> {
 		
 		if !articleIDs.isEmpty, let resultSet = selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) {
 			return articleStatusesWithResultSet(resultSet)
@@ -161,7 +180,18 @@ private extension StatusesTable {
 	
 	func articleIDsMissingStatuses(_ articleIDs: Set<String>) -> Set<String> {
 		
-		return Set(articleIDs.filter { !objectWithIDIsCached[$0] })
+		return Set(articleIDs.filter { !cache.objectWithIDIsCached[$0] })
+	}
+
+	func articlesMissingStatuses(_ articles: Set<Article>) -> Set<Article> {
+
+		let missing = articles.flatMap { (article) -> Article? in
+			if article.status == nil {
+				return article
+			}
+			return nil
+		}
+		return Set(missing)
 	}
 }
 

@@ -11,6 +11,7 @@ import Foundation
 public struct DatabaseTableName {
 	
 	static let articles = "articles"
+	static let authors = "authors"
 	static let statuses = "statuses"
 	static let tags = "tags"
 	static let attachments = "attachments"

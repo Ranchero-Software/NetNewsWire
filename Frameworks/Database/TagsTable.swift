@@ -58,7 +58,7 @@ final class TagsTable: DatabaseTable {
 	}
 }
 
-private extension TagsManager {
+private extension TagsTable {
 
 	func cacheTagsForArticle(_ article: Article, tags: TagNameSet) {
 
