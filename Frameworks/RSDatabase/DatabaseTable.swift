@@ -53,13 +53,10 @@ public extension DatabaseTable {
 
 	// MARK: Saving
 
-	public func insertRows(_ dictionaries: [NSDictionary], insertType: RSDatabaseInsertType) {
+	public func insertRows(_ dictionaries: [NSDictionary], insertType: RSDatabaseInsertType, in database: FMDatabase) {
 
-		queue.update { (database: FMDatabase!) -> Void in
-
-			dictionaries.forEach { (oneDictionary) in
-				let _ = database.rs_insertRow(with: oneDictionary as [NSObject: AnyObject], insertType: insertType, tableName: self.name)
-			}
+		dictionaries.forEach { (oneDictionary) in
+			let _ = database.rs_insertRow(with: oneDictionary as [NSObject: AnyObject], insertType: insertType, tableName: self.name)
 		}
 	}
 
