@@ -65,7 +65,7 @@ final class Database {
 			fetchedArticles = self.fetchArticlesForFeedID(feedID, database: database)
 		}
 
-		let articles = articleCache.uniquedArticles(fetchedArticles, statusesManager: statusesManager)
+		let articles = articleCache.uniquedArticles(fetchedArticles, statusesTable: statusesTable)
 		return filteredArticles(articles, feedCounts: [feed.feedID: fetchedArticles.count])
 	}
 
@@ -79,7 +79,7 @@ final class Database {
 
 			DispatchQueue.main.async() { () -> Void in
 
-				let articles = self.articleCache.uniquedArticles(fetchedArticles, statusesManager: self.statusesManager)
+				let articles = self.articleCache.uniquedArticles(fetchedArticles, statusesTable: self.statusesTable)
 				let filteredArticles = self.filteredArticles(articles, feedCounts: [feed.feedID: fetchedArticles.count])
 				resultBlock(filteredArticles)
 			}
@@ -155,7 +155,7 @@ final class Database {
 			}
 		}
 		
-		let articles = articleCache.uniquedArticles(fetchedArticles, statusesManager: statusesManager)
+		let articles = articleCache.uniquedArticles(fetchedArticles, statusesTable: statusesTable)
 		return filteredArticles(articles, feedCounts: counts)
 	}
 	
@@ -199,7 +199,7 @@ final class Database {
 	
 	func markArticles(_ articles: NSSet, statusKey: ArticleStatusKey, flag: Bool) {
 		
-		statusesManager.markArticles(articles as! Set<Article>, statusKey: statusKey, flag: flag)
+		statusesTable.markArticles(articles as! Set<Article>, statusKey: statusKey, flag: flag)
 	}
 }
 
@@ -215,7 +215,7 @@ private extension Database {
 			return
 		}
 		
-		statusesManager.assertNoMissingStatuses(newArticles)
+		statusesTable.assertNoMissingStatuses(newArticles)
 		articleCache.cacheArticles(newArticles)
 		
 		let newArticleDictionaries = newArticles.map { (oneArticle) in
@@ -249,7 +249,7 @@ private extension Database {
 	
 	func updateArticles(_ articles: [String: Article], parsedArticles: [String: ParsedItem], feed: Feed, completionHandler: @escaping RSVoidCompletionBlock) {
 		
-		statusesManager.ensureStatusesForParsedArticles(Set(parsedArticles.values)) {
+		statusesTable.ensureStatusesForParsedArticles(Set(parsedArticles.values)) {
 			
 			let articleChanges = self.updateExistingArticles(articles, parsedArticles)
 			let newArticles = self.createNewArticles(articles, parsedArticles: parsedArticles, feedID: feed.feedID)
@@ -309,7 +309,7 @@ private extension Database {
 		let newParsedArticles = parsedArticlesMinusExistingArticles(parsedArticles, existingArticles: existingArticles)
 		let newArticles = createNewArticlesWithParsedArticles(newParsedArticles, feedID: feedID)
 		
-		statusesManager.attachCachedUniqueStatuses(newArticles)
+		statusesTable.attachCachedUniqueStatuses(newArticles)
 		
 		return newArticles
 	}
@@ -337,24 +337,16 @@ private extension Database {
 		logSQL(sql)
 		
 		if let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) {
-			return articlesWithResultSet(resultSet)
+			return articlesWithResultSet(resultSet, database)
 		}
 		
 		return Set<Article>()
 	}
 
-	func articlesWithResultSet(_ resultSet: FMResultSet) -> Set<Article> {
+	func articlesWithResultSet(_ resultSet: FMResultSet, _ database: FMDatabase) -> Set<Article> {
 
-		var fetchedArticles = Set<Article>()
+		let fetchedArticles = resultSet.mapToSet { Article(account: self.account, row: $0) }
 
-		while (resultSet.next()) {
-
-			if let oneArticle = Article(account: self.account, row: resultSet) {
-				fetchedArticles.insert(oneArticle)
-			}
-		}
-		resultSet.close()
-		
 		statusesTable.attachStatuses(fetchedArticles, database)
 		authorsTable.attachAuthors(fetchedArticles, database)
 		tagsTable.attachTags(fetchedArticles, database)

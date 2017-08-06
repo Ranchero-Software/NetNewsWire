@@ -27,6 +27,9 @@ public extension DatabaseTable {
 
 	public func selectRowsWhere(key: String, inValues values: [Any], in database: FMDatabase) -> FMResultSet? {
 
+		if values.isEmpty {
+			return nil
+		}
 		return database.rs_selectRowsWhereKey(key, inValues: values, tableName: name)
 	}
 
@@ -37,7 +40,6 @@ public extension DatabaseTable {
 		if values.isEmpty {
 			return
 		}
-		
 		database.rs_deleteRowsWhereKey(key, inValues: values, tableName: name)
 	}
 
@@ -74,6 +76,39 @@ public extension DatabaseTable {
 
 		let resultSet = database.executeQuery(sql, withArgumentsIn: parameters)
 		return numberWithCountResultSet(resultSet)
+	}
+
+	// MARK: Mapping
+
+	func mapResultSet<T>(_ resultSet: FMResultSet, _ callback: (_ resultSet: FMResultSet) -> T?) -> [T] {
+
+		var objects = [T]()
+		while resultSet.next() {
+			if let obj = callback(resultSet) {
+				objects += [obj]
+			}
+		}
+		return objects
+	}
+}
+
+public extension FMResultSet {
+
+	public func flatMap<T>(_ callback: (_ row: FMResultSet) -> T?) -> [T] {
+
+		var objects = [T]()
+		while next() {
+			if let obj = callback(self) {
+				objects += [obj]
+			}
+		}
+		close()
+		return objects
+	}
+
+	public func mapToSet<T>(_ callback: (_ row: FMResultSet) -> T?) -> Set<T> {
+
+		return Set(flatMap(callback))
 	}
 }
 

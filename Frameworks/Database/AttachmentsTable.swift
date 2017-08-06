@@ -238,15 +238,7 @@ private extension AttachmentsTable {
 
 	func attachmentsWithResultSet(_ resultSet: FMResultSet) -> Set<Attachment> {
 
-		var attachments = Set<Attachment>()
-
-		while (resultSet.next()) {
-			if let oneAttachment = attachmentWithRow(resultSet) {
-				attachments.insert(oneAttachment)
-			}
-		}
-
-		return attachments
+		return resultSet.mapToSet(attachmentWithRow)
 	}
 
 	func attachmentWithRow(_ row: FMResultSet) -> Attachment? {

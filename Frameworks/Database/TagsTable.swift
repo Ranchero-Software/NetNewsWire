@@ -10,9 +10,15 @@ import Foundation
 import RSDatabase
 import Data
 
+// Article->tags is a many-to-many relationship.
+// Since a tag is just a simple string, the tags table and the lookup table are the same table.
+//
 // Tags — and the non-existence of tags — are cached, once fetched, for the lifetime of the run.
 // This uses some extra memory but cuts way down on the amount of database time spent
 // maintaining the tags table.
+//
+// CREATE TABLE if not EXISTS tags(tagName TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(tagName, articleID));
+// CREATE INDEX if not EXISTS tags_tagName_index on tags (tagName COLLATE NOCASE);
 
 typealias TagNameSet = Set<String>
 

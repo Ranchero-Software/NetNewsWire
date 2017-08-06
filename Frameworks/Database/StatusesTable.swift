@@ -11,6 +11,10 @@ import RSCore
 import RSDatabase
 import Data
 
+// Article->ArticleStatus is a to-one relationship.
+//
+// CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, userDeleted BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0, accountInfo BLOB);
+
 final class StatusesTable: DatabaseTable {
 
 	let name: String
@@ -122,30 +126,35 @@ private extension StatusesTable {
 
 	func fetchAndCacheStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
 
-		let statuses = fetchStatusesForArticleIDs(articleIDs, database)
-		cache.addObjectsNotCached(Array(statuses))
+		if let statuses = fetchStatusesForArticleIDs(articleIDs, database) {
+			cache.addObjectsNotCached(Array(statuses))
+		}
 	}
 
-	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> Set<ArticleStatus> {
+	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> Set<ArticleStatus>? {
 		
-		if !articleIDs.isEmpty, let resultSet = selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) {
-			return articleStatusesWithResultSet(resultSet)
+		guard let resultSet = selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) else {
+			return nil
 		}
-		
-		return Set<ArticleStatus>()
+		return articleStatusesWithResultSet(resultSet)
 	}
 
 	func articleStatusesWithResultSet(_ resultSet: FMResultSet) -> Set<ArticleStatus> {
-		
-		var statuses = Set<ArticleStatus>()
-		
-		while(resultSet.next()) {
-			if let oneArticleStatus = ArticleStatus(row: resultSet) {
-				statuses.insert(oneArticleStatus)
-			}
+
+		return resultSet.mapToSet(articleStatusWithRow)
+	}
+
+	func articleStatusWithRow(_ row: FMResultSet) -> ArticleStatus? {
+
+		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+			return nil
 		}
-		
-		return statuses
+		if let cachedStatus = cache[articleID] {
+			return cachedStatus
+		}
+		let status = ArticleStatus(articleID: articleID, row: row)
+		cache[articleID] = status
+		return status
 	}
 	
 	// MARK: Updating

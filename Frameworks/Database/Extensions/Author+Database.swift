@@ -12,9 +12,8 @@ import RSDatabase
 
 extension Author {
 
-	init?(row: FMResultSet) {
+	init?(databaseID: String, row: FMResultSet) {
 		
-		let databaseID = row.string(forColumn: DatabaseKey.databaseID)
 		let name = row.string(forColumn: DatabaseKey.name)
 		let url = row.string(forColumn: DatabaseKey.url)
 		let avatarURL = row.string(forColumn: DatabaseKey.avatarURL)

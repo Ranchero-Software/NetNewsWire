@@ -12,12 +12,8 @@ import Data
 
 extension ArticleStatus {
 	
-	convenience init?(row: FMResultSet) {
+	convenience init?(articleID: String, row: FMResultSet) {
 		
-		let articleID = row.string(forColumn: DatabaseKey.articleID)
-		if (articleID == nil) {
-			return nil
-		}
 		let read = row.bool(forColumn: DatabaseKey.read)
 		let starred = row.bool(forColumn: DatabaseKey.starred)
 		let userDeleted = row.bool(forColumn: DatabaseKey.userDeleted)
@@ -29,7 +25,7 @@ extension ArticleStatus {
 		
 		let accountInfoPlist = accountInfoWithRow(row)
 		
-		self.init(articleID: articleID!, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived!, accountInfo: accountInfoPlist)
+		self.init(articleID: articleID, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived!, accountInfo: accountInfoPlist)
 	}
 	
 	func databaseDictionary() -> NSDictionary {

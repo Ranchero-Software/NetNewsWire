@@ -12,6 +12,7 @@ public struct DatabaseTableName {
 	
 	static let articles = "articles"
 	static let authors = "authors"
+	static let authorsLookup = "authorLookup"
 	static let statuses = "statuses"
 	static let tags = "tags"
 	static let attachments = "attachments"
@@ -56,6 +57,7 @@ public struct DatabaseKey {
 	static let tagName = "tagName"
 	
 	// Author
+	static let authorID = "authorID"
 	static let name = "name"
 	static let avatarURL = "avatarURL"
 	static let emailAddress = "emailAddress"
