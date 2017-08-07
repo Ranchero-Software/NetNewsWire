@@ -23,7 +23,6 @@ final class AuthorsTable: DatabaseTable {
 	let queue: RSDatabaseQueue
 	private let cache = ObjectCache<Author>(keyPathForID: \Author.databaseID)
 	private var articleIDToAuthorsCache = [String: Set<Author>]()
-	private var articleIDsWithNoAuthors = Set<String>()
 	private let authorsLookupTable = LookupTable(name: DatabaseTableName.authorsLookup, primaryKey: DatabaseKey.authorID, foreignKey: DatabaseKey.articleID)
 
 	init(name: String, queue: RSDatabaseQueue) {
@@ -36,15 +35,15 @@ final class AuthorsTable: DatabaseTable {
 
 		attachCachedAuthors(articles)
 
-		let articlesNeedingAuthors = articlesMissingAuthors(articles)
-		if articlesNeedingAuthors.isEmpty {
+		let articlesMissingAuthors = articlesNeedingAuthors(articles)
+		if articlesMissingAuthors.isEmpty {
 			return
 		}
 
-		let articleIDs = Set(articlesNeedingAuthors.map { $0.databaseID })
+		let articleIDs = Set(articlesMissingAuthors.map { $0.databaseID })
 		let authorTable = fetchAuthorsForArticleIDs(articleIDs, database)
 
-		for article in articlesNeedingAuthors {
+		for article in articlesMissingAuthors {
 
 			let articleID = article.databaseID
 
@@ -70,24 +69,16 @@ private extension AuthorsTable {
 		}
 	}
 
-	func articlesMissingAuthors(_ articles: Set<Article>) -> Set<Article> {
+	func articlesNeedingAuthors(_ articles: Set<Article>) -> Set<Article> {
 
-		return articles.filter{ (article) -> Bool in
-
-			if let _ = article.authors {
-				return false
-			}
-			if articleIDsWithNoAuthors.contains(article.databaseID) {
-				return false
-			}
-
-			return true
-		}
+		// If article.authors is nil and article is not known to have zero authors, include it in the set.
+		let articlesWithNoAuthors = articles.withNilProperty(\Article.authors)
+		return Set(articlesWithNoAuthors.filter { !articleIDsWithNoAuthors.contains($0.databaseID) })
 	}
 
 	func fetchAuthorsForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> [String: Set<Author>]? {
 
-		let lookupValues = authorsLookupTable.fetchLookupValues(articleIDs, database: database)
+		let lookupValueDictionary = authorsLookupTable.fetchLookupTableDictionary(articleIDs, database)
 		let authorIDs = Set(lookupValues.map { $0.primaryID })
 		if authorIDs.isEmpty {
 			return nil

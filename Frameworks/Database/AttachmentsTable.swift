@@ -28,6 +28,8 @@ import Data
 // Because:
 // * They don’t take up much space.
 // * It seriously cuts down on the number of database reads and writes.
+//
+// CREATE TABLE if not EXISTS attachments(databaseID TEXT NOT NULL PRIMARY KEY, articleID TEXT NOT NULL, url TEXT NOT NULL, mimeType TEXT, title TEXT, sizeInBytes INTEGER, durationInSeconds INTEGER);
 
 final class AttachmentsTable: DatabaseTable {
 

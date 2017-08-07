@@ -121,7 +121,7 @@ private extension StatusesTable {
 
 	func fetchAndCacheStatusesForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
 
-		fetchAndCacheStatusesForArticleIDs(articleIDsFromArticles(articles), database)
+		fetchAndCacheStatusesForArticleIDs(articles.articleIDs(), database)
 	}
 
 	func fetchAndCacheStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
@@ -210,11 +210,6 @@ private extension StatusesTable {
 
 	// MARK: Utilities
 
-	func articleIDsFromArticles(_ articles: Set<Article>) -> Set<String> {
-
-		return Set(articles.map { $0.databaseID })
-	}
-
 	func articleIDsMissingCachedStatuses(_ articleIDs: Set<String>) -> Set<String> {
 		
 		return Set(articleIDs.filter { !cache.objectWithIDIsCached($0) })
@@ -222,13 +217,7 @@ private extension StatusesTable {
 
 	func articlesMissingStatuses(_ articles: Set<Article>) -> Set<Article> {
 
-		let missing = articles.flatMap { (article) -> Article? in
-			if article.status == nil {
-				return article
-			}
-			return nil
-		}
-		return Set(missing)
+		return articles.withNilProperty(\Article.status)
 	}
 }
 

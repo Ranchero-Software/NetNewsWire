@@ -48,3 +48,16 @@ extension Article {
 		return d.copy() as! NSDictionary
 	}
 }
+
+extension Set where Element == Article {
+
+	func withNilProperty<T>(_ keyPath: KeyPath<Article,T?>) -> Set<Article> {
+
+		return Set(filter{ $0[keyPath: keyPath] == nil })
+	}
+
+	func articleIDs() -> Set<String> {
+
+		return Set(map { $0.databaseID })
+	}
+}
