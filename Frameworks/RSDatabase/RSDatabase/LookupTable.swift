@@ -64,6 +64,33 @@ public final class LookupTable {
 		return lookupTableDictionary(with: lookupValues)
 	}
 
+	public func attachRelationships<T,U>(_ objects: [T], idKeyPath: KeyPath<T,String>, relationshipKeyPath: KeyPath<T,[U]>, table: DatabaseTable, lookupTableDictionary: LookupTableDictionary, database: FMDatabase) {
+		
+		let primaryIDs = primaryIDsInLookupTableDictionary(lookupTableDictionary)
+		let relatedObjects = table.fetchObjectsWithIDs(primaryIDs, database)
+		
+		for object in objects {
+			let identifier = object[keyPath: idKeyPath]
+			if let lookupValues = lookupTableDictionary[identifier] {
+				let relatedObjects = lookupValues.flatMap{ (lookupValue) -> U? in
+					<#code#>
+				}
+			}
+		}
+		
+	}
+	
+	func primaryIDsInLookupTableDictionary(_ lookupTableDictionary: LookupTableDictionary) -> Set<String> {
+	
+		var primaryIDs = Set<String>()
+		
+		for (_, lookupValues) in lookupTableDictionary {
+			primaryIDs.formUnion(lookupValues.primaryIDs())
+		}
+		
+		return primaryIDs
+	}
+	
 	public func removeLookupsForForeignIDs(_ foreignIDs: Set<String>, _ database: FMDatabase) {
 
 		let foreignIDsToRemove = foreignIDs.subtracting(foreignIDsWithNoRelationship)
@@ -156,3 +183,10 @@ public struct LookupValue: Hashable {
 	}
 }
 
+private extension Set where Element == LookupValue {
+	
+	func primaryIDs() -> Set<String> {
+		
+		return Set(map { $0.primaryID })
+	}
+}

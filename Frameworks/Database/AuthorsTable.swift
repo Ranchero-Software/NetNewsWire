@@ -78,8 +78,8 @@ private extension AuthorsTable {
 
 	func fetchAuthorsForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> [String: Set<Author>]? {
 
-		let lookupValueDictionary = authorsLookupTable.fetchLookupTableDictionary(articleIDs, database)
-		let authorIDs = Set(lookupValues.map { $0.primaryID })
+		let lookupTableDictionary = authorsLookupTable.fetchLookupTableDictionary(articleIDs, database)
+		let authorIDs = authorsLookupTable.primaryIDsInLookupTableDictionary(lookupTableDictionary)
 		if authorIDs.isEmpty {
 			return nil
 		}
