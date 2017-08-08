@@ -35,8 +35,8 @@
 		84419B061B5ABFF700C26BB2 /* FMResultSet+RSExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 84419B041B5ABFF700C26BB2 /* FMResultSet+RSExtras.m */; };
 		844D97411F2D32F300CEDDEA /* ObjectCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D97401F2D32F300CEDDEA /* ObjectCache.swift */; };
 		849BF8C61C94FB8E0071D1DA /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 849BF8C51C94FB8E0071D1DA /* libsqlite3.tbd */; };
-		84ABC1D11F364B07000DCC55 /* LookupTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ABC1D01F364B07000DCC55 /* LookupTable.swift */; };
-		84ABC1D21F364B07000DCC55 /* LookupTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ABC1D01F364B07000DCC55 /* LookupTable.swift */; };
+		84ABC1D11F364B07000DCC55 /* DatabaseLookupTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ABC1D01F364B07000DCC55 /* DatabaseLookupTable.swift */; };
+		84ABC1D21F364B07000DCC55 /* DatabaseLookupTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ABC1D01F364B07000DCC55 /* DatabaseLookupTable.swift */; };
 		84C6DD011F395C13009AFB47 /* DatabaseObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C6DD001F395C13009AFB47 /* DatabaseObject.swift */; };
 		84DDF1961C94FC45005E6CF5 /* FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DDF18B1C94FC45005E6CF5 /* FMDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84DDF1971C94FC45005E6CF5 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DDF18C1C94FC45005E6CF5 /* FMDatabase.m */; };
@@ -74,7 +74,7 @@
 		84419B041B5ABFF700C26BB2 /* FMResultSet+RSExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "FMResultSet+RSExtras.m"; path = "RSDatabase/FMResultSet+RSExtras.m"; sourceTree = "<group>"; };
 		844D97401F2D32F300CEDDEA /* ObjectCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ObjectCache.swift; path = RSDatabase/ObjectCache.swift; sourceTree = "<group>"; };
 		849BF8C51C94FB8E0071D1DA /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
-		84ABC1D01F364B07000DCC55 /* LookupTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LookupTable.swift; path = RSDatabase/LookupTable.swift; sourceTree = "<group>"; };
+		84ABC1D01F364B07000DCC55 /* DatabaseLookupTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DatabaseLookupTable.swift; path = RSDatabase/DatabaseLookupTable.swift; sourceTree = "<group>"; };
 		84C6DD001F395C13009AFB47 /* DatabaseObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DatabaseObject.swift; path = RSDatabase/DatabaseObject.swift; sourceTree = "<group>"; };
 		84DDF18B1C94FC45005E6CF5 /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
 		84DDF18C1C94FC45005E6CF5 /* FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabase.m; sourceTree = "<group>"; };
@@ -162,7 +162,7 @@
 				84419AD91B5ABD7400C26BB2 /* NSString+RSDatabase.m */,
 				840405DA1F1C158C00DF0296 /* DatabaseTable.swift */,
 				84C6DD001F395C13009AFB47 /* DatabaseObject.swift */,
-				84ABC1D01F364B07000DCC55 /* LookupTable.swift */,
+				84ABC1D01F364B07000DCC55 /* DatabaseLookupTable.swift */,
 				844D97401F2D32F300CEDDEA /* ObjectCache.swift */,
 				84DDF18A1C94FC45005E6CF5 /* FMDB */,
 				84F22C5A1B52E0D9000060CE /* Info.plist */,
@@ -357,7 +357,7 @@
 			files = (
 				8400AC001E0CFC0700AA7C57 /* RSDatabaseQueue.m in Sources */,
 				8400AC061E0CFC0700AA7C57 /* NSString+RSDatabase.m in Sources */,
-				84ABC1D21F364B07000DCC55 /* LookupTable.swift in Sources */,
+				84ABC1D21F364B07000DCC55 /* DatabaseLookupTable.swift in Sources */,
 				8400AC0C1E0CFC3100AA7C57 /* FMResultSet.m in Sources */,
 				840405DC1F1C15EA00DF0296 /* DatabaseTable.swift in Sources */,
 				8400AC021E0CFC0700AA7C57 /* FMDatabase+RSExtras.m in Sources */,
@@ -376,7 +376,7 @@
 				84C6DD011F395C13009AFB47 /* DatabaseObject.swift in Sources */,
 				84419ADB1B5ABD7400C26BB2 /* NSString+RSDatabase.m in Sources */,
 				840405DB1F1C158C00DF0296 /* DatabaseTable.swift in Sources */,
-				84ABC1D11F364B07000DCC55 /* LookupTable.swift in Sources */,
+				84ABC1D11F364B07000DCC55 /* DatabaseLookupTable.swift in Sources */,
 				84DDF1971C94FC45005E6CF5 /* FMDatabase.m in Sources */,
 				84DDF1A01C94FC45005E6CF5 /* FMResultSet.m in Sources */,
 				84419B061B5ABFF700C26BB2 /* FMResultSet+RSExtras.m in Sources */,

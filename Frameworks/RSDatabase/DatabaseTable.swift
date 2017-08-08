@@ -44,13 +44,13 @@ public extension DatabaseTable {
 
 	// MARK: Updating
 
-	public func updateRowsWithValue(_ value: Any, valueKey: String, whereKey: String, matches: [Any]) {
-
-		queue.update { (database: FMDatabase!) in
-
-			let _ = database.rs_updateRows(withValue: value, valueKey: valueKey, whereKey: whereKey, inValues: matches, tableName: self.name)
-		}
-	}
+//	public func updateRowsWithValue(_ value: Any, valueKey: String, whereKey: String, matches: [Any]) {
+//
+//		queue.update { (database: FMDatabase!) in
+//
+//			let _ = database.rs_updateRows(withValue: value, valueKey: valueKey, whereKey: whereKey, inValues: matches, tableName: self.name)
+//		}
+//	}
 
 	// MARK: Saving
 
