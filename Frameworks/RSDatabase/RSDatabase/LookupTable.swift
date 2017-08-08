@@ -17,7 +17,7 @@ import Foundation
 
 public typealias LookupTableDictionary = [String: Set<LookupValue>] // key is foreignID
 
-public final class LookupTable: DatabaseTable {
+public final class LookupTable {
 
 	public let name: String
 	let primaryKey: String
@@ -30,10 +30,6 @@ public final class LookupTable: DatabaseTable {
 		self.name = name
 		self.primaryKey = primaryKey
 		self.foreignKey = foreignKey
-	}
-
-	public func fetchObjectsWithIDs(_ databaseIDs: Set<String>, _ database: FMDatabase) -> [DatabaseObject] {
-		
 	}
 
 	public func fetchLookupTableDictionary(_ foreignIDs: Set<String>, _ database: FMDatabase) -> LookupTableDictionary? {
