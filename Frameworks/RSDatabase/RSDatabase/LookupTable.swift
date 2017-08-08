@@ -15,7 +15,7 @@ import Foundation
 // foreignIDsWithNoRelationship: caches the foreignIDs where it’s known that there’s no relationship.
 // lookupsByForeignID: caches the LookupValues for a foreignID.
 
-typealias LookupTableDictionary = [String: Set<LookupValue>] // key is foreignID
+public typealias LookupTableDictionary = [String: Set<LookupValue>] // key is foreignID
 
 public final class LookupTable {
 
@@ -64,20 +64,30 @@ public final class LookupTable {
 		return lookupTableDictionary(with: lookupValues)
 	}
 
-	public func attachRelationships<T,U>(_ objects: [T], idKeyPath: KeyPath<T,String>, relationshipKeyPath: KeyPath<T,[U]>, table: DatabaseTable, lookupTableDictionary: LookupTableDictionary, database: FMDatabase) {
+	public func attachRelationships<T,U>(to objects: [T], idKeyPath: KeyPath<T,String>, relatedIDKeyPath: KeyPath<U,String>, relationshipKeyPath: KeyPath<T,[U]>, table: DatabaseTable, lookupTableDictionary: LookupTableDictionary, database: FMDatabase) {
 		
 		let primaryIDs = primaryIDsInLookupTableDictionary(lookupTableDictionary)
-		let relatedObjects = table.fetchObjectsWithIDs(primaryIDs, database)
+		if (primaryIDs.isEmpty) {
+			return
+		}
+		
+		let relatedObjects: [U] = table.fetchObjectsWithIDs(primaryIDs, database)
+		if relatedObjects.isEmpty {
+			return
+		}
+		
+		let relatedObjectsDictionary = createRelatedObjectsDictionary(relatedObjects, idKeyPath: relatedIDKeyPath)
 		
 		for object in objects {
 			let identifier = object[keyPath: idKeyPath]
-			if let lookupValues = lookupTableDictionary[identifier] {
-				let relatedObjects = lookupValues.flatMap{ (lookupValue) -> U? in
-					<#code#>
+			if let lookupValues = lookupTableDictionary[identifier], !lookupValues.isEmpty {
+				let primaryIDs = lookupValues.primaryIDs()
+				let oneObjectRelatedObjects = primaryIDs.flatMap{ (primaryID) -> U? in
+					return relatedObjectsDictionary[primaryID]
 				}
+				object[keyPath: relationshipKeyPath] = oneObjectRelatedObjects
 			}
 		}
-		
 	}
 	
 	func primaryIDsInLookupTableDictionary(_ lookupTableDictionary: LookupTableDictionary) -> Set<String> {
@@ -109,6 +119,18 @@ public final class LookupTable {
 
 private extension LookupTable {
 
+	func createRelatedObjectsDictionary<T>(_ relatedObjects: [T], idKeyPath: KeyPath<T,String>) -> [String: T] {
+	
+		var d = [String: T]()
+		
+		for object in relatedObjects {
+			let identifier = object[keyPath: idKeyPath]
+			d[identifier] = object
+		}
+		
+		return d
+	}
+	
 	func addToLookupTableDictionary(_ lookupValues: Set<LookupValue>, _ table: inout LookupTableDictionary) {
 
 		for lookupValue in lookupValues {

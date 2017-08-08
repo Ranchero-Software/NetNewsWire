@@ -14,6 +14,8 @@ public protocol DatabaseTable {
 	var queue: RSDatabaseQueue {get}
 	
 	init(name: String, queue: RSDatabaseQueue)
+	
+	func fetchObjectsWithIDs<T>(_ databaseIDs: Set<String>, _ database: FMDatabase) -> [T]
 }
 
 public extension DatabaseTable {
