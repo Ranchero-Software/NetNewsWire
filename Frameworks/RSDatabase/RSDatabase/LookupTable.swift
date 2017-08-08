@@ -17,9 +17,9 @@ import Foundation
 
 public typealias LookupTableDictionary = [String: Set<LookupValue>] // key is foreignID
 
-public final class LookupTable {
+public final class LookupTable: DatabaseTable {
 
-	let name: String
+	public let name: String
 	let primaryKey: String
 	let foreignKey: String
 	private var foreignIDsWithNoRelationship = Set<String>()
@@ -30,6 +30,10 @@ public final class LookupTable {
 		self.name = name
 		self.primaryKey = primaryKey
 		self.foreignKey = foreignKey
+	}
+
+	public func fetchObjectsWithIDs(_ databaseIDs: Set<String>, _ database: FMDatabase) -> [DatabaseObject] {
+		
 	}
 
 	public func fetchLookupTableDictionary(_ foreignIDs: Set<String>, _ database: FMDatabase) -> LookupTableDictionary? {
@@ -64,28 +68,28 @@ public final class LookupTable {
 		return lookupTableDictionary(with: lookupValues)
 	}
 
-	public func attachRelationships<T,U>(to objects: [T], idKeyPath: KeyPath<T,String>, relatedIDKeyPath: KeyPath<U,String>, relationshipKeyPath: KeyPath<T,[U]>, table: DatabaseTable, lookupTableDictionary: LookupTableDictionary, database: FMDatabase) {
+	public func attachRelationships(to objects: [DatabaseObject], table: DatabaseTable, lookupTableDictionary: LookupTableDictionary, relationshipName: String, database: FMDatabase) {
 		
 		let primaryIDs = primaryIDsInLookupTableDictionary(lookupTableDictionary)
 		if (primaryIDs.isEmpty) {
 			return
 		}
 		
-		let relatedObjects: [U] = table.fetchObjectsWithIDs(primaryIDs, database)
+		let relatedObjects: [DatabaseObject] = table.fetchObjectsWithIDs(primaryIDs, database)
 		if relatedObjects.isEmpty {
 			return
 		}
 		
-		let relatedObjectsDictionary = createRelatedObjectsDictionary(relatedObjects, idKeyPath: relatedIDKeyPath)
+		let relatedObjectsDictionary = relatedObjects.dictionary()
 		
 		for object in objects {
-			let identifier = object[keyPath: idKeyPath]
+			let identifier = object.databaseID
 			if let lookupValues = lookupTableDictionary[identifier], !lookupValues.isEmpty {
 				let primaryIDs = lookupValues.primaryIDs()
-				let oneObjectRelatedObjects = primaryIDs.flatMap{ (primaryID) -> U? in
+				let oneObjectRelatedObjects = primaryIDs.flatMap{ (primaryID) -> DatabaseObject? in
 					return relatedObjectsDictionary[primaryID]
 				}
-				object[keyPath: relationshipKeyPath] = oneObjectRelatedObjects
+				object.attachRelationshipWithObjects(oneObjectRelatedObjects, name: relationshipName)
 			}
 		}
 	}
@@ -119,18 +123,6 @@ public final class LookupTable {
 
 private extension LookupTable {
 
-	func createRelatedObjectsDictionary<T>(_ relatedObjects: [T], idKeyPath: KeyPath<T,String>) -> [String: T] {
-	
-		var d = [String: T]()
-		
-		for object in relatedObjects {
-			let identifier = object[keyPath: idKeyPath]
-			d[identifier] = object
-		}
-		
-		return d
-	}
-	
 	func addToLookupTableDictionary(_ lookupValues: Set<LookupValue>, _ table: inout LookupTableDictionary) {
 
 		for lookupValue in lookupValues {
@@ -174,16 +166,17 @@ private extension LookupTable {
 		return resultSet.mapToSet(lookupValueWithRow)
 	}
 
-	func lookupValueWithRow(_ resultSet: FMResultSet) -> LookupValue? {
+	func lookupValueWithRow(_ row: FMResultSet) -> LookupValue? {
 
-		guard let primaryID = resultSet.string(forColumn: primaryKey) else {
+		guard let primaryID = row.string(forColumn: primaryKey) else {
 			return nil
 		}
-		guard let foreignID = resultSet.string(forColumn: foreignKey) else {
+		guard let foreignID = row.string(forColumn: foreignKey) else {
 			return nil
 		}
 		return LookupValue(primaryID: primaryID, foreignID: foreignID)
 	}
+
 }
 
 public struct LookupValue: Hashable {

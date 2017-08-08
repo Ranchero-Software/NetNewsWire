@@ -11,11 +11,8 @@ import Foundation
 public protocol DatabaseTable {
 	
 	var name: String {get}
-	var queue: RSDatabaseQueue {get}
 	
-	init(name: String, queue: RSDatabaseQueue)
-	
-	func fetchObjectsWithIDs<T>(_ databaseIDs: Set<String>, _ database: FMDatabase) -> [T]
+	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, _ database: FMDatabase) -> [DatabaseObject]
 }
 
 public extension DatabaseTable {
