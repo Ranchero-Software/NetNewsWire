@@ -48,16 +48,16 @@ public final class DatabaseLookupTable {
 			}
 		}
 
-		if !foreignIDsToFetchFromDatabase.isEmpty {
-			if let resultSet = database.rs_selectRowsWhereKey(foreignKey, inValues: Array(foreignIDsToLookup), tableName: name) {
-				lookupValues.formUnion(lookupValuesWithResultSet(resultSet))
-			}
+		// Fetch from database.
+		if let fetchedLookupValues = fetchLookupValues(foreignIDsToFetchFromDatabase, database) {
+			lookupValues.formUnion(fetchedLookupValues)
 		}
 
+		// Maintain cache.
 		cacheNotFoundForeignIDs(lookupValues, foreignIDsToFetchFromDatabase)
-		cache.addLookupValues(lookupValues)
+		cache.addLookupValues(fetchedLookupValues)
 
-		return lookupTableDictionary(with: lookupValues)
+		return LookupTable(lookupValues: lookupValues)
 	}
 
 	public func attachRelationships(to objects: [DatabaseObject], table: DatabaseTable, lookupTableDictionary: LookupTableDictionary, relationshipName: String, database: FMDatabase) {
@@ -115,6 +115,14 @@ public final class DatabaseLookupTable {
 
 private extension DatabaseLookupTable {
 
+	func fetchLookupValues(_ foreignIDs: Set<String>, _ database: FMDatabase) -> Set<LookupValue>? {
+		
+		guard !foreignIDs.isEmpty, let resultSet = database.rs_selectRowsWhereKey(foreignKey, inValues: Array(foreignIDsToLookup), tableName: name) else {
+			return nil
+		}
+		return lookupValuesWithResultSet(resultSet)
+	}
+	
 	func addToLookupTableDictionary(_ lookupValues: Set<LookupValue>, _ table: inout LookupTableDictionary) {
 
 		for lookupValue in lookupValues {
@@ -153,7 +161,7 @@ private extension DatabaseLookupTable {
 			}
 		}
 		
-		cache.removeLookupValuesWithForeignIDs(foreignIDsToRemove)
+		cache.removeLookupValuesForForeignIDs(foreignIDsToRemove)
 	}
 
 	func lookupValuesWithResultSet(_ resultSet: FMResultSet) -> Set<LookupValue> {
@@ -196,7 +204,7 @@ final class LookupTable {
 		addLookupValuesToDictionary(values)
 	}
 	
-	func removeLookupValuesWithForeignIDs(_ foreignIDs: Set<String>) {
+	func removeLookupValuesForForeignIDs(_ foreignIDs: Set<String>) {
 		
 		for foreignID in foreignIDs {
 			self[foreignID] = nil
