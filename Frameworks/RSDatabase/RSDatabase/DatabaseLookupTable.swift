@@ -20,7 +20,6 @@ public final class DatabaseLookupTable {
 	private let relationshipName: String
 	private weak var relatedTable: DatabaseTable?
 	private var foreignIDsWithNoRelationship = Set<String>()
-	private var cache = LookupTable(Set<LookupValue>())
 
 	public init(name: String, primaryKey: String, foreignKey: String, relatedTable: DatabaseTable, relationshipName: String) {
 
@@ -81,50 +80,29 @@ private extension DatabaseLookupTable {
 	func fetchLookupTable(_ foreignIDs: Set<String>, _ database: FMDatabase) -> LookupTable? {
 		
 		let foreignIDsToLookup = foreignIDs.subtracting(foreignIDsWithNoRelationship)
-		if foreignIDsToLookup.isEmpty {
+		guard !foreignIDsToLookup.isEmpty, let lookupValues = fetchLookupValues(foreignIDsToLookup, database) else {
 			return nil
 		}
-		
-		var lookupValues = Set<LookupValue>()
-		var foreignIDsToFetchFromDatabase = Set<String>()
-		
-		// Pull from cache.
-		for foreignID in foreignIDsToLookup {
-			if let cachedLookups = cache[foreignID] {
-				lookupValues.formUnion(cachedLookups)
-			}
-			else {
-				foreignIDsToFetchFromDatabase.insert(foreignID)
-			}
-		}
-		
-		// Fetch from database.
-		let fetchedLookupValues = fetchLookupValues(foreignIDsToFetchFromDatabase, database)
-		if let fetchedLookupValues = fetchedLookupValues {
-			lookupValues.formUnion(fetchedLookupValues)
-			cache.addLookupValues(fetchedLookupValues)
-		}
-		
-		// Maintain cache.
-		cacheNotFoundForeignIDs(lookupValues, foreignIDsToFetchFromDatabase)
+		updateCache(lookupValues, foreignIDsToLookup)
 		
 		return LookupTable(lookupValues)
 	}
 
-	func cacheNotFoundForeignIDs(_ lookupValues: Set<LookupValue>, _ foreignIDs: Set<String>) {
+	func updateCache(_ lookupValues: Set<LookupValue>, _ foreignIDs: Set<String>) {
 		
-		// Note where nothing was found, and cache the foreignID in foreignIDsWithNoRelationship.
+		// Maintain foreignIDsWithNoRelationship.
+		// If a relationship exist, remove the foreignID from foreignIDsWithNoRelationship.
+		// If a relationship does not exist, add the foreignID to foreignIDsWithNoRelationship.
 		
-		let foundForeignIDs = lookupValues.foreignIDs()
-		var foreignIDsToRemove = Set<String>()
+		let foreignIDsWithRelationship = lookupValues.foreignIDs()
+		
+		foreignIDsWithNoRelationship.subtract(foreignIDsWithRelationship)
+		
 		for foreignID in foreignIDs {
-			if !foundForeignIDs.contains(foreignID) {
+			if !foreignIDsWithRelationship.contains(foreignID) {
 				foreignIDsWithNoRelationship.insert(foreignID)
-				foreignIDsToRemove.insert(foreignID)
 			}
 		}
-		
-		cache.removeLookupValuesForForeignIDs(foreignIDsToRemove)
 	}
 	
 	func removeLookupsForForeignIDs(_ foreignIDs: Set<String>, _ database: FMDatabase) {
@@ -134,7 +112,6 @@ private extension DatabaseLookupTable {
 			return
 		}
 		
-		cache.removeLookupValuesForForeignIDs(foreignIDsToRemove)
 		foreignIDsWithNoRelationship.formUnion(foreignIDsToRemove)
 		
 		database.rs_deleteRowsWhereKey(foreignKey, inValues: Array(foreignIDsToRemove), tableName: name)
@@ -166,15 +143,27 @@ private extension DatabaseLookupTable {
 
 }
 
-private class LookupTable {
+struct LookupTable {
 	
-	var dictionary = [String: Set<LookupValue>]()
+	private let dictionary: [String: Set<LookupValue>]
 	
 	init(_ lookupValues: Set<LookupValue>) {
 		
-		addLookupValues(lookupValues)
+		var d = [String: Set<LookupValue>]()
+		
+		for lookupValue in lookupValues {
+			let foreignID = lookupValue.foreignID
+			if d[foreignID] == nil {
+				d[foreignID] = Set([lookupValue])
+			}
+			else {
+				d[foreignID]!.insert(lookupValue)
+			}
+		}
+		
+		self.dictionary = d
 	}
-	
+
 	func primaryIDs() -> Set<String> {
 		
 		var ids = Set<String>()
@@ -184,37 +173,14 @@ private class LookupTable {
 		return ids
 	}
 	
-	func addLookupValues(_ values: Set<LookupValue>) {
-		
-		for lookupValue in values {
-			let foreignID = lookupValue.foreignID
-			if self[foreignID] == nil {
-				self[foreignID] = Set([lookupValue])
-			}
-			else {
-				self[foreignID]!.insert(lookupValue)
-			}
-		}
-	}
-	
-	func removeLookupValuesForForeignIDs(_ foreignIDs: Set<String>) {
-		
-		for foreignID in foreignIDs {
-			self[foreignID] = nil
-		}
-	}
-	
 	subscript(_ foreignID: String) -> Set<LookupValue>? {
 		get {
 			return dictionary[foreignID]
 		}
-		set {
-			dictionary[foreignID] = newValue
-		}
 	}
 }
 
-private struct LookupValue: Hashable {
+struct LookupValue: Hashable {
 
 	let primaryID: String
 	let foreignID: String
