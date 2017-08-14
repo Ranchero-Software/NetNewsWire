@@ -32,7 +32,7 @@ public final class DatabaseLookupTable {
 
 	public func attachRelationships(to objects: [DatabaseObject], database: FMDatabase) {
 		
-		guard !objects.isEmpty, let lookupTable = fetchLookupTable(objects.databaseIDs(), database) else {
+		guard let lookupTable = fetchLookupTable(objects.databaseIDs(), database) else {
 			return;
 		}
 		attachRelationshipsUsingLookupTable(to: objects, lookupTable: lookupTable, database: database)
@@ -80,7 +80,7 @@ private extension DatabaseLookupTable {
 	func fetchLookupTable(_ foreignIDs: Set<String>, _ database: FMDatabase) -> LookupTable? {
 		
 		let foreignIDsToLookup = foreignIDs.subtracting(foreignIDsWithNoRelationship)
-		guard !foreignIDsToLookup.isEmpty, let lookupValues = fetchLookupValues(foreignIDsToLookup, database) else {
+		guard let lookupValues = fetchLookupValues(foreignIDsToLookup, database) else {
 			return nil
 		}
 		updateCache(lookupValues, foreignIDsToLookup)
