@@ -12,7 +12,8 @@ public protocol DatabaseObject {
 
 	var databaseID: String { get }
 
-	func attachRelationshipWithObjects(_ objects: [DatabaseObject], name: String)
+	func setRelatedObjects(_ objects: [DatabaseObject], name: String)
+	func relatedObjectsWithName(_ name: String) -> [DatabaseObject]?
 }
 
 extension Array where Element == DatabaseObject {
@@ -24,5 +25,10 @@ extension Array where Element == DatabaseObject {
 			d[object.databaseID] = object
 		}
 		return d
+	}
+	
+	func databaseIDs() -> Set<String> {
+		
+		return Set(self.map { $0.databaseID })
 	}
 }

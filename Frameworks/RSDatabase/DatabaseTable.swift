@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol DatabaseTable {
+public protocol DatabaseTable: class {
 	
 	var name: String {get}
 	
