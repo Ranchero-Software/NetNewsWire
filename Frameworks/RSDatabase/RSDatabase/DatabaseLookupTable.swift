@@ -19,7 +19,7 @@ public final class DatabaseLookupTable {
 	private let foreignKey: String
 	private let relationshipName: String
 	private weak var relatedTable: DatabaseTable?
-	private var foreignIDsWithNoRelationship = Set<String>()
+	private let cache: DatabaseLookupTableCache
 
 	public init(name: String, primaryKey: String, foreignKey: String, relatedTable: DatabaseTable, relationshipName: String) {
 
@@ -28,6 +28,7 @@ public final class DatabaseLookupTable {
 		self.foreignKey = foreignKey
 		self.relatedTable = relatedTable
 		self.relationshipName = relationshipName
+		self.cache = DatabaseLookupTableCache(relationshipName)
 	}
 
 	public func attachRelationships(to objects: [DatabaseObject], database: FMDatabase) {
@@ -53,6 +54,7 @@ public final class DatabaseLookupTable {
 		}
 		
 		removeRelationships(for: objectsWithNoRelationships, database: database)
+		updateRelationships(for: objectsWithRelationships, database: database)
 	}
 }
 
@@ -61,6 +63,32 @@ private extension DatabaseLookupTable {
 	func removeRelationships(for objects: [DatabaseObject], database: FMDatabase) {
 
 		removeLookupsForForeignIDs(objects.databaseIDs(), database)
+	}
+
+	func updateRelationships(for objects: [DatabaseObject], database: FMDatabase) {
+
+		let objectsNeedingUpdate = objects.filter { (object) -> Bool in
+			return !relationshipsMatchCache(object)
+		}
+	}
+
+	func relationshipsMatchCache(_ object: DatabaseObject) -> Bool {
+
+		let relationships = object.relatedObjectsWithName(relationshipName)
+		let cachedRelationshipIDs = cache[object.databaseID]
+
+		if let relationships = relationships {
+			if let cachedRelationshipIDs = cachedRelationshipIDs {
+				return relationships.databaseIDs() == cachedRelationshipIDs
+			}
+			return false // cachedRelationshipIDs == nil, relationships != nil
+		}
+		else { // relationships == nil
+			if let cachedRelationshipIDs = cachedRelationshipIDs {
+				return !cachedRelationshipIDs.isEmpty
+			}
+			return true // both nil
+		}
 	}
 
 	func attachRelationshipsUsingLookupTable(to objects: [DatabaseObject], lookupTable: LookupTable, database: FMDatabase) {
@@ -99,6 +127,14 @@ private extension DatabaseLookupTable {
 		return LookupTable(lookupValues)
 	}
 
+	func cacheForeignIDsWithNoRelationships(_ foreignIDs: Set<String>) {
+
+		foreignIDsWithNoRelationship.formUnion(foreignIDs)
+		for foreignID in foreignIDs {
+			cache[foreignID] = nil
+		}
+	}
+
 	func updateCache(_ lookupValues: Set<LookupValue>, _ foreignIDs: Set<String>) {
 		
 		// Maintain foreignIDsWithNoRelationship.
@@ -106,9 +142,8 @@ private extension DatabaseLookupTable {
 		// If a relationship does not exist, add the foreignID to foreignIDsWithNoRelationship.
 		
 		let foreignIDsWithRelationship = lookupValues.foreignIDs()
-		
-		foreignIDsWithNoRelationship.subtract(foreignIDsWithRelationship)
-		
+
+		let foreignIDs
 		for foreignID in foreignIDs {
 			if !foreignIDsWithRelationship.contains(foreignID) {
 				foreignIDsWithNoRelationship.insert(foreignID)
@@ -207,6 +242,53 @@ struct LookupValue: Hashable {
 	static public func ==(lhs: LookupValue, rhs: LookupValue) -> Bool {
 
 		return lhs.primaryID == rhs.primaryID && lhs.foreignID == rhs.foreignID
+	}
+}
+
+private final class DatabaseLookupTableCache {
+
+	private let relationshipName: String
+	private var foreignIDsWithNoRelationship = Set<String>()
+	private var cachedLookups = [String: Set<String>]() // foreignID: Set<primaryID>
+
+	init(_ relationshipName: String) {
+
+		self.relationshipName = relationshipName
+	}
+
+	func updateCacheWithIDsWithNoRelationship(_ foreignIDs: Set<String>) {
+
+		foreignIDsWithNoRelationship.formUnion(foreignIDs)
+		for foreignID in foreignIDs {
+			cachedLookups[foreignID] = nil
+		}
+	}
+
+	func updateCacheWithObjects(_ object: [DatabaseObject]) {
+
+		var foreignIDsWithRelationship = Set<String>()
+
+		for object in objects {
+
+			if let relatedObjects = object.relatedObjectsWithName, !relatedObjects.isEmpty {
+				foreignIDsWithRelationship.insert(object.databaseID)
+			}
+			else {
+				updateCacheWithIDsWithNoRelationship(objects.databaseIDs())
+			}
+		}
+
+		foreignIDsWithNoRelationship.subtract(foreignIDsWithRelationships)
+	}
+
+	func foreignIDHasNoRelationship(_ foreignID: String) -> Bool {
+
+		return foreignIDsWithNoRelationship.contains(foreignID)
+	}
+
+	func relationshipIDsForForeignID(_ foreignID: String) -> Set<String>? {
+
+		return cachedLookups[foreignID]
 	}
 }
 
