@@ -38,22 +38,27 @@ public final class DatabaseLookupTable {
 		attachRelationshipsUsingLookupTable(to: objects, lookupTable: lookupTable, database: database)
 	}
 	
-	public func saveRelationships(for objects: [DatabaseObject], relationshipName: String, database: FMDatabase) {
+	public func saveRelationships(for objects: [DatabaseObject], database: FMDatabase) {
 		
 		var objectsWithNoRelationships = [DatabaseObject]()
 		var objectsWithRelationships = [DatabaseObject]()
 
-		objects.forEach { (object)
-			if let relatedObjects = object.relatedObjectsWithName(relationshipsName)
+		for object in objects {
+			if let relatedObjects = object.relatedObjectsWithName(relationshipName), !relatedObjects.isEmpty {
+				objectsWithRelationships += [object]
+			}
+			else {
+				objectsWithNoRelationships += [object]
+			}
 		}
-
+		
+		removeRelationships(for: objectsWithNoRelationships, database: database)
 	}
-	
 }
 
 private extension DatabaseLookupTable {
 
-	func removeRelationships(for objects: [DatabaseObject], relationshipName: String, database: FMDatabase) {
+	func removeRelationships(for objects: [DatabaseObject], database: FMDatabase) {
 
 		removeLookupsForForeignIDs(objects.databaseIDs(), database)
 	}
@@ -196,7 +201,7 @@ struct LookupValue: Hashable {
 
 		self.primaryID = primaryID
 		self.foreignID = foreignID
-		self.hashValue = "\(primaryID)\(foreignID)".hashValue
+		self.hashValue = (primaryID + foreignID).hashValue
 	}
 
 	static public func ==(lhs: LookupValue, rhs: LookupValue) -> Bool {
