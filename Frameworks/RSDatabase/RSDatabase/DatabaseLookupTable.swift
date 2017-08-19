@@ -40,17 +40,23 @@ public final class DatabaseLookupTable {
 	
 	public func saveRelationships(for objects: [DatabaseObject], relationshipName: String, database: FMDatabase) {
 		
-		
-	}
-	
-	public func removeRelationships(for objects: [DatabaseObject], relationshipName: String, database: FMDatabase) {
-		
-		removeLookupsForForeignIDs(objects.databaseIDs(), database)
+		var objectsWithNoRelationships = [DatabaseObject]()
+		var objectsWithRelationships = [DatabaseObject]()
+
+		objects.forEach { (object)
+			if let relatedObjects = object.relatedObjectsWithName(relationshipsName)
+		}
+
 	}
 	
 }
 
 private extension DatabaseLookupTable {
+
+	func removeRelationships(for objects: [DatabaseObject], relationshipName: String, database: FMDatabase) {
+
+		removeLookupsForForeignIDs(objects.databaseIDs(), database)
+	}
 
 	func attachRelationshipsUsingLookupTable(to objects: [DatabaseObject], lookupTable: LookupTable, database: FMDatabase) {
 		
