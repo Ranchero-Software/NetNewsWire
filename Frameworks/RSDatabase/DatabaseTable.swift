@@ -12,7 +12,8 @@ public protocol DatabaseTable: class {
 	
 	var name: String {get}
 	
-	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, _ database: FMDatabase) -> [DatabaseObject]
+	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]
+	func save(_ objects: [DatabaseObject], in database: FMDatabase)
 }
 
 public extension DatabaseTable {

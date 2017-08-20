@@ -31,4 +31,14 @@ extension Array where Element == DatabaseObject {
 		
 		return Set(self.map { $0.databaseID })
 	}
+	
+	func includesObjectWithDatabaseID(_ databaseID: String) -> Bool {
+		
+		for object in self {
+			if object.databaseID == databaseID {
+				return true
+			}
+		}
+		return false
+	}
 }

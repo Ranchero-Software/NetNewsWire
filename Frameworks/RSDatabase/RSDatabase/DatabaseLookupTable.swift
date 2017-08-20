@@ -90,34 +90,105 @@ private extension DatabaseLookupTable {
 		database.rs_deleteRowsWhereKey(objectIDKey, inValues: Array(objectIDsToRemove), tableName: name)
 	}
 	
+	func deleteLookups(for objectID: String, _ relatedObjectIDs: Set<String>, _ database: FMDatabase) {
+		
+		guard !relatedObjectIDs.isEmpty else {
+			assertionFailure("deleteLookups: expected non-empty relatedObjectIDs")
+			return
+		}
+		
+		// delete from authorLookup where articleID=? and authorID in (?,?,?)
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(relatedObjectIDs.count))!
+		let sql = "delete from \(name) where \(objectIDKey)=? and \(relatedObjectIDKey) in \(placeholders)"
+		
+		let parameters: [Any] = [objectID] + Array(relatedObjectIDs)
+		let _ = database.executeUpdate(sql, withArgumentsIn: parameters)
+	}
+	
 	// MARK: Saving/Updating
 	
 	func updateRelationships(for objects: [DatabaseObject], _ database: FMDatabase) {
 
-//		let objectsNeedingUpdate = objects.filter { (object) -> Bool in
-//			return !relationshipsMatchCache(object)
-//		}
+		let objectsNeedingUpdate = objects.filter { !relatedObjectIDsMatchesCache($0) }
+		if objectsNeedingUpdate.isEmpty {
+			return
+		}
+		
+		if let lookupTable = fetchLookupTable(objectsNeedingUpdate.databaseIDs(), database) {
+			for object in objectsNeedingUpdate {
+				syncRelatedObjectsAndLookupTable(object, lookupTable, database)
+			}
+		}
+		
+		// Save the actual related objects.
+		
+		guard let relatedTable = relatedTable else {
+			assertionFailure("updateRelationships: relatedTable unexpectedly disappeared.")
+			return
+		}
+
+		let relatedObjectsToSave = uniqueArrayOfRelatedObjects(with: objectsNeedingUpdate)
+		if relatedObjectsToSave.isEmpty {
+			assertionFailure("updateRelationships: expected related objects to save. This should be unreachable.")
+			return
+		}
+		
+		relatedTable.save(relatedObjectsToSave, in: database)
 	}
 
-	func relationshipsMatchCache(_ object: DatabaseObject) -> Bool {
+	func uniqueArrayOfRelatedObjects(with objects: [DatabaseObject]) -> [DatabaseObject] {
+		
+		// Can’t create a Set, because we can’t make a Set<DatabaseObject>, because protocol-conforming objects can’t be made Hashable or even Equatable.
+		// We still want the array to include only one copy of each object, but we have to do it the slow way. Instruments will tell us if this is a performance problem.
 
-		let relationships = object.relatedObjectsWithName(relationshipName)
-		let cachedRelationshipIDs = cache[object.databaseID]
+		var relatedObjectsUniqueArray = [DatabaseObject]()
+		for object in objects {
+			guard let relatedObjects = object.relatedObjectsWithName(relationshipName) else {
+				assertionFailure("uniqueArrayOfRelatedObjects: expected every object to have related objects.")
+				continue
+			}
+			for relatedObject in relatedObjects {
+				if !relatedObjectsUniqueArray.includesObjectWithDatabaseID(relatedObject.databaseID) {
+					relatedObjectsUniqueArray += [relatedObject]
+				}
+			}
+		}
+		return relatedObjectsUniqueArray
+	}
+	
+	func relatedObjectIDsMatchesCache(_ object: DatabaseObject) -> Bool {
 
-		if let relationships = relationships {
-			if let cachedRelationshipIDs = cachedRelationshipIDs {
-				return relationships.databaseIDs() == cachedRelationshipIDs
-			}
-			return false // cachedRelationshipIDs == nil, relationships != nil
-		}
-		else { // relationships == nil
-			if let cachedRelationshipIDs = cachedRelationshipIDs {
-				return !cachedRelationshipIDs.isEmpty
-			}
-			return true // both nil
-		}
+		let relatedObjects = object.relatedObjectsWithName(relationshipName) ?? [DatabaseObject]()
+		let cachedRelationshipIDs = cache[object.databaseID] ?? Set<String>()
+
+		return relatedObjects.databaseIDs() == cachedRelationshipIDs
 	}
 
+	func syncRelatedObjectsAndLookupTable(_ object: DatabaseObject, _ lookupTable: LookupTable, _ database: FMDatabase) {
+		
+		guard let relatedObjects = object.relatedObjectsWithName(relationshipName) else {
+			assertionFailure("syncRelatedObjectsAndLookupTable should be called only on objects with related objects.")
+			return
+		}
+		
+		let relatedObjectIDs = relatedObjects.databaseIDs()
+		let lookupTableRelatedObjectIDs = lookupTable[object.databaseID] ?? Set<String>()
+		
+		let relatedObjectIDsToDelete = lookupTableRelatedObjectIDs.subtracting(relatedObjectIDs)
+		if !relatedObjectIDsToDelete.isEmpty {
+			deleteLookups(for: object.databaseID, relatedObjectIDsToDelete, database)
+		}
+		
+		let relatedObjectIDsToSave = relatedObjectIDs.subtracting(lookupTableRelatedObjectIDs)
+		if !relatedObjectIDsToSave.isEmpty {
+			saveLookups(for: object.databaseID, relatedObjectIDsToSave, database)
+		}
+	}
+	
+	func saveLookups(for objectID: String, _ relatedObjectIDs: Set<String>, _ database: FMDatabase) {
+		
+	}
+	
 	// MARK: Attaching
 	
 	func attachRelatedObjectsUsingCache(_ objects: [DatabaseObject], _ database: FMDatabase) {
@@ -159,7 +230,7 @@ private extension DatabaseLookupTable {
 	
 	func fetchRelatedObjectsWithIDs(_ relatedObjectIDs: Set<String>, _ database: FMDatabase) -> [DatabaseObject]? {
 		
-		guard let relatedObjects = relatedTable?.fetchObjectsWithIDs(relatedObjectIDs, database), !relatedObjects.isEmpty else {
+		guard let relatedObjects = relatedTable?.fetchObjectsWithIDs(relatedObjectIDs, in: database), !relatedObjects.isEmpty else {
 			return nil
 		}
 		return relatedObjects
@@ -198,7 +269,7 @@ private extension DatabaseLookupTable {
 	}
 }
 
-struct LookupTable {
+private struct LookupTable {
 	
 	private let dictionary: [String: Set<String>] // objectID: Set<relatedObjectID>
 	
@@ -241,7 +312,7 @@ struct LookupTable {
 	}
 }
 
-struct LookupValue: Hashable {
+private struct LookupValue: Hashable {
 
 	let objectID: String
 	let relatedObjectID: String
@@ -316,19 +387,6 @@ private final class DatabaseLookupTableCache {
 			}
 		}
 		return LookupTable(dictionary: d)
-	}
-}
-
-private extension Set where Element == LookupValue {
-
-	func objectIDs() -> Set<String> {
-
-		return Set<String>(self.map { $0.objectID })
-	}
-	
-	func relatedObjectIDs() -> Set<String> {
-		
-		return Set<String>(self.map { $0.relatedObjectID })
 	}
 }
 
