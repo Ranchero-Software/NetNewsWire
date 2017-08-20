@@ -75,6 +75,8 @@ public final class DatabaseLookupTable {
 	}
 }
 
+// MARK: - Private
+
 private extension DatabaseLookupTable {
 
 	// MARK: Removing
@@ -187,6 +189,10 @@ private extension DatabaseLookupTable {
 	
 	func saveLookups(for objectID: String, _ relatedObjectIDs: Set<String>, _ database: FMDatabase) {
 		
+		for relatedObjectID in relatedObjectIDs {
+			let d: [NSObject: Any] = [(objectIDKey as NSString): objectID, (relatedObjectIDKey as NSString): relatedObjectID]
+			let _ = database.rs_insertRow(with: d, insertType: .orIgnore, tableName: name)
+		}
 	}
 	
 	// MARK: Attaching
@@ -268,6 +274,8 @@ private extension DatabaseLookupTable {
 		return LookupValue(objectID: objectID, relatedObjectID: relatedObjectID)
 	}
 }
+
+// MARK: -
 
 private struct LookupTable {
 	
