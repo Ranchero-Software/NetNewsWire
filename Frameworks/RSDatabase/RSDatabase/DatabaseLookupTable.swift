@@ -1,5 +1,5 @@
 //
-//  LookupTable.swift
+//  DatabaseLookupTable.swift
 //  RSDatabase
 //
 //  Created by Brent Simmons on 8/5/17.
@@ -10,36 +10,51 @@ import Foundation
 
 // Implement a lookup table for a many-to-many relationship.
 // Example: CREATE TABLE if not EXISTS authorLookup (authorID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(authorID, articleID));
-// authorID is primaryKey; articleID is foreignKey.
+// articleID is objectID; authorID is relatedObjectID.
 
 public final class DatabaseLookupTable {
 
 	private let name: String
-	private let primaryKey: String
-	private let foreignKey: String
+	private let objectIDKey: String
+	private let relatedObjectIDKey: String
 	private let relationshipName: String
 	private weak var relatedTable: DatabaseTable?
 	private let cache: DatabaseLookupTableCache
 
-	public init(name: String, primaryKey: String, foreignKey: String, relatedTable: DatabaseTable, relationshipName: String) {
+	public init(name: String, objectIDKey: String, relatedObjectIDKey: String, relatedTable: DatabaseTable, relationshipName: String) {
 
 		self.name = name
-		self.primaryKey = primaryKey
-		self.foreignKey = foreignKey
+		self.objectIDKey = objectIDKey
+		self.relatedObjectIDKey = relatedObjectIDKey
 		self.relatedTable = relatedTable
 		self.relationshipName = relationshipName
 		self.cache = DatabaseLookupTableCache(relationshipName)
 	}
 
-	public func attachRelationships(to objects: [DatabaseObject], database: FMDatabase) {
+	public func attachRelationships(to objects: [DatabaseObject], in database: FMDatabase) {
 		
-		guard let lookupTable = fetchLookupTable(objects.databaseIDs(), database) else {
-			return;
+		let objectsThatMayHaveRelatedObjects = cache.objectsThatMayHaveRelatedObjects(objects)
+		if objectsThatMayHaveRelatedObjects.isEmpty {
+			return
 		}
-		attachRelationshipsUsingLookupTable(to: objects, lookupTable: lookupTable, database: database)
+		
+		attachRelatedObjectsUsingCache(objectsThatMayHaveRelatedObjects, database)
+		
+		let objectsNeedingFetching = objectsThatMayHaveRelatedObjects.filter { (object) -> Bool in
+			return object.relatedObjectsWithName(self.relationshipName) == nil
+		}
+		if objectsNeedingFetching.isEmpty {
+			return
+		}
+		
+		if let lookupTable = fetchLookupTable(objectsNeedingFetching.databaseIDs(), database) {
+			attachRelatedObjectsUsingLookupTable(objectsNeedingFetching, lookupTable, database)
+		}
+		
+		cache.update(with: objectsNeedingFetching)
 	}
 	
-	public func saveRelationships(for objects: [DatabaseObject], database: FMDatabase) {
+	public func saveRelationships(for objects: [DatabaseObject], in database: FMDatabase) {
 		
 		var objectsWithNoRelationships = [DatabaseObject]()
 		var objectsWithRelationships = [DatabaseObject]()
@@ -53,23 +68,35 @@ public final class DatabaseLookupTable {
 			}
 		}
 		
-		removeRelationships(for: objectsWithNoRelationships, database: database)
-		updateRelationships(for: objectsWithRelationships, database: database)
+		removeRelationships(for: objectsWithNoRelationships, database)
+		updateRelationships(for: objectsWithRelationships, database)
+		
+		cache.update(with: objects)
 	}
 }
 
 private extension DatabaseLookupTable {
 
-	func removeRelationships(for objects: [DatabaseObject], database: FMDatabase) {
+	// MARK: Removing
+	
+	func removeRelationships(for objects: [DatabaseObject], _ database: FMDatabase) {
 
-		removeLookupsForForeignIDs(objects.databaseIDs(), database)
-	}
-
-	func updateRelationships(for objects: [DatabaseObject], database: FMDatabase) {
-
-		let objectsNeedingUpdate = objects.filter { (object) -> Bool in
-			return !relationshipsMatchCache(object)
+		let objectIDs = objects.databaseIDs()
+		let objectIDsToRemove = objectIDs.subtracting(cache.objectIDsWithNoRelationship)
+		if objectIDsToRemove.isEmpty {
+			return
 		}
+		
+		database.rs_deleteRowsWhereKey(objectIDKey, inValues: Array(objectIDsToRemove), tableName: name)
+	}
+	
+	// MARK: Saving/Updating
+	
+	func updateRelationships(for objects: [DatabaseObject], _ database: FMDatabase) {
+
+//		let objectsNeedingUpdate = objects.filter { (object) -> Bool in
+//			return !relationshipsMatchCache(object)
+//		}
 	}
 
 	func relationshipsMatchCache(_ object: DatabaseObject) -> Bool {
@@ -91,217 +118,217 @@ private extension DatabaseLookupTable {
 		}
 	}
 
-	func attachRelationshipsUsingLookupTable(to objects: [DatabaseObject], lookupTable: LookupTable, database: FMDatabase) {
+	// MARK: Attaching
+	
+	func attachRelatedObjectsUsingCache(_ objects: [DatabaseObject], _ database: FMDatabase) {
 		
-		let primaryIDs = lookupTable.primaryIDs()
-		if (primaryIDs.isEmpty) {
+		let lookupTable = cache.lookupTableForObjectIDs(objects.databaseIDs())
+		attachRelatedObjectsUsingLookupTable(objects, lookupTable, database)
+	}
+	
+	func attachRelatedObjectsUsingLookupTable(_ objects: [DatabaseObject], _ lookupTable: LookupTable, _ database: FMDatabase) {
+		
+		let relatedObjectIDs = lookupTable.relatedObjectIDs()
+		if (relatedObjectIDs.isEmpty) {
 			return
 		}
 		
-		guard let relatedObjects: [DatabaseObject] = relatedTable?.fetchObjectsWithIDs(primaryIDs, database), !relatedObjects.isEmpty else {
+		guard let relatedObjects = fetchRelatedObjectsWithIDs(relatedObjectIDs, database) else {
 			return
 		}
-		
 		let relatedObjectsDictionary = relatedObjects.dictionary()
 		
 		for object in objects {
-			let identifier = object.databaseID
-			if let lookupValues = lookupTable[identifier], !lookupValues.isEmpty {
-				let primaryIDs = lookupValues.primaryIDs()
-				let oneObjectRelatedObjects = primaryIDs.flatMap{ (primaryID) -> DatabaseObject? in
-					return relatedObjectsDictionary[primaryID]
-				}
-				object.setRelatedObjects(oneObjectRelatedObjects, name: relationshipName)
-			}
+			attachRelatedObjectsToObjectUsingLookupTable(object, relatedObjectsDictionary, lookupTable)
 		}
 	}
 
-	func fetchLookupTable(_ foreignIDs: Set<String>, _ database: FMDatabase) -> LookupTable? {
+	func attachRelatedObjectsToObjectUsingLookupTable(_ object: DatabaseObject, _ relatedObjectsDictionary: [String: DatabaseObject], _ lookupTable: LookupTable) {
 		
-		let foreignIDsToLookup = foreignIDs.subtracting(foreignIDsWithNoRelationship)
-		guard let lookupValues = fetchLookupValues(foreignIDsToLookup, database) else {
-			return nil
-		}
-		updateCache(lookupValues, foreignIDsToLookup)
-		
-		return LookupTable(lookupValues)
-	}
-
-	func cacheForeignIDsWithNoRelationships(_ foreignIDs: Set<String>) {
-
-		foreignIDsWithNoRelationship.formUnion(foreignIDs)
-		for foreignID in foreignIDs {
-			cache[foreignID] = nil
-		}
-	}
-
-	func updateCache(_ lookupValues: Set<LookupValue>, _ foreignIDs: Set<String>) {
-		
-		// Maintain foreignIDsWithNoRelationship.
-		// If a relationship exist, remove the foreignID from foreignIDsWithNoRelationship.
-		// If a relationship does not exist, add the foreignID to foreignIDsWithNoRelationship.
-		
-		let foreignIDsWithRelationship = lookupValues.foreignIDs()
-
-		let foreignIDs
-		for foreignID in foreignIDs {
-			if !foreignIDsWithRelationship.contains(foreignID) {
-				foreignIDsWithNoRelationship.insert(foreignID)
-			}
-		}
-	}
-	
-	func removeLookupsForForeignIDs(_ foreignIDs: Set<String>, _ database: FMDatabase) {
-		
-		let foreignIDsToRemove = foreignIDs.subtracting(foreignIDsWithNoRelationship)
-		if foreignIDsToRemove.isEmpty {
+		let identifier = object.databaseID
+		guard let relatedObjectIDs = lookupTable[identifier], !relatedObjectIDs.isEmpty else {
 			return
 		}
-		
-		foreignIDsWithNoRelationship.formUnion(foreignIDsToRemove)
-		
-		database.rs_deleteRowsWhereKey(foreignKey, inValues: Array(foreignIDsToRemove), tableName: name)
+		let relatedObjects = relatedObjectIDs.flatMap { relatedObjectsDictionary[$0] }
+		if !relatedObjects.isEmpty {
+			object.setRelatedObjects(relatedObjects, name: relationshipName)
+		}
 	}
 	
-	func fetchLookupValues(_ foreignIDs: Set<String>, _ database: FMDatabase) -> Set<LookupValue>? {
+	// MARK: Fetching
+	
+	func fetchRelatedObjectsWithIDs(_ relatedObjectIDs: Set<String>, _ database: FMDatabase) -> [DatabaseObject]? {
 		
-		guard !foreignIDs.isEmpty, let resultSet = database.rs_selectRowsWhereKey(foreignKey, inValues: Array(foreignIDs), tableName: name) else {
+		guard let relatedObjects = relatedTable?.fetchObjectsWithIDs(relatedObjectIDs, database), !relatedObjects.isEmpty else {
+			return nil
+		}
+		return relatedObjects
+	}
+	
+	func fetchLookupTable(_ objectIDs: Set<String>, _ database: FMDatabase) -> LookupTable? {
+		
+		guard let lookupValues = fetchLookupValues(objectIDs, database) else {
+			return nil
+		}
+		return LookupTable(lookupValues: lookupValues)
+	}
+
+	func fetchLookupValues(_ objectIDs: Set<String>, _ database: FMDatabase) -> Set<LookupValue>? {
+		
+		guard !objectIDs.isEmpty, let resultSet = database.rs_selectRowsWhereKey(objectIDKey, inValues: Array(objectIDs), tableName: name) else {
 			return nil
 		}
 		return lookupValuesWithResultSet(resultSet)
 	}
 	
 	func lookupValuesWithResultSet(_ resultSet: FMResultSet) -> Set<LookupValue> {
-
+		
 		return resultSet.mapToSet(lookupValueWithRow)
 	}
-
+	
 	func lookupValueWithRow(_ row: FMResultSet) -> LookupValue? {
-
-		guard let primaryID = row.string(forColumn: primaryKey) else {
+		
+		guard let objectID = row.string(forColumn: objectIDKey) else {
 			return nil
 		}
-		guard let foreignID = row.string(forColumn: foreignKey) else {
+		guard let relatedObjectID = row.string(forColumn: relatedObjectIDKey) else {
 			return nil
 		}
-		return LookupValue(primaryID: primaryID, foreignID: foreignID)
+		return LookupValue(objectID: objectID, relatedObjectID: relatedObjectID)
 	}
-
 }
 
 struct LookupTable {
 	
-	private let dictionary: [String: Set<LookupValue>]
+	private let dictionary: [String: Set<String>] // objectID: Set<relatedObjectID>
 	
-	init(_ lookupValues: Set<LookupValue>) {
+	init(dictionary: [String: Set<String>]) {
 		
-		var d = [String: Set<LookupValue>]()
+		self.dictionary = dictionary
+	}
+	
+	init(lookupValues: Set<LookupValue>) {
+		
+		var d = [String: Set<String>]()
 		
 		for lookupValue in lookupValues {
-			let foreignID = lookupValue.foreignID
-			if d[foreignID] == nil {
-				d[foreignID] = Set([lookupValue])
+			let objectID = lookupValue.objectID
+			let relatedObjectID: String = lookupValue.relatedObjectID
+			if d[objectID] == nil {
+				d[objectID] = Set([relatedObjectID])
 			}
 			else {
-				d[foreignID]!.insert(lookupValue)
+				d[objectID]!.insert(relatedObjectID)
 			}
 		}
 		
-		self.dictionary = d
+		self.init(dictionary: d)
 	}
 
-	func primaryIDs() -> Set<String> {
+	func relatedObjectIDs() -> Set<String> {
 		
 		var ids = Set<String>()
-		for (_, lookupValues) in dictionary {
-			ids.formUnion(lookupValues.primaryIDs())
+		for (_, relatedObjectIDs) in dictionary {
+			ids.formUnion(relatedObjectIDs)
 		}
 		return ids
 	}
 	
-	subscript(_ foreignID: String) -> Set<LookupValue>? {
+	subscript(_ objectID: String) -> Set<String>? {
 		get {
-			return dictionary[foreignID]
+			return dictionary[objectID]
 		}
 	}
 }
 
 struct LookupValue: Hashable {
 
-	let primaryID: String
-	let foreignID: String
+	let objectID: String
+	let relatedObjectID: String
 	let hashValue: Int
 
-	init(primaryID: String, foreignID: String) {
+	init(objectID: String, relatedObjectID: String) {
 
-		self.primaryID = primaryID
-		self.foreignID = foreignID
-		self.hashValue = (primaryID + foreignID).hashValue
+		self.objectID = objectID
+		self.relatedObjectID = relatedObjectID
+		self.hashValue = (objectID + relatedObjectID).hashValue
 	}
 
 	static public func ==(lhs: LookupValue, rhs: LookupValue) -> Bool {
 
-		return lhs.primaryID == rhs.primaryID && lhs.foreignID == rhs.foreignID
+		return lhs.objectID == rhs.objectID && lhs.relatedObjectID == rhs.relatedObjectID
 	}
 }
 
 private final class DatabaseLookupTableCache {
 
+	var objectIDsWithNoRelationship = Set<String>()
 	private let relationshipName: String
-	private var foreignIDsWithNoRelationship = Set<String>()
-	private var cachedLookups = [String: Set<String>]() // foreignID: Set<primaryID>
+	private var cachedLookups = [String: Set<String>]() // objectID: Set<relatedObjectID>
 
 	init(_ relationshipName: String) {
 
 		self.relationshipName = relationshipName
 	}
 
-	func updateCacheWithIDsWithNoRelationship(_ foreignIDs: Set<String>) {
+	func update(with objects: [DatabaseObject]) {
 
-		foreignIDsWithNoRelationship.formUnion(foreignIDs)
-		for foreignID in foreignIDs {
-			cachedLookups[foreignID] = nil
-		}
-	}
-
-	func updateCacheWithObjects(_ object: [DatabaseObject]) {
-
-		var foreignIDsWithRelationship = Set<String>()
-
+		var idsWithRelationships = Set<String>()
+		var idsWithNoRelationships = Set<String>()
+		
 		for object in objects {
-
-			if let relatedObjects = object.relatedObjectsWithName, !relatedObjects.isEmpty {
-				foreignIDsWithRelationship.insert(object.databaseID)
+			let objectID = object.databaseID
+			if let relatedObjects = object.relatedObjectsWithName(relationshipName), !relatedObjects.isEmpty {
+				idsWithRelationships.insert(objectID)
+				self[objectID] = relatedObjects.databaseIDs()
 			}
 			else {
-				updateCacheWithIDsWithNoRelationship(objects.databaseIDs())
+				idsWithNoRelationships.insert(objectID)
+				self[objectID] = nil
 			}
 		}
 
-		foreignIDsWithNoRelationship.subtract(foreignIDsWithRelationships)
+		objectIDsWithNoRelationship.subtract(idsWithRelationships)
+		objectIDsWithNoRelationship.formUnion(idsWithNoRelationships)
 	}
 
-	func foreignIDHasNoRelationship(_ foreignID: String) -> Bool {
-
-		return foreignIDsWithNoRelationship.contains(foreignID)
+	subscript(_ objectID: String) -> Set<String>? {
+		get {
+			return cachedLookups[objectID]
+		}
+		set {
+			cachedLookups[objectID] = newValue
+		}
 	}
-
-	func relationshipIDsForForeignID(_ foreignID: String) -> Set<String>? {
-
-		return cachedLookups[foreignID]
+	
+	func objectsThatMayHaveRelatedObjects(_ objects: [DatabaseObject]) -> [DatabaseObject] {
+		
+		// Filter out objects that are known to have no related objects
+		return objects.filter{ !objectIDsWithNoRelationship.contains($0.databaseID) }
+	}
+	
+	func lookupTableForObjectIDs(_ objectIDs: Set<String>) -> LookupTable {
+		
+		var d = [String: Set<String>]()
+		for objectID in objectIDs {
+			if let relatedObjectIDs = self[objectID] {
+				d[objectID] = relatedObjectIDs
+			}
+		}
+		return LookupTable(dictionary: d)
 	}
 }
 
 private extension Set where Element == LookupValue {
 
-	func primaryIDs() -> Set<String> {
+	func objectIDs() -> Set<String> {
 
-		return Set<String>(self.map { $0.primaryID })
+		return Set<String>(self.map { $0.objectID })
 	}
 	
-	func foreignIDs() -> Set<String> {
+	func relatedObjectIDs() -> Set<String> {
 		
-		return Set<String>(self.map { $0.foreignID })
+		return Set<String>(self.map { $0.relatedObjectID })
 	}
 }
 
