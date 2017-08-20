@@ -63,3 +63,8 @@ public struct DatabaseKey {
 	static let emailAddress = "emailAddress"
 }
 
+public struct RelationshipName {
+	
+	static let authors = "authors"
+	static let tags = "tags"
+}

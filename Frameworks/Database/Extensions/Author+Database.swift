@@ -12,13 +12,22 @@ import RSDatabase
 
 extension Author {
 
-	init?(databaseID: String, row: FMResultSet) {
+	init?(authorID: String, row: FMResultSet) {
 		
 		let name = row.string(forColumn: DatabaseKey.name)
 		let url = row.string(forColumn: DatabaseKey.url)
 		let avatarURL = row.string(forColumn: DatabaseKey.avatarURL)
 		let emailAddress = row.string(forColumn: DatabaseKey.emailAddress)
 
-		self.init(databaseID: databaseID, name: name, url: url, avatarURL: avatarURL, emailAddress: emailAddress)
+		self.init(authorID: authorID, name: name, url: url, avatarURL: avatarURL, emailAddress: emailAddress)
+	}
+}
+
+extension Author: DatabaseObject {
+	
+	var databaseID: String {
+		get {
+			return authorID
+		}
 	}
 }

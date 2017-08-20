@@ -11,7 +11,7 @@ import RSCore
 
 public struct Author: Hashable {
 
-	public let databaseID: String // calculated
+	public let authorID: String // calculated
 	public let name: String?
 	public let url: String?
 	public let avatarURL: String?

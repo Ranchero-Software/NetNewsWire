@@ -17,45 +17,27 @@ import Data
 // CREATE TABLE if not EXISTS authorLookup (authorID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(authorID, articleID));
 
 
-final class AuthorsTable: DatabaseTable {
-
+struct AuthorsTable: DatabaseTable {
+	
 	let name: String
-	let queue: RSDatabaseQueue
 	private let cache = ObjectCache<Author>(keyPathForID: \Author.databaseID)
-	private var articleIDToAuthorsCache = [String: Set<Author>]()
-	private let authorsLookupTable = LookupTable(name: DatabaseTableName.authorsLookup, primaryKey: DatabaseKey.authorID, foreignKey: DatabaseKey.articleID)
 
-	init(name: String, queue: RSDatabaseQueue) {
+	init(name: String) {
 
 		self.name = name
-		self.queue = queue
+	}
+	
+	// MARK: DatabaseTable Methods
+	
+	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject] {
+		
+		
+	}
+	
+	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
+		<#code#>
 	}
 
-	func attachAuthors(_ articles: Set<Article>, _ database: FMDatabase) {
-
-		attachCachedAuthors(articles)
-
-		let articlesMissingAuthors = articlesNeedingAuthors(articles)
-		if articlesMissingAuthors.isEmpty {
-			return
-		}
-
-		let articleIDs = Set(articlesMissingAuthors.map { $0.databaseID })
-		let authorTable = fetchAuthorsForArticleIDs(articleIDs, database)
-
-		for article in articlesMissingAuthors {
-
-			let articleID = article.databaseID
-
-			if let authors = authorTable?[articleID] {
-				articleIDsWithNoAuthors.remove(articleID)
-				article.authors = Array(authors)
-			}
-			else {
-				articleIDsWithNoAuthors.insert(articleID)
-			}
-		}
-	}
 }
 
 private extension AuthorsTable {

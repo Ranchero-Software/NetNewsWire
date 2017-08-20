@@ -8,9 +8,9 @@
 
 import Foundation
 
-public protocol DatabaseTable: class {
+public protocol DatabaseTable {
 	
-	var name: String {get}
+	var name: String { get }
 	
 	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]
 	func save(_ objects: [DatabaseObject], in database: FMDatabase)

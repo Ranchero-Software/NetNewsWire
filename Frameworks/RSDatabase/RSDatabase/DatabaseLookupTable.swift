@@ -18,7 +18,7 @@ public final class DatabaseLookupTable {
 	private let objectIDKey: String
 	private let relatedObjectIDKey: String
 	private let relationshipName: String
-	private weak var relatedTable: DatabaseTable?
+	private let relatedTable: DatabaseTable
 	private let cache: DatabaseLookupTableCache
 
 	public init(name: String, objectIDKey: String, relatedObjectIDKey: String, relatedTable: DatabaseTable, relationshipName: String) {
@@ -124,11 +124,6 @@ private extension DatabaseLookupTable {
 		
 		// Save the actual related objects.
 		
-		guard let relatedTable = relatedTable else {
-			assertionFailure("updateRelationships: relatedTable unexpectedly disappeared.")
-			return
-		}
-
 		let relatedObjectsToSave = uniqueArrayOfRelatedObjects(with: objectsNeedingUpdate)
 		if relatedObjectsToSave.isEmpty {
 			assertionFailure("updateRelationships: expected related objects to save. This should be unreachable.")

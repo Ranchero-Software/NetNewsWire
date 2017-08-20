@@ -24,16 +24,17 @@ typealias ArticleResultBlock = (Set<Article>) -> Void
 
 final class Database {
 
-	fileprivate let queue: RSDatabaseQueue
+	private let queue: RSDatabaseQueue
 	private let databaseFile: String
 	private let articlesTable: ArticlesTable
 	private let authorsTable: AuthorsTable
+	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsTable: AttachmentsTable
 	private let statusesTable: StatusesTable
-	private let tagsTable: TagsTable
-	fileprivate var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
-	fileprivate let minimumNumberOfArticles = 10
-	fileprivate weak var delegate: AccountDelegate?
+	private let tagsLookupTable: DatabaseLookupTable
+	private var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
+	private let minimumNumberOfArticles = 10
+	private weak var delegate: AccountDelegate?
 	
 	init(databaseFile: String, delegate: AccountDelegate) {
 
@@ -42,11 +43,15 @@ final class Database {
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
 
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, queue: queue)
-		self.authorsTable = AuthorsTable(name: DatabaseTableName.authors, queue: queue)
-		self.attachmentsTable = AttachmentsTable(name: DatabaseTableName.attachments, queue: queue)
-		self.statusesTable = StatusesTable(name: DatabaseTableName.statuses, queue: queue)
-		self.tagsTable = TagsTable(name: DatabaseTableName.tags, queue: queue)
+		self.attachmentsTable = AttachmentsTable(name: DatabaseTableName.attachments)
+		self.statusesTable = StatusesTable(name: DatabaseTableName.statuses)
+
+		self.authorsTable = AuthorsTable(name: DatabaseTableName.authors)
+		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
 		
+		let tagsTable = TagsTable(name: DatabaseTableName.tags)
+		self.tagsLookupTable = DatabaseLookupTable(name: DatabaseTableName.tags, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.tagName, relatedTable: tagsTable, relationshipName: RelationshipName.tags)
+
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
 		let createStatements = try! NSString(contentsOfFile: createStatementsPath, encoding: String.Encoding.utf8.rawValue)
 		queue.createTables(usingStatements: createStatements as String)

@@ -16,6 +16,18 @@ public protocol DatabaseObject {
 	func relatedObjectsWithName(_ name: String) -> [DatabaseObject]?
 }
 
+public extension DatabaseObject {
+	
+	func setRelatedObjects(_ objects: [DatabaseObject], name: String) {
+		// Do nothing
+	}
+	
+	func relatedObjectsWithName(_ name: String) -> [DatabaseObject]? {
+		
+		return nil
+	}
+}
+
 extension Array where Element == DatabaseObject {
 
 	func dictionary() -> [String: DatabaseObject] {

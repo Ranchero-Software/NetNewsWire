@@ -34,14 +34,12 @@ import Data
 final class AttachmentsTable: DatabaseTable {
 
 	let name: String
-	let queue: RSDatabaseQueue
 	private let cacheByArticleID = ObjectCache<Attachment>(keyPathForID: \Attachment.articleID)
 	private let cacheByDatabaseID = ObjectCache<Attachment>(keyPathForID: \Attachment.databaseID)
 
-	init(name: String, queue: RSDatabaseQueue) {
+	init(name: String) {
 
 		self.name = name
-		self.queue = queue
 	}
 
 	private var cachedAttachments = [String: Attachment]() // Attachment.databaseID key

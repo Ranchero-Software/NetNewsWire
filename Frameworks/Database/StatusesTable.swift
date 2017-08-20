@@ -18,13 +18,11 @@ import Data
 final class StatusesTable: DatabaseTable {
 
 	let name: String
-	let queue: RSDatabaseQueue
 	private let cache = ObjectCache<ArticleStatus>(keyPathForID: \ArticleStatus.articleID)
 
-	init(name: String, queue: RSDatabaseQueue) {
+	init(name: String) {
 
 		self.name = name
-		self.queue = queue
 	}
 
 	func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
