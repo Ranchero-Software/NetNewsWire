@@ -26,7 +26,7 @@ final class Database {
 
 	private let queue: RSDatabaseQueue
 	private let databaseFile: String
-//	private let articlesTable: ArticlesTable
+	private let articlesTable: ArticlesTable
 	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
@@ -41,7 +41,7 @@ final class Database {
 		self.databaseFile = databaseFile
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
 
-//		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, queue: queue)
+		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles)
 		self.statusesTable = StatusesTable(name: DatabaseTableName.statuses)
 
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
@@ -63,7 +63,9 @@ final class Database {
 
 	func fetchArticlesForFeed(_ feed: Feed) -> Set<Article> {
 
-		return Set<Article>() // TODO
+		return articlesTable.fetchArticlesForFeed(feed)
+		
+//		return Set<Article>() // TODO
 //		var fetchedArticles = Set<Article>()
 //		let feedID = feed.feedID
 //
@@ -78,6 +80,8 @@ final class Database {
 
 	func fetchArticlesForFeedAsync(_ feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
 
+		articlesTable.fetchArticlesForFeedAsync(feed, resultBlock)
+		
 //		let feedID = feed.feedID
 //
 //		queue.fetch { (database: FMDatabase!) -> Void in
@@ -95,7 +99,7 @@ final class Database {
 
 	func fetchUnreadArticlesForFolder(_ folder: Folder) -> Set<Article> {
 		
-		return Set<Article>() // TODO
+		return articlesTable.fetchUnreadArticlesForFeeds(folder.flattenedFeeds())
 //		return fetchUnreadArticlesForFeedIDs(folder.flattenedFeedIDs())
 	}
 

@@ -10,18 +10,48 @@ import Foundation
 import RSDatabase
 import Data
 
-//final class ArticlesTable: DatabaseTable {
-//
-//	let name: String
+final class ArticlesTable: DatabaseTable {
+
+	let name: String
+	let databaseIDKey = DatabaseKey.articleID
 //	private let cachedArticles: NSMapTable<NSString, Article> = NSMapTable.weakToWeakObjects()
-//
-//	init(name: String) {
-//
-//		self.name = name
-//	}
 
+	init(name: String) {
 
+		self.name = name
+	}
 
+	// MARK: DatabaseTable Methods
+	
+	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
+		
+//		if let article = articleWithRow(row) {
+//			
+//		}
+		return nil // TODO
+	}
+
+	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
+		// TODO
+	}
+
+	// MARK: Fetching
+	
+	func fetchArticlesForFeed(_ feed: Feed) -> Set<Article> {
+		
+		return Set<Article>() // TODO
+	}
+
+	func fetchArticlesForFeedAsync(_ feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
+
+		// TODO
+	}
+	
+	func fetchUnreadArticlesForFeeds(_ feeds: Set<Feed>) -> Set<Article> {
+	
+		return Set<Article>() // TODO
+	}
+	
 //	func uniquedArticles(_ fetchedArticles: Set<Article>, statusesTable: StatusesTable) -> Set<Article> {
 //
 //		var articles = Set<Article>()
@@ -67,7 +97,7 @@ import Data
 //		}
 //
 //	}
-//}
+}
 
 //private extension ArticlesTable {
 

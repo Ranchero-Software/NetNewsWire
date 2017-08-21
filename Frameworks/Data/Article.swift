@@ -33,13 +33,13 @@ public final class Article: Hashable {
 	public var status: ArticleStatus?
 	public let hashValue: Int
 
-	var feed: Feed? {
+	public var feed: Feed? {
 		get {
 			return account?.existingFeed(with: feedID)
 		}
 	}
 
-	init(account: Account, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: Set<String>?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
+	public init(account: Account, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: Set<String>?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
 		
 		self.account = account
 		self.feedID = feedID
