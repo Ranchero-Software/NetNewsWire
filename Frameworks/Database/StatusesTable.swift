@@ -18,7 +18,7 @@ import Data
 final class StatusesTable: DatabaseTable {
 
 	let name: String
-	private let cache = ObjectCache<ArticleStatus>(keyPathForID: \ArticleStatus.articleID)
+	private let cache = DatabaseObjectCache()
 
 	init(name: String) {
 

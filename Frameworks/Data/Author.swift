@@ -18,7 +18,7 @@ public struct Author: Hashable {
 	public let emailAddress: String?
 	public let hashValue: Int
 	
-	public init?(databaseID: String?, name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
+	public init?(authorID: String?, name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
 
 		if name == nil && url == nil && emailAddress == nil {
 			return nil
@@ -34,11 +34,11 @@ public struct Author: Hashable {
 		s += emailAddress ?? ""
 		self.hashValue = s.hashValue
 
-		if let databaseID = databaseID {
-			self.databaseID = databaseID
+		if let authorID = authorID {
+			self.authorID = authorID
 		}
 		else {
-			self.databaseID = databaseIDWithString(s)
+			self.authorID = databaseIDWithString(s)
 		}
 	}
 	

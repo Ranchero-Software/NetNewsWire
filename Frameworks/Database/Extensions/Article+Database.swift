@@ -49,6 +49,15 @@ extension Article {
 	}
 }
 
+extension Article: DatabaseObject {
+	
+	var databaseID: String {
+		get {
+			return articleID
+		}
+	}
+}
+
 extension Set where Element == Article {
 
 	func withNilProperty<T>(_ keyPath: KeyPath<Article,T?>) -> Set<Article> {

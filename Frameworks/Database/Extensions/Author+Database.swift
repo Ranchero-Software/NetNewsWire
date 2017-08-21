@@ -23,7 +23,7 @@ extension Author {
 	}
 }
 
-extension Author: DatabaseObject {
+public extension Author: DatabaseObject {
 	
 	var databaseID: String {
 		get {

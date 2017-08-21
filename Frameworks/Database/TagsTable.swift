@@ -20,7 +20,7 @@ import Data
 struct TagsTable: DatabaseTable {
 	
 	let name: String
-
+	let databaseIDKey = DatabaseKey.tagName
 	init(name: String) {
 
 		self.name = name
@@ -32,6 +32,11 @@ struct TagsTable: DatabaseTable {
 		
 		// A tag is a string, and it is its own databaseID.
 		return databaseIDs.map{ $0 as DatabaseObject }
+	}
+	
+	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
+		
+		return nil //unused
 	}
 	
 	func save(_ objects: [DatabaseObject], in database: FMDatabase) {

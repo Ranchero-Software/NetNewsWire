@@ -27,10 +27,9 @@ final class Database {
 	private let queue: RSDatabaseQueue
 	private let databaseFile: String
 	private let articlesTable: ArticlesTable
-	private let authorsTable: AuthorsTable
-	private let authorsLookupTable: DatabaseLookupTable
-	private let attachmentsTable: AttachmentsTable
 	private let statusesTable: StatusesTable
+	private let authorsLookupTable: DatabaseLookupTable
+	private let attachmentsLookupTable: DatabaseLookupTable
 	private let tagsLookupTable: DatabaseLookupTable
 	private var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	private let minimumNumberOfArticles = 10
@@ -43,15 +42,17 @@ final class Database {
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
 
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, queue: queue)
-		self.attachmentsTable = AttachmentsTable(name: DatabaseTableName.attachments)
 		self.statusesTable = StatusesTable(name: DatabaseTableName.statuses)
 
-		self.authorsTable = AuthorsTable(name: DatabaseTableName.authors)
+		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
 		
 		let tagsTable = TagsTable(name: DatabaseTableName.tags)
 		self.tagsLookupTable = DatabaseLookupTable(name: DatabaseTableName.tags, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.tagName, relatedTable: tagsTable, relationshipName: RelationshipName.tags)
 
+		let attachmentsTable = AttachmentsTable(name: DatabaseTableName.attachments)
+		self.attachmentsLookupTable = DatabaseLookupTable(name: DatabaseTableName.tags, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.tagName, relatedTable: tagsTable, relationshipName: RelationshipName.tags)
+		
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
 		let createStatements = try! NSString(contentsOfFile: createStatementsPath, encoding: String.Encoding.utf8.rawValue)
 		queue.createTables(usingStatements: createStatements as String)

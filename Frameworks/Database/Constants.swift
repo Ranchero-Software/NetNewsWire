@@ -12,10 +12,11 @@ public struct DatabaseTableName {
 	
 	static let articles = "articles"
 	static let authors = "authors"
-	static let authorsLookup = "authorLookup"
+	static let authorsLookup = "authorsLookup"
 	static let statuses = "statuses"
 	static let tags = "tags"
 	static let attachments = "attachments"
+	static let attachmentsLookup = "attachmentsLookup"
 }
 
 public struct DatabaseKey {
@@ -49,6 +50,7 @@ public struct DatabaseKey {
 	static let dateArrived = "dateArrived"
 
 	// Attachment
+	static let attachmentID = "attachmentID"
 	static let mimeType = "mimeType"
 	static let sizeInBytes = "sizeInBytes"
 	static let durationInSeconds = "durationInSeconds"

@@ -31,7 +31,7 @@ public final class DatabaseLookupTable {
 		self.cache = DatabaseLookupTableCache(relationshipName)
 	}
 
-	public func attachRelationships(to objects: [DatabaseObject], in database: FMDatabase) {
+	public func attachRelatedObjects(to objects: [DatabaseObject], in database: FMDatabase) {
 		
 		let objectsThatMayHaveRelatedObjects = cache.objectsThatMayHaveRelatedObjects(objects)
 		if objectsThatMayHaveRelatedObjects.isEmpty {
@@ -54,7 +54,7 @@ public final class DatabaseLookupTable {
 		cache.update(with: objectsNeedingFetching)
 	}
 	
-	public func saveRelationships(for objects: [DatabaseObject], in database: FMDatabase) {
+	public func saveRelatedObjects(for objects: [DatabaseObject], in database: FMDatabase) {
 		
 		var objectsWithNoRelationships = [DatabaseObject]()
 		var objectsWithRelationships = [DatabaseObject]()
