@@ -18,6 +18,7 @@
 		8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */; };
 		8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */; };
 		846146271F0ABC7B00870CB3 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846146241F0ABC7400870CB3 /* RSParser.framework */; };
+		846FB36B1F4A937B00EAB81D /* Feed+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846FB36A1F4A937B00EAB81D /* Feed+Database.swift */; };
 		84BB4BA21F119C5400858766 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B981F119C4900858766 /* RSCore.framework */; };
 		84BB4BA91F11A32800858766 /* TagsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BB4BA81F11A32800858766 /* TagsTable.swift */; };
 		84D0DEA11F4A429800073503 /* String+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D0DEA01F4A429800073503 /* String+Database.swift */; };
@@ -123,6 +124,7 @@
 		845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ArticleStatus+Database.swift"; path = "Extensions/ArticleStatus+Database.swift"; sourceTree = "<group>"; };
 		8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Attachment+Database.swift"; path = "Extensions/Attachment+Database.swift"; sourceTree = "<group>"; };
 		8461461E1F0ABC7300870CB3 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
+		846FB36A1F4A937B00EAB81D /* Feed+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Feed+Database.swift"; path = "Extensions/Feed+Database.swift"; sourceTree = "<group>"; };
 		84BB4B8F1F119C4900858766 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		84BB4BA81F11A32800858766 /* TagsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsTable.swift; sourceTree = "<group>"; };
 		84D0DEA01F4A429800073503 /* String+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "String+Database.swift"; path = "Extensions/String+Database.swift"; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				845580771F0AF678003CCFA1 /* Folder+Database.swift */,
+				846FB36A1F4A937B00EAB81D /* Feed+Database.swift */,
 				845580751F0AF670003CCFA1 /* Article+Database.swift */,
 				845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */,
 				84F20F901F1810DD00D8E682 /* Author+Database.swift */,
@@ -472,6 +475,7 @@
 				845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */,
 				840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */,
 				84D0DEA11F4A429800073503 /* String+Database.swift in Sources */,
+				846FB36B1F4A937B00EAB81D /* Feed+Database.swift in Sources */,
 				843CB9961F34174100EE6581 /* Author+Database.swift in Sources */,
 				845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,

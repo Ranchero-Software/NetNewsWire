@@ -69,4 +69,5 @@ public struct RelationshipName {
 	
 	static let authors = "authors"
 	static let tags = "tags"
+	static let attachments = "attachments"
 }

@@ -44,6 +44,6 @@ public struct Author: Hashable {
 	
 	public static func ==(lhs: Author, rhs: Author) -> Bool {
 
-		return lhs.hashValue == rhs.hashValue && lhs.databaseID == rhs.databaseID
+		return lhs.hashValue == rhs.hashValue && lhs.authorID == rhs.authorID
 	}
 }

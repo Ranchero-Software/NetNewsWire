@@ -39,7 +39,7 @@ public final class Article: Hashable {
 		}
 	}
 
-	init(account: Account, databaseID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: Set<String>?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
+	init(account: Account, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: Set<String>?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
 		
 		self.account = account
 		self.feedID = feedID
@@ -59,16 +59,14 @@ public final class Article: Hashable {
 		self.attachments = attachments
 		self.accountInfo = accountInfo
 
-		let _databaseID: String
-		if let databaseID = databaseID {
-			_databaseID = databaseID
+		if let articleID = articleID {
+			self.articleID = articleID
 		}
 		else {
-			_databaseID = databaseIDWithString("\(feedID) \(uniqueID)")
+			self.articleID = databaseIDWithString("\(feedID) \(uniqueID)")
 		}
-		self.databaseID = _databaseID
 
-		self.hashValue = account.hashValue ^ _databaseID.hashValue
+		self.hashValue = account.hashValue ^ self.articleID.hashValue
 	}
 
 	public class func ==(lhs: Article, rhs: Article) -> Bool {
