@@ -32,17 +32,17 @@ extension Article {
 		let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL)
 		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
-		let authors = PropertyListTransformer.authorsWithRow(row)
-		let tags = PropertyListTransformer.tagsWithRow(row)
-		let attachments = PropertyListTransformer.attachmentsWithRow(row)
-		let accountInfo = accountInfoWithRow(row)
+//		let authors = PropertyListTransformer.authorsWithRow(row)
+//		let tags = PropertyListTransformer.tagsWithRow(row)
+//		let attachments = PropertyListTransformer.attachmentsWithRow(row)
+//		let accountInfo = accountInfoWithRow(row)
 		
-		self.init(account: account, feedID: feed, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
+		self.init(account: account, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
 	}
 
 	func databaseDictionary() -> NSDictionary {
 		
-		var d = NSMutableDictionary()
+		let d = NSMutableDictionary()
 		
 		
 		return d.copy() as! NSDictionary
@@ -51,7 +51,7 @@ extension Article {
 
 extension Article: DatabaseObject {
 	
-	var databaseID: String {
+	public var databaseID: String {
 		get {
 			return articleID
 		}

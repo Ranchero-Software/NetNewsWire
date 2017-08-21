@@ -23,9 +23,9 @@ extension ArticleStatus {
 			dateArrived = NSDate.distantPast
 		}
 		
-		let accountInfoPlist = accountInfoWithRow(row)
+//		let accountInfoPlist = accountInfoWithRow(row)
 		
-		self.init(articleID: articleID, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived!, accountInfo: accountInfoPlist)
+		self.init(articleID: articleID, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived!, accountInfo: nil)
 	}
 	
 	func databaseDictionary() -> NSDictionary {
@@ -38,11 +38,19 @@ extension ArticleStatus {
 		d[DatabaseKey.userDeleted] = userDeleted
 		d[DatabaseKey.dateArrived] = dateArrived
 		
-		if let accountInfo = accountInfo, let data = PropertyListTransformer.data(withPropertyList: accountInfo) {
-			d[DatabaseKey.accountInfo] = data
-		}
+//		if let accountInfo = accountInfo, let data = PropertyListTransformer.data(withPropertyList: accountInfo) {
+//			d[DatabaseKey.accountInfo] = data
+//		}
 
 		return d.copy() as! NSDictionary
 	}
 }
 
+extension ArticleStatus: DatabaseObject {
+	
+	public var databaseID: String {
+		get {
+			return articleID
+		}
+	}
+}

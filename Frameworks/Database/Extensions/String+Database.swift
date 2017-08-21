@@ -14,7 +14,7 @@ import RSDatabase
 
 extension String: DatabaseObject {
 	
-	var databaseID: String {
+	public var databaseID: String {
 		get {
 			return self
 		}

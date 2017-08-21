@@ -25,7 +25,14 @@ struct AttachmentsTable: DatabaseTable {
 	
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
 		
-		return attachmentWithRow(row) as DatabaseObject
+		if let attachment = attachmentWithRow(row) {
+			return attachment as DatabaseObject
+		}
+		return nil
+	}
+	
+	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
+		// TODO
 	}
 }
 
@@ -33,11 +40,17 @@ private extension AttachmentsTable {
 
 	func attachmentWithRow(_ row: FMResultSet) -> Attachment? {
 
-		let attachmentID = row.string(forColumn: DatabaseKey.attachmentID)
-		if let cachedAttachment = cache(attachmentID) {
+		guard let attachmentID = row.string(forColumn: DatabaseKey.attachmentID) else {
+			return nil
+		}
+		if let cachedAttachment = cache[attachmentID] as? Attachment {
 			return cachedAttachment
 		}
 
-		return Attachment(attachmentID: attachmentID, row: row)
+		guard let attachment = Attachment(attachmentID: attachmentID, row: row) else {
+			return nil
+		}
+		cache[attachmentID] = attachment as DatabaseObject
+		return attachment
 	}
 }

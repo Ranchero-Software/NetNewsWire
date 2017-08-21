@@ -31,9 +31,17 @@ struct AuthorsTable: DatabaseTable {
 	// MARK: DatabaseTable Methods
 	
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
-		
-		return authorWithRow(row) as DatabaseObject
+	
+		if let author = authorWithRow(row) {
+			return author as DatabaseObject
+		}
+		return nil
 	}
+	
+	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
+		// TODO
+	}
+
 }
 
 private extension AuthorsTable {
@@ -44,7 +52,7 @@ private extension AuthorsTable {
 			return nil
 		}
 
-		if let cachedAuthor = cache[authorID] {
+		if let cachedAuthor = cache[authorID] as? Author {
 			return cachedAuthor
 		}
 		

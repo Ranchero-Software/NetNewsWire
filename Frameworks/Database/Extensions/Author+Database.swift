@@ -23,9 +23,9 @@ extension Author {
 	}
 }
 
-public extension Author: DatabaseObject {
+extension Author: DatabaseObject {
 	
-	var databaseID: String {
+	public var databaseID: String {
 		get {
 			return authorID
 		}

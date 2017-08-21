@@ -10,8 +10,7 @@ import Foundation
 
 public struct Attachment: Hashable {
 
-	public let databaseID: String // Calculated
-	public let articleID: String // Article.databaseID
+	public let attachmentID: String // Calculated
 	public let url: String
 	public let mimeType: String?
 	public let title: String?
@@ -19,16 +18,15 @@ public struct Attachment: Hashable {
 	public let durationInSeconds: Int?
 	public let hashValue: Int
 
-	public init(databaseID: String?, articleID: String, url: String, mimeType: String?, title: String?, sizeInBytes: Int?, durationInSeconds: Int?) {
+	public init(attachmentID: String?, url: String, mimeType: String?, title: String?, sizeInBytes: Int?, durationInSeconds: Int?) {
 
-		self.articleID = articleID
 		self.url = url
 		self.mimeType = mimeType
 		self.title = title
 		self.sizeInBytes = sizeInBytes
 		self.durationInSeconds = durationInSeconds
 
-		var s = articleID + url
+		var s = url
 		s += mimeType ?? ""
 		s += title ?? ""
 		if let sizeInBytes = sizeInBytes {
@@ -39,11 +37,11 @@ public struct Attachment: Hashable {
 		}
 		self.hashValue = s.hashValue
 
-		if let databaseID = databaseID {
-			self.databaseID = databaseID
+		if let attachmentID = attachmentID {
+			self.attachmentID = attachmentID
 		}
 		else {
-			self.databaseID = databaseIDWithString(s)
+			self.attachmentID = databaseIDWithString(s)
 		}
 	}
 

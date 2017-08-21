@@ -18,6 +18,7 @@ import Data
 final class StatusesTable: DatabaseTable {
 
 	let name: String
+	let databaseIDKey = DatabaseKey.articleID
 	private let cache = DatabaseObjectCache()
 
 	init(name: String) {
@@ -25,40 +26,58 @@ final class StatusesTable: DatabaseTable {
 		self.name = name
 	}
 
-	func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
-
-		// Main thread.
-
-		assertNoMissingStatuses(articles)
-		let statuses = Set(articles.flatMap { $0.status })
-		markArticleStatuses(statuses, statusKey: statusKey, flag: flag)
+	// Mark: DatabaseTable Methods
+	
+	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
+		
+		if let status = statusWithRow(row) {
+			return status as DatabaseObject
+		}
+		return nil
 	}
 
-	func attachStatuses(_ articles: Set<Article>, _ database: FMDatabase) {
-
-		// Look in cache first.
-		attachCachedStatuses(articles)
-		let articlesNeedingStatuses = articlesMissingStatuses(articles)
-		if articlesNeedingStatuses.isEmpty {
-			return
-		}
-
-		// Fetch from database.
-		fetchAndCacheStatusesForArticles(articlesNeedingStatuses, database)
-		attachCachedStatuses(articlesNeedingStatuses)
-
-		// Create new statuses, and cache and save them in the database.
-		// It shouldn’t happen that an Article in the database has no corresponding ArticleStatus,
-		// but the case should be handled anyway.
-
-		let articlesNeedingStatusesCreated = articlesMissingStatuses(articlesNeedingStatuses)
-		if articlesNeedingStatusesCreated.isEmpty {
-			return
-		}
-		createAndSaveStatusesForArticles(articlesNeedingStatusesCreated, database)
-
-		assertNoMissingStatuses(articles)
+	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
+		
+		// TODO
 	}
+	
+	
+
+	
+//	func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
+//
+//		// Main thread.
+//
+//		assertNoMissingStatuses(articles)
+//		let statuses = Set(articles.flatMap { $0.status })
+//		markArticleStatuses(statuses, statusKey: statusKey, flag: flag)
+//	}
+
+//	func attachStatuses(_ articles: Set<Article>, _ database: FMDatabase) {
+//
+//		// Look in cache first.
+//		attachCachedStatuses(articles)
+//		let articlesNeedingStatuses = articlesMissingStatuses(articles)
+//		if articlesNeedingStatuses.isEmpty {
+//			return
+//		}
+//
+//		// Fetch from database.
+//		fetchAndCacheStatusesForArticles(articlesNeedingStatuses, database)
+//		attachCachedStatuses(articlesNeedingStatuses)
+//
+//		// Create new statuses, and cache and save them in the database.
+//		// It shouldn’t happen that an Article in the database has no corresponding ArticleStatus,
+//		// but the case should be handled anyway.
+//
+//		let articlesNeedingStatusesCreated = articlesMissingStatuses(articlesNeedingStatuses)
+//		if articlesNeedingStatusesCreated.isEmpty {
+//			return
+//		}
+//		createAndSaveStatusesForArticles(articlesNeedingStatusesCreated, database)
+//
+//		assertNoMissingStatuses(articles)
+//	}
 
 
 //	func ensureStatusesForParsedArticles(_ parsedArticles: [ParsedItem], _ callback: @escaping RSVoidCompletionBlock) {
@@ -95,128 +114,144 @@ final class StatusesTable: DatabaseTable {
 
 private extension StatusesTable {
 	
-	func attachCachedStatuses(_ articles: Set<Article>) {
-
-		articles.forEach { (oneArticle) in
-
-			if let cachedStatus = cache[oneArticle.databaseID] {
-				oneArticle.status = cachedStatus
-			}
-		}
-	}
-
-	func assertNoMissingStatuses(_ articles: Set<Article>) {
-
-		for oneArticle in articles {
-			if oneArticle.status == nil {
-				assertionFailure("All articles must have a status at this point.")
-				return
-			}
-		}
-	}
-
 	// MARK: Fetching
-
-	func fetchAndCacheStatusesForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-
-		fetchAndCacheStatusesForArticleIDs(articles.articleIDs(), database)
-	}
-
-	func fetchAndCacheStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
-
-		if let statuses = fetchStatusesForArticleIDs(articleIDs, database) {
-			cache.addObjectsNotCached(Array(statuses))
-		}
-	}
-
-	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> Set<ArticleStatus>? {
-		
-		guard let resultSet = selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) else {
-			return nil
-		}
-		return articleStatusesWithResultSet(resultSet)
-	}
-
-	func articleStatusesWithResultSet(_ resultSet: FMResultSet) -> Set<ArticleStatus> {
-
-		return resultSet.mapToSet(articleStatusWithRow)
-	}
-
-	func articleStatusWithRow(_ row: FMResultSet) -> ArticleStatus? {
+	
+	func statusWithRow(_ row: FMResultSet) -> ArticleStatus? {
 
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
 			return nil
 		}
-		if let cachedStatus = cache[articleID] {
+		if let cachedStatus = cache[articleID] as? ArticleStatus {
 			return cachedStatus
 		}
+		
 		let status = ArticleStatus(articleID: articleID, row: row)
 		cache[articleID] = status
 		return status
 	}
+
+//	func attachCachedStatuses(_ articles: Set<Article>) {
+//
+//		articles.forEach { (oneArticle) in
+//
+//			if let cachedStatus = cache[oneArticle.databaseID] {
+//				oneArticle.status = cachedStatus
+//			}
+//		}
+//	}
+
+//	func assertNoMissingStatuses(_ articles: Set<Article>) {
+//
+//		for oneArticle in articles {
+//			if oneArticle.status == nil {
+//				assertionFailure("All articles must have a status at this point.")
+//				return
+//			}
+//		}
+//	}
+
+	// MARK: Fetching
+
+//	func fetchAndCacheStatusesForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
+//
+//		fetchAndCacheStatusesForArticleIDs(articles.articleIDs(), database)
+//	}
+//
+//	func fetchAndCacheStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
+//
+//		if let statuses = fetchStatusesForArticleIDs(articleIDs, database) {
+//			cache.addObjectsNotCached(Array(statuses))
+//		}
+//	}
+//
+//	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> Set<ArticleStatus>? {
+//
+//		guard let resultSet = selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) else {
+//			return nil
+//		}
+//		return articleStatusesWithResultSet(resultSet)
+//	}
+//
+//	func articleStatusesWithResultSet(_ resultSet: FMResultSet) -> Set<ArticleStatus> {
+//
+//		return resultSet.mapToSet(articleStatusWithRow)
+//	}
+//
+//	func articleStatusWithRow(_ row: FMResultSet) -> ArticleStatus? {
+//
+//		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+//			return nil
+//		}
+//		if let cachedStatus = cache[articleID] {
+//			return cachedStatus
+//		}
+//		let status = ArticleStatus(articleID: articleID, row: row)
+//		cache[articleID] = status
+//		return status
+//	}
 	
 	// MARK: Updating
 	
-	func markArticleStatuses(_ statuses: Set<ArticleStatus>, statusKey: String, flag: Bool) {
+//	func markArticleStatuses(_ statuses: Set<ArticleStatus>, statusKey: String, flag: Bool) {
+//
+//		// Ignore the statuses where status.[statusKey] == flag. Update the remainder and save in database.
+//
+//		var articleIDsToUpdate = Set<String>()
+//
+//		statuses.forEach { (oneStatus) in
+//
+//			if oneStatus.boolStatus(forKey: statusKey) == flag {
+//				return
+//			}
+//
+//			oneStatus.setBoolStatus(flag, forKey: statusKey)
+//			articleIDsToUpdate.insert(oneStatus.articleID)
+//		}
+//
+//		if !articleIDsToUpdate.isEmpty {
+//			updateArticleStatusesInDatabase(articleIDsToUpdate, statusKey: statusKey, flag: flag)
+//		}
+//	}
 
-		// Ignore the statuses where status.[statusKey] == flag. Update the remainder and save in database.
-
-		var articleIDsToUpdate = Set<String>()
-
-		statuses.forEach { (oneStatus) in
-
-			if oneStatus.boolStatus(forKey: statusKey) == flag {
-				return
-			}
-
-			oneStatus.setBoolStatus(flag, forKey: statusKey)
-			articleIDsToUpdate.insert(oneStatus.articleID)
-		}
-
-		if !articleIDsToUpdate.isEmpty {
-			updateArticleStatusesInDatabase(articleIDsToUpdate, statusKey: statusKey, flag: flag)
-		}
-	}
-
-	private func updateArticleStatusesInDatabase(_ articleIDs: Set<String>, statusKey: String, flag: Bool) {
-
-		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs))
-	}
+//	private func updateArticleStatusesInDatabase(_ articleIDs: Set<String>, statusKey: String, flag: Bool) {
+//
+//		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs))
+//	}
 	
 	// MARK: Creating
 
-	func saveStatuses(_ statuses: Set<ArticleStatus>, _ database: FMDatabase) {
-
-		let statusArray = statuses.map { $0.databaseDictionary() }
-		insertRows(statusArray, insertType: .orIgnore, in: database)
-	}
-
-	func createAndSaveStatusesForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-
-		let articleIDs = Set(articles.map { $0.databaseID })
-		createAndSaveStatusesForArticleIDs(articleIDs, database)
-	}
-
-	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
-
-		let now = Date()
-		let statuses = articleIDs.map { ArticleStatus(articleID: $0, dateArrived: now) }
-		cache.addObjectsNotCached(statuses)
-
-		saveStatuses(Set(statuses), database)
-	}
+//	func saveStatuses(_ statuses: Set<ArticleStatus>, _ database: FMDatabase) {
+//
+//		let statusArray = statuses.map { $0.databaseDictionary() }
+//		insertRows(statusArray, insertType: .orIgnore, in: database)
+//	}
+//
+//	func createAndSaveStatusesForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
+//
+//		let articleIDs = Set(articles.map { $0.databaseID })
+//		createAndSaveStatusesForArticleIDs(articleIDs, database)
+//	}
+//
+//	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
+//
+//		let now = Date()
+//		let statuses = articleIDs.map { ArticleStatus(articleID: $0, dateArrived: now) }
+//		cache.addObjectsNotCached(statuses)
+//
+//		saveStatuses(Set(statuses), database)
+//	}
 
 	// MARK: Utilities
 
-	func articleIDsMissingCachedStatuses(_ articleIDs: Set<String>) -> Set<String> {
-		
-		return Set(articleIDs.filter { !cache.objectWithIDIsCached($0) })
-	}
-
-	func articlesMissingStatuses(_ articles: Set<Article>) -> Set<Article> {
-
-		return articles.withNilProperty(\Article.status)
-	}
+//	func articleIDsMissingCachedStatuses(_ articleIDs: Set<String>) -> Set<String> {
+//
+//		return Set(articleIDs.filter { !cache.objectWithIDIsCached($0) })
+//	}
+//
+//	func articlesMissingStatuses(_ articles: Set<Article>) -> Set<Article> {
+//
+//		return articles.withNilProperty(\Article.status)
+//	}
 }
 
 //extension ParsedItem {

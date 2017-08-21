@@ -26,7 +26,7 @@ final class Database {
 
 	private let queue: RSDatabaseQueue
 	private let databaseFile: String
-	private let articlesTable: ArticlesTable
+//	private let articlesTable: ArticlesTable
 	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
@@ -41,7 +41,7 @@ final class Database {
 		self.databaseFile = databaseFile
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
 
-		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, queue: queue)
+//		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, queue: queue)
 		self.statusesTable = StatusesTable(name: DatabaseTableName.statuses)
 
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)

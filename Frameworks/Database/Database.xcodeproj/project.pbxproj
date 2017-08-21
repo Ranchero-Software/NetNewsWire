@@ -467,21 +467,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84E156EA1F0AB80500F8CC05 /* Database.swift in Sources */,
-				84E156EC1F0AB80E00F8CC05 /* ArticlesTable.swift in Sources */,
-				84E156EE1F0AB81400F8CC05 /* StatusesTable.swift in Sources */,
-				8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */,
-				84F20F8F1F180D8700D8E682 /* AuthorsTable.swift in Sources */,
 				845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */,
-				840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */,
-				84D0DEA11F4A429800073503 /* String+Database.swift in Sources */,
 				846FB36B1F4A937B00EAB81D /* Feed+Database.swift in Sources */,
+				84D0DEA11F4A429800073503 /* String+Database.swift in Sources */,
 				843CB9961F34174100EE6581 /* Author+Database.swift in Sources */,
 				845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
-				845580721F0AEE49003CCFA1 /* AccountInfo.swift in Sources */,
 				8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */,
+				8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */,
 				84BB4BA91F11A32800858766 /* TagsTable.swift in Sources */,
+				840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */,
+				84F20F8F1F180D8700D8E682 /* AuthorsTable.swift in Sources */,
+				84E156EC1F0AB80E00F8CC05 /* ArticlesTable.swift in Sources */,
+				84E156EE1F0AB81400F8CC05 /* StatusesTable.swift in Sources */,
+				845580721F0AEE49003CCFA1 /* AccountInfo.swift in Sources */,
+				84E156EA1F0AB80500F8CC05 /* Database.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

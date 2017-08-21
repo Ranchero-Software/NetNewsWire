@@ -13,6 +13,6 @@ extension Set where Element == Feed {
 	
 	func feedIDs() -> Set<String> {
 		
-		return Set(map { $0.feedID })
+		return Set<String>(map { $0.feedID })
 	}
 }

@@ -14,6 +14,10 @@ public final class DatabaseObjectCache {
 
 	private var dictionary = [String: DatabaseObject]()
 
+	public init() {
+		// Compiler seems to want a public init method.
+	}
+	
 	public func addObjects(_ objects: [DatabaseObject]) {
 
 		objects.forEach { add($0) }
