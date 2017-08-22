@@ -32,15 +32,12 @@ extension Article {
 		let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL)
 		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
+		let accountInfo: [String: Any]? = nil // TODO
+
+		// authors, tags, and attachments are fetched from related tables, after init.
 		let authors: [Author]? = nil
 		let tags: Set<String>? = nil
 		let attachments: [Attachment]? = nil
-		let accountInfo: [String: Any]? = nil
-		
-//		let authors = PropertyListTransformer.authorsWithRow(row)
-//		let tags = PropertyListTransformer.tagsWithRow(row)
-//		let attachments = PropertyListTransformer.attachmentsWithRow(row)
-//		let accountInfo = accountInfoWithRow(row)
 		
 		self.init(account: account, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
 	}

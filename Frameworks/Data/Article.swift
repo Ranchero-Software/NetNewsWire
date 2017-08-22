@@ -12,7 +12,7 @@ public final class Article: Hashable {
 
 	weak var account: Account?
 	
-	public let articleID: String
+	public let articleID: String // Unique database ID
 	public let feedID: String // Likely a URL, but not necessarily
 	public let uniqueID: String // Unique per feed (RSS guid, for example)
 	public var title: String?
