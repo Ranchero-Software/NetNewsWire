@@ -7,18 +7,35 @@
 //
 
 import Foundation
+import RSCore
 import RSDatabase
+import RSParser
 import Data
 
 final class ArticlesTable: DatabaseTable {
 
 	let name: String
 	let databaseIDKey = DatabaseKey.articleID
+	private let statusesTable: StatusesTable
+	private let authorsLookupTable: DatabaseLookupTable
+	private let attachmentsLookupTable: DatabaseLookupTable
+	private let tagsLookupTable: DatabaseLookupTable
+
 //	private let cachedArticles: NSMapTable<NSString, Article> = NSMapTable.weakToWeakObjects()
 
 	init(name: String) {
 
 		self.name = name
+		
+		self.statusesTable = StatusesTable(name: DatabaseTableName.statuses)
+		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
+		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
+		
+		let tagsTable = TagsTable(name: DatabaseTableName.tags)
+		self.tagsLookupTable = DatabaseLookupTable(name: DatabaseTableName.tags, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.tagName, relatedTable: tagsTable, relationshipName: RelationshipName.tags)
+		
+		let attachmentsTable = AttachmentsTable(name: DatabaseTableName.attachments)
+		self.attachmentsLookupTable = DatabaseLookupTable(name: DatabaseTableName.attachmentsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.attachmentID, relatedTable: attachmentsTable, relationshipName: RelationshipName.attachments)
 	}
 
 	// MARK: DatabaseTable Methods
@@ -32,25 +49,48 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
+		
 		// TODO
 	}
 
 	// MARK: Fetching
 	
-	func fetchArticlesForFeed(_ feed: Feed) -> Set<Article> {
+	func fetchArticles(_ feed: Feed) -> Set<Article> {
 		
 		return Set<Article>() // TODO
 	}
 
-	func fetchArticlesForFeedAsync(_ feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
+	func fetchArticlesAsync(_ feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
 
 		// TODO
 	}
 	
-	func fetchUnreadArticlesForFeeds(_ feeds: Set<Feed>) -> Set<Article> {
+	func fetchUnreadArticles(_ feeds: Set<Feed>) -> Set<Article> {
 	
 		return Set<Article>() // TODO
 	}
+	
+	// MARK: Updating
+	
+	func update(_ feed: Feed, _ parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
+		
+		// TODO
+	}
+	
+	// MARK: Unread Counts
+	
+	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: @escaping UnreadCountCompletionBlock) {
+		
+		// TODO
+	}
+	
+	// MARK: Status
+	
+	func mark(_ articles: Set<Article>, _ statusKey: String, _ flag: Bool) {
+		
+		// TODO
+	}
+	
 	
 //	func uniquedArticles(_ fetchedArticles: Set<Article>, statusesTable: StatusesTable) -> Set<Article> {
 //

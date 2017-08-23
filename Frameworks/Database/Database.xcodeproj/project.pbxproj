@@ -246,9 +246,9 @@
 			isa = PBXGroup;
 			children = (
 				84E156F11F0AB83600F8CC05 /* Data.xcodeproj */,
+				84E157001F0AB89B00F8CC05 /* RSDatabase.xcodeproj */,
 				84BB4B8F1F119C4900858766 /* RSCore.xcodeproj */,
 				8461461E1F0ABC7300870CB3 /* RSParser.xcodeproj */,
-				84E157001F0AB89B00F8CC05 /* RSDatabase.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

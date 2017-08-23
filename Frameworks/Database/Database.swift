@@ -12,47 +12,27 @@ import RSDatabase
 import RSParser
 import Data
 
-private let sqlLogging = false
+public typealias ArticleResultBlock = (Set<Article>) -> Void
+public typealias UnreadCountTable = [String: Int] // feedID: unreadCount
+public typealias UnreadCountCompletionBlock = (UnreadCountTable) -> Void //feedID: unreadCount
 
-private func logSQL(_ sql: String) {
-	if sqlLogging {
-		print("SQL: \(sql)")
-	}
-}
-
-typealias ArticleResultBlock = (Set<Article>) -> Void
-
-final class Database {
+public final class Database {
 
 	private let queue: RSDatabaseQueue
 	private let databaseFile: String
 	private let articlesTable: ArticlesTable
-	private let statusesTable: StatusesTable
-	private let authorsLookupTable: DatabaseLookupTable
-	private let attachmentsLookupTable: DatabaseLookupTable
-	private let tagsLookupTable: DatabaseLookupTable
 	private var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	private let minimumNumberOfArticles = 10
 	private weak var delegate: AccountDelegate?
 	
-	init(databaseFile: String, delegate: AccountDelegate) {
+	public init(databaseFile: String, delegate: AccountDelegate) {
 
 		self.delegate = delegate
 		self.databaseFile = databaseFile
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
 
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles)
-		self.statusesTable = StatusesTable(name: DatabaseTableName.statuses)
 
-		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
-		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
-		
-		let tagsTable = TagsTable(name: DatabaseTableName.tags)
-		self.tagsLookupTable = DatabaseLookupTable(name: DatabaseTableName.tags, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.tagName, relatedTable: tagsTable, relationshipName: RelationshipName.tags)
-
-		let attachmentsTable = AttachmentsTable(name: DatabaseTableName.attachments)
-		self.attachmentsLookupTable = DatabaseLookupTable(name: DatabaseTableName.attachmentsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.attachmentID, relatedTable: attachmentsTable, relationshipName: RelationshipName.attachments)
-		
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
 		let createStatements = try! NSString(contentsOfFile: createStatementsPath, encoding: String.Encoding.utf8.rawValue)
 		queue.createTables(usingStatements: createStatements as String)
@@ -61,9 +41,9 @@ final class Database {
 
 	// MARK: - Fetching Articles
 
-	func fetchArticlesForFeed(_ feed: Feed) -> Set<Article> {
+	public func fetchArticles(for feed: Feed) -> Set<Article> {
 
-		return articlesTable.fetchArticlesForFeed(feed)
+		return articlesTable.fetchArticles(feed)
 		
 //		return Set<Article>() // TODO
 //		var fetchedArticles = Set<Article>()
@@ -78,9 +58,9 @@ final class Database {
 //		return filteredArticles(articles, feedCounts: [feed.feedID: fetchedArticles.count])
 	}
 
-	func fetchArticlesForFeedAsync(_ feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
+	public func fetchArticlesAsync(for feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
 
-		articlesTable.fetchArticlesForFeedAsync(feed, resultBlock)
+		articlesTable.fetchArticlesAsync(feed, resultBlock)
 		
 //		let feedID = feed.feedID
 //
@@ -97,19 +77,17 @@ final class Database {
 //		}
 	}
 
-	func fetchUnreadArticlesForFolder(_ folder: Folder) -> Set<Article> {
+	public func fetchUnreadArticles(for folder: Folder) -> Set<Article> {
 		
-		return articlesTable.fetchUnreadArticlesForFeeds(folder.flattenedFeeds())
-//		return fetchUnreadArticlesForFeedIDs(folder.flattenedFeedIDs())
+		return articlesTable.fetchUnreadArticles(folder.flattenedFeeds())
 	}
 
 	// MARK: - Unread Counts
 	
-	typealias UnreadCountTable = [String: Int] // feedID: unreadCount
-	typealias UnreadCountCompletionBlock = (UnreadCountTable) -> Void //feedID: unreadCount
 	
-	func fetchUnreadCounts(for feeds: Set<Feed>, completion: @escaping UnreadCountCompletionBlock) {
+	public func fetchUnreadCounts(for feeds: Set<Feed>, completion: @escaping UnreadCountCompletionBlock) {
 		
+		return articlesTable.fetchUnreadCounts(feeds, completion)
 //		let feedIDs = feeds.feedIDs()
 //
 //		queue.fetch { (database: FMDatabase!) -> Void in
@@ -127,8 +105,10 @@ final class Database {
 
 	// MARK: - Updating Articles
 
-	func updateFeedWithParsedFeed(_ feed: Feed, parsedFeed: ParsedFeed, completionHandler: @escaping RSVoidCompletionBlock) {
+	public func update(feed: Feed, parsedFeed: ParsedFeed, completion: @escaping RSVoidCompletionBlock) {
 
+		return articlesTable.update(feed, parsedFeed, completion)
+		
 //		if parsedFeed.items.isEmpty {
 //			completionHandler()
 //			return
@@ -145,8 +125,9 @@ final class Database {
 	
 	// MARK: - Status
 	
-	func markArticles(_ articles: Set<Article>, statusKey: ArticleStatusKey, flag: Bool) {
+	public func mark(_ articles: Set<Article>, statusKey: String, flag: Bool) {
 		
+		articlesTable.mark(articles, statusKey, flag)
 //		statusesTable.markArticles(articles, statusKey: statusKey, flag: flag)
 	}
 }
