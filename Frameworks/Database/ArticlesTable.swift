@@ -20,9 +20,8 @@ final class ArticlesTable: DatabaseTable {
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
 	private let tagsLookupTable: DatabaseLookupTable
-
-//	private let cachedArticles: NSMapTable<NSString, Article> = NSMapTable.weakToWeakObjects()
-
+	private let articleCache = ArticleCache()
+	
 	init(name: String) {
 
 		self.name = name
@@ -156,4 +155,41 @@ final class ArticlesTable: DatabaseTable {
 //		articles.forEach { cacheArticle($0) }
 //	}
 //}
+
+private struct ArticleCache {
+	
+	// Main thread only.
+	// The cache contains a given article only until all outside references are gone.
+	// Cache key is articleID.
+	
+	private let articlesMapTable: NSMapTable<NSString, Article> = NSMapTable.weakToWeakObjects()
+
+	func uniquedArticles(_ articles: Set<Article>) -> Set<Article> {
+
+		var articlesToReturn = Set<Article>()
+
+		for article in articles {
+			let articleID = article.articleID
+			if let cachedArticle = cachedArticle(for: articleID) {
+				articlesToReturn.insert(cachedArticle)
+			}
+			else {
+				articlesToReturn.insert(article)
+				addToCache(article)
+			}
+		}
+
+		return articlesToReturn
+	}
+	
+	private func cachedArticle(for articleID: String) -> Article? {
+	
+		return articlesMapTable.object(forKey: articleID as NSString)
+	}
+	
+	private func addToCache(_ article: Article) {
+	
+		articlesMapTable.setObject(article, forKey: article.articleID as NSString)
+	}
+}
 
