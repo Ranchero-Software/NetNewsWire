@@ -24,14 +24,16 @@ public final class Database {
 	private var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	private let minimumNumberOfArticles = 10
 	private weak var delegate: AccountDelegate?
-	
-	public init(databaseFile: String, delegate: AccountDelegate) {
+	private weak var account: Account?
+
+	public init(databaseFile: String, delegate: AccountDelegate, account: Account) {
 
 		self.delegate = delegate
+		self.account = account
 		self.databaseFile = databaseFile
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
 
-		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles)
+		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, account: account, queue: queue)
 
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
 		let createStatements = try! NSString(contentsOfFile: createStatementsPath, encoding: String.Encoding.utf8.rawValue)

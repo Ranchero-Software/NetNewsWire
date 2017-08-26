@@ -12,20 +12,15 @@ import Data
 
 extension ArticleStatus {
 	
-	convenience init?(articleID: String, row: FMResultSet) {
+	convenience init(articleID: String, dateArrived: Date, row: FMResultSet) {
 		
 		let read = row.bool(forColumn: DatabaseKey.read)
 		let starred = row.bool(forColumn: DatabaseKey.starred)
 		let userDeleted = row.bool(forColumn: DatabaseKey.userDeleted)
 		
-		var dateArrived = row.date(forColumn: DatabaseKey.dateArrived)
-		if (dateArrived == nil) {
-			dateArrived = NSDate.distantPast
-		}
-		
 //		let accountInfoPlist = accountInfoWithRow(row)
 		
-		self.init(articleID: articleID, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived!, accountInfo: nil)
+		self.init(articleID: articleID, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived, accountInfo: nil)
 	}
 	
 	func databaseDictionary() -> NSDictionary {

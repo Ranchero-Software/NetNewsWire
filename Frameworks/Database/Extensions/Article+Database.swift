@@ -71,4 +71,19 @@ extension Set where Element == Article {
 
 		return Set<String>(map { $0.databaseID })
 	}
+
+	func eachHasAStatus() -> Bool {
+
+		for article in self {
+			if article.status == nil {
+				return false
+			}
+		}
+		return true
+	}
+
+	func missingStatuses() -> Set<Article> {
+
+		return withNilProperty(\Article.status)
+	}
 }
