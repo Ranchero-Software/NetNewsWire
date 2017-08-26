@@ -46,37 +46,11 @@ public final class Database {
 	public func fetchArticles(for feed: Feed) -> Set<Article> {
 
 		return articlesTable.fetchArticles(feed)
-		
-//		return Set<Article>() // TODO
-//		var fetchedArticles = Set<Article>()
-//		let feedID = feed.feedID
-//
-//		queue.fetchSync { (database: FMDatabase!) -> Void in
-//
-//			fetchedArticles = self.fetchArticlesForFeedID(feedID, database: database)
-//		}
-//
-//		let articles = articleCache.uniquedArticles(fetchedArticles, statusesTable: statusesTable)
-//		return filteredArticles(articles, feedCounts: [feed.feedID: fetchedArticles.count])
 	}
 
 	public func fetchArticlesAsync(for feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
 
 		articlesTable.fetchArticlesAsync(feed, resultBlock)
-		
-//		let feedID = feed.feedID
-//
-//		queue.fetch { (database: FMDatabase!) -> Void in
-//
-//			let fetchedArticles = self.fetchArticlesForFeedID(feedID, database: database)
-//
-//			DispatchQueue.main.async() { () -> Void in
-//
-//				let articles = self.articleCache.uniquedArticles(fetchedArticles, statusesTable: self.statusesTable)
-//				let filteredArticles = self.filteredArticles(articles, feedCounts: [feed.feedID: fetchedArticles.count])
-//				resultBlock(filteredArticles)
-//			}
-//		}
 	}
 
 	public func fetchUnreadArticles(for folder: Folder) -> Set<Article> {
@@ -329,38 +303,7 @@ private extension Database {
 //		
 //		return result
 //	}
-//	
-//	// MARK: Fetching Articles
-//	
-//	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]?) -> Set<Article> {
-//		
-//		let sql = "select * from articles where \(whereClause);"
-//		logSQL(sql)
-//		
-//		if let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) {
-//			return articlesWithResultSet(resultSet, database)
-//		}
-//		
-//		return Set<Article>()
-//	}
 //
-//	func articlesWithResultSet(_ resultSet: FMResultSet, _ database: FMDatabase) -> Set<Article> {
-//
-//		let fetchedArticles = resultSet.mapToSet { Article(account: self.account, row: $0) }
-//
-//		statusesTable.attachStatuses(fetchedArticles, database)
-//		authorsTable.attachAuthors(fetchedArticles, database)
-//		tagsTable.attachTags(fetchedArticles, database)
-//		attachmentsTable.attachAttachments(fetchedArticles, database)
-//
-//		return fetchedArticles
-//	}
-//
-//	func fetchArticlesForFeedID(_ feedID: String, database: FMDatabase) -> Set<Article> {
-//		
-//		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject])
-//	}
-//	
 //	// MARK: Unread counts
 //	
 //	func numberOfArticles(_ feedID: String, _ database: FMDatabase) -> Int {
@@ -434,12 +377,6 @@ private extension Database {
 //		}
 //
 //		return articlesSet
-//	}
-//	
-//
-//	func feedIDsFromArticles(_ articles: Set<Article>) -> Set<String> {
-//		
-//		return Set(articles.map { $0.feedID })
 //	}
 //	
 //	func deletePossibleOldArticles(_ articles: Set<Article>) {

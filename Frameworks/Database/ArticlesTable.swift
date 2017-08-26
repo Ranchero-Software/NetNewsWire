@@ -114,28 +114,6 @@ final class ArticlesTable: DatabaseTable {
 	}
 	
 	
-//	func uniquedArticles(_ fetchedArticles: Set<Article>, statusesTable: StatusesTable) -> Set<Article> {
-//
-//		var articles = Set<Article>()
-//
-//		for oneArticle in fetchedArticles {
-//
-//			assert(oneArticle.status != nil)
-//
-//			if let existingArticle = cachedArticle(oneArticle.databaseID) {
-//				articles.insert(existingArticle)
-//			}
-//			else {
-//				cacheArticle(oneArticle)
-//				articles.insert(oneArticle)
-//			}
-//		}
-//
-//		statusesTable.attachCachedStatuses(articles)
-//
-//		return articles
-//	}
-
 //	typealias FeedCountCallback = (Int) -> Void
 //
 //	func numberOfArticlesWithFeedID(_ feedID: String, callback: @escaping FeedCountCallback) {
@@ -221,22 +199,9 @@ private extension ArticlesTable {
 
 		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject])
 	}
-
-//	func cachedArticle(_ articleID: String) -> Article? {
-//
-//		return cachedArticles.object(forKey: articleID as NSString)
-//	}
-//
-//	func cacheArticle(_ article: Article) {
-//
-//		cachedArticles.setObject(article, forKey: article.databaseID as NSString)
-//	}
-//
-//	func cacheArticles(_ articles: Set<Article>) {
-//
-//		articles.forEach { cacheArticle($0) }
-//	}
 }
+
+// MARK: -
 
 private struct ArticleCache {
 	
