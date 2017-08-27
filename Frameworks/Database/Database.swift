@@ -55,7 +55,7 @@ public final class Database {
 
 	public func fetchUnreadArticles(for folder: Folder) -> Set<Article> {
 		
-		return articlesTable.fetchUnreadArticles(folder.flattenedFeeds())
+		return articlesTable.fetchUnreadArticles(for: folder.flattenedFeeds())
 	}
 
 	// MARK: - Unread Counts

@@ -61,15 +61,13 @@ final class ArticlesTable: DatabaseTable {
 	func fetchArticles(_ feed: Feed) -> Set<Article> {
 		
 		let feedID = feed.feedID
-
-		var fetchedArticles = Set<Article>()
+		var articles = Set<Article>()
 
 		queue.fetchSync { (database: FMDatabase!) -> Void in
-
-			fetchedArticles = self.fetchArticlesForFeedID(feedID, database: database)
+			articles = self.fetchArticlesForFeedID(feedID, database: database)
 		}
 
-		return articleCache.uniquedArticles(fetchedArticles)
+		return articleCache.uniquedArticles(articles)
 	}
 
 	func fetchArticlesAsync(_ feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
@@ -87,9 +85,9 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 	
-	func fetchUnreadArticles(_ feeds: Set<Feed>) -> Set<Article> {
-	
-		return Set<Article>() // TODO
+	func fetchUnreadArticles(for feeds: Set<Feed>) -> Set<Article> {
+
+		return fetchUnreadArticles(feeds.feedIDs())
 	}
 	
 	// MARK: Updating
@@ -184,20 +182,44 @@ private extension ArticlesTable {
 		return articles
 	}
 
-	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]?) -> Set<Article> {
+	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]) -> Set<Article> {
 
 		let sql = "select * from articles natural join statuses where \(whereClause);"
-
-		if let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) {
-			return articlesWithResultSet(resultSet, database)
-		}
-
-		return Set<Article>()
+		return articlesWithSQL(sql, parameters, database)
 	}
 
 	func fetchArticlesForFeedID(_ feedID: String, database: FMDatabase) -> Set<Article> {
 
 		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject])
+	}
+
+	func fetchUnreadArticles(_ feedIDs: Set<String>) -> Set<Article> {
+
+		if feedIDs.isEmpty {
+			return Set<Article>()
+		}
+
+		var articles = Set<Article>()
+
+		queue.fetchSync { (database) in
+
+			// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and read=0
+
+			let parameters = feedIDs.map { $0 as AnyObject }
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let whereClause = "feedID in \(placeholders) and read=0"
+			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
+		}
+
+		return articleCache.uniquedArticles(articles)
+	}
+
+	func articlesWithSQL(_ sql: String, _ parameters: [AnyObject], _ database: FMDatabase) -> Set<Article> {
+
+		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
+			return Set<Article>()
+		}
+		return articlesWithResultSet(resultSet, database)
 	}
 }
 
