@@ -86,4 +86,9 @@ extension Set where Element == Article {
 
 		return withNilProperty(\Article.status)
 	}
+	
+	func statuses() -> Set<ArticleStatus> {
+		
+		return Set<ArticleStatus>(self.flatMap { $0.status })
+	}
 }

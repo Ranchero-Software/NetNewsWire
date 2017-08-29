@@ -76,14 +76,16 @@ final class StatusesTable: DatabaseTable {
 		assert(articles.eachHasAStatus())
 	}
 	
-//	func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
-//
-//		// Main thread.
-//
-//		assertNoMissingStatuses(articles)
-//		let statuses = Set(articles.flatMap { $0.status })
-//		markArticleStatuses(statuses, statusKey: statusKey, flag: flag)
-//	}
+	// MARK: Marking
+	
+	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: String, _ flag: Bool, _ database: FMDatabase) {
+		
+		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
+	}
+
+	// MARK: Updating
+	
+	
 
 //	func attachStatuses(_ articles: Set<Article>, _ database: FMDatabase) {
 //
@@ -155,16 +157,6 @@ private extension StatusesTable {
 		}
 	}
 
-//	func assertNoMissingStatuses(_ articles: Set<Article>) {
-//
-//		for oneArticle in articles {
-//			if oneArticle.status == nil {
-//				assertionFailure("All articles must have a status at this point.")
-//				return
-//			}
-//		}
-//	}
-
 	// MARK: Fetching
 
 //	func fetchAndCacheStatusesForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
@@ -203,34 +195,6 @@ private extension StatusesTable {
 //		let status = ArticleStatus(articleID: articleID, row: row)
 //		cache[articleID] = status
 //		return status
-//	}
-	
-	// MARK: Updating
-	
-//	func markArticleStatuses(_ statuses: Set<ArticleStatus>, statusKey: String, flag: Bool) {
-//
-//		// Ignore the statuses where status.[statusKey] == flag. Update the remainder and save in database.
-//
-//		var articleIDsToUpdate = Set<String>()
-//
-//		statuses.forEach { (oneStatus) in
-//
-//			if oneStatus.boolStatus(forKey: statusKey) == flag {
-//				return
-//			}
-//
-//			oneStatus.setBoolStatus(flag, forKey: statusKey)
-//			articleIDsToUpdate.insert(oneStatus.articleID)
-//		}
-//
-//		if !articleIDsToUpdate.isEmpty {
-//			updateArticleStatusesInDatabase(articleIDsToUpdate, statusKey: statusKey, flag: flag)
-//		}
-//	}
-
-//	private func updateArticleStatusesInDatabase(_ articleIDs: Set<String>, statusKey: String, flag: Bool) {
-//
-//		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs))
 //	}
 	
 	// MARK: Creating
