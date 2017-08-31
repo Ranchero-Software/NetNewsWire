@@ -19,6 +19,7 @@
 		8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */; };
 		846146271F0ABC7B00870CB3 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846146241F0ABC7400870CB3 /* RSParser.framework */; };
 		846FB36B1F4A937B00EAB81D /* Feed+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846FB36A1F4A937B00EAB81D /* Feed+Database.swift */; };
+		848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */; };
 		84BB4BA21F119C5400858766 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B981F119C4900858766 /* RSCore.framework */; };
 		84BB4BA91F11A32800858766 /* TagsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BB4BA81F11A32800858766 /* TagsTable.swift */; };
 		84D0DEA11F4A429800073503 /* String+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D0DEA01F4A429800073503 /* String+Database.swift */; };
@@ -125,6 +126,7 @@
 		8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Attachment+Database.swift"; path = "Extensions/Attachment+Database.swift"; sourceTree = "<group>"; };
 		8461461E1F0ABC7300870CB3 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		846FB36A1F4A937B00EAB81D /* Feed+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Feed+Database.swift"; path = "Extensions/Feed+Database.swift"; sourceTree = "<group>"; };
+		848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCountDictionary.swift; sourceTree = "<group>"; };
 		84BB4B8F1F119C4900858766 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		84BB4BA81F11A32800858766 /* TagsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsTable.swift; sourceTree = "<group>"; };
 		84D0DEA01F4A429800073503 /* String+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "String+Database.swift"; path = "Extensions/String+Database.swift"; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				84F20F8E1F180D8700D8E682 /* AuthorsTable.swift */,
 				84BB4BA81F11A32800858766 /* TagsTable.swift */,
 				840405CE1F1A963700DF0296 /* AttachmentsTable.swift */,
+				848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */,
 				8461462A1F0AC44100870CB3 /* Extensions */,
 				84E156EF1F0AB81F00F8CC05 /* CreateStatements.sql */,
 				84E156E81F0AB75600F8CC05 /* Info.plist */,
@@ -471,6 +474,7 @@
 				846FB36B1F4A937B00EAB81D /* Feed+Database.swift in Sources */,
 				84D0DEA11F4A429800073503 /* String+Database.swift in Sources */,
 				843CB9961F34174100EE6581 /* Author+Database.swift in Sources */,
+				848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */,
 				845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
 				8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */,

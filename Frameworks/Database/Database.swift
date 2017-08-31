@@ -60,7 +60,6 @@ public final class Database {
 
 	// MARK: - Unread Counts
 	
-	
 	public func fetchUnreadCounts(for feeds: Set<Feed>, completion: @escaping UnreadCountCompletionBlock) {
 		
 		return articlesTable.fetchUnreadCounts(feeds, completion)
@@ -314,31 +313,6 @@ private extension Database {
 //		return numberWithSQLAndParameters(sql, parameters: [feedID], database)
 //	}
 //	
-//	func unreadCount(_ feedID: String, _ database: FMDatabase) -> Int {
-//		
-//		let totalNumberOfArticles = numberOfArticles(feedID, database)
-//		
-//		if totalNumberOfArticles <= minimumNumberOfArticles {
-//			return unreadCountIgnoringCutoffDate(feedID, database)
-//		}
-//		return unreadCountRespectingCutoffDate(feedID, database)
-//	}
-//	
-//	func unreadCountIgnoringCutoffDate(_ feedID: String, _ database: FMDatabase) -> Int {
-//		
-//		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0;"
-//		logSQL(sql)
-//		
-//		return numberWithSQLAndParameters(sql, parameters: [feedID], database)
-//	}
-//	
-//	func unreadCountRespectingCutoffDate(_ feedID: String, _ database: FMDatabase) -> Int {
-//		
-//		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or dateArrived>?);"
-//		logSQL(sql)
-//		
-//		return numberWithSQLAndParameters(sql, parameters: [feedID, articleArrivalCutoffDate], database)
-//	}
 //	
 //	// MARK: Filtering out old articles
 //	

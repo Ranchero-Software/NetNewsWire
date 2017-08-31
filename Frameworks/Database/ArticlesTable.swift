@@ -24,6 +24,9 @@ final class ArticlesTable: DatabaseTable {
 	private let tagsLookupTable: DatabaseLookupTable
 	private let articleCache = ArticleCache()
 	
+	// TODO: update articleCutoffDate as time passes and based on user preferences.
+	private var articleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
+
 	init(name: String, account: Account, queue: RSDatabaseQueue) {
 
 		self.name = name
@@ -206,10 +209,25 @@ private extension ArticlesTable {
 
 	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]) -> Set<Article> {
 
-		let sql = "select * from articles natural join statuses where \(whereClause);"
-		return articlesWithSQL(sql, parameters, database)
+		// Don’t fetch articles that shouldn’t appear in the UI. The rules:
+		// * Must not be deleted.
+		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
+
+		let sql = "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or dateArrived>?);"
+		return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject], database)
 	}
 
+	func fetchUnreadCount(_ feedID: String, _ database: FMDatabase) -> Int {
+		
+		// Count only the articles that would appear in the UI.
+		// * Must be unread.
+		// * Must not be deleted.
+		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
+
+		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or dateArrived>?);"
+		return numberWithSQLAndParameters(sql, [feedID, articleCutoffDate], in: database)
+	}
+	
 	func fetchArticlesForFeedID(_ feedID: String, database: FMDatabase) -> Set<Article> {
 
 		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject])

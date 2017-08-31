@@ -80,18 +80,20 @@ public extension DatabaseTable {
 
 	// MARK: Counting
 
-	func numberWithCountResultSet(_ resultSet: FMResultSet?) -> Int {
+	func numberWithCountResultSet(_ resultSet: FMResultSet) -> Int {
 
-		if let resultSet = resultSet, resultSet.next() {
-			return Int(resultSet.int(forColumnIndex: 0))
+		guard resultSet.next() else {
+			return 0
 		}
-		return 0
+		return Int(resultSet.int(forColumnIndex: 0))
 	}
 
 	func numberWithSQLAndParameters(_ sql: String, _ parameters: [Any], in database: FMDatabase) -> Int {
 
-		let resultSet = database.executeQuery(sql, withArgumentsIn: parameters)
-		return numberWithCountResultSet(resultSet)
+		if let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) {
+			return numberWithCountResultSet(resultSet)
+		}
+		return 0
 	}
 
 	// MARK: Mapping
