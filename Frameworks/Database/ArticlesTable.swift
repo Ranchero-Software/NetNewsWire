@@ -92,21 +92,33 @@ final class ArticlesTable: DatabaseTable {
 
 		return fetchUnreadArticles(feeds.feedIDs())
 	}
-	
+
 	// MARK: Updating
 	
 	func update(_ feed: Feed, _ parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
 		
 		// TODO
 	}
-	
+
 	// MARK: Unread Counts
 	
 	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: @escaping UnreadCountCompletionBlock) {
 		
-		// TODO
+		let feedIDs = feeds.feedIDs()
+		var unreadCountTable = UnreadCountTable()
+
+		queue.fetch { (database) in
+
+			for feedID in feedIDs {
+				unreadCountTable[feedID] = self.fetchUnreadCount(feedID, database)
+			}
+
+			DispatchQueue.main.async() {
+				completion(unreadCountTable)
+			}
+		}
 	}
-	
+
 	// MARK: Status
 	
 	func mark(_ articles: Set<Article>, _ statusKey: String, _ flag: Bool) {
@@ -135,31 +147,6 @@ final class ArticlesTable: DatabaseTable {
 			self.statusesTable.markArticleIDs(Set(articleIDs), statusKey, flag, database)
 		}
 	}
-	
-	
-//	typealias FeedCountCallback = (Int) -> Void
-//
-//	func numberOfArticlesWithFeedID(_ feedID: String, callback: @escaping FeedCountCallback) {
-//
-//		queue.fetch { (database: FMDatabase!)
-//
-//			let sql = "select count(*) from articles where feedID = ?;"
-//			var numberOfArticles = -1
-//
-//			if let resultSet = database.executeQuery(sql, withArgumentsIn: [feedID]) {
-//
-//				while (resultSet.next()) {
-//					numberOfArticles = resultSet.long(forColumnIndex: 0)
-//					break
-//				}
-//			}
-//
-//			DispatchQueue.main.async() {
-//				callback(numberOfArticles)
-//			}
-//		}
-//
-//	}
 }
 
 // MARK: -

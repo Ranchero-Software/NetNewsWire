@@ -60,22 +60,9 @@ public final class Database {
 
 	// MARK: - Unread Counts
 	
-	public func fetchUnreadCounts(for feeds: Set<Feed>, completion: @escaping UnreadCountCompletionBlock) {
+	public func fetchUnreadCounts(for feeds: Set<Feed>, _ completion: @escaping UnreadCountCompletionBlock) {
 		
-		return articlesTable.fetchUnreadCounts(feeds, completion)
-//		let feedIDs = feeds.feedIDs()
-//
-//		queue.fetch { (database: FMDatabase!) -> Void in
-//
-//			var unreadCounts = UnreadCountTable()
-//			for oneFeedID in feedIDs {
-//				unreadCounts[oneFeedID] = self.unreadCount(oneFeedID, database)
-//			}
-//
-//			DispatchQueue.main.async() {
-//				completion(unreadCounts)
-//			}
-//		}
+		articlesTable.fetchUnreadCounts(feeds, completion)
 	}
 
 	// MARK: - Updating Articles
@@ -101,9 +88,8 @@ public final class Database {
 	// MARK: - Status
 	
 	public func mark(_ articles: Set<Article>, statusKey: String, flag: Bool) {
-		
+
 		articlesTable.mark(articles, statusKey, flag)
-//		statusesTable.markArticles(articles, statusKey: statusKey, flag: flag)
 	}
 }
 
@@ -112,74 +98,7 @@ public final class Database {
 private extension Database {
 	
 	
-	//	func feedIDCountDictionariesWithResultSet(_ resultSet: FMResultSet) -> [String: Int] {
-	//
-	//		var counts = [String: Int]()
-	//
-	//		while (resultSet.next()) {
-	//
-	//			if let oneFeedID = resultSet.string(forColumnIndex: 0) {
-	//				let count = resultSet.int(forColumnIndex: 1)
-	//				counts[oneFeedID] = Int(count)
-	//			}
-	//		}
-	//
-	//		return counts
-	//	}
 
-	//	func countsForAllFeeds(_ database: FMDatabase) -> [String: Int] {
-	//
-	//		let sql = "select distinct feedID, count(*) as count from articles group by feedID;"
-	//
-	//		if let resultSet = database.executeQuery(sql, withArgumentsIn: []) {
-	//			return feedIDCountDictionariesWithResultSet(resultSet)
-	//		}
-	//
-	//		return [String: Int]()
-	//	}
-
-	//	func countsForFeedIDs(_ feedIDs: [String], _ database: FMDatabase) -> [String: Int] {
-	//
-	//		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-	//		let sql = "select distinct feedID, count(*) from articles where feedID in \(placeholders) group by feedID;"
-	//		logSQL(sql)
-	//
-	//		if let resultSet = database.executeQuery(sql, withArgumentsIn: feedIDs) {
-	//			return feedIDCountDictionariesWithResultSet(resultSet)
-	//		}
-	//
-	//		return [String: Int]()
-	//
-	//	}
-	
-
-	//	func fetchUnreadArticlesForFeedIDs(_ feedIDs: [String]) -> Set<Article> {
-	//
-	//		if feedIDs.isEmpty {
-	//			return Set<Article>()
-	//		}
-	//
-	//		var fetchedArticles = Set<Article>()
-	//		var counts = [String: Int]()
-	//
-	//		queue.fetchSync { (database: FMDatabase!) -> Void in
-	//
-	//			counts = self.countsForFeedIDs(feedIDs, database)
-	//
-	//			// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and read = 0
-	//
-	//			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-	//			let sql = "select * from articles natural join statuses where feedID in \(placeholders) and read=0;"
-	//			logSQL(sql)
-	//
-	//			if let resultSet = database.executeQuery(sql, withArgumentsIn: feedIDs) {
-	//				fetchedArticles = self.articlesWithResultSet(resultSet)
-	//			}
-	//		}
-	//
-	//		let articles = articleCache.uniquedArticles(fetchedArticles, statusesTable: statusesTable)
-	//		return filteredArticles(articles, feedCounts: counts)
-	//	}
 
 	// MARK: Saving Articles
 	
@@ -303,17 +222,6 @@ private extension Database {
 //		return result
 //	}
 //
-//	// MARK: Unread counts
-//	
-//	func numberOfArticles(_ feedID: String, _ database: FMDatabase) -> Int {
-//		
-//		let sql = "select count(*) from articles where feedID = ?;"
-//		logSQL(sql)
-//		
-//		return numberWithSQLAndParameters(sql, parameters: [feedID], database)
-//	}
-//	
-//	
 //	// MARK: Filtering out old articles
 //	
 //	func articleIsOlderThanCutoffDate(_ article: Article) -> Bool {
@@ -324,11 +232,6 @@ private extension Database {
 //		return false
 //	}
 //	
-//	func articleShouldBeSavedForever(_ article: Article) -> Bool {
-//		
-//		return article.status.starred
-//	}
-//	
 //	func articleShouldAppearToUser(_ article: Article, _ numberOfArticlesInFeed: Int) -> Bool {
 //
 //		if numberOfArticlesInFeed <= minimumNumberOfArticles {
@@ -337,21 +240,6 @@ private extension Database {
 //		return articleShouldBeSavedForever(article) || !articleIsOlderThanCutoffDate(article)
 //	}
 //	
-//	private static let minimumNumberOfArticlesInFeed = 10
-//	
-//	func filteredArticles(_ articles: Set<Article>, feedCounts: [String: Int]) -> Set<Article> {
-//
-//		var articlesSet = Set<Article>()
-//
-//		for oneArticle in articles {
-//			if let feedCount = feedCounts[oneArticle.feedID], articleShouldAppearToUser(oneArticle, feedCount) {
-//				articlesSet.insert(oneArticle)
-//			}
-//
-//		}
-//
-//		return articlesSet
-//	}
 //	
 //	func deletePossibleOldArticles(_ articles: Set<Article>) {
 //		
