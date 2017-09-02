@@ -10,7 +10,8 @@ import Foundation
 
 public struct ParsedItem: Hashable {
 
-	public let uniqueID: String
+	public let syncServiceID: String? //Nil when not syncing
+	public let uniqueID: String //RSS guid, for instance; may be calculated
 	public let feedURL: String
 	public let url: String?
 	public let externalURL: String?
@@ -27,8 +28,9 @@ public struct ParsedItem: Hashable {
 	public let attachments: [ParsedAttachment]?
 	public let hashValue: Int
 	
-	init(uniqueID: String, feedURL: String, url: String?, externalURL: String?, title: String?, contentHTML: String?, contentText: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [ParsedAuthor]?, tags: [String]?, attachments: [ParsedAttachment]?) {
+	init(syncServiceID: String?, uniqueID: String, feedURL: String, url: String?, externalURL: String?, title: String?, contentHTML: String?, contentText: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [ParsedAuthor]?, tags: [String]?, attachments: [ParsedAttachment]?) {
 
+		self.syncServiceID = syncServiceID
 		self.uniqueID = uniqueID
 		self.feedURL = feedURL
 		self.url = url
@@ -44,7 +46,7 @@ public struct ParsedItem: Hashable {
 		self.authors = authors
 		self.tags = tags
 		self.attachments = attachments
-		self.hashValue = uniqueID.hashValue
+		self.hashValue = articleID.hashValue
 	}
 	
 	public static func ==(lhs: ParsedItem, rhs: ParsedItem) -> Bool {

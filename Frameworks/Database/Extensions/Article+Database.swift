@@ -91,4 +91,13 @@ extension Set where Element == Article {
 		
 		return Set<ArticleStatus>(self.flatMap { $0.status })
 	}
+
+	func dictionary() -> [String: Article] {
+
+		var d = [String: Article]()
+		for article in self {
+			d[article.articleID] = article
+		}
+		return d
+	}
 }

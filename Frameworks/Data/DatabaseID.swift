@@ -12,7 +12,15 @@ import Foundation
 // * It’s fast
 // * Collisions aren’t going to happen with feed data
 
+private var databaseIDCache = [String: String]()
+
 public func databaseIDWithString(_ s: String) -> String {
 
-	return (s as NSString).rs_md5Hash()
+	if let identifier = databaseIDCache[s] {
+		return identifier
+	}
+	
+	let identifier = (s as NSString).rs_md5Hash()
+	databaseIDCache[s] = identifier
+	return identifier
 }

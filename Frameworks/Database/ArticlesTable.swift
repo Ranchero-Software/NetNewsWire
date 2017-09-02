@@ -17,7 +17,7 @@ final class ArticlesTable: DatabaseTable {
 	let name: String
 	private weak var account: Account?
 	private let queue: RSDatabaseQueue
-	private let statusesTable: StatusesTable
+	private let statusesTable = StatusesTable()
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
 	private let tagsLookupTable: DatabaseLookupTable
@@ -32,7 +32,6 @@ final class ArticlesTable: DatabaseTable {
 		self.account = account
 		self.queue = queue
 
-		self.statusesTable = StatusesTable(name: DatabaseTableName.statuses)
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
 		
@@ -80,8 +79,26 @@ final class ArticlesTable: DatabaseTable {
 	// MARK: Updating
 	
 	func update(_ feed: Feed, _ parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
-		
-		// TODO
+
+		if parsedFeed.items.isEmpty {
+
+			// Once upon a time in an early version of NetNewsWire there was a bug with this issue.
+			// The design, at the time, was that NetNewsWire would always show only what’s currently in a feed —
+			// no more and no less.
+			// This meant that if a feed had zero items, then all the articles for that feed would be deleted.
+			// There were two problems with that:
+			// 1. People didn’t expect articles to just disappear like that.
+			// 2. Technorati (R.I.P.) had a bug where some of its feeds, at seemingly random times, would have zero items.
+			// So this hit people. THEY WERE NOT HAPPY.
+			// These days we just ignore empty feeds. Who cares if they’re empty. It just means less work the app has to do.
+
+			completion()
+			return
+		}
+
+		fetchArticlesAsync(feed) { (articles) in
+			self.updateArticles(articles.dictionary(), parsedFeed.itemsDictionary(with: feed), feed, completion)
+		}
 	}
 
 	// MARK: Unread Counts
@@ -133,7 +150,7 @@ final class ArticlesTable: DatabaseTable {
 	}
 }
 
-// MARK: -
+// MARK: - Private
 
 private extension ArticlesTable {
 
@@ -232,6 +249,14 @@ private extension ArticlesTable {
 		}
 		return articlesWithResultSet(resultSet, database)
 	}
+
+	// MARK: Saving/Updating
+
+	func updateArticles(_ articlesDictionary: [String: Article], _ parsedItemsDictionary: [String: ParsedItem], _ feed: Feed, _ completion: @escaping RSVoidCompletionBlock) {
+
+		
+	}
+
 }
 
 // MARK: -
@@ -275,4 +300,7 @@ private struct ArticleCache {
 		articlesMapTable.setObject(article, forKey: article.articleID as NSString)
 	}
 }
+
+
+
 
