@@ -114,7 +114,7 @@ private extension JSONFeedParser {
 		let tags = itemDictionary["tags"] as? [String]
 		let attachments = parseAttachments(itemDictionary)
 
-		return ParsedItem(uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
+		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
 	}
 
 	static func parseUniqueID(_ itemDictionary: JSONDictionary) -> String? {

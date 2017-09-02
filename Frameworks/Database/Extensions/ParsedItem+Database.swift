@@ -8,10 +8,11 @@
 
 import Foundation
 import RSParser
+import Data
 
 extension ParsedItem {
 
-	private func databaseIdentifierWithFeed(_ feed: Feed) -> String {
+	func databaseIdentifierWithFeed(_ feed: Feed) -> String {
 
 		if let identifier = syncServiceID {
 			return identifier
@@ -28,8 +29,8 @@ extension ParsedFeed {
 
 		var d = [String: ParsedItem]()
 
-		for parsedItem in parsedItems {
-			let identifier = identifierForParsedItem(parsedItem, feed)
+		for parsedItem in items {
+			let identifier = parsedItem.databaseIdentifierWithFeed(feed)
 			d[identifier] = parsedItem
 		}
 

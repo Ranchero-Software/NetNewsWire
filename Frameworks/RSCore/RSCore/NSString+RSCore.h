@@ -23,7 +23,7 @@ NSString *RSStringReplaceAll(NSString *stringToSearch, NSString *searchFor, NSSt
 
 /*The hashed data is a UTF-8 encoded version of the string.*/
 
-- (NSData *)rs_md5Hash;
+- (NSData *)rs_md5HashData;
 - (NSString *)rs_md5HashString;
 
 

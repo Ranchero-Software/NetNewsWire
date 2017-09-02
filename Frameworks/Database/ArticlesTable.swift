@@ -254,7 +254,15 @@ private extension ArticlesTable {
 
 	func updateArticles(_ articlesDictionary: [String: Article], _ parsedItemsDictionary: [String: ParsedItem], _ feed: Feed, _ completion: @escaping RSVoidCompletionBlock) {
 
-		
+		let parsedItemArticleIDs = Set(parsedItemsDictionary.keys)
+
+		queue.update { (database) in
+
+			self.statusesTable.ensureStatusesForArticleIDs(parsedItemArticleIDs, database)
+
+		}
+
+
 	}
 
 }

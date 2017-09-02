@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 
 // MD5 works because:
 // * It’s fast

@@ -40,7 +40,7 @@ final class StatusesTable: DatabaseTable {
 		return articleStatus
 	}
 	
-	// MARK: Creating
+	// MARK: Creating/Updating
 
 	func ensureStatusesForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
 
@@ -49,12 +49,32 @@ final class StatusesTable: DatabaseTable {
 			return
 		}
 
-		createAndSaveStatusesForArticles(articlesNeedingStatuses, database)
+		let articleIDs = articlesNeedingStatuses.articleIDs()
+		ensureStatusesForArticleIDs(articleIDs, database)
 
 		attachCachedStatuses(articlesNeedingStatuses)
 		assert(articles.eachHasAStatus())
 	}
-	
+
+	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
+
+		// Check cache.
+		let articleIDsMissingCachedStatus = articleIDsWithNoCachedStatus(articleIDs)
+		if articleIDsMissingCachedStatus.isEmpty {
+			return
+		}
+
+		// Check database.
+		fetchAndCacheStatusesForArticleIDs(articleIDsMissingCachedStatus, database)
+		let articleIDsNeedingStatus = articleIDsWithNoCachedStatus(articleIDs)
+		if articleIDsNeedingStatus.isEmpty {
+			return
+		}
+
+		// Create new statuses.
+		createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus, database)
+	}
+
 	// MARK: Marking
 	
 	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: String, _ flag: Bool, _ database: FMDatabase) {
@@ -74,6 +94,11 @@ private extension StatusesTable {
 		}
 	}
 
+	func articleIDsWithNoCachedStatus(_ articleIDs: Set<String>) -> Set<String> {
+
+		return Set(articleIDs.filter { cache[$0] == nil })
+	}
+
 	// MARK: Creating
 
 	func saveStatuses(_ statuses: Set<ArticleStatus>, _ database: FMDatabase) {
@@ -82,7 +107,7 @@ private extension StatusesTable {
 		insertRows(statusArray, insertType: .orIgnore, in: database)
 	}
 
-	func cacheStatuses(_ statuses: [ArticleStatus]) {
+	func cacheStatuses(_ statuses: Set<ArticleStatus>) {
 
 		let databaseObjects = statuses.map { $0 as DatabaseObject }
 		cache.addObjectsNotCached(databaseObjects)
@@ -97,10 +122,19 @@ private extension StatusesTable {
 	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
 
 		let now = Date()
-		let statuses = articleIDs.map { ArticleStatus(articleID: $0, dateArrived: now) }
+		let statuses = Set(articleIDs.map { ArticleStatus(articleID: $0, dateArrived: now) })
 
 		cacheStatuses(statuses)
-		saveStatuses(Set(statuses), database)
+		saveStatuses(statuses, database)
 	}
 
+	func fetchAndCacheStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
+
+		guard let resultSet = selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) else {
+			return
+		}
+
+		let statuses = resultSet.mapToSet(statusWithRow)
+		cacheStatuses(statuses)
+	}
 }

@@ -127,7 +127,7 @@ private extension RSSInJSONParser {
 		}
 
 		if let uniqueID = uniqueID {
-			return ParsedItem(uniqueID: uniqueID, feedURL: feedURL, url: nil, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: authors, tags: tags, attachments: attachments)
+			return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: nil, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: authors, tags: tags, attachments: attachments)
 		}
 		return nil
 	}

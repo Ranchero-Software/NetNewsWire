@@ -45,7 +45,7 @@ NSString *RSStringReplaceAll(NSString *stringToSearch, NSString *searchFor, NSSt
 @implementation NSString (RSCore)
 
 
-- (NSData *)rs_md5Hash {
+- (NSData *)rs_md5HashData {
 
 	NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
 	return [data rs_md5Hash];
@@ -54,7 +54,7 @@ NSString *RSStringReplaceAll(NSString *stringToSearch, NSString *searchFor, NSSt
 
 - (NSString *)rs_md5HashString {
 
-	NSData *d = [self rs_md5Hash];
+	NSData *d = [self rs_md5HashData];
 	return [d rs_hexadecimalString];
 }
 

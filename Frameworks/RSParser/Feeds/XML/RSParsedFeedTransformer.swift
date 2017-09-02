@@ -46,7 +46,7 @@ private extension RSParsedFeedTransformer {
 		let dateModified = parsedArticle.dateModified
 		let authors = parsedAuthors(parsedArticle.author)
 
-		return ParsedItem(uniqueID: uniqueID, feedURL: parsedArticle.feedURL, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: nil, attachments: nil)
+		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: parsedArticle.feedURL, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: nil, attachments: nil)
 	}
 
 	static func parsedAuthors(_ authorEmailAddress: String?) -> [ParsedAuthor]? {
