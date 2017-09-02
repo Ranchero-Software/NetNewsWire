@@ -15,7 +15,6 @@ import Data
 final class ArticlesTable: DatabaseTable {
 
 	let name: String
-	let databaseIDKey = DatabaseKey.articleID
 	private weak var account: Account?
 	private let queue: RSDatabaseQueue
 	private let statusesTable: StatusesTable
@@ -42,21 +41,6 @@ final class ArticlesTable: DatabaseTable {
 		
 		let attachmentsTable = AttachmentsTable(name: DatabaseTableName.attachments)
 		self.attachmentsLookupTable = DatabaseLookupTable(name: DatabaseTableName.attachmentsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.attachmentID, relatedTable: attachmentsTable, relationshipName: RelationshipName.attachments)
-	}
-
-	// MARK: DatabaseTable Methods
-	
-	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
-
-		if let article = articleWithRow(row) {
-			return article as DatabaseObject
-		}
-		return nil
-	}
-
-	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
-		
-		// TODO
 	}
 
 	// MARK: Fetching

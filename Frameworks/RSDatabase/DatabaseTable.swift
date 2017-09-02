@@ -9,33 +9,11 @@
 import Foundation
 
 public protocol DatabaseTable {
-	
+
 	var name: String { get }
-	var databaseIDKey: String { get}
-	
-	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]
-	func objectsWithResultSet(_ resultSet: FMResultSet) -> [DatabaseObject]
-	func objectWithRow(_ row: FMResultSet) -> DatabaseObject?
-	
-	func save(_ objects: [DatabaseObject], in database: FMDatabase)
 }
 
 public extension DatabaseTable {
-
-	// MARK: Default implementations
-	
-	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject] {
-		
-		guard let resultSet = selectRowsWhere(key: databaseIDKey, inValues: Array(databaseIDs), in: database) else {
-			return [DatabaseObject]()
-		}
-		return objectsWithResultSet(resultSet)
-	}
-	
-	func objectsWithResultSet(_ resultSet: FMResultSet) -> [DatabaseObject] {
-		
-		return resultSet.flatMap(objectWithRow)
-	}
 	
 	// MARK: Fetching
 

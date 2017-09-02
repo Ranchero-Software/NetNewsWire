@@ -18,10 +18,10 @@ public final class DatabaseLookupTable {
 	private let objectIDKey: String
 	private let relatedObjectIDKey: String
 	private let relationshipName: String
-	private let relatedTable: DatabaseTable
+	private let relatedTable: DatabaseRelatedObjectsTable
 	private let cache: DatabaseLookupTableCache
 
-	public init(name: String, objectIDKey: String, relatedObjectIDKey: String, relatedTable: DatabaseTable, relationshipName: String) {
+	public init(name: String, objectIDKey: String, relatedObjectIDKey: String, relatedTable: DatabaseRelatedObjectsTable, relationshipName: String) {
 
 		self.name = name
 		self.objectIDKey = objectIDKey
