@@ -17,7 +17,7 @@ import Data
 // CREATE TABLE if not EXISTS authorLookup (authorID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(authorID, articleID));
 
 
-struct AuthorsTable: DatabaseRelatedObjectsTable {
+final class AuthorsTable: DatabaseRelatedObjectsTable {
 	
 	let name: String
 	let databaseIDKey = DatabaseKey.authorID

@@ -17,7 +17,7 @@ import Data
 // CREATE TABLE if not EXISTS tags(tagName TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(tagName, articleID));
 // CREATE INDEX if not EXISTS tags_tagName_index on tags (tagName COLLATE NOCASE);
 
-struct TagsTable: DatabaseRelatedObjectsTable {
+final class TagsTable: DatabaseRelatedObjectsTable {
 	
 	let name: String
 	let databaseIDKey = DatabaseKey.tagName

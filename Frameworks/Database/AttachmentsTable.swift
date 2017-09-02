@@ -10,7 +10,7 @@ import Foundation
 import RSDatabase
 import Data
 
-struct AttachmentsTable: DatabaseRelatedObjectsTable {
+final class AttachmentsTable: DatabaseRelatedObjectsTable {
 
 	let name: String
 	let databaseIDKey = DatabaseKey.attachmentID
