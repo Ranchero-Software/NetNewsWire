@@ -13,7 +13,7 @@ import RSParser
 
 extension Article {
 	
-	convenience init?(row: FMResultSet, account: Account) {
+	convenience init?(row: FMResultSet, authors: Set<Author>, attachments: Set<Attachment>, tags: Set<String>, accountID: String) {
 		
 		guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
 			return nil
@@ -35,12 +35,10 @@ extension Article {
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 		let accountInfo: [String: Any]? = nil // TODO
 
-		// authors, tags, and attachments are fetched from related tables, after init.
-
-		self.init(account: account, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, tags: nil, attachments: nil, accountInfo: accountInfo)
+		self.init(account: account, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
 	}
 
-	convenience init(parsedItem: ParsedItem, feedID: String, account: Account) {
+	convenience init(parsedItem: ParsedItem, accountID: String, feedID: String) {
 
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
 		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
@@ -73,92 +71,97 @@ extension Article {
 		return d.copy() as! NSDictionary
 	}
 
+	static func articlesWithParsedItems(_ parsedItems: [ParsedItem], _ accountID: String, _ feedID: String) -> Set<Article> {
+	
+		return parsedItems.map{ Article(parsedItem: $0, accountID: accountID, feedID: feedID) }
+	}
+	
 	// MARK: Updating with ParsedItem
 
-	func updateTagsWithParsedTags(_ parsedTags: [String]?) -> Bool {
-
-		// Return true if there's a change.
-
-		let currentTags = tags
-
-		if parsedTags == nil && currentTags == nil {
-			return false
-		}
-		if parsedTags != nil && currentTags == nil {
-			tags = Set(parsedItemTags!)
-			return true
-		}
-		if parsedTags == nil && currentTags != nil {
-			tags = nil
-			return true
-		}
-		let parsedTagSet = Set(parsedTags!)
-		if parsedTagSet == tags! {
-			return false
-		}
-		tags = parsedTagSet
-		return true
-	}
-
-	func updateAttachmentsWithParsedAttachments(_ parsedAttachments: [ParsedAttachment]?) -> Bool {
-
-		// Return true if there's a change.
-
-		let currentAttachments = attachments
-		let updatedAttachments = Attachment.attachmentsWithParsedAttachments(parsedAttachments)
-
-		if updatedAttachments == nil && currentAttachments == nil {
-			return false
-		}
-		if updatedAttachments != nil && currentAttachments == nil {
-			attachments = updatedAttachments
-			return true
-		}
-		if updatedAttachments == nil && currentAttachments != nil {
-			attachments = nil
-			return true
-		}
-
-		guard let currentAttachments = currentAttachments, let updatedAttachments = updatedAttachments else {
-			assertionFailure("currentAttachments and updatedAttachments must both be non-nil.")
-			return false
-		}
-		if currentAttachments != updatedAttachments {
-			attachments = updatedAttachments
-			return true
-		}
-		return false
-	}
-
-	func updateAuthorsWithParsedAuthors(_ parsedAuthors: [ParsedAuthor]?) -> Bool {
-
-		// Return true if there's a change.
-
-		let currentAuthors = authors
-		let updatedAuthors = Author.authorsWithParsedAuthors(parsedAuthors)
-
-		if updatedAuthors == nil && currentAuthors == nil {
-			return false
-		}
-		if updatedAuthors != nil && currentAuthors == nil {
-			authors = updatedAuthors
-			return true
-		}
-		if updatedAuthors == nil && currentAuthors != nil {
-			authors = nil
-			return true
-		}
-
-		guard let currentAuthors = currentAuthors, let updatedAuthors = updatedAuthors else {
-			assertionFailure("currentAuthors and updatedAuthors must both be non-nil.")
-			return false
-		}
-		if currentAuthors != updatedAuthors {
-			authors = updatedAuthors
-			return true
-		}
-		return false
-	}
+//	func updateTagsWithParsedTags(_ parsedTags: [String]?) -> Bool {
+//
+//		// Return true if there's a change.
+//
+//		let currentTags = tags
+//
+//		if parsedTags == nil && currentTags == nil {
+//			return false
+//		}
+//		if parsedTags != nil && currentTags == nil {
+//			tags = Set(parsedItemTags!)
+//			return true
+//		}
+//		if parsedTags == nil && currentTags != nil {
+//			tags = nil
+//			return true
+//		}
+//		let parsedTagSet = Set(parsedTags!)
+//		if parsedTagSet == tags! {
+//			return false
+//		}
+//		tags = parsedTagSet
+//		return true
+//	}
+//
+//	func updateAttachmentsWithParsedAttachments(_ parsedAttachments: [ParsedAttachment]?) -> Bool {
+//
+//		// Return true if there's a change.
+//
+//		let currentAttachments = attachments
+//		let updatedAttachments = Attachment.attachmentsWithParsedAttachments(parsedAttachments)
+//
+//		if updatedAttachments == nil && currentAttachments == nil {
+//			return false
+//		}
+//		if updatedAttachments != nil && currentAttachments == nil {
+//			attachments = updatedAttachments
+//			return true
+//		}
+//		if updatedAttachments == nil && currentAttachments != nil {
+//			attachments = nil
+//			return true
+//		}
+//
+//		guard let currentAttachments = currentAttachments, let updatedAttachments = updatedAttachments else {
+//			assertionFailure("currentAttachments and updatedAttachments must both be non-nil.")
+//			return false
+//		}
+//		if currentAttachments != updatedAttachments {
+//			attachments = updatedAttachments
+//			return true
+//		}
+//		return false
+//	}
+//
+//	func updateAuthorsWithParsedAuthors(_ parsedAuthors: [ParsedAuthor]?) -> Bool {
+//
+//		// Return true if there's a change.
+//
+//		let currentAuthors = authors
+//		let updatedAuthors = Author.authorsWithParsedAuthors(parsedAuthors)
+//
+//		if updatedAuthors == nil && currentAuthors == nil {
+//			return false
+//		}
+//		if updatedAuthors != nil && currentAuthors == nil {
+//			authors = updatedAuthors
+//			return true
+//		}
+//		if updatedAuthors == nil && currentAuthors != nil {
+//			authors = nil
+//			return true
+//		}
+//
+//		guard let currentAuthors = currentAuthors, let updatedAuthors = updatedAuthors else {
+//			assertionFailure("currentAuthors and updatedAuthors must both be non-nil.")
+//			return false
+//		}
+//		if currentAuthors != updatedAuthors {
+//			authors = updatedAuthors
+//			return true
+//		}
+//		return false
+//	}
 }
 
 extension Article: DatabaseObject {

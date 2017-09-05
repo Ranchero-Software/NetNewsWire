@@ -35,7 +35,7 @@ extension Author {
 		}
 
 		let authors = parsedAuthors.flatMap { Author(parsedAuthor: $0) }
-		return authors.isEmpty ? nil : Set(authors)
+		return authors.isEmpty ? nil : authors
 	}
 }
 

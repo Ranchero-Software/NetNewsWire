@@ -19,45 +19,53 @@ final class StatusesTable: DatabaseTable {
 
 	let name = DatabaseTableName.statuses
 	private let cache = StatusCache()
+	private let queue: RSDatabaseQueue
+	
+	init(queue: RSDatabaseQueue) {
+		
+		self.queue = queue
+	}
+	
+	func cachedStatus(for articleID: String) -> ArticleStatus? {
 
-	func existingStatus(for articleID: String) -> ArticleStatus? {
-
-		cache.lock()
-		defer { cache.unlock() }
+		assert(Thread.isMainThread)
+		assert(cache[articleID] != nil)
 		return cache[articleID]
 	}
 
 	// MARK: Creating/Updating
 
-	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
-
-		cache.lock()
-		defer { cache.unlock() }
-
+	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ completion: @escaping RSVoidCompletionBlock) {
+		
+		// Adds them to the cache if not cached.
+		
+		assert(Thread.isMainThread)
+		
 		// Check cache.
 		let articleIDsMissingCachedStatus = articleIDsWithNoCachedStatus(articleIDs)
 		if articleIDsMissingCachedStatus.isEmpty {
+			completion()
 			return
 		}
-
+		
 		// Check database.
-		fetchAndCacheStatusesForArticleIDs(articleIDsMissingCachedStatus, database)
-		let articleIDsNeedingStatus = articleIDsWithNoCachedStatus(articleIDs)
-		if articleIDsNeedingStatus.isEmpty {
-			return
+		fetchAndCacheStatusesForArticleIDs(articleIDsMissingCachedStatus) {
+			
+			let articleIDsNeedingStatus = articleIDsWithNoCachedStatus(articleIDs)
+			if articleIDsNeedingStatus.isEmpty {
+				completion()
+				return
+			}
+			
+			// Create new statuses.
+			createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus, completion)
 		}
-
-		// Create new statuses.
-		createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus, database)
 	}
 
 	// MARK: Marking
 	
 	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: String, _ flag: Bool, _ database: FMDatabase) {
 		
-		cache.lock()
-		defer { cache.unlock() }
-
 		// TODO: replace statuses in cache.
 
 		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
@@ -70,54 +78,21 @@ private extension StatusesTable {
 
 	// MARK: Fetching
 
-	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> [String: ArticleStatus] {
-
-		// Does not create statuses. Checks cache first, then database only if needed.
-
-		var d = [String: ArticleStatus]()
-		var articleIDsMissingCachedStatus = Set<String>()
-
-		for articleID in articleIDs {
-			if let cachedStatus = cache[articleID] as? ArticleStatus {
-				d[articleID] = cachedStatus
-			}
-			else {
-				articleIDsMissingCachedStatus.insert(articleID)
-			}
-		}
-
-		if articleIDsMissingCachedStatus.isEmpty {
-			return d
-		}
-
-		fetchAndCacheStatusesForArticleIDs(articleIDsMissingCachedStatus, database)
-		for articleID in articleIDsMissingCachedStatus {
-			if let cachedStatus = cache[articleID] as? ArticleStatus {
-				d[articleID] = cachedStatus
-			}
-		}
-
-		return d
-	}
-
 	func statusWithRow(_ row: FMResultSet) -> ArticleStatus? {
 
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
 			return nil
 		}
-		if let cachedStatus = cache[articleID] as? ArticleStatus {
-			return cachedStatus
-		}
-
 		guard let dateArrived = row.date(forColumn: DatabaseKey.dateArrived) else {
 			return nil
 		}
 
 		let articleStatus = ArticleStatus(articleID: articleID, dateArrived: dateArrived, row: row)
-		cache[articleID] = articleStatus
 		return articleStatus
 	}
 
+	// MARK: Cache
+	
 	func articleIDsWithNoCachedStatus(_ articleIDs: Set<String>) -> Set<String> {
 
 		return Set(articleIDs.filter { cache[$0] == nil })
@@ -125,92 +100,80 @@ private extension StatusesTable {
 
 	// MARK: Creating
 
-	func saveStatuses(_ statuses: Set<ArticleStatus>, _ database: FMDatabase) {
+	func saveStatuses(_ statuses: Set<ArticleStatus>) {
 
-		let statusArray = statuses.map { $0.databaseDictionary() }
-		insertRows(statusArray, insertType: .orIgnore, in: database)
+		queue.update { (database) in
+			let statusArray = statuses.map { $0.databaseDictionary() }
+			insertRows(statusArray, insertType: .orIgnore, in: database)
+		}
 	}
 
-	func createAndSaveStatusesForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
+	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>, _ completion: @escaping RSVoidCompletionBlock) {
 
-		let articleIDs = Set(articles.map { $0.articleID })
-		createAndSaveStatusesForArticleIDs(articleIDs, database)
-	}
-
-	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
-
+		assert(Thread.isMainThread)
+		
 		let now = Date()
 		let statuses = Set(articleIDs.map { ArticleStatus(articleID: $0, dateArrived: now) })
-
-		cache.add(statuses)
-
-		saveStatuses(statuses, database)
+		cache.addIfNotCached(statuses)
+		
+		// No need to wait for database to return before calling completion,
+		// since the new statuses have been cached at this point.
+		
+		completion()
+		saveStatuses(statuses)
 	}
 
-	func fetchAndCacheStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
-
-		guard let resultSet = selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) else {
-			return
+	func fetchAndCacheStatusesForArticleIDs(_ articleIDs: Set<String>, _ completion: @escaping RSVoidCompletionBlock) {
+		
+		queue.fetch { (database) in
+			guard let resultSet = selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) else {
+				completion()
+				return
+			}
+			
+			let statuses = resultSet.mapToSet(statusWithRow)
+			
+			DispatchQueue.main.async {
+				cache.addIfNotCached(statuses)
+				completion()
+			}
 		}
-
-		let statuses = resultSet.mapToSet(statusWithRow)
-		cache.add(statuses)
 	}
 }
 
 private final class StatusCache {
 
-	// Locking is left to the caller. Use the provided lock methods.
+	// Main thread only.
 
-	private let lock = NSLock()
-	private var isLocked = false
 	var dictionary = [String: ArticleStatus]()
-
-	func lock() {
-
-		assert(!isLocked)
-		lock.lock()
-		isLocked = true
-	}
-
-	func unlock() {
-
-		assert(isLocked)
-		lock.unlock()
-		isLocked = false
-	}
 
 	func add(_ statuses: Set<ArticleStatus>) {
 
 		// Replaces any cached statuses.
 
-		assert(isLocked)
 		for status in statuses {
 			self[status.articleID] = status
 		}
 	}
 
-	func statuses(for articleIDs: Set<String>) -> [String: ArticleStatus] {
-
-		assert(isLocked)
-
-		var d = [String: ArticleStatus]()
-		for articleID in articleIDs {
-			if let cachedStatus = self[articleID] {
-				d[articleID] = cachedStatus
+	func addIfNotCached(_ statuses: Set<ArticleStatus>) {
+		
+		// Does not replace already cached statuses.
+		
+		for status in statuses {
+			let articleID = status.articleID
+			if let _ = self[articleID] {
+				continue
 			}
+			self[articleID] = status
 		}
-
-		return d
 	}
-
+	
 	subscript(_ articleID: String) -> ArticleStatus {
 		get {
-			assert(isLocked)
 			return self[articleID]
 		}
 		set {
-			assert(isLocked)
 			self[articleID] = newValue
 		}
 	}

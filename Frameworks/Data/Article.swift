@@ -29,7 +29,6 @@ public struct Article: Hashable {
 	public let attachments: Set<Attachment>?
 	public let hashValue: Int
 
-
 	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, tags: Set<String>?, attachments: Set<Attachment>?, accountInfo: AccountInfo?) {
 		
 		self.accountID = accountID
@@ -68,31 +67,32 @@ public struct Article: Hashable {
 
 public extension Article {
 
+	// MARK: Main-thread only accessors.
+	
 	public var logicalDatePublished: Date? {
 		get {
+			assert(Thread.isMainThread)
 			return (datePublished ?? dateModified) ?? status?.dateArrived
 		}
 	}
 
-	// MARK: Main-thread only accessors.
-
 	public var account: Account? {
 		get {
-			assert(Thread.isMainThread, "article.account is main-thread-only.")
+			assert(Thread.isMainThread)
 			return Account.account(with: accountID)
 		}
 	}
 
 	public var feed: Feed? {
 		get {
-			assert(Thread.isMainThread, "article.feed is main-thread-only.")
+			assert(Thread.isMainThread)
 			return account?.existingFeed(with: feedID)
 		}
 	}
 
 	public var status: ArticleStatus? {
 		get {
-			assert(Thread.isMainThread, "article.status is main-thread-only.")
+			assert(Thread.isMainThread)
 			return account?.status(with: articleID)
 		}
 	}

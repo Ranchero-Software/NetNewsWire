@@ -15,9 +15,9 @@ import Data
 final class ArticlesTable: DatabaseTable {
 
 	let name: String
-	private weak var account: Account?
+	private let accountID: String
 	private let queue: RSDatabaseQueue
-	private let statusesTable = StatusesTable()
+	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
 	private let tagsLookupTable: DatabaseLookupTable
@@ -26,12 +26,14 @@ final class ArticlesTable: DatabaseTable {
 	private var articleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	private var maximumArticleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 4 * 31)!
 
-	init(name: String, account: Account, queue: RSDatabaseQueue) {
+	init(name: String, accountID: String, queue: RSDatabaseQueue) {
 
 		self.name = name
-		self.account = account
+		self.accountID = accountID
 		self.queue = queue
 
+		let statusesTable = StatusesTable(queue: queue)
+		
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
 		
@@ -84,12 +86,37 @@ final class ArticlesTable: DatabaseTable {
 			return
 		}
 
-		queue.update { (database) in
+		// 1. Ensure statuses for all the parsedItems.
+		// 2. Ignore parsedItems that are userDeleted || (!starred and really old)
+		// 3. Fetch all articles for the feed.
+		// 4. Create Articles with parsedItems.
+		// 5.
+		let feedID = feed.feedID
+		let parsedItemArticleIDs = Set(parsedFeed.items.map { $0.databaseIdentifierWithFeed(feed) })
+		let parsedItemsDictionary = parsedFeed.itemsDictionary(with: feed)
 
+		statusesTable.ensureStatusesForArticleIDs(parsedItemArticleIDs) {
+		
+			let filteredParsedItems = self.filterParsedItems(parsedItemsDictionary)
+			if filteredParsedItems.isEmpty {
+				completion()
+				return
+			}
+
+			queue.fetch{ (database) in
+				
+				let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database: database)
+				
+				let incomingArticles = Article.articlesWithParsedItems(parsedFeed.items, accountID, feedID)
+				
+				
+
+			}
+			
 			
 		}
-		// 1. Ensure statuses for all the parsedItems.
-		// 2. Fetch all articles for the feed.
+
+		
 		// 3. For each parsedItem:
 		//	  - if userDeleted || (!starred && status.dateArrived < cutoff), then ignore
 		//    - if matches existing article, then update database with changes between the two
