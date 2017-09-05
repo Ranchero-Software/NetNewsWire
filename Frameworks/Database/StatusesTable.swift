@@ -18,45 +18,21 @@ import Data
 final class StatusesTable: DatabaseTable {
 
 	let name = DatabaseTableName.statuses
-	private let cache = DatabaseObjectCache()
+	private let cache = StatusCache()
 
-	// MARK: Fetching
+	func existingStatus(for articleID: String) -> ArticleStatus? {
 
-	func statusWithRow(_ row: FMResultSet) -> ArticleStatus? {
-
-		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
-			return nil
-		}
-		if let cachedStatus = cache[articleID] as? ArticleStatus {
-			return cachedStatus
-		}
-
-		guard let dateArrived = row.date(forColumn: DatabaseKey.dateArrived) else {
-			return nil
-		}
-
-		let articleStatus = ArticleStatus(articleID: articleID, dateArrived: dateArrived, row: row)
-		cache[articleID] = articleStatus
-		return articleStatus
+		cache.lock()
+		defer { cache.unlock() }
+		return cache[articleID]
 	}
-	
+
 	// MARK: Creating/Updating
 
-	func ensureStatusesForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-
-		let articlesNeedingStatuses = articles.missingStatuses()
-		if articlesNeedingStatuses.isEmpty {
-			return
-		}
-
-		let articleIDs = articlesNeedingStatuses.articleIDs()
-		ensureStatusesForArticleIDs(articleIDs, database)
-
-		attachCachedStatuses(articlesNeedingStatuses)
-		assert(articles.eachHasAStatus())
-	}
-
 	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
+
+		cache.lock()
+		defer { cache.unlock() }
 
 		// Check cache.
 		let articleIDsMissingCachedStatus = articleIDsWithNoCachedStatus(articleIDs)
@@ -74,6 +50,25 @@ final class StatusesTable: DatabaseTable {
 		// Create new statuses.
 		createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus, database)
 	}
+
+	// MARK: Marking
+	
+	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: String, _ flag: Bool, _ database: FMDatabase) {
+		
+		cache.lock()
+		defer { cache.unlock() }
+
+		// TODO: replace statuses in cache.
+
+		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
+	}
+}
+
+// MARK: - Private
+
+private extension StatusesTable {
+
+	// MARK: Fetching
 
 	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> [String: ArticleStatus] {
 
@@ -105,23 +100,22 @@ final class StatusesTable: DatabaseTable {
 		return d
 	}
 
-	// MARK: Marking
-	
-	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: String, _ flag: Bool, _ database: FMDatabase) {
-		
-		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
-	}
-}
+	func statusWithRow(_ row: FMResultSet) -> ArticleStatus? {
 
-private extension StatusesTable {
-
-	func attachCachedStatuses(_ articles: Set<Article>) {
-
-		for article in articles {
-			if let cachedStatus = cache[article.articleID] as? ArticleStatus {
-				article.status = cachedStatus
-			}
+		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+			return nil
 		}
+		if let cachedStatus = cache[articleID] as? ArticleStatus {
+			return cachedStatus
+		}
+
+		guard let dateArrived = row.date(forColumn: DatabaseKey.dateArrived) else {
+			return nil
+		}
+
+		let articleStatus = ArticleStatus(articleID: articleID, dateArrived: dateArrived, row: row)
+		cache[articleID] = articleStatus
+		return articleStatus
 	}
 
 	func articleIDsWithNoCachedStatus(_ articleIDs: Set<String>) -> Set<String> {
@@ -137,12 +131,6 @@ private extension StatusesTable {
 		insertRows(statusArray, insertType: .orIgnore, in: database)
 	}
 
-	func cacheStatuses(_ statuses: Set<ArticleStatus>) {
-
-		let databaseObjects = statuses.map { $0 as DatabaseObject }
-		cache.addObjectsNotCached(databaseObjects)
-	}
-
 	func createAndSaveStatusesForArticles(_ articles: Set<Article>, _ database: FMDatabase) {
 
 		let articleIDs = Set(articles.map { $0.articleID })
@@ -154,7 +142,8 @@ private extension StatusesTable {
 		let now = Date()
 		let statuses = Set(articleIDs.map { ArticleStatus(articleID: $0, dateArrived: now) })
 
-		cacheStatuses(statuses)
+		cache.add(statuses)
+
 		saveStatuses(statuses, database)
 	}
 
@@ -165,6 +154,66 @@ private extension StatusesTable {
 		}
 
 		let statuses = resultSet.mapToSet(statusWithRow)
-		cacheStatuses(statuses)
+		cache.add(statuses)
 	}
 }
+
+private final class StatusCache {
+
+	// Locking is left to the caller. Use the provided lock methods.
+
+	private let lock = NSLock()
+	private var isLocked = false
+	var dictionary = [String: ArticleStatus]()
+
+	func lock() {
+
+		assert(!isLocked)
+		lock.lock()
+		isLocked = true
+	}
+
+	func unlock() {
+
+		assert(isLocked)
+		lock.unlock()
+		isLocked = false
+	}
+
+	func add(_ statuses: Set<ArticleStatus>) {
+
+		// Replaces any cached statuses.
+
+		assert(isLocked)
+		for status in statuses {
+			self[status.articleID] = status
+		}
+	}
+
+	func statuses(for articleIDs: Set<String>) -> [String: ArticleStatus] {
+
+		assert(isLocked)
+
+		var d = [String: ArticleStatus]()
+		for articleID in articleIDs {
+			if let cachedStatus = self[articleID] {
+				d[articleID] = cachedStatus
+			}
+		}
+
+		return d
+	}
+
+	subscript(_ articleID: String) -> ArticleStatus {
+		get {
+			assert(isLocked)
+			return self[articleID]
+		}
+		set {
+			assert(isLocked)
+			self[articleID] = newValue
+		}
+	}
+}
+
+

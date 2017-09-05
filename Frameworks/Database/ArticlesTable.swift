@@ -21,8 +21,7 @@ final class ArticlesTable: DatabaseTable {
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
 	private let tagsLookupTable: DatabaseLookupTable
-	private let articleCache = ArticleCache()
-	
+
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	private var articleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	private var maximumArticleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 4 * 31)!
@@ -50,23 +49,22 @@ final class ArticlesTable: DatabaseTable {
 		let feedID = feed.feedID
 		var articles = Set<Article>()
 
-		queue.fetchSync { (database: FMDatabase!) -> Void in
+		queue.fetchSync { (database) in
 			articles = self.fetchArticlesForFeedID(feedID, withLimits: true, database: database)
 		}
 
-		return articleCache.uniquedArticles(articles)
+		return articles
 	}
 
 	func fetchArticlesAsync(_ feed: Feed, withLimits: Bool, _ resultBlock: @escaping ArticleResultBlock) {
 
 		let feedID = feed.feedID
 
-		queue.fetch { (database: FMDatabase!) -> Void in
+		queue.fetch { (database) in
 
-			let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: withLimits, database: database)
+			let articles = self.fetchArticlesForFeedID(feedID, withLimits: withLimits, database: database)
 
 			DispatchQueue.main.async {
-				let articles = self.articleCache.uniquedArticles(fetchedArticles)
 				resultBlock(articles)
 			}
 		}
@@ -86,6 +84,10 @@ final class ArticlesTable: DatabaseTable {
 			return
 		}
 
+		queue.update { (database) in
+
+			
+		}
 		// 1. Ensure statuses for all the parsedItems.
 		// 2. Fetch all articles for the feed.
 		// 3. For each parsedItem:
@@ -515,49 +517,4 @@ private extension ArticlesTable {
 		return [String: ParsedItem]() //TODO
 	}
 }
-
-// MARK: -
-
-private struct ArticleCache {
-	
-	// Main thread only — unlike the other object caches.
-	// The cache contains a given article only until all outside references are gone.
-	// Cache key is articleID.
-	
-	private let articlesMapTable: NSMapTable<NSString, Article> = NSMapTable.weakToWeakObjects()
-
-	func uniquedArticles(_ articles: Set<Article>) -> Set<Article> {
-
-		var articlesToReturn = Set<Article>()
-
-		for article in articles {
-			let articleID = article.articleID
-			if let cachedArticle = cachedArticle(for: articleID) {
-				articlesToReturn.insert(cachedArticle)
-			}
-			else {
-				articlesToReturn.insert(article)
-				addToCache(article)
-			}
-		}
-
-		// At this point, every Article must have an attached Status.
-		assert(articlesToReturn.eachHasAStatus())
-
-		return articlesToReturn
-	}
-	
-	private func cachedArticle(for articleID: String) -> Article? {
-	
-		return articlesMapTable.object(forKey: articleID as NSString)
-	}
-	
-	private func addToCache(_ article: Article) {
-	
-		articlesMapTable.setObject(article, forKey: article.articleID as NSString)
-	}
-}
-
-
-
 
