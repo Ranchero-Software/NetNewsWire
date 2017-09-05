@@ -20,3 +20,12 @@ extension String: DatabaseObject {
 		}
 	}
 }
+
+func tagSetWithParsedTags(_ parsedTags: [String]?) -> Set<String>? {
+
+	guard let parsedTags = parsedTags, !parsedTags.isEmpty else {
+		return nil
+	}
+
+	return Set(parsedTags)
+}

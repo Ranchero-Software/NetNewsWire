@@ -14,7 +14,6 @@ final class AttachmentsTable: DatabaseRelatedObjectsTable {
 
 	let name: String
 	let databaseIDKey = DatabaseKey.attachmentID
-	private let cache = DatabaseObjectCache()
 
 	init(name: String) {
 
@@ -43,14 +42,6 @@ private extension AttachmentsTable {
 		guard let attachmentID = row.string(forColumn: DatabaseKey.attachmentID) else {
 			return nil
 		}
-		if let cachedAttachment = cache[attachmentID] as? Attachment {
-			return cachedAttachment
-		}
-
-		guard let attachment = Attachment(attachmentID: attachmentID, row: row) else {
-			return nil
-		}
-		cache[attachmentID] = attachment as DatabaseObject
-		return attachment
+		return Attachment(attachmentID: attachmentID, row: row)
 	}
 }

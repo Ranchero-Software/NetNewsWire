@@ -8,40 +8,31 @@
 
 import Foundation
 
-public final class Article: Hashable {
+public struct Article: Hashable {
 
-	weak var account: Account?
-	
-	public let articleID: String // Unique database ID
+	public let articleID: String // Unique database ID (possibly sync service ID)
+	public let accountID: String
 	public let feedID: String // Likely a URL, but not necessarily
 	public let uniqueID: String // Unique per feed (RSS guid, for example)
-	public var title: String?
-	public var contentHTML: String?
-	public var contentText: String?
-	public var url: String?
-	public var externalURL: String?
-	public var summary: String?
-	public var imageURL: String?
-	public var bannerImageURL: String?
-	public var datePublished: Date?
-	public var dateModified: Date?
-	public var authors: [Author]?
-	public var tags: Set<String>?
-	public var attachments: [Attachment]?
-	public var accountInfo: [String: Any]? //If account needs to store more data
-	
-	public var status: ArticleStatus?
+	public let title: String?
+	public let contentHTML: String?
+	public let contentText: String?
+	public let url: String?
+	public let externalURL: String?
+	public let summary: String?
+	public let imageURL: String?
+	public let bannerImageURL: String?
+	public let datePublished: Date?
+	public let dateModified: Date?
+	public let authors: Set<Author>?
+	public let tags: Set<String>?
+	public let attachments: Set<Attachment>?
 	public let hashValue: Int
 
-	public var feed: Feed? {
-		get {
-			return account?.existingFeed(with: feedID)
-		}
-	}
 
-	public init(account: Account, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [Author]?, tags: Set<String>?, attachments: [Attachment]?, accountInfo: AccountInfo?) {
+	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, tags: Set<String>?, attachments: Set<Attachment>?, accountInfo: AccountInfo?) {
 		
-		self.account = account
+		self.accountID = accountID
 		self.feedID = feedID
 		self.uniqueID = uniqueID
 		self.title = title
@@ -66,12 +57,12 @@ public final class Article: Hashable {
 			self.articleID = databaseIDWithString("\(feedID) \(uniqueID)")
 		}
 
-		self.hashValue = account.hashValue ^ self.articleID.hashValue
+		self.hashValue = accountID.hashValue ^ self.articleID.hashValue
 	}
 
 	public class func ==(lhs: Article, rhs: Article) -> Bool {
 
-		return lhs === rhs
+		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.authors == rhs.authors && lhs.tags == rhs.tags && lhs.attachments == rhs.attachments
 	}
 }
 
@@ -82,4 +73,28 @@ public extension Article {
 			return (datePublished ?? dateModified) ?? status?.dateArrived
 		}
 	}
+
+	// MARK: Main-thread only accessors.
+
+	public var account: Account? {
+		get {
+			assert(Thread.isMainThread, "article.account is main-thread-only.")
+			return Account.account(with: accountID)
+		}
+	}
+
+	public var feed: Feed? {
+		get {
+			assert(Thread.isMainThread, "article.feed is main-thread-only.")
+			return account?.existingFeed(with: feedID)
+		}
+	}
+
+	public var status: ArticleStatus? {
+		get {
+			assert(Thread.isMainThread, "article.status is main-thread-only.")
+			return account?.status(with: articleID)
+		}
+	}
 }
+

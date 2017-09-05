@@ -21,7 +21,6 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 	
 	let name: String
 	let databaseIDKey = DatabaseKey.authorID
-	private let cache = DatabaseObjectCache()
 
 	init(name: String) {
 
@@ -41,7 +40,6 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
 		// TODO
 	}
-
 }
 
 private extension AuthorsTable {
@@ -52,7 +50,7 @@ private extension AuthorsTable {
 			return nil
 		}
 
-		if let cachedAuthor = cache[authorID] as? Author {
+		if let cachedAuthor = Author.cachedAuthor[authorID] {
 			return cachedAuthor
 		}
 		

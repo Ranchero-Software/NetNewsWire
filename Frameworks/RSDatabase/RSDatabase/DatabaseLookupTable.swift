@@ -126,7 +126,7 @@ private extension DatabaseLookupTable {
 		
 		let relatedObjectsToSave = uniqueArrayOfRelatedObjects(with: objectsNeedingUpdate)
 		if relatedObjectsToSave.isEmpty {
-			assertionFailure("updateRelationships: expected related objects to save. This should be unreachable.")
+			assertionFailure("updateRelationships: expected relatedObjectsToSave would not be empty. This should be unreachable.")
 			return
 		}
 		

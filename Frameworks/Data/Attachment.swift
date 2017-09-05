@@ -47,6 +47,6 @@ public struct Attachment: Hashable {
 
 	public static func ==(lhs: Attachment, rhs: Attachment) -> Bool {
 
-		return lhs.sizeInBytes == rhs.sizeInBytes && lhs.url == rhs.url && lhs.mimeType == rhs.mimeType && lhs.title == rhs.title && lhs.durationInSeconds == rhs.durationInSeconds
+		return lhs.hashValue == rhs.hashValue && lhs.attachmentID == rhs.attachmentID
 	}
 }

@@ -50,7 +50,7 @@ public final class Database {
 
 	public func fetchArticlesAsync(for feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
 
-		articlesTable.fetchArticlesAsync(feed, resultBlock)
+		articlesTable.fetchArticlesAsync(feed, withLimits: true, resultBlock)
 	}
 
 	public func fetchUnreadArticles(for folder: Folder) -> Set<Article> {
@@ -70,19 +70,6 @@ public final class Database {
 	public func update(feed: Feed, parsedFeed: ParsedFeed, completion: @escaping RSVoidCompletionBlock) {
 
 		return articlesTable.update(feed, parsedFeed, completion)
-		
-//		if parsedFeed.items.isEmpty {
-//			completionHandler()
-//			return
-//		}
-//
-//		let parsedArticlesDictionary = self.articlesDictionary(parsedFeed.items as NSSet) as! [String: ParsedItem]
-//
-//		fetchArticlesForFeedAsync(feed) { (articles) -> Void in
-//
-//			let articlesDictionary = self.articlesDictionary(articles as NSSet) as! [String: Article]
-//			self.updateArticles(articlesDictionary, parsedArticles: parsedArticlesDictionary, feed: feed, completionHandler: completionHandler)
-//		}
 	}
 	
 	// MARK: - Status

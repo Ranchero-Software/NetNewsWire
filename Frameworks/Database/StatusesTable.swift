@@ -75,6 +75,36 @@ final class StatusesTable: DatabaseTable {
 		createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus, database)
 	}
 
+	func fetchStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> [String: ArticleStatus] {
+
+		// Does not create statuses. Checks cache first, then database only if needed.
+
+		var d = [String: ArticleStatus]()
+		var articleIDsMissingCachedStatus = Set<String>()
+
+		for articleID in articleIDs {
+			if let cachedStatus = cache[articleID] as? ArticleStatus {
+				d[articleID] = cachedStatus
+			}
+			else {
+				articleIDsMissingCachedStatus.insert(articleID)
+			}
+		}
+
+		if articleIDsMissingCachedStatus.isEmpty {
+			return d
+		}
+
+		fetchAndCacheStatusesForArticleIDs(articleIDsMissingCachedStatus, database)
+		for articleID in articleIDsMissingCachedStatus {
+			if let cachedStatus = cache[articleID] as? ArticleStatus {
+				d[articleID] = cachedStatus
+			}
+		}
+
+		return d
+	}
+
 	// MARK: Marking
 	
 	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: String, _ flag: Bool, _ database: FMDatabase) {

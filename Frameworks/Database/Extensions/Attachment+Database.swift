@@ -9,6 +9,7 @@
 import Foundation
 import Data
 import RSDatabase
+import RSParser
 
 extension Attachment {
 
@@ -26,6 +27,24 @@ extension Attachment {
 		self.init(attachmentID: attachmentID, url: url, mimeType: mimeType, title: title, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds)
 	}
 
+	init?(parsedAttachment: ParsedAttachment) {
+
+		guard let url = parsedAttachment.url else {
+			return nil
+		}
+
+		self.init(attachmentID: nil, url: url, mimeType: parsedAttachment.mimeType, title: parsedAttachment.title, sizeInBytes: parsedAttachment.sizeInBytes, durationInSeconds: parsedAttachment.durationInSeconds)
+	}
+
+	static func attachmentsWithParsedAttachments(_ parsedAttachments: [ParsedAttachment]?) -> Set<Attachment>? {
+
+		guard let parsedAttachments = parsedAttachments else {
+			return nil
+		}
+
+		let attachments = parsedAttachments.flatMap{ Attachment(parsedAttachment: $0) }
+		return attachments.isEmpty ? nil : Set(attachments)
+	}
 }
 
 private func optionalIntForColumn(_ row: FMResultSet, _ columnName: String) -> Int? {

@@ -25,6 +25,7 @@ final class ArticlesTable: DatabaseTable {
 	
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	private var articleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
+	private var maximumArticleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 4 * 31)!
 
 	init(name: String, account: Account, queue: RSDatabaseQueue) {
 
@@ -50,19 +51,19 @@ final class ArticlesTable: DatabaseTable {
 		var articles = Set<Article>()
 
 		queue.fetchSync { (database: FMDatabase!) -> Void in
-			articles = self.fetchArticlesForFeedID(feedID, database: database)
+			articles = self.fetchArticlesForFeedID(feedID, withLimits: true, database: database)
 		}
 
 		return articleCache.uniquedArticles(articles)
 	}
 
-	func fetchArticlesAsync(_ feed: Feed, _ resultBlock: @escaping ArticleResultBlock) {
+	func fetchArticlesAsync(_ feed: Feed, withLimits: Bool, _ resultBlock: @escaping ArticleResultBlock) {
 
 		let feedID = feed.feedID
 
 		queue.fetch { (database: FMDatabase!) -> Void in
 
-			let fetchedArticles = self.fetchArticlesForFeedID(feedID, database: database)
+			let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: withLimits, database: database)
 
 			DispatchQueue.main.async {
 				let articles = self.articleCache.uniquedArticles(fetchedArticles)
@@ -81,22 +82,18 @@ final class ArticlesTable: DatabaseTable {
 	func update(_ feed: Feed, _ parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
 
 		if parsedFeed.items.isEmpty {
-
-			// Once upon a time in an early version of NetNewsWire there was a bug with this issue.
-			// The design, at the time, was that NetNewsWire would always show only what’s currently in a feed —
-			// no more and no less.
-			// This meant that if a feed had zero items, then all the articles for that feed would be deleted.
-			// There were two problems with that:
-			// 1. People didn’t expect articles to just disappear like that.
-			// 2. Technorati (R.I.P.) had a bug where some of its feeds, at seemingly random times, would have zero items.
-			// So this hit people. THEY WERE NOT HAPPY.
-			// These days we just ignore empty feeds. Who cares if they’re empty. It just means less work the app has to do.
-
 			completion()
 			return
 		}
 
-		fetchArticlesAsync(feed) { (articles) in
+		// 1. Ensure statuses for all the parsedItems.
+		// 2. Fetch all articles for the feed.
+		// 3. For each parsedItem:
+		//	  - if userDeleted || (!starred && status.dateArrived < cutoff), then ignore
+		//    - if matches existing article, then update database with changes between the two
+		//    - if new, create article and save in database
+
+		fetchArticlesAsync(feed, withLimits: false) { (articles) in
 			self.updateArticles(articles.dictionary(), parsedFeed.itemsDictionary(with: feed), feed, completion)
 		}
 	}
@@ -195,13 +192,13 @@ private extension ArticlesTable {
 		return articles
 	}
 
-	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]) -> Set<Article> {
+	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject], withLimits: Bool) -> Set<Article> {
 
 		// Don’t fetch articles that shouldn’t appear in the UI. The rules:
 		// * Must not be deleted.
 		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
 
-		let sql = "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or dateArrived>?);"
+		let sql = withLimits ? "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or dateArrived>?);" : "select * from articles natural join statuses where \(whereClause);"
 		return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject], database)
 	}
 
@@ -216,9 +213,9 @@ private extension ArticlesTable {
 		return numberWithSQLAndParameters(sql, [feedID, articleCutoffDate], in: database)
 	}
 	
-	func fetchArticlesForFeedID(_ feedID: String, database: FMDatabase) -> Set<Article> {
+	func fetchArticlesForFeedID(_ feedID: String, withLimits: Bool, database: FMDatabase) -> Set<Article> {
 
-		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject])
+		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject], withLimits: withLimits)
 	}
 
 	func fetchUnreadArticles(_ feedIDs: Set<String>) -> Set<Article> {
@@ -236,7 +233,7 @@ private extension ArticlesTable {
 			let parameters = feedIDs.map { $0 as AnyObject }
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 			let whereClause = "feedID in \(placeholders) and read=0"
-			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
+			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
 		}
 
 		return articleCache.uniquedArticles(articles)
@@ -254,17 +251,269 @@ private extension ArticlesTable {
 
 	func updateArticles(_ articlesDictionary: [String: Article], _ parsedItemsDictionary: [String: ParsedItem], _ feed: Feed, _ completion: @escaping RSVoidCompletionBlock) {
 
-		let parsedItemArticleIDs = Set(parsedItemsDictionary.keys)
+		// 1. Fetch statuses for parsedItems.
+		// 2. Filter out parsedItems where userDeleted==1 or (arrival date > 4 months and not starred).
+		// (Under no user setting do we retain articles older with an arrival date > 4 months.)
+		// 3. Find parsedItems with no status and no matching article: save them as entirely new articles.
+		// 4. Compare remaining parsedItems with articles, and update database with any changes.
 
-		queue.update { (database) in
+		assert(Thread.isMainThread)
 
-			self.statusesTable.ensureStatusesForArticleIDs(parsedItemArticleIDs, database)
+		queue.fetch { (database) in
 
+			let parsedItemArticleIDs = Set(parsedItemsDictionary.keys)
+			let fetchedStatuses = self.statusesTable.fetchStatusesForArticleIDs(parsedItemArticleIDs, database)
+
+			DispatchQueue.main.async {
+
+				// #2. Drop any parsedItems that can be ignored.
+				// If that’s all of them, then great — nothing to do.
+				let filteredParsedItems = self.filterParsedItems(parsedItemsDictionary, fetchedStatuses)
+				if filteredParsedItems.isEmpty {
+					completion()
+					return
+				}
+
+				// #3. Save entirely new parsedItems.
+				let newParsedItems = self.findNewParsedItems(parsedItemsDictionary, fetchedStatuses, articlesDictionary)
+				if !newParsedItems.isEmpty {
+					self.saveNewParsedItems(newParsedItems, feed)
+				}
+
+				// #4. Update existing parsedItems.
+				let parsedItemsToUpdate = self.findExistingParsedItems(parsedItemsDictionary, fetchedStatuses, articlesDictionary)
+				if !parsedItemsToUpdate.isEmpty {
+					self.updateParsedItems(parsedItemsToUpdate, articlesDictionary, feed)
+				}
+
+				completion()
+			}
 		}
+	}
 
+	func updateParsedItems(_ parsedItems: [String: ParsedItem], _ articles: [String: Article], _ feed: Feed) {
+
+		assert(Thread.isMainThread)
+
+		updateRelatedObjects(_ parsedItems: [String: ParsedItem], _ articles: [String: Article])
 
 	}
 
+	func updateRelatedObjects(_ parsedItems: [String: ParsedItem], _ articles: [String: Article]) {
+
+		// Update the in-memory Articles when needed.
+		// Save only when there are changes, which should be pretty infrequent.
+
+		assert(Thread.isMainThread)
+
+		var articlesWithTagChanges = Set<Article>()
+		var articlesWithAttachmentChanges = Set<Article>()
+		var articlesWithAuthorChanges = Set<Article>()
+
+		for (articleID, parsedItem) in parsedItems {
+
+			guard let article = articles[articleID] else {
+				continue
+			}
+
+			if article.updateTagsWithParsedTags(parsedItem.tags) {
+				articlesWithTagChanges.insert(article)
+			}
+			if article.updateAttachmentsWithParsedAttachments(parsedItem.attachments) {
+				articlesWithAttachmentChanges.insert(article)
+			}
+			if article.updateAuthorsWithParsedAuthors(parsedItem.authors) {
+				articlesWithAuthorChanges.insert(article)
+			}
+		}
+
+		if articlesWithTagChanges.isEmpty && articlesWithAttachmentChanges.isEmpty && articlesWithAuthorChanges.isEmpty {
+			// Should be pretty common.
+			return
+		}
+
+		// We used detachedCopy because the Article objects being updated are main-thread objects.
+		
+		articlesWithTagChanges = Set(articlesWithTagChanges.map{ $0.detachedCopy() })
+		articlesWithAttachmentChanges = Set(articlesWithAttachmentChanges.map{ $0.detachedCopy() })
+		articlesWithAuthorChanges = Set(articlesWithAuthorChanges.map{ $0.detachedCopy() })
+
+		queue.update { (database) in
+			if !articlesWithTagChanges.isEmpty {
+				tagsLookupTable.saveRelatedObjects(for: articlesWithTagChanges.databaseObjects(), in: database)
+			}
+			if !articlesWithAttachmentChanges.isEmpty {
+				attachmentsLookupTable.saveRelatedObjects(for: articlesWithAttachmentChanges.databaseObjects(), in: database)
+			}
+			if !articlesWithAuthorChanges.isEmpty {
+				authorsLookupTable.saveRelatedObjects(for: articlesWithAuthorChanges.databaseObjects(), in: database)
+			}
+		}
+	}
+
+	func updateRelatedAttachments(_ parsedItems: [String: ParsedItem], _ articles: [String: Article]) {
+
+		var articlesWithChanges = Set<Article>()
+
+		for (articleID, parsedItem) in parsedItems {
+			guard let article = articles[articleID] else {
+				continue
+			}
+			if !parsedItemTagsMatchArticlesTag(parsedItem, article) {
+				articlesChanges.insert(article)
+			}
+		}
+
+		if articlesWithChanges.isEmpty {
+			return
+		}
+		queue.update { (database) in
+			tagsLookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
+		}
+
+	}
+
+	func updateRelatedTags(_ parsedItems: [String: ParsedItem], _ articles: [String: Article]) {
+
+		var articlesWithChanges = Set<Article>()
+
+		for (articleID, parsedItem) in parsedItems {
+			guard let article = articles[articleID] else {
+				continue
+			}
+			if !parsedItemTagsMatchArticlesTag(parsedItem, article) {
+				articlesChanges.insert(article)
+			}
+		}
+
+		if articlesWithChanges.isEmpty {
+			return
+		}
+		queue.update { (database) in
+			tagsLookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
+		}
+	}
+
+	func parsedItemTagsMatchArticlesTag(_ parsedItem: ParsedItem, _ article: Article) -> Bool {
+
+		let parsedItemTags = parsedItem.tags
+		let articleTags = article.tags
+
+		if parsedItemTags == nil && articleTags == nil {
+			return true
+		}
+		if parsedItemTags != nil && articleTags == nil {
+			return false
+		}
+		if parsedItemTags == nil && articleTags != nil {
+			return true
+		}
+		return Set(parsedItemTags!) == articleTags!
+	}
+
+	func saveNewParsedItems(_ parsedItems: [String: ParsedItem], _ feed: Feed) {
+
+		// These parsedItems have no existing status or Article.
+
+		queue.update { (database) in
+
+			let articleIDs = Set(parsedItems.keys)
+			self.statusesTable.ensureStatusesForArticleIDs(articleIDs, database)
+
+			let articles = self.articlesWithParsedItems(Set(parsedItems.values), feed)
+			self.saveUncachedNewArticles(articles, database)
+		}
+	}
+
+	func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ feed: Feed) -> Set<Article> {
+
+		// These Articles don’t get cached. Background-queue only.
+		let feedID = feed.feedID
+		return Set(parsedItems.flatMap{ articleWithParsedItem($0, feedID) })
+	}
+
+	func articleWithParsedItem(_ parsedItem: ParsedItem, _ feedID: String) -> Article? {
+
+		guard let account = account else {
+			assertionFailure("account is unexpectedly nil.")
+			return nil
+		}
+
+		return Article(parsedItem: parsedItem, feedID: feedID, account: account)
+	}
+
+	func saveUncachedNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
+
+		saveRelatedObjects(articles, database)
+
+		let databaseDictionaries = articles.map { $0.databaseDictionary() }
+		insertRows(databaseDictionaries, insertType: .orIgnore, in: database)
+	}
+
+	func saveRelatedObjects(_ articles: Set<Article>, _ database: FMDatabase) {
+
+		let databaseObjects = articles.databaseObjects()
+
+		authorsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
+		attachmentsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
+		tagsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
+	}
+	
+	func statusIndicatesArticleIsIgnorable(_ status: ArticleStatus) -> Bool {
+
+		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).
+
+		if status.userDeleted {
+			return true
+		}
+		if status.starred {
+			return false
+		}
+		return status.dateArrived < maximumArticleCutoffDate
+	}
+
+	func filterParsedItems(_ parsedItems: [String: ParsedItem], _ statuses: [String: ArticleStatus]) -> [String: ParsedItem] {
+
+		// Drop parsedItems that we can ignore.
+
+		assert(Thread.isMainThread)
+
+		var d = [String: ParsedItem]()
+
+		for (articleID, parsedItem) in parsedItems {
+
+			if let status = statuses[articleID] {
+				if statusIndicatesArticleIsIgnorable(status) {
+					continue
+				}
+			}
+			d[articleID] = parsedItem
+		}
+
+		return d
+	}
+
+	func findNewParsedItems(_ parsedItems: [String: ParsedItem], _ statuses: [String: ArticleStatus], _ articles: [String: Article]) -> [String: ParsedItem] {
+
+		// If there’s no existing status or Article, then it’s completely new.
+
+		assert(Thread.isMainThread)
+
+		var d = [String: ParsedItem]()
+
+		for (articleID, parsedItem) in parsedItems {
+			if statuses[articleID] == nil && articles[articleID] == nil {
+				d[articleID] = parsedItem
+			}
+		}
+
+		return d
+	}
+
+	func findExistingParsedItems(_ parsedItems: [String: ParsedItem], _ statuses: [String: ArticleStatus], _ articles: [String: Article]) -> [String: ParsedItem] {
+
+		return [String: ParsedItem]() //TODO
+	}
 }
 
 // MARK: -

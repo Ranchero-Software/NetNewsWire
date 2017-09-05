@@ -9,6 +9,7 @@
 import Foundation
 import RSDatabase
 import Data
+import RSParser
 
 extension Article {
 	
@@ -35,19 +36,128 @@ extension Article {
 		let accountInfo: [String: Any]? = nil // TODO
 
 		// authors, tags, and attachments are fetched from related tables, after init.
-		let authors: [Author]? = nil
-		let tags: Set<String>? = nil
-		let attachments: [Attachment]? = nil
-		
-		self.init(account: account, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
+
+		self.init(account: account, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, tags: nil, attachments: nil, accountInfo: accountInfo)
+	}
+
+	convenience init(parsedItem: ParsedItem, feedID: String, account: Account) {
+
+		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
+		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
+		let tags = tagSetWithParsedTags(parsedItem.tags)
+
+		self.init(account: account, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: parsedItem.datePublished, dateModified: parsedItem.dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: nil)
 	}
 
 	func databaseDictionary() -> NSDictionary {
 		
 		let d = NSMutableDictionary()
 		
+		d[DatabaseKey.articleID] = articleID
+		d[DatabaseKey.feedID] = feedID
+		d[DatabaseKey.uniqueID] = uniqueID
+
+		d.addOptionalString(title, DatabaseKey.title)
+		d.addOptionalString(contentHTML, DatabaseKey.contentHTML)
+		d.addOptionalString(url, DatabaseKey.url)
+		d.addOptionalString(externalURL, DatabaseKey.externalURL)
+		d.addOptionalString(summary, DatabaseKey.summary)
+		d.addOptionalString(imageURL, DatabaseKey.imageURL)
+		d.addOptionalString(bannerImageURL, DatabaseKey.bannerImageURL)
+
+		d.addOptionalDate(datePublished, DatabaseKey.datePublished)
+		d.addOptionalDate(dateModified, DatabaseKey.dateModified)
+
+		// TODO: accountInfo
 		
 		return d.copy() as! NSDictionary
+	}
+
+	// MARK: Updating with ParsedItem
+
+	func updateTagsWithParsedTags(_ parsedTags: [String]?) -> Bool {
+
+		// Return true if there's a change.
+
+		let currentTags = tags
+
+		if parsedTags == nil && currentTags == nil {
+			return false
+		}
+		if parsedTags != nil && currentTags == nil {
+			tags = Set(parsedItemTags!)
+			return true
+		}
+		if parsedTags == nil && currentTags != nil {
+			tags = nil
+			return true
+		}
+		let parsedTagSet = Set(parsedTags!)
+		if parsedTagSet == tags! {
+			return false
+		}
+		tags = parsedTagSet
+		return true
+	}
+
+	func updateAttachmentsWithParsedAttachments(_ parsedAttachments: [ParsedAttachment]?) -> Bool {
+
+		// Return true if there's a change.
+
+		let currentAttachments = attachments
+		let updatedAttachments = Attachment.attachmentsWithParsedAttachments(parsedAttachments)
+
+		if updatedAttachments == nil && currentAttachments == nil {
+			return false
+		}
+		if updatedAttachments != nil && currentAttachments == nil {
+			attachments = updatedAttachments
+			return true
+		}
+		if updatedAttachments == nil && currentAttachments != nil {
+			attachments = nil
+			return true
+		}
+
+		guard let currentAttachments = currentAttachments, let updatedAttachments = updatedAttachments else {
+			assertionFailure("currentAttachments and updatedAttachments must both be non-nil.")
+			return false
+		}
+		if currentAttachments != updatedAttachments {
+			attachments = updatedAttachments
+			return true
+		}
+		return false
+	}
+
+	func updateAuthorsWithParsedAuthors(_ parsedAuthors: [ParsedAuthor]?) -> Bool {
+
+		// Return true if there's a change.
+
+		let currentAuthors = authors
+		let updatedAuthors = Author.authorsWithParsedAuthors(parsedAuthors)
+
+		if updatedAuthors == nil && currentAuthors == nil {
+			return false
+		}
+		if updatedAuthors != nil && currentAuthors == nil {
+			authors = updatedAuthors
+			return true
+		}
+		if updatedAuthors == nil && currentAuthors != nil {
+			authors = nil
+			return true
+		}
+
+		guard let currentAuthors = currentAuthors, let updatedAuthors = updatedAuthors else {
+			assertionFailure("currentAuthors and updatedAuthors must both be non-nil.")
+			return false
+		}
+		if currentAuthors != updatedAuthors {
+			authors = updatedAuthors
+			return true
+		}
+		return false
 	}
 }
 
@@ -61,11 +171,6 @@ extension Article: DatabaseObject {
 }
 
 extension Set where Element == Article {
-
-	func withNilProperty<T>(_ keyPath: KeyPath<Article,T?>) -> Set<Article> {
-
-		return Set(filter{ $0[keyPath: keyPath] == nil })
-	}
 
 	func articleIDs() -> Set<String> {
 
@@ -84,7 +189,7 @@ extension Set where Element == Article {
 
 	func missingStatuses() -> Set<Article> {
 
-		return withNilProperty(\Article.status)
+		return Set<Article>(self.filter { $0.status == nil })
 	}
 	
 	func statuses() -> Set<ArticleStatus> {
@@ -99,5 +204,27 @@ extension Set where Element == Article {
 			d[article.articleID] = article
 		}
 		return d
+	}
+
+	func databaseObjects() -> [DatabaseObject] {
+
+		return self.map{ $0 as DatabaseObject }
+	}
+}
+
+private extension NSMutableDictionary {
+
+	func addOptionalString(_ value: String?, _ key: String) {
+
+		if let value = value {
+			self[key] = value
+		}
+	}
+
+	func addOptionalDate(_ date: Date?, _ key: String) {
+
+		if let date = date {
+			self[key] = date as NSDate
+		}
 	}
 }
