@@ -79,10 +79,10 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: Updating
 	
-	func update(_ feed: Feed, _ parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
+	func update(_ feed: Feed, _ parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
 
 		if parsedFeed.items.isEmpty {
-			completion()
+			completion(nil, nil)
 			return
 		}
 
@@ -90,40 +90,51 @@ final class ArticlesTable: DatabaseTable {
 		// 2. Ignore parsedItems that are userDeleted || (!starred and really old)
 		// 3. Fetch all articles for the feed.
 		// 4. Create Articles with parsedItems.
-		// 5.
+		// 5. Create array of Articles not in database and save them.
+		// 6. Create array of updated Articles and save what’s changed.
+		// 7. Call back with new and updated Articles.
+		
 		let feedID = feed.feedID
 		let parsedItemArticleIDs = Set(parsedFeed.items.map { $0.databaseIdentifierWithFeed(feed) })
 		let parsedItemsDictionary = parsedFeed.itemsDictionary(with: feed)
 
-		statusesTable.ensureStatusesForArticleIDs(parsedItemArticleIDs) {
+		statusesTable.ensureStatusesForArticleIDs(parsedItemArticleIDs) { // 1
 		
-			let filteredParsedItems = self.filterParsedItems(parsedItemsDictionary)
+			let filteredParsedItems = self.filterParsedItems(parsedItemsDictionary) // 2
 			if filteredParsedItems.isEmpty {
-				completion()
+				completion(nil, nil)
 				return
 			}
 
-			queue.fetch{ (database) in
+			queue.update{ (database) in
 				
-				let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database: database)
+				let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database: database) //3
+				let fetchedArticlesDictionary = fetchedArticles.dictionary()
 				
-				let incomingArticles = Article.articlesWithParsedItems(parsedFeed.items, accountID, feedID)
-				
-				
+				let incomingArticles = Article.articlesWithParsedItems(filteredParsedItems, accountID, feedID) //4
+				let incomingArticlesDictionary = incomingArticles.dictionary()
 
+				let newArticles = Set(incomingArticles.filter { fetchedArticles[$0.articleID] == nil }) //5
+				if !newArticles.isEmpty {
+					saveNewArticles(newArticles, database)
+				}
+
+				let updatedArticles = incomingArticles.filter{ (incomingArticle) -> Bool in //6
+					if let existingArticle = fetchedArticles[incomingArticle.articleID] {
+						if existingArticle != incomingArticle {
+							return true
+						}
+					}
+					return false
+				}
+				if !updatedArticles.isEmpty {
+					saveUpdatedArticles(Set(updatedArticles), fetchedArticlesDictionary, database)
+				}
+
+				DispatchQueue.main.async {
+					completion(newArticles, updatedArticles) //7
+				}
 			}
-			
-			
-		}
-
-		
-		// 3. For each parsedItem:
-		//	  - if userDeleted || (!starred && status.dateArrived < cutoff), then ignore
-		//    - if matches existing article, then update database with changes between the two
-		//    - if new, create article and save in database
-
-		fetchArticlesAsync(feed, withLimits: false) { (articles) in
-			self.updateArticles(articles.dictionary(), parsedFeed.itemsDictionary(with: feed), feed, completion)
 		}
 	}
 
@@ -182,21 +193,21 @@ private extension ArticlesTable {
 
 	// MARK: Fetching
 
-	func attachRelatedObjects(_ articles: Set<Article>, _ database: FMDatabase) {
-
-		let articleArray = articles.map { $0 as DatabaseObject }
-		
-		authorsLookupTable.attachRelatedObjects(to: articleArray, in: database)
-		attachmentsLookupTable.attachRelatedObjects(to: articleArray, in: database)
-		tagsLookupTable.attachRelatedObjects(to: articleArray, in: database)
-
-		// In theory, it’s impossible to have a fetched article without a status.
-		// Let’s handle that impossibility anyway.
-		// Remember that, if nothing else, the user can edit the SQLite database,
-		// and thus could delete all their statuses.
-
-		statusesTable.ensureStatusesForArticles(articles, database)
-	}
+//	func attachRelatedObjects(_ articles: Set<Article>, _ database: FMDatabase) {
+//
+//		let articleArray = articles.map { $0 as DatabaseObject }
+//
+//		authorsLookupTable.attachRelatedObjects(to: articleArray, in: database)
+//		attachmentsLookupTable.attachRelatedObjects(to: articleArray, in: database)
+//		tagsLookupTable.attachRelatedObjects(to: articleArray, in: database)
+//
+//		// In theory, it’s impossible to have a fetched article without a status.
+//		// Let’s handle that impossibility anyway.
+//		// Remember that, if nothing else, the user can edit the SQLite database,
+//		// and thus could delete all their statuses.
+//
+//		statusesTable.ensureStatusesForArticles(articles, database)
+//	}
 
 	func articleWithRow(_ row: FMResultSet) -> Article? {
 

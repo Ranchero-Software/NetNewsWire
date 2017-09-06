@@ -8,7 +8,24 @@
 
 import Foundation
 
-public struct DatabaseTableName {
+// MARK: - Notifications
+
+public extension Notification.Name {
+
+	public static let ArticlesDidSave = Notification.Name(rawValue: "ArticlesDidSave")
+}
+
+public struct DatabaseNotificationKey {
+
+	// userInfo keys (with Set<Article> values) for ArticlesDidSave.
+	// One or both will be present. If present, may be empty.
+	static let newArticles = "newArticles"
+	static let updatedArticles = "updatedArticles"
+}
+
+// MARK: - Database structure
+
+struct DatabaseTableName {
 	
 	static let articles = "articles"
 	static let authors = "authors"
@@ -19,7 +36,7 @@ public struct DatabaseTableName {
 	static let attachmentsLookup = "attachmentsLookup"
 }
 
-public struct DatabaseKey {
+struct DatabaseKey {
 	
 	// Shared
 	static let databaseID = "databaseID"
@@ -65,7 +82,7 @@ public struct DatabaseKey {
 	static let emailAddress = "emailAddress"
 }
 
-public struct RelationshipName {
+struct RelationshipName {
 	
 	static let authors = "authors"
 	static let tags = "tags"

@@ -73,7 +73,7 @@ extension Article {
 
 	static func articlesWithParsedItems(_ parsedItems: [ParsedItem], _ accountID: String, _ feedID: String) -> Set<Article> {
 	
-		return parsedItems.map{ Article(parsedItem: $0, accountID: accountID, feedID: feedID) }
+		return Set(parsedItems.map{ Article(parsedItem: $0, accountID: accountID, feedID: feedID) })
 	}
 	
 	// MARK: Updating with ParsedItem

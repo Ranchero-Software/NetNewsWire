@@ -15,6 +15,7 @@ import Data
 public typealias ArticleResultBlock = (Set<Article>) -> Void
 public typealias UnreadCountTable = [String: Int] // feedID: unreadCount
 public typealias UnreadCountCompletionBlock = (UnreadCountTable) -> Void //feedID: unreadCount
+typealias UpdateArticlesWithFeedCompletionBlock = (Set<Article>, Set<Article>) -> Void
 
 public final class Database {
 
