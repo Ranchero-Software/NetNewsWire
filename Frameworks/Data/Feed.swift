@@ -11,7 +11,7 @@ import RSCore
 
 public final class Feed: UnreadCountProvider, DisplayNameProvider, Hashable {
 
-	public let account: Account
+	public let accountID: String
 	public let url: String
 	public let feedID: String
 	public var homePageURL: String?
@@ -35,12 +35,12 @@ public final class Feed: UnreadCountProvider, DisplayNameProvider, Hashable {
 		}
 	}
 	
-	public init(account: Account, url: String, feedID: String) {
+	public init(accountID: String, url: String, feedID: String) {
 
-		self.account = account
+		self.accountID = accountID
 		self.url = url
 		self.feedID = feedID
-		self.hashValue = account.hashValue ^ url.hashValue ^ feedID.hashValue
+		self.hashValue = accountID.hashValue ^ url.hashValue ^ feedID.hashValue
 	}
 
 	public func updateUnreadCount() {

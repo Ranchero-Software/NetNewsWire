@@ -18,12 +18,13 @@ public enum ArticleStatusKey: String {
 public struct ArticleStatus: Hashable {
 	
 	public let articleID: String
-	public let read = false
-	public let starred = false
-	public let userDeleted = false
 	public let dateArrived: Date
-	public let accountInfo: AccountInfo?
 	public let hashValue: Int
+
+	public var read = false
+	public var starred = false
+	public var userDeleted = false
+	public var accountInfo: AccountInfo?
 	
 	public init(articleID: String, read: Bool, starred: Bool, userDeleted: Bool, dateArrived: Date, accountInfo: AccountInfo?) {
 		
@@ -36,7 +37,7 @@ public struct ArticleStatus: Hashable {
 		self.hashValue = articleID.hashValue
 	}
 
-	public convenience init(articleID: String, dateArrived: Date) {
+	public init(articleID: String, dateArrived: Date) {
 
 		self.init(articleID: articleID, read: false, starred: false, userDeleted: false, dateArrived: dateArrived, accountInfo: nil)
 	}
@@ -59,27 +60,27 @@ public struct ArticleStatus: Hashable {
 		return false
 	}
 	
-//	public func setBoolStatus(_ status: Bool, forKey key: String) {
-//
-//		if let articleStatusKey = ArticleStatusKey(rawValue: key) {
-//			switch articleStatusKey {
-//			case .read:
-//				read = status
-//			case .starred:
-//				starred = status
-//			case .userDeleted:
-//				userDeleted = status
-//			}
-//		}
+	public mutating func setBoolStatus(_ status: Bool, forKey key: String) {
+
+		if let articleStatusKey = ArticleStatusKey(rawValue: key) {
+			switch articleStatusKey {
+			case .read:
+				read = status
+			case .starred:
+				starred = status
+			case .userDeleted:
+				userDeleted = status
+			}
+		}
 //		else {
 //			if accountInfo == nil {
 //				accountInfo = AccountInfo()
 //			}
 //			accountInfo![key] = status
 //		}
-//	}
+	}
 
-	public class func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
+	public static func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
 		
 		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred && lhs.userDeleted == rhs.userDeleted && lhs.accountInfo == rhs.accountInfo
 	}

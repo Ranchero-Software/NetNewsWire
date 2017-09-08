@@ -10,13 +10,13 @@ import Foundation
 
 public final class Folder: UnreadCountProvider {
 
-	public let account: Account
+	public let accountID: String
 	public var nameForDisplay: String
 	var childObjects = [AnyObject]()
 	
-	init(account: Account, nameForDisplay: String) {
+	init(accountID: String, nameForDisplay: String) {
 		
-		self.account = account
+		self.accountID = accountID
 		self.nameForDisplay = nameForDisplay
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)

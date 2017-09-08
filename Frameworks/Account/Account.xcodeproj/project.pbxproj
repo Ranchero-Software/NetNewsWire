@@ -28,6 +28,7 @@
 		848935041F62485000CEBD24 /* AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTests.swift; sourceTree = "<group>"; };
 		848935061F62485000CEBD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		848935101F62486800CEBD24 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		848935201F62498B00CEBD24 /* Account+OPMLRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+OPMLRepresentable.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				848935101F62486800CEBD24 /* Account.swift */,
+				848935201F62498B00CEBD24 /* Account+OPMLRepresentable.swift */,
 				848934FA1F62484F00CEBD24 /* Info.plist */,
 				848935031F62484F00CEBD24 /* AccountTests */,
 				848934F71F62484F00CEBD24 /* Products */,

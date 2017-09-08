@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import RSCore
-import RSDatabase
+
+public typealias AccountInfo = [String: AnyObject]
 
 // AccountInfo is a plist-compatible dictionary that’s stored as a binary plist in the database.
 

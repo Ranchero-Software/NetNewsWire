@@ -27,6 +27,7 @@ public struct Article: Hashable {
 	public let authors: Set<Author>?
 	public let tags: Set<String>?
 	public let attachments: Set<Attachment>?
+	public let accountInfo: AccountInfo?
 	public let hashValue: Int
 
 	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, tags: Set<String>?, attachments: Set<Attachment>?, accountInfo: AccountInfo?) {
@@ -59,42 +60,10 @@ public struct Article: Hashable {
 		self.hashValue = accountID.hashValue ^ self.articleID.hashValue
 	}
 
-	public class func ==(lhs: Article, rhs: Article) -> Bool {
+	public static func ==(lhs: Article, rhs: Article) -> Bool {
 
 		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.authors == rhs.authors && lhs.tags == rhs.tags && lhs.attachments == rhs.attachments
 	}
 }
 
-public extension Article {
-
-	// MARK: Main-thread only accessors.
-	
-	public var logicalDatePublished: Date? {
-		get {
-			assert(Thread.isMainThread)
-			return (datePublished ?? dateModified) ?? status?.dateArrived
-		}
-	}
-
-	public var account: Account? {
-		get {
-			assert(Thread.isMainThread)
-			return Account.account(with: accountID)
-		}
-	}
-
-	public var feed: Feed? {
-		get {
-			assert(Thread.isMainThread)
-			return account?.existingFeed(with: feedID)
-		}
-	}
-
-	public var status: ArticleStatus? {
-		get {
-			assert(Thread.isMainThread)
-			return account?.status(with: articleID)
-		}
-	}
-}
 
