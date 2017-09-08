@@ -335,7 +335,7 @@ private extension ArticlesTable {
 
 		assert(Thread.isMainThread)
 
-		updateRelatedObjects(_ parsedItems: [String: ParsedItem], _ articles: [String: Article])
+//		updateRelatedObjects(_ parsedItems: [String: ParsedItem], _ articles: [String: Article])
 
 	}
 
@@ -391,78 +391,91 @@ private extension ArticlesTable {
 		}
 	}
 
-	func updateRelatedAttachments(_ parsedItems: [String: ParsedItem], _ articles: [String: Article]) {
+	// MARK: Save New Articles
 
-		var articlesWithChanges = Set<Article>()
+	func saveNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
 
-		for (articleID, parsedItem) in parsedItems {
-			guard let article = articles[articleID] else {
-				continue
-			}
-			if !parsedItemTagsMatchArticlesTag(parsedItem, article) {
-				articlesChanges.insert(article)
-			}
-		}
+		saveRelatedObjectsForNewArticles(articles, database)
 
-		if articlesWithChanges.isEmpty {
-			return
-		}
-		queue.update { (database) in
-			tagsLookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
-		}
-
+		let databaseDictionaries = articles.map { $0.databaseDictionary() }
+		insertRows(databaseDictionaries, insertType: .orReplace, in: database)
 	}
 
-	func updateRelatedTags(_ parsedItems: [String: ParsedItem], _ articles: [String: Article]) {
+	func saveRelatedObjectsForNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
 
-		var articlesWithChanges = Set<Article>()
+		let databaseObjects = articles.databaseObjects()
 
-		for (articleID, parsedItem) in parsedItems {
-			guard let article = articles[articleID] else {
-				continue
-			}
-			if !parsedItemTagsMatchArticlesTag(parsedItem, article) {
-				articlesChanges.insert(article)
-			}
-		}
-
-		if articlesWithChanges.isEmpty {
-			return
-		}
-		queue.update { (database) in
-			tagsLookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
-		}
+		authorsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
+		attachmentsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
+		tagsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
 	}
 
-	func parsedItemTagsMatchArticlesTag(_ parsedItem: ParsedItem, _ article: Article) -> Bool {
+	// MARK: Update Existing Articles
 
-		let parsedItemTags = parsedItem.tags
-		let articleTags = article.tags
+	// TODO: use a keypath instead of separate functions. Fix code duplication.
 
-		if parsedItemTags == nil && articleTags == nil {
+	func articlesWithTagChanges(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
+
+		return updatedArticles.filter{ (updatedArticle) -> Bool in
+			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
+				return updatedArticle.tags != fetchedArticles.tags
+			}
+			assertionFailure("Expected to find matching fetched article.");
 			return true
 		}
-		if parsedItemTags != nil && articleTags == nil {
-			return false
-		}
-		if parsedItemTags == nil && articleTags != nil {
-			return true
-		}
-		return Set(parsedItemTags!) == articleTags!
 	}
 
-	func saveNewParsedItems(_ parsedItems: [String: ParsedItem], _ feed: Feed) {
+	func articlesWithAttachmentChanges(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
 
-		// These parsedItems have no existing status or Article.
-
-		queue.update { (database) in
-
-			let articleIDs = Set(parsedItems.keys)
-			self.statusesTable.ensureStatusesForArticleIDs(articleIDs, database)
-
-			let articles = self.articlesWithParsedItems(Set(parsedItems.values), feed)
-			self.saveUncachedNewArticles(articles, database)
+		return updatedArticles.filter{ (updatedArticle) -> Bool in
+			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
+				return updatedArticle.attachments != fetchedArticles.attachments
+			}
+			assertionFailure("Expected to find matching fetched article.");
+			return true
 		}
+	}
+
+	func articlesWithAuthorChanges(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
+
+		return updatedArticles.filter{ (updatedArticle) -> Bool in
+			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
+				return updatedArticle.authors != fetchedArticles.authors
+			}
+			assertionFailure("Expected to find matching fetched article.");
+			return true
+		}
+	}
+
+	func updateRelatedTags(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
+
+		let articlesWithChanges = articlesWithTagChanges(updatedArticles, fetchedArticles)
+		if !articlesWithChanges.isEmpty {
+			tagsLookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
+		}
+	}
+
+	func updateRelatedAttachments(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
+
+		let articlesWithChanges = articlesWithAttachmentChanges(updatedArticles, fetchedArticles)
+		if !articlesWithChanges.isEmpty {
+			attachmentsLookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
+		}
+	}
+
+	func updateRelatedAuthors(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
+
+		let articlesWithChanges = articlesWithAuthorChanges(updatedArticles, fetchedArticles)
+		if !articlesWithChanges.isEmpty {
+			authorsLookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
+		}
+	}
+
+	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
+
+		updateRelatedTags(updatedArticles, fetchedArticles, database)
+		updateRelatedAttachments(updatedArticles, fetchedArticles, database)
+		updatedRelatedAuthors(updatedArticles, fetchedArticles, database)
 	}
 
 	func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ feed: Feed) -> Set<Article> {
@@ -474,31 +487,9 @@ private extension ArticlesTable {
 
 	func articleWithParsedItem(_ parsedItem: ParsedItem, _ feedID: String) -> Article? {
 
-		guard let account = account else {
-			assertionFailure("account is unexpectedly nil.")
-			return nil
-		}
-
-		return Article(parsedItem: parsedItem, feedID: feedID, account: account)
+		return Article(parsedItem: parsedItem, feedID: feedID, accountID: accountID)
 	}
 
-	func saveUncachedNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-
-		saveRelatedObjects(articles, database)
-
-		let databaseDictionaries = articles.map { $0.databaseDictionary() }
-		insertRows(databaseDictionaries, insertType: .orIgnore, in: database)
-	}
-
-	func saveRelatedObjects(_ articles: Set<Article>, _ database: FMDatabase) {
-
-		let databaseObjects = articles.databaseObjects()
-
-		authorsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
-		attachmentsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
-		tagsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
-	}
-	
 	func statusIndicatesArticleIsIgnorable(_ status: ArticleStatus) -> Bool {
 
 		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).

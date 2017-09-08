@@ -13,7 +13,7 @@ import RSParser
 
 extension Article {
 	
-	convenience init?(row: FMResultSet, authors: Set<Author>, attachments: Set<Attachment>, tags: Set<String>, accountID: String) {
+	init?(row: FMResultSet, authors: Set<Author>, attachments: Set<Attachment>, tags: Set<String>, accountID: String) {
 		
 		guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
 			return nil
@@ -38,7 +38,7 @@ extension Article {
 		self.init(account: account, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
 	}
 
-	convenience init(parsedItem: ParsedItem, accountID: String, feedID: String) {
+	init(parsedItem: ParsedItem, accountID: String, feedID: String) {
 
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
 		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)

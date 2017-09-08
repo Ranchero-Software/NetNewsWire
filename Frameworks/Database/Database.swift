@@ -24,12 +24,9 @@ public final class Database {
 	private let articlesTable: ArticlesTable
 	private var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	private let minimumNumberOfArticles = 10
-	private weak var delegate: AccountDelegate?
-	private weak var account: Account?
 
-	public init(databaseFile: String, delegate: AccountDelegate, account: Account) {
+	public init(databaseFile: String) {
 
-		self.delegate = delegate
 		self.account = account
 		self.databaseFile = databaseFile
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
