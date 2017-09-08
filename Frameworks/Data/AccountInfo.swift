@@ -8,7 +8,15 @@
 
 import Foundation
 
-public typealias AccountInfo = [String: AnyObject]
+public struct AccountInfo: Equatable {
+
+	var dictionary: [String: AnyObject]?
+
+	public static func ==(lhs: AccountInfo, rhs: AccountInfo) -> Bool {
+
+		return true // TODO
+	}
+}
 
 // AccountInfo is a plist-compatible dictionary that’s stored as a binary plist in the database.
 

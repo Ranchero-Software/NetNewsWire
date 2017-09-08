@@ -25,7 +25,6 @@
 		844BEE981F0AB4F8004AB7CD /* AccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE941F0AB4F8004AB7CD /* AccountDelegate.swift */; };
 		844BEE991F0AB4F8004AB7CD /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE951F0AB4F8004AB7CD /* Container.swift */; };
 		844BEE9A1F0AB4F8004AB7CD /* DisplayNameProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE961F0AB4F8004AB7CD /* DisplayNameProvider.swift */; };
-		844BEE9B1F0AB4F8004AB7CD /* UnreadCountProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE971F0AB4F8004AB7CD /* UnreadCountProvider.swift */; };
 		848935221F6249AC00CEBD24 /* AccountInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848935211F6249AC00CEBD24 /* AccountInfo.swift */; };
 /* End PBXBuildFile section */
 
@@ -81,7 +80,6 @@
 		844BEE941F0AB4F8004AB7CD /* AccountDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountDelegate.swift; sourceTree = "<group>"; };
 		844BEE951F0AB4F8004AB7CD /* Container.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
 		844BEE961F0AB4F8004AB7CD /* DisplayNameProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayNameProvider.swift; sourceTree = "<group>"; };
-		844BEE971F0AB4F8004AB7CD /* UnreadCountProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadCountProvider.swift; sourceTree = "<group>"; };
 		844BEE9C1F0AB512004AB7CD /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		848935211F6249AC00CEBD24 /* AccountInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -162,7 +160,6 @@
 				844BEE941F0AB4F8004AB7CD /* AccountDelegate.swift */,
 				844BEE951F0AB4F8004AB7CD /* Container.swift */,
 				844BEE961F0AB4F8004AB7CD /* DisplayNameProvider.swift */,
-				844BEE971F0AB4F8004AB7CD /* UnreadCountProvider.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -342,7 +339,6 @@
 				844BEE811F0AB4D0004AB7CD /* Author.swift in Sources */,
 				844BEE921F0AB4EF004AB7CD /* OPMLRepresentable.swift in Sources */,
 				840405CA1F1A8E4300DF0296 /* DatabaseID.swift in Sources */,
-				844BEE9B1F0AB4F8004AB7CD /* UnreadCountProvider.swift in Sources */,
 				844BEE851F0AB4DB004AB7CD /* ArticleStatus.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

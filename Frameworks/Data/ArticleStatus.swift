@@ -54,9 +54,9 @@ public struct ArticleStatus: Hashable {
 				return userDeleted
 			}
 		}
-		else if let flag = accountInfo?[key] as? Bool {
-			return flag
-		}
+//		else if let flag = accountInfo?[key] as? Bool {
+//			return flag
+//		}
 		return false
 	}
 	

@@ -9,7 +9,7 @@
 import Foundation
 import RSCore
 
-public final class Feed: UnreadCountProvider, DisplayNameProvider, Hashable {
+public final class Feed: DisplayNameProvider, Hashable {
 
 	public let accountID: String
 	public let url: String
@@ -27,13 +27,13 @@ public final class Feed: UnreadCountProvider, DisplayNameProvider, Hashable {
 		}
 	}
 
-	public var unreadCount = 0 {
-		didSet {
-			if unreadCount != oldValue {
-				postUnreadCountDidChangeNotification()
-			}
-		}
-	}
+//	public var unreadCount = 0 {
+//		didSet {
+//			if unreadCount != oldValue {
+//				postUnreadCountDidChangeNotification()
+//			}
+//		}
+//	}
 	
 	public init(accountID: String, url: String, feedID: String) {
 
@@ -43,15 +43,15 @@ public final class Feed: UnreadCountProvider, DisplayNameProvider, Hashable {
 		self.hashValue = accountID.hashValue ^ url.hashValue ^ feedID.hashValue
 	}
 
-	public func updateUnreadCount() {
-		
-		unreadCount = articles.reduce(0) { (result, oneArticle) -> Int in
-			if let read = oneArticle.status?.read, !read {
-				return result + 1
-			}
-			return result
-		}
-	}
+//	public func updateUnreadCount() {
+//		
+//		unreadCount = articles.reduce(0) { (result, oneArticle) -> Int in
+//			if let read = oneArticle.status?.read, !read {
+//				return result + 1
+//			}
+//			return result
+//		}
+//	}
 
 	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
 
