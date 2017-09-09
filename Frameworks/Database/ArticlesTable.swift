@@ -442,20 +442,34 @@ private extension ArticlesTable {
 
 		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
 		
+		for updatedArticle in updatedArticles {
+			guard let fetchedArticle = fetchedArticle[updatedArticle.articleID] else {
+				assertionFailure("Expected to find matching fetched article.");
+				
+			}
+			if let changesDictionary = updatedArticle.changesFrom(fetchedArticles[upd])
+		}
 	}
 
-	func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ feed: Feed) -> Set<Article> {
-
-		assert(!Thread.isMainThread)
-		let feedID = feed.feedID
-		return Set(parsedItems.flatMap{ articleWithParsedItem($0, feedID) })
+	func saveUpdatedArticle(_ updatedArticle: Article, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
+		
+		// Only update exactly what has changed in the Article (if anything).
+		// Untested theory: this gets us better performance and less database fragmentation.
+		
+		guard let fetchedArticle = fetchedArticle[updatedArticle.articleID] else {
+			assertionFailure("Expected to find matching fetched article.");
+			saveNewArticles(Set([updatedArticle]), database)
+			return
+		}
+		
+		guard let changesDictionary = updatedArticle.changesFrom(fetchedArticle), !changesDictionary.isEmpty else {
+			// Not unexpected. There may be no changes.
+			return
+		}
+		
+		updateRowsWithDictionary(changesDictionary, whereKey: DatabaseKey.articleID, matches: updatedArticle.articleID, database: database)
 	}
-
-	func articleWithParsedItem(_ parsedItem: ParsedItem, _ feedID: String) -> Article? {
-
-		return Article(parsedItem: parsedItem, feedID: feedID, accountID: accountID)
-	}
-
+	
 	func statusIndicatesArticleIsIgnorable(_ status: ArticleStatus) -> Bool {
 
 		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).

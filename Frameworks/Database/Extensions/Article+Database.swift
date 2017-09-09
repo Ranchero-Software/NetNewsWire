@@ -57,6 +57,7 @@ extension Article {
 
 		d.addOptionalString(title, DatabaseKey.title)
 		d.addOptionalString(contentHTML, DatabaseKey.contentHTML)
+		d.addOptionalString(contentText, DatabaseKey.contentText)
 		d.addOptionalString(url, DatabaseKey.url)
 		d.addOptionalString(externalURL, DatabaseKey.externalURL)
 		d.addOptionalString(summary, DatabaseKey.summary)
@@ -70,98 +71,60 @@ extension Article {
 		
 		return d.copy() as! NSDictionary
 	}
+	
+	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String>, _ otherArticle: Article, _ key: String, _ dictionary: NSMutableDictionary) {
+		
+		if self[keyPath: comparisonKeyPath] != otherArticle[keyPath: comparisonKeyPath] {
+			dictionary.addOptionalStringDefaultingEmpty(self[keyPath: comparisonKeyPath], key)
+		}
+	}
+	
+	func changesFrom(_ otherArticle: Article) -> NSDictionary? {
+		
+		if self == otherArticle {
+			return nil
+		}
+		
+		let d = NSMutableDictionary()
+		
+		addPossibleStringChangeWithKeyPath(\Article.uniqueID, otherArticle, DatabaseKey.uniqueID, d)
+		addPossibleStringChangeWithKeyPath(\Article.title, otherArticle, DatabaseKey.title, d)
+		addPossibleStringChangeWithKeyPath(\Article.contentHTML, otherArticle, DatabaseKey.contentHTML, d)
+		addPossibleStringChangeWithKeyPath(\Article.contentText, otherArticle, DatabaseKey.contentText, d)
+		addPossibleStringChangeWithKeyPath(\Article.url, otherArticle, DatabaseKey.url, d)
+		addPossibleStringChangeWithKeyPath(\Article.externalURL, otherArticle, DatabaseKey.externalURL, d)
+		addPossibleStringChangeWithKeyPath(\Article.summary, otherArticle, DatabaseKey.summary, d)
+		addPossibleStringChangeWithKeyPath(\Article.imageURL, otherArticle, DatabaseKey.imageURL, d)
+		addPossibleStringChangeWithKeyPath(\Article.bannerImageURL, otherArticle, DatabaseKey.bannerImageURL, d)
+
+		// If updated versions of dates are nil, and we have existing dates, keep the existing dates.
+		// This is data that’s good to have, and it’s likely that a feed removing dates is doing so in error.
+		
+		if article.datePublished != otherArticle.datePublished {
+			if let updatedDatePublished = otherArticle.datePublished {
+				d[DatabaseKey.datePublished] = updatedDatePublished
+			}
+		}
+		if article.dateModified != otherArticle.dateModified {
+			if let updatedDateModified = otherArticle.dateModified {
+				d[DatabaseKey.dateModified] = updatedDateModified
+			}
+		}
+		
+		// TODO: accountInfo
+		
+		if d.isEmpty {
+			return nil
+		}
+		
+		return d
+	}
 
 	static func articlesWithParsedItems(_ parsedItems: [ParsedItem], _ accountID: String, _ feedID: String) -> Set<Article> {
 	
 		return Set(parsedItems.map{ Article(parsedItem: $0, accountID: accountID, feedID: feedID) })
 	}
 	
-	// MARK: Updating with ParsedItem
-
-//	func updateTagsWithParsedTags(_ parsedTags: [String]?) -> Bool {
-//
-//		// Return true if there's a change.
-//
-//		let currentTags = tags
-//
-//		if parsedTags == nil && currentTags == nil {
-//			return false
-//		}
-//		if parsedTags != nil && currentTags == nil {
-//			tags = Set(parsedItemTags!)
-//			return true
-//		}
-//		if parsedTags == nil && currentTags != nil {
-//			tags = nil
-//			return true
-//		}
-//		let parsedTagSet = Set(parsedTags!)
-//		if parsedTagSet == tags! {
-//			return false
-//		}
-//		tags = parsedTagSet
-//		return true
-//	}
-//
-//	func updateAttachmentsWithParsedAttachments(_ parsedAttachments: [ParsedAttachment]?) -> Bool {
-//
-//		// Return true if there's a change.
-//
-//		let currentAttachments = attachments
-//		let updatedAttachments = Attachment.attachmentsWithParsedAttachments(parsedAttachments)
-//
-//		if updatedAttachments == nil && currentAttachments == nil {
-//			return false
-//		}
-//		if updatedAttachments != nil && currentAttachments == nil {
-//			attachments = updatedAttachments
-//			return true
-//		}
-//		if updatedAttachments == nil && currentAttachments != nil {
-//			attachments = nil
-//			return true
-//		}
-//
-//		guard let currentAttachments = currentAttachments, let updatedAttachments = updatedAttachments else {
-//			assertionFailure("currentAttachments and updatedAttachments must both be non-nil.")
-//			return false
-//		}
-//		if currentAttachments != updatedAttachments {
-//			attachments = updatedAttachments
-//			return true
-//		}
-//		return false
-//	}
-//
-//	func updateAuthorsWithParsedAuthors(_ parsedAuthors: [ParsedAuthor]?) -> Bool {
-//
-//		// Return true if there's a change.
-//
-//		let currentAuthors = authors
-//		let updatedAuthors = Author.authorsWithParsedAuthors(parsedAuthors)
-//
-//		if updatedAuthors == nil && currentAuthors == nil {
-//			return false
-//		}
-//		if updatedAuthors != nil && currentAuthors == nil {
-//			authors = updatedAuthors
-//			return true
-//		}
-//		if updatedAuthors == nil && currentAuthors != nil {
-//			authors = nil
-//			return true
-//		}
-//
-//		guard let currentAuthors = currentAuthors, let updatedAuthors = updatedAuthors else {
-//			assertionFailure("currentAuthors and updatedAuthors must both be non-nil.")
-//			return false
-//		}
-//		if currentAuthors != updatedAuthors {
-//			authors = updatedAuthors
-//			return true
-//		}
-//		return false
-//	}
 }
 
 extension Article: DatabaseObject {
@@ -224,6 +187,16 @@ private extension NSMutableDictionary {
 		}
 	}
 
+	func addOptionalStringDefaultingEmpty(_ value: String?, _ key: String) {
+		
+		if let value = value {
+			self[key] = value
+		}
+		else {
+			self[key] = ""
+		}
+	}
+	
 	func addOptionalDate(_ date: Date?, _ key: String) {
 
 		if let date = date {
