@@ -440,9 +440,8 @@ private extension ArticlesTable {
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
 
-		updateRelatedTags(updatedArticles, fetchedArticles, database)
-		updateRelatedAttachments(updatedArticles, fetchedArticles, database)
-		updatedRelatedAuthors(updatedArticles, fetchedArticles, database)
+		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
+		
 	}
 
 	func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ feed: Feed) -> Set<Article> {
