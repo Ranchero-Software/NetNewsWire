@@ -31,7 +31,7 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 	
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
 	
-		if let author = authorWithRow(row) {
+		if let author = Author.authorWithRow(row) {
 			return author as DatabaseObject
 		}
 		return nil
@@ -42,23 +42,3 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 	}
 }
 
-private extension AuthorsTable {
-
-	func authorWithRow(_ row: FMResultSet) -> Author? {
-
-		guard let authorID = row.string(forColumn: DatabaseKey.authorID) else {
-			return nil
-		}
-
-		if let cachedAuthor = Author.cachedAuthor[authorID] {
-			return cachedAuthor
-		}
-		
-		guard let author = Author(authorID: authorID, row: row) else {
-			return nil
-		}
-
-		cache[authorID] = author
-		return author
-	}
-}

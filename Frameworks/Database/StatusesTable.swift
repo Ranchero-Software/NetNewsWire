@@ -169,7 +169,7 @@ private final class StatusCache {
 		}
 	}
 	
-	subscript(_ articleID: String) -> ArticleStatus {
+	subscript(_ articleID: String) -> ArticleStatus? {
 		get {
 			return self[articleID]
 		}

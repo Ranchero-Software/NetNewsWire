@@ -293,7 +293,7 @@ private extension ArticlesTable {
 
 	// MARK: Update Existing Articles
 
-	func articlesWithRelatedObjectChanges(_ comparisonKeyPath: Keypath<Article, Set<AnyHashable>>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
+	func articlesWithRelatedObjectChanges(_ comparisonKeyPath: KeyPath<Article, Set<AnyHashable>>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
 
 		return updatedArticles.filter{ (updatedArticle) -> Bool in
 			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
@@ -304,7 +304,7 @@ private extension ArticlesTable {
 		}
 	}
 
-	func updateRelatedObjects(_ comparisonKeyPath: Keypath<Article, Set<AnyHashable>>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ lookupTable: DatabaseLookupTable, _ database: FMDatabase) {
+	func updateRelatedObjects(_ comparisonKeyPath: KeyPath<Article, Set<AnyHashable>>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ lookupTable: DatabaseLookupTable, _ database: FMDatabase) {
 
 		let articlesWithChanges = articlesWithRelatedObjectChanges(comparisonKeyPath, updatedArticles, fetchedArticles)
 		if !articlesWithChanges.isEmpty {
@@ -312,7 +312,7 @@ private extension ArticlesTable {
 		}
 	}
 
-	func saveUpdatedRelatedObjects(_ updatedArticles: Set<Article>, _fetchedArticles: [String: Article], _ database: FMDatabase) {
+	func saveUpdatedRelatedObjects(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
 
 		updateRelatedObjects(\Article.tags, updatedArticles, fetchedArticles, tagsLookupTable, database)
 		updateRelatedObjects(\Article.authors, updatedArticles, fetchedArticles, authorsLookupTable, database)

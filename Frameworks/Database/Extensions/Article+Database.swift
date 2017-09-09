@@ -35,7 +35,7 @@ extension Article {
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 		let accountInfo: [String: Any]? = nil // TODO
 
-		self.init(account: account, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
+		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
 	}
 
 	init(parsedItem: ParsedItem, accountID: String, feedID: String) {
@@ -44,7 +44,7 @@ extension Article {
 		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
 		let tags = tagSetWithParsedTags(parsedItem.tags)
 
-		self.init(account: account, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: parsedItem.datePublished, dateModified: parsedItem.dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: nil)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: parsedItem.datePublished, dateModified: parsedItem.dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: nil)
 	}
 
 	func databaseDictionary() -> NSDictionary {
@@ -72,7 +72,7 @@ extension Article {
 		return d.copy() as! NSDictionary
 	}
 	
-	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String>, _ otherArticle: Article, _ key: String, _ dictionary: NSMutableDictionary) {
+	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: NSMutableDictionary) {
 		
 		if self[keyPath: comparisonKeyPath] != otherArticle[keyPath: comparisonKeyPath] {
 			dictionary.addOptionalStringDefaultingEmpty(self[keyPath: comparisonKeyPath], key)
@@ -86,8 +86,13 @@ extension Article {
 		}
 		
 		let d = NSMutableDictionary()
+		if uniqueID != otherArticle.uniqueID {
+			// This should be super-rare, if ever.
+			if !otherArticle.uniqueID.isEmpty {
+				d[DatabaseKey.uniqueID] = otherArticle.uniqueID
+			}
+		}
 		
-		addPossibleStringChangeWithKeyPath(\Article.uniqueID, otherArticle, DatabaseKey.uniqueID, d)
 		addPossibleStringChangeWithKeyPath(\Article.title, otherArticle, DatabaseKey.title, d)
 		addPossibleStringChangeWithKeyPath(\Article.contentHTML, otherArticle, DatabaseKey.contentHTML, d)
 		addPossibleStringChangeWithKeyPath(\Article.contentText, otherArticle, DatabaseKey.contentText, d)
@@ -100,12 +105,12 @@ extension Article {
 		// If updated versions of dates are nil, and we have existing dates, keep the existing dates.
 		// This is data that’s good to have, and it’s likely that a feed removing dates is doing so in error.
 		
-		if article.datePublished != otherArticle.datePublished {
+		if datePublished != otherArticle.datePublished {
 			if let updatedDatePublished = otherArticle.datePublished {
 				d[DatabaseKey.datePublished] = updatedDatePublished
 			}
 		}
-		if article.dateModified != otherArticle.dateModified {
+		if dateModified != otherArticle.dateModified {
 			if let updatedDateModified = otherArticle.dateModified {
 				d[DatabaseKey.dateModified] = updatedDateModified
 			}
@@ -113,7 +118,7 @@ extension Article {
 		
 		// TODO: accountInfo
 		
-		if d.isEmpty {
+		if d.count < 1 {
 			return nil
 		}
 		
@@ -141,26 +146,6 @@ extension Set where Element == Article {
 	func articleIDs() -> Set<String> {
 
 		return Set<String>(map { $0.databaseID })
-	}
-
-	func eachHasAStatus() -> Bool {
-
-		for article in self {
-			if article.status == nil {
-				return false
-			}
-		}
-		return true
-	}
-
-	func missingStatuses() -> Set<Article> {
-
-		return Set<Article>(self.filter { $0.status == nil })
-	}
-	
-	func statuses() -> Set<ArticleStatus> {
-		
-		return Set<ArticleStatus>(self.flatMap { $0.status })
 	}
 
 	func dictionary() -> [String: Article] {
