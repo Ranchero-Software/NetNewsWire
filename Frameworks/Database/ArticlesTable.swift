@@ -181,6 +181,7 @@ final class ArticlesTable: DatabaseTable {
 			return
 		}
 		
+		// TODO: statusesTable needs to cache status changes.
 		queue.update { (database) in
 			self.statusesTable.markArticleIDs(Set(articleIDs), statusKey, flag, database)
 		}
@@ -192,22 +193,6 @@ final class ArticlesTable: DatabaseTable {
 private extension ArticlesTable {
 
 	// MARK: Fetching
-
-//	func attachRelatedObjects(_ articles: Set<Article>, _ database: FMDatabase) {
-//
-//		let articleArray = articles.map { $0 as DatabaseObject }
-//
-//		authorsLookupTable.attachRelatedObjects(to: articleArray, in: database)
-//		attachmentsLookupTable.attachRelatedObjects(to: articleArray, in: database)
-//		tagsLookupTable.attachRelatedObjects(to: articleArray, in: database)
-//
-//		// In theory, it’s impossible to have a fetched article without a status.
-//		// Let’s handle that impossibility anyway.
-//		// Remember that, if nothing else, the user can edit the SQLite database,
-//		// and thus could delete all their statuses.
-//
-//		statusesTable.ensureStatusesForArticles(articles, database)
-//	}
 
 	func articleWithRow(_ row: FMResultSet) -> Article? {
 
@@ -287,110 +272,6 @@ private extension ArticlesTable {
 		return articlesWithResultSet(resultSet, database)
 	}
 
-	// MARK: Saving/Updating
-
-	func updateArticles(_ articlesDictionary: [String: Article], _ parsedItemsDictionary: [String: ParsedItem], _ feed: Feed, _ completion: @escaping RSVoidCompletionBlock) {
-
-		// 1. Fetch statuses for parsedItems.
-		// 2. Filter out parsedItems where userDeleted==1 or (arrival date > 4 months and not starred).
-		// (Under no user setting do we retain articles older with an arrival date > 4 months.)
-		// 3. Find parsedItems with no status and no matching article: save them as entirely new articles.
-		// 4. Compare remaining parsedItems with articles, and update database with any changes.
-
-		assert(Thread.isMainThread)
-
-		queue.fetch { (database) in
-
-			let parsedItemArticleIDs = Set(parsedItemsDictionary.keys)
-			let fetchedStatuses = self.statusesTable.fetchStatusesForArticleIDs(parsedItemArticleIDs, database)
-
-			DispatchQueue.main.async {
-
-				// #2. Drop any parsedItems that can be ignored.
-				// If that’s all of them, then great — nothing to do.
-				let filteredParsedItems = self.filterParsedItems(parsedItemsDictionary, fetchedStatuses)
-				if filteredParsedItems.isEmpty {
-					completion()
-					return
-				}
-
-				// #3. Save entirely new parsedItems.
-				let newParsedItems = self.findNewParsedItems(parsedItemsDictionary, fetchedStatuses, articlesDictionary)
-				if !newParsedItems.isEmpty {
-					self.saveNewParsedItems(newParsedItems, feed)
-				}
-
-				// #4. Update existing parsedItems.
-				let parsedItemsToUpdate = self.findExistingParsedItems(parsedItemsDictionary, fetchedStatuses, articlesDictionary)
-				if !parsedItemsToUpdate.isEmpty {
-					self.updateParsedItems(parsedItemsToUpdate, articlesDictionary, feed)
-				}
-
-				completion()
-			}
-		}
-	}
-
-	func updateParsedItems(_ parsedItems: [String: ParsedItem], _ articles: [String: Article], _ feed: Feed) {
-
-		assert(Thread.isMainThread)
-
-//		updateRelatedObjects(_ parsedItems: [String: ParsedItem], _ articles: [String: Article])
-
-	}
-
-//	func updateRelatedObjects(_ parsedItems: [String: ParsedItem], _ articles: [String: Article]) {
-//
-//		// Update the in-memory Articles when needed.
-//		// Save only when there are changes, which should be pretty infrequent.
-//
-//		assert(Thread.isMainThread)
-//
-//		var articlesWithTagChanges = Set<Article>()
-//		var articlesWithAttachmentChanges = Set<Article>()
-//		var articlesWithAuthorChanges = Set<Article>()
-//
-//		for (articleID, parsedItem) in parsedItems {
-//
-//			guard let article = articles[articleID] else {
-//				continue
-//			}
-//
-//			if article.updateTagsWithParsedTags(parsedItem.tags) {
-//				articlesWithTagChanges.insert(article)
-//			}
-//			if article.updateAttachmentsWithParsedAttachments(parsedItem.attachments) {
-//				articlesWithAttachmentChanges.insert(article)
-//			}
-//			if article.updateAuthorsWithParsedAuthors(parsedItem.authors) {
-//				articlesWithAuthorChanges.insert(article)
-//			}
-//		}
-//
-//		if articlesWithTagChanges.isEmpty && articlesWithAttachmentChanges.isEmpty && articlesWithAuthorChanges.isEmpty {
-//			// Should be pretty common.
-//			return
-//		}
-//
-//		// We used detachedCopy because the Article objects being updated are main-thread objects.
-//
-//		articlesWithTagChanges = Set(articlesWithTagChanges.map{ $0.detachedCopy() })
-//		articlesWithAttachmentChanges = Set(articlesWithAttachmentChanges.map{ $0.detachedCopy() })
-//		articlesWithAuthorChanges = Set(articlesWithAuthorChanges.map{ $0.detachedCopy() })
-//
-//		queue.update { (database) in
-//			if !articlesWithTagChanges.isEmpty {
-//				tagsLookupTable.saveRelatedObjects(for: articlesWithTagChanges.databaseObjects(), in: database)
-//			}
-//			if !articlesWithAttachmentChanges.isEmpty {
-//				attachmentsLookupTable.saveRelatedObjects(for: articlesWithAttachmentChanges.databaseObjects(), in: database)
-//			}
-//			if !articlesWithAuthorChanges.isEmpty {
-//				authorsLookupTable.saveRelatedObjects(for: articlesWithAuthorChanges.databaseObjects(), in: database)
-//			}
-//		}
-//	}
-
 	// MARK: Save New Articles
 
 	func saveNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
@@ -443,11 +324,7 @@ private extension ArticlesTable {
 		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
 		
 		for updatedArticle in updatedArticles {
-			guard let fetchedArticle = fetchedArticle[updatedArticle.articleID] else {
-				assertionFailure("Expected to find matching fetched article.");
-				
-			}
-			if let changesDictionary = updatedArticle.changesFrom(fetchedArticles[upd])
+			saveUpdatedArticle(updatedArticle, fetchedArticles, database)
 		}
 	}
 
@@ -500,28 +377,6 @@ private extension ArticlesTable {
 		}
 
 		return d
-	}
-
-	func findNewParsedItems(_ parsedItems: [String: ParsedItem], _ statuses: [String: ArticleStatus], _ articles: [String: Article]) -> [String: ParsedItem] {
-
-		// If there’s no existing status or Article, then it’s completely new.
-
-		assert(Thread.isMainThread)
-
-		var d = [String: ParsedItem]()
-
-		for (articleID, parsedItem) in parsedItems {
-			if statuses[articleID] == nil && articles[articleID] == nil {
-				d[articleID] = parsedItem
-			}
-		}
-
-		return d
-	}
-
-	func findExistingParsedItems(_ parsedItems: [String: ParsedItem], _ statuses: [String: ArticleStatus], _ articles: [String: Article]) -> [String: ParsedItem] {
-
-		return [String: ParsedItem]() //TODO
 	}
 }
 
