@@ -339,57 +339,57 @@ private extension ArticlesTable {
 
 	}
 
-	func updateRelatedObjects(_ parsedItems: [String: ParsedItem], _ articles: [String: Article]) {
-
-		// Update the in-memory Articles when needed.
-		// Save only when there are changes, which should be pretty infrequent.
-
-		assert(Thread.isMainThread)
-
-		var articlesWithTagChanges = Set<Article>()
-		var articlesWithAttachmentChanges = Set<Article>()
-		var articlesWithAuthorChanges = Set<Article>()
-
-		for (articleID, parsedItem) in parsedItems {
-
-			guard let article = articles[articleID] else {
-				continue
-			}
-
-			if article.updateTagsWithParsedTags(parsedItem.tags) {
-				articlesWithTagChanges.insert(article)
-			}
-			if article.updateAttachmentsWithParsedAttachments(parsedItem.attachments) {
-				articlesWithAttachmentChanges.insert(article)
-			}
-			if article.updateAuthorsWithParsedAuthors(parsedItem.authors) {
-				articlesWithAuthorChanges.insert(article)
-			}
-		}
-
-		if articlesWithTagChanges.isEmpty && articlesWithAttachmentChanges.isEmpty && articlesWithAuthorChanges.isEmpty {
-			// Should be pretty common.
-			return
-		}
-
-		// We used detachedCopy because the Article objects being updated are main-thread objects.
-		
-		articlesWithTagChanges = Set(articlesWithTagChanges.map{ $0.detachedCopy() })
-		articlesWithAttachmentChanges = Set(articlesWithAttachmentChanges.map{ $0.detachedCopy() })
-		articlesWithAuthorChanges = Set(articlesWithAuthorChanges.map{ $0.detachedCopy() })
-
-		queue.update { (database) in
-			if !articlesWithTagChanges.isEmpty {
-				tagsLookupTable.saveRelatedObjects(for: articlesWithTagChanges.databaseObjects(), in: database)
-			}
-			if !articlesWithAttachmentChanges.isEmpty {
-				attachmentsLookupTable.saveRelatedObjects(for: articlesWithAttachmentChanges.databaseObjects(), in: database)
-			}
-			if !articlesWithAuthorChanges.isEmpty {
-				authorsLookupTable.saveRelatedObjects(for: articlesWithAuthorChanges.databaseObjects(), in: database)
-			}
-		}
-	}
+//	func updateRelatedObjects(_ parsedItems: [String: ParsedItem], _ articles: [String: Article]) {
+//
+//		// Update the in-memory Articles when needed.
+//		// Save only when there are changes, which should be pretty infrequent.
+//
+//		assert(Thread.isMainThread)
+//
+//		var articlesWithTagChanges = Set<Article>()
+//		var articlesWithAttachmentChanges = Set<Article>()
+//		var articlesWithAuthorChanges = Set<Article>()
+//
+//		for (articleID, parsedItem) in parsedItems {
+//
+//			guard let article = articles[articleID] else {
+//				continue
+//			}
+//
+//			if article.updateTagsWithParsedTags(parsedItem.tags) {
+//				articlesWithTagChanges.insert(article)
+//			}
+//			if article.updateAttachmentsWithParsedAttachments(parsedItem.attachments) {
+//				articlesWithAttachmentChanges.insert(article)
+//			}
+//			if article.updateAuthorsWithParsedAuthors(parsedItem.authors) {
+//				articlesWithAuthorChanges.insert(article)
+//			}
+//		}
+//
+//		if articlesWithTagChanges.isEmpty && articlesWithAttachmentChanges.isEmpty && articlesWithAuthorChanges.isEmpty {
+//			// Should be pretty common.
+//			return
+//		}
+//
+//		// We used detachedCopy because the Article objects being updated are main-thread objects.
+//
+//		articlesWithTagChanges = Set(articlesWithTagChanges.map{ $0.detachedCopy() })
+//		articlesWithAttachmentChanges = Set(articlesWithAttachmentChanges.map{ $0.detachedCopy() })
+//		articlesWithAuthorChanges = Set(articlesWithAuthorChanges.map{ $0.detachedCopy() })
+//
+//		queue.update { (database) in
+//			if !articlesWithTagChanges.isEmpty {
+//				tagsLookupTable.saveRelatedObjects(for: articlesWithTagChanges.databaseObjects(), in: database)
+//			}
+//			if !articlesWithAttachmentChanges.isEmpty {
+//				attachmentsLookupTable.saveRelatedObjects(for: articlesWithAttachmentChanges.databaseObjects(), in: database)
+//			}
+//			if !articlesWithAuthorChanges.isEmpty {
+//				authorsLookupTable.saveRelatedObjects(for: articlesWithAuthorChanges.databaseObjects(), in: database)
+//			}
+//		}
+//	}
 
 	// MARK: Save New Articles
 
@@ -412,63 +412,30 @@ private extension ArticlesTable {
 
 	// MARK: Update Existing Articles
 
-	// TODO: use a keypath instead of separate functions. Fix code duplication.
-
-	func articlesWithTagChanges(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
+	func articlesWithRelatedObjectChanges(_ comparisonKeyPath: Keypath<Article, Set<AnyHashable>>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
 
 		return updatedArticles.filter{ (updatedArticle) -> Bool in
 			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
-				return updatedArticle.tags != fetchedArticles.tags
+				return updatedArticle[keyPath: comparisonKeyPath] != fetchedArticle[keyPath: comparisonKeyPath]
 			}
 			assertionFailure("Expected to find matching fetched article.");
 			return true
 		}
 	}
 
-	func articlesWithAttachmentChanges(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
+	func updateRelatedObjects(_ comparisonKeyPath: Keypath<Article, Set<AnyHashable>>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ lookupTable: DatabaseLookupTable, _ database: FMDatabase) {
 
-		return updatedArticles.filter{ (updatedArticle) -> Bool in
-			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
-				return updatedArticle.attachments != fetchedArticles.attachments
-			}
-			assertionFailure("Expected to find matching fetched article.");
-			return true
-		}
-	}
-
-	func articlesWithAuthorChanges(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
-
-		return updatedArticles.filter{ (updatedArticle) -> Bool in
-			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
-				return updatedArticle.authors != fetchedArticles.authors
-			}
-			assertionFailure("Expected to find matching fetched article.");
-			return true
-		}
-	}
-
-	func updateRelatedTags(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-
-		let articlesWithChanges = articlesWithTagChanges(updatedArticles, fetchedArticles)
+		let articlesWithChanges = articlesWithRelatedObjectChanges(comparisonKeyPath, updatedArticles, fetchedArticles)
 		if !articlesWithChanges.isEmpty {
-			tagsLookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
+			lookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
 		}
 	}
 
-	func updateRelatedAttachments(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
+	func saveUpdatedRelatedObjects(_ updatedArticles: Set<Article>, _fetchedArticles: [String: Article], _ database: FMDatabase) {
 
-		let articlesWithChanges = articlesWithAttachmentChanges(updatedArticles, fetchedArticles)
-		if !articlesWithChanges.isEmpty {
-			attachmentsLookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
-		}
-	}
-
-	func updateRelatedAuthors(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-
-		let articlesWithChanges = articlesWithAuthorChanges(updatedArticles, fetchedArticles)
-		if !articlesWithChanges.isEmpty {
-			authorsLookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
-		}
+		updateRelatedObjects(\Article.tags, updatedArticles, fetchedArticles, tagsLookupTable, database)
+		updateRelatedObjects(\Article.authors, updatedArticles, fetchedArticles, authorsLookupTable, database)
+		updateRelatedObjects(\Article.attachments, updatedArticles, fetchedArticles, attachmentsLookupTable, database)
 	}
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
@@ -480,7 +447,7 @@ private extension ArticlesTable {
 
 	func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ feed: Feed) -> Set<Article> {
 
-		// These Articles don’t get cached. Background-queue only.
+		assert(!Thread.isMainThread)
 		let feedID = feed.feedID
 		return Set(parsedItems.flatMap{ articleWithParsedItem($0, feedID) })
 	}
@@ -506,8 +473,6 @@ private extension ArticlesTable {
 	func filterParsedItems(_ parsedItems: [String: ParsedItem], _ statuses: [String: ArticleStatus]) -> [String: ParsedItem] {
 
 		// Drop parsedItems that we can ignore.
-
-		assert(Thread.isMainThread)
 
 		var d = [String: ParsedItem]()
 

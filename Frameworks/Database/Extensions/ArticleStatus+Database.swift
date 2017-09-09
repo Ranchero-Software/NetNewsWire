@@ -12,7 +12,7 @@ import Data
 
 extension ArticleStatus {
 	
-	convenience init(articleID: String, dateArrived: Date, row: FMResultSet) {
+	init(articleID: String, dateArrived: Date, row: FMResultSet) {
 		
 		let read = row.bool(forColumn: DatabaseKey.read)
 		let starred = row.bool(forColumn: DatabaseKey.starred)
