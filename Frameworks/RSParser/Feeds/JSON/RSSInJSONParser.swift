@@ -141,23 +141,21 @@ private extension RSSInJSONParser {
 		return Set([parsedAuthor])
 	}
 
-	static func parseTags(_ itemDictionary: JSONDictionary) -> [String]? {
+	static func parseTags(_ itemDictionary: JSONDictionary) -> Set<String>? {
 
 		if let categoryObject = itemDictionary["category"] as? JSONDictionary {
 			if let oneTag = categoryObject["#value"] as? String {
-				return [oneTag]
+				return Set([oneTag])
 			}
 			return nil
 		}
 		else if let categoryArray = itemDictionary["category"] as? JSONArray {
-			return categoryArray.flatMap{ (categoryObject) in
-				return categoryObject["#value"] as? String
-			}
+			return Set(categoryArray.flatMap{ $0["#value"] as? String })
 		}
 		return nil
 	}
 
-	static func parseAttachments(_ itemDictionary: JSONDictionary) -> [ParsedAttachment]? {
+	static func parseAttachments(_ itemDictionary: JSONDictionary) -> Set<ParsedAttachment>? {
 
 		guard let enclosureObject = itemDictionary["enclosure"] as? JSONDictionary else {
 			return nil
@@ -175,6 +173,6 @@ private extension RSSInJSONParser {
 
 		let type = enclosureObject["type"] as? String
 		let oneAttachment = ParsedAttachment(url: attachmentURL, mimeType: type, title: nil, sizeInBytes: attachmentSize, durationInSeconds: nil)
-		return [oneAttachment]
+		return Set([oneAttachment])
 	}
 }

@@ -111,7 +111,10 @@ private extension JSONFeedParser {
 		let dateModified = parseDate(itemDictionary["date_modified"] as? String)
 
 		let authors = parseAuthors(itemDictionary)
-		let tags = itemDictionary["tags"] as? [String]
+		var tags: Set<String>? = nil
+		if let tagsArray = itemDictionary["tags"] as? [String] {
+			tags = Set(tagsArray)
+		}
 		let attachments = parseAttachments(itemDictionary)
 
 		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
@@ -140,14 +143,14 @@ private extension JSONFeedParser {
 		return RSDateWithString(dateString)
 	}
 
-	static func parseAttachments(_ itemDictionary: JSONDictionary) -> [ParsedAttachment]? {
+	static func parseAttachments(_ itemDictionary: JSONDictionary) -> Set<ParsedAttachment>? {
 
 		guard let attachmentsArray = itemDictionary["attachments"] as? JSONArray else {
 			return nil
 		}
-		return attachmentsArray.flatMap { (oneAttachmentObject) -> ParsedAttachment? in
+		return Set(attachmentsArray.flatMap { (oneAttachmentObject) -> ParsedAttachment? in
 			return parseAttachment(oneAttachmentObject)
-		}
+		})
 	}
 
 	static func parseAttachment(_ attachmentObject: JSONDictionary) -> ParsedAttachment? {
