@@ -20,10 +20,10 @@ public struct ParsedFeed {
 	public let faviconURL: String?
 	public let authors: [ParsedAuthor]?
 	public let expired: Bool
-	public let hubs: [ParsedHub]?
+	public let hubs: Set<ParsedHub>?
 	public let items: Set<ParsedItem>
 
-	init(type: FeedType, title: String?, homePageURL: String?, feedURL: String?, feedDescription: String?, nextURL: String?, iconURL: String?, faviconURL: String?, authors: [ParsedAuthor]?, expired: Bool, hubs: [ParsedHub]?, items: Set<ParsedItem>) {
+	init(type: FeedType, title: String?, homePageURL: String?, feedURL: String?, feedDescription: String?, nextURL: String?, iconURL: String?, faviconURL: String?, authors: [ParsedAuthor]?, expired: Bool, hubs: Set<ParsedHub>?, items: Set<ParsedItem>) {
 
 		self.type = type
 		self.title = title

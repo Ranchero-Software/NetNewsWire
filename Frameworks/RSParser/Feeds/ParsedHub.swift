@@ -8,8 +8,21 @@
 
 import Foundation
 
-public struct ParsedHub {
+public struct ParsedHub: Hashable {
 
-	public let type: String?
-	public let url: String?
+	public let type: String
+	public let url: String
+	public let hashValue: Int
+	
+	init(type: String, url: String) {
+		
+		self.type = type
+		self.url = url
+		self.hashValue = type.hashValue ^ url.hashValue
+	}
+	
+	public static func ==(lhs: ParsedHub, rhs: ParsedHub) -> Bool {
+		
+		return lhs.type == rhs.type && lhs.url == rhs.url
+	}
 }

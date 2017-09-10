@@ -66,19 +66,19 @@ private extension JSONFeedParser {
 		return [parsedAuthor]
 	}
 
-	static func parseHubs(_ dictionary: JSONDictionary) -> [ParsedHub]? {
+	static func parseHubs(_ dictionary: JSONDictionary) -> Set<ParsedHub>? {
 
 		guard let hubsArray = dictionary["hubs"] as? JSONArray else {
 			return nil
 		}
 
-		let hubs = hubsArray.flatMap { (oneHubDictionary) -> ParsedHub? in
-			guard let oneHubURL = oneHubDictionary["url"] as? String, let oneHubType = oneHubDictionary["type"] as? String else {
+		let hubs = hubsArray.flatMap { (hubDictionary) -> ParsedHub? in
+			guard let hubURL = hubDictionary["url"] as? String, let hubType = hubDictionary["type"] as? String else {
 				return nil
 			}
-			return ParsedHub(type: oneHubType, url: oneHubURL)
+			return ParsedHub(type: hubType, url: hubURL)
 		}
-		return hubs.isEmpty ? nil : hubs
+		return hubs.isEmpty ? nil : Set(hubs)
 	}
 
 	static func parseItems(_ itemsArray: JSONArray, _ feedURL: String) -> Set<ParsedItem> {
