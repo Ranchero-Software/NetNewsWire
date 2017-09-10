@@ -29,14 +29,10 @@ extension Attachment {
 
 	init?(parsedAttachment: ParsedAttachment) {
 
-		guard let url = parsedAttachment.url else {
-			return nil
-		}
-
-		self.init(attachmentID: nil, url: url, mimeType: parsedAttachment.mimeType, title: parsedAttachment.title, sizeInBytes: parsedAttachment.sizeInBytes, durationInSeconds: parsedAttachment.durationInSeconds)
+		self.init(attachmentID: nil, url: parsedAttachment.url, mimeType: parsedAttachment.mimeType, title: parsedAttachment.title, sizeInBytes: parsedAttachment.sizeInBytes, durationInSeconds: parsedAttachment.durationInSeconds)
 	}
 
-	static func attachmentsWithParsedAttachments(_ parsedAttachments: [ParsedAttachment]?) -> Set<Attachment>? {
+	static func attachmentsWithParsedAttachments(_ parsedAttachments: Set<ParsedAttachment>?) -> Set<Attachment>? {
 
 		guard let parsedAttachments = parsedAttachments else {
 			return nil

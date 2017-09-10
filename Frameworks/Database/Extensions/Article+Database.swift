@@ -42,9 +42,8 @@ extension Article {
 
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
 		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
-		let tags = tagSetWithParsedTags(parsedItem.tags)
 
-		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: parsedItem.datePublished, dateModified: parsedItem.dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: nil)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: parsedItem.datePublished, dateModified: parsedItem.dateModified, authors: authors, tags: parsedItem.tags, attachments: attachments, accountInfo: nil)
 	}
 
 	func databaseDictionary() -> NSDictionary {

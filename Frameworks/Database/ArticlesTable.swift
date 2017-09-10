@@ -109,16 +109,15 @@ final class ArticlesTable: DatabaseTable {
 				let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database: database) //3
 				let fetchedArticlesDictionary = fetchedArticles.dictionary()
 				
-				let incomingArticles = Article.articlesWithParsedItems(filteredParsedItems, accountID, feedID) //4
-				let incomingArticlesDictionary = incomingArticles.dictionary()
+				let incomingArticles = Article.articlesWithParsedItems(filteredParsedItems, self.accountID, feedID) //4
 
-				let newArticles = Set(incomingArticles.filter { fetchedArticles[$0.articleID] == nil }) //5
+				let newArticles = Set(incomingArticles.filter { fetchedArticlesDictionary[$0.articleID] == nil }) //5
 				if !newArticles.isEmpty {
-					saveNewArticles(newArticles, database)
+					self.saveNewArticles(newArticles, database)
 				}
 
 				let updatedArticles = incomingArticles.filter{ (incomingArticle) -> Bool in //6
-					if let existingArticle = fetchedArticles[incomingArticle.articleID] {
+					if let existingArticle = fetchedArticlesDictionary[incomingArticle.articleID] {
 						if existingArticle != incomingArticle {
 							return true
 						}
@@ -126,7 +125,7 @@ final class ArticlesTable: DatabaseTable {
 					return false
 				}
 				if !updatedArticles.isEmpty {
-					saveUpdatedArticles(Set(updatedArticles), fetchedArticlesDictionary, database)
+					self.saveUpdatedArticles(Set(updatedArticles), fetchedArticlesDictionary, database)
 				}
 
 				DispatchQueue.main.async {
@@ -161,28 +160,28 @@ final class ArticlesTable: DatabaseTable {
 		
 		// Sets flag in both memory and in database.
 		
-		let articleIDs = articles.flatMap { (article) -> String? in
-			
-			guard let status = article.status else {
-				assertionFailure("Each article must have a status.")
-				return nil
-			}
-			
-			if status.boolStatus(forKey: statusKey) == flag {
-				return nil
-			}
-			status.setBoolStatus(flag, forKey: statusKey)
-			return article.articleID
-		}
-		
-		if articleIDs.isEmpty {
-			return
-		}
-		
-		// TODO: statusesTable needs to cache status changes.
-		queue.update { (database) in
-			self.statusesTable.markArticleIDs(Set(articleIDs), statusKey, flag, database)
-		}
+//		let articleIDs = articles.flatMap { (article) -> String? in
+//			
+//			guard let status = article.status else {
+//				assertionFailure("Each article must have a status.")
+//				return nil
+//			}
+//			
+//			if status.boolStatus(forKey: statusKey) == flag {
+//				return nil
+//			}
+//			status.setBoolStatus(flag, forKey: statusKey)
+//			return article.articleID
+//		}
+//		
+//		if articleIDs.isEmpty {
+//			return
+//		}
+//		
+//		// TODO: statusesTable needs to cache status changes.
+//		queue.update { (database) in
+//			self.statusesTable.markArticleIDs(Set(articleIDs), statusKey, flag, database)
+//		}
 	}
 }
 
@@ -256,7 +255,7 @@ private extension ArticlesTable {
 			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
 		}
 
-		return articleCache.uniquedArticles(articles)
+		return articles
 	}
 
 	func articlesWithSQL(_ sql: String, _ parameters: [AnyObject], _ database: FMDatabase) -> Set<Article> {
@@ -288,7 +287,7 @@ private extension ArticlesTable {
 
 	// MARK: Update Existing Articles
 
-	func articlesWithRelatedObjectChanges(_ comparisonKeyPath: KeyPath<Article, Set<AnyHashable>>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
+	func articlesWithRelatedObjectChanges<T>(_ comparisonKeyPath: KeyPath<Article, Set<T>?>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
 
 		return updatedArticles.filter{ (updatedArticle) -> Bool in
 			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
@@ -299,7 +298,7 @@ private extension ArticlesTable {
 		}
 	}
 
-	func updateRelatedObjects(_ comparisonKeyPath: KeyPath<Article, Set<AnyHashable>>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ lookupTable: DatabaseLookupTable, _ database: FMDatabase) {
+	func updateRelatedObjects<T>(_ comparisonKeyPath: KeyPath<Article, Set<T>?>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ lookupTable: DatabaseLookupTable, _ database: FMDatabase) {
 
 		let articlesWithChanges = articlesWithRelatedObjectChanges(comparisonKeyPath, updatedArticles, fetchedArticles)
 		if !articlesWithChanges.isEmpty {

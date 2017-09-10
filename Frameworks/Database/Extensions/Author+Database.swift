@@ -13,7 +13,7 @@ import RSParser
 
 extension Author {
 
-	static func authorsWithParsedAuthors(_ parsedAuthors: [ParsedAuthor]?) -> Set<Author>? {
+	static func authorsWithParsedAuthors(_ parsedAuthors: Set<ParsedAuthor>?) -> Set<Author>? {
 
 		assert(!Thread.isMainThread)
 		

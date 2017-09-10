@@ -55,7 +55,7 @@ final class StatusesTable: DatabaseTable {
 			
 			let articleIDsNeedingStatus = self.articleIDsWithNoCachedStatus(articleIDs)
 			if articleIDsNeedingStatus.isEmpty {
-				completion(statusesDictionary(articleIDs))
+				completion(self.statusesDictionary(articleIDs))
 				return
 			}
 			
