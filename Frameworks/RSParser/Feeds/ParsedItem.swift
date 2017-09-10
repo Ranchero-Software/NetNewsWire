@@ -23,12 +23,12 @@ public struct ParsedItem: Hashable {
 	public let bannerImageURL: String?
 	public let datePublished: Date?
 	public let dateModified: Date?
-	public let authors: [ParsedAuthor]?
+	public let authors: Set<ParsedAuthor>?
 	public let tags: [String]?
 	public let attachments: [ParsedAttachment]?
 	public let hashValue: Int
 	
-	init(syncServiceID: String?, uniqueID: String, feedURL: String, url: String?, externalURL: String?, title: String?, contentHTML: String?, contentText: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: [ParsedAuthor]?, tags: [String]?, attachments: [ParsedAttachment]?) {
+	init(syncServiceID: String?, uniqueID: String, feedURL: String, url: String?, externalURL: String?, title: String?, contentHTML: String?, contentText: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<ParsedAuthor>?, tags: [String]?, attachments: [ParsedAttachment]?) {
 
 		self.syncServiceID = syncServiceID
 		self.uniqueID = uniqueID

@@ -18,12 +18,12 @@ public struct ParsedFeed {
 	public let nextURL: String?
 	public let iconURL: String?
 	public let faviconURL: String?
-	public let authors: [ParsedAuthor]?
+	public let authors: Set<ParsedAuthor>?
 	public let expired: Bool
 	public let hubs: Set<ParsedHub>?
 	public let items: Set<ParsedItem>
 
-	init(type: FeedType, title: String?, homePageURL: String?, feedURL: String?, feedDescription: String?, nextURL: String?, iconURL: String?, faviconURL: String?, authors: [ParsedAuthor]?, expired: Bool, hubs: Set<ParsedHub>?, items: Set<ParsedItem>) {
+	init(type: FeedType, title: String?, homePageURL: String?, feedURL: String?, feedDescription: String?, nextURL: String?, iconURL: String?, faviconURL: String?, authors: Set<ParsedAuthor>?, expired: Bool, hubs: Set<ParsedHub>?, items: Set<ParsedItem>) {
 
 		self.type = type
 		self.title = title

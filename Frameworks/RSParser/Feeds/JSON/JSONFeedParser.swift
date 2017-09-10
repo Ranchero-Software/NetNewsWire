@@ -50,7 +50,7 @@ public struct JSONFeedParser {
 
 private extension JSONFeedParser {
 
-	static func parseAuthors(_ dictionary: JSONDictionary) -> [ParsedAuthor]? {
+	static func parseAuthors(_ dictionary: JSONDictionary) -> Set<ParsedAuthor>? {
 
 		guard let authorDictionary = dictionary["author"] as? JSONDictionary else {
 			return nil
@@ -63,7 +63,7 @@ private extension JSONFeedParser {
 			return nil
 		}
 		let parsedAuthor = ParsedAuthor(name: name, url: url, avatarURL: avatar, emailAddress: nil)
-		return [parsedAuthor]
+		return Set([parsedAuthor])
 	}
 
 	static func parseHubs(_ dictionary: JSONDictionary) -> Set<ParsedHub>? {

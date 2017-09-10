@@ -45,12 +45,12 @@ private extension RSParsedFeedTransformer {
 		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: parsedArticle.feedURL, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: nil, attachments: nil)
 	}
 
-	static func parsedAuthors(_ authorEmailAddress: String?) -> [ParsedAuthor]? {
+	static func parsedAuthors(_ authorEmailAddress: String?) -> Set<ParsedAuthor>? {
 
 		guard let authorEmailAddress = authorEmailAddress else {
 			return nil
 		}
 		let author = ParsedAuthor(name: nil, url: nil, avatarURL: nil, emailAddress: authorEmailAddress)
-		return [author]
+		return Set([author])
 	}
 }

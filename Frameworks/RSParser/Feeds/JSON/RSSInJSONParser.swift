@@ -132,13 +132,13 @@ private extension RSSInJSONParser {
 		return nil
 	}
 
-	static func parseAuthors(_ itemDictionary: JSONDictionary) -> [ParsedAuthor]? {
+	static func parseAuthors(_ itemDictionary: JSONDictionary) -> Set<ParsedAuthor>? {
 
 		guard let authorEmailAddress = itemDictionary["author"] as? String else {
 			return nil
 		}
 		let parsedAuthor = ParsedAuthor(name: nil, url: nil, avatarURL: nil, emailAddress: authorEmailAddress)
-		return [parsedAuthor]
+		return Set([parsedAuthor])
 	}
 
 	static func parseTags(_ itemDictionary: JSONDictionary) -> [String]? {
