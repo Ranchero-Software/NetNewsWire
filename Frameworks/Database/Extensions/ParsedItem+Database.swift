@@ -23,19 +23,6 @@ extension ParsedItem {
 	}
 }
 
-extension ParsedFeed {
 
-	func itemsDictionary(with feed: Feed) -> [String: ParsedItem] {
-
-		var d = [String: ParsedItem]()
-
-		for parsedItem in items {
-			let identifier = parsedItem.databaseIdentifierWithFeed(feed)
-			d[identifier] = parsedItem
-		}
-
-		return d
-	}
-}
 
 

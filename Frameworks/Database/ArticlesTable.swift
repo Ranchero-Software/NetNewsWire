@@ -31,8 +31,7 @@ final class ArticlesTable: DatabaseTable {
 		self.name = name
 		self.accountID = accountID
 		self.queue = queue
-
-		let statusesTable = StatusesTable(queue: queue)
+		self.statusesTable = StatusesTable(queue: queue)
 		
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
@@ -96,17 +95,16 @@ final class ArticlesTable: DatabaseTable {
 		
 		let feedID = feed.feedID
 		let parsedItemArticleIDs = Set(parsedFeed.items.map { $0.databaseIdentifierWithFeed(feed) })
-		let parsedItemsDictionary = parsedFeed.itemsDictionary(with: feed)
 
-		statusesTable.ensureStatusesForArticleIDs(parsedItemArticleIDs) { // 1
+		statusesTable.ensureStatusesForArticleIDs(parsedItemArticleIDs) { (statusesDictionary) in // 1
 		
-			let filteredParsedItems = self.filterParsedItems(parsedItemsDictionary) // 2
+			let filteredParsedItems = self.filterParsedItems(Set(parsedFeed.items), statusesDictionary) // 2
 			if filteredParsedItems.isEmpty {
 				completion(nil, nil)
 				return
 			}
 
-			queue.update{ (database) in
+			self.queue.update{ (database) in
 				
 				let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database: database) //3
 				let fetchedArticlesDictionary = fetchedArticles.dictionary()
@@ -196,10 +194,7 @@ private extension ArticlesTable {
 
 	func articleWithRow(_ row: FMResultSet) -> Article? {
 
-		guard let account = account else {
-			return nil
-		}
-		guard let article = Article(row: row, account: account) else {
+		guard let article = Article(row: row, accountID: accountID) else {
 			return nil
 		}
 
@@ -360,23 +355,18 @@ private extension ArticlesTable {
 		return status.dateArrived < maximumArticleCutoffDate
 	}
 
-	func filterParsedItems(_ parsedItems: [String: ParsedItem], _ statuses: [String: ArticleStatus]) -> [String: ParsedItem] {
+	func filterParsedItems(_ parsedItems: Set<ParsedItem>, _ statuses: [String: ArticleStatus]) -> Set<ParsedItem> {
 
 		// Drop parsedItems that we can ignore.
 
-		var d = [String: ParsedItem]()
-
-		for (articleID, parsedItem) in parsedItems {
-
+		return Set(parsedItems.filter{ (parsedItem) -> Bool in
+			let articleID = parsedItem.articleID
 			if let status = statuses[articleID] {
-				if statusIndicatesArticleIsIgnorable(status) {
-					continue
-				}
+				return !statusIndicatesArticleIsIgnorable(status)
 			}
-			d[articleID] = parsedItem
-		}
-
-		return d
+			assertionFailure("Expected a status for each parsedItem.")
+			return true
+		})
 	}
 }
 

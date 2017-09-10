@@ -33,7 +33,7 @@ extension Article {
 		let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL)
 		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
-		let accountInfo: [String: Any]? = nil // TODO
+		let accountInfo: AccountInfo? = nil // TODO
 
 		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
 	}
@@ -125,7 +125,7 @@ extension Article {
 		return d
 	}
 
-	static func articlesWithParsedItems(_ parsedItems: [ParsedItem], _ accountID: String, _ feedID: String) -> Set<Article> {
+	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ accountID: String, _ feedID: String) -> Set<Article> {
 	
 		return Set(parsedItems.map{ Article(parsedItem: $0, accountID: accountID, feedID: feedID) })
 	}

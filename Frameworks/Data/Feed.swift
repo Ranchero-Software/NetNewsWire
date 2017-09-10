@@ -18,7 +18,7 @@ public final class Feed: DisplayNameProvider, Hashable {
 	public var name: String?
 	public var editedName: String?
 	public var articles = Set<Article>()
-	public var accountInfo: [String: Any]? //If account needs to store more data
+	public var accountInfo: AccountInfo? //If account needs to store more data
 	public let hashValue: Int
 	
 	public var nameForDisplay: String {

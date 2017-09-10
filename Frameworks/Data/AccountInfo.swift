@@ -8,17 +8,23 @@
 
 import Foundation
 
+// This is used by an Account that needs to store extra info.
+// It’s stored as a binary plist in the database.
+
 public struct AccountInfo: Equatable {
 
-	var dictionary: [String: AnyObject]?
+	var plist: [String: AnyObject]?
 
+	init(plist: [String: AnyObject]) {
+		
+		self.plist = plist
+	}
+	
 	public static func ==(lhs: AccountInfo, rhs: AccountInfo) -> Bool {
 
 		return true // TODO
 	}
 }
-
-// AccountInfo is a plist-compatible dictionary that’s stored as a binary plist in the database.
 
 //func accountInfoWithRow(_ row: FMResultSet) -> AccountInfo? {
 //	

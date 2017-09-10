@@ -15,23 +15,24 @@ import Data
 public typealias ArticleResultBlock = (Set<Article>) -> Void
 public typealias UnreadCountTable = [String: Int] // feedID: unreadCount
 public typealias UnreadCountCompletionBlock = (UnreadCountTable) -> Void //feedID: unreadCount
-typealias UpdateArticlesWithFeedCompletionBlock = (Set<Article>, Set<Article>) -> Void
+public typealias UpdateArticlesWithFeedCompletionBlock = (Set<Article>?, Set<Article>?) -> Void //newArticles, updateArticles
 
 public final class Database {
 
+	private let accountID: String
 	private let queue: RSDatabaseQueue
 	private let databaseFile: String
 	private let articlesTable: ArticlesTable
 	private var articleArrivalCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	private let minimumNumberOfArticles = 10
 
-	public init(databaseFile: String) {
+	public init(databaseFile: String, accountID: String) {
 
-		self.account = account
+		self.accountID = accountID
 		self.databaseFile = databaseFile
 		self.queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
 
-		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, account: account, queue: queue)
+		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue)
 
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
 		let createStatements = try! NSString(contentsOfFile: createStatementsPath, encoding: String.Encoding.utf8.rawValue)
@@ -65,7 +66,7 @@ public final class Database {
 
 	// MARK: - Updating Articles
 
-	public func update(feed: Feed, parsedFeed: ParsedFeed, completion: @escaping RSVoidCompletionBlock) {
+	public func update(feed: Feed, parsedFeed: ParsedFeed, completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
 
 		return articlesTable.update(feed, parsedFeed, completion)
 	}
