@@ -10,33 +10,21 @@ import Foundation
 
 public struct ParsedAttachment: Hashable {
 
-	public let url: String?
+	public let url: String
 	public let mimeType: String?
 	public let title: String?
 	public let sizeInBytes: Int?
 	public let durationInSeconds: Int?
 	public let hashValue: Int
 	
-	init(url: String?, mimeType: String?, title: String?, sizeInBytes: Int?, durationInSeconds: Int?) {
+	init?(url: String, mimeType: String?, title: String?, sizeInBytes: Int?, durationInSeconds: Int?) {
 
 		self.url = url
 		self.mimeType = mimeType
 		self.title = title
 		self.sizeInBytes = sizeInBytes
 		self.durationInSeconds = durationInSeconds
-		
-		var stringToHash = ""
-		stringToHash += url ?? ""
-		stringToHash += mimeType ?? ""
-		stringToHash += title ?? ""
-		var h = stringToHash.hashValue
-		if let sizeInBytes = sizeInBytes {
-			h = h ^ sizeInBytes.hashValue
-		}
-		if let durationInSeconds = durationInSeconds {
-			h = h ^ durationInSeconds.hashValue
-		}
-		self.hashValue = h
+		self.hashValue = url.hashValue
 	}
 	
 	public static func ==(lhs: ParsedAttachment, rhs: ParsedAttachment) -> Bool {
