@@ -32,7 +32,7 @@ public final class DatabaseLookupTable {
 		self.cache = DatabaseLookupTableCache(relationshipName)
 	}
 
-	public func fetchRelatedObjects(for objectIDs: Set<String>, in database: FMDatabase) -> RelatedObjectsLookupTable? {
+	public func fetchRelatedObjects(for objectIDs: Set<String>, in database: FMDatabase) -> RelatedObjectsMap? {
 	
 		let objectIDsThatMayHaveRelatedObjects = objectIDs.subtracting(objectIDsWithNoRelatedObjects)
 		if objectIDsThatMayHaveRelatedObjects.isEmpty {

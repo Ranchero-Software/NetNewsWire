@@ -1,5 +1,5 @@
 //
-//  RelatedObjectsLookupTable.swift
+//  RelatedObjectsMap.swift
 //  RSDatabase
 //
 //  Created by Brent Simmons on 9/10/17.
@@ -8,7 +8,9 @@
 
 import Foundation
 
-public struct RelatedObjectsLookupTable {
+// Map objectID to [DatabaseObject] (related objects).
+
+public struct RelatedObjectsMap {
 	
 	private let dictionary: [String: [DatabaseObject]] // objectID: relatedObjects
 	

@@ -35,8 +35,8 @@
 		84419B061B5ABFF700C26BB2 /* FMResultSet+RSExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 84419B041B5ABFF700C26BB2 /* FMResultSet+RSExtras.m */; };
 		844ECFB91F5B17F9005E405A /* DatabaseRelatedObjectsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844ECFB81F5B17F9005E405A /* DatabaseRelatedObjectsTable.swift */; };
 		848E22541F6652990031D7C5 /* DatabaseRelatedObjectsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844ECFB81F5B17F9005E405A /* DatabaseRelatedObjectsTable.swift */; };
-		848E22561F6652C70031D7C5 /* RelatedObjectsLookupTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E22551F6652C70031D7C5 /* RelatedObjectsLookupTable.swift */; };
-		848E22581F6653960031D7C5 /* RelatedObjectIDsLookupTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E22571F6653960031D7C5 /* RelatedObjectIDsLookupTable.swift */; };
+		848E22561F6652C70031D7C5 /* RelatedObjectsMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E22551F6652C70031D7C5 /* RelatedObjectsMap.swift */; };
+		848E22581F6653960031D7C5 /* RelatedObjectIDsMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E22571F6653960031D7C5 /* RelatedObjectIDsMap.swift */; };
 		849BF8C61C94FB8E0071D1DA /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 849BF8C51C94FB8E0071D1DA /* libsqlite3.tbd */; };
 		84ABC1D11F364B07000DCC55 /* DatabaseLookupTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ABC1D01F364B07000DCC55 /* DatabaseLookupTable.swift */; };
 		84ABC1D21F364B07000DCC55 /* DatabaseLookupTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ABC1D01F364B07000DCC55 /* DatabaseLookupTable.swift */; };
@@ -76,8 +76,8 @@
 		84419B031B5ABFF700C26BB2 /* FMResultSet+RSExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "FMResultSet+RSExtras.h"; path = "RSDatabase/FMResultSet+RSExtras.h"; sourceTree = "<group>"; };
 		84419B041B5ABFF700C26BB2 /* FMResultSet+RSExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "FMResultSet+RSExtras.m"; path = "RSDatabase/FMResultSet+RSExtras.m"; sourceTree = "<group>"; };
 		844ECFB81F5B17F9005E405A /* DatabaseRelatedObjectsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseRelatedObjectsTable.swift; sourceTree = "<group>"; };
-		848E22551F6652C70031D7C5 /* RelatedObjectsLookupTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedObjectsLookupTable.swift; sourceTree = "<group>"; };
-		848E22571F6653960031D7C5 /* RelatedObjectIDsLookupTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedObjectIDsLookupTable.swift; sourceTree = "<group>"; };
+		848E22551F6652C70031D7C5 /* RelatedObjectsMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedObjectsMap.swift; sourceTree = "<group>"; };
+		848E22571F6653960031D7C5 /* RelatedObjectIDsMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedObjectIDsMap.swift; sourceTree = "<group>"; };
 		849BF8C51C94FB8E0071D1DA /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		84ABC1D01F364B07000DCC55 /* DatabaseLookupTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseLookupTable.swift; sourceTree = "<group>"; };
 		84C6DD001F395C13009AFB47 /* DatabaseObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DatabaseObject.swift; path = RSDatabase/DatabaseObject.swift; sourceTree = "<group>"; };
@@ -143,8 +143,8 @@
 			isa = PBXGroup;
 			children = (
 				84ABC1D01F364B07000DCC55 /* DatabaseLookupTable.swift */,
-				848E22551F6652C70031D7C5 /* RelatedObjectsLookupTable.swift */,
-				848E22571F6653960031D7C5 /* RelatedObjectIDsLookupTable.swift */,
+				848E22551F6652C70031D7C5 /* RelatedObjectsMap.swift */,
+				848E22571F6653960031D7C5 /* RelatedObjectIDsMap.swift */,
 				844ECFB81F5B17F9005E405A /* DatabaseRelatedObjectsTable.swift */,
 			);
 			path = "Related Objects";
@@ -398,8 +398,8 @@
 				844ECFB91F5B17F9005E405A /* DatabaseRelatedObjectsTable.swift in Sources */,
 				84419B061B5ABFF700C26BB2 /* FMResultSet+RSExtras.m in Sources */,
 				84DDF1991C94FC45005E6CF5 /* FMDatabaseAdditions.m in Sources */,
-				848E22581F6653960031D7C5 /* RelatedObjectIDsLookupTable.swift in Sources */,
-				848E22561F6652C70031D7C5 /* RelatedObjectsLookupTable.swift in Sources */,
+				848E22581F6653960031D7C5 /* RelatedObjectIDsMap.swift in Sources */,
+				848E22561F6652C70031D7C5 /* RelatedObjectsMap.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

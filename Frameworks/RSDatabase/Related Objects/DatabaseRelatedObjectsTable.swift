@@ -8,6 +8,8 @@
 
 import Foundation
 
+// Protocol for a database table for related objects — authors, tags, and attachments in Evergreen, for instance.
+
 public protocol DatabaseRelatedObjectsTable: DatabaseTable {
 
 	var databaseIDKey: String { get}
