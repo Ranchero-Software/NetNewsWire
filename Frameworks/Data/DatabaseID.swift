@@ -14,9 +14,15 @@ import RSCore
 // * Collisions aren’t going to happen with feed data
 
 private var databaseIDCache = [String: String]()
+private var databaseIDCacheLock = os_unfair_lock_s()
 
 public func databaseIDWithString(_ s: String) -> String {
 
+	os_unfair_lock_lock(&databaseIDCacheLock)
+	defer {
+		os_unfair_lock_unlock(&databaseIDCacheLock)
+	}
+	
 	if let identifier = databaseIDCache[s] {
 		return identifier
 	}

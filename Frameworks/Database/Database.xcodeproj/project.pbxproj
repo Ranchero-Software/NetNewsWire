@@ -11,7 +11,6 @@
 		843CB9961F34174100EE6581 /* Author+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F20F901F1810DD00D8E682 /* Author+Database.swift */; };
 		844BEE411F0AB3AB004AB7CD /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEE371F0AB3AA004AB7CD /* Database.framework */; };
 		844BEE461F0AB3AB004AB7CD /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */; };
-		844ECFC91F5B4F0E005E405A /* ParsedItem+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844ECFC81F5B4F0E005E405A /* ParsedItem+Database.swift */; };
 		845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580661F0AEBCD003CCFA1 /* Constants.swift */; };
 		845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580751F0AF670003CCFA1 /* Article+Database.swift */; };
 		845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580771F0AF678003CCFA1 /* Folder+Database.swift */; };
@@ -118,7 +117,6 @@
 		844BEE401F0AB3AB004AB7CD /* DatabaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DatabaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTests.swift; sourceTree = "<group>"; };
 		844BEE471F0AB3AB004AB7CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		844ECFC81F5B4F0E005E405A /* ParsedItem+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ParsedItem+Database.swift"; path = "Extensions/ParsedItem+Database.swift"; sourceTree = "<group>"; };
 		845580661F0AEBCD003CCFA1 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		845580751F0AF670003CCFA1 /* Article+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Article+Database.swift"; path = "Extensions/Article+Database.swift"; sourceTree = "<group>"; };
 		845580771F0AF678003CCFA1 /* Folder+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Folder+Database.swift"; path = "Extensions/Folder+Database.swift"; sourceTree = "<group>"; };
@@ -221,7 +219,6 @@
 				84F20F901F1810DD00D8E682 /* Author+Database.swift */,
 				8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */,
 				84D0DEA01F4A429800073503 /* String+Database.swift */,
-				844ECFC81F5B4F0E005E405A /* ParsedItem+Database.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -484,7 +481,6 @@
 				84F20F8F1F180D8700D8E682 /* AuthorsTable.swift in Sources */,
 				84E156EC1F0AB80E00F8CC05 /* ArticlesTable.swift in Sources */,
 				84E156EE1F0AB81400F8CC05 /* StatusesTable.swift in Sources */,
-				844ECFC91F5B4F0E005E405A /* ParsedItem+Database.swift in Sources */,
 				84E156EA1F0AB80500F8CC05 /* Database.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
