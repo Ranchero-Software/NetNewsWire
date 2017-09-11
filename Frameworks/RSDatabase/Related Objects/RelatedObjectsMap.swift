@@ -14,7 +14,7 @@ public struct RelatedObjectsMap {
 	
 	private let dictionary: [String: [DatabaseObject]] // objectID: relatedObjects
 	
-	init(relatedObjects: relatedObjects, lookupTable: LookupTable) {
+	init(relatedObjects: relatedObjects, lookupTable: RelatedObjectIDsMap) {
 		
 		var d = [String: [DatabaseObject]]()
 		

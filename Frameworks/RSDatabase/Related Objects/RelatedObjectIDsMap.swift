@@ -57,3 +57,22 @@ struct RelatedObjectIDsMap {
 		}
 	}
 }
+
+struct LookupValue: Hashable {
+
+	let objectID: String
+	let relatedObjectID: String
+	let hashValue: Int
+
+	init(objectID: String, relatedObjectID: String) {
+
+		self.objectID = objectID
+		self.relatedObjectID = relatedObjectID
+		self.hashValue = (objectID + relatedObjectID).hashValue
+	}
+
+	static func ==(lhs: LookupValue, rhs: LookupValue) -> Bool {
+
+		return lhs.objectID == rhs.objectID && lhs.relatedObjectID == rhs.relatedObjectID
+	}
+}
