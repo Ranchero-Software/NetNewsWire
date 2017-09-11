@@ -9,6 +9,7 @@
 import Foundation
 
 // Map objectID to [DatabaseObject] (related objects).
+// It’s used as the return value from DatabaseLookupTable.fetchRelatedObjects.
 
 public struct RelatedObjectsMap {
 	
