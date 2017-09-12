@@ -9,22 +9,20 @@
 import Foundation
 
 // Map objectID to [DatabaseObject] (related objects).
-// It’s used as the return value from DatabaseLookupTable.fetchRelatedObjects.
+// It’s used as the return value for DatabaseLookupTable.fetchRelatedObjects.
 
 public struct RelatedObjectsMap {
 	
 	private let dictionary: [String: [DatabaseObject]] // objectID: relatedObjects
 	
-	init(relatedObjects: relatedObjects, lookupTable: RelatedObjectIDsMap) {
+	init(relatedObjects: [DatabaseObject], relatedObjectIDsMap: RelatedObjectIDsMap) {
 		
 		var d = [String: [DatabaseObject]]()
-		
 		let relatedObjectsDictionary = relatedObjects.dictionary()
-		let objectIDs = lookupTable.objectIDs()
 		
-		for objectID in lookupTable.objectIDs() {
+		for objectID in relatedObjectIDsMap.objectIDs() {
 			
-			if let relatedObjectIDs = lookupTable[objectID] {
+			if let relatedObjectIDs = relatedObjectIDsMap[objectID] {
 				let relatedObjects = relatedObjectIDs.flatMap{ relatedObjectsDictionary[$0] }
 				if !relatedObjects.isEmpty {
 					d[objectID] = relatedObjects
