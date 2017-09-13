@@ -25,6 +25,7 @@
 		8400AC101E0CFD6B00AA7C57 /* RSDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F22C581B52E0D9000060CE /* RSDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		840405DB1F1C158C00DF0296 /* DatabaseTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840405DA1F1C158C00DF0296 /* DatabaseTable.swift */; };
 		840405DC1F1C15EA00DF0296 /* DatabaseTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840405DA1F1C158C00DF0296 /* DatabaseTable.swift */; };
+		84314F4A1F68ECC600F710B2 /* DatabaseObjectCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84314F491F68ECC600F710B2 /* DatabaseObjectCache.swift */; };
 		84419AD61B5ABD6D00C26BB2 /* FMDatabase+RSExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 84419AD41B5ABD6D00C26BB2 /* FMDatabase+RSExtras.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84419AD71B5ABD6D00C26BB2 /* FMDatabase+RSExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 84419AD51B5ABD6D00C26BB2 /* FMDatabase+RSExtras.m */; };
 		84419ADA1B5ABD7400C26BB2 /* NSString+RSDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 84419AD81B5ABD7400C26BB2 /* NSString+RSDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -67,6 +68,7 @@
 		8400ABFA1E0CFBD800AA7C57 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8400AC0E1E0CFC5600AA7C57 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		840405DA1F1C158C00DF0296 /* DatabaseTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTable.swift; sourceTree = "<group>"; };
+		84314F491F68ECC600F710B2 /* DatabaseObjectCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DatabaseObjectCache.swift; path = RSDatabase/DatabaseObjectCache.swift; sourceTree = "<group>"; };
 		84419AD41B5ABD6D00C26BB2 /* FMDatabase+RSExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "FMDatabase+RSExtras.h"; path = "RSDatabase/FMDatabase+RSExtras.h"; sourceTree = "<group>"; };
 		84419AD51B5ABD6D00C26BB2 /* FMDatabase+RSExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "FMDatabase+RSExtras.m"; path = "RSDatabase/FMDatabase+RSExtras.m"; sourceTree = "<group>"; };
 		84419AD81B5ABD7400C26BB2 /* NSString+RSDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+RSDatabase.h"; path = "RSDatabase/NSString+RSDatabase.h"; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 				84419AD91B5ABD7400C26BB2 /* NSString+RSDatabase.m */,
 				84C6DD001F395C13009AFB47 /* DatabaseObject.swift */,
 				840405DA1F1C158C00DF0296 /* DatabaseTable.swift */,
+				84314F491F68ECC600F710B2 /* DatabaseObjectCache.swift */,
 				848E22531F66528C0031D7C5 /* Related Objects */,
 				84DDF18A1C94FC45005E6CF5 /* FMDB */,
 				84F22C5A1B52E0D9000060CE /* Info.plist */,
@@ -389,6 +392,7 @@
 			files = (
 				84419AE71B5ABD7F00C26BB2 /* RSDatabaseQueue.m in Sources */,
 				84419AD71B5ABD6D00C26BB2 /* FMDatabase+RSExtras.m in Sources */,
+				84314F4A1F68ECC600F710B2 /* DatabaseObjectCache.swift in Sources */,
 				84C6DD011F395C13009AFB47 /* DatabaseObject.swift in Sources */,
 				84419ADB1B5ABD7400C26BB2 /* NSString+RSDatabase.m in Sources */,
 				840405DB1F1C158C00DF0296 /* DatabaseTable.swift in Sources */,

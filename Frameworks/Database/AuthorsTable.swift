@@ -21,14 +21,15 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 	
 	let name: String
 	let databaseIDKey = DatabaseKey.authorID
+	var cache = [String: Author]()
 
 	init(name: String) {
 
 		self.name = name
 	}
 	
-	// MARK: DatabaseTable Methods
-	
+	// MARK: DatabaseRelatedObjectsTable
+
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
 	
 		if let author = Author.authorWithRow(row) {
@@ -38,7 +39,20 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 	}
 	
 	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
-		// TODO
-	}
+
+		let attachments = objects.map { $0 as! Author }
+
+		// Authors in cache must already exist in database. Filter them out.
+		let authorsToSave = Set(attachments.filter { (attachment) -> Bool in
+			if let _ = cache[attachment.attachmentID] {
+				return false
+			}
+			return true
+		})
+
+		cacheAttachments(attachmentsToSave)
+
+		insertRows(attachmentsToSave.databaseDictionaries(), insertType: .orIgnore, in: database)
+}
 }
 

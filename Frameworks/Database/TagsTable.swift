@@ -21,6 +21,8 @@ final class TagsTable: DatabaseRelatedObjectsTable {
 	
 	let name: String
 	let databaseIDKey = DatabaseKey.tagName
+	let cache = DatabaseObjectCache() // Unused, but protocol requires it
+	
 	init(name: String) {
 
 		self.name = name

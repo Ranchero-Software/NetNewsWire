@@ -13,7 +13,8 @@ import Foundation
 public protocol DatabaseRelatedObjectsTable: DatabaseTable {
 
 	var databaseIDKey: String { get}
-
+	var cache: DatabaseObjectCache { get }
+	
 	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]?
 	func objectsWithResultSet(_ resultSet: FMResultSet) -> [DatabaseObject]
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject?
@@ -27,10 +28,34 @@ public extension DatabaseRelatedObjectsTable {
 
 	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]? {
 
-		guard let resultSet = selectRowsWhere(key: databaseIDKey, inValues: Array(databaseIDs), in: database) else {
+		if databaseIDs.isEmpty {
 			return nil
 		}
-		return objectsWithResultSet(resultSet)
+
+		var cachedObjects = [DatabaseObject]()
+		var databaseIDsToFetch = Set<String>()
+
+		for databaseID in databaseIDs {
+			if let cachedObject = cache[databaseID] {
+				cachedObjects += [cachedObject]
+			}
+			else {
+				databaseIDsToFetch.insert(databaseID)
+			}
+		}
+
+		if databaseIDsToFetch.isEmpty {
+			return cachedObjects
+		}
+
+		guard let resultSet = selectRowsWhere(key: databaseIDKey, inValues: Array(databaseIDsToFetch), in: database) else {
+			return cachedObjects
+		}
+
+		let fetchedDatabaseObjects = objectsWithResultSet(resultSet)
+		cache.add(fetchedDatabaseObjects)
+
+		return cachedObjects + fetchedDatabaseObjects
 	}
 
 	func objectsWithResultSet(_ resultSet: FMResultSet) -> [DatabaseObject] {
