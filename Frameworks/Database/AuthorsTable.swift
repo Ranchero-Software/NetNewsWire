@@ -21,7 +21,7 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 	
 	let name: String
 	let databaseIDKey = DatabaseKey.authorID
-	var cache = [String: Author]()
+	var cache = DatabaseObjectCache()
 
 	init(name: String) {
 
