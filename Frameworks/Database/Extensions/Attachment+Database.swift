@@ -41,6 +41,29 @@ extension Attachment {
 		let attachments = parsedAttachments.flatMap{ Attachment(parsedAttachment: $0) }
 		return attachments.isEmpty ? nil : Set(attachments)
 	}
+
+	func databaseDictionary() -> NSDictionary {
+
+		var d = NSMutableDictionary()
+
+		d[DatabaseKey.attachmentID] = attachmentID
+		d[DatabaseKey.url] = url
+
+		if let mimeType = mimeType {
+			d[DatabaseKey.mimeType] = mimeType
+		}
+		if let title = title {
+			d[DatabaseKey.title] = title
+		}
+		if let sizeInBytes = sizeInBytes {
+			d[DatabaseKey.sizeInBytes] = NSNumber(sizeInBytes)
+		}
+		if let durationInSeconds = durationInSeconds {
+			d[DatabaseKey.durationInSeconds] = NSNumber(durationInSeconds)
+		}
+
+		return d.copy() as! NSDictionary
+	}
 }
 
 private func optionalIntForColumn(_ row: FMResultSet, _ columnName: String) -> Int? {
@@ -58,5 +81,18 @@ extension Attachment: DatabaseObject {
 		get {
 			return attachmentID
 		}
+	}
+}
+
+extension Set where Element == Attachment {
+
+	func databaseDictionaries() -> [NSDictionary] {
+
+		return self.map<NSDictionary> { $0.databaseDictionary() }
+	}
+
+	func databaseObjects() -> [DatabaseObject] {
+
+		return self.map<DatabaseObject> { $0 as DatabaseObject }
 	}
 }

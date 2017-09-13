@@ -12,15 +12,10 @@ public protocol DatabaseObject {
 
 	var databaseID: String { get }
 
-	func setRelatedObjects(_ objects: [DatabaseObject], name: String)
 	func relatedObjectsWithName(_ name: String) -> [DatabaseObject]?
 }
 
 public extension DatabaseObject {
-	
-	func setRelatedObjects(_ objects: [DatabaseObject], name: String) {
-		// Do nothing
-	}
 	
 	func relatedObjectsWithName(_ name: String) -> [DatabaseObject]? {
 		

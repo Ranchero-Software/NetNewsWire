@@ -14,7 +14,7 @@ public protocol DatabaseRelatedObjectsTable: DatabaseTable {
 
 	var databaseIDKey: String { get}
 
-	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]
+	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]?
 	func objectsWithResultSet(_ resultSet: FMResultSet) -> [DatabaseObject]
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject?
 
@@ -25,10 +25,10 @@ public extension DatabaseRelatedObjectsTable {
 
 	// MARK: Default implementations
 
-	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject] {
+	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]? {
 
 		guard let resultSet = selectRowsWhere(key: databaseIDKey, inValues: Array(databaseIDs), in: database) else {
-			return [DatabaseObject]()
+			return nil
 		}
 		return objectsWithResultSet(resultSet)
 	}

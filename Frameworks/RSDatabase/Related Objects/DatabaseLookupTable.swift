@@ -183,8 +183,7 @@ private extension DatabaseLookupTable {
 	
 	func fetchRelatedObjectsWithIDs(_ relatedObjectIDs: Set<String>, _ database: FMDatabase) -> [DatabaseObject]? {
 		
-		let relatedObjects = relatedTable.fetchObjectsWithIDs(relatedObjectIDs, in: database)
-		if relatedObjects.isEmpty {
+		guard let relatedObjects = relatedTable.fetchObjectsWithIDs(relatedObjectIDs, in: database), !relatedObjects.isEmpty else {
 			return nil
 		}
 		return relatedObjects

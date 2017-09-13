@@ -23,8 +23,18 @@ public struct Attachment: Hashable {
 		self.url = url
 		self.mimeType = mimeType
 		self.title = title
-		self.sizeInBytes = sizeInBytes
-		self.durationInSeconds = durationInSeconds
+		if let sizeInBytes = sizeInBytes, sizeInBytes > 0 {
+			self.sizeInBytes = sizeInBytes
+		}
+		else {
+			self.sizeInBytes = nil
+		}
+		if let durationInSeconds = durationInSeconds, durationInSeconds > 0 {
+			self.durationInSeconds = durationInSeconds
+		}
+		else {
+			self.durationInSeconds = nil
+		}
 
 		var s = url
 		s += mimeType ?? ""

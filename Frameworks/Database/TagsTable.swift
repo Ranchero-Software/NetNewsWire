@@ -28,7 +28,7 @@ final class TagsTable: DatabaseRelatedObjectsTable {
 
 	// MARK: DatabaseTable Methods
 	
-	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject] {
+	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]? {
 		
 		// A tag is a string, and it is its own databaseID.
 		return databaseIDs.map{ $0 as DatabaseObject }
@@ -43,6 +43,5 @@ final class TagsTable: DatabaseRelatedObjectsTable {
 		
 		// Nothing to do, since tags are saved in the lookup table, not in a separate table.
 	}
-
 }
 
