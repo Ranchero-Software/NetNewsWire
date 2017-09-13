@@ -23,22 +23,6 @@ extension ArticleStatus {
 		self.init(articleID: articleID, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived, accountInfo: nil)
 	}
 	
-	func databaseDictionary() -> NSDictionary {
-		
-		let d = NSMutableDictionary()
-		
-		d[DatabaseKey.articleID] = articleID
-		d[DatabaseKey.read] = read
-		d[DatabaseKey.starred] = starred
-		d[DatabaseKey.userDeleted] = userDeleted
-		d[DatabaseKey.dateArrived] = dateArrived
-		
-//		if let accountInfo = accountInfo, let data = PropertyListTransformer.data(withPropertyList: accountInfo) {
-//			d[DatabaseKey.accountInfo] = data
-//		}
-
-		return d.copy() as! NSDictionary
-	}
 }
 
 extension ArticleStatus: DatabaseObject {
@@ -48,4 +32,22 @@ extension ArticleStatus: DatabaseObject {
 			return articleID
 		}
 	}
+
+	public func databaseDictionary() -> NSDictionary? {
+
+		let d = NSMutableDictionary()
+
+		d[DatabaseKey.articleID] = articleID
+		d[DatabaseKey.read] = read
+		d[DatabaseKey.starred] = starred
+		d[DatabaseKey.userDeleted] = userDeleted
+		d[DatabaseKey.dateArrived] = dateArrived
+
+		//		if let accountInfo = accountInfo, let data = PropertyListTransformer.data(withPropertyList: accountInfo) {
+		//			d[DatabaseKey.accountInfo] = data
+		//		}
+
+		return (d.copy() as! NSDictionary)
+	}
+
 }

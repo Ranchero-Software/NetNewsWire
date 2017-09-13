@@ -298,8 +298,9 @@ private extension ArticlesTable {
 
 		saveRelatedObjectsForNewArticles(articles, database)
 
-		let databaseDictionaries = articles.map { $0.databaseDictionary() }
-		insertRows(databaseDictionaries, insertType: .orReplace, in: database)
+		if let databaseDictionaries = articles.databaseDictionaries() {
+			insertRows(databaseDictionaries, insertType: .orReplace, in: database)
+		}
 	}
 
 	func saveRelatedObjectsForNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {

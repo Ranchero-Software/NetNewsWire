@@ -40,37 +40,12 @@ extension Article {
 
 	init(parsedItem: ParsedItem, accountID: String, feedID: String) {
 
-		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
+		let authors = parsedItem.authors?.authors()
 		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
 
 		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: parsedItem.datePublished, dateModified: parsedItem.dateModified, authors: authors, tags: parsedItem.tags, attachments: attachments, accountInfo: nil)
 	}
 
-	func databaseDictionary() -> NSDictionary {
-		
-		let d = NSMutableDictionary()
-		
-		d[DatabaseKey.articleID] = articleID
-		d[DatabaseKey.feedID] = feedID
-		d[DatabaseKey.uniqueID] = uniqueID
-
-		d.addOptionalString(title, DatabaseKey.title)
-		d.addOptionalString(contentHTML, DatabaseKey.contentHTML)
-		d.addOptionalString(contentText, DatabaseKey.contentText)
-		d.addOptionalString(url, DatabaseKey.url)
-		d.addOptionalString(externalURL, DatabaseKey.externalURL)
-		d.addOptionalString(summary, DatabaseKey.summary)
-		d.addOptionalString(imageURL, DatabaseKey.imageURL)
-		d.addOptionalString(bannerImageURL, DatabaseKey.bannerImageURL)
-
-		d.addOptionalDate(datePublished, DatabaseKey.datePublished)
-		d.addOptionalDate(dateModified, DatabaseKey.dateModified)
-
-		// TODO: accountInfo
-		
-		return d.copy() as! NSDictionary
-	}
-	
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: NSMutableDictionary) {
 		
 		if self[keyPath: comparisonKeyPath] != otherArticle[keyPath: comparisonKeyPath] {
@@ -132,6 +107,31 @@ extension Article {
 }
 
 extension Article: DatabaseObject {
+
+	public func databaseDictionary() -> NSDictionary? {
+
+		let d = NSMutableDictionary()
+
+		d[DatabaseKey.articleID] = articleID
+		d[DatabaseKey.feedID] = feedID
+		d[DatabaseKey.uniqueID] = uniqueID
+
+		d.addOptionalString(title, DatabaseKey.title)
+		d.addOptionalString(contentHTML, DatabaseKey.contentHTML)
+		d.addOptionalString(contentText, DatabaseKey.contentText)
+		d.addOptionalString(url, DatabaseKey.url)
+		d.addOptionalString(externalURL, DatabaseKey.externalURL)
+		d.addOptionalString(summary, DatabaseKey.summary)
+		d.addOptionalString(imageURL, DatabaseKey.imageURL)
+		d.addOptionalString(bannerImageURL, DatabaseKey.bannerImageURL)
+
+		d.addOptionalDate(datePublished, DatabaseKey.datePublished)
+		d.addOptionalDate(dateModified, DatabaseKey.dateModified)
+
+		// TODO: accountInfo
+
+		return (d.copy() as! NSDictionary)
+	}
 	
 	public var databaseID: String {
 		get {
@@ -159,6 +159,11 @@ extension Set where Element == Article {
 	func databaseObjects() -> [DatabaseObject] {
 
 		return self.map{ $0 as DatabaseObject }
+	}
+
+	func databaseDictionaries() -> [NSDictionary]? {
+
+		return self.flatMap { $0.databaseDictionary() }
 	}
 }
 

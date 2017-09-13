@@ -11,24 +11,22 @@ import Data
 import RSDatabase
 import RSParser
 
-extension Author {
-
-	static func authorsWithParsedAuthors(_ parsedAuthors: Set<ParsedAuthor>?) -> Set<Author>? {
-
-		assert(!Thread.isMainThread)
-		
-		guard let parsedAuthors = parsedAuthors else {
-			return nil
-		}
-
-		let authors = Set(parsedAuthors.flatMap { authorWithParsedAuthor($0) })
-		return authors.isEmpty ? nil : authors
-	}
-}
-
 // MARK: - DatabaseObject
 
 extension Author: DatabaseObject {
+
+	public func databaseDictionary() -> NSDictionary? {
+
+		var d = NSMutableDictionary()
+
+		// TODO
+		
+		if d.count < 1 {
+			return nil
+		}
+		return (d.copy() as! NSDictionary)
+	}
+
 	
 	public var databaseID: String {
 		get {
@@ -55,6 +53,17 @@ private extension Author {
 	init?(parsedAuthor: ParsedAuthor) {
 		
 		self.init(authorID: nil, name: parsedAuthor.name, url: parsedAuthor.url, avatarURL: parsedAuthor.avatarURL, emailAddress: parsedAuthor.emailAddress)
+	}
+}
+
+// MARK: Author creation from Set<ParsedAuthor>
+
+extension Set where Element == ParsedAuthor {
+
+	func authors() -> Set<Author>? {
+
+		let createdAuthors = Set(self.flatMap { Author(parsedAuthor: $0) })
+		return createdAuthors.isEmpty ? nil: createdAuthors
 	}
 }
 

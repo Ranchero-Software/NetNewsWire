@@ -12,6 +12,8 @@ public protocol DatabaseObject {
 
 	var databaseID: String { get }
 
+	func databaseDictionary() -> NSDictionary?
+
 	func relatedObjectsWithName(_ name: String) -> [DatabaseObject]?
 }
 
@@ -47,5 +49,11 @@ extension Array where Element == DatabaseObject {
 			}
 		}
 		return false
+	}
+
+	func databaseDictionaries() -> [NSDictionary]? {
+
+		let dictionaries = self.flatMap{ $0.databaseDictionary() }
+		return dictionaries.isEmpty ? nil : dictionaries
 	}
 }

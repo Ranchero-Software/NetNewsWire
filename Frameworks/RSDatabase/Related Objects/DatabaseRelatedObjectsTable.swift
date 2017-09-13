@@ -62,4 +62,21 @@ public extension DatabaseRelatedObjectsTable {
 
 		return resultSet.flatMap(objectWithRow)
 	}
+
+	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
+
+		// Objects in cache must already exist in database. Filter them out.
+		let objectsToSave = objects.filter { (object) -> Bool in
+			if let _ = cache[object.databaseID] {
+				return false
+			}
+			return true
+		}
+
+		cache.add(objectsToSave)
+		if let databaseDictionaries = objectsToSave.databaseDictionaries() {
+			insertRows(databaseDictionaries, insertType: .orIgnore, in: database)
+		}
+	}
+
 }
