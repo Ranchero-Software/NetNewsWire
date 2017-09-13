@@ -6,12 +6,12 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,11,16,17,20,24,29,31,34,37,39,41,45,50,53,57,61,63,65,74,79,85,90</expansionState>
-    <vertScrollState>0</vertScrollState>
-    <windowTop>113</windowTop>
-    <windowLeft>44</windowLeft>
-    <windowRight>776</windowRight>
-    <windowBottom>872</windowBottom>
+    <expansionState>11,16,17,20,24,29,31,34,37,39,41,45,50,53,57,59,61,63,72,77,83,88</expansionState>
+    <vertScrollState>47</vertScrollState>
+    <windowTop>208</windowTop>
+    <windowLeft>30</windowLeft>
+    <windowRight>762</windowRight>
+    <windowBottom>967</windowBottom>
   </head>
   <body>
     <outline text="App">
@@ -85,8 +85,6 @@
           <outline text="Delete unused authors"/>
         </outline>
         <outline text="AttachmentsTable">
-          <outline text="Save"/>
-          <outline text="Fetch, use cache"/>
           <outline text="Delete unused attachments"/>
         </outline>
         <outline text="Tags table">
