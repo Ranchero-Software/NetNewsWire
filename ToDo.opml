@@ -6,12 +6,12 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>11,16,17,20,24,29,31,34,37,39,41,43,47,52,55,57,59,61,63,72,77,79,85,90</expansionState>
-    <vertScrollState>0</vertScrollState>
-    <windowTop>209</windowTop>
+    <expansionState>11,16,17,20,24,29,31,34,37,39,40,44,49,52,54,56,58,67,72,78,83</expansionState>
+    <vertScrollState>59</vertScrollState>
+    <windowTop>248</windowTop>
     <windowLeft>30</windowLeft>
     <windowRight>762</windowRight>
-    <windowBottom>968</windowBottom>
+    <windowBottom>1007</windowBottom>
   </head>
   <body>
     <outline text="App">
@@ -63,20 +63,16 @@
     <outline text="Frameworks">
       <outline text="Account"/>
       <outline text="Database">
-        <outline text="Get it building again"/>
-        <outline text="Authors">
-          <outline text="databaseDictionary()"/>
-        </outline>
         <outline text="Database.swift">
           <outline text="updateFeedWithParsedFeed"/>
           <outline text="Handle accountInfo in statuses"/>
           <outline text="Send notification on saving/updating"/>
         </outline>
         <outline text="ArticlesTable">
-          <outline text="Fetch related objects for articles in time for Article.init, so Article can be immutable"/>
           <outline text="mark articles"/>
           <outline text="Delete old articles"/>
           <outline text="Update cutoff date periodically"/>
+          <outline text="Do something with statuses on fetching articles"/>
         </outline>
         <outline text="StatusesTable">
           <outline text="Update cached statuses on marking"/>
@@ -90,9 +86,6 @@
         </outline>
         <outline text="Tags table">
           <outline text="Search on tags using COLLATE NOCASE"/>
-        </outline>
-        <outline text="DatabaseLookupTable">
-          <outline text="Fetch relationships using unique IDs instead of objects"/>
         </outline>
         <outline text="Unit tests">
           <outline text="fetching articles"/>
@@ -110,9 +103,6 @@
             <outline text="String changes"/>
           </outline>
         </outline>
-      </outline>
-      <outline text="RSDatabase">
-        <outline text="DatabaseRelatedObjectsTable.save implementation should use cache"/>
       </outline>
       <outline text="Data">
         <outline text="Make model classes quicklookable"/>

@@ -175,14 +175,56 @@ private extension ArticlesTable {
 		// Note: the row is a result of a JOIN query with the statuses table,
 		// so we can get the status at the same time and avoid additional database lookups.
 
-		article.status = statusesTable.statusWithRow(row)
+//		article.status = statusesTable.statusWithRow(row)
 		return article
 	}
 
 	func articlesWithResultSet(_ resultSet: FMResultSet, _ database: FMDatabase) -> Set<Article> {
 
-		let articles = resultSet.mapToSet(articleWithRow)
-		attachRelatedObjects(articles, database)
+		// Create set of stub Articles without related objects.
+		// Then fetch the related objects, given the set of articleIDs.
+		// Then create set of Articles *with* related objects and return it.
+		
+		let stubArticles = resultSet.mapToSet(articleWithRow)
+		if stubArticles.isEmpty {
+			return stubArticles
+		}
+		
+		// Fetch related objects.
+		
+		let articleIDs = stubArticles.articleIDs()
+		let authorsMap = authorsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
+		let attachmentsMap = attachmentsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
+		let tagsMap = tagsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
+		
+		if authorsMap == nil && attachmentsMap == nil && tagsMap == nil {
+			return stubArticles
+		}
+		
+		// Create articles with related objects.
+		
+		var articles = Set<Article>()
+		for stubArticle in articles {
+			
+			var authors: Set<Author>? = nil
+			var attachments: Set<Attachment>? = nil
+			var tags: Set<String>? = nil
+			let articleID = stubArticle.articleID
+			
+			if let authorsMap = authorsMap {
+				authors = authorsMap.authors(for: articleID)
+			}
+			if let attachmentsMap = attachmentsMap {
+				attachments = attachmentsMap.attachments(for: articleID)
+			}
+			if let tagsMap = tagsMap {
+				tags = tagsMap.tags(for: articleID)
+			}
+			
+			let realArticle = stubArticle.articleByAttaching(authors, attachments, tags)
+			articles.insert(realArticle)
+		}
+		
 		return articles
 	}
 
@@ -378,13 +420,13 @@ private extension ArticlesTable {
 		// Only update exactly what has changed in the Article (if anything).
 		// Untested theory: this gets us better performance and less database fragmentation.
 		
-		guard let fetchedArticle = fetchedArticle[updatedArticle.articleID] else {
+		guard let fetchedArticle = fetchedArticles[updatedArticle.articleID] else {
 			assertionFailure("Expected to find matching fetched article.");
 			saveNewArticles(Set([updatedArticle]), database)
 			return
 		}
 		
-		guard let changesDictionary = updatedArticle.changesFrom(fetchedArticle), !changesDictionary.isEmpty else {
+		guard let changesDictionary = updatedArticle.changesFrom(fetchedArticle), changesDictionary.count > 0 else {
 			// Not unexpected. There may be no changes.
 			return
 		}

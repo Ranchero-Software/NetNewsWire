@@ -54,13 +54,12 @@ final class StatusesTable: DatabaseTable {
 		fetchAndCacheStatusesForArticleIDs(articleIDsMissingCachedStatus) {
 			
 			let articleIDsNeedingStatus = self.articleIDsWithNoCachedStatus(articleIDs)
-			if articleIDsNeedingStatus.isEmpty {
-				completion(self.statusesDictionary(articleIDs))
-				return
+			if !articleIDsNeedingStatus.isEmpty {
+				// Create new statuses.
+				self.createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus)
 			}
 			
-			// Create new statuses.
-			self.createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus, completion)
+			completion(self.statusesDictionary(articleIDs))
 		}
 	}
 
@@ -121,12 +120,12 @@ private extension StatusesTable {
 	func saveStatuses(_ statuses: Set<ArticleStatus>) {
 
 		queue.update { (database) in
-			let statusArray = statuses.map { $0.databaseDictionary() }
+			let statusArray = statuses.map { $0.databaseDictionary()! }
 			self.insertRows(statusArray, insertType: .orIgnore, in: database)
 		}
 	}
 
-	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>, _ completion: @escaping RSVoidCompletionBlock) {
+	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>) {
 
 		assert(Thread.isMainThread)
 		
@@ -134,10 +133,6 @@ private extension StatusesTable {
 		let statuses = Set(articleIDs.map { ArticleStatus(articleID: $0, dateArrived: now) })
 		cache.addIfNotCached(statuses)
 		
-		// No need to wait for database to return before calling completion,
-		// since the new statuses have been cached at this point.
-		
-		completion()
 		saveStatuses(statuses)
 	}
 

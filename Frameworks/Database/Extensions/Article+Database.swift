@@ -13,7 +13,7 @@ import RSParser
 
 extension Article {
 	
-	init?(row: FMResultSet, authors: Set<Author>, attachments: Set<Attachment>, tags: Set<String>, accountID: String) {
+	init?(row: FMResultSet, accountID: String, authors: Set<Author>? = nil, attachments: Set<Attachment>? = nil, tags: Set<String>? = nil) {
 		
 		guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
 			return nil
@@ -40,12 +40,21 @@ extension Article {
 
 	init(parsedItem: ParsedItem, accountID: String, feedID: String) {
 
-		let authors = parsedItem.authors?.authors()
+		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
 		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
 
 		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: parsedItem.datePublished, dateModified: parsedItem.dateModified, authors: authors, tags: parsedItem.tags, attachments: attachments, accountInfo: nil)
 	}
 
+	func articleByAttaching(_ authors: Set<Author>?, _ attachments: Set<Attachment>?, _ tags: Set<String>?) -> Article {
+		
+		if authors == nil && attachments == nil && tags == nil {
+			return self
+		}
+		
+		return Article(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
+	}
+	
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: NSMutableDictionary) {
 		
 		if self[keyPath: comparisonKeyPath] != otherArticle[keyPath: comparisonKeyPath] {

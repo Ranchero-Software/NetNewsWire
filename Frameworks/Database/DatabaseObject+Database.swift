@@ -1,0 +1,32 @@
+//
+//  DatabaseObject+Database.swift
+//  Database
+//
+//  Created by Brent Simmons on 9/13/17.
+//  Copyright © 2017 Ranchero Software. All rights reserved.
+//
+
+import Foundation
+import RSDatabase
+import Data
+
+extension Array where Element == DatabaseObject {
+	
+	func asTags() -> Set<String>? {
+		
+		let tags = Set(self.map { $0 as! String })
+		return tags.isEmpty ? nil : tags
+	}
+	
+	func asAuthors() -> Set<Author>? {
+	
+		let authors = Set(self.map { $0 as! Author })
+		return authors.isEmpty ? nil : authors
+	}
+	
+	func asAttachments() -> Set<Attachment>? {
+		
+		let attachments = Set(self.map { $0 as! Attachment })
+		return attachments.isEmpty ? nil : attachments
+	}
+}

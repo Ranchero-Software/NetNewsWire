@@ -30,6 +30,16 @@ extension Author {
 		
 		self.init(authorID: nil, name: parsedAuthor.name, url: parsedAuthor.url, avatarURL: parsedAuthor.avatarURL, emailAddress: parsedAuthor.emailAddress)
 	}
+	
+	static func authorsWithParsedAuthors(_ parsedAuthors: Set<ParsedAuthor>?) -> Set<Author>? {
+
+		guard let parsedAuthors = parsedAuthors else {
+			return nil
+		}
+		
+		let authors = Set(parsedAuthors.flatMap { Author(parsedAuthor: $0) })
+		return authors.isEmpty ? nil: authors
+	}
 }
 
 extension Author: DatabaseObject {
@@ -42,25 +52,24 @@ extension Author: DatabaseObject {
 
 	public func databaseDictionary() -> NSDictionary? {
 
-		var d = NSMutableDictionary()
+		let d = NSMutableDictionary()
 
-		// TODO
-		
-		if d.count < 1 {
-			return nil
+		d[DatabaseKey.authorID] = authorID
+
+		if let name = name {
+			d[DatabaseKey.name] = name
 		}
+		if let url = url {
+			d[DatabaseKey.url] = url
+		}
+		if let avatarURL = avatarURL {
+			d[DatabaseKey.avatarURL] = avatarURL
+		}
+		if let emailAddress = emailAddress {
+			d[DatabaseKey.emailAddress] = emailAddress
+		}
+
 		return (d.copy() as! NSDictionary)
-	}
-}
-
-// MARK: Author creation from Set<ParsedAuthor>
-
-extension Set where Element == ParsedAuthor {
-
-	func authors() -> Set<Author>? {
-
-		let createdAuthors = Set(self.flatMap { Author(parsedAuthor: $0) })
-		return createdAuthors.isEmpty ? nil: createdAuthors
 	}
 }
 

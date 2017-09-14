@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840405CE1F1A963700DF0296 /* AttachmentsTable.swift */; };
+		84288A001F6A3C4400395871 /* DatabaseObject+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */; };
+		84288A021F6A3D8000395871 /* RelatedObjectsMap+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84288A011F6A3D8000395871 /* RelatedObjectsMap+Database.swift */; };
 		843CB9961F34174100EE6581 /* Author+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F20F901F1810DD00D8E682 /* Author+Database.swift */; };
 		844BEE411F0AB3AB004AB7CD /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEE371F0AB3AA004AB7CD /* Database.framework */; };
 		844BEE461F0AB3AB004AB7CD /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */; };
 		845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580661F0AEBCD003CCFA1 /* Constants.swift */; };
 		845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580751F0AF670003CCFA1 /* Article+Database.swift */; };
-		845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580771F0AF678003CCFA1 /* Folder+Database.swift */; };
 		8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */; };
 		8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */; };
 		846146271F0ABC7B00870CB3 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846146241F0ABC7400870CB3 /* RSParser.framework */; };
@@ -113,13 +114,14 @@
 
 /* Begin PBXFileReference section */
 		840405CE1F1A963700DF0296 /* AttachmentsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsTable.swift; sourceTree = "<group>"; };
+		842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseObject+Database.swift"; sourceTree = "<group>"; };
+		84288A011F6A3D8000395871 /* RelatedObjectsMap+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RelatedObjectsMap+Database.swift"; sourceTree = "<group>"; };
 		844BEE371F0AB3AA004AB7CD /* Database.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Database.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		844BEE401F0AB3AB004AB7CD /* DatabaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DatabaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		844BEE451F0AB3AB004AB7CD /* DatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTests.swift; sourceTree = "<group>"; };
 		844BEE471F0AB3AB004AB7CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		845580661F0AEBCD003CCFA1 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		845580751F0AF670003CCFA1 /* Article+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Article+Database.swift"; path = "Extensions/Article+Database.swift"; sourceTree = "<group>"; };
-		845580771F0AF678003CCFA1 /* Folder+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Folder+Database.swift"; path = "Extensions/Folder+Database.swift"; sourceTree = "<group>"; };
 		845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ArticleStatus+Database.swift"; path = "Extensions/ArticleStatus+Database.swift"; sourceTree = "<group>"; };
 		8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Attachment+Database.swift"; path = "Extensions/Attachment+Database.swift"; sourceTree = "<group>"; };
 		8461461E1F0ABC7300870CB3 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
@@ -212,13 +214,14 @@
 		8461462A1F0AC44100870CB3 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				845580771F0AF678003CCFA1 /* Folder+Database.swift */,
 				846FB36A1F4A937B00EAB81D /* Feed+Database.swift */,
 				845580751F0AF670003CCFA1 /* Article+Database.swift */,
 				845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */,
 				84F20F901F1810DD00D8E682 /* Author+Database.swift */,
 				8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */,
 				84D0DEA01F4A429800073503 /* String+Database.swift */,
+				842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */,
+				84288A011F6A3D8000395871 /* RelatedObjectsMap+Database.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -472,13 +475,14 @@
 				84D0DEA11F4A429800073503 /* String+Database.swift in Sources */,
 				843CB9961F34174100EE6581 /* Author+Database.swift in Sources */,
 				848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */,
-				845580781F0AF678003CCFA1 /* Folder+Database.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
 				8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */,
 				8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */,
+				84288A021F6A3D8000395871 /* RelatedObjectsMap+Database.swift in Sources */,
 				84BB4BA91F11A32800858766 /* TagsTable.swift in Sources */,
 				840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */,
 				84F20F8F1F180D8700D8E682 /* AuthorsTable.swift in Sources */,
+				84288A001F6A3C4400395871 /* DatabaseObject+Database.swift in Sources */,
 				84E156EC1F0AB80E00F8CC05 /* ArticlesTable.swift in Sources */,
 				84E156EE1F0AB81400F8CC05 /* StatusesTable.swift in Sources */,
 				84E156EA1F0AB80500F8CC05 /* Database.swift in Sources */,
