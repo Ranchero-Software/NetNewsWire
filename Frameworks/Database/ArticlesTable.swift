@@ -206,20 +206,11 @@ private extension ArticlesTable {
 		var articles = Set<Article>()
 		for stubArticle in articles {
 			
-			var authors: Set<Author>? = nil
-			var attachments: Set<Attachment>? = nil
-			var tags: Set<String>? = nil
 			let articleID = stubArticle.articleID
 			
-			if let authorsMap = authorsMap {
-				authors = authorsMap.authors(for: articleID)
-			}
-			if let attachmentsMap = attachmentsMap {
-				attachments = attachmentsMap.attachments(for: articleID)
-			}
-			if let tagsMap = tagsMap {
-				tags = tagsMap.tags(for: articleID)
-			}
+			let authors = authorsMap?.authors(for: articleID)
+			let attachments = attachmentsMap?.attachments(for: articleID)
+			let tags = tagsMap?.tags(for: articleID)
 			
 			let realArticle = stubArticle.articleByAttaching(authors, attachments, tags)
 			articles.insert(realArticle)
