@@ -27,12 +27,30 @@ final class StatusesTable: DatabaseTable {
 		
 		self.queue = queue
 	}
-	
+
+	// MARK: Cache
+
 	func cachedStatus(for articleID: String) -> ArticleStatus? {
 
 		assert(Thread.isMainThread)
 		assert(cache[articleID] != nil)
 		return cache[articleID]
+	}
+
+	func addIfNotCached(_ statuses: Set<ArticleStatus>) {
+
+		if statuses.isEmpty {
+			return
+		}
+		
+		if Thread.isMainThread {
+			self.cache.addIfNotCached(statuses)
+		}
+		else {
+			DispatchQueue.main.async {
+				self.cache.addIfNotCached(statuses)
+			}
+		}
 	}
 
 	// MARK: Creating/Updating
@@ -71,11 +89,6 @@ final class StatusesTable: DatabaseTable {
 
 		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
 	}
-}
-
-// MARK: - Private
-
-private extension StatusesTable {
 
 	// MARK: Fetching
 
@@ -91,6 +104,11 @@ private extension StatusesTable {
 		let articleStatus = ArticleStatus(articleID: articleID, dateArrived: dateArrived, row: row)
 		return articleStatus
 	}
+}
+
+// MARK: - Private
+
+private extension StatusesTable {
 
 	// MARK: Cache
 	

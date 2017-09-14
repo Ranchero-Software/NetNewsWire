@@ -166,26 +166,15 @@ private extension ArticlesTable {
 
 	// MARK: Fetching
 
-	func articleWithRow(_ row: FMResultSet) -> Article? {
-
-		guard let article = Article(row: row, accountID: accountID) else {
-			return nil
-		}
-
-		// Note: the row is a result of a JOIN query with the statuses table,
-		// so we can get the status at the same time and avoid additional database lookups.
-
-//		article.status = statusesTable.statusWithRow(row)
-		return article
-	}
-
 	func articlesWithResultSet(_ resultSet: FMResultSet, _ database: FMDatabase) -> Set<Article> {
 
 		// Create set of stub Articles without related objects.
 		// Then fetch the related objects, given the set of articleIDs.
 		// Then create set of Articles *with* related objects and return it.
+
+		let (stubArticles, statuses) = stubArticlesAndStatuses(with: resultSet)
 		
-		let stubArticles = resultSet.mapToSet(articleWithRow)
+		statusesTable.addIfNotCached(statuses)
 		if stubArticles.isEmpty {
 			return stubArticles
 		}
@@ -202,21 +191,42 @@ private extension ArticlesTable {
 		}
 		
 		// Create articles with related objects.
-		
-		var articles = Set<Article>()
-		for stubArticle in articles {
-			
-			let articleID = stubArticle.articleID
-			
-			let authors = authorsMap?.authors(for: articleID)
-			let attachments = attachmentsMap?.attachments(for: articleID)
-			let tags = tagsMap?.tags(for: articleID)
-			
-			let realArticle = stubArticle.articleByAttaching(authors, attachments, tags)
-			articles.insert(realArticle)
-		}
-		
+
+		let articles = Set(stubArticles.map { articleWithAttachedRelatedObjects($0, authorsMap, attachmentsMap, tagsMap) })
 		return articles
+	}
+
+	func stubArticlesAndStatuses(with resultSet: FMResultSet) -> (Set<Article>, Set<ArticleStatus>) {
+
+		var stubArticles = Set<Article>()
+		var statuses = Set<ArticleStatus>()
+
+		// Note: the resultSet is a result of a JOIN query with the statuses table,
+		// so we can get the statuses at the same time and avoid additional database lookups.
+
+		while resultSet.next() {
+			if let stubArticle = Article(row: resultSet, accountID: accountID) {
+				stubArticles.insert(stubArticle)
+			}
+			if let status = statusesTable.statusWithRow(resultSet) {
+				statuses.insert(status)
+			}
+		}
+		resultSet.close()
+
+		return (stubArticles, statuses)
+	}
+
+	func articleWithAttachedRelatedObjects(_ stubArticle: Article, _ authorsMap: RelatedObjectsMap?, _ attachmentsMap: RelatedObjectsMap?, _ tagsMap: RelatedObjectsMap?) -> Article {
+
+		let articleID = stubArticle.articleID
+
+		let authors = authorsMap?.authors(for: articleID)
+		let attachments = attachmentsMap?.attachments(for: articleID)
+		let tags = tagsMap?.tags(for: articleID)
+
+		let realArticle = stubArticle.articleByAttaching(authors, attachments, tags)
+		return realArticle
 	}
 
 	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject], withLimits: Bool) -> Set<Article> {

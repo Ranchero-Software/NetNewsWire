@@ -6,12 +6,12 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>11,16,17,20,24,29,31,34,37,39,40,44,49,52,54,56,58,67,72,78,83</expansionState>
-    <vertScrollState>59</vertScrollState>
-    <windowTop>248</windowTop>
-    <windowLeft>30</windowLeft>
-    <windowRight>762</windowRight>
-    <windowBottom>1007</windowBottom>
+    <expansionState>11,16,17,20,24,29,31,34,37,39,40,44,48,51,53,55,57,66,71,77,82</expansionState>
+    <vertScrollState>0</vertScrollState>
+    <windowTop>523</windowTop>
+    <windowLeft>40</windowLeft>
+    <windowRight>772</windowRight>
+    <windowBottom>1282</windowBottom>
   </head>
   <body>
     <outline text="App">
@@ -72,7 +72,6 @@
           <outline text="mark articles"/>
           <outline text="Delete old articles"/>
           <outline text="Update cutoff date periodically"/>
-          <outline text="Do something with statuses on fetching articles"/>
         </outline>
         <outline text="StatusesTable">
           <outline text="Update cached statuses on marking"/>
