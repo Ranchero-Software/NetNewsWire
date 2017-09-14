@@ -13,34 +13,10 @@ import RSParser
 
 // MARK: - DatabaseObject
 
-extension Author: DatabaseObject {
-
-	public func databaseDictionary() -> NSDictionary? {
-
-		var d = NSMutableDictionary()
-
-		// TODO
-		
-		if d.count < 1 {
-			return nil
-		}
-		return (d.copy() as! NSDictionary)
-	}
-
-	
-	public var databaseID: String {
-		get {
-			return authorID
-		}
-	}
-}
-
-// MARK: - Private
-
-private extension Author {
+extension Author {
 	
 	init?(row: FMResultSet) {
-
+		
 		let authorID = row.string(forColumn: DatabaseKey.authorID)
 		let name = row.string(forColumn: DatabaseKey.name)
 		let url = row.string(forColumn: DatabaseKey.url)
@@ -53,6 +29,27 @@ private extension Author {
 	init?(parsedAuthor: ParsedAuthor) {
 		
 		self.init(authorID: nil, name: parsedAuthor.name, url: parsedAuthor.url, avatarURL: parsedAuthor.avatarURL, emailAddress: parsedAuthor.emailAddress)
+	}
+}
+
+extension Author: DatabaseObject {
+
+	public var databaseID: String {
+		get {
+			return authorID
+		}
+	}
+
+	public func databaseDictionary() -> NSDictionary? {
+
+		var d = NSMutableDictionary()
+
+		// TODO
+		
+		if d.count < 1 {
+			return nil
+		}
+		return (d.copy() as! NSDictionary)
 	}
 }
 

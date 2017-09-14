@@ -14,6 +14,13 @@ import RSDatabase
 
 extension String: DatabaseObject {
 	
+	public func databaseDictionary() -> NSDictionary? {
+		
+		preconditionFailure("databaseDictionary() called for a tag: this should never happen.")
+		return nil // unused
+	}
+	
+	
 	public var databaseID: String {
 		get {
 			return self

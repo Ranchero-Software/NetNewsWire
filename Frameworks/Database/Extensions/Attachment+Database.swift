@@ -61,7 +61,7 @@ extension Attachment: DatabaseObject {
 		}
 	}
 
-	func databaseDictionary() -> NSDictionary? {
+	public func databaseDictionary() -> NSDictionary? {
 
 		let d = NSMutableDictionary()
 

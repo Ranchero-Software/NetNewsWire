@@ -32,27 +32,10 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
 	
-		if let author = Author.authorWithRow(row) {
+		if let author = Author(row: row) {
 			return author as DatabaseObject
 		}
 		return nil
 	}
-	
-	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
-
-		let attachments = objects.map { $0 as! Author }
-
-		// Authors in cache must already exist in database. Filter them out.
-		let authorsToSave = Set(attachments.filter { (attachment) -> Bool in
-			if let _ = cache[attachment.attachmentID] {
-				return false
-			}
-			return true
-		})
-
-		cacheAttachments(attachmentsToSave)
-
-		insertRows(attachmentsToSave.databaseDictionaries(), insertType: .orIgnore, in: database)
-}
 }
 
