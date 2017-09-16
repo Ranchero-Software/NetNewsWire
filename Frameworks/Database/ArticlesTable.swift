@@ -131,32 +131,9 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: Status
 	
-	func mark(_ articles: Set<Article>, _ statusKey: String, _ flag: Bool) {
-		
-		// Sets flag in both memory and in database.
-		
-//		let articleIDs = articles.flatMap { (article) -> String? in
-//			
-//			guard let status = article.status else {
-//				assertionFailure("Each article must have a status.")
-//				return nil
-//			}
-//			
-//			if status.boolStatus(forKey: statusKey) == flag {
-//				return nil
-//			}
-//			status.setBoolStatus(flag, forKey: statusKey)
-//			return article.articleID
-//		}
-//		
-//		if articleIDs.isEmpty {
-//			return
-//		}
-//		
-//		// TODO: statusesTable needs to cache status changes.
-//		queue.update { (database) in
-//			self.statusesTable.markArticleIDs(Set(articleIDs), statusKey, flag, database)
-//		}
+	func mark(_ statuses: Set<ArticleStatus>, _ statusKey: String, _ flag: Bool) {
+
+		statusesTable.mark(statuses, statusKey, flag)
 	}
 }
 

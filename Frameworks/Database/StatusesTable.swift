@@ -82,12 +82,30 @@ final class StatusesTable: DatabaseTable {
 	}
 
 	// MARK: Marking
-	
-	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: String, _ flag: Bool, _ database: FMDatabase) {
-		
-		// TODO: replace statuses in cache.
 
-		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
+	func mark(_ statuses: Set<ArticleStatus>, _ statusKey: String, _ flag: Bool) {
+
+		// Sets flag in both memory and in database.
+
+		var updatedStatuses = Set<ArticleStatus>()
+
+		for status in statuses {
+
+			if status.boolStatus(forKey: statusKey) == flag {
+				continue
+			}
+			status.setBoolStatus(flag, forKey: statusKey)
+			updatedStatuses.insert(status)
+		}
+
+		if updatedStatuses.isEmpty {
+			return
+		}
+		addToCache(updatedStatuses)
+
+		queue.update { (database) in
+			self.markArticleIDs(updatedStatuses.articleIDs(), statusKey, flag, database)
+		}
 	}
 
 	// MARK: Fetching
@@ -132,7 +150,24 @@ private extension StatusesTable {
 		
 		return d
 	}
-	
+
+	func addToCache(_ statuses: Set<ArticleStatus>) {
+
+		// Replacing any already cached statuses.
+		if statuses.isEmpty {
+			return
+		}
+
+		if Thread.isMainThread {
+			self.cache.add(statuses)
+		}
+		else {
+			DispatchQueue.main.async {
+				self.cache.add(statuses)
+			}
+		}
+	}
+
 	// MARK: Creating
 
 	func saveStatuses(_ statuses: Set<ArticleStatus>) {
@@ -169,6 +204,13 @@ private extension StatusesTable {
 				completion()
 			}
 		}
+	}
+
+	// MARK: Marking
+
+	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: String, _ flag: Bool, _ database: FMDatabase) {
+
+		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
 	}
 }
 

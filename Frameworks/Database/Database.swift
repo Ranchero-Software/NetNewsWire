@@ -70,9 +70,9 @@ public final class Database {
 	
 	// MARK: - Status
 	
-	public func mark(_ articles: Set<Article>, statusKey: String, flag: Bool) {
+	public func mark(_ statuses: Set<ArticleStatus>, statusKey: String, flag: Bool) {
 
-		articlesTable.mark(articles, statusKey, flag)
+		articlesTable.mark(statuses, statusKey, flag)
 	}
 }
 
