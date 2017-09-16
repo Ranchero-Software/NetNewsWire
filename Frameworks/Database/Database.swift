@@ -13,8 +13,7 @@ import RSParser
 import Data
 
 public typealias ArticleResultBlock = (Set<Article>) -> Void
-public typealias UnreadCountTable = [String: Int] // feedID: unreadCount
-public typealias UnreadCountCompletionBlock = (UnreadCountTable) -> Void //feedID: unreadCount
+public typealias UnreadCountCompletionBlock = (UnreadCountDictionary) -> Void
 public typealias UpdateArticlesWithFeedCompletionBlock = (Set<Article>?, Set<Article>?) -> Void //newArticles, updateArticles
 
 public final class Database {

@@ -115,16 +115,16 @@ final class ArticlesTable: DatabaseTable {
 	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: @escaping UnreadCountCompletionBlock) {
 		
 		let feedIDs = feeds.feedIDs()
-		var unreadCountTable = UnreadCountTable()
+		var unreadCountDictionary = UnreadCountDictionary()
 
 		queue.fetch { (database) in
 
 			for feedID in feedIDs {
-				unreadCountTable[feedID] = self.fetchUnreadCount(feedID, database)
+				unreadCountDictionary[feedID] = self.fetchUnreadCount(feedID, database)
 			}
 
 			DispatchQueue.main.async() {
-				completion(unreadCountTable)
+				completion(unreadCountDictionary)
 			}
 		}
 	}
