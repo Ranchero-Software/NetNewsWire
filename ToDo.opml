@@ -6,12 +6,12 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>11,16,17,20,24,29,31,34,37,39,40,44,48,51,53,55,57,66,71,77,82</expansionState>
+    <expansionState>11,16,17,20,24,29,31,34,37,39,40,42,46,49,51,53,55,64,69,75,80</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>523</windowTop>
-    <windowLeft>40</windowLeft>
-    <windowRight>772</windowRight>
-    <windowBottom>1282</windowBottom>
+    <windowTop>208</windowTop>
+    <windowLeft>30</windowLeft>
+    <windowRight>762</windowRight>
+    <windowBottom>967</windowBottom>
   </head>
   <body>
     <outline text="App">
@@ -64,9 +64,7 @@
       <outline text="Account"/>
       <outline text="Database">
         <outline text="Database.swift">
-          <outline text="updateFeedWithParsedFeed"/>
           <outline text="Handle accountInfo in statuses"/>
-          <outline text="Send notification on saving/updating"/>
         </outline>
         <outline text="ArticlesTable">
           <outline text="mark articles"/>
