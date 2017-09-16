@@ -16,7 +16,7 @@ import RSCore
 private var databaseIDCache = [String: String]()
 private var databaseIDCacheLock = os_unfair_lock_s()
 
-public func databaseIDWithString(_ s: String) -> String {
+func databaseIDWithString(_ s: String) -> String {
 
 	os_unfair_lock_lock(&databaseIDCacheLock)
 	defer {

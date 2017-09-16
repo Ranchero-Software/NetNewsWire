@@ -49,9 +49,9 @@ public final class Database {
 		articlesTable.fetchArticlesAsync(feed, withLimits: true, resultBlock)
 	}
 
-	public func fetchUnreadArticles(for folder: Folder) -> Set<Article> {
+	public func fetchUnreadArticles(for feeds: Set<Feed>) -> Set<Article> {
 		
-		return articlesTable.fetchUnreadArticles(for: folder.flattenedFeeds())
+		return articlesTable.fetchUnreadArticles(for: feeds)
 	}
 
 	// MARK: - Unread Counts

@@ -7,11 +7,82 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		841973FD1F6DD1B7006346C4 /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973E51F6DD195006346C4 /* Data.framework */; };
+		841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973EF1F6DD19E006346C4 /* RSCore.framework */; };
+		841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973FA1F6DD1AC006346C4 /* RSParser.framework */; };
+		841974011F6DD1EC006346C4 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974001F6DD1EC006346C4 /* Folder.swift */; };
+		841974181F6DD535006346C4 /* Folder+Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974171F6DD535006346C4 /* Folder+Container.swift */; };
+		8419741A1F6DD583006346C4 /* Account+Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974191F6DD583006346C4 /* Account+Container.swift */; };
+		8469F8171F6DD0AD0084783E /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8401A17D1F6DC388002B1BE2 /* Database.framework */; };
+		8469F81C1F6DD15E0084783E /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848935101F62486800CEBD24 /* Account.swift */; };
 		848935001F62484F00CEBD24 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848934F61F62484F00CEBD24 /* Account.framework */; };
 		848935051F62485000CEBD24 /* AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848935041F62485000CEBD24 /* AccountTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8401A17C1F6DC388002B1BE2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8401A1721F6DC387002B1BE2 /* Database.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 844BEE371F0AB3AA004AB7CD;
+			remoteInfo = Database;
+		};
+		8401A17E1F6DC388002B1BE2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8401A1721F6DC387002B1BE2 /* Database.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 844BEE401F0AB3AB004AB7CD;
+			remoteInfo = DatabaseTests;
+		};
+		841973E41F6DD195006346C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841973DF1F6DD194006346C4 /* Data.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 844BEE5B1F0AB3C8004AB7CD;
+			remoteInfo = Data;
+		};
+		841973E61F6DD195006346C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841973DF1F6DD194006346C4 /* Data.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 844BEE641F0AB3C9004AB7CD;
+			remoteInfo = DataTests;
+		};
+		841973EE1F6DD19E006346C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841973E81F6DD19E006346C4 /* RSCore.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84CFF4F41AC3C69700CEA6C8;
+			remoteInfo = RSCore;
+		};
+		841973F01F6DD19E006346C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841973E81F6DD19E006346C4 /* RSCore.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84CFF4FF1AC3C69700CEA6C8;
+			remoteInfo = RSCoreTests;
+		};
+		841973F21F6DD19E006346C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841973E81F6DD19E006346C4 /* RSCore.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 842DD7BC1E14993900E061EB;
+			remoteInfo = RSCoreiOS;
+		};
+		841973F91F6DD1AC006346C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841973F41F6DD1AC006346C4 /* RSParser.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84FF5F841EFA285800C15A01;
+			remoteInfo = RSParser;
+		};
+		841973FB1F6DD1AC006346C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841973F41F6DD1AC006346C4 /* RSParser.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84FF5F8D1EFA285800C15A01;
+			remoteInfo = RSParserTests;
+		};
 		848935011F62484F00CEBD24 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 848934ED1F62484F00CEBD24 /* Project object */;
@@ -22,13 +93,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8401A1721F6DC387002B1BE2 /* Database.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Database.xcodeproj; path = ../Database/Database.xcodeproj; sourceTree = "<group>"; };
+		841973DF1F6DD194006346C4 /* Data.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Data.xcodeproj; path = ../Data/Data.xcodeproj; sourceTree = "<group>"; };
+		841973E81F6DD19E006346C4 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
+		841973F41F6DD1AC006346C4 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
+		841974001F6DD1EC006346C4 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
+		8419740D1F6DD25F006346C4 /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
+		841974171F6DD535006346C4 /* Folder+Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Container.swift"; sourceTree = "<group>"; };
+		841974191F6DD583006346C4 /* Account+Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+Container.swift"; sourceTree = "<group>"; };
 		848934F61F62484F00CEBD24 /* Account.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Account.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		848934FA1F62484F00CEBD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		848934FF1F62484F00CEBD24 /* AccountTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AccountTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		848935041F62485000CEBD24 /* AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTests.swift; sourceTree = "<group>"; };
 		848935061F62485000CEBD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		848935101F62486800CEBD24 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
-		848935201F62498B00CEBD24 /* Account+OPMLRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+OPMLRepresentable.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +114,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */,
+				841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */,
+				841973FD1F6DD1B7006346C4 /* Data.framework in Frameworks */,
+				8469F8171F6DD0AD0084783E /* Database.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,11 +132,71 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8401A1731F6DC387002B1BE2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8401A17D1F6DC388002B1BE2 /* Database.framework */,
+				8401A17F1F6DC388002B1BE2 /* DatabaseTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		841973E01F6DD194006346C4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				841973E51F6DD195006346C4 /* Data.framework */,
+				841973E71F6DD195006346C4 /* DataTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		841973E91F6DD19E006346C4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				841973EF1F6DD19E006346C4 /* RSCore.framework */,
+				841973F11F6DD19E006346C4 /* RSCoreTests.xctest */,
+				841973F31F6DD19E006346C4 /* RSCore.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		841973F51F6DD1AC006346C4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				841973FA1F6DD1AC006346C4 /* RSParser.framework */,
+				841973FC1F6DD1AC006346C4 /* RSParserTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		841974141F6DD4FF006346C4 /* Container */ = {
+			isa = PBXGroup;
+			children = (
+				8419740D1F6DD25F006346C4 /* Container.swift */,
+				841974191F6DD583006346C4 /* Account+Container.swift */,
+				841974171F6DD535006346C4 /* Folder+Container.swift */,
+			);
+			path = Container;
+			sourceTree = "<group>";
+		};
+		8469F80F1F6DC3C10084783E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8401A1721F6DC387002B1BE2 /* Database.xcodeproj */,
+				841973DF1F6DD194006346C4 /* Data.xcodeproj */,
+				841973F41F6DD1AC006346C4 /* RSParser.xcodeproj */,
+				841973E81F6DD19E006346C4 /* RSCore.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		848934EC1F62484F00CEBD24 = {
 			isa = PBXGroup;
 			children = (
 				848935101F62486800CEBD24 /* Account.swift */,
-				848935201F62498B00CEBD24 /* Account+OPMLRepresentable.swift */,
+				841974001F6DD1EC006346C4 /* Folder.swift */,
+				841974141F6DD4FF006346C4 /* Container */,
+				8469F80F1F6DC3C10084783E /* Frameworks */,
 				848934FA1F62484F00CEBD24 /* Info.plist */,
 				848935031F62484F00CEBD24 /* AccountTests */,
 				848934F71F62484F00CEBD24 /* Products */,
@@ -159,6 +301,24 @@
 			mainGroup = 848934EC1F62484F00CEBD24;
 			productRefGroup = 848934F71F62484F00CEBD24 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 841973E01F6DD194006346C4 /* Products */;
+					ProjectRef = 841973DF1F6DD194006346C4 /* Data.xcodeproj */;
+				},
+				{
+					ProductGroup = 8401A1731F6DC387002B1BE2 /* Products */;
+					ProjectRef = 8401A1721F6DC387002B1BE2 /* Database.xcodeproj */;
+				},
+				{
+					ProductGroup = 841973E91F6DD19E006346C4 /* Products */;
+					ProjectRef = 841973E81F6DD19E006346C4 /* RSCore.xcodeproj */;
+				},
+				{
+					ProductGroup = 841973F51F6DD1AC006346C4 /* Products */;
+					ProjectRef = 841973F41F6DD1AC006346C4 /* RSParser.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				848934F51F62484F00CEBD24 /* Account */,
@@ -166,6 +326,72 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		8401A17D1F6DC388002B1BE2 /* Database.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Database.framework;
+			remoteRef = 8401A17C1F6DC388002B1BE2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8401A17F1F6DC388002B1BE2 /* DatabaseTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DatabaseTests.xctest;
+			remoteRef = 8401A17E1F6DC388002B1BE2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		841973E51F6DD195006346C4 /* Data.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Data.framework;
+			remoteRef = 841973E41F6DD195006346C4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		841973E71F6DD195006346C4 /* DataTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DataTests.xctest;
+			remoteRef = 841973E61F6DD195006346C4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		841973EF1F6DD19E006346C4 /* RSCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RSCore.framework;
+			remoteRef = 841973EE1F6DD19E006346C4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		841973F11F6DD19E006346C4 /* RSCoreTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RSCoreTests.xctest;
+			remoteRef = 841973F01F6DD19E006346C4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		841973F31F6DD19E006346C4 /* RSCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RSCore.framework;
+			remoteRef = 841973F21F6DD19E006346C4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		841973FA1F6DD1AC006346C4 /* RSParser.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RSParser.framework;
+			remoteRef = 841973F91F6DD1AC006346C4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		841973FC1F6DD1AC006346C4 /* RSParserTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RSParserTests.xctest;
+			remoteRef = 841973FB1F6DD1AC006346C4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		848934F41F62484F00CEBD24 /* Resources */ = {
@@ -189,6 +415,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8469F81C1F6DD15E0084783E /* Account.swift in Sources */,
+				8419741A1F6DD583006346C4 /* Account+Container.swift in Sources */,
+				841974011F6DD1EC006346C4 /* Folder.swift in Sources */,
+				841974181F6DD535006346C4 /* Folder+Container.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,7 +566,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = Account/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Account;
@@ -360,7 +590,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = Account/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Account;
@@ -373,6 +603,7 @@
 		8489350E1F62485000CEBD24 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
@@ -387,6 +618,7 @@
 		8489350F1F62485000CEBD24 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = M8L2WTLA8W;

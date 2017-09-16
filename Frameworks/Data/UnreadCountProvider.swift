@@ -10,9 +10,7 @@ import Foundation
 
 public protocol UnreadCountProvider {
 
-	var unreadCount: Int {get}
-
-	func updateUnreadCount()
+	var unreadCount: Int { get }
 }
 
 public func calculateUnreadCount<T: Collection>(_ children: T) -> Int {

@@ -9,7 +9,7 @@
 import Foundation
 import RSCore
 
-public final class Feed: DisplayNameProvider, Hashable {
+public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	public let accountID: String
 	public let url: String
@@ -17,24 +17,29 @@ public final class Feed: DisplayNameProvider, Hashable {
 	public var homePageURL: String?
 	public var name: String?
 	public var editedName: String?
-	public var articles = Set<Article>()
 	public var accountInfo: AccountInfo? //If account needs to store more data
 	public let hashValue: Int
-	
+
+	// MARK: - DisplayNameProvider
+
 	public var nameForDisplay: String {
 		get {
 			return (editedName ?? name) ?? NSLocalizedString("Untitled", comment: "Feed name")
 		}
 	}
 
-//	public var unreadCount = 0 {
-//		didSet {
-//			if unreadCount != oldValue {
-//				postUnreadCountDidChangeNotification()
-//			}
-//		}
-//	}
+	// MARK: - UnreadCountProvider
 	
+	public var unreadCount = 0 {
+		didSet {
+			if unreadCount != oldValue {
+				postUnreadCountDidChangeNotification()
+			}
+		}
+	}
+
+	// MARK: - Init
+
 	public init(accountID: String, url: String, feedID: String) {
 
 		self.accountID = accountID
@@ -43,19 +48,29 @@ public final class Feed: DisplayNameProvider, Hashable {
 		self.hashValue = accountID.hashValue ^ url.hashValue ^ feedID.hashValue
 	}
 
-//	public func updateUnreadCount() {
-//		
-//		unreadCount = articles.reduce(0) { (result, oneArticle) -> Int in
-//			if let read = oneArticle.status?.read, !read {
-//				return result + 1
-//			}
-//			return result
-//		}
-//	}
-
 	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
 
 		return lhs === rhs
+	}
+}
+
+// MARK: - OPMLRepresentable
+
+extension Feed: OPMLRepresentable {
+
+	public func OPMLString(indentLevel: Int) -> String {
+
+		let escapedName = nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
+		var escapedHomePageURL = ""
+		if let homePageURL = homePageURL {
+			escapedHomePageURL = homePageURL.rs_stringByEscapingSpecialXMLCharacters()
+		}
+		let escapedFeedURL = url.rs_stringByEscapingSpecialXMLCharacters()
+
+		var s = "<outline text=\"\(escapedName)\" title=\"\(escapedName)\" description=\"\" type=\"rss\" version=\"RSS\" htmlUrl=\"\(escapedHomePageURL)\" xmlUrl=\"\(escapedFeedURL)\"/>\n"
+		s = s.rs_string(byPrependingNumberOfTabs: indentLevel)
+
+		return s
 	}
 }
 

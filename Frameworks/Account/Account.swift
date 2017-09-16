@@ -8,9 +8,7 @@
 
 import Foundation
 import RSCore
-
-// Various model objects include an accountInfo property that Accounts can use to store extra data.
-public typealias AccountInfo = [String: Any]
+import Data
 
 public enum AccountType: Int {
 
@@ -53,57 +51,6 @@ public final class Account: Hashable {
 	}
 }
 
-extension Account: Container {
-	
-	public func hasAtLeastOneFeed() -> Bool {
-	
-		return !feedIDDictionary.isEmpty
-	}
-
-	public func flattenedFeeds() -> Set<Feed> {
-		
-		return Set(feedIDDictionary.values)
-	}
-	
-	public func existingFeed(with feedID: String) -> Feed? {
-		
-		return feedIDDictionary[feedID]
-	}
-	
-	public func canAddItem(_ item: AnyObject) -> Bool {
-		
-		return delegate.canAddItem(item, toContainer: self)
-	}
-	
-	public func isChild(_ obj: AnyObject) -> Bool {
-		
-		return topLevelObjects.contains(where: { (oneObject) -> Bool in
-			return oneObject === obj
-		})
-	}
-	
-	public func visitObjects(_ recurse: Bool, _ visitBlock: VisitBlock) -> Bool {
-		
-		for oneObject in topLevelObjects {
-			
-			if let oneContainer = oneObject as? Container {
-				if visitBlock(oneObject) {
-					return true
-				}
-				if recurse && oneContainer.visitObjects(recurse, visitBlock) {
-					return true
-				}
-			}
-			else {
-				if visitBlock(oneObject) {
-					return true
-				}
-			}
-		}
-		
-		return false
-	}
-}
 
 extension Account: PlistProvider {
 	
@@ -112,3 +59,16 @@ extension Account: PlistProvider {
 	}
 }
 
+extension Account: OPMLRepresentable {
+
+	public func OPMLString(indentLevel: Int) -> String {
+
+		var s = ""
+		for oneObject in topLevelObjects {
+			if let oneOPMLObject = oneObject as? OPMLRepresentable {
+				s += oneOPMLObject.OPMLString(indentLevel: indentLevel + 1)
+			}
+		}
+		return s
+	}
+}
