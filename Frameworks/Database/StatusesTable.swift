@@ -94,8 +94,9 @@ final class StatusesTable: DatabaseTable {
 			if status.boolStatus(forKey: statusKey) == flag {
 				continue
 			}
-			status.setBoolStatus(flag, forKey: statusKey)
-			updatedStatuses.insert(status)
+			var statusCopy = status
+			statusCopy.setBoolStatus(flag, forKey: statusKey)
+			updatedStatuses.insert(statusCopy)
 		}
 
 		if updatedStatuses.isEmpty {

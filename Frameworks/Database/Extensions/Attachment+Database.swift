@@ -13,12 +13,13 @@ import RSParser
 
 extension Attachment {
 
-	init?(attachmentID: String, row: FMResultSet) {
+	init?(row: FMResultSet) {
 
 		guard let url = row.string(forColumn: DatabaseKey.url) else {
 			return nil
 		}
 
+		let attachmentID = row.string(forColumn: DatabaseKey.attachmentID)
 		let mimeType = row.string(forColumn: DatabaseKey.mimeType)
 		let title = row.string(forColumn: DatabaseKey.title)
 		let sizeInBytes = optionalIntForColumn(row, DatabaseKey.sizeInBytes)
