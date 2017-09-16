@@ -13,6 +13,7 @@
 		841974011F6DD1EC006346C4 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974001F6DD1EC006346C4 /* Folder.swift */; };
 		841974181F6DD535006346C4 /* Folder+Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974171F6DD535006346C4 /* Folder+Container.swift */; };
 		8419741A1F6DD583006346C4 /* Account+Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974191F6DD583006346C4 /* Account+Container.swift */; };
+		841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974241F6DDCE4006346C4 /* AccountDelegate.swift */; };
 		8469F8171F6DD0AD0084783E /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8401A17D1F6DC388002B1BE2 /* Database.framework */; };
 		8469F81C1F6DD15E0084783E /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848935101F62486800CEBD24 /* Account.swift */; };
 		848935001F62484F00CEBD24 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848934F61F62484F00CEBD24 /* Account.framework */; };
@@ -101,6 +102,7 @@
 		8419740D1F6DD25F006346C4 /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
 		841974171F6DD535006346C4 /* Folder+Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Container.swift"; sourceTree = "<group>"; };
 		841974191F6DD583006346C4 /* Account+Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+Container.swift"; sourceTree = "<group>"; };
+		841974241F6DDCE4006346C4 /* AccountDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDelegate.swift; sourceTree = "<group>"; };
 		848934F61F62484F00CEBD24 /* Account.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Account.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		848934FA1F62484F00CEBD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		848934FF1F62484F00CEBD24 /* AccountTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AccountTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -194,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				848935101F62486800CEBD24 /* Account.swift */,
+				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
 				841974001F6DD1EC006346C4 /* Folder.swift */,
 				841974141F6DD4FF006346C4 /* Container */,
 				8469F80F1F6DC3C10084783E /* Frameworks */,
@@ -417,6 +420,7 @@
 			files = (
 				8469F81C1F6DD15E0084783E /* Account.swift in Sources */,
 				8419741A1F6DD583006346C4 /* Account+Container.swift in Sources */,
+				841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */,
 				841974011F6DD1EC006346C4 /* Folder.swift in Sources */,
 				841974181F6DD535006346C4 /* Folder+Container.swift in Sources */,
 			);

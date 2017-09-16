@@ -33,7 +33,6 @@ public final class Account: Hashable {
 	var topLevelObjects = [AnyObject]()
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
-	var accountInfo = AccountInfo()
 	
 	init(settingsFile: String, type: AccountType, dataFolder: String, identifier: String, delegate: AccountDelegate) {
 
@@ -48,6 +47,13 @@ public final class Account: Hashable {
 	public class func ==(lhs: Account, rhs: Account) -> Bool {
 		
 		return lhs === rhs
+	}
+
+	// MARK: - API
+
+	func refreshAll() {
+
+		delegate.refreshAll()
 	}
 }
 
