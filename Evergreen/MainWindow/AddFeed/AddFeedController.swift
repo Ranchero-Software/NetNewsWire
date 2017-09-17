@@ -63,7 +63,7 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 		assert(folder.account != nil, "Folder must have an account.")
 		let account = folder.account ?? AccountManager.sharedInstance.localAccount
 
-		if account.hasFeedWithURLString(url.absoluteString) {
+		if account.hasFeed(withURL: url.absoluteString) {
 			showAlreadySubscribedError(url.absoluteString, folder)
 			return
 		}
@@ -160,7 +160,7 @@ private extension AddFeedController {
 			return
 		}
 
-		if account.hasFeedWithURLString(feedURLString) {
+		if account.hasFeed(withURL: feedURLString) {
 			showAlreadySubscribedError(feedURLString, folder)
 			return
 		}

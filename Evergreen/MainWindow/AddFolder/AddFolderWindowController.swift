@@ -68,7 +68,7 @@ class AddFolderWindowController : NSWindowController {
 			return
 		}
 		
-		let _ = account.ensureFolderWithName(folderName)
+		let _ = account.ensureFolder(with: folderName)
 	}
 	
 	// MARK: Actions

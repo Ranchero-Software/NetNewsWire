@@ -24,6 +24,7 @@ public protocol Container {
 	func flattenedFeeds() -> Set<Feed>
 	func existingFeed(with feedID: String) -> Feed?
 	func existingFeed(withURL url: String) -> Feed?
+	func hasFeed(withURL url: String) -> Bool
 	
 	func isChild(_ obj: AnyObject) -> Bool
 
@@ -62,6 +63,14 @@ public extension Container {
 			return false
 		}
 		return foundObject as! Feed?
+	}
+	
+	func hasFeed(withURL url: String) -> Bool {
+	
+		if let _ = existingFeed(withURL: url) {
+			return true
+		}
+		return false
 	}
 	
 	func visitChildren(visitBlock: VisitBlock) -> Bool {

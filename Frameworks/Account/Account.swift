@@ -70,6 +70,11 @@ public final class Account: DisplayNameProvider, Hashable {
 		// TODO
 	}
 	
+	public func ensureFolder(with name: String) -> Folder? {
+		
+		return nil //TODO
+	}
+	
 	// MARK: - Equatable
 
 	public class func ==(lhs: Account, rhs: Account) -> Bool {

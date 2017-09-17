@@ -66,7 +66,7 @@ public final class ArticleStylesManager {
 		updateStyleNames()
 		updateCurrentStyle()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: NSNotification.Name.NSApplicationDidBecomeActiveNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: NSApplication.didBecomeActiveNotification, object: nil)
 	}
 
 	// MARK: Notifications
