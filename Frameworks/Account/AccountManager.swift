@@ -15,14 +15,14 @@ let AccountsDidChangeNotification = "AccountsDidChangeNotification"
 private let localAccountFolderName = "OnMyMac"
 private let localAccountIdentifier = "OnMyMac"
 
-final class AccountManager: UnreadCountProvider {
+public final class AccountManager: UnreadCountProvider {
 
-	static let sharedInstance = AccountManager()
+	public static let sharedInstance = AccountManager()
+	public let localAccount: Account
 	private let accountsFolder = RSDataSubfolder(nil, "Accounts")!
     private var accountsDictionary = [String: Account]()
-	let localAccount: Account
 
-	var unreadCount = 0 {
+	public var unreadCount = 0 {
 		didSet {
 			postUnreadCountDidChangeNotification()
 		}
@@ -40,7 +40,7 @@ final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	var refreshInProgress: Bool {
+	public var refreshInProgress: Bool {
 		get {
 			for oneAccount in accountsDictionary.values {
 				if oneAccount.refreshInProgress {
@@ -51,7 +51,7 @@ final class AccountManager: UnreadCountProvider {
 		}
 	}
 	
-	init() {
+	public init() {
 
 		// The local "On My Mac" account must always exist, even if it's empty.
 
@@ -75,12 +75,12 @@ final class AccountManager: UnreadCountProvider {
 
 	// MARK: API
 	
-	func existingAccountWithID(_ accountID: String) -> Account? {
+	public func existingAccountWithID(_ accountID: String) -> Account? {
 		
 		return accountsDictionary[accountID]
 	}
 	
-	func refreshAll() {
+	public func refreshAll() {
 
 		accounts.forEach { (account) in
 			account.refreshAll()
@@ -108,8 +108,6 @@ final class AccountManager: UnreadCountProvider {
 		return false
 	}
 	
-	// MARK: UnreadCountProvider
-
 	func updateUnreadCount() {
 
 		let updatedUnreadCount = calculateUnreadCount(accounts)

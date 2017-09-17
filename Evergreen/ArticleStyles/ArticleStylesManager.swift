@@ -66,12 +66,12 @@ public final class ArticleStylesManager {
 		updateStyleNames()
 		updateCurrentStyle()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: NSNotification.Name.NSApplicationDidBecomeActive, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: NSNotification.Name.NSApplication.didBecomeActiveNotification, object: nil)
 	}
 
 	// MARK: Notifications
 
-	dynamic func applicationDidBecomeActive(_ note: Notification) {
+	@objc dynamic func applicationDidBecomeActive(_ note: Notification) {
 
 		updateStyleNames()
 		updateCurrentStyle()

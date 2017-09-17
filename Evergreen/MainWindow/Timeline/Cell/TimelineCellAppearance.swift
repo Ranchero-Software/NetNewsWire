@@ -11,7 +11,7 @@ import DB5
 
 struct TimelineCellAppearance {
 
-	let cellPadding: EdgeInsets
+	let cellPadding: NSEdgeInsets
 	
 	let feedNameColor: NSColor
 	let feedNameFont: NSFont

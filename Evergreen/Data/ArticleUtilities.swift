@@ -8,6 +8,7 @@
 
 import Foundation
 import Data
+import Account
 
 // These handle multiple accounts.
 
@@ -34,7 +35,7 @@ private func accountAndArticlesDictionary(_ articles: NSSet) -> [String: NSSet] 
 		guard let oneArticle = oneObject as? Article else {
 			return
 		}
-		guard let oneAccountIdentifier = oneArticle.account?.identifier else {
+		guard let oneAccountIdentifier = oneArticle.account?.accountID else {
 			return
 		}
 
@@ -46,9 +47,9 @@ private func accountAndArticlesDictionary(_ articles: NSSet) -> [String: NSSet] 
     return d
 }
 
-private func accountWithIdentifier(_ identifier: String) -> Account? {
+private func accountWithID(_ accountID: String) -> Account? {
     
-    return AccountManager.sharedInstance.existingAccountWithIdentifier(identifier)
+    return AccountManager.sharedInstance.existingAccountWithIdentifier(accountID)
 }
 
 func preferredLink(for article: Article) -> String? {

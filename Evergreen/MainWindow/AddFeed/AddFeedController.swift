@@ -11,6 +11,7 @@ import RSCore
 import RSTree
 import Data
 import RSFeedFinder
+import Account
 
 // Run add-feed sheet.
 // If it returns with URL and optional name,

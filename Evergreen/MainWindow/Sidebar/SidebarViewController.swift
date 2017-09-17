@@ -9,6 +9,7 @@
 import Cocoa
 import RSTree
 import Data
+import Account
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource {
     
@@ -32,7 +33,7 @@ import Data
 
 	//MARK: Notifications
 
-	dynamic func unreadCountDidChange(_ note: Notification) {
+	@objc dynamic func unreadCountDidChange(_ note: Notification) {
 		
 		guard let representedObject = note.object else {
 			return
@@ -40,17 +41,17 @@ import Data
 		let _ = configureCellsForRepresentedObject(representedObject as AnyObject)
 	}
 
-	dynamic func folderChildrenDidChange(_ note: Notification) {
+	@objc dynamic func folderChildrenDidChange(_ note: Notification) {
 
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 
-	dynamic func dataModelDidPerformBatchUpdates(_ notification: Notification) {
+	@objc dynamic func dataModelDidPerformBatchUpdates(_ notification: Notification) {
 		
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 	
-	dynamic func userDidAddFeed(_ note: Notification) {
+	@objc dynamic func userDidAddFeed(_ note: Notification) {
 
 		// Find the feed and select it.
 

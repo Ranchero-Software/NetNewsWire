@@ -145,7 +145,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		rs_performSelectorCoalesced(#selector(updateBadge), with: nil, afterDelay: 0.01)
 	}
 
-	dynamic func updateBadge() {
+	@objc dynamic func updateBadge() {
 
 		let label = unreadCount > 0 ? "\(unreadCount)" : ""
 		NSApplication.shared().dockTile.badgeLabel = label

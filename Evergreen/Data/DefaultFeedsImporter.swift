@@ -8,7 +8,7 @@
 
 import Foundation
 import Data
-import LocalAccount
+import Account
 
 private func shouldImportDefaultFeeds(_ isFirstRun: Bool) -> Bool {
 	

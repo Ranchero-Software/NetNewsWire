@@ -12,7 +12,7 @@ class IndeterminateProgressWindowController: NSWindowController {
 
 	@IBOutlet var messageLabel: NSTextField!
 	@IBOutlet var progressIndicator: NSProgressIndicator!
-	dynamic var message = ""
+	@objc dynamic var message = ""
 
 	convenience init(message: String) {
 

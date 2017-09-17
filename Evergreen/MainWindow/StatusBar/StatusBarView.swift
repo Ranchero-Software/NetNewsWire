@@ -43,7 +43,7 @@ final class StatusBarView: NSView {
 
 	// MARK: Notifications
 
-	dynamic func progressDidChange(_ notification: Notification) {
+	@objc dynamic func progressDidChange(_ notification: Notification) {
 
 		guard let progress = notification.userInfo?[progressKey] as? DownloadProgress else {
 			return
@@ -54,7 +54,7 @@ final class StatusBarView: NSView {
 
 	// MARK: Notifications
 	
-	dynamic func timelineSelectionDidChange(_ note: Notification) {
+	@objc dynamic func timelineSelectionDidChange(_ note: Notification) {
 		
 		let timelineView = note.userInfo?[viewKey] as! NSView
 		

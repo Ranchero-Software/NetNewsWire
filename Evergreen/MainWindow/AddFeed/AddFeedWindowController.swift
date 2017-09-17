@@ -10,6 +10,7 @@ import Cocoa
 import RSCore
 import RSTree
 import Data
+import Account
 
 protocol AddFeedWindowControllerDelegate: class {
 
@@ -46,7 +47,7 @@ class AddFeedWindowController : NSWindowController {
 
 	convenience init(urlString: String?, name: String?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
 		
-		self.init(windowNibName: "AddFeedSheet")
+		self.init(windowNibName: NSNib.Name(rawValue: "AddFeedSheet"))
 		self.urlString = urlString
 		self.initialName = name
 		self.delegate = delegate
@@ -56,7 +57,7 @@ class AddFeedWindowController : NSWindowController {
     func runSheetOnWindow(_ w: NSWindow) {
         
         hostWindow = w
-        hostWindow.beginSheet(window!) { (returnCode: NSModalResponse) -> Void in
+        hostWindow.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
 		}
     }
 
@@ -110,7 +111,7 @@ class AddFeedWindowController : NSWindowController {
 
 	@IBAction func localShowFeedList(_ sender: AnyObject) {
 		
-		NSApplication.shared().sendAction(NSSelectorFromString("showFeedList:"), to: nil, from: sender)
+		NSApplication.shared.sendAction(NSSelectorFromString("showFeedList:"), to: nil, from: sender)
 		hostWindow.endSheet(window!, returnCode: NSModalResponseContinue)
 	}
 	

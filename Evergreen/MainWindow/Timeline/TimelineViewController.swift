@@ -11,7 +11,7 @@ import RSCore
 import RSTextDrawing
 import RSTree
 import Data
-import LocalAccount
+import Account
 
 let timelineFontSizeKVOKey = "values." + TimelineFontSizeKey
 
