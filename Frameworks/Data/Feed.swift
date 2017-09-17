@@ -8,6 +8,7 @@
 
 import Foundation
 import RSCore
+import RSWeb
 
 public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
@@ -18,6 +19,8 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	public var name: String?
 	public var editedName: String?
 	public var accountInfo: AccountInfo? //If account needs to store more data
+	public var conditionalGetInfo: HTTPConditionalGetInfo?
+	public var contentHash: String?
 	public let hashValue: Int
 
 	// MARK: - DisplayNameProvider

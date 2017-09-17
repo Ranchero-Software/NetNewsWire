@@ -34,36 +34,7 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 		
 		self.accountID = accountID
 		self.nameForDisplay = nameForDisplay
-		
-//		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 	}
-
-
-	// MARK: Notifications
-	
-//	@objc dynamic public func unreadCountDidChange(_ note: Notification) {
-//
-//		guard let obj = note.object else {
-//			return
-//		}
-//		let potentialChild = obj as AnyObject
-//		if isChild(potentialChild) {
-//			updateUnreadCount()
-//		}
-//	}
-
-//	public var unreadCount = 0 {
-//		didSet {
-//			if unreadCount != oldValue {
-//				postUnreadCountDidChangeNotification()
-//			}
-//		}
-//	}
-
-//	public func updateUnreadCount() {
-//		
-//		unreadCount = calculateUnreadCount(childObjects)
-//	}
 }
 
 extension Folder: OPMLRepresentable {

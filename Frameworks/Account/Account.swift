@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import Data
+import RSParser
 
 public enum AccountType: Int {
 
@@ -23,9 +24,9 @@ public enum AccountType: Int {
 
 public final class Account: DisplayNameProvider, Hashable {
 
-	public let identifier: String
+	public let accountID: String
 	public let type: AccountType
-	public var nameForDisplay: String?
+	public var nameForDisplay = ""
 	public let delegate: AccountDelegate
 	public let hashValue: Int
 	let settingsFile: String
@@ -33,18 +34,20 @@ public final class Account: DisplayNameProvider, Hashable {
 	var topLevelObjects = [AnyObject]()
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
-	
-	init?(dataFolder: String, settingsFile: String, type: AccountType, identifier: String) {
 
-		self.identifier = identifier
+	static public let accounts = [String: Account]()
+
+	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
+
+		self.accountID = accountID
 		self.type = type
 		self.settingsFile = settingsFile
 		self.dataFolder = dataFolder
-		self.hashValue = identifier.hashValue
+		self.hashValue = accountID.hashValue
 
 		switch type {
 
-		case onMyMac:
+		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
 		default:
 			return nil
@@ -53,9 +56,19 @@ public final class Account: DisplayNameProvider, Hashable {
 	
 	// MARK: - API
 
+	static public func existingAccountWithID(_ accountID: String) -> Account? {
+
+		return accounts[accountID]
+	}
+
 	public func refreshAll() {
 
 		delegate.refreshAll(for: self)
+	}
+
+	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: RSVoidCompletionBlock) {
+
+		// TODO
 	}
 
 	// MARK: - Equatable

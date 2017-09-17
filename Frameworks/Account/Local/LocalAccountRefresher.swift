@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import RSParser
 import RSWeb
+import Data
 
 final class LocalAccountRefresher: DownloadSessionDelegate {
 	
@@ -32,7 +33,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 	
 	public func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject representedObject: AnyObject) -> URLRequest? {
 		
-		guard let feed = representedObject as? LocalFeed else {
+		guard let feed = representedObject as? Feed else {
 			return nil
 		}
 		
@@ -50,7 +51,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 	
 	public func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?) {
 		
-		guard let feed = representedObject as? LocalFeed, !data.isEmpty else {
+		guard let feed = representedObject as? Feed, !data.isEmpty else {
 			return
 		}
 
@@ -68,10 +69,10 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 		let parserData = ParserData(url: feed.url, data: data)
 		FeedParser.parse(parserData) { (parsedFeed, error) in
 			
-			guard let account = self.account, let parsedFeed = parsedFeed, error == nil else {
+			guard let account = feed.account, let parsedFeed = parsedFeed, error == nil else {
 				return
 			}
-			account.update(feed, parsedFeed: parsedFeed) {
+			account.update(feed, with: parsedFeed) {
 				
 				if let httpResponse = response as? HTTPURLResponse {
 					let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
@@ -87,7 +88,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 	
 	public func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
 		
-		guard let feed = representedObject as? LocalFeed else {
+		guard let feed = representedObject as? Feed else {
 			return false
 		}
 		

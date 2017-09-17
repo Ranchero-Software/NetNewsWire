@@ -10,9 +10,6 @@ import Foundation
 
 public protocol AccountDelegate {
 
-	func refreshAll(for account: Account) {
-
-		
-	}
+	func refreshAll(for account: Account)
 
 }
