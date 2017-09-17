@@ -36,8 +36,6 @@ public final class Account: DisplayNameProvider, Hashable {
 	var username: String?
 	var refreshInProgress = false
 	
-	static public let accounts = [String: Account]()
-
 	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
 
 		self.accountID = accountID
@@ -56,11 +54,6 @@ public final class Account: DisplayNameProvider, Hashable {
 	}
 	
 	// MARK: - API
-
-	static public func existingAccountWithID(_ accountID: String) -> Account? {
-
-		return accounts[accountID]
-	}
 
 	public func refreshAll() {
 
