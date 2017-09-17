@@ -64,6 +64,6 @@ private extension String {
 		}
 		
 		let index = self.index(self.startIndex, offsetBy: prefix.characters.count)
-		return substring(from: index)
+		return String(self[..<index])
 	}
 }
