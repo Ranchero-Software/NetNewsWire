@@ -1,5 +1,5 @@
 //
-//  AccountDelegate.swift
+//  LocalAccountDelegate.swift
 //  Account
 //
 //  Created by Brent Simmons on 9/16/17.
@@ -8,11 +8,10 @@
 
 import Foundation
 
-public protocol AccountDelegate {
+struct LocalAccountDelegate: AccountDelegate {
 
 	func refreshAll(for account: Account) {
 
-		
+		// TODO
 	}
-
 }

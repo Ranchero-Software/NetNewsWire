@@ -13,8 +13,10 @@
 		842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */; };
 		842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */; };
 		842E45E71ED8C747000A8B52 /* DB5.plist in Resources */ = {isa = PBXBuildFile; fileRef = 842E45E61ED8C747000A8B52 /* DB5.plist */; };
-		8471A2F51ED4D062008F099E /* LocalAccount.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2F21ED4D04D008F099E /* LocalAccount.framework */; };
-		8471A2F61ED4D062008F099E /* LocalAccount.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8471A2F21ED4D04D008F099E /* LocalAccount.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		846E773D1F6EF67A00A165E2 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846E773A1F6EF5D700A165E2 /* Account.framework */; };
+		846E773E1F6EF67A00A165E2 /* Account.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 846E773A1F6EF5D700A165E2 /* Account.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		846E77411F6EF6A100A165E2 /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; };
+		846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
 		849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97511ED9EAC0007D329B /* AddFeedController.swift */; };
 		849A97541ED9EAC0007D329B /* AddFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97521ED9EAC0007D329B /* AddFeedWindowController.swift */; };
@@ -83,26 +85,47 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8471A2F11ED4D04D008F099E /* PBXContainerItemProxy */ = {
+		846E77201F6EF5D100A165E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */;
+			containerPortal = 846E77161F6EF5D000A165E2 /* Database.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 84C7AEA71D68C79A009FB883;
-			remoteInfo = LocalAccount;
+			remoteGlobalIDString = 844BEE371F0AB3AA004AB7CD;
+			remoteInfo = Database;
 		};
-		8471A2F31ED4D04D008F099E /* PBXContainerItemProxy */ = {
+		846E77221F6EF5D100A165E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */;
+			containerPortal = 846E77161F6EF5D000A165E2 /* Database.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 84C7AEB01D68C79A009FB883;
-			remoteInfo = LocalAccountTests;
+			remoteGlobalIDString = 844BEE401F0AB3AB004AB7CD;
+			remoteInfo = DatabaseTests;
 		};
-		8471A2F71ED4D062008F099E /* PBXContainerItemProxy */ = {
+		846E77391F6EF5D700A165E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */;
+			containerPortal = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 848934F61F62484F00CEBD24;
+			remoteInfo = Account;
+		};
+		846E773B1F6EF5D700A165E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 848934FF1F62484F00CEBD24;
+			remoteInfo = AccountTests;
+		};
+		846E773F1F6EF67A00A165E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 84C7AEA61D68C79A009FB883;
-			remoteInfo = LocalAccount;
+			remoteGlobalIDString = 848934F51F62484F00CEBD24;
+			remoteInfo = Account;
+		};
+		846E77431F6EF6A100A165E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 846E77161F6EF5D000A165E2 /* Database.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 844BEE361F0AB3AA004AB7CD;
+			remoteInfo = Database;
 		};
 		849B89741F0349C100578A8D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -333,13 +356,14 @@
 				84BB4B781F11753300858766 /* Data.framework in Embed Frameworks */,
 				84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */,
 				849B897D1F0349D000578A8D /* RSParser.framework in Embed Frameworks */,
+				846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */,
 				84B06FB31ED37DBD00F0B54B /* RSDatabase.framework in Embed Frameworks */,
 				84B0700B1ED3822600F0B54B /* RSTextDrawing.framework in Embed Frameworks */,
 				84B06FEA1ED3803A00F0B54B /* RSFeedFinder.framework in Embed Frameworks */,
 				84B06FFE1ED3818D00F0B54B /* RSTree.framework in Embed Frameworks */,
 				84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */,
+				846E773E1F6EF67A00A165E2 /* Account.framework in Embed Frameworks */,
 				84B06FD01ED37F7D00F0B54B /* DB5.framework in Embed Frameworks */,
-				8471A2F61ED4D062008F099E /* LocalAccount.framework in Embed Frameworks */,
 				84B06FC31ED37E9600F0B54B /* RSWeb.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -354,7 +378,8 @@
 		842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardDelegateProtocol.swift; sourceTree = "<group>"; };
 		842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowSplitView.swift; sourceTree = "<group>"; };
 		842E45E61ED8C747000A8B52 /* DB5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DB5.plist; path = Evergreen/Resources/DB5.plist; sourceTree = "<group>"; };
-		8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LocalAccount.xcodeproj; path = Frameworks/LocalAccount/LocalAccount.xcodeproj; sourceTree = "<group>"; };
+		846E77161F6EF5D000A165E2 /* Database.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Database.xcodeproj; path = Frameworks/Database/Database.xcodeproj; sourceTree = "<group>"; };
+		846E77301F6EF5D600A165E2 /* Account.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Account.xcodeproj; path = Frameworks/Account/Account.xcodeproj; sourceTree = "<group>"; };
 		849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderWindowController.swift; sourceTree = "<group>"; };
 		849A97511ED9EAC0007D329B /* AddFeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedController.swift; path = AddFeed/AddFeedController.swift; sourceTree = "<group>"; };
 		849A97521ED9EAC0007D329B /* AddFeedWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedWindowController.swift; path = AddFeed/AddFeedWindowController.swift; sourceTree = "<group>"; };
@@ -424,13 +449,14 @@
 				84BB4B771F11753300858766 /* Data.framework in Frameworks */,
 				84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */,
 				849B897C1F0349D000578A8D /* RSParser.framework in Frameworks */,
+				846E77411F6EF6A100A165E2 /* Database.framework in Frameworks */,
 				84B0700A1ED3822600F0B54B /* RSTextDrawing.framework in Frameworks */,
 				84B06FE91ED3803A00F0B54B /* RSFeedFinder.framework in Frameworks */,
 				84B06FFD1ED3818D00F0B54B /* RSTree.framework in Frameworks */,
 				84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */,
 				84B06FCF1ED37F7D00F0B54B /* DB5.framework in Frameworks */,
+				846E773D1F6EF67A00A165E2 /* Account.framework in Frameworks */,
 				84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */,
-				8471A2F51ED4D062008F099E /* LocalAccount.framework in Frameworks */,
 				84B06FC21ED37E9600F0B54B /* RSWeb.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -473,11 +499,20 @@
 			path = Evergreen/MainWindow;
 			sourceTree = "<group>";
 		};
-		8471A2ED1ED4D04D008F099E /* Products */ = {
+		846E77171F6EF5D000A165E2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8471A2F21ED4D04D008F099E /* LocalAccount.framework */,
-				8471A2F41ED4D04D008F099E /* LocalAccountTests.xctest */,
+				846E77211F6EF5D100A165E2 /* Database.framework */,
+				846E77231F6EF5D100A165E2 /* DatabaseTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		846E77311F6EF5D600A165E2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				846E773A1F6EF5D700A165E2 /* Account.framework */,
+				846E773C1F6EF5D700A165E2 /* AccountTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -649,9 +684,10 @@
 				84FB9A2C1EDCD6A4003D53B9 /* Frameworks */,
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				849C64611ED37A5D003D8FC0 /* Products */,
+				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
+				846E77161F6EF5D000A165E2 /* Database.xcodeproj */,
 				84BB4B611F1174D400858766 /* Data.xcodeproj */,
 				84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */,
-				8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */,
 				84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */,
 				84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */,
 				84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */,
@@ -786,9 +822,10 @@
 				84B06FEC1ED3803A00F0B54B /* PBXTargetDependency */,
 				84B070001ED3818D00F0B54B /* PBXTargetDependency */,
 				84B0700D1ED3822600F0B54B /* PBXTargetDependency */,
-				8471A2F81ED4D062008F099E /* PBXTargetDependency */,
 				849B897F1F0349D000578A8D /* PBXTargetDependency */,
 				84BB4B7A1F11753300858766 /* PBXTargetDependency */,
+				846E77401F6EF67A00A165E2 /* PBXTargetDependency */,
+				846E77441F6EF6A100A165E2 /* PBXTargetDependency */,
 			);
 			name = Evergreen;
 			productName = Evergreen;
@@ -849,16 +886,20 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 846E77311F6EF5D600A165E2 /* Products */;
+					ProjectRef = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
+				},
+				{
 					ProductGroup = 84BB4B621F1174D400858766 /* Products */;
 					ProjectRef = 84BB4B611F1174D400858766 /* Data.xcodeproj */;
 				},
 				{
-					ProductGroup = 84B06FC71ED37F7200F0B54B /* Products */;
-					ProjectRef = 84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */;
+					ProductGroup = 846E77171F6EF5D000A165E2 /* Products */;
+					ProjectRef = 846E77161F6EF5D000A165E2 /* Database.xcodeproj */;
 				},
 				{
-					ProductGroup = 8471A2ED1ED4D04D008F099E /* Products */;
-					ProjectRef = 8471A2EC1ED4D04D008F099E /* LocalAccount.xcodeproj */;
+					ProductGroup = 84B06FC71ED37F7200F0B54B /* Products */;
+					ProjectRef = 84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */;
 				},
 				{
 					ProductGroup = 84B06FA31ED37DAC00F0B54B /* Products */;
@@ -898,18 +939,32 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		8471A2F21ED4D04D008F099E /* LocalAccount.framework */ = {
+		846E77211F6EF5D100A165E2 /* Database.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = LocalAccount.framework;
-			remoteRef = 8471A2F11ED4D04D008F099E /* PBXContainerItemProxy */;
+			path = Database.framework;
+			remoteRef = 846E77201F6EF5D100A165E2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		8471A2F41ED4D04D008F099E /* LocalAccountTests.xctest */ = {
+		846E77231F6EF5D100A165E2 /* DatabaseTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = LocalAccountTests.xctest;
-			remoteRef = 8471A2F31ED4D04D008F099E /* PBXContainerItemProxy */;
+			path = DatabaseTests.xctest;
+			remoteRef = 846E77221F6EF5D100A165E2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		846E773A1F6EF5D700A165E2 /* Account.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Account.framework;
+			remoteRef = 846E77391F6EF5D700A165E2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		846E773C1F6EF5D700A165E2 /* AccountTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AccountTests.xctest;
+			remoteRef = 846E773B1F6EF5D700A165E2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		849B89751F0349C100578A8D /* RSParser.framework */ = {
@@ -1147,10 +1202,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8471A2F81ED4D062008F099E /* PBXTargetDependency */ = {
+		846E77401F6EF67A00A165E2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = LocalAccount;
-			targetProxy = 8471A2F71ED4D062008F099E /* PBXContainerItemProxy */;
+			name = Account;
+			targetProxy = 846E773F1F6EF67A00A165E2 /* PBXContainerItemProxy */;
+		};
+		846E77441F6EF6A100A165E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Database;
+			targetProxy = 846E77431F6EF6A100A165E2 /* PBXContainerItemProxy */;
 		};
 		849B897F1F0349D000578A8D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

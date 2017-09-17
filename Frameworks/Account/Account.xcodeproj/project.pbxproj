@@ -103,6 +103,8 @@
 		841974171F6DD535006346C4 /* Folder+Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Container.swift"; sourceTree = "<group>"; };
 		841974191F6DD583006346C4 /* Account+Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+Container.swift"; sourceTree = "<group>"; };
 		841974241F6DDCE4006346C4 /* AccountDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDelegate.swift; sourceTree = "<group>"; };
+		8419742C1F6DDE84006346C4 /* LocalAccountDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAccountDelegate.swift; sourceTree = "<group>"; };
+		8419742D1F6DDE96006346C4 /* LocalAccountRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAccountRefresher.swift; sourceTree = "<group>"; };
 		848934F61F62484F00CEBD24 /* Account.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Account.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		848934FA1F62484F00CEBD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		848934FF1F62484F00CEBD24 /* AccountTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AccountTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -181,6 +183,15 @@
 			path = Container;
 			sourceTree = "<group>";
 		};
+		8419742B1F6DDE84006346C4 /* Local */ = {
+			isa = PBXGroup;
+			children = (
+				8419742C1F6DDE84006346C4 /* LocalAccountDelegate.swift */,
+				8419742D1F6DDE96006346C4 /* LocalAccountRefresher.swift */,
+			);
+			path = Local;
+			sourceTree = "<group>";
+		};
 		8469F80F1F6DC3C10084783E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -199,6 +210,7 @@
 				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
 				841974001F6DD1EC006346C4 /* Folder.swift */,
 				841974141F6DD4FF006346C4 /* Container */,
+				8419742B1F6DDE84006346C4 /* Local */,
 				8469F80F1F6DC3C10084783E /* Frameworks */,
 				848934FA1F62484F00CEBD24 /* Info.plist */,
 				848935031F62484F00CEBD24 /* AccountTests */,

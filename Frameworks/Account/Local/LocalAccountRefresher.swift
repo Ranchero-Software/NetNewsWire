@@ -13,8 +13,6 @@ import RSWeb
 
 final class LocalAccountRefresher: DownloadSessionDelegate {
 	
-	weak var account: LocalAccount?
-	
 	private lazy var downloadSession: DownloadSession = {
 		return DownloadSession(delegate: self)
 	}()

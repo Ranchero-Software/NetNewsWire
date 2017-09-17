@@ -21,7 +21,7 @@ public enum AccountType: Int {
 	// TODO: more
 }
 
-public final class Account: Hashable {
+public final class Account: DisplayNameProvider, Hashable {
 
 	public let identifier: String
 	public let type: AccountType
@@ -34,26 +34,35 @@ public final class Account: Hashable {
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
 	
-	init(settingsFile: String, type: AccountType, dataFolder: String, identifier: String, delegate: AccountDelegate) {
+	init?(dataFolder: String, settingsFile: String, type: AccountType, identifier: String) {
 
 		self.identifier = identifier
 		self.type = type
 		self.settingsFile = settingsFile
 		self.dataFolder = dataFolder
-		self.delegate = delegate
 		self.hashValue = identifier.hashValue
+
+		switch type {
+
+		case onMyMac:
+			self.delegate = LocalAccountDelegate()
+		default:
+			return nil
+		}
 	}
 	
-	public class func ==(lhs: Account, rhs: Account) -> Bool {
-		
-		return lhs === rhs
-	}
-
 	// MARK: - API
 
-	func refreshAll() {
+	public func refreshAll() {
 
-		delegate.refreshAll()
+		delegate.refreshAll(for: self)
+	}
+
+	// MARK: - Equatable
+
+	public class func ==(lhs: Account, rhs: Account) -> Bool {
+
+		return lhs === rhs
 	}
 }
 
