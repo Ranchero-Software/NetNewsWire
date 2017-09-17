@@ -20,6 +20,7 @@
 		846E774F1F6EF9C000A165E2 /* LocalAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419742C1F6DDE84006346C4 /* LocalAccountDelegate.swift */; };
 		846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419742D1F6DDE96006346C4 /* LocalAccountRefresher.swift */; };
 		846E77521F6EFDFB00A165E2 /* Feed+Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846E77511F6EFDFB00A165E2 /* Feed+Account.swift */; };
+		846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846E77531F6F00E300A165E2 /* AccountManager.swift */; };
 		848935001F62484F00CEBD24 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848934F61F62484F00CEBD24 /* Account.framework */; };
 		848935051F62485000CEBD24 /* AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848935041F62485000CEBD24 /* AccountTests.swift */; };
 /* End PBXBuildFile section */
@@ -110,6 +111,7 @@
 		8419742C1F6DDE84006346C4 /* LocalAccountDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAccountDelegate.swift; sourceTree = "<group>"; };
 		8419742D1F6DDE96006346C4 /* LocalAccountRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAccountRefresher.swift; sourceTree = "<group>"; };
 		846E77511F6EFDFB00A165E2 /* Feed+Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feed+Account.swift"; sourceTree = "<group>"; };
+		846E77531F6F00E300A165E2 /* AccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
 		848934F61F62484F00CEBD24 /* Account.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Account.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		848934FA1F62484F00CEBD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		848934FF1F62484F00CEBD24 /* AccountTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AccountTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -211,6 +213,7 @@
 		848934EC1F62484F00CEBD24 = {
 			isa = PBXGroup;
 			children = (
+				846E77531F6F00E300A165E2 /* AccountManager.swift */,
 				848935101F62486800CEBD24 /* Account.swift */,
 				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
 				841974001F6DD1EC006346C4 /* Folder.swift */,
@@ -441,6 +444,7 @@
 				846E77451F6EF9B900A165E2 /* Container.swift in Sources */,
 				8419741A1F6DD583006346C4 /* Account+Container.swift in Sources */,
 				841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */,
+				846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */,
 				846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */,
 				841974011F6DD1EC006346C4 /* Folder.swift in Sources */,
 				846E774F1F6EF9C000A165E2 /* LocalAccountDelegate.swift in Sources */,

@@ -8,8 +8,7 @@
 
 import Foundation
 import RSCore
-import DataModel
-import LocalAccount
+import Data
 
 let AccountsDidChangeNotification = "AccountsDidChangeNotification"
 
@@ -22,6 +21,7 @@ final class AccountManager: UnreadCountProvider {
 	private let accountsFolder = RSDataSubfolder(nil, "Accounts")!
     private var accountsDictionary = [String: Account]()
 	let localAccount: Account
+
 	var unreadCount = 0 {
 		didSet {
 			postUnreadCountDidChangeNotification()
@@ -33,6 +33,7 @@ final class AccountManager: UnreadCountProvider {
 			return Array(accountsDictionary.values)
 		}
 	}
+
 	var sortedAccounts: [Account] {
 		get {
 			return accountsSortedByName()
@@ -64,8 +65,8 @@ final class AccountManager: UnreadCountProvider {
 		}
 
 		let localAccountSettingsFile = accountFilePathWithFolder(localAccountFolder)
-		localAccount = LocalAccount(settingsFile: localAccountSettingsFile, dataFolder: localAccountFolder, identifier: localAccountIdentifier)
-        accountsDictionary[localAccount.identifier] = localAccount
+		localAccount = Account(dataFolder: localAccountFolder, settingsFile: localAccountSettingsFile, type: .onMyMac, accountID: localAccountIdentifier)!
+        accountsDictionary[localAccount.accountID] = localAccount
 
 		readNonLocalAccountsFromDisk()
 
@@ -74,22 +75,22 @@ final class AccountManager: UnreadCountProvider {
 
 	// MARK: API
 	
-	func existingAccountWithIdentifier(_ identifier: String) -> Account? {
+	func existingAccountWithID(_ accountID: String) -> Account? {
 		
-		return accountsDictionary[identifier]
+		return accountsDictionary[accountID]
 	}
 	
 	func refreshAll() {
 
-		accounts.forEach { (oneAccount) in
-			oneAccount.refreshAll()
+		accounts.forEach { (account) in
+			account.refreshAll()
 		}
 	}
 
 	func anyAccountHasAtLeastOneFeed() -> Bool {
 
-		for oneAccount in accounts {
-			if oneAccount.hasAtLeastOneFeed {
+		for account in accounts {
+			if account.hasAtLeastOneFeed() {
 				return true
 			}
 		}
@@ -99,8 +100,8 @@ final class AccountManager: UnreadCountProvider {
 
 	func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		
-		for oneAccount in accounts {
-			if let _ = oneAccount.existingFeedWithURL(urlString) {
+		for account in accounts {
+			if let _ = account.existingFeed(withURL: urlString) {
 				return true
 			}
 		}
@@ -119,7 +120,7 @@ final class AccountManager: UnreadCountProvider {
 	
 	// MARK: Notifications
 	
-	dynamic func unreadCountDidChange(_ notification: Notification) {
+	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
 		
 		guard let _ = notification.object as? Account else {
 			return
@@ -161,7 +162,7 @@ final class AccountManager: UnreadCountProvider {
 				return
 			}
 			if let oneAccount = createAccount(oneFilename) {
-				accountsDictionary[oneAccount.identifier] = oneAccount
+				accountsDictionary[oneAccount.accountID] = oneAccount
 			}
 		}
 	}

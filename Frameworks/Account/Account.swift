@@ -34,7 +34,8 @@ public final class Account: DisplayNameProvider, Hashable {
 	var topLevelObjects = [AnyObject]()
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
-
+	var refreshInProgress = false
+	
 	static public let accounts = [String: Account]()
 
 	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
