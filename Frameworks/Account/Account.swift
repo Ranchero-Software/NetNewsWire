@@ -70,6 +70,11 @@ public final class Account: DisplayNameProvider, Hashable {
 		// TODO
 	}
 	
+	public func articleStatus(for article: Article) -> ArticleStatus? {
+		
+		// TODO
+	}
+	
 	public func ensureFolder(with name: String) -> Folder? {
 		
 		return nil //TODO

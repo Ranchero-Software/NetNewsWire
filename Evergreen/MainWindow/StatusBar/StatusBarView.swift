@@ -91,8 +91,7 @@ private extension StatusBarView {
 			return
 		}
 		
-		let s = article.preferredLink()
-		if let s = s {
+		if let s = article.preferredLink {
 			urlLabel.stringValue = (s as NSString).rs_stringByStrippingHTTPOrHTTPSScheme()
 		}
 		else {

@@ -135,10 +135,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	
 	@objc func openArticleInBrowser(_ sender: AnyObject) {
 		
-		guard let article = oneSelectedArticle else {
-			return
-		}
-		if let link = preferredLink(for: article) {
+		if let link = oneSelectedArticle?.preferredLink {
 			openInBrowser(link)
 		}
 	}

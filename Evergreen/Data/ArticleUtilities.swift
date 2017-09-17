@@ -43,8 +43,21 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 
 extension Article {
 	
-	func preferredLink() -> String? {
-		
-		return url ?? externalURL
+	var status: ArticleStatus? {
+		get {
+			return account?.articleStatus(for: self)
+		}
+	}
+	
+	var preferredLink: String? {
+		get {
+			return url ?? externalURL
+		}
+	}
+	
+	var body: String? {
+		get {
+			return contentHTML ?? contentText ?? summary
+		}
 	}
 }

@@ -24,7 +24,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 		detailSplitViewItem?.minimumThickness = 384
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: .NSApplicationWillTerminate, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(appNavigationKeyPressed(_:)), name: .AppNavigationKeyPressed, object: nil)
 
@@ -174,7 +174,7 @@ private extension MainWindowController {
 	var currentLink: String? {
 		get {
 			if let article = oneSelectedArticle {
-				return preferredLink(for: article)
+				return article.preferredLink
 			}
 			return nil
 		}

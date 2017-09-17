@@ -138,8 +138,7 @@ class ArticleRenderer {
 
 	private func titleOrTitleLink() -> String {
 
-		let link = preferredLink(for: article)
-		if let link = link {
+		if let link = article.preferredLink {
 			return linkWithText(title, link)
 		}
 		return title
