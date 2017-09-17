@@ -112,7 +112,7 @@ class AddFeedWindowController : NSWindowController {
 	@IBAction func localShowFeedList(_ sender: AnyObject) {
 		
 		NSApplication.shared.sendAction(NSSelectorFromString("showFeedList:"), to: nil, from: sender)
-		hostWindow.endSheet(window!, returnCode: NSModalResponseContinue)
+		hostWindow.endSheet(window!, returnCode: NSApplication.ModalResponse.continue)
 	}
 	
 	// MARK: NSTextFieldDelegate

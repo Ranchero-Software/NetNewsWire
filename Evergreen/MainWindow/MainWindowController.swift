@@ -20,7 +20,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
         super.windowDidLoad()
         
 //		window?.titleVisibility = .hidden
-		window?.setFrameUsingName(kWindowFrameKey, force: true)
+		window?.setFrameUsingName(NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey), force: true)
 		
 		detailSplitViewItem?.minimumThickness = 384
 		
@@ -33,12 +33,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	
     // MARK: Notifications
     
-    func applicationWillTerminate(_ note: Notification) {
+	@objc func applicationWillTerminate(_ note: Notification) {
         
-        window?.saveFrame(usingName: kWindowFrameKey)
+		window?.saveFrame(usingName: NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey))
     }
 
-	func appNavigationKeyPressed(_ note: Notification) {
+	@objc func appNavigationKeyPressed(_ note: Notification) {
 
 		guard let key = note.userInfo?[appNavigationKey] as? Int else {
 			return
@@ -50,14 +50,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		print(key)
 	}
 
-	func refreshProgressDidChange(_ note: Notification) {
+	@objc func refreshProgressDidChange(_ note: Notification) {
 		
 		rs_performSelectorCoalesced(#selector(MainWindowController.coalescedMakeToolbarValidate(_:)), with: nil, afterDelay: 0.1)
 	}
 	
 	// MARK: Toolbar
 	
-	func coalescedMakeToolbarValidate(_ sender: Any) {
+	@objc func coalescedMakeToolbarValidate(_ sender: Any) {
 		
 		window?.toolbar?.validateVisibleItems()
 	}

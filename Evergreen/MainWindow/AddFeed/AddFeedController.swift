@@ -58,7 +58,7 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 
 	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, folder: Folder) {
 
-		closeAddFeedSheet(NSModalResponseOK)
+		closeAddFeedSheet(NSApplication.ModalResponse.OK)
 
 		assert(folder.account != nil, "Folder must have an account.")
 		let account = folder.account ?? AccountManager.sharedInstance.localAccount
@@ -77,7 +77,7 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 
 	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController) {
 
-		closeAddFeedSheet(NSModalResponseCancel)
+		closeAddFeedSheet(NSApplication.ModalResponse.cancel)
 	}
 
 	// MARK: FeedFinderDelegate
@@ -128,14 +128,14 @@ private extension AddFeedController {
 
 	var urlStringFromPasteboard: String? {
 		get {
-			if let urlString = NSPasteboard.rs_urlString(from: NSPasteboard.general()) {
+			if let urlString = NSPasteboard.rs_urlString(from: NSPasteboard.general) {
 				return urlString.rs_normalizedURL()
 			}
 			return nil
 		}
 	}
 
-	func closeAddFeedSheet(_ returnCode: NSModalResponse) {
+	func closeAddFeedSheet(_ returnCode: NSApplication.ModalResponse) {
 
 		if let sheetWindow = addFeedWindowController?.window {
 			hostWindow.endSheet(sheetWindow, returnCode: returnCode)

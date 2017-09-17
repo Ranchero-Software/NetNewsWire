@@ -34,7 +34,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	var sortedAccounts: [Account] {
+	public var sortedAccounts: [Account] {
 		get {
 			return accountsSortedByName()
 		}
@@ -189,6 +189,12 @@ private let accountDataFileName = "AccountData.plist"
 private func accountFilePathWithFolder(_ folderPath: String) -> String {
 
 	return NSString(string: folderPath).appendingPathComponent(accountDataFileName)
+}
+
+public func accountWithID(_ accountID: String) -> Account? {
+
+	// Shortcut.
+	return AccountManager.sharedInstance.existingAccountWithID(accountID)
 }
 
 private struct AccountSpecifier {

@@ -13,7 +13,13 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 
 	public let accountID: String
 	var childObjects = [AnyObject]()
-
+	
+	public var account: Account? {
+		get {
+			return accountWithID(accountID)
+		}
+	}
+	
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String

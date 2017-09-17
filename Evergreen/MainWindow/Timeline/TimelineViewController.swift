@@ -78,7 +78,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 			NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(articleStatusesDidChange(_:)), name: .ArticleStatusesDidChange, object: nil)
 
-			NSUserDefaultsController.shared().addObserver(self, forKeyPath:timelineFontSizeKVOKey, options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
+			NSUserDefaultsController.shared.addObserver(self, forKeyPath:timelineFontSizeKVOKey, options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
 
 			didRegisterForNotifications = true
 		}
@@ -133,7 +133,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	
 	// MARK: Actions
 	
-	func openArticleInBrowser(_ sender: AnyObject) {
+	@objc func openArticleInBrowser(_ sender: AnyObject) {
 		
 		guard let article = oneSelectedArticle else {
 			return
@@ -221,7 +221,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	
 	// MARK: Notifications
 
-	func sidebarSelectionDidChange(_ note: Notification) {
+	@objc func sidebarSelectionDidChange(_ note: Notification) {
 
 		let sidebarView = note.userInfo?[viewKey] as! NSView
 
@@ -230,7 +230,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		}
 	}
 	
-	func articleStatusesDidChange(_ note: Notification) {
+	@objc func articleStatusesDidChange(_ note: Notification) {
 		
 		guard let articles = note.userInfo?[articlesKey] as? NSSet else {
 			return

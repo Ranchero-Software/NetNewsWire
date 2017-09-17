@@ -65,6 +65,11 @@ public final class Account: DisplayNameProvider, Hashable {
 		// TODO
 	}
 
+	public func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
+	
+		// TODO
+	}
+	
 	// MARK: - Equatable
 
 	public class func ==(lhs: Account, rhs: Account) -> Bool {

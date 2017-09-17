@@ -13,7 +13,7 @@ public extension Feed {
 
 	var account: Account? {
 		get {
-			return AccountManager.sharedInstance.existingAccountWithID(accountID)
+			return accountWithID(accountID)
 		}
 	}
 }

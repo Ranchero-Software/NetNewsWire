@@ -8,6 +8,7 @@
 
 import Cocoa
 import Data
+import Account
 
 //func addFolderWindowController() -> AddFolderWindowController {
 //	
@@ -22,7 +23,7 @@ class AddFolderWindowController : NSWindowController {
 
 	convenience init() {
 
-		self.init(windowNibName: "AddFolderSheet")
+		self.init(windowNibName: NSNib.Name(rawValue: "AddFolderSheet"))
 	}
 
     // MARK: API
@@ -30,9 +31,9 @@ class AddFolderWindowController : NSWindowController {
     func runSheetOnWindow(_ w: NSWindow) {
 
 		hostWindow = w
-        hostWindow!.beginSheet(window!) { (returnCode: NSModalResponse) -> Void in
+		hostWindow!.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
 			
-			if returnCode == NSModalResponseOK {
+			if returnCode == NSApplication.ModalResponse.OK {
 				self.addFolderIfNeeded()
 			}
 		}
@@ -74,12 +75,12 @@ class AddFolderWindowController : NSWindowController {
 	
     @IBAction func cancel(_ sender: AnyObject) {
         
-        hostWindow!.endSheet(window!, returnCode: NSModalResponseCancel)
+		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
     }
     
     @IBAction func addFolder(_ sender: AnyObject) {
         
-        hostWindow!.endSheet(window!, returnCode: NSModalResponseOK)
+		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
     }
     
 }

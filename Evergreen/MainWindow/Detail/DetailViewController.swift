@@ -48,7 +48,7 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 
 	// MARK: Notifications
 
-	func timelineSelectionDidChange(_ note: Notification) {
+	@objc func timelineSelectionDidChange(_ note: Notification) {
 
 		let timelineView = note.userInfo?[viewKey] as! NSView
 

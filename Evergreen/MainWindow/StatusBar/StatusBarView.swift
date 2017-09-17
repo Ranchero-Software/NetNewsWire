@@ -33,7 +33,7 @@ final class StatusBarView: NSView {
 	override func awakeFromNib() {
 
 		let progressLabelFontSize = progressLabel.font?.pointSize ?? 13.0
-		progressLabel.font = NSFont.monospacedDigitSystemFont(ofSize: progressLabelFontSize, weight: NSFontWeightRegular)
+		progressLabel.font = NSFont.monospacedDigitSystemFont(ofSize: progressLabelFontSize, weight: NSFont.Weight.regular)
 		progressLabel.stringValue = ""		
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
@@ -91,7 +91,7 @@ private extension StatusBarView {
 			return
 		}
 		
-		let s = preferredLink(for: article)
+		let s = article.preferredLink()
 		if let s = s {
 			urlLabel.stringValue = (s as NSString).rs_stringByStrippingHTTPOrHTTPSScheme()
 		}

@@ -8,6 +8,7 @@
 
 import Foundation
 import Data
+import RSParser
 
 private let truncatedFeedNameCache = NSMutableDictionary()
 private let truncatedTitleCache = NSMutableDictionary()
@@ -102,7 +103,7 @@ func timelineNormalizedTextTruncated(_ text: String) -> String {
 		return cachedText
 	}
 
-	var s: NSString = (text as NSString).rs_stringByDecodingHTMLEntities() as NSString
+	var s: NSString = (text as NSString).rsparser_stringByDecodingHTMLEntities() as NSString
 	s = s.rs_stringByTrimmingWhitespace() as NSString
 	s = s.rs_stringWithCollapsedWhitespace() as NSString
 

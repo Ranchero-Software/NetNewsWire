@@ -12,51 +12,39 @@ import Account
 
 // These handle multiple accounts.
 
-func markArticles(_ articles: NSSet, statusKey: ArticleStatusKey, flag: Bool) {
+func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
 	
-	let d: [String: NSSet] = accountAndArticlesDictionary(articles)
+	let d: [String: Set<Article>] = accountAndArticlesDictionary(articles)
 	
-	d.keys.forEach { (oneAccountIdentifier) in
+	d.keys.forEach { (accountID) in
 		
-		guard let oneAccountArticles = d[oneAccountIdentifier], let oneAccount = accountWithIdentifier(oneAccountIdentifier) else {
+		guard let accountArticles = d[accountID], let account = accountWithID(accountID) else {
 			return
 		}
 		
-		oneAccount.markArticles(oneAccountArticles, statusKey: statusKey, flag: flag)
+		account.markArticles(accountArticles, statusKey: statusKey, flag: flag)
 	}
 }
 
-private func accountAndArticlesDictionary(_ articles: NSSet) -> [String: NSSet] {
+private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: Set<Article>] {
     
-    var d = [String: NSMutableSet]()
+    var d = [String: Set<Article>]()
 	
-	articles.forEach { (oneObject) in
+	articles.forEach { (article) in
 
-		guard let oneArticle = oneObject as? Article else {
-			return
-		}
-		guard let oneAccountIdentifier = oneArticle.account?.accountID else {
-			return
-		}
-
-		let oneArticleSet: NSMutableSet = d[oneAccountIdentifier] ?? NSMutableSet()
-		oneArticleSet.add(oneArticle)
-		d[oneAccountIdentifier] = oneArticleSet
+		let accountID = article.accountID
+		var articleSet: Set<Article> = d[accountID] ?? Set<Article>()
+		articleSet.insert(article)
+		d[accountID] = articleSet
 	}
 
     return d
 }
 
-private func accountWithID(_ accountID: String) -> Account? {
-    
-    return AccountManager.sharedInstance.existingAccountWithIdentifier(accountID)
-}
-
-func preferredLink(for article: Article) -> String? {
+extension Article {
 	
-	if let s = article.permalink {
-		return s
+	func preferredLink() -> String? {
+		
+		return url ?? externalURL
 	}
-	return article.link
 }
-

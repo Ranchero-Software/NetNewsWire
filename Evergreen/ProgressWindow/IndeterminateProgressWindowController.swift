@@ -16,7 +16,7 @@ class IndeterminateProgressWindowController: NSWindowController {
 
 	convenience init(message: String) {
 
-		self.init(windowNibName: "IndeterminateProgressWindow")
+		self.init(windowNibName: NSNib.Name(rawValue: "IndeterminateProgressWindow"))
 		self.message = message
 	}
 
@@ -29,10 +29,10 @@ class IndeterminateProgressWindowController: NSWindowController {
 func runIndeterminateProgressWithMessage(_ message: String) {
 
 	let windowController = IndeterminateProgressWindowController(message: message)
-	NSApplication.shared().runModal(for: windowController.window!)
+	NSApplication.shared.runModal(for: windowController.window!)
 }
 
 func stopIndeterminateProgress() {
 
-	NSApplication.shared().stopModal()
+	NSApplication.shared.stopModal()
 }

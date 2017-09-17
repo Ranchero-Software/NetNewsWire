@@ -103,14 +103,14 @@ import Account
 		
 		outlineView.selectRowIndexes(IndexSet([row]), byExtendingSelection: false)
 		
-		NSApplication.shared().sendAction(NSSelectorFromString("nextUnread:"), to: nil, from: self)
+		NSApplication.shared.sendAction(NSSelectorFromString("nextUnread:"), to: nil, from: self)
 	}
 	
 	// MARK: NSOutlineViewDelegate
     
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
 
-		let cell = outlineView.make(withIdentifier: "DataCell", owner: self) as! SidebarCell
+		let cell = outlineView.make(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DataCell"), owner: self) as! SidebarCell
 		
 		let node = item as! Node
 		configure(cell, node)
