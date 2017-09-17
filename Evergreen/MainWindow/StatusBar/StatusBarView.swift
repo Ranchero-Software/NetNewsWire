@@ -8,7 +8,7 @@
 
 import Cocoa
 import RSCore
-import DataModel
+import Data
 import RSWeb
 
 final class StatusBarView: NSView {

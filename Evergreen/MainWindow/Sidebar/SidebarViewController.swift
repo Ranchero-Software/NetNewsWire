@@ -8,7 +8,7 @@
 
 import Cocoa
 import RSTree
-import DataModel
+import Data
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource {
     

@@ -7,7 +7,7 @@
 //
 
 import Cocoa
-import DataModel
+import Data
 
 private let kWindowFrameKey = "MainWindow"
 

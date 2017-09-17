@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import DataModel
+import Data
 
 private let truncatedFeedNameCache = NSMutableDictionary()
 private let truncatedTitleCache = NSMutableDictionary()

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import DataModel
+import Data
 import LocalAccount
 
 private func shouldImportDefaultFeeds(_ isFirstRun: Bool) -> Bool {

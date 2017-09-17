@@ -8,7 +8,7 @@
 
 import Cocoa
 import DB5
-import DataModel
+import Data
 import RSTextDrawing
 import RSTree
 import RSParser

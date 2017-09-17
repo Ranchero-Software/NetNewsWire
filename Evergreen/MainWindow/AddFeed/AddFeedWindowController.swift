@@ -9,7 +9,7 @@
 import Cocoa
 import RSCore
 import RSTree
-import DataModel
+import Data
 
 protocol AddFeedWindowControllerDelegate: class {
 

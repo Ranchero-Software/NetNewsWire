@@ -9,7 +9,7 @@
 import Cocoa
 import RSCore
 import RSTree
-import DataModel
+import Data
 import RSFeedFinder
 
 // Run add-feed sheet.

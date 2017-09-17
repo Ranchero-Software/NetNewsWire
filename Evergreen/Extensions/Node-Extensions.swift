@@ -8,7 +8,7 @@
 
 import Foundation
 import RSTree
-import DataModel
+import Data
 
 extension Node {
 	

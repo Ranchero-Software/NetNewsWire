@@ -8,7 +8,7 @@
 
 import Foundation
 import RSCore
-import DataModel
+import Data
 
 var cachedStyleString = ""
 var cachedTemplate = ""

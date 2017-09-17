@@ -7,7 +7,7 @@
 //
 
 import Cocoa
-import DataModel
+import Data
 
 var attributedTitleCache = [String: NSAttributedString]()
 var attributedDateCache = [String: NSAttributedString]()

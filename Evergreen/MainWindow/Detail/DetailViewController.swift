@@ -9,7 +9,7 @@
 import Foundation
 import WebKit
 import RSCore
-import DataModel
+import Data
 
 class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
 	
