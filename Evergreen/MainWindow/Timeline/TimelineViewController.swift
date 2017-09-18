@@ -357,9 +357,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	private func rowForArticle(_ article: Article) -> Int {
 
-		if let index = articles.index(where: { (oneArticle) -> Bool in
-			return oneArticle === article
-		}) {
+		if let index = articles.index(where: { $0.articleID == article.articleID }) {
 			return index
 		}
 		
@@ -406,9 +404,9 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		for oneObject in representedObjects {
 
 			if let oneFeed = oneObject as? Feed {
-				addToAccountArray(accountID: oneFeed.account.identifier, object: oneFeed)
+				addToAccountArray(accountID: oneFeed.account.accountID, object: oneFeed)
 			}
-			else if let oneFolder = oneObject as? Folder, let accountID = oneFolder.account?.identifier {
+			else if let oneFolder = oneObject as? Folder, let accountID = oneFolder.account?.accountID {
 				addToAccountArray(accountID: accountID, object: oneFolder)
 			}
 		}
@@ -478,14 +476,14 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
 
-		let rowView: TimelineTableRowView = tableView.make(withIdentifier: "timelineRow", owner: self) as! TimelineTableRowView
+		let rowView: TimelineTableRowView = tableView.make(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineRow"), owner: self) as! TimelineTableRowView
 		rowView.cellAppearance = cellAppearance
 		return rowView
 	}
 
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 
-		let cell: TimelineTableCellView = tableView.make(withIdentifier: "timelineCell", owner: self) as! TimelineTableCellView
+		let cell: TimelineTableCellView = tableView.make(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineCell"), owner: self) as! TimelineTableCellView
 		cell.cellAppearance = cellAppearance
 		
 		if let article = articleAtRow(row) {
@@ -502,7 +500,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 		var userInfo = [String: AnyObject]()
 		if let article = selectedArticle {
-			userInfo[articleKey] = article
+			userInfo[articleKey] = article as AnyObject
 		}
 		userInfo[viewKey] = self.tableView
 

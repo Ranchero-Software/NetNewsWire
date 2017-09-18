@@ -13,6 +13,7 @@ import RSTextDrawing
 import RSTree
 import RSParser
 import RSWeb
+import Account
 
 var currentTheme: VSTheme!
 
@@ -40,39 +41,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		super.init()
 	}
 
-	private func evergreenImage() -> NSImage? {
-		var image: NSImage? = nil
-		let imageWidth = 1024
-		let imageHeight = 1024
-		let imageSize = NSMakeSize(CGFloat(imageWidth), CGFloat(imageHeight))
-
-		if let drawingContext = CGContext(data: nil, width: imageWidth, height: imageHeight, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue) {
-
-			let graphicsContext = NSGraphicsContext(cgContext: drawingContext, flipped: false)
-			NSGraphicsContext.saveGraphicsState()
-			NSGraphicsContext.setCurrent(graphicsContext)
-
-			let targetRect = NSRect(origin: NSZeroPoint, size: imageSize)
-			NSString(string: "🌲").draw(in: targetRect, withAttributes: [NSFontAttributeName: NSFont.systemFont(ofSize: 1000)])
-
-			NSGraphicsContext.restoreGraphicsState()
-
-			if let coreImage = drawingContext.makeImage() {
-				image = NSImage(cgImage: coreImage, size: imageSize)
-			}
-		}
-
-		return image
-	}
-
 	// MARK: NSApplicationDelegate
 
 	func applicationDidFinishLaunching(_ note: Notification) {
-
-		if let appIconImage = evergreenImage() {
-			appIconImage.setName("NSApplicationIcon")
-			NSApplication.shared().applicationIconImage = appIconImage
-		}
 
 		registerDefaults()
 
@@ -89,9 +60,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 		importDefaultFeedsIfNeeded(isFirstRun, account: AccountManager.sharedInstance.localAccount)
 		createAndShowMainWindow()
-
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		AccountManager.sharedInstance.updateUnreadCount()
 
 		#if RELEASE
 			DispatchQueue.main.async {
@@ -120,7 +88,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	// MARK: GetURL Apple Event
 
-	func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor) {
+	@objc func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor) {
 
 		guard let urlString = event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue else {
 			return
@@ -148,7 +116,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	@objc dynamic func updateBadge() {
 
 		let label = unreadCount > 0 ? "\(unreadCount)" : ""
-		NSApplication.shared().dockTile.badgeLabel = label
+		NSApplication.shared.dockTile.badgeLabel = label
 	}
 
 	// MARK: Notifications
@@ -165,7 +133,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	func windowControllerWithName(_ storyboardName: String) -> NSWindowController {
 
-		let storyboard = NSStoryboard(name: storyboardName, bundle: nil)
+		let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: storyboardName), bundle: nil)
 		return storyboard.instantiateInitialController()! as! NSWindowController
 	}
 
