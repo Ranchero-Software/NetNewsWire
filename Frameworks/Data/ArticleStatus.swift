@@ -43,7 +43,7 @@ public final class ArticleStatus: Hashable {
 		self.hashValue = articleID.hashValue
 	}
 
-	public init(articleID: String, dateArrived: Date) {
+	public convenience init(articleID: String, dateArrived: Date) {
 
 		self.init(articleID: articleID, read: false, starred: false, userDeleted: false, dateArrived: dateArrived, accountInfo: nil)
 	}
