@@ -30,42 +30,27 @@ final class StatusesTable: DatabaseTable {
 
 	// MARK: Cache
 
-	func cachedStatus(for articleID: String) -> ArticleStatus? {
+//	func cachedStatus(for articleID: String) -> ArticleStatus? {
+//
+//		assert(Thread.isMainThread)
+//		assert(cache[articleID] != nil)
+//		return cache[articleID]
+//	}
+//
+//	func cachedStatuses(for articleIDs: Set<String>) -> Set<ArticleStatus> {
+//
+//		assert(Thread.isMainThread)
+//
+//		var statuses = Set<ArticleStatus>()
+//		for articleID in articleIDs {
+//			if let articleStatus = cache[articleID] {
+//				statuses.insert(articleStatus)
+//			}
+//		}
+//
+//		return statuses
+//	}
 
-		assert(Thread.isMainThread)
-		assert(cache[articleID] != nil)
-		return cache[articleID]
-	}
-
-	func cachedStatuses(for articleIDs: Set<String>) -> Set<ArticleStatus> {
-		
-		assert(Thread.isMainThread)
-		
-		var statuses = Set<ArticleStatus>()
-		for articleID in articleIDs {
-			if let articleStatus = cache[articleID] {
-				statuses.insert(articleStatus)
-			}
-		}
-		
-		return statuses
-	}
-	
-	func addIfNotCached(_ statuses: Set<ArticleStatus>) {
-
-		if statuses.isEmpty {
-			return
-		}
-		
-		if Thread.isMainThread {
-			self.cache.addIfNotCached(statuses)
-		}
-		else {
-			DispatchQueue.main.async {
-				self.cache.addIfNotCached(statuses)
-			}
-		}
-	}
 
 	// MARK: Creating/Updating
 
@@ -108,15 +93,13 @@ final class StatusesTable: DatabaseTable {
 			if status.boolStatus(forKey: statusKey) == flag {
 				continue
 			}
-			var statusCopy = status
-			statusCopy.setBoolStatus(flag, forKey: statusKey)
-			updatedStatuses.insert(statusCopy)
+			status.setBoolStatus(flag, forKey: statusKey)
+			updatedStatuses.insert(status)
 		}
 
 		if updatedStatuses.isEmpty {
 			return
 		}
-		addToCache(updatedStatuses)
 
 		queue.update { (database) in
 			self.markArticleIDs(updatedStatuses.articleIDs(), statusKey, flag, database)
@@ -183,6 +166,22 @@ private extension StatusesTable {
 		}
 	}
 
+	func addIfNotCached(_ statuses: Set<ArticleStatus>) {
+
+		if statuses.isEmpty {
+			return
+		}
+
+		if Thread.isMainThread {
+			self.cache.addIfNotCached(statuses)
+		}
+		else {
+			DispatchQueue.main.async {
+				self.cache.addIfNotCached(statuses)
+			}
+		}
+	}
+
 	// MARK: Creating
 
 	func saveStatuses(_ statuses: Set<ArticleStatus>) {
@@ -231,13 +230,15 @@ private extension StatusesTable {
 
 private final class StatusCache {
 
-	// Main thread only.
+	// Serial database queue only.
 
 	var dictionary = [String: ArticleStatus]()
 
 	func add(_ statuses: Set<ArticleStatus>) {
 
 		// Replaces any cached statuses.
+
+		assert(!Thread.isMainThread)
 
 		for status in statuses {
 			self[status.articleID] = status
@@ -248,6 +249,8 @@ private final class StatusCache {
 		
 		// Does not replace already cached statuses.
 		
+		assert(!Thread.isMainThread)
+
 		for status in statuses {
 			let articleID = status.articleID
 			if let _ = self[articleID] {
@@ -259,9 +262,11 @@ private final class StatusCache {
 	
 	subscript(_ articleID: String) -> ArticleStatus? {
 		get {
+			assert(!Thread.isMainThread)
 			return self[articleID]
 		}
 		set {
+			assert(!Thread.isMainThread)
 			self[articleID] = newValue
 		}
 	}

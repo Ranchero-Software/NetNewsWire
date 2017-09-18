@@ -70,19 +70,9 @@ public final class Database {
 	
 	// MARK: - Status
 	
-	public func status(for article: Article) -> ArticleStatus? {
-		
-		return articlesTable.status(for: article)
-	}
-	
-	public func statuses(for articles: Set<Article>) -> Set<ArticleStatus> {
-		
-		return articlesTable.statuses(for: articles)
-	}
-	
-	public func mark(_ statuses: Set<ArticleStatus>, statusKey: String, flag: Bool) {
+	public func mark(_ articles: Set<Article>, statusKey: String, flag: Bool) {
 
-		articlesTable.mark(statuses, statusKey, flag)
+		articlesTable.mark(articles, statusKey, flag)
 	}
 }
 

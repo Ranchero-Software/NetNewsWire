@@ -131,19 +131,9 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: Status
 	
-	func status(for article: Article) -> ArticleStatus? {
-		
-		return statusesTable.cachedStatus(for: article.articleID)
-	}
+	func mark(_ articles: Set<Article>, _ statusKey: String, _ flag: Bool) {
 
-	func statuses(for articles: Set<Article>) -> Set<ArticleStatus> {
-		
-		return statusesTable.cachedStatuses(for: articles.articleIDs())
-	}
-	
-	func mark(_ statuses: Set<ArticleStatus>, _ statusKey: String, _ flag: Bool) {
-
-		statusesTable.mark(statuses, statusKey, flag)
+		statusesTable.mark(articles.statuses(), statusKey, flag)
 	}
 }
 

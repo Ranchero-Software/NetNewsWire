@@ -156,6 +156,11 @@ extension Set where Element == Article {
 		return Set<String>(map { $0.databaseID })
 	}
 
+	func statuses() -> Set<ArticleStatus> {
+
+		return Set<ArticleStatus>(map { $0.status })
+	}
+	
 	func dictionary() -> [String: Article] {
 
 		var d = [String: Article]()
