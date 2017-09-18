@@ -28,9 +28,10 @@ public struct Article: Hashable {
 	public let tags: Set<String>?
 	public let attachments: Set<Attachment>?
 	public let accountInfo: AccountInfo?
+	public let status: ArticleStatus
 	public let hashValue: Int
 
-	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, tags: Set<String>?, attachments: Set<Attachment>?, accountInfo: AccountInfo?) {
+	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, tags: Set<String>?, attachments: Set<Attachment>?, accountInfo: AccountInfo?, status: ArticleStatus) {
 		
 		self.accountID = accountID
 		self.feedID = feedID
@@ -49,7 +50,8 @@ public struct Article: Hashable {
 		self.tags = tags
 		self.attachments = attachments
 		self.accountInfo = accountInfo
-
+		self.status = status
+		
 		if let articleID = articleID {
 			self.articleID = articleID
 		}

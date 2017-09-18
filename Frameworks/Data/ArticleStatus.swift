@@ -8,6 +8,12 @@
 
 import Foundation
 
+// Threading rules:
+// * Main-thread only
+// * Except: may be created on background thread by StatusesTable.
+// Which is safe, because at creation time it’t not yet shared,
+// and it won’t be mutated ever on a background thread.
+
 public enum ArticleStatusKey: String {
 	
 	case read = "read"
@@ -15,7 +21,7 @@ public enum ArticleStatusKey: String {
 	case userDeleted = "userDeleted"
 }
 
-public struct ArticleStatus: Hashable {
+public final class ArticleStatus: Hashable {
 	
 	public let articleID: String
 	public let dateArrived: Date
@@ -60,7 +66,7 @@ public struct ArticleStatus: Hashable {
 		return false
 	}
 	
-	public mutating func setBoolStatus(_ status: Bool, forKey key: String) {
+	public func setBoolStatus(_ status: Bool, forKey key: String) {
 
 		if let articleStatusKey = ArticleStatusKey(rawValue: key) {
 			switch articleStatusKey {
