@@ -124,9 +124,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 			return
 		}
 		
-		let articlesSet = NSMutableSet()
-		articlesSet.addObjects(from: articles)
-		markArticles(articlesSet, statusKey: .read, flag: true)
+		markArticles(Set(articles), statusKey: ArticleStatusKey.read.rawValue, flag: true)
 		
 		reloadCellsForArticles(articles)
 	}
@@ -147,21 +145,23 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		}
 		let articles = selectedArticles
 		var markAsRead = true
-		if articles.first!.status.read {
-			markAsRead = false
+		if let status = articles.first!.status {
+			if status.read {
+				markAsRead = false
+			}
 		}
 		
-		markArticles(NSSet(array: articles), statusKey: .read, flag: markAsRead)
+		markArticles(Set(articles), statusKey: ArticleStatusKey.read.rawValue, flag: markAsRead)
 	}
 	
 	@IBAction func markSelectedArticlesAsRead(_ sender: AnyObject) {
 		
-		markArticles(NSSet(array: selectedArticles), statusKey: .read, flag: true)
+		markArticles(Set(selectedArticles), statusKey: ArticleStatusKey.read.rawValue, flag: true)
 	}
 	
 	@IBAction func markSelectedArticlesAsUnread(_ sender: AnyObject) {
 		
-		markArticles(NSSet(array: selectedArticles), statusKey: .read, flag: false)
+		markArticles(Set(selectedArticles), statusKey: ArticleStatusKey.read.rawValue, flag: false)
 	}
 	
 	// MARK: Navigation
@@ -186,11 +186,12 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	
 	func canMarkAllAsRead() -> Bool {
 		
-		for oneArticle in articles {
-			if !oneArticle.status.read {
+		for article in articles {
+			if !article.read {
 				return true
 			}
 		}
+		
 		return false
 	}
 	
@@ -208,7 +209,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 				break
 			}
 			let article = articleAtRow(ix)!
-			if !article.status.read {
+			if !article.read {
 				return ix
 			}
 		}
@@ -520,9 +521,8 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		}
 
 		if let selectedArticle = articleAtRow(selectedRow) {
-			let articleSet = NSSet(array: [selectedArticle])
-			if (!selectedArticle.status.read) {
-				markArticles(articleSet, statusKey: .read, flag: true)
+			if (!selectedArticle.read) {
+				markArticles(Set([selectedArticle]), statusKey: ArticleStatusKey.read.rawValue, flag: true)
 			}
 			postTimelineSelectionDidChangeNotification(selectedArticle)
 		}

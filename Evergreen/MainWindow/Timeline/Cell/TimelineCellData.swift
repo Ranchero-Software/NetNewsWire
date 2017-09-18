@@ -45,7 +45,7 @@ struct TimelineCellData {
 			self.attributedDateString = s
 		}
 		else {
-			self.attributedDateString = NSAttributedString(string: self.dateString, attributes: [NSForegroundColorAttributeName: appearance.dateColor, NSFontAttributeName: appearance.dateFont])
+			self.attributedDateString = NSAttributedString(string: self.dateString, attributes: [NSAttributedStringKey.foregroundColor: appearance.dateColor, NSAttributedStringKey.font: appearance.dateFont])
 			attributedDateCache[self.dateString] = self.attributedDateString
 		}
 
@@ -59,20 +59,14 @@ struct TimelineCellData {
 			self.attributedFeedName = s
 		}
 		else {
-			self.attributedFeedName = NSAttributedString(string: self.feedName, attributes: [NSForegroundColorAttributeName: appearance.feedNameColor, NSFontAttributeName: appearance.feedNameFont])
+			self.attributedFeedName = NSAttributedString(string: self.feedName, attributes: [NSAttributedStringKey.foregroundColor: appearance.feedNameColor, NSAttributedStringKey.font: appearance.feedNameFont])
 			attributedFeedNameCache[self.feedName] = self.attributedFeedName
 		}
 
 		self.showFeedName = showFeedName
 
 		self.favicon = nil
-		
-		if let status = article.status {
-			self.read = status.read
-		}
-		else {
-			self.read = false
-		}
+		self.read = article.read
 	}
 
 	init() { //Empty

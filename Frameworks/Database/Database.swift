@@ -24,11 +24,11 @@ public final class Database {
 	private let accountID: String
 	private let articlesTable: ArticlesTable
 
-	public init(databaseFile: String, accountID: String) {
+	public init(databaseFilePath: String, accountID: String) {
 
 		self.accountID = accountID
 		
-		let queue = RSDatabaseQueue(filepath: databaseFile, excludeFromBackup: false)
+		let queue = RSDatabaseQueue(filepath: databaseFilePath, excludeFromBackup: false)
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue)
 
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
@@ -69,6 +69,16 @@ public final class Database {
 	}
 	
 	// MARK: - Status
+	
+	public func status(for article: Article) -> ArticleStatus? {
+		
+		return articlesTable.status(for: article)
+	}
+	
+	public func statuses(for articles: Set<Article>) -> Set<ArticleStatus> {
+		
+		return articlesTable.statuses(for: articles)
+	}
 	
 	public func mark(_ statuses: Set<ArticleStatus>, statusKey: String, flag: Bool) {
 

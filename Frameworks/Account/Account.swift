@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import Data
 import RSParser
+import Database
 
 public enum AccountType: Int {
 
@@ -31,6 +32,7 @@ public final class Account: DisplayNameProvider, Hashable {
 	public let hashValue: Int
 	let settingsFile: String
 	let dataFolder: String
+	let database: Database
 	var topLevelObjects = [AnyObject]()
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
@@ -38,19 +40,22 @@ public final class Account: DisplayNameProvider, Hashable {
 	
 	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
 
-		self.accountID = accountID
-		self.type = type
-		self.settingsFile = settingsFile
-		self.dataFolder = dataFolder
-		self.hashValue = accountID.hashValue
-
 		switch type {
-
+			
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
 		default:
 			return nil
 		}
+
+		self.accountID = accountID
+		self.type = type
+		self.settingsFile = settingsFile
+		self.dataFolder = dataFolder
+		self.hashValue = accountID.hashValue
+		
+		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
+		self.database = Database(databaseFilePath: databaseFilePath, accountID: accountID)
 	}
 	
 	// MARK: - API
@@ -67,12 +72,16 @@ public final class Account: DisplayNameProvider, Hashable {
 
 	public func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
 	
-		// TODO
+		let statuses = database.statuses(for: articles)
+		if statuses.isEmpty {
+			return
+		}
+		database.mark(statuses, statusKey: statusKey, flag: flag)
 	}
 	
 	public func articleStatus(for article: Article) -> ArticleStatus? {
 		
-		// TODO
+		return database.status(for: article)
 	}
 	
 	public func ensureFolder(with name: String) -> Folder? {

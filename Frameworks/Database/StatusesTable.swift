@@ -37,6 +37,20 @@ final class StatusesTable: DatabaseTable {
 		return cache[articleID]
 	}
 
+	func cachedStatuses(for articleIDs: Set<String>) -> Set<ArticleStatus> {
+		
+		assert(Thread.isMainThread)
+		
+		var statuses = Set<ArticleStatus>()
+		for articleID in articleIDs {
+			if let articleStatus = cache[articleID] {
+				statuses.insert(articleStatus)
+			}
+		}
+		
+		return statuses
+	}
+	
 	func addIfNotCached(_ statuses: Set<ArticleStatus>) {
 
 		if statuses.isEmpty {

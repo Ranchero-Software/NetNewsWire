@@ -43,9 +43,19 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 
 extension Article {
 	
+	var feed: Feed? {
+		get {
+			return account?.existingFeed(with: feedID)
+		}
+	}
+	
 	var status: ArticleStatus? {
 		get {
-			return account?.articleStatus(for: self)
+			guard let status = account?.articleStatus(for: self) else {
+				assertionFailure("Expected ArticleStatus for article.status.")
+				return nil
+			}
+			return status
 		}
 	}
 	
@@ -58,6 +68,21 @@ extension Article {
 	var body: String? {
 		get {
 			return contentHTML ?? contentText ?? summary
+		}
+	}
+	
+	var logicalDatePublished: Date {
+		get {
+			return datePublished ?? dateModified ?? status?.dateArrived ?? Date.distantPast
+		}
+	}
+	
+	var read: Bool {
+		get {
+			if let status = status {
+				return status.read
+			}
+			return false
 		}
 	}
 }
