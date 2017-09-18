@@ -16,7 +16,7 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 	
 	public var account: Account? {
 		get {
-			return accountWithID(accountID)
+			return account(with: accountID)
 		}
 	}
 	

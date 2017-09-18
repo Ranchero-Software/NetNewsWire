@@ -75,7 +75,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	// MARK: API
 	
-	public func existingAccountWithID(_ accountID: String) -> Account? {
+	public func existingAccount(with accountID: String) -> Account? {
 		
 		return accountsDictionary[accountID]
 	}
@@ -191,10 +191,10 @@ private func accountFilePathWithFolder(_ folderPath: String) -> String {
 	return NSString(string: folderPath).appendingPathComponent(accountDataFileName)
 }
 
-public func accountWithID(_ accountID: String) -> Account? {
+public func account(with accountID: String) -> Account? {
 
 	// Shortcut.
-	return AccountManager.sharedInstance.existingAccountWithID(accountID)
+	return AccountManager.sharedInstance.existingAccount(with: accountID)
 }
 
 private struct AccountSpecifier {
