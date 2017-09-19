@@ -72,16 +72,7 @@ public final class Account: DisplayNameProvider, Hashable {
 
 	public func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
 	
-		let statuses = database.statuses(for: articles)
-		if statuses.isEmpty {
-			return
-		}
-		database.mark(statuses, statusKey: statusKey, flag: flag)
-	}
-	
-	public func articleStatus(for article: Article) -> ArticleStatus? {
-		
-		return database.status(for: article)
+		database.mark(articles, statusKey: statusKey, flag: flag)
 	}
 	
 	public func ensureFolder(with name: String) -> Folder? {
