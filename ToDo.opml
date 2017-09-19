@@ -6,12 +6,12 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,18,21,25,30,40,41,43,47,50,52,54,56,65,70</expansionState>
+    <expansionState>0,23,26,30,35,45,46,48,52,55,57,59,61,70,75</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>452</windowTop>
-    <windowLeft>543</windowLeft>
-    <windowRight>1275</windowRight>
-    <windowBottom>1211</windowBottom>
+    <windowTop>207</windowTop>
+    <windowLeft>30</windowLeft>
+    <windowRight>762</windowRight>
+    <windowBottom>966</windowBottom>
   </head>
   <body>
     <outline text="App">
@@ -26,10 +26,17 @@
       <outline text="NSError.setUserInfoValueProvider"/>
       <outline text="NSDictionary.sharedKeySet"/>
       <outline text="Periodic refresh"/>
+      <outline text="OPML Import">
+        <outline text="Accessory view in choose-file sheet for choosing account"/>
+        <outline text="Import from URL">
+          <outline text="Sheet with URL text field and account popup"/>
+          <outline text="Download URL"/>
+          <outline text="Progress while downloading URL"/>
+          <outline text="Report error if needed"/>
+        </outline>
+      </outline>
       <outline text="Commands">
         <outline text="Star"/>
-        <outline text="Import OPML from File"/>
-        <outline text="Import OPML from URL"/>
         <outline text="Toggle sidebar"/>
       </outline>
       <outline text="Main window">

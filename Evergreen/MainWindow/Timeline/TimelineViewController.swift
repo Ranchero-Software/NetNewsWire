@@ -414,7 +414,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		var fetchedArticles = [Article]()
 		for (accountID, objects) in accountsDictionary {
 
-			guard let oneAccount = account(with: accountID) else {
+			guard let oneAccount = accountWithID(accountID) else {
 				continue
 			}
 
@@ -473,14 +473,14 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
 
-		let rowView: TimelineTableRowView = tableView.make(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineRow"), owner: self) as! TimelineTableRowView
+		let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineRow"), owner: self) as! TimelineTableRowView
 		rowView.cellAppearance = cellAppearance
 		return rowView
 	}
 
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 
-		let cell: TimelineTableCellView = tableView.make(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineCell"), owner: self) as! TimelineTableCellView
+		let cell: TimelineTableCellView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineCell"), owner: self) as! TimelineTableCellView
 		cell.cellAppearance = cellAppearance
 		
 		if let article = articleAtRow(row) {

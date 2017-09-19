@@ -13,7 +13,7 @@ import RSParser
 
 extension Article {
 	
-	init?(row: FMResultSet, accountID: String, authors: Set<Author>? = nil, attachments: Set<Attachment>? = nil, tags: Set<String>? = nil) {
+	init?(row: FMResultSet, accountID: String, authors: Set<Author>? = nil, attachments: Set<Attachment>? = nil, tags: Set<String>? = nil, status: ArticleStatus) {
 		
 		guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
 			return nil
@@ -35,15 +35,15 @@ extension Article {
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 		let accountInfo: AccountInfo? = nil // TODO
 
-		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
+		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo, status: status)
 	}
 
-	init(parsedItem: ParsedItem, accountID: String, feedID: String) {
+	init(parsedItem: ParsedItem, accountID: String, feedID: String, status: ArticleStatus) {
 
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
 		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
 
-		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: parsedItem.datePublished, dateModified: parsedItem.dateModified, authors: authors, tags: parsedItem.tags, attachments: attachments, accountInfo: nil)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: parsedItem.datePublished, dateModified: parsedItem.dateModified, authors: authors, tags: parsedItem.tags, attachments: attachments, accountInfo: nil, status: status)
 	}
 
 	func articleByAttaching(_ authors: Set<Author>?, _ attachments: Set<Attachment>?, _ tags: Set<String>?) -> Article {
@@ -52,7 +52,7 @@ extension Article {
 			return self
 		}
 		
-		return Article(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo)
+		return Article(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo, status: status)
 	}
 	
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: NSMutableDictionary) {
@@ -108,9 +108,9 @@ extension Article {
 		return d
 	}
 
-	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ accountID: String, _ feedID: String) -> Set<Article> {
+	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ accountID: String, _ feedID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
 	
-		return Set(parsedItems.map{ Article(parsedItem: $0, accountID: accountID, feedID: feedID) })
+		return Set(parsedItems.map{ Article(parsedItem: $0, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
 	}
 	
 }

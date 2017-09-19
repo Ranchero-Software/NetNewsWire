@@ -98,7 +98,7 @@ public final class AccountManager: UnreadCountProvider {
 		return false
 	}
 
-	func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
+	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		
 		for account in accounts {
 			if let _ = account.existingFeed(withURL: urlString) {
@@ -191,7 +191,7 @@ private func accountFilePathWithFolder(_ folderPath: String) -> String {
 	return NSString(string: folderPath).appendingPathComponent(accountDataFileName)
 }
 
-public func account(with accountID: String) -> Account? {
+public func accountWithID(_ accountID: String) -> Account? {
 
 	// Shortcut.
 	return AccountManager.sharedInstance.existingAccount(with: accountID)

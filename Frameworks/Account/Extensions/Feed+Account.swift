@@ -13,7 +13,7 @@ public extension Feed {
 
 	var account: Account? {
 		get {
-			return account(with: accountID)
+			return accountWithID(accountID)
 		}
 	}
 }

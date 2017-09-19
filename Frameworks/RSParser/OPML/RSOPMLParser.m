@@ -24,6 +24,20 @@
 
 @end
 
+void RSParseOPML(ParserData *parserData, OPMLParserCallback callback) {
+	
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		
+		@autoreleasepool {
+			NSError *error = nil;
+			RSOPMLDocument *opmlDocument = [RSOPMLParser parseOPMLWithParserData:parserData error:&error];
+			
+			dispatch_async(dispatch_get_main_queue(), ^{
+				callback(opmlDocument, error);
+			});
+		}
+	});
+}
 
 @implementation RSOPMLParser
 

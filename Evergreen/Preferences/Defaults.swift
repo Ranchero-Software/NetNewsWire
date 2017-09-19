@@ -8,15 +8,18 @@
 
 import Foundation
 
-let SidebarFontSizeKey = "sidebarFontSize"
-let TimelineFontSizeKey = "timelineFontSize"
-let ArticleFontSizeKey = "articleFontSize"
+final class AppDefaults {
+	
+	
+	
+}
 
-let SidebarFontSizeKVOKey = "values." + SidebarFontSizeKey
-let TimelineFontSizeKVOKey = "values." + TimelineFontSizeKey
-let ArticleFontSizeKVOKey = "values." + ArticleFontSizeKey
-
-let OpenInBrowserInBackgroundKey = "openInBrowserInBackground"
+extension AppDefaultsKey {
+	
+	static let sidebarFontSizeKVO = "values." + sidebarFontSize
+	static let timelineFontSizeKVO = "values." + timelineFontSize
+	static let detailFontSizeKVO = "values." + detailFontSize
+}
 
 enum FontSize: Int {
 	case small = 0
@@ -30,7 +33,7 @@ private let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
 func registerDefaults() {
 	
-	let defaults = [SidebarFontSizeKey: FontSize.medium.rawValue, TimelineFontSizeKey: FontSize.medium.rawValue, ArticleFontSizeKey: FontSize.medium.rawValue]
+	let defaults = [AppDefaultsKey.sidebarFontSize: FontSize.medium.rawValue, AppDefaultsKey.timelineFontSize: FontSize.medium.rawValue, AppDefaultsKey.detailFontSize, FontSize.medium.rawValue]
 	
 	UserDefaults.standard.register(defaults: defaults)
 }

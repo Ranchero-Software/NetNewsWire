@@ -89,6 +89,11 @@ public final class Account: DisplayNameProvider, Hashable {
 		return nil //TODO
 	}
 	
+	public func importOPML(_ opmlDocument: RSOPMLDocument) {
+	
+		// TODO
+	}
+	
 	// MARK: - Equatable
 
 	public class func ==(lhs: Account, rhs: Account) -> Bool {

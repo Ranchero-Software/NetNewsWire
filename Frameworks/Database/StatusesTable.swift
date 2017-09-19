@@ -15,8 +15,6 @@ import Data
 //
 // CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, userDeleted BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0, accountInfo BLOB);
 
-typealias StatusesCompletionBlock = ([String: ArticleStatus]) -> Void // [articleID: Status]
-
 final class StatusesTable: DatabaseTable {
 
 	let name = DatabaseTableName.statuses
@@ -28,56 +26,26 @@ final class StatusesTable: DatabaseTable {
 		self.queue = queue
 	}
 
-	// MARK: Cache
-
-//	func cachedStatus(for articleID: String) -> ArticleStatus? {
-//
-//		assert(Thread.isMainThread)
-//		assert(cache[articleID] != nil)
-//		return cache[articleID]
-//	}
-//
-//	func cachedStatuses(for articleIDs: Set<String>) -> Set<ArticleStatus> {
-//
-//		assert(Thread.isMainThread)
-//
-//		var statuses = Set<ArticleStatus>()
-//		for articleID in articleIDs {
-//			if let articleStatus = cache[articleID] {
-//				statuses.insert(articleStatus)
-//			}
-//		}
-//
-//		return statuses
-//	}
-
-
 	// MARK: Creating/Updating
 
-	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ completion: @escaping StatusesCompletionBlock) {
-		
-		// Adds them to the cache if not cached.
-		
-		assert(Thread.isMainThread)
+	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> [String: ArticleStatus] {
 		
 		// Check cache.
 		let articleIDsMissingCachedStatus = articleIDsWithNoCachedStatus(articleIDs)
 		if articleIDsMissingCachedStatus.isEmpty {
-			completion(statusesDictionary(articleIDs))
-			return
+			return statusesDictionary(articleIDs)
 		}
 		
 		// Check database.
-		fetchAndCacheStatusesForArticleIDs(articleIDsMissingCachedStatus) {
+		fetchAndCacheStatusesForArticleIDs(articleIDsMissingCachedStatus, database)
 			
-			let articleIDsNeedingStatus = self.articleIDsWithNoCachedStatus(articleIDs)
-			if !articleIDsNeedingStatus.isEmpty {
-				// Create new statuses.
-				self.createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus)
-			}
-			
-			completion(self.statusesDictionary(articleIDs))
+		let articleIDsNeedingStatus = self.articleIDsWithNoCachedStatus(articleIDs)
+		if !articleIDsNeedingStatus.isEmpty {
+			// Create new statuses.
+			self.createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus, database)
 		}
+			
+		return statusesDictionary(articleIDs)
 	}
 
 	// MARK: Marking
@@ -100,9 +68,10 @@ final class StatusesTable: DatabaseTable {
 		if updatedStatuses.isEmpty {
 			return
 		}
-
+		let articleIDs = updatedStatuses.articleIDs()
+		
 		queue.update { (database) in
-			self.markArticleIDs(updatedStatuses.articleIDs(), statusKey, flag, database)
+			self.markArticleIDs(articleIDs, statusKey, flag, database)
 		}
 	}
 
@@ -113,11 +82,17 @@ final class StatusesTable: DatabaseTable {
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
 			return nil
 		}
+		if let cachedStatus = cache[articleID] {
+			return cachedStatus
+		}
+		
 		guard let dateArrived = row.date(forColumn: DatabaseKey.dateArrived) else {
 			return nil
 		}
 
 		let articleStatus = ArticleStatus(articleID: articleID, dateArrived: dateArrived, row: row)
+		cache.addStatusIfNotCached(articleStatus)
+		
 		return articleStatus
 	}
 }
@@ -130,13 +105,13 @@ private extension StatusesTable {
 	
 	func articleIDsWithNoCachedStatus(_ articleIDs: Set<String>) -> Set<String> {
 
-		assert(Thread.isMainThread)
+		assert(!Thread.isMainThread)
 		return Set(articleIDs.filter { cache[$0] == nil })
 	}
 
 	func statusesDictionary(_ articleIDs: Set<String>) -> [String: ArticleStatus] {
 		
-		assert(Thread.isMainThread)
+		assert(!Thread.isMainThread)
 		
 		var d = [String: ArticleStatus]()
 		
@@ -149,75 +124,31 @@ private extension StatusesTable {
 		return d
 	}
 
-	func addToCache(_ statuses: Set<ArticleStatus>) {
-
-		// Replacing any already cached statuses.
-		if statuses.isEmpty {
-			return
-		}
-
-		if Thread.isMainThread {
-			self.cache.add(statuses)
-		}
-		else {
-			DispatchQueue.main.async {
-				self.cache.add(statuses)
-			}
-		}
-	}
-
-	func addIfNotCached(_ statuses: Set<ArticleStatus>) {
-
-		if statuses.isEmpty {
-			return
-		}
-
-		if Thread.isMainThread {
-			self.cache.addIfNotCached(statuses)
-		}
-		else {
-			DispatchQueue.main.async {
-				self.cache.addIfNotCached(statuses)
-			}
-		}
-	}
-
 	// MARK: Creating
 
-	func saveStatuses(_ statuses: Set<ArticleStatus>) {
+	func saveStatuses(_ statuses: Set<ArticleStatus>, _ database: FMDatabase) {
 
-		queue.update { (database) in
-			let statusArray = statuses.map { $0.databaseDictionary()! }
-			self.insertRows(statusArray, insertType: .orIgnore, in: database)
-		}
+		let statusArray = statuses.map { $0.databaseDictionary()! }
+		self.insertRows(statusArray, insertType: .orIgnore, in: database)
 	}
 
-	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>) {
+	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
 
-		assert(Thread.isMainThread)
-		
 		let now = Date()
 		let statuses = Set(articleIDs.map { ArticleStatus(articleID: $0, dateArrived: now) })
 		cache.addIfNotCached(statuses)
 		
-		saveStatuses(statuses)
+		saveStatuses(statuses, database)
 	}
 
-	func fetchAndCacheStatusesForArticleIDs(_ articleIDs: Set<String>, _ completion: @escaping RSVoidCompletionBlock) {
+	func fetchAndCacheStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
 		
-		queue.fetch { (database) in
-			guard let resultSet = self.selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) else {
-				completion()
-				return
-			}
-			
-			let statuses = resultSet.mapToSet(self.statusWithRow)
-			
-			DispatchQueue.main.async {
-				self.cache.addIfNotCached(statuses)
-				completion()
-			}
+		guard let resultSet = self.selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) else {
+			return
 		}
+		
+		let statuses = resultSet.mapToSet(self.statusWithRow)
+		self.cache.addIfNotCached(statuses)
 	}
 
 	// MARK: Marking
@@ -227,6 +158,8 @@ private extension StatusesTable {
 		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
 	}
 }
+
+// MARK: -
 
 private final class StatusCache {
 
@@ -245,6 +178,11 @@ private final class StatusCache {
 		}
 	}
 
+	func addStatusIfNotCached(_ status: ArticleStatus) {
+		
+		addIfNotCached(Set([status]))
+	}
+	
 	func addIfNotCached(_ statuses: Set<ArticleStatus>) {
 		
 		// Does not replace already cached statuses.

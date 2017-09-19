@@ -18,12 +18,26 @@ extension Notification.Name {
 	static let AppNavigationKeyPressed = Notification.Name("AppNavigationKeyPressedNotification")
 }
 
-let viewKey = "view"
-let nodeKey = "node"
-let objectsKey = "objects"
-let articleKey = "article"
+struct AppUserInfoKey {
+	
+	static let view = "view"
+	static let node = "node"
+	static let objects = "objects"
+	static let article = "article"
+	static let articles = "articles"
+	static let articleStatus = "status"
+	static let appNavigation = "key"
+}
 
-let articlesKey = "articles"
-let articleStatusKey = "statusKey"
+struct AppDefaultsKey {
+	
+	static let firstRunDate = "firstRunDate"
+	
+	static let sidebarFontSize = "sidebarFontSize"
+	static let timelineFontSize = "timelineFontSize"
+	static let detailFontSize = "detailFontSize"
 
-let appNavigationKey = "keyKey"
+	static let openInBrowserInBackground = "openInBrowserInBackground"
+}
+
+

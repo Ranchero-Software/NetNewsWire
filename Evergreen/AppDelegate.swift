@@ -41,7 +41,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		super.init()
 	}
 
-	// MARK: NSApplicationDelegate
+	// MARK: - NSApplicationDelegate
 
 	func applicationDidFinishLaunching(_ note: Notification) {
 
@@ -51,11 +51,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 		let _ = AccountManager.sharedInstance
 
-		let kFirstRunDateKey = "firstRun"
 		var isFirstRun = false
-		if UserDefaults.standard.object(forKey: kFirstRunDateKey) == nil {
+		if UserDefaults.standard.object(forKey: AppDefaultsKey.firstRunDate) == nil {
 			isFirstRun = true
-			UserDefaults.standard.set(Date(), forKey: kFirstRunDateKey)
+			UserDefaults.standard.set(Date(), forKey: AppDefaultsKey.firstRunDate)
 		}
 
 		importDefaultFeedsIfNeeded(isFirstRun, account: AccountManager.sharedInstance.localAccount)
@@ -224,7 +223,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		panel.allowsOtherFileTypes = false
 
 		let result = panel.runModal()
-		if result == NSFileHandlingPanelOKButton {
+		if result == NSApplication.ModalResponse.OK {
 			if let url = panel.url {
 				DispatchQueue.main.async {
 					self.parseAndImportOPML(url, AccountManager.sharedInstance.localAccount)
@@ -250,15 +249,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		panel.nameFieldStringValue = "MySubscriptions.opml"
 
 		let result = panel.runModal()
-		if result == NSFileHandlingPanelOKButton {
+		if result.rawValue == NSFileHandlingPanelOKButton {
 			if let url = panel.url {
 				DispatchQueue.main.async {
-					let opmlString = AccountManager.sharedInstance.localAccount.opmlString(indentLevel: 0)
+					let opmlString = AccountManager.sharedInstance.localAccount.OPMLString(indentLevel: 0)
 					do {
 						try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
 					}
 					catch let error as NSError {
-						NSApplication.shared().presentError(error)
+						NSApplication.shared.presentError(error)
 					}
 				}
 			}
@@ -271,7 +270,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString")!
 		let urlString = "mailto:support@ranchero.com?subject=I%20need%20help%20with%20\(escapedAppName)%20\(version)&body=I%20ran%20into%20a%20problem:%20"
 		if let url = URL(string: urlString) {
-			NSWorkspace.shared().open(url)
+			NSWorkspace.shared.open(url)
 		}
 	}
 
@@ -321,17 +320,17 @@ private extension AppDelegate {
 			return
 		}
 
-		let parserData = ParserData(data: opmlData, urlString: url.absoluteString)
-		RSParseOPML(xmlData) { (opmlDocument, error) in
+		let parserData = ParserData(url: url.absoluteString, data: opmlData)
+		RSParseOPML(parserData) { (opmlDocument, error) in
 
 			if let error = error {
-				NSApplication.shared().presentError(error)
+				NSApplication.shared.presentError(error)
 				return
 			}
 
 			if let opmlDocument = opmlDocument {
 				account.importOPML(opmlDocument)
-				//				account.refreshAll()
+				account.refreshAll()
 			}
 		}
 	}

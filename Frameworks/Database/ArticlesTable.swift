@@ -85,8 +85,8 @@ final class ArticlesTable: DatabaseTable {
 			return
 		}
 
-		// 1. Create incoming articles with parsedItems.
-		// 2. Ensure statuses for all the incoming articles.
+		// 1. Ensure statuses for all the incoming articles.
+		// 2. Create incoming articles with parsedItems.
 		// 3. Ignore incoming articles that are userDeleted || (!starred and really old)
 		// 4. Fetch all articles for the feed.
 		// 5. Create array of Articles not in database and save them.
@@ -94,19 +94,32 @@ final class ArticlesTable: DatabaseTable {
 		// 7. Call back with new and updated Articles.
 		
 		let feedID = feed.feedID
+		let articleIDs = Set(parsedFeed.items.map { $0.articleID })
 		
-		self.queue.run { (database) in
+		self.queue.update { (database) in
 			
-			// This doesn’t hit the database, but it should be done on the database queue.
-			let allIncomingArticles = Article.articlesWithParsedItems(parsedFeed.items, self.accountID, feedID) //1
+			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, database) //1
+			assert(statusesDictionary.count == articleIDs.count)
+			
+			let allIncomingArticles = Article.articlesWithParsedItems(parsedFeed.items, self.accountID, feedID, statusesDictionary) //2
 			if allIncomingArticles.isEmpty {
 				self.callUpdateArticlesCompletionBlock(nil, nil, completion)
 				return
 			}
 			
-			DispatchQueue.main.async {
-				self.ensureStatusesAndSaveArticles(allIncomingArticles, feedID, completion) //2-7
+			let incomingArticles = self.filterIncomingArticles(allIncomingArticles, statusesDictionary) //3
+			if incomingArticles.isEmpty {
+				self.callUpdateArticlesCompletionBlock(nil, nil, completion)
+				return
 			}
+
+			let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database: database) //4
+			let fetchedArticlesDictionary = fetchedArticles.dictionary()
+			
+			let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
+			let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
+			
+			self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
 		}
 	}
 
@@ -149,9 +162,7 @@ private extension ArticlesTable {
 		// Then fetch the related objects, given the set of articleIDs.
 		// Then create set of Articles *with* related objects and return it.
 
-		let (stubArticles, statuses) = stubArticlesAndStatuses(with: resultSet)
-		
-		statusesTable.addIfNotCached(statuses)
+		let stubArticles = makeStubArticles(with: resultSet)
 		if stubArticles.isEmpty {
 			return stubArticles
 		}
@@ -173,25 +184,25 @@ private extension ArticlesTable {
 		return articles
 	}
 
-	func stubArticlesAndStatuses(with resultSet: FMResultSet) -> (Set<Article>, Set<ArticleStatus>) {
+	func makeStubArticles(with resultSet: FMResultSet) -> Set<Article> {
 
 		var stubArticles = Set<Article>()
-		var statuses = Set<ArticleStatus>()
 
 		// Note: the resultSet is a result of a JOIN query with the statuses table,
 		// so we can get the statuses at the same time and avoid additional database lookups.
 
 		while resultSet.next() {
-			if let stubArticle = Article(row: resultSet, accountID: accountID) {
-				stubArticles.insert(stubArticle)
+			guard let status = statusesTable.statusWithRow(resultSet) else {
+				assertionFailure("Expected status.")
+				continue
 			}
-			if let status = statusesTable.statusWithRow(resultSet) {
-				statuses.insert(status)
+			if let stubArticle = Article(row: resultSet, accountID: accountID, status: status) {
+				stubArticles.insert(stubArticle)
 			}
 		}
 		resultSet.close()
 
-		return (stubArticles, statuses)
+		return stubArticles
 	}
 
 	func articleWithAttachedRelatedObjects(_ stubArticle: Article, _ authorsMap: RelatedObjectsMap?, _ attachmentsMap: RelatedObjectsMap?, _ tagsMap: RelatedObjectsMap?) -> Article {
@@ -263,32 +274,6 @@ private extension ArticlesTable {
 
 	// MARK: Saving Parsed Items
 	
-	private func ensureStatusesAndSaveArticles(_ allIncomingArticles: Set<Article>, _ feedID: String, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
-		
-		statusesTable.ensureStatusesForArticleIDs(allIncomingArticles.articleIDs()) { (statusesDictionary) in // 2
-			
-			self.queue.update{ (database) in
-				self.saveArticlesWithDatabase(allIncomingArticles, statusesDictionary, feedID, database, completion)
-			}
-		}
-	}
-	
-	private func saveArticlesWithDatabase(_ allIncomingArticles: Set<Article>, _ statusesDictionary: [String: ArticleStatus], _ feedID: String, _ database: FMDatabase, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) { // 3-7
-		
-		let incomingArticles = filterIncomingArticles(allIncomingArticles, statusesDictionary) //3
-		if incomingArticles.isEmpty {
-			callUpdateArticlesCompletionBlock(nil, nil, completion)
-			return
-		}
-		
-		let fetchedArticles = fetchArticlesForFeedID(feedID, withLimits: false, database: database) //4
-		let fetchedArticlesDictionary = fetchedArticles.dictionary()
-		
-		let newArticles = findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
-		let updatedArticles = findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
-		
-		callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion)
-	}
 	
 	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
 		

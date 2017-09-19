@@ -177,9 +177,9 @@ private extension SidebarViewController {
 		
 		var userInfo = [AnyHashable: Any]()
 		if let selectedObjects = selectedObjects {
-			userInfo[objectsKey] = selectedObjects
+			userInfo[AppKey.objects] = selectedObjects
 		}
-		userInfo[viewKey] = self.outlineView
+		userInfo[AppKey.view] = self.outlineView
 		
 		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: userInfo)
 	}

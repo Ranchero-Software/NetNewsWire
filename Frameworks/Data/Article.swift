@@ -56,12 +56,17 @@ public struct Article: Hashable {
 			self.articleID = articleID
 		}
 		else {
-			self.articleID = databaseIDWithString("\(feedID) \(uniqueID)")
+			self.articleID = Article.calculatedArticleID(feedID: feedID, uniqueID: uniqueID)
 		}
 
 		self.hashValue = accountID.hashValue ^ self.articleID.hashValue
 	}
 
+	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {
+		
+		return databaseIDWithString("\(feedID) \(uniqueID)")
+	}
+	
 	public static func ==(lhs: Article, rhs: Article) -> Bool {
 
 		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.authors == rhs.authors && lhs.tags == rhs.tags && lhs.attachments == rhs.attachments
