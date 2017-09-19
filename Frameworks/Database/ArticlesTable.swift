@@ -162,26 +162,87 @@ private extension ArticlesTable {
 		// Then fetch the related objects, given the set of articleIDs.
 		// Then create set of Articles *with* related objects and return it.
 
-		let stubArticles = makeStubArticles(with: resultSet)
-		if stubArticles.isEmpty {
-			return stubArticles
+		let articleDictionaries = makeArticleDictionaries(with: resultSet)
+		if articleDictionaries.isEmpty {
+			return Set<Article>()
 		}
 		
 		// Fetch related objects.
 		
-		let articleIDs = stubArticles.articleIDs()
+		let articleIDs = articleDictionaries.map { $0[DatabaseKey.articleID] }
 		let authorsMap = authorsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
 		let attachmentsMap = attachmentsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
 		let tagsMap = tagsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
-		
-		if authorsMap == nil && attachmentsMap == nil && tagsMap == nil {
-			return stubArticles
-		}
-		
+
+		// TODO: get statusesDictionary from statusesTable
+
 		// Create articles with related objects.
 
-		let articles = Set(stubArticles.map { articleWithAttachedRelatedObjects($0, authorsMap, attachmentsMap, tagsMap) })
+		let articles = Set(articleDictionaries.flatMap { articleWithDictionary($0, authorsMap, attachmentsMap, tagsMap) })
 		return articles
+	}
+
+	func articleWithDictionary(_ articleDictionary: [String: Any], _ authorsMap: RelatedObjectsMap?, _ attachmentsMap: RelatedObjectsMap?, _ tagsMap: RelatedObjectsMap?) -> Article? {
+
+		let articleID = articleDictionary[DatabaseKey.articleID]!
+		let status = articleDictionary[statusKey]!
+		let authors = authorsMap?.authors(for: articleID)
+		let attachments = attachmentsMap?.attachments(for: articleID)
+		let tags = tagsMap?.tags(for: articleID)
+
+		return Author(dictionary: articleDictionary, status: status, accountID: accountID, authors: authors, attachments: attachments, tags: tags)
+	}
+
+	func makeArticleDictionaries(with resultSet: FMResultSet) -> Set<[String: Any]> {
+
+		let dictionaries = resultSet.mapToSet{ (row) -> [String: Any]? in
+
+			// The resultSet is a result of a JOIN query with the statuses table,
+			// so we can get the statuses at the same time and avoid additional database lookups.
+
+			guard let status = statusesTable.statusWithRow(resultSet) else {
+				assertionFailure("Expected status.")
+				return nil
+			}
+
+			guard let let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+				return nil
+			}
+			guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
+				return nil
+			}
+			guard let uniqueID = row.string(forColumn: DatabaseKey.uniqueID) else {
+				return nil
+			}
+
+			var d = [String: Any]()
+
+			d[statusKey] = status
+			d[DatabaseKey.articleID] = articleID
+			d[DatabaseKey.feedID] = feedID
+			d[DatabaseKey.uniqueID] = uniqueID
+
+			if let title = row.string(forColumn: DatabaseKey.title) {
+				d[DatabaseKey.title] = title
+			}
+
+			// TODO
+//			let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
+//			let contentText = row.string(forColumn: DatabaseKey.contentText)
+//			let url = row.string(forColumn: DatabaseKey.url)
+//			let externalURL = row.string(forColumn: DatabaseKey.externalURL)
+//			let summary = row.string(forColumn: DatabaseKey.summary)
+//			let imageURL = row.string(forColumn: DatabaseKey.imageURL)
+//			let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL)
+//			let datePublished = row.date(forColumn: DatabaseKey.datePublished)
+//			let dateModified = row.date(forColumn: DatabaseKey.dateModified)
+//			let accountInfo: AccountInfo? = nil // TODO
+//
+			return d
+		}
+		resultSet.close()
+
+		return dictionaries
 	}
 
 	func makeStubArticles(with resultSet: FMResultSet) -> Set<Article> {
