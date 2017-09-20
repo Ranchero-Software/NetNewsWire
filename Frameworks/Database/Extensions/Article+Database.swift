@@ -13,34 +13,34 @@ import RSParser
 
 extension Article {
 	
-	init?(row: FMResultSet, accountID: String, authors: Set<Author>? = nil, attachments: Set<Attachment>? = nil, tags: Set<String>? = nil, status: ArticleStatus) {
-		
-		guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
-			return nil
-		}
-		guard let uniqueID = row.string(forColumn: DatabaseKey.uniqueID) else {
-			return nil
-		}
-		
-		let articleID = row.string(forColumn: DatabaseKey.articleID)!
-		let title = row.string(forColumn: DatabaseKey.title)
-		let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
-		let contentText = row.string(forColumn: DatabaseKey.contentText)
-		let url = row.string(forColumn: DatabaseKey.url)
-		let externalURL = row.string(forColumn: DatabaseKey.externalURL)
-		let summary = row.string(forColumn: DatabaseKey.summary)
-		let imageURL = row.string(forColumn: DatabaseKey.imageURL)
-		let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL)
-		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
-		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
-		let accountInfo: AccountInfo? = nil // TODO
-
-		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo, status: status)
-	}
+//	init?(row: FMResultSet, accountID: String, authors: Set<Author>? = nil, attachments: Set<Attachment>? = nil, tags: Set<String>? = nil, status: ArticleStatus) {
+//		
+//		guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
+//			return nil
+//		}
+//		guard let uniqueID = row.string(forColumn: DatabaseKey.uniqueID) else {
+//			return nil
+//		}
+//		
+//		let articleID = row.string(forColumn: DatabaseKey.articleID)!
+//		let title = row.string(forColumn: DatabaseKey.title)
+//		let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
+//		let contentText = row.string(forColumn: DatabaseKey.contentText)
+//		let url = row.string(forColumn: DatabaseKey.url)
+//		let externalURL = row.string(forColumn: DatabaseKey.externalURL)
+//		let summary = row.string(forColumn: DatabaseKey.summary)
+//		let imageURL = row.string(forColumn: DatabaseKey.imageURL)
+//		let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL)
+//		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
+//		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
+//		let accountInfo: AccountInfo? = nil // TODO
+//
+//		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo, status: status)
+//	}
 
 	init?(dictionary: [String: Any], accountID: String, status: ArticleStatus, authors: Set<Author>?, attachments: Set<Attachment>?, tags: Set<String>?) {
 
-		guard let articleID = dictionary[DatabaseKey.articleID], let feedID = dictionary[DatabaseKey.feedID], let uniqueID = dictionary[DatabaseKey.uniqueID] else {
+		guard let articleID = dictionary[DatabaseKey.articleID] as? String, let feedID = dictionary[DatabaseKey.feedID] as? String, let uniqueID = dictionary[DatabaseKey.uniqueID] as? String else {
 			return nil
 		}
 
@@ -53,7 +53,7 @@ extension Article {
 		let imageURL = dictionary[DatabaseKey.imageURL] as? String
 		let bannerImageURL = dictionary[DatabaseKey.bannerImageURL] as? String
 		let datePublished = dictionary[DatabaseKey.datePublished] as? Date
-		let dateModified = dictionary[DatabaseKey.dateModified]? as? Date
+		let dateModified = dictionary[DatabaseKey.dateModified] as? Date
 		let accountInfo: AccountInfo? = nil // TODO
 
 		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments, accountInfo: accountInfo, status: status)

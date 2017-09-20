@@ -95,6 +95,21 @@ final class StatusesTable: DatabaseTable {
 		
 		return articleStatus
 	}
+
+	func statusesDictionary(_ articleIDs: Set<String>) -> [String: ArticleStatus] {
+
+		assert(!Thread.isMainThread)
+
+		var d = [String: ArticleStatus]()
+
+		for articleID in articleIDs {
+			if let articleStatus = cache[articleID] {
+				d[articleID] = articleStatus
+			}
+		}
+
+		return d
+	}
 }
 
 // MARK: - Private
@@ -107,21 +122,6 @@ private extension StatusesTable {
 
 		assert(!Thread.isMainThread)
 		return Set(articleIDs.filter { cache[$0] == nil })
-	}
-
-	func statusesDictionary(_ articleIDs: Set<String>) -> [String: ArticleStatus] {
-		
-		assert(!Thread.isMainThread)
-		
-		var d = [String: ArticleStatus]()
-		
-		for articleID in articleIDs {
-			if let articleStatus = cache[articleID] {
-				d[articleID] = articleStatus
-			}
-		}
-		
-		return d
 	}
 
 	// MARK: Creating
