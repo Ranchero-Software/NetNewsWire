@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Data
 
 // Intermediate representation of an Article. Doesn’t include related objects.
 // Used by ArticlesTable as part of fetching articles.
@@ -32,6 +33,7 @@ struct DatabaseArticle: Hashable {
 
 	init(articleID: String, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, accountInfo: AccountInfo?, status: ArticleStatus) {
 
+		self.articleID = articleID
 		self.feedID = feedID
 		self.uniqueID = uniqueID
 		self.title = title
@@ -46,12 +48,20 @@ struct DatabaseArticle: Hashable {
 		self.dateModified = dateModified
 		self.accountInfo = accountInfo
 		self.status = status
-
 		self.hashValue = articleID.hashValue
 	}
 
 	static func ==(lhs: DatabaseArticle, rhs: DatabaseArticle) -> Bool {
 
-		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.sumary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.status == rhs.status
+		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.status == rhs.status
+	}
+}
+
+
+extension Set where Element == DatabaseArticle {
+
+	func articleIDs() -> Set<String> {
+
+		return Set<String>(map { $0.articleID })
 	}
 }

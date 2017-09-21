@@ -158,19 +158,18 @@ private extension ArticlesTable {
 
 	func articlesWithResultSet(_ resultSet: FMResultSet, _ database: FMDatabase) -> Set<Article> {
 
-		// 1. Create article dictionaries without related objects.
+		// 1. Create DatabaseArticles without related objects.
 		// 2. Then fetch the related objects, given the set of articleIDs.
-		// 3. Then fetch statuses.
-		// 4. Then create set of Articles with status and related objects and return it.
+		// 3. Then create set of Articles with DatabaseArticles and related objects and return it.
 
-		// 1. Create article dictionaries.
+		// 1. Create databaseArticles (intermediate representations).
 
-		let articleDictionaries = makeArticleDictionaries(with: resultSet)
-		if articleDictionaries.isEmpty {
+		let databaseArticles = makeDatabaseArticles(with: resultSet)
+		if databaseArticles.isEmpty {
 			return Set<Article>()
 		}
 		
-		let articleIDs = Set(articleDictionaries.map { $0[DatabaseKey.articleID] as! String })
+		let articleIDs = databaseArticles.articleIDs()
 
 		// 2. Fetch related objects.
 
@@ -178,107 +177,65 @@ private extension ArticlesTable {
 		let attachmentsMap = attachmentsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
 		let tagsMap = tagsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
 
-		// 3. All statuses for articleDictionaries were created (when needed) in makeArticleDictionaries.
+		// 3. Create articles with related objects.
 
-		let statusesDictionary = statusesTable.statusesDictionary(articleIDs)
-		assert(statusesDictionary.count == articleIDs.count)
-
-		// 4. Create articles with related objects.
-
-		let articles = articleDictionaries.flatMap { (articleDictionary) -> Article? in
-
-			guard let articleID = articleDictionary[DatabaseKey.articleID] as? String else {
-				assertionFailure("articleID expected")
-				return nil
-			}
-			guard let status = statusesDictionary[articleID] else {
-				assertionFailure("status expected")
-				return nil
-			}
-
-			return articleWithDictionary(articleDictionary, status, authorsMap, attachmentsMap, tagsMap)
+		let articles = databaseArticles.map { (databaseArticle) -> Article in
+			return articleWithDatabaseArticle(databaseArticle, authorsMap, attachmentsMap, tagsMap)
 		}
 
 		return Set(articles)
 	}
 
-	func articleWithDictionary(_ articleDictionary: [String: Any], _ status: ArticleStatus, _ authorsMap: RelatedObjectsMap?, _ attachmentsMap: RelatedObjectsMap?, _ tagsMap: RelatedObjectsMap?) -> Article? {
+	func articleWithDatabaseArticle(_ databaseArticle: DatabaseArticle, _ authorsMap: RelatedObjectsMap?, _ attachmentsMap: RelatedObjectsMap?, _ tagsMap: RelatedObjectsMap?) -> Article {
 
-		let articleID = articleDictionary[DatabaseKey.articleID]! as! String
+		let articleID = databaseArticle.articleID
 		let authors = authorsMap?.authors(for: articleID)
 		let attachments = attachmentsMap?.attachments(for: articleID)
 		let tags = tagsMap?.tags(for: articleID)
 
-		return Article(dictionary: articleDictionary, accountID: accountID, status: status, authors: authors, attachments: attachments, tags: tags)
+		return Article(databaseArticle: databaseArticle, accountID: accountID, authors: authors, attachments: attachments, tags: tags)
 	}
 
-	func makeArticleDictionaries(with resultSet: FMResultSet) -> [[String: Any]] {
+	func makeDatabaseArticles(with resultSet: FMResultSet) -> Set<DatabaseArticle> {
 
-		let dictionaries = resultSet.flatMap{ (row) -> [String: Any]? in
+		let articles = resultSet.mapToSet { (row) -> DatabaseArticle? in
 
 			// The resultSet is a result of a JOIN query with the statuses table,
 			// so we can get the statuses at the same time and avoid additional database lookups.
 
-			// Don’t need status locally — we want it to get cached by statusesTable.
-			guard let _ = statusesTable.statusWithRow(resultSet) else {
+			guard let status = statusesTable.statusWithRow(resultSet) else {
 				assertionFailure("Expected status.")
 				return nil
 			}
 
 			guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+				assertionFailure("Expected articleID.")
 				return nil
 			}
 			guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
+				assertionFailure("Expected feedID.")
 				return nil
 			}
 			guard let uniqueID = row.string(forColumn: DatabaseKey.uniqueID) else {
+				assertionFailure("Expected uniqueID.")
 				return nil
 			}
 
-			var d = [String: Any]()
+			let title = row.string(forColumn: DatabaseKey.title)
+			let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
+			let contentText = row.string(forColumn: DatabaseKey.contentText)
+			let url = row.string(forColumn: DatabaseKey.url)
+			let externalURL = row.string(forColumn: DatabaseKey.externalURL)
+			let summary = row.string(forColumn: DatabaseKey.summary)
+			let imageURL = row.string(forColumn: DatabaseKey.imageURL)
+			let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL)
+			let datePublished = row.date(forColumn: DatabaseKey.datePublished)
+			let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 
-			d[DatabaseKey.articleID] = articleID
-			d[DatabaseKey.feedID] = feedID
-			d[DatabaseKey.uniqueID] = uniqueID
-
-			if let title = row.string(forColumn: DatabaseKey.title) {
-				d[DatabaseKey.title] = title
-			}
-			if let contentHTML = row.string(forColumn: DatabaseKey.contentHTML) {
-				d[DatabaseKey.contentHTML] = contentHTML
-			}
-			if let contentText = row.string(forColumn: DatabaseKey.contentText) {
-				d[DatabaseKey.contentText] = contentText
-			}
-			if let url = row.string(forColumn: DatabaseKey.url) {
-				d[DatabaseKey.url] = url
-			}
-			if let externalURL = row.string(forColumn: DatabaseKey.externalURL) {
-				d[DatabaseKey.externalURL] = externalURL
-			}
-			if let summary = row.string(forColumn: DatabaseKey.summary) {
-				d[DatabaseKey.summary] = summary
-			}
-			if let imageURL = row.string(forColumn: DatabaseKey.imageURL) {
-				d[DatabaseKey.imageURL] = imageURL
-			}
-			if let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL) {
-				d[DatabaseKey.bannerImageURL] = bannerImageURL
-			}
-			if let datePublished = row.date(forColumn: DatabaseKey.datePublished) {
-				d[DatabaseKey.datePublished] = datePublished
-			}
-			if let dateModified = row.date(forColumn: DatabaseKey.dateModified) {
-				d[DatabaseKey.dateModified] = dateModified
-			}
-
-			// TODO: accountInfo
-
-			return d
+			return DatabaseArticle(articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, accountInfo: nil,  status: status)
 		}
-		resultSet.close()
 
-		return dictionaries
+		return articles
 	}
 
 	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject], withLimits: Bool) -> Set<Article> {
