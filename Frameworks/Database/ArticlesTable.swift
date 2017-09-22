@@ -107,7 +107,7 @@ final class ArticlesTable: DatabaseTable {
 				return
 			}
 			
-			let incomingArticles = self.filterIncomingArticles(allIncomingArticles, statusesDictionary) //3
+			let incomingArticles = self.filterIncomingArticles(allIncomingArticles) //3
 			if incomingArticles.isEmpty {
 				self.callUpdateArticlesCompletionBlock(nil, nil, completion)
 				return
@@ -431,18 +431,11 @@ private extension ArticlesTable {
 		return status.dateArrived < maximumArticleCutoffDate
 	}
 
-	func filterIncomingArticles(_ articles: Set<Article>, _ statuses: [String: ArticleStatus]) -> Set<Article> {
+	func filterIncomingArticles(_ articles: Set<Article>) -> Set<Article> {
 		
 		// Drop Articles that we can ignore.
 		
-		return Set(articles.filter{ (article) -> Bool in
-			let articleID = article.articleID
-			if let status = statuses[articleID] {
-				return !statusIndicatesArticleIsIgnorable(status)
-			}
-			assertionFailure("Expected a status for each Article.")
-			return true
-		})
+		return Set(articles.filter{ !statusIndicatesArticleIsIgnorable($0.status) })
 	}
 }
 
