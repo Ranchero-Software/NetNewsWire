@@ -27,11 +27,10 @@ struct DatabaseArticle: Hashable {
 	let bannerImageURL: String?
 	let datePublished: Date?
 	let dateModified: Date?
-	let accountInfo: AccountInfo?
 	let status: ArticleStatus
 	let hashValue: Int
 
-	init(articleID: String, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, accountInfo: AccountInfo?, status: ArticleStatus) {
+	init(articleID: String, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, status: ArticleStatus) {
 
 		self.articleID = articleID
 		self.feedID = feedID
@@ -46,7 +45,6 @@ struct DatabaseArticle: Hashable {
 		self.bannerImageURL = bannerImageURL
 		self.datePublished = datePublished
 		self.dateModified = dateModified
-		self.accountInfo = accountInfo
 		self.status = status
 		self.hashValue = articleID.hashValue
 	}

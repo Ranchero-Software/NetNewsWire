@@ -232,7 +232,7 @@ private extension ArticlesTable {
 			let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 			let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 
-			return DatabaseArticle(articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, accountInfo: nil,  status: status)
+			return DatabaseArticle(articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, status: status)
 		}
 
 		return articles

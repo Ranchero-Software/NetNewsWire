@@ -30,22 +30,20 @@ public final class ArticleStatus: Hashable {
 	public var read = false
 	public var starred = false
 	public var userDeleted = false
-	public var accountInfo: AccountInfo?
 	
-	public init(articleID: String, read: Bool, starred: Bool, userDeleted: Bool, dateArrived: Date, accountInfo: AccountInfo?) {
+	public init(articleID: String, read: Bool, starred: Bool, userDeleted: Bool, dateArrived: Date) {
 		
 		self.articleID = articleID
 		self.read = read
 		self.starred = starred
 		self.userDeleted = userDeleted
 		self.dateArrived = dateArrived
-		self.accountInfo = accountInfo
 		self.hashValue = articleID.hashValue
 	}
 
 	public convenience init(articleID: String, dateArrived: Date) {
 
-		self.init(articleID: articleID, read: false, starred: false, userDeleted: false, dateArrived: dateArrived, accountInfo: nil)
+		self.init(articleID: articleID, read: false, starred: false, userDeleted: false, dateArrived: dateArrived)
 	}
 
 	public func boolStatus(forKey key: String) -> Bool {
@@ -60,9 +58,6 @@ public final class ArticleStatus: Hashable {
 				return userDeleted
 			}
 		}
-//		else if let flag = accountInfo?[key] as? Bool {
-//			return flag
-//		}
 		return false
 	}
 	
@@ -78,16 +73,10 @@ public final class ArticleStatus: Hashable {
 				userDeleted = status
 			}
 		}
-//		else {
-//			if accountInfo == nil {
-//				accountInfo = AccountInfo()
-//			}
-//			accountInfo![key] = status
-//		}
 	}
 
 	public static func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
 		
-		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred && lhs.userDeleted == rhs.userDeleted && lhs.accountInfo == rhs.accountInfo
+		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred && lhs.userDeleted == rhs.userDeleted
 	}
 }

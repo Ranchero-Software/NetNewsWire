@@ -18,9 +18,7 @@ extension ArticleStatus {
 		let starred = row.bool(forColumn: DatabaseKey.starred)
 		let userDeleted = row.bool(forColumn: DatabaseKey.userDeleted)
 		
-//		let accountInfoPlist = accountInfoWithRow(row)
-		
-		self.init(articleID: articleID, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived, accountInfo: nil)
+		self.init(articleID: articleID, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived)
 	}
 	
 }
@@ -42,10 +40,6 @@ extension ArticleStatus: DatabaseObject {
 		d[DatabaseKey.starred] = starred
 		d[DatabaseKey.userDeleted] = userDeleted
 		d[DatabaseKey.dateArrived] = dateArrived
-
-		//		if let accountInfo = accountInfo, let data = PropertyListTransformer.data(withPropertyList: accountInfo) {
-		//			d[DatabaseKey.accountInfo] = data
-		//		}
 
 		return (d.copy() as! NSDictionary)
 	}

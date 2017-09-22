@@ -25,7 +25,6 @@ struct DatabaseKey {
 	
 	// Shared
 	static let articleID = "articleID"
-	static let accountInfo = "accountInfo"
 	static let url = "url"
 	static let title = "title"
 	
