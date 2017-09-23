@@ -72,7 +72,7 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 	private func reloadHTML() {
 
 		if let article = article {
-			let articleRenderer = ArticleRenderer(article: article, style: ArticleStylesManager.sharedInstance.currentStyle)
+			let articleRenderer = ArticleRenderer(article: article, style: ArticleStylesManager.shared.currentStyle)
 			webview.loadHTMLString(articleRenderer.html, baseURL: articleRenderer.baseURL)
 		}
 		else {

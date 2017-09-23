@@ -21,9 +21,9 @@ private let nnwStyleSuffix = ".nnwstyle"
 private let cssStyleSuffix = ".css"
 private let styleSuffixes = [styleSuffix, nnwStyleSuffix, cssStyleSuffix];
 
-public final class ArticleStylesManager {
+final class ArticleStylesManager {
 
-	static let sharedInstance = ArticleStylesManager()
+	static let shared = ArticleStylesManager()
 	private let folderPath = RSDataSubfolder(nil, stylesFolderName)!
 
 	var currentStyleName: String {

@@ -20,13 +20,10 @@ final class AppDefaults {
 	static let shared = AppDefaults()
 
 	private struct Key {
-
 		static let firstRunDate = "firstRunDate"
-
 		static let sidebarFontSize = "sidebarFontSize"
 		static let timelineFontSize = "timelineFontSize"
 		static let detailFontSize = "detailFontSize"
-
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 	}
 

@@ -14,8 +14,7 @@ import RSWeb
 func openInBrowser(_ urlString: String) {
 	
 	// Opens according to prefs.
-	let openInBackground = UserDefaults.standard.bool(forKey: OpenInBrowserInBackgroundKey)
-	openInBrowser(urlString, inBackground: openInBackground)
+	openInBrowser(urlString, inBackground: AppDefaults.shared.openInBrowserInBackground)
 }
 
 func openInBrowser(_ urlString: String, inBackground: Bool) {
