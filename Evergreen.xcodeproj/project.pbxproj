@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		842E45CE1ED8C308000A8B52 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppConstants.swift */; };
+		842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppNotifications.swift */; };
 		842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
 		842E45DF1ED8C582000A8B52 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DE1ED8C582000A8B52 /* Defaults.swift */; };
 		842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */; };
@@ -372,7 +372,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		842E45CD1ED8C308000A8B52 /* AppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppConstants.swift; path = Evergreen/AppConstants.swift; sourceTree = "<group>"; };
+		842E45CD1ED8C308000A8B52 /* AppNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppNotifications.swift; path = Evergreen/AppNotifications.swift; sourceTree = "<group>"; };
 		842E45DC1ED8C54B000A8B52 /* Browser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Browser.swift; path = Evergreen/Browser.swift; sourceTree = "<group>"; };
 		842E45DE1ED8C582000A8B52 /* Defaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Defaults.swift; path = Evergreen/Preferences/Defaults.swift; sourceTree = "<group>"; };
 		842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardDelegateProtocol.swift; sourceTree = "<group>"; };
@@ -669,9 +669,9 @@
 				842E45E61ED8C747000A8B52 /* DB5.plist */,
 				849C64671ED37A5D003D8FC0 /* Assets.xcassets */,
 				849C64691ED37A5D003D8FC0 /* Main.storyboard */,
-				842E45CD1ED8C308000A8B52 /* AppConstants.swift */,
-				84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */,
 				849C64631ED37A5D003D8FC0 /* AppDelegate.swift */,
+				84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */,
+				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
 				842E45DC1ED8C54B000A8B52 /* Browser.swift */,
 				842E45E11ED8C681000A8B52 /* MainWindow */,
 				842E45E01ED8C587000A8B52 /* Preferences */,
@@ -1150,7 +1150,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				842E45CE1ED8C308000A8B52 /* AppConstants.swift in Sources */,
+				842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */,
 				849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */,
 				842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */,
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,

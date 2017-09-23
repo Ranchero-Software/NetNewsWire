@@ -1,5 +1,5 @@
 //
-//  AppConstants.swift
+//  AppNotifications.swift
 //  Evergreen
 //
 //  Created by Brent Simmons on 8/30/15.
