@@ -15,6 +15,7 @@ import RSParser
 import RSWeb
 import Account
 
+let appName = "Evergreen"
 var currentTheme: VSTheme!
 
 @NSApplicationMain
@@ -45,19 +46,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	func applicationDidFinishLaunching(_ note: Notification) {
 
-		registerDefaults()
+		let isFirstRun = AppDefaults.shared.isFirstRun
 
 		currentTheme = themeLoader.defaultTheme
 
 		let _ = AccountManager.sharedInstance
 
-		var isFirstRun = false
-		if UserDefaults.standard.object(forKey: AppDefaultsKey.firstRunDate) == nil {
-			isFirstRun = true
-			UserDefaults.standard.set(Date(), forKey: AppDefaultsKey.firstRunDate)
-		}
-
-		importDefaultFeedsIfNeeded(isFirstRun, account: AccountManager.sharedInstance.localAccount)
+		importDefaultFeedsIfNeeded(isFirstRun, account: AccountManager.shared.localAccount)
 		createAndShowMainWindow()
 
 		#if RELEASE
@@ -104,7 +99,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		}
 	}
 
-
 	// MARK: Badge
 
 	private func updateBadgeCoalesced() {
@@ -122,7 +116,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	func unreadCountDidChange(_ note: Notification) {
 
-		let updatedUnreadCount = AccountManager.sharedInstance.unreadCount
+		let updatedUnreadCount = AccountManager.shared.unreadCount
 		if updatedUnreadCount != unreadCount {
 			unreadCount = updatedUnreadCount
 		}
@@ -150,10 +144,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
 		if item.action == #selector(refreshAll(_:)) {
-			return !AccountManager.sharedInstance.refreshInProgress
+			return !AccountManager.shared.refreshInProgress
 		}
 		if item.action == #selector(addAppNews(_:)) {
-			return !AccountManager.sharedInstance.anyAccountHasFeedWithURL(appNewsURLString)
+			return !AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString)
 		}
 		return true
 	}
@@ -168,7 +162,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		addFeedController?.showAddFeedSheet(urlString, name)
 	}
 
-	// MARK: Actions
+	// MARK: - Actions
 
 	@IBAction func showPreferences(_ sender: AnyObject) {
 
@@ -223,15 +217,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		panel.allowsOtherFileTypes = false
 
 		let result = panel.runModal()
-		if result == NSApplication.ModalResponse.OK {
-			if let url = panel.url {
-				DispatchQueue.main.async {
-					self.parseAndImportOPML(url, AccountManager.sharedInstance.localAccount)
-				}
+		if result == NSApplication.ModalResponse.OK, let url = panel.url {
+			DispatchQueue.main.async {
+				self.parseAndImportOPML(url, AccountManager.sharedInstance.localAccount)
 			}
 		}
 	}
-
+	
 	@IBAction func importOPMLFromURL(_ sender: AnyObject) {
 
 	}
@@ -249,21 +241,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		panel.nameFieldStringValue = "MySubscriptions.opml"
 
 		let result = panel.runModal()
-		if result.rawValue == NSFileHandlingPanelOKButton {
-			if let url = panel.url {
-				DispatchQueue.main.async {
-					let opmlString = AccountManager.sharedInstance.localAccount.OPMLString(indentLevel: 0)
-					do {
-						try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
-					}
-					catch let error as NSError {
-						NSApplication.shared.presentError(error)
-					}
+		if result.rawValue == NSFileHandlingPanelOKButton, let url = panel.url {
+			DispatchQueue.main.async {
+				let opmlString = AccountManager.sharedInstance.localAccount.OPMLString(indentLevel: 0)
+				do {
+					try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
+				}
+				catch let error as NSError {
+					NSApplication.shared.presentError(error)
 				}
 			}
 		}
 	}
-
+	
 	@IBAction func emailSupport(_ sender: AnyObject) {
 
 		let escapedAppName = appName.replacingOccurrences(of: " ", with: "%20")
@@ -276,7 +266,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	@IBAction func addAppNews(_ sender: AnyObject) {
 
-		if AccountManager.sharedInstance.anyAccountHasFeedWithURL(appNewsURLString) {
+		if AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 			return
 		}
 		addFeed(appNewsURLString, "Evergreen News")
@@ -302,6 +292,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		openInBrowser("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
 	}
 }
+
+// MARK: -
 
 private extension AppDelegate {
 

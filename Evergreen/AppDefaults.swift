@@ -23,6 +23,8 @@ final class AppDefaults {
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 	}
 
+	let isFirstRun: Bool
+	
 	var firstRunDate: Date? {
 		get {
 			return date(for: Key.firstRunDate)
@@ -43,6 +45,14 @@ final class AppDefaults {
 	init() {
 
 		registerDefaults()
+		
+		if self.firstRunDate == nil {
+			self.isFirstRun = true
+			self.firstRunDate = Date()
+		}
+		else {
+			self.isFirstRun = false
+		}
 	}
 
 	func registerDefaults() {

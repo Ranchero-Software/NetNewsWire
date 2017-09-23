@@ -17,7 +17,7 @@ private let localAccountIdentifier = "OnMyMac"
 
 public final class AccountManager: UnreadCountProvider {
 
-	public static let sharedInstance = AccountManager()
+	public static let shared = AccountManager()
 	public let localAccount: Account
 	private let accountsFolder = RSDataSubfolder(nil, "Accounts")!
     private var accountsDictionary = [String: Account]()
