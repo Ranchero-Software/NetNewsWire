@@ -49,16 +49,6 @@ extension Article {
 		}
 	}
 	
-	var status: ArticleStatus? {
-		get {
-			guard let status = account?.articleStatus(for: self) else {
-				assertionFailure("Expected ArticleStatus for article.status.")
-				return nil
-			}
-			return status
-		}
-	}
-	
 	var preferredLink: String? {
 		get {
 			return url ?? externalURL
@@ -73,16 +63,7 @@ extension Article {
 	
 	var logicalDatePublished: Date {
 		get {
-			return datePublished ?? dateModified ?? status?.dateArrived ?? Date.distantPast
-		}
-	}
-	
-	var read: Bool {
-		get {
-			if let status = status {
-				return status.read
-			}
-			return false
+			return datePublished ?? dateModified ?? status.dateArrived
 		}
 	}
 }

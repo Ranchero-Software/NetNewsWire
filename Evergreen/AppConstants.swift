@@ -29,15 +29,5 @@ struct AppUserInfoKey {
 	static let appNavigation = "key"
 }
 
-struct AppDefaultsKey {
-	
-	static let firstRunDate = "firstRunDate"
-	
-	static let sidebarFontSize = "sidebarFontSize"
-	static let timelineFontSize = "timelineFontSize"
-	static let detailFontSize = "detailFontSize"
-
-	static let openInBrowserInBackground = "openInBrowserInBackground"
-}
 
 

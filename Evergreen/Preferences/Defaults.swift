@@ -33,7 +33,7 @@ private let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
 func registerDefaults() {
 	
-	let defaults = [AppDefaultsKey.sidebarFontSize: FontSize.medium.rawValue, AppDefaultsKey.timelineFontSize: FontSize.medium.rawValue, AppDefaultsKey.detailFontSize, FontSize.medium.rawValue]
+	let defaults = [AppDefaultsKey.sidebarFontSize: FontSize.medium.rawValue, AppDefaultsKey.timelineFontSize: FontSize.medium.rawValue, AppDefaultsKey.detailFontSize: FontSize.medium.rawValue]
 	
 	UserDefaults.standard.register(defaults: defaults)
 }
