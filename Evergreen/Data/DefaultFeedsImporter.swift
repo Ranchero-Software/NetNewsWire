@@ -16,7 +16,7 @@ private func shouldImportDefaultFeeds(_ isFirstRun: Bool) -> Bool {
 		return false
 	}
 
-	for oneAccount in AccountManager.sharedInstance.accounts {
+	for oneAccount in AccountManager.shared.accounts {
 		if oneAccount.hasAtLeastOneFeed {
 			return false
 		}

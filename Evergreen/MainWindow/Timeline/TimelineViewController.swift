@@ -13,13 +13,11 @@ import RSTree
 import Data
 import Account
 
-let timelineFontSizeKVOKey = "values." + TimelineFontSizeKey
-
 class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource, KeyboardDelegate {
 
 	@IBOutlet var tableView: TimelineTableView!
 	var didRegisterForNotifications = false
-	var fontSize: FontSize = timelineFontSize() {
+	var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
 		didSet {
 			fontSizeDidChange()
 		}
@@ -53,7 +51,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	var selectedArticles: [Article] {
 		get {
-			return articlesForIndexes(tableView.selectedRowIndexes)
+			return Array(articlesForIndexes(tableView.selectedRowIndexes))
 		}
 	}
 
@@ -62,6 +60,8 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 			return selectedArticles.count == 1 ? selectedArticles.first : nil
 		}
 	}
+
+	private let timelineFontSizeKVOKey = "values.{AppDefaults.Key.timelineFontSize}"
 
 	override func viewDidLoad() {
 
@@ -78,7 +78,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 			NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(articleStatusesDidChange(_:)), name: .ArticleStatusesDidChange, object: nil)
 
-			NSUserDefaultsController.shared.addObserver(self, forKeyPath:timelineFontSizeKVOKey, options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
+			NSUserDefaultsController.shared.addObserver(self, forKeyPath: timelineFontSizeKVOKey, options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
 
 			didRegisterForNotifications = true
 		}
@@ -144,12 +144,8 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 			return
 		}
 		let articles = selectedArticles
-		var markAsRead = true
-		if let status = articles.first!.status {
-			if status.read {
-				markAsRead = false
-			}
-		}
+		let status = articles.first!.status
+		let markAsRead = !status.read
 		
 		markArticles(Set(articles), statusKey: ArticleStatusKey.read.rawValue, flag: markAsRead)
 	}
@@ -187,7 +183,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	func canMarkAllAsRead() -> Bool {
 		
 		for article in articles {
-			if !article.read {
+			if !article.status.read {
 				return true
 			}
 		}
@@ -209,7 +205,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 				break
 			}
 			let article = articleAtRow(ix)!
-			if !article.read {
+			if !article.status.read {
 				return ix
 			}
 		}
@@ -221,20 +217,19 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	@objc func sidebarSelectionDidChange(_ note: Notification) {
 
-		let sidebarView = note.userInfo?[viewKey] as! NSView
+		let sidebarView = note.appInfo?.view
 
-		if sidebarView.window! === tableView.window {
-			representedObjects = note.userInfo?[objectsKey] as? [AnyObject]
+		if sidebarView?.window === tableView.window {
+			representedObjects = note.appInfo?.objects
 		}
 	}
 	
 	@objc func articleStatusesDidChange(_ note: Notification) {
-		
-		guard let articles = note.userInfo?[articlesKey] as? NSSet else {
+
+		guard let articles = note.appInfo?.articles else {
 			return
 		}
-		
-		reloadCellsForArticles(articles.allObjects as! [Article])
+		reloadCellsForArticles(articles)
 	}
 
 	func fontSizeInDefaultsDidChange() {
@@ -243,7 +238,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		RSSingleLineRenderer.emptyCache()
 		RSMultiLineRenderer.emptyCache()
 		
-		let updatedFontSize = timelineFontSize()
+		let updatedFontSize = AppDefaults.shared.timelineFontSize
 		if updatedFontSize != self.fontSize {
 			self.fontSize = updatedFontSize
 		}
@@ -318,7 +313,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		return nil
 	}
 	
-	private func reloadCellsForArticles(_ articles: [Article]) {
+	private func reloadCellsForArticles(_ articles: Set<Article>) {
 		
 		let indexes = indexesForArticles(articles)
 		tableView.reloadData(forRowIndexes: indexes, columnIndexes: NSIndexSet(index: 0) as IndexSet)
@@ -326,7 +321,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	
 	// MARK: Articles
 
-	private func indexesForArticles(_ articles: [Article]) -> IndexSet {
+	private func indexesForArticles(_ articles: Set<Article>) -> IndexSet {
 		
 		var indexes = IndexSet()
 		
@@ -340,11 +335,11 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		return indexes
 	}
 	
-	private func articlesForIndexes(_ indexes: IndexSet) -> [Article] {
+	private func articlesForIndexes(_ indexes: IndexSet) -> Set<Article> {
 		
-		return indexes.flatMap{ (oneIndex) -> Article? in
+		return Set(indexes.flatMap{ (oneIndex) -> Article? in
 			return articleAtRow(oneIndex)
-		}
+		})
 	}
 	
 	private func articleAtRow(_ row: Int) -> Article? {
@@ -380,57 +375,57 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	private func fetchArticles() {
 
-		guard let representedObjects = representedObjects else {
-			if !articles.isEmpty {
-				articles = [Article]()
-			}
-			return
-		}
-		
-		var accountsDictionary = [String: [AnyObject]]()
-
-		func addToAccountArray(accountID: String, object: AnyObject) {
-
-			if let accountArray = accountsDictionary[accountID] {
-				if !accountArray.contains(where: { $0 === object }) {
-					accountsDictionary[accountID] = accountArray + [object]
-				}
-			}
-			else {
-				accountsDictionary[accountID] = [object]
-			}
-		}
-
-		for oneObject in representedObjects {
-
-			if let oneFeed = oneObject as? Feed {
-				addToAccountArray(accountID: oneFeed.account.accountID, object: oneFeed)
-			}
-			else if let oneFolder = oneObject as? Folder, let accountID = oneFolder.account?.accountID {
-				addToAccountArray(accountID: accountID, object: oneFolder)
-			}
-		}
-
-		var fetchedArticles = [Article]()
-		for (accountID, objects) in accountsDictionary {
-
-			guard let oneAccount = accountWithID(accountID) else {
-				continue
-			}
-
-			let oneFetchedArticles = oneAccount.fetchArticles(for: objects)
-			for oneFetchedArticle in oneFetchedArticles {
-				if !fetchedArticles.contains(where: { $0 === oneFetchedArticle }) {
-					fetchedArticles += [oneFetchedArticle]
-				}
-			}
-		}
-
-		fetchedArticles.sort(by: articleComparator)
-
-		if !articleArraysAreIdentical(array1: articles, array2: fetchedArticles) {
-			articles = fetchedArticles
-		}			
+//		guard let representedObjects = representedObjects else {
+//			if !articles.isEmpty {
+//				articles = [Article]()
+//			}
+//			return
+//		}
+//		
+//		var accountsDictionary = [String: [AnyObject]]()
+//
+//		func addToAccountArray(accountID: String, object: AnyObject) {
+//
+//			if let accountArray = accountsDictionary[accountID] {
+//				if !accountArray.contains(where: { $0 === object }) {
+//					accountsDictionary[accountID] = accountArray + [object]
+//				}
+//			}
+//			else {
+//				accountsDictionary[accountID] = [object]
+//			}
+//		}
+//
+//		for oneObject in representedObjects {
+//
+//			if let oneFeed = oneObject as? Feed {
+//				addToAccountArray(accountID: oneFeed.account.accountID, object: oneFeed)
+//			}
+//			else if let oneFolder = oneObject as? Folder, let accountID = oneFolder.account?.accountID {
+//				addToAccountArray(accountID: accountID, object: oneFolder)
+//			}
+//		}
+//
+//		var fetchedArticles = [Article]()
+//		for (accountID, objects) in accountsDictionary {
+//
+//			guard let oneAccount = accountWithID(accountID) else {
+//				continue
+//			}
+//
+//			let oneFetchedArticles = oneAccount.fetchArticles(for: objects)
+//			for oneFetchedArticle in oneFetchedArticles {
+//				if !fetchedArticles.contains(where: { $0 === oneFetchedArticle }) {
+//					fetchedArticles += [oneFetchedArticle]
+//				}
+//			}
+//		}
+//
+//		fetchedArticles.sort(by: articleComparator)
+//
+//		if articles != fetchedArticles {
+//			articles = fetchedArticles
+//		}			
 	}
 	
 	// MARK: Cell Configuring
@@ -438,7 +433,9 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	private func calculateRowHeight() -> CGFloat {
 
 		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
-		let prototypeArticle = Article(accountID: "prototype", articleID: "prototype", feedID: "prototype", uniqueID: "prototype", title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, tags: nil, attachments: nil)
+		let prototypeID = "prototype"
+		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
+		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, tags: nil, attachments: nil, status: status)
 		
 		let prototypeCellData = TimelineCellData(article: prototypeArticle, appearance: cellAppearance, showFeedName: false)
 		let height = timelineCellHeight(100, cellData: prototypeCellData, appearance: cellAppearance)
@@ -495,13 +492,13 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	private func postTimelineSelectionDidChangeNotification(_ selectedArticle: Article?) {
 
-		var userInfo = [String: AnyObject]()
+		let appInfo = AppInfo()
 		if let article = selectedArticle {
-			userInfo[articleKey] = article as AnyObject
+			appInfo.article = article
 		}
-		userInfo[viewKey] = self.tableView
+		appInfo.view = tableView
 
-		NotificationCenter.default.post(name: .TimelineSelectionDidChange, object: self, userInfo: userInfo)
+		NotificationCenter.default.post(name: .TimelineSelectionDidChange, object: self, userInfo: appInfo.userInfo)
 	}
 
 	func tableViewSelectionDidChange(_ notification: Notification) {
@@ -516,7 +513,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		}
 
 		if let selectedArticle = articleAtRow(selectedRow) {
-			if (!selectedArticle.read) {
+			if (!selectedArticle.status.read) {
 				markArticles(Set([selectedArticle]), statusKey: ArticleStatusKey.read.rawValue, flag: true)
 			}
 			postTimelineSelectionDidChangeNotification(selectedArticle)

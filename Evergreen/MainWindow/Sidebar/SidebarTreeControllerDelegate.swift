@@ -9,6 +9,7 @@
 import Foundation
 import RSTree
 import Data
+import Account
 
 final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 
@@ -34,7 +35,7 @@ private extension SidebarTreeControllerDelegate {
 		
 		var updatedChildNodes = [Node]()
 		
-		let _ = AccountManager.sharedInstance.localAccount.visitChildren { (oneRepresentedObject) in
+		let _ = AccountManager.shared.localAccount.visitChildren { (oneRepresentedObject) in
 			
 			if let existingNode = node.childNodeRepresentingObject(oneRepresentedObject as AnyObject) {
 				// Reuse nodes.

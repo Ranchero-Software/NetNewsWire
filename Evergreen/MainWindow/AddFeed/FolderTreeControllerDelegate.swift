@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import RSTree
 import Data
+import Account
 
 final class FolderTreeControllerDelegate: TreeControllerDelegate {
 	
@@ -28,7 +29,7 @@ private extension FolderTreeControllerDelegate {
 
 		var folderNodes = [Node]()
 
-		let _ = AccountManager.sharedInstance.localAccount.visitChildren { (oneRepresentedObject) in
+		let _ = AccountManager.shared.localAccount.visitChildren { (oneRepresentedObject) in
 
 			if let folder = oneRepresentedObject as? Folder {
 				folderNodes += [createNode(folder, parent: node)]

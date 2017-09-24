@@ -47,23 +47,23 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		window?.showsToolbarButton = false
 		window?.toolbar = toolbar
 
-		window?.setFrameAutosaveName(windowFrameName)
+		window?.setFrameAutosaveName(NSWindow.FrameAutosaveName(rawValue: windowFrameName))
 		
 		switchToViewAtIndex(0)
 	}
 
 	// MARK: Actions
 
-	func toolbarItemClicked(_ sender: AnyObject) {
+	@objc func toolbarItemClicked(_ sender: AnyObject) {
 
 
 	}
 
 	// MARK: NSToolbarDelegate
 
-	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: String, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
 
-		guard let toolbarItemSpec = toolbarItemSpecs.first(where: { $0.identifier == itemIdentifier }) else {
+		guard let toolbarItemSpec = toolbarItemSpecs.first(where: { $0.identifier.rawValue == itemIdentifier }) else {
 			return nil
 		}
 
@@ -151,7 +151,7 @@ private extension PreferencesWindowController {
 			return cachedViewController
 		}
 
-		let storyboard = NSStoryboard(name: "Preferences", bundle: nil)
+		let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Preferences"), bundle: nil)
 		guard let viewController = storyboard.instantiateController(withIdentifier: identifier) as? NSViewController else {
 			assertionFailure("Unknown preferences view controller: \(identifier)")
 			return nil

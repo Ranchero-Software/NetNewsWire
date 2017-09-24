@@ -6,7 +6,8 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-import Foundation
+import Cocoa
+import Data
 
 extension Notification.Name {
 	
@@ -16,16 +17,41 @@ extension Notification.Name {
 	static let AppNavigationKeyPressed = Notification.Name("AppNavigationKeyPressedNotification")
 }
 
-struct AppUserInfoKey {
-	
-	static let view = "view"
-	static let node = "node"
-	static let objects = "objects"
-	static let article = "article"
-	static let articles = "articles"
-	static let articleStatus = "status"
-	static let appNavigation = "key"
+extension Notification {
+
+	var appInfo: AppInfo? {
+		get {
+			return AppInfo.pullFromUserInfo(userInfo)
+		}
+	}
 }
 
+typealias UserInfoDictionary = [AnyHashable: Any]
+
+final class AppInfo {
+
+	// These are things commonly passed around in Evergreen notifications.
+	// Rather than setting these things using strings, we have a single AppInfo class
+	// that the userInfo dictionary may contain.
+
+	var view: NSView?
+	var article: Article?
+	var articles: Set<Article>?
+	var navigationKey: Int?
+	var objects: [AnyObject]?
+
+	static let appInfoKey = "appInfo"
+
+	var userInfo: UserInfoDictionary {
+		get {
+			return [AppInfo.appInfoKey: self] as UserInfoDictionary
+		}
+	}
+
+	static func pullFromUserInfo(_ userInfo: UserInfoDictionary?) -> AppInfo? {
+
+		return userInfo?[appInfoKey] as? AppInfo
+	}
+}
 
 

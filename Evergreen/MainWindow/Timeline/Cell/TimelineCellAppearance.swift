@@ -53,7 +53,7 @@ struct TimelineCellAppearance {
 		dateMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginLeft")
 		
 		titleColor = theme.color(forKey: "MainWindow.Timeline.cell.titleColor")
-		titleFont = NSFont.systemFont(ofSize: actualFontSize, weight: NSFontWeightBold)
+		titleFont = NSFont.systemFont(ofSize: actualFontSize, weight: NSFont.Weight.bold)
 		titleBottomMargin = theme.float(forKey: "MainWindow.Timeline.cell.titleMarginBottom")
 		
 		textColor = theme.color(forKey: "MainWindow.Timeline.cell.textColor")
@@ -69,7 +69,7 @@ struct TimelineCellAppearance {
 	}
 }
 
-private let smallFontSize = NSFont.systemFontSize()
+private let smallFontSize = NSFont.systemFontSize
 private let mediumFontSize = smallFontSize + 1.0
 private let largeFontSize = mediumFontSize + 4.0
 private let veryLargeFontSize = largeFontSize + 8.0

@@ -50,10 +50,9 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 
 	@objc func timelineSelectionDidChange(_ note: Notification) {
 
-		let timelineView = note.userInfo?[viewKey] as! NSView
-
-		if timelineView.window! === self.view.window {
-			article = note.userInfo?[articleKey] as? Article
+		let timelineView = note.appInfo?.view
+		if timelineView?.window === self.view.window {
+			article = note.appInfo?.article
 		}
 	}
 

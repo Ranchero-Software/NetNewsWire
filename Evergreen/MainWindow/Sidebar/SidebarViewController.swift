@@ -174,14 +174,14 @@ private extension SidebarViewController {
 	}
 	
 	func postSidebarSelectionDidChangeNotification(_ selectedObjects: NSArray?) {
-		
-		var userInfo = [AnyHashable: Any]()
+
+		let appInfo = AppInfo()
 		if let selectedObjects = selectedObjects {
-			userInfo[AppKey.objects] = selectedObjects
+			appInfo.objects = selectedObjects
 		}
-		userInfo[AppKey.view] = self.outlineView
+		appInfo.view = outlineView
 		
-		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: userInfo)
+		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: appInfo.userInfo)
 	}
 
 	func nodeForItem(_ item: AnyObject?) -> Node {

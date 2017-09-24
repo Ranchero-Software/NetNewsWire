@@ -19,13 +19,16 @@ final class AppDefaults {
 
 	static let shared = AppDefaults()
 
-	private struct Key {
+	struct Key {
 		static let firstRunDate = "firstRunDate"
 		static let sidebarFontSize = "sidebarFontSize"
 		static let timelineFontSize = "timelineFontSize"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 	}
+
+	private let smallestFontSizeRawValue = FontSize.small.rawValue
+	private let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
 	let isFirstRun: Bool
 	
@@ -65,11 +68,12 @@ final class AppDefaults {
 		}
 	}
 
-	init() {
+	private init() {
 
-		registerDefaults()
-		
-		if self.firstRunDate == nil {
+		AppDefaults.registerDefaults()
+
+		let firstRunDate = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date
+		if firstRunDate == nil {
 			self.isFirstRun = true
 			self.firstRunDate = Date()
 		}
@@ -86,11 +90,11 @@ private extension AppDefaults {
 			return date(for: Key.firstRunDate)
 		}
 		set {
-			setDate(for: key.firstRunDate, date)
+			setDate(for: Key.firstRunDate, newValue)
 		}
 	}
 
-	func registerDefaults() {
+	static func registerDefaults() {
 		
 		let defaults = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue]
 		
@@ -98,9 +102,6 @@ private extension AppDefaults {
 	}
 
 	func fontSize(for key: String) -> FontSize {
-		
-		static let smallestFontSizeRawValue = FontSize.small.rawValue
-		static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
 		var rawFontSize = int(for: key)
 		if rawFontSize < smallestFontSizeRawValue {
@@ -136,7 +137,7 @@ private extension AppDefaults {
 		return UserDefaults.standard.object(forKey: key) as? Date
 	}
 
-	func setDate(for key: String, _ date: Date) {
+	func setDate(for key: String, _ date: Date?) {
 		UserDefaults.standard.set(date, forKey: key)
 	}
 }

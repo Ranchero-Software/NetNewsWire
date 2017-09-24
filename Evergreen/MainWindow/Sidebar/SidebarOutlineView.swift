@@ -38,13 +38,13 @@ class SidebarOutlineView : NSOutlineView {
 
 		default:
 			keyHandled = false
-			
 		}
 
 		if keyHandled {
-			NotificationCenter.default.post(name: .AppNavigationKeyPressed, object: self, userInfo: [appNavigationKey: ch])
+			let appInfo = AppInfo()
+			appInfo.navigationKey = ch
+			NotificationCenter.default.post(name: .AppNavigationKeyPressed, object: self, userInfo: appInfo.userInfo)
 		}
-
 		else {
 			super.keyDown(with: event)
 		}

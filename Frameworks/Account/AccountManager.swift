@@ -28,7 +28,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	var accounts: [Account] {
+	public var accounts: [Account] {
 		get {
 			return Array(accountsDictionary.values)
 		}
@@ -194,7 +194,7 @@ private func accountFilePathWithFolder(_ folderPath: String) -> String {
 public func accountWithID(_ accountID: String) -> Account? {
 
 	// Shortcut.
-	return AccountManager.sharedInstance.existingAccount(with: accountID)
+	return AccountManager.shared.existingAccount(with: accountID)
 }
 
 private struct AccountSpecifier {

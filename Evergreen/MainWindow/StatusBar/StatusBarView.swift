@@ -55,11 +55,10 @@ final class StatusBarView: NSView {
 	// MARK: Notifications
 	
 	@objc dynamic func timelineSelectionDidChange(_ note: Notification) {
-		
-		let timelineView = note.userInfo?[AppKey.view] as! NSView
-		
-		if timelineView.window! === self.window {
-			article = note.userInfo?[AppKey.article] as? Article
+
+		let timelineView = note.appInfo?.view
+		if timelineView?.window === self.window {
+			article = note.appInfo?.article
 		}
 	}
 

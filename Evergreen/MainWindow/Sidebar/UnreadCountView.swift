@@ -14,8 +14,8 @@ private let cornerRadius = currentTheme.float(forKey: "MainWindow.SourceList.unr
 private let backgroundColor = currentTheme.colorWithAlpha(forKey: "MainWindow.SourceList.unreadCount.backgroundColor")
 private let textColor = currentTheme.colorWithAlpha(forKey: "MainWindow.SourceList.unreadCount.color")
 private let textSize = currentTheme.float(forKey: "MainWindow.SourceList.unreadCount.fontSize")
-private let textFont = NSFont.systemFont(ofSize: textSize, weight: NSFontWeightSemibold)
-private var textAttributes: [String: AnyObject] = [NSForegroundColorAttributeName: textColor, NSFontAttributeName: textFont, NSKernAttributeName: NSNull()]
+private let textFont = NSFont.systemFont(ofSize: textSize, weight: NSFont.Weight.semibold)
+private var textAttributes: [NSAttributedStringKey: AnyObject] = [NSAttributedStringKey.foregroundColor: textColor, NSAttributedStringKey.font: textFont, NSAttributedStringKey.kern: NSNull()]
 private var textSizeCache = [Int: NSSize]()
 
 class UnreadCountView : NSView {

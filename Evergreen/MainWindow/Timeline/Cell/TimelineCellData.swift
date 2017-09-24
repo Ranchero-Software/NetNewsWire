@@ -66,12 +66,7 @@ struct TimelineCellData {
 		self.showFeedName = showFeedName
 
 		self.favicon = nil
-		if let status = article.status {
-			self.read = status.read
-		}
-		else {
-			self.read = false
-		}
+		self.read = article.status.read
 	}
 
 	init() { //Empty

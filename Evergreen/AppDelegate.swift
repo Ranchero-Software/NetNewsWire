@@ -47,12 +47,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	func applicationDidFinishLaunching(_ note: Notification) {
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
+		let localAccount = AccountManager.shared.localAccount
+		importDefaultFeedsIfNeeded(isFirstRun, account: localAccount)
 
 		currentTheme = themeLoader.defaultTheme
-
-		let _ = AccountManager.sharedInstance
-
-		importDefaultFeedsIfNeeded(isFirstRun, account: AccountManager.shared.localAccount)
+		
 		createAndShowMainWindow()
 
 		#if RELEASE
@@ -180,7 +179,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	@IBAction func refreshAll(_ sender: AnyObject) {
 
-		AccountManager.sharedInstance.refreshAll()
+		AccountManager.shared.refreshAll()
 	}
 
 	@IBAction func showAddFeedWindow(_ sender: AnyObject) {
@@ -219,7 +218,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		let result = panel.runModal()
 		if result == NSApplication.ModalResponse.OK, let url = panel.url {
 			DispatchQueue.main.async {
-				self.parseAndImportOPML(url, AccountManager.sharedInstance.localAccount)
+				self.parseAndImportOPML(url, AccountManager.shared.localAccount)
 			}
 		}
 	}
@@ -243,7 +242,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		let result = panel.runModal()
 		if result.rawValue == NSFileHandlingPanelOKButton, let url = panel.url {
 			DispatchQueue.main.async {
-				let opmlString = AccountManager.sharedInstance.localAccount.OPMLString(indentLevel: 0)
+				let opmlString = AccountManager.shared.localAccount.OPMLString(indentLevel: 0)
 				do {
 					try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
 				}

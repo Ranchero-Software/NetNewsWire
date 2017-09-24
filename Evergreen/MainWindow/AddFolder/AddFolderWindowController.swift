@@ -45,7 +45,7 @@ class AddFolderWindowController : NSWindowController {
 		
 		accountPopupButton.removeAllItems()
 		let menu = NSMenu()
-		for oneAccount in AccountManager.sharedInstance.sortedAccounts {
+		for oneAccount in AccountManager.shared.sortedAccounts {
 			let oneMenuItem = NSMenuItem()
 			oneMenuItem.title = oneAccount.nameForDisplay
 			oneMenuItem.representedObject = oneAccount

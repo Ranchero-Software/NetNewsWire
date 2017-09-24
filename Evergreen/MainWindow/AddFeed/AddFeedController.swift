@@ -46,7 +46,7 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 
-		let rootNode = Node(representedObject: AccountManager.sharedInstance.localAccount, parent: nil)
+		let rootNode = Node(representedObject: AccountManager.shared.localAccount, parent: nil)
 		rootNode.canHaveChildNodes = true
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate, rootNode: rootNode)
 
@@ -61,7 +61,7 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 		closeAddFeedSheet(NSApplication.ModalResponse.OK)
 
 		assert(folder.account != nil, "Folder must have an account.")
-		let account = folder.account ?? AccountManager.sharedInstance.localAccount
+		let account = folder.account ?? AccountManager.shared.localAccount
 
 		if account.hasFeed(withURL: url.absoluteString) {
 			showAlreadySubscribedError(url.absoluteString, folder)
