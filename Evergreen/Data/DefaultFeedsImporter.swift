@@ -10,44 +10,58 @@ import Foundation
 import Data
 import Account
 
-private func shouldImportDefaultFeeds(_ isFirstRun: Bool) -> Bool {
-	
-	if !isFirstRun {
-		return false
-	}
+private typealias DiskFeedDictionary = [String: String]
 
-	for oneAccount in AccountManager.shared.accounts {
-		if oneAccount.hasAtLeastOneFeed {
+struct DefaultFeedsImporter {
+	
+	static func importIfNeeded(_ firstRun: Bool, account: Account) {
+		
+		if shouldImportDefaultFeeds(firstRun) {
+			FeedsImporter.import(defaultFeeds(), account: account)
+		}
+	}
+	
+	private static func defaultFeeds() -> [DiskFeedDictionary] {
+		
+		let f = Bundle.main.path(forResource: "DefaultFeeds", ofType: "plist")!
+		return NSArray(contentsOfFile: f)! as! [DiskFeedDictionary]
+	}
+	
+	private static func shouldImportDefaultFeeds(_ isFirstRun: Bool) -> Bool {
+		
+		if !isFirstRun {
 			return false
 		}
-	}
-	return true
-}
-
-private func defaultFeedsArray() -> NSArray {
-	
-	let f = Bundle.main.path(forResource: "DefaultFeeds", ofType: "plist")!
-	return NSArray(contentsOfFile: f)!
-}
-
-private func importFeedsWithArray(_ defaultFeeds: NSArray, _ account: Account) {
-
-	for d in defaultFeeds {
-
-		guard let oneFeedDictionary = d as? NSDictionary else {
-			continue
+		
+		for oneAccount in AccountManager.shared.accounts {
+			if oneAccount.hasAtLeastOneFeed() {
+				return false
+			}
 		}
-
-		let oneFeed = LocalFeed(account: account, diskDictionary: oneFeedDictionary)!
-		let _ = account.addItem(oneFeed)
+		return true
 	}
 }
 
-func importDefaultFeedsIfNeeded(_ isFirstRun: Bool, account: Account) {
+struct FeedsImporter {
 	
-	if !shouldImportDefaultFeeds(isFirstRun) {
-		return
+	func import(_ feedDictionaries: [DiskFeedDictionary], account: Account) {
+		
+		let feeds = feeds(with: feedDictionaries)
+		feeds.forEach { let _ = account.addItem($0) }
 	}
-
-	importFeedsWithArray(defaultFeedsArray(), account)
+	
+	private func feeds(with feedDictionaries: [DiskFeedDictionary]) -> Set<Feed> {
+		
+		let feeds = Set(feedDictionaries.map { Feed(account: account, diskFeedDictionary: $0) })
+		return feeds
+	}
 }
+
+private extension Feed {
+	
+	init?(account: Account, diskFeedDictionary: DiskFeedDictionary) {
+		
+		
+	}
+}
+

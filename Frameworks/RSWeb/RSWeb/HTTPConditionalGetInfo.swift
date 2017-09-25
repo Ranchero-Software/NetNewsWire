@@ -8,29 +8,13 @@
 
 import Foundation
 
-public struct HTTPConditionalGetInfo {
+public struct HTTPConditionalGetInfo: Codable {
 	
 	public let lastModified: String?
 	public let etag: String?
 	public var isEmpty: Bool {
 		get {
 			return lastModified == nil && etag == nil
-		}
-	}
-	
-	public var plist: [String: String]? {
-		get {
-			if isEmpty {
-				return nil
-			}
-			var d = [String: String]()
-			if let lastModified = lastModified {
-				d[HTTPResponseHeader.lastModified] = lastModified
-			}
-			if let etag = etag {
-				d[HTTPResponseHeader.etag] = etag
-			}
-			return d
 		}
 	}
 	
@@ -48,11 +32,6 @@ public struct HTTPConditionalGetInfo {
 		self.init(lastModified: lastModified, etag: etag)
 	}
 	
-	public init(plist: [String: String]) {
-		
-		self.init(lastModified: plist[HTTPResponseHeader.lastModified], etag: plist[HTTPResponseHeader.etag])
-	}
-
 	public func addRequestHeadersToURLRequest(_ urlRequest: NSMutableURLRequest) {
 		
 		if let lastModified = lastModified {

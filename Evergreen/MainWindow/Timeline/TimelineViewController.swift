@@ -86,7 +86,6 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	// MARK: KVO
 
-	
 	override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
 		
 		if let keyPath = keyPath {

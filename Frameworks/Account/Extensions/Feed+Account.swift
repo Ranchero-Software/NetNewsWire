@@ -9,11 +9,25 @@
 import Foundation
 import Data
 
+struct FeedDictionaryKey {
+	
+	
+}
+
 public extension Feed {
 
 	var account: Account? {
 		get {
 			return accountWithID(accountID)
 		}
+	}
+	
+	struct DictionaryKey {
+		static let 
+	}
+	
+	init?(accountID: String, feedDictionary: FeedDictionary) {
+		
+		
 	}
 }
