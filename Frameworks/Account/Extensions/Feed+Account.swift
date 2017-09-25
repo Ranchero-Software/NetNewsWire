@@ -21,13 +21,4 @@ public extension Feed {
 			return accountWithID(accountID)
 		}
 	}
-	
-	struct DictionaryKey {
-		static let 
-	}
-	
-	init?(accountID: String, feedDictionary: FeedDictionary) {
-		
-		
-	}
 }

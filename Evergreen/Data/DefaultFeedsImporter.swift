@@ -10,14 +10,14 @@ import Foundation
 import Data
 import Account
 
-private typealias DiskFeedDictionary = [String: String]
+typealias DiskFeedDictionary = [String: String]
 
 struct DefaultFeedsImporter {
 	
 	static func importIfNeeded(_ firstRun: Bool, account: Account) {
 		
 		if shouldImportDefaultFeeds(firstRun) {
-			FeedsImporter.import(defaultFeeds(), account: account)
+			FeedsImporter.importFeeds(defaultFeeds(), account: account)
 		}
 	}
 	
@@ -44,10 +44,10 @@ struct DefaultFeedsImporter {
 
 struct FeedsImporter {
 	
-	func import(_ feedDictionaries: [DiskFeedDictionary], account: Account) {
+	func importFeeds(_ feedDictionaries: [DiskFeedDictionary], account: Account) {
 		
-		let feeds = feeds(with: feedDictionaries)
-		feeds.forEach { let _ = account.addItem($0) }
+		let feedsToImport = feeds(with: feedDictionaries)
+		feedsToImport.forEach(account.addItem)
 	}
 	
 	private func feeds(with feedDictionaries: [DiskFeedDictionary]) -> Set<Feed> {

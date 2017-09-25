@@ -18,7 +18,7 @@ extension NSNotification.Name {
 }
 
 public protocol Container {
-	
+
 	//Recursive
 	func hasAtLeastOneFeed() -> Bool
 	func flattenedFeeds() -> Set<Feed>

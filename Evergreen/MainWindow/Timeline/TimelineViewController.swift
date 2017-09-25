@@ -228,7 +228,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		guard let articles = note.appInfo?.articles else {
 			return
 		}
-		reloadCellsForArticles(articles)
+		reloadCellsForArticles(Array(articles))
 	}
 
 	func fontSizeInDefaultsDidChange() {
@@ -312,7 +312,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		return nil
 	}
 	
-	private func reloadCellsForArticles(_ articles: Set<Article>) {
+	private func reloadCellsForArticles(_ articles: [Article]) {
 		
 		let indexes = indexesForArticles(articles)
 		tableView.reloadData(forRowIndexes: indexes, columnIndexes: NSIndexSet(index: 0) as IndexSet)
@@ -320,7 +320,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	
 	// MARK: Articles
 
-	private func indexesForArticles(_ articles: Set<Article>) -> IndexSet {
+	private func indexesForArticles(_ articles: [Article]) -> IndexSet {
 		
 		var indexes = IndexSet()
 		

@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSWeb
 
-public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
+public final class Feed: DisplayNameProvider, UnreadCountProvider, Codable, Hashable {
 
 	public let accountID: String
 	public let url: String

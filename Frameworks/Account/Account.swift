@@ -79,7 +79,35 @@ public final class Account: DisplayNameProvider, Hashable {
 		
 		return nil //TODO
 	}
-	
+
+	public func canAddFeed(_ feed: Feed, to folder: Folder?) -> Bool {
+
+		// If folder is nil, then it should go at the top level.
+		// The same feed in multiple folders is allowed.
+		// But the same feed can’t appear twice in the same folder
+		// (or at the top level).
+
+		return true // TODO
+	}
+
+	public func addFeed(_ feed: Feed, to folder: Folder?) -> Bool {
+
+		// Return false if it couldn’t be added.
+		// If it already existed in that folder, return true.
+
+		return true // TODO
+	}
+
+	public func canAddFolder(_ folder: Folder, to folder: Folder?) -> Bool {
+
+		return false // TODO
+	}
+
+	public func addFolder(_ folder: Folder, to folder: Folder?) -> Bool {
+
+		return false // TODO
+	}
+
 	public func importOPML(_ opmlDocument: RSOPMLDocument) {
 	
 		// TODO
