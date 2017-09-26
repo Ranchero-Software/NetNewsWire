@@ -36,11 +36,8 @@ public struct HTTPConditionalGetInfo {
 		self.init(lastModified: lastModified, etag: etag)
 	}
 
-	public var dictionary: [String: String]? {
+	public var dictionary: [String: String] {
 		get {
-			if lastModified == nil && etag == nil {
-				return nil
-			}
 			var d = [String: String]()
 			if let lastModified = lastModified {
 				d[HTTPResponseHeader.lastModified] = lastModified

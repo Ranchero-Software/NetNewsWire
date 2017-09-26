@@ -88,6 +88,27 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		get {
 			var d = [String: Any]()
 
+			d[Key.url] = url
+			d[Key.feedID] = feedID
+			if let homePageURL = homePageURL {
+				d[Key.homePageURL] = homePageURL
+			}
+			if let name = name {
+				d[Key.name] = name
+			}
+			if let editedName = editedName {
+				d[Key.editedName] = editedName
+			}
+			if let contentHash = contentHash {
+				d[Key.contentHash] = contentHash
+			}
+			if unreadCount > 0 {
+				d[Key.unreadCount] = unreadCount
+			}
+			if let conditionalGetInfo = conditionalGetInfo {
+				d[Key.conditionalGetInfo] = conditionalGetInfo.dictionary
+			}
+
 			return d
 		}
 	}
