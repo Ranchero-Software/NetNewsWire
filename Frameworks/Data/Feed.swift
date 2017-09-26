@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSWeb
 
-public final class Feed: DisplayNameProvider, UnreadCountProvider, Codable, Hashable {
+public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	public let accountID: String
 	public let url: String
@@ -48,6 +48,48 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Codable, Hash
 		self.url = url
 		self.feedID = feedID
 		self.hashValue = accountID.hashValue ^ url.hashValue ^ feedID.hashValue
+	}
+
+	// MARK: - Disk Dictionary
+
+	private struct Key {
+		static let url = "url"
+		static let feedID = "feedID"
+		static let homePageURL = "homePageURL"
+		static let name = "name"
+		static let editedName = "editedName"
+		static let conditionalGetInfo = "conditionalGetInfo"
+		static let contentHash = "contentHash"
+		static let unreadCount = "unreadCount"
+	}
+
+	convenience public init?(accountID: String, dictionary: [String: Any]) {
+
+		guard let url = dictionary[Key.url] as? String, let feedID = dictionary[Key.feedID] as? String else {
+			return nil
+		}
+
+		self.init(accountID: accountID, url: url, feedID: feedID)
+		self.homePageURL = dictionary[Key.homePageURL] as? String
+		self.name = dictionary[Key.name] as? String
+		self.editedName = dictionary[Key.editedName] as? String
+		self.contentHash = dictionary[Key.contentHash] as? String
+
+		if let conditionalGetInfoDictionary = dictionary[Key.conditionalGetInfo] as? [String: String] {
+			self.conditionalGetInfo = HTTPConditionalGetInfo(dictionary: conditionalGetInfoDictionary)
+		}
+
+		if let savedUnreadCount = dictionary[Key.unreadCount] as? Int {
+			self.unreadCount = savedUnreadCount
+		}
+	}
+
+	public var dictionary: [String: Any] {
+		get {
+			var d = [String: Any]()
+
+			return d
+		}
 	}
 
 	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
