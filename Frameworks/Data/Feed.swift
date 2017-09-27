@@ -52,7 +52,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	// MARK: - Disk Dictionary
 
-	private struct Key {
+	struct Key {
 		static let url = "url"
 		static let feedID = "feedID"
 		static let homePageURL = "homePageURL"
@@ -106,7 +106,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 				d[Key.unreadCount] = unreadCount
 			}
 			if let conditionalGetInfo = conditionalGetInfo {
-				d[Key.conditionalGetInfo] = conditionalGetInfo.dictionary
+				d[Key.conditionalGetInfo] = conditionalGetInfo.dOictionary
 			}
 
 			return d

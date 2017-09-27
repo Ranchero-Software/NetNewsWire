@@ -33,7 +33,7 @@ public final class Account: DisplayNameProvider, Hashable {
 	let settingsFile: String
 	let dataFolder: String
 	let database: Database
-	var topLevelObjects = [AnyObject]()
+	var topLevelObjects = [Any]()
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
 	var refreshInProgress = false
@@ -56,6 +56,8 @@ public final class Account: DisplayNameProvider, Hashable {
 		
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
 		self.database = Database(databaseFilePath: databaseFilePath, accountID: accountID)
+
+		pullObjectsFromDisk()
 	}
 	
 	// MARK: - API
@@ -122,12 +124,67 @@ public final class Account: DisplayNameProvider, Hashable {
 }
 
 
-extension Account: PlistProvider {
+// MARK: - Disk
+
+extension Account {
 	
 	public func plist() -> AnyObject? {
 		return nil // TODO
 	}
+
+	private struct Key {
+		static let children = "children"
+	}
+
+	func pullObjectsFromDisk() {
+
+		guard let d = NSDictionary(contentsOf: settingsFile) as? [String: Any] else {
+			return
+		}
+		guard let childrenArray = d[Key.children] as? [Any] else {
+			return
+		}
+		topLevelObjects = objects(with: childrenArray)
+		updateFeedIDDictionary()
+	}
+
+	func objects(with diskObjects: [[String: Any]]) -> [Any] {
+
+		return diskObjects.flatMap { object(with: $0) }
+	}
+
+	func object(with diskObject: Any) -> Any {
+
+		guard let d = diskObject as? [String: Any] else {
+			return nil
+		}
+		if diskObjectIsFeed(diskObject) {
+			return Feed(accountID: accountID, dictionary: diskObject)
+		}
+		return Folder(accountID: accountID, dictionary: diskObject)
+	}
+
+	private func diskObjectIsFeed(_ diskObject: [String: Any]) -> Bool {
+
+		return d[Feed.Key.url] != nil
+	}
 }
+
+// Mark: - FeedIDDictionary
+
+private extension Account {
+
+	func updateFeedIDDictionary() {
+
+		var d = [String: Feed]()
+		for feed in flattenedFeeds() {
+			d[feed.feedID] = feed
+		}
+		feedIDDictionary = d
+	}
+}
+
+// MARK: - OPMLRepresentable
 
 extension Account: OPMLRepresentable {
 
