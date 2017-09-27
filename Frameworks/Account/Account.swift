@@ -98,12 +98,12 @@ public final class Account: DisplayNameProvider, Hashable {
 		return true // TODO
 	}
 
-	public func canAddFolder(_ folder: Folder, to folder: Folder?) -> Bool {
+	public func canAddFolder(_ folder: Folder, to containingFolder: Folder?) -> Bool {
 
 		return false // TODO
 	}
 
-	public func addFolder(_ folder: Folder, to folder: Folder?) -> Bool {
+	public func addFolder(_ folder: Folder, to containingFolder: Folder?) -> Bool {
 
 		return false // TODO
 	}

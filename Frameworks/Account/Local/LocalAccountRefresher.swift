@@ -42,7 +42,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 		}
 		
 		let request = NSMutableURLRequest(url: url)
-		if let conditionalGetInfo = feed.conditionalGetInfo, !conditionalGetInfo.isEmpty {
+		if let conditionalGetInfo = feed.conditionalGetInfo {
 			conditionalGetInfo.addRequestHeadersToURLRequest(request)
 		}
 
@@ -75,10 +75,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 			account.update(feed, with: parsedFeed) {
 				
 				if let httpResponse = response as? HTTPURLResponse {
-					let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
-					if !conditionalGetInfo.isEmpty || feed.conditionalGetInfo != nil {
-						feed.conditionalGetInfo = conditionalGetInfo
-					}
+					feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 				}
 				
 				feed.contentHash = dataHash

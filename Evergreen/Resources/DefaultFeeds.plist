@@ -7,13 +7,13 @@
 		<string>By Brent Simmons, Evergreen developer</string>
 		<key>editedName</key>
 		<string>Inessential</string>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://inessential.com/</string>
 		<key>url</key>
 		<string>http://inessential.com/xml/rss.xml</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://daringfireball.net/</string>
 		<key>editedName</key>
 		<string>Daring Fireball</string>
@@ -21,7 +21,7 @@
 		<string>http://daringfireball.net/feeds/main</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>https://www.natashatherobot.com/</string>
 		<key>editedName</key>
 		<string>Natasha the Robot</string>
@@ -29,7 +29,7 @@
 		<string>https://www.natashatherobot.com/feed/</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://www.imore.com/</string>
 		<key>editedName</key>
 		<string>iMore</string>
@@ -37,7 +37,7 @@
 		<string>http://www.imore.com/rss.xml</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://becky.coffee/</string>
 		<key>note</key>
 		<string>iOS developer &amp; corgi enthusiast</string>
@@ -47,7 +47,7 @@
 		<string>http://beckyhansmeyer.com/feed/</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://shapeof.com/</string>
 		<key>note</key>
 		<string>By Gus Mueller, Acorn developer</string>
@@ -57,7 +57,7 @@
 		<string>http://shapeof.com/rss.xml</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://redqueencoder.com/</string>
 		<key>note</key>
 		<string>Janie Clayton</string>
@@ -67,7 +67,7 @@
 		<string>http://redqueencoder.com/feed/</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>https://medium.com/@jaimeejaimee</string>
 		<key>editedName</key>
 		<string>jaimeejaimee</string>
@@ -77,7 +77,7 @@
 		<string>https://medium.com/feed/@jaimeejaimee</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://sixcolors.com</string>
 		<key>note</key>
 		<string>By Jason Snell &amp; friends</string>
@@ -87,7 +87,7 @@
 		<string>http://feedpress.me/sixcolors</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://www.loopinsight.com/</string>
 		<key>note</key>
 		<string>Jim Dalrymple and Dave Mark</string>
@@ -97,7 +97,7 @@
 		<string>http://www.loopinsight.com/feed/</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://katiefloyd.com/</string>
 		<key>editedName</key>
 		<string>Katie Floyd</string>
@@ -105,7 +105,7 @@
 		<string>http://feed.katiefloyd.com/</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://ashleynh.me/</string>
 		<key>editedName</key>
 		<string>Ashley Nelson-Hornstein</string>
@@ -113,7 +113,7 @@
 		<string>http://blog.ashleynh.me/rss/</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>https://ranchero.com/evergreen/</string>
 		<key>editedName</key>
 		<string>Evergreen News</string>
@@ -121,7 +121,7 @@
 		<string>https://ranchero.com/evergreen/feed.json</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://scripting.com/</string>
 		<key>editedName</key>
 		<string>Scripting News</string>
@@ -131,7 +131,7 @@
 		<string>http://scripting.com/rss.xml</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://ericasadun.com/</string>
 		<key>editedName</key>
 		<string>Erica Sadun</string>
@@ -141,7 +141,7 @@
 		<string>http://ericasadun.com/feed/</string>
 	</dict>
 	<dict>
-		<key>home</key>
+		<key>homePageURL</key>
 		<string>http://onefoottsunami.com/</string>
 		<key>editedName</key>
 		<string>One Foot Tsunami</string>

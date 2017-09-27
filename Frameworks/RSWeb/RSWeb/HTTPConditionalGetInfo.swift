@@ -13,9 +13,16 @@ public struct HTTPConditionalGetInfo {
 	public let lastModified: String?
 	public let etag: String?
 
-	public var isEmpty: Bool {
+	public var dictionary: [String: String] {
 		get {
-			return lastModified == nil && etag == nil
+			var d = [String: String]()
+			if let lastModified = lastModified {
+				d[HTTPResponseHeader.lastModified] = lastModified
+			}
+			if let etag = etag {
+				d[HTTPResponseHeader.etag] = etag
+			}
+			return d
 		}
 	}
 	
@@ -34,19 +41,6 @@ public struct HTTPConditionalGetInfo {
 		let etag = urlResponse.valueForHTTPHeaderField(HTTPResponseHeader.etag)
 		
 		self.init(lastModified: lastModified, etag: etag)
-	}
-
-	public var dictionary: [String: String] {
-		get {
-			var d = [String: String]()
-			if let lastModified = lastModified {
-				d[HTTPResponseHeader.lastModified] = lastModified
-			}
-			if let etag = etag {
-				d[HTTPResponseHeader.etag] = etag
-			}
-			return d
-		}
 	}
 
 	public init?(dictionary: [String: String]) {

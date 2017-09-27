@@ -48,7 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		let localAccount = AccountManager.shared.localAccount
-		importDefaultFeedsIfNeeded(isFirstRun, account: localAccount)
+		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 
 		currentTheme = themeLoader.defaultTheme
 		
