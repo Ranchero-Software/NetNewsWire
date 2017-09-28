@@ -10,6 +10,8 @@ import Foundation
 
 struct LocalAccountDelegate: AccountDelegate {
 
+	let supportsSubFolders = false
+	
 	func refreshAll(for account: Account) {
 
 		// TODO

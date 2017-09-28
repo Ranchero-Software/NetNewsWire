@@ -10,6 +10,9 @@ import Foundation
 
 public protocol AccountDelegate {
 
+	// Local account does not; some synced accounts might.
+	var supportsSubFolders: Bool { get }
+
 	func refreshAll(for account: Account)
 
 }

@@ -14,7 +14,7 @@ extension Folder: Container {
 	public func flattenedFeeds() -> Set<Feed> {
 
 		var feeds = Set<Feed>()
-		for oneChild in childObjects {
+		for oneChild in children {
 			if let oneFeed = oneChild as? Feed {
 				feeds.insert(oneFeed)
 			}
@@ -27,14 +27,12 @@ extension Folder: Container {
 
 	public func isChild(_ obj: AnyObject) -> Bool {
 
-		return childObjects.contains(where: { (oneObject) -> Bool in
-			return oneObject === obj
-		})
+		return children.contains { $0 === obj }
 	}
 
 	public func visitObjects(_ recurse: Bool, _ visitBlock: VisitBlock) -> Bool {
 
-		for oneObject in childObjects {
+		for oneObject in children {
 
 			if let oneContainer = oneObject as? Container {
 				if visitBlock(oneObject) {

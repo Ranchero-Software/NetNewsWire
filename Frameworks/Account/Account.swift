@@ -33,11 +33,16 @@ public final class Account: DisplayNameProvider, Hashable {
 	let settingsFile: String
 	let dataFolder: String
 	let database: Database
-	var topLevelObjects = [Any]()
+	var topLevelObjects = [AnyObject]()
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
 	var refreshInProgress = false
-	var supportsSubFolders;
+
+	var supportsSubFolders: Bool {
+		get {
+			return delegate.supportsSubFolders
+		}
+	}
 	
 	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
 
@@ -129,45 +134,34 @@ public final class Account: DisplayNameProvider, Hashable {
 
 extension Account {
 	
-	public func plist() -> AnyObject? {
-		return nil // TODO
-	}
-
 	private struct Key {
 		static let children = "children"
 	}
 
 	func pullObjectsFromDisk() {
 
-		guard let d = NSDictionary(contentsOf: settingsFile) as? [String: Any] else {
+		let settingsFileURL = URL(fileURLWithPath: settingsFile)
+		guard let d = NSDictionary(contentsOf: settingsFileURL) as? [String: Any] else {
 			return
 		}
-		guard let childrenArray = d[Key.children] as? [Any] else {
+		guard let childrenArray = d[Key.children] as? [[String: Any]] else {
 			return
 		}
 		topLevelObjects = objects(with: childrenArray)
 		updateFeedIDDictionary()
 	}
 
-	func objects(with diskObjects: [[String: Any]]) -> [Any] {
+	func objects(with diskObjects: [[String: Any]]) -> [AnyObject] {
 
 		return diskObjects.flatMap { object(with: $0) }
 	}
 
-	func object(with diskObject: Any) -> Any {
+	func object(with diskObject: [String: Any]) -> AnyObject? {
 
-		guard let d = diskObject as? [String: Any] else {
-			return nil
-		}
-		if diskObjectIsFeed(diskObject) {
+		if Feed.isFeedDictionary(diskObject) {
 			return Feed(accountID: accountID, dictionary: diskObject)
 		}
-		return Folder(accountID: accountID, dictionary: diskObject)
-	}
-
-	private func diskObjectIsFeed(_ diskObject: [String: Any]) -> Bool {
-
-		return d[Feed.Key.url] != nil
+		return Folder(account: self, dictionary: diskObject)
 	}
 }
 

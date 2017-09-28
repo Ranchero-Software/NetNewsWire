@@ -12,14 +12,15 @@ import Data
 public final class Folder: DisplayNameProvider, UnreadCountProvider {
 
 	public let account: Account
-	var children = [Any]()
+	var children = [AnyObject]()
 	var name: String?
+	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {
 		get {
-			return name ?? NSLocalizedString("Untitled ƒ", comment: "Folder name")
+			return name ?? Folder.untitledName
 
 		}
 	}
@@ -47,14 +48,15 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 	struct Key {
 		static let name = "name"
 		static let unreadCount = "unreadCount"
-		static let childrenKey = "children"
+		static let children = "children"
 	}
 
 	convenience public init?(account: Account, dictionary: [String: Any]) {
 
-		self.name = dictionary[Key.name] as? String
-
-        if let childrenArray = dictionary[Key.childrenKey] as? [String: Any] {
+		let name = dictionary[Key.name] as? String ?? Folder.untitledName
+		self.init(account: account, name: name)
+		
+        if let childrenArray = dictionary[Key.children] as? [[String: Any]] {
 			self.children = account.objects(with: childrenArray)
 		}
 
@@ -74,20 +76,25 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 				d[Key.unreadCount] = unreadCount
 			}
 
-			// TODO: children as dictionaries - use method in Account
-
-
 			let childObjects = children.flatMap { (child) -> [String: Any]? in
 
 				if let feed = child as? Feed {
-
+					return feed.dictionary
 				}
+				if let folder = child as? Folder, account.supportsSubFolders {
+					return folder.dictionary
+				}
+				assertionFailure("Expected a feed or a folder.");
+				return nil
+			}
+
+			if !childObjects.isEmpty {
+				d[Key.children] = childObjects
 			}
 
 			return d
 		}
 	}
-
 }
 
 extension Folder: OPMLRepresentable {
