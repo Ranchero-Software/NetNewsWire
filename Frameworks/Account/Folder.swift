@@ -37,7 +37,7 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 
 	// MARK: - Init
 
-	init(account: Account, name: String) {
+	init(account: Account, name: String?) {
 		
 		self.account = account
 		self.name = name
@@ -53,11 +53,11 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 
 	convenience public init?(account: Account, dictionary: [String: Any]) {
 
-		let name = dictionary[Key.name] as? String ?? Folder.untitledName
+		let name = dictionary[Key.name] as? String
 		self.init(account: account, name: name)
-		
-        if let childrenArray = dictionary[Key.children] as? [[String: Any]] {
-			self.children = account.objects(with: childrenArray)
+
+		if let childrenArray = dictionary[Key.children] as? [[String: Any]] {
+			self.children = Folder.objects(with: childrenArray, account: account)
 		}
 
 		if let savedUnreadCount = dictionary[Key.unreadCount] as? Int {
@@ -94,6 +94,48 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 
 			return d
 		}
+	}
+}
+
+// MARK: - Disk
+
+private extension Folder {
+
+	static func objects(with diskObjects: [[String: Any]], account: Account) -> [AnyObject] {
+
+		if account.supportsSubFolders {
+			return account.objects(with: diskObjects)
+		}
+		else {
+			let flattenedFeeds = feedsOnly(with: diskObjects, account: account)
+			return Array(flattenedFeeds) as [AnyObject]
+		}
+	}
+
+	static func feedsOnly(with diskObjects: [[String: Any]], account: Account) -> Set<Feed> {
+
+		// This Folder doesn’t support subfolders, but they might exist on disk.
+		// (For instance: a user might manually edit the plist to add subfolders.)
+		// Create a flattened version of the feeds.
+
+		var feeds = Set<Feed>()
+
+		for diskObject in diskObjects {
+
+			if Feed.isFeedDictionary(diskObject) {
+				if let feed = Feed(accountID: account.accountID, dictionary: diskObject) {
+					feeds.insert(feed)
+				}
+			}
+			else { // Folder
+				if let subFolderChildren = diskObject[Key.children] as? [[String: Any]] {
+					let subFolderFeeds = feedsOnly(with: subFolderChildren, account: account)
+					feeds.formUnion(subFolderFeeds)
+				}
+			}
+		}
+
+		return feeds
 	}
 }
 
