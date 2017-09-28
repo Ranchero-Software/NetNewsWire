@@ -37,6 +37,7 @@ public final class Account: DisplayNameProvider, Hashable {
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
 	var refreshInProgress = false
+	var supportsSubFolders;
 	
 	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
 

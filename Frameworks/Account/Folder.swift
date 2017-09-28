@@ -11,16 +11,10 @@ import Data
 
 public final class Folder: DisplayNameProvider, UnreadCountProvider {
 
-	public let accountID: String
+	public let account: Account
 	var children = [Any]()
 	var name: String?
 
-	public var account: Account? {
-		get {
-			return accountWithID(accountID)
-		}
-	}
-	
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {
@@ -42,10 +36,10 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 
 	// MARK: - Init
 
-	init(accountID: String, nameForDisplay: String) {
+	init(account: Account, name: String) {
 		
-		self.accountID = accountID
-		self.nameForDisplay = nameForDisplay
+		self.account = account
+		self.name = name
 	}
 
 	// MARK: - Disk Dictionary
@@ -58,10 +52,10 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 
 	convenience public init?(account: Account, dictionary: [String: Any]) {
 
-		self.name = dictionary[Key.name]
+		self.name = dictionary[Key.name] as? String
 
-		if let childrenArray = dictionary[Key.childrenKey] {
-			self.childObjects = account.objects(with: childrenArray)
+        if let childrenArray = dictionary[Key.childrenKey] as? [String: Any] {
+			self.children = account.objects(with: childrenArray)
 		}
 
 		if let savedUnreadCount = dictionary[Key.unreadCount] as? Int {
