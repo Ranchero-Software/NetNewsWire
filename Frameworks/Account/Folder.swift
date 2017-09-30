@@ -45,13 +45,13 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 
 	// MARK: - Disk Dictionary
 
-	struct Key {
+	private struct Key {
 		static let name = "name"
 		static let unreadCount = "unreadCount"
 		static let children = "children"
 	}
 
-	convenience public init?(account: Account, dictionary: [String: Any]) {
+	convenience init?(account: Account, dictionary: [String: Any]) {
 
 		let name = dictionary[Key.name] as? String
 		self.init(account: account, name: name)
@@ -65,7 +65,7 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 		}
 	}
 
-	public var dictionary: [String: Any] {
+	var dictionary: [String: Any] {
 		get {
 			var d = [String: Any]()
 
