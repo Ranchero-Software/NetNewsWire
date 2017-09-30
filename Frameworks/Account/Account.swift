@@ -106,6 +106,22 @@ public final class Account: DisplayNameProvider, Hashable {
 		return true // TODO
 	}
 
+	public func createFeed(with name: String, userEnteredName: String, url: String) -> Feed {
+		
+		// For syncing, this may need to be an async method with a callback,
+		// since it will likely need to call the server.
+		
+		if let feed = existingFeed(withURL: url) {
+			feed.editedName = userEnteredName
+			return feed
+		}
+		
+		let feed = Feed(accountID: accountID, url: url, feedID: url)
+		feed.name = name
+		feed.editedName = userEnteredName
+		return feed
+	}
+	
 	public func canAddFolder(_ folder: Folder, to containingFolder: Folder?) -> Bool {
 
 		return false // TODO

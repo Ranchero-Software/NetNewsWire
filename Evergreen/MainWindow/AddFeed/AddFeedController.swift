@@ -60,9 +60,7 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 
 		closeAddFeedSheet(NSApplication.ModalResponse.OK)
 
-		assert(folder.account != nil, "Folder must have an account.")
-		let account = folder.account ?? AccountManager.shared.localAccount
-
+		let account = folder.account
 		if account.hasFeed(withURL: url.absoluteString) {
 			showAlreadySubscribedError(url.absoluteString, folder)
 			return
