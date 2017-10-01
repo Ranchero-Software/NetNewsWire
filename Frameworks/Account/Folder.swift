@@ -95,6 +95,37 @@ public final class Folder: DisplayNameProvider, UnreadCountProvider {
 			return d
 		}
 	}
+	
+	// MARK: Feeds
+	
+	func addFeed(_ feed: Feed) -> Bool {
+		
+		// The feed has been uniqued at this point.
+		// Return true in the case where the feed is already a child.
+		
+		if childrenContainsFeed(feed) {
+			return true
+		}
+		children += [feed]
+		return true
+	}
+}
+
+// MARK: - Private
+
+private extension Folder {
+	
+	func childrenContainsFeed(_ feed: Feed) -> Bool {
+		
+		return children.contains(where: { (object) -> Bool in
+			if let oneFeed = object as? Feed {
+				if oneFeed.feedID == feed.feedID {
+					return true
+				}
+			}
+			return false
+		})
+	}
 }
 
 // MARK: - Disk

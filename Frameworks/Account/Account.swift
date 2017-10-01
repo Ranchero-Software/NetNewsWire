@@ -103,22 +103,36 @@ public final class Account: DisplayNameProvider, Hashable {
 		// Return false if it couldn’t be added.
 		// If it already existed in that folder, return true.
 
-		return true // TODO
+		var didAddFeed = false
+		let uniquedFeed = existingFeed(with: feed.feedID) ?? feed
+		
+		if let folder = folder {
+			didAddFeed = folder.addFeed(uniquedFeed)
+		}
+		else {
+			if !topLevelObjectsContainsFeed(uniquedFeed) {
+				topLevelObjects += [uniquedFeed]
+			}
+			didAddFeed = true
+		}
+		
+		updateFeedIDDictionary()
+		return didAddFeed // TODO
 	}
 
-	public func createFeed(with name: String, userEnteredName: String, url: String) -> Feed {
+	public func createFeed(with name: String, editedName: String, url: String) -> Feed {
 		
 		// For syncing, this may need to be an async method with a callback,
 		// since it will likely need to call the server.
 		
 		if let feed = existingFeed(withURL: url) {
-			feed.editedName = userEnteredName
+			feed.editedName = editedName
 			return feed
 		}
 		
 		let feed = Feed(accountID: accountID, url: url, feedID: url)
 		feed.name = name
-		feed.editedName = userEnteredName
+		feed.editedName = editedName
 		return feed
 	}
 	
@@ -181,7 +195,7 @@ extension Account {
 	}
 }
 
-// Mark: - FeedIDDictionary
+// MARK: - Private
 
 private extension Account {
 
@@ -192,6 +206,18 @@ private extension Account {
 			d[feed.feedID] = feed
 		}
 		feedIDDictionary = d
+	}
+	
+	func topLevelObjectsContainsFeed(_ feed: Feed) -> Bool {
+		
+		return topLevelObjects.contains(where: { (object) -> Bool in
+			if let oneFeed = object as? Feed {
+				if oneFeed.feedID == feed.feedID {
+					return true
+				}
+			}
+			return false
+		})
 	}
 }
 

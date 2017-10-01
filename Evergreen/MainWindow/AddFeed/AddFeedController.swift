@@ -163,9 +163,9 @@ private extension AddFeedController {
 			return
 		}
 
-		if let feed = folder.createFeedWithName(titleFromFeed, editedName: userEnteredTitle, urlString: feedURLString) {
+		if let feed = account.createFeed(with: titleFromFeed, editedName: userEnteredTitle, url: feedURLString) {
 			print(feedURLString)
-			if folder.addItem(feed) {
+			if account.addFeed(feed, to: folder) {
 				NotificationCenter.default.post(name: UserDidAddFeedNotification, object: self, userInfo: [UserDidAddFeedKey: feed])
 			}
 		}
