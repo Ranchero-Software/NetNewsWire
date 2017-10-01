@@ -120,13 +120,15 @@ public final class Account: DisplayNameProvider, Hashable {
 		return didAddFeed // TODO
 	}
 
-	public func createFeed(with name: String, editedName: String, url: String) -> Feed {
+	public func createFeed(with name: String?, editedName: String?, url: String) -> Feed? {
 		
 		// For syncing, this may need to be an async method with a callback,
 		// since it will likely need to call the server.
 		
 		if let feed = existingFeed(withURL: url) {
-			feed.editedName = editedName
+			if let editedName = editedName {
+				feed.editedName = editedName
+			}
 			return feed
 		}
 		

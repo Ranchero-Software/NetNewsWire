@@ -24,7 +24,7 @@ import Account
 		treeController = TreeController(delegate: treeControllerDelegate)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(folderChildrenDidChange(_:)), name: NSNotification.Name(rawValue: FolderChildrenDidChangeNotification), object: nil)
+//		NotificationCenter.default.addObserver(self, selector: #selector(folderChildrenDidChange(_:)), name: NSNotification.Name(rawValue: FolderChildrenDidChangeNotification), object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: UserDidAddFeedNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(dataModelDidPerformBatchUpdates(_:)), name: .DataModelDidPerformBatchUpdates, object: nil)
 
