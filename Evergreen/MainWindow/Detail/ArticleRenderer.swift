@@ -49,7 +49,7 @@ class ArticleRenderer {
 
 	lazy var baseURL: URL? = {
 
-		var s = self.article.permalink
+		var s = self.article.url
 		if s == nil {
 			s = self.article.feed?.homePageURL
 		}

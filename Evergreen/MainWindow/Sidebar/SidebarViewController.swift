@@ -130,7 +130,7 @@ import Account
         }
         
         if let selectedNode = self.outlineView.item(atRow: selectedRow) as? Node {
-			postSidebarSelectionDidChangeNotification(NSArray(object: selectedNode.representedObject))
+			postSidebarSelectionDidChangeNotification([selectedNode.representedObject])
         }
     }
 
@@ -173,7 +173,7 @@ private extension SidebarViewController {
 		}
 	}
 	
-	func postSidebarSelectionDidChangeNotification(_ selectedObjects: NSArray?) {
+	func postSidebarSelectionDidChangeNotification(_ selectedObjects: [AnyObject]?) {
 
 		let appInfo = AppInfo()
 		if let selectedObjects = selectedObjects {
