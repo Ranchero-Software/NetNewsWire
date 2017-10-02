@@ -87,10 +87,10 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	func anyAccountHasAtLeastOneFeed() -> Bool {
+	public func anyAccountHasAtLeastOneFeed() -> Bool {
 
 		for account in accounts {
-			if account.hasAtLeastOneFeed() {
+			if account.hasAtLeastOneFeed {
 				return true
 			}
 		}

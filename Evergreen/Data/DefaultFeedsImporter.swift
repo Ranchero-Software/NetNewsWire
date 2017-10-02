@@ -29,14 +29,8 @@ struct DefaultFeedsImporter {
 	
 	private static func shouldImportDefaultFeeds(_ isFirstRun: Bool) -> Bool {
 		
-		if !isFirstRun {
+		if !isFirstRun || AccountManager.shared.anyAccountHasAtLeastOneFeed() {
 			return false
-		}
-		
-		for oneAccount in AccountManager.shared.accounts {
-			if oneAccount.hasAtLeastOneFeed() {
-				return false
-			}
 		}
 		return true
 	}

@@ -38,6 +38,12 @@ public final class Account: DisplayNameProvider, Hashable {
 	var username: String?
 	var refreshInProgress = false
 
+	var hasAtLeastOneFeed: Bool {
+		get {
+			return !feedIDDictionary.isEmpty
+		}
+	}
+
 	var supportsSubFolders: Bool {
 		get {
 			return delegate.supportsSubFolders

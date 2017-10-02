@@ -13,7 +13,7 @@
 #import "RSParsedArticle.h"
 #import "NSString+RSParser.h"
 #import "RSDateParser.h"
-#import <RSParser/RSParser-Swift.h>
+//#import "RSParser-Swift.h"
 
 
 @interface RSAtomParser () <RSSAXParserDelegate>

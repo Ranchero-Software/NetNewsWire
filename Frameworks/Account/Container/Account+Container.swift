@@ -11,11 +11,6 @@ import Data
 
 extension Account: Container {
 
-	public func hasAtLeastOneFeed() -> Bool {
-
-		return !feedIDDictionary.isEmpty
-	}
-
 	public func flattenedFeeds() -> Set<Feed> {
 
 		return Set(feedIDDictionary.values)

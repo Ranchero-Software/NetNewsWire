@@ -11,7 +11,7 @@
 #import "RSSAXHTMLParser.h"
 #import "RSSAXParser.h"
 #import "RSParserInternal.h"
-#import <RSParser/RSParser-Swift.h>
+#import "RSParser-Swift.h"
 
 
 @interface RSHTMLLinkParser() <RSSAXHTMLParserDelegate>

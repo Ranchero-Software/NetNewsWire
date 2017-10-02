@@ -20,7 +20,6 @@ extension NSNotification.Name {
 public protocol Container {
 
 	//Recursive
-	func hasAtLeastOneFeed() -> Bool
 	func flattenedFeeds() -> Set<Feed>
 	func existingFeed(with feedID: String) -> Feed?
 	func existingFeed(withURL url: String) -> Feed?
@@ -35,14 +34,6 @@ public protocol Container {
 }
 
 public extension Container {
-	
-	func hasAtLeastOneFeed() -> Bool {
-		
-		let foundObject = findObject(true, visitBlock: { (oneDescendant) -> Bool in
-			return oneDescendant is Feed
-		})
-		return foundObject != nil
-	}
 	
 	func existingFeed(with feedID: String) -> Feed? {
 		

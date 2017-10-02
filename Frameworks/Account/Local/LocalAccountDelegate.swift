@@ -11,6 +11,7 @@ import Foundation
 struct LocalAccountDelegate: AccountDelegate {
 
 	let supportsSubFolders = false
+	private let refresher = LocalAccountRefresher()
 	
 	func refreshAll(for account: Account) {
 

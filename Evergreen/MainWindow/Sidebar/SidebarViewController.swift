@@ -321,9 +321,9 @@ private extension SidebarViewController {
 		return outlineView.revealAndSelectRepresentedObject(representedObject, treeController)
 	}
 	
-	func folderParentForNode(_ node: Node) -> Folder? {
+	func folderParentForNode(_ node: Node) -> Container? {
 		
-		if let folder = node.parent?.representedObject as? Folder {
+		if let folder = node.parent?.representedObject as? Container {
 			return folder
 		}
 		if let feed = node.representedObject as? Feed {
@@ -337,9 +337,9 @@ private extension SidebarViewController {
 	
 	func deleteItemForNode(_ node: Node) {
 		
-		if let folder = folderParentForNode(node) {
-			folder.deleteItems([node.representedObject])
-		}
+//		if let folder = folderParentForNode(node) {
+//			folder.deleteItems([node.representedObject])
+//		}
 	}
 	
 	func deleteItemsForNodes(_ nodes: [Node]) {

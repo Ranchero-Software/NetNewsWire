@@ -103,13 +103,13 @@ private extension PreferencesWindowController {
 
 	func toolbarItemSpec(for identifier: String) -> PreferencesToolbarItemSpec? {
 
-		return toolbarItemSpecs.first(where: { $0.identifier == identifier })
+		return toolbarItemSpecs.first(where: { $0.identifier.rawValue == identifier })
 	}
 
 	func switchToViewAtIndex(_ index: Int) {
 
 		let identifier = toolbarItemSpecs[index].identifier
-		switchToView(identifier: identifier)
+		switchToView(identifier: identifier.rawValue)
 	}
 
 	func switchToView(identifier: String) {
@@ -152,7 +152,7 @@ private extension PreferencesWindowController {
 		}
 
 		let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Preferences"), bundle: nil)
-		guard let viewController = storyboard.instantiateController(withIdentifier: identifier) as? NSViewController else {
+		guard let viewController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: identifier)) as? NSViewController else {
 			assertionFailure("Unknown preferences view controller: \(identifier)")
 			return nil
 		}

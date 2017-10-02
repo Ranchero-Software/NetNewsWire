@@ -12,7 +12,7 @@
 #import "RSOPMLItem.h"
 #import "RSOPMLDocument.h"
 #import "RSOPMLAttributes.h"
-#import <RSParser/RSParser-Swift.h>
+#import "RSParser-Swift.h"
 #import "RSOPMLError.h"
 
 
