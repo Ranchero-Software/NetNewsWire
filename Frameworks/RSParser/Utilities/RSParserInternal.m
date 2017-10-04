@@ -7,7 +7,7 @@
 //
 
 #import <CommonCrypto/CommonDigest.h>
-#import "RSParserInternal.h"
+#import <RSParser/RSParserInternal.h>
 
 
 static BOOL RSParserIsNil(id obj) {

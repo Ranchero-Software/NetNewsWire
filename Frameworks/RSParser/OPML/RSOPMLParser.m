@@ -8,12 +8,12 @@
 
 #import "RSOPMLParser.h"
 #import <libxml/xmlstring.h>
-#import "RSSAXParser.h"
-#import "RSOPMLItem.h"
-#import "RSOPMLDocument.h"
-#import "RSOPMLAttributes.h"
-#import "RSParser-Swift.h"
-#import "RSOPMLError.h"
+#import <RSParser/RSSAXParser.h>
+#import <RSParser/RSOPMLItem.h>
+#import <RSParser/RSOPMLDocument.h>
+#import <RSParser/RSOPMLAttributes.h>
+#import <RSParser/RSOPMLError.h>
+#import <RSParser/ParserData.h>
 
 
 @interface RSOPMLParser () <RSSAXParserDelegate>

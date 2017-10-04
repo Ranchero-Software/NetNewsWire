@@ -65,7 +65,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 //			print("Hashed content of \(feed.url) has not changed.")
 			return
 		}
-		
+
 		let parserData = ParserData(url: feed.url, data: data)
 		FeedParser.parse(parserData) { (parsedFeed, error) in
 			

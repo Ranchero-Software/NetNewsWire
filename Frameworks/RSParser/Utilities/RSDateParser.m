@@ -7,7 +7,7 @@
 //
 
 #import <time.h>
-#import "RSDateParser.h"
+#import <RSParser/RSDateParser.h>
 
 typedef struct {
 	const char *abbreviation;

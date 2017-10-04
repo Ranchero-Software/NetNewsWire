@@ -7,12 +7,13 @@
 //
 
 #import <libxml/xmlstring.h>
-#import "RSHTMLMetadataParser.h"
-#import "RSHTMLMetadata.h"
-#import "RSSAXHTMLParser.h"
-#import "RSSAXParser.h"
-#import "RSParserInternal.h"
-#import "RSParser-Swift.h"
+#import <RSParser/RSHTMLMetadataParser.h>
+#import <RSParser/RSHTMLMetadata.h>
+#import <RSParser/RSSAXHTMLParser.h>
+#import <RSParser/RSSAXParser.h>
+#import <RSParser/RSParserInternal.h>
+#import <RSParser/ParserData.h>
+
 
 @interface RSHTMLMetadataParser () <RSSAXHTMLParserDelegate>
 

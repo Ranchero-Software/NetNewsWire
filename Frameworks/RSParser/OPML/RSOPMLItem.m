@@ -6,10 +6,10 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-#import "RSOPMLItem.h"
-#import "RSOPMLAttributes.h"
-#import "RSOPMLFeedSpecifier.h"
-#import "RSParserInternal.h"
+#import <RSParser/RSOPMLItem.h>
+#import <RSParser/RSOPMLAttributes.h>
+#import <RSParser/RSOPMLFeedSpecifier.h>
+#import <RSParser/RSParserInternal.h>
 
 
 @interface RSOPMLItem ()

@@ -6,7 +6,7 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-#import "RSParsedFeed.h"
+#import <RSParser/RSParsedFeed.h>
 
 @implementation RSParsedFeed
 

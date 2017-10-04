@@ -18,7 +18,6 @@
 		84285AAF1F006BC0002E8708 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84285AAE1F006BC0002E8708 /* libxml2.2.tbd */; };
 		84285AB21F00702E002E8708 /* RSOPMLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 84285AB01F00702E002E8708 /* RSOPMLError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84285AB31F00702E002E8708 /* RSOPMLError.m in Sources */ = {isa = PBXBuildFile; fileRef = 84285AB11F00702E002E8708 /* RSOPMLError.m */; };
-		84469CE21EFA2F3E004A6B28 /* ParserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469CE11EFA2F3E004A6B28 /* ParserData.swift */; };
 		84469CEF1EFA3000004A6B28 /* RSOPMLAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CE51EFA3000004A6B28 /* RSOPMLAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84469CF01EFA3000004A6B28 /* RSOPMLAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469CE61EFA3000004A6B28 /* RSOPMLAttributes.m */; };
 		84469CF11EFA3000004A6B28 /* RSOPMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CE71EFA3000004A6B28 /* RSOPMLDocument.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -86,6 +85,8 @@
 		84D81BE41EFA2D3D00652332 /* ParsedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE31EFA2D3D00652332 /* ParsedItem.swift */; };
 		84D81BE61EFA2DFB00652332 /* ParsedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */; };
 		84D81BE81EFA2E6700652332 /* ParsedHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE71EFA2E6700652332 /* ParsedHub.swift */; };
+		84E7E69F1F85780D0046719D /* ParserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E7E69D1F85780D0046719D /* ParserData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		84E7E6A01F85780D0046719D /* ParserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E7E69E1F85780D0046719D /* ParserData.m */; };
 		84FF5F8E1EFA285800C15A01 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FF5F841EFA285800C15A01 /* RSParser.framework */; };
 /* End PBXBuildFile section */
 
@@ -112,7 +113,6 @@
 		84285AB01F00702E002E8708 /* RSOPMLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLError.h; sourceTree = "<group>"; };
 		84285AB11F00702E002E8708 /* RSOPMLError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSOPMLError.m; sourceTree = "<group>"; };
 		84285AB41F007255002E8708 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		84469CE11EFA2F3E004A6B28 /* ParserData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParserData.swift; sourceTree = "<group>"; };
 		84469CE51EFA3000004A6B28 /* RSOPMLAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLAttributes.h; sourceTree = "<group>"; };
 		84469CE61EFA3000004A6B28 /* RSOPMLAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSOPMLAttributes.m; sourceTree = "<group>"; };
 		84469CE71EFA3000004A6B28 /* RSOPMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLDocument.h; sourceTree = "<group>"; };
@@ -181,6 +181,8 @@
 		84D81BE31EFA2D3D00652332 /* ParsedItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedItem.swift; path = Feeds/ParsedItem.swift; sourceTree = "<group>"; };
 		84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedAttachment.swift; path = Feeds/ParsedAttachment.swift; sourceTree = "<group>"; };
 		84D81BE71EFA2E6700652332 /* ParsedHub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedHub.swift; path = Feeds/ParsedHub.swift; sourceTree = "<group>"; };
+		84E7E69D1F85780D0046719D /* ParserData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserData.h; sourceTree = "<group>"; };
+		84E7E69E1F85780D0046719D /* ParserData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParserData.m; sourceTree = "<group>"; };
 		84FF5F841EFA285800C15A01 /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84FF5F8D1EFA285800C15A01 /* RSParserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RSParserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		84FF5F941EFA285800C15A01 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -352,7 +354,8 @@
 			children = (
 				84285AB41F007255002E8708 /* README.md */,
 				84D81BDA1EFA28E700652332 /* RSParser.h */,
-				84469CE11EFA2F3E004A6B28 /* ParserData.swift */,
+				84E7E69D1F85780D0046719D /* ParserData.h */,
+				84E7E69E1F85780D0046719D /* ParserData.m */,
 				84469CE31EFA2FB0004A6B28 /* Feeds */,
 				84285AA61F004879002E8708 /* Dates */,
 				84469CE41EFA3000004A6B28 /* OPML */,
@@ -411,6 +414,7 @@
 				84D81BDC1EFA28E700652332 /* RSParser.h in Headers */,
 				84469D0B1EFA307E004A6B28 /* RSHTMLMetadataParser.h in Headers */,
 				84469CFC1EFA3069004A6B28 /* RSSAXParser.h in Headers */,
+				84E7E69F1F85780D0046719D /* ParserData.h in Headers */,
 				84469D071EFA307E004A6B28 /* RSHTMLLinkParser.h in Headers */,
 				84469D0D1EFA307E004A6B28 /* RSSAXHTMLParser.h in Headers */,
 				84469D2B1EFA3134004A6B28 /* RSParsedArticle.h in Headers */,
@@ -544,10 +548,10 @@
 				84469CF41EFA3000004A6B28 /* RSOPMLFeedSpecifier.m in Sources */,
 				84469CF01EFA3000004A6B28 /* RSOPMLAttributes.m in Sources */,
 				84469D381EFF2645004A6B28 /* RSSInJSONParser.swift in Sources */,
+				84E7E6A01F85780D0046719D /* ParserData.m in Sources */,
 				84469D301EFA3134004A6B28 /* RSRSSParser.m in Sources */,
 				84469D191EFA30A2004A6B28 /* RSDateParser.m in Sources */,
 				84469CFD1EFA3069004A6B28 /* RSSAXParser.m in Sources */,
-				84469CE21EFA2F3E004A6B28 /* ParserData.swift in Sources */,
 				84469CF21EFA3000004A6B28 /* RSOPMLDocument.m in Sources */,
 				84469CF61EFA3000004A6B28 /* RSOPMLItem.m in Sources */,
 				84D81BE41EFA2D3D00652332 /* ParsedItem.swift in Sources */,

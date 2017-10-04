@@ -6,12 +6,12 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-#import "RSSAXHTMLParser.h"
-#import "RSSAXParser.h"
+#import <RSParser/RSSAXHTMLParser.h>
+#import <RSParser/RSSAXParser.h>
 #import <libxml/tree.h>
 #import <libxml/xmlstring.h>
 #import <libxml/HTMLparser.h>
-#import "RSParserInternal.h"
+#import <RSParser/RSParserInternal.h>
 
 
 @interface RSSAXHTMLParser ()

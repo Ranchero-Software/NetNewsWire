@@ -7,7 +7,7 @@
 //
 
 #import <CommonCrypto/CommonDigest.h>
-#import "NSString+RSParser.h"
+#import <RSParser/NSString+RSParser.h>
 
 
 @interface NSScanner (RSParser)

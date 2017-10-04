@@ -7,7 +7,7 @@
 //
 
 @import Foundation;
-#import "RSOPMLItem.h"
+#import <RSParser/RSOPMLItem.h>
 
 
 @interface RSOPMLDocument : RSOPMLItem

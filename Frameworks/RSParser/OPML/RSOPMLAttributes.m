@@ -6,8 +6,8 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-#import "RSOPMLAttributes.h"
-#import "RSParserInternal.h"
+#import <RSParser/RSOPMLAttributes.h>
+#import <RSParser/RSParserInternal.h>
 
 
 NSString *OPMLTextKey = @"text";

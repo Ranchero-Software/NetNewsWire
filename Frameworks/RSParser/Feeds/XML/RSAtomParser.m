@@ -7,14 +7,13 @@
 //
 
 #import <libxml/xmlstring.h>
-#import "RSAtomParser.h"
-#import "RSSAXParser.h"
-#import "RSParsedFeed.h"
-#import "RSParsedArticle.h"
-#import "NSString+RSParser.h"
-#import "RSDateParser.h"
-//#import "RSParser-Swift.h"
-
+#import <RSParser/RSAtomParser.h>
+#import <RSParser/RSSAXParser.h>
+#import <RSParser/RSParsedFeed.h>
+#import <RSParser/RSParsedArticle.h>
+#import <RSParser/NSString+RSParser.h>
+#import <RSParser/RSDateParser.h>
+#import <RSParser/ParserData.h>
 
 @interface RSAtomParser () <RSSAXParserDelegate>
 

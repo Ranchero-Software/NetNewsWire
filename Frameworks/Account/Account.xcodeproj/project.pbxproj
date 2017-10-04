@@ -127,8 +127,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */,
 				841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */,
+				841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */,
 				841973FD1F6DD1B7006346C4 /* Data.framework in Frameworks */,
 				8469F8171F6DD0AD0084783E /* Database.framework in Frameworks */,
 			);

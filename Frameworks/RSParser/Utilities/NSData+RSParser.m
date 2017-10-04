@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
-#import "NSData+RSParser.h"
+#import <RSParser/NSData+RSParser.h>
 
 /* TODO: find real-world cases where the isProbably* cases fail when they should succeed, and add them to tests.*/
 

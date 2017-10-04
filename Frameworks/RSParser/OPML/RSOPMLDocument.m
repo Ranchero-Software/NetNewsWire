@@ -6,7 +6,7 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-#import "RSOPMLDocument.h"
+#import <RSParser/RSOPMLDocument.h>
 
 @implementation RSOPMLDocument
 

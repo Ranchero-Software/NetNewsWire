@@ -10,6 +10,8 @@
 
 // To parse RSS, Atom, JSON Feed, and RSS-in-JSON the easy way, see FeedParser.swift.
 
+#import <RSParser/ParserData.h>
+
 // Dates
 
 #import <RSParser/RSDateParser.h>

@@ -63,7 +63,7 @@ private extension String {
 			return self
 		}
 		
-		let index = self.index(self.startIndex, offsetBy: prefix.characters.count)
+		let index = self.index(self.startIndex, offsetBy: prefix.count)
 		return String(self[..<index])
 	}
 }

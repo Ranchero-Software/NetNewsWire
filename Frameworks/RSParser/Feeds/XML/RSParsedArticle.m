@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Ranchero Software LLC. All rights reserved.
 //
 
-#import "RSParsedArticle.h"
-#import "RSParserInternal.h"
-#import "NSString+RSParser.h"
+#import <RSParser/RSParsedArticle.h>
+#import <RSParser/RSParserInternal.h>
+#import <RSParser/NSString+RSParser.h>
 
 
 @implementation RSParsedArticle

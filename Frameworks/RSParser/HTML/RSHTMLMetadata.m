@@ -6,8 +6,8 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-#import "RSHTMLMetadata.h"
-#import "RSParserInternal.h"
+#import <RSParser/RSHTMLMetadata.h>
+#import <RSParser/RSParserInternal.h>
 
 static NSString *urlStringFromDictionary(NSDictionary *d);
 static NSString *absoluteURLStringWithRelativeURLString(NSString *relativeURLString, NSString *baseURLString);

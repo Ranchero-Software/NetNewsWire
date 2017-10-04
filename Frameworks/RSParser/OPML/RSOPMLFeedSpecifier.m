@@ -6,8 +6,8 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-#import "RSOPMLFeedSpecifier.h"
-#import "RSParserInternal.h"
+#import <RSParser/RSOPMLFeedSpecifier.h>
+#import <RSParser/RSParserInternal.h>
 
 
 @implementation RSOPMLFeedSpecifier
