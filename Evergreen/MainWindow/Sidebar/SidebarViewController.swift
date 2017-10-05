@@ -14,14 +14,11 @@ import Account
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource {
     
 	@IBOutlet var outlineView: NSOutlineView!
-	var treeController: TreeController!
-	let treeControllerDelegate = SidebarTreeControllerDelegate()
-	
+	let treeController = TreeController(delegate: SidebarTreeControllerDelegate())
+
 	//MARK: NSViewController
 
 	override func viewDidLoad() {
-
-		treeController = TreeController(delegate: treeControllerDelegate)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 //		NotificationCenter.default.addObserver(self, selector: #selector(folderChildrenDidChange(_:)), name: NSNotification.Name(rawValue: FolderChildrenDidChangeNotification), object: nil)
