@@ -34,7 +34,7 @@ func timelineTruncatedFeedName(_ feed: Feed) -> String {
 	}
 
 	let maxFeedNameLength = 100
-	if feedName.characters.count < maxFeedNameLength {
+	if feedName.count < maxFeedNameLength {
 		truncatedFeedNameCache[feedName] = feedName
 		return feedName
 	}
@@ -61,7 +61,7 @@ func timelineTruncatedTitle(_ article: Article) -> String {
 	s = s.rs_stringByTrimmingWhitespace()
 	
 	let maxLength = 1000
-	if s.characters.count < maxLength {
+	if s.count < maxLength {
 		truncatedTitleCache[title] = s
 		return s
 	}

@@ -47,11 +47,11 @@ struct FeedsImporter {
 			}
 		}
 	}
-	
+
 	private static func feeds(with feedDictionaries: [DiskFeedDictionary], accountID: String) -> Set<Feed> {
-		
-		let feeds = Set(feedDictionaries.map { Feed(accountID: accountID, dictionary: $0) })
-		return feeds
+
+		let feedArray = feedDictionaries.flatMap { Feed(accountID: accountID, dictionary: $0) }
+		return Set(feedArray)
 	}
 }
 
