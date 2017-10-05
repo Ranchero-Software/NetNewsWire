@@ -11,7 +11,6 @@ import DB5
 import Data
 import RSTextDrawing
 import RSTree
-import RSParser
 import RSWeb
 import Account
 
@@ -218,7 +217,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		let result = panel.runModal()
 		if result == NSApplication.ModalResponse.OK, let url = panel.url {
 			DispatchQueue.main.async {
-				self.parseAndImportOPML(url, AccountManager.shared.localAccount)
+				do {
+					try OPMLImporter.parseAndImport(fileURL: url, account: AccountManager.shared.localAccount)
+				}
+				catch let error as NSError {
+					NSApplication.shared.presentError(error)
+				}
 			}
 		}
 	}
@@ -292,38 +296,4 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	}
 }
 
-// MARK: -
-
-private extension AppDelegate {
-
-	func parseAndImportOPML(_ url: URL, _ account: Account) {
-
-		var fileData: Data?
-
-		do {
-			fileData = try Data(contentsOf: url)
-		} catch {
-			print("Error reading OPML file. \(error)")
-			return
-		}
-
-		guard let opmlData = fileData else {
-			return
-		}
-
-		let parserData = ParserData(url: url.absoluteString, data: opmlData)
-		RSParseOPML(parserData) { (opmlDocument, error) in
-
-			if let error = error {
-				NSApplication.shared.presentError(error)
-				return
-			}
-
-			if let opmlDocument = opmlDocument {
-				account.importOPML(opmlDocument)
-				account.refreshAll()
-			}
-		}
-	}
-}
 

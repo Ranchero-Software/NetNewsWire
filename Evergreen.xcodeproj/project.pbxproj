@@ -78,6 +78,7 @@
 		84B0700B1ED3822600F0B54B /* RSTextDrawing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84BB4B771F11753300858766 /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B681F1174D400858766 /* Data.framework */; };
 		84BB4B781F11753300858766 /* Data.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B681F1174D400858766 /* Data.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */; };
 		84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
 		84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; };
 		84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -404,7 +405,7 @@
 		849A97871ED9ECEF007D329B /* ArticleStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleStyle.swift; sourceTree = "<group>"; };
 		849A97881ED9ECEF007D329B /* ArticleStylesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleStylesManager.swift; sourceTree = "<group>"; };
 		849A978C1ED9EE4D007D329B /* FeedListWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedListWindowController.swift; sourceTree = "<group>"; };
-		849A978E1ED9EE72007D329B /* DefaultFeeds.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DefaultFeeds.plist; path = Evergreen/Resources/DefaultFeeds.plist; sourceTree = SOURCE_ROOT; };
+		849A978E1ED9EE72007D329B /* DefaultFeeds.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DefaultFeeds.plist; path = Importers/DefaultFeeds.plist; sourceTree = SOURCE_ROOT; };
 		849A97911ED9EF65007D329B /* IndeterminateProgressWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndeterminateProgressWindowController.swift; sourceTree = "<group>"; };
 		849A97941ED9EF7A007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/IndeterminateProgressWindow.xib; sourceTree = SOURCE_ROOT; };
 		849A97971ED9EFAA007D329B /* Node-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Node-Extensions.swift"; sourceTree = "<group>"; };
@@ -435,6 +436,7 @@
 		84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTree.xcodeproj; path = Frameworks/RSTree/RSTree.xcodeproj; sourceTree = "<group>"; };
 		84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTextDrawing.xcodeproj; path = Frameworks/RSTextDrawing/RSTextDrawing.xcodeproj; sourceTree = "<group>"; };
 		84BB4B611F1174D400858766 /* Data.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Data.xcodeproj; path = Frameworks/Data/Data.xcodeproj; sourceTree = "<group>"; };
+		84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLImporter.swift; sourceTree = "<group>"; };
 		84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDefaults.swift; path = Evergreen/AppDefaults.swift; sourceTree = "<group>"; };
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -540,8 +542,6 @@
 			isa = PBXGroup;
 			children = (
 				849A97581ED9EB0D007D329B /* ArticleUtilities.swift */,
-				849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */,
-				849A978E1ED9EE72007D329B /* DefaultFeeds.plist */,
 			);
 			name = Data;
 			path = Evergreen/Data;
@@ -675,6 +675,7 @@
 				849A97861ED9ECEF007D329B /* Article Styles */,
 				849A978B1ED9EE4D007D329B /* Feed List */,
 				849A97901ED9EF65007D329B /* Progress Window */,
+				84DAEE201F86CAE00058304B /* Importers */,
 				849A97561ED9EB0D007D329B /* Data */,
 				849A97961ED9EFAA007D329B /* Extensions */,
 				849A97991ED9EFB6007D329B /* Resources */,
@@ -786,6 +787,16 @@
 				84BB4B6A1F1174D400858766 /* DataTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		84DAEE201F86CAE00058304B /* Importers */ = {
+			isa = PBXGroup;
+			children = (
+				84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */,
+				849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */,
+				849A978E1ED9EE72007D329B /* DefaultFeeds.plist */,
+			);
+			path = Importers;
 			sourceTree = "<group>";
 		};
 		84FB9A2C1EDCD6A4003D53B9 /* Frameworks */ = {
@@ -1160,6 +1171,7 @@
 				849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,
+				84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */,
 				849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */,
 				849A97891ED9ECEF007D329B /* ArticleStyle.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
