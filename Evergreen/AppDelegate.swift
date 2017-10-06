@@ -28,10 +28,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	var addFolderWindowController: AddFolderWindowController?
 	let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
+	private let dockBadge = DockBadge()
 
 	var unreadCount = 0 {
 		didSet {
-			updateBadgeCoalesced()
+			dockBadge.update()
 		}
 	}
 
@@ -39,6 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
+		dockBadge.appDelegate = self
 	}
 
 	// MARK: - NSApplicationDelegate
@@ -95,19 +97,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 			self.addFeed(normalizedURLString)
 		}
-	}
-
-	// MARK: Badge
-
-	private func updateBadgeCoalesced() {
-
-		rs_performSelectorCoalesced(#selector(updateBadge), with: nil, afterDelay: 0.01)
-	}
-
-	@objc dynamic func updateBadge() {
-
-		let label = unreadCount > 0 ? "\(unreadCount)" : ""
-		NSApplication.shared.dockTile.badgeLabel = label
 	}
 
 	// MARK: Notifications
