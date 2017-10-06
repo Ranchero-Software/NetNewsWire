@@ -15,12 +15,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
     
     // MARK: NSWindowController
 
+	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey)
+
     override func windowDidLoad() {
         
         super.windowDidLoad()
         
 //		window?.titleVisibility = .hidden
-		window?.setFrameUsingName(NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey), force: true)
+		window?.setFrameUsingName(windowAutosaveName, force: true)
 		
 		detailSplitViewItem?.minimumThickness = 384
 		
@@ -35,7 +37,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
     
 	@objc func applicationWillTerminate(_ note: Notification) {
         
-		window?.saveFrame(usingName: NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey))
+		window?.saveFrame(usingName: windowAutosaveName)
     }
 
 	@objc func appNavigationKeyPressed(_ note: Notification) {
