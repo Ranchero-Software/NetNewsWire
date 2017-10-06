@@ -13,7 +13,18 @@ extension Account: Container {
 
 	public func flattenedFeeds() -> Set<Feed> {
 
-		return Set(feedIDDictionary.values)
+		var feeds = Set<Feed>()
+		
+		for object in topLevelObjects {
+			if let feed = object as? Feed {
+				feeds.insert(feed)
+			}
+			else if let folder = object as? Folder {
+				feeds.formUnion(folder.flattenedFeeds())
+			}
+		}
+		
+		return feeds
 	}
 
 	public func existingFeed(with feedID: String) -> Feed? {
