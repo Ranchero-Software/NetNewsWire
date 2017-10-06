@@ -86,7 +86,7 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 		if navigationAction.navigationType == .linkActivated {
 			
 			if let url = navigationAction.request.url {
-				openInBrowser(url.absoluteString)
+				Browser.open(url.absoluteString)
 			}
 			
 			decisionHandler(.cancel)

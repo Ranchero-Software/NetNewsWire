@@ -10,17 +10,19 @@ import Foundation
 import CoreServices
 import RSWeb
 
+struct Browser {
 
-func openInBrowser(_ urlString: String) {
-	
-	// Opens according to prefs.
-	openInBrowser(urlString, inBackground: AppDefaults.shared.openInBrowserInBackground)
-}
+	static func open(_ urlString: String) {
 
-func openInBrowser(_ urlString: String, inBackground: Bool) {
-	
-	if let url = URL(string: urlString) {
-		MacWebBrowser.openURL(url, inBackground: inBackground)
+		// Opens according to prefs.
+		open(urlString, inBackground: AppDefaults.shared.openInBrowserInBackground)
+	}
+
+	static func open(_ urlString: String, inBackground: Bool) {
+
+		if let url = URL(string: urlString) {
+			MacWebBrowser.openURL(url, inBackground: inBackground)
+		}
 	}
 }
 

@@ -32,7 +32,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	var unreadCount = 0 {
 		didSet {
-			dockBadge.update()
+			if unreadCount != oldValue {
+				dockBadge.update()
+			}
 		}
 	}
 
@@ -103,10 +105,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	func unreadCountDidChange(_ note: Notification) {
 
-		let updatedUnreadCount = AccountManager.shared.unreadCount
-		if updatedUnreadCount != unreadCount {
-			unreadCount = updatedUnreadCount
-		}
+		unreadCount = AccountManager.shared.unreadCount
 	}
 
 	// MARK: Main Window
@@ -256,22 +255,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	@IBAction func openWebsite(_ sender: AnyObject) {
 
-		openInBrowser("https://ranchero.com/evergreen/", inBackground: false)
+		Browser.open("//ranchero.com/evergreen/", inBackground: false)
 	}
 
 	@IBAction func openRepository(_ sender: AnyObject) {
 
-		openInBrowser("https://github.com/brentsimmons/Evergreen", inBackground: false)
+		Browser.open("https://github.com/brentsimmons/Evergreen", inBackground: false)
 	}
 
 	@IBAction func openBugTracker(_ sender: AnyObject) {
 
-		openInBrowser("https://github.com/brentsimmons/Evergreen/issues", inBackground: false)
+		Browser.open("https://github.com/brentsimmons/Evergreen/issues", inBackground: false)
 	}
 
 	@IBAction func showHelp(_ sender: AnyObject) {
 
-		openInBrowser("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
+		Browser.open("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
 	}
 }
 

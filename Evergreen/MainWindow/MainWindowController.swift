@@ -86,7 +86,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func openArticleInBrowser(_ sender: AnyObject?) {
 		
 		if let link = currentLink {
-			openInBrowser(link)
+			Browser.open(link)
 		}		
 	}
 	
