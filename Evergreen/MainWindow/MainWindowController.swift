@@ -21,7 +21,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
         
         super.windowDidLoad()
         
-//		window?.titleVisibility = .hidden
 		window?.setFrameUsingName(windowAutosaveName, force: true)
 		
 		detailSplitViewItem?.minimumThickness = 384
@@ -54,12 +53,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
 		
-		rs_performSelectorCoalesced(#selector(MainWindowController.coalescedMakeToolbarValidate(_:)), with: nil, afterDelay: 0.1)
+		rs_performSelectorCoalesced(#selector(MainWindowController.makeToolbarValidate(_:)), with: nil, afterDelay: 0.1)
 	}
 	
 	// MARK: Toolbar
 	
-	@objc func coalescedMakeToolbarValidate(_ sender: Any) {
+	@objc func makeToolbarValidate(_ sender: Any) {
 		
 		window?.toolbar?.validateVisibleItems()
 	}
@@ -123,6 +122,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 }
 
+// MARK: - Private
+
 private extension MainWindowController {
 	
 	var splitViewController: NSSplitViewController? {
@@ -147,12 +148,12 @@ private extension MainWindowController {
 	}
 	
 	var detailSplitViewItem: NSSplitViewItem? {
-		
-		return splitViewController?.splitViewItems[2]
+		get {
+			return splitViewController?.splitViewItems[2]
+		}
 	}
 	
 	var detailViewController: DetailViewController? {
-
 		get {
 			return splitViewController?.splitViewItems[2].viewController as? DetailViewController
 		}
@@ -175,10 +176,7 @@ private extension MainWindowController {
 	
 	var currentLink: String? {
 		get {
-			if let article = oneSelectedArticle {
-				return article.preferredLink
-			}
-			return nil
+			return oneSelectedArticle?.preferredLink
 		}
 	}
 	
