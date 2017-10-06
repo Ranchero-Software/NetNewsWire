@@ -57,7 +57,7 @@ public struct Article: Hashable {
 			self.articleID = Article.calculatedArticleID(feedID: feedID, uniqueID: uniqueID)
 		}
 
-		self.hashValue = accountID.hashValue ^ self.articleID.hashValue
+		self.hashValue = (accountID + self.articleID).hashValue
 	}
 
 	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {

@@ -18,7 +18,7 @@ public struct ParsedHub: Hashable {
 		
 		self.type = type
 		self.url = url
-		self.hashValue = type.hashValue ^ url.hashValue
+		self.hashValue = url.hashValue
 	}
 	
 	public static func ==(lhs: ParsedHub, rhs: ParsedHub) -> Bool {

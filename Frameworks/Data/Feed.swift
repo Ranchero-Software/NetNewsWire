@@ -47,7 +47,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		self.accountID = accountID
 		self.url = url
 		self.feedID = feedID
-		self.hashValue = accountID.hashValue ^ url.hashValue ^ feedID.hashValue
+		self.hashValue = feedID.hashValue
 	}
 
 	// MARK: - Disk Dictionary
@@ -65,10 +65,11 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	convenience public init?(accountID: String, dictionary: [String: Any]) {
 
-		guard let url = dictionary[Key.url] as? String, let feedID = dictionary[Key.feedID] as? String else {
+		guard let url = dictionary[Key.url] as? String else {
 			return nil
 		}
-
+		let feedID = dictionary[Key.feedID] as? String ?? url
+		
 		self.init(accountID: accountID, url: url, feedID: feedID)
 		self.homePageURL = dictionary[Key.homePageURL] as? String
 		self.name = dictionary[Key.name] as? String
@@ -94,7 +95,12 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 			var d = [String: Any]()
 
 			d[Key.url] = url
-			d[Key.feedID] = feedID
+			
+			// feedID is not repeated when it’s the same as url
+			if (feedID != url) {
+				d[Key.feedID] = feedID
+			}
+			
 			if let homePageURL = homePageURL {
 				d[Key.homePageURL] = homePageURL
 			}

@@ -46,7 +46,7 @@ public struct ParsedItem: Hashable {
 		self.authors = authors
 		self.tags = tags
 		self.attachments = attachments
-		self.hashValue = feedURL.hashValue ^ uniqueID.hashValue
+		self.hashValue = (feedURL + uniqueID).hashValue
 	}
 	
 	public static func ==(lhs: ParsedItem, rhs: ParsedItem) -> Bool {
