@@ -73,7 +73,7 @@ import Account
 		outlineView.removeItems(at: selectedRows, inParent: nil, withAnimation: [.slideDown])
 		outlineView.endUpdates()
 
-		performDataModelBatchUpdates {
+		batchUpdate.perform {
 			deleteItemsForNodes(nodesToDelete)
 		}
 		
@@ -164,7 +164,7 @@ private extension SidebarViewController {
 	
 	func rebuildTreeAndReloadDataIfNeeded() {
 		
-		if !dataModelIsPerformingBatchUpdates() {
+		if !batchUpdate.isPerforming {
 			treeController.rebuild()
 			outlineView.reloadData()
 		}

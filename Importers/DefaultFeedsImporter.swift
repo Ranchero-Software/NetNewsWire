@@ -41,13 +41,16 @@ struct FeedsImporter {
 	static func importFeeds(_ feedDictionaries: [DiskFeedDictionary], account: Account) {
 		
 		let feedsToImport = feeds(with: feedDictionaries, accountID: account.accountID)
-		for feed in feedsToImport {
-			if !account.hasFeed(with: feed.feedID) {
-				let _ = account.addFeed(feed, to: nil)
+		
+		batchUpdate.perform {
+			for feed in feedsToImport {
+				if !account.hasFeed(with: feed.feedID) {
+					let _ = account.addFeed(feed, to: nil)
+				}
 			}
 		}
 	}
-
+	
 	private static func feeds(with feedDictionaries: [DiskFeedDictionary], accountID: String) -> Set<Feed> {
 
 		let feedArray = feedDictionaries.flatMap { Feed(accountID: accountID, dictionary: $0) }

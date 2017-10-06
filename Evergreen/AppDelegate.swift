@@ -16,6 +16,7 @@ import Account
 
 let appName = "Evergreen"
 var currentTheme: VSTheme!
+let batchUpdate = BatchUpdate()
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
