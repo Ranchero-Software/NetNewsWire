@@ -246,16 +246,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		}
 	}
 	
-	@IBAction func emailSupport(_ sender: AnyObject) {
-
-		let escapedAppName = appName.replacingOccurrences(of: " ", with: "%20")
-		let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString")!
-		let urlString = "mailto:support@ranchero.com?subject=I%20need%20help%20with%20\(escapedAppName)%20\(version)&body=I%20ran%20into%20a%20problem:%20"
-		if let url = URL(string: urlString) {
-			NSWorkspace.shared.open(url)
-		}
-	}
-
 	@IBAction func addAppNews(_ sender: AnyObject) {
 
 		if AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
