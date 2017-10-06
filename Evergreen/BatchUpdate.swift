@@ -17,6 +17,8 @@ public extension Notification.Name {
 
 final class BatchUpdate {
 	
+	static let shared = BatchUpdate()
+	
 	private var count = 0
 	
 	var isPerforming: Bool {

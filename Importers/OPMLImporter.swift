@@ -38,7 +38,7 @@ struct OPMLImporter {
 		}
 
 		if let opmlDocument = opmlDocument {
-			batchUpdate.perform {
+			BatchUpdate.shared.perform {
 				account.importOPML(opmlDocument)
 			}
 		}
