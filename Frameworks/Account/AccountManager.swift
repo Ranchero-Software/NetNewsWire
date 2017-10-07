@@ -44,8 +44,8 @@ public final class AccountManager: UnreadCountProvider {
 
 	public var refreshInProgress: Bool {
 		get {
-			for oneAccount in accountsDictionary.values {
-				if oneAccount.refreshInProgress {
+			for account in accounts {
+				if account.refreshInProgress {
 					return true
 				}
 			}

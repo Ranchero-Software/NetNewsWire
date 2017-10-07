@@ -23,7 +23,7 @@ final class LocalAccountRefresher {
 			return downloadSession.progress
 		}
 	}
-	
+
 	public func refreshFeeds(_ feeds: Set<Feed>) {
 
 		downloadSession.downloadObjects(feeds as NSSet)

@@ -12,6 +12,12 @@ import Data
 import RSParser
 import Database
 
+public extension Notification.Name {
+
+	public static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
+	public static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
+}
+
 public enum AccountType: Int {
 
 	// Raw values should not change since they’re stored on disk.
@@ -28,7 +34,6 @@ public final class Account: DisplayNameProvider, Hashable {
 	public let accountID: String
 	public let type: AccountType
 	public var nameForDisplay = ""
-	public let delegate: AccountDelegate
 	public let hashValue: Int
 	let settingsFile: String
 	let dataFolder: String
@@ -36,7 +41,19 @@ public final class Account: DisplayNameProvider, Hashable {
 	var topLevelObjects = [AnyObject]()
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
-	var refreshInProgress = false
+
+	var refreshInProgress = false {
+		didSet {
+			if refreshInProgress != oldValue {
+				if refreshInProgress {
+					NotificationCenter.default.post(name: .AccountRefreshDidBegin, object: self)
+				}
+				else {
+					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
+				}
+			}
+		}
+	}
 
 	var hasAtLeastOneFeed: Bool {
 		get {
@@ -49,16 +66,21 @@ public final class Account: DisplayNameProvider, Hashable {
 			return delegate.supportsSubFolders
 		}
 	}
-	
-	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
+
+	public lazy var delegate: AccountDelegate! = {
+
+		// TODO: support various syncing systems.
 
 		switch type {
-			
+
 		case .onMyMac:
-			self.delegate = LocalAccountDelegate()
+			return LocalAccountDelegate(account: self)
 		default:
 			return nil
 		}
+	}()
+
+	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
 
 		self.accountID = accountID
 		self.type = type
@@ -76,7 +98,7 @@ public final class Account: DisplayNameProvider, Hashable {
 
 	public func refreshAll() {
 
-		delegate.refreshAll(for: self)
+		delegate.refreshAll()
 	}
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: RSVoidCompletionBlock) {
