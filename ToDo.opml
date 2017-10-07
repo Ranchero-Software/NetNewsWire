@@ -6,7 +6,7 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,21,24,28,33,41,42,44,59,64</expansionState>
+    <expansionState>0,23,26,30,35,43,44,46,61,66</expansionState>
     <vertScrollState>0</vertScrollState>
     <windowTop>3254</windowTop>
     <windowLeft>551</windowLeft>
@@ -15,6 +15,8 @@
   </head>
   <body>
     <outline text="App">
+      <outline text="Make Refresh button work"/>
+      <outline text="Update Sparkle"/>
       <outline text="Use new app icon"/>
       <outline text="Set -NSApplicationCrashOnExceptions YES"/>
       <outline text="Store colors in accent catalog"/>
