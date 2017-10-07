@@ -18,7 +18,7 @@
 		<key>editedName</key>
 		<string>Daring Fireball</string>
 		<key>url</key>
-		<string>http://daringfireball.net/feeds/main</string>
+		<string>https://daringfireball.net/feeds/main</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
@@ -34,7 +34,7 @@
 		<key>editedName</key>
 		<string>iMore</string>
 		<key>url</key>
-		<string>http://www.imore.com/rss.xml</string>
+		<string>https://www.imore.com/rss.xml</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
@@ -110,7 +110,7 @@
 		<key>editedName</key>
 		<string>Ashley Nelson-Hornstein</string>
 		<key>url</key>
-		<string>http://blog.ashleynh.me/rss/</string>
+		<string>http://ashleynh.me/rss/</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
@@ -148,7 +148,7 @@
 		<key>note</key>
 		<string>Paul Kafasis</string>
 		<key>url</key>
-		<string>http://onefoottsunami.com/feed/atom/</string>
+		<string>https://onefoottsunami.com/feed/atom/</string>
 	</dict>
 </array>
 </plist>
