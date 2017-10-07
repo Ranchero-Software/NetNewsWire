@@ -232,7 +232,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		panel.nameFieldStringValue = "MySubscriptions.opml"
 
 		let result = panel.runModal()
-		if result.rawValue == NSFileHandlingPanelOKButton, let url = panel.url {
+		if result == NSApplication.ModalResponse.OK, let url = panel.url {
 			DispatchQueue.main.async {
 				let opmlString = AccountManager.shared.localAccount.OPMLString(indentLevel: 0)
 				do {

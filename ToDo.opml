@@ -6,17 +6,15 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>23,26,30,35,43,44,46,61,66</expansionState>
+    <expansionState>0,21,24,28,33,41,42,44,59,64</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>2634</windowTop>
-    <windowLeft>558</windowLeft>
-    <windowRight>1290</windowRight>
-    <windowBottom>3393</windowBottom>
+    <windowTop>3254</windowTop>
+    <windowLeft>551</windowLeft>
+    <windowRight>1283</windowRight>
+    <windowBottom>4013</windowBottom>
   </head>
   <body>
     <outline text="App">
-      <outline text="Get it building again"/>
-      <outline text="Require High Sierra"/>
       <outline text="Use new app icon"/>
       <outline text="Set -NSApplicationCrashOnExceptions YES"/>
       <outline text="Store colors in accent catalog"/>
