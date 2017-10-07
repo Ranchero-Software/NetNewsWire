@@ -26,10 +26,8 @@ private final class OneShotDownloadManager {
 		sessionConfiguration.urlCache = nil
 		sessionConfiguration.timeoutIntervalForRequest = 30
 		
-		if let userAgent = UserAgent.fromInfoPlist() {
-			var headers = [AnyHashable : Any]()
-			headers[HTTPRequestHeader.userAgent] = userAgent
-			sessionConfiguration.httpAdditionalHeaders = headers
+		if let userAgentHeaders = UserAgent.headers() {
+			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
 
 		urlSession = URLSession(configuration: sessionConfiguration)
