@@ -8,9 +8,9 @@
 
 import Foundation
 
-public class UserAgent {
+public struct UserAgent {
 	
-	public class func fromInfoPlist() -> String? {
+	public static func fromInfoPlist() -> String? {
 
 		guard let userAgentName = Bundle.main.object(forInfoDictionaryKey: "UserAgent") else {
 			return nil
@@ -19,5 +19,14 @@ public class UserAgent {
 			return nil
 		}
 		return "\(userAgentName) \(version)"
+	}
+
+	public static func headers() -> [AnyHashable: String]? {
+
+		guard let userAgent = fromInfoPlist() else {
+			return nil
+		}
+
+		return [HTTPRequestHeader.userAgent: userAgent]
 	}
 }
