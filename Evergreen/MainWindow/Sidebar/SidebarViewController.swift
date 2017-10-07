@@ -23,7 +23,7 @@ import Account
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 //		NotificationCenter.default.addObserver(self, selector: #selector(folderChildrenDidChange(_:)), name: NSNotification.Name(rawValue: FolderChildrenDidChangeNotification), object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: UserDidAddFeedNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(dataModelDidPerformBatchUpdates(_:)), name: .DataModelDidPerformBatchUpdates, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidFinish(_:)), name: .BatchUpdateDidFinish, object: nil)
 
 		outlineView.reloadData()
 	}
@@ -43,7 +43,7 @@ import Account
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 
-	@objc dynamic func dataModelDidPerformBatchUpdates(_ notification: Notification) {
+	@objc dynamic func batchUpdateDidFinish(_ notification: Notification) {
 		
 		rebuildTreeAndReloadDataIfNeeded()
 	}

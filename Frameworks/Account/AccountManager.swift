@@ -24,7 +24,9 @@ public final class AccountManager: UnreadCountProvider {
 
 	public var unreadCount = 0 {
 		didSet {
-			postUnreadCountDidChangeNotification()
+			if unreadCount != oldValue {
+				postUnreadCountDidChangeNotification()
+			}
 		}
 	}
 

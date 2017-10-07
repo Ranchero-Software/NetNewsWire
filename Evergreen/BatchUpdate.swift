@@ -12,7 +12,7 @@ public typealias BatchUpdateBlock = () -> Void
 
 public extension Notification.Name {
 	
-	public static let BatchUpdateDidPerform = Notification.Name(rawValue: "BatchUpdateDidPerform")
+	public static let BatchUpdateDidFinish = Notification.Name(rawValue: "BatchUpdateDidFinish")
 }
 
 final class BatchUpdate {
@@ -60,6 +60,6 @@ private extension BatchUpdate {
 	
 	func postBatchUpdateDidPerform() {
 		
-		NotificationCenter.default.post(name: .BatchUpdateDidPerform, object: nil, userInfo: nil)
+		NotificationCenter.default.post(name: .BatchUpdateDidFinish, object: nil, userInfo: nil)
 	}
 }

@@ -36,7 +36,7 @@ final class StatusBarView: NSView {
 		progressLabel.font = NSFont.monospacedDigitSystemFont(ofSize: progressLabelFontSize, weight: NSFont.Weight.regular)
 		progressLabel.stringValue = ""		
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+//		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange(_:)), name: .TimelineSelectionDidChange, object: nil)
 	}
@@ -45,11 +45,11 @@ final class StatusBarView: NSView {
 
 	@objc dynamic func progressDidChange(_ notification: Notification) {
 
-		guard let progress = notification.userInfo?[progressKey] as? DownloadProgress else {
-			return
-		}
-		updateProgressIndicator(progress)
-		updateProgressLabel(progress)
+//		guard let progress = notification.userInfo?[progressKey] as? DownloadProgress else {
+//			return
+//		}
+//		updateProgressIndicator(progress)
+//		updateProgressLabel(progress)
 	}
 
 	// MARK: Notifications

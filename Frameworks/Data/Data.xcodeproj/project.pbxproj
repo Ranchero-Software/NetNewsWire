@@ -19,7 +19,6 @@
 		844BEE811F0AB4D0004AB7CD /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE801F0AB4D0004AB7CD /* Author.swift */; };
 		844BEE831F0AB4D6004AB7CD /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE821F0AB4D6004AB7CD /* Attachment.swift */; };
 		844BEE851F0AB4DB004AB7CD /* ArticleStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE841F0AB4DB004AB7CD /* ArticleStatus.swift */; };
-		844BEE891F0AB4E7004AB7CD /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE881F0AB4E7004AB7CD /* Notifications.swift */; };
 		84C490F41F705D5F003131D2 /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C490F51F705D5F003131D2 /* RSWeb.framework */; };
 /* End PBXBuildFile section */
 
@@ -69,7 +68,6 @@
 		844BEE801F0AB4D0004AB7CD /* Author.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
 		844BEE821F0AB4D6004AB7CD /* Attachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		844BEE841F0AB4DB004AB7CD /* ArticleStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleStatus.swift; sourceTree = "<group>"; };
-		844BEE881F0AB4E7004AB7CD /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		844BEE9C1F0AB512004AB7CD /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		84C490F51F705D5F003131D2 /* RSWeb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSWeb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -104,7 +102,6 @@
 				844BEE821F0AB4D6004AB7CD /* Attachment.swift */,
 				844BEE841F0AB4DB004AB7CD /* ArticleStatus.swift */,
 				840405C91F1A8E4300DF0296 /* DatabaseID.swift */,
-				844BEE881F0AB4E7004AB7CD /* Notifications.swift */,
 				8419741B1F6DD613006346C4 /* UnreadCountProvider.swift */,
 				8419741F1F6DD672006346C4 /* DisplayNameProvider.swift */,
 				841974221F6DD804006346C4 /* OPMLRepresentable.swift */,
@@ -297,7 +294,6 @@
 				844BEE7F1F0AB4CA004AB7CD /* Article.swift in Sources */,
 				844BEE7D1F0AB4C4004AB7CD /* Feed.swift in Sources */,
 				841974231F6DD804006346C4 /* OPMLRepresentable.swift in Sources */,
-				844BEE891F0AB4E7004AB7CD /* Notifications.swift in Sources */,
 				844BEE831F0AB4D6004AB7CD /* Attachment.swift in Sources */,
 				8419741C1F6DD613006346C4 /* UnreadCountProvider.swift in Sources */,
 				841974201F6DD672006346C4 /* DisplayNameProvider.swift in Sources */,

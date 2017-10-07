@@ -6,12 +6,12 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>23,26,30,35,43,44,48,54,63</expansionState>
+    <expansionState>23,26,30,35,43,44,46,61,66</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>208</windowTop>
-    <windowLeft>30</windowLeft>
-    <windowRight>762</windowRight>
-    <windowBottom>967</windowBottom>
+    <windowTop>2634</windowTop>
+    <windowLeft>558</windowLeft>
+    <windowRight>1290</windowRight>
+    <windowBottom>3393</windowBottom>
   </head>
   <body>
     <outline text="App">
@@ -70,8 +70,6 @@
     </outline>
     <outline text="Frameworks">
       <outline text="Account">
-        <outline text="Save account settings and feeds to disk"/>
-        <outline text="Read account settings and feeds from disk"/>
         <outline text="Update feed unread counts at startup"/>
       </outline>
       <outline text="Database">
@@ -101,8 +99,6 @@
       </outline>
       <outline text="Data">
         <outline text="Make model classes quicklookable"/>
-        <outline text="Move BatchUpdates.swift somewhere"/>
-        <outline text="Move Notifications.swift somewhere"/>
       </outline>
       <outline text="RSParser">
         <outline text="ParsedItem == should compare all properties"/>
