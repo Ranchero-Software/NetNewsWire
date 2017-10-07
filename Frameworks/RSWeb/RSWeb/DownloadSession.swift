@@ -25,17 +25,17 @@ public protocol DownloadSessionDelegate {
 }
 
 
-@objc public final class DownloadSession: NSObject, URLSessionDataDelegate {
+@objc public final class DownloadSession: NSObject {
 	
 	public var progress = DownloadProgress(numberOfTasks: 0)
 
-	fileprivate var urlSession: URLSession!
-	fileprivate var tasksInProgress = Set<URLSessionTask>()
-	fileprivate var tasksPending = Set<URLSessionTask>()
-	fileprivate var taskIdentifierToInfoDictionary = [Int: DownloadInfo]()
-	fileprivate let representedObjects = NSMutableSet()
-	fileprivate let delegate: DownloadSessionDelegate
-	fileprivate var redirectCache = [String: String]()
+	private var urlSession: URLSession!
+	private var tasksInProgress = Set<URLSessionTask>()
+	private var tasksPending = Set<URLSessionTask>()
+	private var taskIdentifierToInfoDictionary = [Int: DownloadInfo]()
+	private let representedObjects = NSMutableSet()
+	private let delegate: DownloadSessionDelegate
+	private var redirectCache = [String: String]()
 	
 	public init(delegate: DownloadSessionDelegate) {
 		
@@ -52,10 +52,8 @@ public protocol DownloadSessionDelegate {
 		sessionConfiguration.httpCookieStorage = nil
 		sessionConfiguration.urlCache = nil
 
-		if let userAgent = UserAgent.fromInfoPlist() {
-			var headers = [AnyHashable : Any]()
-			headers[HTTPRequestHeader.userAgent] = userAgent
-			sessionConfiguration.httpAdditionalHeaders = headers
+		if let userAgentHeaders = UserAgent.headers() {
+			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
 
 		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)		
@@ -64,9 +62,36 @@ public protocol DownloadSessionDelegate {
 	deinit {
 		urlSession.invalidateAndCancel()
 	}
-	
-	// MARK: URLSessionTaskDelegate
-	
+
+	// MARK: - API
+
+	public func cancel() {
+
+		// TODO
+	}
+
+	public func downloadObjects(_ objects: NSSet) {
+
+		var numberOfTasksAdded = 0
+
+		for oneObject in objects {
+
+			if !representedObjects.contains(oneObject) {
+				representedObjects.add(oneObject)
+				addDataTask(oneObject as AnyObject)
+				numberOfTasksAdded += 1
+			}
+		}
+
+		progress.addToNumberOfTasks(numberOfTasksAdded)
+		updateProgress()
+	}
+}
+
+// MARK: - URLSessionTaskDelegate
+
+extension DownloadSession: URLSessionTaskDelegate {
+
 	public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 		
 		tasksInProgress.remove(task)
@@ -92,9 +117,12 @@ public protocol DownloadSessionDelegate {
 		
 		completionHandler(request)
 	}
-	
-	// MARK: URLSessionDataDelegate
-	
+}
+
+// MARK: - URLSessionDataDelegate
+
+extension DownloadSession: URLSessionDataDelegate {
+
 	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
 		
 		tasksInProgress.insert(dataTask)
@@ -146,30 +174,9 @@ public protocol DownloadSessionDelegate {
 		}
 	}
 		
-	// MARK: API
-	
-	public func cancel() {
-		
-		// TODO
-	}
-
-	public func downloadObjects(_ objects: NSSet) {
-
-		var numberOfTasksAdded = 0
-		
-		for oneObject in objects {
-
-			if !representedObjects.contains(oneObject) {
-				representedObjects.add(oneObject)
-				addDataTask(oneObject as AnyObject)
-				numberOfTasksAdded += 1
-			}
-		}
-		
-		progress.addToNumberOfTasks(numberOfTasksAdded)
-		updateProgress()
-	}
 }
+
+// MARK: - Private
 
 private extension DownloadSession {
 
@@ -274,6 +281,8 @@ private extension DownloadSession {
 		return currentString == urlString ? nil : currentString
 	}
 }
+
+// MARK: - DownloadInfo
 
 private final class DownloadInfo {
 	
