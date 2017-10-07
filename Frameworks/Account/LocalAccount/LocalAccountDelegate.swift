@@ -15,6 +15,6 @@ struct LocalAccountDelegate: AccountDelegate {
 	
 	func refreshAll(for account: Account) {
 
-		// TODO
+		refresher.refreshFeeds(account.flattenedFeeds())
 	}
 }

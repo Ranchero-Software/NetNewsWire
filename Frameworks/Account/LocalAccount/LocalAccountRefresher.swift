@@ -12,7 +12,7 @@ import RSParser
 import RSWeb
 import Data
 
-final class LocalAccountRefresher: DownloadSessionDelegate {
+final class LocalAccountRefresher {
 	
 	private lazy var downloadSession: DownloadSession = {
 		return DownloadSession(delegate: self)
@@ -24,14 +24,17 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 		}
 	}
 	
-	public func refreshFeeds(_ feeds: NSSet) {
-		
-		downloadSession.downloadObjects(feeds)
-	}
+	public func refreshFeeds(_ feeds: Set<Feed>) {
 
-	// MARK: DownloadSessionDelegate
-	
-	public func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject representedObject: AnyObject) -> URLRequest? {
+		downloadSession.downloadObjects(feeds as NSSet)
+	}
+}
+
+// MARK: - DownloadSessionDelegate
+
+extension LocalAccountRefresher: DownloadSessionDelegate {
+
+	func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject representedObject: AnyObject) -> URLRequest? {
 		
 		guard let feed = representedObject as? Feed else {
 			return nil
@@ -49,7 +52,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 		return request as URLRequest
 	}
 	
-	public func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?) {
+	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?) {
 		
 		guard let feed = representedObject as? Feed, !data.isEmpty else {
 			return
@@ -83,7 +86,7 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 		}
 	}
 	
-	public func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
+	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
 		
 		guard let feed = representedObject as? Feed else {
 			return false
@@ -106,22 +109,24 @@ final class LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse response: URLResponse, representedObject: AnyObject) {
 
-//		guard let feed = representedObject as? LocalFeed else {
-//			return
-//		}
-//
-//		print("Unexpected response \(response) for \(feed.url).")
+		guard let feed = representedObject as? Feed else {
+			return
+		}
+
+		print("Unexpected response \(response) for \(feed.url).")
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
 
-//		guard let feed = representedObject as? LocalFeed else {
-//			return
-//		}
-//
-//		print("Not modified response for \(feed.url).")
+		guard let feed = representedObject as? Feed else {
+			return
+		}
+
+		print("Not modified response for \(feed.url).")
 	}
 }
+
+// MARK: - Utility
 
 private extension Data {
 	
