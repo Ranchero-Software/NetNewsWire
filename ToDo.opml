@@ -15,7 +15,7 @@
   </head>
   <body>
     <outline text="App">
-      <outline text="Make Refresh button work"/>
+      <outline text="Parse feeds on refresh"/>
       <outline text="Update Sparkle"/>
       <outline text="Use new app icon"/>
       <outline text="Set -NSApplicationCrashOnExceptions YES"/>

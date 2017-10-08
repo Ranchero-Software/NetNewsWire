@@ -13,10 +13,8 @@ public protocol AccountDelegate {
 
 	// Local account does not; some synced accounts might.
 	var supportsSubFolders: Bool { get }
+	
 	var refreshProgress: DownloadProgress { get }
 
-	init(account: Account)
-	
-	func refreshAll()
-
+	func refreshAll(for: Account)
 }

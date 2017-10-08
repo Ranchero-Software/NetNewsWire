@@ -40,6 +40,7 @@ public final class Account: DisplayNameProvider, Hashable {
 	let settingsFile: String
 	let dataFolder: String
 	let database: Database
+	let delegate: AccountDelegate
 	var topLevelObjects = [AnyObject]()
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
@@ -75,20 +76,11 @@ public final class Account: DisplayNameProvider, Hashable {
 		}
 	}
 
-	public lazy var delegate: AccountDelegate! = {
+	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
 
 		// TODO: support various syncing systems.
-
-		switch type {
-
-		case .onMyMac:
-			return LocalAccountDelegate(account: self)
-		default:
-			return nil
-		}
-	}()
-
-	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
+		precondition(type == .onMyMac)
+		self.delegate = LocalAccountDelegate()
 
 		self.accountID = accountID
 		self.type = type
@@ -99,6 +91,8 @@ public final class Account: DisplayNameProvider, Hashable {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
 		self.database = Database(databaseFilePath: databaseFilePath, accountID: accountID)
 
+		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
+
 		pullObjectsFromDisk()
 	}
 	
@@ -106,7 +100,7 @@ public final class Account: DisplayNameProvider, Hashable {
 
 	public func refreshAll() {
 
-		delegate.refreshAll()
+		delegate.refreshAll(for: self)
 	}
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: RSVoidCompletionBlock) {
@@ -189,9 +183,13 @@ public final class Account: DisplayNameProvider, Hashable {
 		// TODO
 	}
 
-	// MARK: - For use by delegate
+	// MARK: - Notifications
 
-	func noteProgressDidChange() {
+	@objc func downloadProgressDidChange(_ note: Notification) {
+
+		guard let noteObject = note.object as? DownloadProgress, noteObject === refreshProgress else {
+			return
+		}
 
 		refreshInProgress = refreshProgress.numberRemaining > 0
 		NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)

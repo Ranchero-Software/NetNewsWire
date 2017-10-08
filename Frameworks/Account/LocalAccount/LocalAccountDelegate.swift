@@ -13,7 +13,6 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	let supportsSubFolders = false
 	private let refresher = LocalAccountRefresher()
-	private weak var account: Account?
 
 	var refreshProgress: DownloadProgress {
 		get {
@@ -21,26 +20,8 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	init(account: Account) {
+	func refreshAll(for account: Account) {
 
-		self.account = account
-		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: refresher.progress)
-	}
-	
-	func refreshAll() {
-
-		guard let account = account else {
-			return
-		}
-
-		account.refreshInProgress = true
 		refresher.refreshFeeds(account.flattenedFeeds())
-	}
-
-	// MARK: - Notifications
-
-	@objc func downloadProgressDidChange(_ note: Notification) {
-
-		account?.noteProgressDidChange()
 	}
 }
