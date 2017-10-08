@@ -201,11 +201,11 @@ private final class StatusCache {
 	subscript(_ articleID: String) -> ArticleStatus? {
 		get {
 			assert(!Thread.isMainThread)
-			return self[articleID]
+			return dictionary[articleID]
 		}
 		set {
 			assert(!Thread.isMainThread)
-			self[articleID] = newValue
+			dictionary[articleID] = newValue
 		}
 	}
 }

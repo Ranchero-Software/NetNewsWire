@@ -113,6 +113,10 @@ private extension DatabaseLookupTable {
 	
 	func updateRelationships(for objects: [DatabaseObject], _ database: FMDatabase) {
 
+		if objects.isEmpty {
+			return
+		}
+		
 		if let lookupTable = fetchRelatedObjectIDsMap(objects.databaseIDs(), database) {
 			for object in objects {
 				syncRelatedObjectsAndLookupTable(object, lookupTable, database)

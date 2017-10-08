@@ -18,6 +18,7 @@ public extension Notification.Name {
 	public static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
 	public static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
 	public static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
+	public static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 }
 
 public enum AccountType: Int {
@@ -32,6 +33,11 @@ public enum AccountType: Int {
 }
 
 public final class Account: DisplayNameProvider, Container, Hashable {
+
+	public struct UserInfoKey { // Used by AccountDidDownloadArticles.
+		public static let newArticles = "newArticles"
+		public static let updatedArticles = "updatedArticles"
+	}
 
 	public let accountID: String
 	public let type: AccountType
@@ -126,9 +132,23 @@ public final class Account: DisplayNameProvider, Container, Hashable {
 		delegate.refreshAll(for: self)
 	}
 
-	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: RSVoidCompletionBlock) {
+	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
 
-		completion()
+		database.update(feed: feed, parsedFeed: parsedFeed) { (newArticles, updatedArticles) in
+
+			var userInfo = [String: Any]()
+			if let newArticles = newArticles, !newArticles.isEmpty {
+				self.updateUnreadCounts(for: Set([feed]))
+				userInfo[UserInfoKey.newArticles] = newArticles
+			}
+			if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
+				userInfo[UserInfoKey.updatedArticles] = updatedArticles
+			}
+
+			completion()
+
+			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo.isEmpty ? nil : userInfo)
+		}
 	}
 
 	public func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
@@ -208,6 +228,18 @@ public final class Account: DisplayNameProvider, Container, Hashable {
 		}
 		importOPMLItems(children, parentFolder: nil, foldersAllowed: true)
 		dirty = true
+	}
+
+	public func updateUnreadCounts(for feeds: Set<Feed>) {
+
+		database.fetchUnreadCounts(for: feeds) { (unreadCountDictionary) in
+
+			for feed in feeds {
+				if let unreadCount = unreadCountDictionary[feed] {
+					feed.unreadCount = unreadCount
+				}
+			}
+		}
 	}
 
 	// MARK: - Notifications
