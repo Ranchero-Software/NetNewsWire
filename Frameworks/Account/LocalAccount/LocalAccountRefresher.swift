@@ -119,11 +119,11 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
 
-		guard let feed = representedObject as? Feed else {
-			return
-		}
-
-		print("Not modified response for \(feed.url).")
+//		guard let feed = representedObject as? Feed else {
+//			return
+//		}
+//
+//		print("Not modified response for \(feed.url).")
 	}
 }
 
