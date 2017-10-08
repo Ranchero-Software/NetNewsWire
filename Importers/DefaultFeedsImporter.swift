@@ -49,6 +49,7 @@ struct FeedsImporter {
 				}
 			}
 		}
+		account.dirty = true
 	}
 	
 	private static func feeds(with feedDictionaries: [DiskFeedDictionary], accountID: String) -> Set<Feed> {
