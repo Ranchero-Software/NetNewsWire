@@ -29,12 +29,11 @@ private extension FolderTreeControllerDelegate {
 
 		var folderNodes = [Node]()
 
-		let _ = AccountManager.shared.localAccount.visitChildren { (oneRepresentedObject) in
+		for oneRepresentedObject in AccountManager.shared.localAccount.children {
 
 			if let folder = oneRepresentedObject as? Folder {
 				folderNodes += [createNode(folder, parent: node)]
 			}
-			return false
 		}
 
 		return Node.nodesSortedAlphabetically(folderNodes)

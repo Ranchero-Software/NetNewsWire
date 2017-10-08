@@ -31,22 +31,22 @@ public enum AccountType: Int {
 	// TODO: more
 }
 
-public final class Account: DisplayNameProvider, Hashable {
+public final class Account: DisplayNameProvider, Container, Hashable {
 
 	public let accountID: String
 	public let type: AccountType
 	public var nameForDisplay = ""
 	public let hashValue: Int
+	public var children = [AnyObject]()
 	let settingsFile: String
 	let dataFolder: String
 	let database: Database
 	let delegate: AccountDelegate
-	var topLevelObjects = [AnyObject]()
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
 	var saveTimer: Timer?
 
-	var dirty = false {
+	public var dirty = false {
 		didSet {
 
 			if refreshInProgress {
@@ -164,7 +164,7 @@ public final class Account: DisplayNameProvider, Hashable {
 		}
 		else {
 			if !topLevelObjectsContainsFeed(uniquedFeed) {
-				topLevelObjects += [uniquedFeed]
+				children += [uniquedFeed]
 			}
 			didAddFeed = true
 		}
@@ -202,8 +202,12 @@ public final class Account: DisplayNameProvider, Hashable {
 	}
 
 	public func importOPML(_ opmlDocument: RSOPMLDocument) {
-	
-		// TODO
+
+		guard let children = opmlDocument.children else {
+			return
+		}
+		importOPMLItems(children, parentFolder: nil, foldersAllowed: true)
+		dirty = true
 	}
 
 	// MARK: - Notifications
@@ -262,13 +266,13 @@ private extension Account {
 		guard let childrenArray = d[Key.children] as? [[String: Any]] else {
 			return
 		}
-		topLevelObjects = objects(with: childrenArray)
+		children = objects(with: childrenArray)
 		updateFeedIDDictionary()
 	}
 
 	func diskDictionary() -> NSDictionary {
 
-		let diskObjects = topLevelObjects.flatMap { (object) -> [String: Any]? in
+		let diskObjects = children.flatMap { (object) -> [String: Any]? in
 
 			if let folder = object as? Folder {
 				return folder.dictionary
@@ -341,7 +345,7 @@ private extension Account {
 	
 	func topLevelObjectsContainsFeed(_ feed: Feed) -> Bool {
 		
-		return topLevelObjects.contains(where: { (object) -> Bool in
+		return children.contains(where: { (object) -> Bool in
 			if let oneFeed = object as? Feed {
 				if oneFeed.feedID == feed.feedID {
 					return true
@@ -349,6 +353,26 @@ private extension Account {
 			}
 			return false
 		})
+	}
+
+	func importOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?, foldersAllowed: Bool) {
+
+		for item in items {
+
+			if let feedSpecifier = item.feedSpecifier {
+				if hasFeed(withURL: feedSpecifier.feedURL) {
+					continue
+				}
+
+			}
+
+			if item.isFolder {
+
+			}
+			else {
+
+			}
+		}
 	}
 }
 
@@ -359,7 +383,7 @@ extension Account: OPMLRepresentable {
 	public func OPMLString(indentLevel: Int) -> String {
 
 		var s = ""
-		for oneObject in topLevelObjects {
+		for oneObject in children {
 			if let oneOPMLObject = oneObject as? OPMLRepresentable {
 				s += oneOPMLObject.OPMLString(indentLevel: indentLevel + 1)
 			}

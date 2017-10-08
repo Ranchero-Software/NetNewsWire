@@ -18,7 +18,7 @@ func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
 	
 	d.keys.forEach { (accountID) in
 		
-		guard let accountArticles = d[accountID], let account = accountWithID(accountID) else {
+		guard let accountArticles = d[accountID], let account = AccountManager.shared.existingAccount(with: accountID) else {
 			return
 		}
 		

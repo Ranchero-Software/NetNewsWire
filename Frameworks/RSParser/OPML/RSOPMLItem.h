@@ -18,7 +18,7 @@
 
 - (void)addChild:(RSOPMLItem *)child;
 
-@property (nonatomic, readonly) RSOPMLFeedSpecifier *OPMLFeedSpecifier; //May be nil.
+@property (nonatomic, readonly) RSOPMLFeedSpecifier *feedSpecifier; //May be nil.
 
 @property (nonatomic, readonly) NSString *titleFromAttributes; //May be nil.
 @property (nonatomic, readonly) BOOL isFolder;

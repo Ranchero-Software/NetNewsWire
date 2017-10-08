@@ -198,12 +198,6 @@ private func accountFilePathWithFolder(_ folderPath: String) -> String {
 	return NSString(string: folderPath).appendingPathComponent(accountDataFileName)
 }
 
-public func accountWithID(_ accountID: String) -> Account? {
-
-	// Shortcut.
-	return AccountManager.shared.existingAccount(with: accountID)
-}
-
 private struct AccountSpecifier {
 
 	let type: String

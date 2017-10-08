@@ -22,7 +22,7 @@
 @implementation RSOPMLItem
 
 @synthesize children = _children;
-@synthesize OPMLFeedSpecifier = _OPMLFeedSpecifier;
+@synthesize feedSpecifier = _feedSpecifier;
 
 
 - (NSArray *)children {
@@ -48,10 +48,10 @@
 }
 
 
-- (RSOPMLFeedSpecifier *)OPMLFeedSpecifier {
+- (RSOPMLFeedSpecifier *)feedSpecifier {
 
-	if (_OPMLFeedSpecifier) {
-		return _OPMLFeedSpecifier;
+	if (_feedSpecifier) {
+		return _feedSpecifier;
 	}
 
 	NSString *feedURL = self.attributes.opml_xmlUrl;
@@ -59,9 +59,9 @@
 		return nil;
 	}
 
-	_OPMLFeedSpecifier = [[RSOPMLFeedSpecifier alloc] initWithTitle:self.attributes.opml_title feedDescription:self.attributes.opml_description homePageURL:self.attributes.opml_htmlUrl feedURL:feedURL];
+	_feedSpecifier = [[RSOPMLFeedSpecifier alloc] initWithTitle:self.attributes.opml_title feedDescription:self.attributes.opml_description homePageURL:self.attributes.opml_htmlUrl feedURL:feedURL];
 
-	return _OPMLFeedSpecifier;
+	return _feedSpecifier;
 }
 
 - (NSString *)titleFromAttributes {

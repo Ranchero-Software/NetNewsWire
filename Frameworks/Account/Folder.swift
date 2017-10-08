@@ -9,10 +9,10 @@
 import Foundation
 import Data
 
-public final class Folder: DisplayNameProvider, UnreadCountProvider {
+public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 
 	public let account: Account
-	var children = [AnyObject]()
+	public var children = [AnyObject]()
 	var name: String?
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 
@@ -180,13 +180,11 @@ extension Folder: OPMLRepresentable {
 
 		var hasAtLeastOneChild = false
 
-		let _ = visitChildren { (oneChild) -> Bool in
-
-			if let oneOPMLObject = oneChild as? OPMLRepresentable {
-				s += oneOPMLObject.OPMLString(indentLevel: indentLevel + 1)
+		for child in children  {
+			if let opmlObject = child as? OPMLRepresentable {
+				s += opmlObject.OPMLString(indentLevel: indentLevel + 1)
 				hasAtLeastOneChild = true
 			}
-			return false
 		}
 
 		if !hasAtLeastOneChild {

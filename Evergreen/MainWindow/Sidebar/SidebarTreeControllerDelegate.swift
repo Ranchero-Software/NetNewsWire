@@ -34,22 +34,19 @@ private extension SidebarTreeControllerDelegate {
 		// This will be expanded later to add synthetic feeds (All Unread, for instance).
 		
 		var updatedChildNodes = [Node]()
-		
-		let _ = AccountManager.shared.localAccount.visitChildren { (oneRepresentedObject) in
-			
-			if let existingNode = node.childNodeRepresentingObject(oneRepresentedObject as AnyObject) {
+
+		for oneRepresentedObject in AccountManager.shared.localAccount.children {
+
+			if let existingNode = node.childNodeRepresentingObject(oneRepresentedObject) {
 				// Reuse nodes.
 				if !updatedChildNodes.contains(existingNode) {
 					updatedChildNodes += [existingNode]
-					return false
 				}
 			}
 			
 			if let newNode = createNode(representedObject: oneRepresentedObject as AnyObject, parent: node) {
 				updatedChildNodes += [newNode]
 			}
-			
-			return false
 		}
 
 		updatedChildNodes = Node.nodesSortedAlphabeticallyWithFoldersAtEnd(updatedChildNodes)
@@ -60,28 +57,25 @@ private extension SidebarTreeControllerDelegate {
 		
 		var updatedChildNodes = [Node]()
 		let folder = node.representedObject as! Folder
-		
-		let _ = folder.visitChildren { (oneRepresentedObject) -> Bool in
-			
+
+		for oneRepresentedObject in folder.children {
+
 			if let existingNode = node.childNodeRepresentingObject(oneRepresentedObject) {
 				if !updatedChildNodes.contains(existingNode) {
 					updatedChildNodes += [existingNode]
 				}
-				return false
 			}
 			
 			if let newNode = self.createNode(representedObject: oneRepresentedObject, parent: node) {
 				updatedChildNodes += [newNode]
 			}
-			
-			return false
 		}
 		
 		updatedChildNodes = Node.nodesSortedAlphabeticallyWithFoldersAtEnd(updatedChildNodes)
 		return updatedChildNodes
 	}
 	
-	func createNode(representedObject: AnyObject, parent: Node) -> Node? {
+	func createNode(representedObject: Any, parent: Node) -> Node? {
 		
 		if let feed = representedObject as? Feed {
 			return createNode(feed: feed, parent: parent)
