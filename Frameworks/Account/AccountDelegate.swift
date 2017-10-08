@@ -7,11 +7,13 @@
 //
 
 import Foundation
+import RSWeb
 
 public protocol AccountDelegate {
 
 	// Local account does not; some synced accounts might.
 	var supportsSubFolders: Bool { get }
+	var refreshProgress: DownloadProgress { get }
 
 	init(account: Account)
 	

@@ -11,11 +11,13 @@ import RSCore
 import Data
 import RSParser
 import Database
+import RSWeb
 
 public extension Notification.Name {
 
 	public static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
 	public static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
+	public static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
 }
 
 public enum AccountType: Int {
@@ -49,9 +51,15 @@ public final class Account: DisplayNameProvider, Hashable {
 					NotificationCenter.default.post(name: .AccountRefreshDidBegin, object: self)
 				}
 				else {
-					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
+					NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
 				}
 			}
+		}
+	}
+
+	var refreshProgress: DownloadProgress {
+		get {
+			return delegate.refreshProgress
 		}
 	}
 
@@ -180,7 +188,15 @@ public final class Account: DisplayNameProvider, Hashable {
 	
 		// TODO
 	}
-	
+
+	// MARK: - For use by delegate
+
+	func noteProgressDidChange() {
+
+		refreshInProgress = refreshProgress.numberRemaining > 0
+		NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
+	}
+
 	// MARK: - Equatable
 
 	public class func ==(lhs: Account, rhs: Account) -> Bool {

@@ -52,7 +52,14 @@ public final class AccountManager: UnreadCountProvider {
 			return false
 		}
 	}
-	
+
+	public var combinedRefreshProgress: CombinedRefreshProgress {
+		get {
+			let downloadProgressArray = accounts.map { $0.refreshProgress }
+			return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
+		}
+	}
+
 	public init() {
 
 		// The local "On My Mac" account must always exist, even if it's empty.

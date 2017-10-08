@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSWeb
 
 final class LocalAccountDelegate: AccountDelegate {
 
@@ -14,6 +15,12 @@ final class LocalAccountDelegate: AccountDelegate {
 	private let refresher = LocalAccountRefresher()
 	private weak var account: Account?
 
+	var refreshProgress: DownloadProgress {
+		get {
+			return refresher.progress
+		}
+	}
+	
 	init(account: Account) {
 
 		self.account = account
@@ -34,11 +41,6 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	@objc func downloadProgressDidChange(_ note: Notification) {
 
-		if refresher.progress.numberRemaining < 1 {
-			account?.refreshInProgress = false
-		}
-		else {
-			account?.refreshInProgress = true
-		}
+		account?.noteProgressDidChange()
 	}
 }

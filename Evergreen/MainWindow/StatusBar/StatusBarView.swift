@@ -10,6 +10,7 @@ import Cocoa
 import RSCore
 import Data
 import RSWeb
+import Account
 
 final class StatusBarView: NSView {
 
@@ -36,7 +37,7 @@ final class StatusBarView: NSView {
 		progressLabel.font = NSFont.monospacedDigitSystemFont(ofSize: progressLabelFontSize, weight: NSFont.Weight.regular)
 		progressLabel.stringValue = ""		
 		
-//		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange(_:)), name: .TimelineSelectionDidChange, object: nil)
 	}
@@ -45,11 +46,9 @@ final class StatusBarView: NSView {
 
 	@objc dynamic func progressDidChange(_ notification: Notification) {
 
-//		guard let progress = notification.userInfo?[progressKey] as? DownloadProgress else {
-//			return
-//		}
-//		updateProgressIndicator(progress)
-//		updateProgressLabel(progress)
+		let progress = AccountManager.shared.combinedRefreshProgress
+		updateProgressIndicator(progress)
+		updateProgressLabel(progress)
 	}
 
 	// MARK: Notifications
@@ -120,7 +119,7 @@ private extension StatusBarView {
 		progressIndicator.startAnimation(self)
 	}
 
-	func updateProgressIndicator(_ progress: DownloadProgress) {
+	func updateProgressIndicator(_ progress: CombinedRefreshProgress) {
 
 		if progress.isComplete {
 			stopProgressIfNeeded()
@@ -140,7 +139,7 @@ private extension StatusBarView {
 		}
 	}
 
-	func updateProgressLabel(_ progress: DownloadProgress) {
+	func updateProgressLabel(_ progress: CombinedRefreshProgress) {
 
 		if progress.isComplete {
 			progressLabel.stringValue = ""
