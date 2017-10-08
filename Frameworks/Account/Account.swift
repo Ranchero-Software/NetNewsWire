@@ -70,7 +70,7 @@ public final class Account: DisplayNameProvider, Hashable {
 					NotificationCenter.default.post(name: .AccountRefreshDidBegin, object: self)
 				}
 				else {
-					NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
+					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
 				}
 			}
 		}
