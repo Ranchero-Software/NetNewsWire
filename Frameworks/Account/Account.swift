@@ -44,6 +44,24 @@ public final class Account: DisplayNameProvider, Hashable {
 	var topLevelObjects = [AnyObject]()
 	var feedIDDictionary = [String: Feed]()
 	var username: String?
+	var saveTimer: Timer?
+
+	private var dirty = false {
+		didSet {
+			if dirty {
+				saveTimer?.rs_invalidateIfValid()
+				saveTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { (timer) in
+					self.saveToDiskIfNeeded()
+					timer.rs_invalidateIfValid()
+					self.saveTimer = nil
+				}
+			}
+			else if !dirty {
+				saveTimer?.rs_invalidateIfValid()
+				saveTimer = nil
+			}
+		}
+	}
 
 	var refreshInProgress = false {
 		didSet {
@@ -236,6 +254,44 @@ extension Account {
 			return Feed(accountID: accountID, dictionary: diskObject)
 		}
 		return Folder(account: self, dictionary: diskObject)
+	}
+
+	func saveToDiskIfNeeded() {
+
+		if dirty {
+			saveToDisk()
+		}
+	}
+
+	private func diskDictionary() -> NSDictionary {
+
+		let diskObjects = topLevelObjects.flatMap { (object) -> [String: Any]? in
+
+			if let folder = object as? Folder {
+				return folder.dictionary
+			}
+			else if let feed = object as? Feed {
+				return feed.dictionary
+			}
+			return nil
+		}
+
+		var d = [String: Any]()
+		d[Key.children] = diskObjects as NSArray
+		return d as NSDictionary
+	}
+
+	func saveToDisk() {
+
+		let d = diskDictionary()
+		do {
+			try RSPlist.write(d, filePath: settingsFile)
+		}
+		catch let error as NSError {
+			NSApplication.shared.presentError(error)
+		}
+
+		dirty = false
 	}
 }
 
