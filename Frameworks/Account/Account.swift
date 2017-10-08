@@ -105,7 +105,7 @@ public final class Account: DisplayNameProvider, Hashable {
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: RSVoidCompletionBlock) {
 
-		// TODO
+		completion()
 	}
 
 	public func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
