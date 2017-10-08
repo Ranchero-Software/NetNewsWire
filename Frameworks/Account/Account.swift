@@ -49,16 +49,10 @@ public final class Account: DisplayNameProvider, Hashable {
 	private var dirty = false {
 		didSet {
 			if dirty {
-				saveTimer?.rs_invalidateIfValid()
-				saveTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { (timer) in
-					self.saveToDiskIfNeeded()
-					timer.rs_invalidateIfValid()
-					self.saveTimer = nil
-				}
+				resetSaveTimer()
 			}
-			else if !dirty {
-				saveTimer?.rs_invalidateIfValid()
-				saveTimer = nil
+			else {
+				removeSaveTimer()
 			}
 		}
 	}
@@ -222,12 +216,30 @@ public final class Account: DisplayNameProvider, Hashable {
 }
 
 
-// MARK: - Disk
+// MARK: - Disk (Public)
 
 extension Account {
+
+	func objects(with diskObjects: [[String: Any]]) -> [AnyObject] {
+
+		return diskObjects.flatMap { object(with: $0) }
+	}
+}
+
+// MARK: - Disk (Private)
+
+private extension Account {
 	
-	private struct Key {
+	struct Key {
 		static let children = "children"
+	}
+
+	func object(with diskObject: [String: Any]) -> AnyObject? {
+
+		if Feed.isFeedDictionary(diskObject) {
+			return Feed(accountID: accountID, dictionary: diskObject)
+		}
+		return Folder(account: self, dictionary: diskObject)
 	}
 
 	func pullObjectsFromDisk() {
@@ -243,27 +255,7 @@ extension Account {
 		updateFeedIDDictionary()
 	}
 
-	func objects(with diskObjects: [[String: Any]]) -> [AnyObject] {
-
-		return diskObjects.flatMap { object(with: $0) }
-	}
-
-	func object(with diskObject: [String: Any]) -> AnyObject? {
-
-		if Feed.isFeedDictionary(diskObject) {
-			return Feed(accountID: accountID, dictionary: diskObject)
-		}
-		return Folder(account: self, dictionary: diskObject)
-	}
-
-	func saveToDiskIfNeeded() {
-
-		if dirty {
-			saveToDisk()
-		}
-	}
-
-	private func diskDictionary() -> NSDictionary {
+	func diskDictionary() -> NSDictionary {
 
 		let diskObjects = topLevelObjects.flatMap { (object) -> [String: Any]? in
 
@@ -281,6 +273,21 @@ extension Account {
 		return d as NSDictionary
 	}
 
+	func saveToDiskIfNeeded() {
+
+		if !dirty {
+			return
+		}
+
+		if refreshInProgress {
+			resetSaveTimer()
+			return
+		}
+
+		saveToDisk()
+		dirty = false
+	}
+
 	func saveToDisk() {
 
 		let d = diskDictionary()
@@ -290,8 +297,21 @@ extension Account {
 		catch let error as NSError {
 			NSApplication.shared.presentError(error)
 		}
+	}
 
-		dirty = false
+	func resetSaveTimer() {
+
+		saveTimer?.rs_invalidateIfValid()
+
+		saveTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { (timer) in
+			self.saveToDiskIfNeeded()
+		}
+	}
+
+	func removeSaveTimer() {
+
+		saveTimer?.rs_invalidateIfValid()
+		saveTimer = nil
 	}
 }
 
