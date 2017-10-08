@@ -82,6 +82,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 				}
 				
 				feed.contentHash = dataHash
+				feed.account?.dirty = true
 			}
 		}
 	}
