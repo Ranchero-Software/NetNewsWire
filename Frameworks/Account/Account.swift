@@ -46,8 +46,16 @@ public final class Account: DisplayNameProvider, Hashable {
 	var username: String?
 	var saveTimer: Timer?
 
-	private var dirty = false {
+	var dirty = false {
 		didSet {
+
+			if refreshInProgress {
+				if let _ = saveTimer {
+					removeSaveTimer()
+				}
+				return
+			}
+
 			if dirty {
 				resetSaveTimer()
 			}
@@ -65,6 +73,9 @@ public final class Account: DisplayNameProvider, Hashable {
 				}
 				else {
 					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
+					if dirty {
+						resetSaveTimer()
+					}
 				}
 			}
 		}
