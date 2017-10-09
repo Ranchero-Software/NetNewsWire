@@ -377,7 +377,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	private func articleComparator(_ article1: Article, article2: Article) -> Bool {
 
-		return article1.logicalDatePublished < article2.logicalDatePublished
+		return article1.logicalDatePublished > article2.logicalDatePublished
 	}
 
 	private func articlesSortedByDate(_ articles: Set<Article>) -> [Article] {
