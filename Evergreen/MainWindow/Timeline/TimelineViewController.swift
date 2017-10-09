@@ -367,64 +367,46 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	private func articleComparator(_ article1: Article, article2: Article) -> Bool {
 
-		return article1.logicalDatePublished.compare(article2.logicalDatePublished) == .orderedDescending
+		return article1.logicalDatePublished < article2.logicalDatePublished
 	}
 
+	private func articlesSortedByDate(_ articles: Set<Article>) -> [Article] {
+		
+		return Array(articles).sorted(by: articleComparator)
+	}
+	
 	// MARK: Fetching Articles
 
+	private func emptyTheTimeline() {
+		
+		if !articles.isEmpty {
+			articles = [Article]()
+		}
+	}
+	
 	private func fetchArticles() {
 
-//		guard let representedObjects = representedObjects else {
-//			if !articles.isEmpty {
-//				articles = [Article]()
-//			}
-//			return
-//		}
-//		
-//		var accountsDictionary = [String: [AnyObject]]()
-//
-//		func addToAccountArray(accountID: String, object: AnyObject) {
-//
-//			if let accountArray = accountsDictionary[accountID] {
-//				if !accountArray.contains(where: { $0 === object }) {
-//					accountsDictionary[accountID] = accountArray + [object]
-//				}
-//			}
-//			else {
-//				accountsDictionary[accountID] = [object]
-//			}
-//		}
-//
-//		for oneObject in representedObjects {
-//
-//			if let oneFeed = oneObject as? Feed {
-//				addToAccountArray(accountID: oneFeed.account.accountID, object: oneFeed)
-//			}
-//			else if let oneFolder = oneObject as? Folder, let accountID = oneFolder.account?.accountID {
-//				addToAccountArray(accountID: accountID, object: oneFolder)
-//			}
-//		}
-//
-//		var fetchedArticles = [Article]()
-//		for (accountID, objects) in accountsDictionary {
-//
-//			guard let oneAccount = accountWithID(accountID) else {
-//				continue
-//			}
-//
-//			let oneFetchedArticles = oneAccount.fetchArticles(for: objects)
-//			for oneFetchedArticle in oneFetchedArticles {
-//				if !fetchedArticles.contains(where: { $0 === oneFetchedArticle }) {
-//					fetchedArticles += [oneFetchedArticle]
-//				}
-//			}
-//		}
-//
-//		fetchedArticles.sort(by: articleComparator)
-//
-//		if articles != fetchedArticles {
-//			articles = fetchedArticles
-//		}			
+		guard let representedObjects = representedObjects else {
+			emptyTheTimeline()
+			return
+		}
+		
+		var fetchedArticles = Set<Article>()
+		
+		for object in representedObjects {
+			
+			if let feed = object as? Feed {
+				fetchedArticles.formUnion(feed.fetchArticles())
+			}
+			else if let folder = object as? Folder {
+				fetchedArticles.formUnion(folder.fetchArticles())
+			}
+		}
+		
+		let sortedArticles = articlesSortedByDate(fetchedArticles)
+		if articles != sortedArticles {
+			articles = sortedArticles
+		}
 	}
 	
 	// MARK: Cell Configuring

@@ -11,10 +11,19 @@ import Data
 
 public extension Feed {
 
-	var account: Account? {
+	public var account: Account? {
 		get {
 			return AccountManager.shared.existingAccount(with: accountID)
 		}
+	}
+	
+	public func fetchArticles() -> Set<Article> {
+	
+		guard let account = account else {
+			assertionFailure("Expected feed.account.")
+			return Set<Article>()
+		}
+		return account.fetchArticles(for: self)
 	}
 }
 

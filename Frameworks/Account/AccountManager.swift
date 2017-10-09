@@ -208,16 +208,20 @@ private struct AccountSpecifier {
 
 	init?(folderPath: String) {
 
-		self.folderPath = folderPath
-		self.folderName = NSString(string: folderPath).lastPathComponent
-
-		let nameComponents = self.folderName.components(separatedBy: "-")
-		let satisfyCompilerFolderName = self.folderName
-		assert(nameComponents.count == 2, "Can’t determine account info from \(satisfyCompilerFolderName)")
+		if !FileManager.default.rs_fileIsFolder(folderPath) {
+			return nil
+		}
+		let name = NSString(string: folderPath).lastPathComponent
+		if name.hasPrefix(".") {
+			return nil
+		}
+		let nameComponents = name.components(separatedBy: "-")
 		if nameComponents.count != 2 {
 			return nil
 		}
 
+		self.folderPath = folderPath
+		self.folderName = name
 		self.type = nameComponents[0]
 		self.identifier = nameComponents[1]
 

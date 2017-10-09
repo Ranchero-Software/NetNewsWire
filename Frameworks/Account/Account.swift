@@ -242,6 +242,16 @@ public final class Account: DisplayNameProvider, Container, Hashable {
 		}
 	}
 
+	public func fetchArticles(for feed: Feed) -> Set<Article> {
+		
+		return database.fetchArticles(for: feed)
+	}
+	
+	public func fetchArticles(folder: Folder) -> Set<Article> {
+		
+		return database.fetchUnreadArticles(for: folder.flattenedFeeds())
+	}
+	
 	// MARK: - Notifications
 
 	@objc func downloadProgressDidChange(_ note: Notification) {

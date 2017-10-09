@@ -16,6 +16,13 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 	var name: String?
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 
+	// MARK: - Fetching Articles
+	
+	public func fetchArticles() -> Set<Article> {
+		
+		return account.fetchArticles(folder: self)
+	}
+	
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {
