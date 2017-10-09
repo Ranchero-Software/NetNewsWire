@@ -39,7 +39,9 @@ public final class Account: DisplayNameProvider, Container, Hashable {
 	public struct UserInfoKey {
 		public static let newArticles = "newArticles" // AccountDidDownloadArticles
 		public static let updatedArticles = "updatedArticles" // AccountDidDownloadArticles
-		public static let statuses = "statuses" // ArticleStatusesDidChange
+		public static let statuses = "statuses" // StatusesDidChange
+		public static let articles = "articles" // StatusesDidChange
+		public static let feeds = "feeds" // StatusesDidChange
 	}
 
 	public let accountID: String
@@ -157,7 +159,12 @@ public final class Account: DisplayNameProvider, Container, Hashable {
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
 	
 		if let updatedStatuses = database.mark(articles, statusKey: statusKey, flag: flag) {
-			NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: updatedStatuses])
+			
+			let updatedArticleIDs = updatedStatuses.articleIDs()
+			let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
+			let updatedFeeds = Set(articles.flatMap{ $0.feed })
+			
+			NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: updatedStatuses, UserInfoKey.articles: updatedArticles, UserInfoKey.feeds: updatedFeeds])
 		}
 	}
 	

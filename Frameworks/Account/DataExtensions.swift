@@ -29,9 +29,15 @@ public extension Feed {
 
 public extension Article {
 
-	var account: Account? {
+	public var account: Account? {
 		get {
 			return AccountManager.shared.existingAccount(with: accountID)
+		}
+	}
+	
+	public var feed: Feed? {
+		get {
+			return account?.existingFeed(with: feedID)
 		}
 	}
 }
