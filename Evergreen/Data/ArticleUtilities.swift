@@ -12,13 +12,13 @@ import Account
 
 // These handle multiple accounts.
 
-func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
+func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
 	
 	let d: [String: Set<Article>] = accountAndArticlesDictionary(articles)
 	
-	d.keys.forEach { (accountID) in
+	for (accountID, accountArticles) in d {
 		
-		guard let accountArticles = d[accountID], let account = AccountManager.shared.existingAccount(with: accountID) else {
+		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
 			return
 		}
 		
@@ -27,18 +27,9 @@ func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
 }
 
 private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: Set<Article>] {
-    
-    var d = [String: Set<Article>]()
 	
-	articles.forEach { (article) in
-
-		let accountID = article.accountID
-		var articleSet: Set<Article> = d[accountID] ?? Set<Article>()
-		articleSet.insert(article)
-		d[accountID] = articleSet
-	}
-
-    return d
+	let d = Dictionary(grouping: articles, by: { $0.accountID })
+	return d.mapValues{ Set($0) }
 }
 
 extension Article {

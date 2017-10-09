@@ -45,10 +45,3 @@ extension ArticleStatus: DatabaseObject {
 	}
 }
 
-extension Set where Element == ArticleStatus {
-
-	func articleIDs() -> Set<String> {
-
-		return Set<String>(map { $0.articleID })
-	}
-}

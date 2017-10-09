@@ -50,7 +50,7 @@ final class StatusesTable: DatabaseTable {
 
 	// MARK: Marking
 
-	func mark(_ statuses: Set<ArticleStatus>, _ statusKey: String, _ flag: Bool) {
+	func mark(_ statuses: Set<ArticleStatus>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
 
 		// Sets flag in both memory and in database.
 
@@ -66,13 +66,14 @@ final class StatusesTable: DatabaseTable {
 		}
 
 		if updatedStatuses.isEmpty {
-			return
+			return nil
 		}
 		let articleIDs = updatedStatuses.articleIDs()
 		
 		queue.update { (database) in
 			self.markArticleIDs(articleIDs, statusKey, flag, database)
 		}
+		return updatedStatuses
 	}
 
 	// MARK: Fetching
@@ -150,9 +151,9 @@ private extension StatusesTable {
 
 	// MARK: Marking
 
-	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: String, _ flag: Bool, _ database: FMDatabase) {
+	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) {
 
-		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
+		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey.rawValue, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
 	}
 }
 

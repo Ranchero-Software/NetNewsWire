@@ -19,6 +19,8 @@ public extension Notification.Name {
 	public static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
 	public static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
 	public static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
+	
+	public static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
 }
 
 public enum AccountType: Int {
@@ -34,9 +36,10 @@ public enum AccountType: Int {
 
 public final class Account: DisplayNameProvider, Container, Hashable {
 
-	public struct UserInfoKey { // Used by AccountDidDownloadArticles.
-		public static let newArticles = "newArticles"
-		public static let updatedArticles = "updatedArticles"
+	public struct UserInfoKey {
+		public static let newArticles = "newArticles" // AccountDidDownloadArticles
+		public static let updatedArticles = "updatedArticles" // AccountDidDownloadArticles
+		public static let statuses = "statuses" // ArticleStatusesDidChange
 	}
 
 	public let accountID: String
@@ -151,9 +154,11 @@ public final class Account: DisplayNameProvider, Container, Hashable {
 		}
 	}
 
-	public func markArticles(_ articles: Set<Article>, statusKey: String, flag: Bool) {
+	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
 	
-		database.mark(articles, statusKey: statusKey, flag: flag)
+		if let updatedStatuses = database.mark(articles, statusKey: statusKey, flag: flag) {
+			NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: updatedStatuses])
+		}
 	}
 	
 	public func ensureFolder(with name: String) -> Folder? {

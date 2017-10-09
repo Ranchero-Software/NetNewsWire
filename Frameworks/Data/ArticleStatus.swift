@@ -14,14 +14,13 @@ import Foundation
 // Which is safe, because at creation time it’t not yet shared,
 // and it won’t be mutated ever on a background thread.
 
-public enum ArticleStatusKey: String {
-	
-	case read = "read"
-	case starred = "starred"
-	case userDeleted = "userDeleted"
-}
-
 public final class ArticleStatus: Hashable {
+	
+	public enum Key: String {
+		case read = "read"
+		case starred = "starred"
+		case userDeleted = "userDeleted"
+	}
 	
 	public let articleID: String
 	public let dateArrived: Date
@@ -46,37 +45,48 @@ public final class ArticleStatus: Hashable {
 		self.init(articleID: articleID, read: false, starred: false, userDeleted: false, dateArrived: dateArrived)
 	}
 
-	public func boolStatus(forKey key: String) -> Bool {
+	public func boolStatus(forKey key: ArticleStatus.Key) -> Bool {
 		
-		if let articleStatusKey = ArticleStatusKey(rawValue: key) {
-			switch articleStatusKey {
-			case .read:
-				return read
-			case .starred:
-				return starred
-			case .userDeleted:
-				return userDeleted
-			}
+		switch key {
+		case .read:
+			return read
+		case .starred:
+			return starred
+		case .userDeleted:
+			return userDeleted
 		}
-		return false
 	}
 	
-	public func setBoolStatus(_ status: Bool, forKey key: String) {
+	public func setBoolStatus(_ status: Bool, forKey key: ArticleStatus.Key) {
 
-		if let articleStatusKey = ArticleStatusKey(rawValue: key) {
-			switch articleStatusKey {
-			case .read:
-				read = status
-			case .starred:
-				starred = status
-			case .userDeleted:
-				userDeleted = status
-			}
+		switch key {
+		case .read:
+			read = status
+		case .starred:
+			starred = status
+		case .userDeleted:
+			userDeleted = status
 		}
 	}
 
 	public static func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
 		
 		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred && lhs.userDeleted == rhs.userDeleted
+	}
+}
+
+public extension Set where Element == ArticleStatus {
+	
+	public func articleIDs() -> Set<String> {
+		
+		return Set<String>(map { $0.articleID })
+	}
+}
+
+public extension Array where Element == ArticleStatus {
+	
+	public func articleIDs() -> [String] {
+		
+		return map { $0.articleID }
 	}
 }

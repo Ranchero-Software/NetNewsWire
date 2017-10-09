@@ -118,11 +118,6 @@ extension Article: DatabaseObject {
 
 extension Set where Element == Article {
 
-	func articleIDs() -> Set<String> {
-
-		return Set<String>(map { $0.databaseID })
-	}
-
 	func statuses() -> Set<ArticleStatus> {
 
 		return Set<ArticleStatus>(map { $0.status })

@@ -71,4 +71,18 @@ public struct Article: Hashable {
 	}
 }
 
+public extension Set where Element == Article {
+	
+	public func articleIDs() -> Set<String> {
+		
+		return Set<String>(map { $0.articleID })
+	}
+}
 
+public extension Array where Element == Article {
+	
+	public func articleIDs() -> [String] {
+		
+		return map { $0.articleID }
+	}
+}

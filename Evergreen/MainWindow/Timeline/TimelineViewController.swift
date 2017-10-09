@@ -76,7 +76,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		if !didRegisterForNotifications {
 
 			NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
-//			NotificationCenter.default.addObserver(self, selector: #selector(articleStatusesDidChange(_:)), name: .ArticleStatusesDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 
 			NSUserDefaultsController.shared.addObserver(self, forKeyPath: timelineFontSizeKVOKey, options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
 
@@ -115,7 +115,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		}
 	}
 
-	// MARK: API
+	// MARK: - API
 	
 	func markAllAsRead() {
 		
@@ -123,12 +123,12 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 			return
 		}
 		
-		markArticles(Set(articles), statusKey: ArticleStatusKey.read.rawValue, flag: true)
+		markArticles(Set(articles), statusKey: .read, flag: true)
 		
 		reloadCellsForArticles(articles)
 	}
 	
-	// MARK: Actions
+	// MARK: - Actions
 	
 	@objc func openArticleInBrowser(_ sender: AnyObject) {
 		
@@ -146,20 +146,20 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		let status = articles.first!.status
 		let markAsRead = !status.read
 		
-		markArticles(Set(articles), statusKey: ArticleStatusKey.read.rawValue, flag: markAsRead)
+		markArticles(Set(articles), statusKey: .read, flag: markAsRead)
 	}
 	
 	@IBAction func markSelectedArticlesAsRead(_ sender: AnyObject) {
 		
-		markArticles(Set(selectedArticles), statusKey: ArticleStatusKey.read.rawValue, flag: true)
+		markArticles(Set(selectedArticles), statusKey: .read, flag: true)
 	}
 	
 	@IBAction func markSelectedArticlesAsUnread(_ sender: AnyObject) {
 		
-		markArticles(Set(selectedArticles), statusKey: ArticleStatusKey.read.rawValue, flag: false)
+		markArticles(Set(selectedArticles), statusKey: .read, flag: false)
 	}
 	
-	// MARK: Navigation
+	// MARK: - Navigation
 	
 	func goToNextUnread() {
 		
@@ -212,7 +212,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		return nil
 	}
 	
-	// MARK: Notifications
+	// MARK: - Notifications
 
 	@objc func sidebarSelectionDidChange(_ note: Notification) {
 
@@ -223,12 +223,12 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		}
 	}
 	
-	@objc func articleStatusesDidChange(_ note: Notification) {
+	@objc func statusesDidChange(_ note: Notification) {
 
-		guard let articles = note.appInfo?.articles else {
+		guard let statuses = note.userInfo?[Account.UserInfoKey.statuses] as? Set<ArticleStatus> else {
 			return
 		}
-		reloadCellsForArticles(Array(articles))
+		reloadCellsForArticleIDs(statuses.articleIDs())
 	}
 
 	func fontSizeInDefaultsDidChange() {
@@ -243,7 +243,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		}
 	}
 
-	// MARK: KeyboardDelegate
+	// MARK: - KeyboardDelegate
 	
 	func handleKeydownEvent(_ event: NSEvent, sender: AnyObject) -> Bool {
 		
@@ -302,7 +302,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		return keyHandled
 	}
 
-	// MARK: Reloading Data
+	// MARK: - Reloading Data
 	
 	private func cellForRowView(_ rowView: NSView) -> NSView? {
 		
@@ -314,23 +314,28 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	
 	private func reloadCellsForArticles(_ articles: [Article]) {
 		
-		let indexes = indexesForArticles(articles)
+		reloadCellsForArticleIDs(Set(articles.articleIDs()))
+	}
+	
+	private func reloadCellsForArticleIDs(_ articleIDs: Set<String>) {
+
+		let indexes = indexesForArticleIDs(articleIDs)
 		tableView.reloadData(forRowIndexes: indexes, columnIndexes: NSIndexSet(index: 0) as IndexSet)
 	}
 	
-	// MARK: Articles
+	// MARK: - Articles
 
-	private func indexesForArticles(_ articles: [Article]) -> IndexSet {
+	private func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
 		
 		var indexes = IndexSet()
 		
-		articles.forEach { (article) in
-			let oneIndex = rowForArticle(article)
+		articleIDs.forEach { (articleID) in
+			let oneIndex = rowForArticleID(articleID)
 			if oneIndex != NSNotFound {
 				indexes.insert(oneIndex)
 			}
 		}
-
+		
 		return indexes
 	}
 	
@@ -351,13 +356,18 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	private func rowForArticle(_ article: Article) -> Int {
 
-		if let index = articles.index(where: { $0.articleID == article.articleID }) {
+		return rowForArticleID(article.articleID)
+	}
+
+	private func rowForArticleID(_ articleID: String) -> Int {
+		
+		if let index = articles.index(where: { $0.articleID == articleID }) {
 			return index
 		}
 		
 		return NSNotFound
 	}
-
+	
 	func selectedArticle() -> Article? {
 
 		return articleAtRow(tableView.selectedRow)
@@ -409,7 +419,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		}
 	}
 	
-	// MARK: Cell Configuring
+	// MARK: - Cell Configuring
 
 	private func calculateRowHeight() -> CGFloat {
 
@@ -435,7 +445,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		cell.cellData = emptyCellData
 	}
 	
-	// MARK: NSTableViewDataSource
+	// MARK: - NSTableViewDataSource
 
 	func numberOfRows(in tableView: NSTableView) -> Int {
 
@@ -447,7 +457,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		return articleAtRow(row)
 	}
 
-	// MARK: NSTableViewDelegate
+	// MARK: - NSTableViewDelegate
 
 	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
 
@@ -495,7 +505,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 		if let selectedArticle = articleAtRow(selectedRow) {
 			if (!selectedArticle.status.read) {
-				markArticles(Set([selectedArticle]), statusKey: ArticleStatusKey.read.rawValue, flag: true)
+				markArticles(Set([selectedArticle]), statusKey: .read, flag: true)
 			}
 			postTimelineSelectionDidChangeNotification(selectedArticle)
 		}
@@ -535,6 +545,8 @@ private extension TimelineViewController {
 		}
 	}
 }
+
+// MARK: - NSTableView extension
 
 private extension NSTableView {
 	
@@ -593,3 +605,4 @@ private extension NSTableView {
 		visibleRowViews()?.forEach { $0.invalidateGridRect() }
 	}
 }
+

@@ -144,9 +144,9 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: Status
 	
-	func mark(_ articles: Set<Article>, _ statusKey: String, _ flag: Bool) {
+	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
 
-		statusesTable.mark(articles.statuses(), statusKey, flag)
+		return statusesTable.mark(articles.statuses(), statusKey, flag)
 	}
 }
 
