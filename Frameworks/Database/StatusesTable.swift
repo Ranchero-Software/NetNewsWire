@@ -98,8 +98,6 @@ final class StatusesTable: DatabaseTable {
 
 	func statusesDictionary(_ articleIDs: Set<String>) -> [String: ArticleStatus] {
 
-		assert(!Thread.isMainThread)
-
 		var d = [String: ArticleStatus]()
 
 		for articleID in articleIDs {
@@ -120,7 +118,6 @@ private extension StatusesTable {
 	
 	func articleIDsWithNoCachedStatus(_ articleIDs: Set<String>) -> Set<String> {
 
-		assert(!Thread.isMainThread)
 		return Set(articleIDs.filter { cache[$0] == nil })
 	}
 
@@ -171,8 +168,6 @@ private final class StatusCache {
 
 		// Replaces any cached statuses.
 
-		assert(!Thread.isMainThread)
-
 		for status in statuses {
 			self[status.articleID] = status
 		}
@@ -187,8 +182,6 @@ private final class StatusCache {
 		
 		// Does not replace already cached statuses.
 		
-		assert(!Thread.isMainThread)
-
 		for status in statuses {
 			let articleID = status.articleID
 			if let _ = self[articleID] {
@@ -200,11 +193,9 @@ private final class StatusCache {
 	
 	subscript(_ articleID: String) -> ArticleStatus? {
 		get {
-			assert(!Thread.isMainThread)
 			return dictionary[articleID]
 		}
 		set {
-			assert(!Thread.isMainThread)
 			dictionary[articleID] = newValue
 		}
 	}
