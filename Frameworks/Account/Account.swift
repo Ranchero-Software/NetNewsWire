@@ -34,7 +34,7 @@ public enum AccountType: Int {
 	// TODO: more
 }
 
-public final class Account: DisplayNameProvider, Container, Hashable {
+public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
 	public struct UserInfoKey {
 		public static let newArticles = "newArticles" // AccountDidDownloadArticles
@@ -76,6 +76,14 @@ public final class Account: DisplayNameProvider, Container, Hashable {
 		}
 	}
 
+    public var unreadCount = 0 {
+        didSet {
+            if unreadCount != oldValue {
+                postUnreadCountDidChangeNotification()
+            }
+        }
+    }
+    
 	var refreshInProgress = false {
 		didSet {
 			if refreshInProgress != oldValue {
@@ -164,11 +172,8 @@ public final class Account: DisplayNameProvider, Container, Hashable {
 		
 		let updatedArticleIDs = updatedStatuses.articleIDs()
 		let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
-		let updatedFeeds = Set(articles.flatMap{ $0.feed })
-
-		updateUnreadCounts(for: updatedFeeds)
-		
-		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: updatedStatuses, UserInfoKey.articles: updatedArticles, UserInfoKey.feeds: updatedFeeds])
+        
+        noteStatusesForArticlesDidChange(updatedArticles)
 	}
 	
 	public func ensureFolder(with name: String) -> Folder? {
@@ -433,6 +438,23 @@ private extension Account {
 			}
 		}
 	}
+    
+    func updateUnreadCount() {
+        
+        unreadCount = calculateUnreadCount(children)
+    }
+    
+    func noteStatusesForArticlesDidChange(articles: Set<Article>) {
+        
+        let feeds = articles.feeds()
+        let statuses = articles.statuses()
+        
+        // .UnreadCountDidChange notification will get sent to Folder and Account objects,
+        // which will update their own unread counts.
+        updateUnreadCounts(for: feeds)
+        
+        NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.feeds: feeds])
+    }
 }
 
 // MARK: - OPMLRepresentable
