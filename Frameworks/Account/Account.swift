@@ -158,14 +158,17 @@ public final class Account: DisplayNameProvider, Container, Hashable {
 
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
 	
-		if let updatedStatuses = database.mark(articles, statusKey: statusKey, flag: flag) {
-			
-			let updatedArticleIDs = updatedStatuses.articleIDs()
-			let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
-			let updatedFeeds = Set(articles.flatMap{ $0.feed })
-			
-			NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: updatedStatuses, UserInfoKey.articles: updatedArticles, UserInfoKey.feeds: updatedFeeds])
+		guard let updatedStatuses = database.mark(articles, statusKey: statusKey, flag: flag) else {
+			return
 		}
+		
+		let updatedArticleIDs = updatedStatuses.articleIDs()
+		let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
+		let updatedFeeds = Set(articles.flatMap{ $0.feed })
+
+		updateUnreadCounts(for: updatedFeeds)
+		
+		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: updatedStatuses, UserInfoKey.articles: updatedArticles, UserInfoKey.feeds: updatedFeeds])
 	}
 	
 	public func ensureFolder(with name: String) -> Folder? {
@@ -251,6 +254,8 @@ public final class Account: DisplayNameProvider, Container, Hashable {
 					feed.unreadCount = unreadCount
 				}
 			}
+			
+			self.dirty = true
 		}
 	}
 

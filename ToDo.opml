@@ -8,15 +8,15 @@
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
     <expansionState>0,23,24,27,31,37,45,46,48,63,68</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>637</windowTop>
-    <windowLeft>42</windowLeft>
-    <windowRight>774</windowRight>
-    <windowBottom>1396</windowBottom>
+    <windowTop>630</windowTop>
+    <windowLeft>38</windowLeft>
+    <windowRight>770</windowRight>
+    <windowBottom>1389</windowBottom>
   </head>
   <body>
     <outline text="App">
       <outline text="Make adding a Folder work — accounts don’t show up in Accounts popup"/>
-      <outline text="Update unread count on marking article status"/>
+      <outline text="Update unread counts for folders and accounts when statuses change"/>
       <outline text="Update Sparkle"/>
       <outline text="Use new app icon"/>
       <outline text="Set -NSApplicationCrashOnExceptions YES"/>

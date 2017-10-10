@@ -225,10 +225,10 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	
 	@objc func statusesDidChange(_ note: Notification) {
 
-		guard let statuses = note.userInfo?[Account.UserInfoKey.statuses] as? Set<ArticleStatus> else {
+		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
 			return
 		}
-		reloadCellsForArticleIDs(statuses.articleIDs())
+		reloadCellsForArticleIDs(articles.articleIDs())
 	}
 
 	func fontSizeInDefaultsDidChange() {
