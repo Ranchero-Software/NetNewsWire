@@ -135,6 +135,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
 
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		
 		pullObjectsFromDisk()
 	}
 	
@@ -284,6 +286,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		refreshInProgress = refreshProgress.numberRemaining > 0
 		NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
+	}
+	
+	@objc func unreadCountDidChange(_ note: Notification) {
+		
+		
 	}
 
 	// MARK: - Equatable
@@ -444,10 +451,10 @@ private extension Account {
         unreadCount = calculateUnreadCount(children)
     }
     
-    func noteStatusesForArticlesDidChange(articles: Set<Article>) {
+    func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
         
-        let feeds = articles.feeds()
-        let statuses = articles.statuses()
+		let feeds = Set(articles.flatMap { $0.feed })
+		let statuses = Set(articles.map { $0.status })
         
         // .UnreadCountDidChange notification will get sent to Folder and Account objects,
         // which will update their own unread counts.

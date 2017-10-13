@@ -42,13 +42,3 @@ public extension Article {
 	}
 }
 
-public extension Set where Element == Article {
-    
-    public func feeds() -> Set<Feed> {
-        return Set(flatMap { $0.feed })
-    }
-    
-    public func statuses() -> Set<ArticleStatus> {
-        return Set(map { $0.articleStatus })
-    }
-}
