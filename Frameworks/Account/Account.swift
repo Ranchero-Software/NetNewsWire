@@ -290,8 +290,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
 
-		if let object = note.object as? AnyObject {
-			if objectIsChild(object) {
+		if let object = note.object {
+			if objectIsChild(object as AnyObject) {
 				updateUnreadCount()
 			}
 		}

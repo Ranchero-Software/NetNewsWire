@@ -48,6 +48,8 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 		
 		self.account = account
 		self.name = name
+
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 	}
 
 	// MARK: - Disk Dictionary
@@ -116,12 +118,29 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 		children += [feed]
 		return true
 	}
+
+	// MARK: Notifications
+
+	@objc func unreadCountDidChange(_ note: Notification) {
+
+		if let object = note.object {
+			if objectIsChild(object as AnyObject) {
+				updateUnreadCount()
+			}
+		}
+	}
+
 }
 
 // MARK: - Private
 
 private extension Folder {
-	
+
+	func updateUnreadCount() {
+		
+		unreadCount = calculateUnreadCount(children)
+	}
+
 	func childrenContainsFeed(_ feed: Feed) -> Bool {
 		
 		return children.contains(where: { (object) -> Bool in
