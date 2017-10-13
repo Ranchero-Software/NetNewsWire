@@ -1,3 +1,4 @@
+
 //
 //  Container.swift
 //  Evergreen
@@ -19,6 +20,8 @@ public protocol Container {
 
 	var children: [AnyObject] { get }
 	
+	func objectIsChild(_ object: AnyObject) -> Bool
+
 	//Recursive
 	func flattenedFeeds() -> Set<Feed>
 	func hasFeed(with feedID: String) -> Bool
@@ -31,6 +34,16 @@ public protocol Container {
 }
 
 public extension Container {
+
+	func objectIsChild(_ object: AnyObject) -> Bool {
+
+		for child in children {
+			if object === child {
+				return true
+			}
+		}
+		return false
+	}
 
 	func flattenedFeeds() -> Set<Feed> {
 

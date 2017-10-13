@@ -289,8 +289,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
-		
-		
+
+		if let object = note.object as? AnyObject {
+			if objectIsChild(object) {
+				updateUnreadCount()
+			}
+		}
 	}
 
 	// MARK: - Equatable
