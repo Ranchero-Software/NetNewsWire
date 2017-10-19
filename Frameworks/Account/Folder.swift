@@ -109,13 +109,11 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 	
 	func addFeed(_ feed: Feed) -> Bool {
 		
-		// The feed has been uniqued at this point.
 		// Return true in the case where the feed is already a child.
 		
-		if childrenContainsFeed(feed) {
-			return true
+		if !childrenContain(feed) {
+			children += [feed]
 		}
-		children += [feed]
 		return true
 	}
 
@@ -141,11 +139,15 @@ private extension Folder {
 		unreadCount = calculateUnreadCount(children)
 	}
 
-	func childrenContainsFeed(_ feed: Feed) -> Bool {
+	func childrenContain(_ feed: Feed) -> Bool {
 		
 		return children.contains(where: { (object) -> Bool in
+			if object === feed {
+				return true
+			}
 			if let oneFeed = object as? Feed {
 				if oneFeed.feedID == feed.feedID {
+					assertionFailure("Expected feeds to match by pointer equality rather than by feedID.")
 					return true
 				}
 			}
