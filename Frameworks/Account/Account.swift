@@ -174,10 +174,25 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
         
         noteStatusesForArticlesDidChange(updatedArticles)
 	}
-	
+
+	@discardableResult
 	public func ensureFolder(with name: String) -> Folder? {
-		
-		return nil //TODO
+
+		// TODO: support subfolders, maybe, some day
+
+		if name.isEmpty {
+			return nil
+		}
+
+		if let folder = existingFolder(with: name) {
+			return folder
+		}
+
+		let folder = Folder(account: self, name: name)
+		children += [folder]
+		dirty = true
+
+		return folder
 	}
 
 	public func canAddFeed(_ feed: Feed, to folder: Folder?) -> Bool {
@@ -287,7 +302,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		// Update the unread count if it’s a direct child.
 		// If the object is owned by this account, then mark dirty —
 		// since unread counts are saved to disk along with other feed info.
-		
+
 		if let object = note.object {
 
 			if objectIsChild(object as AnyObject) {
