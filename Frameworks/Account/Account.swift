@@ -192,6 +192,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		children += [folder]
 		dirty = true
 
+		postChildrenDidChangeNotification()
 		return folder
 	}
 

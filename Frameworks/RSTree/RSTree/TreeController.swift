@@ -17,7 +17,7 @@ public typealias NodeVisitBlock = (_ : Node) -> Void
 
 public final class TreeController {
 
-	fileprivate weak var delegate: TreeControllerDelegate?
+	private weak var delegate: TreeControllerDelegate?
 	public let rootNode: Node
 
 	public init(delegate: TreeControllerDelegate, rootNode: Node) {

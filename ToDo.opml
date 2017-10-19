@@ -6,16 +6,18 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,12,20,23,24,27,31,37,45,46,48,63,68</expansionState>
+    <expansionState>0,14,22,25,26,29,33,39,47,48,50,65,70</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>581</windowTop>
-    <windowLeft>54</windowLeft>
-    <windowRight>786</windowRight>
-    <windowBottom>1340</windowBottom>
+    <windowTop>632</windowTop>
+    <windowLeft>48</windowLeft>
+    <windowRight>780</windowRight>
+    <windowBottom>1391</windowBottom>
   </head>
   <body>
     <outline text="App">
-      <outline text="Make adding a Folder work — the sidebar should update"/>
+      <outline text="Make New Folder a default toolbar item"/>
+      <outline text="Bug: sidebar tree controller duplicates items after adding a folder"/>
+      <outline text="On change sidebar selection, load articles before updating unread count"/>
       <outline text="Update Sparkle"/>
       <outline text="Use new app icon"/>
       <outline text="Set -NSApplicationCrashOnExceptions YES"/>

@@ -14,14 +14,17 @@ import Account
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource {
     
 	@IBOutlet var outlineView: NSOutlineView!
-	let treeController = TreeController(delegate: SidebarTreeControllerDelegate())
+	let treeControllerDelegate = SidebarTreeControllerDelegate()
+	lazy var treeController: TreeController = {
+		TreeController(delegate: treeControllerDelegate)
+	}()
 
 	//MARK: NSViewController
 
 	override func viewDidLoad() {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-//		NotificationCenter.default.addObserver(self, selector: #selector(folderChildrenDidChange(_:)), name: NSNotification.Name(rawValue: FolderChildrenDidChangeNotification), object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: UserDidAddFeedNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidFinish(_:)), name: .BatchUpdateDidFinish, object: nil)
 
@@ -38,7 +41,7 @@ import Account
 		let _ = configureCellsForRepresentedObject(representedObject as AnyObject)
 	}
 
-	@objc dynamic func folderChildrenDidChange(_ note: Notification) {
+	@objc dynamic func containerChildrenDidChange(_ note: Notification) {
 
 		rebuildTreeAndReloadDataIfNeeded()
 	}
