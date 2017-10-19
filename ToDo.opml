@@ -6,27 +6,28 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,22,23,26,30,36,44,45,47,62,67</expansionState>
+    <expansionState>0,12,20,23,24,27,31,37,45,46,48,63,68</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>3254</windowTop>
-    <windowLeft>551</windowLeft>
-    <windowRight>1283</windowRight>
-    <windowBottom>4013</windowBottom>
+    <windowTop>581</windowTop>
+    <windowLeft>54</windowLeft>
+    <windowRight>786</windowRight>
+    <windowBottom>1340</windowBottom>
   </head>
   <body>
     <outline text="App">
-      <outline text="Make adding a Folder work — accounts don’t show up in Accounts popup"/>
+      <outline text="Make adding a Folder work — the sidebar should update"/>
       <outline text="Update Sparkle"/>
       <outline text="Use new app icon"/>
       <outline text="Set -NSApplicationCrashOnExceptions YES"/>
       <outline text="Store colors in accent catalog"/>
       <outline text="Use NSBox for container"/>
       <outline text="Restorable state"/>
-      <outline text="Use new build system"/>
       <outline text="NSError.setUserInfoValueProvider"/>
       <outline text="NSDictionary.sharedKeySet"/>
+      <outline text="Update unread count on selecting feed, in case it’s out of sync"/>
       <outline text="Periodic refresh"/>
       <outline text="OPML Import">
+        <outline text="Finish implementation in Account"/>
         <outline text="Accessory view in choose-file sheet for choosing account"/>
         <outline text="Import from URL">
           <outline text="Sheet with URL text field and account popup"/>

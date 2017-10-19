@@ -175,10 +175,26 @@ private extension SidebarViewController {
 		let appInfo = AppInfo()
 		if let selectedObjects = selectedObjects {
 			appInfo.objects = selectedObjects
+			updateUnreadCounts(for: selectedObjects)
 		}
 		appInfo.view = outlineView
 		
 		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: appInfo.userInfo)
+	}
+
+	func updateUnreadCounts(for objects: [AnyObject]) {
+
+		// On selection, update unread counts for folders and feeds.
+		// For feeds, actually fetch from database.
+
+		for object in objects {
+			if let feed = object as? Feed, let account = feed.account {
+				account.updateUnreadCounts(for: Set([feed]))
+			}
+			else if let folder = object as? Folder {
+				folder.account.updateUnreadCounts(for: folder.flattenedFeeds())
+			}
+		}
 	}
 
 	func nodeForItem(_ item: AnyObject?) -> Node {

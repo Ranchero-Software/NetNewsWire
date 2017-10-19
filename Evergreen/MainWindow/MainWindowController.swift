@@ -17,6 +17,13 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
     // MARK: NSWindowController
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey)
+	private var unreadCount: Int = 0 {
+		didSet {
+			if unreadCount != oldValue {
+				updateWindowTitle()
+			}
+		}
+	}
 
     override func windowDidLoad() {
         
@@ -33,7 +40,13 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidBegin, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+
+		DispatchQueue.main.async {
+			self.updateWindowTitle()
 		}
+	}
 	
     // MARK: Notifications
     
@@ -58,7 +71,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 		rs_performSelectorCoalesced(#selector(MainWindowController.makeToolbarValidate(_:)), with: nil, afterDelay: 0.1)
 	}
-	
+
+	@objc func unreadCountDidChange(_ note: Notification) {
+
+		if note.object is AccountManager {
+			unreadCount = AccountManager.shared.unreadCount
+		}
+	}
+
 	// MARK: Toolbar
 	
 	@objc func makeToolbarValidate(_ sender: Any) {
@@ -101,6 +121,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 		
 		func makeTimelineViewFirstResponder() {
+
 			window!.makeFirstResponderUnlessDescendantIsFirstResponder(timelineViewController.tableView)
 		}
 		
@@ -195,6 +216,16 @@ private extension MainWindowController {
 	func canMarkAllAsRead() -> Bool {
 		
 		return timelineViewController?.canMarkAllAsRead() ?? false
+	}
+
+	func updateWindowTitle() {
+
+		if unreadCount < 1 {
+			window?.title = appName
+		}
+		else if unreadCount > 0 {
+			window?.title = "\(appName) (\(unreadCount))"
+		}
 	}
 }
 

@@ -265,6 +265,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func updateUnreadCounts(for feeds: Set<Feed>) {
 
+		if feeds.isEmpty {
+			return
+		}
+		
 		database.fetchUnreadCounts(for: feeds) { (unreadCountDictionary) in
 
 			for feed in feeds {
