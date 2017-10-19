@@ -184,9 +184,7 @@ public final class AccountManager: UnreadCountProvider {
 			if account2 === localAccount {
 				return false
 			}
-
-			//TODO: Use localizedCaseInsensitiveCompare:
-			return account1.nameForDisplay < account2.nameForDisplay
+			return (account1.nameForDisplay as NSString).localizedStandardCompare(account2.nameForDisplay) == .orderedAscending
 		}
 	}
 }
