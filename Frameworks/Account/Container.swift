@@ -19,7 +19,8 @@ extension NSNotification.Name {
 public protocol Container {
 
 	var children: [AnyObject] { get }
-	
+
+	func hasAtLeastOneFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
 
 	//Recursive
@@ -34,6 +35,22 @@ public protocol Container {
 }
 
 public extension Container {
+
+	func hasAtLeastOneFeed() -> Bool {
+
+		for child in children {
+			if let feed = child as? Feed {
+				return true
+			}
+			if let folder = child as? Folder {
+				if folder.hasAtLeastOneFeed() {
+					return true
+				}
+			}
+		}
+
+		return false
+	}
 
 	func objectIsChild(_ object: AnyObject) -> Bool {
 

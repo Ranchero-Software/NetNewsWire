@@ -53,7 +53,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	let dataFolder: String
 	let database: Database
 	let delegate: AccountDelegate
-	var feedIDDictionary = [String: Feed]()
 	var username: String?
 	var saveTimer: Timer?
 
@@ -103,12 +102,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	var refreshProgress: DownloadProgress {
 		get {
 			return delegate.refreshProgress
-		}
-	}
-
-	var hasAtLeastOneFeed: Bool {
-		get {
-			return !feedIDDictionary.isEmpty
 		}
 	}
 
@@ -215,7 +208,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			didAddFeed = true
 		}
 		
-		updateFeedIDDictionary()
 		return didAddFeed // TODO
 	}
 
@@ -346,7 +338,6 @@ private extension Account {
 			return
 		}
 		children = objects(with: childrenArray)
-		updateFeedIDDictionary()
 	}
 
 	func diskDictionary() -> NSDictionary {
@@ -413,15 +404,6 @@ private extension Account {
 
 private extension Account {
 
-	func updateFeedIDDictionary() {
-
-		var d = [String: Feed]()
-		for feed in flattenedFeeds() {
-			d[feed.feedID] = feed
-		}
-		feedIDDictionary = d
-	}
-	
 	func topLevelObjectsContainsFeed(_ feed: Feed) -> Bool {
 		
 		return children.contains(where: { (object) -> Bool in
