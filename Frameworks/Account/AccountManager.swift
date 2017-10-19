@@ -80,6 +80,10 @@ public final class AccountManager: UnreadCountProvider {
 		readNonLocalAccountsFromDisk()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		
+		DispatchQueue.main.async {
+			self.updateUnreadCount()
+		}
 	}
 
 	// MARK: API
@@ -117,10 +121,7 @@ public final class AccountManager: UnreadCountProvider {
 	
 	func updateUnreadCount() {
 
-		let updatedUnreadCount = calculateUnreadCount(accounts)
-		if updatedUnreadCount != unreadCount {
-			unreadCount = updatedUnreadCount
-		}
+		unreadCount = calculateUnreadCount(accounts)
 	}
 	
 	// MARK: Notifications

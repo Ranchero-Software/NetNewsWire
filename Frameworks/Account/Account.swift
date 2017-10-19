@@ -138,6 +138,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		
 		pullObjectsFromDisk()
+		
+		DispatchQueue.main.async {
+			self.updateUnreadCount()
+		}
 	}
 	
 	// MARK: - API

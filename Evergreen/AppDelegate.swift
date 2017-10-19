@@ -43,6 +43,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
 		dockBadge.appDelegate = self
+
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 	}
 
 	// MARK: - NSApplicationDelegate
@@ -64,6 +66,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		#endif
 
 		NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.getURL(_:_:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
+
+		DispatchQueue.main.async {
+			self.unreadCount = AccountManager.shared.unreadCount
+		}
 	}
 
 	func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -103,9 +109,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 	// MARK: Notifications
 
-	func unreadCountDidChange(_ note: Notification) {
+	@objc func unreadCountDidChange(_ note: Notification) {
 
-		unreadCount = AccountManager.shared.unreadCount
+		if note.object is AccountManager {
+			unreadCount = AccountManager.shared.unreadCount
+		}
 	}
 
 	// MARK: Main Window
