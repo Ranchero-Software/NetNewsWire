@@ -39,7 +39,7 @@ public extension Container {
 	func hasAtLeastOneFeed() -> Bool {
 
 		for child in children {
-			if let feed = child as? Feed {
+			if child is Feed {
 				return true
 			}
 			if let folder = child as? Folder {

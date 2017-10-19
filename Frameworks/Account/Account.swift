@@ -257,8 +257,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 					feed.unreadCount = unreadCount
 				}
 			}
-			
-			self.dirty = true
 		}
 	}
 
@@ -286,9 +284,27 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
 
+		// Update the unread count if it’s a direct child.
+		// If the object is owned by this account, then mark dirty —
+		// since unread counts are saved to disk along with other feed info.
+		
 		if let object = note.object {
+
 			if objectIsChild(object as AnyObject) {
 				updateUnreadCount()
+				self.dirty = true
+				return
+			}
+
+			if let feed = object as? Feed {
+				if feed.account === self {
+					self.dirty = true
+				}
+			}
+			if let folder = object as? Folder {
+				if folder.account === self {
+					self.dirty = true
+				}
 			}
 		}
 	}
@@ -318,6 +334,8 @@ private extension Account {
 	
 	struct Key {
 		static let children = "children"
+		static let userInfo = "userInfo"
+		static let unreadCount = "unreadCount"
 	}
 
 	func object(with diskObject: [String: Any]) -> AnyObject? {
@@ -338,6 +356,15 @@ private extension Account {
 			return
 		}
 		children = objects(with: childrenArray)
+
+		if let savedUnreadCount = d[Key.unreadCount] as? Int {
+			DispatchQueue.main.async {
+				self.unreadCount = savedUnreadCount
+			}
+		}
+
+		let userInfo = d[Key.userInfo] as? NSDictionary
+		delegate.update(account: self, withUserInfo: userInfo)
 	}
 
 	func diskDictionary() -> NSDictionary {
@@ -355,6 +382,12 @@ private extension Account {
 
 		var d = [String: Any]()
 		d[Key.children] = diskObjects as NSArray
+		d[Key.unreadCount] = unreadCount
+
+		if let userInfo = delegate.userInfo(for: self) {
+			d[Key.userInfo] = userInfo
+		}
+
 		return d as NSDictionary
 	}
 
