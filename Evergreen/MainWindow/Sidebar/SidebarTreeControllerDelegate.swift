@@ -33,44 +33,30 @@ private extension SidebarTreeControllerDelegate {
 		// The child nodes are the top-level items of the local Account.
 		// This will be expanded later to add synthetic feeds (All Unread, for instance)
 		// and other accounts.
-		
-		let localAccountChildren = AccountManager.shared.localAccount.children
-		var updatedChildNodes = [Node]()
 
-		localAccountChildren.forEach { (representedObject) in
-
-			if let existingNode = rootNode.childNodeRepresentingObject(representedObject) {
-				// Reuse nodes.
-				if !updatedChildNodes.contains(existingNode) {
-					updatedChildNodes += [existingNode]
-					return
-				}
-			}
-
-			if let newNode = createNode(representedObject: representedObject as AnyObject, parent: rootNode) {
-				updatedChildNodes += [newNode]
-			}
-		}
-
-		updatedChildNodes = Node.nodesSortedAlphabeticallyWithFoldersAtEnd(updatedChildNodes)
-		return updatedChildNodes
+		return childNodesForContainerNode(rootNode, AccountManager.shared.localAccount.children)
 	}
-	
+
 	func childNodesForFolderNode(_ folderNode: Node) -> [Node]? {
-		
-		var updatedChildNodes = [Node]()
+
 		let folder = folderNode.representedObject as! Folder
+		return childNodesForContainerNode(folderNode, folder.children)
+	}
 
-		folder.children.forEach { (representedObject) in
+	func childNodesForContainerNode(_ containerNode: Node, _ children: [AnyObject]) -> [Node]? {
 
-			if let existingNode = folderNode.childNodeRepresentingObject(representedObject) {
+		var updatedChildNodes = [Node]()
+
+		children.forEach { (representedObject) in
+
+			if let existingNode = containerNode.childNodeRepresentingObject(representedObject) {
 				if !updatedChildNodes.contains(existingNode) {
 					updatedChildNodes += [existingNode]
 					return
 				}
 			}
 
-			if let newNode = self.createNode(representedObject: representedObject, parent: folderNode) {
+			if let newNode = self.createNode(representedObject: representedObject, parent: containerNode) {
 				updatedChildNodes += [newNode]
 			}
 		}
@@ -78,7 +64,7 @@ private extension SidebarTreeControllerDelegate {
 		updatedChildNodes = Node.nodesSortedAlphabeticallyWithFoldersAtEnd(updatedChildNodes)
 		return updatedChildNodes
 	}
-	
+
 	func createNode(representedObject: Any, parent: Node) -> Node? {
 		
 		if let feed = representedObject as? Feed {
