@@ -176,12 +176,14 @@ private extension SidebarViewController {
 	func postSidebarSelectionDidChangeNotification(_ selectedObjects: [AnyObject]?) {
 
 		let appInfo = AppInfo()
-		if let selectedObjects = selectedObjects {
-			appInfo.objects = selectedObjects
-			updateUnreadCounts(for: selectedObjects)
+		if let objects = selectedObjects {
+			appInfo.objects = objects
+			DispatchQueue.main.async {
+				self.updateUnreadCounts(for: objects)
+			}
 		}
 		appInfo.view = outlineView
-		
+
 		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: appInfo.userInfo)
 	}
 
