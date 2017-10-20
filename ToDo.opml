@@ -6,7 +6,7 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,12,20,23,24,27,31,37,45,46,48,63,68</expansionState>
+    <expansionState>0,9,17,20,21,24,28,34,42,43,45,60,65</expansionState>
     <vertScrollState>0</vertScrollState>
     <windowTop>602</windowTop>
     <windowLeft>62</windowLeft>
@@ -15,7 +15,6 @@
   </head>
   <body>
     <outline text="App">
-      <outline text="On change sidebar selection, load articles before updating unread count"/>
       <outline text="Update Sparkle"/>
       <outline text="Use new app icon"/>
       <outline text="Set -NSApplicationCrashOnExceptions YES"/>
@@ -23,8 +22,6 @@
       <outline text="Use NSBox for container"/>
       <outline text="Restorable state"/>
       <outline text="NSError.setUserInfoValueProvider"/>
-      <outline text="NSDictionary.sharedKeySet"/>
-      <outline text="Update unread count on selecting feed, in case it’s out of sync"/>
       <outline text="Periodic refresh"/>
       <outline text="OPML Import">
         <outline text="Finish implementation in Account"/>
