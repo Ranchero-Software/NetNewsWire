@@ -28,23 +28,26 @@ final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 
 private extension SidebarTreeControllerDelegate {
 	
-	func childNodesForRootNode(_ node: Node) -> [Node]? {
+	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 		
 		// The child nodes are the top-level items of the local Account.
-		// This will be expanded later to add synthetic feeds (All Unread, for instance).
+		// This will be expanded later to add synthetic feeds (All Unread, for instance)
+		// and other accounts.
 		
+		let localAccountChildren = AccountManager.shared.localAccount.children
 		var updatedChildNodes = [Node]()
 
-		for oneRepresentedObject in AccountManager.shared.localAccount.children {
+		localAccountChildren.forEach { (representedObject) in
 
-			if let existingNode = node.childNodeRepresentingObject(oneRepresentedObject) {
+			if let existingNode = rootNode.childNodeRepresentingObject(representedObject) {
 				// Reuse nodes.
 				if !updatedChildNodes.contains(existingNode) {
 					updatedChildNodes += [existingNode]
+					return
 				}
 			}
-			
-			if let newNode = createNode(representedObject: oneRepresentedObject as AnyObject, parent: node) {
+
+			if let newNode = createNode(representedObject: representedObject as AnyObject, parent: rootNode) {
 				updatedChildNodes += [newNode]
 			}
 		}
@@ -53,24 +56,25 @@ private extension SidebarTreeControllerDelegate {
 		return updatedChildNodes
 	}
 	
-	func childNodesForFolderNode(_ node: Node) -> [Node]? {
+	func childNodesForFolderNode(_ folderNode: Node) -> [Node]? {
 		
 		var updatedChildNodes = [Node]()
-		let folder = node.representedObject as! Folder
+		let folder = folderNode.representedObject as! Folder
 
-		for oneRepresentedObject in folder.children {
+		folder.children.forEach { (representedObject) in
 
-			if let existingNode = node.childNodeRepresentingObject(oneRepresentedObject) {
+			if let existingNode = folderNode.childNodeRepresentingObject(representedObject) {
 				if !updatedChildNodes.contains(existingNode) {
 					updatedChildNodes += [existingNode]
+					return
 				}
 			}
-			
-			if let newNode = self.createNode(representedObject: oneRepresentedObject, parent: node) {
+
+			if let newNode = self.createNode(representedObject: representedObject, parent: folderNode) {
 				updatedChildNodes += [newNode]
 			}
 		}
-		
+
 		updatedChildNodes = Node.nodesSortedAlphabeticallyWithFoldersAtEnd(updatedChildNodes)
 		return updatedChildNodes
 	}
