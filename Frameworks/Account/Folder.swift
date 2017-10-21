@@ -113,6 +113,7 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 		
 		if !childrenContain(feed) {
 			children += [feed]
+			postChildrenDidChangeNotification()
 		}
 		return true
 	}
