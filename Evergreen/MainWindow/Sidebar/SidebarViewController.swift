@@ -13,7 +13,7 @@ import Account
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource {
     
-	@IBOutlet var outlineView: NSOutlineView!
+	@IBOutlet var outlineView: SidebarOutlineView!
 	let treeControllerDelegate = SidebarTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		TreeController(delegate: treeControllerDelegate)
@@ -23,6 +23,8 @@ import Account
 
 	override func viewDidLoad() {
 
+		outlineView.sidebarViewController = self
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: UserDidAddFeedNotification, object: nil)
@@ -69,7 +71,7 @@ import Account
 			return
 		}
 
-		let nodesToDelete = selectedNodes
+		let nodesToDelete = treeController.normalizedSelectedNodes(selectedNodes)
 		let selectedRows = outlineView.selectedRowIndexes
 
 		outlineView.beginUpdates()
