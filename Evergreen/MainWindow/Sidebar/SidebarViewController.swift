@@ -81,8 +81,6 @@ import Account
 		BatchUpdate.shared.perform {
 			deleteItemsForNodes(nodesToDelete)
 		}
-		
-		treeController.rebuild()
 	}
 
 	// MARK: Navigation
