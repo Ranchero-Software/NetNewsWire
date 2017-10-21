@@ -15,7 +15,7 @@ import Account
 protocol AddFeedWindowControllerDelegate: class {
 
 	// userEnteredURL will have already been validated and normalized.
-	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, folder: Folder)
+	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, container: Container)
 
 	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController)
 }
