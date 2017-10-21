@@ -10,7 +10,9 @@ import AppKit
 import RSCore
 
 class SidebarOutlineView : NSOutlineView {
-	
+
+	weak var sidebarViewController: SidebarViewController?
+
 	//MARK: NSResponder
 	
 	override func keyDown(with event: NSEvent) {
@@ -26,27 +28,31 @@ class SidebarOutlineView : NSOutlineView {
 			return
 		}
 		
+		var isNavigationKey = false
 		var keyHandled = false
-		
+
 		switch(ch) {
 			
 		case NSRightArrowFunctionKey:
+			isNavigationKey = true
 			keyHandled = true
 			
 		case NSDeleteFunctionKey, Int(kDeleteKeyCode):
 			keyHandled = true
-			Swift.print("NSDeleteFunctionKey")
+			sidebarViewController?.delete(event)
 
 		default:
 			keyHandled = false
 		}
 
-		if keyHandled {
+		if isNavigationKey {
 			let appInfo = AppInfo()
 			appInfo.navigationKey = ch
 			NotificationCenter.default.post(name: .AppNavigationKeyPressed, object: self, userInfo: appInfo.userInfo)
+			return
 		}
-		else {
+
+		if !keyHandled {
 			super.keyDown(with: event)
 		}
 	}
