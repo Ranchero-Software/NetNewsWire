@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import RSCore
 
 class SidebarOutlineView : NSOutlineView {
 	
@@ -32,7 +33,7 @@ class SidebarOutlineView : NSOutlineView {
 		case NSRightArrowFunctionKey:
 			keyHandled = true
 			
-		case NSDeleteFunctionKey:
+		case NSDeleteFunctionKey, Int(kDeleteKeyCode):
 			keyHandled = true
 			Swift.print("NSDeleteFunctionKey")
 
