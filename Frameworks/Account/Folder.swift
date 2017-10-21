@@ -11,7 +11,7 @@ import Data
 
 public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 
-	public let account: Account
+	public weak var account: Account?
 	public var children = [AnyObject]()
 	var name: String?
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
@@ -19,7 +19,10 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 	// MARK: - Fetching Articles
 	
 	public func fetchArticles() -> Set<Article> {
-		
+
+		guard let account = account else {
+			return Set<Article>()
+		}
 		return account.fetchArticles(folder: self)
 	}
 	
@@ -76,7 +79,11 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 
 	var dictionary: [String: Any] {
 		get {
+
 			var d = [String: Any]()
+			guard let account = account else {
+				return d
+			}
 
 			if let name = name {
 				d[Key.name] = name

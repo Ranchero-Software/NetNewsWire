@@ -194,8 +194,8 @@ private extension SidebarViewController {
 			if let feed = object as? Feed, let account = feed.account {
 				account.updateUnreadCounts(for: Set([feed]))
 			}
-			else if let folder = object as? Folder {
-				folder.account.updateUnreadCounts(for: folder.flattenedFeeds())
+			else if let folder = object as? Folder, let account = folder.account {
+				account.updateUnreadCounts(for: folder.flattenedFeeds())
 			}
 		}
 	}

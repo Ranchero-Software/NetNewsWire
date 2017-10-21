@@ -147,8 +147,8 @@ private extension AddFeedController {
 		if let account = container as? Account {
 			return AccountAndFolderSpecifier(account: account, folder: nil)
 		}
-		if let folder = container as? Folder {
-			return AccountAndFolderSpecifier(account: folder.account, folder: folder)
+		if let folder = container as? Folder, let account = folder.account {
+			return AccountAndFolderSpecifier(account: account, folder: folder)
 		}
 		return nil
 	}
