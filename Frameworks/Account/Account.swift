@@ -206,6 +206,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return true // TODO
 	}
 
+	@discardableResult
 	public func addFeed(_ feed: Feed, to folder: Folder?) -> Bool {
 
 		// Return false if it couldn’t be added.
