@@ -63,7 +63,7 @@ public struct FeedSpecifier: Hashable {
 		}
 		
 		var currentHighScore = 0
-		var currentBestFeed = feedSpecifiers.anyObject()
+		var currentBestFeed: FeedSpecifier? = nil
 		
 		for oneFeedSpecifier in feedSpecifiers {
 			let oneScore = oneFeedSpecifier.score
@@ -96,9 +96,6 @@ private extension FeedSpecifier {
 		if urlString.rs_caseInsensitiveContains("rss") {
 			score = score + 5
 		}
-		if urlString.rs_caseInsensitiveContains("atom") {
-			score = score - 5
-		}
 		if urlString.hasSuffix("/feed/") {
 			score = score + 5
 		}
@@ -109,12 +106,6 @@ private extension FeedSpecifier {
 		if let title = title {
 			if title.rs_caseInsensitiveContains("comments") {
 				score = score - 10
-			}
-			if title.rs_caseInsensitiveContains("rss") {
-				score = score + 10
-			}
-			if title.rs_caseInsensitiveContains("atom") {
-				score = score - 5
 			}
 		}
 		
