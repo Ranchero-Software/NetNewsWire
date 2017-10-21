@@ -220,6 +220,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		else {
 			if !topLevelObjectsContainsFeed(uniquedFeed) {
 				children += [uniquedFeed]
+				dirty = true
+				postChildrenDidChangeNotification()
 			}
 			didAddFeed = true
 		}
