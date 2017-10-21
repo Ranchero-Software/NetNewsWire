@@ -15,6 +15,8 @@ extension Notification.Name {
 	static let TimelineSelectionDidChange = Notification.Name("TimelineSelectionDidChangeNotification")
 
 	static let AppNavigationKeyPressed = Notification.Name("AppNavigationKeyPressedNotification")
+
+	static let UserDidAddFeed = Notification.Name("UserDidAddFeedNotification")
 }
 
 extension Notification {
@@ -39,7 +41,8 @@ final class AppInfo {
 	var articles: Set<Article>?
 	var navigationKey: Int?
 	var objects: [AnyObject]?
-
+	var feed: Feed?
+	
 	static let appInfoKey = "appInfo"
 
 	var userInfo: UserInfoDictionary {

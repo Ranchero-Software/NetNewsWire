@@ -21,21 +21,19 @@ import Account
 //   Else,
 //      display error sheet.
 
-let UserDidAddFeedNotification = Notification.Name("UserDidAddFeedNotification")
-let UserDidAddFeedKey = "feed"
-
 class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 
-	fileprivate let hostWindow: NSWindow
-	fileprivate var addFeedWindowController: AddFeedWindowController?
-	fileprivate var userEnteredURL: URL?
-	fileprivate var userEnteredFolder: Folder?
-	fileprivate var userEnteredTitle: String?
-	fileprivate var foundFeedURLString: String?
-	fileprivate var titleFromFeed: String?
-	fileprivate var feedFinder: FeedFinder?
-	fileprivate var isFindingFeed = false
-	fileprivate var bestFeedSpecifier: FeedSpecifier?
+	private let hostWindow: NSWindow
+	private var addFeedWindowController: AddFeedWindowController?
+	private var userEnteredURL: URL?
+	private var userEnteredFolder: Folder?
+	private var userEnteredTitle: String?
+	private var userEnteredAccount: Account?
+	private var foundFeedURLString: String?
+	private var titleFromFeed: String?
+	private var feedFinder: FeedFinder?
+	private var isFindingFeed = false
+	private var bestFeedSpecifier: FeedSpecifier?
 	
 	init(hostWindow: NSWindow) {
 		
@@ -59,16 +57,22 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, container: Container) {
 
 		closeAddFeedSheet(NSApplication.ModalResponse.OK)
-//
-//		let account = folder.account
-//		if account.hasFeed(withURL: url.absoluteString) {
-//			showAlreadySubscribedError(url.absoluteString, folder)
-//			return
-//		}
-//
-//		userEnteredURL = url
-//		userEnteredFolder = folder
-//		userEnteredTitle = title
+
+		guard let accountAndFolderSpecifier = accountAndFolderFromContainer(container) else {
+			return
+		}
+		let account = accountAndFolderSpecifier.account
+		let folder = accountAndFolderSpecifier.folder
+
+		if account.hasFeed(withURL: url.absoluteString) {
+			showAlreadySubscribedError(url.absoluteString)
+			return
+		}
+
+		userEnteredAccount = account
+		userEnteredURL = url
+		userEnteredFolder = folder
+		userEnteredTitle = title
 
 		findFeed()
 	}
@@ -133,6 +137,22 @@ private extension AddFeedController {
 		}
 	}
 
+	struct AccountAndFolderSpecifier {
+		let account: Account
+		let folder: Folder?
+	}
+
+	func accountAndFolderFromContainer(_ container: Container) -> AccountAndFolderSpecifier? {
+
+		if let account = container as? Account {
+			return AccountAndFolderSpecifier(account: account, folder: nil)
+		}
+		if let folder = container as? Folder {
+			return AccountAndFolderSpecifier(account: folder.account, folder: folder)
+		}
+		return nil
+	}
+
 	func closeAddFeedSheet(_ returnCode: NSApplication.ModalResponse) {
 
 		if let sheetWindow = addFeedWindowController?.window {
@@ -145,29 +165,28 @@ private extension AddFeedController {
 
 		// Add feed if not already subscribed-to.
 
-		guard let folder = userEnteredFolder else {
-			assertionFailure("Folder must not be nil here.")
-			return
-		}
-		guard let account = userEnteredFolder?.account else {
-			assertionFailure("Folder must have an account.")
+		guard let account = userEnteredAccount else {
+			assertionFailure("Expected account.")
 			return
 		}
 		guard let feedURLString = foundFeedURLString else {
-			assertionFailure("urlString must not be nil here.")
+			assertionFailure("Expected feedURLString.")
 			return
 		}
 
 		if account.hasFeed(withURL: feedURLString) {
-			showAlreadySubscribedError(feedURLString, folder)
+			showAlreadySubscribedError(feedURLString)
 			return
 		}
 
-		if let feed = account.createFeed(with: titleFromFeed, editedName: userEnteredTitle, url: feedURLString) {
-			print(feedURLString)
-			if account.addFeed(feed, to: folder) {
-				NotificationCenter.default.post(name: UserDidAddFeedNotification, object: self, userInfo: [UserDidAddFeedKey: feed])
-			}
+		guard let feed = account.createFeed(with: titleFromFeed, editedName: userEnteredTitle, url: feedURLString) else {
+			return
+		}
+
+		if account.addFeed(feed, to: userEnteredFolder) {
+			let appInfo = AppInfo()
+			appInfo.feed = feed
+			NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: appInfo.userInfo)
 		}
 	}
 
@@ -176,7 +195,7 @@ private extension AddFeedController {
 	func findFeed() {
 
 		guard let url = userEnteredURL else {
-			assertionFailure("userEnteredURL must not be nil.")
+			assertionFailure("Expected userEnteredURL.")
 			return
 		}
 		
@@ -188,7 +207,7 @@ private extension AddFeedController {
 
 	// MARK: Errors
 
-	func showAlreadySubscribedError(_ urlString: String, _ folder: Folder) {
+	func showAlreadySubscribedError(_ urlString: String) {
 
 		let alert = NSAlert()
 		alert.alertStyle = .informational

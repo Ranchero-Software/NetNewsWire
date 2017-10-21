@@ -27,7 +27,7 @@ import Account
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: UserDidAddFeedNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidFinish(_:)), name: .BatchUpdateDidFinish, object: nil)
 
 		outlineView.reloadData()
@@ -55,9 +55,7 @@ import Account
 	
 	@objc dynamic func userDidAddFeed(_ note: Notification) {
 
-		// Find the feed and select it.
-
-		guard let feed = note.userInfo?[UserDidAddFeedKey] as? Feed else {
+		guard let appInfo = note.appInfo, let feed = appInfo.feed else {
 			return
 		}
 		revealAndSelectRepresentedObject(feed)
