@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern unichar kDeleteKeyCode;
+
 @interface NSEvent (RSCore)
 
 - (void)rs_getCommandKeyDown:(BOOL *)commandKeyDown optionKeyDown:(BOOL *)optionKeyDown controlKeyDown:(BOOL *)controlKeyDown shiftKeyDown:(BOOL *)shiftKeyDown;

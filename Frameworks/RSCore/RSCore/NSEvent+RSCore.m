@@ -10,6 +10,8 @@
 #import "NSString+RSCore.h"
 
 
+unichar kDeleteKeyCode = 127;
+
 @implementation NSEvent (RSCore)
 
 
