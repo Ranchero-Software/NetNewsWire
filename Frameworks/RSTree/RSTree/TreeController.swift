@@ -67,6 +67,21 @@ public final class TreeController {
 
 		return nodeInArrayRepresentingObject(nodes: [rootNode], representedObject: representedObject, recurse: true)
 	}
+
+	public func normalizedSelectedNodes(_ nodes: [Node]) -> [Node] {
+
+		// An array of nodes might include a leaf node and its parent. Remove the leaf node.
+
+		var normalizedNodes = [Node]()
+
+		for node in nodes {
+			if !node.hasAncestor(in: nodes) {
+				normalizedNodes += [node]
+			}
+		}
+
+		return normalizedNodes
+	}
 }
 
 private extension TreeController {
@@ -117,5 +132,4 @@ private extension TreeController {
 
 		return childNodesDidChange
 	}
-	
 }

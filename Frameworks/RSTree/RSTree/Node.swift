@@ -103,6 +103,34 @@ public final class Node: Equatable {
 		}
 		return nil
 	}
+
+	public func hasAncestor(in nodes: [Node]) -> Bool {
+
+		for node in nodes {
+			if node.isAncestor(of: self) {
+				return true
+			}
+		}
+		return false
+	}
+
+	public func isAncestor(of node: Node) -> Bool {
+
+		if node == self {
+			return false
+		}
+
+		var nomad = node
+		while true {
+			guard let parent = nomad.parent else {
+				return false
+			}
+			if parent == self {
+				return true
+			}
+			nomad = parent
+		}
+	}
 }
 
 
