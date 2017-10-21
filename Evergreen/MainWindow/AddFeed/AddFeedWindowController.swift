@@ -94,19 +94,19 @@ class AddFeedWindowController : NSWindowController {
     
     @IBAction func addFeed(_ sender: AnyObject) {
 		
-		let urlString = urlTextField.stringValue
-		let normalizedURLString = (urlString as NSString).rs_normalizedURL()
-		
-		if normalizedURLString.isEmpty {
-			cancelSheet()
-			return;
-		}
-		guard let url = URL(string: normalizedURLString) else {
-			cancelSheet()
-			return
-		}
+//		let urlString = urlTextField.stringValue
+//		let normalizedURLString = (urlString as NSString).rs_normalizedURL()
+//		
+//		if normalizedURLString.isEmpty {
+//			cancelSheet()
+//			return;
+//		}
+//		guard let url = URL(string: normalizedURLString) else {
+//			cancelSheet()
+//			return
+//		}
 
-		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, folder: selectedFolder()!)
+//		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: selectedContainer()!)
     }
 
 	@IBAction func localShowFeedList(_ sender: AnyObject) {

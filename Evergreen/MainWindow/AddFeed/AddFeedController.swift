@@ -56,19 +56,19 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 
 	// MARK: AddFeedWindowControllerDelegate
 
-	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, folder: Folder) {
+	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, container: Container) {
 
 		closeAddFeedSheet(NSApplication.ModalResponse.OK)
-
-		let account = folder.account
-		if account.hasFeed(withURL: url.absoluteString) {
-			showAlreadySubscribedError(url.absoluteString, folder)
-			return
-		}
-
-		userEnteredURL = url
-		userEnteredFolder = folder
-		userEnteredTitle = title
+//
+//		let account = folder.account
+//		if account.hasFeed(withURL: url.absoluteString) {
+//			showAlreadySubscribedError(url.absoluteString, folder)
+//			return
+//		}
+//
+//		userEnteredURL = url
+//		userEnteredFolder = folder
+//		userEnteredTitle = title
 
 		findFeed()
 	}

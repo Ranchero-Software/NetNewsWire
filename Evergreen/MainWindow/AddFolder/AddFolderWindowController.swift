@@ -10,11 +10,6 @@ import Cocoa
 import Data
 import Account
 
-//func addFolderWindowController() -> AddFolderWindowController {
-//	
-//	return AddFolderWindowController(windowNibName: "AddFolderSheet")
-//}
-
 class AddFolderWindowController : NSWindowController {
     
     @IBOutlet var folderNameTextField: NSTextField!
