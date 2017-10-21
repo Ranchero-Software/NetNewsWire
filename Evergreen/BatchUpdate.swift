@@ -49,7 +49,7 @@ private extension BatchUpdate {
 		if count < 1 {
 			
 			if count < 0 {
-				assertionFailure("Batch updates count should never be below 0.")
+				assertionFailure("Expected batch updates count to be 0 or greater.")
 				count = 0
 			}
 			
