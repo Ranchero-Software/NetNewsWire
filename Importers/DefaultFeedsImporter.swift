@@ -45,7 +45,7 @@ struct FeedsImporter {
 		BatchUpdate.shared.perform {
 			for feed in feedsToImport {
 				if !account.hasFeed(with: feed.feedID) {
-					let _ = account.addFeed(feed, to: nil)
+					account.addFeed(feed, to: nil)
 				}
 			}
 		}
