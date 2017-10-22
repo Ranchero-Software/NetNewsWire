@@ -6,7 +6,7 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,10,18,21,22,25,29,35,37,40,43,44,46,61,66,79,80</expansionState>
+    <expansionState>0,11,14,19,22,23,26,30,36,38,41,44,45,47,62,67,80,81</expansionState>
     <vertScrollState>0</vertScrollState>
     <windowTop>3153</windowTop>
     <windowLeft>549</windowLeft>
@@ -19,6 +19,7 @@
       <outline text="Delete folder from sidebar - with undo support"/>
       <outline text="Delete multiple selection from sidebar - with undo support"/>
       <outline text="Use new app icon"/>
+      <outline text="Profile OPML importing — could be faster"/>
       <outline text="Store colors in accent catalog"/>
       <outline text="Restorable state"/>
       <outline text="NSError.setUserInfoValueProvider"/>
