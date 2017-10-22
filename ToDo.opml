@@ -6,7 +6,7 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,10,13,18,21,22,25,29,35,37,40,43,44,46,61,66,79,80</expansionState>
+    <expansionState>0,10,12,17,20,21,24,28,34,36,39,43,45,60,65,78,79</expansionState>
     <vertScrollState>0</vertScrollState>
     <windowTop>3153</windowTop>
     <windowLeft>549</windowLeft>
@@ -21,11 +21,10 @@
       <outline text="Use new app icon"/>
       <outline text="Store colors in accent catalog"/>
       <outline text="Restorable state"/>
-      <outline text="NSError.setUserInfoValueProvider"/>
+      <outline text="Update current timeline when articles changed (added/removed/modified)"/>
       <outline text="Periodic refresh"/>
       <outline text="Update Sparkle"/>
       <outline text="OPML Import">
-        <outline text="Finish implementation in Account"/>
         <outline text="Accessory view in choose-file sheet for choosing account"/>
         <outline text="Import from URL">
           <outline text="Sheet with URL text field and account popup"/>
