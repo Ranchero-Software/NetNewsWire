@@ -253,7 +253,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return false // TODO
 	}
 
-	public func addFolder(_ folder: Folder, to containingFolder: Folder?) -> Bool {
+	@discardableResult
+	public func addFolder(_ folder: Folder, to parentFolder: Folder?) -> Bool {
 
 		return false // TODO
 	}
@@ -263,7 +264,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		guard let children = opmlDocument.children else {
 			return
 		}
-		importOPMLItems(children, parentFolder: nil, foldersAllowed: true)
+		importOPMLItems(children, parentFolder: nil)
 		dirty = true
 	}
 
@@ -472,22 +473,37 @@ private extension Account {
 		})
 	}
 
-	func importOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?, foldersAllowed: Bool) {
+	func createFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 
-		for item in items {
+		let feed = Feed(accountID: accountID, url: opmlFeedSpecifier.feedURL, feedID: opmlFeedSpecifier.feedURL)
+		feed.editedName = opmlFeedSpecifier.title
+		return feed
+	}
+
+	func importOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
+
+		items.forEach { (item) in
 
 			if let feedSpecifier = item.feedSpecifier {
-				if hasFeed(withURL: feedSpecifier.feedURL) {
-					continue
-				}
-
+				let feed = createFeed(with: feedSpecifier)
+				addFeed(feed, to: parentFolder)
+				return
 			}
 
-			if item.isFolder {
-
+			guard item.isFolder, let itemChildren = item.children else {
+				return
 			}
-			else {
 
+			// TODO: possibly support sub folders.
+
+			guard let folderName = item.titleFromAttributes else {
+				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
+				importOPMLItems(itemChildren, parentFolder: parentFolder)
+				return
+			}
+
+			if let folder = ensureFolder(with: folderName) {
+				importOPMLItems(itemChildren, parentFolder: folder)
 			}
 		}
 	}

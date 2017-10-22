@@ -23,6 +23,9 @@ public protocol Container {
 	func hasAtLeastOneFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
 
+	func hasChildFolder(with: String) -> Bool
+	func childFolder(with: String) -> Folder?
+
 	//Recursive
 	func flattenedFeeds() -> Set<Feed>
 	func hasFeed(with feedID: String) -> Bool
@@ -50,6 +53,22 @@ public extension Container {
 		}
 
 		return false
+	}
+
+	func hasChildFolder(with name: String) -> Bool {
+
+		return childFolder(with: name) != nil
+	}
+
+	func childFolder(with name: String) -> Folder? {
+
+		for child in children {
+			if let folder = child as? Folder, folder.name == name {
+				return folder
+			}
+		}
+
+		return nil
 	}
 
 	func objectIsChild(_ object: AnyObject) -> Bool {

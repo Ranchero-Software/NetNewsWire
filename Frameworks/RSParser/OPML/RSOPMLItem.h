@@ -10,17 +10,21 @@
 
 @class RSOPMLFeedSpecifier;
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface RSOPMLItem : NSObject
 
-@property (nonatomic) NSDictionary *attributes;
-@property (nonatomic) NSArray <RSOPMLItem *> *children;
+@property (nonatomic, nullable) NSDictionary *attributes;
+@property (nonatomic, nullable) NSArray <RSOPMLItem *> *children;
 
 - (void)addChild:(RSOPMLItem *)child;
 
-@property (nonatomic, readonly) RSOPMLFeedSpecifier *feedSpecifier; //May be nil.
+@property (nonatomic, nullable, readonly) RSOPMLFeedSpecifier *feedSpecifier;
 
-@property (nonatomic, readonly) NSString *titleFromAttributes; //May be nil.
+@property (nonatomic, nullable, readonly) NSString *titleFromAttributes;
 @property (nonatomic, readonly) BOOL isFolder;
 
 @end
+
+NS_ASSUME_NONNULL_END
+

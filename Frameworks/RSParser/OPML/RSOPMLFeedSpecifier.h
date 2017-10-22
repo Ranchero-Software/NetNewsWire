@@ -8,16 +8,17 @@
 
 @import Foundation;
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface RSOPMLFeedSpecifier : NSObject
 
+- (instancetype)initWithTitle:(NSString * _Nullable)title feedDescription:(NSString * _Nullable)feedDescription homePageURL:(NSString * _Nullable)homePageURL feedURL:(NSString *)feedURL;
 
-- (instancetype)initWithTitle:(NSString *)title feedDescription:(NSString *)feedDescription homePageURL:(NSString *)homePageURL feedURL:(NSString *)feedURL;
-
-@property (nonatomic, readonly) NSString *title;
-@property (nonatomic, readonly) NSString *feedDescription;
-@property (nonatomic, readonly) NSString *homePageURL;
+@property (nonatomic, nullable, readonly) NSString *title;
+@property (nonatomic, nullable, readonly) NSString *feedDescription;
+@property (nonatomic, nullable, readonly) NSString *homePageURL;
 @property (nonatomic, readonly) NSString *feedURL;
 
-
 @end
+
+NS_ASSUME_NONNULL_END
