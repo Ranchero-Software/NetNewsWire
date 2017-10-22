@@ -49,6 +49,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public var nameForDisplay = ""
 	public let hashValue: Int
 	public var children = [AnyObject]()
+	var urlToFeedDictionary = [String: Feed]()
+	var idToFeedDictionary = [String: Feed]()
 	let settingsFile: String
 	let dataFolder: String
 	let database: Database
@@ -217,10 +219,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		if let folder = folder {
 			didAddFeed = folder.addFeed(uniquedFeed)
+			if didAddFeed {
+				addToFeedDictionaries(uniquedFeed)
+			}
 		}
 		else {
 			if !topLevelObjectsContainsFeed(uniquedFeed) {
 				children += [uniquedFeed]
+				addToFeedDictionaries(uniquedFeed)
 				dirty = true
 				postChildrenDidChangeNotification()
 			}
@@ -380,6 +386,7 @@ private extension Account {
 			return
 		}
 		children = objects(with: childrenArray)
+		rebuildFeedDictionaries()
 
 		if let savedUnreadCount = d[Key.unreadCount] as? Int {
 			DispatchQueue.main.async {
@@ -461,6 +468,26 @@ private extension Account {
 
 private extension Account {
 
+	func rebuildFeedDictionaries() {
+
+		var urlDictionary = [String: Feed]()
+		var idDictionary = [String: Feed]()
+
+		flattenedFeeds().forEach { (feed) in
+			urlDictionary[feed.url] = feed
+			idDictionary[feed.feedID] = feed
+		}
+
+		urlToFeedDictionary = urlDictionary
+		idToFeedDictionary = idDictionary
+	}
+
+	func addToFeedDictionaries(_ feed: Feed) {
+
+		urlToFeedDictionary[feed.url] = feed
+		idToFeedDictionary[feed.feedID] = feed
+	}
+
 	func topLevelObjectsContainsFeed(_ feed: Feed) -> Bool {
 		
 		return children.contains(where: { (object) -> Bool in
@@ -524,6 +551,21 @@ private extension Account {
         
         NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.feeds: feeds])
     }
+}
+
+// MARK: - Container Overrides
+
+extension Account {
+
+	public func existingFeed(withURL url: String) -> Feed? {
+
+		return urlToFeedDictionary[url]
+	}
+
+	public func existingFeed(with feedID: String) -> Feed? {
+
+		return idToFeedDictionary[feedID]
+	}
 }
 
 // MARK: - OPMLRepresentable
