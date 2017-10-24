@@ -135,6 +135,7 @@
 		84CFF56A1AC3D1B000CEA6C8 /* RSScaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CFF5681AC3D1B000CEA6C8 /* RSScaling.m */; };
 		84CFF56D1AC3D20A00CEA6C8 /* NSImage+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CFF56B1AC3D20A00CEA6C8 /* NSImage+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84CFF56E1AC3D20A00CEA6C8 /* NSImage+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CFF56C1AC3D20A00CEA6C8 /* NSImage+RSCore.m */; };
+		84E34DA61F9FA1070077082F /* UndoableCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E34DA51F9FA1070077082F /* UndoableCommand.swift */; };
 		84F20F831F16BA6200D8E682 /* PropertyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F20F821F16BA6200D8E682 /* PropertyList.swift */; };
 		84FE9FC31C00453900081CE9 /* NSStoryboard+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84FE9FC11C00453900081CE9 /* NSStoryboard+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84FE9FC41C00453900081CE9 /* NSStoryboard+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84FE9FC21C00453900081CE9 /* NSStoryboard+RSCore.m */; };
@@ -235,6 +236,7 @@
 		84CFF5681AC3D1B000CEA6C8 /* RSScaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSScaling.m; sourceTree = "<group>"; };
 		84CFF56B1AC3D20A00CEA6C8 /* NSImage+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+RSCore.h"; sourceTree = "<group>"; };
 		84CFF56C1AC3D20A00CEA6C8 /* NSImage+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+RSCore.m"; sourceTree = "<group>"; };
+		84E34DA51F9FA1070077082F /* UndoableCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UndoableCommand.swift; path = RSCore/UndoableCommand.swift; sourceTree = "<group>"; };
 		84F20F821F16BA6200D8E682 /* PropertyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyList.swift; sourceTree = "<group>"; };
 		84FE9FC11C00453900081CE9 /* NSStoryboard+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSStoryboard+RSCore.h"; sourceTree = "<group>"; };
 		84FE9FC21C00453900081CE9 /* NSStoryboard+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSStoryboard+RSCore.m"; sourceTree = "<group>"; };
@@ -307,6 +309,7 @@
 				849BF8B91C9130150071D1DA /* DiskSaver.swift */,
 				84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */,
 				842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */,
+				84E34DA51F9FA1070077082F /* UndoableCommand.swift */,
 				84CFF5241AC3C8A200CEA6C8 /* Foundation */,
 				84CFF5551AC3CF4A00CEA6C8 /* AppKit */,
 				84CFF5661AC3D13F00CEA6C8 /* Images */,
@@ -703,6 +706,7 @@
 				844C915C1B65753E0051FC1B /* RSPlist.m in Sources */,
 				84CFF5231AC3C89D00CEA6C8 /* NSObject+RSCore.m in Sources */,
 				8414CBA71C95F2EA00333C12 /* Set+Extensions.swift in Sources */,
+				84E34DA61F9FA1070077082F /* UndoableCommand.swift in Sources */,
 				844F91D61D90D86100820C48 /* RSTransparentContainerView.m in Sources */,
 				84CFF56E1AC3D20A00CEA6C8 /* NSImage+RSCore.m in Sources */,
 				8453F7DF1BDF337800B1C8ED /* RSMacroProcessor.m in Sources */,

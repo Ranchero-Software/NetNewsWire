@@ -6,15 +6,18 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,10,12,17,20,21,24,28,34,36,39,43,45,60,65,78,79</expansionState>
+    <expansionState>0,13,15,20,23,24,27,31,37,39,42,46,48,63,68,81,82</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>3153</windowTop>
-    <windowLeft>549</windowLeft>
-    <windowRight>1281</windowRight>
-    <windowBottom>3912</windowBottom>
+    <windowTop>658</windowTop>
+    <windowLeft>49</windowLeft>
+    <windowRight>781</windowRight>
+    <windowBottom>1417</windowBottom>
   </head>
   <body>
     <outline text="App">
+      <outline text="Undo mark all as read"/>
+      <outline text="Undo mark as read"/>
+      <outline text=""/>
       <outline text="Delete feed from sidebar - with undo support"/>
       <outline text="Delete folder from sidebar - with undo support"/>
       <outline text="Delete multiple selection from sidebar - with undo support"/>
