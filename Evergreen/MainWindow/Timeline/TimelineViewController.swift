@@ -27,7 +27,10 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	private var articles = [Article]() {
 		didSet {
-			tableView.reloadData()
+			if articles != oldValue {
+				clearUndoableCommands()
+				tableView.reloadData()
+			}
 		}
 	}
 
@@ -123,10 +126,16 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		guard let undoManager = undoManager, let markAllReadCommand = MarkAllReadCommand(initialArticles: articles, undoManager: undoManager) else {
 			return
 		}
-		markAllReadCommand.perform()
+		runCommand(markAllReadCommand)
 	}
-	
-	// MARK: - Actions
+
+	// MARK: - Undoable Commands
+
+	private func runCommand(_ undoableCommand: UndoableCommand) {
+
+		pushUndoableCommand(undoableCommand)
+		undoableCommand.perform()
+	}
 
 	private func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
 
@@ -146,6 +155,8 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		undoableCommands.forEach { undoManager.removeAllActions(withTarget: $0) }
 		undoableCommands = [UndoableCommand]()
 	}
+
+	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: AnyObject) {
 		
