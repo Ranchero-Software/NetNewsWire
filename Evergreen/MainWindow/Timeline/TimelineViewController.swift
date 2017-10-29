@@ -16,6 +16,7 @@ import Account
 class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource, KeyboardDelegate {
 
 	@IBOutlet var tableView: TimelineTableView!
+	private var undoableCommands = [UndoableCommand]()
 	var didRegisterForNotifications = false
 	var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
 		didSet {
@@ -126,7 +127,26 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	}
 	
 	// MARK: - Actions
-	
+
+	private func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
+
+		undoableCommands += [undoableCommand]
+	}
+
+	private func clearUndoableCommands() {
+
+		// When the timeline is reloaded based on a different sidebar selection,
+		// undoable commands should be dropped — otherwise things like
+		// Redo Mark All as Read are ambiguous. (Do they apply to the previous articles
+		// or to the current articles?)
+
+		guard let undoManager = undoManager else {
+			return
+		}
+		undoableCommands.forEach { undoManager.removeAllActions(withTarget: $0) }
+		undoableCommands = [UndoableCommand]()
+	}
+
 	@objc func openArticleInBrowser(_ sender: AnyObject) {
 		
 		if let link = oneSelectedArticle?.preferredLink {
