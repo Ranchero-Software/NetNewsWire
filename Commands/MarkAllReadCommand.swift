@@ -16,20 +16,28 @@ final class MarkAllReadCommand: UndoableCommand {
     let undoActionName = actionName
     let redoActionName = actionName
     let articles: Set<Article>
+	let undoManager: UndoManager
     
-    init(initialArticles: [Article]) {
+	init?(initialArticles: [Article], undoManager: UndoManager) {
         
         // Filter out articles already read.
         let unreadArticles = initialArticles.filter { !$0.status.read }
+		if unreadArticles.isEmpty {
+			return nil
+		}
+
         self.articles = Set(unreadArticles)
+		self.undoManager = undoManager
     }
     
     func perform() {
         mark(read: true)
+		registerUndo()
     }
     
     func undo() {
         mark(read: false)
+		registerRedo()
     }
     
     func redo() {

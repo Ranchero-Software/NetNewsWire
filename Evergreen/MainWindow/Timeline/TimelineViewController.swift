@@ -118,14 +118,11 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	// MARK: - API
 	
 	func markAllAsRead() {
-		
-		if articles.isEmpty {
+
+		guard let undoManager = undoManager, let markAllReadCommand = MarkAllReadCommand(initialArticles: articles, undoManager: undoManager) else {
 			return
 		}
-		
-		markArticles(Set(articles), statusKey: .read, flag: true)
-		
-		reloadCellsForArticles(articles)
+		markAllReadCommand.perform()
 	}
 	
 	// MARK: - Actions
