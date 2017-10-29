@@ -123,10 +123,10 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	
 	func markAllAsRead() {
 
-		guard let undoManager = undoManager, let markAllReadCommand = MarkAllReadCommand(initialArticles: articles, undoManager: undoManager) else {
+		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
 			return
 		}
-		runCommand(markAllReadCommand)
+		runCommand(markReadCommand)
 	}
 
 	// MARK: - Undoable Commands
@@ -144,9 +144,9 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	private func clearUndoableCommands() {
 
-		// When the timeline is reloaded based on a different sidebar selection,
+		// When the timeline is reloaded and the list of articles changes,
 		// undoable commands should be dropped — otherwise things like
-		// Redo Mark All as Read are ambiguous. (Do they apply to the previous articles
+		// Redo Mark Read are ambiguous. (Do they apply to the previous articles
 		// or to the current articles?)
 
 		guard let undoManager = undoManager else {
@@ -173,18 +173,29 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		let articles = selectedArticles
 		let status = articles.first!.status
 		let markAsRead = !status.read
-		
-		markArticles(Set(articles), statusKey: .read, flag: markAsRead)
+
+		if markAsRead {
+			markSelectedArticlesAsRead(sender)
+		}
+		else {
+			markSelectedArticlesAsUnread(sender)
+		}
 	}
 	
 	@IBAction func markSelectedArticlesAsRead(_ sender: AnyObject) {
-		
-		markArticles(Set(selectedArticles), statusKey: .read, flag: true)
+
+		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: selectedArticles, markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
 	}
 	
 	@IBAction func markSelectedArticlesAsUnread(_ sender: AnyObject) {
 		
-		markArticles(Set(selectedArticles), statusKey: .read, flag: false)
+		guard let undoManager = undoManager, let markUnreadCommand = MarkReadOrUnreadCommand(initialArticles: selectedArticles, markingRead: false, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markUnreadCommand)
 	}
 	
 	// MARK: - Navigation

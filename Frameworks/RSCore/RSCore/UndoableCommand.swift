@@ -14,9 +14,8 @@ public protocol UndoableCommand: class {
 	var redoActionName: String { get }
 	var undoManager: UndoManager { get }
 
-	func perform()
-	func undo()
-	func redo()
+	func perform() // must call registerUndo()
+	func undo() // must call registerRedo()
 }
 
 extension UndoableCommand {
@@ -33,7 +32,7 @@ extension UndoableCommand {
 		
 		undoManager.setActionName(redoActionName)
 		undoManager.registerUndo(withTarget: self) { (target) in
-			self.redo()
+			self.perform()
 		}
 	}
 }
