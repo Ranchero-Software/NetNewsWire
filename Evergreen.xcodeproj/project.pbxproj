@@ -83,6 +83,7 @@
 		84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */; };
 		84DAEE321F870B390058304B /* DockBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE311F870B390058304B /* DockBadge.swift */; };
 		84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
+		84FB3A6F1FA6612C00EFC320 /* TimelineTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FB3A6E1FA6612C00EFC320 /* TimelineTableViewDataSource.swift */; };
 		84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; };
 		84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -444,6 +445,7 @@
 		84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLImporter.swift; sourceTree = "<group>"; };
 		84DAEE311F870B390058304B /* DockBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DockBadge.swift; path = Evergreen/DockBadge.swift; sourceTree = "<group>"; };
 		84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDefaults.swift; path = Evergreen/AppDefaults.swift; sourceTree = "<group>"; };
+		84FB3A6E1FA6612C00EFC320 /* TimelineTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineTableViewDataSource.swift; sourceTree = "<group>"; };
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -577,6 +579,7 @@
 			isa = PBXGroup;
 			children = (
 				849A976B1ED9EBC8007D329B /* TimelineViewController.swift */,
+				84FB3A6E1FA6612C00EFC320 /* TimelineTableViewDataSource.swift */,
 				849A97691ED9EBC8007D329B /* TimelineTableRowView.swift */,
 				849A976A1ED9EBC8007D329B /* TimelineTableView.swift */,
 				849A976F1ED9EC04007D329B /* Cell */,
@@ -1214,6 +1217,7 @@
 				849A97851ED9ECCD007D329B /* PreferencesWindowController.swift in Sources */,
 				849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */,
 				849A97761ED9EC04007D329B /* TimelineCellAppearance.swift in Sources */,
+				84FB3A6F1FA6612C00EFC320 /* TimelineTableViewDataSource.swift in Sources */,
 				849A97A21ED9F180007D329B /* FeedTitleDownloader.swift in Sources */,
 				849A977F1ED9EC42007D329B /* ArticleRenderer.swift in Sources */,
 			);

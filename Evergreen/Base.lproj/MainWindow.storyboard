@@ -504,7 +504,6 @@
                                                 </tableColumn>
                                             </tableColumns>
                                             <connections>
-                                                <outlet property="dataSource" destination="36G-bQ-b96" id="cMy-cg-R2c"/>
                                                 <outlet property="delegate" destination="36G-bQ-b96" id="s1m-42-GQ4"/>
                                             </connections>
                                         </tableView>

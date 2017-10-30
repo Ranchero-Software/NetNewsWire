@@ -17,6 +17,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	@IBOutlet var tableView: TimelineTableView!
 	private var undoableCommands = [UndoableCommand]()
+	private var dataSource: TimelineTableViewDataSource!
 	var didRegisterForNotifications = false
 	var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
 		didSet {
@@ -69,6 +70,9 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	override func viewDidLoad() {
 
+		dataSource = TimelineTableViewDataSource(timelineViewController: self)
+		tableView.dataSource = dataSource
+		
 		cellAppearance = TimelineCellAppearance(theme: currentTheme, fontSize: fontSize)
 		tableView.rowHeight = calculateRowHeight()
 
