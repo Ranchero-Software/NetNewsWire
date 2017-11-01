@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+import Cocoa
 
 @objc final class FeedListControlsView: NSView {
 
