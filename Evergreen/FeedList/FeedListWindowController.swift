@@ -10,6 +10,13 @@ import Cocoa
 
 class FeedListWindowController : NSWindowController {
     
-    
+
+	@IBAction func addToFeeds(_ sender: AnyObject) {
+
+	}
+
+	@IBAction func openHomePage(_ sender: AnyObject) {
+
+	}
 }
 

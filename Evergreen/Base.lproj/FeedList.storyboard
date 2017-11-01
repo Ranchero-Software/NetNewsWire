@@ -68,7 +68,7 @@
                                     <segue destination="78T-I6-t3A" kind="embed" id="cA5-Oa-X83"/>
                                 </connections>
                             </containerView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ft4-Ss-rki">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ft4-Ss-rki" customClass="FeedListControlsView" customModule="Evergreen" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="64"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cED-gO-Wz0">
@@ -77,6 +77,9 @@
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
+                                        <connections>
+                                            <action selector="addToFeeds:" target="8hc-S9-JQA" id="3bF-MV-9dX"/>
+                                        </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="soC-1m-gwD">
                                         <rect key="frame" x="148" y="19" width="120" height="25"/>
@@ -84,6 +87,9 @@
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
+                                        <connections>
+                                            <action selector="openHomePage:" target="8hc-S9-JQA" id="vrw-8O-CxX"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
@@ -94,6 +100,10 @@
                                     <constraint firstItem="cED-gO-Wz0" firstAttribute="centerY" secondItem="Ft4-Ss-rki" secondAttribute="centerY" id="yeD-9q-Byh"/>
                                     <constraint firstItem="soC-1m-gwD" firstAttribute="width" secondItem="cED-gO-Wz0" secondAttribute="width" id="zf0-5W-FIg"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="addToFeedsButton" destination="cED-gO-Wz0" id="Xgw-LX-lMV"/>
+                                    <outlet property="openHomePageButton" destination="soC-1m-gwD" id="CMD-WS-oSr"/>
+                                </connections>
                             </customView>
                         </subviews>
                         <constraints>
@@ -277,7 +287,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="8PV-Cn-35M">
-                                                            <rect key="frame" x="1" y="1" width="441.5" height="17"/>
+                                                            <rect key="frame" x="1" y="1" width="442" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l6f-JK-9RY">

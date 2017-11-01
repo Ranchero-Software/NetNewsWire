@@ -12,6 +12,7 @@
 		842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */; };
 		842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */; };
 		842E45E71ED8C747000A8B52 /* DB5.plist in Resources */ = {isa = PBXBuildFile; fileRef = 842E45E61ED8C747000A8B52 /* DB5.plist */; };
+		84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */; };
 		846A7BEC1F872C5600FEFD30 /* BatchUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A7BEB1F872C5600FEFD30 /* BatchUpdate.swift */; };
 		846E773D1F6EF67A00A165E2 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846E773A1F6EF5D700A165E2 /* Account.framework */; };
 		846E773E1F6EF67A00A165E2 /* Account.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 846E773A1F6EF5D700A165E2 /* Account.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -381,6 +382,7 @@
 		842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardDelegateProtocol.swift; sourceTree = "<group>"; };
 		842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowSplitView.swift; sourceTree = "<group>"; };
 		842E45E61ED8C747000A8B52 /* DB5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DB5.plist; path = Evergreen/Resources/DB5.plist; sourceTree = "<group>"; };
+		84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListControlsView.swift; sourceTree = "<group>"; };
 		846A7BEB1F872C5600FEFD30 /* BatchUpdate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BatchUpdate.swift; path = Evergreen/BatchUpdate.swift; sourceTree = "<group>"; };
 		846E77161F6EF5D000A165E2 /* Database.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Database.xcodeproj; path = Frameworks/Database/Database.xcodeproj; sourceTree = "<group>"; };
 		846E77301F6EF5D600A165E2 /* Account.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Account.xcodeproj; path = Frameworks/Account/Account.xcodeproj; sourceTree = "<group>"; };
@@ -633,6 +635,7 @@
 			children = (
 				849A97AD1ED9FA08007D329B /* FeedList.storyboard */,
 				849A978C1ED9EE4D007D329B /* FeedListWindowController.swift */,
+				84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */,
 			);
 			name = "Feed List";
 			path = Evergreen/FeedList;
@@ -1179,6 +1182,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */,
+				84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */,
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,
 				842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */,
 				84DAEE321F870B390058304B /* DockBadge.swift in Sources */,
