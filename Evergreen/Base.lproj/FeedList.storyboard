@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="wIF-6J-Pki">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13528" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="wIF-6J-Pki">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13528"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -15,31 +14,10 @@
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="425" y="461" width="480" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
-                        <toolbar key="toolbar" implicitIdentifier="89924734-153B-4ADD-B68F-89DC1791F58E" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="JSu-AA-ZaR">
-                            <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="Zj0-8M-08Z"/>
-                                <toolbarItem implicitItemIdentifier="7C412FE3-E1E8-46B0-8B42-B4B0F8C0AA02" label="Search" paletteLabel="Search" id="jDJ-n0-LMV">
-                                    <nil key="toolTip"/>
-                                    <size key="minSize" width="96" height="22"/>
-                                    <size key="maxSize" width="256" height="22"/>
-                                    <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" preferredMaxLayoutWidth="256" id="W62-ls-0tL">
-                                        <rect key="frame" x="0.0" y="14" width="96" height="22"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="NfS-Di-Ndg">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </searchFieldCell>
-                                    </searchField>
-                                </toolbarItem>
-                            </allowedToolbarItems>
-                            <defaultToolbarItems>
-                                <toolbarItem reference="Zj0-8M-08Z"/>
-                                <toolbarItem reference="jDJ-n0-LMV"/>
-                                <toolbarItem reference="Zj0-8M-08Z"/>
-                            </defaultToolbarItems>
-                        </toolbar>
                         <contentBorderThickness minY="32"/>
+                        <connections>
+                            <outlet property="delegate" destination="wIF-6J-Pki" id="Q8Z-WL-OaK"/>
+                        </connections>
                     </window>
                     <connections>
                         <segue destination="evy-Bk-pwG" kind="relationship" relationship="window.shadowedContentViewController" id="eVW-14-8Dx"/>
@@ -70,7 +48,7 @@
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn width="498" minWidth="40" maxWidth="1000" id="knj-hb-8yq">
+                                                <tableColumn identifier="" width="498" minWidth="40" maxWidth="1000" id="knj-hb-8yq">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Feeds">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -87,7 +65,7 @@
                                                             <rect key="frame" x="1" y="1" width="498" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Yj-wK-Qrd">
+                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Yj-wK-Qrd">
                                                                     <rect key="frame" x="0.0" y="0.0" width="100" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="u9i-D8-Gaz">
@@ -119,15 +97,26 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xZa-zG-xyU">
-                                <rect key="frame" x="20" y="3" width="120" height="25"/>
+                            <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pqj-lc-n5O">
+                                <rect key="frame" x="20" y="6" width="200" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="JhZ-sW-Jgk"/>
+                                </constraints>
+                                <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="pTh-lO-pJQ">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </searchFieldCell>
+                            </searchField>
+                            <button horizontalHuggingPriority="999" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="xZa-zG-xyU">
+                                <rect key="frame" x="233" y="3" width="120" height="25"/>
                                 <buttonCell key="cell" type="roundTextured" title="Add to Feeds" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uGL-3a-dHx">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AlZ-hg-343">
-                                <rect key="frame" x="148" y="3" width="120" height="25"/>
+                            <button horizontalHuggingPriority="999" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="AlZ-hg-343">
+                                <rect key="frame" x="361" y="3" width="120" height="25"/>
                                 <buttonCell key="cell" type="roundTextured" title="Open Home Page" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xXe-K1-dgf">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -136,14 +125,17 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="xZa-zG-xyU" firstAttribute="top" secondItem="mUl-Ne-X0C" secondAttribute="bottom" constant="5" id="3xc-U9-cye"/>
-                            <constraint firstItem="AlZ-hg-343" firstAttribute="leading" secondItem="xZa-zG-xyU" secondAttribute="trailing" constant="8" id="7BO-sj-paT"/>
+                            <constraint firstItem="AlZ-hg-343" firstAttribute="leading" secondItem="xZa-zG-xyU" secondAttribute="trailing" constant="8" symbolic="YES" id="7BO-sj-paT"/>
+                            <constraint firstItem="pqj-lc-n5O" firstAttribute="baseline" secondItem="AlZ-hg-343" secondAttribute="baseline" id="FfK-2M-TVh"/>
+                            <constraint firstItem="pqj-lc-n5O" firstAttribute="leading" secondItem="2UK-Ne-RFU" secondAttribute="leading" constant="20" symbolic="YES" id="GEm-Y0-L5V"/>
                             <constraint firstAttribute="trailing" secondItem="mUl-Ne-X0C" secondAttribute="trailing" id="H43-RT-2Xx"/>
                             <constraint firstItem="mUl-Ne-X0C" firstAttribute="top" secondItem="2UK-Ne-RFU" secondAttribute="top" id="Ixg-tX-GKm"/>
                             <constraint firstItem="mUl-Ne-X0C" firstAttribute="leading" secondItem="2UK-Ne-RFU" secondAttribute="leading" id="Ula-VU-rkw"/>
                             <constraint firstAttribute="bottom" secondItem="xZa-zG-xyU" secondAttribute="bottom" constant="5" id="Ws6-vQ-weM"/>
                             <constraint firstItem="AlZ-hg-343" firstAttribute="width" secondItem="xZa-zG-xyU" secondAttribute="width" id="d4B-qS-aef"/>
-                            <constraint firstItem="xZa-zG-xyU" firstAttribute="leading" secondItem="2UK-Ne-RFU" secondAttribute="leading" constant="20" id="wYI-VE-jdx"/>
+                            <constraint firstItem="xZa-zG-xyU" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="pqj-lc-n5O" secondAttribute="trailing" constant="8" symbolic="YES" id="wTB-XZ-flk"/>
                             <constraint firstAttribute="bottom" secondItem="AlZ-hg-343" secondAttribute="bottom" constant="5" id="x8o-I5-xTz"/>
+                            <constraint firstAttribute="trailing" secondItem="AlZ-hg-343" secondAttribute="trailing" constant="20" symbolic="YES" id="yUT-66-9pT"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
@@ -154,7 +146,7 @@
                 </viewController>
                 <customObject id="j8c-WU-zpv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="736" y="-105"/>
+            <point key="canvasLocation" x="735.5" y="-105"/>
         </scene>
     </scenes>
 </document>
