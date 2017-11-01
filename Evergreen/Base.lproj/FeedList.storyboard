@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13528" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="wIF-6J-Pki">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="wIF-6J-Pki">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13528"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13770"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -9,12 +9,39 @@
         <scene sceneID="Wez-hg-maV">
             <objects>
                 <windowController id="wIF-6J-Pki" customClass="FeedListWindowController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Feed Directory" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="FeedDirectory" animationBehavior="default" id="48k-xs-Uv2">
+                    <window key="window" title="Feed Directory" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="FeedDirectory" animationBehavior="default" tabbingMode="disallowed" id="48k-xs-Uv2">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="425" y="461" width="480" height="270"/>
+                        <rect key="contentRect" x="425" y="461" width="550" height="400"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
-                        <contentBorderThickness minY="32"/>
+                        <value key="minSize" type="size" width="550" height="400"/>
+                        <value key="maxSize" type="size" width="2048" height="2048"/>
+                        <toolbar key="toolbar" implicitIdentifier="00AD6007-C8D1-4AB1-A895-249FA6612631" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="3ad-vJ-TBO">
+                            <allowedToolbarItems>
+                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="NZO-7p-CmY"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="inv-M9-fBl"/>
+                                <toolbarItem implicitItemIdentifier="AE1BD340-5E55-4B1B-87C7-20276C06B85E" label="Search" paletteLabel="Search" id="WQk-mX-bGs">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="200" height="22"/>
+                                    <size key="maxSize" width="256" height="22"/>
+                                    <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" id="pGT-Bj-wIn">
+                                        <rect key="frame" x="0.0" y="14" width="256" height="22"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="6av-QD-0D7">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </searchFieldCell>
+                                    </searchField>
+                                </toolbarItem>
+                            </allowedToolbarItems>
+                            <defaultToolbarItems>
+                                <toolbarItem reference="inv-M9-fBl"/>
+                                <toolbarItem reference="WQk-mX-bGs"/>
+                                <toolbarItem reference="inv-M9-fBl"/>
+                            </defaultToolbarItems>
+                        </toolbar>
+                        <contentBorderThickness minY="64"/>
                         <connections>
                             <outlet property="delegate" destination="wIF-6J-Pki" id="Q8Z-WL-OaK"/>
                         </connections>
@@ -25,7 +52,7 @@
                 </windowController>
                 <customObject id="mbL-Ns-5Ky" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="161" y="-78"/>
+            <point key="canvasLocation" x="-70" y="-667"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="viS-lC-CIe">
@@ -36,13 +63,13 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mUl-Ne-X0C">
-                                <rect key="frame" x="0.0" y="32" width="501" height="316"/>
+                                <rect key="frame" x="0.0" y="0.0" width="501" height="348"/>
                                 <clipView key="contentView" id="sVR-gX-Vsk">
-                                    <rect key="frame" x="0.0" y="0.0" width="501" height="316"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="501" height="348"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="16" outlineTableColumn="knj-hb-8yq" id="Qnq-Pk-NgP">
-                                            <rect key="frame" x="0.0" y="0.0" width="501" height="316"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="501" height="348"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -97,45 +124,12 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pqj-lc-n5O">
-                                <rect key="frame" x="20" y="6" width="200" height="22"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="JhZ-sW-Jgk"/>
-                                </constraints>
-                                <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="pTh-lO-pJQ">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </searchFieldCell>
-                            </searchField>
-                            <button horizontalHuggingPriority="999" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="xZa-zG-xyU">
-                                <rect key="frame" x="233" y="3" width="120" height="25"/>
-                                <buttonCell key="cell" type="roundTextured" title="Add to Feeds" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uGL-3a-dHx">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                            </button>
-                            <button horizontalHuggingPriority="999" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="AlZ-hg-343">
-                                <rect key="frame" x="361" y="3" width="120" height="25"/>
-                                <buttonCell key="cell" type="roundTextured" title="Open Home Page" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xXe-K1-dgf">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="xZa-zG-xyU" firstAttribute="top" secondItem="mUl-Ne-X0C" secondAttribute="bottom" constant="5" id="3xc-U9-cye"/>
-                            <constraint firstItem="AlZ-hg-343" firstAttribute="leading" secondItem="xZa-zG-xyU" secondAttribute="trailing" constant="8" symbolic="YES" id="7BO-sj-paT"/>
-                            <constraint firstItem="pqj-lc-n5O" firstAttribute="baseline" secondItem="AlZ-hg-343" secondAttribute="baseline" id="FfK-2M-TVh"/>
-                            <constraint firstItem="pqj-lc-n5O" firstAttribute="leading" secondItem="2UK-Ne-RFU" secondAttribute="leading" constant="20" symbolic="YES" id="GEm-Y0-L5V"/>
                             <constraint firstAttribute="trailing" secondItem="mUl-Ne-X0C" secondAttribute="trailing" id="H43-RT-2Xx"/>
+                            <constraint firstAttribute="bottom" secondItem="mUl-Ne-X0C" secondAttribute="bottom" id="IEa-Ix-Y10"/>
                             <constraint firstItem="mUl-Ne-X0C" firstAttribute="top" secondItem="2UK-Ne-RFU" secondAttribute="top" id="Ixg-tX-GKm"/>
                             <constraint firstItem="mUl-Ne-X0C" firstAttribute="leading" secondItem="2UK-Ne-RFU" secondAttribute="leading" id="Ula-VU-rkw"/>
-                            <constraint firstAttribute="bottom" secondItem="xZa-zG-xyU" secondAttribute="bottom" constant="5" id="Ws6-vQ-weM"/>
-                            <constraint firstItem="AlZ-hg-343" firstAttribute="width" secondItem="xZa-zG-xyU" secondAttribute="width" id="d4B-qS-aef"/>
-                            <constraint firstItem="xZa-zG-xyU" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="pqj-lc-n5O" secondAttribute="trailing" constant="8" symbolic="YES" id="wTB-XZ-flk"/>
-                            <constraint firstAttribute="bottom" secondItem="AlZ-hg-343" secondAttribute="bottom" constant="5" id="x8o-I5-xTz"/>
-                            <constraint firstAttribute="trailing" secondItem="AlZ-hg-343" secondAttribute="trailing" constant="20" symbolic="YES" id="yUT-66-9pT"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
@@ -146,7 +140,7 @@
                 </viewController>
                 <customObject id="j8c-WU-zpv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="735.5" y="-105"/>
+            <point key="canvasLocation" x="554" y="-544"/>
         </scene>
     </scenes>
 </document>
