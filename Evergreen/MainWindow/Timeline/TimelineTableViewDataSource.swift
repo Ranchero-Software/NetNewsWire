@@ -6,9 +6,9 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+import Cocoa
 
-final class TimelineTableViewDataSource {
+@objc final class TimelineTableViewDataSource: NSObject, NSTableViewDataSource {
 
 	private weak var timelineViewController: TimelineViewController?
 
@@ -21,12 +21,12 @@ final class TimelineTableViewDataSource {
 
 	func numberOfRows(in tableView: NSTableView) -> Int {
 
-		return timelineViewController?.articles.count ? 0
+		return timelineViewController?.numberOfArticles ?? 0
 	}
 
 	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
 
-		return timelineViewController?.articleAtRow(row) ? nil
+		return timelineViewController?.articleAtRow(row) ?? nil
 	}
 
 }

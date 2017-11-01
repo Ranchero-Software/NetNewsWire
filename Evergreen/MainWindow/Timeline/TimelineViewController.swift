@@ -26,6 +26,12 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	}
 	var cellAppearance: TimelineCellAppearance!
 
+	var numberOfArticles: Int {
+		get {
+			return articles.count
+		}
+	}
+	
 	private var articles = [Article]() {
 		didSet {
 			if articles != oldValue {
@@ -239,16 +245,16 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 			return nil
 		}
 		
-		var ix = tableView.selectedRow
+		var rowIndex = tableView.selectedRow
 		while(true) {
 			
-			ix = ix + 1
-			if ix >= articles.count {
+			rowIndex = rowIndex + 1
+			if rowIndex >= articles.count {
 				break
 			}
-			let article = articleAtRow(ix)!
+			let article = articleAtRow(rowIndex)!
 			if !article.status.read {
-				return ix
+				return rowIndex
 			}
 		}
 	
@@ -389,7 +395,7 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		})
 	}
 	
-	private func articleAtRow(_ row: Int) -> Article? {
+	func articleAtRow(_ row: Int) -> Article? {
 
 		if row < 0 || row == NSNotFound || row > articles.count - 1 {
 			return nil
