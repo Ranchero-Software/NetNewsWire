@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Mac and iOS</key>
+	<array>
+		<dict>
+			<key>editedName</key>
+			<string>TidBITS</string>
+			<key>homePageURL</key>
+			<string>http://tidbits.org/</string>
+			<key>url</key>
+			<string>http://tidbits.org/feeds/tidbits_blurb.rss</string>
+		</dict>
+		<dict>
+			<key>editedName</key>
+			<string>Michael Tsai</string>
+			<key>homePageURL</key>
+			<string>https://mjtsai.com/blog/</string>
+			<key>url</key>
+			<string>https://mjtsai.com/blog/feed/</string>
+		</dict>
+	</array>
+	<key>Blogs</key>
+	<array>
+		<dict>
+			<key>editedName</key>
+			<string>Jason Kottke</string>
+			<key>homePageURL</key>
+			<string>https://kottke.org/</string>
+			<key>url</key>
+			<string>http://feeds.kottke.org/main</string>
+		</dict>
+	</array>
+	<key>News</key>
+	<array>
+		<dict>
+			<key>editedName</key>
+			<string>Talking Points Memo</string>
+			<key>homePageURL</key>
+			<string>https://talkingpointsmemo.com/</string>
+			<key>url</key>
+			<string>https://talkingpointsmemo.com/feed/all</string>
+		</dict>
+	</array>
+</dict>
+</plist>
