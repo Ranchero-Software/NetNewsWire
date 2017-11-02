@@ -9,35 +9,44 @@
 import Foundation
 import RSCore
 import RSTextDrawing
-import RSTree
 import Data
 import Account
 
-class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource, KeyboardDelegate {
+class TimelineViewController: NSViewController, KeyboardDelegate {
 
 	@IBOutlet var tableView: TimelineTableView!
-	private var undoableCommands = [UndoableCommand]()
-	private var dataSource: TimelineTableViewDataSource!
-	var didRegisterForNotifications = false
-	var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
-		didSet {
-			fontSizeDidChange()
-		}
-	}
 	var cellAppearance: TimelineCellAppearance!
+	var showFeedNames = false
 
-	var numberOfArticles: Int {
-		get {
-			return articles.count
-		}
-	}
-	
-	private var articles = [Article]() {
+	var articles = ArticleArray() {
 		didSet {
 			if articles != oldValue {
 				clearUndoableCommands()
 				tableView.reloadData()
 			}
+		}
+	}
+
+	var selectedArticles: [Article] {
+		get {
+			return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
+		}
+	}
+
+	private var undoableCommands = [UndoableCommand]()
+
+	private lazy var tableViewDataSource: TimelineTableViewDataSource! = {
+		return TimelineTableViewDataSource(timelineViewController: self)
+	}()
+
+	private lazy var tableViewDelegate: TimelineTableViewDelegate! = {
+		return TimelineTableViewDelegate(timelineViewController: self)
+	}()
+
+	private var didRegisterForNotifications = false
+	private var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
+		didSet {
+			fontSizeDidChange()
 		}
 	}
 
@@ -52,20 +61,6 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		}
 	}
 
-	private var showFeedNames: Bool {
-
-//		if let _ = node?.representedObject as? Feed {
-			return false
-//		}
-//		return true
-	}
-
-	var selectedArticles: [Article] {
-		get {
-			return Array(articlesForIndexes(tableView.selectedRowIndexes))
-		}
-	}
-
 	private var oneSelectedArticle: Article? {
 		get {
 			return selectedArticles.count == 1 ? selectedArticles.first : nil
@@ -76,15 +71,13 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 
 	override func viewDidLoad() {
 
-		dataSource = TimelineTableViewDataSource(timelineViewController: self)
-		tableView.dataSource = dataSource
-		
 		cellAppearance = TimelineCellAppearance(theme: currentTheme, fontSize: fontSize)
-		tableView.rowHeight = calculateRowHeight()
 
+		tableView.dataSource = tableViewDataSource
+		tableView.delegate = tableViewDelegate
+		tableView.rowHeight = calculateRowHeight()
 		tableView.target = self
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
-		
 		tableView.keyboardDelegate = self
 		
 		if !didRegisterForNotifications {
@@ -229,36 +222,13 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	}
 	
 	func canMarkAllAsRead() -> Bool {
-		
-		for article in articles {
-			if !article.status.read {
-				return true
-			}
-		}
-		
-		return false
+
+		return articles.canMarkAllAsRead()
 	}
 	
 	func indexOfNextUnreadArticle() -> Int? {
-		
-		if articles.isEmpty {
-			return nil
-		}
-		
-		var rowIndex = tableView.selectedRow
-		while(true) {
-			
-			rowIndex = rowIndex + 1
-			if rowIndex >= articles.count {
-				break
-			}
-			let article = articleAtRow(rowIndex)!
-			if !article.status.read {
-				return rowIndex
-			}
-		}
-	
-		return nil
+
+		return articles.rowOfNextUnreadArticle(tableView.selectedRow)
 	}
 	
 	// MARK: - Notifications
@@ -368,104 +338,8 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 	
 	private func reloadCellsForArticleIDs(_ articleIDs: Set<String>) {
 
-		let indexes = indexesForArticleIDs(articleIDs)
+		let indexes = articles.indexesForArticleIDs(articleIDs)
 		tableView.reloadData(forRowIndexes: indexes, columnIndexes: NSIndexSet(index: 0) as IndexSet)
-	}
-	
-	// MARK: - Articles
-
-	private func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
-		
-		var indexes = IndexSet()
-		
-		articleIDs.forEach { (articleID) in
-			let oneIndex = rowForArticleID(articleID)
-			if oneIndex != NSNotFound {
-				indexes.insert(oneIndex)
-			}
-		}
-		
-		return indexes
-	}
-	
-	private func articlesForIndexes(_ indexes: IndexSet) -> Set<Article> {
-		
-		return Set(indexes.flatMap{ (oneIndex) -> Article? in
-			return articleAtRow(oneIndex)
-		})
-	}
-	
-	func articleAtRow(_ row: Int) -> Article? {
-
-		if row < 0 || row == NSNotFound || row > articles.count - 1 {
-			return nil
-		}
-		return articles[row]
-	}
-
-	private func rowForArticle(_ article: Article) -> Int {
-
-		return rowForArticleID(article.articleID)
-	}
-
-	private func rowForArticleID(_ articleID: String) -> Int {
-		
-		if let index = articles.index(where: { $0.articleID == articleID }) {
-			return index
-		}
-		
-		return NSNotFound
-	}
-	
-	func selectedArticle() -> Article? {
-
-		return articleAtRow(tableView.selectedRow)
-	}
-
-	// MARK: Sorting Articles
-
-	private func articleComparator(_ article1: Article, article2: Article) -> Bool {
-
-		return article1.logicalDatePublished > article2.logicalDatePublished
-	}
-
-	private func articlesSortedByDate(_ articles: Set<Article>) -> [Article] {
-		
-		return Array(articles).sorted(by: articleComparator)
-	}
-	
-	// MARK: Fetching Articles
-
-	private func emptyTheTimeline() {
-		
-		if !articles.isEmpty {
-			articles = [Article]()
-		}
-	}
-	
-	private func fetchArticles() {
-
-		guard let representedObjects = representedObjects else {
-			emptyTheTimeline()
-			return
-		}
-		
-		var fetchedArticles = Set<Article>()
-		
-		for object in representedObjects {
-			
-			if let feed = object as? Feed {
-				fetchedArticles.formUnion(feed.fetchArticles())
-			}
-			else if let folder = object as? Folder {
-				fetchedArticles.formUnion(folder.fetchArticles())
-			}
-		}
-		
-		let sortedArticles = articlesSortedByDate(fetchedArticles)
-		if articles != sortedArticles {
-			articles = sortedArticles
-		}
 	}
 	
 	// MARK: - Cell Configuring
@@ -482,84 +356,47 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 		return height
 	}
 
-	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
-		
-		cell.objectValue = article
-		cell.cellData = TimelineCellData(article: article, appearance: cellAppearance, showFeedName: showFeedNames)
-	}
+}
+
+private extension TimelineViewController {
 	
-	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {
-		
-		cell.objectValue = nil
-		cell.cellData = emptyCellData
-	}
-	
-	// MARK: - NSTableViewDataSource
-
-	func numberOfRows(in tableView: NSTableView) -> Int {
-
-		return articles.count
-	}
-
-	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-
-		return articleAtRow(row)
-	}
-
-	// MARK: - NSTableViewDelegate
-
-	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-
-		let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineRow"), owner: self) as! TimelineTableRowView
-		rowView.cellAppearance = cellAppearance
-		return rowView
-	}
-
-	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-
-		let cell: TimelineTableCellView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineCell"), owner: self) as! TimelineTableCellView
-		cell.cellAppearance = cellAppearance
-		
-		if let article = articleAtRow(row) {
-			configureTimelineCell(cell, article: article)
+	var hasAtLeastOneSelectedArticle: Bool {
+		get {
+			return tableView.selectedRow != -1
 		}
-		else {
-			makeTimelineCellEmpty(cell)
-		}
-
-		return cell
 	}
 
-	private func postTimelineSelectionDidChangeNotification(_ selectedArticle: Article?) {
+	func emptyTheTimeline() {
 
-		let appInfo = AppInfo()
-		if let article = selectedArticle {
-			appInfo.article = article
+		if !articles.isEmpty {
+			articles = [Article]()
 		}
-		appInfo.view = tableView
-
-		NotificationCenter.default.post(name: .TimelineSelectionDidChange, object: self, userInfo: appInfo.userInfo)
 	}
 
-	func tableViewSelectionDidChange(_ notification: Notification) {
+	// MARK: Fetching Articles
 
-		tableView.redrawGrid()
-		
-		let selectedRow = tableView.selectedRow
-		
-		if selectedRow < 0 || selectedRow == NSNotFound || tableView.numberOfSelectedRows != 1 {
-			postTimelineSelectionDidChangeNotification(nil)
+	func fetchArticles() {
+
+		guard let representedObjects = representedObjects else {
+			emptyTheTimeline()
 			return
 		}
 
-		if let selectedArticle = articleAtRow(selectedRow) {
-			if (!selectedArticle.status.read) {
-				markArticles(Set([selectedArticle]), statusKey: .read, flag: true)
+		var fetchedArticles = Set<Article>()
+
+		for object in representedObjects {
+
+			if let feed = object as? Feed {
+				fetchedArticles.formUnion(feed.fetchArticles())
 			}
-			postTimelineSelectionDidChangeNotification(selectedArticle)
+			else if let folder = object as? Folder {
+				fetchedArticles.formUnion(folder.fetchArticles())
+			}
 		}
-		else {
-			postTimelineSelectionDidChangeNotification(nil)
+
+		let sortedArticles = Array(fetchedArticles).sortedByDate()
+		if articles != sortedArticles {
+			articles = sortedArticles
 		}
 	}
 
@@ -583,75 +420,6 @@ class TimelineViewController: NSViewController, NSTableViewDelegate, NSTableView
 			ix += 1
 		}
 		return true
-	}
-}
-
-private extension TimelineViewController {
-	
-	var hasAtLeastOneSelectedArticle: Bool {
-		get {
-			return self.tableView.selectedRow != -1
-		}
-	}
-}
-
-// MARK: - NSTableView extension
-
-private extension NSTableView {
-	
-	func scrollTo(row: Int) {
-		
-		guard let scrollView = self.enclosingScrollView else {
-			return
-		}
-		let documentVisibleRect = scrollView.documentVisibleRect
-		
-		let r = rect(ofRow: row)
-		if NSContainsRect(documentVisibleRect, r) {
-			return
-		}
-		
-		let rMidY = NSMidY(r)
-		var scrollPoint = NSZeroPoint;
-		let extraHeight = 150
-		scrollPoint.y = floor(rMidY - (documentVisibleRect.size.height / 2.0)) + CGFloat(extraHeight)
-		scrollPoint.y = max(scrollPoint.y, 0)
-
-		let maxScrollPointY = frame.size.height - documentVisibleRect.size.height
-		scrollPoint.y = min(maxScrollPointY, scrollPoint.y)
-		
-		let clipView = scrollView.contentView
-		
-		let rClipView = NSMakeRect(scrollPoint.x, scrollPoint.y, NSWidth(clipView.bounds), NSHeight(clipView.bounds))
-		
-		clipView.animator().bounds = rClipView
-	}
-	
-	func visibleRowViews() -> [TimelineTableRowView]? {
-		
-		guard let scrollView = self.enclosingScrollView, numberOfRows > 0 else {
-			return nil
-		}
-		
-		let range = rows(in: scrollView.documentVisibleRect)
-		let ixMax = numberOfRows - 1
-		let ixStart = min(range.location, ixMax)
-		let ixEnd = min(((range.location + range.length) - 1), ixMax)
-		
-		var visibleRows = [TimelineTableRowView]()
-		
-		for ixRow in ixStart...ixEnd {
-			if let oneRowView = rowView(atRow: ixRow, makeIfNecessary: false) as? TimelineTableRowView {
-				visibleRows += [oneRowView]
-			}
-		}
-		
-		return visibleRows.isEmpty ? nil : visibleRows
-	}
-		
-	func redrawGrid() {
-		
-		visibleRowViews()?.forEach { $0.invalidateGridRect() }
 	}
 }
 

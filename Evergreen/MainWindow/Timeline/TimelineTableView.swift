@@ -41,4 +41,16 @@ class TimelineTableView: NSTableView {
 		super.viewDidEndLiveResize()
 	}
 
+	func redrawGrid() {
+
+		guard let rowViews = visibleRowViews() else {
+			return
+		}
+
+		rowViews.forEach{ (rowView) in
+			if let rowView = rowView as? TimelineTableRowView {
+				rowView.invalidateGridRect()
+			}
+		}
+	}
 }

@@ -21,12 +21,12 @@ import Cocoa
 
 	func numberOfRows(in tableView: NSTableView) -> Int {
 
-		return timelineViewController?.numberOfArticles ?? 0
+		return timelineViewController?.articles.count ?? 0
 	}
 
 	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
 
-		return timelineViewController?.articleAtRow(row) ?? nil
+		return timelineViewController?.articles.articleAtRow(row) ?? nil
 	}
 
 }
