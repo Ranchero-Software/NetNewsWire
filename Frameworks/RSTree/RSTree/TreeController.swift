@@ -45,11 +45,11 @@ public final class TreeController {
 		visitNode(rootNode, visitBlock)
 	}
 	
-	public func nodeInArrayRepresentingObject(nodes: [Node], representedObject: AnyObject, recurse: Bool = false) -> Node? {
+	public func nodeInArrayRepresentingObject(nodes: [Node], representedObject: AnyHashable, recurse: Bool = false) -> Node? {
 		
 		for oneNode in nodes {
 
-			if oneNode.representedObject === representedObject {
+			if oneNode.representedObject == representedObject {
 				return oneNode
 			}
 
@@ -63,7 +63,7 @@ public final class TreeController {
 		return nil
 	}
 
-	public func nodeInTreeRepresentingObject(_ representedObject: AnyObject) -> Node? {
+	public func nodeInTreeRepresentingObject(_ representedObject: AnyHashable) -> Node? {
 
 		return nodeInArrayRepresentingObject(nodes: [rootNode], representedObject: representedObject, recurse: true)
 	}

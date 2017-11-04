@@ -43,7 +43,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate {
 		}
 	}
 
-	private var representedObjects: [AnyObject]? {
+	private var representedObjects: [AnyHashable]? {
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
 				fetchArticles()
@@ -479,7 +479,7 @@ private extension TimelineViewController {
 		}
 	}
 
-	func representedObjectArraysAreEqual(_ objects1: [AnyObject]?, _ objects2: [AnyObject]?) -> Bool {
+	func representedObjectArraysAreEqual(_ objects1: [AnyHashable]?, _ objects2: [AnyHashable]?) -> Bool {
 
 		if objects1 == nil && objects2 == nil {
 			return true
@@ -493,7 +493,7 @@ private extension TimelineViewController {
 
 		var ix = 0
 		for oneObject in objects1 {
-			if oneObject !== objects2[ix] {
+			if oneObject != objects2[ix] {
 				return false
 			}
 			ix += 1

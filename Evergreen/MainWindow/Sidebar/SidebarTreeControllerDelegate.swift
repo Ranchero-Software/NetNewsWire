@@ -34,16 +34,16 @@ private extension SidebarTreeControllerDelegate {
 		// This will be expanded later to add synthetic feeds (All Unread, for instance)
 		// and other accounts.
 
-		return childNodesForContainerNode(rootNode, AccountManager.shared.localAccount.children)
+		return childNodesForContainerNode(rootNode, AccountManager.shared.localAccount.children as! [AnyHashable])
 	}
 
 	func childNodesForFolderNode(_ folderNode: Node) -> [Node]? {
 
 		let folder = folderNode.representedObject as! Folder
-		return childNodesForContainerNode(folderNode, folder.children)
+		return childNodesForContainerNode(folderNode, folder.children as! [AnyHashable])
 	}
 
-	func childNodesForContainerNode(_ containerNode: Node, _ children: [AnyObject]) -> [Node]? {
+	func childNodesForContainerNode(_ containerNode: Node, _ children: [AnyHashable]) -> [Node]? {
 
 		var updatedChildNodes = [Node]()
 
@@ -83,15 +83,15 @@ private extension SidebarTreeControllerDelegate {
 	
 	func createNode(folder: Folder, parent: Node) -> Node {
 		
-		let node = Node(representedObject: folder as AnyObject, parent: parent)
+		let node = Node(representedObject: folder, parent: parent)
 		node.canHaveChildNodes = true
 		return node
 	}
 	
-	func nodeInArrayRepresentingObject(_ nodes: [Node], _ representedObject: AnyObject) -> Node? {
+	func nodeInArrayRepresentingObject(_ nodes: [Node], _ representedObject: AnyHashable) -> Node? {
 		
 		for oneNode in nodes {
-			if oneNode.representedObject === representedObject {
+			if oneNode.representedObject == representedObject {
 				return oneNode
 			}
 		}

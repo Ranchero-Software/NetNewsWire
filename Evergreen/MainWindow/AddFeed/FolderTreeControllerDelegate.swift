@@ -41,7 +41,7 @@ private extension FolderTreeControllerDelegate {
 
 	func createNode(_ folder: Folder, parent: Node) -> Node {
 		
-		let node = Node(representedObject: folder as AnyObject, parent: parent)
+		let node = Node(representedObject: folder, parent: parent)
 		node.canHaveChildNodes = false
 		return node
 	}

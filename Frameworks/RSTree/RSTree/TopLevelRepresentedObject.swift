@@ -10,6 +10,12 @@ import Foundation
 
 // Handy to use as the represented object for a root node. Not required to use it, though.
 
-final class TopLevelRepresentedObject {
-	
+final class TopLevelRepresentedObject: Hashable {
+
+	let hashValue: Int = 0
+
+	static func ==(lhs: TopLevelRepresentedObject, rhs: TopLevelRepresentedObject) -> Bool {
+		
+		return true
+	}
 }

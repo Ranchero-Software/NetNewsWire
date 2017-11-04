@@ -10,12 +10,14 @@ import Foundation
 import Data
 import RSCore
 
-public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
+public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, Hashable {
+
 
 	public weak var account: Account?
 	public var children = [AnyObject]()
 	var name: String?
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
+	public let hashValue: Int
 
 	// MARK: - Fetching Articles
 	
@@ -52,7 +54,8 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 		
 		self.account = account
 		self.name = name
-
+		self.hashValue = name?.hashValue ?? Folder.untitledName.hashValue
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 	}
 
@@ -137,6 +140,12 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 		}
 	}
 
+	// MARK: - Equatable
+
+	static public func ==(lhs: Folder, rhs: Folder) -> Bool {
+
+		return lhs === rhs
+	}
 }
 
 // MARK: - Private
