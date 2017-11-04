@@ -5,7 +5,7 @@
 	<key>Mac and iOS</key>
 	<array>
 		<dict>
-			<key>editedName</key>
+			<key>name</key>
 			<string>TidBITS</string>
 			<key>homePageURL</key>
 			<string>http://tidbits.org/</string>
@@ -13,7 +13,7 @@
 			<string>http://tidbits.org/feeds/tidbits_blurb.rss</string>
 		</dict>
 		<dict>
-			<key>editedName</key>
+			<key>name</key>
 			<string>Michael Tsai</string>
 			<key>homePageURL</key>
 			<string>https://mjtsai.com/blog/</string>
@@ -24,7 +24,7 @@
 	<key>Blogs</key>
 	<array>
 		<dict>
-			<key>editedName</key>
+			<key>name</key>
 			<string>Jason Kottke</string>
 			<key>homePageURL</key>
 			<string>https://kottke.org/</string>
@@ -35,7 +35,7 @@
 	<key>News</key>
 	<array>
 		<dict>
-			<key>editedName</key>
+			<key>name</key>
 			<string>Talking Points Memo</string>
 			<key>homePageURL</key>
 			<string>https://talkingpointsmemo.com/</string>
