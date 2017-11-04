@@ -15,17 +15,6 @@ import Account
 class TimelineViewController: NSViewController, KeyboardDelegate {
 
 	@IBOutlet var tableView: TimelineTableView!
-	var cellAppearance: TimelineCellAppearance!
-	var showFeedNames = false
-
-	var articles = ArticleArray() {
-		didSet {
-			if articles != oldValue {
-				clearUndoableCommands()
-				tableView.reloadData()
-			}
-		}
-	}
 
 	var selectedArticles: [Article] {
 		get {
@@ -34,16 +23,20 @@ class TimelineViewController: NSViewController, KeyboardDelegate {
 	}
 
 	private var undoableCommands = [UndoableCommand]()
-
-	private lazy var tableViewDataSource: TimelineTableViewDataSource! = {
-		return TimelineTableViewDataSource(timelineViewController: self)
-	}()
-
-	private lazy var tableViewDelegate: TimelineTableViewDelegate! = {
-		return TimelineTableViewDelegate(timelineViewController: self)
-	}()
-
+	private var cellAppearance: TimelineCellAppearance!
+	private var showFeedNames = false
 	private var didRegisterForNotifications = false
+	private let timelineFontSizeKVOKey = "values.{AppDefaults.Key.timelineFontSize}"
+
+	private var articles = ArticleArray() {
+		didSet {
+			if articles != oldValue {
+				clearUndoableCommands()
+				tableView.reloadData()
+			}
+		}
+	}
+
 	private var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
 		didSet {
 			fontSizeDidChange()
@@ -67,14 +60,10 @@ class TimelineViewController: NSViewController, KeyboardDelegate {
 		}
 	}
 
-	private let timelineFontSizeKVOKey = "values.{AppDefaults.Key.timelineFontSize}"
-
 	override func viewDidLoad() {
 
 		cellAppearance = TimelineCellAppearance(theme: currentTheme, fontSize: fontSize)
 
-		tableView.dataSource = tableViewDataSource
-		tableView.delegate = tableViewDelegate
 		tableView.rowHeight = calculateRowHeight()
 		tableView.target = self
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
@@ -357,6 +346,94 @@ class TimelineViewController: NSViewController, KeyboardDelegate {
 	}
 
 }
+
+// MARK: - NSTableViewDataSource
+
+extension TimelineViewController: NSTableViewDataSource {
+
+	func numberOfRows(in tableView: NSTableView) -> Int {
+
+		return articles.count
+	}
+
+	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+
+		return articles.articleAtRow(row) ?? nil
+	}
+}
+
+// MARK: - NSTableViewDelegate
+
+extension TimelineViewController: NSTableViewDelegate {
+
+	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+
+		let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineRow"), owner: self) as! TimelineTableRowView
+		rowView.cellAppearance = cellAppearance
+		return rowView
+	}
+
+	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+
+		let cell: TimelineTableCellView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineCell"), owner: self) as! TimelineTableCellView
+		cell.cellAppearance = cellAppearance
+
+		if let article = articles.articleAtRow(row) {
+			configureTimelineCell(cell, article: article)
+		}
+		else {
+			makeTimelineCellEmpty(cell)
+		}
+
+		return cell
+	}
+
+	func tableViewSelectionDidChange(_ notification: Notification) {
+
+		tableView.redrawGrid()
+
+		let selectedRow = tableView.selectedRow
+		if selectedRow < 0 || selectedRow == NSNotFound || tableView.numberOfSelectedRows != 1 {
+			postTimelineSelectionDidChangeNotification(nil)
+			return
+		}
+
+		if let selectedArticle = articles.articleAtRow(selectedRow) {
+			if (!selectedArticle.status.read) {
+				markArticles(Set([selectedArticle]), statusKey: .read, flag: true)
+			}
+			postTimelineSelectionDidChangeNotification(selectedArticle)
+		}
+		else {
+			postTimelineSelectionDidChangeNotification(nil)
+		}
+	}
+
+	private func postTimelineSelectionDidChangeNotification(_ selectedArticle: Article?) {
+
+		let appInfo = AppInfo()
+		if let article = selectedArticle {
+			appInfo.article = article
+		}
+		appInfo.view = tableView
+
+		NotificationCenter.default.post(name: .TimelineSelectionDidChange, object: self, userInfo: appInfo.userInfo)
+	}
+
+	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
+
+		cell.objectValue = article
+		cell.cellData = TimelineCellData(article: article, appearance: cellAppearance, showFeedName: showFeedNames)
+	}
+
+	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {
+
+		cell.objectValue = nil
+		cell.cellData = emptyCellData
+	}
+}
+
+// MARK: - Private
 
 private extension TimelineViewController {
 	
