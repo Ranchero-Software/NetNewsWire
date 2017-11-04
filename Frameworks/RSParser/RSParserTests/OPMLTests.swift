@@ -35,14 +35,14 @@ class OPMLTests: XCTestCase {
 
 	func recursivelyCheckOPMLStructure(_ item: RSOPMLItem) {
 
-		let feedSpecifier = item.opmlFeedSpecifier
+		let feedSpecifier = item.feedSpecifier
 		if !(item is RSOPMLDocument) {
-			XCTAssertNotNil((item.attributes as NSDictionary).opml_text)
+			XCTAssertNotNil((item.attributes! as NSDictionary).opml_text)
 		}
 
 		// If it has no children, it should have a feed specifier. The converse is also true.
-		var isFolder = item.children != nil && item.children.count > 0
-		if !isFolder && (item.attributes as NSDictionary).opml_title == "Skip" {
+		var isFolder = item.children != nil && item.children!.count > 0
+		if !isFolder && (item.attributes! as NSDictionary).opml_title == "Skip" {
 			isFolder = true
 		}
 
@@ -53,12 +53,12 @@ class OPMLTests: XCTestCase {
 		else {
 			XCTAssertNil(feedSpecifier)
 			if !(item is RSOPMLDocument) {
-				XCTAssertNotNil((item.attributes as NSDictionary).opml_title)
+				XCTAssertNotNil((item.attributes! as NSDictionary).opml_title)
 			}
 		}
 
-		if item.children != nil && item.children.count > 0 {
-			for oneItem in item.children {
+		if item.children != nil && item.children!.count > 0 {
+			for oneItem in item.children! {
 				recursivelyCheckOPMLStructure(oneItem)
 			}
 		}
