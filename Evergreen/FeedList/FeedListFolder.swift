@@ -7,12 +7,20 @@
 //
 
 import Foundation
+import RSCore
+import Data
 
-final class FeedListFolder: Hashable {
+final class FeedListFolder: Hashable, DisplayNameProvider {
 
 	let name: String
 	let feeds: Set<FeedListFeed>
 	let hashValue: Int
+
+	var nameForDisplay: String { // DisplayNameProvider
+		get {
+			return name
+		}
+	}
 
 	init(name: String, feeds: Set<FeedListFeed>) {
 

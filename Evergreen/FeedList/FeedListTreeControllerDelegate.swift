@@ -8,6 +8,7 @@
 
 import Foundation
 import RSTree
+import RSCore
 
 // Folders and feeds that appear in the Feed Directory are pulled from three sources:
 // 1. Feeds added in code here. (Evergreen News should be the only one.)
@@ -18,42 +19,77 @@ import RSTree
 
 final class FeedListTreeControllerDelegate: TreeControllerDelegate {
 
-	let topLevelFeeds: Set<FeedListFeed>
-	let defaultFeeds: Set<FeedListFeed>
-	let folders: Set<FeedListFolder>
+	private let topLevelFeeds: Set<FeedListFeed>
+	private let folders: Set<FeedListFolder>
 
 	init() {
 
 		let evergreenNewsFeed = FeedListFeed(name: "Evergreen News", url: "https://ranchero.com/evergreen/feed.json", homePageURL: "https://ranchero.com/evergreen/blog/")
 		self.topLevelFeeds = Set([evergreenNewsFeed])
 
-		self.defaultFeeds = FeedListReader.defaultFeeds()
-		self.folders = FeedListReader.folders()
+		let defaultFeeds = FeedListReader.defaultFeeds()
+		let defaultFeedsFolder = FeedListFolder(name: NSLocalizedString("Default Feeds (for new users)", comment: "Feed Directory"), feeds: defaultFeeds)
+
+		self.folders = Set(FeedListReader.folders() + [defaultFeedsFolder])
 	}
 
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 
-//		if node.isRoot {
-//			return childNodesForRootNode(node)
-//		}
-//		if node.representedObject is FeedListFolder {
-//			return childNodesForFolderNode(node)
-//		}
-
-		return nil
+		if node.isRoot {
+			return childNodesForRootNode(node)
+		}
+		return childNodesForFolderNode(node)
 	}
 }
 
+// MARK: - Private
 
+private extension FeedListTreeControllerDelegate {
 
-//private extension FeedListTreeControllerDelegate {
-//
-//	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
-//
-//		return childNodesForContainerNode(rootNode, AccountManager.shared.localAccount.children)
-//	}
-//
-//}
+	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
+
+		let children = Array(topLevelFeeds) as [AnyObject] + Array(folders) as [AnyObject]
+		return childNodesForContainerNode(rootNode, children)
+	}
+
+	func childNodesForFolderNode(_ folderNode: Node) -> [Node]? {
+
+		let folder = folderNode.representedObject as! FeedListFolder
+		return childNodesForContainerNode(folderNode, Array(folder.feeds))
+	}
+
+	func childNodesForContainerNode(_ containerNode: Node, _ children: [AnyObject]) -> [Node]? {
+
+		let nodes = unsortedNodes(parent: containerNode, children: children)
+		return Node.nodesSortedAlphabeticallyWithFoldersAtEnd(nodes)
+	}
+
+	func unsortedNodes(parent: Node, children: [AnyObject]) -> [Node] {
+
+		return children.map{ createNode(child: $0, parent: parent) }
+	}
+
+	func createNode(child: AnyObject, parent: Node) -> Node {
+
+		if let feed = child as? FeedListFeed {
+			return createNode(feed: feed, parent: parent)
+		}
+		let folder = child as! FeedListFolder
+		return createNode(folder: folder, parent: parent)
+	}
+
+	func createNode(feed: FeedListFeed, parent: Node) -> Node {
+
+		return Node(representedObject: feed, parent: parent)
+	}
+
+	func createNode(folder: FeedListFolder, parent: Node) -> Node {
+
+		let node = Node(representedObject: folder, parent: parent)
+		node.canHaveChildNodes = true
+		return node
+	}
+}
 
 // MARK: - Loading from Disk
 

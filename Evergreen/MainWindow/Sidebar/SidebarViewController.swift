@@ -10,6 +10,7 @@ import Cocoa
 import RSTree
 import Data
 import Account
+import RSCore
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource {
     

@@ -8,6 +8,7 @@
 
 import Cocoa
 import RSTree
+import RSCore
 
 final class FeedListViewController: NSViewController {
 
@@ -45,4 +46,56 @@ extension FeedListViewController: NSOutlineViewDataSource {
 		}
 		return item as! Node
 	}
+}
+
+// MARK: - NSOutlineViewDelegate
+
+extension FeedListViewController: NSOutlineViewDelegate {
+
+	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
+
+		let cell = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "FeedListCell"), owner: self) as! SidebarCell
+
+		let node = item as! Node
+		configure(cell, node)
+
+		return cell
+	}
+
+	func outlineViewSelectionDidChange(_ notification: Notification) {
+
+//		// TODO: support multiple selection
+//
+//		let selectedRow = self.outlineView.selectedRow
+//
+//		if selectedRow < 0 || selectedRow == NSNotFound {
+//			postSidebarSelectionDidChangeNotification(nil)
+//			return
+//		}
+//
+//		if let selectedNode = self.outlineView.item(atRow: selectedRow) as? Node {
+//			postSidebarSelectionDidChangeNotification([selectedNode.representedObject])
+//		}
+	}
+
+	private func configure(_ cell: SidebarCell, _ node: Node) {
+
+		cell.objectValue = node
+		cell.name = nameFor(node)
+		cell.image = imageFor(node)
+	}
+
+	func imageFor(_ node: Node) -> NSImage? {
+
+		return nil
+	}
+
+	func nameFor(_ node: Node) -> String {
+
+		if let displayNameProvider = node.representedObject as? DisplayNameProvider {
+			return displayNameProvider.nameForDisplay
+		}
+		return ""
+	}
+
 }

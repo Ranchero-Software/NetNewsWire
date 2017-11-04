@@ -89,6 +89,10 @@
 		849BF8BA1C9130150071D1DA /* DiskSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849BF8B91C9130150071D1DA /* DiskSaver.swift */; };
 		84A8358A1D4EC7B80004C598 /* PlistProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */; };
 		84B890561C59CF1600D8BF23 /* NSString+ExtrasTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B890551C59CF1600D8BF23 /* NSString+ExtrasTests.m */; };
+		84B99C941FAE64D500ECDEDB /* DisplayNameProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C931FAE64D400ECDEDB /* DisplayNameProvider.swift */; };
+		84B99C951FAE64D500ECDEDB /* DisplayNameProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C931FAE64D400ECDEDB /* DisplayNameProvider.swift */; };
+		84B99C9A1FAE650100ECDEDB /* OPMLRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */; };
+		84B99C9B1FAE650100ECDEDB /* OPMLRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */; };
 		84BB45431D6909C700B48537 /* NSMutableDictionary-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BB45421D6909C700B48537 /* NSMutableDictionary-Extensions.swift */; };
 		84CFF4FA1AC3C69700CEA6C8 /* RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CFF4F91AC3C69700CEA6C8 /* RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84CFF5001AC3C69700CEA6C8 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84CFF4F41AC3C69700CEA6C8 /* RSCore.framework */; };
@@ -187,6 +191,8 @@
 		849BF8B91C9130150071D1DA /* DiskSaver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiskSaver.swift; path = RSCore/DiskSaver.swift; sourceTree = "<group>"; };
 		84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlistProviderProtocol.swift; path = RSCore/PlistProviderProtocol.swift; sourceTree = "<group>"; };
 		84B890551C59CF1600D8BF23 /* NSString+ExtrasTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ExtrasTests.m"; sourceTree = "<group>"; };
+		84B99C931FAE64D400ECDEDB /* DisplayNameProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DisplayNameProvider.swift; path = RSCore/DisplayNameProvider.swift; sourceTree = "<group>"; };
+		84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OPMLRepresentable.swift; path = RSCore/OPMLRepresentable.swift; sourceTree = "<group>"; };
 		84BB45421D6909C700B48537 /* NSMutableDictionary-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableDictionary-Extensions.swift"; sourceTree = "<group>"; };
 		84CFF4F41AC3C69700CEA6C8 /* RSCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RSCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84CFF4F81AC3C69700CEA6C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = RSCore/Info.plist; sourceTree = "<group>"; };
@@ -306,6 +312,8 @@
 				844C915A1B65753E0051FC1B /* RSPlist.m */,
 				8453F7DC1BDF337800B1C8ED /* RSMacroProcessor.h */,
 				8453F7DD1BDF337800B1C8ED /* RSMacroProcessor.m */,
+				84B99C931FAE64D400ECDEDB /* DisplayNameProvider.swift */,
+				84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */,
 				849BF8B91C9130150071D1DA /* DiskSaver.swift */,
 				84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */,
 				842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */,
@@ -640,6 +648,7 @@
 				842DD7D01E14995C00E061EB /* RSMacroProcessor.m in Sources */,
 				842DD7E51E14996300E061EB /* NSMutableDictionary+RSCore.m in Sources */,
 				842DD7F41E14996B00E061EB /* Set+Extensions.swift in Sources */,
+				84B99C9B1FAE650100ECDEDB /* OPMLRepresentable.swift in Sources */,
 				842DD7D71E14996300E061EB /* NSArray+RSCore.m in Sources */,
 				842DD7CC1E14995C00E061EB /* RSBinaryCache.m in Sources */,
 				842DD7F31E14996B00E061EB /* NSMutableDictionary-Extensions.swift in Sources */,
@@ -649,6 +658,7 @@
 				842DD7E11E14996300E061EB /* NSFileManager+RSCore.m in Sources */,
 				842DD7C61E14995C00E061EB /* RSBlocks.m in Sources */,
 				842DD7DD1E14996300E061EB /* NSDate+RSCore.m in Sources */,
+				84B99C951FAE64D500ECDEDB /* DisplayNameProvider.swift in Sources */,
 				842DD7E91E14996300E061EB /* NSNotificationCenter+RSCore.m in Sources */,
 				842DD7E71E14996300E061EB /* NSMutableSet+RSCore.m in Sources */,
 				842DD7E31E14996300E061EB /* NSMutableArray+RSCore.m in Sources */,
@@ -700,12 +710,14 @@
 				84CFF56A1AC3D1B000CEA6C8 /* RSScaling.m in Sources */,
 				84FEB4AC1D19D7F4004727E5 /* Date+Extensions.swift in Sources */,
 				8461387F1DB3F5BE00048B83 /* RSToolbarItem.swift in Sources */,
+				84B99C941FAE64D500ECDEDB /* DisplayNameProvider.swift in Sources */,
 				84BB45431D6909C700B48537 /* NSMutableDictionary-Extensions.swift in Sources */,
 				845DE0F41B80477100D1571B /* NSSet+RSCore.m in Sources */,
 				842635591D7FA24800196285 /* NSOutlineView+Extensions.swift in Sources */,
 				844C915C1B65753E0051FC1B /* RSPlist.m in Sources */,
 				84CFF5231AC3C89D00CEA6C8 /* NSObject+RSCore.m in Sources */,
 				8414CBA71C95F2EA00333C12 /* Set+Extensions.swift in Sources */,
+				84B99C9A1FAE650100ECDEDB /* OPMLRepresentable.swift in Sources */,
 				84E34DA61F9FA1070077082F /* UndoableCommand.swift in Sources */,
 				844F91D61D90D86100820C48 /* RSTransparentContainerView.m in Sources */,
 				84CFF56E1AC3D20A00CEA6C8 /* NSImage+RSCore.m in Sources */,

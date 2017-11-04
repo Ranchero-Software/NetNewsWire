@@ -9,6 +9,7 @@
 import Foundation
 import RSTree
 import Data
+import RSCore
 
 extension Node {
 	

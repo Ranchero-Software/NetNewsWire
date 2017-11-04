@@ -150,7 +150,7 @@
         <!--Feed List View Controller-->
         <scene sceneID="OoN-9T-0Yf">
             <objects>
-                <viewController id="SJW-Df-ljT" userLabel="Feed List View Controller" sceneMemberID="viewController">
+                <viewController id="SJW-Df-ljT" userLabel="Feed List View Controller" customClass="FeedListViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="4Vf-sw-YId">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -199,19 +199,19 @@
                                                                 <outlet property="textField" destination="WPN-2y-KHq" id="vqQ-4b-IFc"/>
                                                             </connections>
                                                         </tableCellView>
-                                                        <tableCellView identifier="DataCell" id="Fbi-GR-D3O">
+                                                        <tableCellView identifier="FeedListCell" id="uEB-vq-SnD" customClass="SidebarCell" customModule="Evergreen" customModuleProvider="target">
                                                             <rect key="frame" x="1" y="20" width="447" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xtW-nT-POy">
+                                                                <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8NA-xf-HSF">
                                                                     <rect key="frame" x="3" y="0.0" width="17" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                    <imageCell key="cell" refusesFirstResponder="YES" imageScaling="proportionallyDown" image="NSActionTemplate" id="kt1-Cd-LqQ"/>
+                                                                    <imageCell key="cell" refusesFirstResponder="YES" imageScaling="proportionallyDown" id="eJc-Zr-x65"/>
                                                                 </imageView>
-                                                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="clU-WF-qTf">
-                                                                    <rect key="frame" x="25" y="0.0" width="422" height="17"/>
-                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="C9t-7u-EbJ">
+                                                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HwU-Ta-d1b" userLabel="Text field">
+                                                                    <rect key="frame" x="25" y="0.0" width="120" height="17"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="0ZB-5u-bks">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -219,13 +219,17 @@
                                                                 </textField>
                                                             </subviews>
                                                             <connections>
-                                                                <outlet property="imageView" destination="xtW-nT-POy" id="3sG-0s-Up9"/>
-                                                                <outlet property="textField" destination="clU-WF-qTf" id="Oq5-dP-Sk4"/>
+                                                                <outlet property="imageView" destination="8NA-xf-HSF" id="Dd3-ie-DmG"/>
+                                                                <outlet property="textField" destination="HwU-Ta-d1b" id="rpS-Zx-Wx6"/>
                                                             </connections>
                                                         </tableCellView>
                                                     </prototypeCellViews>
                                                 </tableColumn>
                                             </tableColumns>
+                                            <connections>
+                                                <outlet property="dataSource" destination="SJW-Df-ljT" id="FVU-Py-d01"/>
+                                                <outlet property="delegate" destination="SJW-Df-ljT" id="dB1-ku-7kj"/>
+                                            </connections>
                                         </outlineView>
                                     </subviews>
                                     <nil key="backgroundColor"/>
@@ -337,7 +341,4 @@
             <point key="canvasLocation" x="455" y="17"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="NSActionTemplate" width="14" height="14"/>
-    </resources>
 </document>

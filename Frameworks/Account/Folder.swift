@@ -8,6 +8,7 @@
 
 import Foundation
 import Data
+import RSCore
 
 public final class Folder: DisplayNameProvider, Container, UnreadCountProvider {
 
