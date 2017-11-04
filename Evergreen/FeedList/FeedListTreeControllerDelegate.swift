@@ -48,7 +48,7 @@ private extension FeedListTreeControllerDelegate {
 
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 
-		let children = Array(topLevelFeeds) as [AnyObject] + Array(folders) as [AnyObject]
+		let children = (Array(topLevelFeeds) as [AnyHashable]) + (Array(folders) as [AnyHashable])
 		return childNodesForContainerNode(rootNode, children)
 	}
 
@@ -58,18 +58,18 @@ private extension FeedListTreeControllerDelegate {
 		return childNodesForContainerNode(folderNode, Array(folder.feeds))
 	}
 
-	func childNodesForContainerNode(_ containerNode: Node, _ children: [AnyObject]) -> [Node]? {
+	func childNodesForContainerNode(_ containerNode: Node, _ children: [AnyHashable]) -> [Node]? {
 
 		let nodes = unsortedNodes(parent: containerNode, children: children)
 		return Node.nodesSortedAlphabeticallyWithFoldersAtEnd(nodes)
 	}
 
-	func unsortedNodes(parent: Node, children: [AnyObject]) -> [Node] {
+	func unsortedNodes(parent: Node, children: [AnyHashable]) -> [Node] {
 
 		return children.map{ createNode(child: $0, parent: parent) }
 	}
 
-	func createNode(child: AnyObject, parent: Node) -> Node {
+	func createNode(child: AnyHashable, parent: Node) -> Node {
 
 		if let feed = child as? FeedListFeed {
 			return createNode(feed: feed, parent: parent)

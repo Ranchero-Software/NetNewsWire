@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import Data
 
-final class FeedListFolder: Hashable, DisplayNameProvider {
+struct FeedListFolder: Hashable, DisplayNameProvider {
 
 	let name: String
 	let feeds: Set<FeedListFeed>
@@ -31,6 +31,6 @@ final class FeedListFolder: Hashable, DisplayNameProvider {
 
 	static func ==(lhs: FeedListFolder, rhs: FeedListFolder) -> Bool {
 
-		return lhs === rhs
+		return lhs.name == rhs.name && lhs.feeds == rhs.feeds
 	}
 }
