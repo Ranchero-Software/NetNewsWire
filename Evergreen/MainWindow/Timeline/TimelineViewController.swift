@@ -121,31 +121,9 @@ class TimelineViewController: NSViewController, KeyboardDelegate {
 		runCommand(markReadCommand)
 	}
 
-	// MARK: - Undoable Commands
+	func canMarkAllAsRead() -> Bool {
 
-	private func runCommand(_ undoableCommand: UndoableCommand) {
-
-		pushUndoableCommand(undoableCommand)
-		undoableCommand.perform()
-	}
-
-	private func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
-
-		undoableCommands += [undoableCommand]
-	}
-
-	private func clearUndoableCommands() {
-
-		// When the timeline is reloaded and the list of articles changes,
-		// undoable commands should be dropped — otherwise things like
-		// Redo Mark Read are ambiguous. (Do they apply to the previous articles
-		// or to the current articles?)
-
-		guard let undoManager = undoManager else {
-			return
-		}
-		undoableCommands.forEach { undoManager.removeAllActions(withTarget: $0) }
-		undoableCommands = [UndoableCommand]()
+		return articles.canMarkAllAsRead()
 	}
 
 	// MARK: - Actions
@@ -199,7 +177,6 @@ class TimelineViewController: NSViewController, KeyboardDelegate {
 		}
 		tableView.rs_selectRow(ix)
 		tableView.scrollTo(row: ix)
-//		tableView.rs_selectRowAndScrollToVisible(ix)
 	}
 	
 	func canGoToNextUnread() -> Bool {
@@ -208,11 +185,6 @@ class TimelineViewController: NSViewController, KeyboardDelegate {
 			return false
 		}
 		return true
-	}
-	
-	func canMarkAllAsRead() -> Bool {
-
-		return articles.canMarkAllAsRead()
 	}
 	
 	func indexOfNextUnreadArticle() -> Int? {
@@ -345,6 +317,36 @@ class TimelineViewController: NSViewController, KeyboardDelegate {
 		return height
 	}
 
+}
+
+// MARK: - Undoable Commands
+
+private extension TimelineViewController {
+
+	func runCommand(_ undoableCommand: UndoableCommand) {
+
+		pushUndoableCommand(undoableCommand)
+		undoableCommand.perform()
+	}
+
+	func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
+
+		undoableCommands += [undoableCommand]
+	}
+
+	func clearUndoableCommands() {
+
+		// When the timeline is reloaded and the list of articles changes,
+		// undoable commands should be dropped — otherwise things like
+		// Redo Mark Read are ambiguous. (Do they apply to the previous articles
+		// or to the current articles?)
+
+		guard let undoManager = undoManager else {
+			return
+		}
+		undoableCommands.forEach { undoManager.removeAllActions(withTarget: $0) }
+		undoableCommands = [UndoableCommand]()
+	}
 }
 
 // MARK: - NSTableViewDataSource
