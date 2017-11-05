@@ -64,6 +64,9 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                     </button>
+                                    <connections>
+                                        <action selector="showShareWindow:" target="B8D-0N-5wS" id="3PI-Je-J6a"/>
+                                    </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="3552D790-D29C-4BF2-AF02-5BEFE49C7FB9" label="New Feed" paletteLabel="New Feed" image="NSAddTemplate" id="Skp-5r-70Q" customClass="RSToolbarItem" customModule="RSCore">
                                     <nil key="toolTip"/>
