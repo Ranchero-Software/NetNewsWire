@@ -30,7 +30,7 @@ public struct NodePath {
 		self.components = tempArray.reversed()
 	}
 
-	public init?(representedObject: AnyHashable, treeController: TreeController) {
+	public init?(representedObject: AnyObject, treeController: TreeController) {
 
 		if let node = treeController.nodeInTreeRepresentingObject(representedObject) {
 			self.init(node: node)

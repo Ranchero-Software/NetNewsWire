@@ -44,7 +44,7 @@ public extension NSOutlineView {
 	}
 
 	@discardableResult
-	public func revealAndSelectRepresentedObject(_ representedObject: AnyHashable, _ treeController: TreeController) -> Bool {
+	public func revealAndSelectRepresentedObject(_ representedObject: AnyObject, _ treeController: TreeController) -> Bool {
 
 		guard let nodePath = NodePath(representedObject: representedObject, treeController: treeController) else {
 			return false

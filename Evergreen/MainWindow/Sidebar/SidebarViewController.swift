@@ -39,10 +39,10 @@ import RSCore
 
 	@objc dynamic func unreadCountDidChange(_ note: Notification) {
 		
-		guard let representedObject = note.object as? AnyHashable else {
+		guard let representedObject = note.object else {
 			return
 		}
-		let _ = configureCellsForRepresentedObject(representedObject)
+		let _ = configureCellsForRepresentedObject(representedObject as AnyObject)
 	}
 
 	@objc dynamic func containerChildrenDidChange(_ note: Notification) {
@@ -176,7 +176,7 @@ private extension SidebarViewController {
 		}
 	}
 	
-	func postSidebarSelectionDidChangeNotification(_ selectedObjects: [AnyHashable]?) {
+	func postSidebarSelectionDidChangeNotification(_ selectedObjects: [AnyObject]?) {
 
 		let appInfo = AppInfo()
 		if let objects = selectedObjects {
@@ -190,7 +190,7 @@ private extension SidebarViewController {
 		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: appInfo.userInfo)
 	}
 
-	func updateUnreadCounts(for objects: [AnyHashable]) {
+	func updateUnreadCounts(for objects: [AnyObject]) {
 
 		// On selection, update unread counts for folders and feeds.
 		// For feeds, actually fetch from database.
@@ -304,7 +304,7 @@ private extension SidebarViewController {
 		return cells
 	}
 
-	func cellsForRepresentedObject(_ representedObject: AnyHashable) -> [SidebarCell] {
+	func cellsForRepresentedObject(_ representedObject: AnyObject) -> [SidebarCell] {
 
 		let availableCells = availableSidebarCells()
 		return availableCells.filter{ (oneSidebarCell) -> Bool in
@@ -312,11 +312,11 @@ private extension SidebarViewController {
 			guard let oneNode = oneSidebarCell.objectValue as? Node else {
 				return false
 			}
-			return oneNode.representedObject == representedObject
+			return oneNode.representedObject === representedObject
 		}
 	}
 
-	func configureCellsForRepresentedObject(_ representedObject: AnyHashable) -> Bool {
+	func configureCellsForRepresentedObject(_ representedObject: AnyObject) -> Bool {
 
 		//Return true if any cells were configured.
 
@@ -337,7 +337,7 @@ private extension SidebarViewController {
 	}
 
 	@discardableResult
-	func revealAndSelectRepresentedObject(_ representedObject: AnyHashable) -> Bool {
+	func revealAndSelectRepresentedObject(_ representedObject: AnyObject) -> Bool {
 
 		return outlineView.revealAndSelectRepresentedObject(representedObject, treeController)
 	}

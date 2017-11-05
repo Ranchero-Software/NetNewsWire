@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import Data
 
-struct FeedListFolder: Hashable, DisplayNameProvider {
+final class FeedListFolder: Hashable, DisplayNameProvider {
 
 	let name: String
 	let feeds: Set<FeedListFeed>

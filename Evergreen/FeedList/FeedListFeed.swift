@@ -9,7 +9,7 @@
 import Foundation
 import RSCore
 
-struct FeedListFeed: Hashable, DisplayNameProvider {
+final class FeedListFeed: Hashable, DisplayNameProvider {
 
 	let name: String
 	let url: String
@@ -37,7 +37,7 @@ struct FeedListFeed: Hashable, DisplayNameProvider {
 		static let homePageURL = "homePageURL"
 	}
 
-	init(dictionary: [String: String]) {
+	convenience init(dictionary: [String: String]) {
 
 		let name = (dictionary[Key.name] ?? dictionary[Key.editedName])!
 		let url = dictionary[Key.url]!

@@ -11,7 +11,7 @@ import Foundation
 public final class Node: Equatable {
 	
 	public weak var parent: Node?
-	public let representedObject: AnyHashable
+	public let representedObject: AnyObject
 	public var canHaveChildNodes = false
 	public var isGroupItem = false
 	public var childNodes: [Node]?
@@ -59,7 +59,7 @@ public final class Node: Equatable {
 		}
 	}
 
-	public init(representedObject: AnyHashable, parent: Node?) {
+	public init(representedObject: AnyObject, parent: Node?) {
 		
 		self.representedObject = representedObject
 		self.parent = parent
@@ -90,14 +90,14 @@ public final class Node: Equatable {
 		}
 	}
 	
-	public func childNodeRepresentingObject(_ obj: AnyHashable) -> Node? {
+	public func childNodeRepresentingObject(_ obj: AnyObject) -> Node? {
 		
 		guard let childNodes = childNodes else {
 			return nil
 		}
 		
 		for oneNode in childNodes {
-			if oneNode.representedObject == obj {
+			if oneNode.representedObject === obj {
 				return oneNode
 			}
 		}

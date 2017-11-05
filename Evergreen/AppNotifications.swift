@@ -40,7 +40,7 @@ final class AppInfo {
 	var article: Article?
 	var articles: Set<Article>?
 	var navigationKey: Int?
-	var objects: [AnyHashable]?
+	var objects: [AnyObject]?
 	var feed: Feed?
 	
 	static let appInfoKey = "appInfo"
