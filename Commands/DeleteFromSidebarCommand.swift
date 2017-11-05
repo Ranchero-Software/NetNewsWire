@@ -14,14 +14,7 @@ import Data
 
 final class DeleteFromSidebarCommand: UndoableCommand {
 
-	private struct ActionName {
-		static let deleteFeed = NSLocalizedString("Delete Feed", comment: "command")
-		static let deleteFeeds = NSLocalizedString("Delete Feeds", comment: "command")
-		static let deleteFolder = NSLocalizedString("Delete Folder", comment: "command")
-		static let deleteFolders = NSLocalizedString("Delete Folders", comment: "command")
-		static let deleteFeedsAndFolders = NSLocalizedString("Delete Feeds and Folders", comment: "command")
-	}
-
+    let undoManager: UndoManager
 	let undoActionName: String
 	var redoActionName: String {
 		get {
@@ -29,49 +22,40 @@ final class DeleteFromSidebarCommand: UndoableCommand {
 		}
 	}
 
-	let undoManager: UndoManager
-
+    private let itemSpecifiers: [SidebarItemSpecifier]
+    
 	init?(nodesToDelete: [Node], undoManager: UndoManager) {
 
-		var numberOfFeeds = 0
-		var numberOfFolders = 0
-
-		for node in nodesToDelete {
-			if let _ = node.representedObject as? Feed {
-				numberOfFeeds += 1
-			}
-			else if let _ = node.representedObject as? Folder {
-				numberOfFolders += 1
-			}
-			else {
-				return nil // Delete only Feeds and Folders.
-			}
-		}
-
-		if numberOfFeeds < 1 && numberOfFolders < 1 {
-			return nil
-		}
-
-		if numberOfFolders < 1 {
-			self.undoActionName = numberOfFeeds == 1 ? ActionName.deleteFeed : ActionName.deleteFeeds
-		}
-		else if numberOfFeeds < 1 {
-			self.undoActionName = numberOfFolders == 1 ? ActionName.deleteFolder : ActionName.deleteFolders
-		}
-		else {
-			self.undoActionName = ActionName.deleteFeedsAndFolders
-		}
-
+        guard DeleteFromSidebarCommand.canDelete(nodesToDelete) else {
+            return nil
+        }
+        guard let actionName = DeleteActionName.name(for: nodesToDelete) else {
+            return nil
+        }
+        
+        self.undoActionName = actionName
 		self.undoManager = undoManager
+        
+        let itemSpecifiers = nodesToDelete.flatMap{ SidebarItemSpecifier(node: $0) }
+        guard !itemSpecifiers.isEmpty else {
+            return nil
+        }
+        self.itemSpecifiers = itemSpecifiers
 	}
 
 	func perform() {
 
+        BatchUpdate.shared.perform {
+            itemSpecifiers.forEach { $0.delete() }
+        }
 		registerUndo()
 	}
 
 	func undo() {
 
+        BatchUpdate.shared.perform {
+            
+        }
 		registerRedo()
 	}
 
@@ -103,19 +87,34 @@ final class DeleteFromSidebarCommand: UndoableCommand {
 
 private struct SidebarItemSpecifier {
 
-	weak var account: Account?
-	let folder: Folder?
-	let feed: Feed?
-	let path: ContainerPath
-
+	private weak var account: Account?
+    private let parentFolder: Folder?
+	private let folder: Folder?
+	private let feed: Feed?
+	private let path: ContainerPath
+    
+    private var container: Container? {
+        get {
+            if let parentFolder = parentFolder {
+                return parentFolder
+            }
+            if let account = account {
+                return account
+            }
+            return nil
+        }
+    }
+    
 	init?(node: Node) {
 
 		var account: Account?
         
-		if let feed = node.representedObject as? Feed {
+        self.parentFolder = node.parentFolder()
+
+        if let feed = node.representedObject as? Feed {
 			self.feed = feed
             self.folder = nil
- 			account = feed.account
+            account = feed.account
 		}
 		else if let folder = node.representedObject as? Folder {
             self.feed = nil
@@ -132,9 +131,37 @@ private struct SidebarItemSpecifier {
 		self.account = account!
         self.path = ContainerPath(account: account!, folders: node.containingFolders())
 	}
+    
+    func delete() {
+        
+        guard let container = container else {
+            return
+        }
+        
+        if let feed = feed {
+            container.deleteFeed(feed)
+        }
+        else if let folder = folder {
+            container.deleteFolder(folder)
+        }
+    }
 }
 
 private extension Node {
+    
+    func parentFolder() -> Folder? {
+    
+        guard let parentNode = self.parent else {
+            return nil
+        }
+        if parentNode.isRoot {
+            return nil
+        }
+        if let folder = parentNode.representedObject as? Folder {
+			return folder
+        }
+        return nil
+    }
     
     func containingFolders() -> [Folder] {
         
@@ -156,3 +183,38 @@ private extension Node {
     
 }
 
+private struct DeleteActionName {
+    
+    private static let deleteFeed = NSLocalizedString("Delete Feed", comment: "command")
+    private static let deleteFeeds = NSLocalizedString("Delete Feeds", comment: "command")
+    private static let deleteFolder = NSLocalizedString("Delete Folder", comment: "command")
+    private static let deleteFolders = NSLocalizedString("Delete Folders", comment: "command")
+    private static let deleteFeedsAndFolders = NSLocalizedString("Delete Feeds and Folders", comment: "command")
+    
+    static func name(for nodes: [Node]) -> String? {
+        
+        var numberOfFeeds = 0
+        var numberOfFolders = 0
+        
+        for node in nodes {
+            if let _ = node.representedObject as? Feed {
+                numberOfFeeds += 1
+            }
+            else if let _ = node.representedObject as? Folder {
+                numberOfFolders += 1
+            }
+            else {
+                return nil // Delete only Feeds and Folders.
+            }
+        }
+        
+        if numberOfFolders < 1 {
+            return numberOfFeeds == 1 ? deleteFeed : deleteFeeds
+        }
+        if numberOfFeeds < 1 {
+            return numberOfFolders == 1 ? deleteFolder : deleteFolders
+        }
+        
+        return deleteFeedsAndFolders
+    }
+}

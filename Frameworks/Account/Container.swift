@@ -16,9 +16,9 @@ extension NSNotification.Name {
 	public static let ChildrenDidChange = Notification.Name("ChildrenDidChange")
 }
 
-public protocol Container {
+public protocol Container: class {
 
-	var children: [AnyObject] { get }
+	var children: [AnyObject] { get set }
 
 	func hasAtLeastOneFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
@@ -26,6 +26,9 @@ public protocol Container {
 	func hasChildFolder(with: String) -> Bool
 	func childFolder(with: String) -> Folder?
 
+    func deleteFeed(_ feed: Feed)
+    func deleteFolder(_ folder: Folder)
+    
 	//Recursive
 	func flattenedFeeds() -> Set<Feed>
 	func hasFeed(with feedID: String) -> Bool
@@ -172,6 +175,34 @@ public extension Container {
 		return nil
 	}
 
+    func indexOf<T: Equatable>(_ object: T) -> Int? {
+        
+        return children.index(where: { (child) -> Bool in
+            if let oneObject = child as? T {
+                return oneObject == object
+            }
+            return false
+        })
+    }
+    
+    func delete<T: Equatable>(_ object: T) {
+        
+        if let index = indexOf(object) {
+            children.remove(at: index)
+            postChildrenDidChangeNotification()
+        }
+    }
+    
+    func deleteFeed(_ feed: Feed) {
+        
+        return delete(feed)
+    }
+    
+    func deleteFolder(_ folder: Folder) {
+        
+        return delete(folder)
+    }
+    
 	func postChildrenDidChangeNotification() {
 		
 		NotificationCenter.default.post(name: .ChildrenDidChange, object: self)

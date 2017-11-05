@@ -12,7 +12,7 @@ import RSTextDrawing
 import Data
 import Account
 
-class TimelineViewController: NSViewController, KeyboardDelegate {
+class TimelineViewController: NSViewController, KeyboardDelegate, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
 
@@ -22,7 +22,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate {
 		}
 	}
 
-	private var undoableCommands = [UndoableCommand]()
+	var undoableCommands = [UndoableCommand]()
 	private var cellAppearance: TimelineCellAppearance!
 	private var showFeedNames = false
 	private var didRegisterForNotifications = false
@@ -317,36 +317,6 @@ class TimelineViewController: NSViewController, KeyboardDelegate {
 		return height
 	}
 
-}
-
-// MARK: - Undoable Commands
-
-private extension TimelineViewController {
-
-	func runCommand(_ undoableCommand: UndoableCommand) {
-
-		pushUndoableCommand(undoableCommand)
-		undoableCommand.perform()
-	}
-
-	func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
-
-		undoableCommands += [undoableCommand]
-	}
-
-	func clearUndoableCommands() {
-
-		// When the timeline is reloaded and the list of articles changes,
-		// undoable commands should be dropped — otherwise things like
-		// Redo Mark Read are ambiguous. (Do they apply to the previous articles
-		// or to the current articles?)
-
-		guard let undoManager = undoManager else {
-			return
-		}
-		undoableCommands.forEach { undoManager.removeAllActions(withTarget: $0) }
-		undoableCommands = [UndoableCommand]()
-	}
 }
 
 // MARK: - NSTableViewDataSource

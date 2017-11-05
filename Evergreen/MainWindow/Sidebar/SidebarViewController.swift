@@ -12,13 +12,14 @@ import Data
 import Account
 import RSCore
 
-@objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource {
+@objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, UndoableCommandRunner {
     
 	@IBOutlet var outlineView: SidebarOutlineView!
 	let treeControllerDelegate = SidebarTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		TreeController(delegate: treeControllerDelegate)
 	}()
+    var undoableCommands = [UndoableCommand]()
 
 	//MARK: NSViewController
 
@@ -71,15 +72,18 @@ import RSCore
 		}
 
 		let nodesToDelete = treeController.normalizedSelectedNodes(selectedNodes)
+        
+        guard let undoManager = undoManager, let deleteCommand = DeleteFromSidebarCommand(nodesToDelete: nodesToDelete, undoManager: undoManager) else {
+            return
+        }
+        
 		let selectedRows = outlineView.selectedRowIndexes
 
 		outlineView.beginUpdates()
 		outlineView.removeItems(at: selectedRows, inParent: nil, withAnimation: [.slideDown])
 		outlineView.endUpdates()
 
-		BatchUpdate.shared.perform {
-			deleteItemsForNodes(nodesToDelete)
-		}
+        runCommand(deleteCommand)
 	}
 
 	// MARK: Navigation

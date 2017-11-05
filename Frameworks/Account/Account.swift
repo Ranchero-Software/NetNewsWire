@@ -36,7 +36,7 @@ public enum AccountType: Int {
 
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
-	public struct UserInfoKey {
+    public struct UserInfoKey {
 		public static let newArticles = "newArticles" // AccountDidDownloadArticles
 		public static let updatedArticles = "updatedArticles" // AccountDidDownloadArticles
 		public static let statuses = "statuses" // StatusesDidChange
@@ -279,7 +279,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return false // TODO
 	}
 
-	public func importOPML(_ opmlDocument: RSOPMLDocument) {
+ 	public func importOPML(_ opmlDocument: RSOPMLDocument) {
 
 		guard let children = opmlDocument.children else {
 			return

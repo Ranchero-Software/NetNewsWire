@@ -10,7 +10,7 @@ import Foundation
 import Data
 import RSCore
 
-public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, Hashable {
+public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, Hashable {    
 
 	public weak var account: Account?
 	public var children = [AnyObject]()
@@ -133,7 +133,7 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		}
 		return true
 	}
-
+    
 	// MARK: Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {
