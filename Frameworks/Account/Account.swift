@@ -276,7 +276,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	@discardableResult
 	public func addFolder(_ folder: Folder, to parentFolder: Folder?) -> Bool {
 
-		return false // TODO
+		// TODO: support subfolders, maybe, some day, if one of the sync systems
+		// supports subfolders. But, for now, parentFolder is ignored.
+
+		if objectIsChild(folder) {
+			return true
+		}
+		children += [folder]
+		postChildrenDidChangeNotification()
+		return true
 	}
 
  	public func importOPML(_ opmlDocument: RSOPMLDocument) {

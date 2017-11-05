@@ -20,6 +20,7 @@ import RSCore
 		TreeController(delegate: treeControllerDelegate)
 	}()
     var undoableCommands = [UndoableCommand]()
+	private var animatingChanges = false
 
 	//MARK: NSViewController
 
@@ -79,11 +80,13 @@ import RSCore
         
 		let selectedRows = outlineView.selectedRowIndexes
 
+		animatingChanges = true
 		outlineView.beginUpdates()
 		outlineView.removeItems(at: selectedRows, inParent: nil, withAnimation: [.slideDown])
 		outlineView.endUpdates()
 
         runCommand(deleteCommand)
+		animatingChanges = false
 	}
 
 	// MARK: Navigation
@@ -170,7 +173,7 @@ private extension SidebarViewController {
 	
 	func rebuildTreeAndReloadDataIfNeeded() {
 		
-		if !BatchUpdate.shared.isPerforming {
+		if !animatingChanges && !BatchUpdate.shared.isPerforming {
 			treeController.rebuild()
 			outlineView.reloadData()
 		}
