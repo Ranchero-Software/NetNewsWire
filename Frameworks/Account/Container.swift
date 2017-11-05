@@ -33,6 +33,7 @@ public protocol Container {
 	func existingFeed(with feedID: String) -> Feed?
 	func existingFeed(withURL url: String) -> Feed?
 	func existingFolder(with name: String) -> Folder?
+	func existingFolder(withID: Int) -> Folder?
 
 	func postChildrenDidChangeNotification()
 }
@@ -146,6 +147,23 @@ public extension Container {
 					return folder
 				}
 				if let subFolder = folder.existingFolder(with: name) {
+					return subFolder
+				}
+			}
+		}
+
+		return nil
+	}
+
+	func existingFolder(withID folderID: Int) -> Folder? {
+
+		for child in children {
+
+			if let folder = child as? Folder {
+				if folder.folderID == folderID {
+					return folder
+				}
+				if let subFolder = folder.existingFolder(withID: folderID) {
 					return subFolder
 				}
 			}

@@ -20,6 +20,7 @@
 		846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846E77531F6F00E300A165E2 /* AccountManager.swift */; };
 		848935001F62484F00CEBD24 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848934F61F62484F00CEBD24 /* Account.framework */; };
 		848935051F62485000CEBD24 /* AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848935041F62485000CEBD24 /* AccountTests.swift */; };
+		84B99C9F1FAE8D3200ECDEDB /* ContainerPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9E1FAE8D3200ECDEDB /* ContainerPath.swift */; };
 		84C3654A1F899F3B001EC85C /* CombinedRefreshProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */; };
 		84C8B3F41F89DE430053CCA6 /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */; };
 /* End PBXBuildFile section */
@@ -114,6 +115,7 @@
 		848935041F62485000CEBD24 /* AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTests.swift; sourceTree = "<group>"; };
 		848935061F62485000CEBD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		848935101F62486800CEBD24 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		84B99C9E1FAE8D3200ECDEDB /* ContainerPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerPath.swift; sourceTree = "<group>"; };
 		84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombinedRefreshProgress.swift; sourceTree = "<group>"; };
 		84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -205,6 +207,7 @@
 				848935101F62486800CEBD24 /* Account.swift */,
 				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
 				841974001F6DD1EC006346C4 /* Folder.swift */,
+				84B99C9E1FAE8D3200ECDEDB /* ContainerPath.swift */,
 				84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */,
 				84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */,
 				8419740D1F6DD25F006346C4 /* Container.swift */,
@@ -434,6 +437,7 @@
 				846E77451F6EF9B900A165E2 /* Container.swift in Sources */,
 				841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */,
 				846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */,
+				84B99C9F1FAE8D3200ECDEDB /* ContainerPath.swift in Sources */,
 				846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */,
 				841974011F6DD1EC006346C4 /* Folder.swift in Sources */,
 				846E774F1F6EF9C000A165E2 /* LocalAccountDelegate.swift in Sources */,

@@ -82,6 +82,7 @@
 		84B99C671FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */; };
 		84B99C691FAE36B800ECDEDB /* FeedListFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */; };
 		84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */; };
+		84B99C9D1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */; };
 		84BB4B771F11753300858766 /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B681F1174D400858766 /* Data.framework */; };
 		84BB4B781F11753300858766 /* Data.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B681F1174D400858766 /* Data.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */; };
@@ -452,6 +453,7 @@
 		84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFolder.swift; sourceTree = "<group>"; };
 		84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFeed.swift; sourceTree = "<group>"; };
+		84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteFromSidebarCommand.swift; sourceTree = "<group>"; };
 		84BB4B611F1174D400858766 /* Data.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Data.xcodeproj; path = Frameworks/Data/Data.xcodeproj; sourceTree = "<group>"; };
 		84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLImporter.swift; sourceTree = "<group>"; };
 		84DAEE311F870B390058304B /* DockBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DockBadge.swift; path = Evergreen/DockBadge.swift; sourceTree = "<group>"; };
@@ -542,6 +544,7 @@
 			isa = PBXGroup;
 			children = (
 				84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */,
+				84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */,
 			);
 			path = Commands;
 			sourceTree = "<group>";
@@ -1237,6 +1240,7 @@
 				849A97781ED9EC04007D329B /* TimelineCellLayout.swift in Sources */,
 				849A976C1ED9EBC8007D329B /* TimelineTableRowView.swift in Sources */,
 				849A977B1ED9EC04007D329B /* UnreadIndicatorView.swift in Sources */,
+				84B99C9D1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift in Sources */,
 				849A97541ED9EAC0007D329B /* AddFeedWindowController.swift in Sources */,
 				849A976D1ED9EBC8007D329B /* TimelineTableView.swift in Sources */,
 				84B99C671FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift in Sources */,

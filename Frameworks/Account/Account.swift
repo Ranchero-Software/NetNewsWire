@@ -201,6 +201,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return folder
 	}
 
+	public func ensureFolder(withFolderNames folderNames: [String]) -> Folder? {
+
+		// TODO: support subfolders, maybe, some day.
+		// Since we don’t, just take the last name and make sure there’s a Folder.
+
+		guard let folderName = folderNames.last else {
+			return nil
+		}
+		return ensureFolder(with: folderName)
+	}
+
 	public func canAddFeed(_ feed: Feed, to folder: Folder?) -> Bool {
 
 		// If folder is nil, then it should go at the top level.

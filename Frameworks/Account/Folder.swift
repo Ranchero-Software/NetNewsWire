@@ -12,11 +12,12 @@ import RSCore
 
 public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, Hashable {
 
-
 	public weak var account: Account?
 	public var children = [AnyObject]()
 	var name: String?
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
+	public let folderID: Int // not saved: per-run only
+	static var incrementingID = 0
 	public let hashValue: Int
 
 	// MARK: - Fetching Articles
@@ -54,8 +55,12 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		
 		self.account = account
 		self.name = name
-		self.hashValue = name?.hashValue ?? Folder.untitledName.hashValue
-		
+
+		let folderID = Folder.incrementingID
+		Folder.incrementingID += 1
+		self.folderID = folderID
+		self.hashValue = folderID
+
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 	}
 
