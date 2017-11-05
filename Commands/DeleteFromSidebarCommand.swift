@@ -15,11 +15,11 @@ import Data
 final class DeleteFromSidebarCommand: UndoableCommand {
 
 	private struct ActionName {
-		static private let deleteFeed = NSLocalizedString("Delete Feed", comment: "command")
-		static private let deleteFeeds = NSLocalizedString("Delete Feeds", comment: "command")
-		static private let deleteFolder = NSLocalizedString("Delete Folder", comment: "command")
-		static private let deleteFolders = NSLocalizedString("Delete Folders", comment: "command")
-		static private let deleteFeedsAndFolders = NSLocalizedString("Delete Feeds and Folders", comment: "command")
+		static let deleteFeed = NSLocalizedString("Delete Feed", comment: "command")
+		static let deleteFeeds = NSLocalizedString("Delete Feeds", comment: "command")
+		static let deleteFolder = NSLocalizedString("Delete Folder", comment: "command")
+		static let deleteFolders = NSLocalizedString("Delete Folders", comment: "command")
+		static let deleteFeedsAndFolders = NSLocalizedString("Delete Feeds and Folders", comment: "command")
 	}
 
 	let undoActionName: String
@@ -104,31 +104,55 @@ final class DeleteFromSidebarCommand: UndoableCommand {
 private struct SidebarItemSpecifier {
 
 	weak var account: Account?
-	let node: Node
 	let folder: Folder?
 	let feed: Feed?
 	let path: ContainerPath
 
 	init?(node: Node) {
 
-		self.node = node
-
 		var account: Account?
+        
 		if let feed = node.representedObject as? Feed {
 			self.feed = feed
-			account = feed.account
+            self.folder = nil
+ 			account = feed.account
 		}
 		else if let folder = node.representedObject as? Folder {
+            self.feed = nil
 			self.folder = folder
 			account = folder.account
 		}
+        else {
+            return nil
+        }
+        if account == nil {
+            return nil
+        }
 
-		guard let account = account else {
-			return nil
-		}
-
-		self.account = account
-		self.path = SidebarPath(account: account, node: node)
+		self.account = account!
+        self.path = ContainerPath(account: account!, folders: node.containingFolders())
 	}
+}
+
+private extension Node {
+    
+    func containingFolders() -> [Folder] {
+        
+        var nomad = self.parent
+        var folders = [Folder]()
+        
+        while nomad != nil {
+            if let folder = nomad!.representedObject as? Folder {
+                folders += [folder]
+            }
+            else {
+                break
+            }
+            nomad = nomad!.parent
+        }
+        
+        return folders.reversed()
+    }
+    
 }
 

@@ -27,9 +27,7 @@ public struct ContainerPath {
 		self.names = folders.map { $0.nameForDisplay }
 		self.isTopLevel = folders.isEmpty
 
-		if let lastFolder = folders.last {
-			self.folderID = lastFolder.folderID
-		}
+        self.folderID = folders.last?.folderID
 	}
 
 	public func resolveContainer() -> Container? {
