@@ -14,7 +14,7 @@
 	</dict>
 	<dict>
 		<key>homePageURL</key>
-		<string>http://daringfireball.net/</string>
+		<string>https://daringfireball.net/</string>
 		<key>editedName</key>
 		<string>Daring Fireball</string>
 		<key>url</key>
