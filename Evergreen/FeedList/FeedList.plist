@@ -178,6 +178,78 @@
 			<key>url</key>
 			<string>https://david-smith.org/atom.xml</string>
 		</dict>
+		<dict>
+			<key>name</key>
+			<string>Blog Posts About Stuff</string>
+			<key>homePageURL</key>
+			<string>http://nothe.purplellamas.net/</string>
+			<key>url</key>
+			<string>http://nothe.purplellamas.net/index.xml</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Liz Marley</string>
+			<key>homePageURL</key>
+			<string>https://medium.com/@emarley</string>
+			<key>url</key>
+			<string>https://medium.com/feed/@emarley</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Demi Marshall</string>
+			<key>homePageURL</key>
+			<string>https://pewpewthespells.com/ramble.html</string>
+			<key>url</key>
+			<string>https://pewpewthespells.com/feed.xml</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Veronica Ray</string>
+			<key>homePageURL</key>
+			<string>https://medium.com/@nerdonica</string>
+			<key>url</key>
+			<string>https://medium.com/feed/@nerdonica</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Tess Rinearson</string>
+			<key>homePageURL</key>
+			<string>https://medium.com/@tessr</string>
+			<key>url</key>
+			<string>https://medium.com/feed/@tessr</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>jessysaurusrex</string>
+			<key>homePageURL</key>
+			<string>https://jessysaurusrex.com</string>
+			<key>url</key>
+			<string>https://jessysaurusrex.com/feed/</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Designated Nerd</string>
+			<key>homePageURL</key>
+			<string>http://designatednerd.com/blog/</string>
+			<key>url</key>
+			<string>http://designatednerd.com/feed/</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Virginia Roberts</string>
+			<key>homePageURL</key>
+			<string>http://www.virginiaroberts.com/</string>
+			<key>url</key>
+			<string>http://www.virginiaroberts.com/feed/</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Feral Scrutiny</string>
+			<key>homePageURL</key>
+			<string>http://feralscrutiny.co/</string>
+			<key>url</key>
+			<string>http://feralscrutiny.co/feed/</string>
+		</dict>
 	</array>
 	<key>News</key>
 	<array>
@@ -201,7 +273,7 @@
 			<string>http://www.bbc.co.uk/blogs/doctorwho/rss</string>
 		</dict>
 	</array>
-	<key>App Development</key>
+	<key>Programming</key>
 	<array>
 		<dict>
 			<key>name</key>
@@ -234,6 +306,22 @@
 			<string>http://indiestack.com/</string>
 			<key>url</key>
 			<string>http://indiestack.com/feed/</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Pointers Gone Wild</string>
+			<key>homePageURL</key>
+			<string>https://pointersgonewild.com/</string>
+			<key>url</key>
+			<string>https://pointersgonewild.com/feed/</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Marcy Sutton</string>
+			<key>homePageURL</key>
+			<string>https://marcysutton.com/</string>
+			<key>url</key>
+			<string>https://marcysutton.com/feed/</string>
 		</dict>
 	</array>
 	<key>Writers</key>
