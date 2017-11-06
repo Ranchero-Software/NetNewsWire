@@ -338,6 +338,14 @@ extension TimelineViewController: NSTableViewDataSource {
 
 		return articles.articleAtRow(row) ?? nil
 	}
+
+	func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
+
+		guard let article = articles.articleAtRow(row) else {
+			return nil
+		}
+		return ArticlePasteboardWriter(article: article)
+	}
 }
 
 // MARK: - NSTableViewDelegate

@@ -89,6 +89,7 @@
 		84DAEE321F870B390058304B /* DockBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE311F870B390058304B /* DockBadge.swift */; };
 		84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
 		84E95CF71FABB3C800552D99 /* FeedList.plist in Resources */ = {isa = PBXBuildFile; fileRef = 84E95CF61FABB3C800552D99 /* FeedList.plist */; };
+		84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */; };
 		84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204CD1FAACB660076E152 /* FeedListViewController.swift */; };
 		84F204DE1FAACB8B0076E152 /* FeedListTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DD1FAACB8B0076E152 /* FeedListTimelineViewController.swift */; };
 		84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
@@ -459,6 +460,7 @@
 		84DAEE311F870B390058304B /* DockBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DockBadge.swift; path = Evergreen/DockBadge.swift; sourceTree = "<group>"; };
 		84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDefaults.swift; path = Evergreen/AppDefaults.swift; sourceTree = "<group>"; };
 		84E95CF61FABB3C800552D99 /* FeedList.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = FeedList.plist; sourceTree = "<group>"; };
+		84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticlePasteboardWriter.swift; sourceTree = "<group>"; };
 		84F204CD1FAACB660076E152 /* FeedListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListViewController.swift; sourceTree = "<group>"; };
 		84F204DD1FAACB8B0076E152 /* FeedListTimelineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListTimelineViewController.swift; sourceTree = "<group>"; };
 		84F204DF1FAACBB30076E152 /* ArticleArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleArray.swift; sourceTree = "<group>"; };
@@ -599,6 +601,7 @@
 				84F204DF1FAACBB30076E152 /* ArticleArray.swift */,
 				849A97691ED9EBC8007D329B /* TimelineTableRowView.swift */,
 				849A976A1ED9EBC8007D329B /* TimelineTableView.swift */,
+				84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */,
 				849A976F1ED9EC04007D329B /* Cell */,
 			);
 			path = Timeline;
@@ -1219,6 +1222,7 @@
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
+				84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */,
 				846A7BEC1F872C5600FEFD30 /* BatchUpdate.swift in Sources */,
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,
 				84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */,
