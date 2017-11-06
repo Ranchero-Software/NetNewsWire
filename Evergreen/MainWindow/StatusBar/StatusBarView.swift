@@ -18,13 +18,18 @@ final class StatusBarView: NSView {
 	@IBOutlet var progressLabel: NSTextField!
 	@IBOutlet var urlLabel: NSTextField!
 	
-	fileprivate var isAnimatingProgress = false
-	fileprivate var article: Article? {
+	private var isAnimatingProgress = false
+	private var article: Article? {
 		didSet {
 			updateURLLabel()
 		}
 	}
-	
+	private var mouseoverLink: String? {
+		didSet {
+			updateURLLabel()
+		}
+	}
+
 	override var isFlipped: Bool {
 		get {
 			return true
@@ -65,7 +70,7 @@ final class StatusBarView: NSView {
 		guard let link = appInfo.url else {
 			return
 		}
-		print(link)
+		mouseoverLink = link
 	}
 
 	@objc dynamic func mouseDidExitLink(_ notification: Notification) {
@@ -79,7 +84,7 @@ final class StatusBarView: NSView {
 		guard let link = appInfo.url else {
 			return
 		}
-		print(link)
+		mouseoverLink = nil
 	}
 
 	// MARK: Notifications
@@ -88,6 +93,7 @@ final class StatusBarView: NSView {
 
 		let timelineView = note.appInfo?.view
 		if timelineView?.window === self.window {
+			mouseoverLink = nil
 			article = note.appInfo?.article
 		}
 	}
@@ -114,20 +120,30 @@ private extension StatusBarView {
 	func updateURLLabel() {
 		
 		needsLayout = true
-		
+
 		guard let article = article else {
-			urlLabel.stringValue = ""
+			setURLLabel("")
 			return
 		}
-		
+
+		if let mouseoverLink = mouseoverLink, !mouseoverLink.isEmpty {
+			setURLLabel(mouseoverLink)
+			return
+		}
+
 		if let s = article.preferredLink {
-			urlLabel.stringValue = (s as NSString).rs_stringByStrippingHTTPOrHTTPSScheme()
+			setURLLabel(s)
 		}
 		else {
-			urlLabel.stringValue = ""
+			setURLLabel("")
 		}
 	}
-	
+
+	func setURLLabel(_ link: String) {
+
+		urlLabel.stringValue = (link as NSString).rs_stringByStrippingHTTPOrHTTPSScheme()
+	}
+
 	// MARK: Progress
 	
 	func stopProgressIfNeeded() {
