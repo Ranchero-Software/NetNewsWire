@@ -40,6 +40,9 @@ final class StatusBarView: NSView {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange(_:)), name: .TimelineSelectionDidChange, object: nil)
+
+		NotificationCenter.default.addObserver(self, selector: #selector(mouseDidEnterLink(_:)), name: .MouseDidEnterLink, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(mouseDidExitLink(_:)), name: .MouseDidExitLink, object: nil)
 	}
 
 	// MARK: Notifications
@@ -49,6 +52,34 @@ final class StatusBarView: NSView {
 		let progress = AccountManager.shared.combinedRefreshProgress
 		updateProgressIndicator(progress)
 		updateProgressLabel(progress)
+	}
+
+	@objc dynamic func mouseDidEnterLink(_ notification: Notification) {
+
+		guard let appInfo = AppInfo.pullFromUserInfo(notification.userInfo) else {
+			return
+		}
+		guard let window = window, let notificationWindow = appInfo.view?.window, window === notificationWindow else {
+			return
+		}
+		guard let link = appInfo.url else {
+			return
+		}
+		print(link)
+	}
+
+	@objc dynamic func mouseDidExitLink(_ notification: Notification) {
+
+		guard let appInfo = AppInfo.pullFromUserInfo(notification.userInfo) else {
+			return
+		}
+		guard let window = window, let notificationWindow = appInfo.view?.window, window === notificationWindow else {
+			return
+		}
+		guard let link = appInfo.url else {
+			return
+		}
+		print(link)
 	}
 
 	// MARK: Notifications

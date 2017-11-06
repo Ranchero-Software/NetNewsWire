@@ -148,10 +148,10 @@ private struct SidebarItemSpecifier {
 
 	func restore() {
 
-		if let feed = feed {
+		if let _ = feed {
 			restoreFeed()
 		}
-		else if let folder = folder {
+		else if let _ = folder {
 			restoreFolder()
 		}
 	}

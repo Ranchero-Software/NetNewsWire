@@ -620,8 +620,8 @@
 		849A977C1ED9EC42007D329B /* Detail */ = {
 			isa = PBXGroup;
 			children = (
-				849A977D1ED9EC42007D329B /* ArticleRenderer.swift */,
 				849A977E1ED9EC42007D329B /* DetailViewController.swift */,
+				849A977D1ED9EC42007D329B /* ArticleRenderer.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";

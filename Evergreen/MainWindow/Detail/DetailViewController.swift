@@ -12,7 +12,7 @@ import RSCore
 import Data
 
 class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
-	
+
 	var webview: WKWebView!
 	
 	var article: Article? {
@@ -20,7 +20,12 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 			reloadHTML()
 		}
 	}
-	
+
+	private struct MessageName {
+		static let mouseDidEnter = "mouseDidEnter"
+		static let mouseDidExit = "mouseDidExit"
+	}
+
 	override func viewDidLoad() {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange(_:)), name: .TimelineSelectionDidChange, object: nil)
@@ -35,6 +40,11 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
 
+		let userContentController = WKUserContentController()
+		userContentController.add(self, name: MessageName.mouseDidEnter)
+		userContentController.add(self, name: MessageName.mouseDidExit)
+		configuration.userContentController = userContentController
+		
 		webview = WKWebView(frame: self.view.bounds, configuration: configuration)
 		webview.uiDelegate = self
 		webview.navigationDelegate = self
@@ -94,6 +104,41 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 		}
 		
 		decisionHandler(.allow)
+	}
+}
+
+extension DetailViewController: WKScriptMessageHandler {
+
+	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+
+		if message.name == MessageName.mouseDidEnter, let link = message.body as? String {
+			mouseDidEnter(link)
+		}
+		else if message.name == MessageName.mouseDidExit, let link = message.body as? String{
+			mouseDidExit(link)
+		}
+	}
+
+	private func mouseDidEnter(_ link: String) {
+
+		if link.isEmpty {
+			return
+		}
+
+		let appInfo = AppInfo()
+		appInfo.view = self.view
+		appInfo.url = link
+
+		NotificationCenter.default.post(name: .MouseDidEnterLink, object: self, userInfo: appInfo.userInfo)
+	}
+
+	private func mouseDidExit(_ link: String) {
+
+		let appInfo = AppInfo()
+		appInfo.view = self.view
+		appInfo.url = link
+
+		NotificationCenter.default.post(name: .MouseDidExitLink, object: self, userInfo: appInfo.userInfo)
 	}
 }
 

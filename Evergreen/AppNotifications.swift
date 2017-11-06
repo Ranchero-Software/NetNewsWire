@@ -17,6 +17,10 @@ extension Notification.Name {
 	static let AppNavigationKeyPressed = Notification.Name("AppNavigationKeyPressedNotification")
 
 	static let UserDidAddFeed = Notification.Name("UserDidAddFeedNotification")
+
+	// Sent by DetailViewController when mouse hovers over link in web view.
+	static let MouseDidEnterLink = Notification.Name("MouseDidEnterLinkNotification")
+	static let MouseDidExitLink = Notification.Name("MouseDidExitLinkNotification")
 }
 
 extension Notification {
@@ -42,6 +46,7 @@ final class AppInfo {
 	var navigationKey: Int?
 	var objects: [AnyObject]?
 	var feed: Feed?
+	var url: String?
 	
 	static let appInfoKey = "appInfo"
 

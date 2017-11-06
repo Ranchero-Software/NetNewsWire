@@ -180,14 +180,40 @@ class ArticleRenderer {
 
 	private func renderedHTML() -> String {
 
-		var s = "<!DOCTYPE html><html><head>"
+		var s = "<!DOCTYPE html><html><head>\n\n"
 		s += textInsideTag(title, "title")
 		s += textInsideTag(styleString(), "style")
-		s += "</head></body>"
+
+		s += """
+
+		<script type="text/javascript">
+
+		function startup() {
+			var anchors = document.getElementsByTagName("a");
+			for (var i = 0; i < anchors.length; i++) {
+				anchors[i].addEventListener("mouseenter", function() { mouseDidEnterLink(this) });
+				anchors[i].addEventListener("mouseleave", function() { mouseDidExitLink(this) });
+			}
+		}
+
+		function mouseDidEnterLink(anchor) {
+			window.webkit.messageHandlers.mouseDidEnter.postMessage(anchor.href);
+		}
+
+		function mouseDidExitLink(anchor) {
+			window.webkit.messageHandlers.mouseDidExit.postMessage(anchor.href);
+		}
+
+		</script>
+
+		"""
+
+		s += "\n\n</head><body onload='startup()'>\n\n"
+
 
 		s += RSMacroProcessor.renderedText(withTemplate: template(), substitutions: substitutions(), macroStart: "[[", macroEnd: "]]")
 
-		s += "</body></html>"
+		s += "\n\n</body></html>"
 
 //	print(s)
 
