@@ -22,11 +22,30 @@ import Data
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		return [NSPasteboard.PasteboardType]() // TODO: add types
+		// TODO: add more types
+
+		var types = [NSPasteboard.PasteboardType]()
+
+		if let _ = article.title {
+			types += [.string]
+		}
+
+		return types // TODO: add types
 	}
 
 	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
 
-		return nil // TODO: write data
+		// TODO: write data for all types declared in writableTypes.
+
+		let plist: Any?
+
+		switch type {
+		case .string:
+			plist = article.title ?? ""
+		default:
+			plist = nil
+		}
+
+		return plist
 	}
 }
