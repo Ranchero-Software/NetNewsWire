@@ -189,14 +189,6 @@
 			<key>url</key>
 			<string>https://talkingpointsmemo.com/feed/all</string>
 		</dict>
-		<dict>
-			<key>name</key>
-			<string>My Ballard</string>
-			<key>homePageURL</key>
-			<string>http://www.myballard.com/</string>
-			<key>url</key>
-			<string>http://feeds2.feedburner.com/myballard</string>
-		</dict>
 	</array>
 	<key>TV</key>
 	<array>
@@ -253,6 +245,17 @@
 			<string>https://whatever.scalzi.com/</string>
 			<key>url</key>
 			<string>https://whatever.scalzi.com/feed/</string>
+		</dict>
+	</array>
+	<key>Seattle</key>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>My Ballard</string>
+			<key>homePageURL</key>
+			<string>http://www.myballard.com/</string>
+			<key>url</key>
+			<string>http://feeds2.feedburner.com/myballard</string>
 		</dict>
 	</array>
 </dict>
