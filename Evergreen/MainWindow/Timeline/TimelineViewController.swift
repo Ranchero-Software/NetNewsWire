@@ -46,6 +46,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 	private var representedObjects: [AnyObject]? {
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
+				postTimelineSelectionDidChangeNotification(nil)
 				fetchArticles()
 				if articles.count > 0 {
 					tableView.scrollRowToVisible(0)
