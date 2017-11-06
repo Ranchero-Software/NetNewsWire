@@ -141,6 +141,9 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                     </button>
+                                    <connections>
+                                        <action selector="markRead:" target="Oky-zY-oP4" id="yFY-gd-FOd"/>
+                                    </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="4DED27B7-8961-48F3-A995-9C961E2C0257" label="Open in Browser" paletteLabel="Open in Browser" image="ToolbarPlaceholder" id="tid-SB-me3" customClass="RSToolbarItem" customModule="RSCore">
                                     <nil key="toolTip"/>

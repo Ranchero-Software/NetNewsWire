@@ -81,9 +81,6 @@ final class StatusBarView: NSView {
 		guard let window = window, let notificationWindow = appInfo.view?.window, window === notificationWindow else {
 			return
 		}
-		guard let link = appInfo.url else {
-			return
-		}
 		mouseoverLink = nil
 	}
 

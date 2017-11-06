@@ -127,6 +127,11 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		return articles.canMarkAllAsRead()
 	}
 
+	func canMarkSelectedArticlesAsRead() -> Bool {
+
+		return selectedArticles.canMarkAllAsRead()
+	}
+
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: AnyObject) {
@@ -153,7 +158,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		}
 	}
 	
-	@IBAction func markSelectedArticlesAsRead(_ sender: AnyObject) {
+	@IBAction func markSelectedArticlesAsRead(_ sender: AnyObject?) {
 
 		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: selectedArticles, markingRead: true, undoManager: undoManager) else {
 			return

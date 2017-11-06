@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13770"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -412,7 +411,11 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Article" id="57V-gv-vEw">
                                     <items>
-                                        <menuItem title="Mark as Read" keyEquivalent="U" id="Fc9-c7-2AY"/>
+                                        <menuItem title="Mark as Read" keyEquivalent="U" id="Fc9-c7-2AY">
+                                            <connections>
+                                                <action selector="markRead:" target="Ady-hI-5gd" id="RQv-jl-2Nv"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Mark All as Read" keyEquivalent="k" id="HdN-Ks-cwh">
                                             <connections>
                                                 <action selector="markAllAsRead:" target="Ady-hI-5gd" id="154-2D-ONk"/>

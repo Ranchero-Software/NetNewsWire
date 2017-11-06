@@ -101,7 +101,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		if item.action == #selector(markAllAsRead(_:)) {
 			return canMarkAllAsRead()
 		}
-		
+
+		if item.action == #selector(markRead(_:)) {
+			return canMarkRead()
+		}
+
 		return true
 	}
 
@@ -138,6 +142,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func markAllAsRead(_ sender: AnyObject?) {
 		
 		timelineViewController?.markAllAsRead()
+	}
+
+	@IBAction func markRead(_ sender: AnyObject?) {
+
+		timelineViewController?.markSelectedArticlesAsRead(sender!)
 	}
 	
 	@IBAction func toggleSidebar(_ sender: AnyObject?) {
@@ -218,6 +227,11 @@ private extension MainWindowController {
 		return timelineViewController?.canMarkAllAsRead() ?? false
 	}
 
+	func canMarkRead() -> Bool {
+
+		return timelineViewController?.canMarkSelectedArticlesAsRead() ?? false
+	}
+	
 	func updateWindowTitle() {
 
 		if unreadCount < 1 {
