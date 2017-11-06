@@ -227,6 +227,14 @@
 			<key>url</key>
 			<string>https://www.raywenderlich.com/feed</string>
 		</dict>
+		<dict>
+			<key>name</key>
+			<string>Indie Stack (Daniel Jalkut)</string>
+			<key>homePageURL</key>
+			<string>http://indiestack.com/</string>
+			<key>url</key>
+			<string>http://indiestack.com/feed/</string>
+		</dict>
 	</array>
 	<key>Writers</key>
 	<array>
