@@ -29,6 +29,9 @@ import Data
 		if let _ = article.title {
 			types += [.string]
 		}
+		if let link = article.preferredLink, let _ = URL(string: link) {
+			types += [.URL]
+		}
 
 		return types // TODO: add types
 	}
@@ -42,6 +45,8 @@ import Data
 		switch type {
 		case .string:
 			plist = article.title ?? ""
+		case .URL:
+			plist = article.preferredLink ?? ""
 		default:
 			plist = nil
 		}
