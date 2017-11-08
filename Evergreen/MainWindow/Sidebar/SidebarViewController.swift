@@ -27,7 +27,9 @@ import RSCore
 	override func viewDidLoad() {
 
 		outlineView.sidebarViewController = self
-		
+		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)
+		outlineView.setDraggingSourceOperationMask(.copy, forLocal: false)
+
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
@@ -140,7 +142,7 @@ import RSCore
         }
     }
 
-	//MARK: NSOutlineViewDataSource
+	// MARK: NSOutlineViewDataSource
 
 	func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
 		
@@ -155,6 +157,15 @@ import RSCore
 	func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
 		
         return nodeForItem(item as AnyObject?).canHaveChildNodes
+	}
+
+	func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> NSPasteboardWriting? {
+
+		let node = nodeForItem(item as AnyObject?)
+		if let feed = node.representedObject as? Feed {
+			return FeedPasteboardWriter(feed: feed)
+		}
+		return nil
 	}
 }
 

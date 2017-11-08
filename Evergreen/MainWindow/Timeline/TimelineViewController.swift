@@ -69,7 +69,6 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		tableView.target = self
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
 		tableView.keyboardDelegate = self
-		tableView.setDraggingSourceOperationMask(.copy, forLocal: true)
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 
 		if !didRegisterForNotifications {
