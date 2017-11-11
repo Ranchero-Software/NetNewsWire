@@ -40,10 +40,9 @@ public func feedType(_ parserData: ParserData) -> FeedType {
 		return .rssInJSON
 	}
 
-	if nsdata.isProbablyHTML() {
+	if !nsdata.isProbablyXML() {
 		return .notAFeed
 	}
-
 	if nsdata.isProbablyRSS() {
 		return .rss
 	}
