@@ -18,6 +18,7 @@
 		84285AAF1F006BC0002E8708 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84285AAE1F006BC0002E8708 /* libxml2.2.tbd */; };
 		84285AB21F00702E002E8708 /* RSOPMLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 84285AB01F00702E002E8708 /* RSOPMLError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84285AB31F00702E002E8708 /* RSOPMLError.m in Sources */ = {isa = PBXBuildFile; fileRef = 84285AB11F00702E002E8708 /* RSOPMLError.m */; };
+		842A42011FB77A5A00EA22E4 /* dcrainmaker.xml in Resources */ = {isa = PBXBuildFile; fileRef = 842A42001FB77A5A00EA22E4 /* dcrainmaker.xml */; };
 		84469CEF1EFA3000004A6B28 /* RSOPMLAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CE51EFA3000004A6B28 /* RSOPMLAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84469CF01EFA3000004A6B28 /* RSOPMLAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 84469CE61EFA3000004A6B28 /* RSOPMLAttributes.m */; };
 		84469CF11EFA3000004A6B28 /* RSOPMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 84469CE71EFA3000004A6B28 /* RSOPMLDocument.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -113,6 +114,7 @@
 		84285AB01F00702E002E8708 /* RSOPMLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLError.h; sourceTree = "<group>"; };
 		84285AB11F00702E002E8708 /* RSOPMLError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSOPMLError.m; sourceTree = "<group>"; };
 		84285AB41F007255002E8708 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		842A42001FB77A5A00EA22E4 /* dcrainmaker.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = dcrainmaker.xml; sourceTree = "<group>"; };
 		84469CE51EFA3000004A6B28 /* RSOPMLAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLAttributes.h; sourceTree = "<group>"; };
 		84469CE61EFA3000004A6B28 /* RSOPMLAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSOPMLAttributes.m; sourceTree = "<group>"; };
 		84469CE71EFA3000004A6B28 /* RSOPMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSOPMLDocument.h; sourceTree = "<group>"; };
@@ -334,6 +336,7 @@
 				840FDCB71F0218670041F61B /* DaringFireball.atom */,
 				840FDCB91F02186D0041F61B /* DaringFireball.json */,
 				849A03C61F0081EA00122600 /* DaringFireball.rss */,
+				842A42001FB77A5A00EA22E4 /* dcrainmaker.xml */,
 				849A03C71F0081EA00122600 /* EMarley.rss */,
 				849A03C81F0081EA00122600 /* furbo.html */,
 				849A03C91F0081EA00122600 /* inessential.html */,
@@ -531,6 +534,7 @@
 				849A03E81F01F88600122600 /* ScriptingNews.json in Resources */,
 				840FDCB81F0218670041F61B /* DaringFireball.atom in Resources */,
 				849A03D91F0081EA00122600 /* sixcolors.html in Resources */,
+				842A42011FB77A5A00EA22E4 /* dcrainmaker.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
