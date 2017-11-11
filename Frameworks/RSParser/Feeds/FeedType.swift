@@ -33,15 +33,12 @@ public func feedType(_ parserData: ParserData) -> FeedType {
 	}
 
 	let nsdata = parserData.data as NSData
+
 	if nsdata.isProbablyJSONFeed() {
 		return .jsonFeed
 	}
 	if nsdata.isProbablyRSSInJSON() {
 		return .rssInJSON
-	}
-
-	if !nsdata.isProbablyXML() {
-		return .notAFeed
 	}
 	if nsdata.isProbablyRSS() {
 		return .rss
