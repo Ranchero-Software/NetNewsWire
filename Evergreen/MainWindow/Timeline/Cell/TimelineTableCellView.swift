@@ -36,6 +36,7 @@ class TimelineTableCellView: NSTableCellView {
 			dateView.emphasized = isEmphasized
 			feedNameView.emphasized = isEmphasized
 			titleView.emphasized = isEmphasized	
+			needsDisplay = true
 		}
 	}
 	
@@ -115,7 +116,14 @@ class TimelineTableCellView: NSTableCellView {
 
 	override func draw(_ dirtyRect: NSRect) {
 
-		isSelected ? NSColor.alternateSelectedControlColor.set() : NSColor.white.set()
+		let color: NSColor
+		if isSelected {
+			color = isEmphasized ? NSColor.alternateSelectedControlColor : NSColor.secondarySelectedControlColor
+		}
+		else {
+			color = NSColor.white
+		}
+		color.set()
 		dirtyRect.fill()
 	}
 
