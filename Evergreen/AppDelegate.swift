@@ -24,6 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	var preferencesWindowController: NSWindowController?
 	var mainWindowController: NSWindowController?
 	var feedListWindowController: NSWindowController?
+	var dinosaursWindowController: DinosaursWindowController?
 	var addFeedController: AddFeedController?
 	var addFolderWindowController: AddFolderWindowController?
 	let themeLoader = VSThemeLoader()
@@ -196,6 +197,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 			feedListWindowController = windowControllerWithName("FeedList")
 		}
 		feedListWindowController!.showWindow(self)
+	}
+
+	@IBAction func showDinosaursWindow(_ sender: Any?) {
+
+		if dinosaursWindowController == nil {
+			dinosaursWindowController = DinosaursWindowController()
+		}
+		dinosaursWindowController!.showWindow(self)
 	}
 
 	@IBAction func importOPMLFromFile(_ sender: AnyObject) {
