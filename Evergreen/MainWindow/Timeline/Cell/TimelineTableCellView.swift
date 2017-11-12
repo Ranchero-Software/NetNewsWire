@@ -26,7 +26,11 @@ class TimelineTableCellView: NSTableCellView {
 	override var isFlipped: Bool {
 		return true
 	}
-	
+
+	override var isOpaque: Bool {
+		return true
+	}
+
 	var isEmphasized = false {
 		didSet {
 			dateView.emphasized = isEmphasized
@@ -40,6 +44,7 @@ class TimelineTableCellView: NSTableCellView {
 			dateView.selected = isSelected
 			feedNameView.selected = isSelected
 			titleView.selected = isSelected
+			needsDisplay = true
 		}
 	}
 	
@@ -107,7 +112,13 @@ class TimelineTableCellView: NSTableCellView {
 		dateView.rs_setFrameIfNotEqual(layoutRects.dateRect)
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
 	}
-	
+
+	override func draw(_ dirtyRect: NSRect) {
+
+		isSelected ? NSColor.alternateSelectedControlColor.set() : NSColor.white.set()
+		dirtyRect.fill()
+	}
+
 	private func updateTitleView() {
 
 		titleView.attributedStringValue = cellData.attributedTitle
