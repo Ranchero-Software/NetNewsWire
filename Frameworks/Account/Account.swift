@@ -558,8 +558,8 @@ private extension Account {
 	}
     
     func updateUnreadCount() {
-        
-        unreadCount = calculateUnreadCount(children)
+
+		unreadCount = calculateUnreadCount(flattenedFeeds())
     }
     
     func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
