@@ -66,6 +66,7 @@
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849C64691ED37A5D003D8FC0 /* Main.storyboard */; };
 		849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */; };
+		84A6B6941FB8D43C006754AC /* DinosaursWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84A6B6931FB8D43C006754AC /* DinosaursWindow.xib */; };
 		84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; };
 		84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */; };
@@ -446,6 +447,7 @@
 		849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EvergreenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvergreenTests.swift; sourceTree = "<group>"; };
 		849C64771ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84A6B6931FB8D43C006754AC /* DinosaursWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DinosaursWindow.xib; sourceTree = "<group>"; };
 		84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSDatabase.xcodeproj; path = Frameworks/RSDatabase/RSDatabase.xcodeproj; sourceTree = "<group>"; };
 		84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = Frameworks/RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		84B06FB61ED37E8B00F0B54B /* RSWeb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSWeb.xcodeproj; path = Frameworks/RSWeb/RSWeb.xcodeproj; sourceTree = "<group>"; };
@@ -723,6 +725,7 @@
 				842E45E11ED8C681000A8B52 /* MainWindow */,
 				842E45E01ED8C587000A8B52 /* Preferences */,
 				849A97861ED9ECEF007D329B /* Article Styles */,
+				84A6B6921FB8D43C006754AC /* Dinosaurs */,
 				849A978B1ED9EE4D007D329B /* Feed List */,
 				849A97901ED9EF65007D329B /* Progress Window */,
 				84DAEE201F86CAE00058304B /* Importers */,
@@ -762,6 +765,15 @@
 				849C64771ED37A5D003D8FC0 /* Info.plist */,
 			);
 			path = EvergreenTests;
+			sourceTree = "<group>";
+		};
+		84A6B6921FB8D43C006754AC /* Dinosaurs */ = {
+			isa = PBXGroup;
+			children = (
+				84A6B6931FB8D43C006754AC /* DinosaursWindow.xib */,
+			);
+			name = Dinosaurs;
+			path = Evergreen/Dinosaurs;
 			sourceTree = "<group>";
 		};
 		84B06F971ED37DA000F0B54B /* Products */ = {
@@ -1191,6 +1203,7 @@
 				849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */,
 				849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */,
 				849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */,
+				84A6B6941FB8D43C006754AC /* DinosaursWindow.xib in Resources */,
 				849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
