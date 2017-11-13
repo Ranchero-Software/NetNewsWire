@@ -82,6 +82,8 @@
 		845DE0F31B80477100D1571B /* NSSet+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 845DE0F11B80477100D1571B /* NSSet+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		845DE0F41B80477100D1571B /* NSSet+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 845DE0F21B80477100D1571B /* NSSet+RSCore.m */; };
 		8461387F1DB3F5BE00048B83 /* RSToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8461387E1DB3F5BE00048B83 /* RSToolbarItem.swift */; };
+		8479213C1FBA426B004AD08C /* WebViewWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8479213B1FBA426B004AD08C /* WebViewWindow.xib */; };
+		8479213E1FBA4285004AD08C /* WebViewWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8479213D1FBA4285004AD08C /* WebViewWindowController.swift */; };
 		849A339D1AC90A0A0015BA09 /* NSTableView+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 849A339B1AC90A0A0015BA09 /* NSTableView+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		849A339E1AC90A0A0015BA09 /* NSTableView+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 849A339C1AC90A0A0015BA09 /* NSTableView+RSCore.m */; };
 		849B08971BF7BCE30090CEE4 /* NSPasteboard+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 849B08951BF7BCE30090CEE4 /* NSPasteboard+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -184,6 +186,8 @@
 		845DE0F11B80477100D1571B /* NSSet+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSSet+RSCore.h"; sourceTree = "<group>"; };
 		845DE0F21B80477100D1571B /* NSSet+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSSet+RSCore.m"; sourceTree = "<group>"; };
 		8461387E1DB3F5BE00048B83 /* RSToolbarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSToolbarItem.swift; sourceTree = "<group>"; };
+		8479213B1FBA426B004AD08C /* WebViewWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = WebViewWindow.xib; path = AppKit/WebViewWindow.xib; sourceTree = "<group>"; };
+		8479213D1FBA4285004AD08C /* WebViewWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebViewWindowController.swift; path = AppKit/WebViewWindowController.swift; sourceTree = "<group>"; };
 		849A339B1AC90A0A0015BA09 /* NSTableView+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTableView+RSCore.h"; sourceTree = "<group>"; };
 		849A339C1AC90A0A0015BA09 /* NSTableView+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTableView+RSCore.m"; sourceTree = "<group>"; };
 		849B08951BF7BCE30090CEE4 /* NSPasteboard+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSPasteboard+RSCore.h"; sourceTree = "<group>"; };
@@ -420,6 +424,8 @@
 				8414CBA91C95F8F700333C12 /* RSGeometry.h */,
 				8414CBAA1C95F8F700333C12 /* RSGeometry.m */,
 				8461387E1DB3F5BE00048B83 /* RSToolbarItem.swift */,
+				8479213B1FBA426B004AD08C /* WebViewWindow.xib */,
+				8479213D1FBA4285004AD08C /* WebViewWindowController.swift */,
 				842DD7F91E1499FA00E061EB /* Views */,
 			);
 			name = AppKit;
@@ -626,6 +632,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8479213C1FBA426B004AD08C /* WebViewWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -709,6 +716,7 @@
 				84CFF5591AC3CF9100CEA6C8 /* NSView+RSCore.m in Sources */,
 				84CFF56A1AC3D1B000CEA6C8 /* RSScaling.m in Sources */,
 				84FEB4AC1D19D7F4004727E5 /* Date+Extensions.swift in Sources */,
+				8479213E1FBA4285004AD08C /* WebViewWindowController.swift in Sources */,
 				8461387F1DB3F5BE00048B83 /* RSToolbarItem.swift in Sources */,
 				84B99C941FAE64D500ECDEDB /* DisplayNameProvider.swift in Sources */,
 				84BB45431D6909C700B48537 /* NSMutableDictionary-Extensions.swift in Sources */,
