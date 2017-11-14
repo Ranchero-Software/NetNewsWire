@@ -78,6 +78,12 @@
                                                 <action selector="showAddFolderWindow:" target="Ady-hI-5gd" id="GIi-wc-uYk"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="New Window" keyEquivalent="n" id="J9a-dk-nAT">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="newReaderWindow:" target="Ady-hI-5gd" id="XtC-K9-1Np"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="m54-Is-iLE"/>
                                         <menuItem title="Refresh" keyEquivalent="r" id="Veh-SV-KWy">
                                             <connections>

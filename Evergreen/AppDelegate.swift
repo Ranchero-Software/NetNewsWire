@@ -24,6 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	let windowControllers = NSMutableArray()
 	var preferencesWindowController: NSWindowController?
 	var mainWindowController: NSWindowController?
+	var readerWindows = [NSWindowController]()
 	var feedListWindowController: NSWindowController?
 	var dinosaursWindowController: DinosaursWindowController?
 	var addFeedController: AddFeedController?
@@ -131,7 +132,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	func createAndShowMainWindow() {
 
 		if mainWindowController == nil {
-			mainWindowController = windowControllerWithName("MainWindow")
+			mainWindowController = createReaderWindow()
 		}
 
 		mainWindowController!.showWindow(self)
@@ -161,6 +162,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	}
 
 	// MARK: - Actions
+
+	@IBAction func newReaderWindow(_ sender: Any?) {
+
+		let readerWindow = createReaderWindow()
+		readerWindows += [readerWindow]
+		readerWindow.showWindow(self)
+	}
 
 	@IBAction func showPreferences(_ sender: AnyObject) {
 
@@ -304,4 +312,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	}
 }
 
+private extension AppDelegate {
 
+	func createReaderWindow() -> NSWindowController {
+
+		return windowControllerWithName("MainWindow")
+	}
+}
