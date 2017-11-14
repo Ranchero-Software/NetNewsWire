@@ -73,8 +73,7 @@
                                                 <action selector="showAddFeedWindow:" target="Ady-hI-5gd" id="LkT-kx-aCR"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="New Folder" keyEquivalent="n" id="wkh-LX-Xp1">
-                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                        <menuItem title="New Folder" keyEquivalent="N" id="wkh-LX-Xp1">
                                             <connections>
                                                 <action selector="showAddFolderWindow:" target="Ady-hI-5gd" id="GIi-wc-uYk"/>
                                             </connections>
