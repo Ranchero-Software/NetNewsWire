@@ -13,6 +13,7 @@ import RSTextDrawing
 import RSTree
 import RSWeb
 import Account
+import RSCore
 
 let appName = "Evergreen"
 var currentTheme: VSTheme!
@@ -27,6 +28,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	var dinosaursWindowController: DinosaursWindowController?
 	var addFeedController: AddFeedController?
 	var addFolderWindowController: AddFolderWindowController?
+	var keyboardShortcutsWindowController: WebViewWindowController?
+
 	let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
 	private let dockBadge = DockBadge()
@@ -207,6 +210,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		dinosaursWindowController!.showWindow(self)
 	}
 
+	@IBAction func showKeyboardShortcutsWindow(_ sender: Any?) {
+
+		if keyboardShortcutsWindowController == nil {
+			keyboardShortcutsWindowController = WebViewWindowController(title: NSLocalizedString("Keyboard Shortcuts", comment: "window title"))
+			let htmlFile = Bundle(for: type(of: self)).path(forResource: "KeyboardShortcuts", ofType: "html")!
+			keyboardShortcutsWindowController?.displayContents(of: htmlFile)
+		}
+		keyboardShortcutsWindowController!.showWindow(self)
+	}
+	
 	@IBAction func importOPMLFromFile(_ sender: AnyObject) {
 
 		let panel = NSOpenPanel()

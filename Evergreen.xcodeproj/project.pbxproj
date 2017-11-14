@@ -93,6 +93,7 @@
 		84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
 		84E95CF71FABB3C800552D99 /* FeedList.plist in Resources */ = {isa = PBXBuildFile; fileRef = 84E95CF61FABB3C800552D99 /* FeedList.plist */; };
 		84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */; };
+		84EB381F1FBA8B9F000D2111 /* KeyboardShortcuts.html in Resources */ = {isa = PBXBuildFile; fileRef = 84EB38101FBA8B9F000D2111 /* KeyboardShortcuts.html */; };
 		84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204CD1FAACB660076E152 /* FeedListViewController.swift */; };
 		84F204DE1FAACB8B0076E152 /* FeedListTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DD1FAACB8B0076E152 /* FeedListTimelineViewController.swift */; };
 		84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
@@ -467,6 +468,7 @@
 		84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDefaults.swift; path = Evergreen/AppDefaults.swift; sourceTree = "<group>"; };
 		84E95CF61FABB3C800552D99 /* FeedList.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = FeedList.plist; sourceTree = "<group>"; };
 		84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticlePasteboardWriter.swift; sourceTree = "<group>"; };
+		84EB38101FBA8B9F000D2111 /* KeyboardShortcuts.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = KeyboardShortcuts.html; sourceTree = "<group>"; };
 		84F204CD1FAACB660076E152 /* FeedListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListViewController.swift; sourceTree = "<group>"; };
 		84F204DD1FAACB8B0076E152 /* FeedListTimelineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListTimelineViewController.swift; sourceTree = "<group>"; };
 		84F204DF1FAACBB30076E152 /* ArticleArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleArray.swift; sourceTree = "<group>"; };
@@ -697,6 +699,7 @@
 				849A979A1ED9EFEB007D329B /* styleSheet.css */,
 				849A979B1ED9EFEB007D329B /* template.html */,
 				849C646C1ED37A5D003D8FC0 /* Info.plist */,
+				84EB380F1FBA8B9F000D2111 /* KeyboardShortcuts */,
 			);
 			name = Resources;
 			path = Evergreen/Extensions;
@@ -863,6 +866,15 @@
 			);
 			path = Importers;
 			sourceTree = "<group>";
+		};
+		84EB380F1FBA8B9F000D2111 /* KeyboardShortcuts */ = {
+			isa = PBXGroup;
+			children = (
+				84EB38101FBA8B9F000D2111 /* KeyboardShortcuts.html */,
+			);
+			name = KeyboardShortcuts;
+			path = Evergreen/Resources/KeyboardShortcuts;
+			sourceTree = SOURCE_ROOT;
 		};
 		84FB9A2C1EDCD6A4003D53B9 /* Frameworks */ = {
 			isa = PBXGroup;
@@ -1194,6 +1206,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84EB381F1FBA8B9F000D2111 /* KeyboardShortcuts.html in Resources */,
 				849A97951ED9EF7A007D329B /* IndeterminateProgressWindow.xib in Resources */,
 				849A978F1ED9EE72007D329B /* DefaultFeeds.plist in Resources */,
 				849A979D1ED9EFEB007D329B /* template.html in Resources */,
