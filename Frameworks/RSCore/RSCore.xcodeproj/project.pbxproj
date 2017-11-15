@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8402047E1FBCE77900D94C1A /* BatchUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402047D1FBCE77900D94C1A /* BatchUpdate.swift */; };
+		8402047F1FBCE77900D94C1A /* BatchUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402047D1FBCE77900D94C1A /* BatchUpdate.swift */; };
 		84134D1F1C59D5450063FD24 /* NSCalendar+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84134D1D1C59D5450063FD24 /* NSCalendar+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84134D201C59D5450063FD24 /* NSCalendar+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84134D1E1C59D5450063FD24 /* NSCalendar+RSCore.m */; };
 		8414CBA71C95F2EA00333C12 /* Set+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8414CBA61C95F2EA00333C12 /* Set+Extensions.swift */; };
@@ -165,6 +167,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8402047D1FBCE77900D94C1A /* BatchUpdate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BatchUpdate.swift; path = RSCore/BatchUpdate.swift; sourceTree = "<group>"; };
 		84134D1D1C59D5450063FD24 /* NSCalendar+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCalendar+RSCore.h"; sourceTree = "<group>"; };
 		84134D1E1C59D5450063FD24 /* NSCalendar+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCalendar+RSCore.m"; sourceTree = "<group>"; };
 		8414CBA61C95F2EA00333C12 /* Set+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Set+Extensions.swift"; sourceTree = "<group>"; };
@@ -332,6 +335,7 @@
 				84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */,
 				842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */,
 				84E34DA51F9FA1070077082F /* UndoableCommand.swift */,
+				8402047D1FBCE77900D94C1A /* BatchUpdate.swift */,
 				84CFF5241AC3C8A200CEA6C8 /* Foundation */,
 				84CFF5551AC3CF4A00CEA6C8 /* AppKit */,
 				84CFF5661AC3D13F00CEA6C8 /* Images */,
@@ -682,6 +686,7 @@
 				842DD7C61E14995C00E061EB /* RSBlocks.m in Sources */,
 				842DD7DD1E14996300E061EB /* NSDate+RSCore.m in Sources */,
 				84B99C951FAE64D500ECDEDB /* DisplayNameProvider.swift in Sources */,
+				8402047F1FBCE77900D94C1A /* BatchUpdate.swift in Sources */,
 				842DD7E91E14996300E061EB /* NSNotificationCenter+RSCore.m in Sources */,
 				842DD7E71E14996300E061EB /* NSMutableSet+RSCore.m in Sources */,
 				842DD7E31E14996300E061EB /* NSMutableArray+RSCore.m in Sources */,
@@ -711,6 +716,7 @@
 				84CFF54C1AC3CDAC00CEA6C8 /* NSString+RSCore.m in Sources */,
 				84CFF5171AC3C73000CEA6C8 /* RSConstants.m in Sources */,
 				8432B1881DACA2060057D6DF /* NSWindow-Extensions.swift in Sources */,
+				8402047E1FBCE77900D94C1A /* BatchUpdate.swift in Sources */,
 				84CFF5541AC3CF4700CEA6C8 /* NSColor+RSCore.m in Sources */,
 				84536F671BB856D4001E1639 /* NSFileManager+RSCore.m in Sources */,
 				8415CB8B1BF84D24007B1E98 /* NSEvent+RSCore.m in Sources */,
