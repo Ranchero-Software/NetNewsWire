@@ -54,6 +54,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		appDelegate = self
 	}
 
+	// MARK: - API
+
 	func logMessage(_ message: String, type: LogItem.ItemType) {
 
 		let logItem = LogItem(type: type, message: message)
@@ -63,6 +65,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	func logDebugMessage(_ message: String) {
 
 		logMessage(message, type: .debug)
+	}
+
+	func showAddFolderSheetOnWindow(_ window: NSWindow) {
+
+		addFolderWindowController = AddFolderWindowController()
+		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
 	// MARK: - NSApplicationDelegate
@@ -211,9 +219,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	@IBAction func showAddFolderWindow(_ sender: AnyObject) {
 
 		createAndShowMainWindow()
-
-		addFolderWindowController = AddFolderWindowController()
-		addFolderWindowController!.runSheetOnWindow(mainWindowController!.window!)
+		showAddFolderSheetOnWindow(mainWindowController!.window!)
 	}
 
 	@IBAction func showFeedList(_ sender: AnyObject) {
