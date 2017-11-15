@@ -98,8 +98,8 @@
 		84BB45431D6909C700B48537 /* NSMutableDictionary-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BB45421D6909C700B48537 /* NSMutableDictionary-Extensions.swift */; };
 		84C687301FBAA30800345C9E /* LogWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84C6872F1FBAA30800345C9E /* LogWindow.xib */; };
 		84C687321FBAA3DF00345C9E /* LogWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C687311FBAA3DF00345C9E /* LogWindowController.swift */; };
-		84C687351FBC025600345C9E /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C687341FBC025600345C9E /* Logger.swift */; };
-		84C687361FBC025600345C9E /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C687341FBC025600345C9E /* Logger.swift */; };
+		84C687351FBC025600345C9E /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C687341FBC025600345C9E /* Log.swift */; };
+		84C687361FBC025600345C9E /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C687341FBC025600345C9E /* Log.swift */; };
 		84C687381FBC028900345C9E /* LogItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C687371FBC028900345C9E /* LogItem.swift */; };
 		84C687391FBC028900345C9E /* LogItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C687371FBC028900345C9E /* LogItem.swift */; };
 		84CFF4FA1AC3C69700CEA6C8 /* RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CFF4F91AC3C69700CEA6C8 /* RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -206,7 +206,7 @@
 		84BB45421D6909C700B48537 /* NSMutableDictionary-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableDictionary-Extensions.swift"; sourceTree = "<group>"; };
 		84C6872F1FBAA30800345C9E /* LogWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LogWindow.xib; path = AppKit/LogWindow.xib; sourceTree = "<group>"; };
 		84C687311FBAA3DF00345C9E /* LogWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LogWindowController.swift; path = AppKit/LogWindowController.swift; sourceTree = "<group>"; };
-		84C687341FBC025600345C9E /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		84C687341FBC025600345C9E /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		84C687371FBC028900345C9E /* LogItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogItem.swift; sourceTree = "<group>"; };
 		84CFF4F41AC3C69700CEA6C8 /* RSCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RSCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84CFF4F81AC3C69700CEA6C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = RSCore/Info.plist; sourceTree = "<group>"; };
@@ -438,7 +438,7 @@
 				8479213D1FBA4285004AD08C /* WebViewWindowController.swift */,
 				84C6872F1FBAA30800345C9E /* LogWindow.xib */,
 				84C687311FBAA3DF00345C9E /* LogWindowController.swift */,
-				84C687341FBC025600345C9E /* Logger.swift */,
+				84C687341FBC025600345C9E /* Log.swift */,
 				84C687371FBC028900345C9E /* LogItem.swift */,
 				842DD7F91E1499FA00E061EB /* Views */,
 			);
@@ -691,7 +691,7 @@
 				842DD7EF1E14996300E061EB /* NSString+RSCore.m in Sources */,
 				842DD7F21E14996B00E061EB /* Date+Extensions.swift in Sources */,
 				842DD7ED1E14996300E061EB /* NSSet+RSCore.m in Sources */,
-				84C687361FBC025600345C9E /* Logger.swift in Sources */,
+				84C687361FBC025600345C9E /* Log.swift in Sources */,
 				842DD7CA1E14995C00E061EB /* RSPlatform.m in Sources */,
 				842DD7D91E14996300E061EB /* NSCalendar+RSCore.m in Sources */,
 				842DD7F11E14996300E061EB /* NSTimer+RSCore.m in Sources */,
@@ -729,7 +729,7 @@
 				849B08981BF7BCE30090CEE4 /* NSPasteboard+RSCore.m in Sources */,
 				842635571D7FA1C800196285 /* NSTableView+Extensions.swift in Sources */,
 				84F20F831F16BA6200D8E682 /* PropertyList.swift in Sources */,
-				84C687351FBC025600345C9E /* Logger.swift in Sources */,
+				84C687351FBC025600345C9E /* Log.swift in Sources */,
 				84CFF5611AC3D0CE00CEA6C8 /* RSBinaryCache.m in Sources */,
 				84CFF5301AC3CB1900CEA6C8 /* NSDate+RSCore.m in Sources */,
 				84CFF5281AC3C9A200CEA6C8 /* NSArray+RSCore.m in Sources */,

@@ -1,5 +1,5 @@
 //
-//  Logger.swift
+//  Log.swift
 //  RSCore
 //
 //  Created by Brent Simmons on 11/14/17.
@@ -8,11 +8,11 @@
 
 import Foundation
 
-public class Logger {
+public class Log {
 
 	var logItems = [LogItem]()
 
-	public func addLogItem(_ logItem: LogItem) {
+	public func add(_ logItem: LogItem) {
 
 		logItems += [logItem]
 	}
