@@ -33,7 +33,7 @@ import RSCore
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidFinish(_:)), name: .BatchUpdateDidFinish, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 
 		outlineView.reloadData()
 	}
@@ -53,7 +53,7 @@ import RSCore
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 
-	@objc dynamic func batchUpdateDidFinish(_ notification: Notification) {
+	@objc dynamic func batchUpdateDidPerform(_ notification: Notification) {
 		
 		rebuildTreeAndReloadDataIfNeeded()
 	}

@@ -9,6 +9,7 @@
 import Foundation
 import RSParser
 import Account
+import RSCore
 
 struct OPMLImporter {
 

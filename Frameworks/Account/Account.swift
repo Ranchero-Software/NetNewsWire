@@ -132,6 +132,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		
+        NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
+
 		pullObjectsFromDisk()
 		
 		DispatchQueue.main.async {
@@ -360,6 +362,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 	}
+    
+    @objc func batchUpdateDidPerform(_ note: Notification) {
+        
+        updateUnreadCount()
+    }
 
 	// MARK: - Equatable
 

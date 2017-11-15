@@ -9,6 +9,7 @@
 import Foundation
 import Data
 import Account
+import RSCore
 
 typealias DiskFeedDictionary = [String: Any]
 
