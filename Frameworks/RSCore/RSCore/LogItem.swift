@@ -23,8 +23,9 @@ public struct LogItem: Hashable {
 
 		self.type = type
 		self.message = message
-		self.date = Date()
-		self.hashValue = message.hashValue + self.date.hashValue
+        let date = Date()
+		self.date = date
+		self.hashValue = message.hashValue + date.hashValue
 	}
 
 	static public func ==(lhs: LogItem, rhs: LogItem) -> Bool {
