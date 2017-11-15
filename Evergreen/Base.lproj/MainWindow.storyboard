@@ -310,6 +310,19 @@
                                             <constraint firstAttribute="width" constant="64" id="AmG-EL-4l7"/>
                                         </constraints>
                                     </progressIndicator>
+                                    <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="cUf-Xf-7Zp">
+                                        <rect key="frame" x="46" y="2" width="86" height="21"/>
+                                        <popUpButtonCell key="cell" type="bevel" title="145 feeds" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" selectedItem="0uo-gF-YhP" id="WnX-IX-51j">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                            <menu key="menu" id="tCE-z0-Fkp">
+                                                <items>
+                                                    <menuItem title="145 feeds" state="on" id="0uo-gF-YhP"/>
+                                                    <menuItem title="Refreshed 11:05 am" id="vPN-Sq-MoK"/>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                    </popUpButton>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="NOS-H9-Mdl" firstAttribute="centerY" secondItem="FWz-dC-55q" secondAttribute="centerY" priority="999" id="0NZ-ry-RwE"/>
@@ -317,11 +330,14 @@
                                     <constraint firstItem="Vq0-Di-DO2" firstAttribute="centerY" secondItem="FWz-dC-55q" secondAttribute="centerY" id="2sf-bK-T3N"/>
                                     <constraint firstItem="kVh-DT-vkQ" firstAttribute="centerY" secondItem="FWz-dC-55q" secondAttribute="centerY" id="4h2-eA-vEm"/>
                                     <constraint firstAttribute="height" constant="25" id="5Xu-xj-rhU"/>
+                                    <constraint firstItem="cUf-Xf-7Zp" firstAttribute="baseline" secondItem="k7g-zd-q4Q" secondAttribute="baseline" constant="1" id="Ji3-U0-5n0"/>
                                     <constraint firstItem="NOS-H9-Mdl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Vq0-Di-DO2" secondAttribute="trailing" constant="8" id="Kdn-fY-Pg0"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="cUf-Xf-7Zp" secondAttribute="trailing" constant="20" symbolic="YES" id="OQx-lz-gfC"/>
                                     <constraint firstItem="k7g-zd-q4Q" firstAttribute="leading" secondItem="FWz-dC-55q" secondAttribute="leading" constant="2" id="WyI-Mr-ysi"/>
                                     <constraint firstItem="kVh-DT-vkQ" firstAttribute="leading" secondItem="k7g-zd-q4Q" secondAttribute="trailing" constant="8" id="g6B-We-Dqz"/>
                                     <constraint firstItem="Vq0-Di-DO2" firstAttribute="leading" secondItem="kVh-DT-vkQ" secondAttribute="trailing" constant="8" id="pcT-32-3jd"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="NOS-H9-Mdl" secondAttribute="trailing" constant="8" id="twV-E5-yKX"/>
+                                    <constraint firstItem="cUf-Xf-7Zp" firstAttribute="leading" secondItem="k7g-zd-q4Q" secondAttribute="trailing" constant="2" id="u3B-PO-OMH"/>
                                 </constraints>
                                 <connections>
                                     <outlet property="progressIndicator" destination="kVh-DT-vkQ" id="xDW-pX-IcH"/>
