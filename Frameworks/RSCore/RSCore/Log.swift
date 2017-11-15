@@ -10,7 +10,11 @@ import Foundation
 
 public class Log {
 
-	var logItems = [LogItem]()
+	public var logItems = [LogItem]()
+
+	public init() {
+		// Satisfy compiler
+	}
 
 	public func add(_ logItem: LogItem) {
 

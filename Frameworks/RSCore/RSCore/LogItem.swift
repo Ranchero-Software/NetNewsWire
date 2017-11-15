@@ -11,7 +11,7 @@ import Foundation
 public struct LogItem: Hashable {
 
 	public enum ItemType {
-		case notification, warning, error
+		case debug, notification, warning, error
 	}
 
 	public let type: ItemType

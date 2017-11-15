@@ -17,6 +17,7 @@ import RSCore
 
 let appName = "Evergreen"
 var currentTheme: VSTheme!
+var appDelegate: AppDelegate!
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
@@ -30,7 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	var addFeedController: AddFeedController?
 	var addFolderWindowController: AddFolderWindowController?
 	var keyboardShortcutsWindowController: WebViewWindowController?
-
+	let log = Log()
 	let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
 	private let dockBadge = DockBadge()
@@ -50,6 +51,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		dockBadge.appDelegate = self
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		appDelegate = self
+	}
+
+	func logMessage(_ message: String, type: LogItem.ItemType) {
+
+		let logItem = LogItem(type: type, message: message)
+		log.add(logItem)
+	}
+
+	func logDebugMessage(_ message: String) {
+
+		logMessage(message, type: .debug)
 	}
 
 	// MARK: - NSApplicationDelegate
@@ -57,6 +70,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	func applicationDidFinishLaunching(_ note: Notification) {
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
+		logDebugMessage(isFirstRun ? "Is first run." : "Is not first run.")
 		let localAccount = AccountManager.shared.localAccount
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 
