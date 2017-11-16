@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13526" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13526"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13770"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -455,6 +455,11 @@
                                             <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
                                             <connections>
                                                 <action selector="showMainWindow:" target="Ady-hI-5gd" id="TY8-J6-NUD"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Info" keyEquivalent="i" id="24r-2i-fXR">
+                                            <connections>
+                                                <action selector="toggleInspectorWindow:" target="Ady-hI-5gd" id="Bw5-4R-iWP"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Feed Directory" id="iDZ-cW-hZ0">

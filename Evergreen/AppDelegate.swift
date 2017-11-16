@@ -31,6 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	var addFeedController: AddFeedController?
 	var addFolderWindowController: AddFolderWindowController?
 	var keyboardShortcutsWindowController: WebViewWindowController?
+	var inspectorWindowController: InspectorWindowController?
 	let log = Log()
 	let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
@@ -247,7 +248,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		}
 		keyboardShortcutsWindowController!.showWindow(self)
 	}
-	
+
+	@IBAction func toggleInspectorWindow(_ sender: Any?) {
+
+		if inspectorWindowController == nil {
+			inspectorWindowController = InspectorWindowController()
+		}
+
+		if inspectorWindowController!.isOpen {
+			inspectorWindowController!.window!.performClose(self)
+		}
+		else {
+			inspectorWindowController!.showWindow(self)
+		}
+	}
+
 	@IBAction func importOPMLFromFile(_ sender: AnyObject) {
 
 		let panel = NSOpenPanel()
