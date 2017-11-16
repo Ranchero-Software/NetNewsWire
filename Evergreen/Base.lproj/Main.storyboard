@@ -468,6 +468,12 @@
                                                 <action selector="showFeedList:" target="Ady-hI-5gd" id="bd2-m5-wPq"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Error Log" id="a0o-lD-l5s">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showLogWindow:" target="Ady-hI-5gd" id="WzC-He-psY"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Dinosaurs" id="suZ-aW-fnf">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

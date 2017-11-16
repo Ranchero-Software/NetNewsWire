@@ -32,6 +32,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	var addFolderWindowController: AddFolderWindowController?
 	var keyboardShortcutsWindowController: WebViewWindowController?
 	var inspectorWindowController: InspectorWindowController?
+	var logWindowController: LogWindowController?
 	let log = Log()
 	let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
@@ -263,6 +264,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		}
 	}
 
+	@IBAction func showLogWindow(_ sender: Any?) {
+
+		if logWindowController == nil {
+			logWindowController = LogWindowController(title: "Errors", log: log)
+		}
+
+		logWindowController!.showWindow(self)
+	}
+	
 	@IBAction func importOPMLFromFile(_ sender: AnyObject) {
 
 		let panel = NSOpenPanel()

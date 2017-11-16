@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class LogWindowController: NSWindowController {
+public class LogWindowController: NSWindowController {
 
 	@IBOutlet private var textView: NSTextView!
 	private var title: String!
@@ -24,7 +24,7 @@ class LogWindowController: NSWindowController {
 		NotificationCenter.default.addObserver(self, selector: #selector(logDidAddItem(_:)), name: .LogDidAddItem, object: log)
 	}
 
-    override func windowDidLoad() {
+    public override func windowDidLoad() {
 
         window!.title = title
 		addExistingLogItems()
