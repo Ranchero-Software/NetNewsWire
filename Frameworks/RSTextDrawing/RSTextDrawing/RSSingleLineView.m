@@ -109,7 +109,12 @@ static NSAttributedString *emptyAttributedString = nil;
 - (NSSize)intrinsicContentSize {
 	
 	if (!self.intrinsicSizeIsValid) {
-		self.intrinsicSize = ((RSSingleLineRenderer *)(self.renderer)).size;
+		if (!self.attributedStringValue) {
+			self.intrinsicSize = NSZeroSize;
+		}
+		else {
+			self.intrinsicSize = ((RSSingleLineRenderer *)(self.renderer)).size;
+		}
 		self.intrinsicSizeIsValid = YES;
 	}
 	
