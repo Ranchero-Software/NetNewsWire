@@ -67,6 +67,8 @@
 		849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */; };
 		84A6B6941FB8D43C006754AC /* DinosaursWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84A6B6931FB8D43C006754AC /* DinosaursWindow.xib */; };
 		84A6B6961FB8DBD2006754AC /* DinosaursWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A6B6951FB8DBD2006754AC /* DinosaursWindowController.swift */; };
+		84AFBB3C1FBE76D800BA41CF /* PanicButtonWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AFBB3B1FBE76D800BA41CF /* PanicButtonWindowController.swift */; };
+		84AFBB3E1FBE770200BA41CF /* PanicButtonWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84AFBB3D1FBE770200BA41CF /* PanicButtonWindow.xib */; };
 		84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; };
 		84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */; };
@@ -449,6 +451,8 @@
 		849C64771ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84A6B6931FB8D43C006754AC /* DinosaursWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DinosaursWindow.xib; sourceTree = "<group>"; };
 		84A6B6951FB8DBD2006754AC /* DinosaursWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DinosaursWindowController.swift; sourceTree = "<group>"; };
+		84AFBB3B1FBE76D800BA41CF /* PanicButtonWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PanicButtonWindowController.swift; sourceTree = "<group>"; };
+		84AFBB3D1FBE770200BA41CF /* PanicButtonWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PanicButtonWindow.xib; sourceTree = "<group>"; };
 		84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSDatabase.xcodeproj; path = Frameworks/RSDatabase/RSDatabase.xcodeproj; sourceTree = "<group>"; };
 		84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = Frameworks/RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		84B06FB61ED37E8B00F0B54B /* RSWeb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSWeb.xcodeproj; path = Frameworks/RSWeb/RSWeb.xcodeproj; sourceTree = "<group>"; };
@@ -525,6 +529,7 @@
 				849A97811ED9EC63007D329B /* Status Bar */,
 				849A97551ED9EAC3007D329B /* Add Feed */,
 				849A97411ED9EAA9007D329B /* Add Folder */,
+				84AFBB3A1FBE76D800BA41CF /* PanicButton */,
 			);
 			name = MainWindow;
 			path = Evergreen/MainWindow;
@@ -777,6 +782,15 @@
 			);
 			name = Dinosaurs;
 			path = Evergreen/Dinosaurs;
+			sourceTree = "<group>";
+		};
+		84AFBB3A1FBE76D800BA41CF /* PanicButton */ = {
+			isa = PBXGroup;
+			children = (
+				84AFBB3D1FBE770200BA41CF /* PanicButtonWindow.xib */,
+				84AFBB3B1FBE76D800BA41CF /* PanicButtonWindowController.swift */,
+			);
+			path = PanicButton;
 			sourceTree = "<group>";
 		};
 		84B06F971ED37DA000F0B54B /* Products */ = {
@@ -1208,6 +1222,7 @@
 				849A978F1ED9EE72007D329B /* DefaultFeeds.plist in Resources */,
 				849A979D1ED9EFEB007D329B /* template.html in Resources */,
 				849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */,
+				84AFBB3E1FBE770200BA41CF /* PanicButtonWindow.xib in Resources */,
 				842E45E71ED8C747000A8B52 /* DB5.plist in Resources */,
 				849A97AC1ED9F9BC007D329B /* AddFolderSheet.xib in Resources */,
 				849A97AF1ED9FA08007D329B /* FeedList.storyboard in Resources */,
@@ -1252,6 +1267,7 @@
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
+				84AFBB3C1FBE76D800BA41CF /* PanicButtonWindowController.swift in Sources */,
 				84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */,
 				84A6B6961FB8DBD2006754AC /* DinosaursWindowController.swift in Sources */,
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,

@@ -33,6 +33,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	var keyboardShortcutsWindowController: WebViewWindowController?
 	var inspectorWindowController: InspectorWindowController?
 	var logWindowController: LogWindowController?
+	var panicButtonWindowController: PanicButtonWindowController?
+	
 	let log = Log()
 	let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
@@ -73,6 +75,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 		addFolderWindowController = AddFolderWindowController()
 		addFolderWindowController!.runSheetOnWindow(window)
+	}
+
+	func hitPanicButton(with window: NSWindow) {
+
+		panicButtonWindowController = PanicButtonWindowController()
+		panicButtonWindowController!.runSheetOnWindow(window)
 	}
 
 	// MARK: - NSApplicationDelegate
@@ -354,6 +362,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	@IBAction func showHelp(_ sender: AnyObject) {
 
 		Browser.open("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
+	}
+
+	@IBAction func hitPanicButton(_ sender: Any?) {
+
+		createAndShowMainWindow()
+		hitPanicButton(with: mainWindowController!.window!)
 	}
 }
 

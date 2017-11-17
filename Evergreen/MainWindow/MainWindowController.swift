@@ -158,6 +158,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 		splitViewController!.toggleSidebar(sender)
 	}
+
+	@IBAction func hitPanicButton(_ sender: Any?) {
+
+		appDelegate.hitPanicButton(with: window!)
+	}
 }
 
 // MARK: - Private
