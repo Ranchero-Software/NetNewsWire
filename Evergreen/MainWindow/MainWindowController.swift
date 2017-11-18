@@ -28,7 +28,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
     override func windowDidLoad() {
         
         super.windowDidLoad()
-        
+
+		window?.titleVisibility = .hidden
 		window?.setFrameUsingName(windowAutosaveName, force: true)
 		
 		detailSplitViewItem?.minimumThickness = 384
