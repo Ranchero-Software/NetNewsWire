@@ -197,6 +197,26 @@
                                         </segmentedCell>
                                     </segmentedControl>
                                 </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="BEE79EC5-174E-40DB-AA76-0F1141C97804" label="Action" paletteLabel="Action" image="action" id="eyg-zr-m4a">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="48" height="25"/>
+                                    <size key="maxSize" width="50" height="28"/>
+                                    <popUpButton key="view" verticalHuggingPriority="750" id="3z3-Db-0Kb">
+                                        <rect key="frame" x="0.0" y="14" width="48" height="28"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="action" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="NHu-v8-gM6" id="lev-Yv-VWb">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="menu"/>
+                                            <menu key="menu" id="jk1-Ql-ozP">
+                                                <items>
+                                                    <menuItem state="on" image="action" hidden="YES" id="NHu-v8-gM6"/>
+                                                    <menuItem title="Item 2" id="1rz-c0-zPY"/>
+                                                    <menuItem title="Item 3" id="9ZT-Uj-OTH"/>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                    </popUpButton>
+                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="Skp-5r-70Q"/>
@@ -569,6 +589,7 @@
         <image name="NSGoRightTemplate" width="9" height="12"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
+        <image name="action" width="9.5" height="9.5"/>
         <image name="markAllRead" width="11" height="9.5"/>
         <image name="markRead" width="9.5" height="9.5"/>
         <image name="newFolder" width="9.5" height="9.5"/>
