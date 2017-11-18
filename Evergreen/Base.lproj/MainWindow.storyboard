@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13526" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13526"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13770"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -81,14 +81,14 @@
                                         <action selector="showAddFeedWindow:" target="Oky-zY-oP4" id="pEy-MV-Lnd"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="25C9E98A-867B-4EE2-BC1A-7B453D6B40BF" label="New Folder" paletteLabel="New Folder" image="ToolbarPlaceholder" id="st0-Wp-nPK" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="25C9E98A-867B-4EE2-BC1A-7B453D6B40BF" label="New Folder" paletteLabel="New Folder" image="newFolder" id="st0-Wp-nPK" customClass="RSToolbarItem" customModule="RSCore">
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="48" height="25"/>
                                     <size key="maxSize" width="50" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="nvZ-IA-qOA">
                                         <rect key="frame" x="10" y="14" width="48" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="ToolbarPlaceholder" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="Huj-Sy-XeN">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="newFolder" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="Huj-Sy-XeN">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -97,14 +97,14 @@
                                         <action selector="showAddFolderWindow:" target="Oky-zY-oP4" id="JH4-ym-YWq"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="D783290E-C822-40DF-8CB8-925D92EA4D83" label="Next Unread" paletteLabel="Next Unread" image="ToolbarPlaceholder" id="p7Y-Vm-ILH" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="D783290E-C822-40DF-8CB8-925D92EA4D83" label="Next Unread" paletteLabel="Next Unread" image="nextUnread" id="p7Y-Vm-ILH" customClass="RSToolbarItem" customModule="RSCore">
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="48" height="25"/>
                                     <size key="maxSize" width="50" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="1g8-XX-BhA">
                                         <rect key="frame" x="13" y="14" width="48" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="ToolbarPlaceholder" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="aBl-Z6-Tfa">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="nextUnread" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="aBl-Z6-Tfa">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -113,14 +113,14 @@
                                         <action selector="nextUnread:" target="Oky-zY-oP4" id="tR6-kc-nFc"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="4A460A5C-B005-4797-AA95-FD667F0A61C2" label="Mark All as Read" paletteLabel="Mark All as Read" image="ToolbarPlaceholder" id="lst-vn-0Iw" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="4A460A5C-B005-4797-AA95-FD667F0A61C2" label="Mark All as Read" paletteLabel="Mark All as Read" image="markAllRead" id="lst-vn-0Iw" customClass="RSToolbarItem" customModule="RSCore">
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="48" height="25"/>
                                     <size key="maxSize" width="50" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="0d4-hY-S6r">
                                         <rect key="frame" x="24" y="14" width="48" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="ToolbarPlaceholder" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="e9z-YJ-Rib">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="markAllRead" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="e9z-YJ-Rib">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -129,14 +129,14 @@
                                         <action selector="markAllAsRead:" target="Oky-zY-oP4" id="qQg-Wj-NpN"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="540B93C9-F805-41C8-A638-3DC0825A020B" label="Mark Read" paletteLabel="Mark Read" image="ToolbarPlaceholder" id="N7D-g2-EPD" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="540B93C9-F805-41C8-A638-3DC0825A020B" label="Mark Read" paletteLabel="Mark Read" image="markRead" id="N7D-g2-EPD" customClass="RSToolbarItem" customModule="RSCore">
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="48" height="25"/>
                                     <size key="maxSize" width="50" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="Pe3-wh-G7e">
                                         <rect key="frame" x="8" y="14" width="48" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="ToolbarPlaceholder" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="2FV-93-DIY">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="markRead" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="2FV-93-DIY">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -145,14 +145,14 @@
                                         <action selector="markRead:" target="Oky-zY-oP4" id="yFY-gd-FOd"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="4DED27B7-8961-48F3-A995-9C961E2C0257" label="Open in Browser" paletteLabel="Open in Browser" image="ToolbarPlaceholder" id="tid-SB-me3" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="4DED27B7-8961-48F3-A995-9C961E2C0257" label="Open in Browser" paletteLabel="Open in Browser" image="openInBrowser" id="tid-SB-me3" customClass="RSToolbarItem" customModule="RSCore">
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="48" height="25"/>
                                     <size key="maxSize" width="50" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="pgp-lZ-j6S">
                                         <rect key="frame" x="23" y="14" width="48" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="ToolbarPlaceholder" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="PNN-ND-sO0">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="openInBrowser" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="PNN-ND-sO0">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -569,6 +569,10 @@
         <image name="NSGoRightTemplate" width="9" height="12"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
-        <image name="ToolbarPlaceholder" width="24" height="24"/>
+        <image name="markAllRead" width="11" height="9.5"/>
+        <image name="markRead" width="9.5" height="9.5"/>
+        <image name="newFolder" width="9.5" height="9.5"/>
+        <image name="nextUnread" width="9.5" height="9.5"/>
+        <image name="openInBrowser" width="9.5" height="9.5"/>
     </resources>
 </document>
