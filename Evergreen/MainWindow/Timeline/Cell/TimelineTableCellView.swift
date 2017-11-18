@@ -31,6 +31,10 @@ class TimelineTableCellView: NSTableCellView {
 		return true
 	}
 
+	override var wantsUpdateLayer: Bool {
+		return true
+	}
+
 	var isEmphasized = false {
 		didSet {
 			dateView.emphasized = isEmphasized
@@ -114,7 +118,7 @@ class TimelineTableCellView: NSTableCellView {
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
 	}
 
-	override func draw(_ dirtyRect: NSRect) {
+	override func updateLayer() {
 
 		let color: NSColor
 		if isSelected {
@@ -123,8 +127,10 @@ class TimelineTableCellView: NSTableCellView {
 		else {
 			color = NSColor.white
 		}
-		color.set()
-		dirtyRect.fill()
+
+		if layer?.backgroundColor != color.cgColor {
+			layer?.backgroundColor = color.cgColor
+		}
 	}
 
 	private func updateTitleView() {
