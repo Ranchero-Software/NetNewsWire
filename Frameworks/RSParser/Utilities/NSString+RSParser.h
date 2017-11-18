@@ -8,6 +8,8 @@
 
 @import Foundation;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSString (RSParser)
 
 - (NSString *)rsparser_stringByDecodingHTMLEntities;
@@ -16,3 +18,4 @@
 
 @end
 
+NS_ASSUME_NONNULL_END
