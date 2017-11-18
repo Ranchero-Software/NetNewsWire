@@ -433,7 +433,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="gB0-WX-2Gd"/>
-                                        <menuItem title="Star" keyEquivalent="L" id="vvo-ZM-8kl">
+                                        <menuItem title="Mark as Starred" keyEquivalent="L" id="vvo-ZM-8kl">
                                             <connections>
                                                 <action selector="markAllAsRead:" target="Ady-hI-5gd" id="WdN-5m-sV0"/>
                                             </connections>
