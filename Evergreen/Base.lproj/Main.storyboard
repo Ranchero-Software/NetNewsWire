@@ -432,6 +432,12 @@
                                                 <action selector="hitPanicButton:" target="Ady-hI-5gd" id="Y12-ll-3qL"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="gB0-WX-2Gd"/>
+                                        <menuItem title="Star" keyEquivalent="L" id="vvo-ZM-8kl">
+                                            <connections>
+                                                <action selector="markAllAsRead:" target="Ady-hI-5gd" id="WdN-5m-sV0"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="qgr-Gl-Xhw"/>
                                         <menuItem title="Open in Browser" keyEquivalent="" id="4iQ-1v-dTa">
                                             <connections>
