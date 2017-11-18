@@ -145,6 +145,22 @@
                                         <action selector="markRead:" target="Oky-zY-oP4" id="yFY-gd-FOd"/>
                                     </connections>
                                 </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="09CE2FC7-B9B6-4A74-85B3-2DED57082923" label="Star" paletteLabel="Star" image="star" id="Gxg-WQ-ufC" customClass="RSToolbarItem" customModule="RSCore">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="48" height="25"/>
+                                    <size key="maxSize" width="50" height="27"/>
+                                    <button key="view" verticalHuggingPriority="750" id="Ehx-31-ELo">
+                                        <rect key="frame" x="0.0" y="14" width="48" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="star" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="xYM-n6-bee">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <connections>
+                                        <action selector="markRead:" target="Oky-zY-oP4" id="fYI-jM-htG"/>
+                                    </connections>
+                                </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="4DED27B7-8961-48F3-A995-9C961E2C0257" label="Open in Browser" paletteLabel="Open in Browser" image="openInBrowser" id="tid-SB-me3" customClass="RSToolbarItem" customModule="RSCore">
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="48" height="25"/>
@@ -224,6 +240,7 @@
                                 <toolbarItem reference="QD0-SQ-OIM"/>
                                 <toolbarItem reference="YMs-P5-Xhn"/>
                                 <toolbarItem reference="lst-vn-0Iw"/>
+                                <toolbarItem reference="Gxg-WQ-ufC"/>
                                 <toolbarItem reference="YMs-P5-Xhn"/>
                                 <toolbarItem reference="p7Y-Vm-ILH"/>
                                 <toolbarItem reference="tid-SB-me3"/>
@@ -595,5 +612,6 @@
         <image name="newFolder" width="9.5" height="9.5"/>
         <image name="nextUnread" width="9.5" height="9.5"/>
         <image name="openInBrowser" width="9.5" height="9.5"/>
+        <image name="star" width="9.5" height="9.5"/>
     </resources>
 </document>
