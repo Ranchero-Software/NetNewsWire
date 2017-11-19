@@ -96,8 +96,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 		currentTheme = themeLoader.defaultTheme
 
-		let todayFeed = PseudoFeed(delegate: TodayFeedDelegate())
-		pseudoFeeds += [todayFeed]
+		pseudoFeeds += [TodayFeed()]
 		
 		createAndShowMainWindow()
 
