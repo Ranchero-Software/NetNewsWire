@@ -18,13 +18,10 @@ final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 		if node.isRoot {
 			return childNodesForRootNode(node)
 		}
-		if node.representedObject is Folder {
-			return childNodesForFolderNode(node)
+		if node.representedObject is Container {
+			return childNodesForContainerNode(node)
 		}
-		if node.representedObject is Account {
-			return childNodesForAccount(node)
-		}
-		
+
 		return nil
 	}	
 }
@@ -34,28 +31,23 @@ private extension SidebarTreeControllerDelegate {
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 
 		// The top-level nodes are pseudo-feeds (All Unread, Starred, etc.) and accounts.
-		// TODO: pseudo-feeds
 
-		return sortedAccountNodes(rootNode)
+		return pseudoFeedNodes(rootNode) + sortedAccountNodes(rootNode)
 	}
 
-	func childNodesForAccount(_ accountNode: Node) -> [Node]? {
+	func pseudoFeedNodes(_ rootNode: Node) -> [Node] {
 
-		let account = accountNode.representedObject as! Account
-		return childNodesForContainerNode(accountNode, account.children)
+		// The appDelegate’s pseudoFeeds are already sorted properly.
+		return appDelegate.pseudoFeeds.map { rootNode.createChildNode($0) }
 	}
 
-	func childNodesForFolderNode(_ folderNode: Node) -> [Node]? {
+	func childNodesForContainerNode(_ containerNode: Node) -> [Node]? {
 
-		let folder = folderNode.representedObject as! Folder
-		return childNodesForContainerNode(folderNode, folder.children)
-	}
-
-	func childNodesForContainerNode(_ containerNode: Node, _ children: [AnyObject]) -> [Node]? {
+		let container = containerNode.representedObject as! Container
 
 		var updatedChildNodes = [Node]()
 
-		children.forEach { (representedObject) in
+		container.children.forEach { (representedObject) in
 
 			if let existingNode = containerNode.childNodeRepresentingObject(representedObject) {
 				if !updatedChildNodes.contains(existingNode) {
