@@ -15,7 +15,7 @@ import RSCore
 
 	func update() {
 
-		rs_performSelectorCoalesced(#selector(updateBadge), with: nil, afterDelay: 0.01)
+		performSelectorCoalesced(#selector(updateBadge), with: nil, delay: 0.01)
 	}
 
 	@objc dynamic func updateBadge() {
