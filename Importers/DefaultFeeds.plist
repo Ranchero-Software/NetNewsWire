@@ -10,7 +10,7 @@
 		<key>homePageURL</key>
 		<string>http://inessential.com/</string>
 		<key>url</key>
-		<string>http://inessential.com/xml/rss.xml</string>
+		<string>http://inessential.com/feed.json</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
@@ -18,7 +18,7 @@
 		<key>editedName</key>
 		<string>Daring Fireball</string>
 		<key>url</key>
-		<string>https://daringfireball.net/feeds/main</string>
+		<string>https://daringfireball.net/feeds/json</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
@@ -54,7 +54,7 @@
 		<key>editedName</key>
 		<string>The Shape of Everything</string>
 		<key>url</key>
-		<string>http://shapeof.com/rss.xml</string>
+		<string>http://shapeof.com/feed.json</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
@@ -78,13 +78,13 @@
 	</dict>
 	<dict>
 		<key>homePageURL</key>
-		<string>http://sixcolors.com</string>
+		<string>http://sixcolors.com/</string>
 		<key>note</key>
 		<string>By Jason Snell &amp; friends</string>
 		<key>editedName</key>
 		<string>Six Colors</string>
 		<key>url</key>
-		<string>http://feedpress.me/sixcolors</string>
+		<string>https://sixcolors.com/feed.json</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
@@ -128,7 +128,7 @@
 		<key>note</key>
 		<string>Dave Winer</string>
 		<key>url</key>
-		<string>http://scripting.com/rss.xml</string>
+		<string>http://scripting.com/rss.json</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
@@ -148,7 +148,15 @@
 		<key>note</key>
 		<string>Paul Kafasis</string>
 		<key>url</key>
-		<string>https://onefoottsunami.com/feed/atom/</string>
+		<string>https://onefoottsunami.com/feed/json/</string>
+	</dict>
+	<dict>
+		<key>homePageURL</key>
+		<string>https://www.omnigroup.com/blog/</string>
+		<key>editedName</key>
+		<string>The Omni Blog</string>
+		<key>url</key>
+		<string>https://www.omnigroup.com/blog/rss/</string>
 	</dict>
 </array>
 </plist>
