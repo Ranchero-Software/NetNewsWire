@@ -324,10 +324,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return database.fetchUnreadArticles(for: folder.flattenedFeeds())
 	}
 
-	public func fetchUnreadCountForToday(_ callback: (Int) -> Void) {
+	public func fetchUnreadCountForToday(_ callback: @escaping (Int) -> Void) {
 
 		let startOfToday = NSCalendar.startOfToday()
-		
+		database.fetchUnreadCount(for: flattenedFeeds(), since: startOfToday, callback: callback)
 	}
 
 	// MARK: - Notifications

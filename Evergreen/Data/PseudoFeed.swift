@@ -13,7 +13,7 @@ import Account
 
 protocol PseudoFeedDelegate: DisplayNameProvider {
 
-	func fetchUnreadCount(for: Account, callback: (Int) -> Void)
+	func fetchUnreadCount(for: Account, callback: @escaping (Int) -> Void)
 }
 
 final class PseudoFeed: UnreadCountProvider, DisplayNameProvider {
@@ -39,11 +39,15 @@ final class PseudoFeed: UnreadCountProvider, DisplayNameProvider {
 	init(delegate: PseudoFeedDelegate) {
 
 		self.delegate = delegate
+
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+
+		startTimer() // Fetch unread count at startup
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 
-		if let object = note.object, object is Account {
+		if note.object is Account {
 			startTimer()
 		}
 	}
@@ -56,7 +60,8 @@ private extension PseudoFeed {
 	private func fetchUnreadCount(for account: Account) {
 
 		delegate.fetchUnreadCount(for: account) { (accountUnreadCount) in
-			unreadCounts[account] = accountUnreadCount
+			self.unreadCounts[account] = accountUnreadCount
+			self.updateUnreadCount()
 		}
 	}
 
@@ -85,12 +90,13 @@ private extension PseudoFeed {
 		timer = nil
 	}
 
-	private static let fetchCoalescingDelay: TimeInterval = 0.1
+	private static let fetchCoalescingDelay: TimeInterval = 0.2
 
 	func startTimer() {
 
 		stopTimer()
-		timer = Timer(timeInterval: PseudoFeed.fetchCoalescingDelay, repeats: false, block: { (_) in
+		
+		timer = Timer.scheduledTimer(withTimeInterval: PseudoFeed.fetchCoalescingDelay, repeats: false, block: { (timer) in
 			self.fetchUnreadCounts()
 			self.stopTimer()
 		})

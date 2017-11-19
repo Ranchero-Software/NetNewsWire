@@ -13,7 +13,7 @@ struct TodayFeedDelegate: PseudoFeedDelegate {
 
 	let nameForDisplay = NSLocalizedString("Today", comment: "Today pseudo-feed title")
 
-	func fetchUnreadCount(for account: Account, callback: (Int) -> Void) {
+	func fetchUnreadCount(for account: Account, callback: @escaping (Int) -> Void) {
 
 		account.fetchUnreadCountForToday(callback)
 	}
