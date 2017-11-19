@@ -15,3 +15,5 @@ CREATE INDEX if not EXISTS articles_feedID_index on articles (feedID);
 CREATE INDEX if not EXISTS tags_tagName_index on tags (tagName COLLATE NOCASE);
 
 CREATE INDEX if not EXISTS statuses_read_index on statuses (read);
+CREATE INDEX if not EXISTS statuses_starred_index on statuses (starred);
+

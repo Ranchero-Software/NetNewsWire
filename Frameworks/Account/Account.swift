@@ -330,6 +330,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.fetchUnreadCount(for: flattenedFeeds(), since: startOfToday, callback: callback)
 	}
 
+	public func fetchUnreadCountForStarredArticles(_ callback: @escaping (Int) -> Void) {
+
+		database.fetchStarredAndUnreadCount(for: flattenedFeeds(), callback: callback)
+	}
+
 	// MARK: - Notifications
 
 	@objc func downloadProgressDidChange(_ note: Notification) {

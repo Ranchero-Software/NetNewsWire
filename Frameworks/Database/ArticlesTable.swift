@@ -164,6 +164,23 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	func fetchStarredAndUnreadCount(_ feeds: Set<Feed>, _ callback: @escaping (Int) -> Void) {
+
+		let feedIDs = feeds.feedIDs()
+		queue.fetch { (database) in
+
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1 and userDeleted=0;"
+			let parameters = Array(feedIDs) as [Any]
+
+			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
+
+			DispatchQueue.main.async() {
+				callback(unreadCount)
+			}
+		}
+	}
+
 	// MARK: Status
 	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
