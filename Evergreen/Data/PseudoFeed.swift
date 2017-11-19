@@ -18,7 +18,6 @@ protocol PseudoFeedDelegate: DisplayNameProvider {
 
 final class PseudoFeed: UnreadCountProvider, DisplayNameProvider {
 
-	private static let fetchCoalescingDelay: TimeInterval = 0.1
 	private var timer: Timer?
 	private var unreadCounts = [Account: Int]()
 	private let delegate: PseudoFeedDelegate
@@ -45,9 +44,14 @@ final class PseudoFeed: UnreadCountProvider, DisplayNameProvider {
 	@objc func unreadCountDidChange(_ note: Notification) {
 
 		if let object = note.object, object is Account {
-			startCoalescingTimer()
+			startTimer()
 		}
 	}
+}
+
+private extension PseudoFeed {
+
+	// MARK: - Unread Counts
 
 	private func fetchUnreadCount(for account: Account) {
 
@@ -73,7 +77,7 @@ final class PseudoFeed: UnreadCountProvider, DisplayNameProvider {
 
 	// MARK: - Timer
 
-	private func stopTimer() {
+	func stopTimer() {
 
 		if let timer = timer {
 			timer.rs_invalidateIfValid()
@@ -81,7 +85,9 @@ final class PseudoFeed: UnreadCountProvider, DisplayNameProvider {
 		timer = nil
 	}
 
-	private func startCoalescingTimer() {
+	private static let fetchCoalescingDelay: TimeInterval = 0.1
+
+	func startTimer() {
 
 		stopTimer()
 		timer = Timer(timeInterval: PseudoFeed.fetchCoalescingDelay, repeats: false, block: { (_) in
@@ -90,3 +96,4 @@ final class PseudoFeed: UnreadCountProvider, DisplayNameProvider {
 		})
 	}
 }
+
