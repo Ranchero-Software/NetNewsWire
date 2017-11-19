@@ -20,7 +20,7 @@ var currentTheme: VSTheme!
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
+class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UnreadCountProvider {
 
 	let windowControllers = NSMutableArray()
 	var preferencesWindowController: NSWindowController?
@@ -46,6 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		didSet {
 			if unreadCount != oldValue {
 				dockBadge.update()
+				postUnreadCountDidChangeNotification()
 			}
 		}
 	}
@@ -96,7 +97,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 
 		currentTheme = themeLoader.defaultTheme
 
-		pseudoFeeds += [TodayFeed()]
+		pseudoFeeds = [TodayFeed(), UnreadFeed()]
 		
 		createAndShowMainWindow()
 
