@@ -10,6 +10,6 @@ import Foundation
 
 public protocol DisplayNameProvider {
 	
-	var nameForDisplay: String {get}
+	var nameForDisplay: String { get }
 }
 
