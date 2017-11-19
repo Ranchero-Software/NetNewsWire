@@ -40,6 +40,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
 	private let dockBadge = DockBadge()
 
+	var pseudoFeeds = [PseudoFeed]()
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -93,6 +95,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 
 		currentTheme = themeLoader.defaultTheme
+
+		let todayFeed = PseudoFeed(delegate: TodayFeedDelegate())
+		pseudoFeeds += [todayFeed]
 		
 		createAndShowMainWindow()
 
