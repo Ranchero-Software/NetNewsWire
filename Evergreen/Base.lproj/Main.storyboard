@@ -426,11 +426,21 @@
                                                 <action selector="markAllAsRead:" target="Ady-hI-5gd" id="154-2D-ONk"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Mark Older Articles as Read…" id="ilK-aW-oAO">
+                                        <menuItem title="Panic Buttons" id="edg-dV-8eg">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="hitPanicButton:" target="Ady-hI-5gd" id="Y12-ll-3qL"/>
-                                            </connections>
+                                            <menu key="submenu" title="Panic Buttons" id="eTY-4t-iyJ">
+                                                <items>
+                                                    <menuItem title="Mark Older Articles as Read…" id="oGf-d9-ScL">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="markOlderArticlesAsRead:" target="Ady-hI-5gd" id="ANJ-0A-dVY"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Mark All Everywhere as Read…" id="vfn-M4-V9E">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="gB0-WX-2Gd"/>
                                         <menuItem title="Mark as Starred" keyEquivalent="L" id="vvo-ZM-8kl">

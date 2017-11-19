@@ -80,7 +80,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
-	func hitPanicButton(with window: NSWindow) {
+	func markOlderArticlesAsRead(with window: NSWindow) {
 
 		panicButtonWindowController = PanicButtonWindowController()
 		panicButtonWindowController!.runSheetOnWindow(window)
@@ -372,10 +372,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		Browser.open("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
 	}
 
-	@IBAction func hitPanicButton(_ sender: Any?) {
+	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
 
 		createAndShowMainWindow()
-		hitPanicButton(with: mainWindowController!.window!)
+		markOlderArticlesAsRead(with: mainWindowController!.window!)
 	}
 }
 

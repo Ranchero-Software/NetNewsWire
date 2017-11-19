@@ -160,9 +160,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		splitViewController!.toggleSidebar(sender)
 	}
 
-	@IBAction func hitPanicButton(_ sender: Any?) {
+	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
 
-		appDelegate.hitPanicButton(with: window!)
+		appDelegate.markOlderArticlesAsRead(with: window!)
 	}
 }
 
