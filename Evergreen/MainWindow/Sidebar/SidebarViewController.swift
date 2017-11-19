@@ -118,12 +118,24 @@ import RSCore
     
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
 
-		let cell = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DataCell"), owner: self) as! SidebarCell
-		
 		let node = item as! Node
+
+		if node.isGroupItem {
+			let cell = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "HeaderCell"), owner: self) as! NSTableCellView
+			configureGroupCell(cell, node)
+			return cell
+		}
+
+		let cell = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DataCell"), owner: self) as! SidebarCell
 		configure(cell, node)
 
 		return cell
+	}
+
+	func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
+
+		let node = item as! Node
+		return node.isGroupItem
 	}
 
     func outlineViewSelectionDidChange(_ notification: Notification) {
@@ -281,6 +293,12 @@ private extension SidebarViewController {
 		cell.name = nameFor(node)
 		cell.unreadCount = unreadCountFor(node)
 		cell.image = imageFor(node)
+	}
+
+	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
+
+		cell.objectValue = node
+		cell.textField?.stringValue = nameFor(node)
 	}
 
 	func imageFor(_ node: Node) -> NSImage? {

@@ -71,7 +71,13 @@ public final class Node: Equatable {
 		node.canHaveChildNodes = true
 		return node
 	}
-	
+
+	public func createChildNode(_ representedObject: AnyObject) -> Node {
+
+		// Just creates — doesn’t add it.
+		return Node(representedObject: representedObject, parent: self)
+	}
+
 	public func childAtIndex(_ index: Int) -> Node? {
 		
 		guard let childNodes = childNodes else {

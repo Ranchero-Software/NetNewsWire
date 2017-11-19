@@ -21,6 +21,9 @@ final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 		if node.representedObject is Folder {
 			return childNodesForFolderNode(node)
 		}
+		if node.representedObject is Account {
+			return childNodesForAccount(node)
+		}
 		
 		return nil
 	}	
@@ -29,12 +32,17 @@ final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 private extension SidebarTreeControllerDelegate {
 	
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
-		
-		// The child nodes are the top-level items of the local Account.
-		// This will be expanded later to add synthetic feeds (All Unread, for instance)
-		// and other accounts.
 
-		return childNodesForContainerNode(rootNode, AccountManager.shared.localAccount.children)
+		// The top-level nodes are pseudo-feeds (All Unread, Starred, etc.) and accounts.
+		// TODO: pseudo-feeds
+
+		return sortedAccountNodes(rootNode)
+	}
+
+	func childNodesForAccount(_ accountNode: Node) -> [Node]? {
+
+		let account = accountNode.representedObject as! Account
+		return childNodesForContainerNode(accountNode, account.children)
 	}
 
 	func childNodesForFolderNode(_ folderNode: Node) -> [Node]? {
@@ -61,8 +69,7 @@ private extension SidebarTreeControllerDelegate {
 			}
 		}
 
-		updatedChildNodes = Node.nodesSortedAlphabeticallyWithFoldersAtEnd(updatedChildNodes)
-		return updatedChildNodes
+		return updatedChildNodes.sortedAlphabeticallyWithFoldersAtEnd()
 	}
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {
@@ -73,21 +80,39 @@ private extension SidebarTreeControllerDelegate {
 		if let folder = representedObject as? Folder {
 			return createNode(folder: folder, parent: parent)
 		}
+		if let account = representedObject as? Account {
+			return createNode(account: account, parent: parent)
+		}
+
 		return nil
 	}
 	
 	func createNode(feed: Feed, parent: Node) -> Node {
-		
-		return Node(representedObject: feed, parent: parent)
+
+		return parent.createChildNode(feed)
 	}
 	
 	func createNode(folder: Folder, parent: Node) -> Node {
-		
-		let node = Node(representedObject: folder, parent: parent)
+
+		let node = parent.createChildNode(folder)
 		node.canHaveChildNodes = true
 		return node
 	}
-	
+
+	func createNode(account: Account, parent: Node) -> Node {
+
+		let node = parent.createChildNode(account)
+		node.canHaveChildNodes = true
+		node.isGroupItem = true
+		return node
+	}
+
+	func sortedAccountNodes(_ parent: Node) -> [Node] {
+
+		let nodes = AccountManager.shared.accounts.map { createNode(account: $0, parent: parent) }
+		return nodes.sortedAlphabetically()
+	}
+
 	func nodeInArrayRepresentingObject(_ nodes: [Node], _ representedObject: AnyObject) -> Node? {
 		
 		for oneNode in nodes {
