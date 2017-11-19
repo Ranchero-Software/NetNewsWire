@@ -36,6 +36,19 @@ import RSCore
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 
 		outlineView.reloadData()
+
+		// Always expand all group items on initial display.
+		var row = 0
+		while(true) {
+			guard let item = outlineView.item(atRow: row) else {
+				break
+			}
+			let node = item as! Node
+			if node.isGroupItem {
+				outlineView.expandItem(item)
+			}
+			row += 1
+		}
 	}
 
 	//MARK: Notifications
