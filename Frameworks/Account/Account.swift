@@ -323,7 +323,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		return database.fetchUnreadArticles(for: folder.flattenedFeeds())
 	}
-	
+
+	public func fetchUnreadCountForToday(_ callback: (Int) -> Void) {
+
+		let startOfToday = NSCalendar.startOfToday()
+		
+	}
+
 	// MARK: - Notifications
 
 	@objc func downloadProgressDidChange(_ note: Notification) {
