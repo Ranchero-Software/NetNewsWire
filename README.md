@@ -2,8 +2,8 @@
 
 It’s a feed reader for MacOS.
 
-No, it doesn’t support JSON Feed yet. It’s [on the to-do list](https://github.com/brentsimmons/Evergreen/issues/20).
+It supports [RSS](http://cyber.harvard.edu/rss/rss.html), [Atom](https://tools.ietf.org/html/rfc4287), [JSON Feed](https://jsonfeed.org/), and [RSS-in-JSON](https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md) formats.
 
-It’s also not actually usable at this point.
+It’s barely usable at this point. Barely. Probably not even. A whole bunch of things haven’t been done yet. (See the [bug tracker](https://github.com/brentsimmons/Evergreen/milestone/1)).
 
 More info: [https://ranchero.com/evergreen/](https://ranchero.com/evergreen/)
