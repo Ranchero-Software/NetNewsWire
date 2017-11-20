@@ -60,10 +60,15 @@ class SidebarOutlineView : NSOutlineView {
 
 	override func frameOfCell(atColumn column: Int, row: Int) -> NSRect {
 
+		// Don’t allow the pseudo-feeds at the top level to be indented.
+
 		var frame = super.frameOfCell(atColumn: column, row: row)
 
 		let node = item(atRow: row) as! Node
-		if node.isGroupItem {
+		guard let parentNode = node.parent, parentNode.isRoot else {
+			return frame
+		}
+		guard node.representedObject is PseudoFeed else {
 			return frame
 		}
 
