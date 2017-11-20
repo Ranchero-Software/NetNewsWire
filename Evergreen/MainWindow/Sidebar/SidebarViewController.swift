@@ -151,6 +151,21 @@ import RSCore
 		return node.isGroupItem
 	}
 
+	func outlineView(_ outlineView: NSOutlineView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
+
+		// Don’t allow selecting group items.
+		// If any index in IndexSet contains a group item,
+		// return the current selection (not a modified version of the proposed selection).
+
+		for index in proposedSelectionIndexes {
+			if let node = nodeForRow(index), node.isGroupItem {
+				return outlineView.selectedRowIndexes
+			}
+		}
+
+		return proposedSelectionIndexes
+	}
+
     func outlineViewSelectionDidChange(_ notification: Notification) {
 
 		// TODO: support multiple selection
