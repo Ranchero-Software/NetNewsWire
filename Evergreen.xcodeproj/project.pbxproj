@@ -21,7 +21,7 @@
 		846E77411F6EF6A100A165E2 /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; };
 		846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */; };
-		848F6AE51FC29CFB002D422E /* FaviconCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconCache.swift */; };
+		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
 		849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
 		849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97511ED9EAC0007D329B /* AddFeedController.swift */; };
 		849A97541ED9EAC0007D329B /* AddFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97521ED9EAC0007D329B /* AddFeedWindowController.swift */; };
@@ -409,7 +409,7 @@
 		846E77161F6EF5D000A165E2 /* Database.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Database.xcodeproj; path = Frameworks/Database/Database.xcodeproj; sourceTree = "<group>"; };
 		846E77301F6EF5D600A165E2 /* Account.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Account.xcodeproj; path = Frameworks/Account/Account.xcodeproj; sourceTree = "<group>"; };
 		84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkReadOrUnreadCommand.swift; sourceTree = "<group>"; };
-		848F6AE41FC29CFA002D422E /* FaviconCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconCache.swift; sourceTree = "<group>"; };
+		848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconDownloader.swift; sourceTree = "<group>"; };
 		849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderWindowController.swift; sourceTree = "<group>"; };
 		849A97511ED9EAC0007D329B /* AddFeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedController.swift; path = AddFeed/AddFeedController.swift; sourceTree = "<group>"; };
 		849A97521ED9EAC0007D329B /* AddFeedWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedWindowController.swift; path = AddFeed/AddFeedWindowController.swift; sourceTree = "<group>"; };
@@ -578,7 +578,7 @@
 		848F6AE31FC29CFA002D422E /* Favicons */ = {
 			isa = PBXGroup;
 			children = (
-				848F6AE41FC29CFA002D422E /* FaviconCache.swift */,
+				848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */,
 			);
 			name = Favicons;
 			path = Evergreen/Favicons;
@@ -1319,7 +1319,7 @@
 				849A97791ED9EC04007D329B /* TimelineStringUtilities.swift in Sources */,
 				84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */,
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
-				848F6AE51FC29CFB002D422E /* FaviconCache.swift in Sources */,
+				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,
 				849A97981ED9EFAA007D329B /* Node-Extensions.swift in Sources */,
 				849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */,
 				849A97831ED9EC63007D329B /* StatusBarView.swift in Sources */,
