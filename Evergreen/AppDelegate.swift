@@ -86,6 +86,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		panicButtonWindowController!.runSheetOnWindow(window)
 	}
 
+	func markEverywhereAsRead(with window: NSWindow) {
+
+		let alert = NSAlert()
+		alert.messageText = NSLocalizedString("Mark All Articles as Read Everywhere?", comment: "Mark Everywhere alert messageText")
+		alert.informativeText = NSLocalizedString("This will mark every single article as read. All of them. The unread count will be zero.\n\nNote: this operation cannot be undone.", comment: "Mark Everywhere informativeText.")
+
+		alert.addButton(withTitle: NSLocalizedString("Mark All Articles as Read", comment: "Mark Everywhere alert button."))
+		alert.addButton(withTitle: NSLocalizedString("Don’t Mark as Read", comment: "Mark Everywhere alert button."))
+
+		alert.beginSheetModal(for: window) { (returnCode) in
+
+			if returnCode == .alertFirstButtonReturn {
+				self.markEverywhereAsRead()
+			}
+		}
+	}
+
+	func markEverywhereAsRead() {
+
+		AccountManager.shared.accounts.forEach { $0.markEverywhereAsRead() }
+	}
+
 	// MARK: - NSApplicationDelegate
 
 	func applicationDidFinishLaunching(_ note: Notification) {
@@ -377,6 +399,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		createAndShowMainWindow()
 		markOlderArticlesAsRead(with: mainWindowController!.window!)
 	}
+
+	@IBAction func markEverywhereAsRead(_ sender: Any?) {
+
+		createAndShowMainWindow()
+		markEverywhereAsRead(with: mainWindowController!.window!)
+	}
+
 }
 
 private extension AppDelegate {

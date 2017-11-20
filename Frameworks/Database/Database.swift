@@ -84,5 +84,10 @@ public final class Database {
 
 		return articlesTable.mark(articles, statusKey, flag)
 	}
+
+	public func markEverywhereAsRead() {
+
+		articlesTable.markEverywhereAsRead()
+	}
 }
 

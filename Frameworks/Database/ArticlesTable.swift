@@ -187,6 +187,11 @@ final class ArticlesTable: DatabaseTable {
 
 		return statusesTable.mark(articles.statuses(), statusKey, flag)
 	}
+
+	func markEverywhereAsRead() {
+
+		return statusesTable.markEverywhereAsRead()
+	}
 }
 
 // MARK: - Private

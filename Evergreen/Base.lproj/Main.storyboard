@@ -438,6 +438,9 @@
                                                     </menuItem>
                                                     <menuItem title="Mark All Everywhere as Read…" id="vfn-M4-V9E">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="markEverywhereAsRead:" target="Ady-hI-5gd" id="Sq7-ak-Jaa"/>
+                                                        </connections>
                                                     </menuItem>
                                                 </items>
                                             </menu>

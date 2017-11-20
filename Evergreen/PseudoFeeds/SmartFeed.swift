@@ -88,7 +88,7 @@ private extension SmartFeed {
 		timer = nil
 	}
 
-	private static let fetchCoalescingDelay: TimeInterval = 0.2
+	private static let fetchCoalescingDelay: TimeInterval = 0.1
 
 	func startTimer() {
 

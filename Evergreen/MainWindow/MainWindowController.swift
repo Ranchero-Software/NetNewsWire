@@ -164,6 +164,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		appDelegate.markOlderArticlesAsRead(with: window!)
 	}
+
+	@IBAction func markEverywhereAsRead(_ sender: Any?) {
+
+		appDelegate.markEverywhereAsRead(with: window!)
+	}
 }
 
 // MARK: - Private

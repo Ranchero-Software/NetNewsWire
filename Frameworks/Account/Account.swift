@@ -335,6 +335,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.fetchStarredAndUnreadCount(for: flattenedFeeds(), callback: callback)
 	}
 
+	public func markEverywhereAsRead() {
+
+		// Does not support undo.
+
+		database.markEverywhereAsRead()
+		flattenedFeeds().forEach { $0.unreadCount = 0 }		
+	}
+
 	// MARK: - Notifications
 
 	@objc func downloadProgressDidChange(_ note: Notification) {
