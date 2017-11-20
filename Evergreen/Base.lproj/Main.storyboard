@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13526" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13526"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13770"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -392,7 +392,7 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Go" id="FPs-q4-hLT" userLabel="Article">
+                            <menuItem title="Go" id="FPs-q4-hLT">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Go" id="NQW-Ph-lw2">
                                     <items>
@@ -426,10 +426,48 @@
                                                 <action selector="markAllAsRead:" target="Ady-hI-5gd" id="154-2D-ONk"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Panic Buttons" id="edg-dV-8eg">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Panic Buttons" id="eTY-4t-iyJ">
+                                                <items>
+                                                    <menuItem title="Mark Older Articles as Read…" id="oGf-d9-ScL">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="markOlderArticlesAsRead:" target="Ady-hI-5gd" id="ANJ-0A-dVY"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Mark All Everywhere as Read…" id="vfn-M4-V9E">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="markEverywhereAsRead:" target="Ady-hI-5gd" id="Sq7-ak-Jaa"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="gB0-WX-2Gd"/>
+                                        <menuItem title="Mark as Starred" keyEquivalent="L" id="vvo-ZM-8kl">
+                                            <connections>
+                                                <action selector="markAllAsRead:" target="Ady-hI-5gd" id="WdN-5m-sV0"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="qgr-Gl-Xhw"/>
                                         <menuItem title="Open in Browser" keyEquivalent="" id="4iQ-1v-dTa">
                                             <connections>
                                                 <action selector="openArticleInBrowser:" target="Ady-hI-5gd" id="KeH-ES-fpo"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="Debug" id="UqE-mp-gtV" userLabel="Debug">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Debug" id="s1g-zr-8Oi">
+                                    <items>
+                                        <menuItem title="Drop Conditional Get Info" id="ek9-OK-xbc">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="debugDropConditionalGetInfo:" target="Voe-Tx-rLC" id="MTC-K8-rkx"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -457,10 +495,21 @@
                                                 <action selector="showMainWindow:" target="Ady-hI-5gd" id="TY8-J6-NUD"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Info" keyEquivalent="i" id="24r-2i-fXR">
+                                            <connections>
+                                                <action selector="toggleInspectorWindow:" target="Ady-hI-5gd" id="Bw5-4R-iWP"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Feed Directory" id="iDZ-cW-hZ0">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="showFeedList:" target="Ady-hI-5gd" id="bd2-m5-wPq"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Error Log" id="a0o-lD-l5s">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showLogWindow:" target="Ady-hI-5gd" id="WzC-He-psY"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Dinosaurs" id="suZ-aW-fnf">

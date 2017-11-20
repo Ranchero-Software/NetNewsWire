@@ -33,9 +33,22 @@ import RSCore
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidFinish(_:)), name: .BatchUpdateDidFinish, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 
 		outlineView.reloadData()
+
+		// Always expand all group items on initial display.
+		var row = 0
+		while(true) {
+			guard let item = outlineView.item(atRow: row) else {
+				break
+			}
+			let node = item as! Node
+			if node.isGroupItem {
+				outlineView.expandItem(item)
+			}
+			row += 1
+		}
 	}
 
 	//MARK: Notifications
@@ -53,7 +66,7 @@ import RSCore
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 
-	@objc dynamic func batchUpdateDidFinish(_ notification: Notification) {
+	@objc dynamic func batchUpdateDidPerform(_ notification: Notification) {
 		
 		rebuildTreeAndReloadDataIfNeeded()
 	}
@@ -118,12 +131,39 @@ import RSCore
     
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
 
-		let cell = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DataCell"), owner: self) as! SidebarCell
-		
 		let node = item as! Node
+
+		if node.isGroupItem {
+			let cell = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "HeaderCell"), owner: self) as! NSTableCellView
+			configureGroupCell(cell, node)
+			return cell
+		}
+
+		let cell = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DataCell"), owner: self) as! SidebarCell
 		configure(cell, node)
 
 		return cell
+	}
+
+	func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
+
+		let node = item as! Node
+		return node.isGroupItem
+	}
+
+	func outlineView(_ outlineView: NSOutlineView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
+
+		// Don’t allow selecting group items.
+		// If any index in IndexSet contains a group item,
+		// return the current selection (not a modified version of the proposed selection).
+
+		for index in proposedSelectionIndexes {
+			if let node = nodeForRow(index), node.isGroupItem {
+				return outlineView.selectedRowIndexes
+			}
+		}
+
+		return proposedSelectionIndexes
 	}
 
     func outlineViewSelectionDidChange(_ notification: Notification) {
@@ -281,6 +321,12 @@ private extension SidebarViewController {
 		cell.name = nameFor(node)
 		cell.unreadCount = unreadCountFor(node)
 		cell.image = imageFor(node)
+	}
+
+	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
+
+		cell.objectValue = node
+		cell.textField?.stringValue = nameFor(node)
 	}
 
 	func imageFor(_ node: Node) -> NSImage? {

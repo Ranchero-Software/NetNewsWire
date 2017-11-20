@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct LogItem: Hashable {
+public struct LogItem {
 
 	public enum ItemType {
 		case debug, notification, warning, error
@@ -17,18 +17,11 @@ public struct LogItem: Hashable {
 	public let type: ItemType
 	public let message: String
 	public let date: Date
-	public let hashValue: Int
 
 	public init(type: ItemType, message: String) {
 
 		self.type = type
 		self.message = message
 		self.date = Date()
-		self.hashValue = message.hashValue + self.date.hashValue
-	}
-
-	static public func ==(lhs: LogItem, rhs: LogItem) -> Bool {
-
-		return lhs.type == rhs.type && lhs.message == rhs.message && lhs.date == rhs.date
 	}
 }

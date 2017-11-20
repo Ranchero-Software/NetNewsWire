@@ -11,8 +11,21 @@ import RSTree
 import Data
 import RSCore
 
-extension Node {
-	
+extension Array where Element == Node {
+
+	func sortedAlphabetically() -> [Node] {
+
+		return Node.nodesSortedAlphabetically(self)
+	}
+
+	func sortedAlphabeticallyWithFoldersAtEnd() -> [Node] {
+
+		return Node.nodesSortedAlphabeticallyWithFoldersAtEnd(self)
+	}
+}
+
+private extension Node {
+
 	class func nodesSortedAlphabetically(_ nodes: [Node]) -> [Node] {
 		
 		return nodes.sorted { (node1, node2) -> Bool in
@@ -50,3 +63,5 @@ extension Node {
 		}
 	}
 }
+
+

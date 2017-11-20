@@ -8,6 +8,7 @@
 
 import AppKit
 import RSCore
+import RSTree
 
 class SidebarOutlineView : NSOutlineView {
 
@@ -56,7 +57,26 @@ class SidebarOutlineView : NSOutlineView {
 			super.keyDown(with: event)
 		}
 	}
-	
+
+	override func frameOfCell(atColumn column: Int, row: Int) -> NSRect {
+
+		// Don’t allow the pseudo-feeds at the top level to be indented.
+
+		var frame = super.frameOfCell(atColumn: column, row: row)
+
+		let node = item(atRow: row) as! Node
+		guard let parentNode = node.parent, parentNode.isRoot else {
+			return frame
+		}
+		guard node.representedObject is PseudoFeed else {
+			return frame
+		}
+
+		frame.origin.x -= indentationPerLevel
+		frame.size.width += indentationPerLevel
+		return frame
+	}
+
 	override func viewWillStartLiveResize() {
 		
 		if let scrollView = self.enclosingScrollView {

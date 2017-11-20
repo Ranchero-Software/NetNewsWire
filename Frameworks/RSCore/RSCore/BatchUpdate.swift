@@ -12,22 +12,22 @@ public typealias BatchUpdateBlock = () -> Void
 
 public extension Notification.Name {
 	
-	public static let BatchUpdateDidFinish = Notification.Name(rawValue: "BatchUpdateDidFinish")
+	public static let BatchUpdateDidPerform = Notification.Name(rawValue: "BatchUpdateDidPerform")
 }
 
-final class BatchUpdate {
+public final class BatchUpdate {
 	
-	static let shared = BatchUpdate()
+	public static let shared = BatchUpdate()
 	
 	private var count = 0
 	
-	var isPerforming: Bool {
+	public var isPerforming: Bool {
 		get {
 			return count > 0
 		}
 	}
 	
-	func perform(_ batchUpdateBlock: BatchUpdateBlock) {
+	public func perform(_ batchUpdateBlock: BatchUpdateBlock) {
 		
 		incrementCount()
 		batchUpdateBlock()
@@ -60,6 +60,6 @@ private extension BatchUpdate {
 	
 	func postBatchUpdateDidPerform() {
 		
-		NotificationCenter.default.post(name: .BatchUpdateDidFinish, object: nil, userInfo: nil)
+		NotificationCenter.default.post(name: .BatchUpdateDidPerform, object: nil, userInfo: nil)
 	}
 }

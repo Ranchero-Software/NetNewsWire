@@ -142,11 +142,55 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	func fetchUnreadCount(_ feeds: Set<Feed>, _ since: Date, _ callback: @escaping (Int) -> Void) {
+
+		// Get unread count for today, for instance.
+
+		let feedIDs = feeds.feedIDs()
+		queue.fetch { (database) in
+
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and datePublished > ? and read=0 and userDeleted=0;"
+
+			var parameters = [Any]()
+			parameters += Array(feedIDs) as [Any]
+			parameters += [since] as [Any]
+
+			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
+
+			DispatchQueue.main.async() {
+				callback(unreadCount)
+			}
+		}
+	}
+
+	func fetchStarredAndUnreadCount(_ feeds: Set<Feed>, _ callback: @escaping (Int) -> Void) {
+
+		let feedIDs = feeds.feedIDs()
+		queue.fetch { (database) in
+
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1 and userDeleted=0;"
+			let parameters = Array(feedIDs) as [Any]
+
+			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
+
+			DispatchQueue.main.async() {
+				callback(unreadCount)
+			}
+		}
+	}
+
 	// MARK: Status
 	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
 
 		return statusesTable.mark(articles.statuses(), statusKey, flag)
+	}
+
+	func markEverywhereAsRead() {
+
+		return statusesTable.markEverywhereAsRead()
 	}
 }
 

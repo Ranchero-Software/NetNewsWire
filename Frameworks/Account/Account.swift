@@ -132,6 +132,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		
+        NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
+
 		pullObjectsFromDisk()
 		
 		DispatchQueue.main.async {
@@ -148,6 +150,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
 
+		if feed.iconURL != parsedFeed.iconURL {
+			feed.iconURL = parsedFeed.iconURL
+			dirty = true
+		}
+		if feed.faviconURL != parsedFeed.faviconURL {
+			feed.faviconURL = parsedFeed.faviconURL
+			dirty = true
+		}
+		
 		database.update(feed: feed, parsedFeed: parsedFeed) { (newArticles, updatedArticles) in
 
 			var userInfo = [String: Any]()
@@ -321,7 +332,26 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		return database.fetchUnreadArticles(for: folder.flattenedFeeds())
 	}
-	
+
+	public func fetchUnreadCountForToday(_ callback: @escaping (Int) -> Void) {
+
+		let startOfToday = NSCalendar.startOfToday()
+		database.fetchUnreadCount(for: flattenedFeeds(), since: startOfToday, callback: callback)
+	}
+
+	public func fetchUnreadCountForStarredArticles(_ callback: @escaping (Int) -> Void) {
+
+		database.fetchStarredAndUnreadCount(for: flattenedFeeds(), callback: callback)
+	}
+
+	public func markEverywhereAsRead() {
+
+		// Does not support undo.
+
+		database.markEverywhereAsRead()
+		flattenedFeeds().forEach { $0.unreadCount = 0 }		
+	}
+
 	// MARK: - Notifications
 
 	@objc func downloadProgressDidChange(_ note: Notification) {
@@ -360,6 +390,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 	}
+    
+    @objc func batchUpdateDidPerform(_ note: Notification) {
+        
+        updateUnreadCount()
+    }
 
 	// MARK: - Equatable
 

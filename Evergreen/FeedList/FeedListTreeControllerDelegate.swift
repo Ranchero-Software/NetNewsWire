@@ -61,7 +61,7 @@ private extension FeedListTreeControllerDelegate {
 	func childNodesForContainerNode(_ containerNode: Node, _ children: [AnyObject]) -> [Node]? {
 
 		let nodes = unsortedNodes(parent: containerNode, children: children)
-		return Node.nodesSortedAlphabeticallyWithFoldersAtEnd(nodes)
+		return nodes.sortedAlphabeticallyWithFoldersAtEnd()
 	}
 
 	func unsortedNodes(parent: Node, children: [AnyObject]) -> [Node] {

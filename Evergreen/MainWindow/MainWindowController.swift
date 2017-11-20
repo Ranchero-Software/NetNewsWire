@@ -28,7 +28,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
     override func windowDidLoad() {
         
         super.windowDidLoad()
-        
+
+		window?.titleVisibility = .hidden
 		window?.setFrameUsingName(windowAutosaveName, force: true)
 		
 		detailSplitViewItem?.minimumThickness = 384
@@ -69,7 +70,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
 		
-		rs_performSelectorCoalesced(#selector(MainWindowController.makeToolbarValidate(_:)), with: nil, afterDelay: 0.1)
+		performSelectorCoalesced(#selector(MainWindowController.makeToolbarValidate(_:)), with: nil, delay: 0.1)
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -111,6 +112,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	// MARK: Actions
 	
+    @IBAction func showAddFolderWindow(_ sender: AnyObject) {
+
+        appDelegate.showAddFolderSheetOnWindow(window!)
+    }
+    
 	@IBAction func openArticleInBrowser(_ sender: AnyObject?) {
 		
 		if let link = currentLink {
@@ -152,6 +158,16 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func toggleSidebar(_ sender: AnyObject?) {
 		
 		splitViewController!.toggleSidebar(sender)
+	}
+
+	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
+
+		appDelegate.markOlderArticlesAsRead(with: window!)
+	}
+
+	@IBAction func markEverywhereAsRead(_ sender: Any?) {
+
+		appDelegate.markEverywhereAsRead(with: window!)
 	}
 }
 

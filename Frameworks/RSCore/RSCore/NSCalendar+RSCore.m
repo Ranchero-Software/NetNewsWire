@@ -73,4 +73,9 @@ static NSCalendar *cachedCalendar = nil;
 }
 
 
++ (NSDate *)rs_startOfToday {
+
+	return [[self rs_cachedCalendar] startOfDayForDate:[NSDate date]];
+}
+
 @end

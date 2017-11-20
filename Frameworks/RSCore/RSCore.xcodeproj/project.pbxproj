@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8402047E1FBCE77900D94C1A /* BatchUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402047D1FBCE77900D94C1A /* BatchUpdate.swift */; };
+		8402047F1FBCE77900D94C1A /* BatchUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402047D1FBCE77900D94C1A /* BatchUpdate.swift */; };
 		84134D1F1C59D5450063FD24 /* NSCalendar+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84134D1D1C59D5450063FD24 /* NSCalendar+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84134D201C59D5450063FD24 /* NSCalendar+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84134D1E1C59D5450063FD24 /* NSCalendar+RSCore.m */; };
 		8414CBA71C95F2EA00333C12 /* Set+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8414CBA61C95F2EA00333C12 /* Set+Extensions.swift */; };
@@ -84,6 +86,8 @@
 		8461387F1DB3F5BE00048B83 /* RSToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8461387E1DB3F5BE00048B83 /* RSToolbarItem.swift */; };
 		8479213C1FBA426B004AD08C /* WebViewWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8479213B1FBA426B004AD08C /* WebViewWindow.xib */; };
 		8479213E1FBA4285004AD08C /* WebViewWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8479213D1FBA4285004AD08C /* WebViewWindowController.swift */; };
+		848F6AE91FC2BC50002D422E /* ThreadSafeCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE81FC2BC50002D422E /* ThreadSafeCache.swift */; };
+		848F6AEA1FC2BC50002D422E /* ThreadSafeCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE81FC2BC50002D422E /* ThreadSafeCache.swift */; };
 		849A339D1AC90A0A0015BA09 /* NSTableView+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 849A339B1AC90A0A0015BA09 /* NSTableView+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		849A339E1AC90A0A0015BA09 /* NSTableView+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 849A339C1AC90A0A0015BA09 /* NSTableView+RSCore.m */; };
 		849B08971BF7BCE30090CEE4 /* NSPasteboard+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 849B08951BF7BCE30090CEE4 /* NSPasteboard+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -148,6 +152,11 @@
 		84CFF56D1AC3D20A00CEA6C8 /* NSImage+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CFF56B1AC3D20A00CEA6C8 /* NSImage+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84CFF56E1AC3D20A00CEA6C8 /* NSImage+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CFF56C1AC3D20A00CEA6C8 /* NSImage+RSCore.m */; };
 		84E34DA61F9FA1070077082F /* UndoableCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E34DA51F9FA1070077082F /* UndoableCommand.swift */; };
+		84E72E151FBD647500B873C1 /* InspectorItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E72E101FBD647500B873C1 /* InspectorItem.swift */; };
+		84E72E161FBD647500B873C1 /* InspectorItemContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E72E111FBD647500B873C1 /* InspectorItemContainerView.swift */; };
+		84E72E171FBD647500B873C1 /* InspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E72E121FBD647500B873C1 /* InspectorView.swift */; };
+		84E72E181FBD647500B873C1 /* InspectorWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84E72E131FBD647500B873C1 /* InspectorWindow.xib */; };
+		84E72E191FBD647500B873C1 /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E72E141FBD647500B873C1 /* InspectorWindowController.swift */; };
 		84F20F831F16BA6200D8E682 /* PropertyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F20F821F16BA6200D8E682 /* PropertyList.swift */; };
 		84FE9FC31C00453900081CE9 /* NSStoryboard+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84FE9FC11C00453900081CE9 /* NSStoryboard+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84FE9FC41C00453900081CE9 /* NSStoryboard+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84FE9FC21C00453900081CE9 /* NSStoryboard+RSCore.m */; };
@@ -165,6 +174,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8402047D1FBCE77900D94C1A /* BatchUpdate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BatchUpdate.swift; path = RSCore/BatchUpdate.swift; sourceTree = "<group>"; };
 		84134D1D1C59D5450063FD24 /* NSCalendar+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCalendar+RSCore.h"; sourceTree = "<group>"; };
 		84134D1E1C59D5450063FD24 /* NSCalendar+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCalendar+RSCore.m"; sourceTree = "<group>"; };
 		8414CBA61C95F2EA00333C12 /* Set+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Set+Extensions.swift"; sourceTree = "<group>"; };
@@ -194,6 +204,7 @@
 		8461387E1DB3F5BE00048B83 /* RSToolbarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSToolbarItem.swift; sourceTree = "<group>"; };
 		8479213B1FBA426B004AD08C /* WebViewWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = WebViewWindow.xib; path = AppKit/WebViewWindow.xib; sourceTree = "<group>"; };
 		8479213D1FBA4285004AD08C /* WebViewWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebViewWindowController.swift; path = AppKit/WebViewWindowController.swift; sourceTree = "<group>"; };
+		848F6AE81FC2BC50002D422E /* ThreadSafeCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThreadSafeCache.swift; path = RSCore/ThreadSafeCache.swift; sourceTree = "<group>"; };
 		849A339B1AC90A0A0015BA09 /* NSTableView+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTableView+RSCore.h"; sourceTree = "<group>"; };
 		849A339C1AC90A0A0015BA09 /* NSTableView+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTableView+RSCore.m"; sourceTree = "<group>"; };
 		849B08951BF7BCE30090CEE4 /* NSPasteboard+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSPasteboard+RSCore.h"; sourceTree = "<group>"; };
@@ -257,6 +268,11 @@
 		84CFF56B1AC3D20A00CEA6C8 /* NSImage+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+RSCore.h"; sourceTree = "<group>"; };
 		84CFF56C1AC3D20A00CEA6C8 /* NSImage+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+RSCore.m"; sourceTree = "<group>"; };
 		84E34DA51F9FA1070077082F /* UndoableCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UndoableCommand.swift; path = RSCore/UndoableCommand.swift; sourceTree = "<group>"; };
+		84E72E101FBD647500B873C1 /* InspectorItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InspectorItem.swift; sourceTree = "<group>"; };
+		84E72E111FBD647500B873C1 /* InspectorItemContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InspectorItemContainerView.swift; sourceTree = "<group>"; };
+		84E72E121FBD647500B873C1 /* InspectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InspectorView.swift; sourceTree = "<group>"; };
+		84E72E131FBD647500B873C1 /* InspectorWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InspectorWindow.xib; sourceTree = "<group>"; };
+		84E72E141FBD647500B873C1 /* InspectorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InspectorWindowController.swift; sourceTree = "<group>"; };
 		84F20F821F16BA6200D8E682 /* PropertyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyList.swift; sourceTree = "<group>"; };
 		84FE9FC11C00453900081CE9 /* NSStoryboard+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSStoryboard+RSCore.h"; sourceTree = "<group>"; };
 		84FE9FC21C00453900081CE9 /* NSStoryboard+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSStoryboard+RSCore.m"; sourceTree = "<group>"; };
@@ -332,8 +348,11 @@
 				84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */,
 				842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */,
 				84E34DA51F9FA1070077082F /* UndoableCommand.swift */,
+				8402047D1FBCE77900D94C1A /* BatchUpdate.swift */,
+				848F6AE81FC2BC50002D422E /* ThreadSafeCache.swift */,
 				84CFF5241AC3C8A200CEA6C8 /* Foundation */,
 				84CFF5551AC3CF4A00CEA6C8 /* AppKit */,
+				84E72E0F1FBD647500B873C1 /* Inspector */,
 				84CFF5661AC3D13F00CEA6C8 /* Images */,
 				84CFF4F81AC3C69700CEA6C8 /* Info.plist */,
 				84CFF5031AC3C69700CEA6C8 /* RSCoreTests */,
@@ -456,6 +475,19 @@
 			);
 			name = Images;
 			path = RSCore;
+			sourceTree = "<group>";
+		};
+		84E72E0F1FBD647500B873C1 /* Inspector */ = {
+			isa = PBXGroup;
+			children = (
+				84E72E131FBD647500B873C1 /* InspectorWindow.xib */,
+				84E72E141FBD647500B873C1 /* InspectorWindowController.swift */,
+				84E72E121FBD647500B873C1 /* InspectorView.swift */,
+				84E72E111FBD647500B873C1 /* InspectorItemContainerView.swift */,
+				84E72E101FBD647500B873C1 /* InspectorItem.swift */,
+			);
+			name = Inspector;
+			path = RSCore/Inspector;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -648,6 +680,7 @@
 			files = (
 				84C687301FBAA30800345C9E /* LogWindow.xib in Resources */,
 				8479213C1FBA426B004AD08C /* WebViewWindow.xib in Resources */,
+				84E72E181FBD647500B873C1 /* InspectorWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -682,12 +715,14 @@
 				842DD7C61E14995C00E061EB /* RSBlocks.m in Sources */,
 				842DD7DD1E14996300E061EB /* NSDate+RSCore.m in Sources */,
 				84B99C951FAE64D500ECDEDB /* DisplayNameProvider.swift in Sources */,
+				8402047F1FBCE77900D94C1A /* BatchUpdate.swift in Sources */,
 				842DD7E91E14996300E061EB /* NSNotificationCenter+RSCore.m in Sources */,
 				842DD7E71E14996300E061EB /* NSMutableSet+RSCore.m in Sources */,
 				842DD7E31E14996300E061EB /* NSMutableArray+RSCore.m in Sources */,
 				842DD7DB1E14996300E061EB /* NSData+RSCore.m in Sources */,
 				842DD7D51E14995C00E061EB /* PlistProviderProtocol.swift in Sources */,
 				842DD7CE1E14995C00E061EB /* RSPlist.m in Sources */,
+				848F6AEA1FC2BC50002D422E /* ThreadSafeCache.swift in Sources */,
 				842DD7EF1E14996300E061EB /* NSString+RSCore.m in Sources */,
 				842DD7F21E14996B00E061EB /* Date+Extensions.swift in Sources */,
 				842DD7ED1E14996300E061EB /* NSSet+RSCore.m in Sources */,
@@ -708,9 +743,11 @@
 				849BF8BA1C9130150071D1DA /* DiskSaver.swift in Sources */,
 				84FE9FC41C00453900081CE9 /* NSStoryboard+RSCore.m in Sources */,
 				84CFF5341AC3CB6800CEA6C8 /* NSDictionary+RSCore.m in Sources */,
+				84E72E161FBD647500B873C1 /* InspectorItemContainerView.swift in Sources */,
 				84CFF54C1AC3CDAC00CEA6C8 /* NSString+RSCore.m in Sources */,
 				84CFF5171AC3C73000CEA6C8 /* RSConstants.m in Sources */,
 				8432B1881DACA2060057D6DF /* NSWindow-Extensions.swift in Sources */,
+				8402047E1FBCE77900D94C1A /* BatchUpdate.swift in Sources */,
 				84CFF5541AC3CF4700CEA6C8 /* NSColor+RSCore.m in Sources */,
 				84536F671BB856D4001E1639 /* NSFileManager+RSCore.m in Sources */,
 				8415CB8B1BF84D24007B1E98 /* NSEvent+RSCore.m in Sources */,
@@ -733,6 +770,7 @@
 				84CFF5611AC3D0CE00CEA6C8 /* RSBinaryCache.m in Sources */,
 				84CFF5301AC3CB1900CEA6C8 /* NSDate+RSCore.m in Sources */,
 				84CFF5281AC3C9A200CEA6C8 /* NSArray+RSCore.m in Sources */,
+				84E72E171FBD647500B873C1 /* InspectorView.swift in Sources */,
 				84CFF5591AC3CF9100CEA6C8 /* NSView+RSCore.m in Sources */,
 				84CFF56A1AC3D1B000CEA6C8 /* RSScaling.m in Sources */,
 				84FEB4AC1D19D7F4004727E5 /* Date+Extensions.swift in Sources */,
@@ -745,9 +783,11 @@
 				844C915C1B65753E0051FC1B /* RSPlist.m in Sources */,
 				84CFF5231AC3C89D00CEA6C8 /* NSObject+RSCore.m in Sources */,
 				8414CBA71C95F2EA00333C12 /* Set+Extensions.swift in Sources */,
+				84E72E191FBD647500B873C1 /* InspectorWindowController.swift in Sources */,
 				84B99C9A1FAE650100ECDEDB /* OPMLRepresentable.swift in Sources */,
 				84E34DA61F9FA1070077082F /* UndoableCommand.swift in Sources */,
 				844F91D61D90D86100820C48 /* RSTransparentContainerView.m in Sources */,
+				84E72E151FBD647500B873C1 /* InspectorItem.swift in Sources */,
 				84CFF56E1AC3D20A00CEA6C8 /* NSImage+RSCore.m in Sources */,
 				8453F7DF1BDF337800B1C8ED /* RSMacroProcessor.m in Sources */,
 				842E45CC1ED623C7000A8B52 /* UniqueIdentifier.swift in Sources */,
@@ -755,6 +795,7 @@
 				849A339E1AC90A0A0015BA09 /* NSTableView+RSCore.m in Sources */,
 				84CFF51B1AC3C77500CEA6C8 /* RSPlatform.m in Sources */,
 				84CFF52C1AC3CA9700CEA6C8 /* NSData+RSCore.m in Sources */,
+				848F6AE91FC2BC50002D422E /* ThreadSafeCache.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

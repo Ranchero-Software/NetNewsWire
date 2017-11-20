@@ -36,7 +36,7 @@ private extension FolderTreeControllerDelegate {
 			}
 		}
 
-		return Node.nodesSortedAlphabetically(folderNodes)
+		return folderNodes.sortedAlphabetically()
 	}
 
 	func createNode(_ folder: Folder, parent: Node) -> Node {

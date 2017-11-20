@@ -120,7 +120,11 @@ static NSMutableDictionary *rendererCache = nil;
 
 
 - (NSSize)size {
-	
+
+	if (self.title.string.length < 1) {
+		return NSZeroSize;
+	}
+
 	if (NSEqualSizes(_size, NSZeroSize)) {
 		_size = [self calculatedSize];
 	}
@@ -173,7 +177,7 @@ static const CGFloat kMaxHeight = 10000.0;
 	
 	CGContextSetFillColorWithColor(context, self.backgroundColor.CGColor);
 	CGContextFillRect(context, r);
-	
+
 	CGContextSetShouldSmoothFonts(context, true);
 	
 	CTFrameDraw(self.frameref, context);

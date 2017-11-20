@@ -20,7 +20,7 @@ var currentTheme: VSTheme!
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
+class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UnreadCountProvider {
 
 	let windowControllers = NSMutableArray()
 	var preferencesWindowController: NSWindowController?
@@ -31,15 +31,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	var addFeedController: AddFeedController?
 	var addFolderWindowController: AddFolderWindowController?
 	var keyboardShortcutsWindowController: WebViewWindowController?
+	var inspectorWindowController: InspectorWindowController?
+	var logWindowController: LogWindowController?
+	var panicButtonWindowController: PanicButtonWindowController?
+	
 	let log = Log()
 	let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
 	private let dockBadge = DockBadge()
 
+	var pseudoFeeds = [PseudoFeed]()
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
 				dockBadge.update()
+				postUnreadCountDidChangeNotification()
 			}
 		}
 	}
@@ -54,6 +61,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		appDelegate = self
 	}
 
+	// MARK: - API
+
 	func logMessage(_ message: String, type: LogItem.ItemType) {
 
 		let logItem = LogItem(type: type, message: message)
@@ -63,6 +72,40 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	func logDebugMessage(_ message: String) {
 
 		logMessage(message, type: .debug)
+	}
+
+	func showAddFolderSheetOnWindow(_ window: NSWindow) {
+
+		addFolderWindowController = AddFolderWindowController()
+		addFolderWindowController!.runSheetOnWindow(window)
+	}
+
+	func markOlderArticlesAsRead(with window: NSWindow) {
+
+		panicButtonWindowController = PanicButtonWindowController()
+		panicButtonWindowController!.runSheetOnWindow(window)
+	}
+
+	func markEverywhereAsRead(with window: NSWindow) {
+
+		let alert = NSAlert()
+		alert.messageText = NSLocalizedString("Mark All Articles as Read Everywhere?", comment: "Mark Everywhere alert messageText")
+		alert.informativeText = NSLocalizedString("This will mark every single article as read. All of them. The unread count will be zero.\n\nNote: this operation cannot be undone.", comment: "Mark Everywhere informativeText.")
+
+		alert.addButton(withTitle: NSLocalizedString("Mark All Articles as Read", comment: "Mark Everywhere alert button."))
+		alert.addButton(withTitle: NSLocalizedString("Don’t Mark as Read", comment: "Mark Everywhere alert button."))
+
+		alert.beginSheetModal(for: window) { (returnCode) in
+
+			if returnCode == .alertFirstButtonReturn {
+				self.markEverywhereAsRead()
+			}
+		}
+	}
+
+	func markEverywhereAsRead() {
+
+		AccountManager.shared.accounts.forEach { $0.markEverywhereAsRead() }
 	}
 
 	// MARK: - NSApplicationDelegate
@@ -75,6 +118,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 
 		currentTheme = themeLoader.defaultTheme
+
+		let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
+		let unreadFeed = UnreadFeed()
+		let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
+		pseudoFeeds = [todayFeed, unreadFeed, starredFeed]
 		
 		createAndShowMainWindow()
 
@@ -211,9 +259,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	@IBAction func showAddFolderWindow(_ sender: AnyObject) {
 
 		createAndShowMainWindow()
-
-		addFolderWindowController = AddFolderWindowController()
-		addFolderWindowController!.runSheetOnWindow(mainWindowController!.window!)
+		showAddFolderSheetOnWindow(mainWindowController!.window!)
 	}
 
 	@IBAction func showFeedList(_ sender: AnyObject) {
@@ -240,6 +286,29 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 			keyboardShortcutsWindowController?.displayContents(of: htmlFile)
 		}
 		keyboardShortcutsWindowController!.showWindow(self)
+	}
+
+	@IBAction func toggleInspectorWindow(_ sender: Any?) {
+
+		if inspectorWindowController == nil {
+			inspectorWindowController = InspectorWindowController()
+		}
+
+		if inspectorWindowController!.isOpen {
+			inspectorWindowController!.window!.performClose(self)
+		}
+		else {
+			inspectorWindowController!.showWindow(self)
+		}
+	}
+
+	@IBAction func showLogWindow(_ sender: Any?) {
+
+		if logWindowController == nil {
+			logWindowController = LogWindowController(title: "Errors", log: log)
+		}
+
+		logWindowController!.showWindow(self)
 	}
 	
 	@IBAction func importOPMLFromFile(_ sender: AnyObject) {
@@ -323,6 +392,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations {
 	@IBAction func showHelp(_ sender: AnyObject) {
 
 		Browser.open("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
+	}
+
+	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
+
+		createAndShowMainWindow()
+		markOlderArticlesAsRead(with: mainWindowController!.window!)
+	}
+
+	@IBAction func markEverywhereAsRead(_ sender: Any?) {
+
+		createAndShowMainWindow()
+		markEverywhereAsRead(with: mainWindowController!.window!)
+	}
+
+	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
+		#if DEBUG
+			print("debug")
+		#endif
 	}
 }
 

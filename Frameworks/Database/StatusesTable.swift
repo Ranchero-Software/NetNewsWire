@@ -76,6 +76,20 @@ final class StatusesTable: DatabaseTable {
 		return updatedStatuses
 	}
 
+	func markEverywhereAsRead() {
+
+		queue.update { (database) in
+
+			let _ = database.executeUpdate("update statuses set read=1;", withArgumentsIn: nil)
+
+			let cachedStatuses = self.cache.cachedStatuses
+
+			DispatchQueue.main.async {
+				cachedStatuses.forEach { $0.read = true }
+			}
+		}
+	}
+
 	// MARK: Fetching
 
 	func statusWithRow(_ row: FMResultSet) -> ArticleStatus? {
@@ -164,6 +178,11 @@ private final class StatusCache {
 	// Serial database queue only.
 
 	var dictionary = [String: ArticleStatus]()
+	var cachedStatuses: Set<ArticleStatus> {
+		get {
+			return Set(dictionary.values)
+		}
+	}
 
 	func add(_ statuses: Set<ArticleStatus>) {
 
@@ -191,7 +210,7 @@ private final class StatusCache {
 			self[articleID] = status
 		}
 	}
-	
+
 	subscript(_ articleID: String) -> ArticleStatus? {
 		get {
 			return dictionary[articleID]

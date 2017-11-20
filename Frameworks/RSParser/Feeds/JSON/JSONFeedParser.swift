@@ -99,6 +99,7 @@ private extension JSONFeedParser {
 		if contentHTML == nil && contentText == nil {
 			return nil
 		}
+		let decodedContentHTML = contentHTML?.rsparser_stringByDecodingHTMLEntities()
 
 		let url = itemDictionary["url"] as? String
 		let externalURL = itemDictionary["external_url"] as? String
@@ -117,7 +118,7 @@ private extension JSONFeedParser {
 		}
 		let attachments = parseAttachments(itemDictionary)
 
-		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
+		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, contentHTML: decodedContentHTML, contentText: contentText, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
 	}
 
 	static func parseUniqueID(_ itemDictionary: JSONDictionary) -> String? {

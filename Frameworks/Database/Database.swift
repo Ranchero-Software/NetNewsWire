@@ -61,6 +61,16 @@ public final class Database {
 		articlesTable.fetchUnreadCounts(feeds, completion)
 	}
 
+	public func fetchUnreadCount(for feeds: Set<Feed>, since: Date, callback: @escaping (Int) -> Void) {
+
+		articlesTable.fetchUnreadCount(feeds, since, callback)
+	}
+
+	public func fetchStarredAndUnreadCount(for feeds: Set<Feed>, callback: @escaping (Int) -> Void) {
+
+		articlesTable.fetchStarredAndUnreadCount(feeds, callback)
+	}
+
 	// MARK: - Saving and Updating Articles
 
 	public func update(feed: Feed, parsedFeed: ParsedFeed, completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
@@ -73,6 +83,11 @@ public final class Database {
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {
 
 		return articlesTable.mark(articles, statusKey, flag)
+	}
+
+	public func markEverywhereAsRead() {
+
+		articlesTable.markEverywhereAsRead()
 	}
 }
 
