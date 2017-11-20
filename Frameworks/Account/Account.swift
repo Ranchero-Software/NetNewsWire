@@ -150,6 +150,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
 
+		if feed.iconURL != parsedFeed.iconURL {
+			feed.iconURL = parsedFeed.iconURL
+			dirty = true
+		}
+		if feed.faviconURL != parsedFeed.faviconURL {
+			feed.faviconURL = parsedFeed.faviconURL
+			dirty = true
+		}
+		
 		database.update(feed: feed, parsedFeed: parsedFeed) { (newArticles, updatedArticles) in
 
 			var userInfo = [String: Any]()
