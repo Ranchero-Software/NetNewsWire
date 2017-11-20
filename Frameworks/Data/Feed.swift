@@ -16,6 +16,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	public let url: String
 	public let feedID: String
 	public var homePageURL: String?
+	public var faviconURL: String?
 	public var name: String?
 	public var editedName: String?
 	public var conditionalGetInfo: HTTPConditionalGetInfo?
@@ -56,6 +57,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		static let url = "url"
 		static let feedID = "feedID"
 		static let homePageURL = "homePageURL"
+		static let faviconURL = "faviconURL"
 		static let name = "name"
 		static let editedName = "editedName"
 		static let conditionalGetInfo = "conditionalGetInfo"
@@ -72,6 +74,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		
 		self.init(accountID: accountID, url: url, feedID: feedID)
 		self.homePageURL = dictionary[Key.homePageURL] as? String
+		self.faviconURL = dictionary[Key.faviconURL] as? String
 		self.name = dictionary[Key.name] as? String
 		self.editedName = dictionary[Key.editedName] as? String
 		self.contentHash = dictionary[Key.contentHash] as? String
@@ -103,6 +106,9 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 			
 			if let homePageURL = homePageURL {
 				d[Key.homePageURL] = homePageURL
+			}
+			if let faviconURL = faviconURL {
+				d[Key.faviconURL] = faviconURL
 			}
 			if let name = name {
 				d[Key.name] = name
