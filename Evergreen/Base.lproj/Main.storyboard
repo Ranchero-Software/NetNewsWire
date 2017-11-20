@@ -392,7 +392,7 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Go" id="FPs-q4-hLT" userLabel="Article">
+                            <menuItem title="Go" id="FPs-q4-hLT">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Go" id="NQW-Ph-lw2">
                                     <items>
@@ -455,6 +455,19 @@
                                         <menuItem title="Open in Browser" keyEquivalent="" id="4iQ-1v-dTa">
                                             <connections>
                                                 <action selector="openArticleInBrowser:" target="Ady-hI-5gd" id="KeH-ES-fpo"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="Debug" id="UqE-mp-gtV" userLabel="Debug">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Debug" id="s1g-zr-8Oi">
+                                    <items>
+                                        <menuItem title="Drop Conditional Get Info" id="ek9-OK-xbc">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="debugDropConditionalGetInfo:" target="Voe-Tx-rLC" id="MTC-K8-rkx"/>
                                             </connections>
                                         </menuItem>
                                     </items>

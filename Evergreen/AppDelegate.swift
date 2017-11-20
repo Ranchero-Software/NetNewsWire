@@ -406,6 +406,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		markEverywhereAsRead(with: mainWindowController!.window!)
 	}
 
+	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
+		#if DEBUG
+			print("debug")
+		#endif
+	}
 }
 
 private extension AppDelegate {
