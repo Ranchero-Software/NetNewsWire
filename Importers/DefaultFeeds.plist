@@ -106,14 +106,6 @@
 	</dict>
 	<dict>
 		<key>homePageURL</key>
-		<string>http://ashleynh.me/</string>
-		<key>editedName</key>
-		<string>Ashley Nelson-Hornstein</string>
-		<key>url</key>
-		<string>http://ashleynh.me/rss/</string>
-	</dict>
-	<dict>
-		<key>homePageURL</key>
 		<string>https://ranchero.com/evergreen/</string>
 		<key>editedName</key>
 		<string>Evergreen News</string>
