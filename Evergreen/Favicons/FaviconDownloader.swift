@@ -22,6 +22,7 @@ final class FaviconDownloader {
 	private var faviconURLCache = ThreadSafeCache<String>() // homePageURL: faviconURL
 	private let folder: String
 	private var urlsBeingDownloaded = Set<String>()
+	private var badURLs = Set<String>() // URLs that didn’t work for some reason; don’t try again
 	private let binaryCache: RSBinaryCache
 	private var badImages = Set<String>() // keys for images on disk that NSImage can’t handle
 	private let queue: DispatchQueue
@@ -45,14 +46,35 @@ final class FaviconDownloader {
 
 		assert(Thread.isMainThread)
 
+		guard let homePageURL = feed.homePageURL else {
+			return nil
+		}
+
 		if let faviconURL = faviconURL(for: feed) {
 
 			if let cachedFavicon = cache[faviconURL] {
 				return cachedFavicon
 			}
+
+			// TODO: read from disk and return if present.
+
 			if shouldDownloadFaviconURL(faviconURL) {
-				downloadFavicon(faviconURL)
+				downloadFavicon(faviconURL, homePageURL)
 				return nil
+			}
+
+			return nil
+		}
+
+		// Try to find the faviconURL. It might be in the web page.
+		FaviconURLFinder.findFaviconURL(homePageURL) { (faviconURL) in
+
+			if let faviconURL = faviconURL {
+				print(faviconURL) // cache it; then download favicon
+			}
+			else {
+				// Try appending /favicon.ico
+				// It often works.
 			}
 		}
 
@@ -64,10 +86,10 @@ private extension FaviconDownloader {
 
 	func shouldDownloadFaviconURL(_ faviconURL: String) -> Bool {
 
-		return !urlsBeingDownloaded.contains(faviconURL)
+		return !urlsBeingDownloaded.contains(faviconURL) && !badURLs.contains(faviconURL)
 	}
 
-	func downloadFavicon(_ faviconURL: String) {
+	func downloadFavicon(_ faviconURL: String, _ homePageURL: String) {
 
 		guard let url = URL(string: faviconURL) else {
 			return
@@ -78,6 +100,10 @@ private extension FaviconDownloader {
 		download(url) { (data, response, error) in
 
 			self.urlsBeingDownloaded.remove(faviconURL)
+			if response == nil || !response!.statusIsOK {
+				self.badURLs.insert(faviconURL)
+			}
+
 			if let data = data {
 				self.queue.async {
 					let _ = NSImage(data: data)
