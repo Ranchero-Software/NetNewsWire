@@ -6,6 +6,16 @@
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
         
+                <item>
+            <title>Version 1.0d18</title>
+            <description><![CDATA[
+            <p>Resuming distribution via Sparkle.</p>
+						]]></description>
+            <pubDate>Mon, 21 Nov 2017 13:15:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d18.zip" sparkle:version="510" sparkle:shortVersionString="1.0d18" length="7041557" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
           <item>
             <title>Version 1.011</title>
             <description><![CDATA[
