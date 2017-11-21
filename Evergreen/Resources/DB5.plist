@@ -79,7 +79,7 @@
 					<key>titleMarginBottom</key>
 					<integer>1</integer>
 					<key>unreadCircleColor</key>
-					<string>#015cdc</string>
+					<string>#2db6ff</string>
 					<key>unreadCircleDimension</key>
 					<integer>8</integer>
 					<key>unreadCircleMarginRight</key>
