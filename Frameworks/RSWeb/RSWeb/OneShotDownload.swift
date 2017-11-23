@@ -81,7 +81,7 @@ private final class WebCache {
         cache.keys.forEach { (key) in
             let cacheRecord = self[key]!
             if shouldDelete(cacheRecord, cleanupInterval) {
-                self[key] = nil
+                cache[key] = nil
             }
         }
      }
@@ -106,45 +106,47 @@ private final class WebCache {
     }
 }
 
-private var cache = WebCache()
-private let timeToLive: TimeInterval = 5 * 60 // five minutes
-private let cleanupInterval: TimeInterval = 20 * 60 // 20 minutes
+// URLSessionConfiguration has a cache policy.
+// But we don’t know how it works, and the unimplemented parts spook us a bit.
+// So we use a cache that works exactly as we want it to work.
+
+private final class DownloadWithCacheManager {
+
+	static let shared = DownloadWithCacheManager()
+	private var cache = WebCache()
+	private static let timeToLive: TimeInterval = 5 * 60 // five minutes
+	private static let cleanupInterval: TimeInterval = 20 * 60 // 20 minutes
+
+	func download(_ url: URL, _ callback: @escaping OneShotDownloadCallback) {
+
+		cache.cleanup(DownloadWithCacheManager.cleanupInterval)
+
+		let cacheRecord: WebCacheRecord? = cache[url]
+		if let cacheRecord = cacheRecord, !cacheRecord.isExpired(DownloadWithCacheManager.timeToLive) {
+			callback(cacheRecord.data, cacheRecord.response, nil)
+			return
+		}
+
+		download(url) { (data, response, error) in
+
+			if let _ = error, let cacheRecord = cacheRecord {
+				// In the case where a cache record has expired, but the download returned an error, we use the cache record anyway. By design.
+				callback(cacheRecord.data, cacheRecord.response, nil)
+				return
+			}
+
+			if let data = data, let response = response, response.statusIsOK, error == nil {
+				let cacheRecord = WebCacheRecord(url: url, dateDownloaded: Date(), data: data, response: response)
+				self.cache[url] = cacheRecord
+			}
+
+			callback(data, response, error)
+		}
+	}
+}
+
 
 public func downloadUsingCache(_ url: URL, _ callback: @escaping OneShotDownloadCallback) {
-    
-    // In the case where a cache record has expired, but the download returned an error,
-    // we use the cache record anyway. By design.
-    // Only OK status responses are cached.
-    
-    cache.cleanup(cleanupInterval)
-    
-    let cacheRecord: WebCacheRecord? = cache[url]
-    
-    func callbackWith(_ cacheRecord: WebCacheRecord) {
-        callback(cacheRecord.data, cacheRecord.response, nil)
-    }
-    
-    if let cacheRecord = cacheRecord, !cacheRecord.isExpired(timeToLive) {
-        callbackWith(cacheRecord)
-        return
-    }
-    
-    download(url) { (data, response, error) in
-        
-        if let error = error {
-            if let cacheRecord = cacheRecord {
-                callbackWith(cacheRecord)
-                return
-            }
-            callback(data, response, error)
-            return
-        }
-        
-        if let data = data, let response = response, response.statusIsOK, error == nil {
-            let cacheRecord = WebCacheRecord(url: url, dateDownloaded: Date(), data: data, response: response)
-            cache[url] = cacheRecord
-        }
-        
-        callback(data, response, error)
-    }
+
+	DownloadWithCacheManager.shared.download(url, callback)
 }
