@@ -97,7 +97,7 @@ private extension FaviconDownloader {
 
 		urlsBeingDownloaded.insert(faviconURL)
 
-		download(url) { (data, response, error) in
+		downloadUsingCache(url) { (data, response, error) in
 
 			self.urlsBeingDownloaded.remove(faviconURL)
 			if response == nil || !response!.statusIsOK {

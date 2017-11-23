@@ -21,7 +21,7 @@ struct FaviconURLFinder {
 			return
 		}
 
-		download(url) { (data, response, error) in
+		downloadUsingCache(url) { (data, response, error) in
 
 			guard let data = data, let response = response, response.statusIsOK else {
 				callback(nil)

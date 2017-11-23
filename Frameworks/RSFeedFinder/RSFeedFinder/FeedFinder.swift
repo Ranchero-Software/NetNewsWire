@@ -124,7 +124,7 @@ private extension FeedFinder {
 
 	func downloadInitialFeed(_ initialURL: URL) {
 
-		download(initialURL) { (data, response, error) in
+		downloadUsingCache(initialURL) { (data, response, error) in
 
 			self.initialDownloadStatusCode = response?.forcedStatusCode ?? -1
 
@@ -170,7 +170,7 @@ private extension FeedFinder {
 				continue
 			}
 
-			download(url) { (data, response, error) in
+			downloadUsingCache(url) { (data, response, error) in
 
 				pendingDownloads.remove(oneFeedSpecifier)
 
