@@ -13,6 +13,10 @@
 		842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */; };
 		842E45E71ED8C747000A8B52 /* DB5.plist in Resources */ = {isa = PBXBuildFile; fileRef = 842E45E61ED8C747000A8B52 /* DB5.plist */; };
 		84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */; };
+		845A29091FC74B8E007B49E3 /* FaviconMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29081FC74B8E007B49E3 /* FaviconMetadata.swift */; };
+		845A29191FC7563E007B49E3 /* FaviconCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29181FC7563E007B49E3 /* FaviconCache.swift */; };
+		845A291B1FC75AA6007B49E3 /* SeekingFavicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A291A1FC75AA6007B49E3 /* SeekingFavicon.swift */; };
+		845A291D1FC75F49007B49E3 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A291C1FC75F49007B49E3 /* ImageDownloader.swift */; };
 		845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */; };
 		845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7C01FC2488C00854A1F /* SmartFeed.swift */; };
 		845F52ED1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F52EC1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift */; };
@@ -403,6 +407,10 @@
 		842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowSplitView.swift; sourceTree = "<group>"; };
 		842E45E61ED8C747000A8B52 /* DB5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DB5.plist; path = Evergreen/Resources/DB5.plist; sourceTree = "<group>"; };
 		84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListControlsView.swift; sourceTree = "<group>"; };
+		845A29081FC74B8E007B49E3 /* FaviconMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconMetadata.swift; sourceTree = "<group>"; };
+		845A29181FC7563E007B49E3 /* FaviconCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconCache.swift; sourceTree = "<group>"; };
+		845A291A1FC75AA6007B49E3 /* SeekingFavicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeekingFavicon.swift; sourceTree = "<group>"; };
+		845A291C1FC75F49007B49E3 /* ImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		845B14A51FC2299E0013CF92 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarredFeedDelegate.swift; sourceTree = "<group>"; };
 		845EE7C01FC2488C00854A1F /* SmartFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeed.swift; sourceTree = "<group>"; };
@@ -581,6 +589,10 @@
 			isa = PBXGroup;
 			children = (
 				848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */,
+				845A291C1FC75F49007B49E3 /* ImageDownloader.swift */,
+				845A291A1FC75AA6007B49E3 /* SeekingFavicon.swift */,
+				845A29081FC74B8E007B49E3 /* FaviconMetadata.swift */,
+				845A29181FC7563E007B49E3 /* FaviconCache.swift */,
 				84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */,
 			);
 			name = Favicons;
@@ -1308,6 +1320,7 @@
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */,
+				845A291B1FC75AA6007B49E3 /* SeekingFavicon.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
@@ -1329,9 +1342,11 @@
 				849A97831ED9EC63007D329B /* StatusBarView.swift in Sources */,
 				84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */,
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
+				845A29191FC7563E007B49E3 /* FaviconCache.swift in Sources */,
 				849A97921ED9EF65007D329B /* IndeterminateProgressWindowController.swift in Sources */,
 				849A97801ED9EC42007D329B /* DetailViewController.swift in Sources */,
 				849A976E1ED9EBC8007D329B /* TimelineViewController.swift in Sources */,
+				845A291D1FC75F49007B49E3 /* ImageDownloader.swift in Sources */,
 				849A978D1ED9EE4D007D329B /* FeedListWindowController.swift in Sources */,
 				849A97771ED9EC04007D329B /* TimelineCellData.swift in Sources */,
 				84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */,
@@ -1345,6 +1360,7 @@
 				84B99C691FAE36B800ECDEDB /* FeedListFolder.swift in Sources */,
 				84F204DE1FAACB8B0076E152 /* FeedListTimelineViewController.swift in Sources */,
 				849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */,
+				845A29091FC74B8E007B49E3 /* FaviconMetadata.swift in Sources */,
 				849A97851ED9ECCD007D329B /* PreferencesWindowController.swift in Sources */,
 				849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */,
 				849A97761ED9EC04007D329B /* TimelineCellAppearance.swift in Sources */,

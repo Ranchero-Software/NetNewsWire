@@ -18,6 +18,7 @@ extension Notification.Name {
 
 final class FaviconDownloader {
 
+	private var seekingFaviconCache: [String: SeekingFavicon]() // homePageURL: SeekingFavicon
 	private var cache = ThreadSafeCache<NSImage>() // faviconURL: NSImage
 	private var faviconURLCache = ThreadSafeCache<String>() // homePageURL: faviconURL
 	private let folder: String
@@ -37,7 +38,7 @@ final class FaviconDownloader {
 
 		self.folder = folder
 		self.binaryCache = RSBinaryCache(folder: folder)
-		self.queue = DispatchQueue(label: "FaviconCache serial queue - \(folder)")
+		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
 	}
 
 	// MARK: - API
@@ -45,26 +46,42 @@ final class FaviconDownloader {
 	func favicon(for feed: Feed) -> NSImage? {
 
 		assert(Thread.isMainThread)
-
 		guard let homePageURL = feed.homePageURL else {
 			return nil
 		}
 
+		if let favicon = cachedInMemoryFavicon(for: feed) {
+			return favicon
+		}
+
+		findFavicon(for: feed)
+	}
+
+	func findFavicon(for feed: Feed) {
+
+		if let faviconMetadata = cachedFaviconMetadata
 		if let faviconURL = faviconURL(for: feed) {
 
-			if let cachedFavicon = cache[faviconURL] {
-				return cachedFavicon
+			// It might be on disk.
+
+			readFaviconFromDisk(faviconURL) { (image) in
+
+				if let image = image {
+					self.cache[faviconURL] = image
+					self.postFaviconDidBecomeAvailableNotification(homePageURL: homePageURL, faviconURL: faviconURL, image: image)
+					return
+				}
+
+				// Download it (probably).
+
+				if !self.shouldDownloadFaviconURL(faviconURL) {
+					return
+				}
+				
+
 			}
-
-			// TODO: read from disk and return if present.
-
-			if shouldDownloadFaviconURL(faviconURL) {
-				downloadFavicon(faviconURL, homePageURL)
-				return nil
-			}
-
-			return nil
 		}
+
 
 		// Try to find the faviconURL. It might be in the web page.
 		FaviconURLFinder.findFaviconURL(homePageURL) { (faviconURL) in
@@ -83,6 +100,14 @@ final class FaviconDownloader {
 }
 
 private extension FaviconDownloader {
+
+	func cachedInMemoryFavicon(for feed: Feed) -> NSImage? {
+
+		guard let faviconURL = faviconURL(for: feed), let cachedFavicon = cache[faviconURL]  else {
+			return nil
+		}
+		return cachedFavicon
+	}
 
 	func shouldDownloadFaviconURL(_ faviconURL: String) -> Bool {
 
@@ -167,5 +192,11 @@ private extension FaviconDownloader {
 	func keyFor(_ faviconURL: String) -> String {
 
 		return (faviconURL as NSString).rs_md5Hash()
+	}
+
+	func postFaviconDidBecomeAvailableNotification(homePageURL: String, faviconURL: String, image: NSImage) {
+
+		let userInfo: [AnyHashable: Any] = [UserInfoKey.homePageURL: homePageURL, UserInfoKey.faviconURL: faviconURL, UserInfoKey.image: image]
+		NotificationCenter.default.post(name: .FaviconDidBecomeAvailable, object: self, userInfo: userInfo)
 	}
 }
