@@ -16,9 +16,10 @@
 
 	NSParameterAssert(data != nil);
 
-	NSImage *image = [[NSImage alloc] initWithData:data];
-
-	RSCallBlockWithParameter(imageResultBlock, image);
+	dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+		NSImage *image = [[NSImage alloc] initWithData:data];
+		RSCallBlockWithParameter(imageResultBlock, image);
+	});
 }
 
 
