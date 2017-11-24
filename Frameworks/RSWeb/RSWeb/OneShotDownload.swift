@@ -127,7 +127,7 @@ private final class DownloadWithCacheManager {
 			return
 		}
 
-		download(url) { (data, response, error) in
+		OneShotDownloadManager.shared.download(url) { (data, response, error) in
 
 			if let _ = error, let cacheRecord = cacheRecord {
 				// In the case where a cache record has expired, but the download returned an error, we use the cache record anyway. By design.
