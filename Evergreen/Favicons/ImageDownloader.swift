@@ -41,7 +41,7 @@ final class ImageDownloader {
 	}
 }
 
-private extension ImageDownload {
+private extension ImageDownloader {
 
 	func shouldDownloadImage(_ url: String) -> Bool {
 

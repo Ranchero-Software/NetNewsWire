@@ -13,12 +13,13 @@ import RSWeb
 
 extension Notification.Name {
 
-	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo keys: homePageURL, faviconURL, image
+	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo keys, one or more of which will be present: homePageURL, faviconURL
 }
 
 final class FaviconDownloader {
 
-	private var seekingFaviconCache: [String: SeekingFavicon]() // homePageURL: SeekingFavicon
+	private var imageCache = [String: NSImage]()
+	private var seekingFaviconCache = [String: SeekingFavicon]() // homePageURL: SeekingFavicon
 	private var cache = ThreadSafeCache<NSImage>() // faviconURL: NSImage
 	private var faviconURLCache = ThreadSafeCache<String>() // homePageURL: faviconURL
 	private let folder: String
@@ -46,20 +47,57 @@ final class FaviconDownloader {
 	func favicon(for feed: Feed) -> NSImage? {
 
 		assert(Thread.isMainThread)
+
+		if let faviconURL = feed.faviconURL {
+			// JSON Feeds may include the faviconURL in the feed,
+			// so we don’t have to hunt for it.
+			return favicon(withURL: faviconURL)
+		}
+
 		guard let homePageURL = feed.homePageURL else {
 			return nil
 		}
+		return favicon(withHomePageURL: homePageURL)
+	}
 
-		if let favicon = cachedInMemoryFavicon(for: feed) {
-			return favicon
+	func favicon(withURL faviconURL: String) -> NSImage? {
+
+		if let cachedImage = imageCache[faviconURL] {
+			return cachedImage
+		}
+		
+		let controller = faviconController(withURL: faviconURL)
+		return favicon(withController: controller)
+	}
+
+	func faviconController(withURL faviconURL: String) -> FaviconController {
+
+		if let controller = faviconControllerCache[faviconURL] {
+			return controller
+		}
+		let controller = FaviconController(faviconURL: faviconURL)
+		faviconControllerCache[faviconURL] = controller
+		return controller
+	}
+
+	func favicon(withController controller: FaviconController) -> NSImage? {
+
+		if let image = controller.image {
+			return image
 		}
 
-		findFavicon(for: feed)
+		controller.readFromDisk(binaryCache) { (image) in
+
+			if let image = image {
+				post
+			}
+		}
+
 	}
 
 	func findFavicon(for feed: Feed) {
 
-		if let faviconMetadata = cachedFaviconMetadata
+//		if let faviconMetadata = cachedFaviconMetadata
 		if let faviconURL = faviconURL(for: feed) {
 
 			// It might be on disk.
