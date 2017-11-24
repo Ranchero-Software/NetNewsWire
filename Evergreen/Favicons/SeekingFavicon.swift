@@ -10,8 +10,7 @@ import Foundation
 
 extension Notification.Name {
 
-	static let SeekingFaviconDidFindFaviconURL = Notification.Name("SeekingFaviconDidFindFaviconURLNotification")
-	static let SeekingFaviconDidNotFindFaviconURL = Notification.Name("SeekingFaviconDidNotFindFaviconURLNotification")
+	static let SeekingFaviconSeekDidComplete = Notification.Name("SeekingFaviconSeekDidCompleteNotification")
 }
 
 final class SeekingFavicon {
@@ -21,16 +20,14 @@ final class SeekingFavicon {
 	// or it might be at /favicon.ico,
 	// or it might not exist (or be unfindable, which is the same thing).
 
-	let homePageURL: String
-	let defaultFaviconURL: String // /favicon.ico
-	var didAttemptToLookAtHomePageMetadata = false
-	var foundFaviconURL: String?
-
-	var shouldUseDefaultFaviconURL: Bool {
-
-		return didAttemptToLookAtHomePageMetadata && foundFaviconURL == nil
+	var didSeek = false
+	var faviconURL: String? {
+		return didSeek ? (foundFaviconURL ?? defaultFaviconURL) : nil
 	}
 
+	private let homePageURL: String
+	private var foundFaviconURL: String?
+	private let defaultFaviconURL: String // /favicon.ico
 	private static let localeForLowercasing = Locale(identifier: "en_US")
 
 	init?(homePageURL: String) {
@@ -52,15 +49,10 @@ private extension SeekingFavicon {
 
 		FaviconURLFinder.findFaviconURL(homePageURL) { (faviconURL) in
 
-			self.didAttemptToLookAtHomePageMetadata = true
 			self.foundFaviconURL = faviconURL
+			self.didSeek = true
 
-			if let _ = faviconURL {
-				NotificationCenter.default.post(name: .SeekingFaviconDidFindFaviconURL, object: self)
-			}
-			else {
-				NotificationCenter.default.post(name: .SeekingFaviconDidNotFindFaviconURL, object: self)
-			}
+			NotificationCenter.default.post(name: .SeekingFaviconSeekDidComplete, object: self)
 		}
 	}
 }

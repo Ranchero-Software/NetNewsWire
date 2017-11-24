@@ -9,37 +9,32 @@
 import AppKit
 import Data
 import RSCore
-import RSWeb
 
 extension Notification.Name {
 
-	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo keys, one or more of which will be present: homePageURL, faviconURL
+	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
 }
 
 final class FaviconDownloader {
 
-	private var imageCache = [String: NSImage]()
 	private var seekingFaviconCache = [String: SeekingFavicon]() // homePageURL: SeekingFavicon
-	private var cache = ThreadSafeCache<NSImage>() // faviconURL: NSImage
-	private var faviconURLCache = ThreadSafeCache<String>() // homePageURL: faviconURL
+	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
 	private let folder: String
-	private var urlsBeingDownloaded = Set<String>()
-	private var badURLs = Set<String>() // URLs that didn’t work for some reason; don’t try again
-	private let binaryCache: RSBinaryCache
-	private var badImages = Set<String>() // keys for images on disk that NSImage can’t handle
+	private let diskCache: BinaryDiskCache
 	private let queue: DispatchQueue
 
-	public struct UserInfoKey {
-		static let homePageURL = "homePageURL"
+	struct UserInfoKey {
 		static let faviconURL = "faviconURL"
-		static let image = "image" // NSImage
 	}
 
 	init(folder: String) {
 
 		self.folder = folder
-		self.binaryCache = RSBinaryCache(folder: folder)
+		self.diskCache = BinaryDiskCache(folder: folder)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
+
+		NotificationCenter.default.addObserver(self, selector: #selector(seekingFaviconDidSeek(_:)), name: .SeekingFaviconSeekDidComplete, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 	}
 
 	// MARK: - API
@@ -49,9 +44,7 @@ final class FaviconDownloader {
 		assert(Thread.isMainThread)
 
 		if let faviconURL = feed.faviconURL {
-			// JSON Feeds may include the faviconURL in the feed,
-			// so we don’t have to hunt for it.
-			return favicon(withURL: faviconURL)
+			return favicon(with: faviconURL)
 		}
 
 		guard let homePageURL = feed.homePageURL else {
@@ -60,181 +53,82 @@ final class FaviconDownloader {
 		return favicon(withHomePageURL: homePageURL)
 	}
 
-	func favicon(withURL faviconURL: String) -> NSImage? {
+	func favicon(with faviconURL: String) -> NSImage? {
 
-		if let cachedImage = imageCache[faviconURL] {
-			return cachedImage
-		}
-		
-		let controller = faviconController(withURL: faviconURL)
-		return favicon(withController: controller)
+		let downloader = faviconDownloader(withURL: faviconURL)
+		return downloader.image
 	}
 
-	func faviconController(withURL faviconURL: String) -> FaviconController {
+	func favicon(withHomePageURL homePageURL: String) -> NSImage? {
 
-		if let controller = faviconControllerCache[faviconURL] {
-			return controller
+		guard let seekingFavicon = seekingFavicon(with: homePageURL) else {
+			return nil
 		}
-		let controller = FaviconController(faviconURL: faviconURL)
-		faviconControllerCache[faviconURL] = controller
-		return controller
+		return favicon(withSeekingFavicon: seekingFavicon)
 	}
 
-	func favicon(withController controller: FaviconController) -> NSImage? {
+	// MARK: - Notifications
 
-		if let image = controller.image {
-			return image
+	@objc func seekingFaviconDidSeek(_ note: Notification) {
+
+		guard let seekingFavicon = note.object as? SeekingFavicon else {
+			return
 		}
-
-		controller.readFromDisk(binaryCache) { (image) in
-
-			if let image = image {
-				post
-			}
-		}
-
+		favicon(withSeekingFavicon: seekingFavicon)
 	}
 
-	func findFavicon(for feed: Feed) {
+	@objc func didLoadFavicon(_ note: Notification) {
 
-//		if let faviconMetadata = cachedFaviconMetadata
-		if let faviconURL = faviconURL(for: feed) {
-
-			// It might be on disk.
-
-			readFaviconFromDisk(faviconURL) { (image) in
-
-				if let image = image {
-					self.cache[faviconURL] = image
-					self.postFaviconDidBecomeAvailableNotification(homePageURL: homePageURL, faviconURL: faviconURL, image: image)
-					return
-				}
-
-				// Download it (probably).
-
-				if !self.shouldDownloadFaviconURL(faviconURL) {
-					return
-				}
-				
-
-			}
+		guard let singleFaviconDownloader = note.object as? SingleFaviconDownloader else {
+			return
+		}
+		guard let _ = singleFaviconDownloader.image else {
+			return
 		}
 
-
-		// Try to find the faviconURL. It might be in the web page.
-		FaviconURLFinder.findFaviconURL(homePageURL) { (faviconURL) in
-
-			if let faviconURL = faviconURL {
-				print(faviconURL) // cache it; then download favicon
-			}
-			else {
-				// Try appending /favicon.ico
-				// It often works.
-			}
-		}
-
-		return nil
+		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
 	}
 }
 
 private extension FaviconDownloader {
 
-	func cachedInMemoryFavicon(for feed: Feed) -> NSImage? {
+	@discardableResult
+	func favicon(withSeekingFavicon seekingFavicon: SeekingFavicon) -> NSImage? {
 
-		guard let faviconURL = faviconURL(for: feed), let cachedFavicon = cache[faviconURL]  else {
+		guard let faviconURL = seekingFavicon.faviconURL else {
 			return nil
 		}
-		return cachedFavicon
+		return favicon(with: faviconURL)
 	}
 
-	func shouldDownloadFaviconURL(_ faviconURL: String) -> Bool {
+	func faviconDownloader(withURL faviconURL: String) -> SingleFaviconDownloader {
 
-		return !urlsBeingDownloaded.contains(faviconURL) && !badURLs.contains(faviconURL)
+		if let downloader = singleFaviconDownloaderCache[faviconURL] {
+			downloader.downloadFaviconIfNeeded()
+			return downloader
+		}
+
+		let downloader = SingleFaviconDownloader(faviconURL: faviconURL, diskCache: diskCache, queue: queue)
+		singleFaviconDownloaderCache[faviconURL] = downloader
+		return downloader
 	}
 
-	func downloadFavicon(_ faviconURL: String, _ homePageURL: String) {
+	func seekingFavicon(with homePageURL: String) -> SeekingFavicon? {
 
-		guard let url = URL(string: faviconURL) else {
-			return
+		if let seekingFavicon = seekingFaviconCache[homePageURL] {
+			return seekingFavicon
 		}
 
-		urlsBeingDownloaded.insert(faviconURL)
-
-		downloadUsingCache(url) { (data, response, error) in
-
-			self.urlsBeingDownloaded.remove(faviconURL)
-			if response == nil || !response!.statusIsOK {
-				self.badURLs.insert(faviconURL)
-			}
-
-			if let data = data {
-				self.queue.async {
-					let _ = NSImage(data: data)
-				}
-			}
-		}
-	}
-
-	func faviconURL(for feed: Feed) -> String? {
-
-		if let faviconURL = feed.faviconURL {
-			return faviconURL
-		}
-
-		if let homePageURL = feed.homePageURL {
-			return faviconURLCache[homePageURL]
-		}
-		return nil
-	}
-
-	func readFaviconFromDisk(_ faviconURL: String, _ callback: @escaping (NSImage?) -> Void) {
-
-		queue.async {
-			let image = self.tryToInstantiateNSImageFromDisk(faviconURL)
-			DispatchQueue.main.async {
-				callback(image)
-			}
-		}
-	}
-
-	func tryToInstantiateNSImageFromDisk(_ faviconURL: String) -> NSImage? {
-
-		// Call on serial queue.
-
-		if badImages.contains(faviconURL) {
+		guard let seekingFavicon = SeekingFavicon(homePageURL: homePageURL) else {
 			return nil
 		}
-
-		let key = keyFor(faviconURL)
-		var data: Data?
-
-		do {
-			data = try binaryCache.binaryData(forKey: key)
-		}
-		catch {
-			return nil
-		}
-
-		if data == nil {
-			return nil
-		}
-
-		guard let image = NSImage(data: data!) else {
-			badImages.insert(faviconURL)
-			return nil
-		}
-
-		return image
+		seekingFaviconCache[homePageURL] = seekingFavicon
+		return seekingFavicon
 	}
 
-	func keyFor(_ faviconURL: String) -> String {
+	func postFaviconDidBecomeAvailableNotification(_ faviconURL: String) {
 
-		return (faviconURL as NSString).rs_md5Hash()
-	}
-
-	func postFaviconDidBecomeAvailableNotification(homePageURL: String, faviconURL: String, image: NSImage) {
-
-		let userInfo: [AnyHashable: Any] = [UserInfoKey.homePageURL: homePageURL, UserInfoKey.faviconURL: faviconURL, UserInfoKey.image: image]
+		let userInfo: [AnyHashable: Any] = [UserInfoKey.faviconURL: faviconURL]
 		NotificationCenter.default.post(name: .FaviconDidBecomeAvailable, object: self, userInfo: userInfo)
 	}
 }
