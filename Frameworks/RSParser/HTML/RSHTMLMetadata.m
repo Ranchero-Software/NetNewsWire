@@ -17,6 +17,7 @@ static NSString *relValue(NSDictionary *d);
 static BOOL typeIsFeedType(NSString *type);
 
 static NSString *kShortcutIconRelValue = @"shortcut icon";
+static NSString *kIconRelValue = @"icon";
 static NSString *kHrefKey = @"href";
 static NSString *kSrcKey = @"src";
 static NSString *kAppleTouchIconValue = @"apple-touch-icon";
@@ -58,7 +59,10 @@ static NSString *kTypeKey = @"type";
 	_baseURLString = urlString;
 	_dictionaries = dictionaries;
 	_faviconLink = [self resolvedLinkFromFirstDictionaryWithMatchingRel:kShortcutIconRelValue];
-
+	if (_faviconLink == nil) {
+		_faviconLink = [self resolvedLinkFromFirstDictionaryWithMatchingRel:kIconRelValue];
+	}
+	
 	NSArray *appleTouchIconDictionaries = [self appleTouchIconDictionaries];
 	_appleTouchIcons = objectsOfClassWithDictionaries([RSHTMLMetadataAppleTouchIcon class], appleTouchIconDictionaries, urlString);
 
