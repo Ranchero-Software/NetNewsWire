@@ -251,10 +251,10 @@ private extension MainWindowController {
 	func updateWindowTitle() {
 
 		if unreadCount < 1 {
-			window?.title = appDelegate.appName
+			window?.title = appDelegate.appName!
 		}
 		else if unreadCount > 0 {
-			window?.title = "\(appDelegate.appName) (\(unreadCount))"
+			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
 		}
 	}
 }
