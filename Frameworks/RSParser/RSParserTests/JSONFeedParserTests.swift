@@ -50,4 +50,12 @@ class JSONFeedParserTests: XCTestCase {
 		XCTAssert(false, "Expected to find “The Talk Show: ‘I Do Like Throwing a Baby’” article.")
 	}
 
+	func testGettingFaviconAndIconURLs() {
+
+		let d = parserData("DaringFireball", "json", "http://daringfireball.net/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		XCTAssert(parsedFeed.faviconURL == "https://daringfireball.net/graphics/favicon-64.png")
+		XCTAssert(parsedFeed.iconURL == "https://daringfireball.net/graphics/apple-touch-icon.png")
+	}
 }
