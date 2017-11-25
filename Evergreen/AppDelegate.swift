@@ -122,7 +122,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		currentTheme = themeLoader.defaultTheme
 
-		let faviconsFolder = RSDataSubfolder(nil, "Favicons")!
+		let tempDirectory = NSTemporaryDirectory()
+		let faviconsFolder = (tempDirectory as NSString).appendingPathComponent("Favicons")
+		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
+		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
 		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
 
 		let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
@@ -414,7 +417,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
 		#if DEBUG
-			print("debug")
+			AccountManager.shared.accounts.forEach{ $0.debugDropConditionalGetInfo() }
 		#endif
 	}
 }
