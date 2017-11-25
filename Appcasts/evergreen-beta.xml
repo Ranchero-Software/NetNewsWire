@@ -6,7 +6,19 @@
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
         
-                <item>
+       <item>
+            <title>Version 1.0d19</title>
+            <description><![CDATA[
+            <p>The left-hand sidebar now shows favicons.</p>
+            <p>The Feed Directory sidebar also shows favicons.</p>
+            <p>Note: obvious missing thing is a default image for when there is no favicon. See <a href="https://github.com/brentsimmons/Evergreen/issues/208">https://github.com/brentsimmons/Evergreen/issues/208</a>.
+						]]></description>
+            <pubDate>Sat, 25 Nov 2017 11:50:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d19.zip" sparkle:version="511" sparkle:shortVersionString="1.0d19" length="7068870" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>Version 1.0d18</title>
             <description><![CDATA[
             <p>Resuming distribution via Sparkle.</p>
