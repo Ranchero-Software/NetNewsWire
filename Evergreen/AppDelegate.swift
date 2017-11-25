@@ -123,7 +123,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		currentTheme = themeLoader.defaultTheme
 
 		let tempDirectory = NSTemporaryDirectory()
-		let faviconsFolder = (tempDirectory as NSString).appendingPathComponent("Favicons")
+		let cacheFolder = (tempDirectory as NSString).appendingPathComponent("com.ranchero.evergreen")
+		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
 		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
 		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
 		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
