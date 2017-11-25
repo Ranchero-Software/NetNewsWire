@@ -134,6 +134,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
         NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
+
 		pullObjectsFromDisk()
 		
 		DispatchQueue.main.async {
@@ -150,10 +152,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
 
-		if feed.takeSettings(from: parsedFeed) {
-			dirty = true
-		}
-		
+		feed.takeSettings(from: parsedFeed)
+
 		database.update(feed: feed, parsedFeed: parsedFeed) { (newArticles, updatedArticles) in
 
 			var userInfo = [String: Any]()
@@ -399,6 +399,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
         
         updateUnreadCount()
     }
+
+	@objc func feedSettingDidChange(_ note: Notification) {
+
+		if let feed = note.object as? Feed, let feedAccount = feed.account, feedAccount === self {
+			dirty = true
+		}
+	}
 
 	// MARK: - Equatable
 

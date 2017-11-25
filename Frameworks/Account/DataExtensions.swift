@@ -10,6 +10,11 @@ import Foundation
 import Data
 import RSParser
 
+public extension Notification.Name {
+
+	public static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
+}
+
 public extension Feed {
 
 	public var account: Account? {
@@ -27,9 +32,7 @@ public extension Feed {
 		return account.fetchArticles(for: self)
 	}
 
-	public func takeSettings(from parsedFeed: ParsedFeed) -> Bool {
-
-		// Return true if anything changed.
+	public func takeSettings(from parsedFeed: ParsedFeed) {
 
 		var didChangeAtLeastOneSetting = false
 
@@ -50,7 +53,9 @@ public extension Feed {
 			didChangeAtLeastOneSetting = true
 		}
 
-		return didChangeAtLeastOneSetting
+		if didChangeAtLeastOneSetting {
+			NotificationCenter.default.post(name: .FeedSettingDidChange, object: self)
+		}
 	}
 }
 

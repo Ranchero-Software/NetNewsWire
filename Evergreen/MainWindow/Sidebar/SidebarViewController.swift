@@ -38,6 +38,7 @@ import RSCore
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 
 		outlineView.reloadData()
 
@@ -62,7 +63,7 @@ import RSCore
 		guard let representedObject = note.object else {
 			return
 		}
-		let _ = configureCellsForRepresentedObject(representedObject as AnyObject)
+		configureCellsForRepresentedObject(representedObject as AnyObject)
 	}
 
 	@objc dynamic func containerChildrenDidChange(_ note: Notification) {
@@ -86,6 +87,14 @@ import RSCore
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 
 		configureAvailableCells()
+	}
+
+	@objc func feedSettingDidChange(_ note: Notification) {
+
+		guard let feed = note.object as? Feed else {
+			return
+		}
+		configureCellsForRepresentedObject(feed)
 	}
 
 	// MARK: Actions
@@ -405,9 +414,10 @@ private extension SidebarViewController {
 		}
 	}
 
+	@discardableResult
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) -> Bool {
 
-		//Return true if any cells were configured.
+		// Return true if any cells were configured.
 
 		let cells = cellsForRepresentedObject(representedObject)
 		if cells.isEmpty {
