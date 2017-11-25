@@ -15,6 +15,8 @@
 		84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */; };
 		845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */; };
 		845A291B1FC75AA6007B49E3 /* SeekingFavicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A291A1FC75AA6007B49E3 /* SeekingFavicon.swift */; };
+		845A29221FC9251E007B49E3 /* SidebarCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */; };
+		845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */; };
 		845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */; };
 		845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7C01FC2488C00854A1F /* SmartFeed.swift */; };
 		845F52ED1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F52EC1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift */; };
@@ -407,6 +409,8 @@
 		84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListControlsView.swift; sourceTree = "<group>"; };
 		845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleFaviconDownloader.swift; sourceTree = "<group>"; };
 		845A291A1FC75AA6007B49E3 /* SeekingFavicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeekingFavicon.swift; sourceTree = "<group>"; };
+		845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCellLayout.swift; sourceTree = "<group>"; };
+		845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCellAppearance.swift; sourceTree = "<group>"; };
 		845B14A51FC2299E0013CF92 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarredFeedDelegate.swift; sourceTree = "<group>"; };
 		845EE7C01FC2488C00854A1F /* SmartFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeed.swift; sourceTree = "<group>"; };
@@ -554,6 +558,16 @@
 			path = Evergreen/MainWindow;
 			sourceTree = "<group>";
 		};
+		845A29251FC928C7007B49E3 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				849A979E1ED9F130007D329B /* SidebarCell.swift */,
+				845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */,
+				845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
 		846E77171F6EF5D000A165E2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -629,7 +643,7 @@
 			children = (
 				849A97621ED9EB96007D329B /* SidebarViewController.swift */,
 				849A97601ED9EB96007D329B /* SidebarOutlineView.swift */,
-				849A979E1ED9F130007D329B /* SidebarCell.swift */,
+				845A29251FC928C7007B49E3 /* Cell */,
 				849A97611ED9EB96007D329B /* SidebarTreeControllerDelegate.swift */,
 				849A97631ED9EB96007D329B /* UnreadCountView.swift */,
 				845F52EC1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift */,
@@ -653,11 +667,11 @@
 		849A976F1ED9EC04007D329B /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				849A97701ED9EC04007D329B /* TimelineCellAppearance.swift */,
-				849A97711ED9EC04007D329B /* TimelineCellData.swift */,
-				849A97721ED9EC04007D329B /* TimelineCellLayout.swift */,
-				849A97731ED9EC04007D329B /* TimelineStringUtilities.swift */,
 				849A97741ED9EC04007D329B /* TimelineTableCellView.swift */,
+				849A97701ED9EC04007D329B /* TimelineCellAppearance.swift */,
+				849A97721ED9EC04007D329B /* TimelineCellLayout.swift */,
+				849A97711ED9EC04007D329B /* TimelineCellData.swift */,
+				849A97731ED9EC04007D329B /* TimelineStringUtilities.swift */,
 				849A97751ED9EC04007D329B /* UnreadIndicatorView.swift */,
 			);
 			path = Cell;
@@ -1309,6 +1323,7 @@
 				849A975E1ED9EB72007D329B /* MainWindowController.swift in Sources */,
 				842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */,
 				84F2D53A1FC2308B00998D64 /* UnreadFeed.swift in Sources */,
+				845A29221FC9251E007B49E3 /* SidebarCellLayout.swift in Sources */,
 				849A97661ED9EB96007D329B /* SidebarViewController.swift in Sources */,
 				849A97641ED9EB96007D329B /* SidebarOutlineView.swift in Sources */,
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
@@ -1329,6 +1344,7 @@
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
 				849A97791ED9EC04007D329B /* TimelineStringUtilities.swift in Sources */,
 				84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */,
+				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
 				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,
 				849A97981ED9EFAA007D329B /* Node-Extensions.swift in Sources */,

@@ -6,9 +6,10 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+import Cocoa
 
 enum FontSize: Int {
+
 	case small = 0
 	case medium = 1
 	case large = 2
@@ -49,7 +50,7 @@ final class AppDefaults {
 			setFontSize(for: Key.sidebarFontSize, newValue)
 		}
 	}
-	
+
 	var timelineFontSize: FontSize {
 		get {
 			return fontSize(for: Key.timelineFontSize)
@@ -79,6 +80,20 @@ final class AppDefaults {
 		}
 		else {
 			self.isFirstRun = false
+		}
+	}
+
+	static func actualFontSize(for fontSize: FontSize) -> CGFloat {
+
+		switch fontSize {
+		case .small:
+			return NSFont.systemFontSize
+		case .medium:
+			return actualFontSize(for: .small) + 1.0
+		case .large:
+			return actualFontSize(for: .medium) + 4.0
+		case .veryLarge:
+			return actualFontSize(for: .large) + 8.0
 		}
 	}
 }

@@ -39,7 +39,7 @@ struct TimelineCellAppearance {
 	
 	init(theme: VSTheme, fontSize: FontSize) {
 
-		let actualFontSize = actualFontSizeForFontSize(fontSize)
+		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
 		
 		cellPadding = theme.edgeInsets(forKey: "MainWindow.Timeline.cell.padding")
 		
@@ -48,7 +48,7 @@ struct TimelineCellAppearance {
 		faviconFeedNameSpacing = theme.float(forKey: "MainWindow.Timeline.cell.faviconFeedNameSpacing")
 
 		dateColor = theme.color(forKey: "MainWindow.Timeline.cell.dateColor")
-		let actualDateFontSize = actualDateFontSizeForFontSize(fontSize)
+		let actualDateFontSize = AppDefaults.actualFontSize(for: fontSize)
 		dateFont = NSFont.systemFont(ofSize: actualDateFontSize)
 		dateMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginLeft")
 		
@@ -69,53 +69,3 @@ struct TimelineCellAppearance {
 	}
 }
 
-private let smallFontSize = NSFont.systemFontSize
-private let mediumFontSize = smallFontSize + 1.0
-private let largeFontSize = mediumFontSize + 4.0
-private let veryLargeFontSize = largeFontSize + 8.0
-
-private func actualFontSizeForFontSize(_ fontSize: FontSize) -> CGFloat {
-
-	var actualFontSize = smallFontSize
-
-	switch (fontSize) {
-
-	case .small:
-		actualFontSize = smallFontSize
-	case .medium:
-		actualFontSize = mediumFontSize
-	case .large:
-		actualFontSize = largeFontSize
-	case .veryLarge:
-		actualFontSize = veryLargeFontSize
-	}
-
-	return actualFontSize
-}
-
-//private let smallDateFontSize = NSFont.systemFontSize() - 2.0
-//private let mediumDateFontSize = smallDateFontSize + 1.0
-//private let largeDateFontSize = mediumDateFontSize + 4.0
-//private let veryLargeDateFontSize = largeDateFontSize + 8.0
-
-
-private func actualDateFontSizeForFontSize(_ fontSize: FontSize) -> CGFloat {
-	
-	return actualFontSizeForFontSize(fontSize)
-//	var actualFontSize = smallDateFontSize
-//	
-//	switch (fontSize) {
-//		
-//	case .small:
-//		actualFontSize = smallDateFontSize
-//	case .medium:
-//		actualFontSize = mediumDateFontSize
-//	case .large:
-//		actualFontSize = largeDateFontSize
-//	case .veryLarge:
-//		actualFontSize = veryLargeDateFontSize
-//	}
-//	
-//	return actualFontSize
-
-}

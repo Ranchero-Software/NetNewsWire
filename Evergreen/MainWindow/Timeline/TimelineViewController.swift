@@ -63,7 +63,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 
 	override func viewDidLoad() {
 
-		cellAppearance = TimelineCellAppearance(theme: currentTheme, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, fontSize: fontSize)
 
 		tableView.rowHeight = calculateRowHeight()
 		tableView.target = self
@@ -105,7 +105,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 
 	private func fontSizeDidChange() {
 
-		cellAppearance = TimelineCellAppearance(theme: currentTheme, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, fontSize: fontSize)
 		let updatedRowHeight = calculateRowHeight()
 		if tableView.rowHeight != updatedRowHeight {
 			tableView.rowHeight = updatedRowHeight

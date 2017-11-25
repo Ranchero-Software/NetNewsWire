@@ -21,10 +21,13 @@ import RSCore
 	}()
     var undoableCommands = [UndoableCommand]()
 	private var animatingChanges = false
+	private var sidebarCellAppearance: SidebarCellAppearance!
 
 	//MARK: NSViewController
 
 	override func viewDidLoad() {
+
+		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
 
 		outlineView.sidebarViewController = self
 		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)
@@ -317,10 +320,12 @@ private extension SidebarViewController {
 
 	func configure(_ cell: SidebarCell, _ node: Node) {
 
+		cell.cellAppearance = sidebarCellAppearance
 		cell.objectValue = node
 		cell.name = nameFor(node)
 		cell.unreadCount = unreadCountFor(node)
 		cell.image = imageFor(node)
+		cell.shouldShowImage = node.representedObject is Feed
 	}
 
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
@@ -331,6 +336,9 @@ private extension SidebarViewController {
 
 	func imageFor(_ node: Node) -> NSImage? {
 
+//		if let feed = node.representedObject as? Feed {
+//			
+//		}
 		return nil
 	}
 

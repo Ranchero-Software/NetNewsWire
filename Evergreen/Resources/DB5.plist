@@ -14,6 +14,15 @@
 				<string>200</string>
 				<key>maximumWidth</key>
 				<string>350</string>
+				<key>favicon</key>
+				<dict>
+					<key>imageWidth</key>
+					<integer>16</integer>
+					<key>imageHeight</key>
+					<integer>16</integer>
+					<key>marginRight</key>
+					<integer>4</integer>
+				</dict>
 				<key>unreadCount</key>
 				<dict>
 					<key>backgroundColor</key>
