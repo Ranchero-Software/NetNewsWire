@@ -336,10 +336,10 @@ private extension SidebarViewController {
 
 	func imageFor(_ node: Node) -> NSImage? {
 
-//		if let feed = node.representedObject as? Feed {
-//			
-//		}
-		return nil
+		guard let feed = node.representedObject as? Feed else {
+			return nil
+		}
+		return appDelegate.faviconDownloader.favicon(for: feed)
 	}
 
 	func nameFor(_ node: Node) -> String {

@@ -13,13 +13,18 @@ private var textSizeCache = [String: NSSize]()
 
 class SidebarCell : NSTableCellView {
 	
-	var image: NSImage?
+	var image: NSImage? {
+		didSet {
+			imageView?.image = shouldShowImage ? image : nil
+		}
+	}
 
 	var shouldShowImage = false {
 		didSet {
 			if shouldShowImage != oldValue {
 				needsLayout = true
 			}
+			imageView?.image = shouldShowImage ? image : nil
 		}
 	}
 

@@ -122,7 +122,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		currentTheme = themeLoader.defaultTheme
 
-		let faviconsFolder = RSDataSubfolder(nil, "Accounts")!
+		let faviconsFolder = RSDataSubfolder(nil, "Favicons")!
 		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
 
 		let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
