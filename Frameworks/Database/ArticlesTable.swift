@@ -127,6 +127,11 @@ final class ArticlesTable: DatabaseTable {
 	
 	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: @escaping UnreadCountCompletionBlock) {
 		
+		if feeds.isEmpty {
+			completion(UnreadCountDictionary())
+			return
+		}
+
 		let feedIDs = feeds.feedIDs()
 		var unreadCountDictionary = UnreadCountDictionary()
 
@@ -146,6 +151,11 @@ final class ArticlesTable: DatabaseTable {
 
 		// Get unread count for today, for instance.
 
+		if feeds.isEmpty {
+			callback(0)
+			return
+		}
+		
 		let feedIDs = feeds.feedIDs()
 		queue.fetch { (database) in
 
@@ -165,6 +175,11 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	func fetchStarredAndUnreadCount(_ feeds: Set<Feed>, _ callback: @escaping (Int) -> Void) {
+
+		if feeds.isEmpty {
+			callback(0)
+			return
+		}
 
 		let feedIDs = feeds.feedIDs()
 		queue.fetch { (database) in
