@@ -136,6 +136,16 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		}
 	}
 
+	// MARK: - Debug
+
+	public func debugDropConditionalGetInfo() {
+
+		conditionalGetInfo = nil
+		contentHash = nil
+	}
+
+	// MARK: - Equatable
+
 	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
 
 		return lhs === rhs

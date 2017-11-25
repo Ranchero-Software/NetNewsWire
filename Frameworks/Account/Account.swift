@@ -352,6 +352,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		flattenedFeeds().forEach { $0.unreadCount = 0 }		
 	}
 
+	// MARK: - Debug
+
+	public func debugDropConditionalGetInfo() {
+
+		#if DEBUG
+			flattenedFeeds().forEach{ $0.debugDropConditionalGetInfo() }
+		#endif
+	}
+
 	// MARK: - Notifications
 
 	@objc func downloadProgressDidChange(_ note: Notification) {
