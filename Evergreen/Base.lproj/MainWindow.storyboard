@@ -389,7 +389,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="167" height="300"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
-                                            <color key="backgroundColor" white="0.96999999999999997" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
                                                 <tableColumn identifier="" width="164" minWidth="16" maxWidth="1000" id="ih9-mJ-EA7">
