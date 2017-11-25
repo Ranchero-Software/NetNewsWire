@@ -60,6 +60,7 @@
 		84469D401EFF29A9004A6B28 /* FeedParserError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D3F1EFF29A9004A6B28 /* FeedParserError.swift */; };
 		84469D421EFF2B2D004A6B28 /* JSONTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D411EFF2B2D004A6B28 /* JSONTypes.swift */; };
 		84469D441F002CEF004A6B28 /* JSONFeedParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D431F002CEF004A6B28 /* JSONFeedParser.swift */; };
+		84628AAD1FCA10AE00566A9B /* allthis.atom in Resources */ = {isa = PBXBuildFile; fileRef = 84628AAC1FCA10AE00566A9B /* allthis.atom */; };
 		849A03D01F0081EA00122600 /* DaringFireball.html in Resources */ = {isa = PBXBuildFile; fileRef = 849A03C51F0081EA00122600 /* DaringFireball.html */; };
 		849A03D11F0081EA00122600 /* DaringFireball.rss in Resources */ = {isa = PBXBuildFile; fileRef = 849A03C61F0081EA00122600 /* DaringFireball.rss */; };
 		849A03D21F0081EA00122600 /* EMarley.rss in Resources */ = {isa = PBXBuildFile; fileRef = 849A03C71F0081EA00122600 /* EMarley.rss */; };
@@ -156,6 +157,7 @@
 		84469D3F1EFF29A9004A6B28 /* FeedParserError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedParserError.swift; path = Feeds/FeedParserError.swift; sourceTree = "<group>"; };
 		84469D411EFF2B2D004A6B28 /* JSONTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONTypes.swift; path = Feeds/JSON/JSONTypes.swift; sourceTree = "<group>"; };
 		84469D431F002CEF004A6B28 /* JSONFeedParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONFeedParser.swift; path = Feeds/JSON/JSONFeedParser.swift; sourceTree = "<group>"; };
+		84628AAC1FCA10AE00566A9B /* allthis.atom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = allthis.atom; sourceTree = "<group>"; };
 		849A03C51F0081EA00122600 /* DaringFireball.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DaringFireball.html; sourceTree = "<group>"; };
 		849A03C61F0081EA00122600 /* DaringFireball.rss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DaringFireball.rss; sourceTree = "<group>"; };
 		849A03C71F0081EA00122600 /* EMarley.rss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = EMarley.rss; sourceTree = "<group>"; };
@@ -347,6 +349,7 @@
 				849A03E71F01F88600122600 /* ScriptingNews.json */,
 				849A03CD1F0081EA00122600 /* scriptingNews.rss */,
 				849A03CE1F0081EA00122600 /* sixcolors.html */,
+				84628AAC1FCA10AE00566A9B /* allthis.atom */,
 				849A03CF1F0081EA00122600 /* Subs.opml */,
 			);
 			path = Resources;
@@ -527,6 +530,7 @@
 				849A03D61F0081EA00122600 /* manton.rss in Resources */,
 				849A03D11F0081EA00122600 /* DaringFireball.rss in Resources */,
 				849A03D01F0081EA00122600 /* DaringFireball.html in Resources */,
+				84628AAD1FCA10AE00566A9B /* allthis.atom in Resources */,
 				849A03EA1F01F92B00122600 /* inessential.json in Resources */,
 				849A03D71F0081EA00122600 /* OneFootTsunami.atom in Resources */,
 				849A03D41F0081EA00122600 /* inessential.html in Resources */,
