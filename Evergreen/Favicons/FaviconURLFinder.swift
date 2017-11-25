@@ -28,7 +28,15 @@ struct FaviconURLFinder {
 				return
 			}
 
-			let link = faviconURL(homePageURL, data)
+			// Use the absoluteString of the response’s URL instead of the homePageURL,
+			// since the homePageURL might actually have been redirected.
+			// Example: Dr. Drang’s feed reports the homePageURL as http://www.leancrew.com/all-this —
+			// but it gets redirected to http://www.leancrew.com/all-this/ — which is correct.
+			// This way any relative link to a favicon in the page’s metadata
+			// will be made absolute correctly.
+
+			let urlToUse = response.url?.absoluteString ?? homePageURL
+			let link = faviconURL(urlToUse, data)
 			callback(link)
 		}
 	}
