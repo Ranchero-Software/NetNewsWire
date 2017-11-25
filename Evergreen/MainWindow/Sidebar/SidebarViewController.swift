@@ -63,7 +63,7 @@ import RSCore
 		guard let representedObject = note.object else {
 			return
 		}
-		configureCellsForRepresentedObject(representedObject as AnyObject)
+		configureUnreadCountForCellsForRepresentedObject(representedObject as AnyObject)
 	}
 
 	@objc dynamic func containerChildrenDidChange(_ note: Notification) {
@@ -343,6 +343,11 @@ private extension SidebarViewController {
 		cell.shouldShowImage = node.representedObject is Feed
 	}
 
+	func configureUnreadCount(_ cell: SidebarCell, _ node: Node) {
+
+		cell.unreadCount = unreadCountFor(node)
+	}
+
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
 
 		cell.objectValue = node
@@ -433,6 +438,16 @@ private extension SidebarViewController {
 			oneSidebarCell.needsLayout = true
 		}
 		return true
+	}
+
+	func configureUnreadCountForCellsForRepresentedObject(_ representedObject: AnyObject) {
+
+		cellsForRepresentedObject(representedObject).forEach { (cell) in
+			guard let node = cell.objectValue as? Node else {
+				return
+			}
+			configureUnreadCount(cell, node)
+		}
 	}
 
 	@discardableResult
