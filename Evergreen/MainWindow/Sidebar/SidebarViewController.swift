@@ -37,6 +37,7 @@ import RSCore
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 
 		outlineView.reloadData()
 
@@ -80,6 +81,11 @@ import RSCore
 			return
 		}
 		revealAndSelectRepresentedObject(feed)
+	}
+
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+
+		configureAvailableCells()
 	}
 
 	// MARK: Actions
@@ -358,18 +364,33 @@ private extension SidebarViewController {
 		return 0
 	}
 
+	func cellForRowView(_ rowView: NSTableRowView) -> SidebarCell? {
+
+		return rowView.view(atColumn: 0) as? SidebarCell
+	}
+
 	func availableSidebarCells() -> [SidebarCell] {
 
 		var cells = [SidebarCell]()
 
 		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, _: Int) -> Void in
-
-			if let oneSidebarCell = rowView.view(atColumn: 0) as? SidebarCell {
-				cells += [oneSidebarCell]
+			if let cell = cellForRowView(rowView) {
+				cells += [cell]
 			}
 		}
 
 		return cells
+	}
+
+	func configureAvailableCells() {
+
+		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) -> Void in
+
+			guard let cell = cellForRowView(rowView), let node = nodeForRow(row) else {
+				return
+			}
+			configure(cell, node)
+		}
 	}
 
 	func cellsForRepresentedObject(_ representedObject: AnyObject) -> [SidebarCell] {
