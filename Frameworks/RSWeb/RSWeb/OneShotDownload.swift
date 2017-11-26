@@ -114,8 +114,8 @@ private final class DownloadWithCacheManager {
 
 	static let shared = DownloadWithCacheManager()
 	private var cache = WebCache()
-	private static let timeToLive: TimeInterval = 5 * 60 // five minutes
-	private static let cleanupInterval: TimeInterval = 20 * 60 // 20 minutes
+	private static let timeToLive: TimeInterval = 10 * 60 // 10 minutes
+	private static let cleanupInterval: TimeInterval = 30 * 60 // 30 minutes
 
 	func download(_ url: URL, _ callback: @escaping OneShotDownloadCallback) {
 
