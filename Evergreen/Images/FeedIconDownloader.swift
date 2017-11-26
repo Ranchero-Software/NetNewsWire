@@ -39,7 +39,7 @@ public final class FeedIconDownloader {
 		if let iconURL = cachedIconURL(for: homePageURL) {
 			return icon(forURL: iconURL)
 		}
-		
+
 		findIconURLForHomePageURL(homePageURL)
 		return nil
 	}
@@ -60,27 +60,17 @@ private extension FeedIconDownloader {
 	func cacheIconURL(for homePageURL: String, _ iconURL: String) {
 
 		homePageToIconURLCache[homePageURL] = iconURL
+		let _ = icon(forURL: iconURL)
 	}
 
 	func findIconURLForHomePageURL(_ homePageURL: String) {
 
-		guard let url = URL(string: homePageURL) else {
-			return
-		}
+		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { (metadata) in
 
-		downloadUsingCache(url) { (data, response, error) in
-
-			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
-
-				let parserData = ParserData(url: homePageURL, data: data)
-				let metadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
-				self.pullIconURL(from: metadata, homePageURL: homePageURL)
+			guard let metadata = metadata else {
 				return
 			}
-
-			if let error = error {
-				appDelegate.logMessage("Error finding icon url at \(homePageURL): \(error)", type: .warning)
-			}
+			self.pullIconURL(from: metadata, homePageURL: homePageURL)
 		}
 	}
 
