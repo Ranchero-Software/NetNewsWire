@@ -10,19 +10,22 @@
 
 @class RSHTMLMetadataFeedLink;
 @class RSHTMLMetadataAppleTouchIcon;
-
+@class RSHTMLOpenGraphProperties;
+@class RSHTMLOpenGraphImage;
+@class RSHTMLTag;
 
 @interface RSHTMLMetadata : NSObject
 
-- (instancetype)initWithURLString:(NSString *)urlString dictionaries:(NSArray <NSDictionary *> *)dictionaries;
+- (instancetype)initWithURLString:(NSString *)urlString tags:(NSArray <RSHTMLTag *> *)tags;
 
 @property (nonatomic, readonly) NSString *baseURLString;
-@property (nonatomic, readonly) NSArray <NSDictionary *> *dictionaries;
+@property (nonatomic, readonly) NSArray <RSHTMLTag *> *tags;
 
 @property (nonatomic, readonly) NSString *faviconLink;
 @property (nonatomic, readonly) NSArray <RSHTMLMetadataAppleTouchIcon *> *appleTouchIcons;
 @property (nonatomic, readonly) NSArray <RSHTMLMetadataFeedLink *> *feedLinks;
 
+@property (nonatomic, readonly) RSHTMLOpenGraphProperties *openGraphProperties;
 @end
 
 
@@ -43,3 +46,24 @@
 
 @end
 
+@interface RSHTMLOpenGraphProperties : NSObject
+
+// TODO: the rest. At this writing (Nov. 26, 2017) I just care about og:image.
+// See http://ogp.me/
+
+- (instancetype)initWithURLString:(NSString *)urlString tags:(NSArray <RSHTMLTag *> *)tags;
+
+@property (nonatomic, readonly) NSArray <RSHTMLOpenGraphImage *> *images;
+
+@end
+
+@interface RSHTMLOpenGraphImage : NSObject
+
+@property (nonatomic, readonly) NSString *url;
+@property (nonatomic, readonly) NSString *secureURL;
+@property (nonatomic, readonly) NSString *mimeType;
+@property (nonatomic, readonly) CGFloat width;
+@property (nonatomic, readonly) CGFloat height;
+@property (nonatomic, readonly) NSString *altText;
+
+@end

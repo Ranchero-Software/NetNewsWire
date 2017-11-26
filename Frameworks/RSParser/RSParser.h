@@ -44,6 +44,7 @@
 #import <RSParser/RSHTMLMetadata.h>
 #import <RSParser/RSHTMLLinkParser.h>
 #import <RSParser/RSSAXHTMLParser.h> // For writing your own HTML parser.
+#import <RSParser/RSHTMLTag.h>
 
 // Utilities
 

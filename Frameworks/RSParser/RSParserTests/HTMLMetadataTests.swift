@@ -111,4 +111,13 @@ class HTMLMetadataTests: XCTestCase {
 			let _ = RSHTMLMetadataParser.htmlMetadata(with: d)
 		}
 	}
+
+	func testCocoOGImage() {
+
+		let d = parserData("coco", "html", "https://www.theatlantic.com/entertainment/archive/2017/11/coco-is-among-pixars-best-movies-in-years/546695/")
+		let metadata = RSHTMLMetadataParser.htmlMetadata(with: d)
+		let openGraphData = metadata.openGraphProperties!
+		let image = openGraphData.images.first!
+		XCTAssert(image.url == "https://cdn.theatlantic.com/assets/media/img/mt/2017/11/1033101_first_full_length_trailer_arrives_pixars_coco/facebook.jpg?1511382177")
+	}
 }

@@ -13,13 +13,13 @@
 #import <RSParser/RSSAXParser.h>
 #import <RSParser/RSParserInternal.h>
 #import <RSParser/ParserData.h>
-
+#import <RSParser/RSHTMLTag.h>
 
 @interface RSHTMLMetadataParser () <RSSAXHTMLParserDelegate>
 
 @property (nonatomic, readonly) ParserData *parserData;
 @property (nonatomic, readwrite) RSHTMLMetadata *metadata;
-@property (nonatomic) NSMutableArray *dictionaries;
+@property (nonatomic) NSMutableArray *tags;
 @property (nonatomic) BOOL didFinishParsing;
 
 @end
@@ -50,7 +50,7 @@
 	}
 
 	_parserData = parserData;
-	_dictionaries = [NSMutableArray new];
+	_tags = [NSMutableArray new];
 
 	[self parse];
 
@@ -66,7 +66,7 @@
 	[parser parseData:self.parserData.data];
 	[parser finishParsing];
 
-	self.metadata = [[RSHTMLMetadata alloc] initWithURLString:self.parserData.url dictionaries:[self.dictionaries copy]];
+	self.metadata = [[RSHTMLMetadata alloc] initWithURLString:self.parserData.url tags:self.tags];
 }
 
 
@@ -84,7 +84,6 @@ static NSString *kRelKey = @"rel";
 	return [d rsparser_objectForCaseInsensitiveKey:kSrcKey];
 }
 
-
 - (void)handleLinkAttributes:(NSDictionary *)d {
 
 	if (RSParserStringIsEmpty([d rsparser_objectForCaseInsensitiveKey:kRelKey])) {
@@ -94,9 +93,15 @@ static NSString *kRelKey = @"rel";
 		return;
 	}
 
-	[self.dictionaries addObject:d];
+	RSHTMLTag *tag = [RSHTMLTag linkTagWithAttributes:d];
+	[self.tags addObject:tag];
 }
 
+- (void)handleMetaAttributes:(NSDictionary *)d {
+
+	RSHTMLTag *tag = [RSHTMLTag metaTagWithAttributes:d];
+	[self.tags addObject:tag];
+}
 
 #pragma mark - RSSAXHTMLParserDelegate
 
@@ -104,6 +109,8 @@ static const char *kBody = "body";
 static const NSInteger kBodyLength = 5;
 static const char *kLink = "link";
 static const NSInteger kLinkLength = 5;
+static const char *kMeta = "meta";
+static const NSInteger kMetaLength = 5;
 
 - (void)saxParser:(RSSAXHTMLParser *)SAXParser XMLStartElement:(const xmlChar *)localName attributes:(const xmlChar **)attributes {
 
@@ -116,13 +123,19 @@ static const NSInteger kLinkLength = 5;
 		return;
 	}
 
-	if (!RSSAXEqualTags(localName, kLink, kLinkLength)) {
+	if (RSSAXEqualTags(localName, kLink, kLinkLength)) {
+		NSDictionary *d = [SAXParser attributesDictionary:attributes];
+		if (!RSParserObjectIsEmpty(d)) {
+			[self handleLinkAttributes:d];
+		}
 		return;
 	}
 
-	NSDictionary *d = [SAXParser attributesDictionary:attributes];
-	if (!RSParserObjectIsEmpty(d)) {
-		[self handleLinkAttributes:d];
+	if (RSSAXEqualTags(localName, kMeta, kMetaLength)) {
+		NSDictionary *d = [SAXParser attributesDictionary:attributes];
+		if (!RSParserObjectIsEmpty(d)) {
+			[self handleMetaAttributes:d];
+		}
 	}
 }
 
