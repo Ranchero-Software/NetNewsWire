@@ -654,10 +654,10 @@
 			children = (
 				849A97621ED9EB96007D329B /* SidebarViewController.swift */,
 				849A97601ED9EB96007D329B /* SidebarOutlineView.swift */,
-				845A29251FC928C7007B49E3 /* Cell */,
 				849A97611ED9EB96007D329B /* SidebarTreeControllerDelegate.swift */,
 				849A97631ED9EB96007D329B /* UnreadCountView.swift */,
 				845F52EC1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift */,
+				845A29251FC928C7007B49E3 /* Cell */,
 			);
 			path = Sidebar;
 			sourceTree = "<group>";
