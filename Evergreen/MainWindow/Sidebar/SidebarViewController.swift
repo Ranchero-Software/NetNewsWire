@@ -338,7 +338,7 @@ private extension SidebarViewController {
 		cell.cellAppearance = sidebarCellAppearance
 		cell.objectValue = node
 		cell.name = nameFor(node)
-		cell.unreadCount = unreadCountFor(node)
+		configureUnreadCount(cell, node)
 		cell.image = imageFor(node)
 		cell.shouldShowImage = node.representedObject is Feed
 	}
@@ -398,56 +398,37 @@ private extension SidebarViewController {
 
 	func configureAvailableCells() {
 
+		applyToAvailableCells(configure)
+	}
+
+	func applyToAvailableCells(_ callback: (SidebarCell, Node) -> Void) {
+
 		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) -> Void in
 
 			guard let cell = cellForRowView(rowView), let node = nodeForRow(row) else {
 				return
 			}
-			configure(cell, node)
+			callback(cell, node)
 		}
 	}
 
-	func cellsForRepresentedObject(_ representedObject: AnyObject) -> [SidebarCell] {
+	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (SidebarCell, Node) -> Void) {
 
-		let availableCells = availableSidebarCells()
-		return availableCells.filter{ (oneSidebarCell) -> Bool in
-
-			guard let oneNode = oneSidebarCell.objectValue as? Node else {
-				return false
+		applyToAvailableCells { (cell, node) in
+			if node.representedObject === representedObject {
+				callback(cell, node)
 			}
-			return oneNode.representedObject === representedObject
 		}
 	}
 
-	@discardableResult
-	func configureCellsForRepresentedObject(_ representedObject: AnyObject) -> Bool {
+	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
 
-		// Return true if any cells were configured.
-
-		let cells = cellsForRepresentedObject(representedObject)
-		if cells.isEmpty {
-			return false
-		}
-
-		cells.forEach { (oneSidebarCell) in
-			guard let oneNode = oneSidebarCell.objectValue as? Node else {
-				return
-			}
-			configure(oneSidebarCell, oneNode)
-			oneSidebarCell.needsDisplay = true
-			oneSidebarCell.needsLayout = true
-		}
-		return true
+		applyToCellsForRepresentedObject(representedObject, configure)
 	}
 
 	func configureUnreadCountForCellsForRepresentedObject(_ representedObject: AnyObject) {
 
-		cellsForRepresentedObject(representedObject).forEach { (cell) in
-			guard let node = cell.objectValue as? Node else {
-				return
-			}
-			configureUnreadCount(cell, node)
-		}
+		applyToCellsForRepresentedObject(representedObject, configureUnreadCount)
 	}
 
 	@discardableResult
