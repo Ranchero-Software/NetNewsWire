@@ -111,14 +111,17 @@ import RSCore
             return
         }
         
-		let selectedRows = outlineView.selectedRowIndexes
-
 		animatingChanges = true
 		outlineView.beginUpdates()
-		outlineView.removeItems(at: selectedRows, inParent: nil, withAnimation: [.slideDown])
-		outlineView.endUpdates()
 
-        runCommand(deleteCommand)
+		let indexSetsGroupedByParent = Node.indexSetsGroupedByParent(nodesToDelete)
+		for (parent, indexSet) in indexSetsGroupedByParent {
+			outlineView.removeItems(at: indexSet, inParent: parent.isRoot ? nil : parent, withAnimation: [.slideDown])
+		}
+
+		outlineView.endUpdates()
+		
+		runCommand(deleteCommand)
 		animatingChanges = false
 	}
 
@@ -465,6 +468,22 @@ private extension SidebarViewController {
 			deleteItemForNode(oneNode)
 		}
 	}
-	
+
+	func commonParentItemForNodes(_ nodes: [Node]) -> Node? {
+
+		if nodes.isEmpty {
+			return nil
+		}
+
+		guard let parent = nodes.first!.parent else {
+			return nil
+		}
+		for node in nodes {
+			if node.parent !== parent {
+				return nil
+			}
+		}
+		return parent
+	}
 }
 

@@ -8,14 +8,17 @@
 
 import Foundation
 
-public final class Node: Equatable {
+public final class Node: Hashable {
 	
 	public weak var parent: Node?
 	public let representedObject: AnyObject
 	public var canHaveChildNodes = false
 	public var isGroupItem = false
 	public var childNodes: [Node]?
-	
+	public let hashValue: Int
+	private static var incrementingID = 0
+	private static var incrementingIDLock = NSLock()
+
 	public var isRoot: Bool {
 		get {
 			if let _ = parent {
@@ -63,6 +66,11 @@ public final class Node: Equatable {
 		
 		self.representedObject = representedObject
 		self.parent = parent
+
+		Node.incrementingIDLock.lock()
+		self.hashValue = Node.incrementingID
+		Node.incrementingID += 1
+		Node.incrementingIDLock.unlock()
 	}
 	
 	public class func genericRootNode() -> Node {
@@ -136,6 +144,35 @@ public final class Node: Equatable {
 			}
 			nomad = parent
 		}
+	}
+
+	public class func nodesOrganizedByParent(_ nodes: [Node]) -> [Node: [Node]] {
+
+		let nodesWithParents = nodes.filter { $0.parent != nil }
+		return Dictionary(grouping: nodesWithParents, by: { $0.parent! })
+	}
+
+	public class func indexSetsGroupedByParent(_ nodes: [Node]) -> [Node: IndexSet] {
+
+		let d = nodesOrganizedByParent(nodes)
+		let indexSetDictionary = d.mapValues { (nodes) -> IndexSet in
+
+			var indexSet = IndexSet()
+			if nodes.isEmpty {
+				return indexSet
+			}
+
+			let parent = nodes.first!.parent!
+			for node in nodes {
+				if let index = parent.indexOfChild(node) {
+					indexSet.insert(index)
+				}
+			}
+
+			return indexSet
+		}
+
+		return indexSetDictionary
 	}
 }
 
