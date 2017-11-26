@@ -36,37 +36,30 @@ class HTMLFeedFinderTests: XCTestCase {
 		}
 	}
 
-	func testHTMLParserWithDaringFireBall() {
+	func testFindingBestFeedWithDaringFireBall() {
 
 		let finder = feedFinder("DaringFireball", "html", "https://daringfireball.net/")
 		let feedSpecifiers = finder.feedSpecifiers
 		let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers)!
-		print(bestFeedSpecifier)
+		XCTAssert(bestFeedSpecifier.urlString == "https://daringfireball.net/feeds/json")
 	}
 
-//	func testHTMLParserWithFurbo() {
-//
-//		let finder = HTMLFeedFinder(xmlData: furboData())
-//		let feedSpecifiers = finder.feedSpecifiers
-//		let bestFeedSpecifier = FeedFinder.bestFeed(in: feedSpecifiers)
-//		print(bestFeedSpecifier)
-//	}
-//
-//	func testHTMLParserWithInessential() {
-//
-//		let finder = HTMLFeedFinder(xmlData: inessentialData())
-//		let feedSpecifiers = finder.feedSpecifiers
-//		let bestFeedSpecifier = FeedFinder.bestFeed(in: feedSpecifiers)
-//		print(bestFeedSpecifier)
-//	}
-//
-//	func testHTMLParserWithSixColors() {
-//
-//		let finder = HTMLFeedFinder(xmlData: sixColorsData())
-//		let feedSpecifiers = finder.feedSpecifiers
-//		let bestFeedSpecifier = FeedFinder.bestFeed(in: feedSpecifiers)
-//		print(bestFeedSpecifier)
-//	}
+	func testFindingBestFeedWithFurbo() {
+
+		let finder = feedFinder("furbo", "html", "http://furbo.org")
+		let feedSpecifiers = finder.feedSpecifiers
+		let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers)!
+		XCTAssert(bestFeedSpecifier.urlString == "http://furbo.org/feed/")
+	}
+
+	func testFindingBestFeedWithIndieStack() {
+
+		let finder = feedFinder("indiestack", "html", "http://indiestack.com/")
+		let feedSpecifiers = finder.feedSpecifiers
+		let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers)!
+		XCTAssert(bestFeedSpecifier.urlString == "http://indiestack.com/feed/json/")
+	}
+
 }
 
 

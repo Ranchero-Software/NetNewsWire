@@ -15,6 +15,7 @@
 		8430C47B1D58033D00E02399 /* inessential.html in Resources */ = {isa = PBXBuildFile; fileRef = 8430C4781D58033D00E02399 /* inessential.html */; };
 		8430C47C1D58033D00E02399 /* sixcolors.html in Resources */ = {isa = PBXBuildFile; fileRef = 8430C4791D58033D00E02399 /* sixcolors.html */; };
 		8444267C1D5138A00092EDD4 /* FeedFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444267B1D5138A00092EDD4 /* FeedFinder.swift */; };
+		8452130F1FCA45EA003B6E93 /* indiestack.html in Resources */ = {isa = PBXBuildFile; fileRef = 8452130E1FCA45EA003B6E93 /* indiestack.html */; };
 		84B06FEF1ED3808F00F0B54B /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FEE1ED3808F00F0B54B /* RSWeb.framework */; };
 		84B06FF31ED3812600F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FF21ED3812600F0B54B /* RSCore.framework */; };
 		84BAAE231C8E6B3B009F5239 /* RSFeedFinder.h in Headers */ = {isa = PBXBuildFile; fileRef = 84BAAE221C8E6B3B009F5239 /* RSFeedFinder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -42,6 +43,7 @@
 		8430C4781D58033D00E02399 /* inessential.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = inessential.html; path = Resources/inessential.html; sourceTree = "<group>"; };
 		8430C4791D58033D00E02399 /* sixcolors.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = sixcolors.html; path = Resources/sixcolors.html; sourceTree = "<group>"; };
 		8444267B1D5138A00092EDD4 /* FeedFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedFinder.swift; path = RSFeedFinder/FeedFinder.swift; sourceTree = "<group>"; };
+		8452130E1FCA45EA003B6E93 /* indiestack.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = indiestack.html; path = Resources/indiestack.html; sourceTree = "<group>"; };
 		84B06FEE1ED3808F00F0B54B /* RSWeb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSWeb.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Evergreen-edcdqyvewhytnmcfaiesnqiqeynn/Build/Products/Debug/RSWeb.framework"; sourceTree = "<group>"; };
 		84B06FF01ED380A700F0B54B /* RSXML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSXML.framework; path = ../RSXML/build/Debug/RSXML.framework; sourceTree = "<group>"; };
 		84B06FF21ED3812600F0B54B /* RSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSCore.framework; path = ../RSCore/build/Debug/RSCore.framework; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				84BAAE2E1C8E6B3B009F5239 /* RSFeedFinderTests.m */,
 				8430C4731D57FE9600E02399 /* HTMLFeedFinderTests.swift */,
 				8430C4751D57FF0600E02399 /* DaringFireball.html */,
+				8452130E1FCA45EA003B6E93 /* indiestack.html */,
 				8430C4771D58033D00E02399 /* furbo.html */,
 				8430C4781D58033D00E02399 /* inessential.html */,
 				8430C4791D58033D00E02399 /* sixcolors.html */,
@@ -231,6 +234,7 @@
 			files = (
 				8430C47B1D58033D00E02399 /* inessential.html in Resources */,
 				8430C4761D57FF0600E02399 /* DaringFireball.html in Resources */,
+				8452130F1FCA45EA003B6E93 /* indiestack.html in Resources */,
 				8430C47A1D58033D00E02399 /* furbo.html in Resources */,
 				8430C47C1D58033D00E02399 /* sixcolors.html in Resources */,
 			);
