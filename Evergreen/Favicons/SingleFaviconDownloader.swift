@@ -138,6 +138,10 @@ private extension SingleFaviconDownloader {
 				return
 			}
 
+			if let error = error {
+				appDelegate.logMessage("Error downloading favicon at \(url): \(error)", type: .warning)
+			}
+
 			callback(nil)
 		}
 	}
