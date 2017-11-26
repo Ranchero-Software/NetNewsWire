@@ -23,6 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var currentTheme: VSTheme!
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
+	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var appName: String!
 	var pseudoFeeds = [PseudoFeed]()
 
@@ -142,6 +143,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
 		imageDownloader = ImageDownloader(folder: imagesFolder)
 
+		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
+
 		let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
 		let unreadFeed = UnreadFeed()
 		let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
@@ -156,6 +159,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		#endif
 
 		NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.getURL(_:_:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
+
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
@@ -204,6 +209,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
 		}
+	}
+
+	@objc func feedSettingDidChange(_ note: Notification) {
+
+		guard let feed = note.object as? Feed else {
+			return
+		}
+		let _ = faviconDownloader.favicon(for: feed)
 	}
 
 	// MARK: Main Window

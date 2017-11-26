@@ -452,10 +452,7 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	private func avatarForAuthor(_ author: Author) -> NSImage? {
 
-		if let url = author.avatarURL {
-			return appDelegate.imageDownloader.image(for: url)
-		}
-		return nil
+		return appDelegate.authorAvatarDownloader.image(for: author)
 	}
 
 	private func featuredImageFor(_ article: Article) -> NSImage? {
