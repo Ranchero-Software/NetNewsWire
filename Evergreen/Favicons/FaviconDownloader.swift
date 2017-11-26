@@ -61,7 +61,7 @@ final class FaviconDownloader {
 
 	func favicon(withHomePageURL homePageURL: String) -> NSImage? {
 
-		guard let seekingFavicon = seekingFavicon(with: homePageURL) else {
+		guard let seekingFavicon = seekingFavicon(with: normalizedHomePageURL(homePageURL)) else {
 			return nil
 		}
 		return favicon(withSeekingFavicon: seekingFavicon)
@@ -91,6 +91,26 @@ final class FaviconDownloader {
 }
 
 private extension FaviconDownloader {
+
+	private static let localeForLowercasing = Locale(identifier: "en_US")
+
+	func normalizedHomePageURL(_ url: String) -> String {
+
+		// Many times the homePageURL is missing a trailing /.
+		// We add one when needed.
+
+		guard !url.hasSuffix("/") else {
+			return url
+		}
+		let lowercasedURL = url.lowercased(with: FaviconDownloader.localeForLowercasing)
+		guard lowercasedURL.hasPrefix("http://") || lowercasedURL.hasPrefix("https://") else {
+			return url
+		}
+		guard url.components(separatedBy: "/").count < 4 else {
+			return url
+		}
+		return url + "/"
+	}
 
 	@discardableResult
 	func favicon(withSeekingFavicon seekingFavicon: SeekingFavicon) -> NSImage? {
