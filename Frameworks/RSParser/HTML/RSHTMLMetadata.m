@@ -28,6 +28,7 @@ static NSString *kRelKey = @"rel";
 static NSString *kAlternateKey = @"alternate";
 static NSString *kRSSSuffix = @"/rss+xml";
 static NSString *kAtomSuffix = @"/atom+xml";
+static NSString *kJSONSuffix = @"/json";
 static NSString *kTypeKey = @"type";
 
 @interface RSHTMLMetadataAppleTouchIcon ()
@@ -202,7 +203,7 @@ static NSArray *objectsOfClassWithDictionaries(Class class, NSArray *dictionarie
 static BOOL typeIsFeedType(NSString *type) {
 
 	type = type.lowercaseString;
-	return [type hasSuffix:kRSSSuffix] || [type hasSuffix:kAtomSuffix];
+	return [type hasSuffix:kRSSSuffix] || [type hasSuffix:kAtomSuffix] || [type hasSuffix:kJSONSuffix];
 }
 
 
