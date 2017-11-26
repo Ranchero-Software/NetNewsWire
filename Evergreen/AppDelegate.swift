@@ -22,6 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	var currentTheme: VSTheme!
 	var faviconDownloader: FaviconDownloader!
+	var imageDownloader: ImageDownloader!
 	var appName: String!
 	var pseudoFeeds = [PseudoFeed]()
 
@@ -130,10 +131,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		let tempDirectory = NSTemporaryDirectory()
 		let cacheFolder = (tempDirectory as NSString).appendingPathComponent("com.ranchero.evergreen")
+
 		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
 		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
 		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
 		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
+
+		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
+		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
+		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
+		imageDownloader = ImageDownloader(folder: imagesFolder)
 
 		let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
 		let unreadFeed = UnreadFeed()
