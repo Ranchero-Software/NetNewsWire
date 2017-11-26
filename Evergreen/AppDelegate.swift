@@ -66,15 +66,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func logMessage(_ message: String, type: LogItem.ItemType) {
 
+		#if DEBUG
+			print("logMessage: \(message) - \(type)")
+		#endif
+
 		let logItem = LogItem(type: type, message: message)
 		log.add(logItem)
 	}
 
 	func logDebugMessage(_ message: String) {
-
-		#if DEBUG
-			print("logDebugMessage: \(message)")
-		#endif
 
 		logMessage(message, type: .debug)
 	}
