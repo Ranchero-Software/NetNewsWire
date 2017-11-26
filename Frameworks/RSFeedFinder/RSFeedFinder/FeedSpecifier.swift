@@ -102,10 +102,16 @@ private extension FeedSpecifier {
 		if urlString.hasSuffix("/feed") {
 			score = score + 4
 		}
+		if urlString.rs_caseInsensitiveContains("json") {
+			score = score + 6
+		}
 		
 		if let title = title {
 			if title.rs_caseInsensitiveContains("comments") {
 				score = score - 10
+			}
+			if title.rs_caseInsensitiveContains("json") {
+				score = score + 1
 			}
 		}
 		
