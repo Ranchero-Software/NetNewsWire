@@ -71,7 +71,8 @@ static NSString *kTypeKey = @"type";
 	_feedLinks = objectsOfClassWithTags([RSHTMLMetadataFeedLink class], feedLinkTags, urlString);
 
 	_openGraphProperties = [[RSHTMLOpenGraphProperties alloc] initWithURLString:urlString tags:tags];
-
+	_twitterProperties = [[RSHTMLTwitterProperties alloc] initWithURLString:urlString tags:tags];
+	
 	return self;
 }
 
@@ -382,4 +383,38 @@ static NSString *ogContentKey = @"content";
 
 @end
 
+@implementation RSHTMLTwitterProperties
+
+static NSString *twitterNameKey = @"name";
+static NSString *twitterContentKey = @"content";
+static NSString *twitterImageSrc = @"twitter:image:src";
+
+- (instancetype)initWithURLString:(NSString *)urlString tags:(NSArray <RSHTMLTag *> *)tags {
+
+	self = [super init];
+	if (!self) {
+		return nil;
+	}
+
+	for (RSHTMLTag *tag in tags) {
+
+		if (tag.type != RSHTMLTagTypeMeta) {
+			continue;
+		}
+		NSString *name = tag.attributes[twitterNameKey];
+		if (!name || ![name isEqualToString:twitterImageSrc]) {
+			continue;
+		}
+		NSString *content = tag.attributes[twitterContentKey];
+		if (!content || content.length < 1) {
+			continue;
+		}
+		_imageURL = content;
+		break;
+	}
+
+	return self;
+}
+
+@end
 

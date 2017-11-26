@@ -13,6 +13,7 @@
 @class RSHTMLOpenGraphProperties;
 @class RSHTMLOpenGraphImage;
 @class RSHTMLTag;
+@class RSHTMLTwitterProperties;
 
 @interface RSHTMLMetadata : NSObject
 
@@ -26,6 +27,8 @@
 @property (nonatomic, readonly) NSArray <RSHTMLMetadataFeedLink *> *feedLinks;
 
 @property (nonatomic, readonly) RSHTMLOpenGraphProperties *openGraphProperties;
+@property (nonatomic, readonly) RSHTMLTwitterProperties *twitterProperties;
+
 @end
 
 
@@ -67,3 +70,14 @@
 @property (nonatomic, readonly) NSString *altText;
 
 @end
+
+@interface RSHTMLTwitterProperties : NSObject
+
+// TODO: the rest. At this writing (Nov. 26, 2017) I just care about twitter:image:src.
+
+- (instancetype)initWithURLString:(NSString *)urlString tags:(NSArray <RSHTMLTag *> *)tags;
+
+@property (nonatomic, readonly) NSString *imageURL; // twitter:image:src
+
+@end
+
