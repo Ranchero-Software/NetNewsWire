@@ -72,6 +72,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func logDebugMessage(_ message: String) {
 
+		#if DEBUG
+			print("logDebugMessage: \(message)")
+		#endif
+
 		logMessage(message, type: .debug)
 	}
 
@@ -116,7 +120,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		appName = Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
-		logDebugMessage(isFirstRun ? "Is first run." : "Is not first run.")
+		if isFirstRun {
+			logDebugMessage("Is first run.")
+		}
 		let localAccount = AccountManager.shared.localAccount
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 
