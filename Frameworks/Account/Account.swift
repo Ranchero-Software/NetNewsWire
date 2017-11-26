@@ -253,6 +253,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			didAddFeed = true
 		}
 		
+		rebuildFeedDictionaries()
 		return didAddFeed // TODO
 	}
 
@@ -290,6 +291,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		children += [folder]
 		postChildrenDidChangeNotification()
+		rebuildFeedDictionaries()
 		return true
 	}
 
@@ -396,7 +398,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
     
     @objc func batchUpdateDidPerform(_ note: Notification) {
-        
+
+		rebuildFeedDictionaries()
         updateUnreadCount()
     }
 
