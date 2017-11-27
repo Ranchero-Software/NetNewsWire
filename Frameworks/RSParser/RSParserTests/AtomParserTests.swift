@@ -20,4 +20,20 @@ class AtomParserTests: XCTestCase {
 		}
 	}
 
+	func testAllThisPerformance() {
+
+		// 0.003 sec on my 2012 iMac.
+		let d = parserData("allthis", "atom", "http://leancrew.com/all-this")
+		self.measure {
+			let _ = try! FeedParser.parse(d)
+		}
+	}
+
+	func testGettingHomePageLink() {
+
+		let d = parserData("allthis", "atom", "http://leancrew.com/all-this")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		XCTAssertTrue(parsedFeed.homePageURL == "http://leancrew.com/all-this")
+	}
 }

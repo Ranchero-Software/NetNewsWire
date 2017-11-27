@@ -325,7 +325,7 @@
                                         <rect key="frame" x="289" y="4" width="4" height="17"/>
                                         <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" refusesFirstResponder="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" usesSingleLineMode="YES" id="JqV-71-gHH">
                                             <font key="font" metaFont="system"/>
-                                            <color key="textColor" white="0.25" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <color key="textColor" white="0.25" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
@@ -379,16 +379,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="166" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView appearanceType="aqua" borderType="none" autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
+                            <scrollView appearanceType="aqua" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
                                 <rect key="frame" x="0.0" y="0.0" width="166" height="300"/>
                                 <clipView key="contentView" drawsBackground="NO" id="2eU-Wz-F9g">
                                     <rect key="frame" x="0.0" y="0.0" width="166" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView appearanceType="aqua" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="22" rowSizeStyle="small" viewBased="YES" indentationPerLevel="14" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="Evergreen" customModuleProvider="target">
+                                        <outlineView appearanceType="aqua" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="22" rowSizeStyle="small" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="14" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="Evergreen" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="167" height="300"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <size key="intercellSpacing" width="3" height="0.0"/>
+                                            <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
@@ -406,7 +406,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView identifier="HeaderCell" id="qkt-WA-5tB">
-                                                            <rect key="frame" x="1" y="0.0" width="164" height="17"/>
+                                                            <rect key="frame" x="1" y="1" width="164" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fNJ-z1-0Up">
@@ -424,13 +424,13 @@
                                                             </connections>
                                                         </tableCellView>
                                                         <tableCellView identifier="DataCell" id="HJn-Tm-YNO" customClass="SidebarCell" customModule="Evergreen" customModuleProvider="target">
-                                                            <rect key="frame" x="1" y="17" width="164" height="17"/>
+                                                            <rect key="frame" x="1" y="20" width="164" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ocU-b4-EaY">
                                                                     <rect key="frame" x="3" y="0.0" width="17" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                    <imageCell key="cell" refusesFirstResponder="YES" imageScaling="proportionallyDown" id="UzL-Uv-Vhz"/>
+                                                                    <imageCell key="cell" refusesFirstResponder="YES" imageScaling="proportionallyUpOrDown" id="UzL-Uv-Vhz"/>
                                                                 </imageView>
                                                                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fst-vi-Wue" userLabel="Text field">
                                                                     <rect key="frame" x="25" y="0.0" width="120" height="17"/>

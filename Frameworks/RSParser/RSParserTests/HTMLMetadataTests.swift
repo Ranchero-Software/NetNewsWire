@@ -83,6 +83,15 @@ class HTMLMetadataTests: XCTestCase {
 		}
 	}
 
+	func testCocoPerformance() {
+
+		// 0.004 sec on my 2012 iMac
+		let d = parserData("coco", "html", "https://www.theatlantic.com/entertainment/archive/2017/11/coco-is-among-pixars-best-movies-in-years/546695/")
+		self.measure {
+			let _ = RSHTMLMetadataParser.htmlMetadata(with: d)
+		}
+	}
+
 	func testSixColors() {
 
 		let d = parserData("sixcolors", "html", "http://sixcolors.com/")
@@ -110,5 +119,23 @@ class HTMLMetadataTests: XCTestCase {
 		self.measure {
 			let _ = RSHTMLMetadataParser.htmlMetadata(with: d)
 		}
+	}
+
+	func testCocoOGImage() {
+
+		let d = parserData("coco", "html", "https://www.theatlantic.com/entertainment/archive/2017/11/coco-is-among-pixars-best-movies-in-years/546695/")
+		let metadata = RSHTMLMetadataParser.htmlMetadata(with: d)
+		let openGraphData = metadata.openGraphProperties!
+		let image = openGraphData.images.first!
+		XCTAssert(image.url == "https://cdn.theatlantic.com/assets/media/img/mt/2017/11/1033101_first_full_length_trailer_arrives_pixars_coco/facebook.jpg?1511382177")
+	}
+
+	func testCocoTwitterImage() {
+
+		let d = parserData("coco", "html", "https://www.theatlantic.com/entertainment/archive/2017/11/coco-is-among-pixars-best-movies-in-years/546695/")
+		let metadata = RSHTMLMetadataParser.htmlMetadata(with: d)
+		let twitterData = metadata.twitterProperties!
+		let imageURL = twitterData.imageURL!
+		XCTAssert(imageURL == "https://cdn.theatlantic.com/assets/media/img/mt/2017/11/1033101_first_full_length_trailer_arrives_pixars_coco/facebook.jpg?1511382177")
 	}
 }

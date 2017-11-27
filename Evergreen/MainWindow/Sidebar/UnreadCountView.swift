@@ -9,11 +9,11 @@
 import Foundation
 import Cocoa
 
-private let padding = currentTheme.edgeInsets(forKey: "MainWindow.SourceList.unreadCount.padding")
-private let cornerRadius = currentTheme.float(forKey: "MainWindow.SourceList.unreadCount.cornerRadius")
-private let backgroundColor = currentTheme.colorWithAlpha(forKey: "MainWindow.SourceList.unreadCount.backgroundColor")
-private let textColor = currentTheme.colorWithAlpha(forKey: "MainWindow.SourceList.unreadCount.color")
-private let textSize = currentTheme.float(forKey: "MainWindow.SourceList.unreadCount.fontSize")
+private let padding = appDelegate.currentTheme.edgeInsets(forKey: "MainWindow.SourceList.unreadCount.padding")
+private let cornerRadius = appDelegate.currentTheme.float(forKey: "MainWindow.SourceList.unreadCount.cornerRadius")
+private let backgroundColor = appDelegate.currentTheme.colorWithAlpha(forKey: "MainWindow.SourceList.unreadCount.backgroundColor")
+private let textColor = appDelegate.currentTheme.colorWithAlpha(forKey: "MainWindow.SourceList.unreadCount.color")
+private let textSize = appDelegate.currentTheme.float(forKey: "MainWindow.SourceList.unreadCount.fontSize")
 private let textFont = NSFont.systemFont(ofSize: textSize, weight: NSFont.Weight.semibold)
 private var textAttributes: [NSAttributedStringKey: AnyObject] = [NSAttributedStringKey.foregroundColor: textColor, NSAttributedStringKey.font: textFont, NSAttributedStringKey.kern: NSNull()]
 private var textSizeCache = [Int: NSSize]()

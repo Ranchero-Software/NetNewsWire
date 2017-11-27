@@ -9,7 +9,7 @@
 import Foundation
 import RSParser
 
-private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom"]
+private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom", "json"]
 
 class HTMLFeedFinder {
 

@@ -34,8 +34,8 @@ public struct JSONFeedParser {
 			let feedURL = parsedObject["feed_url"] as? String ?? parserData.url
 			let feedDescription = parsedObject["description"] as? String
 			let nextURL = parsedObject["next_url"] as? String
-			let iconURL = parsedObject["icon_url"] as? String
-			let faviconURL = parsedObject["favicon_url"] as? String
+			let iconURL = parsedObject["icon"] as? String
+			let faviconURL = parsedObject["favicon"] as? String
 			let expired = parsedObject["expired"] as? Bool ?? false
 			let hubs = parseHubs(parsedObject)
 
@@ -149,9 +149,7 @@ private extension JSONFeedParser {
 		guard let attachmentsArray = itemDictionary["attachments"] as? JSONArray else {
 			return nil
 		}
-		return Set(attachmentsArray.flatMap { (oneAttachmentObject) -> ParsedAttachment? in
-			return parseAttachment(oneAttachmentObject)
-		})
+		return Set(attachmentsArray.flatMap { parseAttachment($0) })
 	}
 
 	static func parseAttachment(_ attachmentObject: JSONDictionary) -> ParsedAttachment? {

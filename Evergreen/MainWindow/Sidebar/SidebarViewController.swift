@@ -21,10 +21,13 @@ import RSCore
 	}()
     var undoableCommands = [UndoableCommand]()
 	private var animatingChanges = false
+	private var sidebarCellAppearance: SidebarCellAppearance!
 
 	//MARK: NSViewController
 
 	override func viewDidLoad() {
+
+		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
 
 		outlineView.sidebarViewController = self
 		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)
@@ -34,6 +37,8 @@ import RSCore
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 
 		outlineView.reloadData()
 
@@ -58,7 +63,7 @@ import RSCore
 		guard let representedObject = note.object else {
 			return
 		}
-		let _ = configureCellsForRepresentedObject(representedObject as AnyObject)
+		configureUnreadCountForCellsForRepresentedObject(representedObject as AnyObject)
 	}
 
 	@objc dynamic func containerChildrenDidChange(_ note: Notification) {
@@ -79,6 +84,19 @@ import RSCore
 		revealAndSelectRepresentedObject(feed)
 	}
 
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+
+		configureAvailableCells()
+	}
+
+	@objc func feedSettingDidChange(_ note: Notification) {
+
+		guard let feed = note.object as? Feed else {
+			return
+		}
+		configureCellsForRepresentedObject(feed)
+	}
+
 	// MARK: Actions
 
 	@IBAction func delete(_ sender: AnyObject?) {
@@ -93,14 +111,17 @@ import RSCore
             return
         }
         
-		let selectedRows = outlineView.selectedRowIndexes
-
 		animatingChanges = true
 		outlineView.beginUpdates()
-		outlineView.removeItems(at: selectedRows, inParent: nil, withAnimation: [.slideDown])
-		outlineView.endUpdates()
 
-        runCommand(deleteCommand)
+		let indexSetsGroupedByParent = Node.indexSetsGroupedByParent(nodesToDelete)
+		for (parent, indexSet) in indexSetsGroupedByParent {
+			outlineView.removeItems(at: indexSet, inParent: parent.isRoot ? nil : parent, withAnimation: [.slideDown])
+		}
+
+		outlineView.endUpdates()
+		
+		runCommand(deleteCommand)
 		animatingChanges = false
 	}
 
@@ -317,10 +338,17 @@ private extension SidebarViewController {
 
 	func configure(_ cell: SidebarCell, _ node: Node) {
 
+		cell.cellAppearance = sidebarCellAppearance
 		cell.objectValue = node
 		cell.name = nameFor(node)
-		cell.unreadCount = unreadCountFor(node)
+		configureUnreadCount(cell, node)
 		cell.image = imageFor(node)
+		cell.shouldShowImage = node.representedObject is Feed
+	}
+
+	func configureUnreadCount(_ cell: SidebarCell, _ node: Node) {
+
+		cell.unreadCount = unreadCountFor(node)
 	}
 
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
@@ -331,7 +359,10 @@ private extension SidebarViewController {
 
 	func imageFor(_ node: Node) -> NSImage? {
 
-		return nil
+		guard let feed = node.representedObject as? Feed else {
+			return nil
+		}
+		return appDelegate.faviconDownloader.favicon(for: feed)
 	}
 
 	func nameFor(_ node: Node) -> String {
@@ -350,50 +381,57 @@ private extension SidebarViewController {
 		return 0
 	}
 
+	func cellForRowView(_ rowView: NSTableRowView) -> SidebarCell? {
+
+		return rowView.view(atColumn: 0) as? SidebarCell
+	}
+
 	func availableSidebarCells() -> [SidebarCell] {
 
 		var cells = [SidebarCell]()
 
 		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, _: Int) -> Void in
-
-			if let oneSidebarCell = rowView.view(atColumn: 0) as? SidebarCell {
-				cells += [oneSidebarCell]
+			if let cell = cellForRowView(rowView) {
+				cells += [cell]
 			}
 		}
 
 		return cells
 	}
 
-	func cellsForRepresentedObject(_ representedObject: AnyObject) -> [SidebarCell] {
+	func configureAvailableCells() {
 
-		let availableCells = availableSidebarCells()
-		return availableCells.filter{ (oneSidebarCell) -> Bool in
+		applyToAvailableCells(configure)
+	}
 
-			guard let oneNode = oneSidebarCell.objectValue as? Node else {
-				return false
+	func applyToAvailableCells(_ callback: (SidebarCell, Node) -> Void) {
+
+		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) -> Void in
+
+			guard let cell = cellForRowView(rowView), let node = nodeForRow(row) else {
+				return
 			}
-			return oneNode.representedObject === representedObject
+			callback(cell, node)
 		}
 	}
 
-	func configureCellsForRepresentedObject(_ representedObject: AnyObject) -> Bool {
+	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (SidebarCell, Node) -> Void) {
 
-		//Return true if any cells were configured.
-
-		let cells = cellsForRepresentedObject(representedObject)
-		if cells.isEmpty {
-			return false
-		}
-
-		cells.forEach { (oneSidebarCell) in
-			guard let oneNode = oneSidebarCell.objectValue as? Node else {
-				return
+		applyToAvailableCells { (cell, node) in
+			if node.representedObject === representedObject {
+				callback(cell, node)
 			}
-			configure(oneSidebarCell, oneNode)
-			oneSidebarCell.needsDisplay = true
-			oneSidebarCell.needsLayout = true
 		}
-		return true
+	}
+
+	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
+
+		applyToCellsForRepresentedObject(representedObject, configure)
+	}
+
+	func configureUnreadCountForCellsForRepresentedObject(_ representedObject: AnyObject) {
+
+		applyToCellsForRepresentedObject(representedObject, configureUnreadCount)
 	}
 
 	@discardableResult
@@ -430,6 +468,22 @@ private extension SidebarViewController {
 			deleteItemForNode(oneNode)
 		}
 	}
-	
+
+	func commonParentItemForNodes(_ nodes: [Node]) -> Node? {
+
+		if nodes.isEmpty {
+			return nil
+		}
+
+		guard let parent = nodes.first!.parent else {
+			return nil
+		}
+		for node in nodes {
+			if node.parent !== parent {
+				return nil
+			}
+		}
+		return parent
+	}
 }
 

@@ -29,7 +29,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
         
         super.windowDidLoad()
 
-		window?.titleVisibility = .hidden
+//		window?.titleVisibility = .hidden
 		window?.setFrameUsingName(windowAutosaveName, force: true)
 		
 		detailSplitViewItem?.minimumThickness = 384
@@ -251,10 +251,10 @@ private extension MainWindowController {
 	func updateWindowTitle() {
 
 		if unreadCount < 1 {
-			window?.title = appName
+			window?.title = appDelegate.appName!
 		}
 		else if unreadCount > 0 {
-			window?.title = "\(appName) (\(unreadCount))"
+			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
 		}
 	}
 }

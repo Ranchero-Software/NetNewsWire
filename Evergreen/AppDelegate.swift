@@ -15,31 +15,17 @@ import RSWeb
 import Account
 import RSCore
 
-let appName = "Evergreen"
-var currentTheme: VSTheme!
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UnreadCountProvider {
 
-	let windowControllers = NSMutableArray()
-	var preferencesWindowController: NSWindowController?
-	var mainWindowController: NSWindowController?
-	var readerWindows = [NSWindowController]()
-	var feedListWindowController: NSWindowController?
-	var dinosaursWindowController: DinosaursWindowController?
-	var addFeedController: AddFeedController?
-	var addFolderWindowController: AddFolderWindowController?
-	var keyboardShortcutsWindowController: WebViewWindowController?
-	var inspectorWindowController: InspectorWindowController?
-	var logWindowController: LogWindowController?
-	var panicButtonWindowController: PanicButtonWindowController?
-	
-	let log = Log()
-	let themeLoader = VSThemeLoader()
-	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
-	private let dockBadge = DockBadge()
-
+	var currentTheme: VSTheme!
+	var faviconDownloader: FaviconDownloader!
+	var imageDownloader: ImageDownloader!
+	var authorAvatarDownloader: AuthorAvatarDownloader!
+	var feedIconDownloader: FeedIconDownloader!
+	var appName: String!
 	var pseudoFeeds = [PseudoFeed]()
 
 	var unreadCount = 0 {
@@ -50,6 +36,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		}
 	}
+
+	private let windowControllers = NSMutableArray()
+	private var preferencesWindowController: NSWindowController?
+	private var mainWindowController: NSWindowController?
+	private var readerWindows = [NSWindowController]()
+	private var feedListWindowController: NSWindowController?
+	private var dinosaursWindowController: DinosaursWindowController?
+	private var addFeedController: AddFeedController?
+	private var addFolderWindowController: AddFolderWindowController?
+	private var keyboardShortcutsWindowController: WebViewWindowController?
+	private var inspectorWindowController: InspectorWindowController?
+	private var logWindowController: LogWindowController?
+	private var panicButtonWindowController: PanicButtonWindowController?
+	
+	private let log = Log()
+	private let themeLoader = VSThemeLoader()
+	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
+	private let dockBadge = DockBadge()
 
 	override init() {
 
@@ -64,6 +68,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	// MARK: - API
 
 	func logMessage(_ message: String, type: LogItem.ItemType) {
+
+		#if DEBUG
+			print("logMessage: \(message) - \(type)")
+		#endif
 
 		let logItem = LogItem(type: type, message: message)
 		log.add(logItem)
@@ -112,13 +120,33 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func applicationDidFinishLaunching(_ note: Notification) {
 
+		appName = Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String
+
 		let isFirstRun = AppDefaults.shared.isFirstRun
-		logDebugMessage(isFirstRun ? "Is first run." : "Is not first run.")
+		if isFirstRun {
+			logDebugMessage("Is first run.")
+		}
 		let localAccount = AccountManager.shared.localAccount
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 
 		currentTheme = themeLoader.defaultTheme
 
+		let tempDirectory = NSTemporaryDirectory()
+		let cacheFolder = (tempDirectory as NSString).appendingPathComponent("com.ranchero.evergreen")
+
+		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
+		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
+		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
+		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
+
+		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
+		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
+		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
+		imageDownloader = ImageDownloader(folder: imagesFolder)
+
+		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
+		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader)
+		
 		let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
 		let unreadFeed = UnreadFeed()
 		let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
@@ -133,6 +161,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		#endif
 
 		NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.getURL(_:_:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
+
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
@@ -181,6 +211,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
 		}
+	}
+
+	@objc func feedSettingDidChange(_ note: Notification) {
+
+		guard let feed = note.object as? Feed else {
+			return
+		}
+		let _ = faviconDownloader.favicon(for: feed)
 	}
 
 	// MARK: Main Window
@@ -408,7 +446,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
 		#if DEBUG
-			print("debug")
+			AccountManager.shared.accounts.forEach{ $0.debugDropConditionalGetInfo() }
 		#endif
 	}
 }

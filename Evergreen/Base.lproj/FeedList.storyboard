@@ -206,7 +206,7 @@
                                                                 <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8NA-xf-HSF">
                                                                     <rect key="frame" x="3" y="0.0" width="17" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                    <imageCell key="cell" refusesFirstResponder="YES" imageScaling="proportionallyDown" id="eJc-Zr-x65"/>
+                                                                    <imageCell key="cell" refusesFirstResponder="YES" imageScaling="proportionallyUpOrDown" id="eJc-Zr-x65"/>
                                                                 </imageView>
                                                                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HwU-Ta-d1b" userLabel="Text field">
                                                                     <rect key="frame" x="25" y="0.0" width="120" height="17"/>
@@ -251,6 +251,9 @@
                             <constraint firstItem="uLp-jc-nMQ" firstAttribute="top" secondItem="4Vf-sw-YId" secondAttribute="top" id="tvf-eA-0KS"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="outlineView" destination="n3L-hE-QVt" id="5bh-jo-RY2"/>
+                    </connections>
                 </viewController>
                 <customObject id="JQS-ie-zPj" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

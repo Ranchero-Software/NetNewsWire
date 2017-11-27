@@ -11,7 +11,6 @@
 #import <RSCore/RSBlocks.h>
 #import <RSCore/RSConstants.h>
 #import <RSCore/RSPlatform.h>
-#import <RSCore/RSBinaryCache.h>
 
 
 /*Foundation*/

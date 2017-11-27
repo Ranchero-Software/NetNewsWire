@@ -63,7 +63,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 
 	override func viewDidLoad() {
 
-		cellAppearance = TimelineCellAppearance(theme: currentTheme, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, fontSize: fontSize)
 
 		tableView.rowHeight = calculateRowHeight()
 		tableView.target = self
@@ -105,7 +105,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 
 	private func fontSizeDidChange() {
 
-		cellAppearance = TimelineCellAppearance(theme: currentTheme, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, fontSize: fontSize)
 		let updatedRowHeight = calculateRowHeight()
 		if tableView.rowHeight != updatedRowHeight {
 			tableView.rowHeight = updatedRowHeight
@@ -319,7 +319,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, tags: nil, attachments: nil, status: status)
 		
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, appearance: cellAppearance, showFeedName: false)
+		let prototypeCellData = TimelineCellData(article: prototypeArticle, appearance: cellAppearance, showFeedName: false, favicon: nil, avatar: nil, featuredImage: nil)
 		let height = timelineCellHeight(100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
@@ -410,7 +410,53 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 
 		cell.objectValue = article
-		cell.cellData = TimelineCellData(article: article, appearance: cellAppearance, showFeedName: showFeedNames)
+
+		let favicon = faviconFor(article)
+		let avatar = avatarFor(article)
+		let featuredImage = featuredImageFor(article)
+
+		cell.cellData = TimelineCellData(article: article, appearance: cellAppearance, showFeedName: showFeedNames, favicon: favicon, avatar: avatar, featuredImage: featuredImage)
+	}
+
+	private func faviconFor(_ article: Article) -> NSImage? {
+
+		guard let feed = article.feed else {
+			return nil
+		}
+		return appDelegate.faviconDownloader.favicon(for: feed)
+	}
+
+	private func avatarFor(_ article: Article) -> NSImage? {
+
+		if let authors = article.authors {
+			for author in authors {
+				if let image = avatarForAuthor(author) {
+					return image
+				}
+			}
+		}
+
+		guard let feed = article.feed else {
+			return nil
+		}
+
+		// TODO: make Feed know about its authors.
+		// https://github.com/brentsimmons/Evergreen/issues/212
+
+		return appDelegate.feedIconDownloader.icon(for: feed)
+	}
+
+	private func avatarForAuthor(_ author: Author) -> NSImage? {
+
+		return appDelegate.authorAvatarDownloader.image(for: author)
+	}
+
+	private func featuredImageFor(_ article: Article) -> NSImage? {
+
+		if let url = article.imageURL {
+			return appDelegate.imageDownloader.image(for: url)
+		}
+		return nil
 	}
 
 	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {

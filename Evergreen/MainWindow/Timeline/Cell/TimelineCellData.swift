@@ -24,9 +24,11 @@ struct TimelineCellData {
 	let attributedFeedName: NSAttributedString
 	let showFeedName: Bool
 	let favicon: NSImage?
+	let avatar: NSImage? // feed or user avatar
+	let featuredImage: NSImage? // image from within the article
 	let read: Bool
 
-	init(article: Article, appearance: TimelineCellAppearance, showFeedName: Bool) {
+	init(article: Article, appearance: TimelineCellAppearance, showFeedName: Bool, favicon: NSImage?, avatar: NSImage?, featuredImage: NSImage?) {
 		
 		self.title = timelineTruncatedTitle(article)
 		self.text = timelineTruncatedSummary(article)
@@ -65,7 +67,10 @@ struct TimelineCellData {
 
 		self.showFeedName = showFeedName
 
-		self.favicon = nil
+		self.favicon = favicon
+		self.avatar = avatar
+		self.featuredImage = featuredImage
+		
 		self.read = article.status.read
 	}
 
@@ -80,6 +85,8 @@ struct TimelineCellData {
 		self.attributedFeedName = NSAttributedString(string: "")
 		self.showFeedName = false
 		self.favicon = nil
+		self.avatar = nil
+		self.featuredImage = nil
 		self.read = true
 	}
 

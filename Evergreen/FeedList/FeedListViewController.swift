@@ -13,11 +13,26 @@ import RSCore
 final class FeedListViewController: NSViewController {
 
 	@IBOutlet var outlineView: NSOutlineView!
+	private var sidebarCellAppearance: SidebarCellAppearance!
 	private let treeControllerDelegate = FeedListTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		TreeController(delegate: treeControllerDelegate)
 	}()
 
+	// MARK: NSViewController
+
+	override func viewDidLoad() {
+
+		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+	}
+
+	// MARK: - Notifications
+
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+
+		configureAvailableCells()
+	}
 }
 
 // MARK: - NSOutlineViewDataSource
@@ -80,14 +95,19 @@ extension FeedListViewController: NSOutlineViewDelegate {
 
 	private func configure(_ cell: SidebarCell, _ node: Node) {
 
+		cell.cellAppearance = sidebarCellAppearance
 		cell.objectValue = node
 		cell.name = nameFor(node)
 		cell.image = imageFor(node)
+		cell.shouldShowImage = node.representedObject is FeedListFeed
 	}
 
 	func imageFor(_ node: Node) -> NSImage? {
 
-		return nil
+		guard let feed = node.representedObject as? FeedListFeed else {
+			return nil
+		}
+		return appDelegate.faviconDownloader.favicon(withHomePageURL: feed.homePageURL)
 	}
 
 	func nameFor(_ node: Node) -> String {
@@ -97,5 +117,35 @@ extension FeedListViewController: NSOutlineViewDelegate {
 		}
 		return ""
 	}
+}
 
+private extension FeedListViewController {
+
+	func nodeForRow(_ row: Int) -> Node? {
+
+		if row < 0 || row >= outlineView.numberOfRows {
+			return nil
+		}
+
+		if let node = outlineView.item(atRow: row) as? Node {
+			return node
+		}
+		return nil
+	}
+
+	func cellForRowView(_ rowView: NSTableRowView) -> SidebarCell? {
+
+		return rowView.view(atColumn: 0) as? SidebarCell
+	}
+
+	func configureAvailableCells() {
+
+		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) -> Void in
+
+			guard let cell = cellForRowView(rowView), let node = nodeForRow(row) else {
+				return
+			}
+			configure(cell, node)
+		}
+	}
 }

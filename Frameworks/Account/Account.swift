@@ -134,6 +134,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
         NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
+
 		pullObjectsFromDisk()
 		
 		DispatchQueue.main.async {
@@ -150,15 +152,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
 
-		if feed.iconURL != parsedFeed.iconURL {
-			feed.iconURL = parsedFeed.iconURL
-			dirty = true
-		}
-		if feed.faviconURL != parsedFeed.faviconURL {
-			feed.faviconURL = parsedFeed.faviconURL
-			dirty = true
-		}
-		
+		feed.takeSettings(from: parsedFeed)
+
 		database.update(feed: feed, parsedFeed: parsedFeed) { (newArticles, updatedArticles) in
 
 			var userInfo = [String: Any]()
@@ -258,6 +253,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			didAddFeed = true
 		}
 		
+		rebuildFeedDictionaries()
 		return didAddFeed // TODO
 	}
 
@@ -295,6 +291,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		children += [folder]
 		postChildrenDidChangeNotification()
+		rebuildFeedDictionaries()
 		return true
 	}
 
@@ -352,6 +349,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		flattenedFeeds().forEach { $0.unreadCount = 0 }		
 	}
 
+	// MARK: - Debug
+
+	public func debugDropConditionalGetInfo() {
+
+		#if DEBUG
+			flattenedFeeds().forEach{ $0.debugDropConditionalGetInfo() }
+		#endif
+	}
+
 	// MARK: - Notifications
 
 	@objc func downloadProgressDidChange(_ note: Notification) {
@@ -392,9 +398,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
     
     @objc func batchUpdateDidPerform(_ note: Notification) {
-        
+
+		rebuildFeedDictionaries()
         updateUnreadCount()
     }
+
+	@objc func feedSettingDidChange(_ note: Notification) {
+
+		if let feed = note.object as? Feed, let feedAccount = feed.account, feedAccount === self {
+			dirty = true
+		}
+	}
 
 	// MARK: - Equatable
 

@@ -18,6 +18,7 @@ struct DefaultFeedsImporter {
 	static func importIfNeeded(_ firstRun: Bool, account: Account) {
 		
 		if shouldImportDefaultFeeds(firstRun) {
+			appDelegate.logDebugMessage("Importing default feeds.")
 			FeedsImporter.importFeeds(defaultFeeds(), account: account)
 		}
 	}

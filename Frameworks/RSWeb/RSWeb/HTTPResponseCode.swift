@@ -43,7 +43,7 @@ public struct HTTPResponseCode {
 	public static let proxyAuthenticationRequired = 407
 	public static let requestTimeout = 408
 	public static let conflict = 409
-	public static let goone = 410
+	public static let gone = 410
 	public static let lengthRequired = 411
 	public static let preconditionFailed = 412
 	public static let entityTooLarge = 413

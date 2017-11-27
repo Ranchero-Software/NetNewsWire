@@ -8,6 +8,12 @@
 
 import Foundation
 import Data
+import RSParser
+
+public extension Notification.Name {
+
+	public static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
+}
 
 public extension Feed {
 
@@ -24,6 +30,32 @@ public extension Feed {
 			return Set<Article>()
 		}
 		return account.fetchArticles(for: self)
+	}
+
+	public func takeSettings(from parsedFeed: ParsedFeed) {
+
+		var didChangeAtLeastOneSetting = false
+
+		if iconURL != parsedFeed.iconURL {
+			iconURL = parsedFeed.iconURL
+			didChangeAtLeastOneSetting = true
+		}
+		if faviconURL != parsedFeed.faviconURL {
+			faviconURL = parsedFeed.faviconURL
+			didChangeAtLeastOneSetting = true
+		}
+		if homePageURL != parsedFeed.homePageURL {
+			homePageURL = parsedFeed.homePageURL
+			didChangeAtLeastOneSetting = true
+		}
+		if name != parsedFeed.title {
+			name = parsedFeed.title
+			didChangeAtLeastOneSetting = true
+		}
+
+		if didChangeAtLeastOneSetting {
+			NotificationCenter.default.post(name: .FeedSettingDidChange, object: self)
+		}
 	}
 }
 

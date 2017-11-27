@@ -160,7 +160,7 @@
 			<key>homePageURL</key>
 			<string>http://collindonnell.com/</string>
 			<key>url</key>
-			<string>http://feedpress.me/collindonnell</string>
+			<string>http://collindonnell.com/feed/json</string>
 		</dict>
 		<dict>
 			<key>name</key>
@@ -305,7 +305,7 @@
 			<key>homePageURL</key>
 			<string>http://indiestack.com/</string>
 			<key>url</key>
-			<string>http://indiestack.com/feed/</string>
+			<string>http://indiestack.com/feed/json/</string>
 		</dict>
 		<dict>
 			<key>name</key>

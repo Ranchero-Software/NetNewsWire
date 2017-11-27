@@ -12,7 +12,7 @@ import RSWeb
 
 func downloadTitleForFeed(_ url: URL, _ completionHandler: @escaping (_ title: String?) -> ()) {
 
-	download(url) { (data, response, error) in
+	downloadUsingCache(url) { (data, response, error) in
 
 		guard let data = data else {
 			completionHandler(nil)
