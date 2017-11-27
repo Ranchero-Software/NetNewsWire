@@ -15,6 +15,8 @@ public final class FeedIconDownloader {
 
 	private let imageDownloader: ImageDownloader
 	private var homePageToIconURLCache = [String: String]()
+	private var homePagesWithNoIconURL = Set<String>()
+	private var homePageDownloadsInProgress = Set<String>()
 
 	init(imageDownloader: ImageDownloader) {
 
@@ -35,6 +37,10 @@ public final class FeedIconDownloader {
 	}
 
 	func icon(forHomePageURL homePageURL: String) -> NSImage? {
+
+		if homePagesWithNoIconURL.contains(homePageURL) {
+			return nil
+		}
 
 		if let iconURL = cachedIconURL(for: homePageURL) {
 			return icon(forURL: iconURL)
@@ -59,14 +65,20 @@ private extension FeedIconDownloader {
 
 	func cacheIconURL(for homePageURL: String, _ iconURL: String) {
 
+		homePagesWithNoIconURL.remove(homePageURL)
 		homePageToIconURLCache[homePageURL] = iconURL
-		let _ = icon(forURL: iconURL)
 	}
 
 	func findIconURLForHomePageURL(_ homePageURL: String) {
 
+		guard !homePageDownloadsInProgress.contains(homePageURL) else {
+			return
+		}
+		homePageDownloadsInProgress.insert(homePageURL)
+
 		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { (metadata) in
 
+			self.homePageDownloadsInProgress.remove(homePageURL)
 			guard let metadata = metadata else {
 				return
 			}
@@ -76,34 +88,12 @@ private extension FeedIconDownloader {
 
 	func pullIconURL(from metadata: RSHTMLMetadata, homePageURL: String) {
 
-		if let openGraphImageURL = largestOpenGraphImageURL(from: metadata) {
-			cacheIconURL(for: homePageURL, openGraphImageURL)
+		if let url = metadata.bestWebsiteIconURL() {
+			cacheIconURL(for: homePageURL, url)
+			let _ = icon(forURL: url)
 			return
 		}
 
-		if let twitterImageURL = metadata.twitterProperties.imageURL {
-			cacheIconURL(for: homePageURL, twitterImageURL)
-		}
-	}
-
-	func largestOpenGraphImageURL(from metadata: RSHTMLMetadata) -> String? {
-
-		guard let openGraphImages = metadata.openGraphProperties?.images else {
-			return nil
-		}
-
-		var bestImage: RSHTMLOpenGraphImage? = nil
-
-		for image in openGraphImages {
-			if bestImage == nil {
-				bestImage = image
-				continue
-			}
-			if image.height > bestImage!.height && image.width > bestImage!.width {
-				bestImage = image
-			}
-		}
-
-		return bestImage?.secureURL ?? bestImage?.url
+		homePagesWithNoIconURL.insert(homePageURL)
 	}
 }

@@ -24,6 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
+	var feedIconDownloader: FeedIconDownloader!
 	var appName: String!
 	var pseudoFeeds = [PseudoFeed]()
 
@@ -144,7 +145,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		imageDownloader = ImageDownloader(folder: imagesFolder)
 
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
-
+		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader)
+		
 		let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
 		let unreadFeed = UnreadFeed()
 		let starredFeed = SmartFeed(delegate: StarredFeedDelegate())

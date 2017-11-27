@@ -443,11 +443,7 @@ extension TimelineViewController: NSTableViewDelegate {
 		// TODO: make Feed know about its authors.
 		// https://github.com/brentsimmons/Evergreen/issues/212
 
-		if let iconURL = feed.iconURL {
-			return appDelegate.imageDownloader.image(for: iconURL)
-		}
-
-		return nil
+		return appDelegate.feedIconDownloader.icon(for: feed)
 	}
 
 	private func avatarForAuthor(_ author: Author) -> NSImage? {
