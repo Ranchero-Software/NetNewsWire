@@ -93,6 +93,12 @@
 					<integer>8</integer>
 					<key>unreadCircleMarginRight</key>
 					<integer>8</integer>
+					<key>avatarHeight</key>
+					<string>64</string>
+					<key>avatarWidth</key>
+					<string>64</string>
+					<key>avatarMarginRight</key>
+					<string>8</string>
 				</dict>
 			</dict>
 		</dict>
