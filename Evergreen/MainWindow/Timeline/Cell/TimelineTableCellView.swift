@@ -16,6 +16,13 @@ class TimelineTableCellView: NSTableCellView {
 	let dateView = RSSingleLineView(frame: NSZeroRect)
 	let feedNameView = RSSingleLineView(frame: NSZeroRect)
 
+	let avatarImageView: NSImageView = {
+		let imageView = NSImageView(frame: NSRect.zero)
+		imageView.imageScaling = .scaleProportionallyUpOrDown
+		imageView.animates = false
+		return imageView
+	}()
+
 	var cellAppearance: TimelineCellAppearance!
 	var cellData: TimelineCellData! {
 		didSet {
@@ -52,22 +59,21 @@ class TimelineTableCellView: NSTableCellView {
 			needsDisplay = true
 		}
 	}
-	
-	private func commonInit() {
-		
-		addSubview(titleView)
-		titleView.translatesAutoresizingMaskIntoConstraints = false
-		
-		addSubview(unreadIndicatorView)
-		unreadIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-		unreadIndicatorView.isHidden = true
-		
-		addSubview(dateView)
-		dateView.translatesAutoresizingMaskIntoConstraints = false
 
-		addSubview(feedNameView)
-		feedNameView.translatesAutoresizingMaskIntoConstraints = false;
-		feedNameView.isHidden = true
+	private func addSubviewAtInit(_ view: NSView, hidden: Bool) {
+
+		addSubview(view)
+		view.translatesAutoresizingMaskIntoConstraints = false
+		view.isHidden = hidden
+	}
+
+	private func commonInit() {
+
+		addSubviewAtInit(titleView, hidden: false)
+		addSubviewAtInit(unreadIndicatorView, hidden: true)
+		addSubviewAtInit(dateView, hidden: false)
+		addSubviewAtInit(feedNameView, hidden: true)
+		addSubviewAtInit(avatarImageView, hidden: true)
 	}
 	
 	override init(frame frameRect: NSRect) {
