@@ -1,5 +1,5 @@
 //
-//  RSHTMLData+Extension.swift
+//  RSHTMLMetadata+Extension.swift
 //  Evergreen
 //
 //  Created by Brent Simmons on 11/26/17.
@@ -42,10 +42,35 @@ extension RSHTMLMetadata {
 		return url
 	}
 
+	func largestAppleTouchIcon() -> String? {
+
+		guard let icons = appleTouchIcons, !icons.isEmpty else {
+			return nil
+		}
+
+		var bestImage: RSHTMLMetadataAppleTouchIcon? = nil
+
+		for image in icons {
+			if bestImage == nil {
+				bestImage = image
+				continue
+			}
+			if image.size.height > bestImage!.size.height && image.size.width > bestImage!.size.width {
+				bestImage = image;
+			}
+		}
+
+		return bestImage?.urlString
+	}
+
 	func bestWebsiteIconURL() -> String? {
 
 		// TODO: metadata icons — sometimes they’re large enough to use here.
 
+		if let appleTouchIcon = largestAppleTouchIcon() {
+			return appleTouchIcon
+		}
+		
 		if let openGraphImageURL = largestOpenGraphImageURL() {
 			return openGraphImageURL
 		}

@@ -36,6 +36,7 @@
 
 @property (nonatomic, readonly) NSString *rel;
 @property (nonatomic, readonly) NSString *sizes;
+@property (nonatomic, readonly) CGSize size;
 @property (nonatomic, readonly) NSString *urlString; // Absolute.
 
 @end

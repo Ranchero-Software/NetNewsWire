@@ -234,6 +234,16 @@ static BOOL typeIsFeedType(NSString *type) {
 	_sizes = [d rsparser_objectForCaseInsensitiveKey:kSizesKey];
 	_rel = [d rsparser_objectForCaseInsensitiveKey:kRelKey];
 
+	_size = CGSizeZero;
+	if (_sizes) {
+		NSArray *components = [_sizes componentsSeparatedByString:@"x"];
+		if (components.count == 2) {
+			CGFloat width = [components[0] floatValue];
+			CGFloat height = [components[1] floatValue];
+			_size = CGSizeMake(width, height);
+		}
+	}
+	
 	return self;
 }
 
