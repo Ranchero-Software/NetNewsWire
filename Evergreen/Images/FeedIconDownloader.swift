@@ -16,7 +16,8 @@ public final class FeedIconDownloader {
 	private let imageDownloader: ImageDownloader
 	private var homePageToIconURLCache = [String: String]()
 	private var homePagesWithNoIconURL = Set<String>()
-	private var homePageDownloadsInProgress = Set<String>()
+	private var urlsInProgress = Set<String>()
+	private var cache = [Feed: NSImage]()
 
 	init(imageDownloader: ImageDownloader) {
 
@@ -25,12 +26,22 @@ public final class FeedIconDownloader {
 
 	func icon(for feed: Feed) -> NSImage? {
 
+		if let cachedImage = cache[feed] {
+			return cachedImage
+		}
+		
 		if let iconURL = feed.iconURL {
-			return icon(forURL: iconURL)
+			if let image = icon(forURL: iconURL) {
+				cache[feed] = image
+				return image
+			}
 		}
 
 		if let homePageURL = feed.homePageURL {
-			return icon(forHomePageURL: homePageURL)
+			if let image = icon(forHomePageURL: homePageURL) {
+				cache[feed] = image
+				return image
+			}
 		}
 
 		return nil
@@ -71,14 +82,14 @@ private extension FeedIconDownloader {
 
 	func findIconURLForHomePageURL(_ homePageURL: String) {
 
-		guard !homePageDownloadsInProgress.contains(homePageURL) else {
+		guard !urlsInProgress.contains(homePageURL) else {
 			return
 		}
-		homePageDownloadsInProgress.insert(homePageURL)
+		urlsInProgress.insert(homePageURL)
 
 		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { (metadata) in
 
-			self.homePageDownloadsInProgress.remove(homePageURL)
+			self.urlsInProgress.remove(homePageURL)
 			guard let metadata = metadata else {
 				return
 			}

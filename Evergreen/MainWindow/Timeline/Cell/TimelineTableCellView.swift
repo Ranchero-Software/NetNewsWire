@@ -122,6 +122,7 @@ class TimelineTableCellView: NSTableCellView {
 		unreadIndicatorView.rs_setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
 		dateView.rs_setFrameIfNotEqual(layoutRects.dateRect)
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
+		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
 	}
 
 	override func updateLayer() {
@@ -173,12 +174,26 @@ class TimelineTableCellView: NSTableCellView {
 		}
 	}
 
+	private func updateAvatar() {
+
+		if let image = cellData.avatar {
+			if avatarImageView.image !== image {
+				avatarImageView.image = image
+			}
+			avatarImageView.isHidden = false
+		}
+		else {
+			avatarImageView.isHidden = true
+		}
+	}
+
 	private func updateSubviews() {
 
 		updateTitleView()
 		updateDateView()
 		updateFeedNameView()
 		updateUnreadIndicator()
+		updateAvatar()
 	}
 	
 	private func updateAppearance() {

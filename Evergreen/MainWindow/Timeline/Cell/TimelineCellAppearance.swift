@@ -36,36 +36,44 @@ struct TimelineCellAppearance {
 	let boxLeftMargin: CGFloat
 
 	let gridColor: NSColor
-	
+
+	let avatarSize: NSSize
+	let avatarMarginRight: CGFloat
+	let avatarAdjustmentTop: CGFloat
+
 	init(theme: VSTheme, fontSize: FontSize) {
 
 		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
 		
-		cellPadding = theme.edgeInsets(forKey: "MainWindow.Timeline.cell.padding")
+		self.cellPadding = theme.edgeInsets(forKey: "MainWindow.Timeline.cell.padding")
 		
-		feedNameColor = theme.color(forKey: "MainWindow.Timeline.cell.feedNameColor")
-		feedNameFont = NSFont.systemFont(ofSize: actualFontSize)
-		faviconFeedNameSpacing = theme.float(forKey: "MainWindow.Timeline.cell.faviconFeedNameSpacing")
+		self.feedNameColor = theme.color(forKey: "MainWindow.Timeline.cell.feedNameColor")
+		self.feedNameFont = NSFont.systemFont(ofSize: actualFontSize)
+		self.faviconFeedNameSpacing = theme.float(forKey: "MainWindow.Timeline.cell.faviconFeedNameSpacing")
 
-		dateColor = theme.color(forKey: "MainWindow.Timeline.cell.dateColor")
+		self.dateColor = theme.color(forKey: "MainWindow.Timeline.cell.dateColor")
 		let actualDateFontSize = AppDefaults.actualFontSize(for: fontSize)
-		dateFont = NSFont.systemFont(ofSize: actualDateFontSize)
-		dateMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginLeft")
+		self.dateFont = NSFont.systemFont(ofSize: actualDateFontSize)
+		self.dateMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginLeft")
 		
-		titleColor = theme.color(forKey: "MainWindow.Timeline.cell.titleColor")
-		titleFont = NSFont.systemFont(ofSize: actualFontSize, weight: NSFont.Weight.bold)
-		titleBottomMargin = theme.float(forKey: "MainWindow.Timeline.cell.titleMarginBottom")
+		self.titleColor = theme.color(forKey: "MainWindow.Timeline.cell.titleColor")
+		self.titleFont = NSFont.systemFont(ofSize: actualFontSize, weight: NSFont.Weight.bold)
+		self.titleBottomMargin = theme.float(forKey: "MainWindow.Timeline.cell.titleMarginBottom")
 		
-		textColor = theme.color(forKey: "MainWindow.Timeline.cell.textColor")
-		textFont = NSFont.systemFont(ofSize: actualFontSize)
+		self.textColor = theme.color(forKey: "MainWindow.Timeline.cell.textColor")
+		self.textFont = NSFont.systemFont(ofSize: actualFontSize)
 		
-		unreadCircleColor = theme.color(forKey: "MainWindow.Timeline.cell.unreadCircleColor")
-		unreadCircleDimension = theme.float(forKey: "MainWindow.Timeline.cell.unreadCircleDimension")
-		unreadCircleMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.unreadCircleMarginRight")
+		self.unreadCircleColor = theme.color(forKey: "MainWindow.Timeline.cell.unreadCircleColor")
+		self.unreadCircleDimension = theme.float(forKey: "MainWindow.Timeline.cell.unreadCircleDimension")
+		self.unreadCircleMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.unreadCircleMarginRight")
 		
-		boxLeftMargin = cellPadding.left + unreadCircleDimension + unreadCircleMarginRight
+		self.gridColor = theme.colorWithAlpha(forKey: "MainWindow.Timeline.gridColor")
+
+		self.avatarSize = theme.size(forKey: "MainWindow.Timeline.cell.avatar")
+		self.avatarMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginRight")
+		self.avatarAdjustmentTop = theme.float(forKey: "MainWindow.Timeline.cell.avatarAdjustmentTop")
 		
-		gridColor = theme.colorWithAlpha(forKey: "MainWindow.Timeline.gridColor")
+		self.boxLeftMargin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight + self.avatarSize.width + self.avatarMarginRight
 	}
 }
 
