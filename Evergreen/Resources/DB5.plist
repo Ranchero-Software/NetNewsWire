@@ -61,6 +61,11 @@
 				<string>000000</string>
 				<key>gridColorAlpha</key>
 				<real>0.1</real>
+				<key>header</key>
+				<dict>
+					<key>backgroundColor</key>
+					<string>#fcfcfc</string>
+				</dict>
 				<key>cell</key>
 				<dict>
 					<key>paddingLeft</key>
