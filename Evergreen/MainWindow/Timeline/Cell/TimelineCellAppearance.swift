@@ -73,7 +73,7 @@ struct TimelineCellAppearance {
 		self.avatarMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginRight")
 		self.avatarAdjustmentTop = theme.float(forKey: "MainWindow.Timeline.cell.avatarAdjustmentTop")
 		
-		self.boxLeftMargin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight + self.avatarSize.width + self.avatarMarginRight
+		self.boxLeftMargin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight //+ self.avatarSize.width + self.avatarMarginRight
 	}
 }
 

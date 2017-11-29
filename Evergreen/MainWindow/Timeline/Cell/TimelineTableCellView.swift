@@ -18,8 +18,9 @@ class TimelineTableCellView: NSTableCellView {
 
 	let avatarImageView: NSImageView = {
 		let imageView = NSImageView(frame: NSRect.zero)
-		imageView.imageScaling = .scaleProportionallyUpOrDown
+		imageView.imageScaling = .scaleProportionallyDown
 		imageView.animates = false
+		imageView.imageAlignment = .alignTop
 		return imageView
 	}()
 
@@ -176,15 +177,15 @@ class TimelineTableCellView: NSTableCellView {
 
 	private func updateAvatar() {
 
-		if let image = cellData.avatar {
-			if avatarImageView.image !== image {
-				avatarImageView.image = image
-			}
-			avatarImageView.isHidden = false
-		}
-		else {
-			avatarImageView.isHidden = true
-		}
+//		if let image = cellData.avatar {
+//			if avatarImageView.image !== image {
+//				avatarImageView.image = image
+//			}
+//			avatarImageView.isHidden = false
+//		}
+//		else {
+//			avatarImageView.isHidden = true
+//		}
 	}
 
 	private func updateSubviews() {
