@@ -14,6 +14,7 @@ static BOOL bytesAreProbablyHTML(const char *bytes, NSUInteger numberOfBytes);
 static BOOL bytesAreProbablyXML(const char *bytes, NSUInteger numberOfBytes);
 static BOOL bytesStartWithStringIgnoringWhitespace(const char *string, const char *bytes, NSUInteger numberOfBytes);
 static BOOL didFindString(const char *string, const char *bytes, NSUInteger numberOfBytes);
+static BOOL bytesStartWithRSS(const char *bytes, NSUInteger numberOfBytes);
 
 @implementation NSData (RSParser)
 
@@ -52,6 +53,9 @@ static BOOL didFindString(const char *string, const char *bytes, NSUInteger numb
 
 - (BOOL)isProbablyRSS {
 
+	if (bytesStartWithRSS(self.bytes, self.length)) { // Macworld’s RSS feed does not start with xml header.
+		return YES;
+	}
 	if (![self isProbablyXML]) {
 		return NO;
 	}
@@ -131,3 +135,7 @@ static BOOL bytesAreProbablyXML(const char *bytes, NSUInteger numberOfBytes) {
 	return bytesStartWithStringIgnoringWhitespace("<?xml", bytes, numberOfBytes);
 }
 
+static BOOL bytesStartWithRSS(const char *bytes, NSUInteger numberOfBytes) {
+
+	return bytesStartWithStringIgnoringWhitespace("<rss", bytes, numberOfBytes);
+}

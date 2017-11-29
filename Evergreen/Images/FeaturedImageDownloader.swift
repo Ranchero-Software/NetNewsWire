@@ -15,6 +15,7 @@ final class FeaturedImageDownloader {
 	private let imageDownloader: ImageDownloader
 	private var articleURLToFeaturedImageURLCache = [String: String]()
 	private var articleURLsWithNoFeaturedImage = Set<String>()
+	private var urlsInProgress = Set<String>()
 
 	init(imageDownloader: ImageDownloader) {
 
@@ -66,7 +67,14 @@ private extension FeaturedImageDownloader {
 
 	func findFeaturedImageURL(for articleURL: String) {
 
+		guard !urlsInProgress.contains(articleURL) else {
+			return
+		}
+		urlsInProgress.insert(articleURL)
+
 		HTMLMetadataDownloader.downloadMetadata(for: articleURL) { (metadata) in
+
+			self.urlsInProgress.remove(articleURL)
 
 			guard let metadata = metadata else {
 				return
