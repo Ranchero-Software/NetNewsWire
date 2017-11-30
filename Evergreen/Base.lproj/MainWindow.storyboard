@@ -494,7 +494,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="rE6-fd-xjY" customClass="TimelineHeaderView" customModule="Evergreen" customModuleProvider="target">
+                            <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rE6-fd-xjY" customClass="TimelineHeaderView" customModule="Evergreen" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="166" width="450" height="32"/>
                                 <subviews>
                                     <visualEffectView wantsLayer="YES" appearanceType="vibrantLight" blendingMode="withinWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="KZz-oC-IY4">
@@ -556,13 +556,13 @@
                                 </constraints>
                             </customView>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="98" horizontalPageScroll="10" verticalLineScroll="98" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Kfs-n2-RYk">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="166"/>
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                 <clipView key="contentView" id="yAN-Ex-RC7">
-                                    <rect key="frame" x="0.0" y="0.0" width="450" height="166"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="96" viewBased="YES" id="DRs-j8-R9a" customClass="TimelineTableView" customModule="Evergreen" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="450" height="168"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -611,13 +611,13 @@
                             </scrollView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Kfs-n2-RYk" firstAttribute="top" secondItem="rE6-fd-xjY" secondAttribute="bottom" id="7ry-b8-6Q2"/>
                             <constraint firstItem="rE6-fd-xjY" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="D3E-uE-bLp"/>
                             <constraint firstAttribute="trailing" secondItem="Kfs-n2-RYk" secondAttribute="trailing" id="F6K-ec-Sge"/>
                             <constraint firstItem="Kfs-n2-RYk" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="Leg-dK-IeP"/>
                             <constraint firstAttribute="trailing" secondItem="rE6-fd-xjY" secondAttribute="trailing" id="Om9-UK-QCw"/>
                             <constraint firstAttribute="bottom" secondItem="Kfs-n2-RYk" secondAttribute="bottom" id="Xc2-9H-WP5"/>
                             <constraint firstItem="rE6-fd-xjY" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" id="g26-bB-vjf"/>
+                            <constraint firstItem="Kfs-n2-RYk" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" id="hdo-Qf-B6h"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
