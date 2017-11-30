@@ -119,7 +119,14 @@ class FeedParserTypeTests: XCTestCase {
 		let type = feedType(d)
 		XCTAssertTrue(type == .jsonFeed)
 	}
-	
+
+	func testAllThisJSONFeedType() {
+
+		let d = parserData("allthis", "json", "http://leancrew.com/allthis/")
+		let type = feedType(d)
+		XCTAssertTrue(type == .jsonFeed)
+	}
+
 	// MARK: Performance
 	
 	func testFeedTypePerformance() {

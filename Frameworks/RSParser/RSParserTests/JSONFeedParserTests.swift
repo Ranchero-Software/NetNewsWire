@@ -58,4 +58,12 @@ class JSONFeedParserTests: XCTestCase {
 		XCTAssert(parsedFeed.faviconURL == "https://daringfireball.net/graphics/favicon-64.png")
 		XCTAssert(parsedFeed.iconURL == "https://daringfireball.net/graphics/apple-touch-icon.png")
 	}
+
+	func testAllThis() {
+
+		let d = parserData("allthis", "json", "http://leancrew.com/allthis/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		XCTAssertEqual(parsedFeed.items.count, 12)
+	}
 }

@@ -63,6 +63,7 @@
 		845213251FCB3C76003B6E93 /* coco.html in Resources */ = {isa = PBXBuildFile; fileRef = 845213241FCB3C75003B6E93 /* coco.html */; };
 		845213281FCB4042003B6E93 /* RSHTMLTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 845213261FCB4042003B6E93 /* RSHTMLTag.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		845213291FCB4042003B6E93 /* RSHTMLTag.m in Sources */ = {isa = PBXBuildFile; fileRef = 845213271FCB4042003B6E93 /* RSHTMLTag.m */; };
+		84566D941FD0ABFB00103322 /* allthis.json in Resources */ = {isa = PBXBuildFile; fileRef = 84566D931FD0ABFB00103322 /* allthis.json */; };
 		84628AAD1FCA10AE00566A9B /* allthis.atom in Resources */ = {isa = PBXBuildFile; fileRef = 84628AAC1FCA10AE00566A9B /* allthis.atom */; };
 		848674D21FCE7BF600802D1F /* macworld.rss in Resources */ = {isa = PBXBuildFile; fileRef = 848674D11FCE7BF500802D1F /* macworld.rss */; };
 		849A03D01F0081EA00122600 /* DaringFireball.html in Resources */ = {isa = PBXBuildFile; fileRef = 849A03C51F0081EA00122600 /* DaringFireball.html */; };
@@ -164,6 +165,7 @@
 		845213241FCB3C75003B6E93 /* coco.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = coco.html; sourceTree = "<group>"; };
 		845213261FCB4042003B6E93 /* RSHTMLTag.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSHTMLTag.h; sourceTree = "<group>"; };
 		845213271FCB4042003B6E93 /* RSHTMLTag.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSHTMLTag.m; sourceTree = "<group>"; };
+		84566D931FD0ABFB00103322 /* allthis.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = allthis.json; sourceTree = "<group>"; };
 		84628AAC1FCA10AE00566A9B /* allthis.atom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = allthis.atom; sourceTree = "<group>"; };
 		848674D11FCE7BF500802D1F /* macworld.rss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = macworld.rss; sourceTree = "<group>"; };
 		849A03C51F0081EA00122600 /* DaringFireball.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DaringFireball.html; sourceTree = "<group>"; };
@@ -362,6 +364,7 @@
 				845213241FCB3C75003B6E93 /* coco.html */,
 				849A03CE1F0081EA00122600 /* sixcolors.html */,
 				84628AAC1FCA10AE00566A9B /* allthis.atom */,
+				84566D931FD0ABFB00103322 /* allthis.json */,
 				849A03CF1F0081EA00122600 /* Subs.opml */,
 			);
 			path = Resources;
@@ -544,6 +547,7 @@
 				849A03D61F0081EA00122600 /* manton.rss in Resources */,
 				849A03D11F0081EA00122600 /* DaringFireball.rss in Resources */,
 				849A03D01F0081EA00122600 /* DaringFireball.html in Resources */,
+				84566D941FD0ABFB00103322 /* allthis.json in Resources */,
 				84628AAD1FCA10AE00566A9B /* allthis.atom in Resources */,
 				848674D21FCE7BF600802D1F /* macworld.rss in Resources */,
 				849A03EA1F01F92B00122600 /* inessential.json in Resources */,
