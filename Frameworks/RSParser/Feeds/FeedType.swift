@@ -20,7 +20,7 @@ public enum FeedType {
 
 private let minNumberOfBytesRequired = 128
 
-public func feedType(_ parserData: ParserData) -> FeedType {
+public func feedType(_ parserData: ParserData, isPartialData: Bool = false) -> FeedType {
 
 	// Can call with partial data — while still downloading, for instance.
 	// If there’s not enough data, return .unknown. Ask again when there’s more data.
@@ -45,6 +45,16 @@ public func feedType(_ parserData: ParserData) -> FeedType {
 	}
 	if nsdata.isProbablyAtom() {
 		return .atom
+	}
+
+	if isPartialData && nsdata.isProbablyJSON() {
+		// Might not be able to detect a JSON Feed without all data.
+		// Dr. Drang’s JSON Feed (see althis.json and allthis-partial.json in tests)
+		// has, at this writing, the JSON version element at the end of the feed,
+		// which is totally legal — but it means not being able to detect
+		// that it’s a JSON Feed without all the data.
+		// So this returns .unknown instead of .notAFeed.
+		return .unknown
 	}
 
 	return .notAFeed
