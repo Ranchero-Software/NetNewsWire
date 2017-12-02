@@ -114,6 +114,28 @@ extension Article: DatabaseObject {
 			return articleID
 		}
 	}
+
+	public func relatedObjectsWithName(_ name: String) -> [DatabaseObject]? {
+
+		switch name {
+		case RelationshipName.authors:
+			return databaseObjectArray(with: authors)
+		case RelationshipName.tags:
+			return databaseObjectArray(with: tags)
+		case RelationshipName.attachments:
+			return databaseObjectArray(with: attachments)
+		default:
+			return nil
+		}
+	}
+
+	private func databaseObjectArray<T: DatabaseObject>(with objects: Set<T>?) -> [DatabaseObject]? {
+
+		guard let objects = objects else {
+			return nil
+		}
+		return Array(objects)
+	}
 }
 
 extension Set where Element == Article {
