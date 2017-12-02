@@ -94,9 +94,9 @@
 			<key>name</key>
 			<string>And now it’s all this (Dr. Drang)</string>
 			<key>homePageURL</key>
-			<string>http://leancrew.com/all-this</string>
+			<string>http://leancrew.com/all-this/</string>
 			<key>url</key>
-			<string>http://www.leancrew.com/all-this/feed/</string>
+			<string>http://leancrew.com/all-this/feed.json</string>
 		</dict>
 		<dict>
 			<key>name</key>
