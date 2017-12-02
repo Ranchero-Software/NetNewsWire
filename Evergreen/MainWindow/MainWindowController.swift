@@ -29,7 +29,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
         
         super.windowDidLoad()
 
-//		window?.titleVisibility = .hidden
+		if !AppDefaults.shared.showTitleOnMainWindow {
+			window?.titleVisibility = .hidden
+		}
+		
 		window?.setFrameUsingName(windowAutosaveName, force: true)
 		
 		detailSplitViewItem?.minimumThickness = 384
