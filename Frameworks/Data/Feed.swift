@@ -19,6 +19,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	public var iconURL: String?
 	public var faviconURL: String?
 	public var name: String?
+	public var authors: Set<Author>?
 	public var editedName: String?
 	public var conditionalGetInfo: HTTPConditionalGetInfo?
 	public var contentHash: String?
@@ -62,6 +63,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		static let faviconURL = "faviconURL"
 		static let name = "name"
 		static let editedName = "editedName"
+		static let authors = "authors"
 		static let conditionalGetInfo = "conditionalGetInfo"
 		static let contentHash = "contentHash"
 		static let unreadCount = "unreadCount"
@@ -88,6 +90,10 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 		if let savedUnreadCount = dictionary[Key.unreadCount] as? Int {
 			self.unreadCount = savedUnreadCount
+		}
+
+		if let authorsDiskArray = dictionary[Key.authors] as? [[String: Any]] {
+			self.authors = Author.authorsWithDiskArray(authorsDiskArray)
 		}
 	}
 
@@ -121,6 +127,9 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 			}
 			if let editedName = editedName {
 				d[Key.editedName] = editedName
+			}
+			if let authorsArray = authors?.diskArray() {
+				d[Key.authors] = authorsArray
 			}
 			if let contentHash = contentHash {
 				d[Key.contentHash] = contentHash
