@@ -6,6 +6,16 @@
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
         
+      <item>
+            <title>Version 1.0d20</title>
+            <description><![CDATA[
+            <p>Fixes several bugs with downloading and displaying favicons.</p>
+						]]></description>
+            <pubDate>Sun, 26 Nov 2017 21:45:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d20.zip" sparkle:version="512" sparkle:shortVersionString="1.0d20" length="7110096" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
        <item>
             <title>Version 1.0d19</title>
             <description><![CDATA[
