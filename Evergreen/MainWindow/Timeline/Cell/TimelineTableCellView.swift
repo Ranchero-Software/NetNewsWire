@@ -96,7 +96,6 @@ class TimelineTableCellView: NSTableCellView {
 		}
 		
 		super.setFrameSize(newSize)
-		updateSubviews()
 		needsLayout = true
 	}
 
