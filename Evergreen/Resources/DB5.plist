@@ -69,13 +69,13 @@
 				<key>cell</key>
 				<dict>
 					<key>paddingLeft</key>
-					<integer>10</integer>
+					<integer>12</integer>
 					<key>paddingRight</key>
-					<integer>10</integer>
+					<integer>12</integer>
 					<key>paddingTop</key>
-					<integer>8</integer>
+					<integer>12</integer>
 					<key>paddingBottom</key>
-					<integer>10</integer>
+					<integer>14</integer>
 					<key>feedNameColor</key>
 					<string>999999</string>
 					<key>faviconFeedNameSpacing</key>
