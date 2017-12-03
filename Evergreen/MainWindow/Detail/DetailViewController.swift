@@ -12,10 +12,10 @@ import RSCore
 import Data
 import RSWeb
 
-class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
+final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
 
 	var webview: WKWebView!
-	var visualEffectView: NSVisualEffectView!
+	var noSelectionView: NoSelectionView!
 
 	var article: Article? {
 		didSet {
@@ -56,9 +56,7 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 			webview.customUserAgent = userAgent
 		}
 
-		visualEffectView = NSVisualEffectView(frame: self.view.bounds)
-		visualEffectView.material = .appearanceBased
-		visualEffectView.blendingMode = .behindWindow
+		noSelectionView = NoSelectionView(frame: self.view.bounds)
 
 		let boxView = self.view as! DetailBox
 		boxView.viewController = self
@@ -105,7 +103,7 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 			switchToView(webview)
 		}
 		else {
-			switchToView(visualEffectView)
+			switchToView(noSelectionView)
 		}
 	}
 
@@ -172,7 +170,7 @@ extension DetailViewController: WKScriptMessageHandler {
 	}
 }
 
-class DetailBox: NSBox {
+final class DetailBox: NSBox {
 	
 	weak var viewController: DetailViewController?
 	
@@ -186,3 +184,25 @@ class DetailBox: NSBox {
 		viewController?.viewDidEndLiveResize()
 	}
 }
+
+final class NoSelectionView: NSView {
+
+	private var didConfigureLayer = false
+
+	override var wantsUpdateLayer: Bool {
+		return true
+	}
+
+	override func updateLayer() {
+
+		guard !didConfigureLayer else {
+			return
+		}
+		if let layer = layer {
+			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.noSelectionView.backgroundColor")
+			layer.backgroundColor = color.cgColor
+			didConfigureLayer = true
+		}
+	}
+}
+

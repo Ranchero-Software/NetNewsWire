@@ -108,6 +108,14 @@
 					<integer>4</integer>
 				</dict>
 			</dict>
+			<key>Detail</key>
+			<dict>
+				<key>noSelectionView</key>
+				<dict>
+					<key>backgroundColor</key>
+					<string>FFFFFF</string>
+				</dict>
+			</dict>
 		</dict>
 	</dict>
 </dict>
