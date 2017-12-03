@@ -10,6 +10,7 @@ import Foundation
 import WebKit
 import RSCore
 import Data
+import RSWeb
 
 class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
 
@@ -49,6 +50,10 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 		webview.uiDelegate = self
 		webview.navigationDelegate = self
 		webview.translatesAutoresizingMaskIntoConstraints = false
+		if let userAgent = UserAgent.fromInfoPlist() {
+			webview.customUserAgent = userAgent
+		}
+
 		let boxView = self.view as! DetailBox
 		boxView.contentView = webview
 		boxView.rs_addFullSizeConstraints(forSubview: webview)
