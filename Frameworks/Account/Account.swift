@@ -140,6 +140,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		DispatchQueue.main.async {
 			self.updateUnreadCount()
+			self.fetchAllUnreadCounts()
 		}
 	}
 	
@@ -622,6 +623,28 @@ private extension Account {
         
         NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.feeds: feeds])
     }
+
+	func fetchAllUnreadCounts() {
+
+		database.fetchAllNonZeroUnreadCounts { (unreadCountDictionary) in
+
+			if unreadCountDictionary.isEmpty {
+				return
+			}
+
+			self.flattenedFeeds().forEach{ (feed) in
+
+				// When the unread count is zero, it won’t appear in unreadCountDictionary.
+
+				if let unreadCount = unreadCountDictionary[feed] {
+					feed.unreadCount = unreadCount
+				}
+				else {
+					feed.unreadCount = 0
+				}
+			}
+		}
+	}
 }
 
 // MARK: - Container Overrides

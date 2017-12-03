@@ -12,6 +12,10 @@ import Data
 public struct UnreadCountDictionary {
 	
 	private var dictionary = [String: Int]()
+
+	public var isEmpty: Bool {
+		return dictionary.count < 1
+	}
 	
 	subscript(_ feedID: String) -> Int? {
 		get {

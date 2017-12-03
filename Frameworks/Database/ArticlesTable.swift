@@ -174,6 +174,37 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	func fetchAllUnreadCounts(_ completion: @escaping UnreadCountCompletionBlock) {
+
+		// Returns only where unreadCount > 0.
+
+		let cutoffDate = articleCutoffDate
+
+		queue.fetch { (database) in
+
+			let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or dateArrived>?) group by feedID;"
+
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) else {
+				DispatchQueue.main.async() {
+					completion(UnreadCountDictionary())
+				}
+				return
+			}
+
+			var d = UnreadCountDictionary()
+			while resultSet.next() {
+				let unreadCount = resultSet.long(forColumnIndex: 1)
+				if let feedID = resultSet.string(forColumnIndex: 0) {
+					d[feedID] = unreadCount
+				}
+			}
+
+			DispatchQueue.main.async() {
+				completion(d)
+			}
+		}
+	}
+
 	func fetchStarredAndUnreadCount(_ feeds: Set<Feed>, _ callback: @escaping (Int) -> Void) {
 
 		if feeds.isEmpty {
