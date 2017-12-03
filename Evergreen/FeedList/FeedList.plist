@@ -354,5 +354,16 @@
 			<string>http://feeds2.feedburner.com/myballard</string>
 		</dict>
 	</array>
+	<key>Miscellaneous</key>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>Pinboard (popular bookmarks)</string>
+			<key>homePageURL</key>
+			<string>https://pinboard.in/popular/</string>
+			<key>url</key>
+			<string>https://feeds.pinboard.in/rss/popular/</string>
+		</dict>
+	</array>
 </dict>
 </plist>
