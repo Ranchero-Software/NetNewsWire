@@ -44,6 +44,19 @@
                                     <menuItem title="a year" id="TJe-1f-V33"/>
                                 </items>
                             </menu>
+                            <connections>
+                                <binding destination="hgz-4Z-9Jp" name="selectedIndex" keyPath="values.dinosaursWindowPopupSelectedIndex" id="cfA-sC-Qlo">
+                                    <dictionary key="options">
+                                        <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                        <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                        <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                        <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                        <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                        <integer key="NSNullPlaceholder" value="0"/>
+                                        <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                    </dictionary>
+                                </binding>
+                            </connections>
                         </popUpButtonCell>
                     </popUpButton>
                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="afG-dr-1Un">
@@ -210,5 +223,6 @@
             <contentBorderThickness minY="32"/>
             <point key="canvasLocation" x="13" y="149"/>
         </window>
+        <userDefaultsController representsSharedInstance="YES" id="hgz-4Z-9Jp"/>
     </objects>
 </document>
