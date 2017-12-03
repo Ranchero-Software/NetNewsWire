@@ -65,7 +65,7 @@
 		849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 849A979A1ED9EFEB007D329B /* styleSheet.css */; };
 		849A979D1ED9EFEB007D329B /* template.html in Resources */ = {isa = PBXBuildFile; fileRef = 849A979B1ED9EFEB007D329B /* template.html */; };
 		849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A979E1ED9F130007D329B /* SidebarCell.swift */; };
-		849A97A21ED9F180007D329B /* FeedTitleDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A01ED9F180007D329B /* FeedTitleDownloader.swift */; };
+		849A97A21ED9F180007D329B /* InitialFeedDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A01ED9F180007D329B /* InitialFeedDownloader.swift */; };
 		849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
 		849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849A97A41ED9F94D007D329B /* Preferences.storyboard */; };
 		849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97A71ED9F9AA007D329B /* AddFeedSheet.xib */; };
@@ -465,7 +465,7 @@
 		849A979A1ED9EFEB007D329B /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = styleSheet.css; path = Evergreen/Resources/styleSheet.css; sourceTree = SOURCE_ROOT; };
 		849A979B1ED9EFEB007D329B /* template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = template.html; path = Evergreen/Resources/template.html; sourceTree = SOURCE_ROOT; };
 		849A979E1ED9F130007D329B /* SidebarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarCell.swift; sourceTree = "<group>"; };
-		849A97A01ED9F180007D329B /* FeedTitleDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedTitleDownloader.swift; path = AddFeed/FeedTitleDownloader.swift; sourceTree = "<group>"; };
+		849A97A01ED9F180007D329B /* InitialFeedDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InitialFeedDownloader.swift; path = AddFeed/InitialFeedDownloader.swift; sourceTree = "<group>"; };
 		849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FolderTreeControllerDelegate.swift; path = AddFeed/FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		849A97A51ED9F94D007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Evergreen/Base.lproj/Preferences.storyboard; sourceTree = "<group>"; };
 		849A97A81ED9F9AA007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/AddFeedSheet.xib; sourceTree = SOURCE_ROOT; };
@@ -660,7 +660,7 @@
 				849A97A71ED9F9AA007D329B /* AddFeedSheet.xib */,
 				849A97511ED9EAC0007D329B /* AddFeedController.swift */,
 				849A97521ED9EAC0007D329B /* AddFeedWindowController.swift */,
-				849A97A01ED9F180007D329B /* FeedTitleDownloader.swift */,
+				849A97A01ED9F180007D329B /* InitialFeedDownloader.swift */,
 				849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */,
 			);
 			name = "Add Feed";
@@ -1420,7 +1420,7 @@
 				8414AD251FCF5A1E00955102 /* TimelineHeaderView.swift in Sources */,
 				849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */,
 				849A97761ED9EC04007D329B /* TimelineCellAppearance.swift in Sources */,
-				849A97A21ED9F180007D329B /* FeedTitleDownloader.swift in Sources */,
+				849A97A21ED9F180007D329B /* InitialFeedDownloader.swift in Sources */,
 				849A977F1ED9EC42007D329B /* ArticleRenderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

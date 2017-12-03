@@ -12,6 +12,7 @@ import RSTree
 import Data
 import RSFeedFinder
 import Account
+import RSParser
 
 // Run add-feed sheet.
 // If it returns with URL and optional name,
@@ -107,16 +108,12 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 		self.bestFeedSpecifier = bestFeedSpecifier
 		self.foundFeedURLString = bestFeedSpecifier.urlString
 
-		if let _ = userEnteredTitle {
-			addFeedIfPossible()
-		}
-
 		if let url = URL(string: bestFeedSpecifier.urlString) {
 
-			downloadTitleForFeed(url, { (title) in
-				self.titleFromFeed = title
-				self.addFeedIfPossible()
-			})
+			InitialFeedDownloader.download(url) { (parsedFeed) in
+				self.titleFromFeed = parsedFeed?.title
+				self.addFeedIfPossible(parsedFeed)
+			}
 		}
 		else {
 			// Shouldn't happen.
@@ -161,7 +158,7 @@ private extension AddFeedController {
 	}
 
 
-	func addFeedIfPossible() {
+	func addFeedIfPossible(_ parsedFeed: ParsedFeed?) {
 
 		// Add feed if not already subscribed-to.
 
@@ -181,6 +178,10 @@ private extension AddFeedController {
 
 		guard let feed = account.createFeed(with: titleFromFeed, editedName: userEnteredTitle, url: feedURLString) else {
 			return
+		}
+
+		if let parsedFeed = parsedFeed {
+			account.update(feed, with: parsedFeed, {})
 		}
 
 		if account.addFeed(feed, to: userEnteredFolder) {

@@ -150,7 +150,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.refreshAll(for: self)
 	}
 
-	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
+	public func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
 
 		feed.takeSettings(from: parsedFeed)
 
