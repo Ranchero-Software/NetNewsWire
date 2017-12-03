@@ -1,3 +1,3 @@
 # TechNotes
 
-[Hidden Preferences](hiddenPrefs.md)
+[Hidden Preferences](HiddenPrefs.md)
