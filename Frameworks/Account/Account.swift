@@ -303,6 +303,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		importOPMLItems(children, parentFolder: nil)
 		dirty = true
+
+		DispatchQueue.main.async {
+			self.refreshAll()
+		}
 	}
 
 	public func updateUnreadCounts(for feeds: Set<Feed>) {
