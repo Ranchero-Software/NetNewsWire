@@ -15,10 +15,12 @@ import RSWeb
 class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
 
 	var webview: WKWebView!
-	
+	var visualEffectView: NSVisualEffectView!
+
 	var article: Article? {
 		didSet {
 			reloadHTML()
+			showOrHideWebView()
 		}
 	}
 
@@ -54,11 +56,14 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 			webview.customUserAgent = userAgent
 		}
 
+		visualEffectView = NSVisualEffectView(frame: self.view.bounds)
+		visualEffectView.material = .appearanceBased
+		visualEffectView.blendingMode = .behindWindow
+
 		let boxView = self.view as! DetailBox
-		boxView.contentView = webview
-		boxView.rs_addFullSizeConstraints(forSubview: webview)
-		
 		boxView.viewController = self
+
+		showOrHideWebView()
 	}
 
 	// MARK: Notifications
@@ -93,7 +98,27 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 			webview.loadHTMLString("", baseURL: nil)
 		}
 	}
-	
+
+	private func showOrHideWebView() {
+
+		if let _ = article {
+			switchToView(webview)
+		}
+		else {
+			switchToView(visualEffectView)
+		}
+	}
+
+	private func switchToView(_ view: NSView) {
+
+		let boxView = self.view as! DetailBox
+		if boxView.contentView == view {
+			return
+		}
+		boxView.contentView = view
+		boxView.rs_addFullSizeConstraints(forSubview: view)
+	}
+
 	// MARK: WKNavigationDelegate
 	
 	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
