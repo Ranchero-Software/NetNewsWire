@@ -20,7 +20,6 @@
 		84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */; };
 		845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845213221FCA5B10003B6E93 /* ImageDownloader.swift */; };
 		845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */; };
-		845A291B1FC75AA6007B49E3 /* SeekingFavicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A291A1FC75AA6007B49E3 /* SeekingFavicon.swift */; };
 		845A29221FC9251E007B49E3 /* SidebarCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */; };
 		845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */; };
 		845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */; };
@@ -421,7 +420,6 @@
 		84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListControlsView.swift; sourceTree = "<group>"; };
 		845213221FCA5B10003B6E93 /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleFaviconDownloader.swift; sourceTree = "<group>"; };
-		845A291A1FC75AA6007B49E3 /* SeekingFavicon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeekingFavicon.swift; sourceTree = "<group>"; };
 		845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCellLayout.swift; sourceTree = "<group>"; };
 		845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCellAppearance.swift; sourceTree = "<group>"; };
 		845B14A51FC2299E0013CF92 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -637,7 +635,6 @@
 			children = (
 				848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */,
 				845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */,
-				845A291A1FC75AA6007B49E3 /* SeekingFavicon.swift */,
 				84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */,
 			);
 			name = Favicons;
@@ -1370,7 +1367,6 @@
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */,
-				845A291B1FC75AA6007B49E3 /* SeekingFavicon.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
