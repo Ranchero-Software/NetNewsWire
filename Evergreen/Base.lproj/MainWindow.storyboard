@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13526" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13526"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13770"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -52,10 +52,10 @@
                                     </popUpButton>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="C3050605-E4B0-40CB-BA19-F64DF68BCFFA" label="Share" paletteLabel="Share" toolTip="Share" image="NSShareTemplate" id="nv0-Ju-lP7" customClass="RSToolbarItem" customModule="RSCore">
-                                    <size key="minSize" width="48" height="25"/>
-                                    <size key="maxSize" width="50" height="27"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="ypo-pI-PTN">
-                                        <rect key="frame" x="0.0" y="14" width="48" height="25"/>
+                                        <rect key="frame" x="0.0" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSShareTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XW2-7k-h4r">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -64,10 +64,10 @@
                                     </button>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="3552D790-D29C-4BF2-AF02-5BEFE49C7FB9" label="New Feed" paletteLabel="New Feed" toolTip="New Feed" image="NSAddTemplate" id="Skp-5r-70Q" customClass="RSToolbarItem" customModule="RSCore">
-                                    <size key="minSize" width="48" height="25"/>
-                                    <size key="maxSize" width="50" height="27"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="rHO-y7-lG9">
-                                        <rect key="frame" x="6" y="14" width="48" height="25"/>
+                                        <rect key="frame" x="11" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSAddTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eHD-pU-GaN">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -79,10 +79,10 @@
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="25C9E98A-867B-4EE2-BC1A-7B453D6B40BF" label="New Folder" paletteLabel="New Folder" toolTip="New Folder" image="newFolder" id="st0-Wp-nPK" customClass="RSToolbarItem" customModule="RSCore">
-                                    <size key="minSize" width="48" height="25"/>
-                                    <size key="maxSize" width="50" height="27"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="nvZ-IA-qOA">
-                                        <rect key="frame" x="10" y="14" width="48" height="25"/>
+                                        <rect key="frame" x="15" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="newFolder" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="Huj-Sy-XeN">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -94,10 +94,10 @@
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="D783290E-C822-40DF-8CB8-925D92EA4D83" label="Next Unread" paletteLabel="Next Unread" toolTip="Go to Next Unread" image="nextUnread" id="p7Y-Vm-ILH" customClass="RSToolbarItem" customModule="RSCore">
-                                    <size key="minSize" width="48" height="25"/>
-                                    <size key="maxSize" width="50" height="27"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="1g8-XX-BhA">
-                                        <rect key="frame" x="13" y="14" width="48" height="25"/>
+                                        <rect key="frame" x="18" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="nextUnread" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="aBl-Z6-Tfa">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -109,10 +109,10 @@
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="4A460A5C-B005-4797-AA95-FD667F0A61C2" label="Mark All as Read" paletteLabel="Mark All as Read" toolTip="Mark All as Read" image="markAllRead" id="lst-vn-0Iw" customClass="RSToolbarItem" customModule="RSCore">
-                                    <size key="minSize" width="48" height="25"/>
-                                    <size key="maxSize" width="50" height="27"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="0d4-hY-S6r">
-                                        <rect key="frame" x="24" y="14" width="48" height="25"/>
+                                        <rect key="frame" x="29" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="markAllRead" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="e9z-YJ-Rib">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -124,10 +124,10 @@
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="540B93C9-F805-41C8-A638-3DC0825A020B" label="Mark Read" paletteLabel="Mark Read" toolTip="Mark Read or Unread" image="markRead" id="N7D-g2-EPD" customClass="RSToolbarItem" customModule="RSCore">
-                                    <size key="minSize" width="48" height="25"/>
-                                    <size key="maxSize" width="50" height="27"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="Pe3-wh-G7e">
-                                        <rect key="frame" x="8" y="14" width="48" height="25"/>
+                                        <rect key="frame" x="13" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="markRead" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="2FV-93-DIY">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -139,10 +139,10 @@
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="09CE2FC7-B9B6-4A74-85B3-2DED57082923" label="Star" paletteLabel="Star" toolTip="Star or Unstar" image="star" id="Gxg-WQ-ufC" customClass="RSToolbarItem" customModule="RSCore">
-                                    <size key="minSize" width="48" height="25"/>
-                                    <size key="maxSize" width="50" height="27"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="Ehx-31-ELo">
-                                        <rect key="frame" x="0.0" y="14" width="48" height="25"/>
+                                        <rect key="frame" x="0.0" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="star" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="xYM-n6-bee">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -154,10 +154,10 @@
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="4DED27B7-8961-48F3-A995-9C961E2C0257" label="Open in Browser" paletteLabel="Open in Browser" toolTip="Open in Browser" image="openInBrowser" id="tid-SB-me3" customClass="RSToolbarItem" customModule="RSCore">
-                                    <size key="minSize" width="48" height="25"/>
-                                    <size key="maxSize" width="50" height="27"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="pgp-lZ-j6S">
-                                        <rect key="frame" x="23" y="14" width="48" height="25"/>
+                                        <rect key="frame" x="28" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="openInBrowser" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="PNN-ND-sO0">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -169,10 +169,10 @@
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="94C3EB28-587B-4C5C-9647-F8A2A240A1FD" label="Refresh" paletteLabel="Refresh" toolTip="Refresh" image="NSRefreshTemplate" id="QD0-SQ-OIM" customClass="RSToolbarItem" customModule="RSCore">
-                                    <size key="minSize" width="48" height="25"/>
-                                    <size key="maxSize" width="50" height="27"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="tRb-KW-Z3i">
-                                        <rect key="frame" x="0.0" y="14" width="48" height="25"/>
+                                        <rect key="frame" x="5" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRefreshTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="aGM-Q8-k4r">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -184,18 +184,18 @@
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="AD69461C-BB63-4923-AC4C-1F23544C3BBA" label="" paletteLabel="" toolTip="Back/Forward" id="dj7-mB-qwg">
-                                    <size key="minSize" width="73" height="25"/>
-                                    <size key="maxSize" width="73" height="28"/>
+                                    <size key="minSize" width="73" height="24"/>
+                                    <size key="maxSize" width="86" height="28"/>
                                     <segmentedControl key="view" verticalHuggingPriority="750" id="qk7-0C-1d7">
-                                        <rect key="frame" x="0.0" y="14" width="73" height="28"/>
+                                        <rect key="frame" x="0.0" y="14" width="82" height="24"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="separated" trackingMode="momentary" id="Nmq-UY-FwN">
                                             <font key="font" metaFont="system"/>
                                             <segments>
-                                                <segment image="NSGoLeftTemplate" width="32">
+                                                <segment image="NSGoLeftTemplate" width="38">
                                                     <nil key="label"/>
                                                 </segment>
-                                                <segment image="NSGoRightTemplate" width="32" tag="1">
+                                                <segment image="NSGoRightTemplate" width="38" tag="1">
                                                     <nil key="label"/>
                                                 </segment>
                                             </segments>
@@ -203,10 +203,10 @@
                                     </segmentedControl>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="BEE79EC5-174E-40DB-AA76-0F1141C97804" label="Action" paletteLabel="Action" toolTip="Action" image="action" id="eyg-zr-m4a">
-                                    <size key="minSize" width="48" height="25"/>
-                                    <size key="maxSize" width="50" height="28"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="28"/>
                                     <popUpButton key="view" verticalHuggingPriority="750" id="3z3-Db-0Kb">
-                                        <rect key="frame" x="0.0" y="14" width="48" height="28"/>
+                                        <rect key="frame" x="2" y="14" width="38" height="28"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="action" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="NHu-v8-gM6" id="lev-Yv-VWb">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -659,12 +659,12 @@
         <image name="NSMobileMe" width="32" height="32"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
-        <image name="action" width="19" height="19"/>
-        <image name="markAllRead" width="22" height="19"/>
-        <image name="markRead" width="19" height="19"/>
-        <image name="newFolder" width="19" height="19"/>
-        <image name="nextUnread" width="19" height="19"/>
-        <image name="openInBrowser" width="19" height="19"/>
-        <image name="star" width="19" height="19"/>
+        <image name="action" width="9.5" height="9.5"/>
+        <image name="markAllRead" width="11" height="9.5"/>
+        <image name="markRead" width="9.5" height="9.5"/>
+        <image name="newFolder" width="9.5" height="9.5"/>
+        <image name="nextUnread" width="9.5" height="9.5"/>
+        <image name="openInBrowser" width="9.5" height="9.5"/>
+        <image name="star" width="9.5" height="9.5"/>
     </resources>
 </document>
