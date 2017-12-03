@@ -60,7 +60,7 @@ static BOOL bytesStartWithRSS(const char *bytes, NSUInteger numberOfBytes);
 		return NO;
 	}
 
-	return didFindString("<rss", self.bytes, self.length);
+	return didFindString("<rss", self.bytes, self.length) || didFindString("<rdf:RDF", self.bytes, self.length);
 }
 
 - (BOOL)isProbablyAtom {

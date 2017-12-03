@@ -32,6 +32,7 @@
 @property (nonatomic) NSString *link;
 @property (nonatomic) NSString *title;
 @property (nonatomic) NSDate *dateParsed;
+@property (nonatomic) BOOL isRDF;
 
 @end
 
@@ -154,6 +155,9 @@ static const NSInteger kFalseLength = 6;
 
 static const char *kTrue = "true";
 static const NSInteger kTrueLength = 5;
+
+static const char *kUppercaseRDF = "RDF";
+static const NSInteger kUppercaseRDFLength = 4;
 
 
 #pragma mark - Parsing
@@ -317,8 +321,13 @@ static const NSInteger kTrueLength = 5;
 		return;
 	}
 
+	if (RSSAXEqualTags(localName, kUppercaseRDF, kUppercaseRDFLength)) {
+		self.isRDF = YES;
+		return;
+	}
+
 	NSDictionary *xmlAttributes = nil;
-	if (RSSAXEqualTags(localName, kItem, kItemLength) || RSSAXEqualTags(localName, kGuid, kGuidLength)) {
+	if ((self.isRDF && RSSAXEqualTags(localName, kItem, kItemLength)) || RSSAXEqualTags(localName, kGuid, kGuidLength)) {
 		xmlAttributes = [self.parser attributesDictionary:attributes numberOfAttributes:numberOfAttributes];
 	}
 	if (self.currentAttributes != xmlAttributes) {
@@ -330,7 +339,7 @@ static const NSInteger kTrueLength = 5;
 		[self addArticle];
 		self.parsingArticle = YES;
 
-		if (xmlAttributes && xmlAttributes[kRDFAboutKey]) { /*RSS 1.0 guid*/
+		if (self.isRDF && xmlAttributes && xmlAttributes[kRDFAboutKey]) { /*RSS 1.0 guid*/
 			self.currentArticle.guid = xmlAttributes[kRDFAboutKey];
 			self.currentArticle.permalink = self.currentArticle.guid;
 		}
@@ -352,7 +361,11 @@ static const NSInteger kTrueLength = 5;
 		return;
 	}
 
-	if (RSSAXEqualTags(localName, kRSS, kRSSLength)) {
+	if (self.isRDF && RSSAXEqualTags(localName, kUppercaseRDF, kUppercaseRDFLength)) {
+		self.endRSSFound = YES;
+	}
+
+	else if (RSSAXEqualTags(localName, kRSS, kRSSLength)) {
 		self.endRSSFound = YES;
 	}
 
