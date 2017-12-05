@@ -7,6 +7,16 @@
         <language>en</language>
   
        <item>
+            <title>Version 1.0d23</title>
+            <description><![CDATA[
+            <p>Decorate the tree!</p>
+  						]]></description>
+            <pubDate>Tue, 5 Dec 2017 13:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d23.zip" sparkle:version="515" sparkle:shortVersionString="1.0d23" length="7306243" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+       <item>
             <title>Version 1.0d22</title>
             <description><![CDATA[
             <p>Refresh all after importing OPML.</p>
