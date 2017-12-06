@@ -5,7 +5,40 @@
         <link>https://ranchero.com/downloads/evergreen-beta.xml</link>
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
-        
+  
+       <item>
+            <title>Version 1.0d23</title>
+            <description><![CDATA[
+            <p>Decorate the tree!</p>
+  						]]></description>
+            <pubDate>Tue, 5 Dec 2017 13:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d23.zip" sparkle:version="515" sparkle:shortVersionString="1.0d23" length="7306243" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+       <item>
+            <title>Version 1.0d22</title>
+            <description><![CDATA[
+            <p>Refresh all after importing OPML.</p>
+            <p>Fetch unread counts from database at startup.</p>
+            <p>Make resizing the timeline view marginally faster.</p>
+            <p>Make the favicon downloading system use a little less memory.</p>
+            <p>Read a newly-added feed immediately, instead of waiting for the next refresh-all.</p>
+            <p>Use 38-pt-wide toolbar icons, a la Mail.</p>
+            <p>Parse RSS 1.0 (RDF) feeds. Pinboard uses these (I couldn’t find them anywhere else).</p>
+            <p>Make the window title-less. You can bring back the title using a <a href="https://github.com/brentsimmons/Evergreen/blob/master/Technotes/HiddenPrefs.md">hidden pref</a>.</p>
+            <p>Save feed authors.</p>
+            <p>Save article authors.</p>
+            <p>Use updated @2x next-unread icon from Brad.</p>
+            <p>Fix bug detecting feed type for Dr. Drang’s JSON Feed.</p>
+            <p>Fix bug detecting Macworld’s RSS feed as an RSS feed. The feed doesn’t start with the standard XML header.</p>
+            <p>Set user-agent on the detail view’s webview.</p>
+						]]></description>
+            <pubDate>Mon, 4 Dec 2017 13:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d22.zip" sparkle:version="514" sparkle:shortVersionString="1.0d22" length="7153185" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+      
       <item>
             <title>Version 1.0d20</title>
             <description><![CDATA[

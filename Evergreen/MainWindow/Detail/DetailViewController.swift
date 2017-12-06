@@ -10,14 +10,17 @@ import Foundation
 import WebKit
 import RSCore
 import Data
+import RSWeb
 
-class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
+final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
 
 	var webview: WKWebView!
-	
+	var noSelectionView: NoSelectionView!
+
 	var article: Article? {
 		didSet {
 			reloadHTML()
+			showOrHideWebView()
 		}
 	}
 
@@ -49,11 +52,16 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 		webview.uiDelegate = self
 		webview.navigationDelegate = self
 		webview.translatesAutoresizingMaskIntoConstraints = false
+		if let userAgent = UserAgent.fromInfoPlist() {
+			webview.customUserAgent = userAgent
+		}
+
+		noSelectionView = NoSelectionView(frame: self.view.bounds)
+
 		let boxView = self.view as! DetailBox
-		boxView.contentView = webview
-		boxView.rs_addFullSizeConstraints(forSubview: webview)
-		
 		boxView.viewController = self
+
+		showOrHideWebView()
 	}
 
 	// MARK: Notifications
@@ -88,7 +96,27 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 			webview.loadHTMLString("", baseURL: nil)
 		}
 	}
-	
+
+	private func showOrHideWebView() {
+
+		if let _ = article {
+			switchToView(webview)
+		}
+		else {
+			switchToView(noSelectionView)
+		}
+	}
+
+	private func switchToView(_ view: NSView) {
+
+		let boxView = self.view as! DetailBox
+		if boxView.contentView == view {
+			return
+		}
+		boxView.contentView = view
+		boxView.rs_addFullSizeConstraints(forSubview: view)
+	}
+
 	// MARK: WKNavigationDelegate
 	
 	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -142,7 +170,7 @@ extension DetailViewController: WKScriptMessageHandler {
 	}
 }
 
-class DetailBox: NSBox {
+final class DetailBox: NSBox {
 	
 	weak var viewController: DetailViewController?
 	
@@ -156,3 +184,25 @@ class DetailBox: NSBox {
 		viewController?.viewDidEndLiveResize()
 	}
 }
+
+final class NoSelectionView: NSView {
+
+	private var didConfigureLayer = false
+
+	override var wantsUpdateLayer: Bool {
+		return true
+	}
+
+	override func updateLayer() {
+
+		guard !didConfigureLayer else {
+			return
+		}
+		if let layer = layer {
+			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.noSelectionView.backgroundColor")
+			layer.backgroundColor = color.cgColor
+			didConfigureLayer = true
+		}
+	}
+}
+
