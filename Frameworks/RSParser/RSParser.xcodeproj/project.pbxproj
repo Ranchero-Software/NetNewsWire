@@ -86,6 +86,7 @@
 		849A03E81F01F88600122600 /* ScriptingNews.json in Resources */ = {isa = PBXBuildFile; fileRef = 849A03E71F01F88600122600 /* ScriptingNews.json */; };
 		849A03EA1F01F92B00122600 /* inessential.json in Resources */ = {isa = PBXBuildFile; fileRef = 849A03E91F01F92B00122600 /* inessential.json */; };
 		849A03EC1F01FCDC00122600 /* RSSInJSONParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A03EB1F01FCDC00122600 /* RSSInJSONParserTests.swift */; };
+		84B19A771FDA438300458981 /* natasha.xml in Resources */ = {isa = PBXBuildFile; fileRef = 84B19A761FDA438300458981 /* natasha.xml */; };
 		84D81BDC1EFA28E700652332 /* RSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D81BDA1EFA28E700652332 /* RSParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84D81BDE1EFA2B7D00652332 /* ParsedFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */; };
 		84D81BE01EFA2BAE00652332 /* FeedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDF1EFA2BAE00652332 /* FeedType.swift */; };
@@ -189,6 +190,7 @@
 		849A03E71F01F88600122600 /* ScriptingNews.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ScriptingNews.json; sourceTree = "<group>"; };
 		849A03E91F01F92B00122600 /* inessential.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = inessential.json; sourceTree = "<group>"; };
 		849A03EB1F01FCDC00122600 /* RSSInJSONParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSInJSONParserTests.swift; sourceTree = "<group>"; };
+		84B19A761FDA438300458981 /* natasha.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = natasha.xml; sourceTree = "<group>"; };
 		84D81BD91EFA28E700652332 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84D81BDA1EFA28E700652332 /* RSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSParser.h; sourceTree = "<group>"; };
 		84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedFeed.swift; path = Feeds/ParsedFeed.swift; sourceTree = "<group>"; };
@@ -360,6 +362,7 @@
 				849A03CA1F0081EA00122600 /* KatieFloyd.rss */,
 				848674D11FCE7BF500802D1F /* macworld.rss */,
 				849A03CB1F0081EA00122600 /* manton.rss */,
+				84B19A761FDA438300458981 /* natasha.xml */,
 				849A03CC1F0081EA00122600 /* OneFootTsunami.atom */,
 				849A03E71F01F88600122600 /* ScriptingNews.json */,
 				849A03CD1F0081EA00122600 /* scriptingNews.rss */,
@@ -549,6 +552,7 @@
 				849A03DA1F0081EA00122600 /* Subs.opml in Resources */,
 				849A03D61F0081EA00122600 /* manton.rss in Resources */,
 				849A03D11F0081EA00122600 /* DaringFireball.rss in Resources */,
+				84B19A771FDA438300458981 /* natasha.xml in Resources */,
 				84566D961FD1FC1800103322 /* allthis-partial.json in Resources */,
 				849A03D01F0081EA00122600 /* DaringFireball.html in Resources */,
 				84566D941FD0ABFB00103322 /* allthis.json in Resources */,

@@ -47,4 +47,11 @@ class RSSParserTests: XCTestCase {
 		}
 	}
 
+	func testNatashaTheRobot() {
+
+		let d = parserData("natasha", "xml", "https://www.natashatherobot.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertEqual(parsedFeed.items.count, 10)
+	}
+
 }

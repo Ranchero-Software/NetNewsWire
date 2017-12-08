@@ -60,7 +60,12 @@ static BOOL bytesStartWithRSS(const char *bytes, NSUInteger numberOfBytes);
 		return NO;
 	}
 
-	return didFindString("<rss", self.bytes, self.length) || didFindString("<rdf:RDF", self.bytes, self.length);
+	if (didFindString("<rss", self.bytes, self.length) || didFindString("<rdf:RDF", self.bytes, self.length)) {
+		return YES;
+	}
+
+	// At this writing (7 Dec. 2017), https://www.natashatherobot.com/feed/ is missing an opening <rss> tag, but it should be parsed anyway. It does have some other distinct RSS markers we can find.
+	return (didFindString("<channel>", self.bytes, self.length) && didFindString("<pubDate>", self.bytes, self.length));
 }
 
 - (BOOL)isProbablyAtom {
