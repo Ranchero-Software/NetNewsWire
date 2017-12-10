@@ -1,9 +1,0 @@
-//
-//  APIRequest.swift
-//  RSWeb
-//
-//  Created by Brent Simmons on 12/9/17.
-//  Copyright © 2017 Ranchero Software. All rights reserved.
-//
-
-import Foundation
