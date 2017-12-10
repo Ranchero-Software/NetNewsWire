@@ -26,7 +26,7 @@ public struct APICall {
 	private let delegate: APICallDelegate
 	private static var incrementingIdentifier = 0
 
-	init(provider: WebServiceProvider, methodName: String, delegate: APICallDelegate) {
+	public init(provider: WebServiceProvider, methodName: String, delegate: APICallDelegate) {
 
 		self.provider = provider
 		self.methodName = methodName
