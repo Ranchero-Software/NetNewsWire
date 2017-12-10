@@ -12,6 +12,7 @@
 		840FDCB61F0217D20041F61B /* AtomParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FDCB51F0217D20041F61B /* AtomParserTests.swift */; };
 		840FDCB81F0218670041F61B /* DaringFireball.atom in Resources */ = {isa = PBXBuildFile; fileRef = 840FDCB71F0218670041F61B /* DaringFireball.atom */; };
 		840FDCBA1F02186D0041F61B /* DaringFireball.json in Resources */ = {isa = PBXBuildFile; fileRef = 840FDCB91F02186D0041F61B /* DaringFireball.json */; };
+		84245C881FDDDC6D0074AFBB /* JSONUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C871FDDDC6D0074AFBB /* JSONUtilities.swift */; };
 		84285AA81F005D53002E8708 /* RSSParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84285AA71F005D53002E8708 /* RSSParser.swift */; };
 		84285AAA1F006456002E8708 /* RSParsedFeedTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84285AA91F006456002E8708 /* RSParsedFeedTransformer.swift */; };
 		84285AAC1F006754002E8708 /* AtomParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84285AAB1F006754002E8708 /* AtomParser.swift */; };
@@ -115,6 +116,7 @@
 		840FDCB51F0217D20041F61B /* AtomParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomParserTests.swift; sourceTree = "<group>"; };
 		840FDCB71F0218670041F61B /* DaringFireball.atom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DaringFireball.atom; sourceTree = "<group>"; };
 		840FDCB91F02186D0041F61B /* DaringFireball.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DaringFireball.json; sourceTree = "<group>"; };
+		84245C871FDDDC6D0074AFBB /* JSONUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONUtilities.swift; sourceTree = "<group>"; };
 		84285AA71F005D53002E8708 /* RSSParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSParser.swift; sourceTree = "<group>"; };
 		84285AA91F006456002E8708 /* RSParsedFeedTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSParsedFeedTransformer.swift; sourceTree = "<group>"; };
 		84285AAB1F006754002E8708 /* AtomParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomParser.swift; sourceTree = "<group>"; };
@@ -162,7 +164,7 @@
 		84469D341EFF1190004A6B28 /* NSData+RSParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+RSParser.m"; sourceTree = "<group>"; };
 		84469D371EFF2645004A6B28 /* RSSInJSONParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RSSInJSONParser.swift; path = Feeds/JSON/RSSInJSONParser.swift; sourceTree = "<group>"; };
 		84469D3F1EFF29A9004A6B28 /* FeedParserError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedParserError.swift; path = Feeds/FeedParserError.swift; sourceTree = "<group>"; };
-		84469D411EFF2B2D004A6B28 /* JSONTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONTypes.swift; path = Feeds/JSON/JSONTypes.swift; sourceTree = "<group>"; };
+		84469D411EFF2B2D004A6B28 /* JSONTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONTypes.swift; sourceTree = "<group>"; };
 		84469D431F002CEF004A6B28 /* JSONFeedParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONFeedParser.swift; path = Feeds/JSON/JSONFeedParser.swift; sourceTree = "<group>"; };
 		845213241FCB3C75003B6E93 /* coco.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = coco.html; sourceTree = "<group>"; };
 		845213261FCB4042003B6E93 /* RSHTMLTag.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSHTMLTag.h; sourceTree = "<group>"; };
@@ -226,6 +228,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		84245C861FDDDC470074AFBB /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				84469D411EFF2B2D004A6B28 /* JSONTypes.swift */,
+				84245C871FDDDC6D0074AFBB /* JSONUtilities.swift */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
 		84285AA61F004879002E8708 /* Dates */ = {
 			isa = PBXGroup;
 			children = (
@@ -340,7 +351,6 @@
 		84469D391EFF2649004A6B28 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
-				84469D411EFF2B2D004A6B28 /* JSONTypes.swift */,
 				84469D371EFF2645004A6B28 /* RSSInJSONParser.swift */,
 				84469D431F002CEF004A6B28 /* JSONFeedParser.swift */,
 			);
@@ -383,6 +393,7 @@
 				84D81BDA1EFA28E700652332 /* RSParser.h */,
 				84E7E69D1F85780D0046719D /* ParserData.h */,
 				84E7E69E1F85780D0046719D /* ParserData.m */,
+				84245C861FDDDC470074AFBB /* JSON */,
 				84469CE31EFA2FB0004A6B28 /* Feeds */,
 				84285AA61F004879002E8708 /* Dates */,
 				84469CE41EFA3000004A6B28 /* OPML */,
@@ -584,6 +595,7 @@
 				84469CF01EFA3000004A6B28 /* RSOPMLAttributes.m in Sources */,
 				84469D381EFF2645004A6B28 /* RSSInJSONParser.swift in Sources */,
 				84E7E6A01F85780D0046719D /* ParserData.m in Sources */,
+				84245C881FDDDC6D0074AFBB /* JSONUtilities.swift in Sources */,
 				84469D301EFA3134004A6B28 /* RSRSSParser.m in Sources */,
 				84469D191EFA30A2004A6B28 /* RSDateParser.m in Sources */,
 				84469CFD1EFA3069004A6B28 /* RSSAXParser.m in Sources */,
