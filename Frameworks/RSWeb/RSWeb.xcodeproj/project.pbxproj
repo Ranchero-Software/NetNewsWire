@@ -15,12 +15,12 @@
 		84245C611FDC69F20074AFBB /* APICall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C5F1FDC69F20074AFBB /* APICall.swift */; };
 		84245C631FDC6A060074AFBB /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C621FDC6A060074AFBB /* APIRequest.swift */; };
 		84245C641FDC6A060074AFBB /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C621FDC6A060074AFBB /* APIRequest.swift */; };
-		84245C661FDC6A130074AFBB /* APIResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C651FDC6A120074AFBB /* APIResult.swift */; };
-		84245C671FDC6A130074AFBB /* APIResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C651FDC6A120074AFBB /* APIResult.swift */; };
 		84245C691FDC6A1E0074AFBB /* APIResultParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C681FDC6A1E0074AFBB /* APIResultParser.swift */; };
 		84245C6A1FDC6A1E0074AFBB /* APIResultParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C681FDC6A1E0074AFBB /* APIResultParser.swift */; };
 		84245C6C1FDC6A6D0074AFBB /* APIAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C6B1FDC6A6D0074AFBB /* APIAction.swift */; };
 		84245C6D1FDC6A6D0074AFBB /* APIAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C6B1FDC6A6D0074AFBB /* APIAction.swift */; };
+		84245C6F1FDDCD8C0074AFBB /* HTTPResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C6E1FDDCD8C0074AFBB /* HTTPResult.swift */; };
+		84245C701FDDCD8C0074AFBB /* HTTPResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84245C6E1FDDCD8C0074AFBB /* HTTPResult.swift */; };
 		842ED2E71E12FB8A000CF738 /* HTTPRequestHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842ED2E61E12FB8A000CF738 /* HTTPRequestHeader.swift */; };
 		842ED2E81E12FB8A000CF738 /* HTTPRequestHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842ED2E61E12FB8A000CF738 /* HTTPRequestHeader.swift */; };
 		842ED2EA1E12FB91000CF738 /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842ED2E91E12FB91000CF738 /* HTTPMethod.swift */; };
@@ -71,9 +71,9 @@
 		84245C5C1FDC697A0074AFBB /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Credentials.swift; path = RSWeb/Credentials.swift; sourceTree = "<group>"; };
 		84245C5F1FDC69F20074AFBB /* APICall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICall.swift; sourceTree = "<group>"; };
 		84245C621FDC6A060074AFBB /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
-		84245C651FDC6A120074AFBB /* APIResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResult.swift; sourceTree = "<group>"; };
 		84245C681FDC6A1E0074AFBB /* APIResultParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResultParser.swift; sourceTree = "<group>"; };
 		84245C6B1FDC6A6D0074AFBB /* APIAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIAction.swift; sourceTree = "<group>"; };
+		84245C6E1FDDCD8C0074AFBB /* HTTPResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPResult.swift; path = RSWeb/HTTPResult.swift; sourceTree = "<group>"; };
 		842ED2E61E12FB8A000CF738 /* HTTPRequestHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTTPRequestHeader.swift; path = RSWeb/HTTPRequestHeader.swift; sourceTree = "<group>"; };
 		842ED2E91E12FB91000CF738 /* HTTPMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTTPMethod.swift; path = RSWeb/HTTPMethod.swift; sourceTree = "<group>"; };
 		842ED2EC1E12FB97000CF738 /* HTTPResponseCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTTPResponseCode.swift; path = RSWeb/HTTPResponseCode.swift; sourceTree = "<group>"; };
@@ -131,7 +131,6 @@
 				84245C591FDC690A0074AFBB /* WebServiceProvider.swift */,
 				84245C5F1FDC69F20074AFBB /* APICall.swift */,
 				84245C621FDC6A060074AFBB /* APIRequest.swift */,
-				84245C651FDC6A120074AFBB /* APIResult.swift */,
 				84245C681FDC6A1E0074AFBB /* APIResultParser.swift */,
 				84245C6B1FDC6A6D0074AFBB /* APIAction.swift */,
 			);
@@ -159,6 +158,7 @@
 				842ED3131E12FBE7000CF738 /* MimeType.swift */,
 				842ED3101E12FBE1000CF738 /* MacWebBrowser.swift */,
 				84245C5C1FDC697A0074AFBB /* Credentials.swift */,
+				84245C6E1FDDCD8C0074AFBB /* HTTPResult.swift */,
 				84245C581FDC690A0074AFBB /* WebServices */,
 				849C08B81E0CAC85006B03FA /* RSWeb */,
 				849C08C31E0CAC86006B03FA /* RSWebTests */,
@@ -382,8 +382,8 @@
 				842ED2E71E12FB8A000CF738 /* HTTPRequestHeader.swift in Sources */,
 				842ED3111E12FBE1000CF738 /* MacWebBrowser.swift in Sources */,
 				842ED3141E12FBE7000CF738 /* MimeType.swift in Sources */,
-				84245C661FDC6A130074AFBB /* APIResult.swift in Sources */,
 				84245C5D1FDC697A0074AFBB /* Credentials.swift in Sources */,
+				84245C6F1FDDCD8C0074AFBB /* HTTPResult.swift in Sources */,
 				84245C601FDC69F20074AFBB /* APICall.swift in Sources */,
 				842ED30B1E12FBD8000CF738 /* URL+RSWeb.swift in Sources */,
 				842ED2F91E12FBB5000CF738 /* DownloadProgress.swift in Sources */,
@@ -416,11 +416,11 @@
 				842ED2FA1E12FBB5000CF738 /* DownloadProgress.swift in Sources */,
 				84245C641FDC6A060074AFBB /* APIRequest.swift in Sources */,
 				842ED2EB1E12FB91000CF738 /* HTTPMethod.swift in Sources */,
+				84245C701FDDCD8C0074AFBB /* HTTPResult.swift in Sources */,
 				842ED2F11E12FB9B000CF738 /* HTTPResponseHeader.swift in Sources */,
 				84245C611FDC69F20074AFBB /* APICall.swift in Sources */,
 				84245C6A1FDC6A1E0074AFBB /* APIResultParser.swift in Sources */,
 				842ED3061E12FBCC000CF738 /* NSMutableURLRequest+RSWeb.swift in Sources */,
-				84245C671FDC6A130074AFBB /* APIResult.swift in Sources */,
 				842ED2F41E12FBAA000CF738 /* DownloadSession.swift in Sources */,
 				84245C5E1FDC697A0074AFBB /* Credentials.swift in Sources */,
 				842ED2EE1E12FB97000CF738 /* HTTPResponseCode.swift in Sources */,
