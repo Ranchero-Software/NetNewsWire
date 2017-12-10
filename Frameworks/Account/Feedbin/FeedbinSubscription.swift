@@ -15,7 +15,7 @@ struct FeedbinSubscription {
 	let subscriptionID: String
 	let feedID: String
 	let creationDate: Date?
-	let name: String
+	let name: String?
 	let url: String
 	let homePageURL: String?
 
@@ -54,6 +54,9 @@ struct FeedbinSubscription {
 		if let creationDateString = dictionary[Key.creationDate] as? String {
 			self.creationDate = RSDateWithString(creationDateString)
 		}
+		else {
+			self.creationDate = nil
+		}
 
 		self.name = dictionary[Key.name] as? String
 		self.homePageURL = dictionary[Key.homePageURL] as? String
@@ -61,13 +64,7 @@ struct FeedbinSubscription {
 
 	static func subscriptions(with array: JSONArray) -> [FeedbinSubscription]? {
 
-		let subs = array.flatMap { (jsonSubscription) -> FeedbinSubscription? in
-			if let dictionary = jsonSubscription as? JSONDictionary else {
-				return nil
-			}
-			return FeedbinSubscription(dictionary: dictionary)
-		}
-
+		let subs = array.flatMap { FeedbinSubscription(dictionary: $0) }
 		return subs.isEmpty ? nil : subs
 	}
 }
