@@ -240,22 +240,21 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		if let folder = folder {
 			didAddFeed = folder.addFeed(uniquedFeed)
-			if didAddFeed {
-				addToFeedDictionaries(uniquedFeed)
-			}
 		}
 		else {
 			if !topLevelObjectsContainsFeed(uniquedFeed) {
 				children += [uniquedFeed]
-				addToFeedDictionaries(uniquedFeed)
-				dirty = true
 				postChildrenDidChangeNotification()
 			}
 			didAddFeed = true
 		}
+
+		if didAddFeed {
+			addToFeedDictionaries(uniquedFeed)
+			dirty = true
+		}
 		
-		rebuildFeedDictionaries()
-		return didAddFeed // TODO
+		return didAddFeed
 	}
 
 	public func createFeed(with name: String?, editedName: String?, url: String) -> Feed? {
@@ -301,6 +300,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		guard let children = opmlDocument.children else {
 			return
 		}
+		rebuildFeedDictionaries()
 		importOPMLItems(children, parentFolder: nil)
 		dirty = true
 
