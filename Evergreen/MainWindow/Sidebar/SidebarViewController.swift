@@ -86,7 +86,7 @@ import RSCore
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 
-		configureAvailableCells()
+		applyToAvailableCells(configureFavicon)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
@@ -342,13 +342,18 @@ private extension SidebarViewController {
 		cell.objectValue = node
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
-		cell.image = imageFor(node)
+		configureFavicon(cell, node)
 		cell.shouldShowImage = node.representedObject is Feed
 	}
 
 	func configureUnreadCount(_ cell: SidebarCell, _ node: Node) {
 
 		cell.unreadCount = unreadCountFor(node)
+	}
+
+	func configureFavicon(_ cell: SidebarCell, _ node: Node) {
+
+		cell.image = imageFor(node)
 	}
 
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
