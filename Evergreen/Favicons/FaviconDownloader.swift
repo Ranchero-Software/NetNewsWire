@@ -47,10 +47,18 @@ final class FaviconDownloader {
 			return favicon(with: faviconURL)
 		}
 
-		guard let homePageURL = feed.homePageURL else {
-			return nil
+		var homePageURL = feed.homePageURL
+		if homePageURL == nil {
+			// Base homePageURL off feedURL if needed. Won’t always be accurate, but is good enough.
+			if let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host {
+				homePageURL = scheme + "://" + host + "/"
+			}
 		}
-		return favicon(withHomePageURL: homePageURL)
+		if let homePageURL = homePageURL {
+			return favicon(withHomePageURL: homePageURL)
+		}
+
+		return nil
 	}
 
 	func favicon(with faviconURL: String) -> NSImage? {
