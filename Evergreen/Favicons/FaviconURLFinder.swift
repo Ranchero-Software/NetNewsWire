@@ -9,10 +9,14 @@
 import Foundation
 import RSParser
 import RSWeb
+import RSCore
 
 // The favicon URL may be specified in the head section of the home page.
 
 struct FaviconURLFinder {
+
+	static var metadataCache = [String: RSHTMLMetadata]()
+	static let serialDispatchQueue = DispatchQueue(label: "FaviconURLFinder")
 
 	static func findFaviconURL(_ homePageURL: String, _ callback: @escaping (String?) -> Void) {
 
@@ -36,16 +40,33 @@ struct FaviconURLFinder {
 			// will be made absolute correctly.
 
 			let urlToUse = response.url?.absoluteString ?? homePageURL
-			let link = faviconURL(urlToUse, data)
-			callback(link)
+			faviconURL(urlToUse, data, callback)
 		}
 	}
 
-	static private func faviconURL(_ url: String, _ webPageData: Data) -> String? {
+	static private func faviconURL(_ url: String, _ webPageData: Data, _ callback: @escaping (String?) -> Void) {
 
-		let parserData = ParserData(url: url, data: webPageData)
-		let htmlMetadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
-		return htmlMetadata.faviconLink
+		serialDispatchQueue.async {
+
+			let md5String = (webPageData as NSData).rs_md5HashString()
+			if let md5String = md5String, let cachedMetadata = metadataCache[md5String] {
+				let cachedURL = cachedMetadata.faviconLink
+				DispatchQueue.main.async {
+					callback(cachedURL)
+				}
+				return
+			}
+
+			let parserData = ParserData(url: url, data: webPageData)
+			let htmlMetadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
+			if let md5String = md5String {
+				metadataCache[md5String] = htmlMetadata
+			}
+			let url = htmlMetadata.faviconLink
+			DispatchQueue.main.async {
+				callback(url)
+			}
+		}
 	}
 }
 
