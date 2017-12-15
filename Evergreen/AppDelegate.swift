@@ -42,7 +42,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var mainWindowController: NSWindowController?
 	private var readerWindows = [NSWindowController]()
 	private var feedListWindowController: NSWindowController?
-	private var dinosaursWindowController: DinosaursWindowController?
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
@@ -306,14 +305,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			feedListWindowController = windowControllerWithName("FeedList")
 		}
 		feedListWindowController!.showWindow(self)
-	}
-
-	@IBAction func showDinosaursWindow(_ sender: Any?) {
-
-		if dinosaursWindowController == nil {
-			dinosaursWindowController = DinosaursWindowController()
-		}
-		dinosaursWindowController!.showWindow(self)
 	}
 
 	@IBAction func showKeyboardShortcutsWindow(_ sender: Any?) {

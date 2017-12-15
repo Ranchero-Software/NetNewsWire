@@ -77,8 +77,6 @@
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849C64691ED37A5D003D8FC0 /* Main.storyboard */; };
 		849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */; };
-		84A6B6941FB8D43C006754AC /* DinosaursWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84A6B6931FB8D43C006754AC /* DinosaursWindow.xib */; };
-		84A6B6961FB8DBD2006754AC /* DinosaursWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A6B6951FB8DBD2006754AC /* DinosaursWindowController.swift */; };
 		84AFBB3C1FBE76D800BA41CF /* PanicButtonWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AFBB3B1FBE76D800BA41CF /* PanicButtonWindowController.swift */; };
 		84AFBB3E1FBE770200BA41CF /* PanicButtonWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84AFBB3D1FBE770200BA41CF /* PanicButtonWindow.xib */; };
 		84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; };
@@ -1330,7 +1328,6 @@
 				849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */,
 				849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */,
 				849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */,
-				84A6B6941FB8D43C006754AC /* DinosaursWindow.xib in Resources */,
 				849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1373,7 +1370,6 @@
 				84AFBB3C1FBE76D800BA41CF /* PanicButtonWindowController.swift in Sources */,
 				8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */,
 				84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */,
-				84A6B6961FB8DBD2006754AC /* DinosaursWindowController.swift in Sources */,
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,
 				84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */,
 				849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */,
