@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13770"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -91,24 +91,11 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="aJh-i4-bef"/>
-                                        <menuItem title="Import" id="JcK-3V-6nM">
+                                        <menuItem title="Import OPML…" id="rSl-F4-qo7">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Import" id="AIV-3D-omy">
-                                                <items>
-                                                    <menuItem title="OPML from File…" id="8oh-Mr-MuT">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="importOPMLFromFile:" target="Ady-hI-5gd" id="37m-qI-pOs"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="OPML from URL…" id="Ltl-g5-IZS">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="importOPMLFromURL:" target="Ady-hI-5gd" id="UAr-gI-Lxg"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                </items>
-                                            </menu>
+                                            <connections>
+                                                <action selector="importOPMLFromFile:" target="Ady-hI-5gd" id="eGY-fm-uvK"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem title="Export OPML…" keyEquivalent="e" id="Xy2-v8-Lj8">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
@@ -352,13 +339,6 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="dZt-2W-gxf"/>
-                                        <menuItem title="Hide Read Items" id="eM3-PP-aaA">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                        </menuItem>
-                                        <menuItem title="Hide Read Feeds and Folders" id="uho-73-GLg">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                        </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="zyA-cZ-x2T"/>
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
@@ -366,10 +346,6 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="jKG-b2-ZWf"/>
-                                        <menuItem title="Actual Size" keyEquivalent="0" id="2Uf-24-faK"/>
-                                        <menuItem title="Zoom In" keyEquivalent="+" id="kyn-nW-09r"/>
-                                        <menuItem title="Zoom Out" keyEquivalent="-" id="7p4-We-ncc"/>
-                                        <menuItem isSeparatorItem="YES" id="kLs-vX-PHq"/>
                                         <menuItem title="Show Toolbar" keyEquivalent="t" id="snW-S8-Cw5">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
@@ -403,11 +379,8 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="xbe-2a-mp4"/>
-                                        <menuItem title="Back" keyEquivalent="[" id="9Ou-G3-Wxm"/>
-                                        <menuItem title="Forward" keyEquivalent="]" id="um0-gs-HTA"/>
-                                        <menuItem isSeparatorItem="YES" id="MIk-hC-LEn"/>
-                                        <menuItem title="All Unread" keyEquivalent="1" id="8ZT-ew-JNc"/>
-                                        <menuItem title="Today" keyEquivalent="2" id="L20-jv-7c9"/>
+                                        <menuItem title="Today" keyEquivalent="1" id="L20-jv-7c9"/>
+                                        <menuItem title="All Unread" keyEquivalent="2" id="8ZT-ew-JNc"/>
                                         <menuItem title="Starred" keyEquivalent="3" id="ZRx-me-QXO"/>
                                     </items>
                                 </menu>
@@ -426,24 +399,10 @@
                                                 <action selector="markAllAsRead:" target="Ady-hI-5gd" id="154-2D-ONk"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Panic Buttons" id="edg-dV-8eg">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Panic Buttons" id="eTY-4t-iyJ">
-                                                <items>
-                                                    <menuItem title="Mark Older Articles as Read…" id="oGf-d9-ScL">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="markOlderArticlesAsRead:" target="Ady-hI-5gd" id="ANJ-0A-dVY"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Mark All Everywhere as Read…" id="vfn-M4-V9E">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="markEverywhereAsRead:" target="Ady-hI-5gd" id="Sq7-ak-Jaa"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                </items>
-                                            </menu>
+                                        <menuItem title="Mark Older as Read…" keyEquivalent="K" id="p1o-EG-Uo8">
+                                            <connections>
+                                                <action selector="markOlderArticlesAsRead:" target="Ady-hI-5gd" id="gzq-X5-0aC"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="gB0-WX-2Gd"/>
                                         <menuItem title="Mark as Starred" keyEquivalent="L" id="vvo-ZM-8kl">
@@ -510,12 +469,6 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="showLogWindow:" target="Ady-hI-5gd" id="WzC-He-psY"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Dinosaurs" id="suZ-aW-fnf">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="showDinosaursWindow:" target="Ady-hI-5gd" id="txx-zB-q2J"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Keyboard Shortcuts" id="9fu-ah-S4X">
