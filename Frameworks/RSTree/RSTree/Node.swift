@@ -81,6 +81,14 @@ public final class Node: Hashable {
 		return node
 	}
 
+	public func existingOrNewChildNode(with representedObject: AnyObject) -> Node {
+
+		if let node = childNodeRepresentingObject(representedObject) {
+			return node
+		}
+		return createChildNode(representedObject)
+	}
+
 	public func createChildNode(_ representedObject: AnyObject) -> Node {
 
 		// Just creates — doesn’t add it.
