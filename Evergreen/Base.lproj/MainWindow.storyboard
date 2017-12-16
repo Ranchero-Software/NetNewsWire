@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13770"/>
-        <capability name="box content view" minToolsVersion="7.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -238,7 +237,6 @@
                                 <toolbarItem reference="1Ql-WJ-KYi"/>
                             </defaultToolbarItems>
                         </toolbar>
-                        <contentBorderThickness minY="25"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="JSn-lq-Uwe"/>
                         </connections>
@@ -282,12 +280,12 @@
         <scene sceneID="ZPA-jO-OkH">
             <objects>
                 <viewController id="reS-fe-pD8" sceneMemberID="viewController">
-                    <customView key="view" id="hWY-jP-A4m">
+                    <customView key="view" wantsLayer="YES" id="hWY-jP-A4m">
                         <rect key="frame" x="0.0" y="0.0" width="581" height="300"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <containerView appearanceType="aqua" translatesAutoresizingMaskIntoConstraints="NO" id="K1o-Ws-XMQ">
-                                <rect key="frame" x="0.0" y="25" width="581" height="275"/>
+                                <rect key="frame" x="0.0" y="0.0" width="581" height="300"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
                                         <color key="value" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -297,73 +295,12 @@
                                     <segue destination="wEf-EP-9Fq" kind="embed" id="IT3-aj-bSe"/>
                                 </connections>
                             </containerView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="FWz-dC-55q" customClass="StatusBarView" customModule="Evergreen" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="581" height="25"/>
-                                <subviews>
-                                    <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="k7g-zd-q4Q" userLabel="Gear Popup Button">
-                                        <rect key="frame" x="2" y="3" width="42" height="19"/>
-                                        <popUpButtonCell key="cell" type="bevel" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="Ijf-kL-7ym" id="z1h-lo-3qp">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
-                                            <menu key="menu" id="XUl-yC-HKz">
-                                                <items>
-                                                    <menuItem state="on" image="NSActionTemplate" hidden="YES" id="Ijf-kL-7ym"/>
-                                                    <menuItem title="Do A Thing…" id="8O0-wC-JIP"/>
-                                                </items>
-                                            </menu>
-                                        </popUpButtonCell>
-                                    </popUpButton>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="Vq0-Di-DO2">
-                                        <rect key="frame" x="122" y="4" width="4" height="17"/>
-                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" refusesFirstResponder="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" usesSingleLineMode="YES" id="cUs-6K-KXd">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="NOS-H9-Mdl" userLabel="URL Label">
-                                        <rect key="frame" x="289" y="4" width="4" height="17"/>
-                                        <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" refusesFirstResponder="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" usesSingleLineMode="YES" id="JqV-71-gHH">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" white="0.25" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <progressIndicator wantsLayer="YES" maxValue="100" displayedWhenStopped="NO" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="kVh-DT-vkQ">
-                                        <rect key="frame" x="52" y="3" width="64" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="64" id="AmG-EL-4l7"/>
-                                        </constraints>
-                                    </progressIndicator>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="NOS-H9-Mdl" firstAttribute="centerY" secondItem="FWz-dC-55q" secondAttribute="centerY" priority="999" id="0NZ-ry-RwE"/>
-                                    <constraint firstItem="k7g-zd-q4Q" firstAttribute="centerY" secondItem="FWz-dC-55q" secondAttribute="centerY" id="16o-PL-Tu4"/>
-                                    <constraint firstItem="Vq0-Di-DO2" firstAttribute="centerY" secondItem="FWz-dC-55q" secondAttribute="centerY" id="2sf-bK-T3N"/>
-                                    <constraint firstItem="kVh-DT-vkQ" firstAttribute="centerY" secondItem="FWz-dC-55q" secondAttribute="centerY" id="4h2-eA-vEm"/>
-                                    <constraint firstAttribute="height" constant="25" id="5Xu-xj-rhU"/>
-                                    <constraint firstItem="NOS-H9-Mdl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Vq0-Di-DO2" secondAttribute="trailing" constant="8" id="Kdn-fY-Pg0"/>
-                                    <constraint firstItem="k7g-zd-q4Q" firstAttribute="leading" secondItem="FWz-dC-55q" secondAttribute="leading" constant="2" id="WyI-Mr-ysi"/>
-                                    <constraint firstItem="kVh-DT-vkQ" firstAttribute="leading" secondItem="k7g-zd-q4Q" secondAttribute="trailing" constant="8" id="g6B-We-Dqz"/>
-                                    <constraint firstItem="Vq0-Di-DO2" firstAttribute="leading" secondItem="kVh-DT-vkQ" secondAttribute="trailing" constant="8" id="pcT-32-3jd"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="NOS-H9-Mdl" secondAttribute="trailing" constant="8" id="twV-E5-yKX"/>
-                                </constraints>
-                                <connections>
-                                    <outlet property="progressIndicator" destination="kVh-DT-vkQ" id="xDW-pX-IcH"/>
-                                    <outlet property="progressLabel" destination="Vq0-Di-DO2" id="Vy6-2E-jBh"/>
-                                    <outlet property="urlLabel" destination="NOS-H9-Mdl" id="ccW-m4-WXu"/>
-                                </connections>
-                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="FWz-dC-55q" secondAttribute="trailing" id="2ct-ld-H1L"/>
-                            <constraint firstItem="NOS-H9-Mdl" firstAttribute="centerX" secondItem="hWY-jP-A4m" secondAttribute="centerX" id="595-9t-wEe"/>
                             <constraint firstItem="K1o-Ws-XMQ" firstAttribute="top" secondItem="hWY-jP-A4m" secondAttribute="top" id="JPX-I3-QMN"/>
                             <constraint firstItem="K1o-Ws-XMQ" firstAttribute="leading" secondItem="hWY-jP-A4m" secondAttribute="leading" id="Vqi-IQ-2V0"/>
                             <constraint firstAttribute="trailing" secondItem="K1o-Ws-XMQ" secondAttribute="trailing" id="Y9X-7J-odJ"/>
-                            <constraint firstAttribute="bottom" secondItem="FWz-dC-55q" secondAttribute="bottom" id="h7d-Nx-QQG"/>
-                            <constraint firstItem="K1o-Ws-XMQ" firstAttribute="bottom" secondItem="FWz-dC-55q" secondAttribute="top" id="n95-KK-lST"/>
-                            <constraint firstItem="FWz-dC-55q" firstAttribute="leading" secondItem="hWY-jP-A4m" secondAttribute="leading" id="tI7-n4-Eo1"/>
+                            <constraint firstAttribute="bottom" secondItem="K1o-Ws-XMQ" secondAttribute="bottom" id="spp-4y-rEm"/>
                         </constraints>
                     </customView>
                 </viewController>
@@ -637,14 +574,54 @@
         <scene sceneID="HMt-bN-oMN">
             <objects>
                 <viewController id="Vho-7i-T8m" userLabel="Detail View Controller" customClass="DetailViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
-                    <box key="view" boxType="custom" borderType="none" title="Box" titlePosition="noTitle" id="ZqF-bf-2JN" customClass="DetailBox" customModule="Evergreen" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="444" height="296"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <view key="contentView" id="QLg-gD-24I">
-                            <rect key="frame" x="0.0" y="0.0" width="444" height="296"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        </view>
-                    </box>
+                    <customView key="view" id="37A-bp-izR">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="cJ9-6s-66u" customClass="DetailContainerView" customModule="Evergreen" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="450" height="272"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="Evergreen" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="28"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dim-ed-Dcz" userLabel="URL Label">
+                                        <rect key="frame" x="18" y="6" width="414" height="17"/>
+                                        <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="znU-Fh-L7H">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="Dim-ed-Dcz" firstAttribute="centerY" secondItem="xI5-lx-RD8" secondAttribute="centerY" id="Hna-uB-3F7"/>
+                                    <constraint firstAttribute="trailing" secondItem="Dim-ed-Dcz" secondAttribute="trailing" constant="20" symbolic="YES" id="O5q-ZN-DjZ"/>
+                                    <constraint firstAttribute="height" constant="28" id="Sfk-Ri-WoD"/>
+                                    <constraint firstItem="Dim-ed-Dcz" firstAttribute="leading" secondItem="xI5-lx-RD8" secondAttribute="leading" constant="20" symbolic="YES" id="Y9c-WR-ZBY"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="urlLabel" destination="Dim-ed-Dcz" id="8fY-oo-cGT"/>
+                                </connections>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="xI5-lx-RD8" secondAttribute="trailing" id="9M9-ef-mCr"/>
+                            <constraint firstItem="cJ9-6s-66u" firstAttribute="leading" secondItem="37A-bp-izR" secondAttribute="leading" id="AM2-YB-J0B"/>
+                            <constraint firstAttribute="bottom" secondItem="xI5-lx-RD8" secondAttribute="bottom" id="DGH-Hk-TSv"/>
+                            <constraint firstItem="cJ9-6s-66u" firstAttribute="top" secondItem="37A-bp-izR" secondAttribute="top" id="DXp-ju-WpM"/>
+                            <constraint firstItem="xI5-lx-RD8" firstAttribute="top" secondItem="cJ9-6s-66u" secondAttribute="bottom" id="JJw-J8-N57"/>
+                            <constraint firstAttribute="trailing" secondItem="cJ9-6s-66u" secondAttribute="trailing" id="hUh-Uk-62r"/>
+                            <constraint firstItem="xI5-lx-RD8" firstAttribute="leading" secondItem="37A-bp-izR" secondAttribute="leading" id="oCj-Mo-oMU"/>
+                        </constraints>
+                    </customView>
+                    <connections>
+                        <outlet property="containerView" destination="cJ9-6s-66u" id="gXc-Pz-9sQ"/>
+                    </connections>
                 </viewController>
                 <customObject id="vzM-Vn-mEn" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -652,7 +629,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSGoLeftTemplate" width="9" height="12"/>
         <image name="NSGoRightTemplate" width="9" height="12"/>

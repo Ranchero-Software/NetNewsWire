@@ -115,6 +115,13 @@
 					<key>backgroundColor</key>
 					<string>FFFFFF</string>
 				</dict>
+				<key>statusBar</key>
+				<dict>
+					<key>backgroundColor</key>
+					<string>FFFFFF</string>
+				</dict>
+				<key>backgroundColor</key>
+				<string>FFFFFF</string>
 			</dict>
 		</dict>
 	</dict>

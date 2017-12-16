@@ -14,6 +14,8 @@ import RSWeb
 
 final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
 
+	@IBOutlet var containerView: DetailContainerView!
+
 	var webview: WKWebView!
 	var noSelectionView: NoSelectionView!
 
@@ -58,8 +60,7 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 
 		noSelectionView = NoSelectionView(frame: self.view.bounds)
 
-		let boxView = self.view as! DetailBox
-		boxView.viewController = self
+		containerView.viewController = self
 
 		showOrHideWebView()
 	}
@@ -109,12 +110,10 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 
 	private func switchToView(_ view: NSView) {
 
-		let boxView = self.view as! DetailBox
-		if boxView.contentView == view {
+		if containerView.contentView == view {
 			return
 		}
-		boxView.contentView = view
-		boxView.rs_addFullSizeConstraints(forSubview: view)
+		containerView.contentView = view
 	}
 
 	// MARK: WKNavigationDelegate
@@ -170,10 +169,29 @@ extension DetailViewController: WKScriptMessageHandler {
 	}
 }
 
-final class DetailBox: NSBox {
-	
-	weak var viewController: DetailViewController?
-	
+final class DetailContainerView: NSView {
+
+	weak var viewController: DetailViewController? = nil
+
+	private var didConfigureLayer = false
+
+	override var wantsUpdateLayer: Bool {
+		return true
+	}
+
+	var contentView: NSView? {
+		didSet {
+			if let oldContentView = oldValue {
+				oldContentView.removeFromSuperviewWithoutNeedingDisplay()
+			}
+			if let contentView = contentView {
+				contentView.translatesAutoresizingMaskIntoConstraints = false
+				addSubview(contentView)
+				rs_addFullSizeConstraints(forSubview: contentView)
+			}
+		}
+	}
+
 	override func viewWillStartLiveResize() {
 		
 		viewController?.viewWillStartLiveResize()
@@ -182,6 +200,18 @@ final class DetailBox: NSBox {
 	override func viewDidEndLiveResize() {
 		
 		viewController?.viewDidEndLiveResize()
+	}
+
+	override func updateLayer() {
+
+		guard !didConfigureLayer else {
+			return
+		}
+		if let layer = layer {
+			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.backgroundColor")
+			layer.backgroundColor = color.cgColor
+			didConfigureLayer = true
+		}
 	}
 }
 
