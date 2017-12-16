@@ -21,6 +21,9 @@ final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 		if node.representedObject is Container {
 			return childNodesForContainerNode(node)
 		}
+		if node.representedObject is SmartFeedsController {
+			return childNodesForSmartFeeds(node)
+		}
 
 		return nil
 	}	
@@ -30,15 +33,18 @@ private extension SidebarTreeControllerDelegate {
 	
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 
-		// The top-level nodes are pseudo-feeds (All Unread, Starred, etc.) and accounts.
+		// The top-level nodes are Smart Feeds and accounts.
 
-		return pseudoFeedNodes(rootNode) + sortedAccountNodes(rootNode)
+		let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
+		smartFeedsNode.canHaveChildNodes = true
+		smartFeedsNode.isGroupItem = true
+
+		return [smartFeedsNode] + sortedAccountNodes(rootNode)
 	}
 
-	func pseudoFeedNodes(_ rootNode: Node) -> [Node] {
+	func childNodesForSmartFeeds(_ parentNode: Node) -> [Node] {
 
-		// The appDelegate’s pseudoFeeds are already sorted properly.
-		return appDelegate.pseudoFeeds.map { rootNode.createChildNode($0) }
+		return SmartFeedsController.shared.smartFeeds.map { parentNode.existingOrNewChildNode(with: $0) }
 	}
 
 	func childNodesForContainerNode(_ containerNode: Node) -> [Node]? {

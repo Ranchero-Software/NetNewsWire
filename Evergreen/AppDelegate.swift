@@ -26,7 +26,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var feedIconDownloader: FeedIconDownloader!
 	var appName: String!
-	var pseudoFeeds = [PseudoFeed]()
 
 	var unreadCount = 0 {
 		didSet {
@@ -145,12 +144,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
 		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader)
-		
-		let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
-		let unreadFeed = UnreadFeed()
-		let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
-		pseudoFeeds = [todayFeed, unreadFeed, starredFeed]
-		
+
 		createAndShowMainWindow()
 
 		#if RELEASE
