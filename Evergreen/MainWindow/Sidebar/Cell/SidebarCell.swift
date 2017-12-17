@@ -15,7 +15,14 @@ class SidebarCell : NSTableCellView {
 	
 	var image: NSImage? {
 		didSet {
-			imageView?.image = shouldShowImage ? image : nil
+			if let image = image {
+				imageView?.image = shouldShowImage ? image : nil
+				imageView?.alphaValue = image.isTemplate ? 0.75 : 1.0
+			}
+			else {
+				imageView?.image = nil
+				imageView?.alphaValue = 1.0
+			}
 		}
 	}
 
