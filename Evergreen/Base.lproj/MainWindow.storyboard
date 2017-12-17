@@ -32,24 +32,6 @@
                                         </searchFieldCell>
                                     </searchField>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="9E7B0464-8B1E-4F64-B0B8-87F7286DEE14" label="Theme" paletteLabel="Theme" toolTip="Pick a style for articles" id="emz-B8-FeA" userLabel="Theme">
-                                    <size key="minSize" width="100" height="26"/>
-                                    <size key="maxSize" width="102" height="27"/>
-                                    <popUpButton key="view" verticalHuggingPriority="750" id="DeG-jl-47p">
-                                        <rect key="frame" x="0.0" y="14" width="100" height="26"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <popUpButtonCell key="cell" type="roundTextured" title="Ballard" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="uT7-6y-SOX" id="QSz-3g-IsW">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
-                                            <menu key="menu" id="sWS-Rt-NLS">
-                                                <items>
-                                                    <menuItem title="Default" id="MK9-Dq-QEH"/>
-                                                    <menuItem title="Ballard" state="on" id="uT7-6y-SOX"/>
-                                                </items>
-                                            </menu>
-                                        </popUpButtonCell>
-                                    </popUpButton>
-                                </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="C3050605-E4B0-40CB-BA19-F64DF68BCFFA" label="Share" paletteLabel="Share" toolTip="Share" image="NSShareTemplate" id="nv0-Ju-lP7" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
@@ -214,7 +196,6 @@
                                 <toolbarItem reference="tid-SB-me3"/>
                                 <toolbarItem reference="nv0-Ju-lP7"/>
                                 <toolbarItem reference="YMs-P5-Xhn"/>
-                                <toolbarItem reference="emz-B8-FeA"/>
                                 <toolbarItem reference="1Ql-WJ-KYi"/>
                             </defaultToolbarItems>
                         </toolbar>
