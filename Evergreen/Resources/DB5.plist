@@ -6,6 +6,11 @@
 	<dict>
 		<key>_name</key>
 		<string>Default</string>
+		<key>colors</key>
+		<dict>
+			<key>brightBlue</key>
+			<string>#2db6ff</string>
+		</dict>
 		<key>MainWindow</key>
 		<dict>
 			<key>SourceList</key>
