@@ -343,7 +343,7 @@ private extension SidebarViewController {
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
 		configureFavicon(cell, node)
-		cell.shouldShowImage = node.representedObject is Feed
+		cell.shouldShowImage = node.representedObject is SmallIconProvider
 	}
 
 	func configureUnreadCount(_ cell: SidebarCell, _ node: Node) {
@@ -364,10 +364,10 @@ private extension SidebarViewController {
 
 	func imageFor(_ node: Node) -> NSImage? {
 
-		guard let feed = node.representedObject as? Feed else {
-			return nil
+		if let smallIconProvider = node.representedObject as? SmallIconProvider {
+			return smallIconProvider.smallIcon
 		}
-		return appDelegate.faviconDownloader.favicon(for: feed)
+		return nil
 	}
 
 	func nameFor(_ node: Node) -> String {
@@ -489,6 +489,13 @@ private extension SidebarViewController {
 			}
 		}
 		return parent
+	}
+}
+
+extension Feed: SmallIconProvider {
+
+	var smallIcon: NSImage? {
+		return appDelegate.faviconDownloader.favicon(for: self)
 	}
 }
 
