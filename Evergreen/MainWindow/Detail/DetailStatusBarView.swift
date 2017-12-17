@@ -95,19 +95,19 @@ final class DetailStatusBarView: NSView {
 
 	// MARK: Drawing
 
-	private let lineColor = NSColor(calibratedWhite: 0.65, alpha: 1.0)
+	private let lineColor = NSColor(calibratedWhite: 0.85, alpha: 1.0)
 
 	override func draw(_ dirtyRect: NSRect) {
 
 		backgroundColor.set()
 		dirtyRect.fill()
 
-//		let path = NSBezierPath()
-//		path.lineWidth = 1.0
-//		path.move(to: NSPoint(x: NSMinX(bounds), y: NSMinY(bounds) + 0.5))
-//		path.line(to: NSPoint(x: NSMaxX(bounds), y: NSMinY(bounds) + 0.5))
-//		lineColor.set()
-//		path.stroke()
+		let path = NSBezierPath()
+		path.lineWidth = 1.0
+		path.move(to: NSPoint(x: NSMinX(bounds), y: NSMinY(bounds) + 0.5))
+		path.line(to: NSPoint(x: NSMaxX(bounds), y: NSMinY(bounds) + 0.5))
+		lineColor.set()
+		path.stroke()
 	}
 }
 
