@@ -10,9 +10,20 @@ import Foundation
 import Data
 import RSCore
 
-protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider {
+protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconProvider {
 
 }
 
+private var smartFeedIcon: NSImage = {
 
+	return NSImage(named: NSImage.Name.smartBadgeTemplate)!
+}()
 
+extension PseudoFeed {
+
+	var smallIcon: NSImage? {
+		get {
+			return smartFeedIcon
+		}
+	}
+}
