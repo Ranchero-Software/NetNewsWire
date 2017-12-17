@@ -182,25 +182,6 @@
                                         <action selector="refreshAll:" target="Oky-zY-oP4" id="KRz-Df-3zA"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="AD69461C-BB63-4923-AC4C-1F23544C3BBA" label="" paletteLabel="" toolTip="Back/Forward" id="dj7-mB-qwg">
-                                    <size key="minSize" width="73" height="24"/>
-                                    <size key="maxSize" width="86" height="28"/>
-                                    <segmentedControl key="view" verticalHuggingPriority="750" id="qk7-0C-1d7">
-                                        <rect key="frame" x="0.0" y="14" width="82" height="24"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="separated" trackingMode="momentary" id="Nmq-UY-FwN">
-                                            <font key="font" metaFont="system"/>
-                                            <segments>
-                                                <segment image="NSGoLeftTemplate" width="38">
-                                                    <nil key="label"/>
-                                                </segment>
-                                                <segment image="NSGoRightTemplate" width="38" tag="1">
-                                                    <nil key="label"/>
-                                                </segment>
-                                            </segments>
-                                        </segmentedCell>
-                                    </segmentedControl>
-                                </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="BEE79EC5-174E-40DB-AA76-0F1141C97804" label="Action" paletteLabel="Action" toolTip="Action" image="action" id="eyg-zr-m4a">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="28"/>
@@ -683,8 +664,6 @@
     </scenes>
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>
-        <image name="NSGoLeftTemplate" width="9" height="12"/>
-        <image name="NSGoRightTemplate" width="9" height="12"/>
         <image name="NSMobileMe" width="32" height="32"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
