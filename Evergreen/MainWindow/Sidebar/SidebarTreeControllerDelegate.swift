@@ -107,7 +107,12 @@ private extension SidebarTreeControllerDelegate {
 
 	func sortedAccountNodes(_ parent: Node) -> [Node] {
 
-		let nodes = AccountManager.shared.accounts.map { createNode(account: $0, parent: parent) }
+		let nodes = AccountManager.shared.accounts.map { (account) -> Node in
+			let accountNode = parent.existingOrNewChildNode(with: account)
+			accountNode.canHaveChildNodes = true
+			accountNode.isGroupItem = true
+			return accountNode
+		}
 		return nodes.sortedAlphabetically()
 	}
 
