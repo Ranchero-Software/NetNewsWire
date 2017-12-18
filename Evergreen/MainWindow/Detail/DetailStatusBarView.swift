@@ -61,13 +61,10 @@ final class DetailStatusBarView: NSView {
 
 	@objc func mouseDidEnterLink(_ notification: Notification) {
 
-		guard let appInfo = AppInfo.pullFromUserInfo(notification.userInfo) else {
+		guard let userInfo = notification.userInfo, let view = userInfo[UserInfoKey.view] as? NSView, window === view.window else {
 			return
 		}
-		guard let window = window, let notificationWindow = appInfo.view?.window, window === notificationWindow else {
-			return
-		}
-		guard let link = appInfo.url else {
+		guard let link = userInfo[UserInfoKey.url] as? String else {
 			return
 		}
 		mouseoverLink = link
@@ -75,22 +72,19 @@ final class DetailStatusBarView: NSView {
 
 	@objc func mouseDidExitLink(_ notification: Notification) {
 
-		guard let appInfo = AppInfo.pullFromUserInfo(notification.userInfo) else {
-			return
-		}
-		guard let window = window, let notificationWindow = appInfo.view?.window, window === notificationWindow else {
+		guard let view = notification.userInfo?[UserInfoKey.view] as? NSView, window === view.window else {
 			return
 		}
 		mouseoverLink = nil
 	}
 
-	@objc func timelineSelectionDidChange(_ note: Notification) {
+	@objc func timelineSelectionDidChange(_ notification: Notification) {
 
-		let timelineView = note.appInfo?.view
-		if timelineView?.window === self.window {
-			mouseoverLink = nil
-			article = note.appInfo?.article
+		guard let view = notification.userInfo?[UserInfoKey.view] as? NSView, window === view.window else {
+			return
 		}
+		mouseoverLink = nil
+		article = notification.userInfo?[UserInfoKey.article] as? Article
 	}
 
 	// MARK: Drawing

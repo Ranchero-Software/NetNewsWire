@@ -76,12 +76,12 @@ import RSCore
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 	
-	@objc dynamic func userDidAddFeed(_ note: Notification) {
+	@objc dynamic func userDidAddFeed(_ notification: Notification) {
 
-		guard let appInfo = note.appInfo, let feed = appInfo.feed else {
+		guard let feed = notification.userInfo?[UserInfoKey.feed] else {
 			return
 		}
-		revealAndSelectRepresentedObject(feed)
+		revealAndSelectRepresentedObject(feed as AnyObject)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -253,13 +253,13 @@ private extension SidebarViewController {
 	
 	func postSidebarSelectionDidChangeNotification(_ selectedObjects: [AnyObject]?) {
 
-		let appInfo = AppInfo()
+		var userInfo = UserInfoDictionary()
 		if let objects = selectedObjects {
-			appInfo.objects = objects
+			userInfo[UserInfoKey.objects] = objects
 		}
-		appInfo.view = outlineView
+		userInfo[UserInfoKey.view] = outlineView
 
-		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: appInfo.userInfo)
+		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: userInfo)
 	}
 
 	func updateUnreadCounts(for objects: [AnyObject]) {

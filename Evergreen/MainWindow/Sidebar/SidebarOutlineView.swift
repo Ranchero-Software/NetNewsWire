@@ -47,9 +47,7 @@ class SidebarOutlineView : NSOutlineView {
 		}
 
 		if isNavigationKey {
-			let appInfo = AppInfo()
-			appInfo.navigationKey = ch
-			NotificationCenter.default.post(name: .AppNavigationKeyPressed, object: self, userInfo: appInfo.userInfo)
+			NotificationCenter.default.post(name: .AppNavigationKeyPressed, object: self, userInfo: [UserInfoKey.navigationKeyPressed: ch])
 			return
 		}
 

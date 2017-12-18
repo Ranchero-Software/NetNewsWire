@@ -67,12 +67,17 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 
 	// MARK: Notifications
 
-	@objc func timelineSelectionDidChange(_ note: Notification) {
+	@objc func timelineSelectionDidChange(_ notification: Notification) {
 
-		let timelineView = note.appInfo?.view
-		if timelineView?.window === self.view.window {
-			article = note.appInfo?.article
+		guard let userInfo = notification.userInfo else {
+			return
 		}
+		guard let timelineView = userInfo[UserInfoKey.view] as? NSView, timelineView.window === view.window else {
+			return
+		}
+		
+		let timelineArticle = userInfo[UserInfoKey.article] as? Article
+		article = timelineArticle
 	}
 
 	func viewWillStartLiveResize() {
@@ -152,20 +157,20 @@ extension DetailViewController: WKScriptMessageHandler {
 			return
 		}
 
-		let appInfo = AppInfo()
-		appInfo.view = self.view
-		appInfo.url = link
+		var userInfo = UserInfoDictionary()
+		userInfo[UserInfoKey.view] = view
+		userInfo[UserInfoKey.url] = link
 
-		NotificationCenter.default.post(name: .MouseDidEnterLink, object: self, userInfo: appInfo.userInfo)
+		NotificationCenter.default.post(name: .MouseDidEnterLink, object: self, userInfo: userInfo)
 	}
 
 	private func mouseDidExit(_ link: String) {
 
-		let appInfo = AppInfo()
-		appInfo.view = self.view
-		appInfo.url = link
+		var userInfo = UserInfoDictionary()
+		userInfo[UserInfoKey.view] = view
+		userInfo[UserInfoKey.url] = link
 
-		NotificationCenter.default.post(name: .MouseDidExitLink, object: self, userInfo: appInfo.userInfo)
+		NotificationCenter.default.post(name: .MouseDidExitLink, object: self, userInfo: userInfo)
 	}
 }
 

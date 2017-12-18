@@ -185,9 +185,7 @@ private extension AddFeedController {
 		}
 
 		if account.addFeed(feed, to: userEnteredFolder) {
-			let appInfo = AppInfo()
-			appInfo.feed = feed
-			NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: appInfo.userInfo)
+			NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 		}
 	}
 

@@ -201,12 +201,20 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 	
 	// MARK: - Notifications
 
-	@objc func sidebarSelectionDidChange(_ note: Notification) {
+	@objc func sidebarSelectionDidChange(_ notification: Notification) {
 
-		let sidebarView = note.appInfo?.view
+		guard let userInfo = notification.userInfo else {
+			return
+		}
+		guard let sidebarView = userInfo[UserInfoKey.view] as? NSView, sidebarView.window === tableView.window else {
+			return
+		}
 
-		if sidebarView?.window === tableView.window {
-			representedObjects = note.appInfo?.objects
+		if let objects = userInfo[UserInfoKey.objects] as? [AnyObject] {
+			representedObjects = objects
+		}
+		else {
+			representedObjects = nil
 		}
 	}
 	
@@ -398,13 +406,13 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	private func postTimelineSelectionDidChangeNotification(_ selectedArticle: Article?) {
 
-		let appInfo = AppInfo()
+		var userInfo = UserInfoDictionary()
 		if let article = selectedArticle {
-			appInfo.article = article
+			userInfo[UserInfoKey.article] = article
 		}
-		appInfo.view = tableView
+		userInfo[UserInfoKey.view] = tableView
 
-		NotificationCenter.default.post(name: .TimelineSelectionDidChange, object: self, userInfo: appInfo.userInfo)
+		NotificationCenter.default.post(name: .TimelineSelectionDidChange, object: self, userInfo: userInfo)
 	}
 
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {

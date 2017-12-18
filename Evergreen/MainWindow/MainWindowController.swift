@@ -61,7 +61,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@objc func appNavigationKeyPressed(_ note: Notification) {
 
-		guard let navigationKey = note.appInfo?.navigationKey else {
+		guard let navigationKey = note.userInfo?[UserInfoKey.navigationKeyPressed] else {
 			return
 		}
 		guard let contentView = window?.contentView, let view = note.object as? NSView, view.isDescendant(of: contentView) else {
