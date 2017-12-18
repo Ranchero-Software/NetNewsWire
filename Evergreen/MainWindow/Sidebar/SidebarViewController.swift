@@ -256,9 +256,6 @@ private extension SidebarViewController {
 		let appInfo = AppInfo()
 		if let objects = selectedObjects {
 			appInfo.objects = objects
-			DispatchQueue.main.async {
-				self.updateUnreadCounts(for: objects)
-			}
 		}
 		appInfo.view = outlineView
 
