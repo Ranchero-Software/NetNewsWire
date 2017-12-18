@@ -54,4 +54,20 @@ class RSSParserTests: XCTestCase {
 		XCTAssertEqual(parsedFeed.items.count, 10)
 	}
 
+	func testTheOmniShowAttachments() {
+
+		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.attachments)
+			XCTAssertEqual(article.attachments!.count, 1)
+			let attachment = Array(article.attachments!).first!
+			XCTAssertNotNil(attachment.mimeType)
+			XCTAssertNotNil(attachment.sizeInBytes)
+			XCTAssert(attachment.url.contains("cloudfront"))
+			XCTAssertGreaterThanOrEqual(attachment.sizeInBytes!, 22275279)
+			XCTAssertEqual(attachment.mimeType, "audio/mpeg")
+		}
+	}
 }

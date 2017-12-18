@@ -15,7 +15,7 @@
 #import <RSParser/NSString+RSParser.h>
 #import <RSParser/RSDateParser.h>
 #import <RSParser/ParserData.h>
-
+#import <RSParser/RSParsedEnclosure.h>
 
 @interface RSRSSParser () <RSSAXParserDelegate>
 
@@ -159,6 +159,8 @@ static const NSInteger kTrueLength = 5;
 static const char *kUppercaseRDF = "RDF";
 static const NSInteger kUppercaseRDFLength = 4;
 
+static const char *kEnclosure = "enclosure";
+static const NSInteger kEnclosureLength = 10;
 
 #pragma mark - Parsing
 
@@ -232,6 +234,29 @@ static const NSInteger kUppercaseRDFLength = 4;
 	}
 }
 
+- (void)addEnclosure {
+
+	NSDictionary *attributes = self.currentAttributes;
+	NSString *url = attributes[kURLKey];
+	if (!url || url.length < 1) {
+		return;
+	}
+
+	RSParsedEnclosure *enclosure = [[RSParsedEnclosure alloc] init];
+	enclosure.url = url;
+
+	NSString *lengthString = attributes[kLengthKey];
+	if (lengthString) {
+		enclosure.length = lengthString.integerValue;
+	}
+
+	enclosure.mimeType = attributes[kTypeKey];
+
+	// The RSS spec specifies zero or one enclosures.
+	// However, the Media RSS namespace allows for more than one.
+	// We could add support for multiple enclosures at some time in the future.
+	self.currentArticle.enclosures = [NSSet setWithObject:enclosure];
+}
 
 - (NSString *)urlString:(NSString *)s {
 
@@ -304,6 +329,9 @@ static const NSInteger kUppercaseRDFLength = 4;
 	else if (RSSAXEqualTags(localName, kTitle, kTitleLength)) {
 		self.currentArticle.title = [self currentStringWithHTMLEntitiesDecoded];
 	}
+	else if (RSSAXEqualTags(localName, kEnclosure, kEnclosureLength)) {
+		[self addEnclosure];
+	}
 }
 
 
@@ -327,7 +355,7 @@ static const NSInteger kUppercaseRDFLength = 4;
 	}
 
 	NSDictionary *xmlAttributes = nil;
-	if ((self.isRDF && RSSAXEqualTags(localName, kItem, kItemLength)) || RSSAXEqualTags(localName, kGuid, kGuidLength)) {
+	if ((self.isRDF && RSSAXEqualTags(localName, kItem, kItemLength)) || RSSAXEqualTags(localName, kGuid, kGuidLength) || RSSAXEqualTags(localName, kEnclosure, kEnclosureLength)) {
 		xmlAttributes = [self.parser attributesDictionary:attributes numberOfAttributes:numberOfAttributes];
 	}
 	if (self.currentAttributes != xmlAttributes) {

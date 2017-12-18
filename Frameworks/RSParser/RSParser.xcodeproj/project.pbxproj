@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8401FF811FE862E70080F13F /* RSParsedEnclosure.h in Headers */ = {isa = PBXBuildFile; fileRef = 8401FF7F1FE862E70080F13F /* RSParsedEnclosure.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8401FF821FE862E70080F13F /* RSParsedEnclosure.m in Sources */ = {isa = PBXBuildFile; fileRef = 8401FF801FE862E70080F13F /* RSParsedEnclosure.m */; };
+		8401FF841FE87C2F0080F13F /* theomnishow.rss in Resources */ = {isa = PBXBuildFile; fileRef = 8401FF831FE87C2E0080F13F /* theomnishow.rss */; };
 		840FDCB21F01FED00041F61B /* RSSParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FDCB11F01FED00041F61B /* RSSParserTests.swift */; };
 		840FDCB41F0217410041F61B /* JSONFeedParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FDCB31F0217410041F61B /* JSONFeedParserTests.swift */; };
 		840FDCB61F0217D20041F61B /* AtomParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FDCB51F0217D20041F61B /* AtomParserTests.swift */; };
@@ -111,6 +114,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8401FF7F1FE862E70080F13F /* RSParsedEnclosure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSParsedEnclosure.h; sourceTree = "<group>"; };
+		8401FF801FE862E70080F13F /* RSParsedEnclosure.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSParsedEnclosure.m; sourceTree = "<group>"; };
+		8401FF831FE87C2E0080F13F /* theomnishow.rss */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = theomnishow.rss; sourceTree = "<group>"; };
 		840FDCB11F01FED00041F61B /* RSSParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSParserTests.swift; sourceTree = "<group>"; };
 		840FDCB31F0217410041F61B /* JSONFeedParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONFeedParserTests.swift; sourceTree = "<group>"; };
 		840FDCB51F0217D20041F61B /* AtomParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomParserTests.swift; sourceTree = "<group>"; };
@@ -343,6 +349,8 @@
 				84469D221EFA3134004A6B28 /* RSParsedArticle.m */,
 				84469D231EFA3134004A6B28 /* RSParsedFeed.h */,
 				84469D241EFA3134004A6B28 /* RSParsedFeed.m */,
+				8401FF7F1FE862E70080F13F /* RSParsedEnclosure.h */,
+				8401FF801FE862E70080F13F /* RSParsedEnclosure.m */,
 			);
 			name = XML;
 			path = Feeds/XML;
@@ -381,6 +389,7 @@
 				84628AAC1FCA10AE00566A9B /* allthis.atom */,
 				84566D931FD0ABFB00103322 /* allthis.json */,
 				84566D951FD1FC1800103322 /* allthis-partial.json */,
+				8401FF831FE87C2E0080F13F /* theomnishow.rss */,
 				849A03CF1F0081EA00122600 /* Subs.opml */,
 			);
 			path = Resources;
@@ -454,6 +463,7 @@
 				84469CFC1EFA3069004A6B28 /* RSSAXParser.h in Headers */,
 				845213281FCB4042003B6E93 /* RSHTMLTag.h in Headers */,
 				84E7E69F1F85780D0046719D /* ParserData.h in Headers */,
+				8401FF811FE862E70080F13F /* RSParsedEnclosure.h in Headers */,
 				84469D071EFA307E004A6B28 /* RSHTMLLinkParser.h in Headers */,
 				84469D0D1EFA307E004A6B28 /* RSSAXHTMLParser.h in Headers */,
 				84469D2B1EFA3134004A6B28 /* RSParsedArticle.h in Headers */,
@@ -561,6 +571,7 @@
 				840FDCBA1F02186D0041F61B /* DaringFireball.json in Resources */,
 				849A03D21F0081EA00122600 /* EMarley.rss in Resources */,
 				849A03DA1F0081EA00122600 /* Subs.opml in Resources */,
+				8401FF841FE87C2F0080F13F /* theomnishow.rss in Resources */,
 				849A03D61F0081EA00122600 /* manton.rss in Resources */,
 				849A03D11F0081EA00122600 /* DaringFireball.rss in Resources */,
 				84B19A771FDA438300458981 /* natasha.xml in Resources */,
@@ -613,6 +624,7 @@
 				84285AAA1F006456002E8708 /* RSParsedFeedTransformer.swift in Sources */,
 				84469D2E1EFA3134004A6B28 /* RSParsedFeed.m in Sources */,
 				84469CF81EFA3000004A6B28 /* RSOPMLParser.m in Sources */,
+				8401FF821FE862E70080F13F /* RSParsedEnclosure.m in Sources */,
 				84469D401EFF29A9004A6B28 /* FeedParserError.swift in Sources */,
 				84469D321EFA31CF004A6B28 /* FeedParser.swift in Sources */,
 				84469D281EFA3134004A6B28 /* RSAtomParser.m in Sources */,

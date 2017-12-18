@@ -41,8 +41,9 @@ private extension RSParsedFeedTransformer {
 		let datePublished = parsedArticle.datePublished
 		let dateModified = parsedArticle.dateModified
 		let authors = parsedAuthors(parsedArticle.author)
+		let attachments = parsedAttachments(parsedArticle.enclosures)
 
-		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: parsedArticle.feedURL, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: nil, attachments: nil)
+		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: parsedArticle.feedURL, url: url, externalURL: externalURL, title: title, contentHTML: contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: nil, attachments: attachments)
 	}
 
 	static func parsedAuthors(_ authorEmailAddress: String?) -> Set<ParsedAuthor>? {
@@ -52,5 +53,20 @@ private extension RSParsedFeedTransformer {
 		}
 		let author = ParsedAuthor(name: nil, url: nil, avatarURL: nil, emailAddress: authorEmailAddress)
 		return Set([author])
+	}
+
+	static func parsedAttachments(_ enclosures: Set<RSParsedEnclosure>?) -> Set<ParsedAttachment>? {
+
+		guard let enclosures = enclosures, !enclosures.isEmpty else {
+			return nil
+		}
+
+		let attachments = enclosures.flatMap { (enclosure) -> ParsedAttachment? in
+
+			let sizeInBytes = enclosure.length > 0 ? enclosure.length : nil
+			return ParsedAttachment(url: enclosure.url, mimeType: enclosure.mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: nil)
+		}
+
+		return attachments.isEmpty ? nil : Set(attachments)
 	}
 }

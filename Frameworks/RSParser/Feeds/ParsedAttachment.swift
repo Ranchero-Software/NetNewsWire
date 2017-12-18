@@ -19,6 +19,10 @@ public struct ParsedAttachment: Hashable {
 	
 	init?(url: String, mimeType: String?, title: String?, sizeInBytes: Int?, durationInSeconds: Int?) {
 
+		if url.isEmpty {
+			return nil
+		}
+		
 		self.url = url
 		self.mimeType = mimeType
 		self.title = title
