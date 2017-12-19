@@ -14,6 +14,7 @@
 #import <RSParser/NSString+RSParser.h>
 #import <RSParser/RSDateParser.h>
 #import <RSParser/ParserData.h>
+#import <RSParser/RSParsedEnclosure.h>
 
 @interface RSAtomParser () <RSSAXParserDelegate>
 
@@ -94,11 +95,14 @@ static NSString *kXMLBaseKey = @"xml:base";
 static NSString *kXMLLangKey = @"xml:lang";
 static NSString *kTextHTMLValue = @"text/html";
 static NSString *kRelatedValue = @"related";
+static NSString *kEnclosureValue = @"enclosure";
 static NSString *kShortURLValue = @"shorturl";
 static NSString *kHTMLValue = @"html";
 static NSString *kEnValue = @"en";
 static NSString *kTextValue = @"text";
 static NSString *kSelfValue = @"self";
+static NSString *kLengthKey = @"length";
+static NSString *kTitleKey = @"title";
 
 static const char *kID = "id";
 static const NSInteger kIDLength = 3;
@@ -175,6 +179,11 @@ static const NSInteger kTextLength = 5;
 static const char *kSelf = "self";
 static const NSInteger kSelfLength = 5;
 
+static const char *kEnclosure = "enclosure";
+static const NSInteger kEnclosureLength = 10;
+
+static const char *kLength = "length";
+static const NSInteger kLengthLength = 7;
 
 #pragma mark - Parsing
 
@@ -241,28 +250,46 @@ static const NSInteger kSelfLength = 5;
 
 - (void)addLink {
 
-	NSString *urlString = self.currentAttributes[kHrefKey];
+	NSDictionary *attributes = self.currentAttributes;
+
+	NSString *urlString = attributes[kHrefKey];
 	if (urlString.length < 1) {
 		return;
 	}
 
-	NSString *rel = self.currentAttributes[kRelKey];
+	RSParsedArticle *article = self.currentArticle;
+
+	NSString *rel = attributes[kRelKey];
 	if (rel.length < 1) {
 		rel = kAlternateValue;
 	}
 
 	if (rel == kAlternateValue) {
-		if (!self.currentArticle.link) {
-			self.currentArticle.link = urlString;
+		if (!article.link) {
+			article.link = urlString;
 		}
 	}
 	else if (rel == kRelatedValue) {
-		if (!self.currentArticle.permalink) {
-			self.currentArticle.permalink = urlString;
+		if (!article.permalink) {
+			article.permalink = urlString;
 		}
+	}
+	else if (rel == kEnclosureValue) {
+		RSParsedEnclosure *enclosure = [self enclosureWithURLString:urlString attributes:attributes];
+		[article addEnclosure:enclosure];
 	}
 }
 
+- (RSParsedEnclosure *)enclosureWithURLString:(NSString *)urlString attributes:(NSDictionary *)attributes {
+
+	RSParsedEnclosure *enclosure = [[RSParsedEnclosure alloc] init];
+	enclosure.url = urlString;
+	enclosure.title = attributes[kTitleKey];
+	enclosure.mimeType = attributes[kTypeKey];
+	enclosure.length = [attributes[kLengthKey] integerValue];
+
+	return enclosure;
+}
 
 - (void)addContent {
 
@@ -502,6 +529,14 @@ static const NSInteger kSelfLength = 5;
 		return kAlternateValue;
 	}
 
+	if (RSSAXEqualTags(name, kLength, kLengthLength)) {
+		return kLengthKey;
+	}
+
+	if (RSSAXEqualTags(name, kTitle, kTitleLength)) {
+		return kTitleKey;
+	}
+
 	return nil;
 }
 
@@ -522,9 +557,14 @@ static BOOL equalBytes(const void *bytes1, const void *bytes2, NSUInteger length
 	static const NSUInteger enLength = kEnLength - 1;
 	static const NSUInteger textLength = kTextLength - 1;
 	static const NSUInteger selfLength = kSelfLength - 1;
+	static const NSUInteger enclosureLength = kEnclosureLength - 1;
 
 	if (length == alternateLength && equalBytes(bytes, kAlternate, alternateLength)) {
 		return kAlternateValue;
+	}
+
+	if (length == enclosureLength && equalBytes(bytes, kEnclosure, enclosureLength)) {
+		return kEnclosureValue;
 	}
 
 	if (length == textHTMLLength && equalBytes(bytes, kTextHTML, textHTMLLength)) {

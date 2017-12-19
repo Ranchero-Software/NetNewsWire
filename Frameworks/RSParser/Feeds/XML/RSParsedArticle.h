@@ -28,6 +28,8 @@
 @property (nonatomic, nullable) NSDate *dateModified;
 @property (nonatomic, nonnull) NSDate *dateParsed;
 
+- (void)addEnclosure:(RSParsedEnclosure *_Nonnull)enclosure;
+
 - (void)calculateArticleID; // Optimization. Call after all properties have been set. Call on a background thread.
 
 @end

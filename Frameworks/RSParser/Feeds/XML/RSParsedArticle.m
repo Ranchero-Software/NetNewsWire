@@ -32,6 +32,18 @@
 }
 
 
+#pragma mark - Enclosures
+
+- (void)addEnclosure:(RSParsedEnclosure *)enclosure {
+
+	if (self.enclosures) {
+		self.enclosures = [self.enclosures setByAddingObject:enclosure];
+	}
+	else {
+		self.enclosures = [NSSet setWithObject:enclosure];
+	}
+}
+
 #pragma mark - Accessors
 
 - (NSString *)articleID {

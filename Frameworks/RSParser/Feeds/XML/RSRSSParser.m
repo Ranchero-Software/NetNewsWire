@@ -244,18 +244,10 @@ static const NSInteger kEnclosureLength = 10;
 
 	RSParsedEnclosure *enclosure = [[RSParsedEnclosure alloc] init];
 	enclosure.url = url;
-
-	NSString *lengthString = attributes[kLengthKey];
-	if (lengthString) {
-		enclosure.length = lengthString.integerValue;
-	}
-
+	enclosure.length = [attributes[kLengthKey] integerValue];
 	enclosure.mimeType = attributes[kTypeKey];
 
-	// The RSS spec specifies zero or one enclosures.
-	// However, the Media RSS namespace allows for more than one.
-	// We could add support for multiple enclosures at some time in the future.
-	self.currentArticle.enclosures = [NSSet setWithObject:enclosure];
+	[self.currentArticle addEnclosure:enclosure];
 }
 
 - (NSString *)urlString:(NSString *)s {
