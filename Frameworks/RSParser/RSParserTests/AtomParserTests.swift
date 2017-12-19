@@ -54,6 +54,14 @@ class AtomParserTests: XCTestCase {
 			XCTAssertTrue(article.uniqueID.hasPrefix("tag:daringfireball.net,2017:/"))
 
 			XCTAssertEqual(article.authors!.count, 1) // TODO: parse Atom authors
+			let author = article.authors!.first!
+			if author.name == "Daring Fireball Department of Commerce" {
+				XCTAssertNil(author.url)
+			}
+			else {
+				XCTAssertEqual(author.name, "John Gruber")
+				XCTAssertEqual(author.url, "http://daringfireball.net/")
+			}
 
 			XCTAssertNotNil(article.datePublished)
 			XCTAssert(article.attachments == nil)

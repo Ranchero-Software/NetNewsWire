@@ -15,6 +15,7 @@
 #import <RSParser/RSDateParser.h>
 #import <RSParser/ParserData.h>
 #import <RSParser/RSParsedEnclosure.h>
+#import <RSParser/RSParsedAuthor.h>
 
 @interface RSAtomParser () <RSSAXParserDelegate>
 
@@ -34,6 +35,7 @@
 @property (nonatomic) NSDate *dateParsed;
 @property (nonatomic) RSSAXParser *parser;
 @property (nonatomic, readonly) RSParsedArticle *currentArticle;
+@property (nonatomic) RSParsedAuthor *currentAuthor;
 @property (nonatomic, readonly) NSDate *currentDate;
 
 @end
@@ -127,6 +129,15 @@ static const NSInteger kUpdatedLength = 8;
 
 static const char *kAuthor = "author";
 static const NSInteger kAuthorLength = 7;
+
+static const char *kName = "name";
+static const NSInteger kNameLength = 5;
+
+static const char *kEmail = "email";
+static const NSInteger kEmailLength = 6;
+
+static const char *kURI = "uri";
+static const NSInteger kURILength = 4;
 
 static const char *kEntry = "entry";
 static const NSInteger kEntryLength = 6;
@@ -404,6 +415,7 @@ static const NSInteger kLengthLength = 7;
 
 	if (RSSAXEqualTags(localName, kAuthor, kAuthorLength)) {
 		self.parsingAuthor = YES;
+		self.currentAuthor = [[RSParsedAuthor alloc] init];
 		return;
 	}
 
@@ -471,8 +483,25 @@ static const NSInteger kLengthLength = 7;
 		[self.xhtmlString appendString:@">"];
 	}
 
-	else if (RSSAXEqualTags(localName, kAuthor, kAuthorLength)) {
-		self.parsingAuthor = NO;
+	else if (self.parsingAuthor) {
+
+		if (RSSAXEqualTags(localName, kAuthor, kAuthorLength)) {
+			self.parsingAuthor = NO;
+			RSParsedAuthor *author = self.currentAuthor;
+			if (author.name || author.emailAddress || author.url) {
+				[self.currentArticle addAuthor:author];
+			}
+			self.currentAuthor = nil;
+		}
+		else if (RSSAXEqualTags(localName, kName, kNameLength)) {
+			self.currentAuthor.name = self.parser.currentStringWithTrimmedWhitespace;
+		}
+		else if (RSSAXEqualTags(localName, kEmail, kEmailLength)) {
+			self.currentAuthor.emailAddress = self.parser.currentStringWithTrimmedWhitespace;
+		}
+		else if (RSSAXEqualTags(localName, kURI, kURILength)) {
+			self.currentAuthor.url = self.parser.currentStringWithTrimmedWhitespace;
+		}
 	}
 
 	else if (RSSAXEqualTags(localName, kEntry, kEntryLength)) {
