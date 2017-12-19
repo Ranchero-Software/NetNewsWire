@@ -19,6 +19,11 @@
 
 @implementation NSString (RSParser)
 
+- (BOOL)rsparser_contains:(NSString *)s {
+
+	return [self rangeOfString:s].location != NSNotFound;
+}
+
 - (NSString *)rsparser_stringByDecodingHTMLEntities {
 	
 	@autoreleasepool {

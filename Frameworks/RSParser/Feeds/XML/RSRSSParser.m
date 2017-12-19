@@ -16,6 +16,7 @@
 #import <RSParser/RSDateParser.h>
 #import <RSParser/ParserData.h>
 #import <RSParser/RSParsedEnclosure.h>
+#import <RSParser/RSParsedAuthor.h>
 
 @interface RSRSSParser () <RSSAXParserDelegate>
 
@@ -207,15 +208,22 @@ static const NSInteger kEnclosureLength = 10;
 	}
 }
 
+- (void)addAuthorWithString:(NSString *)authorString {
+
+	if (RSParserStringIsEmpty(authorString)) {
+		return;
+	}
+	
+	RSParsedAuthor *author = [RSParsedAuthor authorWithSingleString:self.parser.currentStringWithTrimmedWhitespace];
+	[self.currentArticle addAuthor:author];
+}
 
 - (void)addDCElement:(const xmlChar *)localName {
 
 	if (RSSAXEqualTags(localName, kCreator, kCreatorLength)) {
-
-		self.currentArticle.author = self.parser.currentStringWithTrimmedWhitespace;
+		[self addAuthorWithString:self.parser.currentStringWithTrimmedWhitespace];
 	}
 	else if (RSSAXEqualTags(localName, kDate, kDateLength)) {
-
 		self.currentArticle.datePublished = self.currentDate;
 	}
 }
@@ -304,7 +312,7 @@ static const NSInteger kEnclosureLength = 10;
 		self.currentArticle.datePublished = self.currentDate;
 	}
 	else if (RSSAXEqualTags(localName, kAuthor, kAuthorLength)) {
-		self.currentArticle.author = self.parser.currentStringWithTrimmedWhitespace;
+		[self addAuthorWithString:self.parser.currentStringWithTrimmedWhitespace];
 	}
 	else if (RSSAXEqualTags(localName, kLink, kLinkLength)) {
 		self.currentArticle.link = [self urlString:self.parser.currentStringWithTrimmedWhitespace];

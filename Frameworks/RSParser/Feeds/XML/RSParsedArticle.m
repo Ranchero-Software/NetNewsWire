@@ -9,7 +9,8 @@
 #import <RSParser/RSParsedArticle.h>
 #import <RSParser/RSParserInternal.h>
 #import <RSParser/NSString+RSParser.h>
-
+#import <RSParser/RSParsedAuthor.h>
+#import <RSParser/RSParsedEnclosure.h>
 
 @implementation RSParsedArticle
 
@@ -44,7 +45,19 @@
 	}
 }
 
-#pragma mark - Accessors
+#pragma mark - Authors
+
+- (void)addAuthor:(RSParsedAuthor *)author {
+
+	if (self.authors) {
+		self.authors = [self.authors setByAddingObject:author];
+	}
+	else {
+		self.authors = [NSSet setWithObject:author];
+	}
+}
+
+#pragma mark - articleID
 
 - (NSString *)articleID {
 

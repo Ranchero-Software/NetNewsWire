@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)rsparser_md5Hash;
 
+- (BOOL)rsparser_contains:(NSString *)s;
+
 @end
 
 NS_ASSUME_NONNULL_END

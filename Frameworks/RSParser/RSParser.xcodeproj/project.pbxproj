@@ -66,6 +66,8 @@
 		84469D441F002CEF004A6B28 /* JSONFeedParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84469D431F002CEF004A6B28 /* JSONFeedParser.swift */; };
 		844B5B3E1FE9A13C00C7C76A /* 4fsodonline.atom in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B3D1FE9A13B00C7C76A /* 4fsodonline.atom */; };
 		844B5B401FE9A45200C7C76A /* expertopinionent.atom in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B3F1FE9A45200C7C76A /* expertopinionent.atom */; };
+		844B5B441FE9AFDB00C7C76A /* RSParsedAuthor.h in Headers */ = {isa = PBXBuildFile; fileRef = 844B5B411FE9AF2700C7C76A /* RSParsedAuthor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		844B5B451FE9AFE000C7C76A /* RSParsedAuthor.m in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B421FE9AF2700C7C76A /* RSParsedAuthor.m */; };
 		845213251FCB3C76003B6E93 /* coco.html in Resources */ = {isa = PBXBuildFile; fileRef = 845213241FCB3C75003B6E93 /* coco.html */; };
 		845213281FCB4042003B6E93 /* RSHTMLTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 845213261FCB4042003B6E93 /* RSHTMLTag.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		845213291FCB4042003B6E93 /* RSHTMLTag.m in Sources */ = {isa = PBXBuildFile; fileRef = 845213271FCB4042003B6E93 /* RSHTMLTag.m */; };
@@ -176,6 +178,8 @@
 		84469D431F002CEF004A6B28 /* JSONFeedParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONFeedParser.swift; path = Feeds/JSON/JSONFeedParser.swift; sourceTree = "<group>"; };
 		844B5B3D1FE9A13B00C7C76A /* 4fsodonline.atom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = 4fsodonline.atom; sourceTree = "<group>"; };
 		844B5B3F1FE9A45200C7C76A /* expertopinionent.atom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = expertopinionent.atom; sourceTree = "<group>"; };
+		844B5B411FE9AF2700C7C76A /* RSParsedAuthor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSParsedAuthor.h; sourceTree = "<group>"; };
+		844B5B421FE9AF2700C7C76A /* RSParsedAuthor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSParsedAuthor.m; sourceTree = "<group>"; };
 		845213241FCB3C75003B6E93 /* coco.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = coco.html; sourceTree = "<group>"; };
 		845213261FCB4042003B6E93 /* RSHTMLTag.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSHTMLTag.h; sourceTree = "<group>"; };
 		845213271FCB4042003B6E93 /* RSHTMLTag.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSHTMLTag.m; sourceTree = "<group>"; };
@@ -355,6 +359,8 @@
 				84469D241EFA3134004A6B28 /* RSParsedFeed.m */,
 				8401FF7F1FE862E70080F13F /* RSParsedEnclosure.h */,
 				8401FF801FE862E70080F13F /* RSParsedEnclosure.m */,
+				844B5B411FE9AF2700C7C76A /* RSParsedAuthor.h */,
+				844B5B421FE9AF2700C7C76A /* RSParsedAuthor.m */,
 			);
 			name = XML;
 			path = Feeds/XML;
@@ -469,6 +475,7 @@
 				84469CFC1EFA3069004A6B28 /* RSSAXParser.h in Headers */,
 				845213281FCB4042003B6E93 /* RSHTMLTag.h in Headers */,
 				84E7E69F1F85780D0046719D /* ParserData.h in Headers */,
+				844B5B441FE9AFDB00C7C76A /* RSParsedAuthor.h in Headers */,
 				8401FF811FE862E70080F13F /* RSParsedEnclosure.h in Headers */,
 				84469D071EFA307E004A6B28 /* RSHTMLLinkParser.h in Headers */,
 				84469D0D1EFA307E004A6B28 /* RSSAXHTMLParser.h in Headers */,
@@ -624,6 +631,7 @@
 				84285AAC1F006754002E8708 /* AtomParser.swift in Sources */,
 				84285AA81F005D53002E8708 /* RSSParser.swift in Sources */,
 				84469D421EFF2B2D004A6B28 /* JSONTypes.swift in Sources */,
+				844B5B451FE9AFE000C7C76A /* RSParsedAuthor.m in Sources */,
 				84469D0C1EFA307E004A6B28 /* RSHTMLMetadataParser.m in Sources */,
 				84469D0A1EFA307E004A6B28 /* RSHTMLMetadata.m in Sources */,
 				84469D171EFA30A2004A6B28 /* NSString+RSParser.m in Sources */,

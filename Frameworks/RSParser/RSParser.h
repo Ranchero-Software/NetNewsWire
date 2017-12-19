@@ -38,6 +38,7 @@
 #import <RSParser/RSParsedFeed.h>
 #import <RSParser/RSParsedArticle.h>
 #import <RSParser/RSParsedEnclosure.h>
+#import <RSParser/RSParsedAuthor.h>
 
 // HTML
 

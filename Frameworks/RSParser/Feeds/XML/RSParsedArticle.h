@@ -9,6 +9,7 @@
 @import Foundation;
 
 @class RSParsedEnclosure;
+@class RSParsedAuthor;
 
 @interface RSParsedArticle : NSObject
 
@@ -22,13 +23,14 @@
 @property (nonatomic, nullable) NSString *body;
 @property (nonatomic, nullable) NSString *link;
 @property (nonatomic, nullable) NSString *permalink;
-@property (nonatomic, nullable) NSString *author;
+@property (nonatomic, nullable) NSSet<RSParsedAuthor *> *authors;
 @property (nonatomic, nullable) NSSet<RSParsedEnclosure *> *enclosures;
 @property (nonatomic, nullable) NSDate *datePublished;
 @property (nonatomic, nullable) NSDate *dateModified;
 @property (nonatomic, nonnull) NSDate *dateParsed;
 
 - (void)addEnclosure:(RSParsedEnclosure *_Nonnull)enclosure;
+- (void)addAuthor:(RSParsedAuthor *_Nonnull)author;
 
 @end
 
