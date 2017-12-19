@@ -53,7 +53,7 @@ class AtomParserTests: XCTestCase {
 
 			XCTAssertTrue(article.uniqueID.hasPrefix("tag:daringfireball.net,2017:/"))
 
-			//			XCTAssertEqual(article.authors!.count, 1) // TODO: parse Atom authors
+			XCTAssertEqual(article.authors!.count, 1) // TODO: parse Atom authors
 
 			XCTAssertNotNil(article.datePublished)
 			XCTAssert(article.attachments == nil)
@@ -98,6 +98,5 @@ class AtomParserTests: XCTestCase {
 			XCTAssertNil(attachment.sizeInBytes)
 			XCTAssertEqual(attachment.mimeType!, "audio/mpeg")
 		}
-
 	}
 }
