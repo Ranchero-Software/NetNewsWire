@@ -34,6 +34,9 @@ public final class Database {
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
 		let createStatements = try! NSString(contentsOfFile: createStatementsPath, encoding: String.Encoding.utf8.rawValue)
 		queue.createTables(usingStatements: createStatements as String)
+		queue.update { (database) in
+			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;")
+		}
 		queue.vacuumIfNeeded()
 	}
 

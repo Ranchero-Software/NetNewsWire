@@ -24,8 +24,6 @@
 		846FB36B1F4A937B00EAB81D /* Feed+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846FB36A1F4A937B00EAB81D /* Feed+Database.swift */; };
 		848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */; };
 		84BB4BA21F119C5400858766 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B981F119C4900858766 /* RSCore.framework */; };
-		84BB4BA91F11A32800858766 /* TagsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BB4BA81F11A32800858766 /* TagsTable.swift */; };
-		84D0DEA11F4A429800073503 /* String+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D0DEA01F4A429800073503 /* String+Database.swift */; };
 		84E156EA1F0AB80500F8CC05 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156E91F0AB80500F8CC05 /* Database.swift */; };
 		84E156EC1F0AB80E00F8CC05 /* ArticlesTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156EB1F0AB80E00F8CC05 /* ArticlesTable.swift */; };
 		84E156EE1F0AB81400F8CC05 /* StatusesTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156ED1F0AB81400F8CC05 /* StatusesTable.swift */; };
@@ -134,8 +132,6 @@
 		846FB36A1F4A937B00EAB81D /* Feed+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Feed+Database.swift"; path = "Extensions/Feed+Database.swift"; sourceTree = "<group>"; };
 		848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCountDictionary.swift; sourceTree = "<group>"; };
 		84BB4B8F1F119C4900858766 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
-		84BB4BA81F11A32800858766 /* TagsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsTable.swift; sourceTree = "<group>"; };
-		84D0DEA01F4A429800073503 /* String+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "String+Database.swift"; path = "Extensions/String+Database.swift"; sourceTree = "<group>"; };
 		84E156E81F0AB75600F8CC05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84E156E91F0AB80500F8CC05 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		84E156EB1F0AB80E00F8CC05 /* ArticlesTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticlesTable.swift; sourceTree = "<group>"; };
@@ -180,7 +176,6 @@
 				843577151F744FC800F460AE /* DatabaseArticle.swift */,
 				84E156ED1F0AB81400F8CC05 /* StatusesTable.swift */,
 				84F20F8E1F180D8700D8E682 /* AuthorsTable.swift */,
-				84BB4BA81F11A32800858766 /* TagsTable.swift */,
 				840405CE1F1A963700DF0296 /* AttachmentsTable.swift */,
 				8461462A1F0AC44100870CB3 /* Extensions */,
 				84E156EF1F0AB81F00F8CC05 /* CreateStatements.sql */,
@@ -228,7 +223,6 @@
 				845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */,
 				84F20F901F1810DD00D8E682 /* Author+Database.swift */,
 				8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */,
-				84D0DEA01F4A429800073503 /* String+Database.swift */,
 				842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */,
 				84288A011F6A3D8000395871 /* RelatedObjectsMap+Database.swift */,
 			);
@@ -481,14 +475,12 @@
 			files = (
 				845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */,
 				846FB36B1F4A937B00EAB81D /* Feed+Database.swift in Sources */,
-				84D0DEA11F4A429800073503 /* String+Database.swift in Sources */,
 				843CB9961F34174100EE6581 /* Author+Database.swift in Sources */,
 				848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
 				8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */,
 				8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */,
 				84288A021F6A3D8000395871 /* RelatedObjectsMap+Database.swift in Sources */,
-				84BB4BA91F11A32800858766 /* TagsTable.swift in Sources */,
 				840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */,
 				84F20F8F1F180D8700D8E682 /* AuthorsTable.swift in Sources */,
 				84288A001F6A3C4400395871 /* DatabaseObject+Database.swift in Sources */,

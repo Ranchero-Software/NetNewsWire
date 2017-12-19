@@ -575,7 +575,6 @@
 				849A975F1ED9EB95007D329B /* Sidebar */,
 				849A97681ED9EBC8007D329B /* Timeline */,
 				849A977C1ED9EC42007D329B /* Detail */,
-				849A97811ED9EC63007D329B /* Status Bar */,
 				849A97551ED9EAC3007D329B /* Add Feed */,
 				849A97411ED9EAA9007D329B /* Add Folder */,
 				84AFBB3A1FBE76D800BA41CF /* PanicButton */,
@@ -726,14 +725,6 @@
 				84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */,
 			);
 			path = Detail;
-			sourceTree = "<group>";
-		};
-		849A97811ED9EC63007D329B /* Status Bar */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Status Bar";
-			path = StatusBar;
 			sourceTree = "<group>";
 		};
 		849A97861ED9ECEF007D329B /* Article Styles */ = {
