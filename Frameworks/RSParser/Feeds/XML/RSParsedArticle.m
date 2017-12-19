@@ -47,20 +47,26 @@
 #pragma mark - Accessors
 
 - (NSString *)articleID {
+
+	if (self.guid) {
+		return self.guid;
+	}
 	
 	if (!_articleID) {
-		_articleID = self.calculatedUniqueID;
+		_articleID = [self calculatedArticleID];
 	}
 	
 	return _articleID;
 }
 
 
-- (NSString *)calculatedUniqueID {
+- (NSString *)calculatedArticleID {
 
-	/*guid+feedID, or a combination of properties when no guid. Then hash the result.
-		In general, feeds should have guids. When they don't, re-runs are very likely,
-		because there's no other 100% reliable way to determine identity.*/
+	/*Concatenate a combination of properties when no guid. Then hash the result.
+	 In general, feeds should have guids. When they don't, re-runs are very likely,
+	 because there's no other 100% reliable way to determine identity.
+	 This is intended to create an ID unique inside a feed, but not globally unique.
+	 Not suitable for a database ID, in other words.*/
 
 	NSMutableString *s = [NSMutableString stringWithString:@""];
 	
@@ -69,11 +75,7 @@
 		datePublishedTimeStampString = [NSString stringWithFormat:@"%.0f", self.datePublished.timeIntervalSince1970];
 	}
 	
-	if (!RSParserStringIsEmpty(self.guid)) {
-		[s appendString:self.guid];
-	}
-
-	else if (!RSParserStringIsEmpty(self.link) && self.datePublished != nil) {
+	if (!RSParserStringIsEmpty(self.link) && self.datePublished != nil) {
 		[s appendString:self.link];
 		[s appendString:datePublishedTimeStampString];
 	}
@@ -99,15 +101,11 @@
 		[s appendString:self.body];
 	}
 
-	NSAssert(!RSParserStringIsEmpty(self.feedURL), nil);
-	[s appendString:self.feedURL];
-
-	return [s rsparser_md5Hash];
-}
-
-- (void)calculateArticleID {
+	else if (!RSParserStringIsEmpty(self.permalink)) {
+		[s appendString:self.permalink];
+	}
 	
-	(void)self.articleID;
+	return [s rsparser_md5Hash];
 }
 
 @end

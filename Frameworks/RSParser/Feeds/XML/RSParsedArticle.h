@@ -15,7 +15,7 @@
 - (nonnull instancetype)initWithFeedURL:(NSString * _Nonnull)feedURL;
 
 @property (nonatomic, readonly, nonnull) NSString *feedURL;
-@property (nonatomic, nonnull) NSString *articleID; //Calculated. Don't get until other properties have been set.
+@property (nonatomic, nonnull) NSString *articleID; //guid, if present, or calculated from other attributes. Should be unique to the feed, but not necessarily unique across different feeds. (Not suitable for a database ID.)
 
 @property (nonatomic, nullable) NSString *guid;
 @property (nonatomic, nullable) NSString *title;
@@ -29,8 +29,6 @@
 @property (nonatomic, nonnull) NSDate *dateParsed;
 
 - (void)addEnclosure:(RSParsedEnclosure *_Nonnull)enclosure;
-
-- (void)calculateArticleID; // Optimization. Call after all properties have been set. Call on a background thread.
 
 @end
 

@@ -172,9 +172,6 @@ static const NSInteger kEnclosureLength = 10;
 		[self.parser parseData:self.feedData];
 		[self.parser finishParsing];
 	}
-	
-	// Optimization: make articles do calculations on this background thread.
-	[self.articles makeObjectsPerformSelector:@selector(calculateArticleID)];
 }
 
 

@@ -36,4 +36,28 @@ class AtomParserTests: XCTestCase {
 
 		XCTAssertTrue(parsedFeed.homePageURL == "http://leancrew.com/all-this")
 	}
+
+	func testDaringFireball() {
+
+		let d = parserData("DaringFireball", "atom", "http://daringfireball.net/") //It’s actually an Atom feed
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+
+			XCTAssertNotNil(article.externalURL)
+
+			if !article.title!.hasPrefix("★ ") {
+				XCTAssertNotNil(article.url)
+				XCTAssert(article.url!.hasPrefix("https://daringfireball.net/"))
+			}
+
+			XCTAssertTrue(article.uniqueID.hasPrefix("tag:daringfireball.net,2017:/"))
+
+			//			XCTAssertEqual(article.authors!.count, 1) // TODO: parse Atom authors
+
+			XCTAssertNotNil(article.datePublished)
+			XCTAssert(article.attachments == nil)
+		}
+
+	}
 }
