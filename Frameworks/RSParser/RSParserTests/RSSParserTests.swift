@@ -93,6 +93,21 @@ class RSSParserTests: XCTestCase {
 			XCTAssertNotNil(article.uniqueID)
 			XCTAssertEqual(article.uniqueID.count, 32) // calculated unique IDs are MD5 hashes
 		}
+	}
 
+	func testMacworldAuthors() {
+
+		// Macworld uses names instead of email addresses (despite the RSS spec saying they should be email addresses).
+
+		let d = parserData("macworld", "rss", "https://www.macworld.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+
+			let author = article.authors!.first!
+			XCTAssertNil(author.emailAddress)
+			XCTAssertNil(author.url)
+			XCTAssertNotNil(author.name)
+		}
 	}
 }
