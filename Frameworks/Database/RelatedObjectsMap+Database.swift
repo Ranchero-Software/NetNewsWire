@@ -27,12 +27,4 @@ extension RelatedObjectsMap {
 		}
 		return nil
 	}
-
-	func tags(for articleID: String) -> Set<String>? {
-		
-		if let objects = self[articleID] {
-			return objects.asTags()
-		}
-		return nil
-	}
 }

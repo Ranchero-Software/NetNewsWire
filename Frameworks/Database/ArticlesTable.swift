@@ -20,7 +20,6 @@ final class ArticlesTable: DatabaseTable {
 	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
-	private let tagsLookupTable: DatabaseLookupTable
 
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	private var articleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
@@ -35,9 +34,6 @@ final class ArticlesTable: DatabaseTable {
 		
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
-		
-		let tagsTable = TagsTable(name: DatabaseTableName.tags)
-		self.tagsLookupTable = DatabaseLookupTable(name: DatabaseTableName.tags, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.tagName, relatedTable: tagsTable, relationshipName: RelationshipName.tags)
 		
 		let attachmentsTable = AttachmentsTable(name: DatabaseTableName.attachments)
 		self.attachmentsLookupTable = DatabaseLookupTable(name: DatabaseTableName.attachmentsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.attachmentID, relatedTable: attachmentsTable, relationshipName: RelationshipName.attachments)
@@ -265,25 +261,23 @@ private extension ArticlesTable {
 
 		let authorsMap = authorsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
 		let attachmentsMap = attachmentsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
-		let tagsMap = tagsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
 
 		// 3. Create articles with related objects.
 
 		let articles = databaseArticles.map { (databaseArticle) -> Article in
-			return articleWithDatabaseArticle(databaseArticle, authorsMap, attachmentsMap, tagsMap)
+			return articleWithDatabaseArticle(databaseArticle, authorsMap, attachmentsMap)
 		}
 
 		return Set(articles)
 	}
 
-	func articleWithDatabaseArticle(_ databaseArticle: DatabaseArticle, _ authorsMap: RelatedObjectsMap?, _ attachmentsMap: RelatedObjectsMap?, _ tagsMap: RelatedObjectsMap?) -> Article {
+	func articleWithDatabaseArticle(_ databaseArticle: DatabaseArticle, _ authorsMap: RelatedObjectsMap?, _ attachmentsMap: RelatedObjectsMap?) -> Article {
 
 		let articleID = databaseArticle.articleID
 		let authors = authorsMap?.authors(for: articleID)
 		let attachments = attachmentsMap?.attachments(for: articleID)
-		let tags = tagsMap?.tags(for: articleID)
 
-		return Article(databaseArticle: databaseArticle, accountID: accountID, authors: authors, attachments: attachments, tags: tags)
+		return Article(databaseArticle: databaseArticle, accountID: accountID, authors: authors, attachments: attachments)
 	}
 
 	func makeDatabaseArticles(with resultSet: FMResultSet) -> Set<DatabaseArticle> {
@@ -425,7 +419,6 @@ private extension ArticlesTable {
 
 		authorsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
 		attachmentsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
-		tagsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
 	}
 
 	// MARK: Update Existing Articles
@@ -451,7 +444,6 @@ private extension ArticlesTable {
 
 	func saveUpdatedRelatedObjects(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
 
-		updateRelatedObjects(\Article.tags, updatedArticles, fetchedArticles, tagsLookupTable, database)
 		updateRelatedObjects(\Article.authors, updatedArticles, fetchedArticles, authorsLookupTable, database)
 		updateRelatedObjects(\Article.attachments, updatedArticles, fetchedArticles, attachmentsLookupTable, database)
 	}
