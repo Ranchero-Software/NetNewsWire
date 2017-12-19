@@ -71,7 +71,7 @@ class RSSParserTests: XCTestCase {
 		}
 	}
 
-	func testTheOmniShow() {
+	func testTheOmniShowUniqueIDs() {
 
 		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
 		let parsedFeed = try! FeedParser.parse(d)!
@@ -80,5 +80,19 @@ class RSSParserTests: XCTestCase {
 			XCTAssertNotNil(article.uniqueID)
 			XCTAssertTrue(article.uniqueID.hasPrefix("https://theomnishow.omnigroup.com/episode/"))
 		}
+	}
+
+	func testMacworldUniqueIDs() {
+
+		// Macworld’s feed doesn’t have guids, so they should be calculated unique IDs.
+
+		let d = parserData("macworld", "rss", "https://www.macworld.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.uniqueID)
+			XCTAssertEqual(article.uniqueID.count, 32) // calculated unique IDs are MD5 hashes
+		}
+
 	}
 }
