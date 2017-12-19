@@ -70,4 +70,15 @@ class RSSParserTests: XCTestCase {
 			XCTAssertEqual(attachment.mimeType, "audio/mpeg")
 		}
 	}
+
+	func testTheOmniShow() {
+
+		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.uniqueID)
+			XCTAssertTrue(article.uniqueID.hasPrefix("https://theomnishow.omnigroup.com/episode/"))
+		}
+	}
 }
