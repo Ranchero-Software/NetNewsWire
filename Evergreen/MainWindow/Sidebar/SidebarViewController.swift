@@ -147,7 +147,15 @@ import RSCore
 		
 		NSApplication.shared.sendAction(NSSelectorFromString("nextUnread:"), to: nil, from: self)
 	}
-	
+
+	func focus() {
+
+		guard let window = outlineView.window else {
+			return
+		}
+		window.makeFirstResponderUnlessDescendantIsFirstResponder(outlineView)
+	}
+
 	// MARK: NSOutlineViewDelegate
     
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {

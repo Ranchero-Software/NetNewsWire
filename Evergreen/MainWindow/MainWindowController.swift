@@ -61,14 +61,19 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@objc func appNavigationKeyPressed(_ note: Notification) {
 
-		guard let navigationKey = note.userInfo?[UserInfoKey.navigationKeyPressed] else {
+		guard let navigationKey = note.userInfo?[UserInfoKey.navigationKeyPressed] as? Int else {
 			return
 		}
 		guard let contentView = window?.contentView, let view = note.object as? NSView, view.isDescendant(of: contentView) else {
 			return
 		}
 
-		print(navigationKey)
+		if navigationKey == NSRightArrowFunctionKey {
+			handleRightArrowFunctionKey(in: view)
+		}
+		if navigationKey == NSLeftArrowFunctionKey {
+			handleLeftArrowFunctionKey(in: view)
+		}
 	}
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
@@ -89,7 +94,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 		window?.toolbar?.validateVisibleItems()
 	}
-	
+
 	// MARK: NSUserInterfaceValidations
 	
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
@@ -259,6 +264,24 @@ private extension MainWindowController {
 		else if unreadCount > 0 {
 			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
 		}
+	}
+
+	// MARK: - Navigation
+
+	func handleRightArrowFunctionKey(in view: NSView) {
+
+		guard let outlineView = sidebarViewController?.outlineView, view === outlineView, let timelineViewController = timelineViewController else {
+			return
+		}
+		timelineViewController.focus()
+	}
+
+	func handleLeftArrowFunctionKey(in view: NSView) {
+
+		guard let timelineView = timelineViewController?.tableView, view === timelineView, let sidebarViewController = sidebarViewController else {
+			return
+		}
+		sidebarViewController.focus()
 	}
 }
 

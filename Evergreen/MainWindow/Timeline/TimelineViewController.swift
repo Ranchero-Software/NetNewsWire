@@ -198,7 +198,19 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 
 		return articles.rowOfNextUnreadArticle(tableView.selectedRow)
 	}
-	
+
+	func focus() {
+
+		guard let window = tableView.window else {
+			return
+		}
+
+		window.makeFirstResponderUnlessDescendantIsFirstResponder(tableView)
+		if !hasAtLeastOneSelectedArticle && articles.count > 0 {
+			tableView.rs_selectRowAndScrollToVisible(0)
+		}
+	}
+
 	// MARK: - Notifications
 
 	@objc func sidebarSelectionDidChange(_ notification: Notification) {
@@ -246,32 +258,39 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 			return false
 		}
 		
-		guard let ch = event.rs_unmodifiedCharacterString() else {
+		let ch = Int(event.rs_unmodifiedCharacter())
+		if ch == NSNotFound {
 			return false
 		}
 
 		let hasSelectedArticle = hasAtLeastOneSelectedArticle
 		var keyHandled = false
-		
+		var isNavigationKey = false
+
 		var shouldOpenInBrowser = false
 		
 		switch(ch) {
 			
-		case "\n":
+		case KeyboardConstant.lineFeedKey:
 			shouldOpenInBrowser = true
 			keyHandled = true
-		case "\r":
+			
+		case KeyboardConstant.returnKey:
 			shouldOpenInBrowser = true
 			keyHandled = true
 		
-		case "r":
+		case "r".keyboardIntegerValue:
 			markSelectedArticlesAsRead(sender)
 			keyHandled = true
 			
-		case "u":
+		case "u".keyboardIntegerValue:
 			markSelectedArticlesAsUnread(sender)
 			keyHandled = true
-			
+
+		case NSLeftArrowFunctionKey:
+			isNavigationKey = true
+			keyHandled = true
+
 		default:
 			keyHandled = false
 		}
@@ -289,7 +308,11 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 				keyHandled = false
 			}
 		}
-	
+
+		if isNavigationKey {
+			NotificationCenter.default.post(name: .AppNavigationKeyPressed, object: self.tableView, userInfo: [UserInfoKey.navigationKeyPressed: ch])
+		}
+
 		if shouldOpenInBrowser && hasSelectedArticle {
 			openArticleInBrowser(self)
 		}
