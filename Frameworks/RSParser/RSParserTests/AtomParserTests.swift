@@ -58,6 +58,46 @@ class AtomParserTests: XCTestCase {
 			XCTAssertNotNil(article.datePublished)
 			XCTAssert(article.attachments == nil)
 		}
+	}
+
+	func test4fsodonlineAttachments() {
+
+		// Thanks to Marco for finding me some Atom podcast feeds. Apparently they’re super-rare.
+
+		let d = parserData("4fsodonline", "atom", "http://4fsodonline.blogspot.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+
+			XCTAssertTrue(article.attachments!.count > 0)
+			let attachment = article.attachments!.first!
+
+			XCTAssertTrue(attachment.url.hasPrefix("http://www.blogger.com/video-play.mp4?"))
+			XCTAssertNil(attachment.sizeInBytes)
+			XCTAssertEqual(attachment.mimeType!, "video/mp4")
+		}
+	}
+
+	func testExpertOpinionENTAttachments() {
+
+		// Another from Marco.
+
+		let d = parserData("expertopinionent", "atom", "http://expertopinionent.typepad.com/my-blog/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+
+			guard let attachments = article.attachments else {
+				continue
+			}
+			
+			XCTAssertEqual(attachments.count, 1)
+			let attachment = attachments.first!
+
+			XCTAssertTrue(attachment.url.hasSuffix(".mp3"))
+			XCTAssertNil(attachment.sizeInBytes)
+			XCTAssertEqual(attachment.mimeType!, "audio/mpeg")
+		}
 
 	}
 }
