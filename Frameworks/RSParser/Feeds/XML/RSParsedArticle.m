@@ -74,19 +74,29 @@
 	if (self.datePublished) {
 		datePublishedTimeStampString = [NSString stringWithFormat:@"%.0f", self.datePublished.timeIntervalSince1970];
 	}
-	
-	if (!RSParserStringIsEmpty(self.link) && self.datePublished != nil) {
+
+	// Ideally we have a permalink and a pubDate. Either one would probably be a good guid, but together they should be rock-solid. (In theory. Feeds are buggy, though.)
+	if (!RSParserStringIsEmpty(self.permalink) && datePublishedTimeStampString) {
+		[s appendString:self.permalink];
+		[s appendString:datePublishedTimeStampString];
+	}
+
+	else if (!RSParserStringIsEmpty(self.link) && datePublishedTimeStampString) {
 		[s appendString:self.link];
 		[s appendString:datePublishedTimeStampString];
 	}
 
-	else if (!RSParserStringIsEmpty(self.title) && self.datePublished != nil) {
+	else if (!RSParserStringIsEmpty(self.title) && datePublishedTimeStampString) {
 		[s appendString:self.title];
 		[s appendString:datePublishedTimeStampString];
 	}
 
-	else if (self.datePublished != nil) {
+	else if (datePublishedTimeStampString) {
 		[s appendString:datePublishedTimeStampString];
+	}
+
+	else if (!RSParserStringIsEmpty(self.permalink)) {
+		[s appendString:self.permalink];
 	}
 
 	else if (!RSParserStringIsEmpty(self.link)) {
@@ -101,10 +111,6 @@
 		[s appendString:self.body];
 	}
 
-	else if (!RSParserStringIsEmpty(self.permalink)) {
-		[s appendString:self.permalink];
-	}
-	
 	return [s rsparser_md5Hash];
 }
 
