@@ -302,7 +302,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		rebuildFeedDictionaries()
 		importOPMLItems(children, parentFolder: nil)
-		dirty = true
+		saveToDisk()
 
 		DispatchQueue.main.async {
 			self.refreshAll()
