@@ -26,6 +26,10 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 		}
 	}
 
+	private var webviewIsHidden: Bool {
+		return containerView.contentView !== webview
+	}
+
 	private struct MessageName {
 		static let mouseDidEnter = "mouseDidEnter"
 		static let mouseDidExit = "mouseDidExit"
@@ -63,6 +67,28 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 		containerView.viewController = self
 
 		showOrHideWebView()
+	}
+
+	// MARK: - Scrolling
+
+	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
+
+		if webviewIsHidden {
+			callback(false)
+			return
+		}
+
+		fetchScrollInfo { (scrollInfo) in
+			callback(scrollInfo?.canScrollDown ?? false)
+		}
+	}
+
+	override func scrollPageDown(_ sender: Any?) {
+
+		guard !webviewIsHidden else {
+			return
+		}
+		webview.scrollPageDown(sender)
 	}
 
 	// MARK: Notifications
@@ -174,6 +200,28 @@ extension DetailViewController: WKScriptMessageHandler {
 	}
 }
 
+private extension DetailViewController {
+
+	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {
+
+		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
+		webview.evaluateJavaScript(javascriptString) { (info, error) in
+
+			guard let info = info as? [String: Any] else {
+				callback(nil)
+				return
+			}
+			guard let contentHeight = info["contentHeight"] as? CGFloat, let offsetY = info["offsetY"] as? CGFloat else {
+				callback(nil)
+				return
+			}
+
+			let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webview.frame.height, offsetY: offsetY)
+			callback(scrollInfo)
+		}
+	}
+}
+
 final class DetailContainerView: NSView {
 
 	weak var viewController: DetailViewController? = nil
@@ -241,3 +289,21 @@ final class NoSelectionView: NSView {
 	}
 }
 
+private struct ScrollInfo {
+
+	let contentHeight: CGFloat
+	let viewHeight: CGFloat
+	let offsetY: CGFloat
+	let canScrollDown: Bool
+	let canScrollUp: Bool
+
+	init(contentHeight: CGFloat, viewHeight: CGFloat, offsetY: CGFloat) {
+
+		self.contentHeight = contentHeight
+		self.viewHeight = viewHeight
+		self.offsetY = offsetY
+
+		self.canScrollDown = viewHeight + offsetY < contentHeight
+		self.canScrollUp = offsetY > 0.1
+	}
+}

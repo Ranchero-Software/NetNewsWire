@@ -122,16 +122,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func scrollOrGoToNextUnread(_ sender: Any?) {
 
-//		guard let detailViewController = detailViewController else {
-//			return
-//		}
-//
-//		if detailViewController.canScrollWebView() {
-//			detailViewController.scrollPageDown(sender)
-//			return
-//		}
+		guard let detailViewController = detailViewController else {
+			return
+		}
 
-		nextUnread(sender)
+		detailViewController.canScrollDown { (canScroll) in
+
+			canScroll ? detailViewController.scrollPageDown(sender) : self.nextUnread(sender)
+		}
 	}
 
 
