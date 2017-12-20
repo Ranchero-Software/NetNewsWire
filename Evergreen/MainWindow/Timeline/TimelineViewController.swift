@@ -12,13 +12,19 @@ import RSTextDrawing
 import Data
 import Account
 
-class TimelineViewController: NSViewController, KeyboardDelegate, UndoableCommandRunner {
+class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
 
 	var selectedArticles: [Article] {
 		get {
 			return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
+		}
+	}
+
+	var hasAtLeastOneSelectedArticle: Bool {
+		get {
+			return tableView.selectedRow != -1
 		}
 	}
 
@@ -68,7 +74,6 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		tableView.rowHeight = calculateRowHeight()
 		tableView.target = self
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
-		tableView.keyboardDelegate = self
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 
 		if !didRegisterForNotifications {
@@ -159,7 +164,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		}
 	}
 	
-	@IBAction func markSelectedArticlesAsRead(_ sender: AnyObject?) {
+	@IBAction func markSelectedArticlesAsRead(_ sender: Any?) {
 
 		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: selectedArticles, markingRead: true, undoManager: undoManager) else {
 			return
@@ -167,7 +172,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		runCommand(markReadCommand)
 	}
 	
-	@IBAction func markSelectedArticlesAsUnread(_ sender: AnyObject) {
+	@IBAction func markSelectedArticlesAsUnread(_ sender: Any?) {
 		
 		guard let undoManager = undoManager, let markUnreadCommand = MarkReadOrUnreadCommand(initialArticles: selectedArticles, markingRead: false, undoManager: undoManager) else {
 			return
@@ -248,76 +253,6 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		if updatedFontSize != self.fontSize {
 			self.fontSize = updatedFontSize
 		}
-	}
-
-	// MARK: - KeyboardDelegate
-	
-	func handleKeydownEvent(_ event: NSEvent, sender: AnyObject) -> Bool {
-		
-		guard !event.rs_keyIsModified() else {
-			return false
-		}
-		
-		let ch = Int(event.rs_unmodifiedCharacter())
-		if ch == NSNotFound {
-			return false
-		}
-
-		let hasSelectedArticle = hasAtLeastOneSelectedArticle
-		var keyHandled = false
-		var isNavigationKey = false
-
-		var shouldOpenInBrowser = false
-		
-		switch(ch) {
-			
-		case KeyboardConstant.lineFeedKey:
-			shouldOpenInBrowser = true
-			keyHandled = true
-			
-		case KeyboardConstant.returnKey:
-			shouldOpenInBrowser = true
-			keyHandled = true
-		
-		case "r".keyboardIntegerValue:
-			markSelectedArticlesAsRead(sender)
-			keyHandled = true
-			
-		case "u".keyboardIntegerValue:
-			markSelectedArticlesAsUnread(sender)
-			keyHandled = true
-
-		case NSLeftArrowFunctionKey:
-			isNavigationKey = true
-			keyHandled = true
-
-		default:
-			keyHandled = false
-		}
-		
-		if !keyHandled {
-			let chUnichar = event.rs_unmodifiedCharacter()
-			
-			switch(chUnichar) {
-				
-			case keypadEnter:
-				shouldOpenInBrowser = true
-				keyHandled = true
-				
-			default:
-				keyHandled = false
-			}
-		}
-
-		if isNavigationKey {
-			NotificationCenter.default.post(name: .AppNavigationKeyPressed, object: self.tableView, userInfo: [UserInfoKey.navigationKeyPressed: ch])
-		}
-
-		if shouldOpenInBrowser && hasSelectedArticle {
-			openArticleInBrowser(self)
-		}
-		
-		return keyHandled
 	}
 
 	// MARK: - Reloading Data
@@ -501,12 +436,6 @@ extension TimelineViewController: NSTableViewDelegate {
 
 private extension TimelineViewController {
 	
-	var hasAtLeastOneSelectedArticle: Bool {
-		get {
-			return tableView.selectedRow != -1
-		}
-	}
-
 	func emptyTheTimeline() {
 
 		if !articles.isEmpty {

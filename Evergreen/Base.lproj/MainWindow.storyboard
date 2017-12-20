@@ -284,7 +284,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="166" height="272"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView appearanceType="aqua" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="16" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="Evergreen" customModuleProvider="target">
+                                        <outlineView appearanceType="aqua" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="16" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="Evergreen" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="167" height="272"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
@@ -352,6 +352,7 @@
                                             <connections>
                                                 <outlet property="dataSource" destination="XML-A3-pDn" id="04v-0e-BM6"/>
                                                 <outlet property="delegate" destination="XML-A3-pDn" id="fPE-cv-p5c"/>
+                                                <outlet property="keyboardDelegate" destination="h5K-zR-cUa" id="BlT-aW-sea"/>
                                             </connections>
                                         </outlineView>
                                     </subviews>
@@ -435,6 +436,11 @@
                     </connections>
                 </viewController>
                 <customObject id="Jih-JO-hIE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="h5K-zR-cUa" customClass="SidebarKeyboardDelegate" customModule="Evergreen" customModuleProvider="target">
+                    <connections>
+                        <outlet property="sidebarViewController" destination="XML-A3-pDn" id="kwd-Zc-HJm"/>
+                    </connections>
+                </customObject>
             </objects>
             <point key="canvasLocation" x="-74" y="-186"/>
         </scene>
@@ -547,6 +553,7 @@
                                             <connections>
                                                 <outlet property="dataSource" destination="36G-bQ-b96" id="OpB-zC-ItJ"/>
                                                 <outlet property="delegate" destination="36G-bQ-b96" id="s1m-42-GQ4"/>
+                                                <outlet property="keyboardDelegate" destination="ZOV-xh-WJE" id="HiG-Bz-vD0"/>
                                             </connections>
                                         </tableView>
                                     </subviews>
@@ -582,6 +589,11 @@
                     </connections>
                 </viewController>
                 <customObject id="Ebq-4s-EwK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="ZOV-xh-WJE" customClass="TimelineKeyboardDelegate" customModule="Evergreen" customModuleProvider="target">
+                    <connections>
+                        <outlet property="timelineViewController" destination="36G-bQ-b96" id="rED-2Z-kh6"/>
+                    </connections>
+                </customObject>
             </objects>
             <point key="canvasLocation" x="62" y="394"/>
         </scene>

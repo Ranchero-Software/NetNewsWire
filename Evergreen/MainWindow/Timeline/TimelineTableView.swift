@@ -10,18 +10,15 @@ import Cocoa
 
 class TimelineTableView: NSTableView {
 	
-	weak var keyboardDelegate: KeyboardDelegate?
+	@IBOutlet var keyboardDelegate: KeyboardDelegate!
 	
 	//MARK: NSResponder
 	
 	override func keyDown(with event: NSEvent) {
-		
-		if let keyboardDelegate = keyboardDelegate {
-			if keyboardDelegate.handleKeydownEvent(event, sender: self) {
-				return;
-			}
+
+		if keyboardDelegate.keydown(event, in: self) {
+			return
 		}
-		
 		super.keyDown(with: event)
 	}
 	

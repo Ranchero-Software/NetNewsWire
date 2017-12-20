@@ -10,8 +10,8 @@ import Cocoa
 
 let keypadEnter: unichar = 3
 
-protocol KeyboardDelegate: class {
+@objc protocol KeyboardDelegate: class {
 	
 	// Return true if handled.
-	func handleKeydownEvent(_: NSEvent, sender: AnyObject) -> Bool
+	func keydown(_: NSEvent, in view: NSView) -> Bool
 }

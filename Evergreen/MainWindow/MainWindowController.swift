@@ -118,21 +118,41 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		return true
 	}
 
-	// MARK: Actions
-	
-    @IBAction func showAddFolderWindow(_ sender: AnyObject) {
+	// MARK: - Actions
+
+	@IBAction func scrollOrGoToNextUnread(_ sender: Any?) {
+
+//		guard let detailViewController = detailViewController else {
+//			return
+//		}
+//
+//		if detailViewController.canScrollWebView() {
+//			detailViewController.scrollPageDown(sender)
+//			return
+//		}
+
+		nextUnread(sender)
+	}
+
+
+    @IBAction func showAddFolderWindow(_ sender: Any) {
 
         appDelegate.showAddFolderSheetOnWindow(window!)
     }
     
-	@IBAction func openArticleInBrowser(_ sender: AnyObject?) {
+	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		
 		if let link = currentLink {
 			Browser.open(link)
 		}		
 	}
-	
-	@IBAction func nextUnread(_ sender: AnyObject?) {
+
+	@IBAction func openInBrowser(_ sender: Any?) {
+
+		openArticleInBrowser(sender)
+	}
+
+	@IBAction func nextUnread(_ sender: Any?) {
 		
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
 			return
@@ -153,17 +173,28 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 	
-	@IBAction func markAllAsRead(_ sender: AnyObject?) {
+	@IBAction func markAllAsRead(_ sender: Any?) {
 		
 		timelineViewController?.markAllAsRead()
 	}
 
-	@IBAction func markRead(_ sender: AnyObject?) {
+	@IBAction func markRead(_ sender: Any?) {
 
-		timelineViewController?.markSelectedArticlesAsRead(sender!)
+		timelineViewController?.markSelectedArticlesAsRead(sender)
 	}
-	
-	@IBAction func toggleSidebar(_ sender: AnyObject?) {
+
+	@IBAction func markUnread(_ sender: Any?) {
+
+		timelineViewController?.markSelectedArticlesAsUnread(sender)
+	}
+
+	@IBAction func markUnreadAndGoToNextUnread(_ sender: Any?) {
+
+		markUnread(sender)
+		nextUnread(sender)
+	}
+
+	@IBAction func toggleSidebar(_ sender: Any?) {
 		
 		splitViewController!.toggleSidebar(sender)
 	}

@@ -125,6 +125,14 @@ import RSCore
 		animatingChanges = false
 	}
 
+	@IBAction func openInBrowser(_ sender: Any?) {
+
+		guard let feed = singleSelectedFeed, let homePageURL = feed.homePageURL else {
+			return
+		}
+		Browser.open(homePageURL)
+	}
+
 	// MARK: Navigation
 	
 	
@@ -243,14 +251,26 @@ import RSCore
 private extension SidebarViewController {
 	
 	var selectedNodes: [Node] {
-		get {
-			if let nodes = outlineView.selectedItems as? [Node] {
-				return nodes
-			}
-			return [Node]()
+		if let nodes = outlineView.selectedItems as? [Node] {
+			return nodes
 		}
+		return [Node]()
 	}
-	
+
+	var singleSelectedNode: Node? {
+		guard selectedNodes.count == 1 else {
+			return nil
+		}
+		return selectedNodes.first!
+	}
+
+	var singleSelectedFeed: Feed? {
+		guard let node = singleSelectedNode else {
+			return nil
+		}
+		return node.representedObject as? Feed
+	}
+
 	func rebuildTreeAndReloadDataIfNeeded() {
 		
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
