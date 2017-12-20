@@ -12,4 +12,4 @@ Launch Evergreen. You should have the default feeds, and all preferences should 
 
 #### Alternate version
 
-Run the [cleanPrefsAndData](./cleanPrefsAndData) script instead of doing the above manually.
+Run the [cleanPrefsAndData](../cleanPrefsAndData) script instead of doing the above manually.
