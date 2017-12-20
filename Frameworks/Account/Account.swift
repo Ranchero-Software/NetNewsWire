@@ -124,7 +124,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.settingsFile = settingsFile
 		self.dataFolder = dataFolder
 		self.hashValue = accountID.hashValue
-		
+
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
 		self.database = Database(databaseFilePath: databaseFilePath, accountID: accountID)
 
@@ -142,6 +142,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.updateUnreadCount()
 			self.fetchAllUnreadCounts()
 		}
+
+		self.delegate.accountDidInitialize(self)
 	}
 	
 	// MARK: - API

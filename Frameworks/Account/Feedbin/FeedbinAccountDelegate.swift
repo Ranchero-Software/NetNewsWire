@@ -26,10 +26,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	// MARK: Disk
 
-	func update(account: Account, withUserInfo: NSDictionary?) {
+	func accountDidInitialize(_ account: Account) {
 
 		// TODO: add username to account name
 		account.nameForDisplay = NSLocalizedString("Feedbin", comment: "Feedbin Account Name")
+	}
+
+	func update(account: Account, withUserInfo: NSDictionary?) {
+
 	}
 
 	func userInfo(for: Account) -> NSDictionary? {
