@@ -25,6 +25,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
+	static var didPositionWindowOnFirstRun = false
+
     override func windowDidLoad() {
         
         super.windowDidLoad()
@@ -34,7 +36,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 
 		window?.setFrameUsingName(windowAutosaveName, force: true)
-		if AppDefaults.shared.isFirstRun {
+		if AppDefaults.shared.isFirstRun && !MainWindowController.didPositionWindowOnFirstRun {
 
 			if let window = window, let screen = window.screen {
 				let width: CGFloat = 1280.0
@@ -44,6 +46,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 				window.setContentSize(NSSize(width: width, height: height))
 				window.setFrameTopLeftPoint(NSPoint(x: insetX, y: screen.visibleFrame.maxY - insetY))
+
+				MainWindowController.didPositionWindowOnFirstRun = true
 			}
 		}
 
