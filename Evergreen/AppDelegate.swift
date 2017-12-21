@@ -409,7 +409,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func openWebsite(_ sender: AnyObject) {
 
-		Browser.open("//ranchero.com/evergreen/", inBackground: false)
+		Browser.open("https://ranchero.com/evergreen/", inBackground: false)
 	}
 
 	@IBAction func openRepository(_ sender: AnyObject) {
@@ -420,6 +420,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func openBugTracker(_ sender: AnyObject) {
 
 		Browser.open("https://github.com/brentsimmons/Evergreen/issues", inBackground: false)
+	}
+
+	@IBAction func openTechnotes(_ sender: Any?) {
+
+		Browser.open("https://github.com/brentsimmons/Evergreen/tree/master/Technotes", inBackground: false)
 	}
 
 	@IBAction func showHelp(_ sender: AnyObject) {

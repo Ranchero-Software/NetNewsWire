@@ -186,6 +186,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		timelineViewController?.markSelectedArticlesAsUnread(sender)
 	}
 
+	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
+
+		markAllAsRead(sender)
+		nextUnread(sender)
+	}
+
 	@IBAction func markUnreadAndGoToNextUnread(_ sender: Any?) {
 
 		markUnread(sender)
@@ -211,6 +217,16 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func markEverywhereAsRead(_ sender: Any?) {
 
 		appDelegate.markEverywhereAsRead(with: window!)
+	}
+
+	@IBAction func navigateToTimeline(_ sender: Any?) {
+
+		timelineViewController?.focus()
+	}
+
+	@IBAction func navigateToSidebar(_ sender: Any?) {
+
+		sidebarViewController?.focus()
 	}
 }
 

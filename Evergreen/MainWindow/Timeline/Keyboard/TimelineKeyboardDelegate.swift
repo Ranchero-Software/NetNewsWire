@@ -14,13 +14,30 @@ import RSCore
 @objc final class TimelineKeyboardDelegate: NSObject, KeyboardDelegate {
 
 	@IBOutlet weak var timelineViewController: TimelineViewController?
+	let shortcuts: Set<KeyboardShortcut>
 
 	override init() {
+
+		let f = Bundle.main.path(forResource: "TimelineKeyboardShortcuts", ofType: "plist")!
+		let rawShortcuts = NSArray(contentsOfFile: f)! as! [[String: Any]]
+
+		self.shortcuts = Set(rawShortcuts.flatMap { KeyboardShortcut(dictionary: $0) })
+
 		super.init()
 	}
-	
+
 	func keydown(_ event: NSEvent, in view: NSView) -> Bool {
 
-		return  MainWindowKeyboardHandler.shared.keydown(event, in: view)
+		if MainWindowKeyboardHandler.shared.keydown(event, in: view) {
+			return true
+		}
+
+		let key = KeyboardKey(with: event)
+		guard let matchingShortcut = KeyboardShortcut.findMatchingShortcut(in: shortcuts, key: key) else {
+			return false
+		}
+
+		matchingShortcut.perform(with: view)
+		return true
 	}
 }

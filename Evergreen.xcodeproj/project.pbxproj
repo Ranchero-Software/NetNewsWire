@@ -25,6 +25,7 @@
 		844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
 		84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */; };
 		845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845213221FCA5B10003B6E93 /* ImageDownloader.swift */; };
+		845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */; };
 		845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */; };
 		845A29221FC9251E007B49E3 /* SidebarCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */; };
 		845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */; };
@@ -431,6 +432,7 @@
 		844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = SidebarKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListControlsView.swift; sourceTree = "<group>"; };
 		845213221FCA5B10003B6E93 /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
+		845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TimelineKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleFaviconDownloader.swift; sourceTree = "<group>"; };
 		845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCellLayout.swift; sourceTree = "<group>"; };
 		845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCellAppearance.swift; sourceTree = "<group>"; };
@@ -616,6 +618,7 @@
 			isa = PBXGroup;
 			children = (
 				844B5B5A1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift */,
+				845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */,
 			);
 			path = Keyboard;
 			sourceTree = "<group>";
@@ -1357,6 +1360,7 @@
 				849A97951ED9EF7A007D329B /* IndeterminateProgressWindow.xib in Resources */,
 				844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */,
 				849A978F1ED9EE72007D329B /* DefaultFeeds.plist in Resources */,
+				845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */,
 				849A979D1ED9EFEB007D329B /* template.html in Resources */,
 				849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */,
 				84AFBB3E1FBE770200BA41CF /* PanicButtonWindow.xib in Resources */,

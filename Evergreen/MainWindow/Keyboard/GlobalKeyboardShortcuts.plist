@@ -58,7 +58,7 @@
 		<key>key</key>
 		<string>l</string>
 		<key>action</key>
-		<string>markReadAndGoToNextUnread:</string>
+		<string>markAllAsReadAndGoToNextUnread:</string>
 	</dict>
 	<dict>
 		<key>key</key>

@@ -20,7 +20,7 @@ public struct KeyboardConstant {
 public extension String {
 
 	public var keyboardIntegerValue: Int {
-		return Int(utf8[utf8.startIndex])
+		return Int(utf16[utf16.startIndex])
 	}
 }
 
