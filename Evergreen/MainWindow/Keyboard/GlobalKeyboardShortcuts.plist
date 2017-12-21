@@ -30,7 +30,7 @@
 	</dict>
 	<dict>
 		<key>key</key>
-		<string>[downarrow]</string>
+		<string>+</string>
 		<key>shiftModifier</key>
 		<true/>
 		<key>action</key>
@@ -53,6 +53,12 @@
 		<string>m</string>
 		<key>action</key>
 		<string>markUnreadAndGoToNextUnread:</string>
+	</dict>
+	<dict>
+		<key>key</key>
+		<string>l</string>
+		<key>action</key>
+		<string>markReadAndGoToNextUnread:</string>
 	</dict>
 	<dict>
 		<key>key</key>

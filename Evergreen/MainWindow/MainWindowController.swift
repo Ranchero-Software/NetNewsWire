@@ -192,6 +192,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		nextUnread(sender)
 	}
 
+	@IBAction func markReadAndGoToNextUnread(_ sender: Any?) {
+
+		markUnread(sender)
+		nextUnread(sender)
+	}
+
 	@IBAction func toggleSidebar(_ sender: Any?) {
 		
 		splitViewController!.toggleSidebar(sender)
