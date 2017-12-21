@@ -23,6 +23,62 @@ public extension NSOutlineView {
 		}
 	}
 
+	var firstSelectedRow: Int? {
+
+		if selectionIsEmpty {
+			return nil
+		}
+		return selectedRowIndexes.first
+	}
+
+	var lastSelectedRow: Int? {
+
+		if selectionIsEmpty {
+			return nil
+		}
+		return selectedRowIndexes.last
+	}
+
+	@IBAction func selectPreviousRow(_ sender: Any?) {
+
+		guard var row = firstSelectedRow else {
+			return
+		}
+
+		if row < 1 {
+			return
+		}
+		while true {
+			row -= 1
+			if row < 0 {
+				return
+			}
+			if canSelect(row) {
+				rs_selectRowAndScrollToVisible(row)
+				return
+			}
+		}
+	}
+
+	@IBAction func selectNextRow(_ sender: Any?) {
+
+		// If no selectedRow, end up at first selectable row.
+		var row = lastSelectedRow ?? -1
+
+		while true {
+			row += 1
+			if let _ = item(atRow: row) {
+				if canSelect(row) {
+					rs_selectRowAndScrollToVisible(row)
+					return
+				}
+			}
+			else {
+				return // if there are no more items, we’re out of rows
+			}
+		}
+	}
+
 	@IBAction func collapseSelectedRows(_ sender: Any?) {
 
 		for item in selectedItems {
@@ -97,4 +153,15 @@ public extension NSOutlineView {
 
 		return delegate?.outlineView?(self, isGroupItem: item) ?? false
 	}
+
+	func canSelect(_ row: Int) -> Bool {
+
+		guard let item = item(atRow: row) else {
+			return false
+		}
+		let isSelectable = delegate?.outlineView?(self, shouldSelectItem: item) ?? true
+		return isSelectable
+	}
 }
+
+

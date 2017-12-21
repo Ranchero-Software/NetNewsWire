@@ -202,6 +202,11 @@ import RSCore
 		return proposedSelectionIndexes
 	}
 
+	func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
+
+		return !self.outlineView(outlineView, isGroupItem: item)
+	}
+
     func outlineViewSelectionDidChange(_ notification: Notification) {
 
 		// TODO: support multiple selection

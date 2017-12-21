@@ -32,9 +32,21 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		if !AppDefaults.shared.showTitleOnMainWindow {
 			window?.titleVisibility = .hidden
 		}
-		
+
 		window?.setFrameUsingName(windowAutosaveName, force: true)
-		
+		if AppDefaults.shared.isFirstRun {
+
+			if let window = window, let screen = window.screen {
+				let width: CGFloat = 1280.0
+				let height: CGFloat = 768.0
+				let insetX: CGFloat = 192.0
+				let insetY: CGFloat = 96.0
+
+				window.setContentSize(NSSize(width: width, height: height))
+				window.setFrameTopLeftPoint(NSPoint(x: insetX, y: screen.visibleFrame.maxY - insetY))
+			}
+		}
+
 		detailSplitViewItem?.minimumThickness = 384
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
@@ -227,6 +239,16 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func navigateToSidebar(_ sender: Any?) {
 
 		sidebarViewController?.focus()
+	}
+
+	@IBAction func goToPreviousSubscription(_ sender: Any?) {
+
+		sidebarViewController?.outlineView.selectPreviousRow(sender)
+	}
+
+	@IBAction func goToNextSubscription(_ sender: Any?) {
+
+		sidebarViewController?.outlineView.selectNextRow(sender)
 	}
 }
 
