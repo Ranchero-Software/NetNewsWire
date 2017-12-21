@@ -6,41 +6,25 @@
 		<key>key</key>
 		<string>,</string>
 		<key>action</key>
-		<string>sidebarCollapse:</string>
-	</dict>
-	<dict>
-		<key>key</key>
-		<string>[leftarrow]</string>
-		<key>action</key>
-		<string>sidebarCollapse:</string>
-		<key>commandModifier</key>
-		<true/>
+		<string>collapseSelectedRows:</string>
 	</dict>
 	<dict>
 		<key>key</key>
 		<string>.</string>
 		<key>action</key>
-		<string>sidebarExpand:</string>
-	</dict>
-	<dict>
-		<key>key</key>
-		<string>[rightarrow]</string>
-		<key>action</key>
-		<string>sidebarExpand:</string>
-		<key>commandModifier</key>
-		<true/>
+		<string>expandSelectedRows:</string>
 	</dict>
 	<dict>
 		<key>key</key>
 		<string>;</string>
 		<key>action</key>
-		<string>sidebarCollapseAll:</string>
+		<string>collapseAllExceptForGroupItems:</string>
 	</dict>
 	<dict>
 		<key>key</key>
 		<string>[leftarrow]</string>
 		<key>action</key>
-		<string>sidebarCollapseAll:</string>
+		<string>collapseAllExceptForGroupItems:</string>
 		<key>commandModifier</key>
 		<true/>
 		<key>optionModifier</key>
@@ -50,13 +34,13 @@
 		<key>key</key>
 		<string>&apos;</string>
 		<key>action</key>
-		<string>sidebarExpandAll:</string>
+		<string>expandAll:</string>
 	</dict>
 	<dict>
 		<key>key</key>
 		<string>[rightarrow]</string>
 		<key>action</key>
-		<string>sidebarExpandAll:</string>
+		<string>expandAll:</string>
 		<key>commandModifier</key>
 		<true/>
 		<key>optionModifier</key>

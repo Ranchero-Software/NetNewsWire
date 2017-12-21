@@ -135,7 +135,6 @@ import RSCore
 
 	// MARK: Navigation
 	
-	
 	func canGoToNextUnread() -> Bool {
 		
 		if let _ = rowContainingNextUnread() {
