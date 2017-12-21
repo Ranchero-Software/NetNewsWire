@@ -307,7 +307,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			keyboardShortcutsWindowController = WebViewWindowController(title: NSLocalizedString("Keyboard Shortcuts", comment: "window title"))
 			let htmlFile = Bundle(for: type(of: self)).path(forResource: "KeyboardShortcuts", ofType: "html")!
 			keyboardShortcutsWindowController?.displayContents(of: htmlFile)
+
+			if let window = keyboardShortcutsWindowController?.window, let screen = window.screen {
+				let width: CGFloat = 620.0
+				let height: CGFloat = 1024.0
+				let insetX: CGFloat = 128.0
+				let insetY: CGFloat = 64.0
+				window.setContentSize(NSSize(width: width, height: height))
+				window.setFrameTopLeftPoint(NSPoint(x: insetX, y: screen.visibleFrame.maxY - insetY))
+			}
 		}
+
 		keyboardShortcutsWindowController!.showWindow(self)
 	}
 
