@@ -308,13 +308,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			let htmlFile = Bundle(for: type(of: self)).path(forResource: "KeyboardShortcuts", ofType: "html")!
 			keyboardShortcutsWindowController?.displayContents(of: htmlFile)
 
-			if let window = keyboardShortcutsWindowController?.window, let screen = window.screen {
-				let width: CGFloat = 620.0
-				let height: CGFloat = 1024.0
-				let insetX: CGFloat = 128.0
-				let insetY: CGFloat = 64.0
-				window.setContentSize(NSSize(width: width, height: height))
-				window.setFrameTopLeftPoint(NSPoint(x: insetX, y: screen.visibleFrame.maxY - insetY))
+			if let window = keyboardShortcutsWindowController?.window {
+				let point = NSPoint(x: 128, y: 64)
+				let size = NSSize(width: 620, height: 1000)
+				let minSize = NSSize(width: 400, height: 400)
+				window.setPointAndSizeAdjustingForScreen(point: point, size: size, minimumSize: minSize)
 			}
 		}
 
