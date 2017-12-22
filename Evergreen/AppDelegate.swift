@@ -388,7 +388,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		let result = panel.runModal()
 		if result == NSApplication.ModalResponse.OK, let url = panel.url {
 			DispatchQueue.main.async {
-				let opmlString = AccountManager.shared.localAccount.OPMLString(indentLevel: 0)
+				let filename = url.lastPathComponent
+				let opmlString = OPMLExporter.OPMLString(with: AccountManager.shared.localAccount, title: filename)
 				do {
 					try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
 				}
