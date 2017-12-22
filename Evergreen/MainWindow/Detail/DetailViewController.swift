@@ -10,15 +10,24 @@ import Foundation
 import WebKit
 import RSCore
 import Data
+import RSWeb
 
-class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
+final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
+
+	@IBOutlet var containerView: DetailContainerView!
 
 	var webview: WKWebView!
-	
+	var noSelectionView: NoSelectionView!
+
 	var article: Article? {
 		didSet {
 			reloadHTML()
+			showOrHideWebView()
 		}
+	}
+
+	private var webviewIsHidden: Bool {
+		return containerView.contentView !== webview
 	}
 
 	private struct MessageName {
@@ -49,21 +58,52 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 		webview.uiDelegate = self
 		webview.navigationDelegate = self
 		webview.translatesAutoresizingMaskIntoConstraints = false
-		let boxView = self.view as! DetailBox
-		boxView.contentView = webview
-		boxView.rs_addFullSizeConstraints(forSubview: webview)
-		
-		boxView.viewController = self
+		if let userAgent = UserAgent.fromInfoPlist() {
+			webview.customUserAgent = userAgent
+		}
+
+		noSelectionView = NoSelectionView(frame: self.view.bounds)
+
+		containerView.viewController = self
+
+		showOrHideWebView()
+	}
+
+	// MARK: - Scrolling
+
+	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
+
+		if webviewIsHidden {
+			callback(false)
+			return
+		}
+
+		fetchScrollInfo { (scrollInfo) in
+			callback(scrollInfo?.canScrollDown ?? false)
+		}
+	}
+
+	override func scrollPageDown(_ sender: Any?) {
+
+		guard !webviewIsHidden else {
+			return
+		}
+		webview.scrollPageDown(sender)
 	}
 
 	// MARK: Notifications
 
-	@objc func timelineSelectionDidChange(_ note: Notification) {
+	@objc func timelineSelectionDidChange(_ notification: Notification) {
 
-		let timelineView = note.appInfo?.view
-		if timelineView?.window === self.view.window {
-			article = note.appInfo?.article
+		guard let userInfo = notification.userInfo else {
+			return
 		}
+		guard let timelineView = userInfo[UserInfoKey.view] as? NSView, timelineView.window === view.window else {
+			return
+		}
+		
+		let timelineArticle = userInfo[UserInfoKey.article] as? Article
+		article = timelineArticle
 	}
 
 	func viewWillStartLiveResize() {
@@ -88,7 +128,25 @@ class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate
 			webview.loadHTMLString("", baseURL: nil)
 		}
 	}
-	
+
+	private func showOrHideWebView() {
+
+		if let _ = article {
+			switchToView(webview)
+		}
+		else {
+			switchToView(noSelectionView)
+		}
+	}
+
+	private func switchToView(_ view: NSView) {
+
+		if containerView.contentView == view {
+			return
+		}
+		containerView.contentView = view
+	}
+
 	// MARK: WKNavigationDelegate
 	
 	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -125,27 +183,68 @@ extension DetailViewController: WKScriptMessageHandler {
 			return
 		}
 
-		let appInfo = AppInfo()
-		appInfo.view = self.view
-		appInfo.url = link
+		var userInfo = UserInfoDictionary()
+		userInfo[UserInfoKey.view] = view
+		userInfo[UserInfoKey.url] = link
 
-		NotificationCenter.default.post(name: .MouseDidEnterLink, object: self, userInfo: appInfo.userInfo)
+		NotificationCenter.default.post(name: .MouseDidEnterLink, object: self, userInfo: userInfo)
 	}
 
 	private func mouseDidExit(_ link: String) {
 
-		let appInfo = AppInfo()
-		appInfo.view = self.view
-		appInfo.url = link
+		var userInfo = UserInfoDictionary()
+		userInfo[UserInfoKey.view] = view
+		userInfo[UserInfoKey.url] = link
 
-		NotificationCenter.default.post(name: .MouseDidExitLink, object: self, userInfo: appInfo.userInfo)
+		NotificationCenter.default.post(name: .MouseDidExitLink, object: self, userInfo: userInfo)
 	}
 }
 
-class DetailBox: NSBox {
-	
-	weak var viewController: DetailViewController?
-	
+private extension DetailViewController {
+
+	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {
+
+		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
+		webview.evaluateJavaScript(javascriptString) { (info, error) in
+
+			guard let info = info as? [String: Any] else {
+				callback(nil)
+				return
+			}
+			guard let contentHeight = info["contentHeight"] as? CGFloat, let offsetY = info["offsetY"] as? CGFloat else {
+				callback(nil)
+				return
+			}
+
+			let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webview.frame.height, offsetY: offsetY)
+			callback(scrollInfo)
+		}
+	}
+}
+
+final class DetailContainerView: NSView {
+
+	weak var viewController: DetailViewController? = nil
+
+	private var didConfigureLayer = false
+
+	override var wantsUpdateLayer: Bool {
+		return true
+	}
+
+	var contentView: NSView? {
+		didSet {
+			if let oldContentView = oldValue {
+				oldContentView.removeFromSuperviewWithoutNeedingDisplay()
+			}
+			if let contentView = contentView {
+				contentView.translatesAutoresizingMaskIntoConstraints = false
+				addSubview(contentView)
+				rs_addFullSizeConstraints(forSubview: contentView)
+			}
+		}
+	}
+
 	override func viewWillStartLiveResize() {
 		
 		viewController?.viewWillStartLiveResize()
@@ -154,5 +253,57 @@ class DetailBox: NSBox {
 	override func viewDidEndLiveResize() {
 		
 		viewController?.viewDidEndLiveResize()
+	}
+
+	override func updateLayer() {
+
+		guard !didConfigureLayer else {
+			return
+		}
+		if let layer = layer {
+			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.backgroundColor")
+			layer.backgroundColor = color.cgColor
+			didConfigureLayer = true
+		}
+	}
+}
+
+final class NoSelectionView: NSView {
+
+	private var didConfigureLayer = false
+
+	override var wantsUpdateLayer: Bool {
+		return true
+	}
+
+	override func updateLayer() {
+
+		guard !didConfigureLayer else {
+			return
+		}
+		if let layer = layer {
+			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.noSelectionView.backgroundColor")
+			layer.backgroundColor = color.cgColor
+			didConfigureLayer = true
+		}
+	}
+}
+
+private struct ScrollInfo {
+
+	let contentHeight: CGFloat
+	let viewHeight: CGFloat
+	let offsetY: CGFloat
+	let canScrollDown: Bool
+	let canScrollUp: Bool
+
+	init(contentHeight: CGFloat, viewHeight: CGFloat, offsetY: CGFloat) {
+
+		self.contentHeight = contentHeight
+		self.viewHeight = viewHeight
+		self.offsetY = offsetY
+
+		self.canScrollDown = viewHeight + offsetY < contentHeight
+		self.canScrollUp = offsetY > 0.1
 	}
 }

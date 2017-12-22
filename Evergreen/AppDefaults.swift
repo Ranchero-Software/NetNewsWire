@@ -26,6 +26,9 @@ final class AppDefaults {
 		static let timelineFontSize = "timelineFontSize"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
+
+		// Hidden prefs
+		static let showTitleOnMainWindow = "KafasisTitleMode"
 	}
 
 	private let smallestFontSizeRawValue = FontSize.small.rawValue
@@ -67,6 +70,10 @@ final class AppDefaults {
 		set {
 			setFontSize(for: Key.detailFontSize, newValue)
 		}
+	}
+
+	var showTitleOnMainWindow: Bool {
+		return bool(for: Key.showTitleOnMainWindow)
 	}
 
 	private init() {

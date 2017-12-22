@@ -71,6 +71,8 @@
 		842E45CC1ED623C7000A8B52 /* UniqueIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */; };
 		8432B1861DACA0E90057D6DF /* NSResponder-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8432B1851DACA0E90057D6DF /* NSResponder-Extensions.swift */; };
 		8432B1881DACA2060057D6DF /* NSWindow-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8432B1871DACA2060057D6DF /* NSWindow-Extensions.swift */; };
+		84411E731FE5FFC3004B527F /* NSImage+RSCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E721FE5FFC3004B527F /* NSImage+RSCore.swift */; };
+		844B5B571FE9D36000C7C76A /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B561FE9D36000C7C76A /* Keyboard.swift */; };
 		844C915B1B65753E0051FC1B /* RSPlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 844C91591B65753E0051FC1B /* RSPlist.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		844C915C1B65753E0051FC1B /* RSPlist.m in Sources */ = {isa = PBXBuildFile; fileRef = 844C915A1B65753E0051FC1B /* RSPlist.m */; };
 		844F91D51D90D86100820C48 /* RSTransparentContainerView.h in Headers */ = {isa = PBXBuildFile; fileRef = 844F91D31D90D86100820C48 /* RSTransparentContainerView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -189,6 +191,8 @@
 		842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueIdentifier.swift; sourceTree = "<group>"; };
 		8432B1851DACA0E90057D6DF /* NSResponder-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSResponder-Extensions.swift"; sourceTree = "<group>"; };
 		8432B1871DACA2060057D6DF /* NSWindow-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSWindow-Extensions.swift"; sourceTree = "<group>"; };
+		84411E721FE5FFC3004B527F /* NSImage+RSCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSImage+RSCore.swift"; path = "Images/NSImage+RSCore.swift"; sourceTree = "<group>"; };
+		844B5B561FE9D36000C7C76A /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Keyboard.swift; path = RSCore/Keyboard.swift; sourceTree = "<group>"; };
 		844C91591B65753E0051FC1B /* RSPlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RSPlist.h; path = RSCore/RSPlist.h; sourceTree = "<group>"; };
 		844C915A1B65753E0051FC1B /* RSPlist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RSPlist.m; path = RSCore/RSPlist.m; sourceTree = "<group>"; };
 		844F91D31D90D86100820C48 /* RSTransparentContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSTransparentContainerView.h; sourceTree = "<group>"; };
@@ -346,6 +350,7 @@
 				84E34DA51F9FA1070077082F /* UndoableCommand.swift */,
 				8402047D1FBCE77900D94C1A /* BatchUpdate.swift */,
 				848F6AE81FC2BC50002D422E /* ThreadSafeCache.swift */,
+				844B5B561FE9D36000C7C76A /* Keyboard.swift */,
 				84CFF5241AC3C8A200CEA6C8 /* Foundation */,
 				84CFF5551AC3CF4A00CEA6C8 /* AppKit */,
 				84E72E0F1FBD647500B873C1 /* Inspector */,
@@ -468,6 +473,7 @@
 				84CFF5631AC3D13C00CEA6C8 /* RSImageRenderer.m */,
 				84CFF5671AC3D1B000CEA6C8 /* RSScaling.h */,
 				84CFF5681AC3D1B000CEA6C8 /* RSScaling.m */,
+				84411E721FE5FFC3004B527F /* NSImage+RSCore.swift */,
 			);
 			name = Images;
 			path = RSCore;
@@ -768,9 +774,11 @@
 				84CFF56A1AC3D1B000CEA6C8 /* RSScaling.m in Sources */,
 				84FEB4AC1D19D7F4004727E5 /* Date+Extensions.swift in Sources */,
 				8479213E1FBA4285004AD08C /* WebViewWindowController.swift in Sources */,
+				844B5B571FE9D36000C7C76A /* Keyboard.swift in Sources */,
 				8461387F1DB3F5BE00048B83 /* RSToolbarItem.swift in Sources */,
 				84B99C941FAE64D500ECDEDB /* DisplayNameProvider.swift in Sources */,
 				84BB45431D6909C700B48537 /* NSMutableDictionary-Extensions.swift in Sources */,
+				84411E731FE5FFC3004B527F /* NSImage+RSCore.swift in Sources */,
 				845DE0F41B80477100D1571B /* NSSet+RSCore.m in Sources */,
 				842635591D7FA24800196285 /* NSOutlineView+Extensions.swift in Sources */,
 				844C915C1B65753E0051FC1B /* RSPlist.m in Sources */,

@@ -94,9 +94,9 @@
 			<key>name</key>
 			<string>And now it’s all this (Dr. Drang)</string>
 			<key>homePageURL</key>
-			<string>http://leancrew.com/all-this</string>
+			<string>http://leancrew.com/all-this/</string>
 			<key>url</key>
-			<string>http://www.leancrew.com/all-this/feed/</string>
+			<string>http://leancrew.com/all-this/feed.json</string>
 		</dict>
 		<dict>
 			<key>name</key>
@@ -352,6 +352,17 @@
 			<string>http://www.myballard.com/</string>
 			<key>url</key>
 			<string>http://feeds2.feedburner.com/myballard</string>
+		</dict>
+	</array>
+	<key>Miscellaneous</key>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>Pinboard (popular bookmarks)</string>
+			<key>homePageURL</key>
+			<string>https://pinboard.in/popular/</string>
+			<key>url</key>
+			<string>https://feeds.pinboard.in/rss/popular/</string>
 		</dict>
 	</array>
 </dict>

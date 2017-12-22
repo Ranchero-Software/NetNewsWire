@@ -16,7 +16,6 @@ struct DatabaseTableName {
 	static let authors = "authors"
 	static let authorsLookup = "authorsLookup"
 	static let statuses = "statuses"
-	static let tags = "tags"
 	static let attachments = "attachments"
 	static let attachmentsLookup = "attachmentsLookup"
 }
@@ -40,7 +39,6 @@ struct DatabaseKey {
 	static let datePublished = "datePublished"
 	static let dateModified = "dateModified"
 	static let authors = "authors"
-	static let tags = "tags"
 	static let attachments = "attachments"
 	
 	// ArticleStatus
@@ -68,6 +66,5 @@ struct DatabaseKey {
 struct RelationshipName {
 	
 	static let authors = "authors"
-	static let tags = "tags"
 	static let attachments = "attachments"
 }

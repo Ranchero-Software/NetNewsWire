@@ -14,6 +14,8 @@
 #import <RSParser/NSString+RSParser.h>
 #import <RSParser/RSDateParser.h>
 #import <RSParser/ParserData.h>
+#import <RSParser/RSParsedEnclosure.h>
+#import <RSParser/RSParsedAuthor.h>
 
 @interface RSAtomParser () <RSSAXParserDelegate>
 
@@ -33,6 +35,7 @@
 @property (nonatomic) NSDate *dateParsed;
 @property (nonatomic) RSSAXParser *parser;
 @property (nonatomic, readonly) RSParsedArticle *currentArticle;
+@property (nonatomic) RSParsedAuthor *currentAuthor;
 @property (nonatomic, readonly) NSDate *currentDate;
 
 @end
@@ -94,11 +97,14 @@ static NSString *kXMLBaseKey = @"xml:base";
 static NSString *kXMLLangKey = @"xml:lang";
 static NSString *kTextHTMLValue = @"text/html";
 static NSString *kRelatedValue = @"related";
+static NSString *kEnclosureValue = @"enclosure";
 static NSString *kShortURLValue = @"shorturl";
 static NSString *kHTMLValue = @"html";
 static NSString *kEnValue = @"en";
 static NSString *kTextValue = @"text";
 static NSString *kSelfValue = @"self";
+static NSString *kLengthKey = @"length";
+static NSString *kTitleKey = @"title";
 
 static const char *kID = "id";
 static const NSInteger kIDLength = 3;
@@ -123,6 +129,15 @@ static const NSInteger kUpdatedLength = 8;
 
 static const char *kAuthor = "author";
 static const NSInteger kAuthorLength = 7;
+
+static const char *kName = "name";
+static const NSInteger kNameLength = 5;
+
+static const char *kEmail = "email";
+static const NSInteger kEmailLength = 6;
+
+static const char *kURI = "uri";
+static const NSInteger kURILength = 4;
 
 static const char *kEntry = "entry";
 static const NSInteger kEntryLength = 6;
@@ -175,6 +190,11 @@ static const NSInteger kTextLength = 5;
 static const char *kSelf = "self";
 static const NSInteger kSelfLength = 5;
 
+static const char *kEnclosure = "enclosure";
+static const NSInteger kEnclosureLength = 10;
+
+static const char *kLength = "length";
+static const NSInteger kLengthLength = 7;
 
 #pragma mark - Parsing
 
@@ -186,9 +206,6 @@ static const NSInteger kSelfLength = 5;
 		[self.parser parseData:self.feedData];
 		[self.parser finishParsing];
 	}
-
-	// Optimization: make articles do calculations on this background thread.
-	[self.articles makeObjectsPerformSelector:@selector(calculateArticleID)];
 }
 
 
@@ -241,28 +258,46 @@ static const NSInteger kSelfLength = 5;
 
 - (void)addLink {
 
-	NSString *urlString = self.currentAttributes[kHrefKey];
+	NSDictionary *attributes = self.currentAttributes;
+
+	NSString *urlString = attributes[kHrefKey];
 	if (urlString.length < 1) {
 		return;
 	}
 
-	NSString *rel = self.currentAttributes[kRelKey];
+	RSParsedArticle *article = self.currentArticle;
+
+	NSString *rel = attributes[kRelKey];
 	if (rel.length < 1) {
 		rel = kAlternateValue;
 	}
 
 	if (rel == kAlternateValue) {
-		if (!self.currentArticle.link) {
-			self.currentArticle.link = urlString;
+		if (!article.link) {
+			article.link = urlString;
 		}
 	}
 	else if (rel == kRelatedValue) {
-		if (!self.currentArticle.permalink) {
-			self.currentArticle.permalink = urlString;
+		if (!article.permalink) {
+			article.permalink = urlString;
 		}
+	}
+	else if (rel == kEnclosureValue) {
+		RSParsedEnclosure *enclosure = [self enclosureWithURLString:urlString attributes:attributes];
+		[article addEnclosure:enclosure];
 	}
 }
 
+- (RSParsedEnclosure *)enclosureWithURLString:(NSString *)urlString attributes:(NSDictionary *)attributes {
+
+	RSParsedEnclosure *enclosure = [[RSParsedEnclosure alloc] init];
+	enclosure.url = urlString;
+	enclosure.title = attributes[kTitleKey];
+	enclosure.mimeType = attributes[kTypeKey];
+	enclosure.length = [attributes[kLengthKey] integerValue];
+
+	return enclosure;
+}
 
 - (void)addContent {
 
@@ -380,6 +415,7 @@ static const NSInteger kSelfLength = 5;
 
 	if (RSSAXEqualTags(localName, kAuthor, kAuthorLength)) {
 		self.parsingAuthor = YES;
+		self.currentAuthor = [[RSParsedAuthor alloc] init];
 		return;
 	}
 
@@ -447,8 +483,25 @@ static const NSInteger kSelfLength = 5;
 		[self.xhtmlString appendString:@">"];
 	}
 
-	else if (RSSAXEqualTags(localName, kAuthor, kAuthorLength)) {
-		self.parsingAuthor = NO;
+	else if (self.parsingAuthor) {
+
+		if (RSSAXEqualTags(localName, kAuthor, kAuthorLength)) {
+			self.parsingAuthor = NO;
+			RSParsedAuthor *author = self.currentAuthor;
+			if (author.name || author.emailAddress || author.url) {
+				[self.currentArticle addAuthor:author];
+			}
+			self.currentAuthor = nil;
+		}
+		else if (RSSAXEqualTags(localName, kName, kNameLength)) {
+			self.currentAuthor.name = self.parser.currentStringWithTrimmedWhitespace;
+		}
+		else if (RSSAXEqualTags(localName, kEmail, kEmailLength)) {
+			self.currentAuthor.emailAddress = self.parser.currentStringWithTrimmedWhitespace;
+		}
+		else if (RSSAXEqualTags(localName, kURI, kURILength)) {
+			self.currentAuthor.url = self.parser.currentStringWithTrimmedWhitespace;
+		}
 	}
 
 	else if (RSSAXEqualTags(localName, kEntry, kEntryLength)) {
@@ -502,6 +555,14 @@ static const NSInteger kSelfLength = 5;
 		return kAlternateValue;
 	}
 
+	if (RSSAXEqualTags(name, kLength, kLengthLength)) {
+		return kLengthKey;
+	}
+
+	if (RSSAXEqualTags(name, kTitle, kTitleLength)) {
+		return kTitleKey;
+	}
+
 	return nil;
 }
 
@@ -522,9 +583,14 @@ static BOOL equalBytes(const void *bytes1, const void *bytes2, NSUInteger length
 	static const NSUInteger enLength = kEnLength - 1;
 	static const NSUInteger textLength = kTextLength - 1;
 	static const NSUInteger selfLength = kSelfLength - 1;
+	static const NSUInteger enclosureLength = kEnclosureLength - 1;
 
 	if (length == alternateLength && equalBytes(bytes, kAlternate, alternateLength)) {
 		return kAlternateValue;
+	}
+
+	if (length == enclosureLength && equalBytes(bytes, kEnclosure, enclosureLength)) {
+		return kEnclosureValue;
 	}
 
 	if (length == textHTMLLength && equalBytes(bytes, kTextHTML, textHTMLLength)) {

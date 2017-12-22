@@ -26,7 +26,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var feedIconDownloader: FeedIconDownloader!
 	var appName: String!
-	var pseudoFeeds = [PseudoFeed]()
 
 	var unreadCount = 0 {
 		didSet {
@@ -42,7 +41,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var mainWindowController: NSWindowController?
 	private var readerWindows = [NSWindowController]()
 	private var feedListWindowController: NSWindowController?
-	private var dinosaursWindowController: DinosaursWindowController?
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
@@ -146,12 +144,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
 		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader)
-		
-		let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
-		let unreadFeed = UnreadFeed()
-		let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
-		pseudoFeeds = [todayFeed, unreadFeed, starredFeed]
-		
+
 		createAndShowMainWindow()
 
 		#if RELEASE
@@ -308,21 +301,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		feedListWindowController!.showWindow(self)
 	}
 
-	@IBAction func showDinosaursWindow(_ sender: Any?) {
-
-		if dinosaursWindowController == nil {
-			dinosaursWindowController = DinosaursWindowController()
-		}
-		dinosaursWindowController!.showWindow(self)
-	}
-
 	@IBAction func showKeyboardShortcutsWindow(_ sender: Any?) {
 
 		if keyboardShortcutsWindowController == nil {
 			keyboardShortcutsWindowController = WebViewWindowController(title: NSLocalizedString("Keyboard Shortcuts", comment: "window title"))
 			let htmlFile = Bundle(for: type(of: self)).path(forResource: "KeyboardShortcuts", ofType: "html")!
 			keyboardShortcutsWindowController?.displayContents(of: htmlFile)
+
+			if let window = keyboardShortcutsWindowController?.window, let screen = window.screen {
+				let width: CGFloat = 620.0
+				let height: CGFloat = 1024.0
+				let insetX: CGFloat = 128.0
+				let insetY: CGFloat = 64.0
+				window.setContentSize(NSSize(width: width, height: height))
+				window.setFrameTopLeftPoint(NSPoint(x: insetX, y: screen.visibleFrame.maxY - insetY))
+			}
 		}
+
 		keyboardShortcutsWindowController!.showWindow(self)
 	}
 
@@ -414,7 +409,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func openWebsite(_ sender: AnyObject) {
 
-		Browser.open("//ranchero.com/evergreen/", inBackground: false)
+		Browser.open("https://ranchero.com/evergreen/", inBackground: false)
 	}
 
 	@IBAction func openRepository(_ sender: AnyObject) {
@@ -425,6 +420,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func openBugTracker(_ sender: AnyObject) {
 
 		Browser.open("https://github.com/brentsimmons/Evergreen/issues", inBackground: false)
+	}
+
+	@IBAction func openTechnotes(_ sender: Any?) {
+
+		Browser.open("https://github.com/brentsimmons/Evergreen/tree/master/Technotes", inBackground: false)
 	}
 
 	@IBAction func showHelp(_ sender: AnyObject) {

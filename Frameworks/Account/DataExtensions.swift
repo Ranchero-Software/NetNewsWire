@@ -53,6 +53,12 @@ public extension Feed {
 			didChangeAtLeastOneSetting = true
 		}
 
+		let updatedAuthors = Author.authorsWithParsedAuthors(parsedFeed.authors)
+		if authors != updatedAuthors {
+			authors = updatedAuthors
+			didChangeAtLeastOneSetting = true
+		}
+
 		if didChangeAtLeastOneSetting {
 			NotificationCenter.default.post(name: .FeedSettingDidChange, object: self)
 		}

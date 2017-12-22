@@ -8,6 +8,8 @@
 
 import Foundation
 
+// Main thread only.
+
 public final class Node: Hashable {
 	
 	public weak var parent: Node?
@@ -17,7 +19,6 @@ public final class Node: Hashable {
 	public var childNodes: [Node]?
 	public let hashValue: Int
 	private static var incrementingID = 0
-	private static var incrementingIDLock = NSLock()
 
 	public var isRoot: Bool {
 		get {
@@ -63,14 +64,14 @@ public final class Node: Hashable {
 	}
 
 	public init(representedObject: AnyObject, parent: Node?) {
-		
+
+		precondition(Thread.isMainThread)
+
 		self.representedObject = representedObject
 		self.parent = parent
 
-		Node.incrementingIDLock.lock()
 		self.hashValue = Node.incrementingID
 		Node.incrementingID += 1
-		Node.incrementingIDLock.unlock()
 	}
 	
 	public class func genericRootNode() -> Node {
@@ -78,6 +79,14 @@ public final class Node: Hashable {
 		let node = Node(representedObject: TopLevelRepresentedObject(), parent: nil)
 		node.canHaveChildNodes = true
 		return node
+	}
+
+	public func existingOrNewChildNode(with representedObject: AnyObject) -> Node {
+
+		if let node = childNodeRepresentingObject(representedObject) {
+			return node
+		}
+		return createChildNode(representedObject)
 	}
 
 	public func createChildNode(_ representedObject: AnyObject) -> Node {

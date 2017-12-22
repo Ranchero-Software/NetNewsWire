@@ -47,4 +47,67 @@ class RSSParserTests: XCTestCase {
 		}
 	}
 
+	func testNatashaTheRobot() {
+
+		let d = parserData("natasha", "xml", "https://www.natashatherobot.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertEqual(parsedFeed.items.count, 10)
+	}
+
+	func testTheOmniShowAttachments() {
+
+		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.attachments)
+			XCTAssertEqual(article.attachments!.count, 1)
+			let attachment = Array(article.attachments!).first!
+			XCTAssertNotNil(attachment.mimeType)
+			XCTAssertNotNil(attachment.sizeInBytes)
+			XCTAssert(attachment.url.contains("cloudfront"))
+			XCTAssertGreaterThanOrEqual(attachment.sizeInBytes!, 22275279)
+			XCTAssertEqual(attachment.mimeType, "audio/mpeg")
+		}
+	}
+
+	func testTheOmniShowUniqueIDs() {
+
+		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.uniqueID)
+			XCTAssertTrue(article.uniqueID.hasPrefix("https://theomnishow.omnigroup.com/episode/"))
+		}
+	}
+
+	func testMacworldUniqueIDs() {
+
+		// Macworld’s feed doesn’t have guids, so they should be calculated unique IDs.
+
+		let d = parserData("macworld", "rss", "https://www.macworld.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.uniqueID)
+			XCTAssertEqual(article.uniqueID.count, 32) // calculated unique IDs are MD5 hashes
+		}
+	}
+
+	func testMacworldAuthors() {
+
+		// Macworld uses names instead of email addresses (despite the RSS spec saying they should be email addresses).
+
+		let d = parserData("macworld", "rss", "https://www.macworld.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+
+			let author = article.authors!.first!
+			XCTAssertNil(author.emailAddress)
+			XCTAssertNil(author.url)
+			XCTAssertNotNil(author.name)
+		}
+	}
 }

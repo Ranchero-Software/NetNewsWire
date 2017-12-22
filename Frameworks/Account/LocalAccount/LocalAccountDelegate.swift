@@ -25,11 +25,16 @@ final class LocalAccountDelegate: AccountDelegate {
 		refresher.refreshFeeds(account.flattenedFeeds())
 	}
 
+	func accountDidInitialize(_ account: Account) {
+
+		account.nameForDisplay = NSLocalizedString("On My Mac", comment: "Local Account Name")
+	}
+
 	// MARK: Disk
 	
 	func update(account: Account, withUserInfo: NSDictionary?) {
 
-		account.nameForDisplay = NSLocalizedString("On My Mac", comment: "Local Account Name")
+
 	}
 
 	func userInfo(for: Account) -> NSDictionary? {

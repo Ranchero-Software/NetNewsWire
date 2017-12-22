@@ -22,11 +22,11 @@
 	</dict>
 	<dict>
 		<key>homePageURL</key>
-		<string>https://www.natashatherobot.com/</string>
+		<string>https://jvns.ca/</string>
 		<key>editedName</key>
-		<string>Natasha the Robot</string>
+		<string>Julia Evans</string>
 		<key>url</key>
-		<string>https://www.natashatherobot.com/feed/</string>
+		<string>https://jvns.ca/atom.xml</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
@@ -58,23 +58,21 @@
 	</dict>
 	<dict>
 		<key>homePageURL</key>
-		<string>http://redqueencoder.com/</string>
+		<string>https://cate.blog</string>
 		<key>note</key>
-		<string>Janie Clayton</string>
+		<string>Cate Huston</string>
 		<key>editedName</key>
-		<string>The Red Queen Coder</string>
+		<string>Accidentally in Code</string>
 		<key>url</key>
-		<string>http://redqueencoder.com/feed/</string>
+		<string>https://cate.blog/feed/</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
-		<string>https://medium.com/@jaimeejaimee</string>
+		<string>http://www.manton.org/</string>
 		<key>editedName</key>
-		<string>jaimeejaimee</string>
-		<key>note</key>
-		<string>Jaimee Newberry</string>
+		<string>Manton Reece</string>
 		<key>url</key>
-		<string>https://medium.com/feed/@jaimeejaimee</string>
+		<string>http://www.manton.org/feed/json</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>

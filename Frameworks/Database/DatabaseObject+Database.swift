@@ -12,12 +12,6 @@ import Data
 
 extension Array where Element == DatabaseObject {
 	
-	func asTags() -> Set<String>? {
-		
-		let tags = Set(self.map { $0 as! String })
-		return tags.isEmpty ? nil : tags
-	}
-	
 	func asAuthors() -> Set<Author>? {
 	
 		let authors = Set(self.map { $0 as! Author })

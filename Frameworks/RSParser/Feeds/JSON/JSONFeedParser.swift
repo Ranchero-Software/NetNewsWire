@@ -12,39 +12,70 @@ import Foundation
 
 public struct JSONFeedParser {
 
+	struct Key {
+		static let version = "version"
+		static let items = "items"
+		static let title = "title"
+		static let homePageURL = "home_page_url"
+		static let feedURL = "feed_url"
+		static let feedDescription = "description"
+		static let nextURL = "next_url"
+		static let icon = "icon"
+		static let favicon = "favicon"
+		static let expired = "expired"
+		static let author = "author"
+		static let name = "name"
+		static let url = "url"
+		static let avatar = "avatar"
+		static let hubs = "hubs"
+		static let type = "type"
+		static let contentHTML = "content_html"
+		static let contentText = "content_text"
+		static let externalURL = "external_url"
+		static let summary = "summary"
+		static let image = "image"
+		static let bannerImage = "banner_image"
+		static let datePublished = "date_published"
+		static let dateModified = "date_modified"
+		static let tags = "tags"
+		static let uniqueID = "id"
+		static let attachments = "attachments"
+		static let mimeType = "mime_type"
+		static let sizeInBytes = "size_in_bytes"
+		static let durationInSeconds = "duration_in_seconds"
+	}
+
+	static let jsonFeedVersionPrefix = "https://jsonfeed.org/version/"
+
 	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
 
-		do {
-			guard let parsedObject = try JSONSerialization.jsonObject(with: parserData.data) as? JSONDictionary else {
-				throw FeedParserError(.invalidJSON)
-			}
-
-			guard let version = parsedObject["version"] as? String, version.hasPrefix("https://jsonfeed.org/version/") else {
-				throw FeedParserError(.jsonFeedVersionNotFound)
-			}
-			guard let itemsArray = parsedObject["items"] as? JSONArray else {
-				throw FeedParserError(.jsonFeedItemsNotFound)
-			}
-			guard let title = parsedObject["title"] as? String else {
-				throw FeedParserError(.jsonFeedTitleNotFound)
-			}
-
-			let authors = parseAuthors(parsedObject)
-			let homePageURL = parsedObject["home_page_url"] as? String
-			let feedURL = parsedObject["feed_url"] as? String ?? parserData.url
-			let feedDescription = parsedObject["description"] as? String
-			let nextURL = parsedObject["next_url"] as? String
-			let iconURL = parsedObject["icon"] as? String
-			let faviconURL = parsedObject["favicon"] as? String
-			let expired = parsedObject["expired"] as? Bool ?? false
-			let hubs = parseHubs(parsedObject)
-
-			let items = parseItems(itemsArray, parserData.url)
-
-			return ParsedFeed(type: .jsonFeed, title: title, homePageURL: homePageURL, feedURL: feedURL, feedDescription: feedDescription, nextURL: nextURL, iconURL: iconURL, faviconURL: faviconURL, authors: authors, expired: expired, hubs: hubs, items: items)
-
+		guard let d = JSONUtilities.dictionary(with: parserData.data) else {
+			throw FeedParserError(.invalidJSON)
 		}
-		catch { throw error }
+
+		guard let version = d[Key.version] as? String, version.hasPrefix(JSONFeedParser.jsonFeedVersionPrefix) else {
+			throw FeedParserError(.jsonFeedVersionNotFound)
+		}
+		guard let itemsArray = d[Key.items] as? JSONArray else {
+			throw FeedParserError(.jsonFeedItemsNotFound)
+		}
+		guard let title = d[Key.title] as? String else {
+			throw FeedParserError(.jsonFeedTitleNotFound)
+		}
+
+		let authors = parseAuthors(d)
+		let homePageURL = d[Key.homePageURL] as? String
+		let feedURL = d[Key.feedURL] as? String ?? parserData.url
+		let feedDescription = d[Key.feedDescription] as? String
+		let nextURL = d[Key.nextURL] as? String
+		let iconURL = d[Key.icon] as? String
+		let faviconURL = d[Key.favicon] as? String
+		let expired = d[Key.expired] as? Bool ?? false
+		let hubs = parseHubs(d)
+
+		let items = parseItems(itemsArray, parserData.url)
+
+		return ParsedFeed(type: .jsonFeed, title: title, homePageURL: homePageURL, feedURL: feedURL, feedDescription: feedDescription, nextURL: nextURL, iconURL: iconURL, faviconURL: faviconURL, authors: authors, expired: expired, hubs: hubs, items: items)
 	}
 }
 
@@ -52,13 +83,13 @@ private extension JSONFeedParser {
 
 	static func parseAuthors(_ dictionary: JSONDictionary) -> Set<ParsedAuthor>? {
 
-		guard let authorDictionary = dictionary["author"] as? JSONDictionary else {
+		guard let authorDictionary = dictionary[Key.author] as? JSONDictionary else {
 			return nil
 		}
 
-		let name = authorDictionary["name"] as? String
-		let url = authorDictionary["url"] as? String
-		let avatar = authorDictionary["avatar"] as? String
+		let name = authorDictionary[Key.name] as? String
+		let url = authorDictionary[Key.url] as? String
+		let avatar = authorDictionary[Key.avatar] as? String
 		if name == nil && url == nil && avatar == nil {
 			return nil
 		}
@@ -68,12 +99,12 @@ private extension JSONFeedParser {
 
 	static func parseHubs(_ dictionary: JSONDictionary) -> Set<ParsedHub>? {
 
-		guard let hubsArray = dictionary["hubs"] as? JSONArray else {
+		guard let hubsArray = dictionary[Key.hubs] as? JSONArray else {
 			return nil
 		}
 
 		let hubs = hubsArray.flatMap { (hubDictionary) -> ParsedHub? in
-			guard let hubURL = hubDictionary["url"] as? String, let hubType = hubDictionary["type"] as? String else {
+			guard let hubURL = hubDictionary[Key.url] as? String, let hubType = hubDictionary[Key.type] as? String else {
 				return nil
 			}
 			return ParsedHub(type: hubType, url: hubURL)
@@ -94,26 +125,26 @@ private extension JSONFeedParser {
 			return nil
 		}
 
-		let contentHTML = itemDictionary["content_html"] as? String
-		let contentText = itemDictionary["content_text"] as? String
+		let contentHTML = itemDictionary[Key.contentHTML] as? String
+		let contentText = itemDictionary[Key.contentText] as? String
 		if contentHTML == nil && contentText == nil {
 			return nil
 		}
 		let decodedContentHTML = contentHTML?.rsparser_stringByDecodingHTMLEntities()
 
-		let url = itemDictionary["url"] as? String
-		let externalURL = itemDictionary["external_url"] as? String
-		let title = itemDictionary["title"] as? String
-		let summary = itemDictionary["summary"] as? String
-		let imageURL = itemDictionary["image"] as? String
-		let bannerImageURL = itemDictionary["banner_image"] as? String
+		let url = itemDictionary[Key.url] as? String
+		let externalURL = itemDictionary[Key.externalURL] as? String
+		let title = itemDictionary[Key.title] as? String
+		let summary = itemDictionary[Key.summary] as? String
+		let imageURL = itemDictionary[Key.image] as? String
+		let bannerImageURL = itemDictionary[Key.bannerImage] as? String
 
-		let datePublished = parseDate(itemDictionary["date_published"] as? String)
-		let dateModified = parseDate(itemDictionary["date_modified"] as? String)
+		let datePublished = parseDate(itemDictionary[Key.datePublished] as? String)
+		let dateModified = parseDate(itemDictionary[Key.dateModified] as? String)
 
 		let authors = parseAuthors(itemDictionary)
 		var tags: Set<String>? = nil
-		if let tagsArray = itemDictionary["tags"] as? [String] {
+		if let tagsArray = itemDictionary[Key.tags] as? [String] {
 			tags = Set(tagsArray)
 		}
 		let attachments = parseAttachments(itemDictionary)
@@ -123,14 +154,14 @@ private extension JSONFeedParser {
 
 	static func parseUniqueID(_ itemDictionary: JSONDictionary) -> String? {
 
-		if let uniqueID = itemDictionary["id"] as? String {
+		if let uniqueID = itemDictionary[Key.uniqueID] as? String {
 			return uniqueID // Spec says it must be a string
 		}
 		// Spec also says that if it’s a number, even though that’s incorrect, it should be coerced to a string.
-		if let uniqueID = itemDictionary["id"] as? Int {
+		if let uniqueID = itemDictionary[Key.uniqueID] as? Int {
 			return "\(uniqueID)"
 		}
-		if let uniqueID = itemDictionary["id"] as? Double {
+		if let uniqueID = itemDictionary[Key.uniqueID] as? Double {
 			return "\(uniqueID)"
 		}
 		return nil
@@ -146,7 +177,7 @@ private extension JSONFeedParser {
 
 	static func parseAttachments(_ itemDictionary: JSONDictionary) -> Set<ParsedAttachment>? {
 
-		guard let attachmentsArray = itemDictionary["attachments"] as? JSONArray else {
+		guard let attachmentsArray = itemDictionary[Key.attachments] as? JSONArray else {
 			return nil
 		}
 		return Set(attachmentsArray.flatMap { parseAttachment($0) })
@@ -154,16 +185,16 @@ private extension JSONFeedParser {
 
 	static func parseAttachment(_ attachmentObject: JSONDictionary) -> ParsedAttachment? {
 
-		guard let url = attachmentObject["url"] as? String else {
+		guard let url = attachmentObject[Key.url] as? String else {
 			return nil
 		}
-		guard let mimeType = attachmentObject["mime_type"] as? String else {
+		guard let mimeType = attachmentObject[Key.mimeType] as? String else {
 			return nil
 		}
 
-		let title = attachmentObject["title"] as? String
-		let sizeInBytes = attachmentObject["size_in_bytes"] as? Int
-		let durationInSeconds = attachmentObject["duration_in_seconds"] as? Int
+		let title = attachmentObject[Key.title] as? String
+		let sizeInBytes = attachmentObject[Key.sizeInBytes] as? Int
+		let durationInSeconds = attachmentObject[Key.durationInSeconds] as? Int
 
 		return ParsedAttachment(url: url, mimeType: mimeType, title: title, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds)
 	}

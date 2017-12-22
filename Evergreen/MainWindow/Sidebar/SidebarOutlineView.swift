@@ -13,49 +13,17 @@ import RSTree
 class SidebarOutlineView : NSOutlineView {
 
 	weak var sidebarViewController: SidebarViewController?
+	@IBOutlet var keyboardDelegate: KeyboardDelegate!
 
 	//MARK: NSResponder
 	
 	override func keyDown(with event: NSEvent) {
-		
-		guard !event.rs_keyIsModified() else {
-			super.keyDown(with: event)
-			return
-		}
-		
-		let ch = Int(event.rs_unmodifiedCharacter())
-		if ch == NSNotFound {
-			super.keyDown(with: event)
-			return
-		}
-		
-		var isNavigationKey = false
-		var keyHandled = false
 
-		switch(ch) {
-			
-		case NSRightArrowFunctionKey:
-			isNavigationKey = true
-			keyHandled = true
-			
-		case NSDeleteFunctionKey, Int(kDeleteKeyCode):
-			keyHandled = true
-			sidebarViewController?.delete(event)
-
-		default:
-			keyHandled = false
-		}
-
-		if isNavigationKey {
-			let appInfo = AppInfo()
-			appInfo.navigationKey = ch
-			NotificationCenter.default.post(name: .AppNavigationKeyPressed, object: self, userInfo: appInfo.userInfo)
+		if keyboardDelegate.keydown(event, in: self) {
 			return
 		}
 
-		if !keyHandled {
-			super.keyDown(with: event)
-		}
+		super.keyDown(with: event)
 	}
 
 	override func frameOfCell(atColumn column: Int, row: Int) -> NSRect {

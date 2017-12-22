@@ -18,6 +18,10 @@ public protocol AccountDelegate {
 
 	func refreshAll(for: Account)
 
+	// Called at the end of account’s init method.
+
+	func accountDidInitialize(_ account: Account)
+
 	// Called at the end of initializing an Account using data from disk.
 	// Delegate has complete control over what goes in userInfo and what it means.
 	// Called even if userInfo is nil, since the delegate might have other

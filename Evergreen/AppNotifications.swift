@@ -23,43 +23,16 @@ extension Notification.Name {
 	static let MouseDidExitLink = Notification.Name("MouseDidExitLinkNotification")
 }
 
-extension Notification {
-
-	var appInfo: AppInfo? {
-		get {
-			return AppInfo.pullFromUserInfo(userInfo)
-		}
-	}
-}
-
 typealias UserInfoDictionary = [AnyHashable: Any]
 
-final class AppInfo {
+struct UserInfoKey {
 
-	// These are things commonly passed around in Evergreen notifications.
-	// Rather than setting these things using strings, we have a single AppInfo class
-	// that the userInfo dictionary may contain.
-
-	var view: NSView?
-	var article: Article?
-	var articles: Set<Article>?
-	var navigationKey: Int?
-	var objects: [AnyObject]?
-	var feed: Feed?
-	var url: String?
-	
-	static let appInfoKey = "appInfo"
-
-	var userInfo: UserInfoDictionary {
-		get {
-			return [AppInfo.appInfoKey: self] as UserInfoDictionary
-		}
-	}
-
-	static func pullFromUserInfo(_ userInfo: UserInfoDictionary?) -> AppInfo? {
-
-		return userInfo?[appInfoKey] as? AppInfo
-	}
+	static let view = "view"
+	static let article = "article"
+	static let articles = "articles"
+	static let navigationKeyPressed = "navigationKeyPressed"
+	static let objects = "objects"
+	static let feed = "feed"
+	static let url = "url"
 }
-
 

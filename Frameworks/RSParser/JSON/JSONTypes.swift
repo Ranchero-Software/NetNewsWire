@@ -8,5 +8,5 @@
 
 import Foundation
 
-typealias JSONDictionary = [String: Any]
-typealias JSONArray = [JSONDictionary]
+public typealias JSONDictionary = [String: Any]
+public typealias JSONArray = [JSONDictionary]

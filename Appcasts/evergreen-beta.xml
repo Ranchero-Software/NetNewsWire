@@ -5,7 +5,78 @@
         <link>https://ranchero.com/downloads/evergreen-beta.xml</link>
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
-        
+  
+        <item>
+            <title>Version 1.0d24</title>
+            <description><![CDATA[
+            <h4>UI changes</h4>
+						<p>Instead of an old-fashioned status bar — an app “chin” — the gear menu and refresh status appear at the bottom of the sidebar, and the current article‘s URL (or mouseover URL) appears at the bottom of the detail view.</p>
+						<p>Feedback is welcome on this change. It might need reversing or refining. Or it might be fine as-is. Let me know what you think.</p>
+
+						<h4>Performance</h4>
+						<p>The time between clicking on a feed — or especially a folder — and when the articles appear in the timeline view has been drastically reduced. This was due to a number of changes. (Thanks to Instruments!)</p>
+						<p>OPML importing was slow — now it’s borderline instantaneous, even with thousands of feeds.</p>
+						<p>HTML metadata parsing is now cached and performed on a background thread.</p>
+
+						<h4>Misc.</h4>
+						<p>Detect and parse RSS feeds that lack an opening rss tag. (See https://www.natashatherobot.com/feed/ as an example.)</p>
+						<p>When the home page of a feed isn’t known yet, base the favicon on the feed URL.</p>
+						<p>Fix a memory leak that happened every time you added a feed.</p>
+						<p>Removed signs of some features that won’t appear until 2.0. (I’ve been doing some punting. It hurts, but that’s how I know I’m doing it right.)</p>
+						<p>Increased spacing in sidebar from small to medium.</p>
+						<p>The smart feeds now appear in a Smart Feeds group in the sidebar.</p>
+
+						<h4>More info</h4>
+						<p>You can always look at the <a href="https://github.com/brentsimmons/Evergreen/commits/master">recent commits on GitHub</a> for more details.</p>
+  						]]></description>
+            <pubDate>Mon, 18 Dec 2017 20:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d24.zip" sparkle:version="516" sparkle:shortVersionString="1.0d24" length="7289118" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+       <item>
+            <title>Version 1.0d23</title>
+            <description><![CDATA[
+            <p>Decorate the tree!</p>
+  						]]></description>
+            <pubDate>Tue, 5 Dec 2017 13:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d23.zip" sparkle:version="515" sparkle:shortVersionString="1.0d23" length="7306243" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+       <item>
+            <title>Version 1.0d22</title>
+            <description><![CDATA[
+            <p>Refresh all after importing OPML.</p>
+            <p>Fetch unread counts from database at startup.</p>
+            <p>Make resizing the timeline view marginally faster.</p>
+            <p>Make the favicon downloading system use a little less memory.</p>
+            <p>Read a newly-added feed immediately, instead of waiting for the next refresh-all.</p>
+            <p>Use 38-pt-wide toolbar icons, a la Mail.</p>
+            <p>Parse RSS 1.0 (RDF) feeds. Pinboard uses these (I couldn’t find them anywhere else).</p>
+            <p>Make the window title-less. You can bring back the title using a <a href="https://github.com/brentsimmons/Evergreen/blob/master/Technotes/HiddenPrefs.md">hidden pref</a>.</p>
+            <p>Save feed authors.</p>
+            <p>Save article authors.</p>
+            <p>Use updated @2x next-unread icon from Brad.</p>
+            <p>Fix bug detecting feed type for Dr. Drang’s JSON Feed.</p>
+            <p>Fix bug detecting Macworld’s RSS feed as an RSS feed. The feed doesn’t start with the standard XML header.</p>
+            <p>Set user-agent on the detail view’s webview.</p>
+						]]></description>
+            <pubDate>Mon, 4 Dec 2017 13:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d22.zip" sparkle:version="514" sparkle:shortVersionString="1.0d22" length="7153185" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+      
+      <item>
+            <title>Version 1.0d20</title>
+            <description><![CDATA[
+            <p>Fixes several bugs with downloading and displaying favicons.</p>
+						]]></description>
+            <pubDate>Sun, 26 Nov 2017 21:45:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d20.zip" sparkle:version="512" sparkle:shortVersionString="1.0d20" length="7110096" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
        <item>
             <title>Version 1.0d19</title>
             <description><![CDATA[

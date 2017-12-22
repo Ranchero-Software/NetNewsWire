@@ -62,7 +62,8 @@ private func rectForDate(_ cellData: TimelineCellData, _ width: CGFloat, _ appea
 	r.origin.y = NSMaxY(titleRect) + appearance.titleBottomMargin
 	r.origin.x = appearance.boxLeftMargin
 	
-	r.size.width = max(width - (r.origin.x + appearance.cellPadding.right), 0.0)
+	r.size.width = min(width - (r.origin.x + appearance.cellPadding.right), r.size.width)
+	r.size.width = max(r.size.width, 0.0)
 
 	return r
 }

@@ -9,7 +9,8 @@
 #import <RSParser/RSParsedArticle.h>
 #import <RSParser/RSParserInternal.h>
 #import <RSParser/NSString+RSParser.h>
-
+#import <RSParser/RSParsedAuthor.h>
+#import <RSParser/RSParsedEnclosure.h>
 
 @implementation RSParsedArticle
 
@@ -32,23 +33,53 @@
 }
 
 
-#pragma mark - Accessors
+#pragma mark - Enclosures
+
+- (void)addEnclosure:(RSParsedEnclosure *)enclosure {
+
+	if (self.enclosures) {
+		self.enclosures = [self.enclosures setByAddingObject:enclosure];
+	}
+	else {
+		self.enclosures = [NSSet setWithObject:enclosure];
+	}
+}
+
+#pragma mark - Authors
+
+- (void)addAuthor:(RSParsedAuthor *)author {
+
+	if (self.authors) {
+		self.authors = [self.authors setByAddingObject:author];
+	}
+	else {
+		self.authors = [NSSet setWithObject:author];
+	}
+}
+
+#pragma mark - articleID
 
 - (NSString *)articleID {
+
+	if (self.guid) {
+		return self.guid;
+	}
 	
 	if (!_articleID) {
-		_articleID = self.calculatedUniqueID;
+		_articleID = [self calculatedArticleID];
 	}
 	
 	return _articleID;
 }
 
 
-- (NSString *)calculatedUniqueID {
+- (NSString *)calculatedArticleID {
 
-	/*guid+feedID, or a combination of properties when no guid. Then hash the result.
-		In general, feeds should have guids. When they don't, re-runs are very likely,
-		because there's no other 100% reliable way to determine identity.*/
+	/*Concatenate a combination of properties when no guid. Then hash the result.
+	 In general, feeds should have guids. When they don't, re-runs are very likely,
+	 because there's no other 100% reliable way to determine identity.
+	 This is intended to create an ID unique inside a feed, but not globally unique.
+	 Not suitable for a database ID, in other words.*/
 
 	NSMutableString *s = [NSMutableString stringWithString:@""];
 	
@@ -56,23 +87,29 @@
 	if (self.datePublished) {
 		datePublishedTimeStampString = [NSString stringWithFormat:@"%.0f", self.datePublished.timeIntervalSince1970];
 	}
-	
-	if (!RSParserStringIsEmpty(self.guid)) {
-		[s appendString:self.guid];
+
+	// Ideally we have a permalink and a pubDate. Either one would probably be a good guid, but together they should be rock-solid. (In theory. Feeds are buggy, though.)
+	if (!RSParserStringIsEmpty(self.permalink) && datePublishedTimeStampString) {
+		[s appendString:self.permalink];
+		[s appendString:datePublishedTimeStampString];
 	}
 
-	else if (!RSParserStringIsEmpty(self.link) && self.datePublished != nil) {
+	else if (!RSParserStringIsEmpty(self.link) && datePublishedTimeStampString) {
 		[s appendString:self.link];
 		[s appendString:datePublishedTimeStampString];
 	}
 
-	else if (!RSParserStringIsEmpty(self.title) && self.datePublished != nil) {
+	else if (!RSParserStringIsEmpty(self.title) && datePublishedTimeStampString) {
 		[s appendString:self.title];
 		[s appendString:datePublishedTimeStampString];
 	}
 
-	else if (self.datePublished != nil) {
+	else if (datePublishedTimeStampString) {
 		[s appendString:datePublishedTimeStampString];
+	}
+
+	else if (!RSParserStringIsEmpty(self.permalink)) {
+		[s appendString:self.permalink];
 	}
 
 	else if (!RSParserStringIsEmpty(self.link)) {
@@ -87,15 +124,7 @@
 		[s appendString:self.body];
 	}
 
-	NSAssert(!RSParserStringIsEmpty(self.feedURL), nil);
-	[s appendString:self.feedURL];
-
 	return [s rsparser_md5Hash];
-}
-
-- (void)calculateArticleID {
-	
-	(void)self.articleID;
 }
 
 @end

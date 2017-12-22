@@ -12,13 +12,19 @@ import RSTextDrawing
 import Data
 import Account
 
-class TimelineViewController: NSViewController, KeyboardDelegate, UndoableCommandRunner {
+class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
 
 	var selectedArticles: [Article] {
 		get {
 			return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
+		}
+	}
+
+	var hasAtLeastOneSelectedArticle: Bool {
+		get {
+			return tableView.selectedRow != -1
 		}
 	}
 
@@ -68,7 +74,6 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		tableView.rowHeight = calculateRowHeight()
 		tableView.target = self
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
-		tableView.keyboardDelegate = self
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 
 		if !didRegisterForNotifications {
@@ -159,7 +164,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		}
 	}
 	
-	@IBAction func markSelectedArticlesAsRead(_ sender: AnyObject?) {
+	@IBAction func markSelectedArticlesAsRead(_ sender: Any?) {
 
 		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: selectedArticles, markingRead: true, undoManager: undoManager) else {
 			return
@@ -167,7 +172,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		runCommand(markReadCommand)
 	}
 	
-	@IBAction func markSelectedArticlesAsUnread(_ sender: AnyObject) {
+	@IBAction func markSelectedArticlesAsUnread(_ sender: Any?) {
 		
 		guard let undoManager = undoManager, let markUnreadCommand = MarkReadOrUnreadCommand(initialArticles: selectedArticles, markingRead: false, undoManager: undoManager) else {
 			return
@@ -198,15 +203,35 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 
 		return articles.rowOfNextUnreadArticle(tableView.selectedRow)
 	}
-	
+
+	func focus() {
+
+		guard let window = tableView.window else {
+			return
+		}
+
+		window.makeFirstResponderUnlessDescendantIsFirstResponder(tableView)
+		if !hasAtLeastOneSelectedArticle && articles.count > 0 {
+			tableView.rs_selectRowAndScrollToVisible(0)
+		}
+	}
+
 	// MARK: - Notifications
 
-	@objc func sidebarSelectionDidChange(_ note: Notification) {
+	@objc func sidebarSelectionDidChange(_ notification: Notification) {
 
-		let sidebarView = note.appInfo?.view
+		guard let userInfo = notification.userInfo else {
+			return
+		}
+		guard let sidebarView = userInfo[UserInfoKey.view] as? NSView, sidebarView.window === tableView.window else {
+			return
+		}
 
-		if sidebarView?.window === tableView.window {
-			representedObjects = note.appInfo?.objects
+		if let objects = userInfo[UserInfoKey.objects] as? [AnyObject] {
+			representedObjects = objects
+		}
+		else {
+			representedObjects = nil
 		}
 	}
 	
@@ -228,65 +253,6 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		if updatedFontSize != self.fontSize {
 			self.fontSize = updatedFontSize
 		}
-	}
-
-	// MARK: - KeyboardDelegate
-	
-	func handleKeydownEvent(_ event: NSEvent, sender: AnyObject) -> Bool {
-		
-		guard !event.rs_keyIsModified() else {
-			return false
-		}
-		
-		guard let ch = event.rs_unmodifiedCharacterString() else {
-			return false
-		}
-
-		let hasSelectedArticle = hasAtLeastOneSelectedArticle
-		var keyHandled = false
-		
-		var shouldOpenInBrowser = false
-		
-		switch(ch) {
-			
-		case "\n":
-			shouldOpenInBrowser = true
-			keyHandled = true
-		case "\r":
-			shouldOpenInBrowser = true
-			keyHandled = true
-		
-		case "r":
-			markSelectedArticlesAsRead(sender)
-			keyHandled = true
-			
-		case "u":
-			markSelectedArticlesAsUnread(sender)
-			keyHandled = true
-			
-		default:
-			keyHandled = false
-		}
-		
-		if !keyHandled {
-			let chUnichar = event.rs_unmodifiedCharacter()
-			
-			switch(chUnichar) {
-				
-			case keypadEnter:
-				shouldOpenInBrowser = true
-				keyHandled = true
-				
-			default:
-				keyHandled = false
-			}
-		}
-	
-		if shouldOpenInBrowser && hasSelectedArticle {
-			openArticleInBrowser(self)
-		}
-		
-		return keyHandled
 	}
 
 	// MARK: - Reloading Data
@@ -317,7 +283,7 @@ class TimelineViewController: NSViewController, KeyboardDelegate, UndoableComman
 		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, tags: nil, attachments: nil, status: status)
+		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 		
 		let prototypeCellData = TimelineCellData(article: prototypeArticle, appearance: cellAppearance, showFeedName: false, favicon: nil, avatar: nil, featuredImage: nil)
 		let height = timelineCellHeight(100, cellData: prototypeCellData, appearance: cellAppearance)
@@ -398,13 +364,13 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	private func postTimelineSelectionDidChangeNotification(_ selectedArticle: Article?) {
 
-		let appInfo = AppInfo()
+		var userInfo = UserInfoDictionary()
 		if let article = selectedArticle {
-			appInfo.article = article
+			userInfo[UserInfoKey.article] = article
 		}
-		appInfo.view = tableView
+		userInfo[UserInfoKey.view] = tableView
 
-		NotificationCenter.default.post(name: .TimelineSelectionDidChange, object: self, userInfo: appInfo.userInfo)
+		NotificationCenter.default.post(name: .TimelineSelectionDidChange, object: self, userInfo: userInfo)
 	}
 
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
@@ -470,12 +436,6 @@ extension TimelineViewController: NSTableViewDelegate {
 
 private extension TimelineViewController {
 	
-	var hasAtLeastOneSelectedArticle: Bool {
-		get {
-			return tableView.selectedRow != -1
-		}
-	}
-
 	func emptyTheTimeline() {
 
 		if !articles.isEmpty {

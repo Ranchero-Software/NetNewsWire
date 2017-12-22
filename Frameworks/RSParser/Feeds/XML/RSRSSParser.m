@@ -15,7 +15,8 @@
 #import <RSParser/NSString+RSParser.h>
 #import <RSParser/RSDateParser.h>
 #import <RSParser/ParserData.h>
-
+#import <RSParser/RSParsedEnclosure.h>
+#import <RSParser/RSParsedAuthor.h>
 
 @interface RSRSSParser () <RSSAXParserDelegate>
 
@@ -32,6 +33,7 @@
 @property (nonatomic) NSString *link;
 @property (nonatomic) NSString *title;
 @property (nonatomic) NSDate *dateParsed;
+@property (nonatomic) BOOL isRDF;
 
 @end
 
@@ -155,6 +157,11 @@ static const NSInteger kFalseLength = 6;
 static const char *kTrue = "true";
 static const NSInteger kTrueLength = 5;
 
+static const char *kUppercaseRDF = "RDF";
+static const NSInteger kUppercaseRDFLength = 4;
+
+static const char *kEnclosure = "enclosure";
+static const NSInteger kEnclosureLength = 10;
 
 #pragma mark - Parsing
 
@@ -166,9 +173,6 @@ static const NSInteger kTrueLength = 5;
 		[self.parser parseData:self.feedData];
 		[self.parser finishParsing];
 	}
-	
-	// Optimization: make articles do calculations on this background thread.
-	[self.articles makeObjectsPerformSelector:@selector(calculateArticleID)];
 }
 
 
@@ -204,15 +208,22 @@ static const NSInteger kTrueLength = 5;
 	}
 }
 
+- (void)addAuthorWithString:(NSString *)authorString {
+
+	if (RSParserStringIsEmpty(authorString)) {
+		return;
+	}
+	
+	RSParsedAuthor *author = [RSParsedAuthor authorWithSingleString:self.parser.currentStringWithTrimmedWhitespace];
+	[self.currentArticle addAuthor:author];
+}
 
 - (void)addDCElement:(const xmlChar *)localName {
 
 	if (RSSAXEqualTags(localName, kCreator, kCreatorLength)) {
-
-		self.currentArticle.author = self.parser.currentStringWithTrimmedWhitespace;
+		[self addAuthorWithString:self.parser.currentStringWithTrimmedWhitespace];
 	}
 	else if (RSSAXEqualTags(localName, kDate, kDateLength)) {
-
 		self.currentArticle.datePublished = self.currentDate;
 	}
 }
@@ -228,6 +239,21 @@ static const NSInteger kTrueLength = 5;
 	}
 }
 
+- (void)addEnclosure {
+
+	NSDictionary *attributes = self.currentAttributes;
+	NSString *url = attributes[kURLKey];
+	if (!url || url.length < 1) {
+		return;
+	}
+
+	RSParsedEnclosure *enclosure = [[RSParsedEnclosure alloc] init];
+	enclosure.url = url;
+	enclosure.length = [attributes[kLengthKey] integerValue];
+	enclosure.mimeType = attributes[kTypeKey];
+
+	[self.currentArticle addEnclosure:enclosure];
+}
 
 - (NSString *)urlString:(NSString *)s {
 
@@ -286,7 +312,7 @@ static const NSInteger kTrueLength = 5;
 		self.currentArticle.datePublished = self.currentDate;
 	}
 	else if (RSSAXEqualTags(localName, kAuthor, kAuthorLength)) {
-		self.currentArticle.author = self.parser.currentStringWithTrimmedWhitespace;
+		[self addAuthorWithString:self.parser.currentStringWithTrimmedWhitespace];
 	}
 	else if (RSSAXEqualTags(localName, kLink, kLinkLength)) {
 		self.currentArticle.link = [self urlString:self.parser.currentStringWithTrimmedWhitespace];
@@ -299,6 +325,9 @@ static const NSInteger kTrueLength = 5;
 	}
 	else if (RSSAXEqualTags(localName, kTitle, kTitleLength)) {
 		self.currentArticle.title = [self currentStringWithHTMLEntitiesDecoded];
+	}
+	else if (RSSAXEqualTags(localName, kEnclosure, kEnclosureLength)) {
+		[self addEnclosure];
 	}
 }
 
@@ -317,8 +346,13 @@ static const NSInteger kTrueLength = 5;
 		return;
 	}
 
+	if (RSSAXEqualTags(localName, kUppercaseRDF, kUppercaseRDFLength)) {
+		self.isRDF = YES;
+		return;
+	}
+
 	NSDictionary *xmlAttributes = nil;
-	if (RSSAXEqualTags(localName, kItem, kItemLength) || RSSAXEqualTags(localName, kGuid, kGuidLength)) {
+	if ((self.isRDF && RSSAXEqualTags(localName, kItem, kItemLength)) || RSSAXEqualTags(localName, kGuid, kGuidLength) || RSSAXEqualTags(localName, kEnclosure, kEnclosureLength)) {
 		xmlAttributes = [self.parser attributesDictionary:attributes numberOfAttributes:numberOfAttributes];
 	}
 	if (self.currentAttributes != xmlAttributes) {
@@ -330,7 +364,7 @@ static const NSInteger kTrueLength = 5;
 		[self addArticle];
 		self.parsingArticle = YES;
 
-		if (xmlAttributes && xmlAttributes[kRDFAboutKey]) { /*RSS 1.0 guid*/
+		if (self.isRDF && xmlAttributes && xmlAttributes[kRDFAboutKey]) { /*RSS 1.0 guid*/
 			self.currentArticle.guid = xmlAttributes[kRDFAboutKey];
 			self.currentArticle.permalink = self.currentArticle.guid;
 		}
@@ -352,7 +386,11 @@ static const NSInteger kTrueLength = 5;
 		return;
 	}
 
-	if (RSSAXEqualTags(localName, kRSS, kRSSLength)) {
+	if (self.isRDF && RSSAXEqualTags(localName, kUppercaseRDF, kUppercaseRDFLength)) {
+		self.endRSSFound = YES;
+	}
+
+	else if (RSSAXEqualTags(localName, kRSS, kRSSLength)) {
 		self.endRSSFound = YES;
 	}
 

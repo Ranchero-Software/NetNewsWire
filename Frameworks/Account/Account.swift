@@ -124,7 +124,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.settingsFile = settingsFile
 		self.dataFolder = dataFolder
 		self.hashValue = accountID.hashValue
-		
+
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
 		self.database = Database(databaseFilePath: databaseFilePath, accountID: accountID)
 
@@ -140,7 +140,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		DispatchQueue.main.async {
 			self.updateUnreadCount()
+			self.fetchAllUnreadCounts()
 		}
+
+		self.delegate.accountDidInitialize(self)
 	}
 	
 	// MARK: - API
@@ -150,7 +153,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.refreshAll(for: self)
 	}
 
-	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
+	public func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
 
 		feed.takeSettings(from: parsedFeed)
 
@@ -239,22 +242,21 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		if let folder = folder {
 			didAddFeed = folder.addFeed(uniquedFeed)
-			if didAddFeed {
-				addToFeedDictionaries(uniquedFeed)
-			}
 		}
 		else {
 			if !topLevelObjectsContainsFeed(uniquedFeed) {
 				children += [uniquedFeed]
-				addToFeedDictionaries(uniquedFeed)
-				dirty = true
 				postChildrenDidChangeNotification()
 			}
 			didAddFeed = true
 		}
+
+		if didAddFeed {
+			addToFeedDictionaries(uniquedFeed)
+			dirty = true
+		}
 		
-		rebuildFeedDictionaries()
-		return didAddFeed // TODO
+		return didAddFeed
 	}
 
 	public func createFeed(with name: String?, editedName: String?, url: String) -> Feed? {
@@ -300,8 +302,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		guard let children = opmlDocument.children else {
 			return
 		}
+		rebuildFeedDictionaries()
 		importOPMLItems(children, parentFolder: nil)
-		dirty = true
+		saveToDisk()
+
+		DispatchQueue.main.async {
+			self.refreshAll()
+		}
 	}
 
 	public func updateUnreadCounts(for feeds: Set<Feed>) {
@@ -622,6 +629,28 @@ private extension Account {
         
         NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.feeds: feeds])
     }
+
+	func fetchAllUnreadCounts() {
+
+		database.fetchAllNonZeroUnreadCounts { (unreadCountDictionary) in
+
+			if unreadCountDictionary.isEmpty {
+				return
+			}
+
+			self.flattenedFeeds().forEach{ (feed) in
+
+				// When the unread count is zero, it won’t appear in unreadCountDictionary.
+
+				if let unreadCount = unreadCountDictionary[feed] {
+					feed.unreadCount = unreadCount
+				}
+				else {
+					feed.unreadCount = 0
+				}
+			}
+		}
+	}
 }
 
 // MARK: - Container Overrides

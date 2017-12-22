@@ -76,17 +76,17 @@ import RSCore
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 	
-	@objc dynamic func userDidAddFeed(_ note: Notification) {
+	@objc dynamic func userDidAddFeed(_ notification: Notification) {
 
-		guard let appInfo = note.appInfo, let feed = appInfo.feed else {
+		guard let feed = notification.userInfo?[UserInfoKey.feed] else {
 			return
 		}
-		revealAndSelectRepresentedObject(feed)
+		revealAndSelectRepresentedObject(feed as AnyObject)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 
-		configureAvailableCells()
+		applyToAvailableCells(configureFavicon)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
@@ -125,8 +125,15 @@ import RSCore
 		animatingChanges = false
 	}
 
+	@IBAction func openInBrowser(_ sender: Any?) {
+
+		guard let feed = singleSelectedFeed, let homePageURL = feed.homePageURL else {
+			return
+		}
+		Browser.open(homePageURL)
+	}
+
 	// MARK: Navigation
-	
 	
 	func canGoToNextUnread() -> Bool {
 		
@@ -147,7 +154,15 @@ import RSCore
 		
 		NSApplication.shared.sendAction(NSSelectorFromString("nextUnread:"), to: nil, from: self)
 	}
-	
+
+	func focus() {
+
+		guard let window = outlineView.window else {
+			return
+		}
+		window.makeFirstResponderUnlessDescendantIsFirstResponder(outlineView)
+	}
+
 	// MARK: NSOutlineViewDelegate
     
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
@@ -185,6 +200,11 @@ import RSCore
 		}
 
 		return proposedSelectionIndexes
+	}
+
+	func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
+
+		return !self.outlineView(outlineView, isGroupItem: item)
 	}
 
     func outlineViewSelectionDidChange(_ notification: Notification) {
@@ -235,14 +255,26 @@ import RSCore
 private extension SidebarViewController {
 	
 	var selectedNodes: [Node] {
-		get {
-			if let nodes = outlineView.selectedItems as? [Node] {
-				return nodes
-			}
-			return [Node]()
+		if let nodes = outlineView.selectedItems as? [Node] {
+			return nodes
 		}
+		return [Node]()
 	}
-	
+
+	var singleSelectedNode: Node? {
+		guard selectedNodes.count == 1 else {
+			return nil
+		}
+		return selectedNodes.first!
+	}
+
+	var singleSelectedFeed: Feed? {
+		guard let node = singleSelectedNode else {
+			return nil
+		}
+		return node.representedObject as? Feed
+	}
+
 	func rebuildTreeAndReloadDataIfNeeded() {
 		
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
@@ -253,16 +285,13 @@ private extension SidebarViewController {
 	
 	func postSidebarSelectionDidChangeNotification(_ selectedObjects: [AnyObject]?) {
 
-		let appInfo = AppInfo()
+		var userInfo = UserInfoDictionary()
 		if let objects = selectedObjects {
-			appInfo.objects = objects
-			DispatchQueue.main.async {
-				self.updateUnreadCounts(for: objects)
-			}
+			userInfo[UserInfoKey.objects] = objects
 		}
-		appInfo.view = outlineView
+		userInfo[UserInfoKey.view] = outlineView
 
-		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: appInfo.userInfo)
+		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: userInfo)
 	}
 
 	func updateUnreadCounts(for objects: [AnyObject]) {
@@ -342,13 +371,18 @@ private extension SidebarViewController {
 		cell.objectValue = node
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
-		cell.image = imageFor(node)
-		cell.shouldShowImage = node.representedObject is Feed
+		configureFavicon(cell, node)
+		cell.shouldShowImage = node.representedObject is SmallIconProvider
 	}
 
 	func configureUnreadCount(_ cell: SidebarCell, _ node: Node) {
 
 		cell.unreadCount = unreadCountFor(node)
+	}
+
+	func configureFavicon(_ cell: SidebarCell, _ node: Node) {
+
+		cell.image = imageFor(node)
 	}
 
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
@@ -359,10 +393,10 @@ private extension SidebarViewController {
 
 	func imageFor(_ node: Node) -> NSImage? {
 
-		guard let feed = node.representedObject as? Feed else {
-			return nil
+		if let smallIconProvider = node.representedObject as? SmallIconProvider {
+			return smallIconProvider.smallIcon
 		}
-		return appDelegate.faviconDownloader.favicon(for: feed)
+		return nil
 	}
 
 	func nameFor(_ node: Node) -> String {
@@ -484,6 +518,13 @@ private extension SidebarViewController {
 			}
 		}
 		return parent
+	}
+}
+
+extension Feed: SmallIconProvider {
+
+	var smallIcon: NSImage? {
+		return appDelegate.faviconDownloader.favicon(for: self)
 	}
 }
 

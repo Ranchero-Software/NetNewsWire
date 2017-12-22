@@ -34,6 +34,9 @@ public final class Database {
 		let createStatementsPath = Bundle(for: type(of: self)).path(forResource: "CreateStatements", ofType: "sql")!
 		let createStatements = try! NSString(contentsOfFile: createStatementsPath, encoding: String.Encoding.utf8.rawValue)
 		queue.createTables(usingStatements: createStatements as String)
+		queue.update { (database) in
+			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;")
+		}
 		queue.vacuumIfNeeded()
 	}
 
@@ -57,7 +60,7 @@ public final class Database {
 	// MARK: - Unread Counts
 	
 	public func fetchUnreadCounts(for feeds: Set<Feed>, _ completion: @escaping UnreadCountCompletionBlock) {
-		
+
 		articlesTable.fetchUnreadCounts(feeds, completion)
 	}
 
@@ -69,6 +72,11 @@ public final class Database {
 	public func fetchStarredAndUnreadCount(for feeds: Set<Feed>, callback: @escaping (Int) -> Void) {
 
 		articlesTable.fetchStarredAndUnreadCount(feeds, callback)
+	}
+
+	public func fetchAllNonZeroUnreadCounts(_ completion: @escaping UnreadCountCompletionBlock) {
+
+		articlesTable.fetchAllUnreadCounts(completion)
 	}
 
 	// MARK: - Saving and Updating Articles

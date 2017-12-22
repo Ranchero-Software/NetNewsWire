@@ -17,10 +17,11 @@ extension Notification.Name {
 
 final class FaviconDownloader {
 
-	private var seekingFaviconCache = [String: SeekingFavicon]() // homePageURL: SeekingFavicon
-	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
 	private let folder: String
 	private let diskCache: BinaryDiskCache
+	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
+	private var homePageToFaviconURLCache = [String: String]() //homePageURL: faviconURL
+	private var homePageURLsWithNoFaviconURL = Set<String>()
 	private let queue: DispatchQueue
 
 	struct UserInfoKey {
@@ -33,7 +34,6 @@ final class FaviconDownloader {
 		self.diskCache = BinaryDiskCache(folder: folder)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
 
-		NotificationCenter.default.addObserver(self, selector: #selector(seekingFaviconDidSeek(_:)), name: .SeekingFaviconSeekDidComplete, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 	}
 
@@ -47,10 +47,18 @@ final class FaviconDownloader {
 			return favicon(with: faviconURL)
 		}
 
-		guard let homePageURL = feed.homePageURL else {
-			return nil
+		var homePageURL = feed.homePageURL
+		if homePageURL == nil {
+			// Base homePageURL off feedURL if needed. Won’t always be accurate, but is good enough.
+			if let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host {
+				homePageURL = scheme + "://" + host + "/"
+			}
 		}
-		return favicon(withHomePageURL: homePageURL)
+		if let homePageURL = homePageURL {
+			return favicon(withHomePageURL: homePageURL)
+		}
+
+		return nil
 	}
 
 	func favicon(with faviconURL: String) -> NSImage? {
@@ -61,21 +69,29 @@ final class FaviconDownloader {
 
 	func favicon(withHomePageURL homePageURL: String) -> NSImage? {
 
-		guard let seekingFavicon = seekingFavicon(with: normalizedHomePageURL(homePageURL)) else {
+		let url = normalizedHomePageURL(homePageURL)
+		if homePageURLsWithNoFaviconURL.contains(url) {
 			return nil
 		}
-		return favicon(withSeekingFavicon: seekingFavicon)
+		
+		if let faviconURL = homePageToFaviconURLCache[url] {
+			return favicon(with: faviconURL)
+		}
+
+		FaviconURLFinder.findFaviconURL(url) { (faviconURL) in
+			if let faviconURL = faviconURL {
+				self.homePageToFaviconURLCache[url] = faviconURL
+				let _ = self.favicon(with: faviconURL)
+			}
+			else {
+				self.homePageURLsWithNoFaviconURL.insert(url)
+			}
+		}
+
+		return nil
 	}
 
 	// MARK: - Notifications
-
-	@objc func seekingFaviconDidSeek(_ note: Notification) {
-
-		guard let seekingFavicon = note.object as? SeekingFavicon else {
-			return
-		}
-		favicon(withSeekingFavicon: seekingFavicon)
-	}
 
 	@objc func didLoadFavicon(_ note: Notification) {
 
@@ -92,7 +108,31 @@ final class FaviconDownloader {
 
 private extension FaviconDownloader {
 
-	private static let localeForLowercasing = Locale(identifier: "en_US")
+	static let localeForLowercasing = Locale(identifier: "en_US")
+
+	func findFaviconURL(with homePageURL: String, _ completion: @escaping (String?) -> Void) {
+
+		guard let url = URL(string: homePageURL) else {
+			completion(nil)
+			return
+		}
+
+		FaviconURLFinder.findFaviconURL(homePageURL) { (faviconURL) in
+
+			if let faviconURL = faviconURL {
+				completion(faviconURL)
+				return
+			}
+
+			guard let scheme = url.scheme, let host = url.host else {
+				completion(nil)
+				return
+			}
+
+			let defaultFaviconURL = "\(scheme)://\(host)/favicon.ico".lowercased(with: FaviconDownloader.localeForLowercasing)
+			completion(defaultFaviconURL)
+		}
+	}
 
 	func normalizedHomePageURL(_ url: String) -> String {
 
@@ -112,15 +152,6 @@ private extension FaviconDownloader {
 		return url + "/"
 	}
 
-	@discardableResult
-	func favicon(withSeekingFavicon seekingFavicon: SeekingFavicon) -> NSImage? {
-
-		guard let faviconURL = seekingFavicon.faviconURL else {
-			return nil
-		}
-		return favicon(with: faviconURL)
-	}
-
 	func faviconDownloader(withURL faviconURL: String) -> SingleFaviconDownloader {
 
 		if let downloader = singleFaviconDownloaderCache[faviconURL] {
@@ -131,19 +162,6 @@ private extension FaviconDownloader {
 		let downloader = SingleFaviconDownloader(faviconURL: faviconURL, diskCache: diskCache, queue: queue)
 		singleFaviconDownloaderCache[faviconURL] = downloader
 		return downloader
-	}
-
-	func seekingFavicon(with homePageURL: String) -> SeekingFavicon? {
-
-		if let seekingFavicon = seekingFaviconCache[homePageURL] {
-			return seekingFavicon
-		}
-
-		guard let seekingFavicon = SeekingFavicon(homePageURL: homePageURL) else {
-			return nil
-		}
-		seekingFaviconCache[homePageURL] = seekingFavicon
-		return seekingFavicon
 	}
 
 	func postFaviconDidBecomeAvailableNotification(_ faviconURL: String) {

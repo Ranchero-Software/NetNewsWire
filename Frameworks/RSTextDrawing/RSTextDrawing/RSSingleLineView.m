@@ -53,7 +53,10 @@ static NSAttributedString *emptyAttributedString = nil;
 
 
 - (void)setRenderer:(RSSingleLineRenderer *)renderer {
-	
+
+	if (_renderer == renderer) {
+		return;
+	}
 	_renderer = renderer;
 	[self invalidateIntrinsicContentSize];
 	self.needsDisplay = YES;

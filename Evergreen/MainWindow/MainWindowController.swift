@@ -25,13 +25,32 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
+	static var didPositionWindowOnFirstRun = false
+
     override func windowDidLoad() {
         
         super.windowDidLoad()
 
-//		window?.titleVisibility = .hidden
+		if !AppDefaults.shared.showTitleOnMainWindow {
+			window?.titleVisibility = .hidden
+		}
+
 		window?.setFrameUsingName(windowAutosaveName, force: true)
-		
+		if AppDefaults.shared.isFirstRun && !MainWindowController.didPositionWindowOnFirstRun {
+
+			if let window = window, let screen = window.screen {
+				let width: CGFloat = 1280.0
+				let height: CGFloat = 768.0
+				let insetX: CGFloat = 192.0
+				let insetY: CGFloat = 96.0
+
+				window.setContentSize(NSSize(width: width, height: height))
+				window.setFrameTopLeftPoint(NSPoint(x: insetX, y: screen.visibleFrame.maxY - insetY))
+
+				MainWindowController.didPositionWindowOnFirstRun = true
+			}
+		}
+
 		detailSplitViewItem?.minimumThickness = 384
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
@@ -58,14 +77,19 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@objc func appNavigationKeyPressed(_ note: Notification) {
 
-		guard let navigationKey = note.appInfo?.navigationKey else {
+		guard let navigationKey = note.userInfo?[UserInfoKey.navigationKeyPressed] as? Int else {
 			return
 		}
 		guard let contentView = window?.contentView, let view = note.object as? NSView, view.isDescendant(of: contentView) else {
 			return
 		}
 
-		print(navigationKey)
+		if navigationKey == NSRightArrowFunctionKey {
+			handleRightArrowFunctionKey(in: view)
+		}
+		if navigationKey == NSLeftArrowFunctionKey {
+			handleLeftArrowFunctionKey(in: view)
+		}
 	}
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
@@ -86,7 +110,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 		window?.toolbar?.validateVisibleItems()
 	}
-	
+
 	// MARK: NSUserInterfaceValidations
 	
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
@@ -110,21 +134,39 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		return true
 	}
 
-	// MARK: Actions
-	
-    @IBAction func showAddFolderWindow(_ sender: AnyObject) {
+	// MARK: - Actions
+
+	@IBAction func scrollOrGoToNextUnread(_ sender: Any?) {
+
+		guard let detailViewController = detailViewController else {
+			return
+		}
+
+		detailViewController.canScrollDown { (canScroll) in
+
+			canScroll ? detailViewController.scrollPageDown(sender) : self.nextUnread(sender)
+		}
+	}
+
+
+    @IBAction func showAddFolderWindow(_ sender: Any) {
 
         appDelegate.showAddFolderSheetOnWindow(window!)
     }
     
-	@IBAction func openArticleInBrowser(_ sender: AnyObject?) {
+	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		
 		if let link = currentLink {
 			Browser.open(link)
 		}		
 	}
-	
-	@IBAction func nextUnread(_ sender: AnyObject?) {
+
+	@IBAction func openInBrowser(_ sender: Any?) {
+
+		openArticleInBrowser(sender)
+	}
+
+	@IBAction func nextUnread(_ sender: Any?) {
 		
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
 			return
@@ -145,17 +187,40 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 	
-	@IBAction func markAllAsRead(_ sender: AnyObject?) {
+	@IBAction func markAllAsRead(_ sender: Any?) {
 		
 		timelineViewController?.markAllAsRead()
 	}
 
-	@IBAction func markRead(_ sender: AnyObject?) {
+	@IBAction func markRead(_ sender: Any?) {
 
-		timelineViewController?.markSelectedArticlesAsRead(sender!)
+		timelineViewController?.markSelectedArticlesAsRead(sender)
 	}
-	
-	@IBAction func toggleSidebar(_ sender: AnyObject?) {
+
+	@IBAction func markUnread(_ sender: Any?) {
+
+		timelineViewController?.markSelectedArticlesAsUnread(sender)
+	}
+
+	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
+
+		markAllAsRead(sender)
+		nextUnread(sender)
+	}
+
+	@IBAction func markUnreadAndGoToNextUnread(_ sender: Any?) {
+
+		markUnread(sender)
+		nextUnread(sender)
+	}
+
+	@IBAction func markReadAndGoToNextUnread(_ sender: Any?) {
+
+		markUnread(sender)
+		nextUnread(sender)
+	}
+
+	@IBAction func toggleSidebar(_ sender: Any?) {
 		
 		splitViewController!.toggleSidebar(sender)
 	}
@@ -168,6 +233,26 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func markEverywhereAsRead(_ sender: Any?) {
 
 		appDelegate.markEverywhereAsRead(with: window!)
+	}
+
+	@IBAction func navigateToTimeline(_ sender: Any?) {
+
+		timelineViewController?.focus()
+	}
+
+	@IBAction func navigateToSidebar(_ sender: Any?) {
+
+		sidebarViewController?.focus()
+	}
+
+	@IBAction func goToPreviousSubscription(_ sender: Any?) {
+
+		sidebarViewController?.outlineView.selectPreviousRow(sender)
+	}
+
+	@IBAction func goToNextSubscription(_ sender: Any?) {
+
+		sidebarViewController?.outlineView.selectNextRow(sender)
 	}
 }
 
@@ -256,6 +341,24 @@ private extension MainWindowController {
 		else if unreadCount > 0 {
 			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
 		}
+	}
+
+	// MARK: - Navigation
+
+	func handleRightArrowFunctionKey(in view: NSView) {
+
+		guard let outlineView = sidebarViewController?.outlineView, view === outlineView, let timelineViewController = timelineViewController else {
+			return
+		}
+		timelineViewController.focus()
+	}
+
+	func handleLeftArrowFunctionKey(in view: NSView) {
+
+		guard let timelineView = timelineViewController?.tableView, view === timelineView, let sidebarViewController = sidebarViewController else {
+			return
+		}
+		sidebarViewController.focus()
 	}
 }
 

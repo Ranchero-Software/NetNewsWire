@@ -18,9 +18,21 @@ public struct FeedParser {
 	public static func canParse(_ parserData: ParserData) -> Bool {
 
 		let type = feedType(parserData)
-		
+
 		switch type {
 		case .jsonFeed, .rssInJSON, .rss, .atom:
+			return true
+		default:
+			return false
+		}
+	}
+
+	public static func mightBeAbleToParseBasedOnPartialData(_ parserData: ParserData) -> Bool {
+
+		let type = feedType(parserData, isPartialData: true)
+
+		switch type {
+		case .jsonFeed, .rssInJSON, .rss, .atom, .unknown:
 			return true
 		default:
 			return false

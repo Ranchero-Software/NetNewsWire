@@ -11,14 +11,14 @@ import RSParser
 import RSWeb
 import RSCore
 
-public protocol FeedFinderDelegate {
+public protocol FeedFinderDelegate: class {
 
 	func feedFinder(_: FeedFinder, didFindFeeds: Set<FeedSpecifier>)
 }
 
 public class FeedFinder {
 
-	fileprivate let delegate: FeedFinderDelegate
+	fileprivate weak var delegate: FeedFinderDelegate?
 	fileprivate var feedSpecifiers = [String: FeedSpecifier]()
 	fileprivate var didNotifyDelegate = false
 
@@ -195,7 +195,7 @@ private extension FeedFinder {
 	func notifyDelegateIfNeeded() {
 
 		if !didNotifyDelegate {
-			delegate.feedFinder(self, didFindFeeds: Set(feedSpecifiers.values))
+			delegate?.feedFinder(self, didFindFeeds: Set(feedSpecifiers.values))
 			didNotifyDelegate = true
 		}
 	}

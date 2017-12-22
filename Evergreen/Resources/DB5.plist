@@ -6,6 +6,11 @@
 	<dict>
 		<key>_name</key>
 		<string>Default</string>
+		<key>colors</key>
+		<dict>
+			<key>brightBlue</key>
+			<string>#2db6ff</string>
+		</dict>
 		<key>MainWindow</key>
 		<dict>
 			<key>SourceList</key>
@@ -61,16 +66,21 @@
 				<string>000000</string>
 				<key>gridColorAlpha</key>
 				<real>0.1</real>
+				<key>header</key>
+				<dict>
+					<key>backgroundColor</key>
+					<string>#fcfcfc</string>
+				</dict>
 				<key>cell</key>
 				<dict>
 					<key>paddingLeft</key>
-					<integer>10</integer>
+					<integer>12</integer>
 					<key>paddingRight</key>
-					<integer>10</integer>
+					<integer>12</integer>
 					<key>paddingTop</key>
-					<integer>8</integer>
+					<integer>12</integer>
 					<key>paddingBottom</key>
-					<integer>10</integer>
+					<integer>14</integer>
 					<key>feedNameColor</key>
 					<string>999999</string>
 					<key>faviconFeedNameSpacing</key>
@@ -102,6 +112,21 @@
 					<key>avatarAdjustmentTop</key>
 					<integer>4</integer>
 				</dict>
+			</dict>
+			<key>Detail</key>
+			<dict>
+				<key>noSelectionView</key>
+				<dict>
+					<key>backgroundColor</key>
+					<string>FFFFFF</string>
+				</dict>
+				<key>statusBar</key>
+				<dict>
+					<key>backgroundColor</key>
+					<string>FFFFFF</string>
+				</dict>
+				<key>backgroundColor</key>
+				<string>FFFFFF</string>
 			</dict>
 		</dict>
 	</dict>
