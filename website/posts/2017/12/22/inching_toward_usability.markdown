@@ -7,6 +7,6 @@ The latest build (1.0d25) adds keyboard shortcuts, so you can (for instance) go 
 
 (For a complete list, open the Window menu and choose Keyboard Shortcuts.)
 
-If you want to try it out, you can [download the latest build](https://ranchero.com/downloads/Evergreen-Latest.zip).
+If you want to try it out, you can [download the latest build](https://ranchero.com/downloads/Evergreen-latest.zip).
 
 Note: in the Help menu is a Bug Tracker item — use that to report bugs and make feature requests. (It goes to <a href="https://github.com/brentsimmons/Evergreen/issues">Evergreen’s bug tracker on GitHub</a>.)
