@@ -7,3 +7,5 @@ It supports [RSS](http://cyber.harvard.edu/rss/rss.html), [Atom](https://tools.i
 It’s barely usable at this point. Barely. Probably not even. A whole bunch of things haven’t been done yet. (See the [bug tracker](https://github.com/brentsimmons/Evergreen/milestone/1)).
 
 More info: [https://ranchero.com/evergreen/](https://ranchero.com/evergreen/)
+
+Also see the [Technotes](technotes/).
