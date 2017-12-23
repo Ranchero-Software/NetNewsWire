@@ -53,6 +53,6 @@ Features:
 
 Milestones:
 
-[Evergreen 2.0 alpha](https://github.com/brentsimmons/Evergreen/milestone/4)
-[Evergreen 2.0 beta](https://github.com/brentsimmons/Evergreen/milestone/5)
+[Evergreen 2.0 alpha](https://github.com/brentsimmons/Evergreen/milestone/4)<br />
+[Evergreen 2.0 beta](https://github.com/brentsimmons/Evergreen/milestone/5)<br />
 [Evergreen 2.0](https://github.com/brentsimmons/Evergreen/milestone/6)
