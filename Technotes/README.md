@@ -8,6 +8,8 @@
 
 ## Notes
 
-[What Development, Alpha, Beta, and Final Mean for Evergreen](DevelopmentAlphaBeta.md)<br />
+[What Development, Alpha, Beta, and Final Mean for Evergreen](DevelopmentAlphaBeta.md)
+
 [Hidden Preferences](HiddenPrefs.md)
+
 [Questions Answered](QuestionsAnswered.md)
