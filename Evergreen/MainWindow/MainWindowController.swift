@@ -166,23 +166,39 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		openArticleInBrowser(sender)
 	}
 
+	func makeTimelineViewFirstResponder() {
+
+		guard let window = window, let timelineViewController = timelineViewController else {
+			return
+		}
+		window.makeFirstResponderUnlessDescendantIsFirstResponder(timelineViewController.tableView)
+	}
+
 	@IBAction func nextUnread(_ sender: Any?) {
 		
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
 			return
 		}
 		
-		func makeTimelineViewFirstResponder() {
-
-			window!.makeFirstResponderUnlessDescendantIsFirstResponder(timelineViewController.tableView)
-		}
-		
 		if timelineViewController.canGoToNextUnread() {
-			timelineViewController.goToNextUnread()
-			makeTimelineViewFirstResponder()
+			goToNextUnreadInTimeline()
 		}
 		else if sidebarViewController.canGoToNextUnread() {
 			sidebarViewController.goToNextUnread()
+			if timelineViewController.canGoToNextUnread() {
+				goToNextUnreadInTimeline()
+			}
+		}
+	}
+
+	func goToNextUnreadInTimeline() {
+
+		guard let timelineViewController = timelineViewController else {
+			return
+		}
+
+		if timelineViewController.canGoToNextUnread() {
+			timelineViewController.goToNextUnread()
 			makeTimelineViewFirstResponder()
 		}
 	}
