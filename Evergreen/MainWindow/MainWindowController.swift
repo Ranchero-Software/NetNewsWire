@@ -38,15 +38,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		window?.setFrameUsingName(windowAutosaveName, force: true)
 		if AppDefaults.shared.isFirstRun && !MainWindowController.didPositionWindowOnFirstRun {
 
-			if let window = window, let screen = window.screen {
-				let width: CGFloat = 1280.0
-				let height: CGFloat = 768.0
-				let insetX: CGFloat = 192.0
-				let insetY: CGFloat = 96.0
-
-				window.setContentSize(NSSize(width: width, height: height))
-				window.setFrameTopLeftPoint(NSPoint(x: insetX, y: screen.visibleFrame.maxY - insetY))
-
+			if let window = window {
+				let point = NSPoint(x: 128, y: 64)
+				let size = NSSize(width: 1000, height: 700)
+				let minSize = NSSize(width: 600, height: 600)
+				window.setPointAndSizeAdjustingForScreen(point: point, size: size, minimumSize: minSize)
 				MainWindowController.didPositionWindowOnFirstRun = true
 			}
 		}
