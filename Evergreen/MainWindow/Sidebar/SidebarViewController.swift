@@ -151,8 +151,6 @@ import RSCore
 		}
 		
 		outlineView.selectRowIndexes(IndexSet([row]), byExtendingSelection: false)
-		
-		NSApplication.shared.sendAction(NSSelectorFromString("nextUnread:"), to: nil, from: self)
 	}
 
 	func focus() {
