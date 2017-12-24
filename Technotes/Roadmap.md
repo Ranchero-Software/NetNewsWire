@@ -50,6 +50,13 @@ Features:
 * Hiding read subscriptions
 * Hiding read articles
 * Deleting articles
+* [Dark mode](https://github.com/brentsimmons/Evergreen/issues/97)
+* Dinosaurs
+* Dock menu items
+* [Article themes](https://github.com/brentsimmons/Evergreen/issues/257)
+* Back/forward commands
+* [Article view zooming](https://github.com/brentsimmons/Evergreen/issues/38)
+* [Import OPML from URL](https://github.com/brentsimmons/Evergreen/issues/136)
 
 Milestones:
 
