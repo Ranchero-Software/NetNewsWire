@@ -15,16 +15,17 @@ a {
 	}
 #banner {
 	line-height: 2em;
-	padding-top: 17px;
-	padding-bottom: 1px;
-	background-color: #445088;
+	padding-top: 1px;
+	padding-bottom: 7px;
+	background-color: #333333;
 	text-align: center;
 	}
 #innerbanner {
 	max-width: 30em;
 	margin-left: auto;
 	margin-right: auto;
-	text-align: left;
+	text-align: center;
+	color: white;
 }
 #content {
 	padding-bottom: 2em;
@@ -33,9 +34,11 @@ a {
 	margin-right: auto;
 	margin-top: 3.5em;
 }
-h1 a:link, h1 a:visited {
+#innerbanner a:link, #innerbanner a:visited {
 	color: white;
 	text-decoration: none;
+}
+#innerbanner h1 {
 	font-size: 48px;
 	font-weight: normal;
 }
@@ -45,7 +48,6 @@ h1 {
 h2 {
   color: #666;
   margin-top: 2em;
-  font-weight: normal;
 }
 a:link {
   color: #437C95;
@@ -60,13 +62,13 @@ a:visited {
 	color: #999;
 	font-size: 0.9em;
 	text-align: center;
-	border-toxp: 1px solid #ddd;
-	backgrxound-color: #6A7DD4;
+	border-top: 1px solid #ddd;
 	}
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier", monospace;
-	font-size: 14px;
+	font-size: 16px;
 	color: #666;
+	white-space: pre-wrap;
 	}
 @media (max-width: 700px) {
   #innerbanner {
