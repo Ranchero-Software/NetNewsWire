@@ -57,6 +57,7 @@ Features:
 * Back/forward commands
 * [Article view zooming](https://github.com/brentsimmons/Evergreen/issues/38)
 * [Import OPML from URL](https://github.com/brentsimmons/Evergreen/issues/136)
+* [Traditional vertical layout](https://github.com/brentsimmons/Evergreen/issues/102)
 
 Milestones:
 
