@@ -239,7 +239,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
 
-		appDelegate.markOlderArticlesAsRead(with: window!)
+		timelineViewController?.markOlderArticlesAsRead(sender)
+//		appDelegate.markOlderArticlesAsRead(with: window!)
 	}
 
 	@IBAction func markEverywhereAsRead(_ sender: Any?) {

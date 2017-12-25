@@ -179,6 +179,34 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 		runCommand(markUnreadCommand)
 	}
+
+	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
+
+		// Mark articles the same age or older than the selected article(s) as read.
+
+		var cutoffDate: Date? = nil
+		for article in selectedArticles {
+			if cutoffDate == nil {
+				cutoffDate = article.logicalDatePublished
+			}
+			else if cutoffDate! < article.logicalDatePublished {
+				cutoffDate = article.logicalDatePublished
+			}
+		}
+		if cutoffDate == nil {
+			return
+		}
+
+		let articlesToMark = articles.filter { $0.logicalDatePublished <= cutoffDate! }
+		if articlesToMark.isEmpty {
+			return
+		}
+
+		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
 	
 	// MARK: - Navigation
 	

@@ -86,11 +86,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
-	func markOlderArticlesAsRead(with window: NSWindow) {
-
-		panicButtonWindowController = PanicButtonWindowController()
-		panicButtonWindowController!.runSheetOnWindow(window)
-	}
+//	func markOlderArticlesAsRead(with window: NSWindow) {
+//
+//		panicButtonWindowController = PanicButtonWindowController()
+//		panicButtonWindowController!.runSheetOnWindow(window)
+//	}
 
 	func markEverywhereAsRead(with window: NSWindow) {
 
@@ -431,11 +431,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		Browser.open("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
 	}
 
-	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
-
-		createAndShowMainWindow()
-		markOlderArticlesAsRead(with: mainWindowController!.window!)
-	}
+//	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
+//
+//		createAndShowMainWindow()
+//		markOlderArticlesAsRead(with: mainWindowController!.window!)
+//	}
 
 	@IBAction func markEverywhereAsRead(_ sender: Any?) {
 
