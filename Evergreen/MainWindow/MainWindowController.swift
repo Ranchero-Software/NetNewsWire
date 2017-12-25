@@ -240,12 +240,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
 
 		timelineViewController?.markOlderArticlesAsRead(sender)
-//		appDelegate.markOlderArticlesAsRead(with: window!)
-	}
-
-	@IBAction func markEverywhereAsRead(_ sender: Any?) {
-
-		appDelegate.markEverywhereAsRead(with: window!)
 	}
 
 	@IBAction func navigateToTimeline(_ sender: Any?) {

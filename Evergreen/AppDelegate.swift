@@ -46,8 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
 	private var logWindowController: LogWindowController?
-	private var panicButtonWindowController: PanicButtonWindowController?
-	
+
 	private let log = Log()
 	private let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
@@ -84,34 +83,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		addFolderWindowController = AddFolderWindowController()
 		addFolderWindowController!.runSheetOnWindow(window)
-	}
-
-//	func markOlderArticlesAsRead(with window: NSWindow) {
-//
-//		panicButtonWindowController = PanicButtonWindowController()
-//		panicButtonWindowController!.runSheetOnWindow(window)
-//	}
-
-	func markEverywhereAsRead(with window: NSWindow) {
-
-		let alert = NSAlert()
-		alert.messageText = NSLocalizedString("Mark All Articles as Read Everywhere?", comment: "Mark Everywhere alert messageText")
-		alert.informativeText = NSLocalizedString("This will mark every single article as read. All of them. The unread count will be zero.\n\nNote: this operation cannot be undone.", comment: "Mark Everywhere informativeText.")
-
-		alert.addButton(withTitle: NSLocalizedString("Mark All Articles as Read", comment: "Mark Everywhere alert button."))
-		alert.addButton(withTitle: NSLocalizedString("Don’t Mark as Read", comment: "Mark Everywhere alert button."))
-
-		alert.beginSheetModal(for: window) { (returnCode) in
-
-			if returnCode == .alertFirstButtonReturn {
-				self.markEverywhereAsRead()
-			}
-		}
-	}
-
-	func markEverywhereAsRead() {
-
-		AccountManager.shared.accounts.forEach { $0.markEverywhereAsRead() }
 	}
 
 	// MARK: - NSApplicationDelegate
@@ -429,18 +400,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func showHelp(_ sender: AnyObject) {
 
 		Browser.open("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
-	}
-
-//	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
-//
-//		createAndShowMainWindow()
-//		markOlderArticlesAsRead(with: mainWindowController!.window!)
-//	}
-
-	@IBAction func markEverywhereAsRead(_ sender: Any?) {
-
-		createAndShowMainWindow()
-		markEverywhereAsRead(with: mainWindowController!.window!)
 	}
 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
