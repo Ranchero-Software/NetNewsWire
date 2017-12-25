@@ -127,6 +127,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return canMarkRead()
 		}
 
+		if item.action == #selector(markOlderArticlesAsRead(_:)) {
+			return canMarkOlderArticlesAsRead()
+		}
+		
 		return true
 	}
 
@@ -239,7 +243,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
 
-		timelineViewController?.markOlderArticlesAsRead(sender)
+		timelineViewController?.markOlderArticlesAsRead()
 	}
 
 	@IBAction func navigateToTimeline(_ sender: Any?) {
@@ -339,7 +343,12 @@ private extension MainWindowController {
 
 		return timelineViewController?.canMarkSelectedArticlesAsRead() ?? false
 	}
-	
+
+	func canMarkOlderArticlesAsRead() -> Bool {
+
+		return timelineViewController?.canMarkOlderArticlesAsRead() ?? false
+	}
+
 	func updateWindowTitle() {
 
 		if unreadCount < 1 {

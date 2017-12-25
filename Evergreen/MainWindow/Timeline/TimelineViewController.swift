@@ -180,7 +180,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		runCommand(markUnreadCommand)
 	}
 
-	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
+	func markOlderArticlesAsRead() {
 
 		// Mark articles the same age or older than the selected article(s) as read.
 
@@ -207,7 +207,12 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 		runCommand(markReadCommand)
 	}
-	
+
+	func canMarkOlderArticlesAsRead() -> Bool {
+
+		return !selectedArticles.isEmpty
+	}
+
 	// MARK: - Navigation
 	
 	func goToNextUnread() {
