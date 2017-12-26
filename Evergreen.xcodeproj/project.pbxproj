@@ -588,7 +588,6 @@
 				849A977C1ED9EC42007D329B /* Detail */,
 				849A97551ED9EAC3007D329B /* Add Feed */,
 				849A97411ED9EAA9007D329B /* Add Folder */,
-				84AFBB3A1FBE76D800BA41CF /* PanicButton */,
 			);
 			name = MainWindow;
 			path = Evergreen/MainWindow;
@@ -914,13 +913,6 @@
 			);
 			name = Dinosaurs;
 			path = Evergreen/Dinosaurs;
-			sourceTree = "<group>";
-		};
-		84AFBB3A1FBE76D800BA41CF /* PanicButton */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = PanicButton;
 			sourceTree = "<group>";
 		};
 		84B06F971ED37DA000F0B54B /* Products */ = {

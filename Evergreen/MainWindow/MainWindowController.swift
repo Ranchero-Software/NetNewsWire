@@ -130,6 +130,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		if item.action == #selector(markOlderArticlesAsRead(_:)) {
 			return canMarkOlderArticlesAsRead()
 		}
+
+		if item.action == #selector(toolbarShowShareMenu(_:)) {
+			return canShowShareMenu()
+		}
 		
 		return true
 	}
@@ -265,6 +269,57 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		sidebarViewController?.outlineView.selectNextRow(sender)
 	}
+
+	@IBAction func toolbarShowShareMenu(_ sender: Any?) {
+
+		guard let selectedArticles = selectedArticles, !selectedArticles.isEmpty else {
+			assertionFailure("Expected toolbarShowShareMenu to be called only when there are selected articles.")
+			return
+		}
+		guard let shareToolbarItem = shareToolbarItem else {
+			assertionFailure("Expected toolbarShowShareMenu to be called only by the Share item in the toolbar.")
+			return
+		}
+		guard let view = shareToolbarItem.view else {
+			// TODO: handle menu form representation
+			return
+		}
+
+		let items = selectedArticles.map { ArticlePasteboardWriter(article: $0) }
+		let sharingServicePicker = NSSharingServicePicker(items: items)
+		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+	}
+
+	private func canShowShareMenu() -> Bool {
+
+		guard let selectedArticles = selectedArticles else {
+			return false
+		}
+		return !selectedArticles.isEmpty
+	}
+}
+
+// MARK: - NSToolbarDelegate
+
+extension NSToolbarItem.Identifier {
+	static let Share = NSToolbarItem.Identifier("share")
+}
+
+extension MainWindowController: NSToolbarDelegate {
+
+	func toolbarWillAddItem(_ notification: Notification) {
+
+		// The share button should send its action on mouse down, not mouse up.
+
+		guard let item = notification.userInfo?["item"] as? NSToolbarItem else {
+			return
+		}
+		guard item.itemIdentifier == .Share, let button = item.view as? NSButton else {
+			return
+		}
+
+		button.sendAction(on: .leftMouseDown)
+	}
 }
 
 // MARK: - Private
@@ -357,6 +412,25 @@ private extension MainWindowController {
 		else if unreadCount > 0 {
 			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
 		}
+	}
+
+	// MARK: - Toolbar
+
+	private var shareToolbarItem: NSToolbarItem? {
+		return existingToolbarItem(identifier: .Share)
+	}
+
+	func existingToolbarItem(identifier: NSToolbarItem.Identifier) -> NSToolbarItem? {
+
+		guard let toolbarItems = window?.toolbar?.items else {
+			return nil
+		}
+		for toolbarItem in toolbarItems {
+			if toolbarItem.itemIdentifier == identifier {
+				return toolbarItem
+			}
+		}
+		return nil
 	}
 
 	// MARK: - Navigation
