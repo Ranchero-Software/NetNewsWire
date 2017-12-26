@@ -15,13 +15,31 @@
 		table {
 			width: 100%;
 			line-height: 2.0em;
+			border-collapse: collapse;
+			margin-top: 1.0em;
 		}
-		.tableTitleRow {
-			font-weight: bold;
+		table tr:nth-child(odd) {
+		    background-color: #F0F0F0;
+		}
+		table tr td:first-child {
+		    width: 60%;
+		}
+		table td {
+		    padding: 0;
+		}
+		table caption {
+		    text-align: left;
+		    font-weight: bold;
 			font-style: italic;
 		}
-		.backgroundColorRow {
-			background-color: #F0F0F0;
+		kbd {
+		    font-family: monospace, -apple-system;
+		    background: #FFF;
+		    padding: 2px;
+		    margin: 0 4px 0 2px;
+		    border: solid #333 1px;
+		    border-radius: 3px;
+		    box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.75);
 		}
 	</style>
 </head>
@@ -34,33 +52,36 @@
 
 <p>This way you can go through all your news via the space bar.</p>
 
-<table cellspacing="0" cellpadding="0">
+<table>
+    <caption>Everywhere…</caption>
 
-<tr class="tableTitleRow"><td colspan="2">Everywhere…</td></tr>
-<tr class="backgroundColorRow"><td>Scroll or go to next unread</td><td>space bar</td></tr>
-<tr><td>Go to next unread</td><td>+</td></tr>
-<tr class="backgroundColorRow"><td>Mark as read</td><td>r</td></tr>
-<tr><td>Mark all as read</td><td>k</td></tr>
-<tr class="backgroundColorRow"><td>Mark older articles as read</td><td>o</td></tr>
-<tr><td>Mark all as read, go to next unread</td><td>l (lowercase L)</td></tr>
-<tr class="backgroundColorRow"><td>Mark as unread, go to next unread</td><td>m</td></tr>
-<tr><td>Mark as unread</td><td>u</td></tr>
-<tr class="backgroundColorRow"><td>Open in browser</td><td>b or return or enter</td></tr>
-<tr><td>Previous subscription</td><td>a</td></tr>
-<tr class="backgroundColorRow"><td>Next subscription</td><td>z</td></tr>
+    <tr><td>Scroll or go to next unread</td><td><kbd>space</kbd></td></tr>
+    <tr><td>Go to next unread</td><td><kbd>+</kbd></td></tr>
+    <tr><td>Mark as read</td><td><kbd>r</kbd></td></tr>
+    <tr><td>Mark all as read</td><td><kbd>k</kbd></td></tr>
+    <tr><td>Mark older articles as read</td><td><kbd>o</kbd></td></tr>
+    <tr><td>Mark all as read, go to next unread</td><td><kbd>l</kbd></td></tr>
+    <tr><td>Mark as unread, go to next unread</td><td><kbd>m</kbd></td></tr>
+    <tr><td>Mark as unread</td><td><kbd>u</kbd></td></tr>
+    <tr><td>Open in browser</td><td><kbd>b</kbd> or <kbd>&#9166;</kbd> or <kbd>Enter</kbd></td></tr>
+    <tr><td>Previous subscription</td><td><kbd>a</kbd></td></tr>
+    <tr><td>Next subscription</td><td><kbd>z</kbd></td></tr>
+</table>
 
-<tr><td colspan="2">&nbsp;<br /></td></tr>
-<tr><td colspan="2" class="tableTitleRow">Left sidebar only…</td></tr>
-<tr class="backgroundColorRow"><td>Collapse</td><td>, or option-leftArrow</td></tr>
-<tr><td>Expand</td><td>. or option-rightArrow</td></tr>
-<tr class="backgroundColorRow"><td>Collapse All (except for group items)</td><td>; or option-cmd-leftArrow</td></tr>
-<tr><td>Expand All</td><td>' or option-cmd-rightArrow</td></tr>
-<tr class="backgroundColorRow"><td>Move focus to headlines</td><td>rightArrow</td></tr>
+<table>
+    <caption>Left sidebar only…</caption>
 
-<tr><td colspan="2">&nbsp;<br /></td></tr>
-<tr><td colspan="2" class="tableTitleRow">Timeline only…</td></tr>
-<tr class="backgroundColorRow"><td>Move focus to subscriptions</td><td>leftArrow</td></tr>
+    <tr><td>Collapse</td><td><kbd>,</kbd> or <kbd>&#8997;</kbd>+<kbd>&larr;</kbd></td></tr>
+    <tr><td>Expand</td><td><kbd>.</kbd> or <kbd>&#8997;</kbd>+<kbd>&rarr;</kbd></td></tr>
+    <tr><td>Collapse All (except for group items)</td><td><kbd>;</kbd> or <kbd>&#8997;</kbd>+<kbd>&#8984;</kbd>+<kbd>&larr;</kbd></td></tr>
+    <tr><td>Expand All</td><td><kbd>'</kbd> or <kbd>&#8997;</kbd>+<kbd>&#8984;</kbd>+<kbd>&rarr;</kbd></td></tr>
+    <tr><td>Move focus to headlines</td><td><kbd>&rarr;</kbd></td></tr>
+</table>
 
+<table>
+    <caption>Timeline only…</caption>
+
+    <tr><td>Move focus to subscriptions</td><td><kbd>&larr;</kbd></td></tr>
 </table>
 
 </body>
