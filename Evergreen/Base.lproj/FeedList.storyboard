@@ -102,7 +102,7 @@
             <objects>
                 <splitViewController id="78T-I6-t3A" sceneMemberID="viewController">
                     <splitViewItems>
-                        <splitViewItem canCollapse="YES" holdingPriority="260" behavior="sidebar" id="AlW-hU-Zmk"/>
+                        <splitViewItem holdingPriority="260" behavior="sidebar" id="AlW-hU-Zmk"/>
                         <splitViewItem holdingPriority="255" behavior="contentList" id="3BT-LH-byy"/>
                     </splitViewItems>
                     <splitView key="splitView" misplaced="YES" dividerStyle="thin" vertical="YES" id="3RJ-Ag-WxU">
