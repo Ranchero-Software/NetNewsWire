@@ -11,7 +11,7 @@ import RSTree
 import RSCore
 
 // Folders and feeds that appear in the Feed Directory are pulled from three sources:
-// 1. Feeds added in code here. (Evergreen News should be the only one.)
+// 1. Feeds added in code here. (None, at least for now.)
 // 2. Default feeds for new users — see DefaultFeeds.plist.
 // 3. FeedList.plist — the main directory. Its top level is all folders. There are no sub-folders.
 // It’s okay if there’s overlap: a feed may appear in multiple places.
@@ -24,8 +24,8 @@ final class FeedListTreeControllerDelegate: TreeControllerDelegate {
 
 	init() {
 
-		let evergreenNewsFeed = FeedListFeed(name: "Evergreen News", url: "https://ranchero.com/evergreen/feed.json", homePageURL: "https://ranchero.com/evergreen/blog/")
-		self.topLevelFeeds = Set([evergreenNewsFeed])
+//		let evergreenNewsFeed = FeedListFeed(name: "Evergreen News", url: "https://ranchero.com/evergreen/feed.json", homePageURL: "https://ranchero.com/evergreen/blog/")
+		self.topLevelFeeds = Set<FeedListFeed>() //Set([evergreenNewsFeed])
 
 		let defaultFeeds = FeedListReader.defaultFeeds()
 		let defaultFeedsFolder = FeedListFolder(name: NSLocalizedString("Default Feeds (for new users)", comment: "Feed Directory"), feeds: defaultFeeds)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="wIF-6J-Pki">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="wIF-6J-Pki">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13770"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -16,32 +16,7 @@
                         <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
                         <value key="minSize" type="size" width="550" height="400"/>
                         <value key="maxSize" type="size" width="2048" height="2048"/>
-                        <toolbar key="toolbar" implicitIdentifier="00AD6007-C8D1-4AB1-A895-249FA6612631" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="3ad-vJ-TBO">
-                            <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="NZO-7p-CmY"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="inv-M9-fBl"/>
-                                <toolbarItem implicitItemIdentifier="AE1BD340-5E55-4B1B-87C7-20276C06B85E" label="Search" paletteLabel="Search" id="WQk-mX-bGs">
-                                    <nil key="toolTip"/>
-                                    <size key="minSize" width="200" height="22"/>
-                                    <size key="maxSize" width="256" height="22"/>
-                                    <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" id="pGT-Bj-wIn">
-                                        <rect key="frame" x="0.0" y="14" width="256" height="22"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="6av-QD-0D7">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </searchFieldCell>
-                                    </searchField>
-                                </toolbarItem>
-                            </allowedToolbarItems>
-                            <defaultToolbarItems>
-                                <toolbarItem reference="inv-M9-fBl"/>
-                                <toolbarItem reference="WQk-mX-bGs"/>
-                                <toolbarItem reference="inv-M9-fBl"/>
-                            </defaultToolbarItems>
-                        </toolbar>
-                        <contentBorderThickness minY="64"/>
+                        <contentBorderThickness minY="32"/>
                         <connections>
                             <outlet property="delegate" destination="wIF-6J-Pki" id="Q8Z-WL-OaK"/>
                         </connections>
@@ -63,17 +38,17 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="8m1-11-DW9">
-                                <rect key="frame" x="0.0" y="64" width="450" height="236"/>
+                                <rect key="frame" x="0.0" y="32" width="450" height="268"/>
                                 <connections>
                                     <segue destination="78T-I6-t3A" kind="embed" id="cA5-Oa-X83"/>
                                 </connections>
                             </containerView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ft4-Ss-rki" customClass="FeedListControlsView" customModule="Evergreen" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="64"/>
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="32"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cED-gO-Wz0">
-                                        <rect key="frame" x="20" y="19" width="120" height="25"/>
-                                        <buttonCell key="cell" type="roundTextured" title="Add to Feeds" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wCg-Qh-DYL">
+                                        <rect key="frame" x="20" y="3" width="120" height="25"/>
+                                        <buttonCell key="cell" type="roundTextured" title="Subscribe" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wCg-Qh-DYL">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -82,7 +57,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="soC-1m-gwD">
-                                        <rect key="frame" x="148" y="19" width="120" height="25"/>
+                                        <rect key="frame" x="148" y="3" width="120" height="25"/>
                                         <buttonCell key="cell" type="roundTextured" title="Open Home Page" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cLu-3m-Acf">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -93,10 +68,10 @@
                                     </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="cED-gO-Wz0" firstAttribute="leading" secondItem="Ft4-Ss-rki" secondAttribute="leading" constant="20" symbolic="YES" id="hsh-WV-Oh4"/>
+                                    <constraint firstItem="cED-gO-Wz0" firstAttribute="leading" secondItem="Ft4-Ss-rki" secondAttribute="leading" constant="20" symbolic="YES" id="K4b-qF-py1"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="soC-1m-gwD" secondAttribute="trailing" constant="20" symbolic="YES" id="haR-66-HDX"/>
                                     <constraint firstItem="soC-1m-gwD" firstAttribute="leading" secondItem="cED-gO-Wz0" secondAttribute="trailing" constant="8" symbolic="YES" id="idA-4R-yfF"/>
                                     <constraint firstItem="soC-1m-gwD" firstAttribute="baseline" secondItem="cED-gO-Wz0" secondAttribute="baseline" id="imQ-qY-LNB"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="soC-1m-gwD" secondAttribute="trailing" constant="20" id="lM7-Gv-via"/>
                                     <constraint firstItem="cED-gO-Wz0" firstAttribute="centerY" secondItem="Ft4-Ss-rki" secondAttribute="centerY" id="yeD-9q-Byh"/>
                                     <constraint firstItem="soC-1m-gwD" firstAttribute="width" secondItem="cED-gO-Wz0" secondAttribute="width" id="zf0-5W-FIg"/>
                                 </constraints>
@@ -107,11 +82,11 @@
                             </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Ft4-Ss-rki" firstAttribute="leading" secondItem="dwE-Xn-QiX" secondAttribute="leading" id="0pq-cm-5hf"/>
                             <constraint firstAttribute="trailing" secondItem="8m1-11-DW9" secondAttribute="trailing" id="BoV-If-PwH"/>
-                            <constraint firstAttribute="bottom" secondItem="8m1-11-DW9" secondAttribute="bottom" constant="64" id="KZN-54-iEE"/>
-                            <constraint firstAttribute="trailing" secondItem="Ft4-Ss-rki" secondAttribute="trailing" id="Yxa-Kn-Fuo"/>
+                            <constraint firstAttribute="bottom" secondItem="8m1-11-DW9" secondAttribute="bottom" constant="32" id="KZN-54-iEE"/>
+                            <constraint firstAttribute="trailing" secondItem="Ft4-Ss-rki" secondAttribute="trailing" id="YNk-4j-q88"/>
                             <constraint firstItem="Ft4-Ss-rki" firstAttribute="top" secondItem="8m1-11-DW9" secondAttribute="bottom" id="l1X-gr-ifB"/>
+                            <constraint firstItem="Ft4-Ss-rki" firstAttribute="leading" secondItem="dwE-Xn-QiX" secondAttribute="leading" id="tJv-HT-Ifp"/>
                             <constraint firstAttribute="bottom" secondItem="Ft4-Ss-rki" secondAttribute="bottom" id="u8t-5y-ERY"/>
                             <constraint firstItem="8m1-11-DW9" firstAttribute="top" secondItem="dwE-Xn-QiX" secondAttribute="top" id="uyV-cq-K5Z"/>
                             <constraint firstItem="8m1-11-DW9" firstAttribute="leading" secondItem="dwE-Xn-QiX" secondAttribute="leading" id="yLo-vH-wPm"/>
@@ -127,11 +102,11 @@
             <objects>
                 <splitViewController id="78T-I6-t3A" sceneMemberID="viewController">
                     <splitViewItems>
-                        <splitViewItem id="AlW-hU-Zmk"/>
-                        <splitViewItem id="3BT-LH-byy"/>
+                        <splitViewItem canCollapse="YES" holdingPriority="260" behavior="sidebar" id="AlW-hU-Zmk"/>
+                        <splitViewItem holdingPriority="255" behavior="contentList" id="3BT-LH-byy"/>
                     </splitViewItems>
-                    <splitView key="splitView" dividerStyle="thin" vertical="YES" id="3RJ-Ag-WxU">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                    <splitView key="splitView" misplaced="YES" dividerStyle="thin" vertical="YES" id="3RJ-Ag-WxU">
+                        <rect key="frame" x="0.0" y="0.0" width="512" height="400"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <connections>
                             <outlet property="delegate" destination="78T-I6-t3A" id="EL9-7c-F81"/>
@@ -152,17 +127,42 @@
             <objects>
                 <viewController id="SJW-Df-ljT" userLabel="Feed List View Controller" customClass="FeedListViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="4Vf-sw-YId">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="364"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <visualEffectView appearanceType="vibrantLight" blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="BHi-7T-ecK">
+                                <rect key="frame" x="0.0" y="316" width="450" height="48"/>
+                                <subviews>
+                                    <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="feb-rP-bG9">
+                                        <rect key="frame" x="20" y="13" width="410" height="22"/>
+                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Filter" usesSingleLineMode="YES" bezelStyle="round" sendsSearchStringImmediately="YES" id="Di1-Xb-Yz2">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </searchFieldCell>
+                                    </searchField>
+                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="GU6-1g-N91">
+                                        <rect key="frame" x="0.0" y="-2" width="450" height="5"/>
+                                    </box>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="feb-rP-bG9" secondAttribute="trailing" constant="20" symbolic="YES" id="4Ng-T3-04A"/>
+                                    <constraint firstItem="feb-rP-bG9" firstAttribute="leading" secondItem="BHi-7T-ecK" secondAttribute="leading" constant="20" symbolic="YES" id="6jM-xO-6sn"/>
+                                    <constraint firstAttribute="bottom" secondItem="GU6-1g-N91" secondAttribute="bottom" id="72u-d4-jxF"/>
+                                    <constraint firstItem="feb-rP-bG9" firstAttribute="centerY" secondItem="BHi-7T-ecK" secondAttribute="centerY" id="V7U-xz-w8p"/>
+                                    <constraint firstAttribute="trailing" secondItem="GU6-1g-N91" secondAttribute="trailing" id="eoO-JD-MXW"/>
+                                    <constraint firstItem="GU6-1g-N91" firstAttribute="leading" secondItem="BHi-7T-ecK" secondAttribute="leading" id="tZq-2u-MLe"/>
+                                    <constraint firstAttribute="height" constant="48" id="xFv-uL-Y4I"/>
+                                </constraints>
+                            </visualEffectView>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uLp-jc-nMQ">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="316"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="y7D-YW-hrK">
-                                    <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="450" height="316"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="22" rowSizeStyle="small" viewBased="YES" indentationPerLevel="14" outlineTableColumn="s0r-Rt-sSC" id="n3L-hE-QVt">
-                                            <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="450" height="316"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -234,6 +234,9 @@
                                     </subviews>
                                     <nil key="backgroundColor"/>
                                 </clipView>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="300" id="83U-Lq-1wH"/>
+                                </constraints>
                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="nXB-WS-VEH">
                                     <rect key="frame" x="-100" y="-100" width="238" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
@@ -245,10 +248,13 @@
                             </scrollView>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="uLp-jc-nMQ" secondAttribute="bottom" id="1w7-cf-fRQ"/>
+                            <constraint firstItem="BHi-7T-ecK" firstAttribute="leading" secondItem="4Vf-sw-YId" secondAttribute="leading" id="9L0-IF-VaS"/>
+                            <constraint firstItem="BHi-7T-ecK" firstAttribute="top" secondItem="4Vf-sw-YId" secondAttribute="top" id="Knc-lx-DlG"/>
                             <constraint firstAttribute="trailing" secondItem="uLp-jc-nMQ" secondAttribute="trailing" id="NkS-mI-WgQ"/>
                             <constraint firstItem="uLp-jc-nMQ" firstAttribute="leading" secondItem="4Vf-sw-YId" secondAttribute="leading" id="S74-ja-3oL"/>
-                            <constraint firstAttribute="bottom" secondItem="uLp-jc-nMQ" secondAttribute="bottom" id="slk-si-ZMU"/>
-                            <constraint firstItem="uLp-jc-nMQ" firstAttribute="top" secondItem="4Vf-sw-YId" secondAttribute="top" id="tvf-eA-0KS"/>
+                            <constraint firstAttribute="trailing" secondItem="BHi-7T-ecK" secondAttribute="trailing" id="SuU-CD-1EV"/>
+                            <constraint firstItem="uLp-jc-nMQ" firstAttribute="top" secondItem="BHi-7T-ecK" secondAttribute="bottom" id="jBs-MZ-N2t"/>
                         </constraints>
                     </view>
                     <connections>
@@ -273,8 +279,8 @@
                                     <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="Vxx-NR-80U" viewBased="YES" id="umc-nQ-VmL">
-                                            <rect key="frame" x="0.0" y="0.0" width="450" height="277"/>
+                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="umc-nQ-VmL">
+                                            <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -317,18 +323,18 @@
                                         </tableView>
                                     </subviews>
                                 </clipView>
-                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="nFN-al-8tX">
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="300" id="rtQ-OL-S9p"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="192" id="wln-51-nAD"/>
+                                </constraints>
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="nFN-al-8tX">
                                     <rect key="frame" x="0.0" y="284" width="450" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="pv8-Pa-0oB">
+                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="pv8-Pa-0oB">
                                     <rect key="frame" x="224" y="17" width="15" height="102"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <tableHeaderView key="headerView" id="Vxx-NR-80U">
-                                    <rect key="frame" x="0.0" y="0.0" width="450" height="23"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableHeaderView>
                             </scrollView>
                         </subviews>
                         <constraints>
