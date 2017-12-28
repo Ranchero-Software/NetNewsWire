@@ -6,6 +6,25 @@
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
   
+           <item>
+            <title>Version 1.0d26</title>
+            <description><![CDATA[
+            
+            <p>Fixed an infinite loop that could happen when going to next unread.</p>
+            <p>The main sidebar and the sidebar in the Feed Directory now show standard folder icons for folders.</p>
+  					<p>Fixed OPML export bug — the OPML is now valid.</p>
+						<p>Fixed bug sizing the Keyboard Shortcuts window on a small screen.</p>
+						<p>Made Mark as Starred command not doing anything (for now) — it was doing the wrong thing.</p>
+						
+						<h4>More info</h4>
+						<p>You can always look at the <a href="https://github.com/brentsimmons/Evergreen/commits/master">recent commits on GitHub</a> for more details.</p>
+						<p>And you can look at the <a href="https://github.com/brentsimmons/Evergreen/milestone/1">current milestone</a> to see what remains to be done.</p>
+  						]]></description>
+            <pubDate>Wed, 27 Dec 2017 18:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d26.zip" sparkle:version="518" sparkle:shortVersionString="1.0d26" length="7330000" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
           <item>
             <title>Version 1.0d25</title>
             <description><![CDATA[
