@@ -526,3 +526,10 @@ extension Feed: SmallIconProvider {
 	}
 }
 
+extension Folder: SmallIconProvider {
+
+	var smallIcon: NSImage? {
+		return NSImage(named: NSImage.Name.folder)
+	}
+}
+
