@@ -62,6 +62,12 @@
 	</dict>
 	<dict>
 		<key>key</key>
+		<string>o</string>
+		<key>action</key>
+		<string>markOlderArticlesAsRead:</string>
+	</dict>
+	<dict>
+		<key>key</key>
 		<string>u</string>
 		<key>action</key>
 		<string>markUnread:</string>

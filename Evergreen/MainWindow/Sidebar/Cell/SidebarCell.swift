@@ -37,7 +37,7 @@ class SidebarCell : NSTableCellView {
 
 	private let unreadCountView = UnreadCountView(frame: NSZeroRect)
 
-	var cellAppearance: SidebarCellAppearance! {
+	var cellAppearance: SidebarCellAppearance? {
 		didSet {
 			if cellAppearance != oldValue {
 				needsLayout = true
@@ -105,7 +105,7 @@ class SidebarCell : NSTableCellView {
 
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
 
-		guard let textField = textField else {
+		guard let textField = textField, let cellAppearance = cellAppearance else {
 			return
 		}
 		let layout = SidebarCellLayout(appearance: cellAppearance, cellSize: bounds.size, shouldShowImage: shouldShowImage, textField: textField, unreadCountView: unreadCountView)

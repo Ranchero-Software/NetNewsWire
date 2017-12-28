@@ -6,6 +6,39 @@
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
   
+          <item>
+            <title>Version 1.0d25</title>
+            <description><![CDATA[
+            
+            <h3>Warning: Re-runs</h3>
+            <p>I fixed a couple bugs with how article database IDs are created. This will cause re-runs. Sorry about that! I am trying to avoid things like this, but it could happen again before we get to 1.0 alpha.</p>
+            
+            <h4>Keyboard Shortcuts</h4>
+						<p>Open Window > Keyboard Shortcuts to see the list of keyboard shortcuts (shortcuts not otherwise in the menubar).</p>
+						<p>The keyboard shortcuts listed all work — when either the sidebar or timeline has focus. (They don’t work yet when the detail view has focus.)</p>
+						
+						<h4>First Run</h4>
+					  <p>Position and size the main window more nicely.</p>
+					  <p>Edited the default feeds list slightly.</p>
+						<p>Fixed bug where On My Mac group item title would be blank on first run.</p>
+	
+						<h4>Parsers</h4>
+						<p>Parse authors and attachments in Atom feeds.</p>
+						<p>Add support for multiple authors in Atom and RSS.</p>
+						<p>In RSS feeds, detect when an author is really a URL or a name as opposed to an email address.</p>
+							
+						<h4>Misc.</h4>
+						<p>Added link to Technotes in the Help menu. It goes to the Technotes index page in the GitHub repository.</p>
+						<p>Refresh-all on startup (unless running a debug build).</p>
+						
+						<h4>More info</h4>
+						<p>You can always look at the <a href="https://github.com/brentsimmons/Evergreen/commits/master">recent commits on GitHub</a> for more details.</p>
+  						]]></description>
+            <pubDate>Thu, 21 Dec 2017 14:50:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d25.zip" sparkle:version="517" sparkle:shortVersionString="1.0d25" length="7330000" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
         <item>
             <title>Version 1.0d24</title>
             <description><![CDATA[

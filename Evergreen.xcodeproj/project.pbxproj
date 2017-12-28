@@ -18,6 +18,7 @@
 		842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */; };
 		842E45E71ED8C747000A8B52 /* DB5.plist in Resources */ = {isa = PBXBuildFile; fileRef = 842E45E61ED8C747000A8B52 /* DB5.plist */; };
 		84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E701FE5FBFA004B527F /* SmallIconProvider.swift */; };
+		8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
 		844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */; };
 		844B5B5B1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B5A1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift */; };
 		844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */; };
@@ -37,6 +38,7 @@
 		846E77411F6EF6A100A165E2 /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; };
 		846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */; };
+		847C4C9C1FF44F790090D517 /* FeedListSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847C4C9B1FF44F790090D517 /* FeedListSplitViewController.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
 		849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
 		849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97511ED9EAC0007D329B /* AddFeedController.swift */; };
@@ -76,7 +78,6 @@
 		849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849A97A41ED9F94D007D329B /* Preferences.storyboard */; };
 		849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97A71ED9F9AA007D329B /* AddFeedSheet.xib */; };
 		849A97AC1ED9F9BC007D329B /* AddFolderSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97AA1ED9F9BC007D329B /* AddFolderSheet.xib */; };
-		849A97AF1ED9FA08007D329B /* FeedList.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849A97AD1ED9FA08007D329B /* FeedList.storyboard */; };
 		849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849A97B01ED9FA69007D329B /* MainWindow.storyboard */; };
 		849B897C1F0349D000578A8D /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849B89751F0349C100578A8D /* RSParser.framework */; };
 		849B897D1F0349D000578A8D /* RSParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 849B89751F0349C100578A8D /* RSParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -84,8 +85,6 @@
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849C64691ED37A5D003D8FC0 /* Main.storyboard */; };
 		849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */; };
-		84AFBB3C1FBE76D800BA41CF /* PanicButtonWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AFBB3B1FBE76D800BA41CF /* PanicButtonWindowController.swift */; };
-		84AFBB3E1FBE770200BA41CF /* PanicButtonWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84AFBB3D1FBE770200BA41CF /* PanicButtonWindow.xib */; };
 		84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; };
 		84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */; };
@@ -100,6 +99,7 @@
 		84B06FFE1ED3818D00F0B54B /* RSTree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FFA1ED3818000F0B54B /* RSTree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B0700A1ED3822600F0B54B /* RSTextDrawing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; };
 		84B0700B1ED3822600F0B54B /* RSTextDrawing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84B2FAA41FF47BAC009C4878 /* FeedListWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84B2FAA31FF47BAC009C4878 /* FeedListWindow.xib */; };
 		84B99C671FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */; };
 		84B99C691FAE36B800ECDEDB /* FeedListFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */; };
 		84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */; };
@@ -425,6 +425,7 @@
 		842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowSplitView.swift; sourceTree = "<group>"; };
 		842E45E61ED8C747000A8B52 /* DB5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DB5.plist; path = Evergreen/Resources/DB5.plist; sourceTree = "<group>"; };
 		84411E701FE5FBFA004B527F /* SmallIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallIconProvider.swift; sourceTree = "<group>"; };
+		8444C8F11FED81840051386C /* OPMLExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLExporter.swift; sourceTree = "<group>"; };
 		844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarKeyboardDelegate.swift; sourceTree = "<group>"; };
 		844B5B5A1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineKeyboardDelegate.swift; sourceTree = "<group>"; };
 		844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = GlobalKeyboardShortcuts.plist; sourceTree = "<group>"; };
@@ -443,6 +444,7 @@
 		846E77161F6EF5D000A165E2 /* Database.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Database.xcodeproj; path = Frameworks/Database/Database.xcodeproj; sourceTree = "<group>"; };
 		846E77301F6EF5D600A165E2 /* Account.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Account.xcodeproj; path = Frameworks/Account/Account.xcodeproj; sourceTree = "<group>"; };
 		84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkReadOrUnreadCommand.swift; sourceTree = "<group>"; };
+		847C4C9B1FF44F790090D517 /* FeedListSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListSplitViewController.swift; sourceTree = "<group>"; };
 		848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconDownloader.swift; sourceTree = "<group>"; };
 		849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderWindowController.swift; sourceTree = "<group>"; };
 		849A97511ED9EAC0007D329B /* AddFeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedController.swift; path = AddFeed/AddFeedController.swift; sourceTree = "<group>"; };
@@ -482,7 +484,6 @@
 		849A97A51ED9F94D007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Evergreen/Base.lproj/Preferences.storyboard; sourceTree = "<group>"; };
 		849A97A81ED9F9AA007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/AddFeedSheet.xib; sourceTree = SOURCE_ROOT; };
 		849A97AB1ED9F9BC007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/AddFolderSheet.xib; sourceTree = SOURCE_ROOT; };
-		849A97AE1ED9FA08007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Evergreen/Base.lproj/FeedList.storyboard; sourceTree = SOURCE_ROOT; };
 		849A97B11ED9FA69007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Evergreen/Base.lproj/MainWindow.storyboard; sourceTree = SOURCE_ROOT; };
 		849B89681F0349C100578A8D /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = Frameworks/RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -495,8 +496,6 @@
 		849C64771ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84A6B6931FB8D43C006754AC /* DinosaursWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DinosaursWindow.xib; sourceTree = "<group>"; };
 		84A6B6951FB8DBD2006754AC /* DinosaursWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DinosaursWindowController.swift; sourceTree = "<group>"; };
-		84AFBB3B1FBE76D800BA41CF /* PanicButtonWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PanicButtonWindowController.swift; sourceTree = "<group>"; };
-		84AFBB3D1FBE770200BA41CF /* PanicButtonWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PanicButtonWindow.xib; sourceTree = "<group>"; };
 		84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSDatabase.xcodeproj; path = Frameworks/RSDatabase/RSDatabase.xcodeproj; sourceTree = "<group>"; };
 		84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = Frameworks/RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		84B06FB61ED37E8B00F0B54B /* RSWeb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSWeb.xcodeproj; path = Frameworks/RSWeb/RSWeb.xcodeproj; sourceTree = "<group>"; };
@@ -504,6 +503,7 @@
 		84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSFeedFinder.xcodeproj; path = Frameworks/RSFeedFinder/RSFeedFinder.xcodeproj; sourceTree = "<group>"; };
 		84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTree.xcodeproj; path = Frameworks/RSTree/RSTree.xcodeproj; sourceTree = "<group>"; };
 		84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTextDrawing.xcodeproj; path = Frameworks/RSTextDrawing/RSTextDrawing.xcodeproj; sourceTree = "<group>"; };
+		84B2FAA31FF47BAC009C4878 /* FeedListWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedListWindow.xib; sourceTree = "<group>"; };
 		84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFolder.swift; sourceTree = "<group>"; };
 		84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFeed.swift; sourceTree = "<group>"; };
@@ -590,10 +590,17 @@
 				849A977C1ED9EC42007D329B /* Detail */,
 				849A97551ED9EAC3007D329B /* Add Feed */,
 				849A97411ED9EAA9007D329B /* Add Folder */,
-				84AFBB3A1FBE76D800BA41CF /* PanicButton */,
 			);
 			name = MainWindow;
 			path = Evergreen/MainWindow;
+			sourceTree = "<group>";
+		};
+		8444C9011FED81880051386C /* Exporters */ = {
+			isa = PBXGroup;
+			children = (
+				8444C8F11FED81840051386C /* OPMLExporter.swift */,
+			);
+			path = Exporters;
 			sourceTree = "<group>";
 		};
 		844B5B6A1FEA224000C7C76A /* Keyboard */ = {
@@ -782,10 +789,11 @@
 		849A978B1ED9EE4D007D329B /* Feed List */ = {
 			isa = PBXGroup;
 			children = (
-				849A97AD1ED9FA08007D329B /* FeedList.storyboard */,
+				84B2FAA31FF47BAC009C4878 /* FeedListWindow.xib */,
 				849A978C1ED9EE4D007D329B /* FeedListWindowController.swift */,
 				84F204CD1FAACB660076E152 /* FeedListViewController.swift */,
 				84F204DD1FAACB8B0076E152 /* FeedListTimelineViewController.swift */,
+				847C4C9B1FF44F790090D517 /* FeedListSplitViewController.swift */,
 				84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */,
 				84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */,
 				84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */,
@@ -857,6 +865,7 @@
 				849A978B1ED9EE4D007D329B /* Feed List */,
 				849A97901ED9EF65007D329B /* Progress Window */,
 				84DAEE201F86CAE00058304B /* Importers */,
+				8444C9011FED81880051386C /* Exporters */,
 				84F2D5341FC22FCB00998D64 /* SmartFeeds */,
 				849A97561ED9EB0D007D329B /* Data */,
 				8426119C1FCB6ED40086A189 /* HTMLMetadata */,
@@ -907,15 +916,6 @@
 			);
 			name = Dinosaurs;
 			path = Evergreen/Dinosaurs;
-			sourceTree = "<group>";
-		};
-		84AFBB3A1FBE76D800BA41CF /* PanicButton */ = {
-			isa = PBXGroup;
-			children = (
-				84AFBB3D1FBE770200BA41CF /* PanicButtonWindow.xib */,
-				84AFBB3B1FBE76D800BA41CF /* PanicButtonWindowController.swift */,
-			);
-			path = PanicButton;
 			sourceTree = "<group>";
 		};
 		84B06F971ED37DA000F0B54B /* Products */ = {
@@ -1363,11 +1363,10 @@
 				845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */,
 				849A979D1ED9EFEB007D329B /* template.html in Resources */,
 				849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */,
-				84AFBB3E1FBE770200BA41CF /* PanicButtonWindow.xib in Resources */,
 				842E45E71ED8C747000A8B52 /* DB5.plist in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				849A97AC1ED9F9BC007D329B /* AddFolderSheet.xib in Resources */,
-				849A97AF1ED9FA08007D329B /* FeedList.storyboard in Resources */,
+				84B2FAA41FF47BAC009C4878 /* FeedListWindow.xib in Resources */,
 				84E95CF71FABB3C800552D99 /* FeedList.plist in Resources */,
 				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
 				849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */,
@@ -1401,6 +1400,7 @@
 				842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */,
 				842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */,
 				845F52ED1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift in Sources */,
+				8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */,
 				849A975E1ED9EB72007D329B /* MainWindowController.swift in Sources */,
 				842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */,
 				84F2D53A1FC2308B00998D64 /* UnreadFeed.swift in Sources */,
@@ -1414,7 +1414,6 @@
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
-				84AFBB3C1FBE76D800BA41CF /* PanicButtonWindowController.swift in Sources */,
 				8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */,
 				84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */,
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,
@@ -1445,6 +1444,7 @@
 				84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */,
 				842611A01FCB72600086A189 /* FeaturedImageDownloader.swift in Sources */,
 				849A97781ED9EC04007D329B /* TimelineCellLayout.swift in Sources */,
+				847C4C9C1FF44F790090D517 /* FeedListSplitViewController.swift in Sources */,
 				849A976C1ED9EBC8007D329B /* TimelineTableRowView.swift in Sources */,
 				849A977B1ED9EC04007D329B /* UnreadIndicatorView.swift in Sources */,
 				84B99C9D1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift in Sources */,
@@ -1572,14 +1572,6 @@
 				849A97AB1ED9F9BC007D329B /* Base */,
 			);
 			name = AddFolderSheet.xib;
-			sourceTree = "<group>";
-		};
-		849A97AD1ED9FA08007D329B /* FeedList.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				849A97AE1ED9FA08007D329B /* Base */,
-			);
-			name = FeedList.storyboard;
 			sourceTree = "<group>";
 		};
 		849A97B01ED9FA69007D329B /* MainWindow.storyboard */ = {

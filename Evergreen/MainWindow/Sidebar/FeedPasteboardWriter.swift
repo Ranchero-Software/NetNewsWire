@@ -14,7 +14,7 @@ import Data
 	private let feed: Feed
 	static let feedUTI = "com.ranchero.feed"
 	static let feedUTIType = NSPasteboard.PasteboardType(rawValue: feedUTI)
-	static let feedUTIInternal = "com.ranchero.evergreen.internal.feed";
+	static let feedUTIInternal = "com.ranchero.evergreen.internal.feed"
 	static let feedUTIInternalType = NSPasteboard.PasteboardType(rawValue: feedUTIInternal)
 
 	init(feed: Feed) {

@@ -328,13 +328,36 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func fetchArticles(for feed: Feed) -> Set<Article> {
-		
-		return database.fetchArticles(for: feed)
+
+		let articles = database.fetchArticles(for: feed)
+		validateUnreadCount(feed, articles)
+		return articles
 	}
 	
 	public func fetchArticles(folder: Folder) -> Set<Article> {
-		
-		return database.fetchUnreadArticles(for: folder.flattenedFeeds())
+
+		let feeds = folder.flattenedFeeds()
+		let articles = database.fetchUnreadArticles(for: feeds)
+		feeds.forEach { validateUnreadCount($0, articles) }
+		return articles
+	}
+
+	private func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
+
+		// articles must contain all the unread articles for the feed.
+		// The unread number should match the feed’s unread count.
+
+		let feedUnreadCount = articles.reduce(0) { (result, article) -> Int in
+			if article.feed == feed && !article.status.read {
+				return result + 1
+			}
+			return result
+		}
+
+		if feedUnreadCount != feed.unreadCount {
+			assertionFailure("Expected feed.unreadCount \(feed.unreadCount) to equal number of fetched unread articles \(feedUnreadCount).")
+			feed.unreadCount = feedUnreadCount
+		}
 	}
 
 	public func fetchUnreadCountForToday(_ callback: @escaping (Int) -> Void) {

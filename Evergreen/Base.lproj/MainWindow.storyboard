@@ -32,7 +32,7 @@
                                         </searchFieldCell>
                                     </searchField>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="C3050605-E4B0-40CB-BA19-F64DF68BCFFA" label="Share" paletteLabel="Share" toolTip="Share" image="NSShareTemplate" id="nv0-Ju-lP7" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="C3050605-E4B0-40CB-BA19-F64DF68BCFFA" explicitItemIdentifier="share" label="Share" paletteLabel="Share" toolTip="Share" image="NSShareTemplate" id="nv0-Ju-lP7" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="ypo-pI-PTN">
@@ -43,6 +43,9 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                     </button>
+                                    <connections>
+                                        <action selector="toolbarShowShareMenu:" target="Oky-zY-oP4" id="zUk-sS-frQ"/>
+                                    </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="3552D790-D29C-4BF2-AF02-5BEFE49C7FB9" label="New Feed" paletteLabel="New Feed" toolTip="New Feed" image="NSAddTemplate" id="Skp-5r-70Q" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
@@ -198,6 +201,9 @@
                                 <toolbarItem reference="YMs-P5-Xhn"/>
                                 <toolbarItem reference="1Ql-WJ-KYi"/>
                             </defaultToolbarItems>
+                            <connections>
+                                <outlet property="delegate" destination="B8D-0N-5wS" id="hrC-d9-Cge"/>
+                            </connections>
                         </toolbar>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="JSn-lq-Uwe"/>

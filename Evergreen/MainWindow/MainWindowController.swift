@@ -38,15 +38,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		window?.setFrameUsingName(windowAutosaveName, force: true)
 		if AppDefaults.shared.isFirstRun && !MainWindowController.didPositionWindowOnFirstRun {
 
-			if let window = window, let screen = window.screen {
-				let width: CGFloat = 1280.0
-				let height: CGFloat = 768.0
-				let insetX: CGFloat = 192.0
-				let insetY: CGFloat = 96.0
-
-				window.setContentSize(NSSize(width: width, height: height))
-				window.setFrameTopLeftPoint(NSPoint(x: insetX, y: screen.visibleFrame.maxY - insetY))
-
+			if let window = window {
+				let point = NSPoint(x: 128, y: 64)
+				let size = NSSize(width: 1000, height: 700)
+				let minSize = NSSize(width: 600, height: 600)
+				window.setPointAndSizeAdjustingForScreen(point: point, size: size, minimumSize: minSize)
 				MainWindowController.didPositionWindowOnFirstRun = true
 			}
 		}
@@ -131,6 +127,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return canMarkRead()
 		}
 
+		if item.action == #selector(markOlderArticlesAsRead(_:)) {
+			return canMarkOlderArticlesAsRead()
+		}
+
+		if item.action == #selector(toolbarShowShareMenu(_:)) {
+			return canShowShareMenu()
+		}
+		
 		return true
 	}
 
@@ -166,23 +170,39 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		openArticleInBrowser(sender)
 	}
 
+	func makeTimelineViewFirstResponder() {
+
+		guard let window = window, let timelineViewController = timelineViewController else {
+			return
+		}
+		window.makeFirstResponderUnlessDescendantIsFirstResponder(timelineViewController.tableView)
+	}
+
 	@IBAction func nextUnread(_ sender: Any?) {
 		
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
 			return
 		}
 		
-		func makeTimelineViewFirstResponder() {
-
-			window!.makeFirstResponderUnlessDescendantIsFirstResponder(timelineViewController.tableView)
-		}
-		
 		if timelineViewController.canGoToNextUnread() {
-			timelineViewController.goToNextUnread()
-			makeTimelineViewFirstResponder()
+			goToNextUnreadInTimeline()
 		}
 		else if sidebarViewController.canGoToNextUnread() {
 			sidebarViewController.goToNextUnread()
+			if timelineViewController.canGoToNextUnread() {
+				goToNextUnreadInTimeline()
+			}
+		}
+	}
+
+	func goToNextUnreadInTimeline() {
+
+		guard let timelineViewController = timelineViewController else {
+			return
+		}
+
+		if timelineViewController.canGoToNextUnread() {
+			timelineViewController.goToNextUnread()
 			makeTimelineViewFirstResponder()
 		}
 	}
@@ -227,12 +247,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
 
-		appDelegate.markOlderArticlesAsRead(with: window!)
-	}
-
-	@IBAction func markEverywhereAsRead(_ sender: Any?) {
-
-		appDelegate.markEverywhereAsRead(with: window!)
+		timelineViewController?.markOlderArticlesAsRead()
 	}
 
 	@IBAction func navigateToTimeline(_ sender: Any?) {
@@ -253,6 +268,57 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func goToNextSubscription(_ sender: Any?) {
 
 		sidebarViewController?.outlineView.selectNextRow(sender)
+	}
+
+	@IBAction func toolbarShowShareMenu(_ sender: Any?) {
+
+		guard let selectedArticles = selectedArticles, !selectedArticles.isEmpty else {
+			assertionFailure("Expected toolbarShowShareMenu to be called only when there are selected articles.")
+			return
+		}
+		guard let shareToolbarItem = shareToolbarItem else {
+			assertionFailure("Expected toolbarShowShareMenu to be called only by the Share item in the toolbar.")
+			return
+		}
+		guard let view = shareToolbarItem.view else {
+			// TODO: handle menu form representation
+			return
+		}
+
+		let items = selectedArticles.map { ArticlePasteboardWriter(article: $0) }
+		let sharingServicePicker = NSSharingServicePicker(items: items)
+		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+	}
+
+	private func canShowShareMenu() -> Bool {
+
+		guard let selectedArticles = selectedArticles else {
+			return false
+		}
+		return !selectedArticles.isEmpty
+	}
+}
+
+// MARK: - NSToolbarDelegate
+
+extension NSToolbarItem.Identifier {
+	static let Share = NSToolbarItem.Identifier("share")
+}
+
+extension MainWindowController: NSToolbarDelegate {
+
+	func toolbarWillAddItem(_ notification: Notification) {
+
+		// The share button should send its action on mouse down, not mouse up.
+
+		guard let item = notification.userInfo?["item"] as? NSToolbarItem else {
+			return
+		}
+		guard item.itemIdentifier == .Share, let button = item.view as? NSButton else {
+			return
+		}
+
+		button.sendAction(on: .leftMouseDown)
 	}
 }
 
@@ -332,7 +398,12 @@ private extension MainWindowController {
 
 		return timelineViewController?.canMarkSelectedArticlesAsRead() ?? false
 	}
-	
+
+	func canMarkOlderArticlesAsRead() -> Bool {
+
+		return timelineViewController?.canMarkOlderArticlesAsRead() ?? false
+	}
+
 	func updateWindowTitle() {
 
 		if unreadCount < 1 {
@@ -341,6 +412,25 @@ private extension MainWindowController {
 		else if unreadCount > 0 {
 			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
 		}
+	}
+
+	// MARK: - Toolbar
+
+	private var shareToolbarItem: NSToolbarItem? {
+		return existingToolbarItem(identifier: .Share)
+	}
+
+	func existingToolbarItem(identifier: NSToolbarItem.Identifier) -> NSToolbarItem? {
+
+		guard let toolbarItems = window?.toolbar?.items else {
+			return nil
+		}
+		for toolbarItem in toolbarItems {
+			if toolbarItem.itemIdentifier == identifier {
+				return toolbarItem
+			}
+		}
+		return nil
 	}
 
 	// MARK: - Navigation

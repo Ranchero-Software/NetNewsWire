@@ -411,11 +411,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="gB0-WX-2Gd"/>
-                                        <menuItem title="Mark as Starred" keyEquivalent="L" id="vvo-ZM-8kl">
-                                            <connections>
-                                                <action selector="markAllAsRead:" target="Ady-hI-5gd" id="WdN-5m-sV0"/>
-                                            </connections>
-                                        </menuItem>
+                                        <menuItem title="Mark as Starred" keyEquivalent="L" id="vvo-ZM-8kl"/>
                                         <menuItem isSeparatorItem="YES" id="qgr-Gl-Xhw"/>
                                         <menuItem title="Open in Browser" keyEquivalent="" id="4iQ-1v-dTa">
                                             <connections>
@@ -477,12 +473,6 @@
                                                 <action selector="showLogWindow:" target="Ady-hI-5gd" id="WzC-He-psY"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Keyboard Shortcuts" id="9fu-ah-S4X">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="showKeyboardShortcutsWindow:" target="Ady-hI-5gd" id="gnm-4I-7ab"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
                                         <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -500,6 +490,12 @@
                                         <menuItem title="Evergreen Help" keyEquivalent="?" id="FKE-Sm-Kum">
                                             <connections>
                                                 <action selector="showHelp:" target="Voe-Tx-rLC" id="WJP-8V-s4K"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Keyboard Shortcuts" id="w6o-j8-cda">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showKeyboardShortcutsWindow:" target="Ady-hI-5gd" id="RXH-ej-Xss"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="iyN-Fr-QXC"/>

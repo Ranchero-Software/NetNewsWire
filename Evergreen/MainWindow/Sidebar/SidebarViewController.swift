@@ -151,8 +151,6 @@ import RSCore
 		}
 		
 		outlineView.selectRowIndexes(IndexSet([row]), byExtendingSelection: false)
-		
-		NSApplication.shared.sendAction(NSSelectorFromString("nextUnread:"), to: nil, from: self)
 	}
 
 	func focus() {
@@ -525,6 +523,13 @@ extension Feed: SmallIconProvider {
 
 	var smallIcon: NSImage? {
 		return appDelegate.faviconDownloader.favicon(for: self)
+	}
+}
+
+extension Folder: SmallIconProvider {
+
+	var smallIcon: NSImage? {
+		return NSImage(named: NSImage.Name.folder)
 	}
 }
 

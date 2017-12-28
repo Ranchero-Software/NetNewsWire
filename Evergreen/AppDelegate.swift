@@ -46,8 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
 	private var logWindowController: LogWindowController?
-	private var panicButtonWindowController: PanicButtonWindowController?
-	
+
 	private let log = Log()
 	private let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://ranchero.com/evergreen/feed.json"
@@ -86,34 +85,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
-	func markOlderArticlesAsRead(with window: NSWindow) {
-
-		panicButtonWindowController = PanicButtonWindowController()
-		panicButtonWindowController!.runSheetOnWindow(window)
-	}
-
-	func markEverywhereAsRead(with window: NSWindow) {
-
-		let alert = NSAlert()
-		alert.messageText = NSLocalizedString("Mark All Articles as Read Everywhere?", comment: "Mark Everywhere alert messageText")
-		alert.informativeText = NSLocalizedString("This will mark every single article as read. All of them. The unread count will be zero.\n\nNote: this operation cannot be undone.", comment: "Mark Everywhere informativeText.")
-
-		alert.addButton(withTitle: NSLocalizedString("Mark All Articles as Read", comment: "Mark Everywhere alert button."))
-		alert.addButton(withTitle: NSLocalizedString("Don’t Mark as Read", comment: "Mark Everywhere alert button."))
-
-		alert.beginSheetModal(for: window) { (returnCode) in
-
-			if returnCode == .alertFirstButtonReturn {
-				self.markEverywhereAsRead()
-			}
-		}
-	}
-
-	func markEverywhereAsRead() {
-
-		AccountManager.shared.accounts.forEach { $0.markEverywhereAsRead() }
-	}
-
 	// MARK: - NSApplicationDelegate
 
 	func applicationDidFinishLaunching(_ note: Notification) {
@@ -147,12 +118,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		createAndShowMainWindow()
 
-		#if RELEASE
-			DispatchQueue.main.async {
-				self.refreshAll(self)
-			}
-		#endif
-
 		NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.getURL(_:_:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
 
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
@@ -160,6 +125,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
+
+		#if RELEASE
+			DispatchQueue.main.async {
+				self.refreshAll(self)
+			}
+		#endif
 	}
 
 	func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -296,7 +267,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func showFeedList(_ sender: AnyObject) {
 
 		if feedListWindowController == nil {
-			feedListWindowController = windowControllerWithName("FeedList")
+			feedListWindowController = FeedListWindowController()
 		}
 		feedListWindowController!.showWindow(self)
 	}
@@ -308,13 +279,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			let htmlFile = Bundle(for: type(of: self)).path(forResource: "KeyboardShortcuts", ofType: "html")!
 			keyboardShortcutsWindowController?.displayContents(of: htmlFile)
 
-			if let window = keyboardShortcutsWindowController?.window, let screen = window.screen {
-				let width: CGFloat = 620.0
-				let height: CGFloat = 1024.0
-				let insetX: CGFloat = 128.0
-				let insetY: CGFloat = 64.0
-				window.setContentSize(NSSize(width: width, height: height))
-				window.setFrameTopLeftPoint(NSPoint(x: insetX, y: screen.visibleFrame.maxY - insetY))
+			if let window = keyboardShortcutsWindowController?.window {
+				let point = NSPoint(x: 128, y: 64)
+				let size = NSSize(width: 620, height: 1000)
+				let minSize = NSSize(width: 400, height: 400)
+				window.setPointAndSizeAdjustingForScreen(point: point, size: size, minimumSize: minSize)
 			}
 		}
 
@@ -388,7 +357,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		let result = panel.runModal()
 		if result == NSApplication.ModalResponse.OK, let url = panel.url {
 			DispatchQueue.main.async {
-				let opmlString = AccountManager.shared.localAccount.OPMLString(indentLevel: 0)
+				let filename = url.lastPathComponent
+				let opmlString = OPMLExporter.OPMLString(with: AccountManager.shared.localAccount, title: filename)
 				do {
 					try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
 				}
@@ -430,18 +400,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func showHelp(_ sender: AnyObject) {
 
 		Browser.open("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
-	}
-
-	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
-
-		createAndShowMainWindow()
-		markOlderArticlesAsRead(with: mainWindowController!.window!)
-	}
-
-	@IBAction func markEverywhereAsRead(_ sender: Any?) {
-
-		createAndShowMainWindow()
-		markEverywhereAsRead(with: mainWindowController!.window!)
 	}
 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {

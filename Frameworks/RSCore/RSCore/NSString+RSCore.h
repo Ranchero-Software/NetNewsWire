@@ -59,6 +59,7 @@ typedef struct {
 - (NSString *)rs_stringByStrippingSuffix:(NSString *)suffix caseSensitive:(BOOL)caseSensitive;
 
 - (NSString *)rs_stringByStrippingHTML:(NSUInteger)maxCharacters;
+- (NSString *)rs_stringByConvertingToPlainText;
 
 /*Filename from path, file URL string, or external URL string.*/
 
