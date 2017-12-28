@@ -25,11 +25,9 @@ final class FeedListViewController: NSViewController {
 
 		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		outlineView.needsLayout = true
 	}
 
-	override func viewWillLayout() {
-		super.viewWillLayout()
-	}
 	// MARK: - Notifications
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {

@@ -41,18 +41,12 @@
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </searchFieldCell>
                                             </searchField>
-                                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="wey-fS-dNY">
-                                                <rect key="frame" x="0.0" y="-2" width="128" height="5"/>
-                                            </box>
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="48" id="62f-Ja-njN"/>
-                                            <constraint firstItem="wey-fS-dNY" firstAttribute="leading" secondItem="Sxr-eg-boM" secondAttribute="leading" id="8Ls-P9-pxs"/>
                                             <constraint firstItem="791-YX-E38" firstAttribute="centerY" secondItem="Sxr-eg-boM" secondAttribute="centerY" id="Z9W-jw-zkI"/>
                                             <constraint firstItem="791-YX-E38" firstAttribute="leading" secondItem="Sxr-eg-boM" secondAttribute="leading" constant="20" symbolic="YES" id="d50-xe-TO4"/>
                                             <constraint firstAttribute="trailing" secondItem="791-YX-E38" secondAttribute="trailing" constant="20" symbolic="YES" id="i0h-PY-4SC"/>
-                                            <constraint firstAttribute="bottom" secondItem="wey-fS-dNY" secondAttribute="bottom" id="plH-tG-c0g"/>
-                                            <constraint firstAttribute="trailing" secondItem="wey-fS-dNY" secondAttribute="trailing" id="xao-N6-CQq"/>
                                         </constraints>
                                     </customView>
                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="OF2-9S-uq1">
@@ -160,9 +154,12 @@
                             </customView>
                         </subviews>
                         <holdingPriorities>
-                            <real value="260"/>
-                            <real value="250"/>
+                            <real value="489"/>
+                            <real value="251"/>
                         </holdingPriorities>
+                        <connections>
+                            <outlet property="delegate" destination="foD-R8-nCX" id="8ds-kY-h3r"/>
+                        </connections>
                     </splitView>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="6se-0m-JxY" customClass="FeedListControlsView" customModule="Evergreen" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="32"/>
@@ -214,6 +211,13 @@
                 <outlet property="view" destination="OF2-9S-uq1" id="yfP-zX-T6z"/>
             </connections>
         </viewController>
+        <customObject id="foD-R8-nCX" customClass="FeedListSplitViewDelegate" customModule="Evergreen" customModuleProvider="target">
+            <connections>
+                <outlet property="sidebarView" destination="fSs-xC-S8k" id="EPm-FO-BI3"/>
+                <outlet property="splitView" destination="LmW-op-ndf" id="X2z-RD-rkV"/>
+                <outlet property="timelineView" destination="asI-cc-kYO" id="sw2-Qf-oMo"/>
+            </connections>
+        </customObject>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>
