@@ -102,15 +102,18 @@ extension FeedListViewController: NSOutlineViewDelegate {
 		cell.objectValue = node
 		cell.name = nameFor(node)
 		cell.image = imageFor(node)
-		cell.shouldShowImage = node.representedObject is FeedListFeed
+		cell.shouldShowImage = true
 	}
 
 	func imageFor(_ node: Node) -> NSImage? {
 
-		guard let feed = node.representedObject as? FeedListFeed else {
-			return nil
+		if let _ = node.representedObject as? FeedListFolder {
+			return NSImage(named: NSImage.Name.folder)
 		}
-		return appDelegate.faviconDownloader.favicon(withHomePageURL: feed.homePageURL)
+		else if let feed = node.representedObject as? FeedListFeed {
+			return appDelegate.faviconDownloader.favicon(withHomePageURL: feed.homePageURL)
+		}
+		return nil
 	}
 
 	func nameFor(_ node: Node) -> String {
