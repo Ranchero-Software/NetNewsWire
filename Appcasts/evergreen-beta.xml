@@ -10,11 +10,24 @@
             <title>Version 1.0d26</title>
             <description><![CDATA[
             
+            <h4>New command - Mark Older as Read</h4>
+            <p>This new command marks as read everything in the current timeline that’s older than the selected article.</p>
+            <p>This command is also available as a keyboard shortcut: the o key. (Lowercase Oh, not zero.)</p>
+            
+            <h4>Share toolbar button</h4>
+            <p>It works, sort-of. Has issues. But you can share things. Sort-of-ish.</p>
+            
+            <h4>Misc.</h4>
             <p>Fixed an infinite loop that could happen when going to next unread.</p>
-            <p>The main sidebar and the sidebar in the Feed Directory now show standard folder icons for folders.</p>
+            <p>The main sidebar and the sidebar in the Feed Directory now use standard folder icons for folders.</p>
   					<p>Fixed OPML export bug — the OPML is now valid.</p>
 						<p>Fixed bug sizing the Keyboard Shortcuts window on a small screen.</p>
 						<p>Made Mark as Starred command not doing anything (for now) — it was doing the wrong thing.</p>
+						<p>Move Keyboard Shortcuts menu item to the Help menu.</p>
+						<p>Use semantic markup in the Keyboard Shortcuts HTML. Courtesy of ePirat.</p>
+						<p>Return to the normal app icon. Until next year.</p>
+						<p>Validate unread counts on fetching articles without having to hit the database for the validation.</p>
+						<p>Restore window size/position and splitview position in the Feeds Directory window between runs.</p>
 						
 						<h4>More info</h4>
 						<p>You can always look at the <a href="https://github.com/brentsimmons/Evergreen/commits/master">recent commits on GitHub</a> for more details.</p>
