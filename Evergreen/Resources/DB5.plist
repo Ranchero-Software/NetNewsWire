@@ -129,6 +129,18 @@
 				<string>FFFFFF</string>
 			</dict>
 		</dict>
+		<key>FeedDirectory</key>
+		<dict>
+			<key>sidebar</key>
+			<dict>
+				<key>initialWidth</key>
+				<integer>285</integer>
+				<key>minimumThickness</key>
+				<string>220</string>
+				<key>maximumThickness</key>
+				<string>512</string>
+			</dict>
+		</dict>
 	</dict>
 </dict>
 </plist>

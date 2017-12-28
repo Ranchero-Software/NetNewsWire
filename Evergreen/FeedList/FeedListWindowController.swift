@@ -11,6 +11,11 @@ import Cocoa
 class FeedListWindowController : NSWindowController {
     
 
+	public convenience init() {
+
+		self.init(windowNibName: NSNib.Name(rawValue: "FeedListWindow"))
+	}
+
 	@IBAction func addToFeeds(_ sender: AnyObject) {
 
 	}

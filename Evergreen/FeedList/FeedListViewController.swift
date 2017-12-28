@@ -27,6 +27,9 @@ final class FeedListViewController: NSViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 	}
 
+	override func viewWillLayout() {
+		super.viewWillLayout()
+	}
 	// MARK: - Notifications
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
