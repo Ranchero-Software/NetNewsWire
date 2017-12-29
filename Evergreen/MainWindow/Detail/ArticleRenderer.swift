@@ -136,6 +136,11 @@ class ArticleRenderer {
 		return "<a href=\"\(href)\">\(text)</a>"
 	}
 
+	private func linkWithLink(_ href: String) -> String {
+
+		return linkWithText(href, href)
+	}
+
 	private func titleOrTitleLink() -> String {
 
 		if let link = article.preferredLink {
@@ -174,8 +179,57 @@ class ArticleRenderer {
 		
 		let shortDate = shortDateFormatter.string(from: article.logicalDatePublished)
 		d["date_short"] = shortDate
-		
+
+		d["byline"] = byline()
+
 		return d
+	}
+
+	private func byline() -> String {
+
+		guard let authors = article.authors ?? article.feed?.authors, !authors.isEmpty else {
+			return ""
+		}
+
+		var byline = ""
+		var isFirstAuthor = true
+
+		for author in authors {
+			if !isFirstAuthor {
+				byline += ", "
+			}
+			isFirstAuthor = false
+
+			if let emailAddress = author.emailAddress, emailAddress.contains(" ") {
+				byline += emailAddress // probably name plus email address
+			}
+			else if let name = author.name, let url = author.url {
+				byline += linkWithText(name, url)
+			}
+			else if let name = author.name, let emailAddress = author.emailAddress {
+				byline += "\(name) &lt;\(emailAddress)&lg;"
+//				byline += linkWithText(name, "mailto:\(emailAddress)") //TODO
+			}
+			else if let name = author.name {
+				byline += name
+			}
+			else if let emailAddress = author.emailAddress {
+				byline += "&lt;\(emailAddress)&gt;" // TODO: mailto link
+			}
+			else if let url = author.url {
+				byline += linkWithLink(url)
+			}
+		}
+
+		byline = "By " + byline
+
+		if authors.count == 1, let author = authors.first {
+			if let avatarURL = author.avatarURL {
+				byline = "<img src=\"\(avatarURL)\" height=\"64\" width=\"64\" /> " + byline
+			}
+		}
+
+		return byline
 	}
 
 	private func renderedHTML() -> String {
