@@ -11,11 +11,11 @@ import Cocoa
 class FeedListWindowController : NSWindowController {
     
 
-	public convenience init() {
+	override func windowDidLoad() {
 
-		self.init(windowNibName: NSNib.Name(rawValue: "FeedListWindow"))
+		window!.contentView?.translatesAutoresizingMaskIntoConstraints = false
 	}
-
+	
 	@IBAction func addToFeeds(_ sender: AnyObject) {
 
 	}

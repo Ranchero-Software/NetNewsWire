@@ -267,7 +267,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func showFeedList(_ sender: AnyObject) {
 
 		if feedListWindowController == nil {
-			feedListWindowController = FeedListWindowController()
+			feedListWindowController = windowControllerWithName("FeedList")
 		}
 		feedListWindowController!.showWindow(self)
 	}

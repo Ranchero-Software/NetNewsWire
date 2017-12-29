@@ -23,6 +23,8 @@ final class FeedListViewController: NSViewController {
 
 	override func viewDidLoad() {
 
+		view.translatesAutoresizingMaskIntoConstraints = false
+
 		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		outlineView.needsLayout = true
@@ -71,7 +73,7 @@ extension FeedListViewController: NSOutlineViewDelegate {
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
 
 		let cell = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "FeedListCell"), owner: self) as! SidebarCell
-
+		cell.translatesAutoresizingMaskIntoConstraints = false
 		let node = item as! Node
 		configure(cell, node)
 

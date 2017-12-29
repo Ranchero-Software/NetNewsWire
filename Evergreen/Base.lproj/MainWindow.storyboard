@@ -215,7 +215,7 @@
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-520" y="38"/>
+            <point key="canvasLocation" x="-666" y="-124"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="vhK-r2-b3N">

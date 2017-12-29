@@ -83,6 +83,8 @@ class SidebarCell : NSTableCellView {
 	private func commonInit() {
 		
 		unreadCountView.translatesAutoresizingMaskIntoConstraints = false
+		imageView?.translatesAutoresizingMaskIntoConstraints = false
+		textField?.translatesAutoresizingMaskIntoConstraints = false
 		addSubview(unreadCountView)
 	}
 	
