@@ -87,10 +87,10 @@
             </objects>
             <point key="canvasLocation" x="-989" y="535"/>
         </scene>
-        <!--Split View Controller-->
+        <!--Feed List Split View Controller-->
         <scene sceneID="E8t-Vq-sKF">
             <objects>
-                <splitViewController identifier="FeedListSplitViewRestorationID" storyboardIdentifier="FeedListSplitViewStoryboardID" showSeguePresentationStyle="single" id="d1q-Ba-ygg" sceneMemberID="viewController">
+                <splitViewController identifier="FeedListSplitViewRestorationID" storyboardIdentifier="FeedListSplitViewStoryboardID" showSeguePresentationStyle="single" id="d1q-Ba-ygg" customClass="FeedListSplitViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <splitViewItems>
                         <splitViewItem canCollapse="YES" holdingPriority="260" behavior="sidebar" id="ae2-iY-wHE"/>
                         <splitViewItem holdingPriority="255" behavior="contentList" id="GY8-gt-RfC"/>
@@ -125,7 +125,7 @@
                                 <subviews>
                                     <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gqz-ML-j9e">
                                         <rect key="frame" x="20" y="13" width="245" height="22"/>
-                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="Xlk-3c-BJ7">
+                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Filter" usesSingleLineMode="YES" bezelStyle="round" id="Xlk-3c-BJ7">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -145,7 +145,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="285" height="252"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="16" outlineTableColumn="Ytm-dS-0WJ" id="Hxu-8i-6rp">
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="23" outlineTableColumn="Ytm-dS-0WJ" id="Hxu-8i-6rp">
                                             <rect key="frame" x="0.0" y="0.0" width="285" height="252"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
