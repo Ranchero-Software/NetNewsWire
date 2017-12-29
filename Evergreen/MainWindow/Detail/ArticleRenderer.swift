@@ -167,6 +167,16 @@ class ArticleRenderer {
 			if let feedURL = article.feed?.homePageURL {
 				feedLink = linkWithTextAndClass(feedTitle, feedURL, "feedLink")
 			}
+			if let feedIcon = article.feed?.iconURL {
+				let feedIconImage = "<img src=\"\(feedIcon)\" height=\"48\" width=\"48\" class=\"feedIcon\" />"
+				if let feedURL = article.feed?.homePageURL {
+					let feedIconImageLink = linkWithText(feedIconImage, feedURL)
+					feedLink = feedIconImageLink + " " + feedLink
+				}
+				else {
+					feedLink = feedIconImage + " " + feedLink
+				}
+			}
 		}
 		d["feedlink"] = feedLink
 		d["feedlink_withfavicon"] = feedLink
@@ -181,8 +191,25 @@ class ArticleRenderer {
 		d["date_short"] = shortDate
 
 		d["byline"] = byline()
+		d["author_avatar"] = authorAvatar()
 
 		return d
+	}
+
+	private func authorAvatar() -> String {
+
+		guard let authors = article.authors, authors.count == 1, let author = authors.first else {
+			return ""
+		}
+		guard let avatarURL = author.avatarURL else {
+			return ""
+		}
+
+		var imageTag = "<img src=\"\(avatarURL)\" height=64 width=64 />"
+		if let authorURL = author.url {
+			imageTag = linkWithText(imageTag, authorURL)
+		}
+		return "<div id=authorAvatar>\(imageTag)</div>"
 	}
 
 	private func byline() -> String {
@@ -221,15 +248,8 @@ class ArticleRenderer {
 			}
 		}
 
-		byline = "By " + byline
 
-		if authors.count == 1, let author = authors.first {
-			if let avatarURL = author.avatarURL {
-				byline = "<img src=\"\(avatarURL)\" height=\"64\" width=\"64\" /> " + byline
-			}
-		}
-
-		return byline
+		return " • " + byline
 	}
 
 	private func renderedHTML() -> String {

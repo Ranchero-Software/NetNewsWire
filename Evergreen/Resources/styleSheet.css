@@ -31,6 +31,16 @@ a:hover {
 #articleDescription {
 	line-height: 1.5em;
 }
+#authorAvatar {
+	margin-top: 2em;
+	text-align: left;
+}
+#authorAvatar img {
+	border-radius: 5px;
+}
+.feedIcon {
+	border-radius: 5px;
+}
 h1 {
 	line-height: 1.15em;
 	font-weight: medium;
