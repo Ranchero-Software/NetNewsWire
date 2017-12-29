@@ -354,10 +354,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return result
 		}
 
-		if feedUnreadCount != feed.unreadCount {
-			assertionFailure("Expected feed.unreadCount \(feed.unreadCount) to equal number of fetched unread articles \(feedUnreadCount).")
-			feed.unreadCount = feedUnreadCount
-		}
+		feed.unreadCount = feedUnreadCount
 	}
 
 	public func fetchUnreadCountForToday(_ callback: @escaping (Int) -> Void) {
