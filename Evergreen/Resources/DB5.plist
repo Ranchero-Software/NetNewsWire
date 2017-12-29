@@ -123,7 +123,7 @@
 				<key>statusBar</key>
 				<dict>
 					<key>backgroundColor</key>
-					<string>FFFFFF</string>
+					<string>F0F0F0</string>
 				</dict>
 				<key>backgroundColor</key>
 				<string>FFFFFF</string>

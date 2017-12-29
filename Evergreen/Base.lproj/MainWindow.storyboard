@@ -612,44 +612,51 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="cJ9-6s-66u" customClass="DetailContainerView" customModule="Evergreen" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="450" height="272"/>
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                <subviews>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="Evergreen" customModuleProvider="target">
+                                        <rect key="frame" x="6" y="2" width="12" height="20"/>
+                                        <subviews>
+                                            <textField horizontalHuggingPriority="850" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dim-ed-Dcz" userLabel="URL Label">
+                                                <rect key="frame" x="4" y="2" width="4" height="17"/>
+                                                <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" usesSingleLineMode="YES" id="znU-Fh-L7H">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="Dim-ed-Dcz" firstAttribute="centerY" secondItem="xI5-lx-RD8" secondAttribute="centerY" id="Hna-uB-3F7"/>
+                                            <constraint firstAttribute="trailing" secondItem="Dim-ed-Dcz" secondAttribute="trailing" constant="6" id="O5q-ZN-DjZ"/>
+                                            <constraint firstAttribute="height" constant="20" id="Sfk-Ri-WoD"/>
+                                            <constraint firstItem="Dim-ed-Dcz" firstAttribute="leading" secondItem="xI5-lx-RD8" secondAttribute="leading" constant="6" id="Y9c-WR-ZBY"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="urlLabel" destination="Dim-ed-Dcz" id="8fY-oo-cGT"/>
+                                        </connections>
+                                    </customView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="xI5-lx-RD8" firstAttribute="leading" secondItem="cJ9-6s-66u" secondAttribute="leading" constant="6" id="5vz-ys-CAo"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="xI5-lx-RD8" secondAttribute="trailing" constant="6" id="pbD-LN-Gk1"/>
+                                    <constraint firstAttribute="bottom" secondItem="xI5-lx-RD8" secondAttribute="bottom" constant="2" id="zsv-B0-ChW"/>
+                                </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
                                         <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
-                            </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="Evergreen" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="28"/>
-                                <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dim-ed-Dcz" userLabel="URL Label">
-                                        <rect key="frame" x="18" y="6" width="414" height="17"/>
-                                        <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="znU-Fh-L7H">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="Dim-ed-Dcz" firstAttribute="centerY" secondItem="xI5-lx-RD8" secondAttribute="centerY" id="Hna-uB-3F7"/>
-                                    <constraint firstAttribute="trailing" secondItem="Dim-ed-Dcz" secondAttribute="trailing" constant="20" symbolic="YES" id="O5q-ZN-DjZ"/>
-                                    <constraint firstAttribute="height" constant="28" id="Sfk-Ri-WoD"/>
-                                    <constraint firstItem="Dim-ed-Dcz" firstAttribute="leading" secondItem="xI5-lx-RD8" secondAttribute="leading" constant="20" symbolic="YES" id="Y9c-WR-ZBY"/>
-                                </constraints>
                                 <connections>
-                                    <outlet property="urlLabel" destination="Dim-ed-Dcz" id="8fY-oo-cGT"/>
+                                    <outlet property="detailStatusBarView" destination="xI5-lx-RD8" id="yIZ-aP-fKF"/>
                                 </connections>
                             </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="xI5-lx-RD8" secondAttribute="trailing" id="9M9-ef-mCr"/>
                             <constraint firstItem="cJ9-6s-66u" firstAttribute="leading" secondItem="37A-bp-izR" secondAttribute="leading" id="AM2-YB-J0B"/>
-                            <constraint firstAttribute="bottom" secondItem="xI5-lx-RD8" secondAttribute="bottom" id="DGH-Hk-TSv"/>
                             <constraint firstItem="cJ9-6s-66u" firstAttribute="top" secondItem="37A-bp-izR" secondAttribute="top" id="DXp-ju-WpM"/>
-                            <constraint firstItem="xI5-lx-RD8" firstAttribute="top" secondItem="cJ9-6s-66u" secondAttribute="bottom" id="JJw-J8-N57"/>
                             <constraint firstAttribute="trailing" secondItem="cJ9-6s-66u" secondAttribute="trailing" id="hUh-Uk-62r"/>
-                            <constraint firstItem="xI5-lx-RD8" firstAttribute="leading" secondItem="37A-bp-izR" secondAttribute="leading" id="oCj-Mo-oMU"/>
+                            <constraint firstAttribute="bottom" secondItem="cJ9-6s-66u" secondAttribute="bottom" id="wzr-Ci-6A8"/>
                         </constraints>
                     </customView>
                     <connections>
