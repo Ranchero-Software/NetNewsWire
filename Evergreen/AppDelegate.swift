@@ -27,6 +27,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var feedIconDownloader: FeedIconDownloader!
 	var appName: String!
 
+	lazy var genericFeedImage: NSImage? = {
+		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/BookmarkIcon.icns"
+		let image = NSImage(contentsOfFile: path)
+		return image
+	}()
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {

@@ -111,7 +111,10 @@ extension FeedListViewController: NSOutlineViewDelegate {
 			return NSImage(named: NSImage.Name.folder)
 		}
 		else if let feed = node.representedObject as? FeedListFeed {
-			return appDelegate.faviconDownloader.favicon(withHomePageURL: feed.homePageURL)
+			if let image = appDelegate.faviconDownloader.favicon(withHomePageURL: feed.homePageURL) {
+				return image
+			}
+			return appDelegate.genericFeedImage
 		}
 		return nil
 	}
