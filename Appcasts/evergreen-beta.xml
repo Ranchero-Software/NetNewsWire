@@ -6,6 +6,26 @@
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
   
+             <item>
+            <title>Version 1.0d27</title>
+            <description><![CDATA[
+            
+            <h4>Detail status bar</h4>
+            <p>The link display now appears only during mouseover. Works much like Safari.</p>
+            <p>There is no persistent display of the current permalink. We’ll see if we miss it or not.</p>
+            
+            <h4>Icons</h4>
+            <p>Using a generic icon for feeds that don’t have a favicon. This icon may change.</p>
+            
+            <h4>Misc.</h4>
+            <p>Futzed around with the Feed Directory UI.</p>
+        
+  						]]></description>
+            <pubDate>Thu, 28 Dec 2017 18:45:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d27.zip" sparkle:version="519" sparkle:shortVersionString="1.0d27" length="7185976" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
            <item>
             <title>Version 1.0d26</title>
             <description><![CDATA[
