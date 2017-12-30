@@ -69,7 +69,7 @@
 			<key>homePageURL</key>
 			<string>http://flyingmeat.com/blog/</string>
 			<key>url</key>
-			<string>http://flyingmeat.com/blog/atom.xml</string>
+			<string>http://flyingmeat.com/blog/feed.json</string>
 		</dict>
 	</array>
 	<key>Blogs</key>
