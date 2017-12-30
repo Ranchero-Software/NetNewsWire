@@ -52,6 +52,19 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	private var representedObjects: [AnyObject]? {
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
+
+				if let representedObjects = representedObjects {
+					if representedObjects.count == 1 && representedObjects.first is Feed {
+						showFeedNames = false
+					}
+					else {
+						showFeedNames = true
+					}
+				}
+				else {
+					showFeedNames = false
+				}
+
 				postTimelineSelectionDidChangeNotification(nil)
 				fetchArticles()
 				if articles.count > 0 {
