@@ -13,6 +13,8 @@ import Data
 var cachedStyleString = ""
 var cachedTemplate = ""
 
+// NOTE: THIS CODE IS A TOTAL MESS RIGHT NOW WHILE WE’RE EXPERIMENTING WITH DIFFERENT LAYOUTS. DON’T JUDGE, YOU!
+
 class ArticleRenderer {
 
 	let article: Article
