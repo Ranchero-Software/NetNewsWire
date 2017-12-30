@@ -102,6 +102,7 @@
 		84D81BE41EFA2D3D00652332 /* ParsedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE31EFA2D3D00652332 /* ParsedItem.swift */; };
 		84D81BE61EFA2DFB00652332 /* ParsedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */; };
 		84D81BE81EFA2E6700652332 /* ParsedHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE71EFA2E6700652332 /* ParsedHub.swift */; };
+		84DCCC661FF80E0100D2DDF1 /* EntityDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DCCC651FF80E0100D2DDF1 /* EntityDecodingTests.swift */; };
 		84E7E69F1F85780D0046719D /* ParserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E7E69D1F85780D0046719D /* ParserData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84E7E6A01F85780D0046719D /* ParserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E7E69E1F85780D0046719D /* ParserData.m */; };
 		84FF5F8E1EFA285800C15A01 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FF5F841EFA285800C15A01 /* RSParser.framework */; };
@@ -215,6 +216,7 @@
 		84D81BE31EFA2D3D00652332 /* ParsedItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedItem.swift; path = Feeds/ParsedItem.swift; sourceTree = "<group>"; };
 		84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedAttachment.swift; path = Feeds/ParsedAttachment.swift; sourceTree = "<group>"; };
 		84D81BE71EFA2E6700652332 /* ParsedHub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedHub.swift; path = Feeds/ParsedHub.swift; sourceTree = "<group>"; };
+		84DCCC651FF80E0100D2DDF1 /* EntityDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityDecodingTests.swift; sourceTree = "<group>"; };
 		84E7E69D1F85780D0046719D /* ParserData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserData.h; sourceTree = "<group>"; };
 		84E7E69E1F85780D0046719D /* ParserData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParserData.m; sourceTree = "<group>"; };
 		84FF5F841EFA285800C15A01 /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -449,6 +451,7 @@
 				849A03E11F00902C00122600 /* RSDateParserTests.m */,
 				849A03E31F00912100122600 /* HTMLMetadataTests.swift */,
 				849A03E51F00952400122600 /* HTMLLinkTests.swift */,
+				84DCCC651FF80E0100D2DDF1 /* EntityDecodingTests.swift */,
 				849A03C41F0081EA00122600 /* Resources */,
 				84FF5F941EFA285800C15A01 /* Info.plist */,
 			);
@@ -661,6 +664,7 @@
 				849A03EC1F01FCDC00122600 /* RSSInJSONParserTests.swift in Sources */,
 				849A03E01F0088F600122600 /* OPMLTests.swift in Sources */,
 				840FDCB41F0217410041F61B /* JSONFeedParserTests.swift in Sources */,
+				84DCCC661FF80E0100D2DDF1 /* EntityDecodingTests.swift in Sources */,
 				849A03E61F00952400122600 /* HTMLLinkTests.swift in Sources */,
 				849A03E21F00902C00122600 /* RSDateParserTests.m in Sources */,
 				849A03DE1F00837A00122600 /* FeedParserTypeTests.swift in Sources */,
