@@ -19,6 +19,7 @@ class ArticleRenderer {
 
 	let article: Article
 	let articleStyle: ArticleStyle
+	static var faviconImgTagCache = [Feed: String]()
 
 	lazy var longDateFormatter: DateFormatter = {
 		let dateFormatter = DateFormatter()
@@ -169,21 +170,11 @@ class ArticleRenderer {
 		d["newsitem_description"] = body
 
 		d["avatars"] = ""
+		var didAddAvatar = false
 		if let avatar = avatarToUse() {
 			let avatarHTML = avatar.html(dimension: 64)
 			d["avatars"] = avatarHTML
-//			var ix = 0
-//			let ct = avatars.count
-//			for avatar in avatars {
-//				avatarHTML += avatar.html(dimension: 64)
-//				if ix < ct - 1 {
-//					avatarHTML += "&nbsp;"
-//				}
-//				ix += 1
-//			}
-//			if !avatarHTML.isEmpty {
-//				d["avatars"] = avatarHTML
-//			}
+			didAddAvatar = true
 		}
 
 		var feedLink = ""
@@ -195,6 +186,13 @@ class ArticleRenderer {
 		}
 		d["feedlink"] = feedLink
 		d["feedlink_withfavicon"] = feedLink
+
+		d["favicon"] = ""
+		if !didAddAvatar, let feed = article.feed {
+			if let favicon = faviconImgTag(forFeed: feed) {
+				d["favicon"] = favicon
+			}
+		}
 
 		let longDate = longDateFormatter.string(from: article.logicalDatePublished)
 		let mediumDate = mediumDateFormatter.string(from: article.logicalDatePublished)
@@ -228,6 +226,30 @@ class ArticleRenderer {
 			}
 			return imageTag
 		}
+	}
+
+	private func faviconImgTag(forFeed feed: Feed) -> String? {
+
+		if let cachedImgTag = ArticleRenderer.faviconImgTagCache[feed] {
+			return cachedImgTag
+		}
+
+		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
+			if let s = base64String(forImage: favicon) {
+				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=16 width=16 />"
+				ArticleRenderer.faviconImgTagCache[feed] = imgTag
+				return imgTag
+			}
+		}
+
+		return nil
+	}
+
+	private func base64String(forImage image: NSImage) -> String? {
+
+
+		let d = image.tiffRepresentation
+		return d?.base64EncodedString()
 	}
 
 	private func singleArticleSpecifiedAuthor() -> Author? {
