@@ -78,7 +78,7 @@ final class FaviconDownloader {
 			return favicon(with: faviconURL)
 		}
 
-		FaviconURLFinder.findFaviconURL(url) { (faviconURL) in
+		findFaviconURL(with: url) { (faviconURL) in
 			if let faviconURL = faviconURL {
 				self.homePageToFaviconURLCache[url] = faviconURL
 				let _ = self.favicon(with: faviconURL)
