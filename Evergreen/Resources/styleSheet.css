@@ -28,6 +28,16 @@ a:hover {
 #articleDateline a:link, #articleDateline a:visited {
 	color: rgba(0, 0, 0, 0.4);
 }
+#articleDateline img {
+	border-radius: 7px;
+}
+.articleDate {
+	color: #2db6ff;
+	text-align: right;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+	padding-bottom: 8px;
+	margin-bottom: 1em;
+}
 #articleDescription {
 	line-height: 1.5em;
 }
@@ -38,6 +48,30 @@ a:hover {
 #authorAvatar img {
 	border-radius: 5px;
 }
+.rightAlign {
+	text-align: right;
+}
+.leftAlign {
+	text-align: left;
+}
+.headerContainer {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	color: rgba(0, 0, 0, 0.3);
+}
+.header {
+	color: rgba(0, 0, 0, 0.3);
+}
+.headerTable {
+	width: 100%;
+}
+.headerContainer img {
+	border-radius: 7px;
+	margin-right: 8px;
+}
+.headerContainer a:link, .headerContainer a:visited {
+	color: rgba(0, 0, 0, 0.5);
+}
+
 .feedIcon {
 	border-radius: 5px;
 }

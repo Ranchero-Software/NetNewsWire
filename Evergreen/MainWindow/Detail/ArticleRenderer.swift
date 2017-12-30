@@ -133,6 +133,11 @@ class ArticleRenderer {
 	
 	private func linkWithText(_ text: String, _ href: String) -> String {
 
+		return ArticleRenderer.linkWithText(text, href)
+	}
+
+	private static func linkWithText(_ text: String, _ href: String) -> String {
+
 		return "<a href=\"\(href)\">\(text)</a>"
 	}
 
@@ -161,21 +166,28 @@ class ArticleRenderer {
 		d["article_description"] = body
 		d["newsitem_description"] = body
 
+		d["avatars"] = ""
+		if let avatars = avatarsToShow() {
+			var avatarHTML = ""
+			var ix = 0
+			let ct = avatars.count
+			for avatar in avatars {
+				avatarHTML += avatar.html(dimension: 64)
+				if ix < ct - 1 {
+					avatarHTML += "&nbsp;"
+				}
+				ix += 1
+			}
+			if !avatarHTML.isEmpty {
+				d["avatars"] = avatarHTML
+			}
+		}
+
 		var feedLink = ""
 		if let feedTitle = article.feed?.nameForDisplay {
 			feedLink = feedTitle
 			if let feedURL = article.feed?.homePageURL {
 				feedLink = linkWithTextAndClass(feedTitle, feedURL, "feedLink")
-			}
-			if let feedIcon = article.feed?.iconURL {
-				let feedIconImage = "<img src=\"\(feedIcon)\" height=\"48\" width=\"48\" class=\"feedIcon\" />"
-				if let feedURL = article.feed?.homePageURL {
-					let feedIconImageLink = linkWithText(feedIconImage, feedURL)
-					feedLink = feedIconImageLink + " " + feedLink
-				}
-				else {
-					feedLink = feedIconImage + " " + feedLink
-				}
 			}
 		}
 		d["feedlink"] = feedLink
@@ -191,26 +203,106 @@ class ArticleRenderer {
 		d["date_short"] = shortDate
 
 		d["byline"] = byline()
-		d["author_avatar"] = authorAvatar()
+//		d["author_avatar"] = authorAvatar()
 
 		return d
 	}
 
-	private func authorAvatar() -> String {
+	struct Avatar {
+		let imageURL: String
+		let url: String?
 
-		guard let authors = article.authors, authors.count == 1, let author = authors.first else {
-			return ""
-		}
-		guard let avatarURL = author.avatarURL else {
-			return ""
-		}
+		func html(dimension: Int) -> String {
 
-		var imageTag = "<img src=\"\(avatarURL)\" height=64 width=64 />"
-		if let authorURL = author.url {
-			imageTag = linkWithText(imageTag, authorURL)
+			let imageTag = "<img src=\"\(imageURL)\" width=\"\(dimension)\" height=\"\(dimension)\""
+			if let url = url {
+				return linkWithText(imageTag, url)
+			}
+			return imageTag
 		}
-		return "<div id=authorAvatar>\(imageTag)</div>"
 	}
+
+	private func singleArticleSpecifiedAuthor() -> Author? {
+
+		// The author of this article, if just one.
+
+		if let authors = article.authors, authors.count == 1 {
+			return authors.first!
+		}
+		return nil
+	}
+
+	private func singleFeedSpecifiedAuthor() -> Author? {
+
+		if let authors = article.feed?.authors, authors.count == 1 {
+			return authors.first!
+		}
+		return nil
+	}
+
+	private func feedAvatar() -> Avatar? {
+
+		guard let feedIconURL = article.feed?.iconURL else {
+			return nil
+		}
+		return Avatar(imageURL: feedIconURL, url: article.feed?.homePageURL ?? article.feed?.url)
+	}
+
+	private func authorAvatar() -> Avatar? {
+
+		if let author = singleArticleSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url)
+		}
+		if let author = singleFeedSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url)
+		}
+		return nil
+	}
+
+	private func avatarsToShow() -> [Avatar]? {
+
+		var avatars = [Avatar]()
+		if let avatar = feedAvatar() {
+			avatars.append(avatar)
+		}
+		if let avatar = authorAvatar() {
+			avatars.append(avatar)
+		}
+		return avatars.isEmpty ? nil : avatars
+	}
+
+	private func avatarToUse() -> Avatar? {
+
+		// Use author if article specifies an author, otherwise use feed icon.
+		// If no feed icon, use feed-specified author.
+
+		if let author = singleArticleSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url)
+		}
+		if let feedIconURL = article.feed?.iconURL {
+			return Avatar(imageURL: feedIconURL, url: article.feed?.homePageURL ?? article.feed?.url)
+		}
+		if let author = singleFeedSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url)
+		}
+		return nil
+	}
+
+//	private func authorAvatar() -> String {
+//
+//		guard let authors = article.authors, authors.count == 1, let author = authors.first else {
+//			return ""
+//		}
+//		guard let avatarURL = author.avatarURL else {
+//			return ""
+//		}
+//
+//		var imageTag = "<img src=\"\(avatarURL)\" height=64 width=64 />"
+//		if let authorURL = author.url {
+//			imageTag = linkWithText(imageTag, authorURL)
+//		}
+//		return "<div id=authorAvatar>\(imageTag)</div>"
+//	}
 
 	private func byline() -> String {
 
@@ -249,7 +341,7 @@ class ArticleRenderer {
 		}
 
 
-		return " • " + byline
+		return byline
 	}
 
 	private func renderedHTML() -> String {
