@@ -20,6 +20,7 @@ class ArticleRenderer {
 	let article: Article
 	let articleStyle: ArticleStyle
 	static var faviconImgTagCache = [Feed: String]()
+	static var feedIconImgTagCache = [Feed: String]()
 
 	lazy var longDateFormatter: DateFormatter = {
 		let dateFormatter = DateFormatter()
@@ -171,8 +172,7 @@ class ArticleRenderer {
 
 		d["avatars"] = ""
 		var didAddAvatar = false
-		if let avatar = avatarToUse() {
-			let avatarHTML = avatar.html(dimension: 64)
+		if let avatarHTML = avatarImgTag() {
 			d["avatars"] = avatarHTML
 			didAddAvatar = true
 		}
@@ -238,6 +238,23 @@ class ArticleRenderer {
 			if let s = base64String(forImage: favicon) {
 				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=16 width=16 />"
 				ArticleRenderer.faviconImgTagCache[feed] = imgTag
+				return imgTag
+			}
+		}
+
+		return nil
+	}
+
+	private func feedIconImgTag(forFeed feed: Feed) -> String? {
+
+		if let cachedImgTag = ArticleRenderer.feedIconImgTagCache[feed] {
+			return cachedImgTag
+		}
+
+		if let icon = appDelegate.feedIconDownloader.icon(for: feed) {
+			if let s = base64String(forImage: icon) {
+				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=48 width=48 />"
+				ArticleRenderer.feedIconImgTagCache[feed] = imgTag
 				return imgTag
 			}
 		}
@@ -314,6 +331,25 @@ class ArticleRenderer {
 		}
 		if let author = singleFeedSpecifiedAuthor(), let imageURL = author.avatarURL {
 			return Avatar(imageURL: imageURL, url: author.url)
+		}
+		return nil
+	}
+
+	private let avatarDimension = 48
+
+	private func avatarImgTag() -> String? {
+
+		if let author = singleArticleSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url).html(dimension: avatarDimension)
+		}
+		if let feed = article.feed, let imgTag = feedIconImgTag(forFeed: feed) {
+			return imgTag
+		}
+		if let feedIconURL = article.feed?.iconURL {
+			return Avatar(imageURL: feedIconURL, url: article.feed?.homePageURL ?? article.feed?.url).html(dimension: avatarDimension)
+		}
+		if let author = singleFeedSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url).html(dimension: avatarDimension)
 		}
 		return nil
 	}
