@@ -7,6 +7,22 @@
         <language>en</language>
   
              <item>
+             
+            <title>Version 1.0d28</title>
+            <description><![CDATA[
+            
+            <h4>Experimental version</h4>
+            <p>Now shows feed and user avatars in the detail view, when they’re available in the feed. (Requires JSON Feed feeds, at least for now.)</p>
+            <p>This meant making layout changes to the detail view. Feedback is, of course, very much welcome.</p>
+            
+            <p>(The code for building the detail view’s HTML is currently a total mess while we’re experimenting. Don’t look at it. Consider yourself warned.)</p>
+     				]]></description>
+            <pubDate>Fri, 29 Dec 2017 19:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d28.zip" sparkle:version="520" sparkle:shortVersionString="1.0d28" length="7193574" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+
             <title>Version 1.0d27</title>
             <description><![CDATA[
             
