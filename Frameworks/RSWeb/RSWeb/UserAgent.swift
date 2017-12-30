@@ -18,7 +18,14 @@ public struct UserAgent {
 		guard let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") else {
 			return nil
 		}
-		return "\(userAgentName) \(version)"
+
+		#if os(macOS)
+			let osString = "Macintosh"
+		#elseif os(iOS)
+			let osString = "iOS"
+		#endif
+
+		return "\(userAgentName)/\(version) (\(osString))"
 	}
 
 	public static func headers() -> [AnyHashable: String]? {
