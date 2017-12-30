@@ -30,7 +30,22 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	var undoableCommands = [UndoableCommand]()
 	private var cellAppearance: TimelineCellAppearance!
-	private var showFeedNames = false
+
+	private var showFeedNames = false {
+		didSet {
+			if showFeedNames != oldValue {
+				tableView.rowHeight = currentRowHeight
+			}
+		}
+	}
+
+	private var rowHeightWithFeedName: CGFloat = 0.0
+	private var rowHeightWithoutFeedName: CGFloat = 0.0
+
+	private var currentRowHeight: CGFloat {
+		return showFeedNames ? rowHeightWithFeedName : rowHeightWithoutFeedName
+	}
+
 	private var didRegisterForNotifications = false
 	private let timelineFontSizeKVOKey = "values.{AppDefaults.Key.timelineFontSize}"
 
@@ -84,7 +99,8 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, fontSize: fontSize)
 
-		tableView.rowHeight = calculateRowHeight()
+		updateRowHeights()
+		tableView.rowHeight = currentRowHeight
 		tableView.target = self
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
@@ -124,9 +140,9 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	private func fontSizeDidChange() {
 
 		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, fontSize: fontSize)
-		let updatedRowHeight = calculateRowHeight()
-		if tableView.rowHeight != updatedRowHeight {
-			tableView.rowHeight = updatedRowHeight
+		updateRowHeights()
+		if tableView.rowHeight != currentRowHeight {
+			tableView.rowHeight = currentRowHeight
 			tableView.reloadData()
 		}
 	}
@@ -324,18 +340,23 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	
 	// MARK: - Cell Configuring
 
-	private func calculateRowHeight() -> CGFloat {
+	private func calculateRowHeight(showingFeedNames: Bool) -> CGFloat {
 
 		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 		
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, appearance: cellAppearance, showFeedName: false, favicon: nil, avatar: nil, featuredImage: nil)
+		let prototypeCellData = TimelineCellData(article: prototypeArticle, appearance: cellAppearance, showFeedName: showingFeedNames, feedName: "Prototype Feed Name", favicon: nil, avatar: nil, featuredImage: nil)
 		let height = timelineCellHeight(100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
 
+	private func updateRowHeights() {
+
+		rowHeightWithFeedName = calculateRowHeight(showingFeedNames: true)
+		rowHeightWithoutFeedName = calculateRowHeight(showingFeedNames: false)
+	}
 }
 
 // MARK: - NSTableViewDataSource
@@ -423,19 +444,11 @@ extension TimelineViewController: NSTableViewDelegate {
 
 		cell.objectValue = article
 
-		let favicon = faviconFor(article)
+		let favicon = showFeedNames ? article.feed?.smallIcon : nil
 		let avatar = avatarFor(article)
 		let featuredImage = featuredImageFor(article)
 
-		cell.cellData = TimelineCellData(article: article, appearance: cellAppearance, showFeedName: showFeedNames, favicon: favicon, avatar: avatar, featuredImage: featuredImage)
-	}
-
-	private func faviconFor(_ article: Article) -> NSImage? {
-
-		guard let feed = article.feed else {
-			return nil
-		}
-		return appDelegate.faviconDownloader.favicon(for: feed)
+		cell.cellData = TimelineCellData(article: article, appearance: cellAppearance, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, favicon: favicon, avatar: avatar, featuredImage: featuredImage)
 	}
 
 	private func avatarFor(_ article: Article) -> NSImage? {

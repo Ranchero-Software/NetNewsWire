@@ -28,7 +28,7 @@ struct TimelineCellData {
 	let featuredImage: NSImage? // image from within the article
 	let read: Bool
 
-	init(article: Article, appearance: TimelineCellAppearance, showFeedName: Bool, favicon: NSImage?, avatar: NSImage?, featuredImage: NSImage?) {
+	init(article: Article, appearance: TimelineCellAppearance, showFeedName: Bool, feedName: String?, favicon: NSImage?, avatar: NSImage?, featuredImage: NSImage?) {
 		
 		self.title = timelineTruncatedTitle(article)
 		self.text = timelineTruncatedSummary(article)
@@ -51,13 +51,13 @@ struct TimelineCellData {
 			attributedDateCache[self.dateString] = self.attributedDateString
 		}
 
-		if let feed = article.feed {
-			self.feedName = timelineTruncatedFeedName(feed)
+		if let feedName = feedName {
+			self.feedName = timelineTruncatedFeedName(feedName)
 		}
 		else {
 			self.feedName = ""
 		}
-		if let s = attributedFeedNameCache[self.dateString] {
+		if let s = attributedFeedNameCache[self.feedName] {
 			self.attributedFeedName = s
 		}
 		else {
