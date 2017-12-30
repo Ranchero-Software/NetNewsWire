@@ -167,20 +167,21 @@ class ArticleRenderer {
 		d["newsitem_description"] = body
 
 		d["avatars"] = ""
-		if let avatars = avatarsToShow() {
-			var avatarHTML = ""
-			var ix = 0
-			let ct = avatars.count
-			for avatar in avatars {
-				avatarHTML += avatar.html(dimension: 64)
-				if ix < ct - 1 {
-					avatarHTML += "&nbsp;"
-				}
-				ix += 1
-			}
-			if !avatarHTML.isEmpty {
-				d["avatars"] = avatarHTML
-			}
+		if let avatar = avatarToUse() {
+			let avatarHTML = avatar.html(dimension: 64)
+			d["avatars"] = avatarHTML
+//			var ix = 0
+//			let ct = avatars.count
+//			for avatar in avatars {
+//				avatarHTML += avatar.html(dimension: 64)
+//				if ix < ct - 1 {
+//					avatarHTML += "&nbsp;"
+//				}
+//				ix += 1
+//			}
+//			if !avatarHTML.isEmpty {
+//				d["avatars"] = avatarHTML
+//			}
 		}
 
 		var feedLink = ""
@@ -194,16 +195,21 @@ class ArticleRenderer {
 		d["feedlink_withfavicon"] = feedLink
 
 		let longDate = longDateFormatter.string(from: article.logicalDatePublished)
-		d["date_long"] = longDate
-
 		let mediumDate = mediumDateFormatter.string(from: article.logicalDatePublished)
-		d["date_medium"] = mediumDate
-		
 		let shortDate = shortDateFormatter.string(from: article.logicalDatePublished)
-		d["date_short"] = shortDate
+		if let permalink = article.url {
+			d["date_long"] = linkWithText(longDate, permalink)
+			d["date_medium"] = linkWithText(mediumDate, permalink)
+			d["date_short"] = linkWithText(shortDate, permalink)
+		}
+		else {
+			d["date_long"] = longDate
+			d["date_medium"] = mediumDate
+			d["date_short"] = shortDate
+		}
 
 		d["byline"] = byline()
-//		d["author_avatar"] = authorAvatar()
+		//		d["author_avatar"] = authorAvatar()
 
 		return d
 	}
