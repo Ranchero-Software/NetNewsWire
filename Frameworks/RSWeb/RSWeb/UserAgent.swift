@@ -19,6 +19,10 @@ public struct UserAgent {
 			return nil
 		}
 
+		if let userAgentParentheticalAddition = Bundle.main.object(forInfoDictionaryKey: "UserAgentParentheticalAddition") {
+			return "\(userAgentName)/\(version) (\(userAgentParentheticalAddition))"
+		}
+
 		#if os(macOS)
 			let osString = "Macintosh"
 		#elseif os(iOS)
