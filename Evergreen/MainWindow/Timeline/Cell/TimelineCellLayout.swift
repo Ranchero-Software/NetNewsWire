@@ -33,15 +33,13 @@ struct TimelineCellLayout {
 		self.avatarImageRect = avatarImageRect
 		self.paddingBottom = paddingBottom
 		
-		var height = NSMaxY(dateRect)
-		if feedNameRect != NSZeroRect {
-			height = NSMaxY(feedNameRect)
-		}
-		height = height + paddingBottom
-
-		let heightOfImage = avatarImageRect.maxY + paddingBottom
-		height = max(height, heightOfImage)
-
+		var height = max(0, faviconRect.maxY)
+		height = max(height, feedNameRect.maxY)
+		height = max(height, dateRect.maxY)
+		height = max(height, titleRect.maxY)
+		height = max(height, unreadIndicatorRect.maxY)
+		height = max(height, avatarImageRect.maxY)
+		height += paddingBottom
 		self.height = height
 	}
 }
@@ -51,8 +49,6 @@ private func rectForDate(_ cellData: TimelineCellData, _ width: CGFloat, _ appea
 	let renderer = RSSingleLineRenderer(attributedTitle: cellData.attributedDateString)
 	var r = NSZeroRect
 	r.size = renderer.size
-//	r.origin.y = appearance.cellPadding.top
-//	r.origin.x = width - (appearance.cellPadding.right + r.size.width)
 
 	r.origin.y = NSMaxY(titleRect) + appearance.titleBottomMargin
 	r.origin.x = appearance.boxLeftMargin
@@ -75,15 +71,7 @@ private func rectForFeedName(_ cellData: TimelineCellData, _ width: CGFloat, _ a
 	r.origin.y = NSMaxY(dateRect) + appearance.titleBottomMargin
 	r.origin.x = appearance.boxLeftMargin
 	
-//	if let _ = cellData.favicon {
-//		r.origin.x += appearance.faviconSize.width + appearance.faviconFeedNameSpacing
-//	}
-
-	r.size.width = width - (r.origin.x + appearance.cellPadding.right)
-	
-	if r.size.width < 15 {
-		return NSZeroRect
-	}
+	r.size.width = max(0, width - (r.origin.x + appearance.cellPadding.right))
 	
 	return r
 }
@@ -124,10 +112,6 @@ private func rectsForTitle(_ cellData: TimelineCellData, _ width: CGFloat, _ app
 
 private func rectForUnreadIndicator(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ titleLine1Rect: NSRect) -> NSRect {
 	
-//	if cellData.read {
-//		return NSZeroRect
-//	}
-	
 	var r = NSZeroRect
 	r.size = NSSize(width: appearance.unreadCircleDimension, height: appearance.unreadCircleDimension)
 	r.origin.x = appearance.cellPadding.left
@@ -148,7 +132,6 @@ private func rectForAvatar(_ cellData: TimelineCellData, _ appearance: TimelineC
 
 func timelineCellLayout(_ width: CGFloat, cellData: TimelineCellData, appearance: TimelineCellAppearance) -> TimelineCellLayout {
 	
-//	let dateRect = rectForDate(cellData, width, appearance)
 	let (titleRect, titleLine1Rect) = rectsForTitle(cellData, width, appearance)
 	let dateRect = rectForDate(cellData, width, appearance, titleRect)
 	let feedNameRect = rectForFeedName(cellData, width, appearance, dateRect)
