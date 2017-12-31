@@ -7,6 +7,29 @@
         <language>en</language>
 
 				<item>
+          <title>Version 1.0d29</title>
+            <description><![CDATA[
+            
+            <h4>Detail view</h4>
+            <p>Feed icons and user avatars now go at the top right. (Except for favicons, which are still on the left. They should probably go to the right too.)</p>
+            <p>The system gets feed icons from web page metadata now, when not specified in the feed.</p>
+            
+            <h4>Timeline view</h4>
+            <p>Show the feed name when in a timeline that could show multiple feeds — such as when a folder is selected in the sidebar.</p>
+            
+            <h4>Misc.</h4>
+            <p>Fixed a bug where favicons in the default location for a feed — /favicon.ico — wouldn’t get found.</p>
+            <p>Make User-Agent of the form Evergreen/1.0d28 (Macintosh; RSS Reader; ranchero.com/evergreen/)</p>
+            <p>Fix bug decoding &amp;#39; entities.</p>
+            <p>Use Flying Meat’s JSON Feed in the feed directory.</p>
+         
+  						]]></description>
+            <pubDate>Sat, 30 Dec 2017 16:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d29.zip" sparkle:version="521" sparkle:shortVersionString="1.0d29" length="7200332" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+				<item>
           <title>Version 1.0d28</title>
             <description><![CDATA[
             
