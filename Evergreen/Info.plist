@@ -31,9 +31,7 @@
 	<key>SUFeedURL</key>
 	<string>https://ranchero.com/downloads/evergreen-beta.xml</string>
 	<key>UserAgent</key>
-	<string>Evergreen</string>
-	<key>UserAgentParentheticalAddition</key>
-	<string>Macintosh; RSS Reader; ranchero.com/evergreen/</string>
+	<string>Evergreen (macOS; RSS Reader; https://ranchero.com/evergreen/)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
