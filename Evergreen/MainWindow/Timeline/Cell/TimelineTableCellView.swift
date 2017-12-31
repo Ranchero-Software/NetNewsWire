@@ -20,7 +20,7 @@ class TimelineTableCellView: NSTableCellView {
 		let imageView = NSImageView(frame: NSRect.zero)
 		imageView.imageScaling = .scaleProportionallyDown
 		imageView.animates = false
-		imageView.imageAlignment = .alignTop
+		imageView.imageAlignment = .alignCenter
 		return imageView
 	}()
 
@@ -32,7 +32,13 @@ class TimelineTableCellView: NSTableCellView {
 //		return imageView
 //	}()
 
-	var cellAppearance: TimelineCellAppearance!
+	var cellAppearance: TimelineCellAppearance! {
+		didSet {
+			avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
+			avatarImageView.needsDisplay = true
+		}
+	}
+	
 	var cellData: TimelineCellData! {
 		didSet {
 			updateSubviews()
@@ -186,15 +192,17 @@ class TimelineTableCellView: NSTableCellView {
 
 	private func updateAvatar() {
 
-//		if let image = cellData.avatar {
-//			if avatarImageView.image !== image {
-//				avatarImageView.image = image
-//			}
-//			avatarImageView.isHidden = false
-//		}
-//		else {
-//			avatarImageView.isHidden = true
-//		}
+		avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
+
+		if let image = cellData.avatar {
+			if avatarImageView.image !== image {
+				avatarImageView.image = image
+			}
+			avatarImageView.isHidden = false
+		}
+		else {
+			avatarImageView.isHidden = true
+		}
 	}
 
 	private func updateFavicon() {
@@ -216,7 +224,7 @@ class TimelineTableCellView: NSTableCellView {
 		updateFeedNameView()
 		updateUnreadIndicator()
 		updateAvatar()
-		updateFavicon()
+//		updateFavicon()
 	}
 	
 	private func updateAppearance() {

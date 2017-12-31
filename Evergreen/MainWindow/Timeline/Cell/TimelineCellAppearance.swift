@@ -40,7 +40,8 @@ struct TimelineCellAppearance {
 	let avatarSize: NSSize
 	let avatarMarginRight: CGFloat
 	let avatarAdjustmentTop: CGFloat
-
+	let avatarCornerRadius: CGFloat
+	
 	init(theme: VSTheme, fontSize: FontSize) {
 
 		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
@@ -72,8 +73,9 @@ struct TimelineCellAppearance {
 		self.avatarSize = theme.size(forKey: "MainWindow.Timeline.cell.avatar")
 		self.avatarMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginRight")
 		self.avatarAdjustmentTop = theme.float(forKey: "MainWindow.Timeline.cell.avatarAdjustmentTop")
+		self.avatarCornerRadius = theme.float(forKey: "MainWindow.Timeline.cell.avatarCornerRadius")
 		
-		self.boxLeftMargin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight //+ self.avatarSize.width + self.avatarMarginRight
+		self.boxLeftMargin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight + self.avatarSize.width + self.avatarMarginRight
 	}
 }
 

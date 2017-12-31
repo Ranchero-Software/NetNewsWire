@@ -104,13 +104,15 @@
 					<key>unreadCircleMarginRight</key>
 					<integer>8</integer>
 					<key>avatarHeight</key>
-					<integer>42</integer>
+					<integer>48</integer>
 					<key>avatarWidth</key>
-					<integer>42</integer>
+					<integer>48</integer>
 					<key>avatarMarginRight</key>
 					<integer>8</integer>
 					<key>avatarAdjustmentTop</key>
 					<integer>4</integer>
+					<key>avatarCornerRadius</key>
+					<integer>7</integer>
 				</dict>
 			</dict>
 			<key>Detail</key>

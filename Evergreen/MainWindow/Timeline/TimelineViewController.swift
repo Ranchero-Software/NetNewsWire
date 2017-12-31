@@ -81,6 +81,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 				}
 
 				postTimelineSelectionDidChangeNotification(nil)
+				articles = ArticleArray()
 				fetchArticles()
 				if articles.count > 0 {
 					tableView.scrollRowToVisible(0)
