@@ -1,10 +1,10 @@
 body {
 	color: #444;
 	background-color: white;
-	margin-top: 42px;
-	margin-bottom: 100px;
-	margin-left: 80px;
-	margin-right: 80px;
+	margin: 80px auto 100px;
+	padding-left: 40px;
+	padding-right: 40px;
+	max-width: 600px;
 	font-family: -apple-system;
 	font-size: 18px;
 }
