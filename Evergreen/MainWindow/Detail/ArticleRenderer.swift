@@ -173,7 +173,8 @@ class ArticleRenderer {
 		d["avatars"] = ""
 		var didAddAvatar = false
 		if let avatarHTML = avatarImgTag() {
-			d["avatars"] = avatarHTML
+//			d["avatars"] = avatarHTML
+			d["avatars"] = "<td class=\"header rightAlign avatar\">\(avatarHTML)</td>";
 			didAddAvatar = true
 		}
 
@@ -187,10 +188,11 @@ class ArticleRenderer {
 		d["feedlink"] = feedLink
 		d["feedlink_withfavicon"] = feedLink
 
-		d["favicon"] = ""
+//		d["favicon"] = ""
 		if !didAddAvatar, let feed = article.feed {
 			if let favicon = faviconImgTag(forFeed: feed) {
-				d["favicon"] = favicon
+				d["avatars"] = "<td class=\"header rightAlign\">\(favicon)</td>";
+//				d["favicon"] = favicon
 			}
 		}
 
