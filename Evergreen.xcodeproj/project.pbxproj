@@ -475,8 +475,8 @@
 		849A97911ED9EF65007D329B /* IndeterminateProgressWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndeterminateProgressWindowController.swift; sourceTree = "<group>"; };
 		849A97941ED9EF7A007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/IndeterminateProgressWindow.xib; sourceTree = SOURCE_ROOT; };
 		849A97971ED9EFAA007D329B /* Node-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Node-Extensions.swift"; sourceTree = "<group>"; };
-		849A979A1ED9EFEB007D329B /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = styleSheet.css; path = Evergreen/Resources/styleSheet.css; sourceTree = SOURCE_ROOT; };
-		849A979B1ED9EFEB007D329B /* template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = template.html; path = Evergreen/Resources/template.html; sourceTree = SOURCE_ROOT; };
+		849A979A1ED9EFEB007D329B /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = styleSheet.css; path = Evergreen/MainWindow/Detail/styleSheet.css; sourceTree = SOURCE_ROOT; };
+		849A979B1ED9EFEB007D329B /* template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = template.html; path = Evergreen/MainWindow/Detail/template.html; sourceTree = SOURCE_ROOT; };
 		849A979E1ED9F130007D329B /* SidebarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarCell.swift; sourceTree = "<group>"; };
 		849A97A01ED9F180007D329B /* InitialFeedDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InitialFeedDownloader.swift; path = AddFeed/InitialFeedDownloader.swift; sourceTree = "<group>"; };
 		849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FolderTreeControllerDelegate.swift; path = AddFeed/FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
@@ -772,6 +772,8 @@
 				849A977E1ED9EC42007D329B /* DetailViewController.swift */,
 				849A977D1ED9EC42007D329B /* ArticleRenderer.swift */,
 				84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */,
+				849A979A1ED9EFEB007D329B /* styleSheet.css */,
+				849A979B1ED9EFEB007D329B /* template.html */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -826,8 +828,6 @@
 		849A97991ED9EFB6007D329B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				849A979A1ED9EFEB007D329B /* styleSheet.css */,
-				849A979B1ED9EFEB007D329B /* template.html */,
 				849C646C1ED37A5D003D8FC0 /* Info.plist */,
 				84EB380F1FBA8B9F000D2111 /* KeyboardShortcuts */,
 			);
