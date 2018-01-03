@@ -96,14 +96,6 @@
 	</dict>
 	<dict>
 		<key>homePageURL</key>
-		<string>http://katiefloyd.com/</string>
-		<key>editedName</key>
-		<string>Katie Floyd</string>
-		<key>url</key>
-		<string>http://feed.katiefloyd.com/</string>
-	</dict>
-	<dict>
-		<key>homePageURL</key>
 		<string>https://ranchero.com/evergreen/</string>
 		<key>editedName</key>
 		<string>Evergreen News</string>
@@ -147,6 +139,14 @@
 		<string>The Omni Blog</string>
 		<key>url</key>
 		<string>https://www.omnigroup.com/blog/rss/</string>
+	</dict>
+	<dict>
+		<key>homePageURL</key>
+		<string>https://om.co/</string>
+		<key>editedName</key>
+		<string>Om Malik</string>
+		<key>url</key>
+		<string>https://om.co/feed</string>
 	</dict>
 </array>
 </plist>
