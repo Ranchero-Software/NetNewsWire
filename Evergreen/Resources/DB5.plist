@@ -104,13 +104,15 @@
 					<key>unreadCircleMarginRight</key>
 					<integer>8</integer>
 					<key>avatarHeight</key>
-					<integer>42</integer>
+					<integer>48</integer>
 					<key>avatarWidth</key>
-					<integer>42</integer>
+					<integer>48</integer>
 					<key>avatarMarginRight</key>
 					<integer>8</integer>
 					<key>avatarAdjustmentTop</key>
 					<integer>4</integer>
+					<key>avatarCornerRadius</key>
+					<integer>7</integer>
 				</dict>
 			</dict>
 			<key>Detail</key>
@@ -123,7 +125,7 @@
 				<key>statusBar</key>
 				<dict>
 					<key>backgroundColor</key>
-					<string>FFFFFF</string>
+					<string>F0F0F0</string>
 				</dict>
 				<key>backgroundColor</key>
 				<string>FFFFFF</string>
@@ -133,12 +135,17 @@
 		<dict>
 			<key>sidebar</key>
 			<dict>
-				<key>initialWidth</key>
+				<key>bestWidth</key>
 				<integer>285</integer>
 				<key>minimumThickness</key>
-				<string>220</string>
+				<integer>240</integer>
 				<key>maximumThickness</key>
-				<string>512</string>
+				<integer>512</integer>
+			</dict>
+			<key>timeline</key>
+			<dict>
+				<key>minimumThickness</key>
+				<integer>240</integer>
 			</dict>
 		</dict>
 	</dict>

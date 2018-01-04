@@ -13,10 +13,14 @@ import Data
 var cachedStyleString = ""
 var cachedTemplate = ""
 
+// NOTE: THIS CODE IS A TOTAL MESS RIGHT NOW WHILE WE’RE EXPERIMENTING WITH DIFFERENT LAYOUTS. DON’T JUDGE, YOU!
+
 class ArticleRenderer {
 
 	let article: Article
 	let articleStyle: ArticleStyle
+	static var faviconImgTagCache = [Feed: String]()
+	static var feedIconImgTagCache = [Feed: String]()
 
 	lazy var longDateFormatter: DateFormatter = {
 		let dateFormatter = DateFormatter()
@@ -133,7 +137,17 @@ class ArticleRenderer {
 	
 	private func linkWithText(_ text: String, _ href: String) -> String {
 
+		return ArticleRenderer.linkWithText(text, href)
+	}
+
+	private static func linkWithText(_ text: String, _ href: String) -> String {
+
 		return "<a href=\"\(href)\">\(text)</a>"
+	}
+
+	private func linkWithLink(_ href: String) -> String {
+
+		return linkWithText(href, href)
 	}
 
 	private func titleOrTitleLink() -> String {
@@ -156,6 +170,14 @@ class ArticleRenderer {
 		d["article_description"] = body
 		d["newsitem_description"] = body
 
+		d["avatars"] = ""
+		var didAddAvatar = false
+		if let avatarHTML = avatarImgTag() {
+//			d["avatars"] = avatarHTML
+			d["avatars"] = "<td class=\"header rightAlign avatar\">\(avatarHTML)</td>";
+			didAddAvatar = true
+		}
+
 		var feedLink = ""
 		if let feedTitle = article.feed?.nameForDisplay {
 			feedLink = feedTitle
@@ -166,16 +188,228 @@ class ArticleRenderer {
 		d["feedlink"] = feedLink
 		d["feedlink_withfavicon"] = feedLink
 
-		let longDate = longDateFormatter.string(from: article.logicalDatePublished)
-		d["date_long"] = longDate
+//		d["favicon"] = ""
+		if !didAddAvatar, let feed = article.feed {
+			if let favicon = faviconImgTag(forFeed: feed) {
+				d["avatars"] = "<td class=\"header rightAlign\">\(favicon)</td>";
+//				d["favicon"] = favicon
+			}
+		}
 
+		let longDate = longDateFormatter.string(from: article.logicalDatePublished)
 		let mediumDate = mediumDateFormatter.string(from: article.logicalDatePublished)
-		d["date_medium"] = mediumDate
-		
 		let shortDate = shortDateFormatter.string(from: article.logicalDatePublished)
-		d["date_short"] = shortDate
-		
+		if let permalink = article.url {
+			d["date_long"] = linkWithText(longDate, permalink)
+			d["date_medium"] = linkWithText(mediumDate, permalink)
+			d["date_short"] = linkWithText(shortDate, permalink)
+		}
+		else {
+			d["date_long"] = longDate
+			d["date_medium"] = mediumDate
+			d["date_short"] = shortDate
+		}
+
+		d["byline"] = byline()
+		//		d["author_avatar"] = authorAvatar()
+
 		return d
+	}
+
+	struct Avatar {
+		let imageURL: String
+		let url: String?
+
+		func html(dimension: Int) -> String {
+
+			let imageTag = "<img src=\"\(imageURL)\" width=\"\(dimension)\" height=\"\(dimension)\""
+			if let url = url {
+				return linkWithText(imageTag, url)
+			}
+			return imageTag
+		}
+	}
+
+	private func faviconImgTag(forFeed feed: Feed) -> String? {
+
+		if let cachedImgTag = ArticleRenderer.faviconImgTagCache[feed] {
+			return cachedImgTag
+		}
+
+		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
+			if let s = base64String(forImage: favicon) {
+				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=16 width=16 />"
+				ArticleRenderer.faviconImgTagCache[feed] = imgTag
+				return imgTag
+			}
+		}
+
+		return nil
+	}
+
+	private func feedIconImgTag(forFeed feed: Feed) -> String? {
+
+		if let cachedImgTag = ArticleRenderer.feedIconImgTagCache[feed] {
+			return cachedImgTag
+		}
+
+		if let icon = appDelegate.feedIconDownloader.icon(for: feed) {
+			if let s = base64String(forImage: icon) {
+				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=48 width=48 />"
+				ArticleRenderer.feedIconImgTagCache[feed] = imgTag
+				return imgTag
+			}
+		}
+
+		return nil
+	}
+
+	private func base64String(forImage image: NSImage) -> String? {
+
+
+		let d = image.tiffRepresentation
+		return d?.base64EncodedString()
+	}
+
+	private func singleArticleSpecifiedAuthor() -> Author? {
+
+		// The author of this article, if just one.
+
+		if let authors = article.authors, authors.count == 1 {
+			return authors.first!
+		}
+		return nil
+	}
+
+	private func singleFeedSpecifiedAuthor() -> Author? {
+
+		if let authors = article.feed?.authors, authors.count == 1 {
+			return authors.first!
+		}
+		return nil
+	}
+
+	private func feedAvatar() -> Avatar? {
+
+		guard let feedIconURL = article.feed?.iconURL else {
+			return nil
+		}
+		return Avatar(imageURL: feedIconURL, url: article.feed?.homePageURL ?? article.feed?.url)
+	}
+
+	private func authorAvatar() -> Avatar? {
+
+		if let author = singleArticleSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url)
+		}
+		if let author = singleFeedSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url)
+		}
+		return nil
+	}
+
+	private func avatarsToShow() -> [Avatar]? {
+
+		var avatars = [Avatar]()
+		if let avatar = feedAvatar() {
+			avatars.append(avatar)
+		}
+		if let avatar = authorAvatar() {
+			avatars.append(avatar)
+		}
+		return avatars.isEmpty ? nil : avatars
+	}
+
+	private func avatarToUse() -> Avatar? {
+
+		// Use author if article specifies an author, otherwise use feed icon.
+		// If no feed icon, use feed-specified author.
+
+		if let author = singleArticleSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url)
+		}
+		if let feedIconURL = article.feed?.iconURL {
+			return Avatar(imageURL: feedIconURL, url: article.feed?.homePageURL ?? article.feed?.url)
+		}
+		if let author = singleFeedSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url)
+		}
+		return nil
+	}
+
+	private let avatarDimension = 48
+
+	private func avatarImgTag() -> String? {
+
+		if let author = singleArticleSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url).html(dimension: avatarDimension)
+		}
+		if let feed = article.feed, let imgTag = feedIconImgTag(forFeed: feed) {
+			return imgTag
+		}
+		if let feedIconURL = article.feed?.iconURL {
+			return Avatar(imageURL: feedIconURL, url: article.feed?.homePageURL ?? article.feed?.url).html(dimension: avatarDimension)
+		}
+		if let author = singleFeedSpecifiedAuthor(), let imageURL = author.avatarURL {
+			return Avatar(imageURL: imageURL, url: author.url).html(dimension: avatarDimension)
+		}
+		return nil
+	}
+
+//	private func authorAvatar() -> String {
+//
+//		guard let authors = article.authors, authors.count == 1, let author = authors.first else {
+//			return ""
+//		}
+//		guard let avatarURL = author.avatarURL else {
+//			return ""
+//		}
+//
+//		var imageTag = "<img src=\"\(avatarURL)\" height=64 width=64 />"
+//		if let authorURL = author.url {
+//			imageTag = linkWithText(imageTag, authorURL)
+//		}
+//		return "<div id=authorAvatar>\(imageTag)</div>"
+//	}
+
+	private func byline() -> String {
+
+		guard let authors = article.authors ?? article.feed?.authors, !authors.isEmpty else {
+			return ""
+		}
+
+		var byline = ""
+		var isFirstAuthor = true
+
+		for author in authors {
+			if !isFirstAuthor {
+				byline += ", "
+			}
+			isFirstAuthor = false
+
+			if let emailAddress = author.emailAddress, emailAddress.contains(" ") {
+				byline += emailAddress // probably name plus email address
+			}
+			else if let name = author.name, let url = author.url {
+				byline += linkWithText(name, url)
+			}
+			else if let name = author.name, let emailAddress = author.emailAddress {
+				byline += "\(name) &lt;\(emailAddress)&lg;"
+//				byline += linkWithText(name, "mailto:\(emailAddress)") //TODO
+			}
+			else if let name = author.name {
+				byline += name
+			}
+			else if let emailAddress = author.emailAddress {
+				byline += "&lt;\(emailAddress)&gt;" // TODO: mailto link
+			}
+			else if let url = author.url {
+				byline += linkWithLink(url)
+			}
+		}
+
+
+		return byline
 	}
 
 	private func renderedHTML() -> String {

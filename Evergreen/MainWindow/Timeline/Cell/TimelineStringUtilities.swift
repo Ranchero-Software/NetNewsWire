@@ -10,7 +10,7 @@ import Foundation
 import Data
 import RSParser
 
-private let truncatedFeedNameCache = NSMutableDictionary()
+private var truncatedFeedNameCache = [String: String]()
 private let truncatedTitleCache = NSMutableDictionary()
 private let normalizedTextCache = NSMutableDictionary()
 private let textCache = NSMutableDictionary()
@@ -19,17 +19,16 @@ private let summaryCache = NSMutableDictionary()
 
 func timelineEmptyCaches() {
 	
-	truncatedFeedNameCache.removeAllObjects()
+	truncatedFeedNameCache = [String: String]()
 	truncatedTitleCache.removeAllObjects()
 	normalizedTextCache.removeAllObjects()
 	textCache.removeAllObjects()
 	summaryCache.removeAllObjects()
 }
 
-func timelineTruncatedFeedName(_ feed: Feed) -> String {
+func timelineTruncatedFeedName(_ feedName: String) -> String {
 
-	let feedName = feed.nameForDisplay
-	if let cachedFeedName = truncatedFeedNameCache[feedName] as? String {
+	if let cachedFeedName = truncatedFeedNameCache[feedName] {
 		return cachedFeedName
 	}
 

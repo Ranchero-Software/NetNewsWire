@@ -38,7 +38,6 @@
 		846E77411F6EF6A100A165E2 /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; };
 		846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */; };
-		847C4C9C1FF44F790090D517 /* FeedListSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847C4C9B1FF44F790090D517 /* FeedListSplitViewController.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
 		849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
 		849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97511ED9EAC0007D329B /* AddFeedController.swift */; };
@@ -99,13 +98,14 @@
 		84B06FFE1ED3818D00F0B54B /* RSTree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FFA1ED3818000F0B54B /* RSTree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B0700A1ED3822600F0B54B /* RSTextDrawing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; };
 		84B0700B1ED3822600F0B54B /* RSTextDrawing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		84B2FAA41FF47BAC009C4878 /* FeedListWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84B2FAA31FF47BAC009C4878 /* FeedListWindow.xib */; };
 		84B99C671FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */; };
 		84B99C691FAE36B800ECDEDB /* FeedListFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */; };
 		84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */; };
 		84B99C9D1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */; };
 		84BB4B771F11753300858766 /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B681F1174D400858766 /* Data.framework */; };
 		84BB4B781F11753300858766 /* Data.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B681F1174D400858766 /* Data.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84C12A151FF5B0080009A267 /* FeedList.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C12A141FF5B0080009A267 /* FeedList.storyboard */; };
+		84CC08061FF5D2E000C0C0ED /* FeedListSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */; };
 		84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
 		84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */; };
 		84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */; };
@@ -444,7 +444,6 @@
 		846E77161F6EF5D000A165E2 /* Database.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Database.xcodeproj; path = Frameworks/Database/Database.xcodeproj; sourceTree = "<group>"; };
 		846E77301F6EF5D600A165E2 /* Account.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Account.xcodeproj; path = Frameworks/Account/Account.xcodeproj; sourceTree = "<group>"; };
 		84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkReadOrUnreadCommand.swift; sourceTree = "<group>"; };
-		847C4C9B1FF44F790090D517 /* FeedListSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListSplitViewController.swift; sourceTree = "<group>"; };
 		848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconDownloader.swift; sourceTree = "<group>"; };
 		849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderWindowController.swift; sourceTree = "<group>"; };
 		849A97511ED9EAC0007D329B /* AddFeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedController.swift; path = AddFeed/AddFeedController.swift; sourceTree = "<group>"; };
@@ -476,8 +475,8 @@
 		849A97911ED9EF65007D329B /* IndeterminateProgressWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndeterminateProgressWindowController.swift; sourceTree = "<group>"; };
 		849A97941ED9EF7A007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/IndeterminateProgressWindow.xib; sourceTree = SOURCE_ROOT; };
 		849A97971ED9EFAA007D329B /* Node-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Node-Extensions.swift"; sourceTree = "<group>"; };
-		849A979A1ED9EFEB007D329B /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = styleSheet.css; path = Evergreen/Resources/styleSheet.css; sourceTree = SOURCE_ROOT; };
-		849A979B1ED9EFEB007D329B /* template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = template.html; path = Evergreen/Resources/template.html; sourceTree = SOURCE_ROOT; };
+		849A979A1ED9EFEB007D329B /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = styleSheet.css; path = Evergreen/MainWindow/Detail/styleSheet.css; sourceTree = SOURCE_ROOT; };
+		849A979B1ED9EFEB007D329B /* template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = template.html; path = Evergreen/MainWindow/Detail/template.html; sourceTree = SOURCE_ROOT; };
 		849A979E1ED9F130007D329B /* SidebarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarCell.swift; sourceTree = "<group>"; };
 		849A97A01ED9F180007D329B /* InitialFeedDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InitialFeedDownloader.swift; path = AddFeed/InitialFeedDownloader.swift; sourceTree = "<group>"; };
 		849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FolderTreeControllerDelegate.swift; path = AddFeed/FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
@@ -503,13 +502,14 @@
 		84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSFeedFinder.xcodeproj; path = Frameworks/RSFeedFinder/RSFeedFinder.xcodeproj; sourceTree = "<group>"; };
 		84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTree.xcodeproj; path = Frameworks/RSTree/RSTree.xcodeproj; sourceTree = "<group>"; };
 		84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTextDrawing.xcodeproj; path = Frameworks/RSTextDrawing/RSTextDrawing.xcodeproj; sourceTree = "<group>"; };
-		84B2FAA31FF47BAC009C4878 /* FeedListWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedListWindow.xib; sourceTree = "<group>"; };
 		84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFolder.swift; sourceTree = "<group>"; };
 		84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFeed.swift; sourceTree = "<group>"; };
 		84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteFromSidebarCommand.swift; sourceTree = "<group>"; };
 		84BB4B611F1174D400858766 /* Data.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Data.xcodeproj; path = Frameworks/Data/Data.xcodeproj; sourceTree = "<group>"; };
+		84C12A141FF5B0080009A267 /* FeedList.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = FeedList.storyboard; sourceTree = "<group>"; };
 		84CBDDAE1FD3674C005A61AA /* Technotes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Technotes; sourceTree = "<group>"; };
+		84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListSplitViewController.swift; sourceTree = "<group>"; };
 		84CC88171FE59CBF00644329 /* SmartFeedsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeedsController.swift; sourceTree = "<group>"; };
 		84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailStatusBarView.swift; sourceTree = "<group>"; };
 		84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLImporter.swift; sourceTree = "<group>"; };
@@ -772,6 +772,8 @@
 				849A977E1ED9EC42007D329B /* DetailViewController.swift */,
 				849A977D1ED9EC42007D329B /* ArticleRenderer.swift */,
 				84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */,
+				849A979A1ED9EFEB007D329B /* styleSheet.css */,
+				849A979B1ED9EFEB007D329B /* template.html */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -789,11 +791,11 @@
 		849A978B1ED9EE4D007D329B /* Feed List */ = {
 			isa = PBXGroup;
 			children = (
-				84B2FAA31FF47BAC009C4878 /* FeedListWindow.xib */,
+				84C12A141FF5B0080009A267 /* FeedList.storyboard */,
 				849A978C1ED9EE4D007D329B /* FeedListWindowController.swift */,
+				84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */,
 				84F204CD1FAACB660076E152 /* FeedListViewController.swift */,
 				84F204DD1FAACB8B0076E152 /* FeedListTimelineViewController.swift */,
-				847C4C9B1FF44F790090D517 /* FeedListSplitViewController.swift */,
 				84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */,
 				84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */,
 				84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */,
@@ -826,8 +828,6 @@
 		849A97991ED9EFB6007D329B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				849A979A1ED9EFEB007D329B /* styleSheet.css */,
-				849A979B1ED9EFEB007D329B /* template.html */,
 				849C646C1ED37A5D003D8FC0 /* Info.plist */,
 				84EB380F1FBA8B9F000D2111 /* KeyboardShortcuts */,
 			);
@@ -1366,7 +1366,7 @@
 				842E45E71ED8C747000A8B52 /* DB5.plist in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				849A97AC1ED9F9BC007D329B /* AddFolderSheet.xib in Resources */,
-				84B2FAA41FF47BAC009C4878 /* FeedListWindow.xib in Resources */,
+				84C12A151FF5B0080009A267 /* FeedList.storyboard in Resources */,
 				84E95CF71FABB3C800552D99 /* FeedList.plist in Resources */,
 				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
 				849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */,
@@ -1444,7 +1444,7 @@
 				84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */,
 				842611A01FCB72600086A189 /* FeaturedImageDownloader.swift in Sources */,
 				849A97781ED9EC04007D329B /* TimelineCellLayout.swift in Sources */,
-				847C4C9C1FF44F790090D517 /* FeedListSplitViewController.swift in Sources */,
+				84CC08061FF5D2E000C0C0ED /* FeedListSplitViewController.swift in Sources */,
 				849A976C1ED9EBC8007D329B /* TimelineTableRowView.swift in Sources */,
 				849A977B1ED9EC04007D329B /* UnreadIndicatorView.swift in Sources */,
 				84B99C9D1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift in Sources */,

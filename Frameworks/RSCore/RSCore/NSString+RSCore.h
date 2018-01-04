@@ -76,6 +76,8 @@ typedef struct {
 
 - (NSString *)rs_stringByStrippingHTTPOrHTTPSScheme;
 
++ (NSString *)rs_debugStringWithData:(NSData *)d; // Assume it’s UTF8, at least for now. Good enough for most debugging purposes.
+
 @end
 
 NS_ASSUME_NONNULL_END

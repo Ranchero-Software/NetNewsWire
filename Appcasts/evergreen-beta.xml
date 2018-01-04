@@ -5,7 +5,99 @@
         <link>https://ranchero.com/downloads/evergreen-beta.xml</link>
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
-  
+
+				<item>
+          <title>Version 1.0d29</title>
+            <description><![CDATA[
+            
+            <h4>Detail view</h4>
+            <p>Feed icons and user avatars now go at the top right. (Except for favicons, which are still on the left. They should probably go to the right too.)</p>
+            <p>The system gets feed icons from web page metadata now, when not specified in the feed.</p>
+            
+            <h4>Timeline view</h4>
+            <p>Show the feed name when in a timeline that could show multiple feeds — such as when a folder is selected in the sidebar.</p>
+            
+            <h4>Misc.</h4>
+            <p>Fixed a bug where favicons in the default location for a feed — /favicon.ico — wouldn’t get found.</p>
+            <p>Make User-Agent of the form Evergreen/1.0d28 (Macintosh; RSS Reader; ranchero.com/evergreen/)</p>
+            <p>Fix bug decoding &amp;#39; entities.</p>
+            <p>Use Flying Meat’s JSON Feed in the feed directory.</p>
+         
+  						]]></description>
+            <pubDate>Sat, 30 Dec 2017 16:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d29.zip" sparkle:version="521" sparkle:shortVersionString="1.0d29" length="7200332" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+				<item>
+          <title>Version 1.0d28</title>
+            <description><![CDATA[
+            
+              <h4>Experimental version</h4>
+            <p>Now shows feed and user avatars in the detail view, when they’re available in the feed. (Requires JSON Feed feeds, at least for now.)</p>
+            <p>This meant making layout changes to the detail view. Feedback is, of course, very much welcome.</p>
+            
+            <p>(The code for building the detail view’s HTML is currently a total mess while we’re experimenting. Don’t look at it. Consider yourself warned.)</p>
+        
+  						]]></description>
+            <pubDate>Fri, 29 Dec 2017 19:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d28.zip" sparkle:version="520" sparkle:shortVersionString="1.0d28" length="7193574" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+        
+				<item>
+
+            <title>Version 1.0d27</title>
+            <description><![CDATA[
+            
+            <h4>Detail status bar</h4>
+            <p>The link display now appears only during mouseover. Works much like Safari.</p>
+            <p>There is no persistent display of the current permalink. We’ll see if we miss it or not.</p>
+            
+            <h4>Icons</h4>
+            <p>Using a generic icon for feeds that don’t have a favicon. This icon may change.</p>
+            
+            <h4>Misc.</h4>
+            <p>Futzed around with the Feed Directory UI.</p>
+        
+  						]]></description>
+            <pubDate>Thu, 28 Dec 2017 18:45:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d27.zip" sparkle:version="519" sparkle:shortVersionString="1.0d27" length="7185976" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+           <item>
+            <title>Version 1.0d26</title>
+            <description><![CDATA[
+            
+            <h4>New command - Mark Older as Read</h4>
+            <p>This new command marks as read everything in the current timeline that’s older than the selected article.</p>
+            <p>This command is also available as a keyboard shortcut: the o key. (Lowercase Oh, not zero.)</p>
+            
+            <h4>Share toolbar button</h4>
+            <p>It works, sort-of. Has issues. But you can share things. Sort-of-ish.</p>
+            
+            <h4>Misc.</h4>
+            <p>Fixed an infinite loop that could happen when going to next unread.</p>
+            <p>The main sidebar and the sidebar in the Feed Directory now use standard folder icons for folders.</p>
+  					<p>Fixed OPML export bug — the OPML is now valid.</p>
+						<p>Fixed bug sizing the Keyboard Shortcuts window on a small screen.</p>
+						<p>Made Mark as Starred command not doing anything (for now) — it was doing the wrong thing.</p>
+						<p>Move Keyboard Shortcuts menu item to the Help menu.</p>
+						<p>Use semantic markup in the Keyboard Shortcuts HTML. Courtesy of ePirat.</p>
+						<p>Return to the normal app icon. Until next year.</p>
+						<p>Validate unread counts on fetching articles without having to hit the database for the validation.</p>
+						<p>Restore window size/position and splitview position in the Feeds Directory window between runs.</p>
+						
+						<h4>More info</h4>
+						<p>You can always look at the <a href="https://github.com/brentsimmons/Evergreen/commits/master">recent commits on GitHub</a> for more details.</p>
+						<p>And you can look at the <a href="https://github.com/brentsimmons/Evergreen/milestone/1">current milestone</a> to see what remains to be done.</p>
+  						]]></description>
+            <pubDate>Wed, 27 Dec 2017 18:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d26.zip" sparkle:version="518" sparkle:shortVersionString="1.0d26" length="7330000" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
           <item>
             <title>Version 1.0d25</title>
             <description><![CDATA[

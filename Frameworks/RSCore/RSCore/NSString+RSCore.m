@@ -416,6 +416,10 @@ NSString *RSStringReplaceAll(NSString *stringToSearch, NSString *searchFor, NSSt
 	return s;
 }
 
++ (NSString *)rs_debugStringWithData:(NSData *)d {
+
+	return [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
+}
 
 @end
 

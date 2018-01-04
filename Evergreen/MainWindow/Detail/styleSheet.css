@@ -17,19 +17,66 @@ a, a:link, a:visited {
 a:hover {
 	text-decoration: underline;
 }
-#articleDateline {
-	color: rgba(0, 0, 0, 0.2);
-	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-/*	border-top: 1px solid rgba(0, 0, 0, 0.1);*/
-	padding-bottom: 6px;
+.articleDateline {
+	color: rgba(0, 0, 0, 0.3);
+	border-bottxom: 1px solid rgba(0, 0, 0, 0.1);
+	border-txop: 1px solid rgba(0, 0, 0, 0.1);
+	padding-bottom: 0px;
 	padding-top: 0px;
 	margin-bottom: 25px;
+	font-style: italic;
 }
-#articleDateline a:link, #articleDateline a:visited {
-	color: rgba(0, 0, 0, 0.4);
+.articleDateline a:link, #articleDateline a:visited {
+	color: rgba(0, 0, 0, 0.3);
+}
+#articleDateline img {
+	border-radius: 7px;
+}
+.articleDate {
+	color: #2db6ff;
+	text-align: right;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+	padding-bottom: 8px;
+	margin-bottom: 1em;
 }
 #articleDescription {
 	line-height: 1.5em;
+}
+#authorAvatar {
+	margin-top: 2em;
+	text-align: left;
+}
+#authorAvatar img {
+	border-radius: 5px;
+}
+.rightAlign {
+	text-align: right;
+}
+.leftAlign {
+	text-align: left;
+}
+.articleTitle {
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.headerContainer {
+	border-botxtom: 1px solid rgba(0, 0, 0, 0.1);
+	color: rgba(0, 0, 0, 0.3);
+}
+.header {
+	color: rgba(0, 0, 0, 0.3);
+}
+.headerTable {
+	width: 100%;
+	height: 68px;
+}
+.avatar img {
+	border-radius: 7px;
+}
+.headerContainer a:link, .headerContainer a:visited {
+	color: rgba(0, 0, 0, 0.3);
+}
+.feedIcon {
+	border-radius: 5px;
 }
 h1 {
 	line-height: 1.15em;

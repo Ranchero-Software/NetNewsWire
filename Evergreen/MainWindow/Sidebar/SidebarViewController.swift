@@ -522,7 +522,10 @@ private extension SidebarViewController {
 extension Feed: SmallIconProvider {
 
 	var smallIcon: NSImage? {
-		return appDelegate.faviconDownloader.favicon(for: self)
+		if let image = appDelegate.faviconDownloader.favicon(for: self) {
+			return image
+		}
+		return appDelegate.genericFeedImage
 	}
 }
 

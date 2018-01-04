@@ -1,8 +1,6 @@
 # RSParser
 
-(Note: Tests are still incomplete. It’s possible that none of this works.)
-
-(Also note: this framework is intended to supersede my [RSXML](https://github.com/brentsimmons/RSXML) framework. Use this one instead. Well, once it’s working, that is.)
+This framework was developed for [Evergreen](https://github.com/brentsimmons/Evergreen) and is made available here for developers who just need the parsing code. It has no depencies that aren’t provided by the system.
 
 ## What’s inside
 
@@ -22,11 +20,11 @@ This framework builds for macOS. It *could* be made to build for iOS also, but I
 
 To get the type of a feed, even with partial data, call `FeedParser.feedType(parserData)`, which will return a `FeedType`.
 
-To parse a feed, call `FeedParser.parseFeed(parserData)`, which will return a `ParsedFeed`. Also see related structs: `ParsedAuthor`, `ParsedItem`, `ParsedAttachment`, and `ParsedHub`.
+To parse a feed, call `FeedParser.parse(parserData)`, which will return a [ParsedFeed](Feeds/ParsedFeed.swift). Also see related structs: `ParsedAuthor`, `ParsedItem`, `ParsedAttachment`, and `ParsedHub`.
 
-You do *not* need to know the type of feed when calling `FeedParser.parseFeed` — it will figure it out and use the correct concrete parser.
+You do *not* need to know the type of feed when calling `FeedParser.parse` — it will figure it out and use the correct concrete parser.
 
-However, if you do want to use a concrete parser directly, see `RSSInJSONParser`, `JSONFeedParser`, `RSSParser`, and `AtomParser`.
+However, if you do want to use a concrete parser directly, see [RSSInJSONParser](Feeds/JSON/RSSInJSONParser.swift), [JSONFeedParser](Feeds/JSON/JSONFeedParser.swift), [RSSParser](Feeds/XML/RSSParser.swift), and [AtomParser](Feeds/XML/AtomParser.swift).
 
 (Note: if you want to write a feed reader app, please do! You have my blessing and encouragement. Let me know when it’s shipping so I can check it out.)
 

@@ -14,40 +14,51 @@ final class DetailStatusBarView: NSView {
 
 	@IBOutlet var urlLabel: NSTextField!
 
-//	private var didConfigureLayer = false
-
-	private var article: Article? {
-		didSet {
-			updateURLLabel()
-		}
-	}
+	private var didConfigureLayer = false
 	private var mouseoverLink: String? {
 		didSet {
-			updateURLLabel()
+			updateLinkForDisplay()
 		}
 	}
 
-	private let backgroundColor = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.statusBar.backgroundColor")
+	private var linkForDisplay: String? {
+		didSet {
+			needsLayout = true
+			if let link = linkForDisplay {
+				urlLabel.stringValue = link
+				self.isHidden = false
+			}
+			else {
+				urlLabel.stringValue = ""
+				self.isHidden = true
+			}
+		}
+	}
 
+	override var isOpaque: Bool {
+		return false
+	}
+	
 	override var isFlipped: Bool {
 		return true
 	}
 
-//	override var wantsUpdateLayer: Bool {
-//		return true
-//	}
-//
-//	override func updateLayer() {
-//
-//		guard !didConfigureLayer else {
-//			return
-//		}
-//		if let layer = layer {
-//			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.statusBar.backgroundColor")
-//			layer.backgroundColor = color.cgColor
-//			didConfigureLayer = true
-//		}
-//	}
+	override var wantsUpdateLayer: Bool {
+		return true
+	}
+
+	override func updateLayer() {
+
+		guard !didConfigureLayer else {
+			return
+		}
+		if let layer = layer {
+			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.statusBar.backgroundColor")
+			layer.backgroundColor = color.cgColor
+			layer.cornerRadius = 4.0
+			didConfigureLayer = true
+		}
+	}
 
 	override func awakeFromNib() {
 
@@ -55,6 +66,8 @@ final class DetailStatusBarView: NSView {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(mouseDidEnterLink(_:)), name: .MouseDidEnterLink, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(mouseDidExitLink(_:)), name: .MouseDidExitLink, object: nil)
+
+		alphaValue = 0.9
 	}
 
 	// MARK: - Notifications
@@ -84,24 +97,6 @@ final class DetailStatusBarView: NSView {
 			return
 		}
 		mouseoverLink = nil
-		article = notification.userInfo?[UserInfoKey.article] as? Article
-	}
-
-	// MARK: Drawing
-
-	private let lineColor = NSColor(calibratedWhite: 0.85, alpha: 1.0)
-
-	override func draw(_ dirtyRect: NSRect) {
-
-		backgroundColor.set()
-		dirtyRect.fill()
-
-		let path = NSBezierPath()
-		path.lineWidth = 1.0
-		path.move(to: NSPoint(x: NSMinX(bounds), y: NSMinY(bounds) + 0.5))
-		path.line(to: NSPoint(x: NSMaxX(bounds), y: NSMinY(bounds) + 0.5))
-		lineColor.set()
-		path.stroke()
 	}
 }
 
@@ -109,31 +104,14 @@ private extension DetailStatusBarView {
 
 	// MARK: URL Label
 
-	func updateURLLabel() {
-
-		needsLayout = true
-
-		guard let article = article else {
-			setURLLabel("")
-			return
-		}
+	func updateLinkForDisplay() {
 
 		if let mouseoverLink = mouseoverLink, !mouseoverLink.isEmpty {
-			setURLLabel(mouseoverLink)
-			return
-		}
-
-		if let s = article.preferredLink {
-			setURLLabel(s)
+			linkForDisplay = (mouseoverLink as NSString).rs_stringByStrippingHTTPOrHTTPSScheme()
 		}
 		else {
-			setURLLabel("")
+			linkForDisplay = nil
 		}
-	}
-
-	func setURLLabel(_ link: String) {
-
-		urlLabel.stringValue = (link as NSString).rs_stringByStrippingHTTPOrHTTPSScheme()
 	}
 }
 

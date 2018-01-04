@@ -20,11 +20,25 @@ class TimelineTableCellView: NSTableCellView {
 		let imageView = NSImageView(frame: NSRect.zero)
 		imageView.imageScaling = .scaleProportionallyDown
 		imageView.animates = false
-		imageView.imageAlignment = .alignTop
+		imageView.imageAlignment = .alignCenter
 		return imageView
 	}()
 
-	var cellAppearance: TimelineCellAppearance!
+//	let faviconImageView: NSImageView = {
+//		let imageView = NSImageView(frame: NSRect(x: 0, y: 0, width: 16, height: 16))
+//		imageView.imageScaling = .scaleProportionallyDown
+//		imageView.animates = false
+//		imageView.imageAlignment = .alignCenter
+//		return imageView
+//	}()
+
+	var cellAppearance: TimelineCellAppearance! {
+		didSet {
+			avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
+			avatarImageView.needsDisplay = true
+		}
+	}
+	
 	var cellData: TimelineCellData! {
 		didSet {
 			updateSubviews()
@@ -75,6 +89,7 @@ class TimelineTableCellView: NSTableCellView {
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
 		addSubviewAtInit(avatarImageView, hidden: true)
+//		addSubviewAtInit(faviconImageView, hidden: true)
 	}
 	
 	override init(frame frameRect: NSRect) {
@@ -123,6 +138,7 @@ class TimelineTableCellView: NSTableCellView {
 		dateView.rs_setFrameIfNotEqual(layoutRects.dateRect)
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
 		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
+//		faviconImageView.rs_setFrameIfNotEqual(layoutRects.faviconRect)
 	}
 
 	override func updateLayer() {
@@ -176,14 +192,28 @@ class TimelineTableCellView: NSTableCellView {
 
 	private func updateAvatar() {
 
-//		if let image = cellData.avatar {
-//			if avatarImageView.image !== image {
-//				avatarImageView.image = image
-//			}
-//			avatarImageView.isHidden = false
+		avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
+
+		if let image = cellData.avatar {
+			if avatarImageView.image !== image {
+				avatarImageView.image = image
+			}
+			avatarImageView.isHidden = false
+		}
+		else {
+			avatarImageView.isHidden = true
+		}
+	}
+
+	private func updateFavicon() {
+
+//		if let favicon = cellData.showFeedName ? cellData.favicon : nil {
+//			faviconImageView.image = favicon
+//			faviconImageView.isHidden = false
 //		}
 //		else {
-//			avatarImageView.isHidden = true
+//			faviconImageView.image = nil
+//			faviconImageView.isHidden = true
 //		}
 	}
 
@@ -194,6 +224,7 @@ class TimelineTableCellView: NSTableCellView {
 		updateFeedNameView()
 		updateUnreadIndicator()
 		updateAvatar()
+//		updateFavicon()
 	}
 	
 	private func updateAppearance() {

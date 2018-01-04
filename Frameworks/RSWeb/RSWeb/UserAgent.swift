@@ -12,13 +12,7 @@ public struct UserAgent {
 	
 	public static func fromInfoPlist() -> String? {
 
-		guard let userAgentName = Bundle.main.object(forInfoDictionaryKey: "UserAgent") else {
-			return nil
-		}
-		guard let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") else {
-			return nil
-		}
-		return "\(userAgentName) \(version)"
+		return Bundle.main.object(forInfoDictionaryKey: "UserAgent") as? String
 	}
 
 	public static func headers() -> [AnyHashable: String]? {

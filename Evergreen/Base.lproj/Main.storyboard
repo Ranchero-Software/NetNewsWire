@@ -399,7 +399,7 @@
                                                 <action selector="markAllAsRead:" target="Ady-hI-5gd" id="154-2D-ONk"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Mark Older as Read…" keyEquivalent="K" id="p1o-EG-Uo8">
+                                        <menuItem title="Mark Older as Read" keyEquivalent="K" id="p1o-EG-Uo8">
                                             <connections>
                                                 <action selector="markOlderArticlesAsRead:" target="Ady-hI-5gd" id="gzq-X5-0aC"/>
                                             </connections>
@@ -450,12 +450,6 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="bGu-Ws-7LM"/>
-                                        <menuItem title="Main Window" keyEquivalent="0" id="wfx-4y-Nc9">
-                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
-                                            <connections>
-                                                <action selector="showMainWindow:" target="Ady-hI-5gd" id="TY8-J6-NUD"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem title="Info" keyEquivalent="i" id="24r-2i-fXR">
                                             <connections>
                                                 <action selector="toggleInspectorWindow:" target="Ady-hI-5gd" id="Bw5-4R-iWP"/>

@@ -224,6 +224,8 @@ private extension DetailViewController {
 
 final class DetailContainerView: NSView {
 
+	@IBOutlet var detailStatusBarView: DetailStatusBarView!
+	
 	weak var viewController: DetailViewController? = nil
 
 	private var didConfigureLayer = false
@@ -239,7 +241,7 @@ final class DetailContainerView: NSView {
 			}
 			if let contentView = contentView {
 				contentView.translatesAutoresizingMaskIntoConstraints = false
-				addSubview(contentView)
+				addSubview(contentView, positioned: .below, relativeTo: detailStatusBarView)
 				rs_addFullSizeConstraints(forSubview: contentView)
 			}
 		}
