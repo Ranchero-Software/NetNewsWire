@@ -34,5 +34,6 @@ struct UserInfoKey {
 	static let objects = "objects"
 	static let feed = "feed"
 	static let url = "url"
+	static let author = "author"
 }
 

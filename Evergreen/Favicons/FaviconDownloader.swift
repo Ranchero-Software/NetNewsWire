@@ -166,7 +166,9 @@ private extension FaviconDownloader {
 
 	func postFaviconDidBecomeAvailableNotification(_ faviconURL: String) {
 
-		let userInfo: [AnyHashable: Any] = [UserInfoKey.faviconURL: faviconURL]
-		NotificationCenter.default.post(name: .FaviconDidBecomeAvailable, object: self, userInfo: userInfo)
+		DispatchQueue.main.async {
+			let userInfo: [AnyHashable: Any] = [UserInfoKey.faviconURL: faviconURL]
+			NotificationCenter.default.post(name: .FaviconDidBecomeAvailable, object: self, userInfo: userInfo)
+		}
 	}
 }

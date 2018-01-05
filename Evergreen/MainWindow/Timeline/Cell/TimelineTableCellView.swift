@@ -21,6 +21,7 @@ class TimelineTableCellView: NSTableCellView {
 		imageView.imageScaling = .scaleProportionallyDown
 		imageView.animates = false
 		imageView.imageAlignment = .alignCenter
+		imageView.image = appDelegate.genericFeedImage
 		return imageView
 	}()
 
@@ -34,8 +35,7 @@ class TimelineTableCellView: NSTableCellView {
 
 	var cellAppearance: TimelineCellAppearance! {
 		didSet {
-			avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
-			avatarImageView.needsDisplay = true
+			needsLayout = true
 		}
 	}
 	
@@ -88,7 +88,7 @@ class TimelineTableCellView: NSTableCellView {
 		addSubviewAtInit(unreadIndicatorView, hidden: true)
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
-		addSubviewAtInit(avatarImageView, hidden: true)
+		addSubviewAtInit(avatarImageView, hidden: false)
 //		addSubviewAtInit(faviconImageView, hidden: true)
 	}
 	
@@ -192,17 +192,32 @@ class TimelineTableCellView: NSTableCellView {
 
 	private func updateAvatar() {
 
-		avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
+		if !cellData.showAvatar {
+			avatarImageView.image = nil
+			avatarImageView.isHidden = true
+			return
+		}
+
+		avatarImageView.isHidden = false
 
 		if let image = cellData.avatar {
 			if avatarImageView.image !== image {
 				avatarImageView.image = image
 			}
-			avatarImageView.isHidden = false
 		}
 		else {
-			avatarImageView.isHidden = true
+			avatarImageView.image = nil
 		}
+
+		avatarImageView.wantsLayer = true
+		avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
+		if avatarImageView.image == nil {
+			avatarImageView.layer?.backgroundColor = NSColor(calibratedWhite: 0.0, alpha: 0.1).cgColor
+		}
+		else {
+			avatarImageView.layer?.backgroundColor = NSColor.clear.cgColor
+		}
+
 	}
 
 	private func updateFavicon() {

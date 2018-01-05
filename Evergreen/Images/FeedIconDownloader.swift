@@ -11,6 +11,11 @@ import Data
 import RSWeb
 import RSParser
 
+extension Notification.Name {
+
+	static let FeedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailableNotification") // UserInfoKey.feed
+}
+
 public final class FeedIconDownloader {
 
 	private let imageDownloader: ImageDownloader
@@ -32,6 +37,7 @@ public final class FeedIconDownloader {
 		
 		if let iconURL = feed.iconURL {
 			if let image = icon(forURL: iconURL) {
+				postFeedIconDidBecomeAvailableNotification(feed)
 				cache[feed] = image
 				return image
 			}
@@ -39,6 +45,7 @@ public final class FeedIconDownloader {
 
 		if let homePageURL = feed.homePageURL {
 			if let image = icon(forHomePageURL: homePageURL) {
+				postFeedIconDidBecomeAvailableNotification(feed)
 				cache[feed] = image
 				return image
 			}
@@ -46,6 +53,9 @@ public final class FeedIconDownloader {
 
 		return nil
 	}
+}
+
+private extension FeedIconDownloader {
 
 	func icon(forHomePageURL homePageURL: String) -> NSImage? {
 
@@ -65,9 +75,14 @@ public final class FeedIconDownloader {
 
 		return imageDownloader.image(for: url)
 	}
-}
 
-private extension FeedIconDownloader {
+	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
+
+		DispatchQueue.main.async {
+			let userInfo: [AnyHashable: Any] = [UserInfoKey.feed: feed]
+			NotificationCenter.default.post(name: .FeedIconDidBecomeAvailable, object: self, userInfo: userInfo)
+		}
+	}
 
 	func cachedIconURL(for homePageURL: String) -> String? {
 
