@@ -12,7 +12,7 @@ import RSWeb
 
 extension Notification.Name {
 
-	static let ImageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // ImageDownloader.UserInfoKey.imageURL
+	static let ImageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // UserInfoKey.url
 }
 
 final class ImageDownloader {
@@ -23,10 +23,6 @@ final class ImageDownloader {
 	private var imageCache = [String: NSImage]() // url: image
 	private var urlsInProgress = Set<String>()
 	private var badURLs = Set<String>() // That return a 404 or whatever. Just skip them in the future.
-
-	struct UserInfoKey {
-		static let imageURL = "imageURL"
-	}
 
 	init(folder: String) {
 
@@ -135,6 +131,6 @@ private extension ImageDownloader {
 
 	func postImageDidBecomeAvailableNotification(_ url: String) {
 
-		NotificationCenter.default.post(name: .ImageDidBecomeAvailable, object: self, userInfo: [UserInfoKey.imageURL: url])
+		NotificationCenter.default.post(name: .ImageDidBecomeAvailable, object: self, userInfo: [UserInfoKey.url: url])
 	}
 }

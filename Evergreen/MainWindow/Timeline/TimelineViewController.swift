@@ -327,7 +327,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 
-		guard let author = note.userInfo?[UserInfoKey.author] as? Author, let avatarURL = author.avatarURL else {
+		guard let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
 		let articlesToReload = articles.filter { (article) -> Bool in
