@@ -327,19 +327,20 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 
-		guard let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+		guard showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
-		let articlesToReload = articles.filter { (article) -> Bool in
-			guard let authors = article.authors else {
-				return false
+
+		var articlesToReload = [Article]()
+		tableView.enumerateAvailableRowViews { (rowView, row) in
+			guard let article = articles.articleAtRow(row), let authors = article.authors, !authors.isEmpty else {
+				return
 			}
-			for oneAuthor in authors {
-				if oneAuthor.avatarURL == avatarURL {
-					return true
+			for author in authors {
+				if author.avatarURL == avatarURL {
+					articlesToReload.append(article)
 				}
 			}
-			return false
 		}
 		reloadCellsForArticles(articlesToReload)
 	}
@@ -373,6 +374,9 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	
 	private func reloadCellsForArticleIDs(_ articleIDs: Set<String>) {
 
+		if articleIDs.isEmpty {
+			return
+		}
 		let indexes = articles.indexesForArticleIDs(articleIDs)
 		tableView.reloadData(forRowIndexes: indexes, columnIndexes: NSIndexSet(index: 0) as IndexSet)
 	}
