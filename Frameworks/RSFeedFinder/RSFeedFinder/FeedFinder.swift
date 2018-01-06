@@ -94,10 +94,15 @@ private extension FeedFinder {
 
 		if feedSpecifiers.isEmpty {
 			// Odds are decent it’s a WordPress site, and just adding /feed/ will work.
+			// It’s also fairly common for /index.xml to work.
 			if let url = URL(string: urlString) {
 				let feedURL = url.appendingPathComponent("feed", isDirectory: true)
 				let wordpressFeedSpecifier = FeedSpecifier(title: nil, urlString: feedURL.absoluteString, source: .HTMLLink)
 				feedSpecifiers.insert(wordpressFeedSpecifier)
+
+				let indexXMLURL = url.appendingPathComponent("index.xml", isDirectory: false)
+				let indexXMLFeedSpecifier = FeedSpecifier(title: nil, urlString: indexXMLURL.absoluteString, source: .HTMLLink)
+				feedSpecifiers.insert(indexXMLFeedSpecifier)
 			}
 		}
 
