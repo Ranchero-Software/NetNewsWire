@@ -331,18 +331,19 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return
 		}
 
-		var articlesToReload = [Article]()
+		var indexes = IndexSet()
 		tableView.enumerateAvailableRowViews { (rowView, row) in
 			guard let article = articles.articleAtRow(row), let authors = article.authors, !authors.isEmpty else {
 				return
 			}
 			for author in authors {
 				if author.avatarURL == avatarURL {
-					articlesToReload.append(article)
+					indexes.insert(row)
+					return
 				}
 			}
 		}
-		reloadCellsForArticles(articlesToReload)
+		reloadCells(for: indexes)
 	}
 
 	func fontSizeInDefaultsDidChange() {
@@ -358,7 +359,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	// MARK: - Reloading Data
-	
+
 	private func cellForRowView(_ rowView: NSView) -> NSView? {
 		
 		for oneView in rowView.subviews where oneView is TimelineTableCellView {
@@ -378,6 +379,14 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return
 		}
 		let indexes = articles.indexesForArticleIDs(articleIDs)
+		reloadCells(for: indexes)
+	}
+
+	private func reloadCells(for indexes: IndexSet) {
+
+		if indexes.isEmpty {
+			return
+		}
 		tableView.reloadData(forRowIndexes: indexes, columnIndexes: NSIndexSet(index: 0) as IndexSet)
 	}
 	
