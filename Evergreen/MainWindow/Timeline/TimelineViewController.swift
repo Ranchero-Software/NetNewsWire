@@ -331,19 +331,20 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return
 		}
 
-		var indexes = IndexSet()
-		tableView.enumerateAvailableRowViews { (rowView, row) in
+		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
 			guard let article = articles.articleAtRow(row), let authors = article.authors, !authors.isEmpty else {
-				return
+				return false
 			}
 			for author in authors {
 				if author.avatarURL == avatarURL {
-					indexes.insert(row)
-					return
+					return true
 				}
 			}
+			return false
 		}
-		reloadCells(for: indexes)
+		if let indexesToReload = indexesToReload {
+			reloadCells(for: indexesToReload)
+		}
 	}
 
 	func fontSizeInDefaultsDidChange() {

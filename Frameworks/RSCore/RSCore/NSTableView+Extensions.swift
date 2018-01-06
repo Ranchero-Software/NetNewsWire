@@ -16,6 +16,20 @@ public extension NSTableView {
 		}
 	}
 
+	func indexesOfAvailableRowsPassingTest(_ test: (Int) -> Bool) -> IndexSet? {
+
+		// Checks visible and in-flight rows.
+
+		var indexes = IndexSet()
+		enumerateAvailableRowViews { (_, row) in
+			if test(row) {
+				indexes.insert(row)
+			}
+		}
+
+		return indexes.isEmpty ? nil : indexes
+	}
+
 	func scrollTo(row: Int) {
 
 		guard let scrollView = self.enclosingScrollView else {
