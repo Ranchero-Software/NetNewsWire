@@ -1045,6 +1045,7 @@
 				849C645C1ED37A5D003D8FC0 /* Sources */,
 				849C645D1ED37A5D003D8FC0 /* Frameworks */,
 				849C645E1ED37A5D003D8FC0 /* Resources */,
+				84C987A52000AC9E0066B150 /* ShellScript */,
 				84B06F681ED37B9000F0B54B /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -1384,6 +1385,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		84C987A52000AC9E0066B150 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# See https://blog.curtisherbert.com/automated-build-numbers/\n\ngit=`sh /etc/profile; which git`\nbranch_name=`$git symbolic-ref HEAD | sed -e 's,.*/\\\\(.*\\\\),\\\\1,'`\ngit_count=`$git rev-list $branch_name |wc -l | sed 's/^ *//;s/ *$//'`\nsimple_branch_name=`$git rev-parse --abbrev-ref HEAD`\n\nbuild_number=\"$git_count\"\nif [ $CONFIGURATION != \"Release\" ]; then\nbuild_number+=\"-$simple_branch_name\"\nfi\n\nplist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\ndsym_plist=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\nif [ -f \"$DSYM_INFO_PLIST\" ] ; then\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$dsym_plist\"\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		849C645C1ED37A5D003D8FC0 /* Sources */ = {
