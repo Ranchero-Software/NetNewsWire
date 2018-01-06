@@ -61,7 +61,8 @@ class TimelineTableCellView: NSTableCellView {
 		didSet {
 			dateView.emphasized = isEmphasized
 			feedNameView.emphasized = isEmphasized
-			titleView.emphasized = isEmphasized	
+			titleView.emphasized = isEmphasized
+			unreadIndicatorView.isEmphasized = isEmphasized
 			needsDisplay = true
 		}
 	}
@@ -71,6 +72,7 @@ class TimelineTableCellView: NSTableCellView {
 			dateView.selected = isSelected
 			feedNameView.selected = isSelected
 			titleView.selected = isSelected
+			unreadIndicatorView.isSelected = isSelected
 			needsDisplay = true
 		}
 	}
