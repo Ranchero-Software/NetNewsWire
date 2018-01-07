@@ -37,5 +37,9 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+    <key>NSAppleScriptEnabled</key>
+    <true/>
+    <key>OSAScriptingDefinition</key>
+    <string>Evergreen.sdef</string>
 </dict>
 </plist>

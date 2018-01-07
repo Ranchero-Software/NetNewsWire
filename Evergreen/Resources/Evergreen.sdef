@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+
+<!-- declare the namespace for using XInclude so we can include the standard suite -->
+<dictionary title="sa;lfsdf" xmlns:xi="http://www.w3.org/2003/XInclude">
+    
+    <suite name="Internet Suite" code="GURL"
+        description="Standard Internet Suite.">
+        
+        <command name="open location" code="GURLGURL" description="opens the given url.">
+            <direct-parameter type="text"/>
+        </command>        
+    </suite>
+
+</dictionary>
+

@@ -124,6 +124,14 @@
 		84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; };
 		84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */; };
+		D5558FD32002245C0066386B /* ScriptingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD22002245C0066386B /* ScriptingTests.swift */; };
+		D5558FD5200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */; };
+		D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
+		D5907CA0200232A1005947E5 /* testGenericScript.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5907C9D20023249005947E5 /* testGenericScript.applescript */; };
+		D5907CA1200232A1005947E5 /* testGetURL.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD1200223F60066386B /* testGetURL.applescript */; };
+		D5907CA2200232AD005947E5 /* testGenericScript.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5907C9D20023249005947E5 /* testGenericScript.applescript */; };
+		D5907CA3200232AF005947E5 /* testGetURL.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5558FD1200223F60066386B /* testGetURL.applescript */; };
+		D5D1751220020B980047B29D /* Evergreen.sdef in Resources */ = {isa = PBXBuildFile; fileRef = D5D175012002039D0047B29D /* Evergreen.sdef */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -411,6 +419,17 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D5907C9B20022EC7005947E5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = TestScripts;
+			dstSubfolderSpec = 7;
+			files = (
+				D5907CA2200232AD005947E5 /* testGenericScript.applescript in CopyFiles */,
+				D5907CA3200232AF005947E5 /* testGetURL.applescript in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -527,6 +546,12 @@
 		84F2D5391FC2308B00998D64 /* UnreadFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadFeed.swift; sourceTree = "<group>"; };
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
+		D5558FD1200223F60066386B /* testGetURL.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = testGetURL.applescript; sourceTree = "<group>"; };
+		D5558FD22002245C0066386B /* ScriptingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScriptingTests.swift; path = EvergreenTests/ScriptingTests/ScriptingTests.swift; sourceTree = SOURCE_ROOT; };
+		D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSAppleEventDescriptor+UserRecordFields.swift"; path = "AppleEvents/NSAppleEventDescriptor+UserRecordFields.swift"; sourceTree = SOURCE_ROOT; };
+		D5558FD7200228B80066386B /* AppleEventUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleEventUtils.swift; sourceTree = "<group>"; };
+		D5907C9D20023249005947E5 /* testGenericScript.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = testGenericScript.applescript; sourceTree = "<group>"; };
+		D5D175012002039D0047B29D /* Evergreen.sdef */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Evergreen.sdef; path = ../Resources/Evergreen.sdef; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -828,6 +853,7 @@
 		849A97991ED9EFB6007D329B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D5D175012002039D0047B29D /* Evergreen.sdef */,
 				849C646C1ED37A5D003D8FC0 /* Info.plist */,
 				84EB380F1FBA8B9F000D2111 /* KeyboardShortcuts */,
 			);
@@ -872,6 +898,7 @@
 				848F6AE31FC29CFA002D422E /* Favicons */,
 				845213211FCA5B10003B6E93 /* Images */,
 				849A97961ED9EFAA007D329B /* Extensions */,
+				D5558FD6200227E60066386B /* AppleEvents */,
 				849A97991ED9EFB6007D329B /* Resources */,
 				84FB9A2C1EDCD6A4003D53B9 /* Frameworks */,
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
@@ -902,6 +929,7 @@
 		849C64741ED37A5D003D8FC0 /* EvergreenTests */ = {
 			isa = PBXGroup;
 			children = (
+				D5558FC020021C290066386B /* ScriptingTests */,
 				849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */,
 				849C64771ED37A5D003D8FC0 /* Info.plist */,
 			);
@@ -1035,6 +1063,33 @@
 			path = Evergreen/Extensions;
 			sourceTree = "<group>";
 		};
+		D5558FC020021C290066386B /* ScriptingTests */ = {
+			isa = PBXGroup;
+			children = (
+				D5558FCF20021C590066386B /* scripts */,
+				D5558FD22002245C0066386B /* ScriptingTests.swift */,
+			);
+			path = ScriptingTests;
+			sourceTree = "<group>";
+		};
+		D5558FCF20021C590066386B /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				D5907C9D20023249005947E5 /* testGenericScript.applescript */,
+				D5558FD1200223F60066386B /* testGetURL.applescript */,
+			);
+			path = scripts;
+			sourceTree = "<group>";
+		};
+		D5558FD6200227E60066386B /* AppleEvents */ = {
+			isa = PBXGroup;
+			children = (
+				D5558FD7200228B80066386B /* AppleEventUtils.swift */,
+				D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */,
+			);
+			path = AppleEvents;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1075,6 +1130,7 @@
 				849C646D1ED37A5D003D8FC0 /* Sources */,
 				849C646E1ED37A5D003D8FC0 /* Frameworks */,
 				849C646F1ED37A5D003D8FC0 /* Resources */,
+				D5907C9B20022EC7005947E5 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1374,6 +1430,7 @@
 				849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */,
 				849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */,
 				849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */,
+				D5D1751220020B980047B29D /* Evergreen.sdef in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1489,7 +1546,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5558FD5200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */,
+				D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */,
+				D5907CA1200232A1005947E5 /* testGetURL.applescript in Sources */,
 				849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */,
+				D5558FD32002245C0066386B /* ScriptingTests.swift in Sources */,
+				D5907CA0200232A1005947E5 /* testGenericScript.applescript in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
