@@ -102,6 +102,7 @@
 		84D81BE41EFA2D3D00652332 /* ParsedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE31EFA2D3D00652332 /* ParsedItem.swift */; };
 		84D81BE61EFA2DFB00652332 /* ParsedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */; };
 		84D81BE81EFA2E6700652332 /* ParsedHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BE71EFA2E6700652332 /* ParsedHub.swift */; };
+		84DA2E21200415D500A4D03B /* curt.json in Resources */ = {isa = PBXBuildFile; fileRef = 84DA2E20200415D500A4D03B /* curt.json */; };
 		84DCCC661FF80E0100D2DDF1 /* EntityDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DCCC651FF80E0100D2DDF1 /* EntityDecodingTests.swift */; };
 		84E7E69F1F85780D0046719D /* ParserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E7E69D1F85780D0046719D /* ParserData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84E7E6A01F85780D0046719D /* ParserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E7E69E1F85780D0046719D /* ParserData.m */; };
@@ -216,6 +217,7 @@
 		84D81BE31EFA2D3D00652332 /* ParsedItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedItem.swift; path = Feeds/ParsedItem.swift; sourceTree = "<group>"; };
 		84D81BE51EFA2DFB00652332 /* ParsedAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedAttachment.swift; path = Feeds/ParsedAttachment.swift; sourceTree = "<group>"; };
 		84D81BE71EFA2E6700652332 /* ParsedHub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedHub.swift; path = Feeds/ParsedHub.swift; sourceTree = "<group>"; };
+		84DA2E20200415D500A4D03B /* curt.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = curt.json; sourceTree = "<group>"; };
 		84DCCC651FF80E0100D2DDF1 /* EntityDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityDecodingTests.swift; sourceTree = "<group>"; };
 		84E7E69D1F85780D0046719D /* ParserData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserData.h; sourceTree = "<group>"; };
 		84E7E69E1F85780D0046719D /* ParserData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParserData.m; sourceTree = "<group>"; };
@@ -380,6 +382,7 @@
 		849A03C41F0081EA00122600 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				84DA2E20200415D500A4D03B /* curt.json */,
 				849A03C51F0081EA00122600 /* DaringFireball.html */,
 				840FDCB71F0218670041F61B /* DaringFireball.atom */,
 				840FDCB91F02186D0041F61B /* DaringFireball.json */,
@@ -600,6 +603,7 @@
 				849A03EA1F01F92B00122600 /* inessential.json in Resources */,
 				849A03D71F0081EA00122600 /* OneFootTsunami.atom in Resources */,
 				849A03D41F0081EA00122600 /* inessential.html in Resources */,
+				84DA2E21200415D500A4D03B /* curt.json in Resources */,
 				849A03D31F0081EA00122600 /* furbo.html in Resources */,
 				849A03E81F01F88600122600 /* ScriptingNews.json in Resources */,
 				844B5B3E1FE9A13C00C7C76A /* 4fsodonline.atom in Resources */,
