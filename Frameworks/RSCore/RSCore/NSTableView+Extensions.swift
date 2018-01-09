@@ -30,6 +30,13 @@ public extension NSTableView {
 		return indexes.isEmpty ? nil : indexes
 	}
 
+	func indexesOfAvailableRows() -> IndexSet? {
+
+		var indexes = IndexSet()
+		enumerateAvailableRowViews { indexes.insert($1) }
+		return indexes.isEmpty ? nil : indexes
+	}
+
 	func scrollTo(row: Int) {
 
 		guard let scrollView = self.enclosingScrollView else {
