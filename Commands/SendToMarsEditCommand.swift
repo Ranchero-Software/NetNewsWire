@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct SendToMarsEditCommand {
+final class SendToMarsEditCommand: SendToCommand {
 
 	func canSendObject(_ object: Any?) -> Bool {
 
