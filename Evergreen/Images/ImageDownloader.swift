@@ -131,6 +131,8 @@ private extension ImageDownloader {
 
 	func postImageDidBecomeAvailableNotification(_ url: String) {
 
-		NotificationCenter.default.post(name: .ImageDidBecomeAvailable, object: self, userInfo: [UserInfoKey.url: url])
+		DispatchQueue.main.async {
+			NotificationCenter.default.post(name: .ImageDidBecomeAvailable, object: self, userInfo: [UserInfoKey.url: url])
+		}
 	}
 }

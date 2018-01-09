@@ -30,14 +30,6 @@
 		</dict>
 		<dict>
 			<key>name</key>
-			<string>Macalope</string>
-			<key>homePageURL</key>
-			<string>http://www.macalope.com/</string>
-			<key>url</key>
-			<string>http://www.macalope.com/feed/</string>
-		</dict>
-		<dict>
-			<key>name</key>
 			<string>Macdrifter</string>
 			<key>homePageURL</key>
 			<string>http://www.macdrifter.com/</string>

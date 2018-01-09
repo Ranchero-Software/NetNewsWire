@@ -66,4 +66,22 @@ class JSONFeedParserTests: XCTestCase {
 
 		XCTAssertEqual(parsedFeed.items.count, 12)
 	}
+
+	func testCurt() {
+
+		let d = parserData("curt", "json", "http://curtclifton.net/")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		XCTAssertEqual(parsedFeed.items.count, 26)
+
+		var didFindTwitterQuitterArticle = false
+		for article in parsedFeed.items {
+			if article.title == "Twitter Quitter" {
+				didFindTwitterQuitterArticle = true
+				XCTAssertTrue(article.contentHTML!.hasPrefix("<p>I’ve decided to close my Twitter account. William Van Hecke <a href=\"https://tinyletter.com/fet/letters/microcosmographia-xlxi-reasons-to-stay-on-twitter\">makes a convincing case</a>"))
+			}
+		}
+
+		XCTAssertTrue(didFindTwitterQuitterArticle)
+	}
 }

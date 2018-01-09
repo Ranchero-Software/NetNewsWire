@@ -51,6 +51,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	private var didRegisterForNotifications = false
 	private let timelineFontSizeKVOKey = "values.{AppDefaults.Key.timelineFontSize}"
+	private var reloadAvailableCellsTimer: Timer?
 
 	private var articles = ArticleArray() {
 		didSet {
@@ -117,6 +118,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 
 			NSUserDefaultsController.shared.addObserver(self, forKeyPath: timelineFontSizeKVOKey, options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
 
@@ -347,6 +349,11 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 	}
 
+	@objc func imageDidBecomeAvailable(_ note: Notification) {
+
+		queueReloadAvailableCells()
+	}
+
 	func fontSizeInDefaultsDidChange() {
 
 		TimelineCellData.emptyCache()
@@ -553,6 +560,32 @@ extension TimelineViewController: NSTableViewDelegate {
 // MARK: - Private
 
 private extension TimelineViewController {
+
+	func reloadAvailableCells() {
+
+		if let indexesToReload = tableView.indexesOfAvailableRows() {
+			reloadCells(for: indexesToReload)
+		}
+	}
+
+	func queueReloadAvailableCells() {
+
+		invalidateReloadTimer()
+		reloadAvailableCellsTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { (timer) in
+			self.reloadAvailableCells()
+			self.invalidateReloadTimer()
+		}
+	}
+
+	func invalidateReloadTimer() {
+
+		if let timer = reloadAvailableCellsTimer {
+			if timer.isValid {
+				timer.invalidate()
+			}
+			reloadAvailableCellsTimer = nil
+		}
+	}
 
 	func updateShowAvatars() {
 
