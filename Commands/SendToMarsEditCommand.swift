@@ -10,12 +10,12 @@ import Foundation
 
 final class SendToMarsEditCommand: SendToCommand {
 
-	func canSendObject(_ object: Any?) -> Bool {
+	func canSendObject(_ object: Any?, selectedText: String?) -> Bool {
 
 		return false
 	}
 
-	func sendObject(_ object: Any?) {
+	func sendObject(_ object: Any?, selectedText: String?) {
 
 	}
 }
