@@ -214,7 +214,7 @@ class TimelineTableCellView: NSTableCellView {
 		avatarImageView.wantsLayer = true
 		avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
 		if avatarImageView.image == nil {
-			avatarImageView.layer?.backgroundColor = NSColor(calibratedWhite: 0.0, alpha: 0.1).cgColor
+			avatarImageView.layer?.backgroundColor = NSColor(calibratedWhite: 0.0, alpha: 0.05).cgColor
 		}
 		else {
 			avatarImageView.layer?.backgroundColor = NSColor.clear.cgColor
