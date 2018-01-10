@@ -119,6 +119,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 
 			NSUserDefaultsController.shared.addObserver(self, forKeyPath: timelineFontSizeKVOKey, options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
 
@@ -351,7 +352,9 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
 
-		queueReloadAvailableCells()
+		if showAvatars {
+			queueReloadAvailableCells()
+		}
 	}
 
 	func fontSizeInDefaultsDidChange() {
