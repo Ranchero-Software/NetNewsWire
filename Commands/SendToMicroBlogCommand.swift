@@ -24,13 +24,7 @@ final class SendToMicroBlogCommand: SendToCommand {
 
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool {
 
-		guard appExists else {
-			return false
-		}
-		guard let article = object as? Article else {
-			return false
-		}
-		guard let _ = article.preferredLink else {
+		guard appExists, let article = object as? Article, let _ = article.preferredLink else {
 			return false
 		}
 
@@ -59,6 +53,9 @@ final class SendToMicroBlogCommand: SendToCommand {
 			if let link = article.preferredLink {
 				s = "[" + s + "](" + link + ")"
 			}
+		}
+		else if let link = article.preferredLink {
+			s = link
 		}
 
 		guard let encodedString = s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
