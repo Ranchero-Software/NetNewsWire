@@ -8,10 +8,12 @@
 
 import Cocoa
 
+// Unlike UndoableCommand commands, you instantiate one of each of these and reuse them.
+
 protocol SendToCommand {
 
-	func canSendObject(_ object: Any?) -> Bool
-	func sendObject(_ object: Any?)
+	func canSendObject(_ object: Any?, selectedText: String?) -> Bool
+	func sendObject(_ object: Any?, selectedText: String?)
 }
 
 extension SendToCommand {
