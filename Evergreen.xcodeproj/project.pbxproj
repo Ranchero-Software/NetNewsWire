@@ -84,6 +84,9 @@
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849C64691ED37A5D003D8FC0 /* Main.storyboard */; };
 		849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */; };
+		84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */; };
+		84A1500320048D660046AD9A /* SendToCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500220048D660046AD9A /* SendToCommand.swift */; };
+		84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */; };
 		84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; };
 		84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */; };
@@ -124,6 +127,25 @@
 		84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; };
 		84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */; };
+		D5558FD32002245C0066386B /* ScriptingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD22002245C0066386B /* ScriptingTests.swift */; };
+		D5558FD5200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */; };
+		D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
+		D5907CA0200232A1005947E5 /* testGenericScript.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5907C9D20023249005947E5 /* testGenericScript.applescript */; };
+		D5907CA1200232A1005947E5 /* testGetURL.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD1200223F60066386B /* testGetURL.applescript */; };
+		D5907CA2200232AD005947E5 /* testGenericScript.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5907C9D20023249005947E5 /* testGenericScript.applescript */; };
+		D5907CA3200232AF005947E5 /* testGetURL.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5558FD1200223F60066386B /* testGetURL.applescript */; };
+		D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */; };
+		D5907D972004B7EB005947E5 /* Account+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907D962004B7EB005947E5 /* Account+Scriptability.swift */; };
+		D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907DB12004BB37005947E5 /* ScriptingObjectContainer.swift */; };
+		D5907DB32005F45D005947E5 /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
+		D5D1751220020B980047B29D /* Evergreen.sdef in Resources */ = {isa = PBXBuildFile; fileRef = D5D175012002039D0047B29D /* Evergreen.sdef */; };
+		D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */; };
+		D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */; };
+		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
+		D5F4EDE620075C1300B9E363 /* testNameOfEveryFolder.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */; };
+		D5F4EDE820075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDE720075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript */; };
+		D5F4EDE920075C6700B9E363 /* testNameAndUrlOfEveryFeed.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5F4EDE720075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript */; };
+		D5F4EDEA20075C6700B9E363 /* testNameOfEveryFolder.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -411,6 +433,19 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D5907C9B20022EC7005947E5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = TestScripts;
+			dstSubfolderSpec = 7;
+			files = (
+				D5F4EDE920075C6700B9E363 /* testNameAndUrlOfEveryFeed.applescript in CopyFiles */,
+				D5F4EDEA20075C6700B9E363 /* testNameOfEveryFolder.applescript in CopyFiles */,
+				D5907CA2200232AD005947E5 /* testGenericScript.applescript in CopyFiles */,
+				D5907CA3200232AF005947E5 /* testGetURL.applescript in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -493,6 +528,9 @@
 		849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EvergreenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvergreenTests.swift; sourceTree = "<group>"; };
 		849C64771ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMicroBlogCommand.swift; sourceTree = "<group>"; };
+		84A1500220048D660046AD9A /* SendToCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToCommand.swift; sourceTree = "<group>"; };
+		84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMarsEditCommand.swift; sourceTree = "<group>"; };
 		84A6B6931FB8D43C006754AC /* DinosaursWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DinosaursWindow.xib; sourceTree = "<group>"; };
 		84A6B6951FB8DBD2006754AC /* DinosaursWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DinosaursWindowController.swift; sourceTree = "<group>"; };
 		84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSDatabase.xcodeproj; path = Frameworks/RSDatabase/RSDatabase.xcodeproj; sourceTree = "<group>"; };
@@ -527,6 +565,25 @@
 		84F2D5391FC2308B00998D64 /* UnreadFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadFeed.swift; sourceTree = "<group>"; };
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
+		D5558FD1200223F60066386B /* testGetURL.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = testGetURL.applescript; sourceTree = "<group>"; };
+		D5558FD22002245C0066386B /* ScriptingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScriptingTests.swift; path = EvergreenTests/ScriptingTests/ScriptingTests.swift; sourceTree = SOURCE_ROOT; };
+		D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSAppleEventDescriptor+UserRecordFields.swift"; path = "AppleEvents/NSAppleEventDescriptor+UserRecordFields.swift"; sourceTree = SOURCE_ROOT; };
+		D5558FD7200228B80066386B /* AppleEventUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleEventUtils.swift; sourceTree = "<group>"; };
+		D5907C9D20023249005947E5 /* testGenericScript.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = testGenericScript.applescript; sourceTree = "<group>"; };
+		D5907CDC2002F0BE005947E5 /* Evergreen_project_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Evergreen_project_release.xcconfig; sourceTree = "<group>"; };
+		D5907CDD2002F0BE005947E5 /* Evergreen_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Evergreen_project_debug.xcconfig; sourceTree = "<group>"; };
+		D5907CDE2002F0BE005947E5 /* Evergreen_project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Evergreen_project.xcconfig; sourceTree = "<group>"; };
+		D5907CDF2002F0F9005947E5 /* EvergreenTests_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EvergreenTests_target.xcconfig; sourceTree = "<group>"; };
+		D5907CE02002F0FA005947E5 /* Evergreen_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Evergreen_target.xcconfig; sourceTree = "<group>"; };
+		D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSApplication+Scriptability.swift"; sourceTree = "<group>"; };
+		D5907D962004B7EB005947E5 /* Account+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+Scriptability.swift"; sourceTree = "<group>"; };
+		D5907DB12004BB37005947E5 /* ScriptingObjectContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingObjectContainer.swift; sourceTree = "<group>"; };
+		D5D175012002039D0047B29D /* Evergreen.sdef */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Evergreen.sdef; path = ../Resources/Evergreen.sdef; sourceTree = "<group>"; };
+		D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingObject.swift; sourceTree = "<group>"; };
+		D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feed+Scriptability.swift"; sourceTree = "<group>"; };
+		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
+		D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testNameOfEveryFolder.applescript; sourceTree = "<group>"; };
+		D5F4EDE720075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testNameAndUrlOfEveryFeed.applescript; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -676,6 +733,9 @@
 			children = (
 				84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */,
 				84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */,
+				84A1500220048D660046AD9A /* SendToCommand.swift */,
+				84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */,
+				84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */,
 			);
 			path = Commands;
 			sourceTree = "<group>";
@@ -828,6 +888,7 @@
 		849A97991ED9EFB6007D329B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D5D175012002039D0047B29D /* Evergreen.sdef */,
 				849C646C1ED37A5D003D8FC0 /* Info.plist */,
 				84EB380F1FBA8B9F000D2111 /* KeyboardShortcuts */,
 			);
@@ -872,9 +933,12 @@
 				848F6AE31FC29CFA002D422E /* Favicons */,
 				845213211FCA5B10003B6E93 /* Images */,
 				849A97961ED9EFAA007D329B /* Extensions */,
+				D5907D6F2004AB67005947E5 /* Scriptability */,
+				D5558FD6200227E60066386B /* AppleEvents */,
 				849A97991ED9EFB6007D329B /* Resources */,
 				84FB9A2C1EDCD6A4003D53B9 /* Frameworks */,
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
+				D5907CDA2002F084005947E5 /* xcconfig */,
 				849C64611ED37A5D003D8FC0 /* Products */,
 				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
 				846E77161F6EF5D000A165E2 /* Database.xcodeproj */,
@@ -902,6 +966,7 @@
 		849C64741ED37A5D003D8FC0 /* EvergreenTests */ = {
 			isa = PBXGroup;
 			children = (
+				D5558FC020021C290066386B /* ScriptingTests */,
 				849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */,
 				849C64771ED37A5D003D8FC0 /* Info.plist */,
 			);
@@ -1035,6 +1100,61 @@
 			path = Evergreen/Extensions;
 			sourceTree = "<group>";
 		};
+		D5558FC020021C290066386B /* ScriptingTests */ = {
+			isa = PBXGroup;
+			children = (
+				D5558FCF20021C590066386B /* scripts */,
+				D5558FD22002245C0066386B /* ScriptingTests.swift */,
+			);
+			path = ScriptingTests;
+			sourceTree = "<group>";
+		};
+		D5558FCF20021C590066386B /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				D5907C9D20023249005947E5 /* testGenericScript.applescript */,
+				D5558FD1200223F60066386B /* testGetURL.applescript */,
+				D5F4EDE720075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript */,
+				D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */,
+			);
+			path = scripts;
+			sourceTree = "<group>";
+		};
+		D5558FD6200227E60066386B /* AppleEvents */ = {
+			isa = PBXGroup;
+			children = (
+				D5558FD7200228B80066386B /* AppleEventUtils.swift */,
+				D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */,
+			);
+			path = AppleEvents;
+			sourceTree = "<group>";
+		};
+		D5907CDA2002F084005947E5 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				D5907CDD2002F0BE005947E5 /* Evergreen_project_debug.xcconfig */,
+				D5907CDC2002F0BE005947E5 /* Evergreen_project_release.xcconfig */,
+				D5907CDE2002F0BE005947E5 /* Evergreen_project.xcconfig */,
+				D5907CE02002F0FA005947E5 /* Evergreen_target.xcconfig */,
+				D5907CDF2002F0F9005947E5 /* EvergreenTests_target.xcconfig */,
+			);
+			path = xcconfig;
+			sourceTree = "<group>";
+		};
+		D5907D6F2004AB67005947E5 /* Scriptability */ = {
+			isa = PBXGroup;
+			children = (
+				D5907D962004B7EB005947E5 /* Account+Scriptability.swift */,
+				D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */,
+				D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */,
+				D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */,
+				D5907DB12004BB37005947E5 /* ScriptingObjectContainer.swift */,
+				D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */,
+			);
+			name = Scriptability;
+			path = Evergreen/Scriptability;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1045,6 +1165,7 @@
 				849C645C1ED37A5D003D8FC0 /* Sources */,
 				849C645D1ED37A5D003D8FC0 /* Frameworks */,
 				849C645E1ED37A5D003D8FC0 /* Resources */,
+				84C987A52000AC9E0066B150 /* ShellScript */,
 				84B06F681ED37B9000F0B54B /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -1074,6 +1195,7 @@
 				849C646D1ED37A5D003D8FC0 /* Sources */,
 				849C646E1ED37A5D003D8FC0 /* Frameworks */,
 				849C646F1ED37A5D003D8FC0 /* Resources */,
+				D5907C9B20022EC7005947E5 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1097,7 +1219,7 @@
 				TargetAttributes = {
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 493CVA9A35;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Manual;
 					};
 					849C64701ED37A5D003D8FC0 = {
@@ -1373,6 +1495,7 @@
 				849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */,
 				849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */,
 				849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */,
+				D5D1751220020B980047B29D /* Evergreen.sdef in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1385,6 +1508,22 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		84C987A52000AC9E0066B150 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# See https://blog.curtisherbert.com/automated-build-numbers/\n\ngit=`sh /etc/profile; which git`\nbranch_name=`$git symbolic-ref HEAD | sed -e 's,.*/\\\\(.*\\\\),\\\\1,'`\ngit_count=`$git rev-list $branch_name |wc -l | sed 's/^ *//;s/ *$//'`\nsimple_branch_name=`$git rev-parse --abbrev-ref HEAD`\n\nbuild_number=\"$git_count\"\nif [ $CONFIGURATION != \"Release\" ]; then\nbuild_number+=\"-$simple_branch_name\"\nfi\n\nplist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\ndsym_plist=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\nif [ -f \"$DSYM_INFO_PLIST\" ] ; then\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$dsym_plist\"\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		849C645C1ED37A5D003D8FC0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1394,12 +1533,14 @@
 				849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */,
 				84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */,
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,
+				D5907D972004B7EB005947E5 /* Account+Scriptability.swift in Sources */,
 				842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */,
 				844B5B5B1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift in Sources */,
 				84DAEE321F870B390058304B /* DockBadge.swift in Sources */,
 				842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */,
 				842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */,
 				845F52ED1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift in Sources */,
+				D5907DB32005F45D005947E5 /* AppleEventUtils.swift in Sources */,
 				8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */,
 				849A975E1ED9EB72007D329B /* MainWindowController.swift in Sources */,
 				842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */,
@@ -1411,6 +1552,7 @@
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */,
+				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
@@ -1419,9 +1561,12 @@
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,
 				84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */,
 				849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */,
+				84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */,
 				849A97891ED9ECEF007D329B /* ArticleStyle.swift in Sources */,
 				84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */,
 				842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */,
+				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
+				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
 				849A97791ED9EC04007D329B /* TimelineStringUtilities.swift in Sources */,
 				84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */,
@@ -1442,6 +1587,8 @@
 				849A978D1ED9EE4D007D329B /* FeedListWindowController.swift in Sources */,
 				849A97771ED9EC04007D329B /* TimelineCellData.swift in Sources */,
 				84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */,
+				D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */,
+				D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */,
 				842611A01FCB72600086A189 /* FeaturedImageDownloader.swift in Sources */,
 				849A97781ED9EC04007D329B /* TimelineCellLayout.swift in Sources */,
 				84CC08061FF5D2E000C0C0ED /* FeedListSplitViewController.swift in Sources */,
@@ -1457,8 +1604,10 @@
 				84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */,
 				844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */,
 				849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */,
+				84A1500320048D660046AD9A /* SendToCommand.swift in Sources */,
 				845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */,
 				849A97851ED9ECCD007D329B /* PreferencesWindowController.swift in Sources */,
+				D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */,
 				84E850861FCB60CE0072EA88 /* AuthorAvatarDownloader.swift in Sources */,
 				8414AD251FCF5A1E00955102 /* TimelineHeaderView.swift in Sources */,
 				849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */,
@@ -1472,7 +1621,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5558FD5200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */,
+				D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */,
+				D5907CA1200232A1005947E5 /* testGetURL.applescript in Sources */,
 				849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */,
+				D5558FD32002245C0066386B /* ScriptingTests.swift in Sources */,
+				D5F4EDE820075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript in Sources */,
+				D5907CA0200232A1005947E5 /* testGenericScript.applescript in Sources */,
+				D5F4EDE620075C1300B9E363 /* testNameOfEveryFolder.applescript in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1596,179 +1752,45 @@
 /* Begin XCBuildConfiguration section */
 		849C64781ED37A5D003D8FC0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5907CDD2002F0BE005947E5 /* Evergreen_project_debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
 		849C64791ED37A5D003D8FC0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5907CDC2002F0BE005947E5 /* Evergreen_project_release.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = macosx;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
 		849C647B1ED37A5D003D8FC0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* Evergreen_target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 493CVA9A35;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Vendor",
-				);
-				INFOPLIST_FILE = Evergreen/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				OTHER_SWIFT_FLAGS = "-DDEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Evergreen;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
 		849C647C1ED37A5D003D8FC0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* Evergreen_target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = M8L2WTLA8W;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Vendor",
-				);
-				INFOPLIST_FILE = Evergreen/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				OTHER_SWIFT_FLAGS = "-DRELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Evergreen;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
 		849C647E1ED37A5D003D8FC0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5907CDF2002F0F9005947E5 /* EvergreenTests_target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
-				INFOPLIST_FILE = EvergreenTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.EvergreenTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Evergreen.app/Contents/MacOS/Evergreen";
 			};
 			name = Debug;
 		};
 		849C647F1ED37A5D003D8FC0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5907CDF2002F0F9005947E5 /* EvergreenTests_target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
-				INFOPLIST_FILE = EvergreenTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.EvergreenTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Evergreen.app/Contents/MacOS/Evergreen";
 			};
 			name = Release;
 		};

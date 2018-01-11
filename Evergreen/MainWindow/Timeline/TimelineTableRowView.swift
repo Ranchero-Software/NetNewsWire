@@ -10,7 +10,13 @@ import Cocoa
 
 class TimelineTableRowView : NSTableRowView {
 
-	var cellAppearance: TimelineCellAppearance!
+	var cellAppearance: TimelineCellAppearance! {
+		didSet {
+			if cellAppearance != oldValue {
+				invalidateGridRect()
+			}
+		}
+	}
 	
 //	override var interiorBackgroundStyle: NSBackgroundStyle {
 //		return .Light
@@ -45,32 +51,33 @@ class TimelineTableRowView : NSTableRowView {
 
 	var gridRect: NSRect {
 		get {
-			return NSMakeRect(floor(cellAppearance.boxLeftMargin), NSMaxY(bounds) - 1.0, NSWidth(bounds), 1)
+//			return NSMakeRect(floor(cellAppearance.boxLeftMargin), NSMaxY(bounds) - 1.0, NSWidth(bounds), 1)
+			return NSMakeRect(0.0, NSMaxY(bounds) - 1.0, NSWidth(bounds), 1)
 		}
 	}
 	
 	override func drawSeparator(in dirtyRect: NSRect) {
-		
+
 		let path = NSBezierPath()
 		let originX = floor(cellAppearance.boxLeftMargin)
 		let destinationX = ceil(NSMaxX(bounds))
 		let y = floor(NSMaxY(bounds)) - 0.5
 		path.move(to: NSPoint(x: originX, y: y))
 		path.line(to: NSPoint(x: destinationX, y: y))
-		
+
 		cellAppearance.gridColor.set()
 		path.stroke()
 	}
-	
+
 	override func draw(_ dirtyRect: NSRect) {
-		
+
 		super.draw(dirtyRect)
-		
+
 		if !isSelected && !isNextRowSelected {
 			drawSeparator(in: dirtyRect)
 		}
 	}
-	
+
 	func invalidateGridRect() {
 		
 		setNeedsDisplay(gridRect)

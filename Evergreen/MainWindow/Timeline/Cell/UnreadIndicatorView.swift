@@ -19,9 +19,26 @@ class UnreadIndicatorView: NSView {
 	
 	static let unreadCircleColor = appDelegate.currentTheme.color(forKey: "MainWindow.Timeline.cell.unreadCircleColor")
 
+	var isEmphasized = false {
+		didSet {
+			if isEmphasized != oldValue {
+				needsDisplay = true
+			}
+		}
+	}
+
+	var isSelected = false {
+		didSet {
+			if isSelected != oldValue {
+				needsDisplay = true
+			}
+		}
+	}
+
     override func draw(_ dirtyRect: NSRect) {
-		
-		UnreadIndicatorView.unreadCircleColor.setFill()
+
+		let color = isEmphasized && isSelected ? NSColor.white : UnreadIndicatorView.unreadCircleColor
+		color.setFill()
 		UnreadIndicatorView.bezierPath.fill()
     }
     

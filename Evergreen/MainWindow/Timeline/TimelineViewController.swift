@@ -30,15 +30,18 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	var undoableCommands = [UndoableCommand]()
 	private var cellAppearance: TimelineCellAppearance!
+	private var cellAppearanceWithAvatar: TimelineCellAppearance!
 
 	private var showFeedNames = false {
 		didSet {
 			if showFeedNames != oldValue {
+				updateShowAvatars()
 				tableView.rowHeight = currentRowHeight
 			}
 		}
 	}
 
+	private var showAvatars = false
 	private var rowHeightWithFeedName: CGFloat = 0.0
 	private var rowHeightWithoutFeedName: CGFloat = 0.0
 
@@ -48,11 +51,13 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	private var didRegisterForNotifications = false
 	private let timelineFontSizeKVOKey = "values.{AppDefaults.Key.timelineFontSize}"
+	private var reloadAvailableCellsTimer: Timer?
 
 	private var articles = ArticleArray() {
 		didSet {
 			if articles != oldValue {
 				clearUndoableCommands()
+				updateShowAvatars()
 				tableView.reloadData()
 			}
 		}
@@ -98,7 +103,8 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	override func viewDidLoad() {
 
-		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: false, fontSize: fontSize)
+		cellAppearanceWithAvatar = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: true, fontSize: fontSize)
 
 		updateRowHeights()
 		tableView.rowHeight = currentRowHeight
@@ -110,6 +116,10 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 			NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 
 			NSUserDefaultsController.shared.addObserver(self, forKeyPath: timelineFontSizeKVOKey, options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
 
@@ -140,7 +150,8 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	private func fontSizeDidChange() {
 
-		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: false, fontSize: fontSize)
+		cellAppearanceWithAvatar = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: true, fontSize: fontSize)
 		updateRowHeights()
 		if tableView.rowHeight != currentRowHeight {
 			tableView.rowHeight = currentRowHeight
@@ -306,6 +317,46 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		reloadCellsForArticleIDs(articles.articleIDs())
 	}
 
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+			return
+		}
+		let articlesToReload = articles.filter { (article) -> Bool in
+			return feed == article.feed
+		}
+		reloadCellsForArticles(articlesToReload)
+	}
+
+	@objc func avatarDidBecomeAvailable(_ note: Notification) {
+
+		guard showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+			return
+		}
+
+		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
+			guard let article = articles.articleAtRow(row), let authors = article.authors, !authors.isEmpty else {
+				return false
+			}
+			for author in authors {
+				if author.avatarURL == avatarURL {
+					return true
+				}
+			}
+			return false
+		}
+		if let indexesToReload = indexesToReload {
+			reloadCells(for: indexesToReload)
+		}
+	}
+
+	@objc func imageDidBecomeAvailable(_ note: Notification) {
+
+		if showAvatars {
+			queueReloadAvailableCells()
+		}
+	}
+
 	func fontSizeInDefaultsDidChange() {
 
 		TimelineCellData.emptyCache()
@@ -319,7 +370,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	// MARK: - Reloading Data
-	
+
 	private func cellForRowView(_ rowView: NSView) -> NSView? {
 		
 		for oneView in rowView.subviews where oneView is TimelineTableCellView {
@@ -335,7 +386,18 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	
 	private func reloadCellsForArticleIDs(_ articleIDs: Set<String>) {
 
+		if articleIDs.isEmpty {
+			return
+		}
 		let indexes = articles.indexesForArticleIDs(articleIDs)
+		reloadCells(for: indexes)
+	}
+
+	private func reloadCells(for indexes: IndexSet) {
+
+		if indexes.isEmpty {
+			return
+		}
 		tableView.reloadData(forRowIndexes: indexes, columnIndexes: NSIndexSet(index: 0) as IndexSet)
 	}
 	
@@ -348,7 +410,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 		
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, appearance: cellAppearance, showFeedName: showingFeedNames, feedName: "Prototype Feed Name", favicon: nil, avatar: nil, featuredImage: nil)
+		let prototypeCellData = TimelineCellData(article: prototypeArticle, appearance: cellAppearance, showFeedName: showingFeedNames, feedName: "Prototype Feed Name", avatar: nil, showAvatar: false, featuredImage: nil)
 		let height = timelineCellHeight(100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
@@ -390,14 +452,14 @@ extension TimelineViewController: NSTableViewDelegate {
 	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
 
 		let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineRow"), owner: self) as! TimelineTableRowView
-		rowView.cellAppearance = cellAppearance
+		rowView.cellAppearance = showAvatars ? cellAppearanceWithAvatar: cellAppearance
 		return rowView
 	}
 
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 
 		let cell: TimelineTableCellView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineCell"), owner: self) as! TimelineTableCellView
-		cell.cellAppearance = cellAppearance
+		cell.cellAppearance = showAvatars ? cellAppearanceWithAvatar: cellAppearance
 
 		if let article = articles.articleAtRow(row) {
 			configureTimelineCell(cell, article: article)
@@ -445,15 +507,21 @@ extension TimelineViewController: NSTableViewDelegate {
 
 		cell.objectValue = article
 
-		let favicon = showFeedNames ? article.feed?.smallIcon : nil
-		let avatar = avatarFor(article)
+//		let favicon = showFeedNames ? article.feed?.smallIcon : nil
+		var avatar = avatarFor(article)
+		if avatar == nil, let feed = article.feed {
+			avatar = appDelegate.faviconDownloader.favicon(for: feed)
+		}
 		let featuredImage = featuredImageFor(article)
 
-		cell.cellData = TimelineCellData(article: article, appearance: cellAppearance, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, favicon: favicon, avatar: avatar, featuredImage: featuredImage)
+		cell.cellData = TimelineCellData(article: article, appearance: cellAppearance, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatars, featuredImage: featuredImage)
 	}
 
 	private func avatarFor(_ article: Article) -> NSImage? {
 
+		if !showAvatars {
+			return nil
+		}
 		if let authors = article.authors {
 			for author in authors {
 				if let image = avatarForAuthor(author) {
@@ -495,7 +563,54 @@ extension TimelineViewController: NSTableViewDelegate {
 // MARK: - Private
 
 private extension TimelineViewController {
-	
+
+	func reloadAvailableCells() {
+
+		if let indexesToReload = tableView.indexesOfAvailableRows() {
+			reloadCells(for: indexesToReload)
+		}
+	}
+
+	func queueReloadAvailableCells() {
+
+		invalidateReloadTimer()
+		reloadAvailableCellsTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { (timer) in
+			self.reloadAvailableCells()
+			self.invalidateReloadTimer()
+		}
+	}
+
+	func invalidateReloadTimer() {
+
+		if let timer = reloadAvailableCellsTimer {
+			if timer.isValid {
+				timer.invalidate()
+			}
+			reloadAvailableCellsTimer = nil
+		}
+	}
+
+	func updateShowAvatars() {
+
+		if showFeedNames {
+			self.showAvatars = true
+			return
+		}
+
+		for article in articles {
+			if let authors = article.authors {
+			for author in authors {
+				if author.avatarURL != nil {
+					self.showAvatars = true
+					return
+				}
+			}
+			}
+		}
+
+		self.showAvatars = false
+	}
+
 	func emptyTheTimeline() {
 
 		if !articles.isEmpty {

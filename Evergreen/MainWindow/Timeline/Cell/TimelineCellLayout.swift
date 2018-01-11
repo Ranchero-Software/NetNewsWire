@@ -14,7 +14,6 @@ struct TimelineCellLayout {
 	
 	let width: CGFloat
 	let height: CGFloat
-	let faviconRect: NSRect
 	let feedNameRect: NSRect
 	let dateRect: NSRect
 	let titleRect: NSRect
@@ -22,10 +21,9 @@ struct TimelineCellLayout {
 	let avatarImageRect: NSRect
 	let paddingBottom: CGFloat
 	
-	init(width: CGFloat, faviconRect: NSRect, feedNameRect: NSRect, dateRect: NSRect, titleRect: NSRect, unreadIndicatorRect: NSRect, avatarImageRect: NSRect, paddingBottom: CGFloat) {
+	init(width: CGFloat, feedNameRect: NSRect, dateRect: NSRect, titleRect: NSRect, unreadIndicatorRect: NSRect, avatarImageRect: NSRect, paddingBottom: CGFloat) {
 		
 		self.width = width
-		self.faviconRect = faviconRect
 		self.feedNameRect = feedNameRect
 		self.dateRect = dateRect
 		self.titleRect = titleRect
@@ -33,8 +31,7 @@ struct TimelineCellLayout {
 		self.avatarImageRect = avatarImageRect
 		self.paddingBottom = paddingBottom
 		
-		var height = max(0, faviconRect.maxY)
-		height = max(height, feedNameRect.maxY)
+		var height = max(0, feedNameRect.maxY)
 		height = max(height, dateRect.maxY)
 		height = max(height, titleRect.maxY)
 		height = max(height, unreadIndicatorRect.maxY)
@@ -76,20 +73,20 @@ private func rectForFeedName(_ cellData: TimelineCellData, _ width: CGFloat, _ a
 	return r
 }
 
-private func rectForFavicon(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ feedNameRect: NSRect, _ unreadIndicatorRect: NSRect) -> NSRect {
-	
-	guard let _ = cellData.favicon, cellData.showFeedName else {
-		return NSZeroRect
-	}
-	
-	var r = NSZeroRect
-	r.size = appearance.faviconSize
-	r.origin.y = feedNameRect.origin.y
-	
-	r = RSRectCenteredHorizontallyInRect(r, unreadIndicatorRect)
-	
-	return r
-}
+//private func rectForFavicon(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ feedNameRect: NSRect, _ unreadIndicatorRect: NSRect) -> NSRect {
+//	
+//	guard let _ = cellData.favicon, cellData.showFeedName else {
+//		return NSZeroRect
+//	}
+//	
+//	var r = NSZeroRect
+//	r.size = appearance.faviconSize
+//	r.origin.y = feedNameRect.origin.y
+//	
+//	r = RSRectCenteredHorizontallyInRect(r, unreadIndicatorRect)
+//	
+//	return r
+//}
 
 private func rectsForTitle(_ cellData: TimelineCellData, _ width: CGFloat, _ appearance: TimelineCellAppearance) -> (NSRect, NSRect) {
 	
@@ -123,6 +120,9 @@ private func rectForUnreadIndicator(_ cellData: TimelineCellData, _ appearance: 
 private func rectForAvatar(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ titleLine1Rect: NSRect) -> NSRect {
 
 	var r = NSRect.zero
+	if !cellData.showAvatar {
+		return r
+	}
 	r.size = appearance.avatarSize
 	r.origin.x = appearance.cellPadding.left + appearance.unreadCircleDimension + appearance.unreadCircleMarginRight
 	r.origin.y = titleLine1Rect.minY + appearance.avatarAdjustmentTop
@@ -131,15 +131,15 @@ private func rectForAvatar(_ cellData: TimelineCellData, _ appearance: TimelineC
 }
 
 func timelineCellLayout(_ width: CGFloat, cellData: TimelineCellData, appearance: TimelineCellAppearance) -> TimelineCellLayout {
-	
+
 	let (titleRect, titleLine1Rect) = rectsForTitle(cellData, width, appearance)
 	let dateRect = rectForDate(cellData, width, appearance, titleRect)
 	let feedNameRect = rectForFeedName(cellData, width, appearance, dateRect)
 	let unreadIndicatorRect = rectForUnreadIndicator(cellData, appearance, titleLine1Rect)
-	let faviconRect = rectForFavicon(cellData, appearance, feedNameRect, unreadIndicatorRect)
+//	let faviconRect = rectForFavicon(cellData, appearance, feedNameRect, unreadIndicatorRect)
 	let avatarImageRect = rectForAvatar(cellData, appearance, titleLine1Rect)
 
-	return TimelineCellLayout(width: width, faviconRect: faviconRect, feedNameRect: feedNameRect, dateRect: dateRect, titleRect: titleRect, unreadIndicatorRect: unreadIndicatorRect, avatarImageRect: avatarImageRect, paddingBottom: appearance.cellPadding.bottom)
+	return TimelineCellLayout(width: width, feedNameRect: feedNameRect, dateRect: dateRect, titleRect: titleRect, unreadIndicatorRect: unreadIndicatorRect, avatarImageRect: avatarImageRect, paddingBottom: appearance.cellPadding.bottom)
 }
 
 func timelineCellHeight(_ width: CGFloat, cellData: TimelineCellData, appearance: TimelineCellAppearance) -> CGFloat {

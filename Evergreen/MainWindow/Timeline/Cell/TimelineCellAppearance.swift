@@ -9,15 +9,13 @@
 import Cocoa
 import DB5
 
-struct TimelineCellAppearance {
+struct TimelineCellAppearance: Equatable {
 
 	let cellPadding: NSEdgeInsets
 	
 	let feedNameColor: NSColor
 	let feedNameFont: NSFont
-	let faviconFeedNameSpacing: CGFloat
-	let faviconSize = NSSize(width: 16, height: 16)
-	
+
 	let dateColor: NSColor
 	let dateMarginLeft: CGFloat
 	let dateFont: NSFont
@@ -33,16 +31,17 @@ struct TimelineCellAppearance {
 	let unreadCircleDimension: CGFloat
 	let unreadCircleMarginRight: CGFloat
 	
-	let boxLeftMargin: CGFloat
-
 	let gridColor: NSColor
 
 	let avatarSize: NSSize
 	let avatarMarginRight: CGFloat
 	let avatarAdjustmentTop: CGFloat
 	let avatarCornerRadius: CGFloat
-	
-	init(theme: VSTheme, fontSize: FontSize) {
+	let showAvatar: Bool
+
+	let boxLeftMargin: CGFloat
+
+	init(theme: VSTheme, showAvatar: Bool, fontSize: FontSize) {
 
 		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
 		
@@ -50,7 +49,6 @@ struct TimelineCellAppearance {
 		
 		self.feedNameColor = theme.color(forKey: "MainWindow.Timeline.cell.feedNameColor")
 		self.feedNameFont = NSFont.systemFont(ofSize: actualFontSize)
-		self.faviconFeedNameSpacing = theme.float(forKey: "MainWindow.Timeline.cell.faviconFeedNameSpacing")
 
 		self.dateColor = theme.color(forKey: "MainWindow.Timeline.cell.dateColor")
 		let actualDateFontSize = AppDefaults.actualFontSize(for: fontSize)
@@ -74,8 +72,25 @@ struct TimelineCellAppearance {
 		self.avatarMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginRight")
 		self.avatarAdjustmentTop = theme.float(forKey: "MainWindow.Timeline.cell.avatarAdjustmentTop")
 		self.avatarCornerRadius = theme.float(forKey: "MainWindow.Timeline.cell.avatarCornerRadius")
-		
-		self.boxLeftMargin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight + self.avatarSize.width + self.avatarMarginRight
+		self.showAvatar = showAvatar
+
+		var margin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight
+		if showAvatar {
+			margin += (self.avatarSize.width + self.avatarMarginRight)
+		}
+		self.boxLeftMargin = margin
+	}
+
+	static func ==(lhs: TimelineCellAppearance, rhs: TimelineCellAppearance) -> Bool {
+
+		return lhs.boxLeftMargin == rhs.boxLeftMargin && lhs.showAvatar == rhs.showAvatar && lhs.cellPadding == rhs.cellPadding && lhs.feedNameColor == rhs.feedNameColor && lhs.feedNameFont == rhs.feedNameFont && lhs.dateColor == rhs.dateColor && lhs.dateMarginLeft == rhs.dateMarginLeft && lhs.dateFont == rhs.dateFont && lhs.titleColor == rhs.titleColor && lhs.titleFont == rhs.titleFont && lhs.titleBottomMargin == rhs.titleBottomMargin && lhs.textColor == rhs.textColor && lhs.textFont == rhs.textFont && lhs.unreadCircleColor == rhs.unreadCircleColor && lhs.unreadCircleDimension == rhs.unreadCircleDimension && lhs.unreadCircleMarginRight == rhs.unreadCircleMarginRight && lhs.gridColor == rhs.gridColor && lhs.avatarSize == rhs.avatarSize && lhs.avatarMarginRight == rhs.avatarMarginRight && lhs.avatarAdjustmentTop == rhs.avatarAdjustmentTop && lhs.avatarCornerRadius == rhs.avatarCornerRadius
 	}
 }
 
+extension NSEdgeInsets: Equatable {
+
+	public static func ==(lhs: NSEdgeInsets, rhs: NSEdgeInsets) -> Bool {
+
+		return lhs.left == rhs.left && lhs.top == rhs.top && lhs.right == rhs.right && lhs.bottom == rhs.bottom
+	}
+}

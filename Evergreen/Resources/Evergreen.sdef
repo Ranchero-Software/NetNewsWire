@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+
+<!-- declare the namespace for using XInclude so we can include the standard suite -->
+<dictionary title="sa;lfsdf" xmlns:xi="http://www.w3.org/2003/XInclude">
+    
+    <suite name="Standard Suite" code="core" description="Subset of the Standard Suite.">
+        <class name="application" code="capp" description="The application's top-level scripting object.">
+            <cocoa class="NSApplication"/>
+            <property name="name" code="pnam" type="text" access="r" description="The name of the application."/>
+            <property name="version" code="vers" type="text" access="r" description="The version number of the application."/>
+        </class>
+    </suite>
+
+    <suite name="Evergreen Suite" code="Geod" description="The Evergreen Application Suite.">
+        <class name="application" code="capp"
+             description="Evergreen Application" inherits="application">
+             
+             <!-- the name of the Cocoa class where we have provided the
+              various accessor methods for our application class.  -->
+             <cocoa class="NSApplication"/>
+             
+             <element type="account">
+                 <cocoa key="accounts"/>
+             </element>
+         </class>
+
+        <enumeration name="account type" code="enum">
+            <enumerator name="local" code="Locl" description="The On my Mac account"/>
+            <enumerator name="feedly" code="Fdly" description="A Feedly account"/>
+            <enumerator name="feedbin" code="Fdbn" description="A Feedbin account"/>
+            <enumerator name="feed wrangler" code="FWrg" description="A Feed Wrangler account"/>
+            <enumerator name="newsblur" code="NBlr" description="A Newsblur account"/>
+        </enumeration>
+
+        <class name="account" code="Acct" plural="accounts" description="An account for subscribing to feeds">
+            <cocoa class="ScriptableAccount"/>
+            <property name="name" code="pnam" type="text" access="r" description="The name of the account">
+                <cocoa key="name"/>
+            </property>
+            <property name="id" code="id  " type="text" access="r" description="The unique id of the account">
+                <cocoa key="uniqueId"/>
+            </property>
+            <property name="type" code="ATyp" type="account type" access="r" description="The type of the account">
+                <cocoa key="accountType"/>
+            </property>
+            <property name="contents" code="Cnts" access="r" description="The type of the account">
+                <cocoa key="contents"/>
+                <type type="account item" list="yes"/>
+            </property>
+            <element type="feed">
+                <cocoa key="feeds"/>
+            </element>
+            <element type="folder">
+                <cocoa key="folders"/>
+            </element>
+        </class>
+        
+        <class name="account item" code="AItm" plural="account items" description="a folder or feed">
+        </class>
+        
+        <class name="feed" code="Feed" plural="feeds" description="An RSS feeds" inherits="account item">
+            <cocoa class="ScriptableFeed"/>
+            <property name="name" code="pnam" type="text" access="r" description="The name of the account">
+                <cocoa key="name"/>
+            </property>
+            <property name="id" code="id  " type="text" access="r" description="The unique id of the account">
+                <cocoa key="uniqueId"/>
+            </property>
+            <property name="url" code="URL " type="text" access="r" description="The type of the account">
+                <cocoa key="url"/>
+            </property>
+        </class>
+
+        <class name="folder" code="fold" plural="folders" description="A folder for organizing feeds" inherits="account item">
+            <cocoa class="ScriptableFolder"/>
+            <property name="name" code="pnam" type="text" access="r" description="The name of the account">
+                <cocoa key="name"/>
+            </property>
+            <property name="id" code="id  " type="integer" access="r" description="The unique id of the account">
+                <cocoa key="uniqueId"/>
+            </property>
+        </class>
+
+    </suite>
+
+    <suite name="Internet Suite" code="GURL"
+        description="Standard Internet Suite.">
+        
+        <command name="open location" code="GURLGURL" description="opens the given url.">
+            <direct-parameter type="text"/>
+        </command>        
+    </suite>
+
+</dictionary>
+

@@ -7,6 +7,39 @@
         <language>en</language>
 
 				<item>
+          <title>Version 1.0d31</title>
+            <description><![CDATA[
+            
+            <p>Improve the promptness and reliability of user avatars appearing in the timeline.</p>
+            <p>Fix a bug detecting some JSON Feeds — those that use escaping on forward slashes in the text, such as http://curtclifton.net/feed.json</p>
+            <p>Draw a white unread indicator in the timeline when the cell is selected and emphasized.</p>
+            <p>Remove Error Log command from menu, since the Error Log won’t be until after 1.0.</p>
+            <p>Use the git commit number as the build number in Info.plist. Use Curtis Herbert’s script: https://blog.curtisherbert.com/automated-build-numbers/</p>
+            <p>Add Om Malik’s feed to the default list.</p>
+            <p>Check /index.xml when finding a feed when there are no other leads.</p>
+  
+    						]]></description>
+            <pubDate>Mon, 08 Jan 2018 13:15:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d31.zip" sparkle:version="775" sparkle:shortVersionString="1.0d31" length="7224599" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+				<item>
+          <title>Version 1.0d30</title>
+            <description><![CDATA[
+            
+            <p>Show avatars in the timeline view at the right time — when viewing a folder, or when the articles in the timeline specify authors per article (as with Micro.blog timelines).</p>
+            <p>Move favicons in the detail view to the right side. They’re shown when there’s no user avatar or feed icon.</p>
+            <p>Fix avatar alignment in the detail view.</p>
+            <p>Freeze the user agent as <code>Evergreen (macOS; RSS Reader; https://ranchero.com/evergreen/)</code>. (An iOS version would say iOS rather than macOS, but would be the same otherwise.)</p>
+  
+    						]]></description>
+            <pubDate>Thu, 04 Jan 2018 21:20:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d30.zip" sparkle:version="522" sparkle:shortVersionString="1.0d30" length="7214977" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+				<item>
           <title>Version 1.0d29</title>
             <description><![CDATA[
             
