@@ -134,7 +134,18 @@
 		D5907CA1200232A1005947E5 /* testGetURL.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD1200223F60066386B /* testGetURL.applescript */; };
 		D5907CA2200232AD005947E5 /* testGenericScript.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5907C9D20023249005947E5 /* testGenericScript.applescript */; };
 		D5907CA3200232AF005947E5 /* testGetURL.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5558FD1200223F60066386B /* testGetURL.applescript */; };
+		D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */; };
+		D5907D972004B7EB005947E5 /* Account+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907D962004B7EB005947E5 /* Account+Scriptability.swift */; };
+		D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907DB12004BB37005947E5 /* ScriptingObjectContainer.swift */; };
+		D5907DB32005F45D005947E5 /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
 		D5D1751220020B980047B29D /* Evergreen.sdef in Resources */ = {isa = PBXBuildFile; fileRef = D5D175012002039D0047B29D /* Evergreen.sdef */; };
+		D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */; };
+		D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */; };
+		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
+		D5F4EDE620075C1300B9E363 /* testNameOfEveryFolder.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */; };
+		D5F4EDE820075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDE720075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript */; };
+		D5F4EDE920075C6700B9E363 /* testNameAndUrlOfEveryFeed.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5F4EDE720075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript */; };
+		D5F4EDEA20075C6700B9E363 /* testNameOfEveryFolder.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -428,6 +439,8 @@
 			dstPath = TestScripts;
 			dstSubfolderSpec = 7;
 			files = (
+				D5F4EDE920075C6700B9E363 /* testNameAndUrlOfEveryFeed.applescript in CopyFiles */,
+				D5F4EDEA20075C6700B9E363 /* testNameOfEveryFolder.applescript in CopyFiles */,
 				D5907CA2200232AD005947E5 /* testGenericScript.applescript in CopyFiles */,
 				D5907CA3200232AF005947E5 /* testGetURL.applescript in CopyFiles */,
 			);
@@ -562,7 +575,15 @@
 		D5907CDE2002F0BE005947E5 /* Evergreen_project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Evergreen_project.xcconfig; sourceTree = "<group>"; };
 		D5907CDF2002F0F9005947E5 /* EvergreenTests_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = EvergreenTests_target.xcconfig; sourceTree = "<group>"; };
 		D5907CE02002F0FA005947E5 /* Evergreen_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Evergreen_target.xcconfig; sourceTree = "<group>"; };
+		D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSApplication+Scriptability.swift"; sourceTree = "<group>"; };
+		D5907D962004B7EB005947E5 /* Account+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+Scriptability.swift"; sourceTree = "<group>"; };
+		D5907DB12004BB37005947E5 /* ScriptingObjectContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingObjectContainer.swift; sourceTree = "<group>"; };
 		D5D175012002039D0047B29D /* Evergreen.sdef */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Evergreen.sdef; path = ../Resources/Evergreen.sdef; sourceTree = "<group>"; };
+		D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingObject.swift; sourceTree = "<group>"; };
+		D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feed+Scriptability.swift"; sourceTree = "<group>"; };
+		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
+		D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testNameOfEveryFolder.applescript; sourceTree = "<group>"; };
+		D5F4EDE720075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testNameAndUrlOfEveryFeed.applescript; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -912,6 +933,7 @@
 				848F6AE31FC29CFA002D422E /* Favicons */,
 				845213211FCA5B10003B6E93 /* Images */,
 				849A97961ED9EFAA007D329B /* Extensions */,
+				D5907D6F2004AB67005947E5 /* Scriptability */,
 				D5558FD6200227E60066386B /* AppleEvents */,
 				849A97991ED9EFB6007D329B /* Resources */,
 				84FB9A2C1EDCD6A4003D53B9 /* Frameworks */,
@@ -1092,6 +1114,8 @@
 			children = (
 				D5907C9D20023249005947E5 /* testGenericScript.applescript */,
 				D5558FD1200223F60066386B /* testGetURL.applescript */,
+				D5F4EDE720075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript */,
+				D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */,
 			);
 			path = scripts;
 			sourceTree = "<group>";
@@ -1115,6 +1139,20 @@
 				D5907CDF2002F0F9005947E5 /* EvergreenTests_target.xcconfig */,
 			);
 			path = xcconfig;
+			sourceTree = "<group>";
+		};
+		D5907D6F2004AB67005947E5 /* Scriptability */ = {
+			isa = PBXGroup;
+			children = (
+				D5907D962004B7EB005947E5 /* Account+Scriptability.swift */,
+				D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */,
+				D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */,
+				D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */,
+				D5907DB12004BB37005947E5 /* ScriptingObjectContainer.swift */,
+				D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */,
+			);
+			name = Scriptability;
+			path = Evergreen/Scriptability;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1495,12 +1533,14 @@
 				849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */,
 				84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */,
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,
+				D5907D972004B7EB005947E5 /* Account+Scriptability.swift in Sources */,
 				842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */,
 				844B5B5B1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift in Sources */,
 				84DAEE321F870B390058304B /* DockBadge.swift in Sources */,
 				842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */,
 				842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */,
 				845F52ED1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift in Sources */,
+				D5907DB32005F45D005947E5 /* AppleEventUtils.swift in Sources */,
 				8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */,
 				849A975E1ED9EB72007D329B /* MainWindowController.swift in Sources */,
 				842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */,
@@ -1512,6 +1552,7 @@
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */,
+				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
@@ -1525,6 +1566,7 @@
 				84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */,
 				842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */,
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
+				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
 				849A97791ED9EC04007D329B /* TimelineStringUtilities.swift in Sources */,
 				84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */,
@@ -1545,6 +1587,8 @@
 				849A978D1ED9EE4D007D329B /* FeedListWindowController.swift in Sources */,
 				849A97771ED9EC04007D329B /* TimelineCellData.swift in Sources */,
 				84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */,
+				D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */,
+				D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */,
 				842611A01FCB72600086A189 /* FeaturedImageDownloader.swift in Sources */,
 				849A97781ED9EC04007D329B /* TimelineCellLayout.swift in Sources */,
 				84CC08061FF5D2E000C0C0ED /* FeedListSplitViewController.swift in Sources */,
@@ -1563,6 +1607,7 @@
 				84A1500320048D660046AD9A /* SendToCommand.swift in Sources */,
 				845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */,
 				849A97851ED9ECCD007D329B /* PreferencesWindowController.swift in Sources */,
+				D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */,
 				84E850861FCB60CE0072EA88 /* AuthorAvatarDownloader.swift in Sources */,
 				8414AD251FCF5A1E00955102 /* TimelineHeaderView.swift in Sources */,
 				849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */,
@@ -1581,7 +1626,9 @@
 				D5907CA1200232A1005947E5 /* testGetURL.applescript in Sources */,
 				849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */,
 				D5558FD32002245C0066386B /* ScriptingTests.swift in Sources */,
+				D5F4EDE820075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript in Sources */,
 				D5907CA0200232A1005947E5 /* testGenericScript.applescript in Sources */,
+				D5F4EDE620075C1300B9E363 /* testNameOfEveryFolder.applescript in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
