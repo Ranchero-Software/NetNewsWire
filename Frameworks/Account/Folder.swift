@@ -14,7 +14,7 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 
 	public weak var account: Account?
 	public var children = [AnyObject]()
-	var name: String?
+	public private(set) var name: String?
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 	public let folderID: Int // not saved: per-run only
 	static var incrementingID = 0

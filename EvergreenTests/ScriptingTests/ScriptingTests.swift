@@ -77,5 +77,13 @@ class ScriptingTests: XCTestCase {
     func testGetUrlScript() {
         _ = doIndividualScript(filename: "testGetURL")
     }
+    
+    func testNameAndUrlOfEveryFeedScript() {
+        _ = doIndividualScript(filename: "testNameAndUrlOfEveryFeed")
+    }
+    
+    func testNameOfEveryFolderScript() {
+        _ = doIndividualScript(filename: "testNameOfEveryFolder")
+    }
 
 }

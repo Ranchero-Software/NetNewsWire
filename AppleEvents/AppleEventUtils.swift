@@ -31,3 +31,9 @@ extension String {
         return (sum)
     }
 }
+extension Int {
+    func FourCharCode() -> FourCharCode {
+        return (UInt32(self))
+    }
+}
+
