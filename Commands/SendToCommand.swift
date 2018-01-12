@@ -12,15 +12,54 @@ import Cocoa
 
 protocol SendToCommand {
 
+	var title: String { get }
+	var image: NSImage? { get }
+
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool
 	func sendObject(_ object: Any?, selectedText: String?)
 }
 
-extension SendToCommand {
 
-	func appExistsOnDisk(_ bundleIdentifier: String) -> Bool {
+final class ApplicationSpecifier {
 
-		if let _ = NSWorkspace.shared.absolutePathForApplication(withBundleIdentifier: bundleIdentifier) {
+	let bundleID: String
+	var icon: NSImage? = nil
+	var existsOnDisk = false
+	var path: String? = nil
+
+	init(bundleID: String) {
+
+		self.bundleID = bundleID
+		update()
+	}
+
+	func update() {
+
+		path = NSWorkspace.shared.absolutePathForApplication(withBundleIdentifier: bundleID)
+		if let path = path {
+			if icon == nil {
+				icon = NSWorkspace.shared.icon(forFile: path)
+			}
+			existsOnDisk = true
+		}
+		else {
+			existsOnDisk = false
+			icon = nil
+		}
+	}
+
+	func launch() -> Bool {
+
+		guard existsOnDisk, let path = path else {
+			return false
+		}
+
+		let url = URL(fileURLWithPath: path)
+		if let runningApplication = try? NSWorkspace.shared.launchApplication(at: url, options: [.withErrorPresentation], configuration: [:]) {
+			if runningApplication.isFinishedLaunching {
+				return true
+			}
+			sleep(3) // Give the app time to launch. This is ugly.
 			return true
 		}
 		return false

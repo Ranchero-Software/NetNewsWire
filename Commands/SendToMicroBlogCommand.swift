@@ -13,18 +13,18 @@ import Data
 
 final class SendToMicroBlogCommand: SendToCommand {
 
-	private let bundleID = "blog.micro.mac"
-	private var appExists = false
+	let title = NSLocalizedString("Send to Micro.blog", comment: "Send to command")
 
-	init() {
-
-		self.appExists = appExistsOnDisk(bundleID)
-		NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive(_:)), name: NSApplication.didBecomeActiveNotification, object: nil)
+	var image: NSImage? {
+		return microBlogApp.icon
 	}
+
+	private let microBlogApp = ApplicationSpecifier(bundleID: "blog.micro.mac")
 
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool {
 
-		guard appExists, let article = object as? Article, let _ = article.preferredLink else {
+		microBlogApp.update()
+		guard microBlogApp.existsOnDisk, let article = (object as? ArticlePasteboardWriter)?.article, let _ = article.preferredLink else {
 			return false
 		}
 
@@ -36,7 +36,10 @@ final class SendToMicroBlogCommand: SendToCommand {
 		guard canSendObject(object, selectedText: selectedText) else {
 			return
 		}
-		guard let article = object as? Article else {
+		guard let article = (object as? ArticlePasteboardWriter)?.article else {
+			return
+		}
+		guard microBlogApp.existsOnDisk, microBlogApp.launch() else {
 			return
 		}
 
@@ -66,11 +69,6 @@ final class SendToMicroBlogCommand: SendToCommand {
 		}
 
 		let _ = try? NSWorkspace.shared.open(url, options: [], configuration: [:])
-	}
-
-	@objc func appDidBecomeActive(_ note: Notification) {
-
-		self.appExists = appExistsOnDisk(bundleID)
 	}
 }
 
