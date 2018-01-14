@@ -61,10 +61,11 @@ final class SendToMicroBlogCommand: SendToCommand {
 			s = link
 		}
 
-		guard let encodedString = s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+		let urlQueryDictionary = ["text": s]
+		guard let urlQueryString = urlQueryDictionary.urlQueryString() else {
 			return
 		}
-		guard let url = URL(string: "microblog://post?text=" + encodedString) else {
+		guard let url = URL(string: "microblog://post?" + urlQueryString) else {
 			return
 		}
 
