@@ -71,6 +71,7 @@
 		842E45CC1ED623C7000A8B52 /* UniqueIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */; };
 		8432B1861DACA0E90057D6DF /* NSResponder-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8432B1851DACA0E90057D6DF /* NSResponder-Extensions.swift */; };
 		8432B1881DACA2060057D6DF /* NSWindow-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8432B1871DACA2060057D6DF /* NSWindow-Extensions.swift */; };
+		8434D15C200BD6F400D6281E /* UserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8434D15B200BD6F400D6281E /* UserApp.swift */; };
 		84411E731FE5FFC3004B527F /* NSImage+RSCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E721FE5FFC3004B527F /* NSImage+RSCore.swift */; };
 		844B5B571FE9D36000C7C76A /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B561FE9D36000C7C76A /* Keyboard.swift */; };
 		844C915B1B65753E0051FC1B /* RSPlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 844C91591B65753E0051FC1B /* RSPlist.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -191,6 +192,7 @@
 		842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueIdentifier.swift; sourceTree = "<group>"; };
 		8432B1851DACA0E90057D6DF /* NSResponder-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSResponder-Extensions.swift"; sourceTree = "<group>"; };
 		8432B1871DACA2060057D6DF /* NSWindow-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSWindow-Extensions.swift"; sourceTree = "<group>"; };
+		8434D15B200BD6F400D6281E /* UserApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserApp.swift; path = AppKit/UserApp.swift; sourceTree = "<group>"; };
 		84411E721FE5FFC3004B527F /* NSImage+RSCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSImage+RSCore.swift"; path = "Images/NSImage+RSCore.swift"; sourceTree = "<group>"; };
 		844B5B561FE9D36000C7C76A /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Keyboard.swift; path = RSCore/Keyboard.swift; sourceTree = "<group>"; };
 		844C91591B65753E0051FC1B /* RSPlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RSPlist.h; path = RSCore/RSPlist.h; sourceTree = "<group>"; };
@@ -460,6 +462,7 @@
 				84C687311FBAA3DF00345C9E /* LogWindowController.swift */,
 				84C687341FBC025600345C9E /* Log.swift */,
 				84C687371FBC028900345C9E /* LogItem.swift */,
+				8434D15B200BD6F400D6281E /* UserApp.swift */,
 				842DD7F91E1499FA00E061EB /* Views */,
 			);
 			name = AppKit;
@@ -794,6 +797,7 @@
 				842E45CC1ED623C7000A8B52 /* UniqueIdentifier.swift in Sources */,
 				84A8358A1D4EC7B80004C598 /* PlistProviderProtocol.swift in Sources */,
 				849A339E1AC90A0A0015BA09 /* NSTableView+RSCore.m in Sources */,
+				8434D15C200BD6F400D6281E /* UserApp.swift in Sources */,
 				84CFF51B1AC3C77500CEA6C8 /* RSPlatform.m in Sources */,
 				845A291F1FC8BC49007B49E3 /* BinaryDiskCache.swift in Sources */,
 				84CFF52C1AC3CA9700CEA6C8 /* NSData+RSCore.m in Sources */,
