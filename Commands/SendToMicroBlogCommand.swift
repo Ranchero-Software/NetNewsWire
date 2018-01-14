@@ -8,6 +8,7 @@
 
 import Cocoa
 import Data
+import RSCore
 
 // Not undoable.
 
@@ -19,11 +20,11 @@ final class SendToMicroBlogCommand: SendToCommand {
 		return microBlogApp.icon
 	}
 
-	private let microBlogApp = ApplicationSpecifier(bundleID: "blog.micro.mac")
+	private let microBlogApp = UserApp(bundleID: "blog.micro.mac")
 
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool {
 
-		microBlogApp.update()
+		microBlogApp.updateStatus()
 		guard microBlogApp.existsOnDisk, let article = (object as? ArticlePasteboardWriter)?.article, let _ = article.preferredLink else {
 			return false
 		}
@@ -39,7 +40,7 @@ final class SendToMicroBlogCommand: SendToCommand {
 		guard let article = (object as? ArticlePasteboardWriter)?.article else {
 			return
 		}
-		guard microBlogApp.existsOnDisk, microBlogApp.launch() else {
+		guard microBlogApp.launchIfNeeded(), microBlogApp.bringToFront() else {
 			return
 		}
 
