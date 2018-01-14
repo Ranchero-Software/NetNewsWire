@@ -45,22 +45,9 @@ final class SendToMicroBlogCommand: SendToCommand {
 		}
 
 		// TODO: get text from contentHTML or contentText if no title and no selectedText.
-		var s = ""
-		if let selectedText = selectedText {
-			s += selectedText
-			if let link = article.preferredLink {
-				s += "\n\n\(link)"
-			}
-		}
-		else if let title = article.title {
-			s += title
-			if let link = article.preferredLink {
-				s = "[" + s + "](" + link + ")"
-			}
-		}
-		else if let link = article.preferredLink {
-			s = link
-		}
+		// TODO: consider selectedText.
+
+		let s = article.attributionString + article.linkString
 
 		let urlQueryDictionary = ["text": s]
 		guard let urlQueryString = urlQueryDictionary.urlQueryString() else {
@@ -74,4 +61,36 @@ final class SendToMicroBlogCommand: SendToCommand {
 	}
 }
 
+private extension Article {
 
+	var attributionString: String {
+
+		// Feed name, or feed name + author name (if author is specified per-article).
+		// Includes trailing space.
+
+		if let feedName = feed?.nameForDisplay, let authorName = authors?.first?.name {
+			return feedName + ", " + authorName + ": "
+		}
+		if let feedName = feed?.nameForDisplay {
+			return feedName + ": "
+		}
+		return ""
+	}
+
+	var linkString: String {
+
+		// Title + link or just title (if no link) or just link if no title
+
+		if let title = title, let link = preferredLink {
+			return "[" + title + "](" + link + ")"
+		}
+		if let preferredLink = preferredLink {
+			return preferredLink
+		}
+		if let title = title {
+			return title
+		}
+		return ""
+	}
+
+}
