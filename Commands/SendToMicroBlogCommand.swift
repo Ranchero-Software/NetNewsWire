@@ -14,7 +14,7 @@ import RSCore
 
 final class SendToMicroBlogCommand: SendToCommand {
 
-	let title = NSLocalizedString("Send to Micro.blog", comment: "Send to command")
+	let title = "Micro.blog"
 
 	var image: NSImage? {
 		return microBlogApp.icon

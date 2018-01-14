@@ -11,7 +11,7 @@ import RSCore
 
 final class SendToMarsEditCommand: SendToCommand {
 
-	let title = NSLocalizedString("Send to MarsEdit", comment: "Send to command")
+	let title = "MarsEdit"
 
 	var image: NSImage? {
 		return appToUse()?.icon ?? nil
