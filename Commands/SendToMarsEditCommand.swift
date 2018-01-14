@@ -7,20 +7,21 @@
 //
 
 import Cocoa
+import RSCore
 
 final class SendToMarsEditCommand: SendToCommand {
 
 	let title = NSLocalizedString("Send to MarsEdit", comment: "Send to command")
 
 	var image: NSImage? {
-		return appSpecifierToUse()?.icon ?? nil
+		return appToUse()?.icon ?? nil
 	}
 
-	private let marsEditApps = [ApplicationSpecifier(bundleID: "com.red-sweater.marsedit4"), ApplicationSpecifier(bundleID: "com.red-sweater.marsedit")]
+	private let marsEditApps = [UserApp(bundleID: "com.red-sweater.marsedit4"), UserApp(bundleID: "com.red-sweater.marsedit")]
 
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool {
 
-		if let _ = appSpecifierToUse() {
+		if let _ = appToUse() {
 			return true
 		}
 		return false
@@ -36,12 +37,15 @@ final class SendToMarsEditCommand: SendToCommand {
 
 private extension SendToMarsEditCommand {
 
-	func appSpecifierToUse() -> ApplicationSpecifier? {
+	func appToUse() -> UserApp? {
 
-		for specifier in marsEditApps {
-			specifier.update()
-			if specifier.existsOnDisk {
-				return specifier
+		for app in marsEditApps {
+			app.updateStatus()
+			if app.isRunning {
+				return app
+			}
+			if app.existsOnDisk {
+				return app
 			}
 		}
 
