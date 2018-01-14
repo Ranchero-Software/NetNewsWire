@@ -15,7 +15,7 @@ class DictionaryTests: XCTestCase {
 		let d = ["foo": "bar", "param1": "This is a value."]
 		let s = d.urlQueryString()
 
-		XCTAssertTrue(s == "foo=bar&param1=This+is+a+value." || s == "param1=This+is+a+value.&foo=bar")
+		XCTAssertTrue(s == "foo=bar&param1=This%20is%20a%20value." || s == "param1=This%20is%20a%20value.&foo=bar")
 	}
 
 	func testQueryStringWithAmpersand() {
@@ -23,7 +23,7 @@ class DictionaryTests: XCTestCase {
 		let d = ["fo&o": "bar", "param1": "This is a&value."]
 		let s = d.urlQueryString()
 
-		XCTAssertTrue(s == "fo%38o=bar&param1=This+is+a%38value." || s == "param1=This+is+a%38value.&fo%38o=bar")
+		XCTAssertTrue(s == "fo%38o=bar&param1=This%20is%20a%38value." || s == "param1=This%20is%20a%38value.&fo%38o=bar")
 	}
 
 	func testQueryStringWithAccentedCharacters() {

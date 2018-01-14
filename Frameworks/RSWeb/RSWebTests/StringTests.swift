@@ -16,9 +16,9 @@ class StringTests: XCTestCase {
 		XCTAssertEqual(s, "foo")
 
 		s = "foo bar".encodedForURLQuery()
-		XCTAssertEqual(s, "foo+bar")
+		XCTAssertEqual(s, "foo%20bar")
 
 		s = "foo bar &well".encodedForURLQuery()
-		XCTAssertEqual(s, "foo+bar+%38well")
+		XCTAssertEqual(s, "foo%20bar%20%38well")
     }
 }

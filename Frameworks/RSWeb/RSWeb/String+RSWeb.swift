@@ -12,8 +12,7 @@ public extension String {
 
 	public func encodedForURLQuery() -> String? {
 
-		let s = replacingOccurrences(of: " ", with: "+")
-		guard let encodedString = s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+		guard let encodedString = addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
 			return nil
 		}
 		return encodedString.replacingOccurrences(of: "&", with: "%38")
