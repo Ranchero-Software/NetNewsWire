@@ -11,7 +11,7 @@
             <description><![CDATA[
             
             <h4>Send to Micro.blog</h4>
-            <p>See the Sharing command in the toolbar for a new feature: Send to Micro.blog. This sends the current item to your copy the Micro.blog Mac app (if you have it). It gets launched if necessary.</p>
+            <p>See the Sharing command in the toolbar for a new feature: send to Micro.blog. This sends the current item to your copy of the Micro.blog Mac app (if you have it). It gets launched if necessary. You can edit the post in Micro.blog before actually posting it to your microblog.</p>
             <p>This is hugely important, because feed reading isn’t just about reading — it’s also about posting. While Evergreen doesn’t itself include a way to post to the web, other apps do, and Evergreen should make it easy to connect to these other apps.</p>
             <p>Note: send-to-MarsEdit is next, probably in the next release.</p>
             
@@ -21,7 +21,7 @@
    
     						]]></description>
             <pubDate>Sun, 14 Jan 2018 12:00:00 -0800</pubDate>
-            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d32.zip" sparkle:version="802" sparkle:shortVersionString="1.0d32" length="7265678" type="application/zip" />
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d32.zip" sparkle:version="804" sparkle:shortVersionString="1.0d32" length="7265605" type="application/zip" />
             <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
         </item>
 
