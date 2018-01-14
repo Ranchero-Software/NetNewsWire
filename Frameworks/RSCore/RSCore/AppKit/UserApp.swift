@@ -11,15 +11,15 @@ import Cocoa
 // Represents an app (the type of app mostly found in /Applications.)
 // The app may or may not be running. It may or may not exist.
 
-final class UserApp {
+public final class UserApp {
 
-	let bundleID: String
-	var icon: NSImage? = nil
-	var existsOnDisk = false
-	var path: String? = nil
-	var runningApplication: NSRunningApplication? = nil
+	public let bundleID: String
+	public var icon: NSImage? = nil
+	public var existsOnDisk = false
+	public var path: String? = nil
+	public var runningApplication: NSRunningApplication? = nil
 
-	var isRunning: Bool {
+	public var isRunning: Bool {
 
 		updateStatus()
 		if let runningApplication = runningApplication {
@@ -28,13 +28,13 @@ final class UserApp {
 		return false
 	}
 
-	init(bundleID: String) {
+	public init(bundleID: String) {
 
 		self.bundleID = bundleID
 		updateStatus()
 	}
 
-	func updateStatus() {
+	public func updateStatus() {
 
 		if let runningApplication = runningApplication, runningApplication.isTerminated {
 			self.runningApplication = nil
@@ -83,7 +83,7 @@ final class UserApp {
 		}
 	}
 
-	func launchIfNeeded() -> Bool {
+	public func launchIfNeeded() -> Bool {
 
 		// Return true if already running.
 		// Return true if not running and successfully gets launched.
@@ -110,7 +110,7 @@ final class UserApp {
 		return false
 	}
 
-	func bringToFront() -> Bool {
+	public func bringToFront() -> Bool {
 
 		// Activates the app, ignoring other apps.
 		// Does not automatically launch the app first.
