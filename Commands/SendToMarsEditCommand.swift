@@ -39,11 +39,15 @@ private extension SendToMarsEditCommand {
 
 	func appToUse() -> UserApp? {
 
+		marsEditApps.forEach{ $0.updateStatus() }
+
 		for app in marsEditApps {
-			app.updateStatus()
 			if app.isRunning {
 				return app
 			}
+		}
+
+		for app in marsEditApps {
 			if app.existsOnDisk {
 				return app
 			}
