@@ -105,7 +105,7 @@
 		84BB45431D6909C700B48537 /* NSMutableDictionary-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BB45421D6909C700B48537 /* NSMutableDictionary-Extensions.swift */; };
 		84C632A0200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C6329E200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84C632A1200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C6329F200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m */; };
-		84C632A4200D356E007BEEAA /* SendToBlogEditorApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C632A2200D356E007BEEAA /* SendToBlogEditorApp.h */; };
+		84C632A4200D356E007BEEAA /* SendToBlogEditorApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C632A2200D356E007BEEAA /* SendToBlogEditorApp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84C632A5200D356E007BEEAA /* SendToBlogEditorApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C632A3200D356E007BEEAA /* SendToBlogEditorApp.m */; };
 		84C687301FBAA30800345C9E /* LogWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84C6872F1FBAA30800345C9E /* LogWindow.xib */; };
 		84C687321FBAA3DF00345C9E /* LogWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C687311FBAA3DF00345C9E /* LogWindowController.swift */; };

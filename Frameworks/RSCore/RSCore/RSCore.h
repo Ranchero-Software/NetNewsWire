@@ -53,6 +53,7 @@
 #import <RSCore/RSGeometry.h>
 
 #import <RSCore/NSAppleEventDescriptor+RSCore.h>
+#import <RSCore/SendToBlogEditorApp.h>
 
 #endif
 
