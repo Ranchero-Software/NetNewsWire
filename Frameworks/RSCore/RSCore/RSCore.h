@@ -52,6 +52,8 @@
 
 #import <RSCore/RSGeometry.h>
 
+#import <RSCore/NSAppleEventDescriptor+RSCore.h>
+
 #endif
 
 
