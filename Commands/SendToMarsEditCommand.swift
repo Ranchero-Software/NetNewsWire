@@ -8,6 +8,7 @@
 
 import Cocoa
 import RSCore
+import Data
 
 final class SendToMarsEditCommand: SendToCommand {
 
@@ -29,14 +30,37 @@ final class SendToMarsEditCommand: SendToCommand {
 
 	func sendObject(_ object: Any?, selectedText: String?) {
 
-		if !canSendObject(object, selectedText: selectedText) {
+		guard canSendObject(object, selectedText: selectedText) else {
 			return
 		}
+		guard let article = (object as? ArticlePasteboardWriter)?.article else {
+			return
+		}
+		guard let app = appToUse(), app.launchIfNeeded(), app.bringToFront() else {
+			return
+		}
+
+		send(article, to: app)
 	}
 }
 
 private extension SendToMarsEditCommand {
 
+	func send(_ article: Article, to app: UserApp) {
+
+		// App has already been launched.
+
+		guard let targetDescriptor = app.targetDescriptor() else {
+			return
+		}
+
+		let body = article.contentHTML ?? article.contentText ?? article.summary
+		let authorName = article.authors?.first?.name
+
+		let sender = SendToBlogEditorApp(targetDesciptor: targetDescriptor, title: article.title, body: body, summary: article.summary, link: article.externalURL, permalink: article.url, subject: nil, creator: authorName, commentsURL: nil, guid: article.uniqueID, sourceName: article.feed?.nameForDisplay, sourceHomeURL: article.feed?.homePageURL, sourceFeedURL: article.feed?.url)
+		let _ = sender.send()
+	}
+	
 	func appToUse() -> UserApp? {
 
 		marsEditApps.forEach{ $0.updateStatus() }
