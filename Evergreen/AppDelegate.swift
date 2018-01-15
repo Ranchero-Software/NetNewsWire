@@ -34,7 +34,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}()
 
 	lazy var sendToCommands: [SendToCommand] = {
-		return [SendToMicroBlogCommand()] //, SendToMarsEditCommand()]
+		return [SendToMicroBlogCommand(), SendToMarsEditCommand()]
 	}()
 
 	var unreadCount = 0 {
