@@ -83,30 +83,29 @@ const AEKeyword DataItemSourceFeedURL = 'furl';
 
 	NSAppleEventDescriptor *descriptor = [NSAppleEventDescriptor recordDescriptor];
 
-	[self addToDescriptor:descriptor key:@"title" keyword:DataItemTitle];
-	[self addToDescriptor:descriptor key:@"body" keyword:DataItemDescription];
-	[self addToDescriptor:descriptor key:@"summary" keyword:DataItemSummary];
-	[self addToDescriptor:descriptor key:@"link" keyword:DataItemLink];
-	[self addToDescriptor:descriptor key:@"permalink" keyword:DataItemPermalink];
-	[self addToDescriptor:descriptor key:@"subject" keyword:DataItemSubject];
-	[self addToDescriptor:descriptor key:@"creator" keyword:DataItemCreator];
-	[self addToDescriptor:descriptor key:@"commentsURL" keyword:DataItemCommentsURL];
-	[self addToDescriptor:descriptor key:@"guid" keyword:DataItemGUID];
-	[self addToDescriptor:descriptor key:@"sourceName" keyword:DataItemSourceName];
-	[self addToDescriptor:descriptor key:@"sourceHomeURL" keyword:DataItemSourceHomeURL];
-	[self addToDescriptor:descriptor key:@"sourceFeedURL" keyword:DataItemSourceFeedURL];
+	[self addToDescriptor:descriptor value:self.title keyword:DataItemTitle];
+	[self addToDescriptor:descriptor value:self.body keyword:DataItemDescription];
+	[self addToDescriptor:descriptor value:self.summary keyword:DataItemSummary];
+	[self addToDescriptor:descriptor value:self.link keyword:DataItemLink];
+	[self addToDescriptor:descriptor value:self.permalink keyword:DataItemPermalink];
+	[self addToDescriptor:descriptor value:self.subject keyword:DataItemSubject];
+	[self addToDescriptor:descriptor value:self.creator keyword:DataItemCreator];
+	[self addToDescriptor:descriptor value:self.commentsURL keyword:DataItemCommentsURL];
+	[self addToDescriptor:descriptor value:self.guid keyword:DataItemGUID];
+	[self addToDescriptor:descriptor value:self.sourceName keyword:DataItemSourceName];
+	[self addToDescriptor:descriptor value:self.sourceHomeURL keyword:DataItemSourceHomeURL];
+	[self addToDescriptor:descriptor value:self.sourceFeedURL keyword:DataItemSourceFeedURL];
 
 	return descriptor;
 }
 
-- (void)addToDescriptor:(NSAppleEventDescriptor *)descriptor key:(NSString *)key keyword:(AEKeyword)keyword {
+- (void)addToDescriptor:(NSAppleEventDescriptor *)descriptor value:(NSString *)value keyword:(AEKeyword)keyword {
 
-	NSString *stringValue = (NSString *)[self valueForKey:key];
-	if (!stringValue) {
+	if (!value) {
 		return;
 	}
 
-	NSAppleEventDescriptor *stringDescriptor = [NSAppleEventDescriptor descriptorWithString:stringValue];
+	NSAppleEventDescriptor *stringDescriptor = [NSAppleEventDescriptor descriptorWithString:value];
 	[descriptor setDescriptor:stringDescriptor forKeyword:keyword];
 }
 
