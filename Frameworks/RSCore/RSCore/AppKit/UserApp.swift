@@ -118,6 +118,18 @@ public final class UserApp {
 		updateStatus()
 		return runningApplication?.activate(options: [.activateIgnoringOtherApps]) ?? false
 	}
+
+	public func targetDescriptor() -> NSAppleEventDescriptor? {
+
+		// Requires that the app has previously been launched.
+
+		updateStatus()
+		guard let runningApplication = runningApplication, !runningApplication.isTerminated else {
+			return nil
+		}
+
+		return NSAppleEventDescriptor(runningApplication: runningApplication)
+	}
 }
 
 
