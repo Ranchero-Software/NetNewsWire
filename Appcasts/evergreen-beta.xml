@@ -6,6 +6,20 @@
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
 
+			<item>
+          <title>Evergreen 1.0d33</title>
+            <description><![CDATA[
+            
+            <h4>Send to MarsEdit</h4>
+            <p>If you have <a href="https://red-sweater.com/marsedit/">MarsEdit</a> on your Mac, then you can send an article from Evergreen to MarsEdit via the sharing menu in the toolbar.</p>
+            <p>In MarsEdit you can edit the post and add your commentary before posting to your blog.</p>
+    
+    						]]></description>
+            <pubDate>Mon, 15 Jan 2018 14:10:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d33.zip" sparkle:version="813" sparkle:shortVersionString="1.0d33" length="7274707" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
 				<item>
           <title>Evergreen 1.0d32</title>
             <description><![CDATA[
