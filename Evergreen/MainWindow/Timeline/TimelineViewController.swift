@@ -670,12 +670,12 @@ private extension TimelineViewController {
 
 	func selectArticles(_ articleIDs: [String]) {
 
-		let indexesToSelect = indexesOf(articleIDs)
-		if indexesToSelect.isEmpty {
-			tableView.deselectAll(self)
-			return
-		}
-		tableView.selectRowIndexes(indexesToSelect, byExtendingSelection: false)
+//		let indexesToSelect = indexesOf(articleIDs)
+//		if indexesToSelect.isEmpty {
+//			tableView.deselectAll(self)
+//			return
+//		}
+//		tableView.selectRowIndexes(indexesToSelect, byExtendingSelection: false)
 	}
 
 	func invalidateFetchAndMergeArticlesTimer() {
