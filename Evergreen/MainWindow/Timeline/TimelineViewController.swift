@@ -641,6 +641,15 @@ private extension TimelineViewController {
 			return
 		}
 
+		let fetchedArticles = fetchUnsortedArticles(for: representedObjects)
+		let sortedArticles = Array(fetchedArticles).sortedByDate()
+		if articles != sortedArticles {
+			articles = sortedArticles
+		}
+	}
+
+	func fetchUnsortedArticles(for representedObjects: [Any]) -> Set<Article> {
+
 		var fetchedArticles = Set<Article>()
 
 		for object in representedObjects {
@@ -653,12 +662,8 @@ private extension TimelineViewController {
 			}
 		}
 
-		let sortedArticles = Array(fetchedArticles).sortedByDate()
-		if articles != sortedArticles {
-			articles = sortedArticles
-		}
+		return fetchedArticles
 	}
-
 
 	func fetchAndMergeArticles() {
 
