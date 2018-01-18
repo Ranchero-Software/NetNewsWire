@@ -52,6 +52,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	private var didRegisterForNotifications = false
 	private let timelineFontSizeKVOKey = "values.{AppDefaults.Key.timelineFontSize}"
 	private var reloadAvailableCellsTimer: Timer?
+	private var fetchAndMergeArticlesTimer: Timer?
 
 	private var articles = ArticleArray() {
 		didSet {
@@ -120,6 +121,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 
 			NSUserDefaultsController.shared.addObserver(self, forKeyPath: timelineFontSizeKVOKey, options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
 
@@ -366,6 +368,18 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		let updatedFontSize = AppDefaults.shared.timelineFontSize
 		if updatedFontSize != self.fontSize {
 			self.fontSize = updatedFontSize
+		}
+	}
+
+	@objc func accountDidDownloadArticles(_ note: Notification) {
+
+		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
+			return
+		}
+
+		let shouldFetchAndMergeArticles = representedObjectsContainsAnyFeed(feeds)
+		if shouldFetchAndMergeArticles {
+			queueFetchAndMergeArticles()
 		}
 	}
 
@@ -645,6 +659,44 @@ private extension TimelineViewController {
 		}
 	}
 
+
+	func fetchAndMergeArticles() {
+
+		let selectedArticleIDs = selectedArticles.articleIDs()
+
+
+		selectArticles(selectedArticleIDs)
+	}
+
+	func selectArticles(_ articleIDs: [String]) {
+
+		let indexesToSelect = indexesOf(articleIDs)
+		if indexesToSelect.isEmpty {
+			tableView.deselectAll(self)
+			return
+		}
+		tableView.selectRowIndexes(indexesToSelect, byExtendingSelection: false)
+	}
+
+	func invalidateFetchAndMergeArticlesTimer() {
+
+		if let timer = fetchAndMergeArticlesTimer {
+			if timer.isValid {
+				timer.invalidate()
+			}
+			fetchAndMergeArticlesTimer = nil
+		}
+	}
+
+	func queueFetchAndMergeArticles() {
+
+		invalidateFetchAndMergeArticlesTimer()
+		fetchAndMergeArticlesTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { (timer) in
+			self.fetchAndMergeArticles()
+			self.invalidateFetchAndMergeArticlesTimer()
+		}
+	}
+
 	func representedObjectArraysAreEqual(_ objects1: [AnyObject]?, _ objects2: [AnyObject]?) -> Bool {
 
 		if objects1 == nil && objects2 == nil {
@@ -665,6 +717,32 @@ private extension TimelineViewController {
 			ix += 1
 		}
 		return true
+	}
+
+	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
+
+		// Return true if there’s a match or if a folder contains (recursively) one of feeds
+
+		guard let representedObjects = representedObjects else {
+			return false
+		}
+		for representedObject in representedObjects {
+			if let feed = representedObject as? Feed {
+				for oneFeed in feeds {
+					if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
+						return true
+					}
+				}
+			}
+			else if let folder = representedObject as? Folder {
+				for oneFeed in feeds {
+					if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
+						return true
+					}
+				}
+			}
+		}
+		return false
 	}
 }
 
