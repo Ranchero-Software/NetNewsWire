@@ -71,6 +71,7 @@
 		842E45CC1ED623C7000A8B52 /* UniqueIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */; };
 		8432B1861DACA0E90057D6DF /* NSResponder-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8432B1851DACA0E90057D6DF /* NSResponder-Extensions.swift */; };
 		8432B1881DACA2060057D6DF /* NSWindow-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8432B1871DACA2060057D6DF /* NSWindow-Extensions.swift */; };
+		8434D15C200BD6F400D6281E /* UserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8434D15B200BD6F400D6281E /* UserApp.swift */; };
 		84411E731FE5FFC3004B527F /* NSImage+RSCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E721FE5FFC3004B527F /* NSImage+RSCore.swift */; };
 		844B5B571FE9D36000C7C76A /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B561FE9D36000C7C76A /* Keyboard.swift */; };
 		844C915B1B65753E0051FC1B /* RSPlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 844C91591B65753E0051FC1B /* RSPlist.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -102,6 +103,10 @@
 		84B99C9A1FAE650100ECDEDB /* OPMLRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */; };
 		84B99C9B1FAE650100ECDEDB /* OPMLRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */; };
 		84BB45431D6909C700B48537 /* NSMutableDictionary-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BB45421D6909C700B48537 /* NSMutableDictionary-Extensions.swift */; };
+		84C632A0200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C6329E200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		84C632A1200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C6329F200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m */; };
+		84C632A4200D356E007BEEAA /* SendToBlogEditorApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C632A2200D356E007BEEAA /* SendToBlogEditorApp.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		84C632A5200D356E007BEEAA /* SendToBlogEditorApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C632A3200D356E007BEEAA /* SendToBlogEditorApp.m */; };
 		84C687301FBAA30800345C9E /* LogWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84C6872F1FBAA30800345C9E /* LogWindow.xib */; };
 		84C687321FBAA3DF00345C9E /* LogWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C687311FBAA3DF00345C9E /* LogWindowController.swift */; };
 		84C687351FBC025600345C9E /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C687341FBC025600345C9E /* Log.swift */; };
@@ -191,6 +196,7 @@
 		842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueIdentifier.swift; sourceTree = "<group>"; };
 		8432B1851DACA0E90057D6DF /* NSResponder-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSResponder-Extensions.swift"; sourceTree = "<group>"; };
 		8432B1871DACA2060057D6DF /* NSWindow-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSWindow-Extensions.swift"; sourceTree = "<group>"; };
+		8434D15B200BD6F400D6281E /* UserApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserApp.swift; path = AppKit/UserApp.swift; sourceTree = "<group>"; };
 		84411E721FE5FFC3004B527F /* NSImage+RSCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSImage+RSCore.swift"; path = "Images/NSImage+RSCore.swift"; sourceTree = "<group>"; };
 		844B5B561FE9D36000C7C76A /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Keyboard.swift; path = RSCore/Keyboard.swift; sourceTree = "<group>"; };
 		844C91591B65753E0051FC1B /* RSPlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RSPlist.h; path = RSCore/RSPlist.h; sourceTree = "<group>"; };
@@ -218,6 +224,10 @@
 		84B99C931FAE64D400ECDEDB /* DisplayNameProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DisplayNameProvider.swift; path = RSCore/DisplayNameProvider.swift; sourceTree = "<group>"; };
 		84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OPMLRepresentable.swift; path = RSCore/OPMLRepresentable.swift; sourceTree = "<group>"; };
 		84BB45421D6909C700B48537 /* NSMutableDictionary-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableDictionary-Extensions.swift"; sourceTree = "<group>"; };
+		84C6329E200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSAppleEventDescriptor+RSCore.h"; path = "AppKit/NSAppleEventDescriptor+RSCore.h"; sourceTree = "<group>"; };
+		84C6329F200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "NSAppleEventDescriptor+RSCore.m"; path = "AppKit/NSAppleEventDescriptor+RSCore.m"; sourceTree = "<group>"; };
+		84C632A2200D356E007BEEAA /* SendToBlogEditorApp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SendToBlogEditorApp.h; path = AppKit/SendToBlogEditorApp.h; sourceTree = "<group>"; };
+		84C632A3200D356E007BEEAA /* SendToBlogEditorApp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SendToBlogEditorApp.m; path = AppKit/SendToBlogEditorApp.m; sourceTree = "<group>"; };
 		84C6872F1FBAA30800345C9E /* LogWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LogWindow.xib; path = AppKit/LogWindow.xib; sourceTree = "<group>"; };
 		84C687311FBAA3DF00345C9E /* LogWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LogWindowController.swift; path = AppKit/LogWindowController.swift; sourceTree = "<group>"; };
 		84C687341FBC025600345C9E /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
@@ -434,6 +444,10 @@
 			isa = PBXGroup;
 			children = (
 				84CFF5511AC3CF4700CEA6C8 /* NSColor+RSCore.h */,
+				84C6329E200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h */,
+				84C6329F200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m */,
+				84C632A2200D356E007BEEAA /* SendToBlogEditorApp.h */,
+				84C632A3200D356E007BEEAA /* SendToBlogEditorApp.m */,
 				84CFF5521AC3CF4700CEA6C8 /* NSColor+RSCore.m */,
 				8415CB881BF84D24007B1E98 /* NSEvent+RSCore.h */,
 				8415CB891BF84D24007B1E98 /* NSEvent+RSCore.m */,
@@ -460,6 +474,7 @@
 				84C687311FBAA3DF00345C9E /* LogWindowController.swift */,
 				84C687341FBC025600345C9E /* Log.swift */,
 				84C687371FBC028900345C9E /* LogItem.swift */,
+				8434D15B200BD6F400D6281E /* UserApp.swift */,
 				842DD7F91E1499FA00E061EB /* Views */,
 			);
 			name = AppKit;
@@ -544,6 +559,7 @@
 				84CFF4FA1AC3C69700CEA6C8 /* RSCore.h in Headers */,
 				844F91D51D90D86100820C48 /* RSTransparentContainerView.h in Headers */,
 				84CFF53F1AC3CD0100CEA6C8 /* NSMutableSet+RSCore.h in Headers */,
+				84C632A0200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h in Headers */,
 				84CFF5121AC3C6D800CEA6C8 /* RSBlocks.h in Headers */,
 				84CFF56D1AC3D20A00CEA6C8 /* NSImage+RSCore.h in Headers */,
 				84CFF5471AC3CD8000CEA6C8 /* NSTimer+RSCore.h in Headers */,
@@ -555,6 +571,7 @@
 				84CFF52F1AC3CB1900CEA6C8 /* NSDate+RSCore.h in Headers */,
 				8414CBAB1C95F8F700333C12 /* RSGeometry.h in Headers */,
 				845DE0F31B80477100D1571B /* NSSet+RSCore.h in Headers */,
+				84C632A4200D356E007BEEAA /* SendToBlogEditorApp.h in Headers */,
 				844C915B1B65753E0051FC1B /* RSPlist.h in Headers */,
 				8453F7DE1BDF337800B1C8ED /* RSMacroProcessor.h in Headers */,
 				8415CB8A1BF84D24007B1E98 /* NSEvent+RSCore.h in Headers */,
@@ -748,6 +765,7 @@
 				84CFF5171AC3C73000CEA6C8 /* RSConstants.m in Sources */,
 				8432B1881DACA2060057D6DF /* NSWindow-Extensions.swift in Sources */,
 				8402047E1FBCE77900D94C1A /* BatchUpdate.swift in Sources */,
+				84C632A5200D356E007BEEAA /* SendToBlogEditorApp.m in Sources */,
 				84CFF5541AC3CF4700CEA6C8 /* NSColor+RSCore.m in Sources */,
 				84536F671BB856D4001E1639 /* NSFileManager+RSCore.m in Sources */,
 				8415CB8B1BF84D24007B1E98 /* NSEvent+RSCore.m in Sources */,
@@ -769,6 +787,7 @@
 				84C687351FBC025600345C9E /* Log.swift in Sources */,
 				84CFF5301AC3CB1900CEA6C8 /* NSDate+RSCore.m in Sources */,
 				84CFF5281AC3C9A200CEA6C8 /* NSArray+RSCore.m in Sources */,
+				84C632A1200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m in Sources */,
 				84E72E171FBD647500B873C1 /* InspectorView.swift in Sources */,
 				84CFF5591AC3CF9100CEA6C8 /* NSView+RSCore.m in Sources */,
 				84CFF56A1AC3D1B000CEA6C8 /* RSScaling.m in Sources */,
@@ -794,6 +813,7 @@
 				842E45CC1ED623C7000A8B52 /* UniqueIdentifier.swift in Sources */,
 				84A8358A1D4EC7B80004C598 /* PlistProviderProtocol.swift in Sources */,
 				849A339E1AC90A0A0015BA09 /* NSTableView+RSCore.m in Sources */,
+				8434D15C200BD6F400D6281E /* UserApp.swift in Sources */,
 				84CFF51B1AC3C77500CEA6C8 /* RSPlatform.m in Sources */,
 				845A291F1FC8BC49007B49E3 /* BinaryDiskCache.swift in Sources */,
 				84CFF52C1AC3CA9700CEA6C8 /* NSData+RSCore.m in Sources */,
@@ -931,7 +951,6 @@
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
@@ -1003,7 +1022,6 @@
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;

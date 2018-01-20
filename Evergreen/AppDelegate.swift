@@ -33,6 +33,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		return image
 	}()
 
+	lazy var sendToCommands: [SendToCommand] = {
+		return [SendToMicroBlogCommand(), SendToMarsEditCommand()]
+	}()
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {

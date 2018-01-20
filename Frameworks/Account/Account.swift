@@ -41,7 +41,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		public static let updatedArticles = "updatedArticles" // AccountDidDownloadArticles
 		public static let statuses = "statuses" // StatusesDidChange
 		public static let articles = "articles" // StatusesDidChange
-		public static let feeds = "feeds" // StatusesDidChange
+		public static let feeds = "feeds" // AccountDidDownloadArticles, StatusesDidChange
 	}
 
 	public let accountID: String
@@ -167,10 +167,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
 				userInfo[UserInfoKey.updatedArticles] = updatedArticles
 			}
+			userInfo[UserInfoKey.feeds] = Set([feed])
 
 			completion()
 
-			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo.isEmpty ? nil : userInfo)
+			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
 		}
 	}
 

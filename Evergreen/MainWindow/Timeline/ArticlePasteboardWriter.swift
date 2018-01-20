@@ -11,7 +11,7 @@ import Data
 
 @objc final class ArticlePasteboardWriter: NSObject, NSPasteboardWriting {
 
-	private let article: Article
+	let article: Article
 	static let articleUTI = "com.ranchero.article"
 	static let articleUTIType = NSPasteboard.PasteboardType(rawValue: articleUTI)
 	static let articleUTIInternal = "com.ranchero.evergreen.internal.article"
