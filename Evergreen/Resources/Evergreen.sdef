@@ -62,7 +62,7 @@
         
         <class name="feed" code="Feed" plural="feeds" description="An RSS feeds" inherits="account item">
             <cocoa class="ScriptableFeed"/>
-            <property name="name" code="pnam" type="text" access="r" description="The name of the account">
+            <property name="name" code="pnam" type="text" access="r" description="The name of the feed">
                 <cocoa key="name"/>
             </property>
             <property name="id" code="id  " type="text" access="r" description="The unique id of the account">
@@ -70,6 +70,36 @@
             </property>
             <property name="url" code="URL " type="text" access="r" description="The type of the account">
                 <cocoa key="url"/>
+            </property>
+            <property name="homepage url" code="HpUr" type="text" access="r" description="url for the feed homepage (optional)">
+                <cocoa key="homePageURL"/>
+            </property>
+            <property name="icon url" code="IcUr" type="text" access="r" description="url for the feed icon (optional)">
+                <cocoa key="iconURL"/>
+            </property>
+            <property name="favicon url" code="FvUr" type="text" access="r" description="url for the feed favicon (optional)">
+                <cocoa key="faviconURL"/>
+            </property>
+            <element type="author">
+                <cocoa key="authors"/>
+            </element>
+        </class>
+
+        <class name="author" code="Athr" plural="authors" description="A feed author">
+            <property name="name" code="pnam" type="text" access="r" description="The name of the author">
+                <cocoa key="name"/>
+            </property>
+            <property name="id" code="id  " type="text" access="r" description="The unique id of the author">
+                <cocoa key="uniqueId"/>
+            </property>
+            <property name="url" code="URL " type="text" access="r" description="url for the author">
+                <cocoa key="url"/>
+            </property>
+            <property name="avatar url" code="AvUr" type="text" access="r" description="url for the author avatar (optional)">
+                <cocoa key="avatarURL"/>
+            </property>
+            <property name="email address" code="eMal" type="text" access="r" description="email address for the author avatar (optional)">
+                <cocoa key="emailAddress"/>
             </property>
         </class>
 
