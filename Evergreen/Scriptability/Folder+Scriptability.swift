@@ -53,4 +53,9 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject {
         return self.folder.name ?? ""
     }
 
+    @objc(opmlRepresentation)
+    var opmlRepresentation:String  {
+        return self.folder.OPMLString(indentLevel:0)
+    }
+
 }

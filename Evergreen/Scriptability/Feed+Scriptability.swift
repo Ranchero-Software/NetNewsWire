@@ -80,6 +80,11 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         return self.feed.faviconURL ?? ""
     }
 
+    @objc(opmlRepresentation)
+    var opmlRepresentation:String  {
+        return self.feed.OPMLString(indentLevel:0)
+    }
+    
     @objc(authors)
     var authors:NSArray {
         let feedAuthors = feed.authors ?? []

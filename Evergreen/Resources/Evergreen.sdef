@@ -49,6 +49,9 @@
                 <cocoa key="contents"/>
                 <type type="account item" list="yes"/>
             </property>
+            <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the account">
+                <cocoa key="opmlRepresentation"/>
+            </property>
             <element type="feed">
                 <cocoa key="feeds"/>
             </element>
@@ -80,6 +83,9 @@
             <property name="favicon url" code="FvUr" type="text" access="r" description="url for the feed favicon (optional)">
                 <cocoa key="faviconURL"/>
             </property>
+            <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the feed">
+                <cocoa key="opmlRepresentation"/>
+            </property>
             <element type="author">
                 <cocoa key="authors"/>
             </element>
@@ -110,6 +116,9 @@
             </property>
             <property name="id" code="id  " type="integer" access="r" description="The unique id of the account">
                 <cocoa key="uniqueId"/>
+            </property>
+            <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the folder">
+                <cocoa key="opmlRepresentation"/>
             </property>
         </class>
 
