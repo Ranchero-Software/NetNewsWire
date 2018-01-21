@@ -69,6 +69,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		dockBadge.appDelegate = self
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
+
 		appDelegate = self
 	}
 
@@ -195,6 +197,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		let _ = faviconDownloader.favicon(for: feed)
 	}
 
+	@objc func sidebarSelectionDidChange(_ note: Notification) {
+
+		guard let inspectorWindowController = inspectorWindowController, inspectorWindowController.isOpen else {
+			return
+		}
+		inspectorWindowController.objects = objectsForInspector()
+	}
+
 	// MARK: Main Window
 
 	func windowControllerWithName(_ storyboardName: String) -> NSWindowController {
@@ -310,13 +320,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			inspectorWindowController!.window!.performClose(self)
 		}
 		else {
-			var selectedObjects: [Any]? = nil
-			if let window = NSApplication.shared.mainWindow {
-				if let windowController = window.windowController as? MainWindowController {
-					selectedObjects = windowController.selectedObjectsInSidebar()
-				}
-			}
-			inspectorWindowController!.objects = selectedObjects
+			inspectorWindowController!.objects = objectsForInspector()
 			inspectorWindowController!.showWindow(self)
 		}
 	}
@@ -431,5 +435,13 @@ private extension AppDelegate {
 	func createReaderWindow() -> NSWindowController {
 
 		return windowControllerWithName("MainWindow")
+	}
+
+	func objectsForInspector() -> [Any]? {
+
+		guard let window = NSApplication.shared.mainWindow, let windowController = window.windowController as? MainWindowController else {
+			return nil
+		}
+		return windowController.selectedObjectsInSidebar()
 	}
 }

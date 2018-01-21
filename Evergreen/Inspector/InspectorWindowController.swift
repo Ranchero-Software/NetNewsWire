@@ -64,6 +64,8 @@ final class InspectorWindowController: NSWindowController {
 
 		inspectors = [feedInspector, folderInspector, builtinSmartFeedInspector, nothingInspector]
 		currentInspector = nothingInspector
+
+		window?.flippedOrigin = NSPoint(x: 128, y: 128)
 	}
 
 	func inspector(for objects: [Any]?) -> InspectorViewController {
@@ -95,6 +97,12 @@ private extension InspectorWindowController {
 		guard let window = window, inspector !== window.contentViewController else {
 			return
 		}
+		
+		let flippedOrigin = window.flippedOrigin
 		window.contentViewController = inspector
+		window.layoutIfNeeded()
+		if let origin = flippedOrigin {
+			window.setFlippedOriginAdjustingForScreen(origin)
+		}
 	}
 }

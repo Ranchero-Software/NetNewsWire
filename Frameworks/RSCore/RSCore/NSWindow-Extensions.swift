@@ -45,4 +45,42 @@ public extension NSWindow {
 		setFrame(frame, display: true)
 		setFrameTopLeftPoint(frame.origin)
 	}
+
+	public var flippedOrigin: NSPoint? {
+
+		// Screen coordinates start at lower-left.
+		// With this we can use upper-left, like sane people.
+
+		get {
+			guard let screenFrame = screen?.frame else {
+				return nil
+			}
+
+			let flippedPoint = NSPoint(x: frame.origin.x, y: screenFrame.maxY - frame.maxY)
+			return flippedPoint
+		}
+		set {
+			guard let screenFrame = screen?.frame else {
+				return
+			}
+			var point = newValue!
+			point.y = screenFrame.maxY - point.y
+			setFrameTopLeftPoint(point)
+		}
+	}
+
+	public func setFlippedOriginAdjustingForScreen(_ point: NSPoint) {
+
+		guard let screenFrame = screen?.frame else {
+			return
+		}
+
+		let paddingFromBottomEdge: CGFloat = 8.0
+		var unflippedPoint = point
+		unflippedPoint.y = (screenFrame.maxY - point.y) - frame.height
+		if unflippedPoint.y < 0 {
+			unflippedPoint.y = paddingFromBottomEdge
+		}
+		setFrameOrigin(unflippedPoint)
+	}
 }
