@@ -139,9 +139,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 
 		if InspectorWindowController.shouldOpenAtStartup {
-			DispatchQueue.main.async {
-				self.toggleInspectorWindow(self)
-			}
+			self.toggleInspectorWindow(self)
 		}
 
 		#if RELEASE
