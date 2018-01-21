@@ -23,6 +23,23 @@ typealias InspectorViewController = Inspector & NSViewController
 
 final class InspectorWindowController: NSWindowController {
 
+	class var shouldOpenAtStartup: Bool {
+		return UserDefaults.standard.bool(forKey: DefaultsKey.windowIsOpen)
+	}
+
+	var objects: [Any]? {
+		didSet {
+			let _ = window
+			currentInspector = inspector(for: objects)
+		}
+	}
+
+	var isOpen: Bool {
+		get {
+			return isWindowLoaded && window!.isVisible
+		}
+	}
+
 	private var inspectors: [InspectorViewController]!
 
 	private var currentInspector: InspectorViewController! {
@@ -40,17 +57,9 @@ final class InspectorWindowController: NSWindowController {
 		}
 	}
 
-	var objects: [Any]? {
-		didSet {
-			let _ = window
-			currentInspector = inspector(for: objects)
-		}
-	}
-
-	var isOpen: Bool {
-		get {
-			return isWindowLoaded && window!.isVisible
-		}
+	private struct DefaultsKey {
+		static let windowIsOpen = "FloatingInspectorIsOpen"
+		static let windowOrigin = "FloatingInspectorOrigin"
 	}
 
 	override func windowDidLoad() {
@@ -82,6 +91,14 @@ final class InspectorWindowController: NSWindowController {
 		}
 
 		return fallbackInspector!
+	}
+
+	func saveState() {
+
+		UserDefaults.standard.set(isOpen, forKey: DefaultsKey.windowIsOpen)
+		if isOpen, let window = window, let flippedOrigin = window.flippedOrigin {
+			UserDefaults.standard.set(NSStringFromPoint(flippedOrigin), forKey: DefaultsKey.windowOrigin)
+		}
 	}
 }
 

@@ -138,6 +138,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
 
+		if InspectorWindowController.shouldOpenAtStartup {
+			DispatchQueue.main.async {
+				self.toggleInspectorWindow(self)
+			}
+		}
+
 		#if RELEASE
 			DispatchQueue.main.async {
 				self.refreshAll(self)
@@ -159,6 +165,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		RSMultiLineRenderer.emptyCache()
 		TimelineCellData.emptyCache()
 		timelineEmptyCaches()
+
+		saveState()
+	}
+
+	func applicationWillTerminate(_ notification: Notification) {
+
+		saveState()
 	}
 
 	// MARK: GetURL Apple Event
@@ -443,5 +456,12 @@ private extension AppDelegate {
 			return nil
 		}
 		return windowController.selectedObjectsInSidebar()
+	}
+
+	func saveState() {
+
+		if let inspectorWindowController = inspectorWindowController {
+			inspectorWindowController.saveState()
+		}
 	}
 }
