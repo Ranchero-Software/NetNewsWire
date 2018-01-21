@@ -31,7 +31,7 @@
         <!--View Controller-->
         <scene sceneID="KfF-qz-jtB">
             <objects>
-                <viewController id="VUU-wH-gjh" sceneMemberID="viewController">
+                <viewController showSeguePresentationStyle="single" id="VUU-wH-gjh" sceneMemberID="viewController">
                     <view key="view" id="E15-dH-my9">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -76,7 +76,7 @@
         <!--Feed-->
         <scene sceneID="vUh-Rc-fPi">
             <objects>
-                <viewController title="Feed" storyboardIdentifier="FeedInspector" id="sfH-oR-GXm" customClass="FeedInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="FeedInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ecA-UY-KEd">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="268"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -165,7 +165,7 @@ Field</string>
         <!--Folder-->
         <scene sceneID="8By-fa-WDQ">
             <objects>
-                <viewController title="Folder" id="ylq-Dz-pnT" sceneMemberID="viewController">
+                <viewController title="Folder" storyboardIdentifier="Folder" showSeguePresentationStyle="single" id="ylq-Dz-pnT" sceneMemberID="viewController">
                     <view key="view" id="DIQ-fD-5q6">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="152"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -207,10 +207,10 @@ Field</string>
             </objects>
             <point key="canvasLocation" x="-52" y="471"/>
         </scene>
-        <!--Smart Feed-->
+        <!--Builtin Smart Feed-->
         <scene sceneID="dFq-3d-JKW">
             <objects>
-                <viewController title="Smart Feed" id="ye3-co-8lc" sceneMemberID="viewController">
+                <viewController title="Builtin Smart Feed" storyboardIdentifier="PseudoFeed" showSeguePresentationStyle="single" id="ye3-co-8lc" customClass="PseudoFeedInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="DXo-3M-jJQ">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="113"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -249,7 +249,7 @@ Field</string>
         <!--Nothing to inspect-->
         <scene sceneID="lUc-e1-dN7">
             <objects>
-                <viewController title="Nothing to inspect" showSeguePresentationStyle="single" id="Fdj-2F-Kl1" sceneMemberID="viewController">
+                <viewController title="Nothing to inspect" storyboardIdentifier="Nothing" showSeguePresentationStyle="single" id="Fdj-2F-Kl1" customClass="NothingInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="FDE-PJ-bJl">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="57"/>
                         <autoresizingMask key="autoresizingMask"/>

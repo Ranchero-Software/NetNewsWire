@@ -8,6 +8,13 @@
 
 import AppKit
 
+protocol Inspector {
+
+	var objects: [Any] { get set }
+
+	func isInspectorFor(_ objects: [Any]) -> Bool
+}
+
 final class InspectorWindowController: NSWindowController {
 
 	public var isOpen: Bool {
@@ -16,4 +23,8 @@ final class InspectorWindowController: NSWindowController {
 		}
 	}
 
+	func inspector(for objects: [Any]) -> Inspector {
+
+		
+	}
 }
