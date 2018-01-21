@@ -74,7 +74,12 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         }
         return contentsArray as NSArray
     }
-    
+
+    @objc(opmlRepresentation)
+    var opmlRepresentation:String  {
+        return self.account.OPMLString(indentLevel:0)
+    }
+
     @objc(accountType)
     var accountType:OSType {
         var osType:String = ""

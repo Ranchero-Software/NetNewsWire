@@ -57,7 +57,11 @@ class ScriptingTests: XCTestCase {
         }
         
         XCTAssert(testResult.booleanValue == true, "test_result should be true")
-        
+        if (testResult.booleanValue  != true )
+        {
+            print("test_result was \(testResult)")
+            print("script_result was \(String(describing: usrfDictionary["script_result"]))")
+        }
         return usrfDictionary["script_result"]
     }
     
@@ -84,6 +88,14 @@ class ScriptingTests: XCTestCase {
     
     func testNameOfEveryFolderScript() {
         _ = doIndividualScript(filename: "testNameOfEveryFolder")
+    }
+    
+    func testNameOfAuthorsScript() {
+        _ = doIndividualScript(filename: "testNameOfAuthors")
+    }
+    
+    func testNameOfAuthorsScript() {
+        _ = doIndividualScript(filename: "testFeedOPML")
     }
 
 }
