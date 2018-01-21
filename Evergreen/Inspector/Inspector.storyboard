@@ -9,7 +9,7 @@
         <scene sceneID="nxk-j5-jp4">
             <objects>
                 <windowController storyboardIdentifier="WindowController" showSeguePresentationStyle="single" id="cfG-Pn-VJS" customClass="InspectorWindowController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" identifier="InspectorPanel" title="Inspector" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="bma-LM-jVu" customClass="NSPanel">
+                    <window key="window" identifier="InspectorPanel" title="Inspector" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="bma-LM-jVu" customClass="NSPanel">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="314" y="928" width="256" height="256"/>
