@@ -8,4 +8,7 @@
 
 import AppKit
 
+final class FeedInspectorViewController: NSViewController {
 
+	
+}

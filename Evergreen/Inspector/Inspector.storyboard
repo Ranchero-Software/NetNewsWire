@@ -76,7 +76,7 @@
         <!--Feed-->
         <scene sceneID="vUh-Rc-fPi">
             <objects>
-                <viewController title="Feed" storyboardIdentifier="FeedInspector" id="sfH-oR-GXm" sceneMemberID="viewController">
+                <viewController title="Feed" storyboardIdentifier="FeedInspector" id="sfH-oR-GXm" customClass="FeedInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ecA-UY-KEd">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="268"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -246,10 +246,10 @@ Field</string>
             </objects>
             <point key="canvasLocation" x="-52" y="685"/>
         </scene>
-        <!--Nothing to Inspect-->
+        <!--Nothing to inspect-->
         <scene sceneID="lUc-e1-dN7">
             <objects>
-                <viewController title="Nothing to Inspect" showSeguePresentationStyle="single" id="Fdj-2F-Kl1" sceneMemberID="viewController">
+                <viewController title="Nothing to inspect" showSeguePresentationStyle="single" id="Fdj-2F-Kl1" sceneMemberID="viewController">
                     <view key="view" id="FDE-PJ-bJl">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="57"/>
                         <autoresizingMask key="autoresizingMask"/>
