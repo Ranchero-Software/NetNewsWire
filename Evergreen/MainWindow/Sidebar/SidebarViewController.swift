@@ -23,6 +23,10 @@ import RSCore
 	private var animatingChanges = false
 	private var sidebarCellAppearance: SidebarCellAppearance!
 
+	var selectedObjects: [AnyObject] {
+		return selectedNodes.representedObjects()
+	}
+
 	//MARK: NSViewController
 
 	override func viewDidLoad() {

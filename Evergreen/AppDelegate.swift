@@ -310,6 +310,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			inspectorWindowController!.window!.performClose(self)
 		}
 		else {
+			var selectedObjects: [Any]? = nil
+			if let window = NSApplication.shared.mainWindow {
+				if let windowController = window.windowController as? MainWindowController {
+					selectedObjects = windowController.selectedObjectsInSidebar()
+				}
+			}
+			inspectorWindowController!.objects = selectedObjects
 			inspectorWindowController!.showWindow(self)
 		}
 	}

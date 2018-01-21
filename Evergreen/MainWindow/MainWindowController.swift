@@ -63,7 +63,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			self.updateWindowTitle()
 		}
 	}
-	
+
+	// MARK: Sidebar
+
+	func selectedObjectsInSidebar() -> [AnyObject]? {
+
+		return sidebarViewController?.selectedObjects
+	}
+
     // MARK: Notifications
     
 	@objc func applicationWillTerminate(_ note: Notification) {

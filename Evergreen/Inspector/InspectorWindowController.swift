@@ -18,11 +18,14 @@ protocol Inspector: class {
 	func willEndInspectingObjects() // Called on the current inspector right before objects is about to change.
 }
 
+typealias InspectorViewController = Inspector & NSViewController
+
+
 final class InspectorWindowController: NSWindowController {
 
-	private var inspectors: [Inspector]!
+	private var inspectors: [InspectorViewController]!
 
-	private var currentInspector: Inspector! {
+	private var currentInspector: InspectorViewController! {
 		didSet {
 			if let oldInspector = oldValue {
 				oldInspector.willEndInspectingObjects()
@@ -39,6 +42,7 @@ final class InspectorWindowController: NSWindowController {
 
 	var objects: [Any]? {
 		didSet {
+			let _ = window
 			currentInspector = inspector(for: objects)
 		}
 	}
@@ -51,17 +55,20 @@ final class InspectorWindowController: NSWindowController {
 
 	override func windowDidLoad() {
 
+		let nothingInspector = window?.contentViewController as! InspectorViewController
+
 		let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Inspector"), bundle: nil)
 		let feedInspector = inspector("Feed", storyboard)
 		let folderInspector = inspector("Folder", storyboard)
 		let builtinSmartFeedInspector = inspector("BuiltinSmartFeed", storyboard)
-		let nothingInspector = inspector("Nothing", storyboard)
+
 		inspectors = [feedInspector, folderInspector, builtinSmartFeedInspector, nothingInspector]
+		currentInspector = nothingInspector
 	}
 
-	func inspector(for objects: [Any]?) -> Inspector {
+	func inspector(for objects: [Any]?) -> InspectorViewController {
 
-		var fallbackInspector: Inspector? = nil
+		var fallbackInspector: InspectorViewController? = nil
 
 		for inspector in inspectors {
 			if inspector.isFallbackInspector {
@@ -78,13 +85,16 @@ final class InspectorWindowController: NSWindowController {
 
 private extension InspectorWindowController {
 
-	func inspector(_ identifier: String, _ storyboard: NSStoryboard) -> Inspector {
+	func inspector(_ identifier: String, _ storyboard: NSStoryboard) -> InspectorViewController {
 
-		return storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: identifier)) as! Inspector
+		return storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: identifier)) as! InspectorViewController
 	}
 
-	func show(_ inspector: Inspector) {
+	func show(_ inspector: InspectorViewController) {
 
-		// TODO
+		guard let window = window, inspector !== window.contentViewController else {
+			return
+		}
+		window.contentViewController = inspector
 	}
 }

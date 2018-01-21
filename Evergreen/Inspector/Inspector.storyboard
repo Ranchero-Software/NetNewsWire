@@ -21,25 +21,12 @@
                         </connections>
                     </window>
                     <connections>
-                        <segue destination="VUU-wH-gjh" kind="relationship" relationship="window.shadowedContentViewController" id="YF3-J6-BnJ"/>
+                        <segue destination="Fdj-2F-Kl1" kind="relationship" relationship="window.shadowedContentViewController" id="AOI-cR-OVA"/>
                     </connections>
                 </windowController>
                 <customObject id="THC-Ye-xbS" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-349" y="-167"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="KfF-qz-jtB">
-            <objects>
-                <viewController showSeguePresentationStyle="single" id="VUU-wH-gjh" sceneMemberID="viewController">
-                    <view key="view" id="E15-dH-my9">
-                        <rect key="frame" x="0.0" y="0.0" width="256" height="270"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </view>
-                </viewController>
-                <customObject id="kLX-um-NVe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-8" y="-174"/>
         </scene>
         <!--Feed-->
         <scene sceneID="vUh-Rc-fPi">
@@ -128,7 +115,7 @@ Field</string>
                 </viewController>
                 <customObject id="1ho-ZO-Gkb" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-52" y="182"/>
+            <point key="canvasLocation" x="67" y="30"/>
         </scene>
         <!--Folder-->
         <scene sceneID="8By-fa-WDQ">
@@ -173,7 +160,7 @@ Field</string>
                 </viewController>
                 <customObject id="4SD-ni-Scy" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-52" y="471"/>
+            <point key="canvasLocation" x="67" y="329"/>
         </scene>
         <!--Builtin Smart Feed-->
         <scene sceneID="dFq-3d-JKW">
@@ -212,7 +199,7 @@ Field</string>
                 </viewController>
                 <customObject id="3Xn-vX-2s9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-52" y="685"/>
+            <point key="canvasLocation" x="67" y="553"/>
         </scene>
         <!--Nothing to inspect-->
         <scene sceneID="lUc-e1-dN7">
@@ -240,7 +227,7 @@ Field</string>
                 </viewController>
                 <customObject id="B1q-CC-IfW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-52" y="868"/>
+            <point key="canvasLocation" x="67" y="-213"/>
         </scene>
     </scenes>
     <resources>
