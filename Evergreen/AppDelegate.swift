@@ -303,7 +303,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func toggleInspectorWindow(_ sender: Any?) {
 
 		if inspectorWindowController == nil {
-			inspectorWindowController = InspectorWindowController()
+			inspectorWindowController = (windowControllerWithName("Inspector") as! InspectorWindowController)
 		}
 
 		if inspectorWindowController!.isOpen {

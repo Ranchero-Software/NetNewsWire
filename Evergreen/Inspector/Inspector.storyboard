@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="nxk-j5-jp4">
+            <objects>
+                <windowController showSeguePresentationStyle="single" id="cfG-Pn-VJS" customClass="InspectorWindowController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="Inspector" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="bma-LM-jVu" customClass="NSPanel">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="314" y="928" width="256" height="256"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+                        <value key="minSize" type="size" width="256" height="256"/>
+                        <value key="maxSize" type="size" width="256" height="2048"/>
+                        <connections>
+                            <outlet property="delegate" destination="cfG-Pn-VJS" id="nAa-rb-Rpi"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="VUU-wH-gjh" kind="relationship" relationship="window.shadowedContentViewController" id="YF3-J6-BnJ"/>
+                    </connections>
+                </windowController>
+                <customObject id="THC-Ye-xbS" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-349" y="-167"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="KfF-qz-jtB">
+            <objects>
+                <viewController id="VUU-wH-gjh" sceneMemberID="viewController">
+                    <view key="view" id="E15-dH-my9">
+                        <rect key="frame" x="0.0" y="0.0" width="256" height="270"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Y7h-bI-q4X">
+                                <rect key="frame" x="0.0" y="0.0" width="256" height="270"/>
+                                <clipView key="contentView" id="jKX-BM-mcT">
+                                    <rect key="frame" x="0.0" y="0.0" width="256" height="270"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zfd-8k-OKB">
+                                            <rect key="frame" x="0.0" y="0.0" width="241" height="255"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        </view>
+                                    </subviews>
+                                </clipView>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="256" id="E2h-fr-otm"/>
+                                </constraints>
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="gtQ-f4-7Xf">
+                                    <rect key="frame" x="-100" y="-100" width="256" height="16"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="ftW-E0-V9g">
+                                    <rect key="frame" x="240" y="0.0" width="16" height="270"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="Y7h-bI-q4X" firstAttribute="leading" secondItem="E15-dH-my9" secondAttribute="leading" id="5Wp-fI-ImY"/>
+                            <constraint firstAttribute="trailing" secondItem="Y7h-bI-q4X" secondAttribute="trailing" id="VNM-7e-XyN"/>
+                            <constraint firstAttribute="bottom" secondItem="Y7h-bI-q4X" secondAttribute="bottom" id="hAx-bV-njb"/>
+                            <constraint firstItem="Y7h-bI-q4X" firstAttribute="top" secondItem="E15-dH-my9" secondAttribute="top" id="oLa-0Y-yxk"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="kLX-um-NVe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-8" y="-174"/>
+        </scene>
+        <!--Feed-->
+        <scene sceneID="vUh-Rc-fPi">
+            <objects>
+                <viewController title="Feed" storyboardIdentifier="FeedInspector" id="sfH-oR-GXm" sceneMemberID="viewController">
+                    <view key="view" id="ecA-UY-KEd">
+                        <rect key="frame" x="0.0" y="0.0" width="256" height="268"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="H9X-OG-K0p">
+                                <rect key="frame" x="104" y="200" width="48" height="48"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="48" id="1Cy-0w-dBg"/>
+                                    <constraint firstAttribute="height" constant="48" id="edb-lw-Ict"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="MZ2-89-Bje"/>
+                            </imageView>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IWu-80-XC5">
+                                <rect key="frame" x="20" y="136" width="216" height="56"/>
+                                <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="tAO-GI-MT1">
+                                    <font key="font" metaFont="system"/>
+                                    <string key="title">Feed
+Name
+Field</string>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2WO-Iu-p5e">
+                                <rect key="frame" x="18" y="99" width="220" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Home Page URL" usesSingleLineMode="YES" id="Fg8-rA-G5J">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zm0-15-BFy">
+                                <rect key="frame" x="18" y="78" width="220" height="17"/>
+                                <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="http://example.com/" id="L2p-ur-j7a">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ju6-Zo-8X4">
+                                <rect key="frame" x="18" y="41" width="220" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Feed URL" usesSingleLineMode="YES" id="zzB-rX-1dK">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Vvk-KG-JlG">
+                                <rect key="frame" x="18" y="20" width="220" height="17"/>
+                                <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="http://example.com/feed" id="HpC-rK-YGK">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="zm0-15-BFy" firstAttribute="top" secondItem="2WO-Iu-p5e" secondAttribute="bottom" constant="4" id="2fb-QO-XIm"/>
+                            <constraint firstItem="IWu-80-XC5" firstAttribute="top" secondItem="H9X-OG-K0p" secondAttribute="bottom" constant="8" symbolic="YES" id="4WB-WJ-3Z4"/>
+                            <constraint firstItem="H9X-OG-K0p" firstAttribute="centerX" secondItem="ecA-UY-KEd" secondAttribute="centerX" id="9CA-KA-HEg"/>
+                            <constraint firstAttribute="trailing" secondItem="ju6-Zo-8X4" secondAttribute="trailing" constant="20" symbolic="YES" id="Jzi-tP-TIw"/>
+                            <constraint firstAttribute="trailing" secondItem="Vvk-KG-JlG" secondAttribute="trailing" constant="20" symbolic="YES" id="KAS-A7-TxB"/>
+                            <constraint firstItem="ju6-Zo-8X4" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="NwI-2x-dAr"/>
+                            <constraint firstItem="ju6-Zo-8X4" firstAttribute="top" secondItem="zm0-15-BFy" secondAttribute="bottom" constant="20" id="PFv-jF-JIZ"/>
+                            <constraint firstItem="2WO-Iu-p5e" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="PeT-mm-2HJ"/>
+                            <constraint firstAttribute="trailing" secondItem="IWu-80-XC5" secondAttribute="trailing" constant="20" symbolic="YES" id="WW6-xR-Zue"/>
+                            <constraint firstItem="H9X-OG-K0p" firstAttribute="top" secondItem="ecA-UY-KEd" secondAttribute="top" constant="20" symbolic="YES" id="Z6q-PN-wOC"/>
+                            <constraint firstItem="zm0-15-BFy" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="aho-BJ-kmB"/>
+                            <constraint firstAttribute="trailing" secondItem="2WO-Iu-p5e" secondAttribute="trailing" constant="20" symbolic="YES" id="dLU-a6-nfx"/>
+                            <constraint firstItem="2WO-Iu-p5e" firstAttribute="top" secondItem="IWu-80-XC5" secondAttribute="bottom" constant="20" id="mlo-9L-OMV"/>
+                            <constraint firstItem="IWu-80-XC5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="r6h-Z0-g7b"/>
+                            <constraint firstItem="Vvk-KG-JlG" firstAttribute="top" secondItem="ju6-Zo-8X4" secondAttribute="bottom" constant="4" id="sAt-dN-Taz"/>
+                            <constraint firstAttribute="bottom" secondItem="Vvk-KG-JlG" secondAttribute="bottom" constant="20" symbolic="YES" id="uL4-qx-Mj1"/>
+                            <constraint firstItem="Vvk-KG-JlG" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="uS2-JS-PPg"/>
+                            <constraint firstAttribute="trailing" secondItem="zm0-15-BFy" secondAttribute="trailing" constant="20" symbolic="YES" id="zTN-Nx-u3L"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="1ho-ZO-Gkb" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-42" y="281"/>
+        </scene>
+    </scenes>
+</document>
