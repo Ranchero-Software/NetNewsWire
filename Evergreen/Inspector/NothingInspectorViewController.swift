@@ -8,7 +8,17 @@
 
 import AppKit
 
-final class NothingInspectorViewController: NSViewController {
+final class NothingInspectorViewController: NSViewController, Inspector {
 
-	
+	let isFallbackInspector = true
+	var objects: [Any]?
+
+	func canInspect(_ objects: [Any]) -> Bool {
+
+		return true
+	}
+
+	func willEndInspectingObjects() {
+
+	}
 }

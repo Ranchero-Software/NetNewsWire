@@ -7,8 +7,19 @@
 //
 
 import AppKit
+import Account
 
-final class FolderInspectorViewController: NSViewController {
+final class FolderInspectorViewController: NSViewController, Inspector {
 
-	
+	let isFallbackInspector = false
+	var objects: [Any]?
+
+	func canInspect(_ objects: [Any]) -> Bool {
+
+		return objects.count == 1 && objects.first is Folder
+	}
+
+	func willEndInspectingObjects() {
+
+	}
 }

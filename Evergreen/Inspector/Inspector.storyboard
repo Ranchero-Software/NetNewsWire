@@ -9,8 +9,8 @@
         <scene sceneID="nxk-j5-jp4">
             <objects>
                 <windowController showSeguePresentationStyle="single" id="cfG-Pn-VJS" customClass="InspectorWindowController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Inspector" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="bma-LM-jVu" customClass="NSPanel">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+                    <window key="window" title="Inspector" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="bma-LM-jVu" customClass="NSPanel">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="314" y="928" width="256" height="256"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
@@ -35,38 +35,6 @@
                     <view key="view" id="E15-dH-my9">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Y7h-bI-q4X">
-                                <rect key="frame" x="0.0" y="0.0" width="256" height="270"/>
-                                <clipView key="contentView" id="jKX-BM-mcT">
-                                    <rect key="frame" x="0.0" y="0.0" width="256" height="270"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zfd-8k-OKB">
-                                            <rect key="frame" x="0.0" y="0.0" width="241" height="255"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        </view>
-                                    </subviews>
-                                </clipView>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="256" id="E2h-fr-otm"/>
-                                </constraints>
-                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="gtQ-f4-7Xf">
-                                    <rect key="frame" x="-100" y="-100" width="256" height="16"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="ftW-E0-V9g">
-                                    <rect key="frame" x="240" y="0.0" width="16" height="270"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                            </scrollView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="Y7h-bI-q4X" firstAttribute="leading" secondItem="E15-dH-my9" secondAttribute="leading" id="5Wp-fI-ImY"/>
-                            <constraint firstAttribute="trailing" secondItem="Y7h-bI-q4X" secondAttribute="trailing" id="VNM-7e-XyN"/>
-                            <constraint firstAttribute="bottom" secondItem="Y7h-bI-q4X" secondAttribute="bottom" id="hAx-bV-njb"/>
-                            <constraint firstItem="Y7h-bI-q4X" firstAttribute="top" secondItem="E15-dH-my9" secondAttribute="top" id="oLa-0Y-yxk"/>
-                        </constraints>
                     </view>
                 </viewController>
                 <customObject id="kLX-um-NVe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -165,7 +133,7 @@ Field</string>
         <!--Folder-->
         <scene sceneID="8By-fa-WDQ">
             <objects>
-                <viewController title="Folder" storyboardIdentifier="Folder" showSeguePresentationStyle="single" id="ylq-Dz-pnT" sceneMemberID="viewController">
+                <viewController title="Folder" storyboardIdentifier="Folder" showSeguePresentationStyle="single" id="ylq-Dz-pnT" customClass="FolderInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="DIQ-fD-5q6">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="152"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -210,7 +178,7 @@ Field</string>
         <!--Builtin Smart Feed-->
         <scene sceneID="dFq-3d-JKW">
             <objects>
-                <viewController title="Builtin Smart Feed" storyboardIdentifier="PseudoFeed" showSeguePresentationStyle="single" id="ye3-co-8lc" customClass="PseudoFeedInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Builtin Smart Feed" storyboardIdentifier="BuiltinSmartFeed" showSeguePresentationStyle="single" id="ye3-co-8lc" customClass="BuiltinSmartFeedInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="DXo-3M-jJQ">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="113"/>
                         <autoresizingMask key="autoresizingMask"/>
