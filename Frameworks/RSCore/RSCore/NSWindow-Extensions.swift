@@ -75,11 +75,14 @@ public extension NSWindow {
 			return
 		}
 
-		let paddingFromBottomEdge: CGFloat = 8.0
+		let paddingFromEdge: CGFloat = 8.0
 		var unflippedPoint = point
 		unflippedPoint.y = (screenFrame.maxY - point.y) - frame.height
 		if unflippedPoint.y < 0 {
-			unflippedPoint.y = paddingFromBottomEdge
+			unflippedPoint.y = paddingFromEdge
+		}
+		if unflippedPoint.x < 0 {
+			unflippedPoint.x = paddingFromEdge
 		}
 		setFrameOrigin(unflippedPoint)
 	}
