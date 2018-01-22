@@ -10,15 +10,57 @@ import AppKit
 
 final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector {
 
+	@IBOutlet var nameTextField: NSTextField?
+
+	private var smartFeed: PseudoFeed? {
+		didSet {
+			updateUI()
+		}
+	}
+
+	// MARK: Inspector
+
 	let isFallbackInspector = false
-	var objects: [Any]?
+	var objects: [Any]? {
+		didSet {
+			updateSmartFeed()
+		}
+	}
 
 	func canInspect(_ objects: [Any]) -> Bool {
 
-		return objects.count == 1 && objects.first is PseudoFeed
+		guard let _ = singleSmartFeed(from: objects) else {
+			return false
+		}
+		return true
 	}
 
-	func willEndInspectingObjects() {
+	// MARK: NSViewController
 
+	override func viewDidLoad() {
+
+		updateUI()
+	}
+}
+
+private extension BuiltinSmartFeedInspectorViewController {
+
+	func singleSmartFeed(from objects: [Any]?) -> PseudoFeed? {
+
+		guard let objects = objects, objects.count == 1, let singleSmartFeed = objects.first as? PseudoFeed else {
+			return nil
+		}
+
+		return singleSmartFeed
+	}
+
+	func updateSmartFeed() {
+
+		smartFeed = singleSmartFeed(from: objects)
+	}
+
+	func updateUI() {
+
+		nameTextField?.stringValue = smartFeed?.nameForDisplay ?? ""
 	}
 }

@@ -19,7 +19,9 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 	private var feed: Feed? {
 		didSet {
-			updateUI()
+			if feed != oldValue {
+				updateUI()
+			}
 		}
 	}
 
@@ -90,7 +92,7 @@ private extension FeedInspectorViewController {
 			imageView?.image = feedIcon
 			return
 		}
-		
+
 		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
 			if favicon.size.height < 16.0 && favicon.size.width < 16.0 {
 				favicon.size = NSSize(width: 16, height: 16)
