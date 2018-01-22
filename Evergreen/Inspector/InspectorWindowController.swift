@@ -14,8 +14,6 @@ protocol Inspector: class {
 	var isFallbackInspector: Bool { get } // Can handle nothing-to-inspect or unexpected type of objects.
 
 	func canInspect(_ objects: [Any]) -> Bool
-
-	func willEndInspectingObjects() // Called on the current inspector right before objects is about to change.
 }
 
 typealias InspectorViewController = Inspector & NSViewController
@@ -44,9 +42,6 @@ final class InspectorWindowController: NSWindowController {
 
 	private var currentInspector: InspectorViewController! {
 		didSet {
-			if let oldInspector = oldValue {
-				oldInspector.willEndInspectingObjects()
-			}
 			currentInspector.objects = objects
 			for inspector in inspectors {
 				if inspector !== currentInspector {
