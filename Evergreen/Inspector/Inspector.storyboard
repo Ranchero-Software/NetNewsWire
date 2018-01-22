@@ -62,7 +62,7 @@ Field</string>
                                 <rect key="frame" x="18" y="99" width="220" height="17"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Home Page URL" usesSingleLineMode="YES" id="Fg8-rA-G5J">
                                     <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
@@ -78,7 +78,7 @@ Field</string>
                                 <rect key="frame" x="18" y="41" width="220" height="17"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Feed URL" usesSingleLineMode="YES" id="zzB-rX-1dK">
                                     <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
@@ -112,6 +112,12 @@ Field</string>
                             <constraint firstItem="Vvk-KG-JlG" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="uS2-JS-PPg"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="homePageURLTextField" destination="zm0-15-BFy" id="0Jh-yy-mnF"/>
+                        <outlet property="imageView" destination="H9X-OG-K0p" id="Rm6-X6-csH"/>
+                        <outlet property="nameTextField" destination="IWu-80-XC5" id="zg4-5h-hoP"/>
+                        <outlet property="urlTextField" destination="Vvk-KG-JlG" id="bcl-fq-3nQ"/>
+                    </connections>
                 </viewController>
                 <customObject id="1ho-ZO-Gkb" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
