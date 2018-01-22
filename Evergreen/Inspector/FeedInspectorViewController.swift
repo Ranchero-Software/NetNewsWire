@@ -81,16 +81,25 @@ private extension FeedInspectorViewController {
 
 	func updateImage() {
 
-		guard let feed = feed, let image = image(for: feed) else {
+		guard let feed = feed else {
 			imageView?.image = nil
 			return
 		}
-		imageView?.image = image
-	}
 
-	func image(for feed: Feed) -> NSImage? {
+		if let feedIcon = appDelegate.feedIconDownloader.icon(for: feed) {
+			imageView?.image = feedIcon
+			return
+		}
+		
+		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
+			if favicon.size.height < 16.0 && favicon.size.width < 16.0 {
+				favicon.size = NSSize(width: 16, height: 16)
+			}
+			imageView?.image = favicon
+			return
+		}
 
-		return appDelegate.feedIconDownloader.icon(for: feed) ?? appDelegate.faviconDownloader.favicon(for: feed)
+		imageView?.image = nil
 	}
 
 	func updateName() {
