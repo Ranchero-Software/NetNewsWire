@@ -31,12 +31,12 @@ import Data
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		var types = [ArticlePasteboardWriter.articleUTIType, .string]
+		var types = [ArticlePasteboardWriter.articleUTIType]
 
 		if let link = article.preferredLink, let _ = URL(string: link) {
 			types += [.URL]
 		}
-		types += [.html, ArticlePasteboardWriter.articleUTIInternalType]
+		types += [.string, .html, ArticlePasteboardWriter.articleUTIInternalType]
 
 		return types
 	}
