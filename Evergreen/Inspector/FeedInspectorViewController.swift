@@ -60,6 +60,10 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	}
 }
 
+extension FeedInspectorViewController: NSTextFieldDelegate {
+
+}
+
 private extension FeedInspectorViewController {
 
 	func updateFeed() {
