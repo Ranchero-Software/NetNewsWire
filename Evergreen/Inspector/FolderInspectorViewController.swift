@@ -8,6 +8,7 @@
 
 import AppKit
 import Account
+import RSCore
 
 final class FolderInspectorViewController: NSViewController, Inspector {
 
@@ -43,6 +44,29 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 	override func viewDidLoad() {
 
 		updateUI()
+
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+	}
+
+	// MARK: Notifications
+
+	@objc func displayNameDidChange(_ note: Notification) {
+
+		guard let updatedFolder = note.object as? Folder, updatedFolder == folder else {
+			return
+		}
+		updateUI()
+	}
+}
+
+extension FolderInspectorViewController: NSTextFieldDelegate {
+
+	override func controlTextDidChange(_ note: Notification) {
+
+		guard let folder = folder, let nameTextField = nameTextField else {
+			return
+		}
+		folder.name = nameTextField.stringValue
 	}
 }
 
@@ -64,7 +88,13 @@ private extension FolderInspectorViewController {
 
 	func updateUI() {
 
-		nameTextField?.stringValue = folder?.nameForDisplay ?? ""
-	}
+		guard let nameTextField = nameTextField else {
+			return
+		}
 
+		let name = folder?.nameForDisplay ?? ""
+		if nameTextField.stringValue != name {
+			nameTextField.stringValue = name
+		}
+	}
 }

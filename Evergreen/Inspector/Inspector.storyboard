@@ -155,6 +155,9 @@ Field</string>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <outlet property="delegate" destination="ylq-Dz-pnT" id="30z-5n-OpR"/>
+                                </connections>
                             </textField>
                         </subviews>
                         <constraints>

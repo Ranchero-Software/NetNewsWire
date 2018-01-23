@@ -111,12 +111,18 @@ private extension InspectorWindowController {
 
 	func show(_ inspector: InspectorViewController) {
 
-		guard let window = window, inspector !== window.contentViewController else {
+		guard let window = window else {
 			return
 		}
 		
 		let flippedOrigin = window.flippedOrigin
-		window.contentViewController = inspector
+
+		if window.contentViewController != inspector {
+			window.contentViewController = inspector
+			window.makeFirstResponder(nil)
+		}
+		
+		window.layoutIfNeeded()
 		if let flippedOrigin = flippedOrigin {
 			window.setFlippedOriginAdjustingForScreen(flippedOrigin)
 		}

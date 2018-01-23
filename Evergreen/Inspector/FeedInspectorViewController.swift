@@ -110,7 +110,14 @@ private extension FeedInspectorViewController {
 
 	func updateName() {
 
-		nameTextField?.stringValue = feed?.editedName ?? feed?.name ?? ""
+		guard let nameTextField = nameTextField else {
+			return
+		}
+
+		let name = feed?.editedName ?? feed?.name ?? ""
+		if nameTextField.stringValue != name {
+			nameTextField.stringValue = name
+		}
 	}
 
 	func updateHomePageURL() {
