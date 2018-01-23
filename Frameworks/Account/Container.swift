@@ -11,7 +11,7 @@ import Foundation
 import RSCore
 import Data
 
-extension NSNotification.Name {
+extension Notification.Name {
 	
 	public static let ChildrenDidChange = Notification.Name("ChildrenDidChange")
 }
