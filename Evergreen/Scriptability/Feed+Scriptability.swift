@@ -90,5 +90,15 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         let feedAuthors = feed.authors ?? []
         return feedAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
     }
+    
+    @objc(articles)
+    var articles:NSArray {
+        let feedArticles = feed.fetchArticles()
+        // the articles are a set, use the sorting algorithm from the viewer
+        let sortedArticles = feedArticles.sorted(by:{
+            return $0.logicalDatePublished > $1.logicalDatePublished
+        })
+        return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
+    }
 
 }

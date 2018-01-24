@@ -8,6 +8,7 @@
 
 import Cocoa
 import Account
+import Data
 
 extension NSApplication : ScriptingObjectContainer {
     
@@ -25,6 +26,21 @@ extension NSApplication : ScriptingObjectContainer {
         return accounts.map { ScriptableAccount($0) } as NSArray
     }
     
+    /*
+        accessing feeds from the application object skips the 'account' containment hierarchy
+        this allows a script like 'articles of feed "The Shape of Everything"' as a shorthand
+        for  'articles of feed "The Shape of Everything" of account "On My Mac"'
+    */
+    @objc(feeds)
+    func feeds() -> NSArray {
+        let accounts = AccountManager.shared.accounts
+        let emptyFeeds:[Feed] = []
+        let feeds = accounts.reduce(emptyFeeds) { (result, nthAccount) -> [Feed] in
+              let accountFeeds = nthAccount.children.flatMap { $0 as? Feed }
+              return result + accountFeeds
+        }
+        return feeds.map { ScriptableFeed($0, container:self) } as NSArray
+    }
 }
 
 
