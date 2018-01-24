@@ -94,8 +94,12 @@ class ScriptingTests: XCTestCase {
         _ = doIndividualScript(filename: "testNameOfAuthors")
     }
     
-    func testNameOfAuthorsScript() {
+    func testFeedOPML() {
         _ = doIndividualScript(filename: "testFeedOPML")
+    }
+
+    func testTitleOfArticlesWhoseScript() {
+        _ = doIndividualScript(filename: "testTitleOfArticlesWhose")
     }
 
 }

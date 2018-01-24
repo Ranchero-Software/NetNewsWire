@@ -11,7 +11,7 @@ import Account
 import Data
 
 @objc(ScriptableArticle)
-class ScriptableArticle: NSObject, UniqueIdScriptingObject {
+class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let article:Article
     let container:ScriptingObjectContainer
@@ -41,7 +41,13 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject {
     var scriptingUniqueId:Any {
         return article.uniqueID
     }
+
+    // MARK: --- ScriptingObjectContainer protocol ---
     
+    var scriptingClassDescription: NSScriptClassDescription {
+        return self.classDescription as! NSScriptClassDescription
+    }
+
     // MARK: --- Scriptable properties ---
     
     @objc(url)
@@ -108,4 +114,11 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject {
     var imageURL:String  {
         return article.imageURL ?? ""
     }
+    
+    @objc(authors)
+    var authors:NSArray {
+        let articleAuthors = article.authors ?? []
+        return articleAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
+    }
+
 }

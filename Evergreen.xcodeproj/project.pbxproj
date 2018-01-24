@@ -134,6 +134,8 @@
 		84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */; };
 		D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D553737C20186C1F006D8857 /* Article+Scriptability.swift */; };
+		D55373AF2018797C006D8857 /* testTitleOfArticlesWhose.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D55373A02018797B006D8857 /* testTitleOfArticlesWhose.applescript */; };
+		D55373B020187A05006D8857 /* testTitleOfArticlesWhose.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D55373A02018797B006D8857 /* testTitleOfArticlesWhose.applescript */; };
 		D5558FD32002245C0066386B /* ScriptingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD22002245C0066386B /* ScriptingTests.swift */; };
 		D5558FD5200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */; };
 		D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
@@ -455,6 +457,7 @@
 				D5A2679D201313A200A8D3C0 /* testNameOfAuthors.applescript in CopyFiles */,
 				D5F4EDE920075C6700B9E363 /* testNameAndUrlOfEveryFeed.applescript in CopyFiles */,
 				D5F4EDEA20075C6700B9E363 /* testNameOfEveryFolder.applescript in CopyFiles */,
+				D55373B020187A05006D8857 /* testTitleOfArticlesWhose.applescript in CopyFiles */,
 				D5907CA2200232AD005947E5 /* testGenericScript.applescript in CopyFiles */,
 				D5907CA3200232AF005947E5 /* testGetURL.applescript in CopyFiles */,
 			);
@@ -587,6 +590,7 @@
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
 		D553737C20186C1F006D8857 /* Article+Scriptability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Article+Scriptability.swift"; sourceTree = "<group>"; };
+		D55373A02018797B006D8857 /* testTitleOfArticlesWhose.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testTitleOfArticlesWhose.applescript; sourceTree = "<group>"; };
 		D5558FD1200223F60066386B /* testGetURL.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = testGetURL.applescript; sourceTree = "<group>"; };
 		D5558FD22002245C0066386B /* ScriptingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScriptingTests.swift; path = EvergreenTests/ScriptingTests/ScriptingTests.swift; sourceTree = SOURCE_ROOT; };
 		D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSAppleEventDescriptor+UserRecordFields.swift"; path = "AppleEvents/NSAppleEventDescriptor+UserRecordFields.swift"; sourceTree = SOURCE_ROOT; };
@@ -1159,6 +1163,7 @@
 				D5F4EDE720075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript */,
 				D5A2679B201312F900A8D3C0 /* testNameOfAuthors.applescript */,
 				D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */,
+				D55373A02018797B006D8857 /* testTitleOfArticlesWhose.applescript */,
 			);
 			path = scripts;
 			sourceTree = "<group>";
@@ -1676,6 +1681,7 @@
 			files = (
 				D5558FD5200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */,
 				D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */,
+				D55373AF2018797C006D8857 /* testTitleOfArticlesWhose.applescript in Sources */,
 				D5907CA1200232A1005947E5 /* testGetURL.applescript in Sources */,
 				D5A267C120131B8300A8D3C0 /* testFeedOPML.applescript in Sources */,
 				D5A2679C201312F900A8D3C0 /* testNameOfAuthors.applescript in Sources */,

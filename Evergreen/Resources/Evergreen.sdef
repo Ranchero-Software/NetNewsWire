@@ -166,7 +166,7 @@
             <property name="deleted" code="Delt" type="boolean" access="r" description="has the article been deleted by the user">
                 <cocoa key="deleted"/>
             </property>
-            <property name="image url" code="URL " type="text" access="r" description="an image url for the article">
+            <property name="image url" code="IURL" type="text" access="r" description="an image url for the article">
                 <cocoa key="imageURL"/>
             </property>
             <element type="author">
