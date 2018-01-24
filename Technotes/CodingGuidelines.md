@@ -94,7 +94,7 @@ Don’t fight the built-in frameworks and don’t try to hide them. Let’s not 
 
 #### Ours
 
-Evergreen is layered into frameworks. There’s an app level and a bunch of frameworks below that. Each framework has its own reason for being. Dependencies between projects should be as minimal as possible, but those dependencies do exist.
+Evergreen is layered into frameworks. There’s an app level and a bunch of frameworks below that. Each framework has its own reason for being. Dependencies between frameworks should be as minimal as possible, but those dependencies do exist.
 
 Some frameworks are not permitted to add dependencies, and should be treated as at the bottom of the cake: RSCore, RSWeb, RSDatabase, RSParser, RSTree, and DB5. This simplifies things for us, and makes it easier for us and other people to use these frameworks in other apps.
 
