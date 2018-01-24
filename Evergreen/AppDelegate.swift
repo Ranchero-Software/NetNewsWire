@@ -69,6 +69,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		dockBadge.appDelegate = self
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
+
 		appDelegate = self
 	}
 
@@ -136,6 +138,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
 
+		if InspectorWindowController.shouldOpenAtStartup {
+			self.toggleInspectorWindow(self)
+		}
+
 		#if RELEASE
 			DispatchQueue.main.async {
 				self.refreshAll(self)
@@ -157,6 +163,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		RSMultiLineRenderer.emptyCache()
 		TimelineCellData.emptyCache()
 		timelineEmptyCaches()
+
+		saveState()
+	}
+
+	func applicationWillTerminate(_ notification: Notification) {
+
+		saveState()
 	}
 
 	// MARK: GetURL Apple Event
@@ -193,6 +206,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return
 		}
 		let _ = faviconDownloader.favicon(for: feed)
+	}
+
+	@objc func sidebarSelectionDidChange(_ note: Notification) {
+
+		guard let inspectorWindowController = inspectorWindowController, inspectorWindowController.isOpen else {
+			return
+		}
+		inspectorWindowController.objects = objectsForInspector()
 	}
 
 	// MARK: Main Window
@@ -303,13 +324,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func toggleInspectorWindow(_ sender: Any?) {
 
 		if inspectorWindowController == nil {
-			inspectorWindowController = InspectorWindowController()
+			inspectorWindowController = (windowControllerWithName("Inspector") as! InspectorWindowController)
 		}
 
 		if inspectorWindowController!.isOpen {
 			inspectorWindowController!.window!.performClose(self)
 		}
 		else {
+			inspectorWindowController!.objects = objectsForInspector()
 			inspectorWindowController!.showWindow(self)
 		}
 	}
@@ -424,5 +446,20 @@ private extension AppDelegate {
 	func createReaderWindow() -> NSWindowController {
 
 		return windowControllerWithName("MainWindow")
+	}
+
+	func objectsForInspector() -> [Any]? {
+
+		guard let window = NSApplication.shared.mainWindow, let windowController = window.windowController as? MainWindowController else {
+			return nil
+		}
+		return windowController.selectedObjectsInSidebar()
+	}
+
+	func saveState() {
+
+		if let inspectorWindowController = inspectorWindowController {
+			inspectorWindowController.saveState()
+		}
 	}
 }

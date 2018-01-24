@@ -642,7 +642,12 @@ private extension TimelineViewController {
 		}
 
 		let fetchedArticles = fetchUnsortedArticles(for: representedObjects)
-		let sortedArticles = Array(fetchedArticles).sortedByDate()
+		updateArticles(with: fetchedArticles)
+	}
+
+	func updateArticles(with unsortedArticles: Set<Article>) {
+
+		let sortedArticles = Array(unsortedArticles).sortedByDate()
 		if articles != sortedArticles {
 			articles = sortedArticles
 		}
@@ -667,20 +672,27 @@ private extension TimelineViewController {
 
 	func fetchAndMergeArticles() {
 
+		guard let representedObjects = representedObjects else {
+			return
+		}
+
 		let selectedArticleIDs = selectedArticles.articleIDs()
 
+		var unsortedArticles = fetchUnsortedArticles(for: representedObjects)
+		unsortedArticles.formUnion(Set(articles))
+		updateArticles(with: unsortedArticles)
 
 		selectArticles(selectedArticleIDs)
 	}
 
 	func selectArticles(_ articleIDs: [String]) {
 
-//		let indexesToSelect = indexesOf(articleIDs)
-//		if indexesToSelect.isEmpty {
-//			tableView.deselectAll(self)
-//			return
-//		}
-//		tableView.selectRowIndexes(indexesToSelect, byExtendingSelection: false)
+		let indexesToSelect = articles.indexesForArticleIDs(Set(articleIDs))
+		if indexesToSelect.isEmpty {
+			tableView.deselectAll(self)
+			return
+		}
+		tableView.selectRowIndexes(indexesToSelect, byExtendingSelection: false)
 	}
 
 	func invalidateFetchAndMergeArticlesTimer() {

@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		8414AD251FCF5A1E00955102 /* TimelineHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8414AD241FCF5A1E00955102 /* TimelineHeaderView.swift */; };
+		841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */; };
+		841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */; };
+		841ABA6020145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */; };
 		8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611891FCB67AA0086A189 /* FeedIconDownloader.swift */; };
 		8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
 		842611A01FCB72600086A189 /* FeaturedImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119F1FCB72600086A189 /* FeaturedImageDownloader.swift */; };
@@ -38,6 +41,7 @@
 		846E77411F6EF6A100A165E2 /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; };
 		846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */; };
+		8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* FeedInspectorViewController.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
 		849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
 		849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97511ED9EAC0007D329B /* AddFeedController.swift */; };
@@ -107,6 +111,8 @@
 		84B99C9D1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */; };
 		84BB4B771F11753300858766 /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B681F1174D400858766 /* Data.framework */; };
 		84BB4B781F11753300858766 /* Data.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B681F1174D400858766 /* Data.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84BBB12B20142A4700F054F5 /* Inspector.storyboard */; };
+		84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BBB12C20142A4700F054F5 /* InspectorWindowController.swift */; };
 		84C12A151FF5B0080009A267 /* FeedList.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C12A141FF5B0080009A267 /* FeedList.storyboard */; };
 		84CC08061FF5D2E000C0C0ED /* FeedListSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */; };
 		84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
@@ -457,6 +463,9 @@
 
 /* Begin PBXFileReference section */
 		8414AD241FCF5A1E00955102 /* TimelineHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineHeaderView.swift; sourceTree = "<group>"; };
+		841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingInspectorViewController.swift; sourceTree = "<group>"; };
+		841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderInspectorViewController.swift; sourceTree = "<group>"; };
+		841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinSmartFeedInspectorViewController.swift; sourceTree = "<group>"; };
 		842611891FCB67AA0086A189 /* FeedIconDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedIconDownloader.swift; sourceTree = "<group>"; };
 		8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataDownloader.swift; sourceTree = "<group>"; };
 		8426119F1FCB72600086A189 /* FeaturedImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedImageDownloader.swift; sourceTree = "<group>"; };
@@ -486,6 +495,7 @@
 		846E77161F6EF5D000A165E2 /* Database.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Database.xcodeproj; path = Frameworks/Database/Database.xcodeproj; sourceTree = "<group>"; };
 		846E77301F6EF5D600A165E2 /* Account.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Account.xcodeproj; path = Frameworks/Account/Account.xcodeproj; sourceTree = "<group>"; };
 		84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkReadOrUnreadCommand.swift; sourceTree = "<group>"; };
+		8472058020142E8900AD578B /* FeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedInspectorViewController.swift; sourceTree = "<group>"; };
 		847752FE2008879500D93690 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconDownloader.swift; sourceTree = "<group>"; };
 		849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderWindowController.swift; sourceTree = "<group>"; };
@@ -553,6 +563,8 @@
 		84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFeed.swift; sourceTree = "<group>"; };
 		84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteFromSidebarCommand.swift; sourceTree = "<group>"; };
 		84BB4B611F1174D400858766 /* Data.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Data.xcodeproj; path = Frameworks/Data/Data.xcodeproj; sourceTree = "<group>"; };
+		84BBB12B20142A4700F054F5 /* Inspector.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Inspector.storyboard; sourceTree = "<group>"; };
+		84BBB12C20142A4700F054F5 /* InspectorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InspectorWindowController.swift; sourceTree = "<group>"; };
 		84C12A141FF5B0080009A267 /* FeedList.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = FeedList.storyboard; sourceTree = "<group>"; };
 		84CBDDAE1FD3674C005A61AA /* Technotes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Technotes; sourceTree = "<group>"; };
 		84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListSplitViewController.swift; sourceTree = "<group>"; };
@@ -931,6 +943,7 @@
 				842E45DC1ED8C54B000A8B52 /* Browser.swift */,
 				84702AB31FA27AE8006B8943 /* Commands */,
 				842E45E11ED8C681000A8B52 /* MainWindow */,
+				84BBB12A20142A4700F054F5 /* Inspector */,
 				842E45E01ED8C587000A8B52 /* Preferences */,
 				849A97861ED9ECEF007D329B /* Article Styles */,
 				84A6B6921FB8D43C006754AC /* Dinosaurs */,
@@ -1067,6 +1080,20 @@
 				84BB4B6A1F1174D400858766 /* DataTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		84BBB12A20142A4700F054F5 /* Inspector */ = {
+			isa = PBXGroup;
+			children = (
+				84BBB12B20142A4700F054F5 /* Inspector.storyboard */,
+				84BBB12C20142A4700F054F5 /* InspectorWindowController.swift */,
+				8472058020142E8900AD578B /* FeedInspectorViewController.swift */,
+				841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */,
+				841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */,
+				841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */,
+			);
+			name = Inspector;
+			path = Evergreen/Inspector;
 			sourceTree = "<group>";
 		};
 		84DAEE201F86CAE00058304B /* Importers */ = {
@@ -1510,6 +1537,7 @@
 				849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */,
 				849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */,
 				849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */,
+				84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */,
 				D5D1751220020B980047B29D /* Evergreen.sdef in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1547,8 +1575,10 @@
 				84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */,
 				849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */,
 				84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */,
+				84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */,
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,
 				D5907D972004B7EB005947E5 /* Account+Scriptability.swift in Sources */,
+				841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */,
 				842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */,
 				844B5B5B1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift in Sources */,
 				84DAEE321F870B390058304B /* DockBadge.swift in Sources */,
@@ -1585,6 +1615,7 @@
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
 				849A97791ED9EC04007D329B /* TimelineStringUtilities.swift in Sources */,
+				8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */,
 				84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */,
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
@@ -1593,6 +1624,7 @@
 				849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */,
 				849A97831ED9EC63007D329B /* SidebarStatusBarView.swift in Sources */,
 				84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */,
+				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
 				845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */,
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
 				844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */,
@@ -1603,6 +1635,7 @@
 				849A978D1ED9EE4D007D329B /* FeedListWindowController.swift in Sources */,
 				849A97771ED9EC04007D329B /* TimelineCellData.swift in Sources */,
 				84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */,
+				841ABA6020145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift in Sources */,
 				D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */,
 				D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */,
 				842611A01FCB72600086A189 /* FeaturedImageDownloader.swift in Sources */,

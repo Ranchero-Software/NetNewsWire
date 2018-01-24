@@ -20,7 +20,13 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	public var faviconURL: String?
 	public var name: String?
 	public var authors: Set<Author>?
-	public var editedName: String?
+
+	public var editedName: String? {
+		didSet {
+			postDisplayNameDidChangeNotification()
+		}
+	}
+
 	public var conditionalGetInfo: HTTPConditionalGetInfo?
 	public var contentHash: String?
 	public let hashValue: Int
@@ -29,7 +35,13 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	public var nameForDisplay: String {
 		get {
-			return (editedName ?? name) ?? NSLocalizedString("Untitled", comment: "Feed name")
+			if let s = editedName, !s.isEmpty {
+				return s
+			}
+			if let s = name, !s.isEmpty {
+				return s
+			}
+			return NSLocalizedString("Untitled", comment: "Feed name")
 		}
 	}
 
