@@ -7,6 +7,27 @@
         <language>en</language>
 
 			<item>
+          <title>Evergreen 1.0d34</title>
+            <description><![CDATA[
+            
+            <h4>Icons</h4>
+            <p>Updated app icon — tree redrawn to make branches wider and have definition.</p>
+            <p>Updated next unread icon to fit better.</p>
+            <p>(Icons are by Brad Ellis.)</p>
+            
+            <h4>Inspector</h4>
+            <p>Window > Info, or cmd-I, opens the Inspector. You can change the names of feeds and folders. You can get the home page URL and feed URL of a feed (which is pretty important when filing a bug for a feed).</p>
+
+            <h4>Misc.</h4>
+            <p>Reload the timeline when a feed updates (when feed is selected, or when a folder containing the feed is selected).</p>
+
+    						]]></description>
+            <pubDate>Tue, 23 Jan 2018 22:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d34.zip" sparkle:version="852" sparkle:shortVersionString="1.0d34" length="7455712" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+			<item>
           <title>Evergreen 1.0d33</title>
             <description><![CDATA[
             
