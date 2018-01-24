@@ -10,15 +10,38 @@ import AppKit
 
 final class NothingInspectorViewController: NSViewController, Inspector {
 
+	@IBOutlet var nothingTextField: NSTextField?
+	@IBOutlet var multipleTextField: NSTextField?
+
 	let isFallbackInspector = true
-	var objects: [Any]?
+	var objects: [Any]? {
+		didSet {
+			updateTextFields()
+		}
+	}
 
 	func canInspect(_ objects: [Any]) -> Bool {
 
 		return true
 	}
 
-	func willEndInspectingObjects() {
+	override func viewDidLoad() {
 
+		updateTextFields()
+	}
+}
+
+private extension NothingInspectorViewController {
+
+	func updateTextFields() {
+
+		if let objects = objects, objects.count > 1 {
+			nothingTextField?.isHidden = true
+			multipleTextField?.isHidden = false
+		}
+		else {
+			nothingTextField?.isHidden = false
+			multipleTextField?.isHidden = true
+		}
 	}
 }

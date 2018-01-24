@@ -17,7 +17,6 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 
 	public var name: String? {
 		didSet {
-			account?.dirty = true
 			postDisplayNameDidChangeNotification()
 		}
 	}

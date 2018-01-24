@@ -129,12 +129,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.database = Database(databaseFilePath: databaseFilePath, accountID: accountID)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
-
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		
-        NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 
+        NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
 		pullObjectsFromDisk()
 		
@@ -434,6 +433,16 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	@objc func feedSettingDidChange(_ note: Notification) {
 
 		if let feed = note.object as? Feed, let feedAccount = feed.account, feedAccount === self {
+			dirty = true
+		}
+	}
+
+	@objc func displayNameDidChange(_ note: Notification) {
+
+		if let feed = note.object as? Feed, let feedAccount = feed.account, feedAccount === self {
+			dirty = true
+		}
+		if let folder = note.object as? Folder, let folderAccount = folder.account, folderAccount === self {
 			dirty = true
 		}
 	}
