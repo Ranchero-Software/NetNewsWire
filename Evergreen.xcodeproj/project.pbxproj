@@ -1264,12 +1264,12 @@
 				TargetAttributes = {
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 6V7D786XTL;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = M8L2WTLA8W;
+						ProvisioningStyle = Manual;
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 6V7D786XTL;
+						DevelopmentTeam = 9C84TZ7Q6Z;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
