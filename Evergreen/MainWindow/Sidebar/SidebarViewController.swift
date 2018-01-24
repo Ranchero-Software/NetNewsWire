@@ -43,6 +43,7 @@ import RSCore
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
 		outlineView.reloadData()
 
@@ -99,6 +100,14 @@ import RSCore
 			return
 		}
 		configureCellsForRepresentedObject(feed)
+	}
+
+	@objc func displayNameDidChange(_ note: Notification) {
+
+		guard let object = note.object else {
+			return
+		}
+		configureCellsForRepresentedObject(object as AnyObject)
 	}
 
 	// MARK: Actions

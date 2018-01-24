@@ -112,11 +112,13 @@ Stack views are not allowed in table and outline view cells, but they can be use
 
 Use nil-targeted actions and the responder chain when appropriate.
 
-Use Cocoa bindings extremely rarely — for a checkbox in a preferences window, for instance. `NSArrayController` and similar are never used. Binding via code is also not done.
+Use Cocoa bindings extremely rarely — for a checkbox in a preferences window, for instance.
 
 ### Notifications and Bindings
 
 Key-Value Observing (KVO) is entirely forbidden. KVO is where the crashing bugs live. (The only possible exception to this is when an Apple API requires KVO, which is rare.)
+
+`NSArrayController` and similar are never used. Binding via code is also not done.
 
 Instead, we use NotificationCenter notifications, and we use Swift’s `didSet` method on accessors.
 
