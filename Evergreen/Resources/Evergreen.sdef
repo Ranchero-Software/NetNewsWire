@@ -24,6 +24,9 @@
              <element type="account">
                  <cocoa key="accounts"/>
              </element>
+             <element type="feed">
+                 <cocoa key="feeds"/>
+             </element>
          </class>
 
         <enumeration name="account type" code="enum">
@@ -89,6 +92,9 @@
             <element type="author">
                 <cocoa key="authors"/>
             </element>
+            <element type="article">
+                <cocoa key="articles"/>
+            </element>
         </class>
 
         <class name="author" code="Athr" plural="authors" description="A feed author">
@@ -120,6 +126,52 @@
             <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the folder">
                 <cocoa key="opmlRepresentation"/>
             </property>
+        </class>
+
+        <class name="article" code="Arcl" plural="articles" description="An article in a feed">
+            <cocoa class="ScriptableArticle"/>
+            <property name="id" code="id  " type="text" access="r" description="The unique id of the article as set by the feed">
+                <cocoa key="uniqueId"/>
+            </property>
+            <property name="title" code="titl" type="text" access="r" description="The article title">
+                <cocoa key="title"/>
+            </property>
+            <property name="url" code="URL " type="text" access="r" description="url for the article">
+                <cocoa key="url"/>
+            </property>
+            <property name="contents" code="Cnts" type="text" access="r" description="text of the article">
+                <cocoa key="contents"/>
+            </property>
+            <property name="html" code="HTML" type="text" access="r" description="html of the article">
+                <cocoa key="html"/>
+            </property>
+            <property name="summary" code="Smry" type="text" access="r" description="a summary of the article">
+                <cocoa key="summary"/>
+            </property>
+            <property name="published date" code="PDat" type="date" access="r" description="date the article was published">
+                <cocoa key="datePublished"/>
+            </property>
+            <property name="arrived date" code="ADat" type="date" access="r" description="date the article was seen by Evergreen">
+                <cocoa key="dateArrived"/>
+            </property>
+            <property name="modified date" code="MDat" type="date" access="r" description="date the article was last modified">
+                <cocoa key="dateModified"/>
+            </property>
+            <property name="read" code="Read" type="boolean" access="r" description="has the article been read">
+                <cocoa key="read"/>
+            </property>
+            <property name="starred" code="Star" type="boolean" access="r" description="has the article been marked with a star">
+                <cocoa key="starred"/>
+            </property>
+            <property name="deleted" code="Delt" type="boolean" access="r" description="has the article been deleted by the user">
+                <cocoa key="deleted"/>
+            </property>
+            <property name="image url" code="IURL" type="text" access="r" description="an image url for the article">
+                <cocoa key="imageURL"/>
+            </property>
+            <element type="author">
+                <cocoa key="authors"/>
+            </element>
         </class>
 
     </suite>
