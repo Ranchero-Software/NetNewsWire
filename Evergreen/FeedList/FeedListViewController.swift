@@ -10,6 +10,16 @@ import Cocoa
 import RSTree
 import RSCore
 
+extension Notification.Name {
+
+	static let FeedListSidebarSelectionDidChange = Notification.Name(rawValue: "FeedListSidebarSelectionDidChange")
+}
+
+struct FeedListUserInfoKey {
+
+	static let selectedObject = "selectedObject"
+}
+
 final class FeedListViewController: NSViewController {
 
 	@IBOutlet var outlineView: NSOutlineView!
@@ -82,18 +92,16 @@ extension FeedListViewController: NSOutlineViewDelegate {
 
 	func outlineViewSelectionDidChange(_ notification: Notification) {
 
-//		// TODO: support multiple selection
-//
-//		let selectedRow = self.outlineView.selectedRow
-//
-//		if selectedRow < 0 || selectedRow == NSNotFound {
-//			postSidebarSelectionDidChangeNotification(nil)
-//			return
-//		}
-//
-//		if let selectedNode = self.outlineView.item(atRow: selectedRow) as? Node {
-//			postSidebarSelectionDidChangeNotification([selectedNode.representedObject])
-//		}
+		let selectedRow = self.outlineView.selectedRow
+
+		if selectedRow < 0 || selectedRow == NSNotFound {
+			postSidebarSelectionDidChangeNotification(nil)
+			return
+		}
+
+		if let selectedNode = self.outlineView.item(atRow: selectedRow) as? Node {
+			postSidebarSelectionDidChangeNotification(selectedNode.representedObject)
+		}
 	}
 
 	private func configure(_ cell: SidebarCell, _ node: Node) {
@@ -156,5 +164,16 @@ private extension FeedListViewController {
 			}
 			configure(cell, node)
 		}
+	}
+
+	func postSidebarSelectionDidChangeNotification(_ selectedObject: Any?) {
+
+		var userInfo = [AnyHashable: Any]()
+
+		if let selectedObject = selectedObject {
+			userInfo[FeedListUserInfoKey.selectedObject] = selectedObject
+		}
+
+		NotificationCenter.default.post(name: .FeedListSidebarSelectionDidChange, object: self, userInfo: userInfo)
 	}
 }

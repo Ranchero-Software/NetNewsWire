@@ -8,6 +8,13 @@
 
 import Foundation
 import RSCore
+import RSParser
+import RSWeb
+
+extension Notification.Name {
+
+	public static let FeedListFeedDidBecomeAvailable = Notification.Name(rawValue: "FeedListFeedDidBecomeAvailable")
+}
 
 final class FeedListFeed: Hashable, DisplayNameProvider {
 
@@ -15,6 +22,13 @@ final class FeedListFeed: Hashable, DisplayNameProvider {
 	let url: String
 	let homePageURL: String
 	let hashValue: Int
+	var lastDownloadAttemptDate: Date? = nil
+
+	var parsedFeed: ParsedFeed? = nil {
+		didSet {
+			postFeedListFeedDidBecomeAvailableNotification()
+		}
+	}
 
 	var nameForDisplay: String { // DisplayNameProvider
 		get {
@@ -46,8 +60,52 @@ final class FeedListFeed: Hashable, DisplayNameProvider {
 		self.init(name: name, url: url, homePageURL: homePageURL)
 	}
 
+	func downloadIfNeeded() {
+
+		guard let lastDownloadAttemptDate = lastDownloadAttemptDate else {
+			downloadFeed()
+			return
+		}
+
+		let cutoffDate = Date().addingTimeInterval(-(30 * 60)) // 30 minutes in the past
+		if lastDownloadAttemptDate < cutoffDate {
+			downloadFeed()
+		}
+	}
+
 	static func ==(lhs: FeedListFeed, rhs: FeedListFeed) -> Bool {
 
 		return lhs.hashValue == rhs.hashValue && lhs.url == rhs.url && lhs.name == rhs.name && lhs.homePageURL == rhs.homePageURL
+	}
+}
+
+private extension FeedListFeed {
+
+	func postFeedListFeedDidBecomeAvailableNotification() {
+
+		NotificationCenter.default.post(name: .FeedListFeedDidBecomeAvailable, object: self, userInfo: nil)
+	}
+
+	func downloadFeed() {
+
+		lastDownloadAttemptDate = Date()
+		guard let feedURL = URL(string: url) else {
+			return
+		}
+
+		downloadUsingCache(feedURL) { (data, response, error) in
+
+			guard let data = data, error == nil else {
+				return
+			}
+			
+			let parserData = ParserData(url: self.url, data: data)
+			FeedParser.parse(parserData) { (parsedFeed, error) in
+
+				if let parsedFeed = parsedFeed, parsedFeed.items.count > 0 {
+					self.parsedFeed = parsedFeed
+				}
+			}
+		}
 	}
 }
