@@ -63,7 +63,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			self.updateWindowTitle()
 		}
 	}
-	
+
+	// MARK: Sidebar
+
+	func selectedObjectsInSidebar() -> [AnyObject]? {
+
+		return sidebarViewController?.selectedObjects
+	}
+
     // MARK: Notifications
     
 	@objc func applicationWillTerminate(_ note: Notification) {
@@ -287,6 +294,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		let items = selectedArticles.map { ArticlePasteboardWriter(article: $0) }
 		let sharingServicePicker = NSSharingServicePicker(items: items)
+		sharingServicePicker.delegate = self
 		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
 	}
 
@@ -296,6 +304,30 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return false
 		}
 		return !selectedArticles.isEmpty
+	}
+}
+
+// MARK: - NSSharingServicePickerDelegate
+
+extension MainWindowController: NSSharingServicePickerDelegate {
+
+	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
+
+		let sendToServices = appDelegate.sendToCommands.flatMap { (sendToCommand) -> NSSharingService? in
+
+			guard let object = items.first else {
+				return nil
+			}
+			guard sendToCommand.canSendObject(object, selectedText: nil) else {
+				return nil
+			}
+
+			let image = sendToCommand.image ?? appDelegate.genericFeedImage ?? NSImage()
+			return NSSharingService(title: sendToCommand.title, image: image, alternateImage: nil) {
+				sendToCommand.sendObject(object, selectedText: nil)
+			}
+		}
+		return proposedServices + sendToServices
 	}
 }
 

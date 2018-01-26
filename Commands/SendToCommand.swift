@@ -12,17 +12,10 @@ import Cocoa
 
 protocol SendToCommand {
 
+	var title: String { get }
+	var image: NSImage? { get }
+
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool
 	func sendObject(_ object: Any?, selectedText: String?)
 }
 
-extension SendToCommand {
-
-	func appExistsOnDisk(_ bundleIdentifier: String) -> Bool {
-
-		if let _ = NSWorkspace.shared.absolutePathForApplication(withBundleIdentifier: bundleIdentifier) {
-			return true
-		}
-		return false
-	}
-}

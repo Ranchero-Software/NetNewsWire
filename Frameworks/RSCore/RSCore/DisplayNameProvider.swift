@@ -8,8 +8,21 @@
 
 import Foundation
 
+extension Notification.Name {
+
+	public static let DisplayNameDidChange = Notification.Name("DisplayNameDidChange")
+}
+
+
 public protocol DisplayNameProvider {
 	
 	var nameForDisplay: String { get }
 }
 
+public extension DisplayNameProvider {
+
+	func postDisplayNameDidChangeNotification() {
+
+		NotificationCenter.default.post(name: .DisplayNameDidChange, object: self, userInfo: nil)
+	}
+}

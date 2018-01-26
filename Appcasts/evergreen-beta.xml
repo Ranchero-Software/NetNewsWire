@@ -6,6 +6,60 @@
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
 
+			<item>
+          <title>Evergreen 1.0d34</title>
+            <description><![CDATA[
+            
+            <h4>Icons</h4>
+            <p>Updated app icon — tree redrawn to make branches wider and have definition.</p>
+            <p>Updated next unread icon to fit better.</p>
+            <p>(Icons are by Brad Ellis.)</p>
+            
+            <h4>Inspector</h4>
+            <p>Window > Info, or cmd-I, opens the Inspector. You can change the names of feeds and folders. You can get the home page URL and feed URL of a feed (which is pretty important when filing a bug for a feed).</p>
+
+            <h4>Misc.</h4>
+            <p>Reload the timeline when a feed updates (when feed is selected, or when a folder containing the feed is selected).</p>
+
+    						]]></description>
+            <pubDate>Tue, 23 Jan 2018 22:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d34.zip" sparkle:version="852" sparkle:shortVersionString="1.0d34" length="7455712" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+			<item>
+          <title>Evergreen 1.0d33</title>
+            <description><![CDATA[
+            
+            <h4>Send to MarsEdit</h4>
+            <p>If you have <a href="https://red-sweater.com/marsedit/">MarsEdit</a> on your Mac, then you can send an article from Evergreen to MarsEdit via the sharing menu in the toolbar.</p>
+            <p>In MarsEdit you can edit the post and add your commentary before posting to your blog.</p>
+    
+    						]]></description>
+            <pubDate>Mon, 15 Jan 2018 14:10:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d33.zip" sparkle:version="813" sparkle:shortVersionString="1.0d33" length="7274707" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+				<item>
+          <title>Evergreen 1.0d32</title>
+            <description><![CDATA[
+            
+            <h4>Send to Micro.blog</h4>
+            <p>See the Sharing command in the toolbar for a new feature: send to Micro.blog. This sends the current item to your copy of the Micro.blog Mac app (if you have it). It gets launched if necessary. You can edit the post in Micro.blog before actually posting it to your microblog.</p>
+            <p>This is hugely important, because feed reading isn’t just about reading — it’s also about posting. While Evergreen doesn’t itself include a way to post to the web, other apps do, and Evergreen should make it easy to connect to these other apps.</p>
+            <p>Note: send-to-MarsEdit is next, probably in the next release.</p>
+            
+            <h4>Misc.</h4>
+            <p>Improve the promptness and reliability of feed icons and favicons appearing in the timeline (when a folder is selected).</p>
+            <p>Increase the indentation in the source list so that feeds inside folders line up better.</p>
+   
+    						]]></description>
+            <pubDate>Sun, 14 Jan 2018 12:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d32.zip" sparkle:version="804" sparkle:shortVersionString="1.0d32" length="7265605" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
 				<item>
           <title>Version 1.0d31</title>
             <description><![CDATA[

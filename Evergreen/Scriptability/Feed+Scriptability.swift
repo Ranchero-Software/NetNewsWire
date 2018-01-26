@@ -11,7 +11,7 @@ import Account
 import Data
 
 @objc(ScriptableFeed)
-class ScriptableFeed: NSObject, UniqueIdScriptingObject {
+class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer{
 
     let feed:Feed
     let container:ScriptingObjectContainer
@@ -41,7 +41,13 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject {
     var scriptingUniqueId:Any {
         return feed.feedID
     }
+
+    // MARK: --- ScriptingObjectContainer protocol ---
     
+    var scriptingClassDescription: NSScriptClassDescription {
+        return self.classDescription as! NSScriptClassDescription
+    }
+
     // MARK: --- Scriptable properties ---
     
     @objc(url)
@@ -57,6 +63,42 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject {
     @objc(name)
     var name:String  {
         return self.feed.name ?? ""
+    }
+
+    @objc(homePageURL)
+    var homePageURL:String  {
+        return self.feed.homePageURL ?? ""
+    }
+
+    @objc(iconURL)
+    var iconURL:String  {
+        return self.feed.iconURL ?? ""
+    }
+
+    @objc(faviconURL)
+    var faviconURL:String  {
+        return self.feed.faviconURL ?? ""
+    }
+
+    @objc(opmlRepresentation)
+    var opmlRepresentation:String  {
+        return self.feed.OPMLString(indentLevel:0)
+    }
+    
+    @objc(authors)
+    var authors:NSArray {
+        let feedAuthors = feed.authors ?? []
+        return feedAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
+    }
+    
+    @objc(articles)
+    var articles:NSArray {
+        let feedArticles = feed.fetchArticles()
+        // the articles are a set, use the sorting algorithm from the viewer
+        let sortedArticles = feedArticles.sorted(by:{
+            return $0.logicalDatePublished > $1.logicalDatePublished
+        })
+        return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
     }
 
 }

@@ -1,22 +1,23 @@
 //
-//  Folder+Scriptability.swift
+//  Author+Scriptability.swift
 //  Evergreen
 //
-//  Created by Olof Hellman on 1/10/18.
+//  Created by Olof Hellman on 1/19/18.
 //  Copyright © 2018 Olof Hellman. All rights reserved.
 //
 
 import Foundation
 import Account
+import Data
 
-@objc(ScriptableFolder)
-class ScriptableFolder: NSObject, UniqueIdScriptingObject {
+@objc(ScriptableAuthor)
+class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
 
-    let folder:Folder
+    let author:Author
     let container:ScriptingObjectContainer
-
-    init (_ folder:Folder, container:ScriptingObjectContainer) {
-        self.folder = folder
+    
+    init (_ author:Author, container:ScriptingObjectContainer) {
+        self.author = author
         self.container = container
     }
 
@@ -29,7 +30,7 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject {
     // MARK: --- ScriptingObject protocol ---
 
     var scriptingKey: String {
-        return "folders"
+        return "authors"
     }
 
     // MARK: --- UniqueIdScriptingObject protocol ---
@@ -38,24 +39,33 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject {
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
 
     var scriptingUniqueId:Any {
-        return folder.folderID
+        return author.authorID
     }
     
     // MARK: --- Scriptable properties ---
     
+    @objc(url)
+    var url:String  {
+        return self.author.url ?? ""
+    }
+    
     @objc(uniqueId)
-    var uniqueId:Int  {
-        return self.folder.folderID
+    var uniqueId:String  {
+        return self.author.authorID
     }
     
     @objc(name)
     var name:String  {
-        return self.folder.name ?? ""
+        return self.author.name ?? ""
     }
 
-    @objc(opmlRepresentation)
-    var opmlRepresentation:String  {
-        return self.folder.OPMLString(indentLevel:0)
+    @objc(avatarURL)
+    var avatarURL:String  {
+        return self.author.avatarURL ?? ""
     }
 
+    @objc(emailAddress)
+    var emailAddress:String  {
+        return self.author.emailAddress ?? ""
+    }
 }

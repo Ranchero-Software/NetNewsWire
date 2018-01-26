@@ -8,23 +8,24 @@
 
 import Cocoa
 import Data
+import RSCore
 
 // Not undoable.
 
 final class SendToMicroBlogCommand: SendToCommand {
 
-	private let bundleID = "blog.micro.mac"
-	private var appExists = false
+	let title = "Micro.blog"
 
-	init() {
-
-		self.appExists = appExistsOnDisk(bundleID)
-		NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive(_:)), name: NSApplication.didBecomeActiveNotification, object: nil)
+	var image: NSImage? {
+		return microBlogApp.icon
 	}
+
+	private let microBlogApp = UserApp(bundleID: "blog.micro.mac")
 
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool {
 
-		guard appExists, let article = object as? Article, let _ = article.preferredLink else {
+		microBlogApp.updateStatus()
+		guard microBlogApp.existsOnDisk, let article = (object as? ArticlePasteboardWriter)?.article, let _ = article.preferredLink else {
 			return false
 		}
 
@@ -36,42 +37,60 @@ final class SendToMicroBlogCommand: SendToCommand {
 		guard canSendObject(object, selectedText: selectedText) else {
 			return
 		}
-		guard let article = object as? Article else {
+		guard let article = (object as? ArticlePasteboardWriter)?.article else {
+			return
+		}
+		guard microBlogApp.launchIfNeeded(), microBlogApp.bringToFront() else {
 			return
 		}
 
 		// TODO: get text from contentHTML or contentText if no title and no selectedText.
-		var s = ""
-		if let selectedText = selectedText {
-			s += selectedText
-			if let link = article.preferredLink {
-				s += "\n\n\(link)"
-			}
-		}
-		else if let title = article.title {
-			s += title
-			if let link = article.preferredLink {
-				s = "[" + s + "](" + link + ")"
-			}
-		}
-		else if let link = article.preferredLink {
-			s = link
-		}
+		// TODO: consider selectedText.
 
-		guard let encodedString = s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+		let s = article.attributionString + article.linkString
+
+		let urlQueryDictionary = ["text": s]
+		guard let urlQueryString = urlQueryDictionary.urlQueryString() else {
 			return
 		}
-		guard let url = URL(string: "microblog://post?text=" + encodedString) else {
+		guard let url = URL(string: "microblog://post?" + urlQueryString) else {
 			return
 		}
 
 		let _ = try? NSWorkspace.shared.open(url, options: [], configuration: [:])
 	}
-
-	@objc func appDidBecomeActive(_ note: Notification) {
-
-		self.appExists = appExistsOnDisk(bundleID)
-	}
 }
 
+private extension Article {
 
+	var attributionString: String {
+
+		// Feed name, or feed name + author name (if author is specified per-article).
+		// Includes trailing space.
+
+		if let feedName = feed?.nameForDisplay, let authorName = authors?.first?.name {
+			return feedName + ", " + authorName + ": "
+		}
+		if let feedName = feed?.nameForDisplay {
+			return feedName + ": "
+		}
+		return ""
+	}
+
+	var linkString: String {
+
+		// Title + link or just title (if no link) or just link if no title
+
+		if let title = title, let link = preferredLink {
+			return "[" + title + "](" + link + ")"
+		}
+		if let preferredLink = preferredLink {
+			return preferredLink
+		}
+		if let title = title {
+			return title
+		}
+		return ""
+	}
+
+}

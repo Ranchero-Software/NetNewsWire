@@ -110,11 +110,11 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse response: URLResponse, representedObject: AnyObject) {
 
-		guard let feed = representedObject as? Feed else {
-			return
-		}
-
-		print("Unexpected response \(response) for \(feed.url).")
+//		guard let feed = representedObject as? Feed else {
+//			return
+//		}
+//
+//		print("Unexpected response \(response) for \(feed.url).")
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {

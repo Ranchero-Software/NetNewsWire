@@ -13,3 +13,7 @@
 [Hidden Preferences](HiddenPrefs.md)
 
 [Questions Answered](QuestionsAnswered.md)
+
+## Contributing
+
+[Coding Guidelines](CodingGuidelines.md)

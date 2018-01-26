@@ -190,3 +190,11 @@ public func ==(lhs: Node, rhs: Node) -> Bool {
 	
 	return lhs === rhs
 }
+
+public extension Array where Element == Node {
+
+	public func representedObjects() -> [AnyObject] {
+
+		return self.map{ $0.representedObject }
+	}
+}
