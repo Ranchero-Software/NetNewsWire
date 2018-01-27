@@ -248,6 +248,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if item.action == #selector(addAppNews(_:)) {
 			return !AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString)
 		}
+		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
+			return mainWindowController?.isOpen ?? false
+		}
 		return true
 	}
 
