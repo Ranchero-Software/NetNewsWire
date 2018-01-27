@@ -132,11 +132,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
 		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader)
 
+		updateSortMenuItems()
 		createAndShowMainWindow()
 
 		NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.getURL(_:_:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
 
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
@@ -219,6 +221,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return
 		}
 		inspectorWindowController.objects = objectsForInspector()
+	}
+
+	@objc func userDefaultsDidChange(_ note: Notification) {
+
+		updateSortMenuItems()
 	}
 
 	// MARK: Main Window
@@ -497,5 +504,12 @@ private extension AppDelegate {
 		if let inspectorWindowController = inspectorWindowController {
 			inspectorWindowController.saveState()
 		}
+	}
+
+	func updateSortMenuItems() {
+
+		let sortByNewestOnTop = AppDefaults.shared.timelineSortDirection == .orderedDescending
+		sortByNewestArticleOnTopMenuItem.state = sortByNewestOnTop ? .on : .off
+		sortByOldestArticleOnTopMenuItem.state = sortByNewestOnTop ? .off : .on
 	}
 }
