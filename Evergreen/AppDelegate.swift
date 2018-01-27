@@ -28,7 +28,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var appName: String!
 
 	@IBOutlet var debugMenuItem: NSMenuItem!
-	
+	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
+	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
+
 	lazy var genericFeedImage: NSImage? = {
 		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/BookmarkIcon.icns"
 		let image = NSImage(contentsOfFile: path)
@@ -459,6 +461,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		createAndShowMainWindow()
 		mainWindowController!.gotoStarred(sender)
+	}
+
+	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
+
+		AppDefaults.shared.timelineSortDirection = .orderedAscending
+	}
+
+	@IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
+
+		AppDefaults.shared.timelineSortDirection = .orderedDescending
 	}
 }
 

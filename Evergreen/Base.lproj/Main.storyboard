@@ -335,9 +335,15 @@
                                                 <items>
                                                     <menuItem title="Newest Article on Top" id="TNS-TV-n0U">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="sortByNewestArticleOnTop:" target="Ady-hI-5gd" id="gkW-hU-IQJ"/>
+                                                        </connections>
                                                     </menuItem>
                                                     <menuItem title="Oldest Article on Top" id="iii-kP-qoF">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="sortByOldestArticleOnTop:" target="Ady-hI-5gd" id="8jC-1r-5RH"/>
+                                                        </connections>
                                                     </menuItem>
                                                 </items>
                                             </menu>
@@ -544,6 +550,8 @@
                 <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Evergreen" customModuleProvider="target">
                     <connections>
                         <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
+                        <outlet property="sortByNewestArticleOnTopMenuItem" destination="TNS-TV-n0U" id="gix-Nd-9k4"/>
+                        <outlet property="sortByOldestArticleOnTopMenuItem" destination="iii-kP-qoF" id="fTe-Tf-EWG"/>
                     </connections>
                 </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
