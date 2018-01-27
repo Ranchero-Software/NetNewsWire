@@ -250,10 +250,10 @@
             </objects>
             <point key="canvasLocation" x="-967" y="1488"/>
         </scene>
-        <!--Feed List Timeline View Controller-->
+        <!--Timeline View Controller-->
         <scene sceneID="hOx-Zn-uli">
             <objects>
-                <viewController id="5oM-Nv-I7I" customClass="FeedListTimelineViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="5oM-Nv-I7I" customClass="TimelineViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Ayc-tI-OzD">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -264,7 +264,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" id="D1H-xQ-37M">
+                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" id="D1H-xQ-37M" customClass="TimelineTableView" customModule="Evergreen" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
@@ -304,40 +304,12 @@
                                                         </tableCellView>
                                                     </prototypeCellViews>
                                                 </tableColumn>
-                                                <tableColumn identifier="" width="328" minWidth="40" maxWidth="1000" id="N5b-a8-DDG">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                                    </tableHeaderCell>
-                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" title="Text Cell" id="UtV-Rc-YFH">
-                                                        <font key="font" metaFont="system"/>
-                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                                    <prototypeCellViews>
-                                                        <tableCellView id="e21-hS-OeE">
-                                                            <rect key="frame" x="120" y="1" width="328" height="17"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                            <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MRY-sV-Us9">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="328" height="17"/>
-                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="EXc-CI-HAS">
-                                                                        <font key="font" metaFont="system"/>
-                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                    </textFieldCell>
-                                                                </textField>
-                                                            </subviews>
-                                                            <connections>
-                                                                <outlet property="textField" destination="MRY-sV-Us9" id="6SL-WX-tp5"/>
-                                                            </connections>
-                                                        </tableCellView>
-                                                    </prototypeCellViews>
-                                                </tableColumn>
                                             </tableColumns>
+                                            <connections>
+                                                <outlet property="dataSource" destination="5oM-Nv-I7I" id="ZmN-vl-ubI"/>
+                                                <outlet property="delegate" destination="5oM-Nv-I7I" id="lSh-Ow-oO3"/>
+                                                <outlet property="keyboardDelegate" destination="2ud-3a-p3A" id="nts-O0-WYq"/>
+                                            </connections>
                                         </tableView>
                                     </subviews>
                                 </clipView>
@@ -358,8 +330,16 @@
                             <constraint firstItem="eGF-yH-oea" firstAttribute="leading" secondItem="Ayc-tI-OzD" secondAttribute="leading" id="xE0-7D-thL"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="tableView" destination="D1H-xQ-37M" id="6DC-Fc-yeT"/>
+                    </connections>
                 </viewController>
                 <customObject id="Xw8-6t-9F9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="2ud-3a-p3A" customClass="FeedListTimelineKeyboardDelegate" customModule="Evergreen" customModuleProvider="target">
+                    <connections>
+                        <outlet property="timelineViewController" destination="5oM-Nv-I7I" id="Xqu-94-MvJ"/>
+                    </connections>
+                </customObject>
             </objects>
             <point key="canvasLocation" x="-261" y="1477"/>
         </scene>
