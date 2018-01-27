@@ -8,7 +8,7 @@
         <!--Window Controller-->
         <scene sceneID="joN-Oe-nep">
             <objects>
-                <windowController showSeguePresentationStyle="single" id="z5E-aV-xMb" sceneMemberID="viewController">
+                <windowController showSeguePresentationStyle="single" id="z5E-aV-xMb" customClass="FeedListWindowController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <window key="window" identifier="feedDirectoryWindow" title="Feed Directory" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="FeedDirectoryWindow" animationBehavior="default" id="Ty3-Oi-cUp">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
