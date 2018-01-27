@@ -14,7 +14,11 @@ private let kWindowFrameKey = "MainWindow"
 
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
     
-    // MARK: NSWindowController
+	var isOpen: Bool {
+		return isWindowLoaded && window!.isVisible
+	}
+
+	// MARK: NSWindowController
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey)
 	private var unreadCount: Int = 0 {
@@ -291,7 +295,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		sidebarViewController?.gotoStarred(sender)
 	}
-	
+
 	@IBAction func toolbarShowShareMenu(_ sender: Any?) {
 
 		guard let selectedArticles = selectedArticles, !selectedArticles.isEmpty else {
