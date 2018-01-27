@@ -329,8 +329,18 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View" id="HyV-fh-RgO">
                                     <items>
-                                        <menuItem title="Sort Articles by Oldest on Top" id="J5R-XG-4yB">
+                                        <menuItem title="Sort By" id="nLP-fa-KUi">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Sort By" id="OlJ-93-6OP">
+                                                <items>
+                                                    <menuItem title="Newest Article on Top" id="TNS-TV-n0U">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="Oldest Article on Top" id="iii-kP-qoF">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="dZt-2W-gxf"/>
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
