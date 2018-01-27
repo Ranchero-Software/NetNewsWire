@@ -372,7 +372,6 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Go" id="NQW-Ph-lw2">
                                     <items>
-                                        <menuItem title="Previous Unread" keyEquivalent="'" id="ijT-zA-eRz"/>
                                         <menuItem title="Next Unread" keyEquivalent="/" id="q3p-nE-m2k">
                                             <connections>
                                                 <action selector="nextUnread:" target="Ady-hI-5gd" id="rgH-ce-FV3"/>
