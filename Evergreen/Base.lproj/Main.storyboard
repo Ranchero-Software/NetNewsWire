@@ -372,9 +372,21 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="xbe-2a-mp4"/>
-                                        <menuItem title="Today" keyEquivalent="1" id="L20-jv-7c9"/>
-                                        <menuItem title="All Unread" keyEquivalent="2" id="8ZT-ew-JNc"/>
-                                        <menuItem title="Starred" keyEquivalent="3" id="ZRx-me-QXO"/>
+                                        <menuItem title="Today" keyEquivalent="1" id="L20-jv-7c9">
+                                            <connections>
+                                                <action selector="gotoToday:" target="Ady-hI-5gd" id="GyO-dW-XCy"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="All Unread" keyEquivalent="2" id="8ZT-ew-JNc">
+                                            <connections>
+                                                <action selector="gotoAllUnread:" target="Ady-hI-5gd" id="xGb-dU-hH7"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Starred" keyEquivalent="3" id="ZRx-me-QXO">
+                                            <connections>
+                                                <action selector="gotoStarred:" target="Ady-hI-5gd" id="p7p-rP-Ezb"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

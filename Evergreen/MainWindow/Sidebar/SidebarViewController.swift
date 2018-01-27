@@ -146,6 +146,21 @@ import RSCore
 		Browser.open(homePageURL)
 	}
 
+	@IBAction func gotoToday(_ sender: Any?) {
+
+		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.todayFeed, treeController)
+	}
+
+	@IBAction func gotoAllUnread(_ sender: Any?) {
+
+		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.unreadFeed, treeController)
+	}
+
+	@IBAction func gotoStarred(_ sender: Any?) {
+
+		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.starredFeed, treeController)
+	}
+
 	// MARK: Navigation
 	
 	func canGoToNextUnread() -> Bool {

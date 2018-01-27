@@ -50,7 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	private let windowControllers = NSMutableArray()
 	private var preferencesWindowController: NSWindowController?
-	private var mainWindowController: NSWindowController?
+	private var mainWindowController: MainWindowController?
 	private var readerWindows = [NSWindowController]()
 	private var feedListWindowController: NSWindowController?
 	private var addFeedController: AddFeedController?
@@ -442,13 +442,31 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			AccountManager.shared.accounts.forEach{ $0.debugDropConditionalGetInfo() }
 		#endif
 	}
+
+	@IBAction func gotoToday(_ sender: Any?) {
+
+		createAndShowMainWindow()
+		mainWindowController!.gotoToday(sender)
+	}
+
+	@IBAction func gotoAllUnread(_ sender: Any?) {
+
+		createAndShowMainWindow()
+		mainWindowController!.gotoAllUnread(sender)
+	}
+
+	@IBAction func gotoStarred(_ sender: Any?) {
+
+		createAndShowMainWindow()
+		mainWindowController!.gotoStarred(sender)
+	}
 }
 
 private extension AppDelegate {
 
-	func createReaderWindow() -> NSWindowController {
+	func createReaderWindow() -> MainWindowController {
 
-		return windowControllerWithName("MainWindow")
+		return windowControllerWithName("MainWindow") as! MainWindowController
 	}
 
 	func objectsForInspector() -> [Any]? {
