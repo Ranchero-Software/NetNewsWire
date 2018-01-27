@@ -27,6 +27,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var feedIconDownloader: FeedIconDownloader!
 	var appName: String!
 
+	@IBOutlet var debugMenuItem: NSMenuItem!
+	
 	lazy var genericFeedImage: NSImage? = {
 		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/BookmarkIcon.icns"
 		let image = NSImage(contentsOfFile: path)
@@ -143,6 +145,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 
 		#if RELEASE
+			debugMenuItem.menu?.removeItem(debugMenuItem)
 			DispatchQueue.main.async {
 				self.refreshAll(self)
 			}
