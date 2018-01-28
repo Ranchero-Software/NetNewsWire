@@ -617,7 +617,15 @@ private extension TimelineViewController {
 
 	func sortDirectionDidChange() {
 
-		// TODO
+		let selectedArticleIDs = selectedArticles.articleIDs()
+
+		let unsortedArticles = Set(articles)
+		updateArticles(with: unsortedArticles)
+
+		selectArticles(selectedArticleIDs)
+		if tableView.selectedRow != -1 {
+			tableView.scrollRowToVisible(tableView.selectedRow)
+		}
 	}
 
 	// MARK: Fetching Articles
