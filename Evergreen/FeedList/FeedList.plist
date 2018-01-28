@@ -234,14 +234,6 @@
 			<key>url</key>
 			<string>http://www.virginiaroberts.com/feed/</string>
 		</dict>
-		<dict>
-			<key>name</key>
-			<string>Feral Scrutiny</string>
-			<key>homePageURL</key>
-			<string>http://feralscrutiny.co/</string>
-			<key>url</key>
-			<string>http://feralscrutiny.co/feed/</string>
-		</dict>
 	</array>
 	<key>News</key>
 	<array>

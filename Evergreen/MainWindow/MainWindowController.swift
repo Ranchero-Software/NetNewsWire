@@ -277,6 +277,21 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		sidebarViewController?.outlineView.selectNextRow(sender)
 	}
 
+	@IBAction func gotoToday(_ sender: Any?) {
+
+		sidebarViewController?.gotoToday(sender)
+	}
+
+	@IBAction func gotoAllUnread(_ sender: Any?) {
+
+		sidebarViewController?.gotoAllUnread(sender)
+	}
+
+	@IBAction func gotoStarred(_ sender: Any?) {
+
+		sidebarViewController?.gotoStarred(sender)
+	}
+	
 	@IBAction func toolbarShowShareMenu(_ sender: Any?) {
 
 		guard let selectedArticles = selectedArticles, !selectedArticles.isEmpty else {

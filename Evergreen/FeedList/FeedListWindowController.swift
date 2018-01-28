@@ -13,7 +13,6 @@ class FeedListWindowController : NSWindowController {
 
 	override func windowDidLoad() {
 
-		window!.contentView?.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
 	@IBAction func addToFeeds(_ sender: AnyObject) {

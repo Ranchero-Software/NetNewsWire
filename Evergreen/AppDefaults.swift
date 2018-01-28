@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 
 enum FontSize: Int {
 
@@ -24,6 +24,7 @@ final class AppDefaults {
 		static let firstRunDate = "firstRunDate"
 		static let sidebarFontSize = "sidebarFontSize"
 		static let timelineFontSize = "timelineFontSize"
+		static let timelineSortDirection = "timelineSortDirection"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 
@@ -76,6 +77,15 @@ final class AppDefaults {
 		return bool(for: Key.showTitleOnMainWindow)
 	}
 
+	var timelineSortDirection: ComparisonResult {
+		get {
+			return sortDirection(for: Key.timelineSortDirection)
+		}
+		set {
+			setSortDirection(for: Key.timelineSortDirection, newValue)
+		}
+	}
+
 	private init() {
 
 		AppDefaults.registerDefaults()
@@ -118,7 +128,7 @@ private extension AppDefaults {
 
 	static func registerDefaults() {
 		
-		let defaults = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue]
+		let defaults = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue]
 		
 		UserDefaults.standard.register(defaults: defaults)
 	}
@@ -161,6 +171,25 @@ private extension AppDefaults {
 
 	func setDate(for key: String, _ date: Date?) {
 		UserDefaults.standard.set(date, forKey: key)
+	}
+
+	func sortDirection(for key:String) -> ComparisonResult {
+
+		let rawInt = int(for: key)
+		if rawInt == ComparisonResult.orderedAscending.rawValue {
+			return .orderedAscending
+		}
+		return .orderedDescending
+	}
+
+	func setSortDirection(for key: String, _ value: ComparisonResult) {
+
+		if value == .orderedAscending {
+			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
+		}
+		else {
+			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
+		}
 	}
 }
 
