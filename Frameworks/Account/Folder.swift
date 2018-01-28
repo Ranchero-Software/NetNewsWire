@@ -107,7 +107,7 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 				d[Key.unreadCount] = unreadCount
 			}
 
-			let childObjects = children.flatMap { (child) -> [String: Any]? in
+			let childObjects = children.compactMap { (child) -> [String: Any]? in
 
 				if let feed = child as? Feed {
 					return feed.dictionary

@@ -53,7 +53,7 @@ extension Array where Element == DatabaseObject {
 
 	func databaseDictionaries() -> [NSDictionary]? {
 
-		let dictionaries = self.flatMap{ $0.databaseDictionary() }
+		let dictionaries = self.compactMap{ $0.databaseDictionary() }
 		return dictionaries.isEmpty ? nil : dictionaries
 	}
 }

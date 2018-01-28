@@ -39,7 +39,7 @@ extension Attachment {
 			return nil
 		}
 
-		let attachments = parsedAttachments.flatMap{ Attachment(parsedAttachment: $0) }
+		let attachments = parsedAttachments.compactMap{ Attachment(parsedAttachment: $0) }
 		return attachments.isEmpty ? nil : Set(attachments)
 	}
 
@@ -91,11 +91,11 @@ extension Set where Element == Attachment {
 
 	func databaseDictionaries() -> [NSDictionary] {
 
-		return self.flatMap { $0.databaseDictionary() }
+		return self.compactMap { $0.databaseDictionary() }
 	}
 
 	func databaseObjects() -> [DatabaseObject] {
 
-		return self.flatMap { $0 as DatabaseObject }
+		return self.compactMap { $0 as DatabaseObject }
 	}
 }

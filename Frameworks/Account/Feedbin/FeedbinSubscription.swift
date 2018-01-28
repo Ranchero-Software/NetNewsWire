@@ -64,7 +64,7 @@ struct FeedbinSubscription {
 
 	static func subscriptions(with array: JSONArray) -> [FeedbinSubscription]? {
 
-		let subs = array.flatMap { FeedbinSubscription(dictionary: $0) }
+		let subs = array.compactMap { FeedbinSubscription(dictionary: $0) }
 		return subs.isEmpty ? nil : subs
 	}
 }

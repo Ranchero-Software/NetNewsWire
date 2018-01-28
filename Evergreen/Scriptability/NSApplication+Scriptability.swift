@@ -36,7 +36,7 @@ extension NSApplication : ScriptingObjectContainer {
         let accounts = AccountManager.shared.accounts
         let emptyFeeds:[Feed] = []
         let feeds = accounts.reduce(emptyFeeds) { (result, nthAccount) -> [Feed] in
-              let accountFeeds = nthAccount.children.flatMap { $0 as? Feed }
+              let accountFeeds = nthAccount.children.compactMap { $0 as? Feed }
               return result + accountFeeds
         }
         return feeds.map { ScriptableFeed($0, container:self) } as NSArray

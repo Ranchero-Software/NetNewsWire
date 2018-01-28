@@ -45,7 +45,7 @@ extension Array where Element == Article {
 
 	func articlesForIndexes(_ indexes: IndexSet) -> Set<Article> {
 
-		return Set(indexes.flatMap{ (oneIndex) -> Article? in
+		return Set(indexes.compactMap{ (oneIndex) -> Article? in
 			return articleAtRow(oneIndex)
 		})
 	}
