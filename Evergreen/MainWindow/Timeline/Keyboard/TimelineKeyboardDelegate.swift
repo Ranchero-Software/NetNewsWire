@@ -21,7 +21,7 @@ import RSCore
 		let f = Bundle.main.path(forResource: "TimelineKeyboardShortcuts", ofType: "plist")!
 		let rawShortcuts = NSArray(contentsOfFile: f)! as! [[String: Any]]
 
-		self.shortcuts = Set(rawShortcuts.flatMap { KeyboardShortcut(dictionary: $0) })
+		self.shortcuts = Set(rawShortcuts.compactMap { KeyboardShortcut(dictionary: $0) })
 
 		super.init()
 	}

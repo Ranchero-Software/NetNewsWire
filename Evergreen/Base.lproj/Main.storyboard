@@ -425,6 +425,12 @@
                                                 <action selector="markOlderArticlesAsRead:" target="Ady-hI-5gd" id="gzq-X5-0aC"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Mark Everything as Read…" keyEquivalent="K" id="Rrw-jx-qnJ">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="markEverywhereAsRead:" target="Voe-Tx-rLC" id="xp2-1J-6z0"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="gB0-WX-2Gd"/>
                                         <menuItem title="Mark as Starred" keyEquivalent="L" id="vvo-ZM-8kl"/>
                                         <menuItem isSeparatorItem="YES" id="qgr-Gl-Xhw"/>

@@ -19,7 +19,7 @@ final class MainWindowKeyboardHandler: KeyboardDelegate {
 		let f = Bundle.main.path(forResource: "GlobalKeyboardShortcuts", ofType: "plist")!
 		let rawShortcuts = NSArray(contentsOfFile: f)! as! [[String: Any]]
 
-		self.globalShortcuts = Set(rawShortcuts.flatMap { KeyboardShortcut(dictionary: $0) })
+		self.globalShortcuts = Set(rawShortcuts.compactMap { KeyboardShortcut(dictionary: $0) })
 	}
 
 	func keydown(_ event: NSEvent, in view: NSView) -> Bool {

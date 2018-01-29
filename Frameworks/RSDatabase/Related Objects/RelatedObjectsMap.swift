@@ -23,7 +23,7 @@ public struct RelatedObjectsMap {
 		for objectID in relatedObjectIDsMap.objectIDs() {
 			
 			if let relatedObjectIDs = relatedObjectIDsMap[objectID] {
-				let relatedObjects = relatedObjectIDs.flatMap{ relatedObjectsDictionary[$0] }
+				let relatedObjects = relatedObjectIDs.compactMap{ relatedObjectsDictionary[$0] }
 				if !relatedObjects.isEmpty {
 					d[objectID] = relatedObjects
 				}

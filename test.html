@@ -1,0 +1,117 @@
+
+<html>
+<head>
+   <title></title>
+
+   <base target="bottom">
+   <style TYPE="text/css">
+        <!--
+        CAPTION  { font-family: Arial,Helvetica,sans-serif; padding: 0.25em 0 0 0; }
+        TD, TH   { font-family: Arial,Helvetica,sans-serif; font-size: 9pt; padding-left: 0.5em; padding-right: 0.5em; }
+        #T1 TH   { border-bottom: solid 1px #808080; }
+        #T1 TD   { border-bottom: solid 1px #cccccc; }
+        #T1 TD A { text-decoration: none; }
+        #T1 TD A:hover { text-decoration: underline; }
+	@media print {
+		TD, TH { font-size: 8pt; }
+	}
+        -->
+   </style>
+</head>
+
+<body>
+<!-- SELECT rptBankerTrades.AccountNumber as AccountNumber     , rptBankerTrades.ParcelID as ParcelID     , Owner1     , Owner2     , Owner3     , StreetName     , [Street#]     , [AltStreet#]     , BuildType     , BuildType2     , BuildType3     , YearBuilt     , Bedrooms     , Fullbaths     , TotalAcres     , LegalRefDate     , SalePrice     , LegalReference     , FinArea     , rptBankerTrades.LUC as LUC     , TotalValue     , DataProperty.NBC as Neighborhood     , TableLandUse.Description as LandUseDescription  FROM rptBankerTrades  LEFT OUTER JOIN DataProperty    ON            DataProperty.AccountNumber = rptBankerTrades.AccountNumber   AND            DataProperty.CardNumber    = 1  LEFT OUTER JOIN TableLandUse    ON            TableLandUse.Code          = rptBankerTrades.LUC WHERE 1 = 1 AND StreetName          LIKE 'freeman%' AND [Street#]           LIKE '30%' ORDER BY StreetName, [Street#], rptBankerTrades.ParcelID --><table width='100%'>
+<tr><td width='15%' align='left'></td>
+<td width='15%' align='left'></td>
+<td width='40%' align='center'><a href='#' target='bottom'><span onClick='window.print();'>Print page 1 of 1</span></a></td>
+<td width='15%' align='right'></td>
+<td width='15%' align='right'></td>
+</tr>
+</table>
+
+
+<TABLE ID="T1" ONSELECTSTART="return false" WIDTH=100% border="0" cellspacing="0" cellpadding="0">
+
+    <caption>
+	<B>
+	    Click on the Column Headings to sort accordingly.<br>
+	    Click on the Parcel ID to view the parcel detail.<br>&nbsp;
+	</B>
+    </caption>
+
+    <THEAD>  
+	<TR valign='bottom'>
+	    <TH align='left'  	    ><A HREF="SearchResults.asp?Sort=Parcel"	  target="bottom">Parcel ID</A></TH>
+	    <TH align='left'  	    ><A HREF="SearchResults.asp?Sort=Street"	  target="bottom">Location</A></TH>
+	    <TH align='left'  	    ><A HREF="SearchResults.asp?Sort=Owner"	  target="bottom">Owner</A></TH>
+	    <TH align='left'  	    ><A HREF="SearchResults.asp?Sort=YearBuilt"      target="bottom">Built</A><BR>
+				     <A HREF="SearchResults.asp?Sort=BuildingType"   target="bottom">Type</A></TD>
+	    <TH align='right' 	    ><A HREF="SearchResults.asp?Sort=TotalValue"     target="bottom">Total Value</A></TD>
+	    <TH align='center'	    ><A HREF="SearchResults.asp?Sort=Bedrooms"       target="bottom">Beds</A><br>
+			       	     <A HREF="SearchResults.asp?Sort=Bathrooms"      target="bottom">Baths</A></TH>
+	    <TH align='right' nowrap><A HREF="SearchResults.asp?Sort=LotSize"	  target="bottom">Lot size</A><br>
+				     <A HREF="SearchResults.asp?Sort=FinArea"        target="bottom">Fin area</A></TH>
+	    <TH align='left'	    ><A HREF="SearchResults.asp?Sort=LUC"		  target="bottom">LUC</A><br>
+				     <A HREF="SearchResults.asp?Sort=LUCDescription" target="bottom">Description</A></TH>
+	    <TH align='center'	    ><A HREF="SearchResults.asp?Sort=Neighborhood"	  target="bottom">NHood</A></TH>
+	    <TH align='right'	    ><A HREF="SearchResults.asp?Sort=SaleDate"	  target="bottom">Sale date</A><br>
+				     <A HREF="SearchResults.asp?Sort=SalePrice"	  target="bottom">Sale price</A></TH>
+	    <TH align='left'	    ><A HREF="SearchResults.asp?Sort=LegalRef"	  target="bottom">Book Page</A></TH>
+	</TR>
+    </THEAD>
+
+    <TBODY>
+
+
+	<TR valign='top'>
+	    <TD><A HREF="Summary.asp?AccountNumber=600" target="_top">006.0-0005-0003.0</A></TD> 
+	    <TD>30&nbsp;
+	        <A HREF="SearchResults.asp?SearchStreetName=FREEMAN+ST" target="bottom">FREEMAN ST</A></TD> 
+	    <TD><A HREF="SearchResults.asp?SearchOwner=PITCHEL+STUART" target="bottom">PITCHEL STUART</A>
+		<br><A HREF="SearchResults.asp?SearchOwner=GOODMAN+JULIA" target="bottom">GOODMAN JULIA</A></TD>
+	     <TD><A HREF='SearchResults.asp?SearchYearBuilt=1914&amp;SearchYearBuiltThru=1914' target='bottom'>1914</A><br>
+		<A HREF="SearchResults.asp?SearchBuildingType=Old+Style" target="bottom">Old Style</A>
+		&nbsp;</TD>
+	    <TD align='right'>$615,400</TD>
+	    <TD align='center'>5<br>
+			       3</TD>
+	    <TD align='right'>5,502
+	       <br>2,472</TD>
+	    <TD align='left'><A HREF="SearchResults.asp?SearchLUC=101&amp;SearchLUCDescription=One+Family" target="bottom">101</a><br>
+			     <A HREF="SearchResults.asp?SearchLUC=101&amp;SearchLUCDescription=One+Family" target="bottom">One Family</a></TD>
+	    <TD align='center'><A HREF="SearchResults.asp?SearchNeighborhood=1" target="bottom">1</A></TD>
+	    <TD align='right'>8/19/<A HREF='SearchResults.asp?SearchSaleDate=01%2f01%2f1998&amp;SearchSaleDateThru=12%2f31%2f1998' target='bottom'>1998</A><br>
+			      $299,000</TD>
+	    <TD>28988-522</TD>
+	</TR>
+
+
+    </TBODY>
+</TABLE>
+
+<table width='100%'>
+<tr><td width='15%' align='left'></td>
+<td width='15%' align='left'></td>
+<td width='40%' align='center'><a href='#' target='bottom'><span onClick='window.print();'>Print page 1 of 1</span></a></td>
+<td width='15%' align='right'></td>
+<td width='15%' align='right'></td>
+</tr>
+</table>
+
+
+
+<script type="text/javascript">
+
+
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4142258-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

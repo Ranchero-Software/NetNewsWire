@@ -90,7 +90,7 @@ struct FeedbinArticle {
 
 	static func articles(with array: JSONArray) -> [FeedbinArticle]? {
 
-		let articlesArray = array.flatMap { FeedbinArticle(jsonDictionary: $0) }
+		let articlesArray = array.compactMap { FeedbinArticle(jsonDictionary: $0) }
 		return articlesArray.isEmpty ? nil : articlesArray
 	}
 }

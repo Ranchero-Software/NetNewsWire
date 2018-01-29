@@ -17,7 +17,7 @@ public extension NSOutlineView {
 				return [AnyObject]()
 			}
 
-			return selectedRowIndexes.flatMap { (oneIndex) -> AnyObject? in
+			return selectedRowIndexes.compactMap { (oneIndex) -> AnyObject? in
 				return item(atRow: oneIndex) as AnyObject
 			}
 		}
