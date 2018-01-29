@@ -9,6 +9,7 @@
 import AppKit
 import Data
 import Account
+import RSCore
 
 extension MainWindowController {
 
@@ -38,10 +39,18 @@ extension MainWindowController {
 
 	@objc func openHomePageFromContextualMenu(_ sender: Any?) {
 
+		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
+			return
+		}
+		Browser.open(urlString, inBackground: false)
 	}
 
-	@objc func copyStringFromContextualMenu(_ sender: Any?) {
+	@objc func copyURLFromContextualMenu(_ sender: Any?) {
 
+		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
+			return
+		}
+		URLPasteboardWriter.write(urlString: urlString, to: NSPasteboard.general)
 	}
 
 	@objc func markObjectsReadFromContextualMenu(_ sender: Any?) {
@@ -76,11 +85,11 @@ private extension MainWindowController {
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyStringFromContextualMenu(_:)), feed.url)
+		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), feed.url)
 		menu.addItem(copyFeedURLItem)
 
 		if let homePageURL = feed.homePageURL {
-			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyStringFromContextualMenu(_:)), homePageURL)
+			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL)
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
@@ -100,10 +109,17 @@ private extension MainWindowController {
 			menu.addItem(NSMenuItem.separator())
 		}
 
+		menu.addItem(renameMenuItem(folder))
+		menu.addItem(deleteMenuItem([folder]))
+
 		return menu.numberOfItems > 0 ? menu : nil
 	}
 
 	func menuForMultipleObjects(_ objects: [Any]) -> NSMenu? {
+
+		guard allObjectsAreFeedsAndOrFolders(objects) else {
+			return nil
+		}
 
 		let menu = NSMenu(title: "")
 
@@ -112,6 +128,7 @@ private extension MainWindowController {
 			menu.addItem(NSMenuItem.separator())
 		}
 
+		menu.addItem(deleteMenuItem(objects))
 
 		return menu.numberOfItems > 0 ? menu : nil
 	}
@@ -141,6 +158,21 @@ private extension MainWindowController {
 			}
 		}
 		return false
+	}
+
+	func allObjectsAreFeedsAndOrFolders(_ objects: [Any]) -> Bool {
+
+		for object in objects {
+			if !objectIsFeedOrFolder(object) {
+				return false
+			}
+		}
+		return true
+	}
+
+	func objectIsFeedOrFolder(_ object: Any) -> Bool {
+
+		return object is Feed || object is Folder
 	}
 
 	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any) -> NSMenuItem {

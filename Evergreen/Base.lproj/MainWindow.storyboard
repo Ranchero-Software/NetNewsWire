@@ -393,6 +393,9 @@
                                                     <menuItem title="Item 2" id="8qw-qv-HEP"/>
                                                     <menuItem title="Item 3" id="V2t-4f-IAM"/>
                                                 </items>
+                                                <connections>
+                                                    <outlet property="delegate" destination="f3Y-bi-SLk" id="bVa-Lg-nGG"/>
+                                                </connections>
                                             </menu>
                                         </popUpButtonCell>
                                     </popUpButton>
@@ -438,10 +441,16 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="gearMenuDelegate" destination="f3Y-bi-SLk" id="2on-6C-laM"/>
                         <outlet property="outlineView" destination="cnV-kg-Dn2" id="FVf-OT-E3h"/>
                     </connections>
                 </viewController>
                 <customObject id="Jih-JO-hIE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="f3Y-bi-SLk" customClass="SidebarGearMenuDelegate" customModule="Evergreen" customModuleProvider="target">
+                    <connections>
+                        <outlet property="sidebarViewController" destination="XML-A3-pDn" id="Tw0-4c-1Go"/>
+                    </connections>
+                </customObject>
                 <customObject id="h5K-zR-cUa" customClass="SidebarKeyboardDelegate" customModule="Evergreen" customModuleProvider="target">
                     <connections>
                         <outlet property="sidebarViewController" destination="XML-A3-pDn" id="kwd-Zc-HJm"/>
@@ -677,7 +686,7 @@
         <image name="markAllRead" width="11" height="9.5"/>
         <image name="markRead" width="9.5" height="9.5"/>
         <image name="newFolder" width="9.5" height="9.5"/>
-        <image name="nextUnread" width="9.5" height="9.5"/>
+        <image name="nextUnread" width="12" height="9.5"/>
         <image name="openInBrowser" width="9.5" height="9.5"/>
         <image name="star" width="9.5" height="9.5"/>
     </resources>
