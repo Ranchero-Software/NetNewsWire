@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Ranchero Software, LLC. All rights reserved.
 //
 
+#import <libxml/parser.h>
 #import <libxml/tree.h>
 #import <libxml/xmlstring.h>
 #import <RSParser/RSSAXParser.h>

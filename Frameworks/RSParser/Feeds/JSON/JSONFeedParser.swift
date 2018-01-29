@@ -103,7 +103,7 @@ private extension JSONFeedParser {
 			return nil
 		}
 
-		let hubs = hubsArray.flatMap { (hubDictionary) -> ParsedHub? in
+		let hubs = hubsArray.compactMap { (hubDictionary) -> ParsedHub? in
 			guard let hubURL = hubDictionary[Key.url] as? String, let hubType = hubDictionary[Key.type] as? String else {
 				return nil
 			}
@@ -114,7 +114,7 @@ private extension JSONFeedParser {
 
 	static func parseItems(_ itemsArray: JSONArray, _ feedURL: String) -> Set<ParsedItem> {
 
-		return Set(itemsArray.flatMap { (oneItemDictionary) -> ParsedItem? in
+		return Set(itemsArray.compactMap { (oneItemDictionary) -> ParsedItem? in
 			return parseItem(oneItemDictionary, feedURL)
 		})
 	}
@@ -180,7 +180,7 @@ private extension JSONFeedParser {
 		guard let attachmentsArray = itemDictionary[Key.attachments] as? JSONArray else {
 			return nil
 		}
-		return Set(attachmentsArray.flatMap { parseAttachment($0) })
+		return Set(attachmentsArray.compactMap { parseAttachment($0) })
 	}
 
 	static func parseAttachment(_ attachmentObject: JSONDictionary) -> ParsedAttachment? {

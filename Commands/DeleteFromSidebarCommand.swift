@@ -36,7 +36,7 @@ final class DeleteFromSidebarCommand: UndoableCommand {
 		self.undoActionName = actionName
 		self.undoManager = undoManager
 
-		let itemSpecifiers = nodesToDelete.flatMap{ SidebarItemSpecifier(node: $0) }
+		let itemSpecifiers = nodesToDelete.compactMap{ SidebarItemSpecifier(node: $0) }
 		guard !itemSpecifiers.isEmpty else {
 			return nil
 		}

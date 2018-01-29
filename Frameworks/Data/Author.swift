@@ -84,7 +84,7 @@ public struct Author: Hashable {
 
 	static func authorsWithDiskArray(_ diskArray: [[String: Any]]) -> Set<Author>? {
 
-		let authors = diskArray.flatMap { Author(dictionary: $0) }
+		let authors = diskArray.compactMap { Author(dictionary: $0) }
 		return authors.isEmpty ? nil : Set(authors)
 	}
 }

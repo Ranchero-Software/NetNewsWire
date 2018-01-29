@@ -159,7 +159,7 @@ extension Set where Element == Article {
 
 	func databaseDictionaries() -> [NSDictionary]? {
 
-		return self.flatMap { $0.databaseDictionary() }
+		return self.compactMap { $0.databaseDictionary() }
 	}
 }
 

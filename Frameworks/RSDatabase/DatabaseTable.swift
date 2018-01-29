@@ -95,7 +95,7 @@ public extension DatabaseTable {
 
 public extension FMResultSet {
 
-	public func flatMap<T>(_ callback: (_ row: FMResultSet) -> T?) -> [T] {
+	public func compactMap<T>(_ callback: (_ row: FMResultSet) -> T?) -> [T] {
 
 		var objects = [T]()
 		while next() {
@@ -109,7 +109,7 @@ public extension FMResultSet {
 
 	public func mapToSet<T>(_ callback: (_ row: FMResultSet) -> T?) -> Set<T> {
 
-		return Set(flatMap(callback))
+		return Set(compactMap(callback))
 	}
 }
 

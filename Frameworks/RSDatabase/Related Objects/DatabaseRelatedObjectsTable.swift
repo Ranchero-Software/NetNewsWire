@@ -60,7 +60,7 @@ public extension DatabaseRelatedObjectsTable {
 
 	func objectsWithResultSet(_ resultSet: FMResultSet) -> [DatabaseObject] {
 
-		return resultSet.flatMap(objectWithRow)
+		return resultSet.compactMap(objectWithRow)
 	}
 
 	func save(_ objects: [DatabaseObject], in database: FMDatabase) {
