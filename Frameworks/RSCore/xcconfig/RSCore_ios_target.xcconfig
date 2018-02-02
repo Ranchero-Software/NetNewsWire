@@ -1,0 +1,24 @@
+#include "./RSCore_target.xcconfig"
+
+CODE_SIGN_IDENTITY =
+DEVELOPMENT_TEAM = 9C84TZ7Q6Z
+
+// See the notes in Evergreen_target.xcconfig on why the
+// DeveloperSettings.xcconfig is #included here
+
+#include? "../../../SharedXcodeSettings/DeveloperSettings.xcconfig"
+
+SDKROOT = iphoneos
+TARGETED_DEVICE_FAMILY = 1,2
+IPHONEOS_DEPLOYMENT_TARGET = 10.2
+
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/Frameworks
+INFOPLIST_FILE = RSCoreiOS/Info.plist
+PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.RSCoreiOS
+PRODUCT_NAME = RSCore
+GCC_NO_COMMON_BLOCKS = YES
+
+CLANG_WARN_DOCUMENTATION_COMMENTS = YES
+CLANG_WARN_INFINITE_RECURSION = YES
+CLANG_WARN_SUSPICIOUS_MOVE = YES
+CLANG_ANALYZER_NONNULL = YES

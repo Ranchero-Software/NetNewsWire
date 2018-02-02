@@ -1,0 +1,17 @@
+#include "./RSCore_target.xcconfig"
+
+CODE_SIGN_IDENTITY =
+DEVELOPMENT_TEAM = 9C84TZ7Q6Z
+
+// See the notes in Evergreen_target.xcconfig on why the
+// DeveloperSettings.xcconfig is #included here
+
+#include? "../../../SharedXcodeSettings/DeveloperSettings.xcconfig"
+
+INFOPLIST_FILE = RSCore/Info.plist
+PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.$(PRODUCT_NAME:rfc1034identifier)
+
+CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES
+CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES
+CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES
+CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES
