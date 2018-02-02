@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8403E75B201C4A79007F7246 /* FeedListKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8403E75A201C4A79007F7246 /* FeedListKeyboardDelegate.swift */; };
 		8414AD251FCF5A1E00955102 /* TimelineHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8414AD241FCF5A1E00955102 /* TimelineHeaderView.swift */; };
 		841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */; };
 		841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */; };
@@ -105,6 +106,7 @@
 		84B06FFE1ED3818D00F0B54B /* RSTree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FFA1ED3818000F0B54B /* RSTree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B0700A1ED3822600F0B54B /* RSTextDrawing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; };
 		84B0700B1ED3822600F0B54B /* RSTextDrawing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84B7178C201E66580091657D /* MainWindowController+ContextualMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B7178B201E66580091657D /* MainWindowController+ContextualMenus.swift */; };
 		84B99C671FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */; };
 		84B99C691FAE36B800ECDEDB /* FeedListFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */; };
 		84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */; };
@@ -117,6 +119,7 @@
 		84CC08061FF5D2E000C0C0ED /* FeedListSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */; };
 		84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
 		84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */; };
+		84D5BA20201E8FB6009092BD /* SidebarGearMenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */; };
 		84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */; };
 		84DAEE321F870B390058304B /* DockBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE311F870B390058304B /* DockBadge.swift */; };
 		84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
@@ -125,7 +128,6 @@
 		84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */; };
 		84EB381F1FBA8B9F000D2111 /* KeyboardShortcuts.html in Resources */ = {isa = PBXBuildFile; fileRef = 84EB38101FBA8B9F000D2111 /* KeyboardShortcuts.html */; };
 		84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204CD1FAACB660076E152 /* FeedListViewController.swift */; };
-		84F204DE1FAACB8B0076E152 /* FeedListTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DD1FAACB8B0076E152 /* FeedListTimelineViewController.swift */; };
 		84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
 		84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5351FC22FCB00998D64 /* PseudoFeed.swift */; };
 		84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5361FC22FCB00998D64 /* TodayFeedDelegate.swift */; };
@@ -466,6 +468,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8403E75A201C4A79007F7246 /* FeedListKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListKeyboardDelegate.swift; sourceTree = "<group>"; };
 		8414AD241FCF5A1E00955102 /* TimelineHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineHeaderView.swift; sourceTree = "<group>"; };
 		841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingInspectorViewController.swift; sourceTree = "<group>"; };
 		841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderInspectorViewController.swift; sourceTree = "<group>"; };
@@ -562,6 +565,7 @@
 		84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSFeedFinder.xcodeproj; path = Frameworks/RSFeedFinder/RSFeedFinder.xcodeproj; sourceTree = "<group>"; };
 		84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTree.xcodeproj; path = Frameworks/RSTree/RSTree.xcodeproj; sourceTree = "<group>"; };
 		84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTextDrawing.xcodeproj; path = Frameworks/RSTextDrawing/RSTextDrawing.xcodeproj; sourceTree = "<group>"; };
+		84B7178B201E66580091657D /* MainWindowController+ContextualMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MainWindowController+ContextualMenus.swift"; sourceTree = "<group>"; };
 		84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFolder.swift; sourceTree = "<group>"; };
 		84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFeed.swift; sourceTree = "<group>"; };
@@ -574,6 +578,7 @@
 		84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListSplitViewController.swift; sourceTree = "<group>"; };
 		84CC88171FE59CBF00644329 /* SmartFeedsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeedsController.swift; sourceTree = "<group>"; };
 		84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailStatusBarView.swift; sourceTree = "<group>"; };
+		84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarGearMenuDelegate.swift; sourceTree = "<group>"; };
 		84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLImporter.swift; sourceTree = "<group>"; };
 		84DAEE311F870B390058304B /* DockBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DockBadge.swift; path = Evergreen/DockBadge.swift; sourceTree = "<group>"; };
 		84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDefaults.swift; path = Evergreen/AppDefaults.swift; sourceTree = "<group>"; };
@@ -582,7 +587,6 @@
 		84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticlePasteboardWriter.swift; sourceTree = "<group>"; };
 		84EB38101FBA8B9F000D2111 /* KeyboardShortcuts.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = KeyboardShortcuts.html; sourceTree = "<group>"; };
 		84F204CD1FAACB660076E152 /* FeedListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListViewController.swift; sourceTree = "<group>"; };
-		84F204DD1FAACB8B0076E152 /* FeedListTimelineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListTimelineViewController.swift; sourceTree = "<group>"; };
 		84F204DF1FAACBB30076E152 /* ArticleArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleArray.swift; sourceTree = "<group>"; };
 		84F2D5351FC22FCB00998D64 /* PseudoFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PseudoFeed.swift; sourceTree = "<group>"; };
 		84F2D5361FC22FCB00998D64 /* TodayFeedDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodayFeedDelegate.swift; sourceTree = "<group>"; };
@@ -821,6 +825,7 @@
 				849A97631ED9EB96007D329B /* UnreadCountView.swift */,
 				845F52EC1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift */,
 				849A97821ED9EC63007D329B /* SidebarStatusBarView.swift */,
+				84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */,
 				844B5B6A1FEA224000C7C76A /* Keyboard */,
 				845A29251FC928C7007B49E3 /* Cell */,
 			);
@@ -884,7 +889,7 @@
 				849A978C1ED9EE4D007D329B /* FeedListWindowController.swift */,
 				84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */,
 				84F204CD1FAACB660076E152 /* FeedListViewController.swift */,
-				84F204DD1FAACB8B0076E152 /* FeedListTimelineViewController.swift */,
+				8403E75A201C4A79007F7246 /* FeedListKeyboardDelegate.swift */,
 				84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */,
 				84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */,
 				84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */,
@@ -949,6 +954,7 @@
 				842E45DC1ED8C54B000A8B52 /* Browser.swift */,
 				84702AB31FA27AE8006B8943 /* Commands */,
 				842E45E11ED8C681000A8B52 /* MainWindow */,
+				84B7178A201E66580091657D /* ContextualMenus */,
 				84BBB12A20142A4700F054F5 /* Inspector */,
 				842E45E01ED8C587000A8B52 /* Preferences */,
 				849A97861ED9ECEF007D329B /* Article Styles */,
@@ -1077,6 +1083,15 @@
 				84B070091ED3821900F0B54B /* RSTextDrawingTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		84B7178A201E66580091657D /* ContextualMenus */ = {
+			isa = PBXGroup;
+			children = (
+				84B7178B201E66580091657D /* MainWindowController+ContextualMenus.swift */,
+			);
+			name = ContextualMenus;
+			path = Evergreen/ContextualMenus;
 			sourceTree = "<group>";
 		};
 		84BB4B621F1174D400858766 /* Products */ = {
@@ -1264,7 +1279,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0820;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					849C645F1ED37A5D003D8FC0 = {
@@ -1605,6 +1620,7 @@
 				D5A2678C20130ECF00A8D3C0 /* Author+Scriptability.swift in Sources */,
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
 				D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */,
+				8403E75B201C4A79007F7246 /* FeedListKeyboardDelegate.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */,
 				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
@@ -1619,6 +1635,7 @@
 				84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */,
 				849A97891ED9ECEF007D329B /* ArticleStyle.swift in Sources */,
 				84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */,
+				84B7178C201E66580091657D /* MainWindowController+ContextualMenus.swift in Sources */,
 				842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */,
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
@@ -1657,8 +1674,8 @@
 				849A976D1ED9EBC8007D329B /* TimelineTableView.swift in Sources */,
 				84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */,
 				84B99C671FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift in Sources */,
+				84D5BA20201E8FB6009092BD /* SidebarGearMenuDelegate.swift in Sources */,
 				84B99C691FAE36B800ECDEDB /* FeedListFolder.swift in Sources */,
-				84F204DE1FAACB8B0076E152 /* FeedListTimelineViewController.swift in Sources */,
 				84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */,
 				844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */,
 				849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */,

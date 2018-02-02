@@ -78,12 +78,6 @@
                                                 <action selector="showAddFolderWindow:" target="Ady-hI-5gd" id="GIi-wc-uYk"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="New Window" keyEquivalent="n" id="J9a-dk-nAT">
-                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                            <connections>
-                                                <action selector="newReaderWindow:" target="Ady-hI-5gd" id="XtC-K9-1Np"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="m54-Is-iLE"/>
                                         <menuItem title="Refresh" keyEquivalent="r" id="Veh-SV-KWy">
                                             <connections>
@@ -335,8 +329,24 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View" id="HyV-fh-RgO">
                                     <items>
-                                        <menuItem title="Sort Articles by Oldest on Top" id="J5R-XG-4yB">
+                                        <menuItem title="Sort By" id="nLP-fa-KUi">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Sort By" id="OlJ-93-6OP">
+                                                <items>
+                                                    <menuItem title="Newest Article on Top" id="TNS-TV-n0U">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="sortByNewestArticleOnTop:" target="Ady-hI-5gd" id="gkW-hU-IQJ"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Oldest Article on Top" id="iii-kP-qoF">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="sortByOldestArticleOnTop:" target="Ady-hI-5gd" id="8jC-1r-5RH"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="dZt-2W-gxf"/>
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
@@ -372,16 +382,27 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Go" id="NQW-Ph-lw2">
                                     <items>
-                                        <menuItem title="Previous Unread" keyEquivalent="'" id="ijT-zA-eRz"/>
                                         <menuItem title="Next Unread" keyEquivalent="/" id="q3p-nE-m2k">
                                             <connections>
                                                 <action selector="nextUnread:" target="Ady-hI-5gd" id="rgH-ce-FV3"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="xbe-2a-mp4"/>
-                                        <menuItem title="Today" keyEquivalent="1" id="L20-jv-7c9"/>
-                                        <menuItem title="All Unread" keyEquivalent="2" id="8ZT-ew-JNc"/>
-                                        <menuItem title="Starred" keyEquivalent="3" id="ZRx-me-QXO"/>
+                                        <menuItem title="Today" keyEquivalent="1" id="L20-jv-7c9">
+                                            <connections>
+                                                <action selector="gotoToday:" target="Ady-hI-5gd" id="GyO-dW-XCy"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="All Unread" keyEquivalent="2" id="8ZT-ew-JNc">
+                                            <connections>
+                                                <action selector="gotoAllUnread:" target="Ady-hI-5gd" id="xGb-dU-hH7"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Starred" keyEquivalent="3" id="ZRx-me-QXO">
+                                            <connections>
+                                                <action selector="gotoStarred:" target="Ady-hI-5gd" id="p7p-rP-Ezb"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
@@ -444,6 +465,11 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="bGu-Ws-7LM"/>
+                                        <menuItem title="Main Window" keyEquivalent="0" id="LSZ-ci-Jb5">
+                                            <connections>
+                                                <action selector="showMainWindow:" target="Ady-hI-5gd" id="yQt-yi-4JX"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Info" keyEquivalent="i" id="24r-2i-fXR">
                                             <connections>
                                                 <action selector="toggleInspectorWindow:" target="Ady-hI-5gd" id="Bw5-4R-iWP"/>
@@ -521,7 +547,13 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Evergreen" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Evergreen" customModuleProvider="target">
+                    <connections>
+                        <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
+                        <outlet property="sortByNewestArticleOnTopMenuItem" destination="TNS-TV-n0U" id="gix-Nd-9k4"/>
+                        <outlet property="sortByOldestArticleOnTopMenuItem" destination="iii-kP-qoF" id="fTe-Tf-EWG"/>
+                    </connections>
+                </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <customObject id="5Wg-Cw-OOw" customClass="SUUpdater"/>
             </objects>

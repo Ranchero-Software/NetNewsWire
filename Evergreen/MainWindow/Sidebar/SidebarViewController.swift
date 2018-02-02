@@ -6,7 +6,7 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 import RSTree
 import Data
 import Account
@@ -15,6 +15,8 @@ import RSCore
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, UndoableCommandRunner {
     
 	@IBOutlet var outlineView: SidebarOutlineView!
+	@IBOutlet var gearMenuDelegate: SidebarGearMenuDelegate!
+	
 	let treeControllerDelegate = SidebarTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		TreeController(delegate: treeControllerDelegate)
@@ -146,6 +148,21 @@ import RSCore
 		Browser.open(homePageURL)
 	}
 
+	@IBAction func gotoToday(_ sender: Any?) {
+
+		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.todayFeed, treeController)
+	}
+
+	@IBAction func gotoAllUnread(_ sender: Any?) {
+
+		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.unreadFeed, treeController)
+	}
+
+	@IBAction func gotoStarred(_ sender: Any?) {
+
+		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.starredFeed, treeController)
+	}
+
 	// MARK: Navigation
 	
 	func canGoToNextUnread() -> Bool {
@@ -172,6 +189,16 @@ import RSCore
 			return
 		}
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(outlineView)
+	}
+
+	// MARK: Contextual Menu
+
+	func contextualMenuForSelectedObjects() -> NSMenu? {
+
+		guard let mainWindowController = view.window?.windowController as? MainWindowController else {
+			return nil
+		}
+		return mainWindowController.menu(for: selectedObjects)
 	}
 
 	// MARK: NSOutlineViewDelegate

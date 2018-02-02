@@ -50,13 +50,13 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     
     @objc(feeds)
     var feeds:NSArray  {
-        let feeds = account.children.flatMap { $0 as? Feed }
+        let feeds = account.children.compactMap { $0 as? Feed }
         return feeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
     
     @objc(folders)
     var folders:NSArray  {
-        let folders = account.children.flatMap { $0 as? Folder }
+        let folders = account.children.compactMap { $0 as? Folder }
         return folders.map { ScriptableFolder($0, container:self) } as NSArray
     }
     

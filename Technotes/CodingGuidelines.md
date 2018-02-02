@@ -42,6 +42,8 @@ Extensions, including private extensions, are used — though we take care not t
 
 Things should be marked private as often as possible. APIs should be exactly what’s needed and not more.
 
+When `@importing`, import `AppKit` rather than `Cocoa`. If you see a case where it’s `Cocoa`, change it to `AppKit`. (Reason: importing Cocoa also imports CoreData, which we aren’t using.)
+
 #### Code organization
 
 Properties go at the top, then functions.
@@ -149,6 +151,12 @@ No code that writes to the console may be checked in — console spew is not al
 Use Instruments to look for leaks and to do profiling. Instruments is great at finding where the problems actually are, as opposed to where you think they are.
 
 No shipping version gets released without looking for memory leaks.
+
+### Testing
+
+Write unit tests, especially in the lower-level frameworks, and particularly when fixing a bug.
+
+There is never enough test coverage. There should always be more tests.
 
 ### Version Control
 

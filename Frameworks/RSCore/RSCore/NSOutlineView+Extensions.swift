@@ -17,7 +17,7 @@ public extension NSOutlineView {
 				return [AnyObject]()
 			}
 
-			return selectedRowIndexes.flatMap { (oneIndex) -> AnyObject? in
+			return selectedRowIndexes.compactMap { (oneIndex) -> AnyObject? in
 				return item(atRow: oneIndex) as AnyObject
 			}
 		}
@@ -159,8 +159,27 @@ public extension NSOutlineView {
 		guard let item = item(atRow: row) else {
 			return false
 		}
+		return canSelectItem(item)
+	}
+
+	func canSelectItem(_ item: Any) -> Bool {
+
 		let isSelectable = delegate?.outlineView?(self, shouldSelectItem: item) ?? true
 		return isSelectable
+	}
+
+	func selectItemAndScrollToVisible(_ item: Any) {
+
+		guard canSelectItem(item) else {
+			return
+		}
+
+		let rowToSelect = row(forItem: item)
+		guard rowToSelect != -1 else {
+			return
+		}
+
+		rs_selectRowAndScrollToVisible(rowToSelect)
 	}
 }
 

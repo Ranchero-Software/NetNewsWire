@@ -14,7 +14,11 @@ private let kWindowFrameKey = "MainWindow"
 
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
     
-    // MARK: NSWindowController
+	var isOpen: Bool {
+		return isWindowLoaded && window!.isVisible
+	}
+
+	// MARK: NSWindowController
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey)
 	private var unreadCount: Int = 0 {
@@ -109,7 +113,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	// MARK: Toolbar
 	
-	@objc func makeToolbarValidate(_ sender: Any) {
+	@objc func makeToolbarValidate(_ sender: Any?) {
 		
 		window?.toolbar?.validateVisibleItems()
 	}
@@ -277,6 +281,21 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		sidebarViewController?.outlineView.selectNextRow(sender)
 	}
 
+	@IBAction func gotoToday(_ sender: Any?) {
+
+		sidebarViewController?.gotoToday(sender)
+	}
+
+	@IBAction func gotoAllUnread(_ sender: Any?) {
+
+		sidebarViewController?.gotoAllUnread(sender)
+	}
+
+	@IBAction func gotoStarred(_ sender: Any?) {
+
+		sidebarViewController?.gotoStarred(sender)
+	}
+
 	@IBAction func toolbarShowShareMenu(_ sender: Any?) {
 
 		guard let selectedArticles = selectedArticles, !selectedArticles.isEmpty else {
@@ -313,7 +332,7 @@ extension MainWindowController: NSSharingServicePickerDelegate {
 
 	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
 
-		let sendToServices = appDelegate.sendToCommands.flatMap { (sendToCommand) -> NSSharingService? in
+		let sendToServices = appDelegate.sendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
 
 			guard let object = items.first else {
 				return nil

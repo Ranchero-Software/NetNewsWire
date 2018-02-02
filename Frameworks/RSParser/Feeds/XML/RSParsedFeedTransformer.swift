@@ -52,7 +52,7 @@ private extension RSParsedFeedTransformer {
 			return nil
 		}
 
-		let transformedAuthors = authors.flatMap { (author) -> ParsedAuthor? in
+		let transformedAuthors = authors.compactMap { (author) -> ParsedAuthor? in
 			return ParsedAuthor(name: author.name, url: author.url, avatarURL: nil, emailAddress: author.emailAddress)
 		}
 
@@ -65,7 +65,7 @@ private extension RSParsedFeedTransformer {
 			return nil
 		}
 
-		let attachments = enclosures.flatMap { (enclosure) -> ParsedAttachment? in
+		let attachments = enclosures.compactMap { (enclosure) -> ParsedAttachment? in
 
 			let sizeInBytes = enclosure.length > 0 ? enclosure.length : nil
 			return ParsedAttachment(url: enclosure.url, mimeType: enclosure.mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: nil)

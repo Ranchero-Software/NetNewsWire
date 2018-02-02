@@ -50,10 +50,16 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	private var didRegisterForNotifications = false
-	private let timelineFontSizeKVOKey = "values.{AppDefaults.Key.timelineFontSize}"
 	private var reloadAvailableCellsTimer: Timer?
 	private var fetchAndMergeArticlesTimer: Timer?
 
+	private var sortDirection = AppDefaults.shared.timelineSortDirection {
+		didSet {
+			if sortDirection != oldValue {
+				sortDirectionDidChange()
+			}
+		}
+	}
 	private var articles = ArticleArray() {
 		didSet {
 			if articles != oldValue {
@@ -66,7 +72,9 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	private var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
 		didSet {
-			fontSizeDidChange()
+			if fontSize != oldValue {
+				fontSizeDidChange()
+			}
 		}
 	}
 
@@ -122,43 +130,24 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
-			NSUserDefaultsController.shared.addObserver(self, forKeyPath: timelineFontSizeKVOKey, options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
-
-			didRegisterForNotifications = true
+				didRegisterForNotifications = true
 		}
-	}
-
-	// MARK: KVO
-
-	override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-		
-		if let keyPath = keyPath {
-
-			switch (keyPath) {
-
-			case timelineFontSizeKVOKey:
-				fontSizeInDefaultsDidChange()
-				return
-			default:
-				break
-			}
-		}
-
-		super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
 	}
 
 	// MARK: Appearance Change
 
 	private func fontSizeDidChange() {
 
+		TimelineCellData.emptyCache()
+		RSSingleLineRenderer.emptyCache()
+		RSMultiLineRenderer.emptyCache()
+
 		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: false, fontSize: fontSize)
 		cellAppearanceWithAvatar = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: true, fontSize: fontSize)
 		updateRowHeights()
-		if tableView.rowHeight != currentRowHeight {
-			tableView.rowHeight = currentRowHeight
-			tableView.reloadData()
-		}
+		tableView.reloadData()
 	}
 
 	// MARK: - API
@@ -359,18 +348,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 	}
 
-	func fontSizeInDefaultsDidChange() {
-
-		TimelineCellData.emptyCache()
-		RSSingleLineRenderer.emptyCache()
-		RSMultiLineRenderer.emptyCache()
-		
-		let updatedFontSize = AppDefaults.shared.timelineFontSize
-		if updatedFontSize != self.fontSize {
-			self.fontSize = updatedFontSize
-		}
-	}
-
 	@objc func accountDidDownloadArticles(_ note: Notification) {
 
 		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
@@ -381,6 +358,12 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		if shouldFetchAndMergeArticles {
 			queueFetchAndMergeArticles()
 		}
+	}
+
+	@objc func userDefaultsDidChange(_ note: Notification) {
+
+		self.fontSize = AppDefaults.shared.timelineFontSize
+		self.sortDirection = AppDefaults.shared.timelineSortDirection
 	}
 
 	// MARK: - Reloading Data
@@ -632,6 +615,19 @@ private extension TimelineViewController {
 		}
 	}
 
+	func sortDirectionDidChange() {
+
+		let selectedArticleIDs = selectedArticles.articleIDs()
+
+		let unsortedArticles = Set(articles)
+		updateArticles(with: unsortedArticles)
+
+		selectArticles(selectedArticleIDs)
+		if tableView.selectedRow != -1 {
+			tableView.scrollRowToVisible(tableView.selectedRow)
+		}
+	}
+
 	// MARK: Fetching Articles
 
 	func fetchArticles() {
@@ -647,7 +643,7 @@ private extension TimelineViewController {
 
 	func updateArticles(with unsortedArticles: Set<Article>) {
 
-		let sortedArticles = Array(unsortedArticles).sortedByDate()
+		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
 		if articles != sortedArticles {
 			articles = sortedArticles
 		}

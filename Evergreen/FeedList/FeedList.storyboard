@@ -8,7 +8,7 @@
         <!--Window Controller-->
         <scene sceneID="joN-Oe-nep">
             <objects>
-                <windowController showSeguePresentationStyle="single" id="z5E-aV-xMb" sceneMemberID="viewController">
+                <windowController showSeguePresentationStyle="single" id="z5E-aV-xMb" customClass="FeedListWindowController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <window key="window" identifier="feedDirectoryWindow" title="Feed Directory" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="FeedDirectoryWindow" animationBehavior="default" id="Ty3-Oi-cUp">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -120,33 +120,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="285" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <visualEffectView appearanceType="vibrantLight" blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="W6S-45-U7K">
-                                <rect key="frame" x="0.0" y="252" width="285" height="48"/>
-                                <subviews>
-                                    <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gqz-ML-j9e">
-                                        <rect key="frame" x="20" y="13" width="245" height="22"/>
-                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Filter" usesSingleLineMode="YES" bezelStyle="round" id="Xlk-3c-BJ7">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </searchFieldCell>
-                                    </searchField>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="9cZ-Tx-Yyw"/>
-                                    <constraint firstItem="gqz-ML-j9e" firstAttribute="leading" secondItem="W6S-45-U7K" secondAttribute="leading" constant="20" symbolic="YES" id="AE3-2F-KB1"/>
-                                    <constraint firstItem="gqz-ML-j9e" firstAttribute="centerY" secondItem="W6S-45-U7K" secondAttribute="centerY" id="bVb-ZW-mMc"/>
-                                    <constraint firstAttribute="trailing" secondItem="gqz-ML-j9e" secondAttribute="trailing" constant="20" symbolic="YES" id="v25-Qt-e3h"/>
-                                </constraints>
-                            </visualEffectView>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rir-se-YCO">
-                                <rect key="frame" x="0.0" y="0.0" width="285" height="252"/>
+                                <rect key="frame" x="0.0" y="0.0" width="285" height="300"/>
                                 <clipView key="contentView" drawsBackground="NO" id="vli-sv-HLg">
-                                    <rect key="frame" x="0.0" y="0.0" width="285" height="252"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="285" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="23" outlineTableColumn="Ytm-dS-0WJ" id="Hxu-8i-6rp">
-                                            <rect key="frame" x="0.0" y="0.0" width="285" height="252"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="285" height="300"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -235,11 +216,8 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="rir-se-YCO" secondAttribute="trailing" id="7WI-u5-sU6"/>
                             <constraint firstAttribute="bottom" secondItem="rir-se-YCO" secondAttribute="bottom" id="B0Q-Ma-ojH"/>
-                            <constraint firstItem="W6S-45-U7K" firstAttribute="top" secondItem="vp3-VV-Mzw" secondAttribute="top" id="RcQ-DY-ExG"/>
-                            <constraint firstAttribute="trailing" secondItem="W6S-45-U7K" secondAttribute="trailing" id="Tqw-ES-fcL"/>
-                            <constraint firstItem="rir-se-YCO" firstAttribute="top" secondItem="W6S-45-U7K" secondAttribute="bottom" id="Xd3-qo-Ubs"/>
+                            <constraint firstItem="rir-se-YCO" firstAttribute="top" secondItem="vp3-VV-Mzw" secondAttribute="top" id="Koo-lp-EvO"/>
                             <constraint firstItem="rir-se-YCO" firstAttribute="leading" secondItem="vp3-VV-Mzw" secondAttribute="leading" id="bGY-bf-MdA"/>
-                            <constraint firstItem="W6S-45-U7K" firstAttribute="leading" secondItem="vp3-VV-Mzw" secondAttribute="leading" id="qIe-ch-aAN"/>
                         </constraints>
                     </view>
                     <connections>
@@ -250,10 +228,10 @@
             </objects>
             <point key="canvasLocation" x="-967" y="1488"/>
         </scene>
-        <!--Feed List Timeline View Controller-->
+        <!--Timeline View Controller-->
         <scene sceneID="hOx-Zn-uli">
             <objects>
-                <viewController id="5oM-Nv-I7I" customClass="FeedListTimelineViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="5oM-Nv-I7I" customClass="TimelineViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Ayc-tI-OzD">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -264,7 +242,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" id="D1H-xQ-37M">
+                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" id="D1H-xQ-37M" customClass="TimelineTableView" customModule="Evergreen" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
@@ -304,40 +282,12 @@
                                                         </tableCellView>
                                                     </prototypeCellViews>
                                                 </tableColumn>
-                                                <tableColumn identifier="" width="328" minWidth="40" maxWidth="1000" id="N5b-a8-DDG">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                                    </tableHeaderCell>
-                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" title="Text Cell" id="UtV-Rc-YFH">
-                                                        <font key="font" metaFont="system"/>
-                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                                    <prototypeCellViews>
-                                                        <tableCellView id="e21-hS-OeE">
-                                                            <rect key="frame" x="120" y="1" width="328" height="17"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                            <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MRY-sV-Us9">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="328" height="17"/>
-                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="EXc-CI-HAS">
-                                                                        <font key="font" metaFont="system"/>
-                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                    </textFieldCell>
-                                                                </textField>
-                                                            </subviews>
-                                                            <connections>
-                                                                <outlet property="textField" destination="MRY-sV-Us9" id="6SL-WX-tp5"/>
-                                                            </connections>
-                                                        </tableCellView>
-                                                    </prototypeCellViews>
-                                                </tableColumn>
                                             </tableColumns>
+                                            <connections>
+                                                <outlet property="dataSource" destination="5oM-Nv-I7I" id="ZmN-vl-ubI"/>
+                                                <outlet property="delegate" destination="5oM-Nv-I7I" id="lSh-Ow-oO3"/>
+                                                <outlet property="keyboardDelegate" destination="2ud-3a-p3A" id="nts-O0-WYq"/>
+                                            </connections>
                                         </tableView>
                                     </subviews>
                                 </clipView>
@@ -358,8 +308,16 @@
                             <constraint firstItem="eGF-yH-oea" firstAttribute="leading" secondItem="Ayc-tI-OzD" secondAttribute="leading" id="xE0-7D-thL"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="tableView" destination="D1H-xQ-37M" id="6DC-Fc-yeT"/>
+                    </connections>
                 </viewController>
                 <customObject id="Xw8-6t-9F9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="2ud-3a-p3A" customClass="FeedListTimelineKeyboardDelegate" customModule="Evergreen" customModuleProvider="target">
+                    <connections>
+                        <outlet property="timelineViewController" destination="5oM-Nv-I7I" id="Xqu-94-MvJ"/>
+                    </connections>
+                </customObject>
             </objects>
             <point key="canvasLocation" x="-261" y="1477"/>
         </scene>

@@ -156,6 +156,7 @@
 		84CFF56A1AC3D1B000CEA6C8 /* RSScaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CFF5681AC3D1B000CEA6C8 /* RSScaling.m */; };
 		84CFF56D1AC3D20A00CEA6C8 /* NSImage+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CFF56B1AC3D20A00CEA6C8 /* NSImage+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84CFF56E1AC3D20A00CEA6C8 /* NSImage+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CFF56C1AC3D20A00CEA6C8 /* NSImage+RSCore.m */; };
+		84D5BA1E201E87E2009092BD /* URLPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BA1D201E87E2009092BD /* URLPasteboardWriter.swift */; };
 		84E34DA61F9FA1070077082F /* UndoableCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E34DA51F9FA1070077082F /* UndoableCommand.swift */; };
 		84F20F831F16BA6200D8E682 /* PropertyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F20F821F16BA6200D8E682 /* PropertyList.swift */; };
 		84FE9FC31C00453900081CE9 /* NSStoryboard+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84FE9FC11C00453900081CE9 /* NSStoryboard+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -273,6 +274,7 @@
 		84CFF5681AC3D1B000CEA6C8 /* RSScaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSScaling.m; sourceTree = "<group>"; };
 		84CFF56B1AC3D20A00CEA6C8 /* NSImage+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+RSCore.h"; sourceTree = "<group>"; };
 		84CFF56C1AC3D20A00CEA6C8 /* NSImage+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+RSCore.m"; sourceTree = "<group>"; };
+		84D5BA1D201E87E2009092BD /* URLPasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLPasteboardWriter.swift; path = AppKit/URLPasteboardWriter.swift; sourceTree = "<group>"; };
 		84E34DA51F9FA1070077082F /* UndoableCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UndoableCommand.swift; path = RSCore/UndoableCommand.swift; sourceTree = "<group>"; };
 		84F20F821F16BA6200D8E682 /* PropertyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyList.swift; sourceTree = "<group>"; };
 		84FE9FC11C00453900081CE9 /* NSStoryboard+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSStoryboard+RSCore.h"; sourceTree = "<group>"; };
@@ -464,6 +466,7 @@
 				84C687341FBC025600345C9E /* Log.swift */,
 				84C687371FBC028900345C9E /* LogItem.swift */,
 				8434D15B200BD6F400D6281E /* UserApp.swift */,
+				84D5BA1D201E87E2009092BD /* URLPasteboardWriter.swift */,
 				842DD7F91E1499FA00E061EB /* Views */,
 			);
 			name = AppKit;
@@ -621,7 +624,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Ranchero Software, LLC";
 				TargetAttributes = {
 					842DD7BB1E14993900E061EB = {
@@ -755,6 +758,7 @@
 				84C687321FBAA3DF00345C9E /* LogWindowController.swift in Sources */,
 				84C687381FBC028900345C9E /* LogItem.swift in Sources */,
 				8432B1861DACA0E90057D6DF /* NSResponder-Extensions.swift in Sources */,
+				84D5BA1E201E87E2009092BD /* URLPasteboardWriter.swift in Sources */,
 				849B08981BF7BCE30090CEE4 /* NSPasteboard+RSCore.m in Sources */,
 				842635571D7FA1C800196285 /* NSTableView+Extensions.swift in Sources */,
 				84F20F831F16BA6200D8E682 /* PropertyList.swift in Sources */,
@@ -816,6 +820,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -845,6 +850,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1007,6 +1013,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -1024,6 +1031,7 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1047,6 +1055,7 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1066,6 +1075,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -1086,6 +1096,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",

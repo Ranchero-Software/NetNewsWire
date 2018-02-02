@@ -45,7 +45,7 @@ extension Array where Element == Article {
 
 	func articlesForIndexes(_ indexes: IndexSet) -> Set<Article> {
 
-		return Set(indexes.flatMap{ (oneIndex) -> Article? in
+		return Set(indexes.compactMap{ (oneIndex) -> Article? in
 			return articleAtRow(oneIndex)
 		})
 	}
@@ -64,9 +64,16 @@ extension Array where Element == Article {
 		return indexes
 	}
 
-	func sortedByDate() -> ArticleArray {
+	func sortedByDate(_ sortDirection: ComparisonResult) -> ArticleArray {
 
-		return sorted(by: articleComparator)
+		let articles = sorted { (article1, article2) -> Bool in
+			if sortDirection == .orderedDescending {
+				return article1.logicalDatePublished > article2.logicalDatePublished
+			}
+			return article1.logicalDatePublished < article2.logicalDatePublished
+		}
+		
+		return articles
 	}
 
 	func canMarkAllAsRead() -> Bool {
@@ -95,12 +102,4 @@ private extension Array where Element == Article {
 
 		return rowForArticleID(article.articleID)
 	}
-
-	// MARK: Sorting
-
-	func articleComparator(_ article1: Article, article2: Article) -> Bool {
-
-		return article1.logicalDatePublished > article2.logicalDatePublished
-	}
-
 }
