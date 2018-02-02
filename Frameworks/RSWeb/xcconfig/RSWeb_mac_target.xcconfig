@@ -1,0 +1,13 @@
+#include "./RSWeb_target.xcconfig"
+
+CODE_SIGN_IDENTITY =
+DEVELOPMENT_TEAM = 9C84TZ7Q6Z
+
+// See the notes in Evergreen_target.xcconfig on why the
+// DeveloperSettings.xcconfig is #included here
+
+#include? "../../../SharedXcodeSettings/DeveloperSettings.xcconfig"
+
+INFOPLIST_FILE = RSWeb/Info.plist
+PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.RSWeb
+

@@ -1,0 +1,5 @@
+#include "./RSWeb_ios_target.xcconfig"
+
+VALIDATE_PRODUCT = NO
+
+
