@@ -21,6 +21,4 @@ final class RenameWindowController: NSWindowController {
 		self.init(windowNibName: NSNib.Name(rawValue: "RenameSheet"))
 		self.originalTitle = originalTitle
 	}
-
-
 }
