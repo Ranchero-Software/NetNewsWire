@@ -1,0 +1,4 @@
+#include "./RSDatabase_ios_target.xcconfig"
+
+VALIDATE_PRODUCT = YES
+

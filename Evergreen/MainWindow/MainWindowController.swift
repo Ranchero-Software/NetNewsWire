@@ -113,7 +113,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	// MARK: Toolbar
 	
-	@objc func makeToolbarValidate(_ sender: Any) {
+	@objc func makeToolbarValidate(_ sender: Any?) {
 		
 		window?.toolbar?.validateVisibleItems()
 	}
@@ -332,7 +332,7 @@ extension MainWindowController: NSSharingServicePickerDelegate {
 
 	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
 
-		let sendToServices = appDelegate.sendToCommands.flatMap { (sendToCommand) -> NSSharingService? in
+		let sendToServices = appDelegate.sendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
 
 			guard let object = items.first else {
 				return nil

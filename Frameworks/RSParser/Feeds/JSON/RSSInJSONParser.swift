@@ -60,7 +60,7 @@ private extension RSSInJSONParser {
 
 	static func parseItems(_ itemsObject: JSONArray, _ feedURL: String) -> Set<ParsedItem> {
 
-		return Set(itemsObject.flatMap{ (oneItemDictionary) -> ParsedItem? in
+		return Set(itemsObject.compactMap{ (oneItemDictionary) -> ParsedItem? in
 
 			return parsedItemWithDictionary(oneItemDictionary, feedURL)
 		})
@@ -150,7 +150,7 @@ private extension RSSInJSONParser {
 			return nil
 		}
 		else if let categoryArray = itemDictionary["category"] as? JSONArray {
-			return Set(categoryArray.flatMap{ $0["#value"] as? String })
+			return Set(categoryArray.compactMap{ $0["#value"] as? String })
 		}
 		return nil
 	}

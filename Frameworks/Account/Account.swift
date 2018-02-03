@@ -462,7 +462,7 @@ extension Account {
 
 	func objects(with diskObjects: [[String: Any]]) -> [AnyObject] {
 
-		return diskObjects.flatMap { object(with: $0) }
+		return diskObjects.compactMap { object(with: $0) }
 	}
 }
 
@@ -508,7 +508,7 @@ private extension Account {
 
 	func diskDictionary() -> NSDictionary {
 
-		let diskObjects = children.flatMap { (object) -> [String: Any]? in
+		let diskObjects = children.compactMap { (object) -> [String: Any]? in
 
 			if let folder = object as? Folder {
 				return folder.dictionary
@@ -650,7 +650,7 @@ private extension Account {
     
     func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
         
-		let feeds = Set(articles.flatMap { $0.feed })
+		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
         
         // .UnreadCountDidChange notification will get sent to Folder and Account objects,
