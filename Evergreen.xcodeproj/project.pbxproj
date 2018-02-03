@@ -92,6 +92,8 @@
 		84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */; };
 		84A1500320048D660046AD9A /* SendToCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500220048D660046AD9A /* SendToCommand.swift */; };
 		84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */; };
+		84A37CB5201ECD610087C5AF /* RenameWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A37CB4201ECD610087C5AF /* RenameWindowController.swift */; };
+		84A37CBB201ECE590087C5AF /* RenameSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84A37CB9201ECE590087C5AF /* RenameSheet.xib */; };
 		84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; };
 		84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */; };
@@ -556,6 +558,8 @@
 		84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMicroBlogCommand.swift; sourceTree = "<group>"; };
 		84A1500220048D660046AD9A /* SendToCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToCommand.swift; sourceTree = "<group>"; };
 		84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMarsEditCommand.swift; sourceTree = "<group>"; };
+		84A37CB4201ECD610087C5AF /* RenameWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenameWindowController.swift; sourceTree = "<group>"; };
+		84A37CBA201ECE590087C5AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/RenameSheet.xib; sourceTree = SOURCE_ROOT; };
 		84A6B6931FB8D43C006754AC /* DinosaursWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DinosaursWindow.xib; sourceTree = "<group>"; };
 		84A6B6951FB8DBD2006754AC /* DinosaursWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DinosaursWindowController.swift; sourceTree = "<group>"; };
 		84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSDatabase.xcodeproj; path = Frameworks/RSDatabase/RSDatabase.xcodeproj; sourceTree = "<group>"; };
@@ -680,6 +684,7 @@
 				849A977C1ED9EC42007D329B /* Detail */,
 				849A97551ED9EAC3007D329B /* Add Feed */,
 				849A97411ED9EAA9007D329B /* Add Folder */,
+				84B7178A201E66580091657D /* ContextualMenus */,
 			);
 			name = MainWindow;
 			path = Evergreen/MainWindow;
@@ -828,6 +833,7 @@
 				84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */,
 				844B5B6A1FEA224000C7C76A /* Keyboard */,
 				845A29251FC928C7007B49E3 /* Cell */,
+				84A37CB3201ECD610087C5AF /* Renaming */,
 			);
 			path = Sidebar;
 			sourceTree = "<group>";
@@ -954,7 +960,6 @@
 				842E45DC1ED8C54B000A8B52 /* Browser.swift */,
 				84702AB31FA27AE8006B8943 /* Commands */,
 				842E45E11ED8C681000A8B52 /* MainWindow */,
-				84B7178A201E66580091657D /* ContextualMenus */,
 				84BBB12A20142A4700F054F5 /* Inspector */,
 				842E45E01ED8C587000A8B52 /* Preferences */,
 				849A97861ED9ECEF007D329B /* Article Styles */,
@@ -1007,6 +1012,15 @@
 				849C64771ED37A5D003D8FC0 /* Info.plist */,
 			);
 			path = EvergreenTests;
+			sourceTree = "<group>";
+		};
+		84A37CB3201ECD610087C5AF /* Renaming */ = {
+			isa = PBXGroup;
+			children = (
+				84A37CB9201ECE590087C5AF /* RenameSheet.xib */,
+				84A37CB4201ECD610087C5AF /* RenameWindowController.swift */,
+			);
+			path = Renaming;
 			sourceTree = "<group>";
 		};
 		84A6B6921FB8D43C006754AC /* Dinosaurs */ = {
@@ -1090,8 +1104,7 @@
 			children = (
 				84B7178B201E66580091657D /* MainWindowController+ContextualMenus.swift */,
 			);
-			name = ContextualMenus;
-			path = Evergreen/ContextualMenus;
+			path = ContextualMenus;
 			sourceTree = "<group>";
 		};
 		84BB4B621F1174D400858766 /* Products */ = {
@@ -1560,6 +1573,7 @@
 				849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */,
 				849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */,
 				849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */,
+				84A37CBB201ECE590087C5AF /* RenameSheet.xib in Resources */,
 				84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */,
 				D5D1751220020B980047B29D /* Evergreen.sdef in Resources */,
 			);
@@ -1632,6 +1646,7 @@
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,
 				84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */,
 				849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */,
+				84A37CB5201ECD610087C5AF /* RenameWindowController.swift in Sources */,
 				84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */,
 				849A97891ED9ECEF007D329B /* ArticleStyle.swift in Sources */,
 				84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */,
@@ -1823,6 +1838,14 @@
 			);
 			name = Main.storyboard;
 			path = Evergreen;
+			sourceTree = "<group>";
+		};
+		84A37CB9201ECE590087C5AF /* RenameSheet.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				84A37CBA201ECE590087C5AF /* Base */,
+			);
+			name = RenameSheet.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
