@@ -6,7 +6,7 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+@import AppKit;
 
 //! Project version number for DB5.
 FOUNDATION_EXPORT double DB5VersionNumber;

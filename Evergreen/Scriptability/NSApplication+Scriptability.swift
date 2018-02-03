@@ -6,7 +6,7 @@
 //  Copyright © 2018 Olof Hellman. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 import Account
 import Data
 

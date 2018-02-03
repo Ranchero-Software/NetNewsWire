@@ -6,7 +6,7 @@
 //  Copyright © 2018 Ranchero Software. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 
 // Unlike UndoableCommand commands, you instantiate one of each of these and reuse them.
 

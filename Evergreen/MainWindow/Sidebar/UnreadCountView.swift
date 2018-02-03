@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Cocoa
+import AppKit
 
 private let padding = appDelegate.currentTheme.edgeInsets(forKey: "MainWindow.SourceList.unreadCount.padding")
 private let cornerRadius = appDelegate.currentTheme.float(forKey: "MainWindow.SourceList.unreadCount.cornerRadius")

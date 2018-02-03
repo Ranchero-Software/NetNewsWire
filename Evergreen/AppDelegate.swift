@@ -6,7 +6,7 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 import DB5
 import Data
 import RSTextDrawing

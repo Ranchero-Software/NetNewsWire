@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 import RSTree
 import RSCore
 

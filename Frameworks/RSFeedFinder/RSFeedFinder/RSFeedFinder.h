@@ -6,7 +6,7 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <AppKit/AppKit.h>
 
 //! Project version number for RSFeedFinder.
 FOUNDATION_EXPORT double RSFeedFinderVersionNumber;

@@ -6,7 +6,7 @@
 //  Copyright © 2018 Ranchero Software, LLC. All rights reserved.
 //
 
-@import Cocoa;
+@import AppKit;
 
 // This is for sending articles to MarsEdit and other apps that implement the send-to-blog-editor Apple events API:
 // http://ranchero.com/netnewswire/developers/externalinterface

@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 
 public class LogWindowController: NSWindowController {
 

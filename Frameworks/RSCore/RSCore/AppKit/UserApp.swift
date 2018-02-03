@@ -6,7 +6,7 @@
 //  Copyright © 2018 Ranchero Software, LLC. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 
 // Represents an app (the type of app mostly found in /Applications.)
 // The app may or may not be running. It may or may not exist.

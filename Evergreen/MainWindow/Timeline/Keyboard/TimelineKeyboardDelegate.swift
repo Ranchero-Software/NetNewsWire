@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 import RSCore
 
 // Doesn’t have any shortcuts of its own — they’re all in MainWindowKeyboardHandler.

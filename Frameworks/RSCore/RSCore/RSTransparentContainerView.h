@@ -6,7 +6,7 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-@import Cocoa;
+@import AppKit;
 
 /*This view has one subview, which it resizes to fit the bounds of this view.*/
 
