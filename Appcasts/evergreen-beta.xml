@@ -6,6 +6,28 @@
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
 
+		<item>
+          <title>Evergreen 1.0d35</title>
+            <description><![CDATA[
+            
+            <h4>Sidebar Gear Menu</h4>
+            <p>You can rename, mark as read, and copy URLs.</p>
+            <p>(Delete isn’t there yet, but it’s planned for 1.0.)</p>
+            
+            <h4>Misc.</h4>
+            <p>You can sort the timeline by newest on top or oldest on top. See the View > Sort By menu.</p>
+            <p>Share menu now supports EagleFiler Impot and Add to Reading List. (Thanks to a contribution by Michael Tsai.)</p>
+            <p>Go > Today, Unread, Starred commands work, including keyboard shortcuts. (Nothing appears yet, though. That’s a separate bug.)</p>
+            <p>Fixed a bug where the add-feed command wouldn’t disable when a sheet was already displaying.</p>
+            <p>Removed Debug menu when running a Release build.</p>
+            <p>Punted multiple window support till after 1.0.</p>
+
+    						]]></description>
+            <pubDate>Sun, 04 Feb 2018 12:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d35.zip" sparkle:version="920" sparkle:shortVersionString="1.0d35" length="7331028" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
 			<item>
           <title>Evergreen 1.0d34</title>
             <description><![CDATA[
