@@ -140,7 +140,7 @@ private extension SidebarViewController {
 		menu.addItem(NSMenuItem.separator())
 
 		menu.addItem(renameMenuItem(feed))
-		menu.addItem(deleteMenuItem([feed]))
+//		menu.addItem(deleteMenuItem([feed]))
 
 		return menu
 	}
@@ -155,7 +155,7 @@ private extension SidebarViewController {
 		}
 
 		menu.addItem(renameMenuItem(folder))
-		menu.addItem(deleteMenuItem([folder]))
+//		menu.addItem(deleteMenuItem([folder]))
 
 		return menu.numberOfItems > 0 ? menu : nil
 	}
@@ -170,10 +170,10 @@ private extension SidebarViewController {
 
 		if anyObjectInArrayHasNonZeroUnreadCount(objects) {
 			menu.addItem(markAllReadMenuItem(objects))
-			menu.addItem(NSMenuItem.separator())
+//			menu.addItem(NSMenuItem.separator())
 		}
 
-		menu.addItem(deleteMenuItem(objects))
+//		menu.addItem(deleteMenuItem(objects))
 
 		return menu.numberOfItems > 0 ? menu : nil
 	}
