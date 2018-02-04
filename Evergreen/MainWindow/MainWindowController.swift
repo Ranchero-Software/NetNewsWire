@@ -177,7 +177,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
         appDelegate.showAddFolderSheetOnWindow(window!)
     }
-    
+
+	@IBAction func showAddFeedWindow(_ sender: Any) {
+
+		appDelegate.showAddFeedSheetOnWindow(window!, urlString: nil, name: nil)
+	}
+
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		
 		if let link = currentLink {

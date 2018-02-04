@@ -16,7 +16,7 @@ extension MainWindowController {
 	func menu(for objects: [Any]?) -> NSMenu? {
 
 		guard let objects = objects, objects.count > 0 else {
-			return nil
+			return menuForNoSelection()
 		}
 
 		if objects.count == 1 {
@@ -55,6 +55,7 @@ extension MainWindowController {
 
 	@objc func markObjectsReadFromContextualMenu(_ sender: Any?) {
 
+
 	}
 
 	@objc func deleteFromContextualMenu(_ sender: Any?) {
@@ -91,6 +92,16 @@ extension MainWindowController: RenameWindowControllerDelegate {
 // MARK: Build Contextual Menus
 
 private extension MainWindowController {
+
+	func menuForNoSelection() -> NSMenu {
+
+		let menu = NSMenu(title: "")
+
+		menu.addItem(withTitle: NSLocalizedString("New Feed", comment: "Command"), action: #selector(showAddFeedWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("New Folder", comment: "Command"), action: #selector(showAddFolderWindow(_:)), keyEquivalent: "")
+
+		return menu
+	}
 
 	func menuForFeed(_ feed: Feed) -> NSMenu? {
 
