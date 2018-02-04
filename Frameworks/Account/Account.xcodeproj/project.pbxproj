@@ -28,6 +28,7 @@
 		84C3654A1F899F3B001EC85C /* CombinedRefreshProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */; };
 		84C8B3F41F89DE430053CCA6 /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */; };
 		84CAD7161FDF2E22000F0755 /* FeedbinArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CAD7151FDF2E22000F0755 /* FeedbinArticle.swift */; };
+		84F73CF1202788D90000BCEF /* ArticleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F73CF0202788D80000BCEF /* ArticleFetcher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -128,6 +129,7 @@
 		84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombinedRefreshProgress.swift; sourceTree = "<group>"; };
 		84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtensions.swift; sourceTree = "<group>"; };
 		84CAD7151FDF2E22000F0755 /* FeedbinArticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinArticle.swift; sourceTree = "<group>"; };
+		84F73CF0202788D80000BCEF /* ArticleFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleFetcher.swift; sourceTree = "<group>"; };
 		D511EEB5202422BB00712EC3 /* Account_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_debug.xcconfig; sourceTree = "<group>"; };
 		D511EEB6202422BB00712EC3 /* Account_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_target.xcconfig; sourceTree = "<group>"; };
 		D511EEB7202422BB00712EC3 /* Account_project_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_release.xcconfig; sourceTree = "<group>"; };
@@ -237,6 +239,7 @@
 				84B99C9E1FAE8D3200ECDEDB /* ContainerPath.swift */,
 				84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */,
 				84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */,
+				84F73CF0202788D80000BCEF /* ArticleFetcher.swift */,
 				8419740D1F6DD25F006346C4 /* Container.swift */,
 				8419742B1F6DDE84006346C4 /* LocalAccount */,
 				84245C7D1FDDD2580074AFBB /* Feedbin */,
@@ -476,6 +479,7 @@
 				84C3654A1F899F3B001EC85C /* CombinedRefreshProgress.swift in Sources */,
 				8469F81C1F6DD15E0084783E /* Account.swift in Sources */,
 				846E77451F6EF9B900A165E2 /* Container.swift in Sources */,
+				84F73CF1202788D90000BCEF /* ArticleFetcher.swift in Sources */,
 				84245C7F1FDDD2580074AFBB /* FeedbinAccountDelegate.swift in Sources */,
 				841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */,
 				846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */,
