@@ -25,8 +25,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		return false
 	}
 
-	var renameWindowController: RenameWindowController?
-	
 	// MARK: NSWindowController
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey)

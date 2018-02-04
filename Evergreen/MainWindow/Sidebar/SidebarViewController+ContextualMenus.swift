@@ -1,5 +1,5 @@
 //
-//  MainWindowController+ContextualMenus.swift
+//  SidebarViewController+ContextualMenus.swift
 //  Evergreen
 //
 //  Created by Brent Simmons on 1/28/18.
@@ -11,7 +11,7 @@ import Data
 import Account
 import RSCore
 
-extension MainWindowController {
+extension SidebarViewController {
 
 	func menu(for objects: [Any]?) -> NSMenu? {
 
@@ -35,7 +35,7 @@ extension MainWindowController {
 
 // MARK: Contextual Menu Actions
 
-extension MainWindowController {
+extension SidebarViewController {
 
 	@objc func openHomePageFromContextualMenu(_ sender: Any?) {
 
@@ -64,7 +64,7 @@ extension MainWindowController {
 
 	@objc func renameFromContextualMenu(_ sender: Any?) {
 
-		guard let window = window, let menuItem = sender as? NSMenuItem, let object = menuItem.representedObject as? DisplayNameProvider, object is Feed || object is Folder else {
+		guard let window = view.window, let menuItem = sender as? NSMenuItem, let object = menuItem.representedObject as? DisplayNameProvider, object is Feed || object is Folder else {
 			return
 		}
 
@@ -76,7 +76,7 @@ extension MainWindowController {
 	}
 }
 
-extension MainWindowController: RenameWindowControllerDelegate {
+extension SidebarViewController: RenameWindowControllerDelegate {
 
 	func renameWindowController(_ windowController: RenameWindowController, didRenameObject object: Any, withNewName name: String) {
 
@@ -91,14 +91,14 @@ extension MainWindowController: RenameWindowControllerDelegate {
 
 // MARK: Build Contextual Menus
 
-private extension MainWindowController {
+private extension SidebarViewController {
 
 	func menuForNoSelection() -> NSMenu {
 
 		let menu = NSMenu(title: "")
 
-		menu.addItem(withTitle: NSLocalizedString("New Feed", comment: "Command"), action: #selector(showAddFeedWindow(_:)), keyEquivalent: "")
-		menu.addItem(withTitle: NSLocalizedString("New Folder", comment: "Command"), action: #selector(showAddFolderWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("New Feed", comment: "Command"), action: #selector(MainWindowController.showAddFeedWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("New Folder", comment: "Command"), action: #selector(MainWindowController.showAddFolderWindow(_:)), keyEquivalent: "")
 
 		return menu
 	}
