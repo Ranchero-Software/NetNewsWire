@@ -167,20 +167,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		84659B8920259341008DB8F8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84659B8020259341008DB8F8 /* Evergreen-iOS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84E3B15E2025877000E03C2F;
-			remoteInfo = "Evergreen-iOS";
-		};
-		84659B8B20259341008DB8F8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84659B8020259341008DB8F8 /* Evergreen-iOS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84E3B1742025877000E03C2F;
-			remoteInfo = "Evergreen-iOSTests";
-		};
 		846E77201F6EF5D100A165E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 846E77161F6EF5D000A165E2 /* Database.xcodeproj */;
@@ -515,7 +501,6 @@
 		845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarredFeedDelegate.swift; sourceTree = "<group>"; };
 		845EE7C01FC2488C00854A1F /* SmartFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeed.swift; sourceTree = "<group>"; };
 		845F52EC1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPasteboardWriter.swift; sourceTree = "<group>"; };
-		84659B8020259341008DB8F8 /* Evergreen-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Evergreen-iOS.xcodeproj"; path = "Evergreen-iOS/Evergreen-iOS.xcodeproj"; sourceTree = "<group>"; };
 		846E77161F6EF5D000A165E2 /* Database.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Database.xcodeproj; path = Frameworks/Database/Database.xcodeproj; sourceTree = "<group>"; };
 		846E77301F6EF5D600A165E2 /* Account.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Account.xcodeproj; path = Frameworks/Account/Account.xcodeproj; sourceTree = "<group>"; };
 		84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkReadOrUnreadCommand.swift; sourceTree = "<group>"; };
@@ -763,15 +748,6 @@
 			path = Cell;
 			sourceTree = "<group>";
 		};
-		84659B8120259341008DB8F8 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				84659B8A20259341008DB8F8 /* Evergreen-iOS.app */,
-				84659B8C20259341008DB8F8 /* Evergreen-iOSTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		846E77171F6EF5D000A165E2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1005,7 +981,6 @@
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				D5907CDA2002F084005947E5 /* xcconfig */,
 				849C64611ED37A5D003D8FC0 /* Products */,
-				84659B8020259341008DB8F8 /* Evergreen-iOS.xcodeproj */,
 				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
 				846E77161F6EF5D000A165E2 /* Database.xcodeproj */,
 				84BB4B611F1174D400858766 /* Data.xcodeproj */,
@@ -1362,10 +1337,6 @@
 					ProjectRef = 84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */;
 				},
 				{
-					ProductGroup = 84659B8120259341008DB8F8 /* Products */;
-					ProjectRef = 84659B8020259341008DB8F8 /* Evergreen-iOS.xcodeproj */;
-				},
-				{
 					ProductGroup = 84B06FA31ED37DAC00F0B54B /* Products */;
 					ProjectRef = 84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */;
 				},
@@ -1403,20 +1374,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		84659B8A20259341008DB8F8 /* Evergreen-iOS.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "Evergreen-iOS.app";
-			remoteRef = 84659B8920259341008DB8F8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84659B8C20259341008DB8F8 /* Evergreen-iOSTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Evergreen-iOSTests.xctest";
-			remoteRef = 84659B8B20259341008DB8F8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		846E77211F6EF5D100A165E2 /* Database.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
