@@ -80,7 +80,7 @@ extension MainWindowController {
 			self.renameWindowController = nil
 		}
 
-		renameWindowController!.runSheetOnWindow(window)
+		renameWindowController?.runSheetOnWindow(window)
 	}
 }
 
