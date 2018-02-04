@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Users/brent/Projects/Evergreen/Evergreen-iOS.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Evergreen.xcodeproj">
    </FileRef>
 </Workspace>
