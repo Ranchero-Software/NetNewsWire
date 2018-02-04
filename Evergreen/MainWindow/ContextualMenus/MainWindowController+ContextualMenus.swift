@@ -67,20 +67,24 @@ extension MainWindowController {
 			return
 		}
 
-		renameWindowController = RenameWindowController(originalTitle: object.nameForDisplay) { (newTitle) in
-			guard let newTitle = newTitle else {
-				return
-			}
-			if let feed = object as? Feed {
-				feed.editedName = newTitle
-			}
-			else if let folder = object as? Folder {
-				folder.name = newTitle
-			}
-			self.renameWindowController = nil
+		renameWindowController = RenameWindowController(originalTitle: object.nameForDisplay, representedObject: object, delegate: self)
+		guard let renameSheet = renameWindowController?.window else {
+			return
 		}
+		window.beginSheet(renameSheet)
+	}
+}
 
-		renameWindowController?.runSheetOnWindow(window)
+extension MainWindowController: RenameWindowControllerDelegate {
+
+	func renameWindowController(_ windowController: RenameWindowController, didRenameObject object: Any, withNewName name: String) {
+
+		if let feed = object as? Feed {
+			feed.editedName = name
+		}
+		else if let folder = object as? Folder {
+			folder.name = name
+		}
 	}
 }
 
