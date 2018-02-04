@@ -10,6 +10,7 @@
                 <outlet property="newTitleTextField" destination="OYZ-cW-H2x" id="QBo-lj-NGi"/>
                 <outlet property="renameButton" destination="RI3-Rg-htY" id="PMM-jS-psV"/>
                 <outlet property="renamePrompt" destination="Sh3-Yd-lqa" id="wd5-4I-pYl"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="eYQ-Qy-Z2g"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -50,7 +51,13 @@
                         <buttonCell key="cell" type="push" title="Rename" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gcS-uM-zjx">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
                         </buttonCell>
+                        <connections>
+                            <action selector="rename:" target="-1" id="ba5-O4-rNJ"/>
+                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vuB-kU-1EJ">
                         <rect key="frame" x="232" y="13" width="89" height="32"/>
@@ -61,6 +68,9 @@
 Gw
 </string>
                         </buttonCell>
+                        <connections>
+                            <action selector="cancel:" target="-1" id="4sS-Ja-Gev"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>

@@ -63,6 +63,24 @@ extension MainWindowController {
 
 	@objc func renameFromContextualMenu(_ sender: Any?) {
 
+		guard let window = window, let menuItem = sender as? NSMenuItem, let object = menuItem.representedObject as? DisplayNameProvider, object is Feed || object is Folder else {
+			return
+		}
+
+		renameWindowController = RenameWindowController(originalTitle: object.nameForDisplay) { (newTitle) in
+			guard let newTitle = newTitle else {
+				return
+			}
+			if let feed = object as? Feed {
+				feed.editedName = newTitle
+			}
+			else if let folder = object as? Folder {
+				folder.name = newTitle
+			}
+			self.renameWindowController = nil
+		}
+
+		renameWindowController!.runSheetOnWindow(window)
 	}
 }
 
