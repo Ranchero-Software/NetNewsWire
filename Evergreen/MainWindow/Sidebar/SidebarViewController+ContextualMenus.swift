@@ -55,7 +55,19 @@ extension SidebarViewController {
 
 	@objc func markObjectsReadFromContextualMenu(_ sender: Any?) {
 
+		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [Any] else {
+			return
+		}
+		
+		let articles = unreadArticles(for: objects)
+		if articles.isEmpty {
+			return
+		}
 
+		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
 	}
 
 	@objc func deleteFromContextualMenu(_ sender: Any?) {
@@ -214,6 +226,17 @@ private extension SidebarViewController {
 		item.representedObject = representedObject
 		item.target = self
 		return item
+	}
+
+	func unreadArticles(for objects: [Any]) -> Set<Article> {
+
+		var articles = Set<Article>()
+		for object in objects {
+			if let articleFetcher = object as? ArticleFetcher {
+				articles.formUnion(articleFetcher.fetchUnreadArticles())
+			}
+		}
+		return articles
 	}
 }
 
