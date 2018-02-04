@@ -26,7 +26,7 @@ import Data
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		return [.string, .URL, FeedPasteboardWriter.feedUTIType, FeedPasteboardWriter.feedUTIInternalType]
+		return [FeedPasteboardWriter.feedUTIType, .URL, .string, FeedPasteboardWriter.feedUTIInternalType]
 	}
 
 	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
