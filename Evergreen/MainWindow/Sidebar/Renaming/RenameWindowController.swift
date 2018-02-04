@@ -16,9 +16,32 @@ final class RenameWindowController: NSWindowController {
 	
 	private var originalTitle: String!
 
-	public convenience init(originalTitle: String) {
+	convenience init(originalTitle: String) {
 
 		self.init(windowNibName: NSNib.Name(rawValue: "RenameSheet"))
 		self.originalTitle = originalTitle
+	}
+
+	override func windowDidLoad() {
+
+		newTitleTextField.stringValue = originalTitle
+		updateUI()
+	}
+}
+
+extension RenameWindowController: NSTextFieldDelegate {
+
+	override func controlTextDidChange(_ obj: Notification) {
+
+		updateUI()
+	}
+}
+
+private extension RenameWindowController {
+
+	func updateUI() {
+
+		let newTitle = newTitleTextField.stringValue
+		renameButton.isEnabled = !newTitle.isEmpty && newTitle != originalTitle
 	}
 }
