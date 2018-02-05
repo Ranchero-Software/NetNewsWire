@@ -405,20 +405,6 @@
 			remoteGlobalIDString = 8439D9FA1C8937C800E5E4B4;
 			remoteInfo = RSTextDrawing;
 		};
-		84B2342A202689F5007C5900 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B23425202689F5007C5900 /* Evergreen-iOS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84EBBBC62026866000DEA7DD;
-			remoteInfo = "Evergreen-iOS";
-		};
-		84B2342C202689F5007C5900 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B23425202689F5007C5900 /* Evergreen-iOS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84EBBBDC2026866100DEA7DD;
-			remoteInfo = "Evergreen-iOSTests";
-		};
 		84BB4B671F1174D400858766 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 84BB4B611F1174D400858766 /* Data.xcodeproj */;
@@ -583,7 +569,6 @@
 		84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSFeedFinder.xcodeproj; path = Frameworks/RSFeedFinder/RSFeedFinder.xcodeproj; sourceTree = "<group>"; };
 		84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTree.xcodeproj; path = Frameworks/RSTree/RSTree.xcodeproj; sourceTree = "<group>"; };
 		84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTextDrawing.xcodeproj; path = Frameworks/RSTextDrawing/RSTextDrawing.xcodeproj; sourceTree = "<group>"; };
-		84B23425202689F5007C5900 /* Evergreen-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "Evergreen-iOS.xcodeproj"; sourceTree = "<group>"; };
 		84B7178B201E66580091657D /* SidebarViewController+ContextualMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SidebarViewController+ContextualMenus.swift"; sourceTree = "<group>"; };
 		84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFolder.swift; sourceTree = "<group>"; };
@@ -996,7 +981,6 @@
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				D5907CDA2002F084005947E5 /* xcconfig */,
 				849C64611ED37A5D003D8FC0 /* Products */,
-				84B23425202689F5007C5900 /* Evergreen-iOS.xcodeproj */,
 				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
 				846E77161F6EF5D000A165E2 /* Database.xcodeproj */,
 				84BB4B611F1174D400858766 /* Data.xcodeproj */,
@@ -1111,15 +1095,6 @@
 			children = (
 				84B070071ED3821900F0B54B /* RSTextDrawing.framework */,
 				84B070091ED3821900F0B54B /* RSTextDrawingTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		84B23426202689F5007C5900 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				84B2342B202689F5007C5900 /* Evergreen.app */,
-				84B2342D202689F5007C5900 /* Evergreen-iOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1354,10 +1329,6 @@
 					ProjectRef = 84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */;
 				},
 				{
-					ProductGroup = 84B23426202689F5007C5900 /* Products */;
-					ProjectRef = 84B23425202689F5007C5900 /* Evergreen-iOS.xcodeproj */;
-				},
-				{
 					ProductGroup = 84B06FA31ED37DAC00F0B54B /* Products */;
 					ProjectRef = 84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */;
 				},
@@ -1554,20 +1525,6 @@
 			fileType = wrapper.cfbundle;
 			path = RSTextDrawingTests.xctest;
 			remoteRef = 84B070081ED3821900F0B54B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B2342B202689F5007C5900 /* Evergreen.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Evergreen.app;
-			remoteRef = 84B2342A202689F5007C5900 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B2342D202689F5007C5900 /* Evergreen-iOSTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Evergreen-iOSTests.xctest";
-			remoteRef = 84B2342C202689F5007C5900 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		84BB4B681F1174D400858766 /* Data.framework */ = {
