@@ -51,6 +51,7 @@
 		846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */; };
 		8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* FeedInspectorViewController.swift */; };
+		847FA121202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847FA120202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
 		849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
 		849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97511ED9EAC0007D329B /* AddFeedController.swift */; };
@@ -542,6 +543,7 @@
 		84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkReadOrUnreadCommand.swift; sourceTree = "<group>"; };
 		8472058020142E8900AD578B /* FeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedInspectorViewController.swift; sourceTree = "<group>"; };
 		847752FE2008879500D93690 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
+		847FA120202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarContextualMenuDelegate.swift; sourceTree = "<group>"; };
 		848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconDownloader.swift; sourceTree = "<group>"; };
 		849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderWindowController.swift; sourceTree = "<group>"; };
 		849A97511ED9EAC0007D329B /* AddFeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedController.swift; path = AddFeed/AddFeedController.swift; sourceTree = "<group>"; };
@@ -920,6 +922,7 @@
 				845F52EC1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift */,
 				849A97821ED9EC63007D329B /* SidebarStatusBarView.swift */,
 				84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */,
+				847FA120202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift */,
 				844B5B6A1FEA224000C7C76A /* Keyboard */,
 				845A29251FC928C7007B49E3 /* Cell */,
 				84A37CB3201ECD610087C5AF /* Renaming */,
@@ -1826,6 +1829,7 @@
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,
 				D5907D972004B7EB005947E5 /* Account+Scriptability.swift in Sources */,
 				841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */,
+				847FA121202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift in Sources */,
 				842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */,
 				844B5B5B1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift in Sources */,
 				84DAEE321F870B390058304B /* DockBadge.swift in Sources */,

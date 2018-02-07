@@ -16,6 +16,7 @@ import RSCore
     
 	@IBOutlet var outlineView: SidebarOutlineView!
 	@IBOutlet var gearMenuDelegate: SidebarGearMenuDelegate!
+	@IBOutlet var contextualMenuDelegate: SidebarContextualMenuDelegate!
 	
 	let treeControllerDelegate = SidebarTreeControllerDelegate()
 	lazy var treeController: TreeController = {
