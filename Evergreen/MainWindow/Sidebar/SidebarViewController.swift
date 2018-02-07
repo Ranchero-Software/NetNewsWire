@@ -25,6 +25,8 @@ import RSCore
 	private var animatingChanges = false
 	private var sidebarCellAppearance: SidebarCellAppearance!
 
+	var renameWindowController: RenameWindowController?
+
 	var selectedObjects: [AnyObject] {
 		return selectedNodes.representedObjects()
 	}
@@ -195,10 +197,7 @@ import RSCore
 
 	func contextualMenuForSelectedObjects() -> NSMenu? {
 
-		guard let mainWindowController = view.window?.windowController as? MainWindowController else {
-			return nil
-		}
-		return mainWindowController.menu(for: selectedObjects)
+		return menu(for: selectedObjects)
 	}
 
 	// MARK: NSOutlineViewDelegate

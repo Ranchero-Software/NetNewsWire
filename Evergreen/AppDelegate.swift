@@ -101,6 +101,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
+	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?) {
+
+		addFeedController = AddFeedController(hostWindow: window)
+		addFeedController?.showAddFeedSheet(urlString, name)
+	}
+
 	// MARK: - NSApplicationDelegate
 
 	func applicationDidFinishLaunching(_ note: Notification) {
@@ -249,14 +255,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
+		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
+
 		if item.action == #selector(refreshAll(_:)) {
 			return !AccountManager.shared.refreshInProgress
 		}
 		if item.action == #selector(addAppNews(_:)) {
-			return !AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString)
+			return !isDisplayingSheet && !AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString)
 		}
 		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
 			return mainWindowController?.isOpen ?? false
+		}
+		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
+			return !isDisplayingSheet
 		}
 		return true
 	}
@@ -266,9 +277,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	func addFeed(_ urlString: String?, _ name: String? = nil) {
 
 		createAndShowMainWindow()
+		if mainWindowController!.isDisplayingSheet {
+			return
+		}
 
-		addFeedController = AddFeedController(hostWindow: mainWindowController!.window!)
-		addFeedController?.showAddFeedSheet(urlString, name)
+		showAddFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name)
 	}
 
 	// MARK: - Actions

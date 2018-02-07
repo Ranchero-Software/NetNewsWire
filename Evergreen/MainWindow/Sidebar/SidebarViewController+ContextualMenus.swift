@@ -1,5 +1,5 @@
 //
-//  MainWindowController+ContextualMenus.swift
+//  SidebarViewController+ContextualMenus.swift
 //  Evergreen
 //
 //  Created by Brent Simmons on 1/28/18.
@@ -11,12 +11,12 @@ import Data
 import Account
 import RSCore
 
-extension MainWindowController {
+extension SidebarViewController {
 
 	func menu(for objects: [Any]?) -> NSMenu? {
 
 		guard let objects = objects, objects.count > 0 else {
-			return nil
+			return menuForNoSelection()
 		}
 
 		if objects.count == 1 {
@@ -35,7 +35,7 @@ extension MainWindowController {
 
 // MARK: Contextual Menu Actions
 
-extension MainWindowController {
+extension SidebarViewController {
 
 	@objc func openHomePageFromContextualMenu(_ sender: Any?) {
 
@@ -55,6 +55,19 @@ extension MainWindowController {
 
 	@objc func markObjectsReadFromContextualMenu(_ sender: Any?) {
 
+		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [Any] else {
+			return
+		}
+		
+		let articles = unreadArticles(for: objects)
+		if articles.isEmpty {
+			return
+		}
+
+		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
 	}
 
 	@objc func deleteFromContextualMenu(_ sender: Any?) {
@@ -63,12 +76,44 @@ extension MainWindowController {
 
 	@objc func renameFromContextualMenu(_ sender: Any?) {
 
+		guard let window = view.window, let menuItem = sender as? NSMenuItem, let object = menuItem.representedObject as? DisplayNameProvider, object is Feed || object is Folder else {
+			return
+		}
+
+		renameWindowController = RenameWindowController(originalTitle: object.nameForDisplay, representedObject: object, delegate: self)
+		guard let renameSheet = renameWindowController?.window else {
+			return
+		}
+		window.beginSheet(renameSheet)
+	}
+}
+
+extension SidebarViewController: RenameWindowControllerDelegate {
+
+	func renameWindowController(_ windowController: RenameWindowController, didRenameObject object: Any, withNewName name: String) {
+
+		if let feed = object as? Feed {
+			feed.editedName = name
+		}
+		else if let folder = object as? Folder {
+			folder.name = name
+		}
 	}
 }
 
 // MARK: Build Contextual Menus
 
-private extension MainWindowController {
+private extension SidebarViewController {
+
+	func menuForNoSelection() -> NSMenu {
+
+		let menu = NSMenu(title: "")
+
+		menu.addItem(withTitle: NSLocalizedString("New Feed", comment: "Command"), action: #selector(MainWindowController.showAddFeedWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("New Folder", comment: "Command"), action: #selector(MainWindowController.showAddFolderWindow(_:)), keyEquivalent: "")
+
+		return menu
+	}
 
 	func menuForFeed(_ feed: Feed) -> NSMenu? {
 
@@ -95,7 +140,7 @@ private extension MainWindowController {
 		menu.addItem(NSMenuItem.separator())
 
 		menu.addItem(renameMenuItem(feed))
-		menu.addItem(deleteMenuItem([feed]))
+//		menu.addItem(deleteMenuItem([feed]))
 
 		return menu
 	}
@@ -110,7 +155,7 @@ private extension MainWindowController {
 		}
 
 		menu.addItem(renameMenuItem(folder))
-		menu.addItem(deleteMenuItem([folder]))
+//		menu.addItem(deleteMenuItem([folder]))
 
 		return menu.numberOfItems > 0 ? menu : nil
 	}
@@ -125,10 +170,10 @@ private extension MainWindowController {
 
 		if anyObjectInArrayHasNonZeroUnreadCount(objects) {
 			menu.addItem(markAllReadMenuItem(objects))
-			menu.addItem(NSMenuItem.separator())
+//			menu.addItem(NSMenuItem.separator())
 		}
 
-		menu.addItem(deleteMenuItem(objects))
+//		menu.addItem(deleteMenuItem(objects))
 
 		return menu.numberOfItems > 0 ? menu : nil
 	}
@@ -181,6 +226,17 @@ private extension MainWindowController {
 		item.representedObject = representedObject
 		item.target = self
 		return item
+	}
+
+	func unreadArticles(for objects: [Any]) -> Set<Article> {
+
+		var articles = Set<Article>()
+		for object in objects {
+			if let articleFetcher = object as? ArticleFetcher {
+				articles.formUnion(articleFetcher.fetchUnreadArticles())
+			}
+		}
+		return articles
 	}
 }
 

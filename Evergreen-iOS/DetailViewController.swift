@@ -2,8 +2,8 @@
 //  DetailViewController.swift
 //  Evergreen-iOS
 //
-//  Created by Brent Simmons on 2/2/18.
-//  Copyright © 2018 Ranchero Software, LLC. All rights reserved.
+//  Created by Brent Simmons on 2/5/18.
+//  Copyright © 2018 Ranchero Software. All rights reserved.
 //
 
 import UIKit

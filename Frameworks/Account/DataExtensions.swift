@@ -23,15 +23,6 @@ public extension Feed {
 		}
 	}
 	
-	public func fetchArticles() -> Set<Article> {
-	
-		guard let account = account else {
-			assertionFailure("Expected feed.account.")
-			return Set<Article>()
-		}
-		return account.fetchArticles(for: self)
-	}
-
 	public func takeSettings(from parsedFeed: ParsedFeed) {
 
 		var didChangeAtLeastOneSetting = false

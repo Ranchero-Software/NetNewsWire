@@ -18,6 +18,13 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		return isWindowLoaded && window!.isVisible
 	}
 
+	var isDisplayingSheet: Bool {
+		if let _ = window?.attachedSheet {
+			return true
+		}
+		return false
+	}
+
 	// MARK: NSWindowController
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey)
@@ -168,7 +175,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
         appDelegate.showAddFolderSheetOnWindow(window!)
     }
-    
+
+	@IBAction func showAddFeedWindow(_ sender: Any) {
+
+		appDelegate.showAddFeedSheetOnWindow(window!, urlString: nil, name: nil)
+	}
+
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		
 		if let link = currentLink {

@@ -333,7 +333,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		validateUnreadCount(feed, articles)
 		return articles
 	}
-	
+
+	public func fetchUnreadArticles(for feed: Feed) -> Set<Article> {
+
+		let articles = database.fetchUnreadArticles(for: Set([feed]))
+		validateUnreadCount(feed, articles)
+		return articles
+	}
+
 	public func fetchArticles(folder: Folder) -> Set<Article> {
 
 		let feeds = folder.flattenedFeeds()

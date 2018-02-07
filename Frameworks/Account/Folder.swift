@@ -26,16 +26,6 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 	static var incrementingID = 0
 	public let hashValue: Int
 
-	// MARK: - Fetching Articles
-	
-	public func fetchArticles() -> Set<Article> {
-
-		guard let account = account else {
-			return Set<Article>()
-		}
-		return account.fetchArticles(folder: self)
-	}
-	
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {
