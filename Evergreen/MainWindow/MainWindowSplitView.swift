@@ -6,7 +6,7 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 
 class MainWindowSplitView: NSSplitView {
 

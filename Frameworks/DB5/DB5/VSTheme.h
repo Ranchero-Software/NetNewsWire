@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Q Branch LLC. All rights reserved.
 //
 
-@import Cocoa;
+@import AppKit;
 
 NS_ASSUME_NONNULL_BEGIN
 

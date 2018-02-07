@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <AppKit/AppKit.h>
 #import <XCTest/XCTest.h>
 
 @interface RSCoreTests : XCTestCase

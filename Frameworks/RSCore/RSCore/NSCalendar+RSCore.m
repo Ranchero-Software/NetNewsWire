@@ -11,7 +11,7 @@
 #if TARGET_OS_IPHONE
 @import UIKit;
 #else
-@import Cocoa;
+@import AppKit;
 #endif
 
 @implementation NSCalendar (RSCore)

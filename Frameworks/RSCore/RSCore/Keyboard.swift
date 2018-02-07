@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 
 // To get, for instance, the keyboard integer value for "\r": "\r".keyboardIntegerValue (returns 13)
 

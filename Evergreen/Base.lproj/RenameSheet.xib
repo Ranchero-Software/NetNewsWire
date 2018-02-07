@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14087.3" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14087.3"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="RenameWindowController" customModule="Evergreen" customModuleProvider="target">
+            <connections>
+                <outlet property="newTitleTextField" destination="OYZ-cW-H2x" id="QBo-lj-NGi"/>
+                <outlet property="renameButton" destination="RI3-Rg-htY" id="PMM-jS-psV"/>
+                <outlet property="renamePrompt" destination="Sh3-Yd-lqa" id="wd5-4I-pYl"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Rename" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="424" height="116"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="424" height="116"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Sh3-Yd-lqa">
+                        <rect key="frame" x="18" y="79" width="388" height="17"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="&lt;&lt;Rename prompt&gt;&gt;" id="7Os-lV-Jer">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OYZ-cW-H2x">
+                        <rect key="frame" x="20" y="49" width="384" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="384" id="l0l-MT-cWi"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="hYk-R8-qWE">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RI3-Rg-htY">
+                        <rect key="frame" x="321" y="13" width="89" height="32"/>
+                        <buttonCell key="cell" type="push" title="Rename" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gcS-uM-zjx">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vuB-kU-1EJ">
+                        <rect key="frame" x="232" y="13" width="89" height="32"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oe4-cJ-2V8">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="RI3-Rg-htY" secondAttribute="trailing" constant="20" symbolic="YES" id="0z1-e4-z5o"/>
+                    <constraint firstItem="RI3-Rg-htY" firstAttribute="leading" secondItem="vuB-kU-1EJ" secondAttribute="trailing" constant="12" symbolic="YES" id="1wa-oD-ZUk"/>
+                    <constraint firstItem="RI3-Rg-htY" firstAttribute="baseline" secondItem="vuB-kU-1EJ" secondAttribute="baseline" id="7aJ-9f-ZiB"/>
+                    <constraint firstItem="Sh3-Yd-lqa" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="7iI-p5-afU"/>
+                    <constraint firstItem="OYZ-cW-H2x" firstAttribute="top" secondItem="Sh3-Yd-lqa" secondAttribute="bottom" constant="8" symbolic="YES" id="7mb-Wa-D2t"/>
+                    <constraint firstItem="RI3-Rg-htY" firstAttribute="width" secondItem="vuB-kU-1EJ" secondAttribute="width" id="7wx-8m-oci"/>
+                    <constraint firstAttribute="bottom" secondItem="RI3-Rg-htY" secondAttribute="bottom" constant="20" symbolic="YES" id="B87-a6-FfJ"/>
+                    <constraint firstItem="vuB-kU-1EJ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="La1-cg-bkz"/>
+                    <constraint firstItem="Sh3-Yd-lqa" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="Nea-H1-95X"/>
+                    <constraint firstItem="OYZ-cW-H2x" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="UZp-Dj-pmE"/>
+                    <constraint firstAttribute="trailing" secondItem="OYZ-cW-H2x" secondAttribute="trailing" constant="20" symbolic="YES" id="m0F-xh-d9a"/>
+                    <constraint firstItem="RI3-Rg-htY" firstAttribute="top" secondItem="OYZ-cW-H2x" secondAttribute="bottom" constant="8" symbolic="YES" id="m3G-Ks-EL3"/>
+                    <constraint firstAttribute="trailing" secondItem="Sh3-Yd-lqa" secondAttribute="trailing" constant="20" symbolic="YES" id="xsO-co-H9V"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="90" y="-409"/>
+        </window>
+    </objects>
+</document>

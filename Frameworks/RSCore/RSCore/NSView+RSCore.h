@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-@import Cocoa;
+@import AppKit;
 
 
 @interface NSView (RSCore)
