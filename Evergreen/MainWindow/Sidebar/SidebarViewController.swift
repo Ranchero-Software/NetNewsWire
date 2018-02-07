@@ -37,7 +37,6 @@ import RSCore
 
 		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
 
-		outlineView.sidebarViewController = self
 		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)
 		outlineView.setDraggingSourceOperationMask(.copy, forLocal: false)
 
