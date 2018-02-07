@@ -200,6 +200,19 @@ import RSCore
 		return menu(for: selectedObjects)
 	}
 
+	func contextualMenuForClickedRows() -> NSMenu? {
+
+		// TODO: If the clickedRow is part of the selected rows, then do a contextual menu for all the selected rows.
+
+		let row = outlineView.clickedRow
+		guard row != -1, let node = nodeForRow(row) else {
+			return nil
+		}
+
+		let object = node.representedObject
+		return menu(for: [object])
+	}
+
 	// MARK: NSOutlineViewDelegate
     
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {

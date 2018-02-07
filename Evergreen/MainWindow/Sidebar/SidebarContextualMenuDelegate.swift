@@ -20,7 +20,7 @@ import AppKit
 
 		menu.removeAllItems()
 
-		guard let contextualMenu = sidebarViewController.contextualMenuForSelectedObjects() else {
+		guard let contextualMenu = sidebarViewController.contextualMenuForClickedRows() else {
 			return
 		}
 

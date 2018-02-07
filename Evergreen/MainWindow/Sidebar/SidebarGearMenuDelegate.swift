@@ -14,10 +14,6 @@ import AppKit
 
 	public func menuNeedsUpdate(_ menu: NSMenu) {
 
-		guard let sidebarViewController = sidebarViewController else {
-			return
-		}
-
 		// Save the first item, since it’s the gear icon itself.
 		guard let gearMenuItem = menu.item(at: 0) else {
 			assertionFailure("Expected sidebar gear menu to have at least one item.")
@@ -26,6 +22,9 @@ import AppKit
 		menu.removeAllItems()
 		menu.addItem(gearMenuItem)
 
+		guard let sidebarViewController = sidebarViewController else {
+			return
+		}
 		guard let contextualMenu = sidebarViewController.contextualMenuForSelectedObjects() else {
 			return
 		}
