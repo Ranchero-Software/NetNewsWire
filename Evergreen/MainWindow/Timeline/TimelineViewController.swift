@@ -147,7 +147,9 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: false, fontSize: fontSize)
 		cellAppearanceWithAvatar = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: true, fontSize: fontSize)
 		updateRowHeights()
-		tableView.reloadData()
+		performBlockAndRestoreSelection {
+			tableView.reloadData()
+		}
 	}
 
 	// MARK: - API
