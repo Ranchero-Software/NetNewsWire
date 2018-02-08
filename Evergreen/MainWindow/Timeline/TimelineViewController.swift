@@ -36,7 +36,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		didSet {
 			if showFeedNames != oldValue {
 				updateShowAvatars()
-				tableView.rowHeight = currentRowHeight
+				updateTableViewRowHeight()
 			}
 		}
 	}
@@ -416,6 +416,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 		rowHeightWithFeedName = calculateRowHeight(showingFeedNames: true)
 		rowHeightWithoutFeedName = calculateRowHeight(showingFeedNames: false)
+		updateTableViewRowHeight()
 	}
 }
 
@@ -587,6 +588,11 @@ private extension TimelineViewController {
 		}
 	}
 
+	func updateTableViewRowHeight() {
+
+		tableView.rowHeight = currentRowHeight
+	}
+
 	func updateShowAvatars() {
 
 		if showFeedNames {
@@ -617,17 +623,32 @@ private extension TimelineViewController {
 
 	func sortDirectionDidChange() {
 
-		let selectedArticleIDs = selectedArticles.articleIDs()
+		performBlockAndRestoreSelection {
+			let unsortedArticles = Set(articles)
+			updateArticles(with: unsortedArticles)
+		}
+	}
 
-		let unsortedArticles = Set(articles)
-		updateArticles(with: unsortedArticles)
+	func selectedArticleIDs() -> [String] {
 
-		selectArticles(selectedArticleIDs)
+		return selectedArticles.articleIDs()
+	}
+
+	func restoreSelection(_ articleIDs: [String]) {
+
+		selectArticles(articleIDs)
 		if tableView.selectedRow != -1 {
 			tableView.scrollRowToVisible(tableView.selectedRow)
 		}
 	}
 
+	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
+
+		let savedSelection = selectedArticleIDs()
+		block()
+		restoreSelection(savedSelection)
+	}
+	
 	// MARK: Fetching Articles
 
 	func fetchArticles() {
@@ -672,15 +693,13 @@ private extension TimelineViewController {
 			return
 		}
 
-		let selectedArticleIDs = selectedArticles.articleIDs()
-
-		var unsortedArticles = fetchUnsortedArticles(for: representedObjects)
-		unsortedArticles.formUnion(Set(articles))
-		updateArticles(with: unsortedArticles)
-
-		selectArticles(selectedArticleIDs)
+		performBlockAndRestoreSelection {
+			var unsortedArticles = fetchUnsortedArticles(for: representedObjects)
+			unsortedArticles.formUnion(Set(articles))
+			updateArticles(with: unsortedArticles)
+		}
 	}
-
+	
 	func selectArticles(_ articleIDs: [String]) {
 
 		let indexesToSelect = articles.indexesForArticleIDs(Set(articleIDs))
