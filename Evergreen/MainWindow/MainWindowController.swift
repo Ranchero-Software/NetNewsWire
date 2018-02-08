@@ -385,6 +385,28 @@ extension MainWindowController: NSToolbarDelegate {
 	}
 }
 
+
+// MARK: - Scripting Access
+
+/*
+    the ScriptingMainWindowController protocol exposes a narrow set of accessors with
+    internal visibility which are very similar to some private vars.
+    
+    These would be unnecessary if the similar accessors were marked internal rather than private,
+    but for now, we'll keep the stratification of visibility
+*/
+
+extension MainWindowController : ScriptingMainWindowController {
+
+    internal var scriptingCurrentArticle: Article? {
+        return self.oneSelectedArticle
+    }
+
+    internal var scriptingSelectedArticles: [Article] {
+        return self.selectedArticles ?? []
+    }
+}
+
 // MARK: - Private
 
 private extension MainWindowController {
