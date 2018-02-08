@@ -54,12 +54,29 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         return feeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
     
+    @objc(valueInFeedsWithUniqueID:)
+    func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
+        let feeds = account.children.compactMap { $0 as? Feed }
+        guard let feed = feeds.first(where:{$0.feedID == id}) else { return nil }
+        return ScriptableFeed(feed, container:self)
+    }
+    
+
     @objc(folders)
     var folders:NSArray  {
         let folders = account.children.compactMap { $0 as? Folder }
         return folders.map { ScriptableFolder($0, container:self) } as NSArray
     }
     
+    @objc(valueInFoldersWithUniqueID:)
+    func valueInFolders(withUniqueID id:NSNumber) -> ScriptableFolder? {
+        let folderId = id.intValue
+        let folders = account.children.compactMap { $0 as? Folder }
+        guard let folder = folders.first(where:{$0.folderID == folderId}) else { return nil }
+        return ScriptableFolder(folder, container:self)
+    }
+    
+
     // MARK: --- Scriptable properties ---
 
     @objc(contents)

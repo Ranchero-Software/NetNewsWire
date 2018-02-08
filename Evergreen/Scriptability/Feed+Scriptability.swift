@@ -85,10 +85,18 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         return self.feed.OPMLString(indentLevel:0)
     }
     
+    // MARK: --- scriptable elements ---
+
     @objc(authors)
     var authors:NSArray {
         let feedAuthors = feed.authors ?? []
         return feedAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
+    }
+     
+    @objc(valueInAuthorsWithUniqueID:)
+    func valueInAuthors(withUniqueID id:String) -> ScriptableAuthor? {
+        guard let author = feed.authors?.first(where:{$0.authorID == id}) else { return nil }
+        return ScriptableAuthor(author, container:self)
     }
     
     @objc(articles)
@@ -99,6 +107,13 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
             return $0.logicalDatePublished > $1.logicalDatePublished
         })
         return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
+    }
+    
+    @objc(valueInArticlesWithUniqueID:)
+    func valueInArticles(withUniqueID id:String) -> ScriptableArticle? {
+        let articles = feed.fetchArticles()
+        guard let article = articles.first(where:{$0.uniqueID == id}) else { return nil }
+        return ScriptableArticle(article, container:self)
     }
 
 }

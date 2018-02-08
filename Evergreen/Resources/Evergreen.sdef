@@ -20,7 +20,13 @@
              <!-- the name of the Cocoa class where we have provided the
               various accessor methods for our application class.  -->
              <cocoa class="NSApplication"/>
-             
+             <property name="current article" code="CurA" type="article" access="r" description="The article, if any, being currently displayed">
+                 <cocoa key="currentArticle"/>
+             </property>
+             <property name="selected articles" code="SelA" access="r" description="All articles in the main window that are currently selected, if any.">
+                 <type type="article" list="yes"/>
+                 <cocoa key="selectedArticles"/>
+             </property>
              <element type="account">
                  <cocoa key="accounts"/>
              </element>
@@ -42,7 +48,7 @@
             <property name="name" code="pnam" type="text" access="r" description="The name of the account">
                 <cocoa key="name"/>
             </property>
-            <property name="id" code="id  " type="text" access="r" description="The unique id of the account">
+            <property name="id" code="ID  " type="text" access="r" description="The unique id of the account">
                 <cocoa key="uniqueId"/>
             </property>
             <property name="type" code="ATyp" type="account type" access="r" description="The type of the account">
@@ -71,7 +77,7 @@
             <property name="name" code="pnam" type="text" access="r" description="The name of the feed">
                 <cocoa key="name"/>
             </property>
-            <property name="id" code="id  " type="text" access="r" description="The unique id of the account">
+            <property name="id" code="ID  " type="text" access="r" description="The unique id of the account">
                 <cocoa key="uniqueId"/>
             </property>
             <property name="url" code="URL " type="text" access="r" description="The type of the account">
@@ -101,7 +107,7 @@
             <property name="name" code="pnam" type="text" access="r" description="The name of the author">
                 <cocoa key="name"/>
             </property>
-            <property name="id" code="id  " type="text" access="r" description="The unique id of the author">
+            <property name="id" code="ID  " type="text" access="r" description="The unique id of the author">
                 <cocoa key="uniqueId"/>
             </property>
             <property name="url" code="URL " type="text" access="r" description="url for the author">
@@ -120,7 +126,7 @@
             <property name="name" code="pnam" type="text" access="r" description="The name of the account">
                 <cocoa key="name"/>
             </property>
-            <property name="id" code="id  " type="integer" access="r" description="The unique id of the account">
+            <property name="id" code="ID  " type="integer" access="r" description="The unique id of the account">
                 <cocoa key="uniqueId"/>
             </property>
             <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the folder">
@@ -130,7 +136,7 @@
 
         <class name="article" code="Arcl" plural="articles" description="An article in a feed">
             <cocoa class="ScriptableArticle"/>
-            <property name="id" code="id  " type="text" access="r" description="The unique id of the article as set by the feed">
+            <property name="id" code="ID  " type="text" access="r" description="The unique id of the article as set by the feed">
                 <cocoa key="uniqueId"/>
             </property>
             <property name="title" code="titl" type="text" access="r" description="The article title">
