@@ -13,7 +13,7 @@ import Account
 private let kWindowFrameKey = "MainWindow"
 
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
-    
+
 	var isOpen: Bool {
 		return isWindowLoaded && window!.isVisible
 	}
@@ -38,9 +38,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	static var didPositionWindowOnFirstRun = false
 
-    override func windowDidLoad() {
-        
-        super.windowDidLoad()
+	override func windowDidLoad() {
+
+		super.windowDidLoad()
 
 		if !AppDefaults.shared.showTitleOnMainWindow {
 			window?.titleVisibility = .hidden
@@ -82,12 +82,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		return sidebarViewController?.selectedObjects
 	}
 
-    // MARK: Notifications
-    
+	// MARK: Notifications
+
 	@objc func applicationWillTerminate(_ note: Notification) {
-        
+
 		window?.saveFrame(usingName: windowAutosaveName)
-    }
+	}
 
 	@objc func appNavigationKeyPressed(_ note: Notification) {
 
@@ -152,7 +152,22 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		if item.action == #selector(toolbarShowShareMenu(_:)) {
 			return canShowShareMenu()
 		}
-		
+
+		if item.action == #selector(toggleSidebar(_:)) {
+
+			guard let splitViewItem = sidebarSplitViewItem else {
+				return false
+			}
+
+			let sidebarIsShowing = !splitViewItem.isCollapsed
+			if let menuItem = item as? NSMenuItem {
+				let title = sidebarIsShowing ? NSLocalizedString("Hide Sidebar", comment: "Menu item") : NSLocalizedString("Show Sidebar", comment: "Menu item")
+				menuItem.title = title
+			}
+
+			return true
+		}
+
 		return true
 	}
 
@@ -171,10 +186,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 
-    @IBAction func showAddFolderWindow(_ sender: Any) {
+	@IBAction func showAddFolderWindow(_ sender: Any) {
 
-        appDelegate.showAddFolderSheetOnWindow(window!)
-    }
+		appDelegate.showAddFolderSheetOnWindow(window!)
+	}
 
 	@IBAction func showAddFeedWindow(_ sender: Any) {
 
@@ -412,59 +427,47 @@ extension MainWindowController : ScriptingMainWindowController {
 private extension MainWindowController {
 	
 	var splitViewController: NSSplitViewController? {
-		get {
-			guard let viewController = contentViewController else {
-				return nil
-			}
-			return viewController.childViewControllers.first as? NSSplitViewController
+		guard let viewController = contentViewController else {
+			return nil
 		}
+		return viewController.childViewControllers.first as? NSSplitViewController
 	}
 
 	var sidebarViewController: SidebarViewController? {
-		get {
-			return splitViewController?.splitViewItems[0].viewController as? SidebarViewController
-		}
+		return splitViewController?.splitViewItems[0].viewController as? SidebarViewController
 	}
 	
 	var timelineViewController: TimelineViewController? {
-		get {
-			return splitViewController?.splitViewItems[1].viewController as? TimelineViewController
-		}
+		return splitViewController?.splitViewItems[1].viewController as? TimelineViewController
 	}
-	
+
+	var sidebarSplitViewItem: NSSplitViewItem? {
+		return splitViewController?.splitViewItems[0]
+	}
+
 	var detailSplitViewItem: NSSplitViewItem? {
-		get {
-			return splitViewController?.splitViewItems[2]
-		}
+		return splitViewController?.splitViewItems[2]
 	}
 	
 	var detailViewController: DetailViewController? {
-		get {
-			return splitViewController?.splitViewItems[2].viewController as? DetailViewController
-		}
+		return splitViewController?.splitViewItems[2].viewController as? DetailViewController
 	}
 
 	var selectedArticles: [Article]? {
-		get {
-			return timelineViewController?.selectedArticles
-		}
+		return timelineViewController?.selectedArticles
 	}
-	
+
 	var oneSelectedArticle: Article? {
-		get {
-			if let articles = selectedArticles {
-				return articles.count == 1 ? articles[0] : nil
-			}
-			return nil
+		if let articles = selectedArticles {
+			return articles.count == 1 ? articles[0] : nil
 		}
+		return nil
 	}
-	
+
 	var currentLink: String? {
-		get {
-			return oneSelectedArticle?.preferredLink
-		}
+		return oneSelectedArticle?.preferredLink
 	}
-	
+
 	func canGoToNextUnread() -> Bool {
 		
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {

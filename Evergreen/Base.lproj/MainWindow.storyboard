@@ -359,6 +359,7 @@
                                                 <outlet property="dataSource" destination="XML-A3-pDn" id="04v-0e-BM6"/>
                                                 <outlet property="delegate" destination="XML-A3-pDn" id="fPE-cv-p5c"/>
                                                 <outlet property="keyboardDelegate" destination="h5K-zR-cUa" id="BlT-aW-sea"/>
+                                                <outlet property="menu" destination="p3f-EZ-sSD" id="KTA-tl-UrO"/>
                                             </connections>
                                         </outlineView>
                                     </subviews>
@@ -441,11 +442,28 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="contextualMenuDelegate" destination="GIi-rR-u3i" id="HnU-AM-kBV"/>
                         <outlet property="gearMenuDelegate" destination="f3Y-bi-SLk" id="2on-6C-laM"/>
                         <outlet property="outlineView" destination="cnV-kg-Dn2" id="FVf-OT-E3h"/>
                     </connections>
                 </viewController>
                 <customObject id="Jih-JO-hIE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <menu id="p3f-EZ-sSD">
+                    <items>
+                        <menuItem title="Item 1" id="ZDH-CV-Y2s">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="Item 2" id="1F7-qu-7oN">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="Item 3" id="r9E-FO-GoU">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                    </items>
+                    <connections>
+                        <outlet property="delegate" destination="GIi-rR-u3i" id="xCL-ce-fof"/>
+                    </connections>
+                </menu>
                 <customObject id="f3Y-bi-SLk" customClass="SidebarGearMenuDelegate" customModule="Evergreen" customModuleProvider="target">
                     <connections>
                         <outlet property="sidebarViewController" destination="XML-A3-pDn" id="Tw0-4c-1Go"/>
@@ -454,6 +472,11 @@
                 <customObject id="h5K-zR-cUa" customClass="SidebarKeyboardDelegate" customModule="Evergreen" customModuleProvider="target">
                     <connections>
                         <outlet property="sidebarViewController" destination="XML-A3-pDn" id="kwd-Zc-HJm"/>
+                    </connections>
+                </customObject>
+                <customObject id="GIi-rR-u3i" customClass="SidebarContextualMenuDelegate" customModule="Evergreen" customModuleProvider="target">
+                    <connections>
+                        <outlet property="sidebarViewController" destination="XML-A3-pDn" id="cFr-ow-5mf"/>
                     </connections>
                 </customObject>
             </objects>
@@ -682,12 +705,12 @@
         <image name="NSMobileMe" width="32" height="32"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
-        <image name="action" width="9.5" height="9.5"/>
-        <image name="markAllRead" width="11" height="9.5"/>
-        <image name="markRead" width="9.5" height="9.5"/>
-        <image name="newFolder" width="9.5" height="9.5"/>
-        <image name="nextUnread" width="12" height="9.5"/>
-        <image name="openInBrowser" width="9.5" height="9.5"/>
-        <image name="star" width="9.5" height="9.5"/>
+        <image name="action" width="19" height="19"/>
+        <image name="markAllRead" width="22" height="19"/>
+        <image name="markRead" width="19" height="19"/>
+        <image name="newFolder" width="19" height="19"/>
+        <image name="nextUnread" width="24" height="19"/>
+        <image name="openInBrowser" width="19" height="19"/>
+        <image name="star" width="19" height="19"/>
     </resources>
 </document>
