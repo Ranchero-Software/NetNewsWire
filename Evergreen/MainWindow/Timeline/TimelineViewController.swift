@@ -15,7 +15,8 @@ import Account
 class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
-
+	@IBOutlet var contextualMenuDelegate: TimelineContextualMenuDelegate?
+	
 	var selectedArticles: [Article] {
 		get {
 			return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
