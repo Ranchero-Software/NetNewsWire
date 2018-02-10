@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14087.3" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14092" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14087.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14092"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,9 +21,9 @@
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="YMs-P5-Xhn"/>
                                 <toolbarItem implicitItemIdentifier="DD0FA79F-72C1-488B-B113-0D2DE89AA468" label="Search" paletteLabel="Search" toolTip="Search Articles" id="1Ql-WJ-KYi">
                                     <size key="minSize" width="96" height="22"/>
-                                    <size key="maxSize" width="256" height="28"/>
+                                    <size key="maxSize" width="320" height="28"/>
                                     <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" id="Fcs-4u-xuP">
-                                        <rect key="frame" x="0.0" y="14" width="256" height="22"/>
+                                        <rect key="frame" x="0.0" y="14" width="320" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="syc-TO-rPc">
                                             <font key="font" metaFont="system"/>
@@ -193,13 +193,13 @@
                                 <toolbarItem reference="QD0-SQ-OIM"/>
                                 <toolbarItem reference="YMs-P5-Xhn"/>
                                 <toolbarItem reference="lst-vn-0Iw"/>
-                                <toolbarItem reference="Gxg-WQ-ufC"/>
+                                <toolbarItem reference="1Ql-WJ-KYi"/>
                                 <toolbarItem reference="YMs-P5-Xhn"/>
                                 <toolbarItem reference="p7Y-Vm-ILH"/>
+                                <toolbarItem reference="Gxg-WQ-ufC"/>
+                                <toolbarItem reference="N7D-g2-EPD"/>
                                 <toolbarItem reference="tid-SB-me3"/>
                                 <toolbarItem reference="nv0-Ju-lP7"/>
-                                <toolbarItem reference="YMs-P5-Xhn"/>
-                                <toolbarItem reference="1Ql-WJ-KYi"/>
                             </defaultToolbarItems>
                             <connections>
                                 <outlet property="delegate" destination="B8D-0N-5wS" id="hrC-d9-Cge"/>
@@ -724,12 +724,12 @@
         <image name="NSMobileMe" width="32" height="32"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
-        <image name="action" width="19" height="19"/>
-        <image name="markAllRead" width="22" height="19"/>
-        <image name="markRead" width="19" height="19"/>
-        <image name="newFolder" width="19" height="19"/>
-        <image name="nextUnread" width="24" height="19"/>
-        <image name="openInBrowser" width="19" height="19"/>
-        <image name="star" width="19" height="19"/>
+        <image name="action" width="9.5" height="9.5"/>
+        <image name="markAllRead" width="11" height="9.5"/>
+        <image name="markRead" width="9.5" height="9.5"/>
+        <image name="newFolder" width="9.5" height="9.5"/>
+        <image name="nextUnread" width="12" height="9.5"/>
+        <image name="openInBrowser" width="9.5" height="9.5"/>
+        <image name="star" width="9.5" height="9.5"/>
     </resources>
 </document>
