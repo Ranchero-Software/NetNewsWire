@@ -71,7 +71,7 @@
 
 	while (nomad != nil) {
 		if ([nomad isKindOfClass:[NSTableView class]]) {
-			return nomad;
+			return (NSTableView *)nomad;
 		}
 		nomad = nomad.superview;
 	}
