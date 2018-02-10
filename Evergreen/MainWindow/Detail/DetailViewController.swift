@@ -16,7 +16,7 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 
 	@IBOutlet var containerView: DetailContainerView!
 
-	var webview: WKWebView!
+	var webview: DetailWebView!
 	var noSelectionView: NoSelectionView!
 
 	var article: Article? {
@@ -54,7 +54,7 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 		userContentController.add(self, name: MessageName.mouseDidExit)
 		configuration.userContentController = userContentController
 		
-		webview = WKWebView(frame: self.view.bounds, configuration: configuration)
+		webview = DetailWebView(frame: self.view.bounds, configuration: configuration)
 		webview.uiDelegate = self
 		webview.navigationDelegate = self
 		webview.translatesAutoresizingMaskIntoConstraints = false
