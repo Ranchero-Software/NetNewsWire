@@ -75,6 +75,12 @@ public extension Set where Element == Article {
 		
 		return Set<String>(map { $0.articleID })
 	}
+
+	public func unreadArticles() -> Set<Article> {
+
+		let articles = self.filter { !$0.status.read }
+		return Set(articles)
+	}
 }
 
 public extension Array where Element == Article {
