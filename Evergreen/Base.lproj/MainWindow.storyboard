@@ -167,25 +167,6 @@
                                         <action selector="refreshAll:" target="Oky-zY-oP4" id="KRz-Df-3zA"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="BEE79EC5-174E-40DB-AA76-0F1141C97804" label="Action" paletteLabel="Action" toolTip="Action" image="action" id="eyg-zr-m4a">
-                                    <size key="minSize" width="38" height="25"/>
-                                    <size key="maxSize" width="38" height="28"/>
-                                    <popUpButton key="view" verticalHuggingPriority="750" id="3z3-Db-0Kb">
-                                        <rect key="frame" x="2" y="14" width="38" height="28"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="action" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="NHu-v8-gM6" id="lev-Yv-VWb">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
-                                            <menu key="menu" id="jk1-Ql-ozP">
-                                                <items>
-                                                    <menuItem state="on" image="action" hidden="YES" id="NHu-v8-gM6"/>
-                                                    <menuItem title="Item 2" id="1rz-c0-zPY"/>
-                                                    <menuItem title="Item 3" id="9ZT-Uj-OTH"/>
-                                                </items>
-                                            </menu>
-                                        </popUpButtonCell>
-                                    </popUpButton>
-                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="Skp-5r-70Q"/>
