@@ -11,7 +11,7 @@ import RSCore
 import Data
 import Account
 
-protocol SmartFeedDelegate: DisplayNameProvider {
+protocol SmartFeedDelegate: DisplayNameProvider, ArticleFetcher {
 
 	func fetchUnreadCount(for: Account, callback: @escaping (Int) -> Void)
 }
@@ -48,6 +48,19 @@ final class SmartFeed: PseudoFeed {
 		if note.object is Account {
 			startTimer()
 		}
+	}
+}
+
+extension SmartFeed: ArticleFetcher {
+
+	func fetchArticles() -> Set<Article> {
+
+		return delegate.fetchArticles()
+	}
+
+	func fetchUnreadArticles() -> Set<Article> {
+
+		return delegate.fetchUnreadArticles()
 	}
 }
 
