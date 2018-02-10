@@ -27,5 +27,6 @@
 
 - (NSRect)rs_rectCentered:(NSRect)originalRect;
 
+- (NSTableView *)rs_enclosingTableView;
 
 @end
