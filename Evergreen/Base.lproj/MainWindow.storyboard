@@ -592,6 +592,7 @@
                                                 <outlet property="dataSource" destination="36G-bQ-b96" id="OpB-zC-ItJ"/>
                                                 <outlet property="delegate" destination="36G-bQ-b96" id="s1m-42-GQ4"/>
                                                 <outlet property="keyboardDelegate" destination="ZOV-xh-WJE" id="HiG-Bz-vD0"/>
+                                                <outlet property="menu" destination="gb5-z4-YPr" id="pey-0u-ogu"/>
                                             </connections>
                                         </tableView>
                                     </subviews>
@@ -623,15 +624,33 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <connections>
+                        <outlet property="contextualMenuDelegate" destination="iD1-KK-gFc" id="b0j-aW-e4B"/>
                         <outlet property="tableView" destination="DRs-j8-R9a" id="2AG-SP-7n2"/>
                     </connections>
                 </viewController>
                 <customObject id="Ebq-4s-EwK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <menu id="gb5-z4-YPr">
+                    <items>
+                        <menuItem title="Item 1" id="Ikx-w7-cua">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="Item 2" id="QX3-hL-Dqh">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="Item 3" id="IsQ-j7-Njb">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                    </items>
+                    <connections>
+                        <outlet property="delegate" destination="iD1-KK-gFc" id="q4j-wE-tnf"/>
+                    </connections>
+                </menu>
                 <customObject id="ZOV-xh-WJE" customClass="TimelineKeyboardDelegate" customModule="Evergreen" customModuleProvider="target">
                     <connections>
                         <outlet property="timelineViewController" destination="36G-bQ-b96" id="rED-2Z-kh6"/>
                     </connections>
                 </customObject>
+                <customObject id="iD1-KK-gFc" customClass="TimelineContextualMenuDelegate" customModule="Evergreen" customModuleProvider="target"/>
             </objects>
             <point key="canvasLocation" x="62" y="394"/>
         </scene>
