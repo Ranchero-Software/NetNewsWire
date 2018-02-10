@@ -679,11 +679,8 @@ private extension TimelineViewController {
 
 		for object in representedObjects {
 
-			if let feed = object as? Feed {
-				fetchedArticles.formUnion(feed.fetchArticles())
-			}
-			else if let folder = object as? Folder {
-				fetchedArticles.formUnion(folder.fetchArticles())
+			if let articleFetcher = object as? ArticleFetcher {
+				fetchedArticles.formUnion(articleFetcher.fetchArticles())
 			}
 		}
 
