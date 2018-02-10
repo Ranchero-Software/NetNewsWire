@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import RSCore
 
 @objc final class TimelineContextualMenuDelegate: NSObject, NSMenuDelegate {
 
@@ -14,21 +15,17 @@ import AppKit
 
 	public func menuNeedsUpdate(_ menu: NSMenu) {
 
-//		guard let timelineViewController = timelineViewController else {
-//			return
-//		}
+		guard let timelineViewController = timelineViewController else {
+			return
+		}
 
-//		menu.removeAllItems()
+		menu.removeAllItems()
 
-//		guard let contextualMenu = sidebarViewController.contextualMenuForClickedRows() else {
-//			return
-//		}
-//
-//		let items = contextualMenu.items
-//		contextualMenu.removeAllItems()
-//		for menuItem in items {
-//			menu.addItem(menuItem)
-//		}
+		guard let contextualMenu = timelineViewController.contextualMenuForClickedRows() else {
+			return
+		}
+
+		menu.takeItems(from: contextualMenu)
 	}
 }
 

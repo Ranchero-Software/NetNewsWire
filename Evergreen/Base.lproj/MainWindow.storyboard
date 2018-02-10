@@ -650,7 +650,11 @@
                         <outlet property="timelineViewController" destination="36G-bQ-b96" id="rED-2Z-kh6"/>
                     </connections>
                 </customObject>
-                <customObject id="iD1-KK-gFc" customClass="TimelineContextualMenuDelegate" customModule="Evergreen" customModuleProvider="target"/>
+                <customObject id="iD1-KK-gFc" customClass="TimelineContextualMenuDelegate" customModule="Evergreen" customModuleProvider="target">
+                    <connections>
+                        <outlet property="timelineViewController" destination="36G-bQ-b96" id="oE9-uV-TNi"/>
+                    </connections>
+                </customObject>
             </objects>
             <point key="canvasLocation" x="62" y="394"/>
         </scene>

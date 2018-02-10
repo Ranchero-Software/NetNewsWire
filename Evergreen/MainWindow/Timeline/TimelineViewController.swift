@@ -29,6 +29,16 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 	}
 
+	var articles = ArticleArray() {
+		didSet {
+			if articles != oldValue {
+				clearUndoableCommands()
+				updateShowAvatars()
+				tableView.reloadData()
+			}
+		}
+	}
+
 	var undoableCommands = [UndoableCommand]()
 	private var cellAppearance: TimelineCellAppearance!
 	private var cellAppearanceWithAvatar: TimelineCellAppearance!
@@ -61,16 +71,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			}
 		}
 	}
-	private var articles = ArticleArray() {
-		didSet {
-			if articles != oldValue {
-				clearUndoableCommands()
-				updateShowAvatars()
-				tableView.reloadData()
-			}
-		}
-	}
-
 	private var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
 		didSet {
 			if fontSize != oldValue {

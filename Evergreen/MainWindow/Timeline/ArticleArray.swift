@@ -78,12 +78,37 @@ extension Array where Element == Article {
 
 	func canMarkAllAsRead() -> Bool {
 
+		return anyArticleIsUnread()
+	}
+
+	func anyArticlePassesTest(_ test: ((Article) -> Bool)) -> Bool {
+
 		for article in self {
-			if !article.status.read {
+			if test(article) {
 				return true
 			}
 		}
 		return false
+	}
+
+	func anyArticleIsRead() -> Bool {
+
+		return anyArticlePassesTest { $0.status.read }
+	}
+
+	func anyArticleIsUnread() -> Bool {
+
+		return anyArticlePassesTest { !$0.status.read }
+	}
+
+	func anyArticleIsStarred() -> Bool {
+
+		return anyArticlePassesTest { $0.status.starred }
+	}
+
+	func anyArticleIsUnstarred() -> Bool {
+
+		return anyArticlePassesTest { !$0.status.starred }
 	}
 }
 
