@@ -6,6 +6,13 @@
 <dictionary title="sa;lfsdf" xmlns:xi="http://www.w3.org/2003/XInclude">
     
     <suite name="Standard Suite" code="core" description="Subset of the Standard Suite.">
+        <access-group identifier="com.ranchero.Evergreen" access="rw"/>
+        <command name="exists" code="coredoex" description="Verify that an object exists.">
+            <cocoa class="Evergreen.EvergreenExistsCommand"/>
+            <direct-parameter type="any" requires-access="r" description="The object(s) to check."/>
+            <result type="boolean" description="Does the object(s) exist?"/>
+        </command>
+
         <class name="application" code="capp" description="The application's top-level scripting object.">
             <cocoa class="NSApplication"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the application."/>
@@ -14,6 +21,7 @@
     </suite>
 
     <suite name="Evergreen Suite" code="Geod" description="The Evergreen Application Suite.">
+        <access-group identifier="com.ranchero.Evergreen" access="rw"/>
         <class name="application" code="capp"
              description="Evergreen Application" inherits="application">
              
@@ -142,8 +150,14 @@
             <property name="title" code="titl" type="text" access="r" description="The article title">
                 <cocoa key="title"/>
             </property>
-            <property name="url" code="URL " type="text" access="r" description="url for the article">
+            <property name="url" code="URL " type="text" access="r" description="url for the article.  This will be the permalink if available, or the external url">
                 <cocoa key="url"/>
+            </property>
+            <property name="external url" code="eURL" type="text" access="r" description="the external url for the article, if known">
+                <cocoa key="externalUrl"/>
+            </property>
+            <property name="permalink" code="pLnk" type="text" access="r" description="a permalink for the article, if known">
+                <cocoa key="permalink"/>
             </property>
             <property name="contents" code="Cnts" type="text" access="r" description="text of the article">
                 <cocoa key="contents"/>
@@ -182,9 +196,9 @@
 
     </suite>
 
-    <suite name="Internet Suite" code="GURL"
-        description="Standard Internet Suite.">
-        
+    <suite name="Internet Suite" code="GURL" description="Standard Internet Suite.">
+        <access-group identifier="com.ranchero.Evergreen" access="rw"/>
+
         <command name="open location" code="GURLGURL" description="opens the given url.">
             <direct-parameter type="text"/>
         </command>        

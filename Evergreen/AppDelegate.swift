@@ -139,9 +139,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader)
 
 		updateSortMenuItems()
-		createAndShowMainWindow()
-
-		NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.getURL(_:_:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
+        createAndShowMainWindow()
+        installAppleEventHandlers()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
@@ -183,25 +182,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	func applicationWillTerminate(_ notification: Notification) {
 
 		saveState()
-	}
-
-	// MARK: GetURL Apple Event
-
-	@objc func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor) {
-
-		guard let urlString = event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue else {
-			return
-		}
-
-		let normalizedURLString = urlString.rs_normalizedURL()
-		if !normalizedURLString.rs_stringMayBeURL() {
-			return
-		}
-
-		DispatchQueue.main.async {
-
-			self.addFeed(normalizedURLString)
-		}
 	}
 
 	// MARK: Notifications

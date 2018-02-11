@@ -171,6 +171,17 @@
 		D5D1751220020B980047B29D /* Evergreen.sdef in Resources */ = {isa = PBXBuildFile; fileRef = D5D175012002039D0047B29D /* Evergreen.sdef */; };
 		D5E4CC54202C1361009B4FFC /* AppDelegate+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */; };
 		D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */; };
+		D5E4CCB320300024009B4FFC /* uiScriptingTestSetup.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CCB220300024009B4FFC /* uiScriptingTestSetup.applescript */; };
+		D5E4CCB420300033009B4FFC /* uiScriptingTestSetup.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5E4CCB220300024009B4FFC /* uiScriptingTestSetup.applescript */; };
+		D5E4CCC520300537009B4FFC /* AppleScriptXCTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CCC3203004EA009B4FFC /* AppleScriptXCTestCase.swift */; };
+		D5E4CCD720303823009B4FFC /* selectAnArticle.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CCD520303823009B4FFC /* selectAnArticle.applescript */; };
+		D5E4CCD820303823009B4FFC /* selectAFeed.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CCD620303823009B4FFC /* selectAFeed.applescript */; };
+		D5E4CCDA2030382A009B4FFC /* establishMainWindowStartingState.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CCD92030382A009B4FFC /* establishMainWindowStartingState.applescript */; };
+		D5E4CCDB20303A52009B4FFC /* selectAFeed.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5E4CCD620303823009B4FFC /* selectAFeed.applescript */; };
+		D5E4CCDC20303A52009B4FFC /* selectAnArticle.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5E4CCD520303823009B4FFC /* selectAnArticle.applescript */; };
+		D5E4CCDD20303A59009B4FFC /* establishMainWindowStartingState.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5E4CCD92030382A009B4FFC /* establishMainWindowStartingState.applescript */; };
+		D5E4CCDE20303A66009B4FFC /* testCurrentArticleIsNil.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5E4CCD12030260E009B4FFC /* testCurrentArticleIsNil.applescript */; };
+		D5E4CCDF20303A66009B4FFC /* testURLsOfCurrentArticle.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5E4CCCF203025FF009B4FFC /* testURLsOfCurrentArticle.applescript */; };
 		D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */; };
 		D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */; };
 		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
@@ -485,6 +496,12 @@
 			dstPath = TestScripts;
 			dstSubfolderSpec = 7;
 			files = (
+				D5E4CCDE20303A66009B4FFC /* testCurrentArticleIsNil.applescript in CopyFiles */,
+				D5E4CCDF20303A66009B4FFC /* testURLsOfCurrentArticle.applescript in CopyFiles */,
+				D5E4CCDD20303A59009B4FFC /* establishMainWindowStartingState.applescript in CopyFiles */,
+				D5E4CCDB20303A52009B4FFC /* selectAFeed.applescript in CopyFiles */,
+				D5E4CCDC20303A52009B4FFC /* selectAnArticle.applescript in CopyFiles */,
+				D5E4CCB420300033009B4FFC /* uiScriptingTestSetup.applescript in CopyFiles */,
 				D5A267C220131BA000A8D3C0 /* testFeedOPML.applescript in CopyFiles */,
 				D5A2679D201313A200A8D3C0 /* testNameOfAuthors.applescript in CopyFiles */,
 				D5F4EDE920075C6700B9E363 /* testNameAndUrlOfEveryFeed.applescript in CopyFiles */,
@@ -664,6 +681,13 @@
 		D5D175012002039D0047B29D /* Evergreen.sdef */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Evergreen.sdef; path = ../Resources/Evergreen.sdef; sourceTree = "<group>"; };
 		D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Scriptability.swift"; sourceTree = "<group>"; };
 		D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainWindowController+Scriptability.swift"; sourceTree = "<group>"; };
+		D5E4CCB220300024009B4FFC /* uiScriptingTestSetup.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = uiScriptingTestSetup.applescript; sourceTree = "<group>"; };
+		D5E4CCC3203004EA009B4FFC /* AppleScriptXCTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppleScriptXCTestCase.swift; path = EvergreenTests/ScriptingTests/AppleScriptXCTestCase.swift; sourceTree = SOURCE_ROOT; };
+		D5E4CCCF203025FF009B4FFC /* testURLsOfCurrentArticle.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testURLsOfCurrentArticle.applescript; sourceTree = "<group>"; };
+		D5E4CCD12030260E009B4FFC /* testCurrentArticleIsNil.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testCurrentArticleIsNil.applescript; sourceTree = "<group>"; };
+		D5E4CCD520303823009B4FFC /* selectAnArticle.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = selectAnArticle.applescript; sourceTree = "<group>"; };
+		D5E4CCD620303823009B4FFC /* selectAFeed.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = selectAFeed.applescript; sourceTree = "<group>"; };
+		D5E4CCD92030382A009B4FFC /* establishMainWindowStartingState.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = establishMainWindowStartingState.applescript; sourceTree = "<group>"; };
 		D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingObject.swift; sourceTree = "<group>"; };
 		D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feed+Scriptability.swift"; sourceTree = "<group>"; };
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
@@ -1281,6 +1305,7 @@
 			children = (
 				D5558FCF20021C590066386B /* scripts */,
 				D5558FD22002245C0066386B /* ScriptingTests.swift */,
+				D5E4CCC3203004EA009B4FFC /* AppleScriptXCTestCase.swift */,
 			);
 			path = ScriptingTests;
 			sourceTree = "<group>";
@@ -1288,6 +1313,9 @@
 		D5558FCF20021C590066386B /* scripts */ = {
 			isa = PBXGroup;
 			children = (
+				D5E4CCD92030382A009B4FFC /* establishMainWindowStartingState.applescript */,
+				D5E4CCD620303823009B4FFC /* selectAFeed.applescript */,
+				D5E4CCD520303823009B4FFC /* selectAnArticle.applescript */,
 				D5907C9D20023249005947E5 /* testGenericScript.applescript */,
 				D5A267B220131B8300A8D3C0 /* testFeedOPML.applescript */,
 				D5558FD1200223F60066386B /* testGetURL.applescript */,
@@ -1295,6 +1323,9 @@
 				D5A2679B201312F900A8D3C0 /* testNameOfAuthors.applescript */,
 				D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */,
 				D55373A02018797B006D8857 /* testTitleOfArticlesWhose.applescript */,
+				D5E4CCD12030260E009B4FFC /* testCurrentArticleIsNil.applescript */,
+				D5E4CCCF203025FF009B4FFC /* testURLsOfCurrentArticle.applescript */,
+				D5E4CCB220300024009B4FFC /* uiScriptingTestSetup.applescript */,
 			);
 			path = scripts;
 			sourceTree = "<group>";
@@ -1952,10 +1983,15 @@
 				D5A267C120131B8300A8D3C0 /* testFeedOPML.applescript in Sources */,
 				D5A2679C201312F900A8D3C0 /* testNameOfAuthors.applescript in Sources */,
 				849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */,
+				D5E4CCC520300537009B4FFC /* AppleScriptXCTestCase.swift in Sources */,
+				D5E4CCB320300024009B4FFC /* uiScriptingTestSetup.applescript in Sources */,
 				D5558FD32002245C0066386B /* ScriptingTests.swift in Sources */,
+				D5E4CCDA2030382A009B4FFC /* establishMainWindowStartingState.applescript in Sources */,
 				D5F4EDE820075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript in Sources */,
 				D5907CA0200232A1005947E5 /* testGenericScript.applescript in Sources */,
 				D5F4EDE620075C1300B9E363 /* testNameOfEveryFolder.applescript in Sources */,
+				D5E4CCD720303823009B4FFC /* selectAnArticle.applescript in Sources */,
+				D5E4CCD820303823009B4FFC /* selectAFeed.applescript in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
