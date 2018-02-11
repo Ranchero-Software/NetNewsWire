@@ -23,8 +23,11 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 
 	func fetchArticles() -> Set<Article> {
 
-		// TODO
-		return Set<Article>()
+		var articles = Set<Article>()
+		for account in AccountManager.shared.accounts {
+			articles.formUnion(account.fetchTodayArticles())
+		}
+		return articles
 	}
 
 	func fetchUnreadArticles() -> Set<Article> {

@@ -72,6 +72,11 @@ final class ArticlesTable: DatabaseTable {
 		return fetchUnreadArticles(feeds.feedIDs())
 	}
 
+	public func fetchTodayArticles(for feeds: Set<Feed>) -> Set<Article> {
+
+		return fetchTodayArticles(feeds.feedIDs())
+	}
+
 	// MARK: Updating
 	
 	func update(_ feed: Feed, _ parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
@@ -328,8 +333,14 @@ private extension ArticlesTable {
 		// * Must not be deleted.
 		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
 
-		let sql = withLimits ? "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or dateArrived>?);" : "select * from articles natural join statuses where \(whereClause);"
-		return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject], database)
+		if withLimits {
+			let sql = "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or dateArrived>?);"
+			return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject], database)
+		}
+		else {
+			let sql = "select * from articles natural join statuses where \(whereClause);"
+			return articlesWithSQL(sql, parameters, database)
+		}
 	}
 
 	func fetchUnreadCount(_ feedID: String, _ database: FMDatabase) -> Int {
@@ -364,6 +375,31 @@ private extension ArticlesTable {
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 			let whereClause = "feedID in \(placeholders) and read=0"
 			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
+		}
+
+		return articles
+	}
+
+	func fetchTodayArticles(_ feedIDs: Set<String>) -> Set<Article> {
+
+		if feedIDs.isEmpty {
+			return Set<Article>()
+		}
+
+		var articles = Set<Article>()
+
+		queue.fetchSync { (database) in
+
+			// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and (datePublished > ? || (datePublished is null and dateArrived > ?)
+			//
+			// datePublished may be nil, so we fall back to dateArrived.
+
+			let startOfToday = NSCalendar.startOfToday()
+			let parameters = feedIDs.map { $0 as AnyObject } + [startOfToday as AnyObject, startOfToday as AnyObject]
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let whereClause = "feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and userDeleted = 0"
+//			let whereClause = "feedID in \(placeholders) and datePublished > ? and userDeleted = 0"
+			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
 		}
 
 		return articles

@@ -57,6 +57,11 @@ public final class Database {
 		return articlesTable.fetchUnreadArticles(for: feeds)
 	}
 
+	public func fetchTodayArticles(for feeds: Set<Feed>) -> Set<Article> {
+		
+		return articlesTable.fetchTodayArticles(for: feeds)
+	}
+
 	// MARK: - Unread Counts
 	
 	public func fetchUnreadCounts(for feeds: Set<Feed>, _ completion: @escaping UnreadCountCompletionBlock) {

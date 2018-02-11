@@ -359,6 +359,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return articles
 	}
 
+	public func fetchTodayArticles() -> Set<Article> {
+
+		return database.fetchTodayArticles(for: flattenedFeeds())
+	}
+
 	private func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
 
 		// articles must contain all the unread articles for the feed.
