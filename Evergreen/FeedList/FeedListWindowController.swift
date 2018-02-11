@@ -13,6 +13,7 @@ class FeedListWindowController : NSWindowController {
 
 	override func windowDidLoad() {
 
+		window!.appearance = NSAppearance(named: .vibrantDark)
 	}
 	
 	@IBAction func addToFeeds(_ sender: AnyObject) {
