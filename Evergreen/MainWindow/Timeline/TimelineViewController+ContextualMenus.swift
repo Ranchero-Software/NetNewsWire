@@ -72,7 +72,7 @@ private extension TimelineViewController {
 		guard let articlesToMark = read ? unreadArticles(from: articles) : readArticles(from: articles) else {
 			return
 		}
-		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: Array(articlesToMark), markingRead: read, undoManager: undoManager) else {
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articlesToMark), markingRead: read, undoManager: undoManager) else {
 			return
 		}
 

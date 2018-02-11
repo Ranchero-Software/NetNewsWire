@@ -49,7 +49,7 @@
 		846E773E1F6EF67A00A165E2 /* Account.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 846E773A1F6EF5D700A165E2 /* Account.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		846E77411F6EF6A100A165E2 /* Database.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; };
 		846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 846E77211F6EF5D100A165E2 /* Database.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */; };
+		84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* FeedInspectorViewController.swift */; };
 		847FA121202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847FA120202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
@@ -562,7 +562,7 @@
 		845F52EC1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPasteboardWriter.swift; sourceTree = "<group>"; };
 		846E77161F6EF5D000A165E2 /* Database.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Database.xcodeproj; path = Frameworks/Database/Database.xcodeproj; sourceTree = "<group>"; };
 		846E77301F6EF5D600A165E2 /* Account.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Account.xcodeproj; path = Frameworks/Account/Account.xcodeproj; sourceTree = "<group>"; };
-		84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkReadOrUnreadCommand.swift; sourceTree = "<group>"; };
+		84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkStatusCommand.swift; sourceTree = "<group>"; };
 		8472058020142E8900AD578B /* FeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedInspectorViewController.swift; sourceTree = "<group>"; };
 		847752FE2008879500D93690 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		847FA120202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarContextualMenuDelegate.swift; sourceTree = "<group>"; };
@@ -893,7 +893,7 @@
 		84702AB31FA27AE8006B8943 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
-				84702AA31FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift */,
+				84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */,
 				84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */,
 				84A1500220048D660046AD9A /* SendToCommand.swift */,
 				84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */,
@@ -1896,7 +1896,7 @@
 				D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */,
 				8403E75B201C4A79007F7246 /* FeedListKeyboardDelegate.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
-				84702AA41FA27AC0006B8943 /* MarkReadOrUnreadCommand.swift in Sources */,
+				84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */,
 				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */,

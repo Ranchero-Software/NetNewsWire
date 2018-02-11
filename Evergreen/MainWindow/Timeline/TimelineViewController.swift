@@ -157,7 +157,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	
 	func markAllAsRead() {
 
-		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
 			return
 		}
 		runCommand(markReadCommand)
@@ -201,7 +201,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	
 	@IBAction func markSelectedArticlesAsRead(_ sender: Any?) {
 
-		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: selectedArticles, markingRead: true, undoManager: undoManager) else {
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: true, undoManager: undoManager) else {
 			return
 		}
 		runCommand(markReadCommand)
@@ -209,7 +209,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	
 	@IBAction func markSelectedArticlesAsUnread(_ sender: Any?) {
 		
-		guard let undoManager = undoManager, let markUnreadCommand = MarkReadOrUnreadCommand(initialArticles: selectedArticles, markingRead: false, undoManager: undoManager) else {
+		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: false, undoManager: undoManager) else {
 			return
 		}
 		runCommand(markUnreadCommand)
@@ -237,7 +237,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return
 		}
 
-		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
 			return
 		}
 		runCommand(markReadCommand)
