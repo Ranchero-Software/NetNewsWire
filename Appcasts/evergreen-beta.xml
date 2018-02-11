@@ -7,6 +7,33 @@
         <language>en</language>
 
 		<item>
+          <title>Evergreen 1.0d36</title>
+            <description><![CDATA[
+            
+            <h4>AppleScript!</h4>
+            <p>Evergreen is scriptable — use Script Editor to see the app’s scripting dictionary.</p>
+
+						<h4>Sidebar</h4>
+						<p>Fetch and display articles for smart feeds. (The Starred feed is empty for now, though, because you can’t actually star anything yet.)</p>
+						<p>Display a contextual menu for feeds, folders, and smart feeds.</p>
+						
+						<h4>Timeline</h4>
+						<p>Display a contextual menu for articles.</p>
+						
+						<h4>Detail</h4>
+						<p>Remove contextual menu items from the web view that don’t make sense for Evergren — Reload, for example.</p>
+						            
+            <h4>Misc.</h4>
+            <p>Rearrange the default toolbar to put Search in the middle.</p>
+ 						<p>Update the name of the Show/Hide Sidebar menu command when needed.</p>
+ 						
+    						]]></description>
+            <pubDate>Sun, 11 Feb 2018 14:35:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d36.zip" sparkle:version="959" sparkle:shortVersionString="1.0d36" length="8813422" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
           <title>Evergreen 1.0d35</title>
             <description><![CDATA[
             
