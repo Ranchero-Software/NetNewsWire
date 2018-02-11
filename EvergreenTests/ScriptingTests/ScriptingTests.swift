@@ -8,7 +8,7 @@
 
 import XCTest
 
-class ScriptingTests: XCTestCase {
+class ScriptingTests: AppleScriptXCTestCase {
 
     override func setUp() {
         super.setUp()
@@ -18,52 +18,6 @@ class ScriptingTests: XCTestCase {
         super.tearDown()
     }
 
-    /*
-        @function doIndividualScript
-        @param filename -- name of a .applescript (sans extention) in the test bundle's 
-                           Resources/TestScripts directory
-        @brief  given a file, loads the script and runs it.  Expects a result from running
-                the script of the form
-                     {test_result:true, script_result:<anything>}
-                if the test_result is false or is missing, the test fails
-        @return  the value of script_result, if any
-    */
-    func doIndividualScript(filename:String) -> NSAppleEventDescriptor? {
-        var errorDict: NSDictionary? = nil
-        let testBundle = Bundle(for: type(of: self))
-        let url = testBundle.url(forResource:filename, withExtension:"applescript", subdirectory:"TestScripts")
-        guard let testScriptUrl = url  else {
-            XCTFail("Failed Getting script URL")
-            return nil
-        }
-        
-        guard let testScript = NSAppleScript(contentsOf: testScriptUrl, error: &errorDict) else {
-            XCTFail("Failed initializing NSAppleScript")
-            print ("error is \(String(describing: errorDict))")
-            return nil
-        }
-        
-        let scriptResult = testScript.executeAndReturnError(&errorDict)
-        if (errorDict != nil) {
-            XCTFail("Failed executing script")
-            print ("error is \(String(describing: errorDict))")
-            return nil
-        }
-        
-        let usrfDictionary = scriptResult.usrfDictionary()
-        guard let testResult = usrfDictionary["test_result"] else {
-            XCTFail("test script didn't return test result in usrf")
-            return nil
-        }
-        
-        XCTAssert(testResult.booleanValue == true, "test_result should be true")
-        if (testResult.booleanValue  != true )
-        {
-            print("test_result was \(testResult)")
-            print("script_result was \(String(describing: usrfDictionary["script_result"]))")
-        }
-        return usrfDictionary["script_result"]
-    }
     
     /*
         @function testGenericScript
@@ -102,4 +56,32 @@ class ScriptingTests: XCTestCase {
         _ = doIndividualScript(filename: "testTitleOfArticlesWhose")
     }
 
+    func doIndividualScriptWithExpectation(filename:String) {
+        let queue = DispatchQueue(label:"testQueue")
+        let scriptExpectation = self.expectation(description: filename+"expectation")
+        queue.async {
+             _ = self.doIndividualScript(filename:filename)
+             scriptExpectation.fulfill()
+        }
+        self.wait(for:[scriptExpectation], timeout:60)
+    }
+
+/*
+    @function testCurrentArticleScripts
+    @brief    the pices of the test are broken up into smaller pieces because of the
+              way events are delivered to the app -- I tried one single script with all the
+              actions and the keystrokes aren't delivered to the app right away, so the ui
+              isn't updated in time for 'current article' to be set.  But, breaking them up
+              in this way seems to work.
+*/
+    func testCurrentArticleScripts() {
+        doIndividualScriptWithExpectation(filename: "uiScriptingTestSetup")
+        doIndividualScriptWithExpectation(filename: "establishMainWindowStartingState")
+        doIndividualScriptWithExpectation(filename: "selectAFeed")
+        doIndividualScriptWithExpectation(filename: "testCurrentArticleIsNil")
+        doIndividualScriptWithExpectation(filename: "selectAnArticle")
+        doIndividualScriptWithExpectation(filename: "testURLsOfCurrentArticle")
+    }
 }
+
+

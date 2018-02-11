@@ -51,10 +51,20 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     // MARK: --- Scriptable properties ---
     
     @objc(url)
-    var url:String  {
-        return article.url ?? ""
+    var url:String?  {
+        return article.url ?? article.externalURL
     }
-    
+
+    @objc(permalink)
+    var permalink:String?  {
+        return article.url
+    }
+
+    @objc(externalUrl)
+    var externalUrl:String?  {
+        return article.externalURL
+    }
+
     @objc(uniqueId)
     var uniqueId:String  {
         return article.uniqueID

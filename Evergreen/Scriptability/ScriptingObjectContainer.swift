@@ -12,9 +12,8 @@ protocol ScriptingObjectContainer: ScriptingObject {
     var scriptingClassDescription:NSScriptClassDescription { get }
 }
 
-
 extension ScriptingObjectContainer {
-    
+
     func makeFormNameScriptObjectSpecifier(forObject object:NamedScriptingObject) -> NSScriptObjectSpecifier? {
         let containerClassDescription = self.scriptingClassDescription
         let containerScriptObjectSpecifier = self.objectSpecifier
