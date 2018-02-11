@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14087.3" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14092" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14087.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14092"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,9 +21,9 @@
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="YMs-P5-Xhn"/>
                                 <toolbarItem implicitItemIdentifier="DD0FA79F-72C1-488B-B113-0D2DE89AA468" label="Search" paletteLabel="Search" toolTip="Search Articles" id="1Ql-WJ-KYi">
                                     <size key="minSize" width="96" height="22"/>
-                                    <size key="maxSize" width="256" height="28"/>
+                                    <size key="maxSize" width="320" height="28"/>
                                     <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" id="Fcs-4u-xuP">
-                                        <rect key="frame" x="0.0" y="14" width="256" height="22"/>
+                                        <rect key="frame" x="0.0" y="14" width="320" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="syc-TO-rPc">
                                             <font key="font" metaFont="system"/>
@@ -167,25 +167,6 @@
                                         <action selector="refreshAll:" target="Oky-zY-oP4" id="KRz-Df-3zA"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="BEE79EC5-174E-40DB-AA76-0F1141C97804" label="Action" paletteLabel="Action" toolTip="Action" image="action" id="eyg-zr-m4a">
-                                    <size key="minSize" width="38" height="25"/>
-                                    <size key="maxSize" width="38" height="28"/>
-                                    <popUpButton key="view" verticalHuggingPriority="750" id="3z3-Db-0Kb">
-                                        <rect key="frame" x="2" y="14" width="38" height="28"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="action" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="NHu-v8-gM6" id="lev-Yv-VWb">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
-                                            <menu key="menu" id="jk1-Ql-ozP">
-                                                <items>
-                                                    <menuItem state="on" image="action" hidden="YES" id="NHu-v8-gM6"/>
-                                                    <menuItem title="Item 2" id="1rz-c0-zPY"/>
-                                                    <menuItem title="Item 3" id="9ZT-Uj-OTH"/>
-                                                </items>
-                                            </menu>
-                                        </popUpButtonCell>
-                                    </popUpButton>
-                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="Skp-5r-70Q"/>
@@ -193,13 +174,13 @@
                                 <toolbarItem reference="QD0-SQ-OIM"/>
                                 <toolbarItem reference="YMs-P5-Xhn"/>
                                 <toolbarItem reference="lst-vn-0Iw"/>
-                                <toolbarItem reference="Gxg-WQ-ufC"/>
+                                <toolbarItem reference="1Ql-WJ-KYi"/>
                                 <toolbarItem reference="YMs-P5-Xhn"/>
                                 <toolbarItem reference="p7Y-Vm-ILH"/>
+                                <toolbarItem reference="Gxg-WQ-ufC"/>
+                                <toolbarItem reference="N7D-g2-EPD"/>
                                 <toolbarItem reference="tid-SB-me3"/>
                                 <toolbarItem reference="nv0-Ju-lP7"/>
-                                <toolbarItem reference="YMs-P5-Xhn"/>
-                                <toolbarItem reference="1Ql-WJ-KYi"/>
                             </defaultToolbarItems>
                             <connections>
                                 <outlet property="delegate" destination="B8D-0N-5wS" id="hrC-d9-Cge"/>
@@ -592,6 +573,7 @@
                                                 <outlet property="dataSource" destination="36G-bQ-b96" id="OpB-zC-ItJ"/>
                                                 <outlet property="delegate" destination="36G-bQ-b96" id="s1m-42-GQ4"/>
                                                 <outlet property="keyboardDelegate" destination="ZOV-xh-WJE" id="HiG-Bz-vD0"/>
+                                                <outlet property="menu" destination="gb5-z4-YPr" id="pey-0u-ogu"/>
                                             </connections>
                                         </tableView>
                                     </subviews>
@@ -623,13 +605,35 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <connections>
+                        <outlet property="contextualMenuDelegate" destination="iD1-KK-gFc" id="b0j-aW-e4B"/>
                         <outlet property="tableView" destination="DRs-j8-R9a" id="2AG-SP-7n2"/>
                     </connections>
                 </viewController>
                 <customObject id="Ebq-4s-EwK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <menu id="gb5-z4-YPr">
+                    <items>
+                        <menuItem title="Item 1" id="Ikx-w7-cua">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="Item 2" id="QX3-hL-Dqh">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="Item 3" id="IsQ-j7-Njb">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                    </items>
+                    <connections>
+                        <outlet property="delegate" destination="iD1-KK-gFc" id="q4j-wE-tnf"/>
+                    </connections>
+                </menu>
                 <customObject id="ZOV-xh-WJE" customClass="TimelineKeyboardDelegate" customModule="Evergreen" customModuleProvider="target">
                     <connections>
                         <outlet property="timelineViewController" destination="36G-bQ-b96" id="rED-2Z-kh6"/>
+                    </connections>
+                </customObject>
+                <customObject id="iD1-KK-gFc" customClass="TimelineContextualMenuDelegate" customModule="Evergreen" customModuleProvider="target">
+                    <connections>
+                        <outlet property="timelineViewController" destination="36G-bQ-b96" id="oE9-uV-TNi"/>
                     </connections>
                 </customObject>
             </objects>
@@ -705,12 +709,12 @@
         <image name="NSMobileMe" width="32" height="32"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
-        <image name="action" width="19" height="19"/>
-        <image name="markAllRead" width="22" height="19"/>
-        <image name="markRead" width="19" height="19"/>
-        <image name="newFolder" width="19" height="19"/>
-        <image name="nextUnread" width="24" height="19"/>
-        <image name="openInBrowser" width="19" height="19"/>
-        <image name="star" width="19" height="19"/>
+        <image name="action" width="9.5" height="9.5"/>
+        <image name="markAllRead" width="11" height="9.5"/>
+        <image name="markRead" width="9.5" height="9.5"/>
+        <image name="newFolder" width="9.5" height="9.5"/>
+        <image name="nextUnread" width="12" height="9.5"/>
+        <image name="openInBrowser" width="9.5" height="9.5"/>
+        <image name="star" width="9.5" height="9.5"/>
     </resources>
 </document>

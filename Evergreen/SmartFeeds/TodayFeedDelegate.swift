@@ -18,5 +18,21 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 
 		account.fetchUnreadCountForToday(callback)
 	}
+
+	// MARK: ArticleFetcher
+
+	func fetchArticles() -> Set<Article> {
+
+		var articles = Set<Article>()
+		for account in AccountManager.shared.accounts {
+			articles.formUnion(account.fetchTodayArticles())
+		}
+		return articles
+	}
+
+	func fetchUnreadArticles() -> Set<Article> {
+
+		return fetchArticles().unreadArticles()
+	}
 }
 

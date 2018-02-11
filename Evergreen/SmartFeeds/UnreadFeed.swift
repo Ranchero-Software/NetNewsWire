@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import Account
+import Data
 
 // This just shows the global unread count, which appDelegate already has. Easy.
 
@@ -32,5 +34,22 @@ final class UnreadFeed: PseudoFeed {
 
 		assert(note.object is AppDelegate)
 		unreadCount = appDelegate.unreadCount
+	}
+}
+
+extension UnreadFeed: ArticleFetcher {
+
+	func fetchArticles() -> Set<Article> {
+
+		return fetchUnreadArticles()
+	}
+
+	func fetchUnreadArticles() -> Set<Article> {
+
+		var articles = Set<Article>()
+		for account in AccountManager.shared.accounts {
+			articles.formUnion(account.fetchUnreadArticles())
+		}
+		return articles
 	}
 }

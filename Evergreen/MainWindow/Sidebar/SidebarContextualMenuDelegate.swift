@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import RSCore
 
 @objc final class SidebarContextualMenuDelegate: NSObject, NSMenuDelegate {
 
@@ -24,11 +25,7 @@ import AppKit
 			return
 		}
 
-		let items = contextualMenu.items
-		contextualMenu.removeAllItems()
-		for menuItem in items {
-			menu.addItem(menuItem)
-		}
+		menu.takeItems(from: contextualMenu)
 	}
 }
 

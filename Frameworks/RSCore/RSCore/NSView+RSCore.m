@@ -65,4 +65,18 @@
 }
 
 
+- (NSTableView *)rs_enclosingTableView {
+
+	NSView *nomad = self.superview;
+
+	while (nomad != nil) {
+		if ([nomad isKindOfClass:[NSTableView class]]) {
+			return (NSTableView *)nomad;
+		}
+		nomad = nomad.superview;
+	}
+
+	return nil;
+}
+
 @end

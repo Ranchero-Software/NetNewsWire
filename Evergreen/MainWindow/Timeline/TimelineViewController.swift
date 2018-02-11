@@ -15,7 +15,8 @@ import Account
 class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
-
+	@IBOutlet var contextualMenuDelegate: TimelineContextualMenuDelegate?
+	
 	var selectedArticles: [Article] {
 		get {
 			return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
@@ -25,6 +26,16 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	var hasAtLeastOneSelectedArticle: Bool {
 		get {
 			return tableView.selectedRow != -1
+		}
+	}
+
+	var articles = ArticleArray() {
+		didSet {
+			if articles != oldValue {
+				clearUndoableCommands()
+				updateShowAvatars()
+				tableView.reloadData()
+			}
 		}
 	}
 
@@ -60,16 +71,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			}
 		}
 	}
-	private var articles = ArticleArray() {
-		didSet {
-			if articles != oldValue {
-				clearUndoableCommands()
-				updateShowAvatars()
-				tableView.reloadData()
-			}
-		}
-	}
-
 	private var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
 		didSet {
 			if fontSize != oldValue {
@@ -678,11 +679,8 @@ private extension TimelineViewController {
 
 		for object in representedObjects {
 
-			if let feed = object as? Feed {
-				fetchedArticles.formUnion(feed.fetchArticles())
-			}
-			else if let folder = object as? Folder {
-				fetchedArticles.formUnion(folder.fetchArticles())
+			if let articleFetcher = object as? ArticleFetcher {
+				fetchedArticles.formUnion(articleFetcher.fetchArticles())
 			}
 		}
 

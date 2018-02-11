@@ -6,6 +6,7 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
+@import RSCore;
 #import "RSMultiLineView.h"
 #import "RSMultiLineRenderer.h"
 #import "RSMultiLineRendererMeasurements.h"
@@ -134,6 +135,16 @@ static NSAttributedString *emptyAttributedString = nil;
 	
 	[self invalidateIntrinsicContentSize];
 	[super setFrameSize:newSize];
+}
+
+
+- (NSMenu *)menuForEvent:(NSEvent *)event {
+
+	NSTableView *tableView = [self rs_enclosingTableView];
+	if (tableView) {
+		return [tableView menuForEvent:event];
+	}
+	return nil;
 }
 
 

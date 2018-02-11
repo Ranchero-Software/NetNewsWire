@@ -341,12 +341,27 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return articles
 	}
 
+	public func fetchUnreadArticles() -> Set<Article> {
+
+		return fetchUnreadArticles(forContainer: self)
+	}
+
 	public func fetchArticles(folder: Folder) -> Set<Article> {
 
-		let feeds = folder.flattenedFeeds()
+		return fetchUnreadArticles(forContainer: folder)
+	}
+
+	public func fetchUnreadArticles(forContainer container: Container) -> Set<Article> {
+
+		let feeds = container.flattenedFeeds()
 		let articles = database.fetchUnreadArticles(for: feeds)
 		feeds.forEach { validateUnreadCount($0, articles) }
 		return articles
+	}
+
+	public func fetchTodayArticles() -> Set<Article> {
+
+		return database.fetchTodayArticles(for: flattenedFeeds())
 	}
 
 	private func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {

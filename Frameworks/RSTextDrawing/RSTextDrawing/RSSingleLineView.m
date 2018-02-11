@@ -124,6 +124,14 @@ static NSAttributedString *emptyAttributedString = nil;
 	return self.intrinsicSize;
 }
 
+- (NSMenu *)menuForEvent:(NSEvent *)event {
+
+	NSTableView *tableView = [self rs_enclosingTableView];
+	if (tableView) {
+		return [tableView menuForEvent:event];
+	}
+	return nil;
+}
 
 - (void)drawRect:(NSRect)r {
 	
