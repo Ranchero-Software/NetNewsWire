@@ -32,7 +32,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	var articles = ArticleArray() {
 		didSet {
 			if articles != oldValue {
-				clearUndoableCommands()
 				updateShowAvatars()
 				tableView.reloadData()
 			}
