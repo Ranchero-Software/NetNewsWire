@@ -97,6 +97,8 @@
 		849B08981BF7BCE30090CEE4 /* NSPasteboard+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 849B08961BF7BCE30090CEE4 /* NSPasteboard+RSCore.m */; };
 		849BF8BA1C9130150071D1DA /* DiskSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849BF8B91C9130150071D1DA /* DiskSaver.swift */; };
 		84A8358A1D4EC7B80004C598 /* PlistProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */; };
+		84AD1EA520315A8800BC20B7 /* PasteboardWriterOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EA420315A8700BC20B7 /* PasteboardWriterOwner.swift */; };
+		84AD1EA820315BA900BC20B7 /* NSPasteboard+RSCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EA720315BA900BC20B7 /* NSPasteboard+RSCore.swift */; };
 		84B890561C59CF1600D8BF23 /* NSString+ExtrasTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B890551C59CF1600D8BF23 /* NSString+ExtrasTests.m */; };
 		84B99C941FAE64D500ECDEDB /* DisplayNameProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C931FAE64D400ECDEDB /* DisplayNameProvider.swift */; };
 		84B99C951FAE64D500ECDEDB /* DisplayNameProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C931FAE64D400ECDEDB /* DisplayNameProvider.swift */; };
@@ -217,6 +219,8 @@
 		849B08961BF7BCE30090CEE4 /* NSPasteboard+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSPasteboard+RSCore.m"; sourceTree = "<group>"; };
 		849BF8B91C9130150071D1DA /* DiskSaver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiskSaver.swift; path = RSCore/DiskSaver.swift; sourceTree = "<group>"; };
 		84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlistProviderProtocol.swift; path = RSCore/PlistProviderProtocol.swift; sourceTree = "<group>"; };
+		84AD1EA420315A8700BC20B7 /* PasteboardWriterOwner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PasteboardWriterOwner.swift; path = RSCore/PasteboardWriterOwner.swift; sourceTree = "<group>"; };
+		84AD1EA720315BA900BC20B7 /* NSPasteboard+RSCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSPasteboard+RSCore.swift"; path = "AppKit/NSPasteboard+RSCore.swift"; sourceTree = "<group>"; };
 		84B890551C59CF1600D8BF23 /* NSString+ExtrasTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ExtrasTests.m"; sourceTree = "<group>"; };
 		84B99C931FAE64D400ECDEDB /* DisplayNameProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DisplayNameProvider.swift; path = RSCore/DisplayNameProvider.swift; sourceTree = "<group>"; };
 		84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OPMLRepresentable.swift; path = RSCore/OPMLRepresentable.swift; sourceTree = "<group>"; };
@@ -364,6 +368,7 @@
 				8402047D1FBCE77900D94C1A /* BatchUpdate.swift */,
 				848F6AE81FC2BC50002D422E /* ThreadSafeCache.swift */,
 				844B5B561FE9D36000C7C76A /* Keyboard.swift */,
+				84AD1EA420315A8700BC20B7 /* PasteboardWriterOwner.swift */,
 				84CFF5241AC3C8A200CEA6C8 /* Foundation */,
 				84CFF5551AC3CF4A00CEA6C8 /* AppKit */,
 				84CFF5661AC3D13F00CEA6C8 /* Images */,
@@ -480,6 +485,7 @@
 				84C687371FBC028900345C9E /* LogItem.swift */,
 				8434D15B200BD6F400D6281E /* UserApp.swift */,
 				84D5BA1D201E87E2009092BD /* URLPasteboardWriter.swift */,
+				84AD1EA720315BA900BC20B7 /* NSPasteboard+RSCore.swift */,
 				842DD7F91E1499FA00E061EB /* Views */,
 			);
 			name = AppKit;
@@ -789,6 +795,7 @@
 				84C687381FBC028900345C9E /* LogItem.swift in Sources */,
 				8432B1861DACA0E90057D6DF /* NSResponder-Extensions.swift in Sources */,
 				84E8E0D9202EC39800562D8F /* NSMenu+Extensions.swift in Sources */,
+				84AD1EA820315BA900BC20B7 /* NSPasteboard+RSCore.swift in Sources */,
 				84D5BA1E201E87E2009092BD /* URLPasteboardWriter.swift in Sources */,
 				849B08981BF7BCE30090CEE4 /* NSPasteboard+RSCore.m in Sources */,
 				842635571D7FA1C800196285 /* NSTableView+Extensions.swift in Sources */,
@@ -810,6 +817,7 @@
 				842635591D7FA24800196285 /* NSOutlineView+Extensions.swift in Sources */,
 				844C915C1B65753E0051FC1B /* RSPlist.m in Sources */,
 				84CFF5231AC3C89D00CEA6C8 /* NSObject+RSCore.m in Sources */,
+				84AD1EA520315A8800BC20B7 /* PasteboardWriterOwner.swift in Sources */,
 				8414CBA71C95F2EA00333C12 /* Set+Extensions.swift in Sources */,
 				84B99C9A1FAE650100ECDEDB /* OPMLRepresentable.swift in Sources */,
 				84E34DA61F9FA1070077082F /* UndoableCommand.swift in Sources */,
