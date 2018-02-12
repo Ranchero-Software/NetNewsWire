@@ -67,11 +67,15 @@ final class FeedListViewController: NSViewController {
 
 extension FeedListViewController {
 
-	func openHomePage(_ sender: Any?) {
+	@IBAction func openHomePage(_ sender: Any?) {
 
+		guard let homePageURL = singleSelectedHomePageURL() else {
+			return
+		}
+		Browser.open(homePageURL, inBackground: false)
 	}
 
-	func addToFeeds(_ sender: Any?) {
+	@IBAction func addToFeeds(_ sender: Any?) {
 
 	}
 }
@@ -133,8 +137,11 @@ extension FeedListViewController: NSOutlineViewDelegate {
 			postSidebarSelectionDidChangeNotification(selectedNode.representedObject)
 		}
 	}
+}
 
-	private func configure(_ cell: SidebarCell, _ node: Node) {
+private extension FeedListViewController {
+
+	func configure(_ cell: SidebarCell, _ node: Node) {
 
 		cell.cellAppearance = sidebarCellAppearance
 		cell.objectValue = node
@@ -164,9 +171,6 @@ extension FeedListViewController: NSOutlineViewDelegate {
 		}
 		return ""
 	}
-}
-
-private extension FeedListViewController {
 
 	func nodeForRow(_ row: Int) -> Node? {
 
