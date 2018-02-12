@@ -214,6 +214,11 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		runCommand(markUnreadCommand)
 	}
 
+	@IBAction func copy(_ sender: Any?) {
+
+		NSPasteboard.general.copyObjects(selectedArticles)
+	}
+
 	func markOlderArticlesAsRead() {
 
 		// Mark articles the same age or older than the selected article(s) as read.
@@ -419,6 +424,19 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		rowHeightWithFeedName = calculateRowHeight(showingFeedNames: true)
 		rowHeightWithoutFeedName = calculateRowHeight(showingFeedNames: false)
 		updateTableViewRowHeight()
+	}
+}
+
+// MARK: NSUserInterfaceValidations
+
+extension TimelineViewController: NSUserInterfaceValidations {
+
+	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+
+		if item.action == #selector(copy(_:)) {
+			return NSPasteboard.general.canCopyAtLeastOneObject(selectedArticles)
+		}
+		return true
 	}
 }
 
