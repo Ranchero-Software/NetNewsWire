@@ -54,7 +54,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 
 	// MARK: Actions
 
-	@objc func toolbarItemClicked(_ sender: AnyObject) {
+	@objc func toolbarItemClicked(_ sender: Any?) {
 
 
 	}

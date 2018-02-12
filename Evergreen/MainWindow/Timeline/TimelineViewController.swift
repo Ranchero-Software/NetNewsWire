@@ -174,14 +174,14 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	// MARK: - Actions
 
-	@objc func openArticleInBrowser(_ sender: AnyObject) {
+	@objc func openArticleInBrowser(_ sender: Any?) {
 		
 		if let link = oneSelectedArticle?.preferredLink {
 			Browser.open(link)
 		}
 	}
 	
-	@IBAction func toggleStatusOfSelectedArticles(_ sender: AnyObject) {
+	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {
 	
 		guard !selectedArticles.isEmpty else {
 			return

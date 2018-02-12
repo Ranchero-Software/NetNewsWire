@@ -273,7 +273,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		readerWindow.showWindow(self)
 	}
 
-	@IBAction func showPreferences(_ sender: AnyObject) {
+	@IBAction func showPreferences(_ sender: Any?) {
 
 		if preferencesWindowController == nil {
 			preferencesWindowController = windowControllerWithName("Preferences")
@@ -282,28 +282,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		preferencesWindowController!.showWindow(self)
 	}
 
-	@IBAction func showMainWindow(_ sender: AnyObject) {
+	@IBAction func showMainWindow(_ sender: Any?) {
 
 		createAndShowMainWindow()
 	}
 
-	@IBAction func refreshAll(_ sender: AnyObject) {
+	@IBAction func refreshAll(_ sender: Any?) {
 
 		AccountManager.shared.refreshAll()
 	}
 
-	@IBAction func showAddFeedWindow(_ sender: AnyObject) {
+	@IBAction func showAddFeedWindow(_ sender: Any?) {
 
 		addFeed(nil)
 	}
 
-	@IBAction func showAddFolderWindow(_ sender: AnyObject) {
+	@IBAction func showAddFolderWindow(_ sender: Any?) {
 
 		createAndShowMainWindow()
 		showAddFolderSheetOnWindow(mainWindowController!.window!)
 	}
 
-	@IBAction func showFeedList(_ sender: AnyObject) {
+	@IBAction func showFeedList(_ sender: Any?) {
 
 		if feedListWindowController == nil {
 			feedListWindowController = windowControllerWithName("FeedList")
@@ -353,7 +353,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		logWindowController!.showWindow(self)
 	}
 	
-	@IBAction func importOPMLFromFile(_ sender: AnyObject) {
+	@IBAction func importOPMLFromFile(_ sender: Any?) {
 
 		let panel = NSOpenPanel()
 		panel.canDownloadUbiquitousContents = true
@@ -378,11 +378,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 	
-	@IBAction func importOPMLFromURL(_ sender: AnyObject) {
+	@IBAction func importOPMLFromURL(_ sender: Any?) {
 
 	}
 
-	@IBAction func exportOPML(_ sender: AnyObject) {
+	@IBAction func exportOPML(_ sender: Any?) {
 
 		let panel = NSSavePanel()
 		panel.allowedFileTypes = ["opml"]
@@ -409,7 +409,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 	
-	@IBAction func addAppNews(_ sender: AnyObject) {
+	@IBAction func addAppNews(_ sender: Any?) {
 
 		if AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 			return
@@ -417,17 +417,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFeed(appNewsURLString, "Evergreen News")
 	}
 
-	@IBAction func openWebsite(_ sender: AnyObject) {
+	@IBAction func openWebsite(_ sender: Any?) {
 
 		Browser.open("https://ranchero.com/evergreen/", inBackground: false)
 	}
 
-	@IBAction func openRepository(_ sender: AnyObject) {
+	@IBAction func openRepository(_ sender: Any?) {
 
 		Browser.open("https://github.com/brentsimmons/Evergreen", inBackground: false)
 	}
 
-	@IBAction func openBugTracker(_ sender: AnyObject) {
+	@IBAction func openBugTracker(_ sender: Any?) {
 
 		Browser.open("https://github.com/brentsimmons/Evergreen/issues", inBackground: false)
 	}
@@ -437,7 +437,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		Browser.open("https://github.com/brentsimmons/Evergreen/tree/master/Technotes", inBackground: false)
 	}
 
-	@IBAction func showHelp(_ sender: AnyObject) {
+	@IBAction func showHelp(_ sender: Any?) {
 
 		Browser.open("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
 	}

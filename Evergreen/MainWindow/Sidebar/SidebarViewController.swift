@@ -165,6 +165,10 @@ import RSCore
 		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.starredFeed, treeController)
 	}
 
+	@IBAction func copy(_ sender: Any?) {
+
+	}
+	
 	// MARK: Navigation
 	
 	func canGoToNextUnread() -> Bool {

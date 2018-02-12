@@ -186,12 +186,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 
-	@IBAction func showAddFolderWindow(_ sender: Any) {
+	@IBAction func showAddFolderWindow(_ sender: Any?) {
 
 		appDelegate.showAddFolderSheetOnWindow(window!)
 	}
 
-	@IBAction func showAddFeedWindow(_ sender: Any) {
+	@IBAction func showAddFeedWindow(_ sender: Any?) {
 
 		appDelegate.showAddFeedSheetOnWindow(window!, urlString: nil, name: nil)
 	}
