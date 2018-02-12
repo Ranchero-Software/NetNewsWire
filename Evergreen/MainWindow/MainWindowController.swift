@@ -75,6 +75,13 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
+	func saveState() {
+
+		// TODO: save width of split view and anything else that should be saved.
+
+		
+	}
+
 	// MARK: Sidebar
 
 	func selectedObjectsInSidebar() -> [AnyObject]? {
