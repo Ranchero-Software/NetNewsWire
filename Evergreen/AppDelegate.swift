@@ -442,6 +442,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		Browser.open("https://ranchero.com/evergreen/help/1.0/", inBackground: false)
 	}
 
+	@IBAction func donateToAppCampForGirls(_ sender: Any?) {
+
+		Browser.open("https://appcamp4girls.com/contribute/", inBackground: false)
+	}
+
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
 		#if DEBUG
 			AccountManager.shared.accounts.forEach{ $0.debugDropConditionalGetInfo() }
