@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8403E75B201C4A79007F7246 /* FeedListKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8403E75A201C4A79007F7246 /* FeedListKeyboardDelegate.swift */; };
 		840D617F2029031C009BC708 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D617E2029031C009BC708 /* AppDelegate.swift */; };
 		840D61812029031C009BC708 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61802029031C009BC708 /* MasterViewController.swift */; };
 		840D61832029031C009BC708 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61822029031C009BC708 /* DetailViewController.swift */; };
@@ -36,7 +35,6 @@
 		844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */; };
 		844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B661FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift */; };
 		844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
-		84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */; };
 		845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845213221FCA5B10003B6E93 /* ImageDownloader.swift */; };
 		845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */; };
 		845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */; };
@@ -128,7 +126,6 @@
 		84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84BBB12B20142A4700F054F5 /* Inspector.storyboard */; };
 		84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BBB12C20142A4700F054F5 /* InspectorWindowController.swift */; };
 		84C12A151FF5B0080009A267 /* FeedList.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C12A141FF5B0080009A267 /* FeedList.storyboard */; };
-		84CC08061FF5D2E000C0C0ED /* FeedListSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */; };
 		84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
 		84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */; };
 		84D5BA20201E8FB6009092BD /* SidebarGearMenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */; };
@@ -1022,14 +1019,12 @@
 			children = (
 				84C12A141FF5B0080009A267 /* FeedList.storyboard */,
 				849A978C1ED9EE4D007D329B /* FeedListWindowController.swift */,
-				84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */,
 				84F204CD1FAACB660076E152 /* FeedListViewController.swift */,
-				8403E75A201C4A79007F7246 /* FeedListKeyboardDelegate.swift */,
-				84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */,
 				84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */,
 				84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */,
 				84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */,
 				84E95CF61FABB3C800552D99 /* FeedList.plist */,
+				84DC413A20310AEE00198AD4 /* UnusedIn1.0 */,
 			);
 			name = "Feed List";
 			path = Evergreen/FeedList;
@@ -1265,6 +1260,16 @@
 				849A978E1ED9EE72007D329B /* DefaultFeeds.plist */,
 			);
 			path = Importers;
+			sourceTree = "<group>";
+		};
+		84DC413A20310AEE00198AD4 /* UnusedIn1.0 */ = {
+			isa = PBXGroup;
+			children = (
+				84CC08051FF5D2E000C0C0ED /* FeedListSplitViewController.swift */,
+				8403E75A201C4A79007F7246 /* FeedListKeyboardDelegate.swift */,
+				84513F8F1FAA63950023A1A9 /* FeedListControlsView.swift */,
+			);
+			path = UnusedIn1.0;
 			sourceTree = "<group>";
 		};
 		84EB380F1FBA8B9F000D2111 /* KeyboardShortcuts */ = {
@@ -1870,7 +1875,6 @@
 			files = (
 				84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */,
 				849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */,
-				84513F901FAA63950023A1A9 /* FeedListControlsView.swift in Sources */,
 				84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */,
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,
 				D5907D972004B7EB005947E5 /* Account+Scriptability.swift in Sources */,
@@ -1894,7 +1898,6 @@
 				D5A2678C20130ECF00A8D3C0 /* Author+Scriptability.swift in Sources */,
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
 				D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */,
-				8403E75B201C4A79007F7246 /* FeedListKeyboardDelegate.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */,
 				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
@@ -1945,7 +1948,6 @@
 				842611A01FCB72600086A189 /* FeaturedImageDownloader.swift in Sources */,
 				849A97781ED9EC04007D329B /* TimelineCellLayout.swift in Sources */,
 				84E8E0EB202F693600562D8F /* DetailWebView.swift in Sources */,
-				84CC08061FF5D2E000C0C0ED /* FeedListSplitViewController.swift in Sources */,
 				849A976C1ED9EBC8007D329B /* TimelineTableRowView.swift in Sources */,
 				849A977B1ED9EC04007D329B /* UnreadIndicatorView.swift in Sources */,
 				84B99C9D1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift in Sources */,

@@ -23,11 +23,25 @@ struct FeedListUserInfoKey {
 final class FeedListViewController: NSViewController {
 
 	@IBOutlet var outlineView: NSOutlineView!
+	@IBOutlet var openHomePageButton: NSButton!
+	@IBOutlet var addToFeedsButton: NSButton!
+	
 	private var sidebarCellAppearance: SidebarCellAppearance!
 	private let treeControllerDelegate = FeedListTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		TreeController(delegate: treeControllerDelegate)
 	}()
+
+	private var selectedNodes: [Node] {
+		if let nodes = outlineView.selectedItems as? [Node] {
+			return nodes
+		}
+		return [Node]()
+	}
+
+	private var selectedObjects: [AnyObject] {
+		return selectedNodes.representedObjects()
+	}
 
 	// MARK: NSViewController
 
@@ -38,6 +52,7 @@ final class FeedListViewController: NSViewController {
 		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		outlineView.needsLayout = true
+		updateUI()
 	}
 
 	// MARK: - Notifications
@@ -45,6 +60,19 @@ final class FeedListViewController: NSViewController {
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 
 		configureAvailableCells()
+	}
+}
+
+// MARK: Actions
+
+extension FeedListViewController {
+
+	func openHomePage(_ sender: Any?) {
+
+	}
+
+	func addToFeeds(_ sender: Any?) {
+
 	}
 }
 
@@ -91,6 +119,8 @@ extension FeedListViewController: NSOutlineViewDelegate {
 	}
 
 	func outlineViewSelectionDidChange(_ notification: Notification) {
+
+		updateUI()
 
 		let selectedRow = self.outlineView.selectedRow
 
@@ -175,5 +205,38 @@ private extension FeedListViewController {
 		}
 
 		NotificationCenter.default.post(name: .FeedListSidebarSelectionDidChange, object: self, userInfo: userInfo)
+	}
+
+	func updateUI() {
+
+		updateButtons()
+	}
+
+	func updateButtons() {
+
+		let objects = selectedObjects
+
+		if objects.isEmpty {
+			openHomePageButton.isEnabled = false
+			addToFeedsButton.isEnabled = false
+			return
+		}
+
+		addToFeedsButton.isEnabled = true
+
+		if let _ = singleSelectedHomePageURL() {
+			openHomePageButton.isEnabled = true
+		}
+		else {
+			openHomePageButton.isEnabled = false
+		}
+	}
+
+	func singleSelectedHomePageURL() -> String? {
+
+		guard selectedObjects.count == 1, let homePageURL = (selectedObjects.first! as? FeedListFeed)?.homePageURL, !homePageURL.isEmpty else {
+			return nil
+		}
+		return homePageURL
 	}
 }

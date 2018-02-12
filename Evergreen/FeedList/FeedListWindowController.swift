@@ -10,18 +10,9 @@ import AppKit
 
 class FeedListWindowController : NSWindowController {
     
-
 	override func windowDidLoad() {
 
 		window!.appearance = NSAppearance(named: .vibrantDark)
-	}
-	
-	@IBAction func addToFeeds(_ sender: AnyObject) {
-
-	}
-
-	@IBAction func openHomePage(_ sender: AnyObject) {
-
 	}
 }
 

@@ -8,8 +8,8 @@
 
 import AppKit
 
+// Unused, at least for now.
+
 @objc final class FeedListControlsView: NSView {
 
-	@IBOutlet var addToFeedsButton: NSButton!
-	@IBOutlet var openHomePageButton: NSButton!
 }
