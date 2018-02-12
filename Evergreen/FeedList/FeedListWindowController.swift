@@ -12,7 +12,10 @@ class FeedListWindowController : NSWindowController {
     
 	override func windowDidLoad() {
 
-		window!.appearance = NSAppearance(named: .vibrantDark)
+//		window!.appearance = NSAppearance(named: .vibrantDark)
+
+		let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: "FeedDirectoryWindow")
+		window?.setFrameUsingName(windowAutosaveName, force: true)
 	}
 }
 
