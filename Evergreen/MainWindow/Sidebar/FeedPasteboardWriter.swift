@@ -8,6 +8,14 @@
 
 import AppKit
 import Data
+import RSCore
+
+extension Feed: PasteboardWriterOwner {
+
+	public var pasteboardWriter: NSPasteboardWriting {
+		return FeedPasteboardWriter(feed: self)
+	}
+}
 
 @objc final class FeedPasteboardWriter: NSObject, NSPasteboardWriting {
 

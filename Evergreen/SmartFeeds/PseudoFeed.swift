@@ -10,7 +10,7 @@ import Foundation
 import Data
 import RSCore
 
-protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconProvider {
+protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconProvider, PasteboardWriterOwner {
 
 }
 

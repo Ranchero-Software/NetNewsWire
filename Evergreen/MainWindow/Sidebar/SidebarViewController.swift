@@ -167,8 +167,9 @@ import RSCore
 
 	@IBAction func copy(_ sender: Any?) {
 
+		NSPasteboard.general.copyObjects(selectedObjects)
 	}
-	
+
 	// MARK: Navigation
 	
 	func canGoToNextUnread() -> Bool {
@@ -304,6 +305,19 @@ import RSCore
 			return FeedPasteboardWriter(feed: feed)
 		}
 		return nil
+	}
+}
+
+// MARK: NSUserInterfaceValidations
+
+extension SidebarViewController: NSUserInterfaceValidations {
+
+	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+
+		if item.action == #selector(copy(_:)) {
+			return NSPasteboard.general.canCopyAtLeastOneObject(selectedObjects)
+		}
+		return true
 	}
 }
 
