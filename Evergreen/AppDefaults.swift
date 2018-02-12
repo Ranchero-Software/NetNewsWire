@@ -135,14 +135,17 @@ private extension AppDefaults {
 
 	func fontSize(for key: String) -> FontSize {
 
-		var rawFontSize = int(for: key)
-		if rawFontSize < smallestFontSizeRawValue {
-			rawFontSize = smallestFontSizeRawValue
-		}
-		if rawFontSize > largestFontSizeRawValue {
-			rawFontSize = largestFontSizeRawValue
-		}
-		return FontSize(rawValue: rawFontSize)!
+		// Punted till after 1.0.
+		return .medium
+
+//		var rawFontSize = int(for: key)
+//		if rawFontSize < smallestFontSizeRawValue {
+//			rawFontSize = smallestFontSizeRawValue
+//		}
+//		if rawFontSize > largestFontSizeRawValue {
+//			rawFontSize = largestFontSizeRawValue
+//		}
+//		return FontSize(rawValue: rawFontSize)!
 	}
 	
 	func setFontSize(for key: String, _ fontSize: FontSize) {
