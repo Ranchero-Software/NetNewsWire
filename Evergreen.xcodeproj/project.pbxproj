@@ -105,6 +105,7 @@
 		84AAF2BF202CF684004A0BC4 /* TimelineContextualMenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AAF2BE202CF684004A0BC4 /* TimelineContextualMenuDelegate.swift */; };
 		84AD1EAA2031617300BC20B7 /* FolderPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EA92031617300BC20B7 /* FolderPasteboardWriter.swift */; };
 		84AD1EBA2031649C00BC20B7 /* SmartFeedPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */; };
+		84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */; };
 		84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; };
 		84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FA91ED37DAD00F0B54B /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */; };
@@ -626,6 +627,7 @@
 		84AAF2BE202CF684004A0BC4 /* TimelineContextualMenuDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineContextualMenuDelegate.swift; sourceTree = "<group>"; };
 		84AD1EA92031617300BC20B7 /* FolderPasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPasteboardWriter.swift; sourceTree = "<group>"; };
 		84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeedPasteboardWriter.swift; sourceTree = "<group>"; };
+		84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarOutlineDataSource.swift; sourceTree = "<group>"; };
 		84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSDatabase.xcodeproj; path = Frameworks/RSDatabase/RSDatabase.xcodeproj; sourceTree = "<group>"; };
 		84B06FA21ED37DAC00F0B54B /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = Frameworks/RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		84B06FB61ED37E8B00F0B54B /* RSWeb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSWeb.xcodeproj; path = Frameworks/RSWeb/RSWeb.xcodeproj; sourceTree = "<group>"; };
@@ -953,6 +955,7 @@
 			children = (
 				849A97621ED9EB96007D329B /* SidebarViewController.swift */,
 				84B7178B201E66580091657D /* SidebarViewController+ContextualMenus.swift */,
+				84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */,
 				849A97601ED9EB96007D329B /* SidebarOutlineView.swift */,
 				849A97611ED9EB96007D329B /* SidebarTreeControllerDelegate.swift */,
 				849A97631ED9EB96007D329B /* UnreadCountView.swift */,
@@ -1934,6 +1937,7 @@
 				8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* FolderPasteboardWriter.swift in Sources */,
 				84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */,
+				84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */,
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
 				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,

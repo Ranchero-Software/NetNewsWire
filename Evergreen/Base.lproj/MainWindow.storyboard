@@ -337,7 +337,6 @@
                                                 </tableColumn>
                                             </tableColumns>
                                             <connections>
-                                                <outlet property="dataSource" destination="XML-A3-pDn" id="04v-0e-BM6"/>
                                                 <outlet property="delegate" destination="XML-A3-pDn" id="fPE-cv-p5c"/>
                                                 <outlet property="keyboardDelegate" destination="h5K-zR-cUa" id="BlT-aW-sea"/>
                                                 <outlet property="menu" destination="p3f-EZ-sSD" id="KTA-tl-UrO"/>

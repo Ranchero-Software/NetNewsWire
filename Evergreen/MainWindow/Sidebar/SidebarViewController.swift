@@ -20,8 +20,12 @@ import RSCore
 	
 	let treeControllerDelegate = SidebarTreeControllerDelegate()
 	lazy var treeController: TreeController = {
-		TreeController(delegate: treeControllerDelegate)
+		return TreeController(delegate: treeControllerDelegate)
 	}()
+	lazy var dataSource: SidebarOutlineDataSource = {
+		return SidebarOutlineDataSource(treeController: treeController)
+	}()
+
     var undoableCommands = [UndoableCommand]()
 	private var animatingChanges = false
 	private var sidebarCellAppearance: SidebarCellAppearance!
@@ -38,6 +42,7 @@ import RSCore
 
 		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
 
+		outlineView.dataSource = dataSource
 		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)
 		outlineView.setDraggingSourceOperationMask(.copy, forLocal: false)
 
@@ -270,7 +275,7 @@ import RSCore
 		// TODO: support multiple selection
 
         let selectedRow = self.outlineView.selectedRow
-        
+
         if selectedRow < 0 || selectedRow == NSNotFound {
             postSidebarSelectionDidChangeNotification(nil)
             return
@@ -280,35 +285,9 @@ import RSCore
 			postSidebarSelectionDidChangeNotification([selectedNode.representedObject])
         }
     }
-
-	// MARK: NSOutlineViewDataSource
-
-	func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
-		
-		return nodeForItem(item as AnyObject?).numberOfChildNodes
-	}
-	
-	func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
-		
-        return nodeForItem(item as AnyObject?).childNodes![index]
-    }
-	
-	func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-		
-        return nodeForItem(item as AnyObject?).canHaveChildNodes
-	}
-
-	func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> NSPasteboardWriting? {
-
-		let node = nodeForItem(item as AnyObject?)
-		if let feed = node.representedObject as? Feed {
-			return FeedPasteboardWriter(feed: feed)
-		}
-		return nil
-	}
 }
 
-// MARK: NSUserInterfaceValidations
+// MARK: - NSUserInterfaceValidations
 
 extension SidebarViewController: NSUserInterfaceValidations {
 
