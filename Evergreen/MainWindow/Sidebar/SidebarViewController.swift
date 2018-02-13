@@ -272,18 +272,7 @@ import RSCore
 
     func outlineViewSelectionDidChange(_ notification: Notification) {
 
-		// TODO: support multiple selection
-
-        let selectedRow = self.outlineView.selectedRow
-
-        if selectedRow < 0 || selectedRow == NSNotFound {
-            postSidebarSelectionDidChangeNotification(nil)
-            return
-        }
-        
-        if let selectedNode = self.outlineView.item(atRow: selectedRow) as? Node {
-			postSidebarSelectionDidChangeNotification([selectedNode.representedObject])
-        }
+		postSidebarSelectionDidChangeNotification(selectedObjects.isEmpty ? nil : selectedObjects)
     }
 }
 
