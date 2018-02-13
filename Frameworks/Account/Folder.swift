@@ -58,6 +58,7 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		self.hashValue = folderID
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: self)
 	}
 
 	// MARK: - Disk Dictionary
@@ -130,7 +131,7 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		return true
 	}
     
-	// MARK: Notifications
+	// MARK: - Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 
@@ -139,6 +140,11 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 				updateUnreadCount()
 			}
 		}
+	}
+
+	@objc func childrenDidChange(_ note: Notification) {
+
+		updateUnreadCount()
 	}
 
 	// MARK: - Equatable
