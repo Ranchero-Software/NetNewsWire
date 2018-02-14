@@ -7,6 +7,30 @@
         <language>en</language>
 
 		<item>
+          <title>Evergreen 1.0d37</title>
+            <description><![CDATA[
+            
+ 							<h4>Misc.</h4>
+ 							<p>Make the Copy command work in the sidebar and timeline.</p>
+ 							<p>Add Donate to App Camp for Girls item to the Help menu. The Help menu is now a place where <i>you</i> can help.</p>
+ 							<p>When selecting multiple items in the sidebar, show articles in the timeline from the entire selection, not just from one thing.</p>
+ 							<p>Update folder unread count when a feed it contains is deleted.</p>
+ 							<p>Update copyright date in About box.</p>
+ 							<p>Disallow blurring behind the title bar, since it’s buggy.</p>
+ 							<p>Don’t clear undo stack when sidebar changes selection.</p>
+ 							<p>Remember Feed Directory’s window frame between runs.</p>
+ 							
+ 							<h4>Puntings</h4>
+ 							<p>Font size is punted till after 1.0, and its preferences have been removed until then.</p>
+ 							<p>Feed Directory is simplified — the feed preview feature has been punted till after 1.0.</p>
+ 							 						
+    						]]></description>
+            <pubDate>Wed, 14 Feb 2018 13:25:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d37.zip" sparkle:version="981" sparkle:shortVersionString="1.0d37" length="7374447" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
           <title>Evergreen 1.0d36</title>
             <description><![CDATA[
             
