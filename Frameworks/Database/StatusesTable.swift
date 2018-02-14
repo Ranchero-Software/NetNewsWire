@@ -179,9 +179,7 @@ private final class StatusCache {
 
 	var dictionary = [String: ArticleStatus]()
 	var cachedStatuses: Set<ArticleStatus> {
-		get {
-			return Set(dictionary.values)
-		}
+		return Set(dictionary.values)
 	}
 
 	func add(_ statuses: Set<ArticleStatus>) {

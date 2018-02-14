@@ -14,9 +14,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	let supportsSubFolders = false
 
 	var refreshProgress: DownloadProgress {
-		get {
-			return DownloadProgress(numberOfTasks: 0) // TODO
-		}
+		return DownloadProgress(numberOfTasks: 0) // TODO
 	}
 
 	func refreshAll(for: Account) {

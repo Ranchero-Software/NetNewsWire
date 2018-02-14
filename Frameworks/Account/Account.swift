@@ -102,19 +102,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	var refreshProgress: DownloadProgress {
-		get {
-			return delegate.refreshProgress
-		}
+		return delegate.refreshProgress
 	}
-
+	
 	var supportsSubFolders: Bool {
-		get {
-			return delegate.supportsSubFolders
-		}
+		return delegate.supportsSubFolders
 	}
-
+	
 	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
-
+		
 		// TODO: support various syncing systems.
 		precondition(type == .onMyMac)
 		self.delegate = LocalAccountDelegate()

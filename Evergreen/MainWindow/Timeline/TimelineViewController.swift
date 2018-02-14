@@ -18,15 +18,11 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	@IBOutlet var contextualMenuDelegate: TimelineContextualMenuDelegate?
 	
 	var selectedArticles: [Article] {
-		get {
-			return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
-		}
+		return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
 	}
 
 	var hasAtLeastOneSelectedArticle: Bool {
-		get {
-			return tableView.selectedRow != -1
-		}
+		return tableView.selectedRow != -1
 	}
 
 	var articles = ArticleArray() {
@@ -105,9 +101,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	private var oneSelectedArticle: Article? {
-		get {
-			return selectedArticles.count == 1 ? selectedArticles.first : nil
-		}
+		return selectedArticles.count == 1 ? selectedArticles.first : nil
 	}
 
 	override func viewDidLoad() {

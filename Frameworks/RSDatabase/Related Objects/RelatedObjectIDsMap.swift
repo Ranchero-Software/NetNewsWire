@@ -52,9 +52,7 @@ struct RelatedObjectIDsMap {
 	}
 	
 	subscript(_ objectID: String) -> Set<String>? {
-		get {
-			return dictionary[objectID]
-		}
+		return dictionary[objectID]
 	}
 }
 

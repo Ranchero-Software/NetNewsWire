@@ -26,9 +26,7 @@ extension ArticleStatus {
 extension ArticleStatus: DatabaseObject {
 	
 	public var databaseID: String {
-		get {
-			return articleID
-		}
+		return articleID
 	}
 
 	public func databaseDictionary() -> NSDictionary? {

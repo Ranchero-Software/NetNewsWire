@@ -15,9 +15,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	private let refresher = LocalAccountRefresher()
 
 	var refreshProgress: DownloadProgress {
-		get {
-			return refresher.progress
-		}
+		return refresher.progress
 	}
 	
 	func refreshAll(for account: Account) {

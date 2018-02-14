@@ -29,10 +29,7 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {
-		get {
-			return name ?? Folder.untitledName
-
-		}
+		return name ?? Folder.untitledName
 	}
 
 	// MARK: - UnreadCountProvider
@@ -84,38 +81,36 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 	}
 
 	var dictionary: [String: Any] {
-		get {
-
-			var d = [String: Any]()
-			guard let account = account else {
-				return d
-			}
-
-			if let name = name {
-				d[Key.name] = name
-			}
-			if unreadCount > 0 {
-				d[Key.unreadCount] = unreadCount
-			}
-
-			let childObjects = children.compactMap { (child) -> [String: Any]? in
-
-				if let feed = child as? Feed {
-					return feed.dictionary
-				}
-				if let folder = child as? Folder, account.supportsSubFolders {
-					return folder.dictionary
-				}
-				assertionFailure("Expected a feed or a folder.");
-				return nil
-			}
-
-			if !childObjects.isEmpty {
-				d[Key.children] = childObjects
-			}
-
+		
+		var d = [String: Any]()
+		guard let account = account else {
 			return d
 		}
+		
+		if let name = name {
+			d[Key.name] = name
+		}
+		if unreadCount > 0 {
+			d[Key.unreadCount] = unreadCount
+		}
+		
+		let childObjects = children.compactMap { (child) -> [String: Any]? in
+			
+			if let feed = child as? Feed {
+				return feed.dictionary
+			}
+			if let folder = child as? Folder, account.supportsSubFolders {
+				return folder.dictionary
+			}
+			assertionFailure("Expected a feed or a folder.");
+			return nil
+		}
+		
+		if !childObjects.isEmpty {
+			d[Key.children] = childObjects
+		}
+		
+		return d
 	}
 	
 	// MARK: Feeds

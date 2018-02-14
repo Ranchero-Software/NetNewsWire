@@ -18,9 +18,7 @@ public extension Notification.Name {
 public extension Feed {
 
 	public var account: Account? {
-		get {
-			return AccountManager.shared.existingAccount(with: accountID)
-		}
+		return AccountManager.shared.existingAccount(with: accountID)
 	}
 	
 	public func takeSettings(from parsedFeed: ParsedFeed) {
@@ -59,15 +57,11 @@ public extension Feed {
 public extension Article {
 
 	public var account: Account? {
-		get {
-			return AccountManager.shared.existingAccount(with: accountID)
-		}
+		return AccountManager.shared.existingAccount(with: accountID)
 	}
 	
 	public var feed: Feed? {
-		get {
-			return account?.existingFeed(with: feedID)
-		}
+		return account?.existingFeed(with: feedID)
 	}
 }
 

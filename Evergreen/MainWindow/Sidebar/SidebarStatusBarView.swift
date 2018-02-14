@@ -25,11 +25,9 @@ final class SidebarStatusBarView: NSView {
 	}
 	
 	override var isFlipped: Bool {
-		get {
-			return true
-		}
+		return true
 	}
-
+	
 	override func awakeFromNib() {
 
 		progressIndicator.isHidden = true

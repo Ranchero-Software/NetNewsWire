@@ -57,9 +57,7 @@ private func optionalIntForColumn(_ row: FMResultSet, _ columnName: String) -> I
 extension Attachment: DatabaseObject {
 	
 	public var databaseID: String {
-		get {
-			return attachmentID
-		}
+		return attachmentID
 	}
 
 	public func databaseDictionary() -> NSDictionary? {

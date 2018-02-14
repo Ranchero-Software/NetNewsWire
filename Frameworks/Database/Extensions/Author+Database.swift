@@ -45,9 +45,7 @@ extension Author {
 extension Author: DatabaseObject {
 
 	public var databaseID: String {
-		get {
-			return authorID
-		}
+		return authorID
 	}
 
 	public func databaseDictionary() -> NSDictionary? {

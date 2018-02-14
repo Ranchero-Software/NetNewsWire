@@ -17,9 +17,7 @@ final class FeedListFolder: Hashable, DisplayNameProvider {
 	let hashValue: Int
 
 	var nameForDisplay: String { // DisplayNameProvider
-		get {
-			return name
-		}
+		return name
 	}
 
 	init(name: String, feeds: Set<FeedListFeed>) {

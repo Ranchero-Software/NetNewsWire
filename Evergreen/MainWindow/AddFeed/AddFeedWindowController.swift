@@ -33,14 +33,12 @@ class AddFeedWindowController : NSWindowController {
 	fileprivate var folderTreeController: TreeController!
 
 	private var userEnteredTitle: String? {
-		get {
-			var s = nameTextField.stringValue
-			s = s.rs_stringWithCollapsedWhitespace()
-			if s.isEmpty {
-				return nil
-			}
-			return s
+		var s = nameTextField.stringValue
+		s = s.rs_stringWithCollapsedWhitespace()
+		if s.isEmpty {
+			return nil
 		}
+		return s
 	}
 	
     var hostWindow: NSWindow!

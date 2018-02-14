@@ -11,15 +11,12 @@ import AppKit
 public extension NSOutlineView {
 
 	var selectedItems: [AnyObject] {
-		get {
+		if selectionIsEmpty {
+			return [AnyObject]()
+		}
 
-			if selectionIsEmpty {
-				return [AnyObject]()
-			}
-
-			return selectedRowIndexes.compactMap { (oneIndex) -> AnyObject? in
-				return item(atRow: oneIndex) as AnyObject
-			}
+		return selectedRowIndexes.compactMap { (oneIndex) -> AnyObject? in
+			return item(atRow: oneIndex) as AnyObject
 		}
 	}
 

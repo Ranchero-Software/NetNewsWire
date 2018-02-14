@@ -27,36 +27,30 @@ class UnreadCountView : NSView {
 		}
 	}
 	var unreadCountString: String {
-		get {
-			return unreadCount < 1 ? "" : "\(unreadCount)"
-		}
+		return unreadCount < 1 ? "" : "\(unreadCount)"
 	}
 
 	private var intrinsicContentSizeIsValid = false
 	private var _intrinsicContentSize = NSZeroSize
 	
 	override var intrinsicContentSize: NSSize {
-		get {
-			if !intrinsicContentSizeIsValid {
-				var size = NSZeroSize
-				if unreadCount > 0 {
-					size = textSize()
-					size.width += (padding.left + padding.right)
-					size.height += (padding.top + padding.bottom)
-				}
-				_intrinsicContentSize = size
-				intrinsicContentSizeIsValid = true
+		if !intrinsicContentSizeIsValid {
+			var size = NSZeroSize
+			if unreadCount > 0 {
+				size = textSize()
+				size.width += (padding.left + padding.right)
+				size.height += (padding.top + padding.bottom)
 			}
-			return _intrinsicContentSize
+			_intrinsicContentSize = size
+			intrinsicContentSizeIsValid = true
 		}
+		return _intrinsicContentSize
 	}
 	
 	override var isFlipped: Bool {
-		get {
-			return true
-		}
+		return true
 	}
-
+	
 	override func invalidateIntrinsicContentSize() {
 		
 		intrinsicContentSizeIsValid = false

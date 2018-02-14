@@ -96,9 +96,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 private extension PreferencesWindowController {
 
 	var currentView: NSView? {
-		get {
-			return window?.contentView?.subviews.first
-		}
+		return window?.contentView?.subviews.first
 	}
 
 	func toolbarItemSpec(for identifier: String) -> PreferencesToolbarItemSpec? {

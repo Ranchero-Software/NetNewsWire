@@ -34,15 +34,13 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {
-		get {
-			if let s = editedName, !s.isEmpty {
-				return s
-			}
-			if let s = name, !s.isEmpty {
-				return s
-			}
-			return NSLocalizedString("Untitled", comment: "Feed name")
+		if let s = editedName, !s.isEmpty {
+			return s
 		}
+		if let s = name, !s.isEmpty {
+			return s
+		}
+		return NSLocalizedString("Untitled", comment: "Feed name")
 	}
 
 	// MARK: - UnreadCountProvider
@@ -115,46 +113,44 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	}
 
 	public var dictionary: [String: Any] {
-		get {
-			var d = [String: Any]()
-
-			d[Key.url] = url
-			
-			// feedID is not repeated when it’s the same as url
-			if (feedID != url) {
-				d[Key.feedID] = feedID
-			}
-			
-			if let homePageURL = homePageURL {
-				d[Key.homePageURL] = homePageURL
-			}
-			if let iconURL = iconURL {
-				d[Key.iconURL] = iconURL
-			}
-			if let faviconURL = faviconURL {
-				d[Key.faviconURL] = faviconURL
-			}
-			if let name = name {
-				d[Key.name] = name
-			}
-			if let editedName = editedName {
-				d[Key.editedName] = editedName
-			}
-			if let authorsArray = authors?.diskArray() {
-				d[Key.authors] = authorsArray
-			}
-			if let contentHash = contentHash {
-				d[Key.contentHash] = contentHash
-			}
-			if unreadCount > 0 {
-				d[Key.unreadCount] = unreadCount
-			}
-			if let conditionalGetInfo = conditionalGetInfo {
-				d[Key.conditionalGetInfo] = conditionalGetInfo.dictionary
-			}
-
-			return d
+		var d = [String: Any]()
+		
+		d[Key.url] = url
+		
+		// feedID is not repeated when it’s the same as url
+		if (feedID != url) {
+			d[Key.feedID] = feedID
 		}
+		
+		if let homePageURL = homePageURL {
+			d[Key.homePageURL] = homePageURL
+		}
+		if let iconURL = iconURL {
+			d[Key.iconURL] = iconURL
+		}
+		if let faviconURL = faviconURL {
+			d[Key.faviconURL] = faviconURL
+		}
+		if let name = name {
+			d[Key.name] = name
+		}
+		if let editedName = editedName {
+			d[Key.editedName] = editedName
+		}
+		if let authorsArray = authors?.diskArray() {
+			d[Key.authors] = authorsArray
+		}
+		if let contentHash = contentHash {
+			d[Key.contentHash] = contentHash
+		}
+		if unreadCount > 0 {
+			d[Key.unreadCount] = unreadCount
+		}
+		if let conditionalGetInfo = conditionalGetInfo {
+			d[Key.conditionalGetInfo] = conditionalGetInfo.dictionary
+		}
+		
+		return d
 	}
 
 	// MARK: - Debug

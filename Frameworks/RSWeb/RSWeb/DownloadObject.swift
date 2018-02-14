@@ -14,9 +14,7 @@ public final class DownloadObject: Hashable {
 	public var data = Data()
 	
 	public var hashValue: Int {
-		get {
-			return url.hashValue
-		}
+		return url.hashValue
 	}
 	
 	public init(url: URL) {

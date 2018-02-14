@@ -31,9 +31,7 @@ final class FeedListFeed: Hashable, DisplayNameProvider {
 	}
 
 	var nameForDisplay: String { // DisplayNameProvider
-		get {
-			return name
-		}
+		return name
 	}
 
 	init(name: String, url: String, homePageURL: String) {

@@ -294,9 +294,7 @@ private final class DownloadInfo {
 	var canceled = false
 	
 	var statusCode: Int {
-		get {
-			return urlResponse?.forcedStatusCode ?? 0
-		}
+		return urlResponse?.forcedStatusCode ?? 0
 	}
 	
 	init(_ representedObject: AnyObject, urlRequest: URLRequest) {

@@ -22,8 +22,6 @@ private var smartFeedIcon: NSImage = {
 extension PseudoFeed {
 
 	var smallIcon: NSImage? {
-		get {
-			return smartFeedIcon
-		}
+		return smartFeedIcon
 	}
 }

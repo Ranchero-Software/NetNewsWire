@@ -19,9 +19,7 @@ protocol SmartFeedDelegate: DisplayNameProvider, ArticleFetcher {
 final class SmartFeed: PseudoFeed {
 
 	var nameForDisplay: String {
-		get {
-			return delegate.nameForDisplay
-		}
+		return delegate.nameForDisplay
 	}
 
 	var unreadCount = 0 {
