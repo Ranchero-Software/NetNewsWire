@@ -38,7 +38,7 @@ static BOOL bytesStartWithRSS(const char *bytes, NSUInteger numberOfBytes);
 	if (![self isProbablyJSON]) {
 		return NO;
 	}
-	return didFindString("https://jsonfeed.org/version/", self.bytes, self.length) || didFindString("https:\\/\\/jsonfeed.org\\/version\\/", self.bytes, self.length);
+	return didFindString("://jsonfeed.org/version/", self.bytes, self.length);
 }
 
 - (BOOL)isProbablyRSSInJSON {

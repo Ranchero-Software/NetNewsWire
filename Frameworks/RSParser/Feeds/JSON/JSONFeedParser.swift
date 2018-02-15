@@ -45,7 +45,7 @@ public struct JSONFeedParser {
 		static let durationInSeconds = "duration_in_seconds"
 	}
 
-	static let jsonFeedVersionPrefix = "https://jsonfeed.org/version/"
+	static let jsonFeedVersionMarker = "://jsonfeed.org/version/" // Allow for the mistake of not getting the scheme exactly correct.
 
 	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
 
@@ -53,7 +53,7 @@ public struct JSONFeedParser {
 			throw FeedParserError(.invalidJSON)
 		}
 
-		guard let version = d[Key.version] as? String, version.hasPrefix(JSONFeedParser.jsonFeedVersionPrefix) else {
+		guard let version = d[Key.version] as? String, let _ = version.range(of: JSONFeedParser.jsonFeedVersionMarker) else {
 			throw FeedParserError(.jsonFeedVersionNotFound)
 		}
 		guard let itemsArray = d[Key.items] as? JSONArray else {

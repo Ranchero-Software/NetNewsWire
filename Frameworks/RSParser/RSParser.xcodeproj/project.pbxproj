@@ -95,6 +95,7 @@
 		849A03EA1F01F92B00122600 /* inessential.json in Resources */ = {isa = PBXBuildFile; fileRef = 849A03E91F01F92B00122600 /* inessential.json */; };
 		849A03EC1F01FCDC00122600 /* RSSInJSONParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A03EB1F01FCDC00122600 /* RSSInJSONParserTests.swift */; };
 		84B19A771FDA438300458981 /* natasha.xml in Resources */ = {isa = PBXBuildFile; fileRef = 84B19A761FDA438300458981 /* natasha.xml */; };
+		84CF85BB2035455B0096F368 /* pxlnv.json in Resources */ = {isa = PBXBuildFile; fileRef = 84CF85BA2035455B0096F368 /* pxlnv.json */; };
 		84D81BDC1EFA28E700652332 /* RSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 84D81BDA1EFA28E700652332 /* RSParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84D81BDE1EFA2B7D00652332 /* ParsedFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */; };
 		84D81BE01EFA2BAE00652332 /* FeedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D81BDF1EFA2BAE00652332 /* FeedType.swift */; };
@@ -209,6 +210,7 @@
 		849A03E91F01F92B00122600 /* inessential.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = inessential.json; sourceTree = "<group>"; };
 		849A03EB1F01FCDC00122600 /* RSSInJSONParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSInJSONParserTests.swift; sourceTree = "<group>"; };
 		84B19A761FDA438300458981 /* natasha.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = natasha.xml; sourceTree = "<group>"; };
+		84CF85BA2035455B0096F368 /* pxlnv.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = pxlnv.json; sourceTree = "<group>"; };
 		84D81BD91EFA28E700652332 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84D81BDA1EFA28E700652332 /* RSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSParser.h; sourceTree = "<group>"; };
 		84D81BDD1EFA2B7D00652332 /* ParsedFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParsedFeed.swift; path = Feeds/ParsedFeed.swift; sourceTree = "<group>"; };
@@ -412,6 +414,7 @@
 				8401FF831FE87C2E0080F13F /* theomnishow.rss */,
 				844B5B3D1FE9A13B00C7C76A /* 4fsodonline.atom */,
 				844B5B3F1FE9A45200C7C76A /* expertopinionent.atom */,
+				84CF85BA2035455B0096F368 /* pxlnv.json */,
 				849A03CF1F0081EA00122600 /* Subs.opml */,
 			);
 			path = Resources;
@@ -565,10 +568,12 @@
 					84FF5F831EFA285800C15A01 = {
 						CreatedOnToolsVersion = 9.0;
 						LastSwiftMigration = 0900;
+						ProvisioningStyle = Automatic;
 					};
 					84FF5F8C1EFA285800C15A01 = {
 						CreatedOnToolsVersion = 9.0;
 						LastSwiftMigration = 0900;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -624,6 +629,7 @@
 				84DA2E21200415D500A4D03B /* curt.json in Resources */,
 				849A03D31F0081EA00122600 /* furbo.html in Resources */,
 				849A03E81F01F88600122600 /* ScriptingNews.json in Resources */,
+				84CF85BB2035455B0096F368 /* pxlnv.json in Resources */,
 				844B5B3E1FE9A13C00C7C76A /* 4fsodonline.atom in Resources */,
 				840FDCB81F0218670041F61B /* DaringFireball.atom in Resources */,
 				849A03D91F0081EA00122600 /* sixcolors.html in Resources */,
