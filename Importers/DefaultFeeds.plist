@@ -30,11 +30,11 @@
 	</dict>
 	<dict>
 		<key>homePageURL</key>
-		<string>http://www.imore.com/</string>
+		<string>https://kottke.org/</string>
 		<key>editedName</key>
-		<string>iMore</string>
+		<string>Jason Kottke</string>
 		<key>url</key>
-		<string>https://www.imore.com/rss.xml</string>
+		<string>http://feeds.kottke.org/json</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
