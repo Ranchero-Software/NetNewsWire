@@ -179,7 +179,7 @@ import RSCore
 	
 	func canGoToNextUnread() -> Bool {
 		
-		if let _ = rowContainingNextUnread() {
+		if let _ = nextSelectableRowWithUnreadArticle() {
 			return true
 		}
 		return false
@@ -187,7 +187,7 @@ import RSCore
 	
 	func goToNextUnread() {
 		
-		guard let row = rowContainingNextUnread() else {
+		guard let row = nextSelectableRowWithUnreadArticle() else {
 			assertionFailure("goToNextUnread called before checking if there is a next unread.")
 			return
 		}
@@ -380,14 +380,24 @@ private extension SidebarViewController {
 		return false
 	}
 
-	func rowContainingNextUnread() -> Int? {
-		
+	func rowIsGroupItem(_ row: Int) -> Bool {
+
+		if let node = nodeForRow(row), outlineView.isGroupItem(node) {
+			return true
+		}
+		return false
+	}
+
+	func nextSelectableRowWithUnreadArticle() -> Int? {
+
+		// Skip group items, because they should never be selected.
+
 		let selectedRow = outlineView.selectedRow
 		let numberOfRows = outlineView.numberOfRows
 		var row = selectedRow + 1
 		
 		while (row < numberOfRows) {
-			if rowHasAtLeastOneUnreadArticle(row) {
+			if rowHasAtLeastOneUnreadArticle(row) && !rowIsGroupItem(row) {
 				return row
 			}
 			row += 1
@@ -395,7 +405,7 @@ private extension SidebarViewController {
 		
 		row = 0
 		while (row <= selectedRow) {
-			if rowHasAtLeastOneUnreadArticle(row) {
+			if rowHasAtLeastOneUnreadArticle(row) && !rowIsGroupItem(row) {
 				return row
 			}
 			row += 1
