@@ -170,9 +170,10 @@ private extension JSONFeedParser {
 		// As of 16 Feb. 2018, Kottke’s and Heer’s feeds includes HTML entities in the title elements.
 		// If we find more feeds like this, we’ll add them here. If these feeds get fixed, we’ll remove them.
 
+		let lowerFeedURL = feedURL.lowercased()
 		let matchStrings = ["kottke.org", "pxlnv.com"]
 		for matchString in matchStrings {
-			if feedURL.contains(matchString) {
+			if lowerFeedURL.contains(matchString) {
 				return true
 			}
 		}
