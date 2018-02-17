@@ -57,7 +57,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	private var didRegisterForNotifications = false
-	private var fetchAndMergeArticlesTimer: Timer?
+	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 
 	private var sortDirection = AppDefaults.shared.timelineSortDirection {
 		didSet {
@@ -451,6 +451,28 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		rowHeightWithoutFeedName = calculateRowHeight(showingFeedNames: false)
 		updateTableViewRowHeight()
 	}
+
+	@objc func fetchAndMergeArticles() {
+
+		guard let representedObjects = representedObjects else {
+			return
+		}
+
+		performBlockAndRestoreSelection {
+
+			var unsortedArticles = fetchUnsortedArticles(for: representedObjects)
+
+			// Merge articles by articleID. For any unique articleID in current articles, add to unsortedArticles.
+			let unsortedArticleIDs = unsortedArticles.articleIDs()
+			for article in articles {
+				if !unsortedArticleIDs.contains(article.articleID) {
+					unsortedArticles.insert(article)
+				}
+			}
+
+			updateArticles(with: unsortedArticles)
+		}
+	}
 }
 
 // MARK: NSUserInterfaceValidations
@@ -690,28 +712,6 @@ private extension TimelineViewController {
 		return fetchedArticles
 	}
 
-	func fetchAndMergeArticles() {
-
-		guard let representedObjects = representedObjects else {
-			return
-		}
-
-		performBlockAndRestoreSelection {
-			
-			var unsortedArticles = fetchUnsortedArticles(for: representedObjects)
-
-			// Merge articles by articleID. For any unique articleID in current articles, add to unsortedArticles.
-			let unsortedArticleIDs = unsortedArticles.articleIDs()
-			for article in articles {
-				if !unsortedArticleIDs.contains(article.articleID) {
-					unsortedArticles.insert(article)
-				}
-			}
-			
-			updateArticles(with: unsortedArticles)
-		}
-	}
-	
 	func selectArticles(_ articleIDs: [String]) {
 
 		let indexesToSelect = articles.indexesForArticleIDs(Set(articleIDs))
@@ -722,23 +722,9 @@ private extension TimelineViewController {
 		tableView.selectRowIndexes(indexesToSelect, byExtendingSelection: false)
 	}
 
-	func invalidateFetchAndMergeArticlesTimer() {
-
-		if let timer = fetchAndMergeArticlesTimer {
-			if timer.isValid {
-				timer.invalidate()
-			}
-			fetchAndMergeArticlesTimer = nil
-		}
-	}
-
 	func queueFetchAndMergeArticles() {
 
-		invalidateFetchAndMergeArticlesTimer()
-		fetchAndMergeArticlesTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { (timer) in
-			self.fetchAndMergeArticles()
-			self.invalidateFetchAndMergeArticlesTimer()
-		}
+		TimelineViewController.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
 	}
 
 	func representedObjectArraysAreEqual(_ objects1: [AnyObject]?, _ objects2: [AnyObject]?) -> Bool {

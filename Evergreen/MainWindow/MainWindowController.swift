@@ -132,7 +132,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	// MARK: Toolbar
 	
-	@objc func makeToolbarValidate(_ sender: Any?) {
+	@objc func makeToolbarValidate() {
 		
 		window?.toolbar?.validateVisibleItems()
 	}
