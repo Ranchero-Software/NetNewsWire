@@ -12,6 +12,19 @@ import RSTextDrawing
 import Data
 import Account
 
+enum MarkCommandValidationStatus {
+
+	case canMark, canUnmark, canDoNothing
+
+	static func statusFor(_ articles: ArticleArray, _ canMarkTest: ((ArticleArray) -> Bool)) -> MarkCommandValidationStatus {
+
+		if articles.isEmpty {
+			return .canDoNothing
+		}
+		return canMarkTest(articles) ? .canMark : .canUnmark
+	}
+}
+
 class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
@@ -191,7 +204,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			markSelectedArticlesAsUnread(sender)
 		}
 	}
-	
+
 	@IBAction func markSelectedArticlesAsRead(_ sender: Any?) {
 
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: true, undoManager: undoManager) else {
@@ -211,6 +224,38 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	@IBAction func copy(_ sender: Any?) {
 
 		NSPasteboard.general.copyObjects(selectedArticles)
+	}
+
+	func toggleStarredStatusForSelectedArticles() {
+
+		// If any one of the selected articles is not starred, then star them.
+		// If all articles are starred, then unstar them.
+
+		let commandStatus = markStarredCommandStatus()
+		let starring: Bool
+		switch commandStatus {
+		case .canMark:
+			starring = true
+		case .canUnmark:
+			starring = false
+		case .canDoNothing:
+			return
+		}
+
+		guard let undoManager = undoManager, let markStarredCommand = MarkStatusCommand(initialArticles: selectedArticles, markingStarred: starring, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markStarredCommand)
+	}
+
+	func markStarredCommandStatus() -> MarkCommandValidationStatus {
+
+		return MarkCommandValidationStatus.statusFor(selectedArticles) { $0.anyArticleIsUnstarred() }
+	}
+
+	func markReadCommandStatus() -> MarkCommandValidationStatus {
+
+		return MarkCommandValidationStatus.statusFor(selectedArticles) { $0.anyArticleIsUnread() }
 	}
 
 	func markOlderArticlesAsRead() {

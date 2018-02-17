@@ -12,6 +12,11 @@ import Account
 
 private let kWindowFrameKey = "MainWindow"
 
+extension NSImage.Name {
+	static let star = NSImage.Name(rawValue: "star")
+	static let unstar = NSImage.Name(rawValue: "unstar")
+}
+
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	var isOpen: Bool {
@@ -152,6 +157,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return canMarkRead()
 		}
 
+		if item.action == #selector(toggleStarred(_:)) {
+			return validateToggleStarred(item)
+		}
+
 		if item.action == #selector(markOlderArticlesAsRead(_:)) {
 			return canMarkOlderArticlesAsRead()
 		}
@@ -176,6 +185,31 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 
 		return true
+	}
+
+	private func validateToggleStarred(_ item: NSValidatedUserInterfaceItem) -> Bool {
+
+		let validationStatus = timelineViewController?.markStarredCommandStatus() ?? .canDoNothing
+		let showStar: Bool
+		let result: Bool
+
+		switch validationStatus {
+		case .canMark:
+			showStar = true
+			result = true
+		case .canUnmark:
+			showStar = false
+			result = true
+		case .canDoNothing:
+			showStar = true
+			result = false
+		}
+
+		if let button = (item as? NSToolbarItem)?.view as? NSButton {
+			button.image = NSImage(named: showStar ? .star : .unstar)
+		}
+
+		return result
 	}
 
 	// MARK: - Actions
@@ -265,6 +299,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func markUnread(_ sender: Any?) {
 
 		timelineViewController?.markSelectedArticlesAsUnread(sender)
+	}
+
+	@IBAction func toggleStarred(_ sender: Any?) {
+
+		timelineViewController?.toggleStarredStatusForSelectedArticles()
 	}
 
 	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {

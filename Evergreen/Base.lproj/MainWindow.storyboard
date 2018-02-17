@@ -134,7 +134,7 @@
                                         </buttonCell>
                                     </button>
                                     <connections>
-                                        <action selector="markRead:" target="Oky-zY-oP4" id="fYI-jM-htG"/>
+                                        <action selector="toggleStarred:" target="Oky-zY-oP4" id="44J-UK-89l"/>
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="4DED27B7-8961-48F3-A995-9C961E2C0257" label="Open in Browser" paletteLabel="Open in Browser" toolTip="Open in Browser" image="openInBrowser" id="tid-SB-me3" customClass="RSToolbarItem" customModule="RSCore">
