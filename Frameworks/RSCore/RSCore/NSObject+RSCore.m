@@ -50,13 +50,6 @@ BOOL RSEqualValues(id obj1, id obj2) {
 
 @implementation NSObject (RSCore)
 
-- (void)rs_performSelectorCoalesced:(SEL)selector withObject:(id)obj afterDelay:(NSTimeInterval)delay {
-
-	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:selector object:obj];
-	[self performSelector:selector withObject:obj afterDelay:delay];
-}
-
-
 - (void)rs_takeValuesFromObject:(id)object propertyNames:(NSArray *)propertyNames {
 
 	for (NSString *onePropertyName in propertyNames) {
