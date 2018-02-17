@@ -569,7 +569,7 @@
                                                 </tableColumn>
                                             </tableColumns>
                                             <connections>
-                                                <outlet property="dataSource" destination="36G-bQ-b96" id="OpB-zC-ItJ"/>
+                                                <outlet property="dataSource" destination="7kA-tA-2n7" id="Tdx-DB-Zjs"/>
                                                 <outlet property="delegate" destination="36G-bQ-b96" id="s1m-42-GQ4"/>
                                                 <outlet property="keyboardDelegate" destination="ZOV-xh-WJE" id="HiG-Bz-vD0"/>
                                                 <outlet property="menu" destination="gb5-z4-YPr" id="pey-0u-ogu"/>
@@ -605,6 +605,7 @@
                     </view>
                     <connections>
                         <outlet property="contextualMenuDelegate" destination="iD1-KK-gFc" id="b0j-aW-e4B"/>
+                        <outlet property="dataSource" destination="7kA-tA-2n7" id="heZ-eT-SZ6"/>
                         <outlet property="tableView" destination="DRs-j8-R9a" id="2AG-SP-7n2"/>
                     </connections>
                 </viewController>
@@ -635,6 +636,7 @@
                         <outlet property="timelineViewController" destination="36G-bQ-b96" id="oE9-uV-TNi"/>
                     </connections>
                 </customObject>
+                <customObject id="7kA-tA-2n7" customClass="TimelineDataSource" customModule="Evergreen" customModuleProvider="target"/>
             </objects>
             <point key="canvasLocation" x="62" y="394"/>
         </scene>

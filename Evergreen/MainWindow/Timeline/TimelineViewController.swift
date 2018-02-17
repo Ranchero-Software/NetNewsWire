@@ -16,7 +16,8 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
 	@IBOutlet var contextualMenuDelegate: TimelineContextualMenuDelegate?
-	
+	@IBOutlet var dataSource: TimelineDataSource!
+
 	var selectedArticles: [Article] {
 		return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
 	}
@@ -28,6 +29,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	var articles = ArticleArray() {
 		didSet {
 			if articles != oldValue {
+				dataSource.articles = articles
 				updateShowAvatars()
 				tableView.reloadData()
 			}
@@ -37,7 +39,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 	private var cellAppearance: TimelineCellAppearance!
 	private var cellAppearanceWithAvatar: TimelineCellAppearance!
-
 	private var showFeedNames = false {
 		didSet {
 			if showFeedNames != oldValue {
