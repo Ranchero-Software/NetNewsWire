@@ -56,23 +56,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	let database: Database
 	let delegate: AccountDelegate
 	var username: String?
-	var saveTimer: Timer?
+	static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
 
 	public var dirty = false {
 		didSet {
-
-			if refreshInProgress {
-				if let _ = saveTimer {
-					removeSaveTimer()
-				}
-				return
-			}
-
 			if dirty {
-				resetSaveTimer()
-			}
-			else {
-				removeSaveTimer()
+				Account.saveQueue.add(self, #selector(saveToDiskIfNeeded))
 			}
 		}
 	}
@@ -93,9 +82,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				}
 				else {
 					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
-					if dirty {
-						resetSaveTimer()
-					}
 				}
 			}
 		}
@@ -470,6 +456,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
+	@objc func saveToDiskIfNeeded() {
+
+		guard dirty else {
+			return
+		}
+		saveToDisk()
+		dirty = false
+	}
+
 	// MARK: - Equatable
 
 	public class func ==(lhs: Account, rhs: Account) -> Bool {
@@ -553,21 +548,6 @@ private extension Account {
 		return d as NSDictionary
 	}
 
-	func saveToDiskIfNeeded() {
-
-		if !dirty {
-			return
-		}
-
-		if refreshInProgress {
-			resetSaveTimer()
-			return
-		}
-
-		saveToDisk()
-		dirty = false
-	}
-
 	func saveToDisk() {
 
 		let d = diskDictionary()
@@ -577,21 +557,6 @@ private extension Account {
 		catch let error as NSError {
 			NSApplication.shared.presentError(error)
 		}
-	}
-
-	func resetSaveTimer() {
-
-		saveTimer?.rs_invalidateIfValid()
-
-		saveTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { (timer) in
-			self.saveToDiskIfNeeded()
-		}
-	}
-
-	func removeSaveTimer() {
-
-		saveTimer?.rs_invalidateIfValid()
-		saveTimer = nil
 	}
 }
 
