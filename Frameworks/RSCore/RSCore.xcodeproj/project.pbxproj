@@ -105,6 +105,7 @@
 		84B99C9A1FAE650100ECDEDB /* OPMLRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */; };
 		84B99C9B1FAE650100ECDEDB /* OPMLRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */; };
 		84BB45431D6909C700B48537 /* NSMutableDictionary-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BB45421D6909C700B48537 /* NSMutableDictionary-Extensions.swift */; };
+		84C326872038C9F6006A025C /* CoalescingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C326862038C9F6006A025C /* CoalescingQueue.swift */; };
 		84C632A0200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C6329E200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84C632A1200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C6329F200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m */; };
 		84C632A4200D356E007BEEAA /* SendToBlogEditorApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C632A2200D356E007BEEAA /* SendToBlogEditorApp.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -225,6 +226,7 @@
 		84B99C931FAE64D400ECDEDB /* DisplayNameProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DisplayNameProvider.swift; path = RSCore/DisplayNameProvider.swift; sourceTree = "<group>"; };
 		84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OPMLRepresentable.swift; path = RSCore/OPMLRepresentable.swift; sourceTree = "<group>"; };
 		84BB45421D6909C700B48537 /* NSMutableDictionary-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableDictionary-Extensions.swift"; sourceTree = "<group>"; };
+		84C326862038C9F6006A025C /* CoalescingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoalescingQueue.swift; path = RSCore/CoalescingQueue.swift; sourceTree = "<group>"; };
 		84C6329E200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSAppleEventDescriptor+RSCore.h"; path = "AppKit/NSAppleEventDescriptor+RSCore.h"; sourceTree = "<group>"; };
 		84C6329F200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "NSAppleEventDescriptor+RSCore.m"; path = "AppKit/NSAppleEventDescriptor+RSCore.m"; sourceTree = "<group>"; };
 		84C632A2200D356E007BEEAA /* SendToBlogEditorApp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SendToBlogEditorApp.h; path = AppKit/SendToBlogEditorApp.h; sourceTree = "<group>"; };
@@ -369,6 +371,7 @@
 				848F6AE81FC2BC50002D422E /* ThreadSafeCache.swift */,
 				844B5B561FE9D36000C7C76A /* Keyboard.swift */,
 				84AD1EA420315A8700BC20B7 /* PasteboardWriterOwner.swift */,
+				84C326862038C9F6006A025C /* CoalescingQueue.swift */,
 				84CFF5241AC3C8A200CEA6C8 /* Foundation */,
 				84CFF5551AC3CF4A00CEA6C8 /* AppKit */,
 				84CFF5661AC3D13F00CEA6C8 /* Images */,
@@ -824,6 +827,7 @@
 				844F91D61D90D86100820C48 /* RSTransparentContainerView.m in Sources */,
 				84CFF56E1AC3D20A00CEA6C8 /* NSImage+RSCore.m in Sources */,
 				8453F7DF1BDF337800B1C8ED /* RSMacroProcessor.m in Sources */,
+				84C326872038C9F6006A025C /* CoalescingQueue.swift in Sources */,
 				842E45CC1ED623C7000A8B52 /* UniqueIdentifier.swift in Sources */,
 				84A8358A1D4EC7B80004C598 /* PlistProviderProtocol.swift in Sources */,
 				849A339E1AC90A0A0015BA09 /* NSTableView+RSCore.m in Sources */,
