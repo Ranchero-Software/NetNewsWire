@@ -467,29 +467,6 @@ extension TimelineViewController: NSUserInterfaceValidations {
 	}
 }
 
-// MARK: - NSTableViewDataSource
-
-extension TimelineViewController: NSTableViewDataSource {
-
-	func numberOfRows(in tableView: NSTableView) -> Int {
-
-		return articles.count
-	}
-
-	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-
-		return articles.articleAtRow(row) ?? nil
-	}
-
-	func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
-
-		guard let article = articles.articleAtRow(row) else {
-			return nil
-		}
-		return ArticlePasteboardWriter(article: article)
-	}
-}
-
 // MARK: - NSTableViewDelegate
 
 extension TimelineViewController: NSTableViewDelegate {
