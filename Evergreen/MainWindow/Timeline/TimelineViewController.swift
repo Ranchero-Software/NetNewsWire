@@ -705,8 +705,17 @@ private extension TimelineViewController {
 		}
 
 		performBlockAndRestoreSelection {
+			
 			var unsortedArticles = fetchUnsortedArticles(for: representedObjects)
-			unsortedArticles.formUnion(Set(articles))
+
+			// Merge articles by articleID. For any unique articleID in current articles, add to unsortedArticles.
+			let unsortedArticleIDs = unsortedArticles.articleIDs()
+			for article in articles {
+				if !unsortedArticleIDs.contains(article.articleID) {
+					unsortedArticles.insert(article)
+				}
+			}
+			
 			updateArticles(with: unsortedArticles)
 		}
 	}
