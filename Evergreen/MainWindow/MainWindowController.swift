@@ -190,23 +190,26 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private func validateToggleStarred(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
 		let validationStatus = timelineViewController?.markStarredCommandStatus() ?? .canDoNothing
-		let showStar: Bool
+		let starring: Bool
 		let result: Bool
 
 		switch validationStatus {
 		case .canMark:
-			showStar = true
+			starring = true
 			result = true
 		case .canUnmark:
-			showStar = false
+			starring = false
 			result = true
 		case .canDoNothing:
-			showStar = true
+			starring = true
 			result = false
 		}
 
-		if let button = (item as? NSToolbarItem)?.view as? NSButton {
-			button.image = NSImage(named: showStar ? .star : .unstar)
+		if let toolbarItem = item as? NSToolbarItem {
+			toolbarItem.toolTip = starring ? NSLocalizedString("Mark as Starred", comment: "Command") : NSLocalizedString("Mark as Unstarred", comment: "Command")
+			if let button = toolbarItem.view as? NSButton {
+				button.image = NSImage(named: starring ? .star : .unstar)
+			}
 		}
 
 		return result
