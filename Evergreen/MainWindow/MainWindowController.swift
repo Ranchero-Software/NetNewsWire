@@ -119,8 +119,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
-		
-		performSelectorCoalesced(#selector(MainWindowController.makeToolbarValidate(_:)), with: nil, delay: 0.1)
+
+		appDelegate?.coalescingQueue.add(self, #selector(makeToolbarValidate))
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
