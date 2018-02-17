@@ -556,9 +556,6 @@ extension TimelineViewController: NSTableViewDelegate {
 			return nil
 		}
 
-		// TODO: make Feed know about its authors.
-		// https://github.com/brentsimmons/Evergreen/issues/212
-
 		return appDelegate.feedIconDownloader.icon(for: feed)
 	}
 
