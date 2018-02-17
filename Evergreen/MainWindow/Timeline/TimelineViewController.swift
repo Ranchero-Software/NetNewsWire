@@ -57,7 +57,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	private var didRegisterForNotifications = false
-	private var reloadAvailableCellsTimer: Timer?
 	private var fetchAndMergeArticlesTimer: Timer?
 
 	private var sortDirection = AppDefaults.shared.timelineSortDirection {
@@ -583,7 +582,7 @@ extension TimelineViewController: NSTableViewDelegate {
 
 private extension TimelineViewController {
 
-	func reloadAvailableCells() {
+	@objc func reloadAvailableCells() {
 
 		if let indexesToReload = tableView.indexesOfAvailableRows() {
 			reloadCells(for: indexesToReload)
@@ -592,21 +591,7 @@ private extension TimelineViewController {
 
 	func queueReloadAvailableCells() {
 
-		invalidateReloadTimer()
-		reloadAvailableCellsTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { (timer) in
-			self.reloadAvailableCells()
-			self.invalidateReloadTimer()
-		}
-	}
-
-	func invalidateReloadTimer() {
-
-		if let timer = reloadAvailableCellsTimer {
-			if timer.isValid {
-				timer.invalidate()
-			}
-			reloadAvailableCellsTimer = nil
-		}
+		appDelegate.coalescingQueue.add(self, #selector(reloadAvailableCells))
 	}
 
 	func updateTableViewRowHeight() {
