@@ -205,13 +205,19 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			result = false
 		}
 
+		let commandName = starring ? NSLocalizedString("Mark as Starred", comment: "Command") : NSLocalizedString("Mark as Unstarred", comment: "Command")
+
 		if let toolbarItem = item as? NSToolbarItem {
-			toolbarItem.toolTip = starring ? NSLocalizedString("Mark as Starred", comment: "Command") : NSLocalizedString("Mark as Unstarred", comment: "Command")
+			toolbarItem.toolTip = commandName
 			if let button = toolbarItem.view as? NSButton {
 				button.image = NSImage(named: starring ? .star : .unstar)
 			}
 		}
 
+		if let menuItem = item as? NSMenuItem {
+			menuItem.title = commandName
+		}
+		
 		return result
 	}
 

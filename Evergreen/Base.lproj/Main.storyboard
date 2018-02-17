@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14087.3" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14092" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14087.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14092"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -426,7 +426,11 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="gB0-WX-2Gd"/>
-                                        <menuItem title="Mark as Starred" keyEquivalent="L" id="vvo-ZM-8kl"/>
+                                        <menuItem title="Mark as Starred" keyEquivalent="L" id="vvo-ZM-8kl">
+                                            <connections>
+                                                <action selector="toggleStarred:" target="Ady-hI-5gd" id="vIK-kP-re7"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="qgr-Gl-Xhw"/>
                                         <menuItem title="Open in Browser" keyEquivalent="" id="4iQ-1v-dTa">
                                             <connections>
