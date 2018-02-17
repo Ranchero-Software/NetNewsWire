@@ -31,7 +31,6 @@
 		842DD7CE1E14995C00E061EB /* RSPlist.m in Sources */ = {isa = PBXBuildFile; fileRef = 844C915A1B65753E0051FC1B /* RSPlist.m */; };
 		842DD7CF1E14995C00E061EB /* RSMacroProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8453F7DC1BDF337800B1C8ED /* RSMacroProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		842DD7D01E14995C00E061EB /* RSMacroProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 8453F7DD1BDF337800B1C8ED /* RSMacroProcessor.m */; };
-		842DD7D41E14995C00E061EB /* DiskSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849BF8B91C9130150071D1DA /* DiskSaver.swift */; };
 		842DD7D51E14995C00E061EB /* PlistProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */; };
 		842DD7D61E14996300E061EB /* NSArray+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CFF5251AC3C9A200CEA6C8 /* NSArray+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		842DD7D71E14996300E061EB /* NSArray+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CFF5261AC3C9A200CEA6C8 /* NSArray+RSCore.m */; };
@@ -95,7 +94,6 @@
 		849A339E1AC90A0A0015BA09 /* NSTableView+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 849A339C1AC90A0A0015BA09 /* NSTableView+RSCore.m */; };
 		849B08971BF7BCE30090CEE4 /* NSPasteboard+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 849B08951BF7BCE30090CEE4 /* NSPasteboard+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		849B08981BF7BCE30090CEE4 /* NSPasteboard+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 849B08961BF7BCE30090CEE4 /* NSPasteboard+RSCore.m */; };
-		849BF8BA1C9130150071D1DA /* DiskSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849BF8B91C9130150071D1DA /* DiskSaver.swift */; };
 		84A8358A1D4EC7B80004C598 /* PlistProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */; };
 		84AD1EA520315A8800BC20B7 /* PasteboardWriterOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EA420315A8700BC20B7 /* PasteboardWriterOwner.swift */; };
 		84AD1EA820315BA900BC20B7 /* NSPasteboard+RSCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EA720315BA900BC20B7 /* NSPasteboard+RSCore.swift */; };
@@ -218,7 +216,6 @@
 		849A339C1AC90A0A0015BA09 /* NSTableView+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTableView+RSCore.m"; sourceTree = "<group>"; };
 		849B08951BF7BCE30090CEE4 /* NSPasteboard+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSPasteboard+RSCore.h"; sourceTree = "<group>"; };
 		849B08961BF7BCE30090CEE4 /* NSPasteboard+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSPasteboard+RSCore.m"; sourceTree = "<group>"; };
-		849BF8B91C9130150071D1DA /* DiskSaver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiskSaver.swift; path = RSCore/DiskSaver.swift; sourceTree = "<group>"; };
 		84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlistProviderProtocol.swift; path = RSCore/PlistProviderProtocol.swift; sourceTree = "<group>"; };
 		84AD1EA420315A8700BC20B7 /* PasteboardWriterOwner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PasteboardWriterOwner.swift; path = RSCore/PasteboardWriterOwner.swift; sourceTree = "<group>"; };
 		84AD1EA720315BA900BC20B7 /* NSPasteboard+RSCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSPasteboard+RSCore.swift"; path = "AppKit/NSPasteboard+RSCore.swift"; sourceTree = "<group>"; };
@@ -363,7 +360,6 @@
 				8453F7DD1BDF337800B1C8ED /* RSMacroProcessor.m */,
 				84B99C931FAE64D400ECDEDB /* DisplayNameProvider.swift */,
 				84B99C991FAE650100ECDEDB /* OPMLRepresentable.swift */,
-				849BF8B91C9130150071D1DA /* DiskSaver.swift */,
 				84A835891D4EC7B80004C598 /* PlistProviderProtocol.swift */,
 				842E45CB1ED623C7000A8B52 /* UniqueIdentifier.swift */,
 				84E34DA51F9FA1070077082F /* UndoableCommand.swift */,
@@ -744,7 +740,6 @@
 				842DD7C81E14995C00E061EB /* RSConstants.m in Sources */,
 				845A29201FC8BC49007B49E3 /* BinaryDiskCache.swift in Sources */,
 				84C687391FBC028900345C9E /* LogItem.swift in Sources */,
-				842DD7D41E14995C00E061EB /* DiskSaver.swift in Sources */,
 				842DD7E11E14996300E061EB /* NSFileManager+RSCore.m in Sources */,
 				842DD7C61E14995C00E061EB /* RSBlocks.m in Sources */,
 				842DD7DD1E14996300E061EB /* NSDate+RSCore.m in Sources */,
@@ -774,7 +769,6 @@
 			files = (
 				8417FE031AC67D430048E9B7 /* RSOpaqueContainerView.m in Sources */,
 				84CFF5481AC3CD8000CEA6C8 /* NSTimer+RSCore.m in Sources */,
-				849BF8BA1C9130150071D1DA /* DiskSaver.swift in Sources */,
 				84FE9FC41C00453900081CE9 /* NSStoryboard+RSCore.m in Sources */,
 				84CFF5341AC3CB6800CEA6C8 /* NSDictionary+RSCore.m in Sources */,
 				84CFF54C1AC3CDAC00CEA6C8 /* NSString+RSCore.m in Sources */,
