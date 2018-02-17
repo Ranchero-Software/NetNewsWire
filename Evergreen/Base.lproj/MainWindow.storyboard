@@ -649,7 +649,7 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="cJ9-6s-66u" customClass="DetailContainerView" customModule="Evergreen" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                 <subviews>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="Evergreen" customModuleProvider="target">
+                                    <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="Evergreen" customModuleProvider="target">
                                         <rect key="frame" x="6" y="2" width="12" height="20"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="850" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dim-ed-Dcz" userLabel="URL Label">
