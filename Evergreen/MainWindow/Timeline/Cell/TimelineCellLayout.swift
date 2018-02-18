@@ -75,21 +75,6 @@ private func rectForFeedName(_ cellData: TimelineCellData, _ width: CGFloat, _ a
 	return r
 }
 
-//private func rectForFavicon(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ feedNameRect: NSRect, _ unreadIndicatorRect: NSRect) -> NSRect {
-//	
-//	guard let _ = cellData.favicon, cellData.showFeedName else {
-//		return NSZeroRect
-//	}
-//	
-//	var r = NSZeroRect
-//	r.size = appearance.faviconSize
-//	r.origin.y = feedNameRect.origin.y
-//	
-//	r = RSRectCenteredHorizontallyInRect(r, unreadIndicatorRect)
-//	
-//	return r
-//}
-
 private func rectsForTitle(_ cellData: TimelineCellData, _ width: CGFloat, _ appearance: TimelineCellAppearance) -> (NSRect, NSRect) {
 	
 	var r = NSZeroRect
@@ -150,7 +135,6 @@ func timelineCellLayout(_ width: CGFloat, cellData: TimelineCellData, appearance
 	let feedNameRect = rectForFeedName(cellData, width, appearance, dateRect)
 	let unreadIndicatorRect = rectForUnreadIndicator(cellData, appearance, titleLine1Rect)
 	let starRect = rectForStar(cellData, appearance, unreadIndicatorRect)
-//	let faviconRect = rectForFavicon(cellData, appearance, feedNameRect, unreadIndicatorRect)
 	let avatarImageRect = rectForAvatar(cellData, appearance, titleLine1Rect)
 
 	return TimelineCellLayout(width: width, feedNameRect: feedNameRect, dateRect: dateRect, titleRect: titleRect, unreadIndicatorRect: unreadIndicatorRect, starRect: starRect, avatarImageRect: avatarImageRect, paddingBottom: appearance.cellPadding.bottom)
