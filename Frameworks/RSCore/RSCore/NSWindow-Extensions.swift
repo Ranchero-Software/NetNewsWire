@@ -9,7 +9,12 @@
 import AppKit
 
 public extension NSWindow {
-	
+
+	public var isDisplayingSheet: Bool {
+
+		return attachedSheet != nil
+	}
+
 	public func makeFirstResponderUnlessDescendantIsFirstResponder(_ responder: NSResponder) {
 
 		if let fr = firstResponder, fr.hasAncestor(responder) {
