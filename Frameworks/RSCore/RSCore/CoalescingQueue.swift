@@ -38,6 +38,7 @@ struct QueueCall: Equatable {
 
 @objc public final class CoalescingQueue: NSObject {
 
+	public static let standard = CoalescingQueue(name: "Standard")
 	public let name: String
 	private let interval: TimeInterval
 	private var timer: Timer? = nil
