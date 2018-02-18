@@ -7,6 +7,24 @@
         <language>en</language>
 
 		<item>
+          <title>Evergreen 1.0d38</title>
+            <description><![CDATA[
+            
+ 							<h4>Starring</h4>
+ 							<p>You can mark articles starred and unstarred — via the menu, contextual menu in the timeline, and toolbar button.</p>
+ 							<p>The Starred smart feed shows all your starred articles. Tip: cmd-3 takes you to the Starred feed.</p>
+ 							
+ 							<h4>Misc.</h4>
+ 							<p>Added special cases to the JSON Feed parser for known feeds that put HTML entities in article titles. (Kottke, Pixel Envy.)</p>
+ 							<p>Revised the JSON parser feed detector to allow for a version property that uses the incorrect scheme. (Makes Pixel Envy’s feed work.)</p>
+ 							<p>Made Kottke’s feed a default for new users.</p> 							 						
+    						]]></description>
+            <pubDate>Sun, 18 Feb 2018 12:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d38.zip" sparkle:version="1027" sparkle:shortVersionString="1.0d38" length="7349333" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
           <title>Evergreen 1.0d37</title>
             <description><![CDATA[
             
