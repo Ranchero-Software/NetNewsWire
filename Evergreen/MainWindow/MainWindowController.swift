@@ -11,14 +11,12 @@ import Data
 import Account
 import RSCore
 
-private let kWindowFrameKey = "MainWindow"
-
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBOutlet var toolbarDelegate: MainWindowToolbarDelegate?
 	private let sharingServicePickerDelegate = MainWindowSharingServicePickerDelegate()
 
-	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey)
+	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: "MainWindow")
 	static var didPositionWindowOnFirstRun = false
 
 	private var unreadCount: Int = 0 {
@@ -30,7 +28,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	private var shareToolbarItem: NSToolbarItem? {
-
 		return window?.toolbar?.existingItem(withIdentifier: .Share)
 	}
 
@@ -71,6 +68,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
+	// MARK: - API
+
 	func saveState() {
 
 		// TODO: save width of split view and anything else that should be saved.
@@ -78,14 +77,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 	}
 
-	// MARK: Sidebar
-
 	func selectedObjectsInSidebar() -> [AnyObject]? {
 
 		return sidebarViewController?.selectedObjects
 	}
 
-	// MARK: Notifications
+	// MARK: - Notifications
 
 	@objc func applicationWillTerminate(_ note: Notification) {
 
@@ -104,14 +101,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
-	// MARK: Toolbar
+	// MARK: - Toolbar
 	
 	@objc func makeToolbarValidate() {
 		
 		window?.toolbar?.validateVisibleItems()
 	}
 
-	// MARK: NSUserInterfaceValidations
+	// MARK: - NSUserInterfaceValidations
 	
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		
@@ -161,40 +158,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		return true
 	}
 
-	private func validateToggleStarred(_ item: NSValidatedUserInterfaceItem) -> Bool {
-
-		let validationStatus = timelineViewController?.markStarredCommandStatus() ?? .canDoNothing
-		let starring: Bool
-		let result: Bool
-
-		switch validationStatus {
-		case .canMark:
-			starring = true
-			result = true
-		case .canUnmark:
-			starring = false
-			result = true
-		case .canDoNothing:
-			starring = true
-			result = false
-		}
-
-		let commandName = starring ? NSLocalizedString("Mark as Starred", comment: "Command") : NSLocalizedString("Mark as Unstarred", comment: "Command")
-
-		if let toolbarItem = item as? NSToolbarItem {
-			toolbarItem.toolTip = commandName
-			if let button = toolbarItem.view as? NSButton {
-				button.image = NSImage(named: starring ? .star : .unstar)
-			}
-		}
-
-		if let menuItem = item as? NSMenuItem {
-			menuItem.title = commandName
-		}
-		
-		return result
-	}
-
 	// MARK: - Actions
 
 	@IBAction func scrollOrGoToNextUnread(_ sender: Any?) {
@@ -231,14 +194,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		openArticleInBrowser(sender)
 	}
 
-	func makeTimelineViewFirstResponder() {
-
-		guard let window = window, let timelineViewController = timelineViewController else {
-			return
-		}
-		window.makeFirstResponderUnlessDescendantIsFirstResponder(timelineViewController.tableView)
-	}
-
 	@IBAction func nextUnread(_ sender: Any?) {
 		
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
@@ -256,18 +211,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
-	func goToNextUnreadInTimeline() {
-
-		guard let timelineViewController = timelineViewController else {
-			return
-		}
-
-		if timelineViewController.canGoToNextUnread() {
-			timelineViewController.goToNextUnread()
-			makeTimelineViewFirstResponder()
-		}
-	}
-	
 	@IBAction func markAllAsRead(_ sender: Any?) {
 		
 		timelineViewController?.markAllAsRead()
@@ -372,13 +315,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
 	}
 
-	private func canShowShareMenu() -> Bool {
-
-		guard let selectedArticles = selectedArticles else {
-			return false
-		}
-		return !selectedArticles.isEmpty
-	}
 }
 
 // MARK: - Scripting Access
@@ -448,6 +384,8 @@ private extension MainWindowController {
 		return oneSelectedArticle?.preferredLink
 	}
 
+	// MARK: - Command Validation
+
 	func canGoToNextUnread() -> Bool {
 		
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
@@ -470,6 +408,70 @@ private extension MainWindowController {
 	func canMarkOlderArticlesAsRead() -> Bool {
 
 		return timelineViewController?.canMarkOlderArticlesAsRead() ?? false
+	}
+
+	func canShowShareMenu() -> Bool {
+
+		guard let selectedArticles = selectedArticles else {
+			return false
+		}
+		return !selectedArticles.isEmpty
+	}
+
+	func validateToggleStarred(_ item: NSValidatedUserInterfaceItem) -> Bool {
+
+		let validationStatus = timelineViewController?.markStarredCommandStatus() ?? .canDoNothing
+		let starring: Bool
+		let result: Bool
+
+		switch validationStatus {
+		case .canMark:
+			starring = true
+			result = true
+		case .canUnmark:
+			starring = false
+			result = true
+		case .canDoNothing:
+			starring = true
+			result = false
+		}
+
+		let commandName = starring ? NSLocalizedString("Mark as Starred", comment: "Command") : NSLocalizedString("Mark as Unstarred", comment: "Command")
+
+		if let toolbarItem = item as? NSToolbarItem {
+			toolbarItem.toolTip = commandName
+			if let button = toolbarItem.view as? NSButton {
+				button.image = NSImage(named: starring ? .star : .unstar)
+			}
+		}
+
+		if let menuItem = item as? NSMenuItem {
+			menuItem.title = commandName
+		}
+
+		return result
+	}
+
+	// MARK: - Misc.
+
+	func goToNextUnreadInTimeline() {
+
+		guard let timelineViewController = timelineViewController else {
+			return
+		}
+
+		if timelineViewController.canGoToNextUnread() {
+			timelineViewController.goToNextUnread()
+			makeTimelineViewFirstResponder()
+		}
+	}
+
+	func makeTimelineViewFirstResponder() {
+
+		guard let window = window, let timelineViewController = timelineViewController else {
+			return
+		}
+		window.makeFirstResponderUnlessDescendantIsFirstResponder(timelineViewController.tableView)
 	}
 
 	func updateWindowTitle() {
