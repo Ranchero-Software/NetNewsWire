@@ -53,8 +53,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(appNavigationKeyPressed(_:)), name: .AppNavigationKeyPressed, object: nil)
-
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidBegin, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
@@ -85,23 +83,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@objc func applicationWillTerminate(_ note: Notification) {
 
 		window?.saveFrame(usingName: windowAutosaveName)
-	}
-
-	@objc func appNavigationKeyPressed(_ note: Notification) {
-
-		guard let navigationKey = note.userInfo?[UserInfoKey.navigationKeyPressed] as? Int else {
-			return
-		}
-		guard let contentView = window?.contentView, let view = note.object as? NSView, view.isDescendant(of: contentView) else {
-			return
-		}
-
-		if navigationKey == NSRightArrowFunctionKey {
-			handleRightArrowFunctionKey(in: view)
-		}
-		if navigationKey == NSLeftArrowFunctionKey {
-			handleLeftArrowFunctionKey(in: view)
-		}
 	}
 
 	@objc func refreshProgressDidChange(_ note: Notification) {

@@ -14,8 +14,6 @@ extension Notification.Name {
 	static let SidebarSelectionDidChange = Notification.Name("SidebarSelectionDidChangeNotification")
 	static let TimelineSelectionDidChange = Notification.Name("TimelineSelectionDidChangeNotification")
 
-	static let AppNavigationKeyPressed = Notification.Name("AppNavigationKeyPressedNotification")
-
 	static let UserDidAddFeed = Notification.Name("UserDidAddFeedNotification")
 
 	// Sent by DetailViewController when mouse hovers over link in web view.
