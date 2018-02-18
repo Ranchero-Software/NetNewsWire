@@ -31,12 +31,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
 
-	lazy var genericFeedImage: NSImage? = {
-		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/BookmarkIcon.icns"
-		let image = NSImage(contentsOfFile: path)
-		return image
-	}()
-
 	lazy var sendToCommands: [SendToCommand] = {
 		return [SendToMicroBlogCommand(), SendToMarsEditCommand()]
 	}()

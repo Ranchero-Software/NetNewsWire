@@ -576,7 +576,7 @@ extension Feed: SmallIconProvider {
 		if let image = appDelegate.faviconDownloader.favicon(for: self) {
 			return image
 		}
-		return appDelegate.genericFeedImage
+		return AppImages.genericFeedImage
 	}
 }
 

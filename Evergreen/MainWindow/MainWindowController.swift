@@ -13,10 +13,6 @@ import RSCore
 
 private let kWindowFrameKey = "MainWindow"
 
-extension NSImage.Name {
-	static let star = NSImage.Name(rawValue: "star")
-	static let unstar = NSImage.Name(rawValue: "unstar")
-}
 
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
@@ -417,7 +413,7 @@ extension MainWindowController: NSSharingServicePickerDelegate {
 				return nil
 			}
 
-			let image = sendToCommand.image ?? appDelegate.genericFeedImage ?? NSImage()
+			let image = sendToCommand.image ?? AppImages.genericFeedImage ?? NSImage()
 			return NSSharingService(title: sendToCommand.title, image: image, alternateImage: nil) {
 				sendToCommand.sendObject(object, selectedText: nil)
 			}

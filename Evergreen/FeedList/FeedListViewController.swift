@@ -159,7 +159,7 @@ private extension FeedListViewController {
 			if let image = appDelegate.faviconDownloader.favicon(withHomePageURL: feed.homePageURL) {
 				return image
 			}
-			return appDelegate.genericFeedImage
+			return AppImages.genericFeedImage
 		}
 		return nil
 	}

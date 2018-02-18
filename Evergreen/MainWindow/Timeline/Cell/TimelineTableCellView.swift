@@ -21,7 +21,7 @@ class TimelineTableCellView: NSTableCellView {
 		imageView.imageScaling = .scaleProportionallyDown
 		imageView.animates = false
 		imageView.imageAlignment = .alignCenter
-		imageView.image = appDelegate.genericFeedImage
+		imageView.image = AppImages.genericFeedImage
 		return imageView
 	}()
 

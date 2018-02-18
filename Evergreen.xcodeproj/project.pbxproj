@@ -99,6 +99,7 @@
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849C64691ED37A5D003D8FC0 /* Main.storyboard */; };
 		849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */; };
+		849EE70F203919360082A1EA /* AppImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849EE70E203919360082A1EA /* AppImages.swift */; };
 		84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */; };
 		84A1500320048D660046AD9A /* SendToCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500220048D660046AD9A /* SendToCommand.swift */; };
 		84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */; };
@@ -621,6 +622,7 @@
 		849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EvergreenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvergreenTests.swift; sourceTree = "<group>"; };
 		849C64771ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		849EE70E203919360082A1EA /* AppImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppImages.swift; path = Evergreen/AppImages.swift; sourceTree = "<group>"; };
 		84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMicroBlogCommand.swift; sourceTree = "<group>"; };
 		84A1500220048D660046AD9A /* SendToCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToCommand.swift; sourceTree = "<group>"; };
 		84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMarsEditCommand.swift; sourceTree = "<group>"; };
@@ -1098,6 +1100,7 @@
 				849C64631ED37A5D003D8FC0 /* AppDelegate.swift */,
 				84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */,
 				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
+				849EE70E203919360082A1EA /* AppImages.swift */,
 				84DAEE311F870B390058304B /* DockBadge.swift */,
 				842E45DC1ED8C54B000A8B52 /* Browser.swift */,
 				84702AB31FA27AE8006B8943 /* Commands */,
@@ -1949,6 +1952,7 @@
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
 				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,
 				849A97981ED9EFAA007D329B /* Node-Extensions.swift in Sources */,
+				849EE70F203919360082A1EA /* AppImages.swift in Sources */,
 				849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */,
 				84AAF2BF202CF684004A0BC4 /* TimelineContextualMenuDelegate.swift in Sources */,
 				849A97831ED9EC63007D329B /* SidebarStatusBarView.swift in Sources */,
