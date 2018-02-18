@@ -113,6 +113,8 @@
 					<integer>4</integer>
 					<key>avatarCornerRadius</key>
 					<integer>7</integer>
+					<key>starDimension</key>
+					<integer>19</integer>
 				</dict>
 			</dict>
 			<key>Detail</key>

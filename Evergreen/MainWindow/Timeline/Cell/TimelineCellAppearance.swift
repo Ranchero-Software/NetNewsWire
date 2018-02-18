@@ -30,7 +30,9 @@ struct TimelineCellAppearance: Equatable {
 	let unreadCircleColor: NSColor
 	let unreadCircleDimension: CGFloat
 	let unreadCircleMarginRight: CGFloat
-	
+
+	let starDimension: CGFloat
+
 	let gridColor: NSColor
 
 	let avatarSize: NSSize
@@ -65,6 +67,8 @@ struct TimelineCellAppearance: Equatable {
 		self.unreadCircleColor = theme.color(forKey: "MainWindow.Timeline.cell.unreadCircleColor")
 		self.unreadCircleDimension = theme.float(forKey: "MainWindow.Timeline.cell.unreadCircleDimension")
 		self.unreadCircleMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.unreadCircleMarginRight")
+
+		self.starDimension = theme.float(forKey: "MainWindow.Timeline.cell.starDimension")
 		
 		self.gridColor = theme.colorWithAlpha(forKey: "MainWindow.Timeline.gridColor")
 

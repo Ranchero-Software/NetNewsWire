@@ -974,7 +974,6 @@
 				849A97631ED9EB96007D329B /* UnreadCountView.swift */,
 				845F52EC1FB2B9FC00C10BF0 /* FeedPasteboardWriter.swift */,
 				84AD1EA92031617300BC20B7 /* FolderPasteboardWriter.swift */,
-				84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */,
 				849A97821ED9EC63007D329B /* SidebarStatusBarView.swift */,
 				84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */,
 				847FA120202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift */,
@@ -1317,6 +1316,7 @@
 				845EE7C01FC2488C00854A1F /* SmartFeed.swift */,
 				84F2D5361FC22FCB00998D64 /* TodayFeedDelegate.swift */,
 				845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */,
+				84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */,
 			);
 			name = SmartFeeds;
 			path = Evergreen/SmartFeeds;
