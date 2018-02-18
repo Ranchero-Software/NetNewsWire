@@ -66,6 +66,8 @@
 				<string>000000</string>
 				<key>gridColorAlpha</key>
 				<real>0.1</real>
+				<key>drawsGrid</key>
+				<false/>
 				<key>header</key>
 				<dict>
 					<key>backgroundColor</key>

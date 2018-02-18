@@ -34,6 +34,7 @@ struct TimelineCellAppearance: Equatable {
 	let starDimension: CGFloat
 
 	let gridColor: NSColor
+	let drawsGrid: Bool
 
 	let avatarSize: NSSize
 	let avatarMarginRight: CGFloat
@@ -71,7 +72,8 @@ struct TimelineCellAppearance: Equatable {
 		self.starDimension = theme.float(forKey: "MainWindow.Timeline.cell.starDimension")
 		
 		self.gridColor = theme.colorWithAlpha(forKey: "MainWindow.Timeline.gridColor")
-
+		self.drawsGrid = theme.bool(forKey: "MainWindow.Timeline.drawsGrid")
+		
 		self.avatarSize = theme.size(forKey: "MainWindow.Timeline.cell.avatar")
 		self.avatarMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginRight")
 		self.avatarAdjustmentTop = theme.float(forKey: "MainWindow.Timeline.cell.avatarAdjustmentTop")
