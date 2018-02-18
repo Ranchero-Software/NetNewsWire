@@ -14,4 +14,9 @@ public extension NSWindowController {
 
 		return window?.isDisplayingSheet ?? false
 	}
+
+	public var isOpen: Bool {
+
+		return isWindowLoaded && window!.isVisible
+	}
 }
