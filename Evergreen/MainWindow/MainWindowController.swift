@@ -481,23 +481,5 @@ private extension MainWindowController {
 			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
 		}
 	}
-
-	// MARK: - Navigation
-
-	func handleRightArrowFunctionKey(in view: NSView) {
-
-		guard let outlineView = sidebarViewController?.outlineView, view === outlineView, let timelineViewController = timelineViewController else {
-			return
-		}
-		timelineViewController.focus()
-	}
-
-	func handleLeftArrowFunctionKey(in view: NSView) {
-
-		guard let timelineView = timelineViewController?.tableView, view === timelineView, let sidebarViewController = sidebarViewController else {
-			return
-		}
-		sidebarViewController.focus()
-	}
 }
 
