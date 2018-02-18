@@ -8,6 +8,7 @@
 
 import Foundation
 import RSTextDrawing
+import DB5
 
 class TimelineTableCellView: NSTableCellView {
 
@@ -25,13 +26,14 @@ class TimelineTableCellView: NSTableCellView {
 		return imageView
 	}()
 
-//	let faviconImageView: NSImageView = {
-//		let imageView = NSImageView(frame: NSRect(x: 0, y: 0, width: 16, height: 16))
-//		imageView.imageScaling = .scaleProportionallyDown
-//		imageView.animates = false
-//		imageView.imageAlignment = .alignCenter
-//		return imageView
-//	}()
+	let starView: NSImageView = {
+		let imageView = NSImageView(frame: NSRect.zero)
+		imageView.imageScaling = .scaleNone
+		imageView.animates = false
+		imageView.imageAlignment = .alignCenter
+		imageView.image = AppImages.timelineStar
+		return imageView
+	}()
 
 	var cellAppearance: TimelineCellAppearance! {
 		didSet {
@@ -91,7 +93,7 @@ class TimelineTableCellView: NSTableCellView {
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
 		addSubviewAtInit(avatarImageView, hidden: false)
-//		addSubviewAtInit(faviconImageView, hidden: true)
+		addSubviewAtInit(starView, hidden: false)
 	}
 	
 	override init(frame frameRect: NSRect) {
@@ -140,6 +142,7 @@ class TimelineTableCellView: NSTableCellView {
 		dateView.rs_setFrameIfNotEqual(layoutRects.dateRect)
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
 		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
+		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
 //		faviconImageView.rs_setFrameIfNotEqual(layoutRects.faviconRect)
 	}
 
@@ -186,10 +189,16 @@ class TimelineTableCellView: NSTableCellView {
 	}
 
 	private func updateUnreadIndicator() {
-		
-		if unreadIndicatorView.isHidden != cellData.read {
-			unreadIndicatorView.isHidden = cellData.read
+
+		let shouldHide = cellData.read || cellData.starred
+		if unreadIndicatorView.isHidden != shouldHide {
+			unreadIndicatorView.isHidden = shouldHide
 		}
+	}
+
+	private func updateStarView() {
+
+		starView.isHidden = !cellData.starred
 	}
 
 	private func updateAvatar() {
@@ -240,6 +249,7 @@ class TimelineTableCellView: NSTableCellView {
 		updateDateView()
 		updateFeedNameView()
 		updateUnreadIndicator()
+		updateStarView()
 		updateAvatar()
 //		updateFavicon()
 	}
@@ -256,3 +266,4 @@ class TimelineTableCellView: NSTableCellView {
 		}
 	}
 }
+

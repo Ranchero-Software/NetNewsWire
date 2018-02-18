@@ -126,7 +126,7 @@ private func rectForStar(_ cellData: TimelineCellData, _ appearance: TimelineCel
 	r.size.width = appearance.starDimension
 	r.size.height = appearance.starDimension
 	r.origin.x = floor(unreadIndicatorRect.origin.x - ((appearance.starDimension - appearance.unreadCircleDimension) / 2.0))
-	r.origin.y = unreadIndicatorRect.origin.y
+	r.origin.y = unreadIndicatorRect.origin.y - 3.0
 	return r
 }
 

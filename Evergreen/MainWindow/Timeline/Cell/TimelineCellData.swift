@@ -27,6 +27,7 @@ struct TimelineCellData {
 	let showAvatar: Bool // Make space even when avatar is nil
 	let featuredImage: NSImage? // image from within the article
 	let read: Bool
+	let starred: Bool
 
 	init(article: Article, appearance: TimelineCellAppearance, showFeedName: Bool, feedName: String?, avatar: NSImage?, showAvatar: Bool, featuredImage: NSImage?) {
 		
@@ -72,6 +73,7 @@ struct TimelineCellData {
 		self.featuredImage = featuredImage
 		
 		self.read = article.status.read
+		self.starred = article.status.starred
 	}
 
 	init() { //Empty
@@ -88,6 +90,7 @@ struct TimelineCellData {
 		self.avatar = nil
 		self.featuredImage = nil
 		self.read = true
+		self.starred = false
 	}
 
 	static func emptyCache() {
