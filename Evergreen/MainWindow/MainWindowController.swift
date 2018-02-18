@@ -19,6 +19,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private let sharingServicePickerDelegate = MainWindowSharingServicePickerDelegate()
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey)
+	static var didPositionWindowOnFirstRun = false
+
 	private var unreadCount: Int = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -27,13 +29,17 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
+	private var shareToolbarItem: NSToolbarItem? {
 
-	static var didPositionWindowOnFirstRun = false
+		return window?.toolbar?.existingItem(withIdentifier: .Share)
+	}
+
+	// MARK: - NSWindowController
 
 	override func windowDidLoad() {
 
 		super.windowDidLoad()
-		
+
 		if !AppDefaults.shared.showTitleOnMainWindow {
 			window?.titleVisibility = .hidden
 		}
@@ -202,7 +208,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			canScroll ? detailViewController.scrollPageDown(sender) : self.nextUnread(sender)
 		}
 	}
-
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {
 
@@ -475,25 +480,6 @@ private extension MainWindowController {
 		else if unreadCount > 0 {
 			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
 		}
-	}
-
-	// MARK: - Toolbar
-
-	private var shareToolbarItem: NSToolbarItem? {
-		return existingToolbarItem(identifier: .Share)
-	}
-
-	func existingToolbarItem(identifier: NSToolbarItem.Identifier) -> NSToolbarItem? {
-
-		guard let toolbarItems = window?.toolbar?.items else {
-			return nil
-		}
-		for toolbarItem in toolbarItems {
-			if toolbarItem.itemIdentifier == identifier {
-				return toolbarItem
-			}
-		}
-		return nil
 	}
 
 	// MARK: - Navigation
