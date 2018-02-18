@@ -8,16 +8,15 @@
 
 import Foundation
 import RSTextDrawing
-import DB5
 
 class TimelineTableCellView: NSTableCellView {
 
-	let titleView = RSMultiLineView(frame: NSZeroRect)
-	let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
-	let dateView = RSSingleLineView(frame: NSZeroRect)
-	let feedNameView = RSSingleLineView(frame: NSZeroRect)
+	private let titleView = RSMultiLineView(frame: NSZeroRect)
+	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
+	private let dateView = RSSingleLineView(frame: NSZeroRect)
+	private let feedNameView = RSSingleLineView(frame: NSZeroRect)
 
-	let avatarImageView: NSImageView = {
+	private let avatarImageView: NSImageView = {
 		let imageView = NSImageView(frame: NSRect.zero)
 		imageView.imageScaling = .scaleProportionallyDown
 		imageView.animates = false
@@ -26,7 +25,7 @@ class TimelineTableCellView: NSTableCellView {
 		return imageView
 	}()
 
-	let starView: NSImageView = {
+	private let starView: NSImageView = {
 		let imageView = NSImageView(frame: NSRect.zero)
 		imageView.imageScaling = .scaleNone
 		imageView.animates = false
@@ -79,23 +78,6 @@ class TimelineTableCellView: NSTableCellView {
 		}
 	}
 
-	private func addSubviewAtInit(_ view: NSView, hidden: Bool) {
-
-		addSubview(view)
-		view.translatesAutoresizingMaskIntoConstraints = false
-		view.isHidden = hidden
-	}
-
-	private func commonInit() {
-
-		addSubviewAtInit(titleView, hidden: false)
-		addSubviewAtInit(unreadIndicatorView, hidden: true)
-		addSubviewAtInit(dateView, hidden: false)
-		addSubviewAtInit(feedNameView, hidden: true)
-		addSubviewAtInit(avatarImageView, hidden: false)
-		addSubviewAtInit(starView, hidden: false)
-	}
-	
 	override init(frame frameRect: NSRect) {
 		
 		super.init(frame: frameRect)
@@ -124,11 +106,6 @@ class TimelineTableCellView: NSTableCellView {
 		updateAppearance()
 	}
 	
-	private func updatedLayoutRects() -> TimelineCellLayout {
-
-		return timelineCellLayout(NSWidth(bounds), cellData: cellData, appearance: cellAppearance)
-	}
-
 	override func layout() {
 
 		resizeSubviews(withOldSize: NSZeroSize)
@@ -143,7 +120,6 @@ class TimelineTableCellView: NSTableCellView {
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
 		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
 		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
-//		faviconImageView.rs_setFrameIfNotEqual(layoutRects.faviconRect)
 	}
 
 	override func updateLayer() {
@@ -160,20 +136,59 @@ class TimelineTableCellView: NSTableCellView {
 			layer?.backgroundColor = color.cgColor
 		}
 	}
+}
 
-	private func updateTitleView() {
+// MARK: - Private
+
+private extension TimelineTableCellView {
+
+	func addSubviewAtInit(_ view: NSView, hidden: Bool) {
+
+		addSubview(view)
+		view.translatesAutoresizingMaskIntoConstraints = false
+		view.isHidden = hidden
+	}
+
+	func commonInit() {
+
+		addSubviewAtInit(titleView, hidden: false)
+		addSubviewAtInit(unreadIndicatorView, hidden: true)
+		addSubviewAtInit(dateView, hidden: false)
+		addSubviewAtInit(feedNameView, hidden: true)
+		addSubviewAtInit(avatarImageView, hidden: false)
+		addSubviewAtInit(starView, hidden: false)
+	}
+
+	func updatedLayoutRects() -> TimelineCellLayout {
+
+		return timelineCellLayout(NSWidth(bounds), cellData: cellData, appearance: cellAppearance)
+	}
+
+	func updateAppearance() {
+
+		if let rowView = superview as? NSTableRowView {
+			isEmphasized = rowView.isEmphasized
+			isSelected = rowView.isSelected
+		}
+		else {
+			isEmphasized = false
+			isSelected = false
+		}
+	}
+
+	func updateTitleView() {
 
 		titleView.attributedStringValue = cellData.attributedTitle
 		needsLayout = true
 	}
-	
-	private func updateDateView() {
+
+	func updateDateView() {
 
 		dateView.attributedStringValue = cellData.attributedDateString
 		needsLayout = true
 	}
 
-	private func updateFeedNameView() {
+	func updateFeedNameView() {
 
 		if cellData.showFeedName {
 			if feedNameView.isHidden {
@@ -188,7 +203,7 @@ class TimelineTableCellView: NSTableCellView {
 		}
 	}
 
-	private func updateUnreadIndicator() {
+	func updateUnreadIndicator() {
 
 		let shouldHide = cellData.read || cellData.starred
 		if unreadIndicatorView.isHidden != shouldHide {
@@ -196,12 +211,12 @@ class TimelineTableCellView: NSTableCellView {
 		}
 	}
 
-	private func updateStarView() {
+	func updateStarView() {
 
 		starView.isHidden = !cellData.starred
 	}
 
-	private func updateAvatar() {
+	func updateAvatar() {
 
 		if !cellData.showAvatar {
 			avatarImageView.image = nil
@@ -224,19 +239,7 @@ class TimelineTableCellView: NSTableCellView {
 		avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
 	}
 
-	private func updateFavicon() {
-
-//		if let favicon = cellData.showFeedName ? cellData.favicon : nil {
-//			faviconImageView.image = favicon
-//			faviconImageView.isHidden = false
-//		}
-//		else {
-//			faviconImageView.image = nil
-//			faviconImageView.isHidden = true
-//		}
-	}
-
-	private func updateSubviews() {
+	func updateSubviews() {
 
 		updateTitleView()
 		updateDateView()
@@ -244,19 +247,5 @@ class TimelineTableCellView: NSTableCellView {
 		updateUnreadIndicator()
 		updateStarView()
 		updateAvatar()
-//		updateFavicon()
-	}
-	
-	private func updateAppearance() {
-		
-		if let rowView = superview as? NSTableRowView {
-			isEmphasized = rowView.isEmphasized
-			isSelected = rowView.isSelected
-		}
-		else {
-			isEmphasized = false
-			isSelected = false
-		}
 	}
 }
-
