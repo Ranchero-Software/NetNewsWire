@@ -613,7 +613,7 @@ private extension TimelineViewController {
 
 	func queueReloadAvailableCells() {
 
-		appDelegate.coalescingQueue.add(self, #selector(reloadAvailableCells))
+		CoalescingQueue.standard.add(self, #selector(reloadAvailableCells))
 	}
 
 	func updateTableViewRowHeight() {

@@ -74,7 +74,7 @@ private extension SmartFeed {
 
 	func queueFetchUnreadCounts() {
 
-		appDelegate?.coalescingQueue.add(self, #selector(fetchUnreadCounts))
+		CoalescingQueue.standard.add(self, #selector(fetchUnreadCounts))
 	}
 
 	func fetchUnreadCount(for account: Account) {

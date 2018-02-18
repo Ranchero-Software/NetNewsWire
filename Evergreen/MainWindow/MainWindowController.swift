@@ -9,6 +9,7 @@
 import AppKit
 import Data
 import Account
+import RSCore
 
 private let kWindowFrameKey = "MainWindow"
 
@@ -120,7 +121,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
 
-		appDelegate?.coalescingQueue.add(self, #selector(makeToolbarValidate))
+		CoalescingQueue.standard.add(self, #selector(makeToolbarValidate))
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {

@@ -26,7 +26,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var feedIconDownloader: FeedIconDownloader!
 	var appName: String!
-	var coalescingQueue = CoalescingQueue(name: "UI Queue", interval: 0.05)
 	
 	@IBOutlet var debugMenuItem: NSMenuItem!
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!

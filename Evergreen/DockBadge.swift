@@ -15,7 +15,7 @@ import RSCore
 
 	func update() {
 
-		appDelegate?.coalescingQueue.add(self, #selector(updateBadge))
+		CoalescingQueue.standard.add(self, #selector(updateBadge))
 	}
 
 	@objc func updateBadge() {
