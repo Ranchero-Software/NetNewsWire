@@ -23,7 +23,12 @@ final class SidebarStatusBarView: NSView {
 			progressLabel.isHidden = !isAnimatingProgress
 		}
 	}
-	
+
+	private var progress: CombinedRefreshProgress? = nil {
+		didSet {
+			CoalescingQueue.standard.add(self, #selector(updateUI))
+		}
+	}
 	override var isFlipped: Bool {
 		return true
 	}
@@ -40,28 +45,23 @@ final class SidebarStatusBarView: NSView {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 	}
 
-	// MARK: Notifications
+	@objc func updateUI() {
 
-	@objc dynamic func progressDidChange(_ notification: Notification) {
+		guard let progress = progress else {
+			stopProgressIfNeeded()
+			return
+		}
 
-		let progress = AccountManager.shared.combinedRefreshProgress
 		updateProgressIndicator(progress)
 		updateProgressLabel(progress)
 	}
 
-	// MARK: Drawing
+	// MARK: Notifications
 
-//	private let lineColor = NSColor(calibratedWhite: 0.57, alpha: 1.0)
-//
-//	override func draw(_ dirtyRect: NSRect) {
-//
-//		let path = NSBezierPath()
-//		path.lineWidth = 1.0
-//		path.move(to: NSPoint(x: NSMinX(bounds), y: NSMinY(bounds) + 0.5))
-//		path.line(to: NSPoint(x: NSMaxX(bounds), y: NSMinY(bounds) + 0.5))
-//		lineColor.set()
-//		path.stroke()
-//	}
+	@objc dynamic func progressDidChange(_ notification: Notification) {
+
+		progress = AccountManager.shared.combinedRefreshProgress
+	}
 }
 
 private extension SidebarStatusBarView {
