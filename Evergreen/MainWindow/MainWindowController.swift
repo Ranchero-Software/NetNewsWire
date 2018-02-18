@@ -13,10 +13,10 @@ import RSCore
 
 private let kWindowFrameKey = "MainWindow"
 
-
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
-	// MARK: NSWindowController
+	@IBOutlet var toolbarDelegate: MainWindowToolbarDelegate?
+	private let sharingServicePickerDelegate = MainWindowSharingServicePickerDelegate()
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey)
 	private var unreadCount: Int = 0 {
@@ -27,12 +27,13 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
+
 	static var didPositionWindowOnFirstRun = false
 
 	override func windowDidLoad() {
 
 		super.windowDidLoad()
-
+		
 		if !AppDefaults.shared.showTitleOnMainWindow {
 			window?.titleVisibility = .hidden
 		}
@@ -362,7 +363,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		let items = selectedArticles.map { ArticlePasteboardWriter(article: $0) }
 		let sharingServicePicker = NSSharingServicePicker(items: items)
-		sharingServicePicker.delegate = self
+		sharingServicePicker.delegate = sharingServicePickerDelegate
 		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
 	}
 
@@ -374,54 +375,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		return !selectedArticles.isEmpty
 	}
 }
-
-// MARK: - NSSharingServicePickerDelegate
-
-extension MainWindowController: NSSharingServicePickerDelegate {
-
-	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
-
-		let sendToServices = appDelegate.sendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
-
-			guard let object = items.first else {
-				return nil
-			}
-			guard sendToCommand.canSendObject(object, selectedText: nil) else {
-				return nil
-			}
-
-			let image = sendToCommand.image ?? AppImages.genericFeedImage ?? NSImage()
-			return NSSharingService(title: sendToCommand.title, image: image, alternateImage: nil) {
-				sendToCommand.sendObject(object, selectedText: nil)
-			}
-		}
-		return proposedServices + sendToServices
-	}
-}
-
-// MARK: - NSToolbarDelegate
-
-extension NSToolbarItem.Identifier {
-	static let Share = NSToolbarItem.Identifier("share")
-}
-
-extension MainWindowController: NSToolbarDelegate {
-
-	func toolbarWillAddItem(_ notification: Notification) {
-
-		// The share button should send its action on mouse down, not mouse up.
-
-		guard let item = notification.userInfo?["item"] as? NSToolbarItem else {
-			return
-		}
-		guard item.itemIdentifier == .Share, let button = item.view as? NSButton else {
-			return
-		}
-
-		button.sendAction(on: .leftMouseDown)
-	}
-}
-
 
 // MARK: - Scripting Access
 

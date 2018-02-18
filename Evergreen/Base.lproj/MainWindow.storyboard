@@ -183,7 +183,7 @@
                                 <toolbarItem reference="nv0-Ju-lP7"/>
                             </defaultToolbarItems>
                             <connections>
-                                <outlet property="delegate" destination="B8D-0N-5wS" id="hrC-d9-Cge"/>
+                                <outlet property="delegate" destination="V3e-nc-6hW" id="ncd-Wh-qZU"/>
                             </connections>
                         </toolbar>
                         <connections>
@@ -191,10 +191,12 @@
                         </connections>
                     </window>
                     <connections>
+                        <outlet property="toolbarDelegate" destination="V3e-nc-6hW" id="0rl-4U-DkU"/>
                         <segue destination="reS-fe-pD8" kind="relationship" relationship="window.shadowedContentViewController" id="WS2-WB-dc4"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="V3e-nc-6hW" customClass="MainWindowToolbarDelegate" customModule="Evergreen" customModuleProvider="target"/>
             </objects>
             <point key="canvasLocation" x="-666" y="-124"/>
         </scene>
