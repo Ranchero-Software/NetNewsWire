@@ -36,7 +36,7 @@ import RSCore
 		return selectedNodes.representedObjects()
 	}
 
-	//MARK: NSViewController
+	// MARK: - NSViewController
 
 	override func viewDidLoad() {
 
@@ -70,9 +70,9 @@ import RSCore
 		}
 	}
 
-	//MARK: Notifications
+	// MARK: - Notifications
 
-	@objc dynamic func unreadCountDidChange(_ note: Notification) {
+	@objc func unreadCountDidChange(_ note: Notification) {
 		
 		guard let representedObject = note.object else {
 			return
@@ -80,17 +80,17 @@ import RSCore
 		configureUnreadCountForCellsForRepresentedObject(representedObject as AnyObject)
 	}
 
-	@objc dynamic func containerChildrenDidChange(_ note: Notification) {
+	@objc func containerChildrenDidChange(_ note: Notification) {
 
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 
-	@objc dynamic func batchUpdateDidPerform(_ notification: Notification) {
+	@objc func batchUpdateDidPerform(_ notification: Notification) {
 		
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 	
-	@objc dynamic func userDidAddFeed(_ notification: Notification) {
+	@objc func userDidAddFeed(_ notification: Notification) {
 
 		guard let feed = notification.userInfo?[UserInfoKey.feed] else {
 			return
@@ -119,7 +119,7 @@ import RSCore
 		configureCellsForRepresentedObject(object as AnyObject)
 	}
 
-	// MARK: Actions
+	// MARK: - Actions
 
 	@IBAction func delete(_ sender: AnyObject?) {
 
@@ -175,7 +175,7 @@ import RSCore
 		NSPasteboard.general.copyObjects(selectedObjects)
 	}
 
-	// MARK: Navigation
+	// MARK: - Navigation
 	
 	func canGoToNextUnread() -> Bool {
 		
@@ -203,7 +203,7 @@ import RSCore
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(outlineView)
 	}
 
-	// MARK: Contextual Menu
+	// MARK: - Contextual Menu
 
 	func contextualMenuForSelectedObjects() -> NSMenu? {
 
@@ -226,7 +226,7 @@ import RSCore
 		return menu(for: [object])
 	}
 
-	// MARK: NSOutlineViewDelegate
+	// MARK: - NSOutlineViewDelegate
     
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
 
@@ -570,20 +570,4 @@ private extension SidebarViewController {
 	}
 }
 
-extension Feed: SmallIconProvider {
-
-	var smallIcon: NSImage? {
-		if let image = appDelegate.faviconDownloader.favicon(for: self) {
-			return image
-		}
-		return AppImages.genericFeedImage
-	}
-}
-
-extension Folder: SmallIconProvider {
-
-	var smallIcon: NSImage? {
-		return NSImage(named: NSImage.Name.folder)
-	}
-}
 
