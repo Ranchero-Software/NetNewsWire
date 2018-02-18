@@ -60,8 +60,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public var dirty = false {
 		didSet {
-			if dirty {
-				Account.saveQueue.add(self, #selector(saveToDiskIfNeeded))
+			if dirty && !refreshInProgress {
+				queueSaveToDiskIfNeeded()
 			}
 		}
 	}
@@ -82,6 +82,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				}
 				else {
 					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
+					queueSaveToDiskIfNeeded()
 				}
 			}
 		}
@@ -492,6 +493,11 @@ private extension Account {
 		static let children = "children"
 		static let userInfo = "userInfo"
 		static let unreadCount = "unreadCount"
+	}
+
+	func queueSaveToDiskIfNeeded() {
+
+		Account.saveQueue.add(self, #selector(saveToDiskIfNeeded))
 	}
 
 	func object(with diskObject: [String: Any]) -> AnyObject? {
