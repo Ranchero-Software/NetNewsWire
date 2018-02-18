@@ -76,13 +76,13 @@
 				<key>cell</key>
 				<dict>
 					<key>paddingLeft</key>
-					<integer>12</integer>
+					<integer>20</integer>
 					<key>paddingRight</key>
 					<integer>12</integer>
 					<key>paddingTop</key>
-					<integer>12</integer>
-					<key>paddingBottom</key>
 					<integer>14</integer>
+					<key>paddingBottom</key>
+					<integer>16</integer>
 					<key>feedNameColor</key>
 					<string>999999</string>
 					<key>faviconFeedNameSpacing</key>
@@ -110,6 +110,8 @@
 					<key>avatarWidth</key>
 					<integer>48</integer>
 					<key>avatarMarginRight</key>
+					<integer>20</integer>
+					<key>avatarMarginLeft</key>
 					<integer>8</integer>
 					<key>avatarAdjustmentTop</key>
 					<integer>4</integer>

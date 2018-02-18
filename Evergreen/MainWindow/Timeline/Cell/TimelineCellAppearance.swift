@@ -38,6 +38,7 @@ struct TimelineCellAppearance: Equatable {
 
 	let avatarSize: NSSize
 	let avatarMarginRight: CGFloat
+	let avatarMarginLeft: CGFloat
 	let avatarAdjustmentTop: CGFloat
 	let avatarCornerRadius: CGFloat
 	let showAvatar: Bool
@@ -76,14 +77,15 @@ struct TimelineCellAppearance: Equatable {
 		
 		self.avatarSize = theme.size(forKey: "MainWindow.Timeline.cell.avatar")
 		self.avatarMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginRight")
+		self.avatarMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginLeft")
 		self.avatarAdjustmentTop = theme.float(forKey: "MainWindow.Timeline.cell.avatarAdjustmentTop")
 		self.avatarCornerRadius = theme.float(forKey: "MainWindow.Timeline.cell.avatarCornerRadius")
 		self.showAvatar = showAvatar
 
-		var margin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight
-		if showAvatar {
-			margin += (self.avatarSize.width + self.avatarMarginRight)
-		}
+		let margin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight
+//		if showAvatar {
+//			margin += (self.avatarSize.width + self.avatarMarginRight)
+//		}
 		self.boxLeftMargin = margin
 	}
 
