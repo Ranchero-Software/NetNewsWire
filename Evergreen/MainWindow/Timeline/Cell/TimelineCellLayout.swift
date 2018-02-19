@@ -107,13 +107,15 @@ private extension TimelineCellLayout {
 
 	static func rectOfLineBelow(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ topMargin: CGFloat, _ attributedString: NSAttributedString) -> NSRect {
 
-		let renderer = RSSingleLineRenderer(attributedTitle: attributedString)
+		let font = attributedString.attribute(NSAttributedStringKey.font, at: 0, effectiveRange: nil) as! NSFont
+		let textFieldSize = SingleLineTextFieldSizer.size(for: attributedString.string, font: font)
+//		let renderer = RSSingleLineRenderer(attributedTitle: attributedString)
 		var r = NSZeroRect
-		r.size = renderer.size
+		r.size = textFieldSize
 		r.origin.y = NSMaxY(rectAbove) + topMargin
 		r.origin.x = textBoxRect.origin.x
 
-		var width = renderer.size.width
+		var width = textFieldSize.width
 		width = min(width, textBoxRect.size.width)
 		width = max(width, 0.0)
 		r.size.width = width

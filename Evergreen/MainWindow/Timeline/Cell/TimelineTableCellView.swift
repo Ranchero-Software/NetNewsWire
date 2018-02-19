@@ -13,29 +13,18 @@ class TimelineTableCellView: NSTableCellView {
 
 	private let titleView = RSMultiLineView(frame: NSZeroRect)
 	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
-	private let dateView = RSSingleLineView(frame: NSZeroRect)
-	private let feedNameView = RSSingleLineView(frame: NSZeroRect)
+	private let dateView = TimelineTableCellView.singleLineTextField()
+	private let feedNameView = TimelineTableCellView.singleLineTextField()
+	private let avatarImageView = TimelineTableCellView.imageView(with: AppImages.genericFeedImage, scaling: .scaleProportionallyDown)
+	private let starView = TimelineTableCellView.imageView(with: AppImages.timelineStar, scaling: .scaleNone)
 
-	private let avatarImageView: NSImageView = {
-		let imageView = NSImageView(frame: NSRect.zero)
-		imageView.imageScaling = .scaleProportionallyDown
-		imageView.animates = false
-		imageView.imageAlignment = .alignCenter
-		imageView.image = AppImages.genericFeedImage
-		return imageView
-	}()
-
-	private let starView: NSImageView = {
-		let imageView = NSImageView(frame: NSRect.zero)
-		imageView.imageScaling = .scaleNone
-		imageView.animates = false
-		imageView.imageAlignment = .alignCenter
-		imageView.image = AppImages.timelineStar
-		return imageView
+	private lazy var textFields = {
+		return [self.dateView, self.feedNameView]
 	}()
 
 	var cellAppearance: TimelineCellAppearance! {
 		didSet {
+			updateTextFields()
 			needsLayout = true
 		}
 	}
@@ -60,20 +49,18 @@ class TimelineTableCellView: NSTableCellView {
 
 	var isEmphasized = false {
 		didSet {
-			dateView.emphasized = isEmphasized
-			feedNameView.emphasized = isEmphasized
 			titleView.emphasized = isEmphasized
 			unreadIndicatorView.isEmphasized = isEmphasized
+			updateTextFieldColors()
 			needsDisplay = true
 		}
 	}
 	
 	var isSelected = false {
 		didSet {
-			dateView.selected = isSelected
-			feedNameView.selected = isSelected
 			titleView.selected = isSelected
 			unreadIndicatorView.isSelected = isSelected
+			updateTextFieldColors()
 			needsDisplay = true
 		}
 	}
@@ -142,6 +129,48 @@ class TimelineTableCellView: NSTableCellView {
 
 private extension TimelineTableCellView {
 
+	static func singleLineTextField() -> NSTextField {
+
+		let textField = NSTextField(labelWithString: "")
+		textField.usesSingleLineMode = true
+		textField.maximumNumberOfLines = 1
+		textField.isEditable = false
+		textField.lineBreakMode = .byTruncatingTail
+		return textField
+	}
+
+	static func imageView(with image: NSImage?, scaling: NSImageScaling) -> NSImageView {
+
+		let imageView = image != nil ? NSImageView(image: image!) : NSImageView(frame: NSRect.zero)
+		imageView.animates = false
+		imageView.imageAlignment = .alignCenter
+		imageView.imageScaling = scaling
+		return imageView
+	}
+
+	func updateTextFieldColors() {
+
+		if isEmphasized && isSelected {
+			textFields.forEach { $0.textColor = NSColor.white }
+		}
+		else {
+			feedNameView.textColor = cellAppearance.feedNameColor
+			dateView.textColor = cellAppearance.dateColor
+		}
+	}
+
+	func updateTextFieldFonts() {
+
+		feedNameView.font = cellAppearance.feedNameFont
+		dateView.font = cellAppearance.dateFont
+	}
+
+	func updateTextFields() {
+
+		updateTextFieldColors()
+		updateTextFieldFonts()
+	}
+
 	func addSubviewAtInit(_ view: NSView, hidden: Bool) {
 
 		addSubview(view)
@@ -184,7 +213,7 @@ private extension TimelineTableCellView {
 
 	func updateDateView() {
 
-		dateView.attributedStringValue = cellData.attributedDateString
+		dateView.stringValue = cellData.attributedDateString.string
 		needsLayout = true
 	}
 
@@ -194,7 +223,7 @@ private extension TimelineTableCellView {
 			if feedNameView.isHidden {
 				feedNameView.isHidden = false
 			}
-			feedNameView.attributedStringValue = cellData.attributedFeedName
+			feedNameView.stringValue = cellData.attributedFeedName.string
 		}
 		else {
 			if !feedNameView.isHidden {
