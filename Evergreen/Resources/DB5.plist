@@ -78,13 +78,13 @@
 					<key>paddingLeft</key>
 					<integer>20</integer>
 					<key>paddingRight</key>
-					<integer>12</integer>
+					<integer>20</integer>
 					<key>paddingTop</key>
 					<integer>14</integer>
 					<key>paddingBottom</key>
 					<integer>16</integer>
 					<key>feedNameColor</key>
-					<string>999999</string>
+					<string>aaaaaa</string>
 					<key>faviconFeedNameSpacing</key>
 					<integer>2</integer>
 					<key>dateColor</key>
@@ -94,9 +94,13 @@
 					<key>dateMarginBottom</key>
 					<integer>2</integer>
 					<key>textColor</key>
-					<string>666666</string>
+					<string>999999</string>
+					<key>textOnlyColor</key>
+					<string>222222</string>
 					<key>titleColor</key>
 					<string>222222</string>
+					<key>titleFontSizeMultiplier</key>
+					<real>1.1</real>
 					<key>titleMarginBottom</key>
 					<integer>1</integer>
 					<key>unreadCircleColor</key>

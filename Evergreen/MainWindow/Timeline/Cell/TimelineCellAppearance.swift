@@ -26,7 +26,10 @@ struct TimelineCellAppearance: Equatable {
 	
 	let textColor: NSColor
 	let textFont: NSFont
-	
+
+	let textOnlyColor: NSColor
+	let textOnlyFont: NSFont
+
 	let unreadCircleColor: NSColor
 	let unreadCircleDimension: CGFloat
 	let unreadCircleMarginRight: CGFloat
@@ -60,11 +63,15 @@ struct TimelineCellAppearance: Equatable {
 		self.dateMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginLeft")
 		
 		self.titleColor = theme.color(forKey: "MainWindow.Timeline.cell.titleColor")
-		self.titleFont = NSFont.systemFont(ofSize: actualFontSize, weight: NSFont.Weight.bold)
+		let titleFontSizeMultiplier = theme.float(forKey: "MainWindow.Timeline.cell.titleFontSizeMultiplier")
+		self.titleFont = NSFont.systemFont(ofSize: floor(actualFontSize * titleFontSizeMultiplier), weight: NSFont.Weight.semibold)
 		self.titleBottomMargin = theme.float(forKey: "MainWindow.Timeline.cell.titleMarginBottom")
 		
 		self.textColor = theme.color(forKey: "MainWindow.Timeline.cell.textColor")
 		self.textFont = NSFont.systemFont(ofSize: actualFontSize)
+
+		self.textOnlyColor = theme.color(forKey: "MainWindow.Timeline.cell.textOnlyColor")
+		self.textOnlyFont = self.textFont
 		
 		self.unreadCircleColor = theme.color(forKey: "MainWindow.Timeline.cell.unreadCircleColor")
 		self.unreadCircleDimension = theme.float(forKey: "MainWindow.Timeline.cell.unreadCircleDimension")

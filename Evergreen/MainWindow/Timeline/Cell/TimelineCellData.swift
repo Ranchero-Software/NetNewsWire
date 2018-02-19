@@ -30,7 +30,7 @@ struct TimelineCellData {
 	let starred: Bool
 
 	init(article: Article, appearance: TimelineCellAppearance, showFeedName: Bool, feedName: String?, avatar: NSImage?, showAvatar: Bool, featuredImage: NSImage?) {
-		
+
 		self.title = timelineTruncatedTitle(article)
 		self.text = timelineTruncatedSummary(article)
 
@@ -117,6 +117,6 @@ private func attributedTitleString(_ title: String, _ text: String, _ appearance
 		return NSAttributedString(string: title, attributes: [NSAttributedStringKey.foregroundColor: appearance.titleColor, NSAttributedStringKey.font: appearance.titleFont])
 	}
 	
-	return NSAttributedString(string: text, attributes: [NSAttributedStringKey.foregroundColor: appearance.textColor, NSAttributedStringKey.font: appearance.textFont])
+	return NSAttributedString(string: text, attributes: [NSAttributedStringKey.foregroundColor: appearance.textOnlyColor, NSAttributedStringKey.font: appearance.textFont])
 }
 
