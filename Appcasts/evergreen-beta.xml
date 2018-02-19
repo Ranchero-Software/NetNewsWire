@@ -7,6 +7,20 @@
         <language>en</language>
 
 		<item>
+          <title>Evergreen 1.0d40</title>
+            <description><![CDATA[
+            
+            <p>Improve font sizing in the timeline.</p>
+            <p>Show no-selection or multiple-selection text in the detail view when appropriate.</p>
+            <p>Give the source list an almost-white background (96%) instead of using the blueish blur view. Reason: favicons are often created with the expectation that they will be placed on a white background — they often don’t include transparency. They end up looking better on this almost-white background.</p>
+ 							 							 						
+    						]]></description>
+            <pubDate>Sun, 18 Feb 2018 22:10:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d40.zip" sparkle:version="1040" sparkle:shortVersionString="1.0d40" length="7357549" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
           <title>Evergreen 1.0d39</title>
             <description><![CDATA[
             
