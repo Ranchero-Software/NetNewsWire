@@ -361,7 +361,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="HZs-Zf-G8s" customClass="SidebarStatusBarView" customModule="Evergreen" customModuleProvider="target">
+                            <customView appearanceType="aqua" translatesAutoresizingMaskIntoConstraints="NO" id="HZs-Zf-G8s" customClass="SidebarStatusBarView" customModule="Evergreen" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="166" height="28"/>
                                 <subviews>
                                     <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="gZE-LB-FdW">
