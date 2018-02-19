@@ -7,6 +7,22 @@
         <language>en</language>
 
 		<item>
+          <title>Evergreen 1.0d39</title>
+            <description><![CDATA[
+            
+ 							<h4>Timeline</h4>
+ 							<p>Moved avatars and feed icons to the right.</p>
+ 							<p>Tweaked some colors and margins.</p>
+ 							<p>Removed the grid line.</p>
+ 							<p>Made the text for no-title articles darker.</p>
+ 							 							 						
+    						]]></description>
+            <pubDate>Sun, 18 Feb 2018 17:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d39.zip" sparkle:version="1034" sparkle:shortVersionString="1.0d39" length="7351715" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
           <title>Evergreen 1.0d38</title>
             <description><![CDATA[
             
