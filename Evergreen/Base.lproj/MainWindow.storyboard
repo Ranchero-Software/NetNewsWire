@@ -269,7 +269,7 @@
                         <subviews>
                             <scrollView appearanceType="aqua" borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
                                 <rect key="frame" x="0.0" y="28" width="166" height="272"/>
-                                <clipView key="contentView" drawsBackground="NO" id="2eU-Wz-F9g">
+                                <clipView key="contentView" id="2eU-Wz-F9g">
                                     <rect key="frame" x="0.0" y="0.0" width="166" height="272"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -535,7 +535,7 @@
                             </customView>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="96" horizontalPageScroll="10" verticalLineScroll="96" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Kfs-n2-RYk">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
-                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="yAN-Ex-RC7">
+                                <clipView key="contentView" copiesOnScroll="NO" id="yAN-Ex-RC7">
                                     <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>

@@ -284,7 +284,8 @@ final class NoSelectionView: NSView {
 			return
 		}
 		if let layer = layer {
-			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.noSelectionView.backgroundColor")
+//			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.noSelectionView.backgroundColor")
+			let color = NSColor(calibratedWhite: 0.96, alpha: 1.0)
 			layer.backgroundColor = color.cgColor
 			didConfigureLayer = true
 		}
