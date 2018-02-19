@@ -51,28 +51,28 @@ struct TimelineCellAppearance: Equatable {
 	init(theme: VSTheme, showAvatar: Bool, fontSize: FontSize) {
 
 		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
-		
+		let smallItemFontSize = floor(actualFontSize * 0.95)
+		let largeItemFontSize = floor(actualFontSize * 1.1)
+
 		self.cellPadding = theme.edgeInsets(forKey: "MainWindow.Timeline.cell.padding")
 		
 		self.feedNameColor = theme.color(forKey: "MainWindow.Timeline.cell.feedNameColor")
-		self.feedNameFont = NSFont.systemFont(ofSize: actualFontSize)
+		self.feedNameFont = NSFont.systemFont(ofSize: smallItemFontSize)
 
 		self.dateColor = theme.color(forKey: "MainWindow.Timeline.cell.dateColor")
-		let actualDateFontSize = AppDefaults.actualFontSize(for: fontSize)
-		self.dateFont = NSFont.systemFont(ofSize: actualDateFontSize)
+		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize)
 		self.dateMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginLeft")
 		
 		self.titleColor = theme.color(forKey: "MainWindow.Timeline.cell.titleColor")
-		let titleFontSizeMultiplier = theme.float(forKey: "MainWindow.Timeline.cell.titleFontSizeMultiplier")
-		self.titleFont = NSFont.systemFont(ofSize: floor(actualFontSize * titleFontSizeMultiplier), weight: NSFont.Weight.semibold)
+		self.titleFont = NSFont.systemFont(ofSize: largeItemFontSize, weight: NSFont.Weight.semibold)
 		self.titleBottomMargin = theme.float(forKey: "MainWindow.Timeline.cell.titleMarginBottom")
 		
 		self.textColor = theme.color(forKey: "MainWindow.Timeline.cell.textColor")
-		self.textFont = NSFont.systemFont(ofSize: actualFontSize)
+		self.textFont = NSFont.systemFont(ofSize: largeItemFontSize)
 
 		self.textOnlyColor = theme.color(forKey: "MainWindow.Timeline.cell.textOnlyColor")
-		self.textOnlyFont = self.textFont
-		
+		self.textOnlyFont = NSFont.systemFont(ofSize: largeItemFontSize)
+
 		self.unreadCircleColor = theme.color(forKey: "MainWindow.Timeline.cell.unreadCircleColor")
 		self.unreadCircleDimension = theme.float(forKey: "MainWindow.Timeline.cell.unreadCircleDimension")
 		self.unreadCircleMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.unreadCircleMarginRight")

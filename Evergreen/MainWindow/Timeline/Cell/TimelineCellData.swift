@@ -117,6 +117,6 @@ private func attributedTitleString(_ title: String, _ text: String, _ appearance
 		return NSAttributedString(string: title, attributes: [NSAttributedStringKey.foregroundColor: appearance.titleColor, NSAttributedStringKey.font: appearance.titleFont])
 	}
 	
-	return NSAttributedString(string: text, attributes: [NSAttributedStringKey.foregroundColor: appearance.textOnlyColor, NSAttributedStringKey.font: appearance.textFont])
+	return NSAttributedString(string: text, attributes: [NSAttributedStringKey.foregroundColor: appearance.textOnlyColor, NSAttributedStringKey.font: appearance.textOnlyFont])
 }
 

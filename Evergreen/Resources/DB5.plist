@@ -99,10 +99,8 @@
 					<string>222222</string>
 					<key>titleColor</key>
 					<string>222222</string>
-					<key>titleFontSizeMultiplier</key>
-					<real>1.1</real>
 					<key>titleMarginBottom</key>
-					<integer>1</integer>
+					<integer>2</integer>
 					<key>unreadCircleColor</key>
 					<string>#2db6ff</string>
 					<key>unreadCircleDimension</key>
