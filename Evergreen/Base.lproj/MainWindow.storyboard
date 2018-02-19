@@ -533,18 +533,17 @@
                                     <constraint firstItem="KZz-oC-IY4" firstAttribute="leading" secondItem="rE6-fd-xjY" secondAttribute="leading" id="dqI-OO-8A0"/>
                                 </constraints>
                             </customView>
-                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="98" horizontalPageScroll="10" verticalLineScroll="98" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Kfs-n2-RYk">
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="96" horizontalPageScroll="10" verticalLineScroll="96" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Kfs-n2-RYk">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
-                                <clipView key="contentView" id="yAN-Ex-RC7">
+                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="yAN-Ex-RC7">
                                     <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="96" viewBased="YES" id="DRs-j8-R9a" customClass="TimelineTableView" customModule="Evergreen" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                                            <color key="gridColor" white="0.90000000000000002" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="gridColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <tableColumns>
                                                 <tableColumn identifier="" width="447" minWidth="40" maxWidth="1000" id="5h5-G1-xGq">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
@@ -560,11 +559,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView identifier="timelineCell" id="58o-U2-ss4" customClass="TimelineTableCellView" customModule="Evergreen" customModuleProvider="target">
-                                                            <rect key="frame" x="1" y="1" width="447" height="68"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="447" height="68"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         </tableCellView>
                                                         <customView identifier="timelineRow" id="54E-Vz-WND" customClass="TimelineTableRowView" customModule="Evergreen" customModuleProvider="target">
-                                                            <rect key="frame" x="1" y="71" width="447" height="96"/>
+                                                            <rect key="frame" x="0.0" y="68" width="447" height="96"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         </customView>
                                                     </prototypeCellViews>
