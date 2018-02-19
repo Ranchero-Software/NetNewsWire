@@ -8,6 +8,14 @@
 
 import AppKit
 import Data
+import RSCore
+
+extension Article: PasteboardWriterOwner {
+
+	public var pasteboardWriter: NSPasteboardWriting {
+		return ArticlePasteboardWriter(article: self)
+	}
+}
 
 @objc final class ArticlePasteboardWriter: NSObject, NSPasteboardWriting {
 

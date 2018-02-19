@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+import AppKit
 import Account
 import Data
 
@@ -24,6 +24,10 @@ final class UnreadFeed: PseudoFeed {
 		}
 	}
 
+	var pasteboardWriter: NSPasteboardWriting {
+		return SmartFeedPasteboardWriter(smartFeed: self)
+	}
+	
 	init() {
 
 		self.unreadCount = appDelegate.unreadCount

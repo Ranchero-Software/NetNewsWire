@@ -7,6 +7,105 @@
         <language>en</language>
 
 		<item>
+          <title>Evergreen 1.0d40</title>
+            <description><![CDATA[
+            
+            <p>Improve font sizing in the timeline.</p>
+            <p>Show no-selection or multiple-selection text in the detail view when appropriate.</p>
+            <p>Give the source list an almost-white background (96%) instead of using the blueish blur view. Reason: favicons are often created with the expectation that they will be placed on a white background — they often don’t include transparency. They end up looking better on this almost-white background.</p>
+ 							 							 						
+    						]]></description>
+            <pubDate>Sun, 18 Feb 2018 22:10:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d40.zip" sparkle:version="1040" sparkle:shortVersionString="1.0d40" length="7357549" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
+          <title>Evergreen 1.0d39</title>
+            <description><![CDATA[
+            
+ 							<h4>Timeline</h4>
+ 							<p>Moved avatars and feed icons to the right.</p>
+ 							<p>Tweaked some colors and margins.</p>
+ 							<p>Removed the grid line.</p>
+ 							<p>Made the text for no-title articles darker.</p>
+ 							 							 						
+    						]]></description>
+            <pubDate>Sun, 18 Feb 2018 17:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d39.zip" sparkle:version="1034" sparkle:shortVersionString="1.0d39" length="7351715" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
+          <title>Evergreen 1.0d38</title>
+            <description><![CDATA[
+            
+ 							<h4>Starring</h4>
+ 							<p>You can mark articles starred and unstarred — via the menu, contextual menu in the timeline, and toolbar button.</p>
+ 							<p>The Starred smart feed shows all your starred articles. Tip: cmd-3 takes you to the Starred feed.</p>
+ 							
+ 							<h4>Misc.</h4>
+ 							<p>Added special cases to the JSON Feed parser for known feeds that put HTML entities in article titles. (Kottke, Pixel Envy.)</p>
+ 							<p>Revised the JSON parser feed detector to allow for a version property that uses the incorrect scheme. (Makes Pixel Envy’s feed work.)</p>
+ 							<p>Made Kottke’s feed a default for new users.</p> 							 						
+    						]]></description>
+            <pubDate>Sun, 18 Feb 2018 12:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d38.zip" sparkle:version="1027" sparkle:shortVersionString="1.0d38" length="7349333" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
+          <title>Evergreen 1.0d37</title>
+            <description><![CDATA[
+            
+ 							<h4>Misc.</h4>
+ 							<p>Make the Copy command work in the sidebar and timeline.</p>
+ 							<p>Add Donate to App Camp for Girls item to the Help menu. The Help menu is now a place where <i>you</i> can help.</p>
+ 							<p>When selecting multiple items in the sidebar, show articles in the timeline from the entire selection, not just from one thing.</p>
+ 							<p>Update folder unread count when a feed it contains is deleted.</p>
+ 							<p>Update copyright date in About box.</p>
+ 							<p>Disallow blurring behind the title bar, since it’s buggy.</p>
+ 							<p>Don’t clear undo stack when sidebar changes selection.</p>
+ 							<p>Remember Feed Directory’s window frame between runs.</p>
+ 							
+ 							<h4>Puntings</h4>
+ 							<p>Font size is punted till after 1.0, and its preferences have been removed until then.</p>
+ 							<p>Feed Directory is simplified — the feed preview feature has been punted till after 1.0.</p>
+ 							 						
+    						]]></description>
+            <pubDate>Wed, 14 Feb 2018 13:25:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d37.zip" sparkle:version="981" sparkle:shortVersionString="1.0d37" length="7374447" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
+          <title>Evergreen 1.0d36</title>
+            <description><![CDATA[
+            
+            <h4>AppleScript!</h4>
+            <p>Evergreen is scriptable — use Script Editor to see the app’s scripting dictionary.</p>
+
+						<h4>Sidebar</h4>
+						<p>Fetch and display articles for smart feeds. (The Starred feed is empty for now, though, because you can’t actually star anything yet.)</p>
+						<p>Display a contextual menu for feeds, folders, and smart feeds.</p>
+						
+						<h4>Timeline</h4>
+						<p>Display a contextual menu for articles.</p>
+						
+						<h4>Detail</h4>
+						<p>Remove contextual menu items from the web view that don’t make sense for Evergren — Reload, for example.</p>
+						            
+            <h4>Misc.</h4>
+            <p>Rearrange the default toolbar to put Search in the middle.</p>
+ 						<p>Update the name of the Show/Hide Sidebar menu command when needed.</p>
+ 						
+    						]]></description>
+            <pubDate>Sun, 11 Feb 2018 14:35:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d36.zip" sparkle:version="959" sparkle:shortVersionString="1.0d36" length="8813422" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
           <title>Evergreen 1.0d35</title>
             <description><![CDATA[
             

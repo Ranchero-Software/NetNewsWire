@@ -11,27 +11,28 @@ import RSTextDrawing
 
 class TimelineTableCellView: NSTableCellView {
 
-	let titleView = RSMultiLineView(frame: NSZeroRect)
-	let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
-	let dateView = RSSingleLineView(frame: NSZeroRect)
-	let feedNameView = RSSingleLineView(frame: NSZeroRect)
+	private let titleView = RSMultiLineView(frame: NSZeroRect)
+	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
+	private let dateView = RSSingleLineView(frame: NSZeroRect)
+	private let feedNameView = RSSingleLineView(frame: NSZeroRect)
 
-	let avatarImageView: NSImageView = {
+	private let avatarImageView: NSImageView = {
 		let imageView = NSImageView(frame: NSRect.zero)
 		imageView.imageScaling = .scaleProportionallyDown
 		imageView.animates = false
 		imageView.imageAlignment = .alignCenter
-		imageView.image = appDelegate.genericFeedImage
+		imageView.image = AppImages.genericFeedImage
 		return imageView
 	}()
 
-//	let faviconImageView: NSImageView = {
-//		let imageView = NSImageView(frame: NSRect(x: 0, y: 0, width: 16, height: 16))
-//		imageView.imageScaling = .scaleProportionallyDown
-//		imageView.animates = false
-//		imageView.imageAlignment = .alignCenter
-//		return imageView
-//	}()
+	private let starView: NSImageView = {
+		let imageView = NSImageView(frame: NSRect.zero)
+		imageView.imageScaling = .scaleNone
+		imageView.animates = false
+		imageView.imageAlignment = .alignCenter
+		imageView.image = AppImages.timelineStar
+		return imageView
+	}()
 
 	var cellAppearance: TimelineCellAppearance! {
 		didSet {
@@ -77,23 +78,6 @@ class TimelineTableCellView: NSTableCellView {
 		}
 	}
 
-	private func addSubviewAtInit(_ view: NSView, hidden: Bool) {
-
-		addSubview(view)
-		view.translatesAutoresizingMaskIntoConstraints = false
-		view.isHidden = hidden
-	}
-
-	private func commonInit() {
-
-		addSubviewAtInit(titleView, hidden: false)
-		addSubviewAtInit(unreadIndicatorView, hidden: true)
-		addSubviewAtInit(dateView, hidden: false)
-		addSubviewAtInit(feedNameView, hidden: true)
-		addSubviewAtInit(avatarImageView, hidden: false)
-//		addSubviewAtInit(faviconImageView, hidden: true)
-	}
-	
 	override init(frame frameRect: NSRect) {
 		
 		super.init(frame: frameRect)
@@ -122,11 +106,6 @@ class TimelineTableCellView: NSTableCellView {
 		updateAppearance()
 	}
 	
-	private func updatedLayoutRects() -> TimelineCellLayout {
-
-		return timelineCellLayout(NSWidth(bounds), cellData: cellData, appearance: cellAppearance)
-	}
-
 	override func layout() {
 
 		resizeSubviews(withOldSize: NSZeroSize)
@@ -140,7 +119,7 @@ class TimelineTableCellView: NSTableCellView {
 		dateView.rs_setFrameIfNotEqual(layoutRects.dateRect)
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
 		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
-//		faviconImageView.rs_setFrameIfNotEqual(layoutRects.faviconRect)
+		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
 	}
 
 	override func updateLayer() {
@@ -157,20 +136,59 @@ class TimelineTableCellView: NSTableCellView {
 			layer?.backgroundColor = color.cgColor
 		}
 	}
+}
 
-	private func updateTitleView() {
+// MARK: - Private
+
+private extension TimelineTableCellView {
+
+	func addSubviewAtInit(_ view: NSView, hidden: Bool) {
+
+		addSubview(view)
+		view.translatesAutoresizingMaskIntoConstraints = false
+		view.isHidden = hidden
+	}
+
+	func commonInit() {
+
+		addSubviewAtInit(titleView, hidden: false)
+		addSubviewAtInit(unreadIndicatorView, hidden: true)
+		addSubviewAtInit(dateView, hidden: false)
+		addSubviewAtInit(feedNameView, hidden: true)
+		addSubviewAtInit(avatarImageView, hidden: false)
+		addSubviewAtInit(starView, hidden: false)
+	}
+
+	func updatedLayoutRects() -> TimelineCellLayout {
+
+		return TimelineCellLayout(width: bounds.width, cellData: cellData, appearance: cellAppearance)
+	}
+
+	func updateAppearance() {
+
+		if let rowView = superview as? NSTableRowView {
+			isEmphasized = rowView.isEmphasized
+			isSelected = rowView.isSelected
+		}
+		else {
+			isEmphasized = false
+			isSelected = false
+		}
+	}
+
+	func updateTitleView() {
 
 		titleView.attributedStringValue = cellData.attributedTitle
 		needsLayout = true
 	}
-	
-	private func updateDateView() {
+
+	func updateDateView() {
 
 		dateView.attributedStringValue = cellData.attributedDateString
 		needsLayout = true
 	}
 
-	private func updateFeedNameView() {
+	func updateFeedNameView() {
 
 		if cellData.showFeedName {
 			if feedNameView.isHidden {
@@ -185,14 +203,20 @@ class TimelineTableCellView: NSTableCellView {
 		}
 	}
 
-	private func updateUnreadIndicator() {
-		
-		if unreadIndicatorView.isHidden != cellData.read {
-			unreadIndicatorView.isHidden = cellData.read
+	func updateUnreadIndicator() {
+
+		let shouldHide = cellData.read || cellData.starred
+		if unreadIndicatorView.isHidden != shouldHide {
+			unreadIndicatorView.isHidden = shouldHide
 		}
 	}
 
-	private func updateAvatar() {
+	func updateStarView() {
+
+		starView.isHidden = !cellData.starred
+	}
+
+	func updateAvatar() {
 
 		if !cellData.showAvatar {
 			avatarImageView.image = nil
@@ -213,46 +237,15 @@ class TimelineTableCellView: NSTableCellView {
 
 		avatarImageView.wantsLayer = true
 		avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
-		if avatarImageView.image == nil {
-			avatarImageView.layer?.backgroundColor = NSColor(calibratedWhite: 0.0, alpha: 0.05).cgColor
-		}
-		else {
-			avatarImageView.layer?.backgroundColor = NSColor.clear.cgColor
-		}
-
 	}
 
-	private func updateFavicon() {
-
-//		if let favicon = cellData.showFeedName ? cellData.favicon : nil {
-//			faviconImageView.image = favicon
-//			faviconImageView.isHidden = false
-//		}
-//		else {
-//			faviconImageView.image = nil
-//			faviconImageView.isHidden = true
-//		}
-	}
-
-	private func updateSubviews() {
+	func updateSubviews() {
 
 		updateTitleView()
 		updateDateView()
 		updateFeedNameView()
 		updateUnreadIndicator()
+		updateStarView()
 		updateAvatar()
-//		updateFavicon()
-	}
-	
-	private func updateAppearance() {
-		
-		if let rowView = superview as? NSTableRowView {
-			isEmphasized = rowView.isEmphasized
-			isSelected = rowView.isSelected
-		}
-		else {
-			isEmphasized = false
-			isSelected = false
-		}
 	}
 }

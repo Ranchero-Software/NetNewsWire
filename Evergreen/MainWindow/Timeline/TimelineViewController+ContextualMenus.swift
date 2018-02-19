@@ -49,10 +49,18 @@ extension TimelineViewController {
 
 	@objc func markArticlesStarredFromContextualMenu(_ sender: Any?) {
 
+		guard let articles = articles(from: sender) else {
+			return
+		}
+		markArticles(articles, starred: true)
 	}
 
 	@objc func markArticlesUnstarredFromContextualMenu(_ sender: Any?) {
 
+		guard let articles = articles(from: sender) else {
+			return
+		}
+		markArticles(articles, starred: false)
 	}
 
 	@objc func openInBrowserFromContextualMenu(_ sender: Any?) {
@@ -69,14 +77,21 @@ private extension TimelineViewController {
 
 	func markArticles(_ articles: [Article], read: Bool) {
 
-		guard let articlesToMark = read ? unreadArticles(from: articles) : readArticles(from: articles) else {
-			return
-		}
-		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: Array(articlesToMark), markingRead: read, undoManager: undoManager) else {
+		markArticles(articles, statusKey: .read, flag: read)
+	}
+
+	func markArticles(_ articles: [Article], starred: Bool) {
+
+		markArticles(articles, statusKey: .starred, flag: starred)
+	}
+
+	func markArticles(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool) {
+
+		guard let undoManager = undoManager, let markStatusCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) else {
 			return
 		}
 
-		runCommand(markReadCommand)
+		runCommand(markStatusCommand)
 	}
 
 	func unreadArticles(from articles: [Article]) -> [Article]? {
@@ -110,12 +125,12 @@ private extension TimelineViewController {
 			menu.addItem(NSMenuItem.separator())
 		}
 
-//		if articles.anyArticleIsUnstarred() {
-//			menu.addItem(markStarredMenuItem(articles))
-//		}
-//		if articles.anyArticleIsStarred() {
-//			menu.addItem(markUnstarredMenuItem(articles))
-//		}
+		if articles.anyArticleIsUnstarred() {
+			menu.addItem(markStarredMenuItem(articles))
+		}
+		if articles.anyArticleIsStarred() {
+			menu.addItem(markUnstarredMenuItem(articles))
+		}
 		if menu.items.count > 0 && !menu.items.last!.isSeparatorItem {
 			menu.addItem(NSMenuItem.separator())
 		}

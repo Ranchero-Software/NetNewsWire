@@ -45,7 +45,7 @@ public struct JSONFeedParser {
 		static let durationInSeconds = "duration_in_seconds"
 	}
 
-	static let jsonFeedVersionPrefix = "https://jsonfeed.org/version/"
+	static let jsonFeedVersionMarker = "://jsonfeed.org/version/" // Allow for the mistake of not getting the scheme exactly correct.
 
 	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
 
@@ -53,7 +53,7 @@ public struct JSONFeedParser {
 			throw FeedParserError(.invalidJSON)
 		}
 
-		guard let version = d[Key.version] as? String, version.hasPrefix(JSONFeedParser.jsonFeedVersionPrefix) else {
+		guard let version = d[Key.version] as? String, let _ = version.range(of: JSONFeedParser.jsonFeedVersionMarker) else {
 			throw FeedParserError(.jsonFeedVersionNotFound)
 		}
 		guard let itemsArray = d[Key.items] as? JSONArray else {
@@ -134,7 +134,7 @@ private extension JSONFeedParser {
 
 		let url = itemDictionary[Key.url] as? String
 		let externalURL = itemDictionary[Key.externalURL] as? String
-		let title = itemDictionary[Key.title] as? String
+		let title = parseTitle(itemDictionary, feedURL)
 		let summary = itemDictionary[Key.summary] as? String
 		let imageURL = itemDictionary[Key.image] as? String
 		let bannerImageURL = itemDictionary[Key.bannerImage] as? String
@@ -150,6 +150,35 @@ private extension JSONFeedParser {
 		let attachments = parseAttachments(itemDictionary)
 
 		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, contentHTML: decodedContentHTML, contentText: contentText, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
+	}
+
+	static func parseTitle(_ itemDictionary: JSONDictionary, _ feedURL: String) -> String? {
+
+		guard let title = itemDictionary[Key.title] as? String else {
+			return nil
+		}
+
+		if isSpecialCaseTitleWithEntitiesFeed(feedURL) {
+			return (title as NSString).rsparser_stringByDecodingHTMLEntities()
+		}
+
+		return title
+	}
+
+	static func isSpecialCaseTitleWithEntitiesFeed(_ feedURL: String) -> Bool {
+
+		// As of 16 Feb. 2018, Kottke’s and Heer’s feeds includes HTML entities in the title elements.
+		// If we find more feeds like this, we’ll add them here. If these feeds get fixed, we’ll remove them.
+
+		let lowerFeedURL = feedURL.lowercased()
+		let matchStrings = ["kottke.org", "pxlnv.com"]
+		for matchString in matchStrings {
+			if lowerFeedURL.contains(matchString) {
+				return true
+			}
+		}
+
+		return false
 	}
 
 	static func parseUniqueID(_ itemDictionary: JSONDictionary) -> String? {

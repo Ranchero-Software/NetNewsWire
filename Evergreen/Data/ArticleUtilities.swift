@@ -42,26 +42,18 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 extension Article {
 	
 	var feed: Feed? {
-		get {
-			return account?.existingFeed(with: feedID)
-		}
+		return account?.existingFeed(with: feedID)
 	}
 	
 	var preferredLink: String? {
-		get {
-			return url ?? externalURL
-		}
+		return url ?? externalURL
 	}
 	
 	var body: String? {
-		get {
-			return contentHTML ?? contentText ?? summary
-		}
+		return contentHTML ?? contentText ?? summary
 	}
 	
 	var logicalDatePublished: Date {
-		get {
-			return datePublished ?? dateModified ?? status.dateArrived
-		}
+		return datePublished ?? dateModified ?? status.dateArrived
 	}
 }

@@ -141,6 +141,13 @@ class FeedParserTypeTests: XCTestCase {
 		XCTAssertTrue(type == .jsonFeed)
 	}
 
+	func testPixelEnvyJSONFeedType() {
+
+		let d = parserData("pxlnv", "json", "http://pxlnv.com/")
+		let type = feedType(d)
+		XCTAssertTrue(type == .jsonFeed)
+	}
+
 	// MARK: Unknown
 
 	func testPartialAllThisUnknownFeedType() {

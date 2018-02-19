@@ -10,17 +10,12 @@ import AppKit
 
 class FeedListWindowController : NSWindowController {
     
-
 	override func windowDidLoad() {
 
-	}
-	
-	@IBAction func addToFeeds(_ sender: AnyObject) {
+//		window!.appearance = NSAppearance(named: .vibrantDark)
 
-	}
-
-	@IBAction func openHomePage(_ sender: AnyObject) {
-
+		let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: "FeedDirectoryWindow")
+		window?.setFrameUsingName(windowAutosaveName, force: true)
 	}
 }
 

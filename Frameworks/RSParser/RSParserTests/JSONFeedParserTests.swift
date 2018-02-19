@@ -84,4 +84,12 @@ class JSONFeedParserTests: XCTestCase {
 
 		XCTAssertTrue(didFindTwitterQuitterArticle)
 	}
+
+	func testPixelEnvy() {
+
+		let d = parserData("pxlnv", "json", "http://pxlnv.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertEqual(parsedFeed.items.count, 20)
+
+	}
 }

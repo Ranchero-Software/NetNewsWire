@@ -77,6 +77,11 @@ final class ArticlesTable: DatabaseTable {
 		return fetchTodayArticles(feeds.feedIDs())
 	}
 
+	public func fetchStarredArticles(for feeds: Set<Feed>) -> Set<Article> {
+
+		return fetchStarredArticles(feeds.feedIDs())
+	}
+
 	// MARK: Updating
 	
 	func update(_ feed: Feed, _ parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
@@ -404,6 +409,28 @@ private extension ArticlesTable {
 
 		return articles
 	}
+
+	func fetchStarredArticles(_ feedIDs: Set<String>) -> Set<Article> {
+
+		if feedIDs.isEmpty {
+			return Set<Article>()
+		}
+
+		var articles = Set<Article>()
+
+		queue.fetchSync { (database) in
+
+			// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and starred = 1 and userDeleted = 0;
+
+			let parameters = feedIDs.map { $0 as AnyObject }
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let whereClause = "feedID in \(placeholders) and starred = 1 and userDeleted = 0"
+			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
+		}
+
+		return articles
+	}
+
 
 	func articlesWithSQL(_ sql: String, _ parameters: [AnyObject], _ database: FMDatabase) -> Set<Article> {
 

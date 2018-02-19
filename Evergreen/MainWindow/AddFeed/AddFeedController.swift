@@ -126,14 +126,12 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 private extension AddFeedController {
 
 	var urlStringFromPasteboard: String? {
-		get {
-			if let urlString = NSPasteboard.rs_urlString(from: NSPasteboard.general) {
-				return urlString.rs_normalizedURL()
-			}
-			return nil
+		if let urlString = NSPasteboard.rs_urlString(from: NSPasteboard.general) {
+			return urlString.rs_normalizedURL()
 		}
+		return nil
 	}
-
+	
 	struct AccountAndFolderSpecifier {
 		let account: Account
 		let folder: Folder?

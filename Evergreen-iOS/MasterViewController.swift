@@ -38,7 +38,7 @@ class MasterViewController: UITableViewController {
 	}
 
 	@objc
-	func insertNewObject(_ sender: Any) {
+	func insertNewObject(_ sender: Any?) {
 		objects.insert(NSDate(), at: 0)
 		let indexPath = IndexPath(row: 0, section: 0)
 		tableView.insertRows(at: [indexPath], with: .automatic)

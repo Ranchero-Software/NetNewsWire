@@ -32,12 +32,6 @@ final class InspectorWindowController: NSWindowController {
 		}
 	}
 
-	var isOpen: Bool {
-		get {
-			return isWindowLoaded && window!.isVisible
-		}
-	}
-
 	private var inspectors: [InspectorViewController]!
 
 	private var currentInspector: InspectorViewController! {

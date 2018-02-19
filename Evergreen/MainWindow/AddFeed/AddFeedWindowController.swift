@@ -33,14 +33,12 @@ class AddFeedWindowController : NSWindowController {
 	fileprivate var folderTreeController: TreeController!
 
 	private var userEnteredTitle: String? {
-		get {
-			var s = nameTextField.stringValue
-			s = s.rs_stringWithCollapsedWhitespace()
-			if s.isEmpty {
-				return nil
-			}
-			return s
+		var s = nameTextField.stringValue
+		s = s.rs_stringWithCollapsedWhitespace()
+		if s.isEmpty {
+			return nil
 		}
+		return s
 	}
 	
     var hostWindow: NSWindow!
@@ -87,12 +85,12 @@ class AddFeedWindowController : NSWindowController {
 
     // MARK: Actions
     
-    @IBAction func cancel(_ sender: AnyObject) {
+    @IBAction func cancel(_ sender: Any?) {
         
 		cancelSheet()
     }
     
-    @IBAction func addFeed(_ sender: AnyObject) {
+    @IBAction func addFeed(_ sender: Any?) {
 		
 		let urlString = urlTextField.stringValue
 		let normalizedURLString = (urlString as NSString).rs_normalizedURL()
@@ -109,7 +107,7 @@ class AddFeedWindowController : NSWindowController {
 		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: selectedContainer()!)
     }
 
-	@IBAction func localShowFeedList(_ sender: AnyObject) {
+	@IBAction func localShowFeedList(_ sender: Any?) {
 		
 		NSApplication.shared.sendAction(NSSelectorFromString("showFeedList:"), to: nil, from: sender)
 		hostWindow.endSheet(window!, returnCode: NSApplication.ModalResponse.continue)

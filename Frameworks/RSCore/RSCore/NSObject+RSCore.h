@@ -19,11 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSObject (RSCore)
 
-/*Cancels any previous and does a new -performSelector:withObject:afterDelay:. Experimental.*/
-
-- (void)rs_performSelectorCoalesced:(SEL)selector withObject:(id _Nullable)obj afterDelay:(NSTimeInterval)delay
- NS_SWIFT_NAME(performSelectorCoalesced(_:with:delay:));
-
 
 - (void)rs_takeValuesFromObject:(id)object propertyNames:(NSArray *)propertyNames;
 

@@ -17,20 +17,18 @@ class TimelineTableRowView : NSTableRowView {
 			}
 		}
 	}
-	
+
 //	override var interiorBackgroundStyle: NSBackgroundStyle {
 //		return .Light
 //	}
-	
+
 	private var cellView: TimelineTableCellView? {
-		get {
-			for oneSubview in subviews {
-				if let foundView = oneSubview as? TimelineTableCellView {
-					return foundView
-				}
+		for oneSubview in subviews {
+			if let foundView = oneSubview as? TimelineTableCellView {
+				return foundView
 			}
-			return nil
 		}
+		return nil
 	}
 
 	override var isEmphasized: Bool {
@@ -50,12 +48,9 @@ class TimelineTableRowView : NSTableRowView {
 	}
 
 	var gridRect: NSRect {
-		get {
-//			return NSMakeRect(floor(cellAppearance.boxLeftMargin), NSMaxY(bounds) - 1.0, NSWidth(bounds), 1)
-			return NSMakeRect(0.0, NSMaxY(bounds) - 1.0, NSWidth(bounds), 1)
-		}
+		return NSMakeRect(0.0, NSMaxY(bounds) - 1.0, NSWidth(bounds), 1)
 	}
-	
+
 	override func drawSeparator(in dirtyRect: NSRect) {
 
 		let path = NSBezierPath()
@@ -73,7 +68,7 @@ class TimelineTableRowView : NSTableRowView {
 
 		super.draw(dirtyRect)
 
-		if !isSelected && !isNextRowSelected {
+		if cellAppearance.drawsGrid && !isSelected && !isNextRowSelected {
 			drawSeparator(in: dirtyRect)
 		}
 	}

@@ -54,7 +54,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 
 	// MARK: Actions
 
-	@objc func toolbarItemClicked(_ sender: AnyObject) {
+	@objc func toolbarItemClicked(_ sender: Any?) {
 
 
 	}
@@ -96,9 +96,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 private extension PreferencesWindowController {
 
 	var currentView: NSView? {
-		get {
-			return window?.contentView?.subviews.first
-		}
+		return window?.contentView?.subviews.first
 	}
 
 	func toolbarItemSpec(for identifier: String) -> PreferencesToolbarItemSpec? {

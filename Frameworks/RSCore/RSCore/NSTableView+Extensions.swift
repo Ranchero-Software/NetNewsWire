@@ -9,13 +9,11 @@
 import AppKit
 
 public extension NSTableView {
-
+	
 	var selectionIsEmpty: Bool {
-		get {
-			return selectedRowIndexes.startIndex == selectedRowIndexes.endIndex
-		}
+		return selectedRowIndexes.startIndex == selectedRowIndexes.endIndex
 	}
-
+	
 	func indexesOfAvailableRowsPassingTest(_ test: (Int) -> Bool) -> IndexSet? {
 
 		// Checks visible and in-flight rows.

@@ -31,9 +31,7 @@ final class FeedListFeed: Hashable, DisplayNameProvider {
 	}
 
 	var nameForDisplay: String { // DisplayNameProvider
-		get {
-			return name
-		}
+		return name
 	}
 
 	init(name: String, url: String, homePageURL: String) {
@@ -62,15 +60,17 @@ final class FeedListFeed: Hashable, DisplayNameProvider {
 
 	func downloadIfNeeded() {
 
-		guard let lastDownloadAttemptDate = lastDownloadAttemptDate else {
-			downloadFeed()
-			return
-		}
+		// Not doing feed previews until after 1.0.
 
-		let cutoffDate = Date().addingTimeInterval(-(30 * 60)) // 30 minutes in the past
-		if lastDownloadAttemptDate < cutoffDate {
-			downloadFeed()
-		}
+//		guard let lastDownloadAttemptDate = lastDownloadAttemptDate else {
+//			downloadFeed()
+//			return
+//		}
+//
+//		let cutoffDate = Date().addingTimeInterval(-(30 * 60)) // 30 minutes in the past
+//		if lastDownloadAttemptDate < cutoffDate {
+//			downloadFeed()
+//		}
 	}
 
 	static func ==(lhs: FeedListFeed, rhs: FeedListFeed) -> Bool {
@@ -83,29 +83,29 @@ private extension FeedListFeed {
 
 	func postFeedListFeedDidBecomeAvailableNotification() {
 
-		NotificationCenter.default.post(name: .FeedListFeedDidBecomeAvailable, object: self, userInfo: nil)
+//		NotificationCenter.default.post(name: .FeedListFeedDidBecomeAvailable, object: self, userInfo: nil)
 	}
 
 	func downloadFeed() {
 
-		lastDownloadAttemptDate = Date()
-		guard let feedURL = URL(string: url) else {
-			return
-		}
-
-		downloadUsingCache(feedURL) { (data, response, error) in
-
-			guard let data = data, error == nil else {
-				return
-			}
-			
-			let parserData = ParserData(url: self.url, data: data)
-			FeedParser.parse(parserData) { (parsedFeed, error) in
-
-				if let parsedFeed = parsedFeed, parsedFeed.items.count > 0 {
-					self.parsedFeed = parsedFeed
-				}
-			}
-		}
+//		lastDownloadAttemptDate = Date()
+//		guard let feedURL = URL(string: url) else {
+//			return
+//		}
+//
+//		downloadUsingCache(feedURL) { (data, response, error) in
+//
+//			guard let data = data, error == nil else {
+//				return
+//			}
+//
+//			let parserData = ParserData(url: self.url, data: data)
+//			FeedParser.parse(parserData) { (parsedFeed, error) in
+//
+//				if let parsedFeed = parsedFeed, parsedFeed.items.count > 0 {
+//					self.parsedFeed = parsedFeed
+//				}
+//			}
+//		}
 	}
 }

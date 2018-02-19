@@ -9,25 +9,16 @@
 import AppKit
 import Data
 import Account
-
-private let kWindowFrameKey = "MainWindow"
+import RSCore
 
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
-	var isOpen: Bool {
-		return isWindowLoaded && window!.isVisible
-	}
+	@IBOutlet var toolbarDelegate: MainWindowToolbarDelegate?
+	private let sharingServicePickerDelegate = MainWindowSharingServicePickerDelegate()
 
-	var isDisplayingSheet: Bool {
-		if let _ = window?.attachedSheet {
-			return true
-		}
-		return false
-	}
+	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: "MainWindow")
+	static var didPositionWindowOnFirstRun = false
 
-	// MARK: NSWindowController
-
-	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: kWindowFrameKey)
 	private var unreadCount: Int = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -36,7 +27,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
-	static var didPositionWindowOnFirstRun = false
+	private var shareToolbarItem: NSToolbarItem? {
+		return window?.toolbar?.existingItem(withIdentifier: .Share)
+	}
+
+	// MARK: - NSWindowController
 
 	override func windowDidLoad() {
 
@@ -62,8 +57,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(appNavigationKeyPressed(_:)), name: .AppNavigationKeyPressed, object: nil)
-
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidBegin, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
@@ -75,40 +68,30 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
-	// MARK: Sidebar
+	// MARK: - API
+
+	func saveState() {
+
+		// TODO: save width of split view and anything else that should be saved.
+
+		
+	}
 
 	func selectedObjectsInSidebar() -> [AnyObject]? {
 
 		return sidebarViewController?.selectedObjects
 	}
 
-	// MARK: Notifications
+	// MARK: - Notifications
 
 	@objc func applicationWillTerminate(_ note: Notification) {
 
 		window?.saveFrame(usingName: windowAutosaveName)
 	}
 
-	@objc func appNavigationKeyPressed(_ note: Notification) {
-
-		guard let navigationKey = note.userInfo?[UserInfoKey.navigationKeyPressed] as? Int else {
-			return
-		}
-		guard let contentView = window?.contentView, let view = note.object as? NSView, view.isDescendant(of: contentView) else {
-			return
-		}
-
-		if navigationKey == NSRightArrowFunctionKey {
-			handleRightArrowFunctionKey(in: view)
-		}
-		if navigationKey == NSLeftArrowFunctionKey {
-			handleLeftArrowFunctionKey(in: view)
-		}
-	}
-
 	@objc func refreshProgressDidChange(_ note: Notification) {
-		
-		performSelectorCoalesced(#selector(MainWindowController.makeToolbarValidate(_:)), with: nil, delay: 0.1)
+
+		CoalescingQueue.standard.add(self, #selector(makeToolbarValidate))
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -118,14 +101,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
-	// MARK: Toolbar
+	// MARK: - Toolbar
 	
-	@objc func makeToolbarValidate(_ sender: Any?) {
+	@objc func makeToolbarValidate() {
 		
 		window?.toolbar?.validateVisibleItems()
 	}
 
-	// MARK: NSUserInterfaceValidations
+	// MARK: - NSUserInterfaceValidations
 	
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		
@@ -143,6 +126,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		if item.action == #selector(markRead(_:)) {
 			return canMarkRead()
+		}
+
+		if item.action == #selector(toggleStarred(_:)) {
+			return validateToggleStarred(item)
 		}
 
 		if item.action == #selector(markOlderArticlesAsRead(_:)) {
@@ -185,13 +172,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
-
-	@IBAction func showAddFolderWindow(_ sender: Any) {
+	@IBAction func showAddFolderWindow(_ sender: Any?) {
 
 		appDelegate.showAddFolderSheetOnWindow(window!)
 	}
 
-	@IBAction func showAddFeedWindow(_ sender: Any) {
+	@IBAction func showAddFeedWindow(_ sender: Any?) {
 
 		appDelegate.showAddFeedSheetOnWindow(window!, urlString: nil, name: nil)
 	}
@@ -206,14 +192,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func openInBrowser(_ sender: Any?) {
 
 		openArticleInBrowser(sender)
-	}
-
-	func makeTimelineViewFirstResponder() {
-
-		guard let window = window, let timelineViewController = timelineViewController else {
-			return
-		}
-		window.makeFirstResponderUnlessDescendantIsFirstResponder(timelineViewController.tableView)
 	}
 
 	@IBAction func nextUnread(_ sender: Any?) {
@@ -233,18 +211,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
-	func goToNextUnreadInTimeline() {
-
-		guard let timelineViewController = timelineViewController else {
-			return
-		}
-
-		if timelineViewController.canGoToNextUnread() {
-			timelineViewController.goToNextUnread()
-			makeTimelineViewFirstResponder()
-		}
-	}
-	
 	@IBAction func markAllAsRead(_ sender: Any?) {
 		
 		timelineViewController?.markAllAsRead()
@@ -258,6 +224,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func markUnread(_ sender: Any?) {
 
 		timelineViewController?.markSelectedArticlesAsUnread(sender)
+	}
+
+	@IBAction func toggleStarred(_ sender: Any?) {
+
+		timelineViewController?.toggleStarredStatusForSelectedArticles()
 	}
 
 	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
@@ -340,66 +311,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		let items = selectedArticles.map { ArticlePasteboardWriter(article: $0) }
 		let sharingServicePicker = NSSharingServicePicker(items: items)
-		sharingServicePicker.delegate = self
+		sharingServicePicker.delegate = sharingServicePickerDelegate
 		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
 	}
 
-	private func canShowShareMenu() -> Bool {
-
-		guard let selectedArticles = selectedArticles else {
-			return false
-		}
-		return !selectedArticles.isEmpty
-	}
 }
-
-// MARK: - NSSharingServicePickerDelegate
-
-extension MainWindowController: NSSharingServicePickerDelegate {
-
-	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
-
-		let sendToServices = appDelegate.sendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
-
-			guard let object = items.first else {
-				return nil
-			}
-			guard sendToCommand.canSendObject(object, selectedText: nil) else {
-				return nil
-			}
-
-			let image = sendToCommand.image ?? appDelegate.genericFeedImage ?? NSImage()
-			return NSSharingService(title: sendToCommand.title, image: image, alternateImage: nil) {
-				sendToCommand.sendObject(object, selectedText: nil)
-			}
-		}
-		return proposedServices + sendToServices
-	}
-}
-
-// MARK: - NSToolbarDelegate
-
-extension NSToolbarItem.Identifier {
-	static let Share = NSToolbarItem.Identifier("share")
-}
-
-extension MainWindowController: NSToolbarDelegate {
-
-	func toolbarWillAddItem(_ notification: Notification) {
-
-		// The share button should send its action on mouse down, not mouse up.
-
-		guard let item = notification.userInfo?["item"] as? NSToolbarItem else {
-			return
-		}
-		guard item.itemIdentifier == .Share, let button = item.view as? NSButton else {
-			return
-		}
-
-		button.sendAction(on: .leftMouseDown)
-	}
-}
-
 
 // MARK: - Scripting Access
 
@@ -468,6 +384,8 @@ private extension MainWindowController {
 		return oneSelectedArticle?.preferredLink
 	}
 
+	// MARK: - Command Validation
+
 	func canGoToNextUnread() -> Bool {
 		
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
@@ -492,6 +410,70 @@ private extension MainWindowController {
 		return timelineViewController?.canMarkOlderArticlesAsRead() ?? false
 	}
 
+	func canShowShareMenu() -> Bool {
+
+		guard let selectedArticles = selectedArticles else {
+			return false
+		}
+		return !selectedArticles.isEmpty
+	}
+
+	func validateToggleStarred(_ item: NSValidatedUserInterfaceItem) -> Bool {
+
+		let validationStatus = timelineViewController?.markStarredCommandStatus() ?? .canDoNothing
+		let starring: Bool
+		let result: Bool
+
+		switch validationStatus {
+		case .canMark:
+			starring = true
+			result = true
+		case .canUnmark:
+			starring = false
+			result = true
+		case .canDoNothing:
+			starring = true
+			result = false
+		}
+
+		let commandName = starring ? NSLocalizedString("Mark as Starred", comment: "Command") : NSLocalizedString("Mark as Unstarred", comment: "Command")
+
+		if let toolbarItem = item as? NSToolbarItem {
+			toolbarItem.toolTip = commandName
+			if let button = toolbarItem.view as? NSButton {
+				button.image = NSImage(named: starring ? .star : .unstar)
+			}
+		}
+
+		if let menuItem = item as? NSMenuItem {
+			menuItem.title = commandName
+		}
+
+		return result
+	}
+
+	// MARK: - Misc.
+
+	func goToNextUnreadInTimeline() {
+
+		guard let timelineViewController = timelineViewController else {
+			return
+		}
+
+		if timelineViewController.canGoToNextUnread() {
+			timelineViewController.goToNextUnread()
+			makeTimelineViewFirstResponder()
+		}
+	}
+
+	func makeTimelineViewFirstResponder() {
+
+		guard let window = window, let timelineViewController = timelineViewController else {
+			return
+		}
+		window.makeFirstResponderUnlessDescendantIsFirstResponder(timelineViewController.tableView)
+	}
+
 	func updateWindowTitle() {
 
 		if unreadCount < 1 {
@@ -500,43 +482,6 @@ private extension MainWindowController {
 		else if unreadCount > 0 {
 			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
 		}
-	}
-
-	// MARK: - Toolbar
-
-	private var shareToolbarItem: NSToolbarItem? {
-		return existingToolbarItem(identifier: .Share)
-	}
-
-	func existingToolbarItem(identifier: NSToolbarItem.Identifier) -> NSToolbarItem? {
-
-		guard let toolbarItems = window?.toolbar?.items else {
-			return nil
-		}
-		for toolbarItem in toolbarItems {
-			if toolbarItem.itemIdentifier == identifier {
-				return toolbarItem
-			}
-		}
-		return nil
-	}
-
-	// MARK: - Navigation
-
-	func handleRightArrowFunctionKey(in view: NSView) {
-
-		guard let outlineView = sidebarViewController?.outlineView, view === outlineView, let timelineViewController = timelineViewController else {
-			return
-		}
-		timelineViewController.focus()
-	}
-
-	func handleLeftArrowFunctionKey(in view: NSView) {
-
-		guard let timelineView = timelineViewController?.tableView, view === timelineView, let sidebarViewController = sidebarViewController else {
-			return
-		}
-		sidebarViewController.focus()
 	}
 }
 

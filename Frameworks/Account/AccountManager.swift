@@ -31,37 +31,29 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public var accounts: [Account] {
-		get {
-			return Array(accountsDictionary.values)
-		}
+		return Array(accountsDictionary.values)
 	}
 
 	public var sortedAccounts: [Account] {
-		get {
-			return accountsSortedByName()
-		}
+		return accountsSortedByName()
 	}
 
 	public var refreshInProgress: Bool {
-		get {
-			for account in accounts {
-				if account.refreshInProgress {
-					return true
-				}
+		for account in accounts {
+			if account.refreshInProgress {
+				return true
 			}
-			return false
 		}
+		return false
 	}
-
+	
 	public var combinedRefreshProgress: CombinedRefreshProgress {
-		get {
-			let downloadProgressArray = accounts.map { $0.refreshProgress }
-			return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
-		}
+		let downloadProgressArray = accounts.map { $0.refreshProgress }
+		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
-
+	
 	public init() {
-
+		
 		// The local "On My Mac" account must always exist, even if it's empty.
 
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")

@@ -19,17 +19,22 @@ extension SidebarViewController {
 			return menuForNoSelection()
 		}
 
-		if objects.count == 1 {
-			if let feed = objects.first as? Feed {
-				return menuForFeed(feed)
-			}
-			if let folder = objects.first as? Folder {
-				return menuForFolder(folder)
-			}
-			return nil
+		if objects.count > 1 {
+			return menuForMultipleObjects(objects)
 		}
 
-		return menuForMultipleObjects(objects)
+		let object = objects.first!
+
+		switch object {
+		case is Feed:
+			return menuForFeed(object as! Feed)
+		case is Folder:
+			return menuForFolder(object as! Folder)
+		case is PseudoFeed:
+			return menuForSmartFeed(object as! PseudoFeed)
+		default:
+			return nil
+		}
 	}
 }
 
@@ -60,11 +65,7 @@ extension SidebarViewController {
 		}
 		
 		let articles = unreadArticles(for: objects)
-		if articles.isEmpty {
-			return
-		}
-
-		guard let undoManager = undoManager, let markReadCommand = MarkReadOrUnreadCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
 			return
 		}
 		runCommand(markReadCommand)
@@ -160,11 +161,21 @@ private extension SidebarViewController {
 		return menu.numberOfItems > 0 ? menu : nil
 	}
 
+	func menuForSmartFeed(_ smartFeed: PseudoFeed) -> NSMenu? {
+
+		let menu = NSMenu(title: "")
+
+		if smartFeed.unreadCount > 0 {
+			menu.addItem(markAllReadMenuItem([smartFeed]))
+		}
+		return menu.numberOfItems > 0 ? menu : nil
+	}
+
 	func menuForMultipleObjects(_ objects: [Any]) -> NSMenu? {
 
-		guard allObjectsAreFeedsAndOrFolders(objects) else {
-			return nil
-		}
+//		guard allObjectsAreFeedsAndOrFolders(objects) else {
+//			return nil
+//		}
 
 		let menu = NSMenu(title: "")
 

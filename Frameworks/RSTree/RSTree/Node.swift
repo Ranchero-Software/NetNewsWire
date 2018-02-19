@@ -21,50 +21,40 @@ public final class Node: Hashable {
 	private static var incrementingID = 0
 
 	public var isRoot: Bool {
-		get {
-			if let _ = parent {
-				return false
-			}
-			return true
+		if let _ = parent {
+			return false
 		}
+		return true
 	}
 	
 	public var numberOfChildNodes: Int {
-		get {
-			return childNodes?.count ?? 0
-		}
+		return childNodes?.count ?? 0
 	}
 	
 	public var indexPath: IndexPath {
-		get {
-			if let parent = parent {
-				let parentPath = parent.indexPath
-				if let childIndex = parent.indexOfChild(self) {
-					return parentPath.appending(childIndex)
-				}
-				preconditionFailure("A Node’s parent must contain it as a child.")
+		if let parent = parent {
+			let parentPath = parent.indexPath
+			if let childIndex = parent.indexOfChild(self) {
+				return parentPath.appending(childIndex)
 			}
-			return IndexPath(index: 0) //root node
+			preconditionFailure("A Node’s parent must contain it as a child.")
 		}
+		return IndexPath(index: 0) //root node
 	}
 	
 	public var level: Int {
-		get {
-			if let parent = parent {
-				return parent.level + 1
-			}
-			return 0
+		if let parent = parent {
+			return parent.level + 1
 		}
+		return 0
 	}
 	
 	public var isLeaf: Bool {
-		get {
-			return numberOfChildNodes < 1
-		}
+		return numberOfChildNodes < 1
 	}
-
+	
 	public init(representedObject: AnyObject, parent: Node?) {
-
+		
 		precondition(Thread.isMainThread)
 
 		self.representedObject = representedObject

@@ -12,14 +12,30 @@ import RSCore
 import Data
 import RSWeb
 
-final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDelegate {
+final class DetailViewController: NSViewController, WKUIDelegate {
 
 	@IBOutlet var containerView: DetailContainerView!
+	@IBOutlet var noSelectionView: NoSelectionView!
 
 	var webview: DetailWebView!
-	var noSelectionView: NoSelectionView!
 
-	var article: Article? {
+	var articles: [Article]? {
+		didSet {
+			if let articles = articles, articles.count == 1 {
+				article = articles.first!
+				return
+			}
+			article = nil
+			if let _ = articles {
+				noSelectionView.showMultipleSelection()
+			}
+			else {
+				noSelectionView.showNoSelection()
+			}
+		}
+	}
+	
+	private var article: Article? {
 		didSet {
 			reloadHTML()
 			showOrHideWebView()
@@ -62,8 +78,6 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 			webview.customUserAgent = userAgent
 		}
 
-		noSelectionView = NoSelectionView(frame: self.view.bounds)
-
 		containerView.viewController = self
 
 		showOrHideWebView()
@@ -91,7 +105,7 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 		webview.scrollPageDown(sender)
 	}
 
-	// MARK: Notifications
+	// MARK: - Notifications
 
 	@objc func timelineSelectionDidChange(_ notification: Notification) {
 
@@ -102,8 +116,8 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 			return
 		}
 		
-		let timelineArticle = userInfo[UserInfoKey.article] as? Article
-		article = timelineArticle
+		let timelineArticles = userInfo[UserInfoKey.articles] as? ArticleArray
+		articles = timelineArticles
 	}
 
 	func viewWillStartLiveResize() {
@@ -115,55 +129,29 @@ final class DetailViewController: NSViewController, WKNavigationDelegate, WKUIDe
 		
 		webview.evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
 	}
-	
-	// MARK: Private
+}
 
-	private func reloadHTML() {
+// MARK: - WKNavigationDelegate
 
-		if let article = article {
-			let articleRenderer = ArticleRenderer(article: article, style: ArticleStylesManager.shared.currentStyle)
-			webview.loadHTMLString(articleRenderer.html, baseURL: articleRenderer.baseURL)
-		}
-		else {
-			webview.loadHTMLString("", baseURL: nil)
-		}
-	}
+extension DetailViewController: WKNavigationDelegate {
 
-	private func showOrHideWebView() {
-
-		if let _ = article {
-			switchToView(webview)
-		}
-		else {
-			switchToView(noSelectionView)
-		}
-	}
-
-	private func switchToView(_ view: NSView) {
-
-		if containerView.contentView == view {
-			return
-		}
-		containerView.contentView = view
-	}
-
-	// MARK: WKNavigationDelegate
-	
 	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-	
+
 		if navigationAction.navigationType == .linkActivated {
-			
+
 			if let url = navigationAction.request.url {
 				Browser.open(url.absoluteString)
 			}
-			
+
 			decisionHandler(.cancel)
 			return
 		}
-		
+
 		decisionHandler(.allow)
 	}
 }
+
+// MARK: - WKScriptMessageHandler
 
 extension DetailViewController: WKScriptMessageHandler {
 
@@ -200,7 +188,38 @@ extension DetailViewController: WKScriptMessageHandler {
 	}
 }
 
+// MARK: - Private
+
 private extension DetailViewController {
+
+	func reloadHTML() {
+
+		if let article = article {
+			let articleRenderer = ArticleRenderer(article: article, style: ArticleStylesManager.shared.currentStyle)
+			webview.loadHTMLString(articleRenderer.html, baseURL: articleRenderer.baseURL)
+		}
+		else {
+			webview.loadHTMLString("", baseURL: nil)
+		}
+	}
+
+	func showOrHideWebView() {
+
+		if let _ = article {
+			switchToView(webview)
+		}
+		else {
+			switchToView(noSelectionView)
+		}
+	}
+
+	func switchToView(_ view: NSView) {
+
+		if containerView.contentView == view {
+			return
+		}
+		containerView.contentView = view
+	}
 
 	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {
 
@@ -221,6 +240,8 @@ private extension DetailViewController {
 		}
 	}
 }
+
+// MARK: -
 
 final class DetailContainerView: NSView {
 
@@ -270,26 +291,27 @@ final class DetailContainerView: NSView {
 	}
 }
 
+// MARK: -
+
 final class NoSelectionView: NSView {
 
-	private var didConfigureLayer = false
+	@IBOutlet var noSelectionLabel: NSTextField!
+	@IBOutlet var multipleSelectionLabel: NSTextField!
 
-	override var wantsUpdateLayer: Bool {
-		return true
+	func showMultipleSelection() {
+
+		noSelectionLabel.isHidden = true
+		multipleSelectionLabel.isHidden = false
 	}
 
-	override func updateLayer() {
+	func showNoSelection() {
 
-		guard !didConfigureLayer else {
-			return
-		}
-		if let layer = layer {
-			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.noSelectionView.backgroundColor")
-			layer.backgroundColor = color.cgColor
-			didConfigureLayer = true
-		}
+		noSelectionLabel.isHidden = false
+		multipleSelectionLabel.isHidden = true
 	}
 }
+
+// MARK: -
 
 private struct ScrollInfo {
 

@@ -19,9 +19,7 @@ final class LocalAccountRefresher {
 	}()
 
 	var progress: DownloadProgress {
-		get {
-			return downloadSession.progress
-		}
+		return downloadSession.progress
 	}
 
 	public func refreshFeeds(_ feeds: Set<Feed>) {

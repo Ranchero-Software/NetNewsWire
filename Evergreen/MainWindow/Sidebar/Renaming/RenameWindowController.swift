@@ -44,12 +44,12 @@ final class RenameWindowController: NSWindowController {
 
 	// MARK: Actions
 
-	@IBAction func cancel(_ sender: AnyObject) {
+	@IBAction func cancel(_ sender: Any?) {
 
 		window?.sheetParent?.endSheet(window!, returnCode: .cancel)
 	}
 
-	@IBAction func rename(_ sender: AnyObject) {
+	@IBAction func rename(_ sender: Any?) {
 
 		guard let representedObject = representedObject else {
 			return

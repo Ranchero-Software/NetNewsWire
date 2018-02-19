@@ -9,23 +9,19 @@
 import Foundation
 
 public extension URLResponse {
-
+	
 	public var statusIsOK: Bool {
-		get {
-			return forcedStatusCode >= 200 && forcedStatusCode <= 299
-		}
+		return forcedStatusCode >= 200 && forcedStatusCode <= 299
 	}
-
+	
 	public var forcedStatusCode: Int {
-
-		get {
-			// Return actual statusCode or -1 if there isn’t one.
-
-			if let response = self as? HTTPURLResponse {
-				return response.statusCode
-			}
-			return 0
+		
+		// Return actual statusCode or -1 if there isn’t one.
+		
+		if let response = self as? HTTPURLResponse {
+			return response.statusCode
 		}
+		return 0
 	}
 }
 

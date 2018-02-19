@@ -68,12 +68,12 @@ class AddFolderWindowController : NSWindowController {
 	
 	// MARK: Actions
 	
-    @IBAction func cancel(_ sender: AnyObject) {
+    @IBAction func cancel(_ sender: Any?) {
         
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
     }
     
-    @IBAction func addFolder(_ sender: AnyObject) {
+    @IBAction func addFolder(_ sender: Any?) {
         
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
     }

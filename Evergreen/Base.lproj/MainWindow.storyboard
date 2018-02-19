@@ -2,7 +2,9 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14092" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14092"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
     </dependencies>
     <scenes>
         <!--Window Controller-->
@@ -134,7 +136,7 @@
                                         </buttonCell>
                                     </button>
                                     <connections>
-                                        <action selector="markRead:" target="Oky-zY-oP4" id="fYI-jM-htG"/>
+                                        <action selector="toggleStarred:" target="Oky-zY-oP4" id="44J-UK-89l"/>
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="4DED27B7-8961-48F3-A995-9C961E2C0257" label="Open in Browser" paletteLabel="Open in Browser" toolTip="Open in Browser" image="openInBrowser" id="tid-SB-me3" customClass="RSToolbarItem" customModule="RSCore">
@@ -183,7 +185,7 @@
                                 <toolbarItem reference="nv0-Ju-lP7"/>
                             </defaultToolbarItems>
                             <connections>
-                                <outlet property="delegate" destination="B8D-0N-5wS" id="hrC-d9-Cge"/>
+                                <outlet property="delegate" destination="V3e-nc-6hW" id="ncd-Wh-qZU"/>
                             </connections>
                         </toolbar>
                         <connections>
@@ -191,10 +193,12 @@
                         </connections>
                     </window>
                     <connections>
+                        <outlet property="toolbarDelegate" destination="V3e-nc-6hW" id="0rl-4U-DkU"/>
                         <segue destination="reS-fe-pD8" kind="relationship" relationship="window.shadowedContentViewController" id="WS2-WB-dc4"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="V3e-nc-6hW" customClass="MainWindowToolbarDelegate" customModule="Evergreen" customModuleProvider="target"/>
             </objects>
             <point key="canvasLocation" x="-666" y="-124"/>
         </scene>
@@ -267,7 +271,7 @@
                         <subviews>
                             <scrollView appearanceType="aqua" borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
                                 <rect key="frame" x="0.0" y="28" width="166" height="272"/>
-                                <clipView key="contentView" drawsBackground="NO" id="2eU-Wz-F9g">
+                                <clipView key="contentView" id="2eU-Wz-F9g">
                                     <rect key="frame" x="0.0" y="0.0" width="166" height="272"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -275,7 +279,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="167" height="272"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
-                                            <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" white="0.95999999999999996" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
                                                 <tableColumn identifier="" width="164" minWidth="16" maxWidth="1000" id="ih9-mJ-EA7">
@@ -337,7 +341,6 @@
                                                 </tableColumn>
                                             </tableColumns>
                                             <connections>
-                                                <outlet property="dataSource" destination="XML-A3-pDn" id="04v-0e-BM6"/>
                                                 <outlet property="delegate" destination="XML-A3-pDn" id="fPE-cv-p5c"/>
                                                 <outlet property="keyboardDelegate" destination="h5K-zR-cUa" id="BlT-aW-sea"/>
                                                 <outlet property="menu" destination="p3f-EZ-sSD" id="KTA-tl-UrO"/>
@@ -358,7 +361,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="HZs-Zf-G8s" customClass="SidebarStatusBarView" customModule="Evergreen" customModuleProvider="target">
+                            <customView appearanceType="aqua" translatesAutoresizingMaskIntoConstraints="NO" id="HZs-Zf-G8s" customClass="SidebarStatusBarView" customModule="Evergreen" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="166" height="28"/>
                                 <subviews>
                                     <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="gZE-LB-FdW">
@@ -532,18 +535,17 @@
                                     <constraint firstItem="KZz-oC-IY4" firstAttribute="leading" secondItem="rE6-fd-xjY" secondAttribute="leading" id="dqI-OO-8A0"/>
                                 </constraints>
                             </customView>
-                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="98" horizontalPageScroll="10" verticalLineScroll="98" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Kfs-n2-RYk">
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="96" horizontalPageScroll="10" verticalLineScroll="96" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Kfs-n2-RYk">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
-                                <clipView key="contentView" id="yAN-Ex-RC7">
+                                <clipView key="contentView" copiesOnScroll="NO" id="yAN-Ex-RC7">
                                     <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="96" viewBased="YES" id="DRs-j8-R9a" customClass="TimelineTableView" customModule="Evergreen" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                                            <color key="gridColor" white="0.90000000000000002" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="gridColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <tableColumns>
                                                 <tableColumn identifier="" width="447" minWidth="40" maxWidth="1000" id="5h5-G1-xGq">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
@@ -559,18 +561,18 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView identifier="timelineCell" id="58o-U2-ss4" customClass="TimelineTableCellView" customModule="Evergreen" customModuleProvider="target">
-                                                            <rect key="frame" x="1" y="1" width="447" height="68"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="447" height="68"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         </tableCellView>
                                                         <customView identifier="timelineRow" id="54E-Vz-WND" customClass="TimelineTableRowView" customModule="Evergreen" customModuleProvider="target">
-                                                            <rect key="frame" x="1" y="71" width="447" height="96"/>
+                                                            <rect key="frame" x="0.0" y="68" width="447" height="96"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         </customView>
                                                     </prototypeCellViews>
                                                 </tableColumn>
                                             </tableColumns>
                                             <connections>
-                                                <outlet property="dataSource" destination="36G-bQ-b96" id="OpB-zC-ItJ"/>
+                                                <outlet property="dataSource" destination="7kA-tA-2n7" id="Tdx-DB-Zjs"/>
                                                 <outlet property="delegate" destination="36G-bQ-b96" id="s1m-42-GQ4"/>
                                                 <outlet property="keyboardDelegate" destination="ZOV-xh-WJE" id="HiG-Bz-vD0"/>
                                                 <outlet property="menu" destination="gb5-z4-YPr" id="pey-0u-ogu"/>
@@ -606,6 +608,7 @@
                     </view>
                     <connections>
                         <outlet property="contextualMenuDelegate" destination="iD1-KK-gFc" id="b0j-aW-e4B"/>
+                        <outlet property="dataSource" destination="7kA-tA-2n7" id="heZ-eT-SZ6"/>
                         <outlet property="tableView" destination="DRs-j8-R9a" id="2AG-SP-7n2"/>
                     </connections>
                 </viewController>
@@ -636,6 +639,7 @@
                         <outlet property="timelineViewController" destination="36G-bQ-b96" id="oE9-uV-TNi"/>
                     </connections>
                 </customObject>
+                <customObject id="7kA-tA-2n7" customClass="TimelineDataSource" customModule="Evergreen" customModuleProvider="target"/>
             </objects>
             <point key="canvasLocation" x="62" y="394"/>
         </scene>
@@ -650,7 +654,7 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="cJ9-6s-66u" customClass="DetailContainerView" customModule="Evergreen" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                 <subviews>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="Evergreen" customModuleProvider="target">
+                                    <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="Evergreen" customModuleProvider="target">
                                         <rect key="frame" x="6" y="2" width="12" height="20"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="850" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dim-ed-Dcz" userLabel="URL Label">
@@ -697,11 +701,61 @@
                     </customView>
                     <connections>
                         <outlet property="containerView" destination="cJ9-6s-66u" id="gXc-Pz-9sQ"/>
+                        <outlet property="noSelectionView" destination="aEc-1k-VmJ" id="KLS-ln-T1K"/>
                     </connections>
                 </viewController>
                 <customObject id="vzM-Vn-mEn" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customView id="aEc-1k-VmJ" customClass="NoSelectionView" customModule="Evergreen" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="0.0" width="613" height="96"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <subviews>
+                        <box boxType="custom" borderType="none" borderWidth="0.0" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Zb8-hH-gIZ">
+                            <rect key="frame" x="0.0" y="0.0" width="613" height="96"/>
+                            <view key="contentView" id="Gmh-qL-lA5">
+                                <rect key="frame" x="0.0" y="0.0" width="613" height="96"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ECt-Wi-zkb">
+                                        <rect key="frame" x="266" y="40" width="109" height="22"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="No selection" usesSingleLineMode="YES" id="oNn-so-m7W">
+                                            <font key="font" metaFont="systemSemibold" size="18"/>
+                                            <color key="textColor" name="tertiaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1AW-Ay-XS8">
+                                        <rect key="frame" x="408" y="39" width="154" height="22"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Multiple selection" usesSingleLineMode="YES" id="vhD-gM-NUy">
+                                            <font key="font" metaFont="systemSemibold" size="18"/>
+                                            <color key="textColor" name="tertiaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="1AW-Ay-XS8" firstAttribute="centerY" secondItem="Gmh-qL-lA5" secondAttribute="centerY" constant="-64" id="9uN-K3-d35"/>
+                                    <constraint firstItem="ECt-Wi-zkb" firstAttribute="centerX" secondItem="Gmh-qL-lA5" secondAttribute="centerX" id="QDc-Y3-Nn4"/>
+                                    <constraint firstItem="1AW-Ay-XS8" firstAttribute="centerX" secondItem="Gmh-qL-lA5" secondAttribute="centerX" id="QV5-qP-Ys6"/>
+                                    <constraint firstItem="ECt-Wi-zkb" firstAttribute="centerY" secondItem="Gmh-qL-lA5" secondAttribute="centerY" constant="-64" id="yQr-wJ-pBL"/>
+                                </constraints>
+                            </view>
+                            <color key="borderColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <color key="fillColor" white="0.95999999999999996" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </box>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="Zb8-hH-gIZ" firstAttribute="leading" secondItem="aEc-1k-VmJ" secondAttribute="leading" id="5Ay-6o-LZ1"/>
+                        <constraint firstItem="Zb8-hH-gIZ" firstAttribute="top" secondItem="aEc-1k-VmJ" secondAttribute="top" id="Wb7-Zp-hj0"/>
+                        <constraint firstAttribute="trailing" secondItem="Zb8-hH-gIZ" secondAttribute="trailing" id="cYM-up-kUN"/>
+                        <constraint firstAttribute="bottom" secondItem="Zb8-hH-gIZ" secondAttribute="bottom" id="gCy-5R-aK2"/>
+                    </constraints>
+                    <connections>
+                        <outlet property="multipleSelectionLabel" destination="1AW-Ay-XS8" id="gK2-Ya-Dz7"/>
+                        <outlet property="noSelectionLabel" destination="ECt-Wi-zkb" id="Dvq-DU-MxC"/>
+                    </connections>
+                </customView>
             </objects>
-            <point key="canvasLocation" x="62" y="774"/>
+            <point key="canvasLocation" x="68" y="946"/>
         </scene>
     </scenes>
     <resources>

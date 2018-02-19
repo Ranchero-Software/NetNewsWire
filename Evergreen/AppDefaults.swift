@@ -128,21 +128,24 @@ private extension AppDefaults {
 
 	static func registerDefaults() {
 		
-		let defaults = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue]
+		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false]
 		
 		UserDefaults.standard.register(defaults: defaults)
 	}
 
 	func fontSize(for key: String) -> FontSize {
 
-		var rawFontSize = int(for: key)
-		if rawFontSize < smallestFontSizeRawValue {
-			rawFontSize = smallestFontSizeRawValue
-		}
-		if rawFontSize > largestFontSizeRawValue {
-			rawFontSize = largestFontSizeRawValue
-		}
-		return FontSize(rawValue: rawFontSize)!
+		// Punted till after 1.0.
+		return .medium
+
+//		var rawFontSize = int(for: key)
+//		if rawFontSize < smallestFontSizeRawValue {
+//			rawFontSize = smallestFontSizeRawValue
+//		}
+//		if rawFontSize > largestFontSizeRawValue {
+//			rawFontSize = largestFontSizeRawValue
+//		}
+//		return FontSize(rawValue: rawFontSize)!
 	}
 	
 	func setFontSize(for key: String, _ fontSize: FontSize) {

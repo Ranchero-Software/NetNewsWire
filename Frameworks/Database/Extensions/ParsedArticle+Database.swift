@@ -13,12 +13,10 @@ import Data
 extension ParsedItem {
 	
 	var articleID: String {
-		get {
-			if let s = syncServiceID {
-				return s
-			}
-			// Must be same calculation as for Article.
-			return Article.calculatedArticleID(feedID: feedURL, uniqueID: uniqueID)
+		if let s = syncServiceID {
+			return s
 		}
+		// Must be same calculation as for Article.
+		return Article.calculatedArticleID(feedID: feedURL, uniqueID: uniqueID)
 	}
 }

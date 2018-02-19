@@ -19,9 +19,7 @@ protocol SmartFeedDelegate: DisplayNameProvider, ArticleFetcher {
 final class SmartFeed: PseudoFeed {
 
 	var nameForDisplay: String {
-		get {
-			return delegate.nameForDisplay
-		}
+		return delegate.nameForDisplay
 	}
 
 	var unreadCount = 0 {
@@ -32,22 +30,30 @@ final class SmartFeed: PseudoFeed {
 		}
 	}
 
+	var pasteboardWriter: NSPasteboardWriting {
+		return SmartFeedPasteboardWriter(smartFeed: self)
+	}
+
 	private let delegate: SmartFeedDelegate
-	private var timer: Timer?
 	private var unreadCounts = [Account: Int]()
 
 	init(delegate: SmartFeedDelegate) {
 
 		self.delegate = delegate
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		startTimer() // Fetch unread count at startup
+		queueFetchUnreadCounts() // Fetch unread count at startup
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 
 		if note.object is Account {
-			startTimer()
+			queueFetchUnreadCounts()
 		}
+	}
+
+	@objc func fetchUnreadCounts() {
+
+		AccountManager.shared.accounts.forEach { self.fetchUnreadCount(for: $0) }
 	}
 }
 
@@ -66,9 +72,12 @@ extension SmartFeed: ArticleFetcher {
 
 private extension SmartFeed {
 
-	// MARK: - Unread Counts
+	func queueFetchUnreadCounts() {
 
-	private func fetchUnreadCount(for account: Account) {
+		CoalescingQueue.standard.add(self, #selector(fetchUnreadCounts))
+	}
+
+	func fetchUnreadCount(for account: Account) {
 
 		delegate.fetchUnreadCount(for: account) { (accountUnreadCount) in
 			self.unreadCounts[account] = accountUnreadCount
@@ -76,12 +85,7 @@ private extension SmartFeed {
 		}
 	}
 
-	private func fetchUnreadCounts() {
-
-		AccountManager.shared.accounts.forEach { self.fetchUnreadCount(for: $0) }
-	}
-
-	private func updateUnreadCount() {
+	func updateUnreadCount() {
 
 		unreadCount = AccountManager.shared.accounts.reduce(0) { (result, account) -> Int in
 			if let oneUnreadCount = unreadCounts[account] {
@@ -89,27 +93,5 @@ private extension SmartFeed {
 			}
 			return result
 		}
-	}
-
-	// MARK: - Timer
-
-	func stopTimer() {
-
-		if let timer = timer {
-			timer.rs_invalidateIfValid()
-		}
-		timer = nil
-	}
-
-	private static let fetchCoalescingDelay: TimeInterval = 0.1
-
-	func startTimer() {
-
-		stopTimer()
-
-		timer = Timer.scheduledTimer(withTimeInterval: SmartFeed.fetchCoalescingDelay, repeats: false, block: { (timer) in
-			self.fetchUnreadCounts()
-			self.stopTimer()
-		})
 	}
 }

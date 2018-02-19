@@ -20,8 +20,12 @@ import RSCore
 	
 	let treeControllerDelegate = SidebarTreeControllerDelegate()
 	lazy var treeController: TreeController = {
-		TreeController(delegate: treeControllerDelegate)
+		return TreeController(delegate: treeControllerDelegate)
 	}()
+	lazy var dataSource: SidebarOutlineDataSource = {
+		return SidebarOutlineDataSource(treeController: treeController)
+	}()
+
     var undoableCommands = [UndoableCommand]()
 	private var animatingChanges = false
 	private var sidebarCellAppearance: SidebarCellAppearance!
@@ -32,12 +36,13 @@ import RSCore
 		return selectedNodes.representedObjects()
 	}
 
-	//MARK: NSViewController
+	// MARK: - NSViewController
 
 	override func viewDidLoad() {
 
 		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
 
+		outlineView.dataSource = dataSource
 		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)
 		outlineView.setDraggingSourceOperationMask(.copy, forLocal: false)
 
@@ -65,9 +70,9 @@ import RSCore
 		}
 	}
 
-	//MARK: Notifications
+	// MARK: - Notifications
 
-	@objc dynamic func unreadCountDidChange(_ note: Notification) {
+	@objc func unreadCountDidChange(_ note: Notification) {
 		
 		guard let representedObject = note.object else {
 			return
@@ -75,17 +80,17 @@ import RSCore
 		configureUnreadCountForCellsForRepresentedObject(representedObject as AnyObject)
 	}
 
-	@objc dynamic func containerChildrenDidChange(_ note: Notification) {
+	@objc func containerChildrenDidChange(_ note: Notification) {
 
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 
-	@objc dynamic func batchUpdateDidPerform(_ notification: Notification) {
+	@objc func batchUpdateDidPerform(_ notification: Notification) {
 		
 		rebuildTreeAndReloadDataIfNeeded()
 	}
 	
-	@objc dynamic func userDidAddFeed(_ notification: Notification) {
+	@objc func userDidAddFeed(_ notification: Notification) {
 
 		guard let feed = notification.userInfo?[UserInfoKey.feed] else {
 			return
@@ -114,7 +119,7 @@ import RSCore
 		configureCellsForRepresentedObject(object as AnyObject)
 	}
 
-	// MARK: Actions
+	// MARK: - Actions
 
 	@IBAction func delete(_ sender: AnyObject?) {
 
@@ -165,11 +170,16 @@ import RSCore
 		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.starredFeed, treeController)
 	}
 
-	// MARK: Navigation
+	@IBAction func copy(_ sender: Any?) {
+
+		NSPasteboard.general.copyObjects(selectedObjects)
+	}
+
+	// MARK: - Navigation
 	
 	func canGoToNextUnread() -> Bool {
 		
-		if let _ = rowContainingNextUnread() {
+		if let _ = nextSelectableRowWithUnreadArticle() {
 			return true
 		}
 		return false
@@ -177,7 +187,7 @@ import RSCore
 	
 	func goToNextUnread() {
 		
-		guard let row = rowContainingNextUnread() else {
+		guard let row = nextSelectableRowWithUnreadArticle() else {
 			assertionFailure("goToNextUnread called before checking if there is a next unread.")
 			return
 		}
@@ -193,7 +203,7 @@ import RSCore
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(outlineView)
 	}
 
-	// MARK: Contextual Menu
+	// MARK: - Contextual Menu
 
 	func contextualMenuForSelectedObjects() -> NSMenu? {
 
@@ -216,7 +226,7 @@ import RSCore
 		return menu(for: [object])
 	}
 
-	// MARK: NSOutlineViewDelegate
+	// MARK: - NSOutlineViewDelegate
     
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
 
@@ -262,44 +272,20 @@ import RSCore
 
     func outlineViewSelectionDidChange(_ notification: Notification) {
 
-		// TODO: support multiple selection
-
-        let selectedRow = self.outlineView.selectedRow
-        
-        if selectedRow < 0 || selectedRow == NSNotFound {
-            postSidebarSelectionDidChangeNotification(nil)
-            return
-        }
-        
-        if let selectedNode = self.outlineView.item(atRow: selectedRow) as? Node {
-			postSidebarSelectionDidChangeNotification([selectedNode.representedObject])
-        }
+		postSidebarSelectionDidChangeNotification(selectedObjects.isEmpty ? nil : selectedObjects)
     }
+}
 
-	// MARK: NSOutlineViewDataSource
+// MARK: - NSUserInterfaceValidations
 
-	func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
-		
-		return nodeForItem(item as AnyObject?).numberOfChildNodes
-	}
-	
-	func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
-		
-        return nodeForItem(item as AnyObject?).childNodes![index]
-    }
-	
-	func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-		
-        return nodeForItem(item as AnyObject?).canHaveChildNodes
-	}
+extension SidebarViewController: NSUserInterfaceValidations {
 
-	func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> NSPasteboardWriting? {
+	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
-		let node = nodeForItem(item as AnyObject?)
-		if let feed = node.representedObject as? Feed {
-			return FeedPasteboardWriter(feed: feed)
+		if item.action == #selector(copy(_:)) {
+			return NSPasteboard.general.canCopyAtLeastOneObject(selectedObjects)
 		}
-		return nil
+		return true
 	}
 }
 
@@ -394,14 +380,24 @@ private extension SidebarViewController {
 		return false
 	}
 
-	func rowContainingNextUnread() -> Int? {
-		
+	func rowIsGroupItem(_ row: Int) -> Bool {
+
+		if let node = nodeForRow(row), outlineView.isGroupItem(node) {
+			return true
+		}
+		return false
+	}
+
+	func nextSelectableRowWithUnreadArticle() -> Int? {
+
+		// Skip group items, because they should never be selected.
+
 		let selectedRow = outlineView.selectedRow
 		let numberOfRows = outlineView.numberOfRows
 		var row = selectedRow + 1
 		
 		while (row < numberOfRows) {
-			if rowHasAtLeastOneUnreadArticle(row) {
+			if rowHasAtLeastOneUnreadArticle(row) && !rowIsGroupItem(row) {
 				return row
 			}
 			row += 1
@@ -409,7 +405,7 @@ private extension SidebarViewController {
 		
 		row = 0
 		while (row <= selectedRow) {
-			if rowHasAtLeastOneUnreadArticle(row) {
+			if rowHasAtLeastOneUnreadArticle(row) && !rowIsGroupItem(row) {
 				return row
 			}
 			row += 1
@@ -574,20 +570,4 @@ private extension SidebarViewController {
 	}
 }
 
-extension Feed: SmallIconProvider {
-
-	var smallIcon: NSImage? {
-		if let image = appDelegate.faviconDownloader.favicon(for: self) {
-			return image
-		}
-		return appDelegate.genericFeedImage
-	}
-}
-
-extension Folder: SmallIconProvider {
-
-	var smallIcon: NSImage? {
-		return NSImage(named: NSImage.Name.folder)
-	}
-}
 

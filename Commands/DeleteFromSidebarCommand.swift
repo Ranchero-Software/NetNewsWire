@@ -17,9 +17,7 @@ final class DeleteFromSidebarCommand: UndoableCommand {
 	let undoManager: UndoManager
 	let undoActionName: String
 	var redoActionName: String {
-		get {
-			return undoActionName
-		}
+		return undoActionName
 	}
 
 	private let itemSpecifiers: [SidebarItemSpecifier]
@@ -94,15 +92,13 @@ private struct SidebarItemSpecifier {
 	private let path: ContainerPath
 
 	private var container: Container? {
-		get {
-			if let parentFolder = parentFolder {
-				return parentFolder
-			}
-			if let account = account {
-				return account
-			}
-			return nil
+		if let parentFolder = parentFolder {
+			return parentFolder
 		}
+		if let account = account {
+			return account
+		}
+		return nil
 	}
 
 	init?(node: Node) {

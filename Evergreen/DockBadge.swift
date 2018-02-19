@@ -15,16 +15,12 @@ import RSCore
 
 	func update() {
 
-		performSelectorCoalesced(#selector(updateBadge), with: nil, delay: 0.01)
+		CoalescingQueue.standard.add(self, #selector(updateBadge))
 	}
 
-	@objc dynamic func updateBadge() {
+	@objc func updateBadge() {
 
-		guard let appDelegate = appDelegate else {
-			return
-		}
-
-		let unreadCount = appDelegate.unreadCount
+		let unreadCount = appDelegate?.unreadCount ?? 0
 		let label = unreadCount > 0 ? "\(unreadCount)" : ""
 		NSApplication.shared.dockTile.badgeLabel = label
 	}

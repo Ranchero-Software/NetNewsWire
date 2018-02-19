@@ -39,8 +39,6 @@ public struct RelatedObjectsMap {
 	}
 	
 	public subscript(_ objectID: String) -> [DatabaseObject]? {
-		get {
-			return dictionary[objectID]
-		}
+		return dictionary[objectID]
 	}
 }

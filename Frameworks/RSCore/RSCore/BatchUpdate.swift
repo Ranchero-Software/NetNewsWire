@@ -22,9 +22,7 @@ public final class BatchUpdate {
 	private var count = 0
 	
 	public var isPerforming: Bool {
-		get {
-			return count > 0
-		}
+		return count > 0
 	}
 	
 	public func perform(_ batchUpdateBlock: BatchUpdateBlock) {

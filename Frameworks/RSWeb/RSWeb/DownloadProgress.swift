@@ -35,22 +35,18 @@ public final class DownloadProgress {
 	}
 
 	public var numberCompleted: Int {
-		get {
-			var n = numberOfTasks - numberRemaining
-			if n < 0 {
-				n = 0
-			}
-			if n > numberOfTasks {
-				n = numberOfTasks
-			}
-			return n
+		var n = numberOfTasks - numberRemaining
+		if n < 0 {
+			n = 0
 		}
+		if n > numberOfTasks {
+			n = numberOfTasks
+		}
+		return n
 	}
 	
 	public var isComplete: Bool {
-		get {
-			return numberRemaining < 1
-		}
+		return numberRemaining < 1
 	}
 	
 	public init(numberOfTasks: Int) {

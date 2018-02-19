@@ -10,7 +10,7 @@ import Foundation
 import Data
 import RSCore
 
-protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconProvider {
+protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconProvider, PasteboardWriterOwner {
 
 }
 
@@ -22,8 +22,6 @@ private var smartFeedIcon: NSImage = {
 extension PseudoFeed {
 
 	var smallIcon: NSImage? {
-		get {
-			return smartFeedIcon
-		}
+		return smartFeedIcon
 	}
 }

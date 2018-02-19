@@ -27,8 +27,6 @@ public struct UnreadCountDictionary {
 	}
 	
 	public subscript(_ feed: Feed) -> Int? {
-		get {
-			return dictionary[feed.feedID]
-		}
+		return dictionary[feed.feedID]
 	}
 }

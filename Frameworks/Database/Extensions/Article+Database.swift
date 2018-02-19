@@ -110,9 +110,7 @@ extension Article: DatabaseObject {
 	}
 	
 	public var databaseID: String {
-		get {
-			return articleID
-		}
+		return articleID
 	}
 
 	public func relatedObjectsWithName(_ name: String) -> [DatabaseObject]? {

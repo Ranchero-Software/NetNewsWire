@@ -75,9 +75,7 @@ class SidebarCell : NSTableCellView {
 	}
 
 	override var isFlipped: Bool {
-		get {
-			return true
-		}
+		return true
 	}
 	
 	private func commonInit() {
