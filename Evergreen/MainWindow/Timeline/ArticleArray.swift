@@ -110,6 +110,12 @@ extension Array where Element == Article {
 
 		return anyArticlePassesTest { !$0.status.starred }
 	}
+
+	func unreadArticles() -> [Article]? {
+
+		let articles = self.filter{ !$0.status.read }
+		return articles.isEmpty ? nil : articles
+	}
 }
 
 private extension Array where Element == Article {

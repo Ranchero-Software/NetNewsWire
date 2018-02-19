@@ -516,30 +516,28 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	func tableViewSelectionDidChange(_ notification: Notification) {
 
-		tableView.redrawGrid()
+		//		tableView.redrawGrid()
 
-		let selectedRow = tableView.selectedRow
-		if selectedRow < 0 || selectedRow == NSNotFound || tableView.numberOfSelectedRows != 1 {
+		if selectedArticles.isEmpty {
 			postTimelineSelectionDidChangeNotification(nil)
 			return
 		}
 
-		if let selectedArticle = articles.articleAtRow(selectedRow) {
-			if (!selectedArticle.status.read) {
-				markArticles(Set([selectedArticle]), statusKey: .read, flag: true)
+		if selectedArticles.count == 1 {
+			let article = selectedArticles.first!
+			if !article.status.read {
+				markArticles(Set([article]), statusKey: .read, flag: true)
 			}
-			postTimelineSelectionDidChangeNotification(selectedArticle)
 		}
-		else {
-			postTimelineSelectionDidChangeNotification(nil)
-		}
+
+		postTimelineSelectionDidChangeNotification(selectedArticles)
 	}
 
-	private func postTimelineSelectionDidChangeNotification(_ selectedArticle: Article?) {
+	private func postTimelineSelectionDidChangeNotification(_ selectedArticles: ArticleArray?) {
 
 		var userInfo = UserInfoDictionary()
-		if let article = selectedArticle {
-			userInfo[UserInfoKey.article] = article
+		if let selectedArticles = selectedArticles {
+			userInfo[UserInfoKey.articles] = selectedArticles
 		}
 		userInfo[UserInfoKey.view] = tableView
 
