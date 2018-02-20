@@ -515,7 +515,7 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	func tableViewSelectionDidChange(_ notification: Notification) {
 
-		//		tableView.redrawGrid()
+		tableView.redrawGrid()
 
 		if selectedArticles.isEmpty {
 			postTimelineSelectionDidChangeNotification(nil)

@@ -64,17 +64,17 @@ class TimelineTableRowView : NSTableRowView {
 		path.stroke()
 	}
 
-//	override func draw(_ dirtyRect: NSRect) {
-//
-//		super.draw(dirtyRect)
-//
-//		if cellAppearance.drawsGrid && !isSelected && !isNextRowSelected {
-//			drawSeparator(in: dirtyRect)
-//		}
-//	}
+	override func draw(_ dirtyRect: NSRect) {
+
+		super.draw(dirtyRect)
+
+		if cellAppearance.drawsGrid && !isSelected && !isNextRowSelected {
+			drawSeparator(in: dirtyRect)
+		}
+	}
 
 	func invalidateGridRect() {
 		
-//		setNeedsDisplay(gridRect)
+		setNeedsDisplay(gridRect)
 	}
 }
