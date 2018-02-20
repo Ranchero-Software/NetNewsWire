@@ -8,7 +8,6 @@
 
 import Foundation
 import RSCore
-import RSTextDrawing
 import Data
 import Account
 
@@ -135,7 +134,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	private func fontSizeDidChange() {
 
 		TimelineCellData.emptyCache()
-		RSMultiLineRenderer.emptyCache()
 
 		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: false, fontSize: fontSize)
 		cellAppearanceWithAvatar = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: true, fontSize: fontSize)

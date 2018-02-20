@@ -7,7 +7,6 @@
 //
 
 import AppKit
-import RSTextDrawing
 import RSCore
 
 struct TimelineCellLayout {
@@ -81,16 +80,9 @@ private extension TimelineCellLayout {
 
 		var r = textBoxRect
 		let height = MultilineTextFieldSizer.size(for: cellData.attributedTitle, numberOfLines: 2, width: Int(textBoxRect.width))
-//		let renderer = RSMultiLineRenderer(attributedTitle: cellData.attributedTitle)
-//
-//		let measurements = renderer.measurements(forWidth: textBoxRect.width)
 		r.size.height = CGFloat(height)
 
 		return r
-//		var rline1 = r
-//		rline1.size.height = CGFloat(measurements.heightOfFirstLine)
-//
-//		return (r, rline1)
 	}
 
 	static func rectForDate(_ textBoxRect: NSRect, _ titleRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
