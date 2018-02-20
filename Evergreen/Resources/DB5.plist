@@ -67,7 +67,7 @@
 				<key>gridColorAlpha</key>
 				<real>0.1</real>
 				<key>drawsGrid</key>
-				<false/>
+				<true/>
 				<key>header</key>
 				<dict>
 					<key>backgroundColor</key>
@@ -100,7 +100,7 @@
 					<key>titleColor</key>
 					<string>222222</string>
 					<key>titleMarginBottom</key>
-					<integer>2</integer>
+					<integer>1</integer>
 					<key>unreadCircleColor</key>
 					<string>#2db6ff</string>
 					<key>unreadCircleDimension</key>
@@ -108,9 +108,9 @@
 					<key>unreadCircleMarginRight</key>
 					<integer>8</integer>
 					<key>avatarHeight</key>
-					<integer>48</integer>
+					<integer>64</integer>
 					<key>avatarWidth</key>
-					<integer>48</integer>
+					<integer>64</integer>
 					<key>avatarMarginRight</key>
 					<integer>20</integer>
 					<key>avatarMarginLeft</key>
