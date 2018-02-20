@@ -40,14 +40,14 @@ struct TimelineCellLayout {
 
 		var textBoxRect = TimelineCellLayout.rectForTextBox(appearance, cellData, width)
 
-		let (titleRect, titleLine1Rect) = TimelineCellLayout.rectsForTitle(textBoxRect, cellData)
+		let titleRect = TimelineCellLayout.rectForTitle(textBoxRect, cellData)
 		let dateRect = TimelineCellLayout.rectForDate(textBoxRect, titleRect, appearance, cellData)
 		let feedNameRect = TimelineCellLayout.rectForFeedName(textBoxRect, dateRect, appearance, cellData)
-		let unreadIndicatorRect = TimelineCellLayout.rectForUnreadIndicator(appearance, titleLine1Rect)
-		let starRect = TimelineCellLayout.rectForStar(appearance, unreadIndicatorRect)
 
 		textBoxRect.size.height = ceil([titleRect, dateRect, feedNameRect].maxY() - textBoxRect.origin.y)
 		let avatarImageRect = TimelineCellLayout.rectForAvatar(cellData, appearance, textBoxRect, width)
+		let unreadIndicatorRect = TimelineCellLayout.rectForUnreadIndicator(appearance, titleRect)
+		let starRect = TimelineCellLayout.rectForStar(appearance, unreadIndicatorRect)
 
 		let paddingBottom = appearance.cellPadding.bottom
 
@@ -77,18 +77,20 @@ private extension TimelineCellLayout {
 		return textBoxRect
 	}
 
-	static func rectsForTitle(_ textBoxRect: NSRect, _ cellData: TimelineCellData) -> (NSRect, NSRect) {
+	static func rectForTitle(_ textBoxRect: NSRect, _ cellData: TimelineCellData) -> NSRect {
 
 		var r = textBoxRect
-		let renderer = RSMultiLineRenderer(attributedTitle: cellData.attributedTitle)
+		let height = MultilineTextFieldSizer.size(for: cellData.attributedTitle, numberOfLines: 2, width: Int(textBoxRect.width))
+//		let renderer = RSMultiLineRenderer(attributedTitle: cellData.attributedTitle)
+//
+//		let measurements = renderer.measurements(forWidth: textBoxRect.width)
+		r.size.height = CGFloat(height)
 
-		let measurements = renderer.measurements(forWidth: textBoxRect.width)
-		r.size.height = CGFloat(measurements.height)
-
-		var rline1 = r
-		rline1.size.height = CGFloat(measurements.heightOfFirstLine)
-
-		return (r, rline1)
+		return r
+//		var rline1 = r
+//		rline1.size.height = CGFloat(measurements.heightOfFirstLine)
+//
+//		return (r, rline1)
 	}
 
 	static func rectForDate(_ textBoxRect: NSRect, _ titleRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
@@ -122,13 +124,14 @@ private extension TimelineCellLayout {
 		return r
 	}
 
-	static func rectForUnreadIndicator(_ appearance: TimelineCellAppearance, _ titleLine1Rect: NSRect) -> NSRect {
+	static func rectForUnreadIndicator(_ appearance: TimelineCellAppearance, _ titleRect: NSRect) -> NSRect {
 
 		var r = NSZeroRect
 		r.size = NSSize(width: appearance.unreadCircleDimension, height: appearance.unreadCircleDimension)
 		r.origin.x = appearance.cellPadding.left
-		r = RSRectCenteredVerticallyInRect(r, titleLine1Rect)
-		r.origin.y += 1
+		r.origin.y = titleRect.minY + 6
+//		r = RSRectCenteredVerticallyInRect(r, titleRect)
+//		r.origin.y += 1
 
 		return r
 	}
@@ -139,7 +142,7 @@ private extension TimelineCellLayout {
 		r.size.width = appearance.starDimension
 		r.size.height = appearance.starDimension
 		r.origin.x = floor(unreadIndicatorRect.origin.x - ((appearance.starDimension - appearance.unreadCircleDimension) / 2.0))
-		r.origin.y = unreadIndicatorRect.origin.y - 3.0
+		r.origin.y = unreadIndicatorRect.origin.y - 4.0
 		return r
 	}
 

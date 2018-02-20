@@ -10,6 +10,7 @@ import AppKit
 
 // Get the size of an NSTextField configured with a specific font with a specific size.
 // Uses a cache.
+// Main thready only.
 
 final class SingleLineTextFieldSizer {
 
@@ -53,8 +54,15 @@ final class SingleLineTextFieldSizer {
 		return newSizer
 	}
 
+	// Use this call. It’s easiest.
+
 	static func size(for text: String, font: NSFont) -> NSSize {
 
 		return sizer(for: font).size(for: text)
+	}
+
+	static func emptyCache() {
+
+		sizers = [NSFont: SingleLineTextFieldSizer]()
 	}
 }

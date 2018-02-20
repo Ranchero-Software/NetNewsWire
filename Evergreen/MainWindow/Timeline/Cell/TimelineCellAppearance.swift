@@ -23,6 +23,7 @@ struct TimelineCellAppearance: Equatable {
 	let titleColor: NSColor
 	let titleFont: NSFont
 	let titleBottomMargin: CGFloat
+	let titleNumberOfLines = 2
 	
 	let textColor: NSColor
 	let textFont: NSFont
