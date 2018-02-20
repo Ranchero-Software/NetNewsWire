@@ -11,7 +11,7 @@ import RSTextDrawing
 
 class TimelineTableCellView: NSTableCellView {
 
-	private let titleView = RSMultiLineView(frame: NSZeroRect)
+	private let titleView = TimelineTableCellView.multiLineTextField()
 	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
 	private let dateView = TimelineTableCellView.singleLineTextField()
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
@@ -19,7 +19,7 @@ class TimelineTableCellView: NSTableCellView {
 	private let starView = TimelineTableCellView.imageView(with: AppImages.timelineStar, scaling: .scaleNone)
 
 	private lazy var textFields = {
-		return [self.dateView, self.feedNameView]
+		return [self.dateView, self.feedNameView, self.titleView]
 	}()
 
 	var cellAppearance: TimelineCellAppearance! {
@@ -49,7 +49,7 @@ class TimelineTableCellView: NSTableCellView {
 
 	var isEmphasized = false {
 		didSet {
-			titleView.emphasized = isEmphasized
+//			titleView.emphasized = isEmphasized
 			unreadIndicatorView.isEmphasized = isEmphasized
 			updateTextFieldColors()
 			needsDisplay = true
@@ -58,7 +58,7 @@ class TimelineTableCellView: NSTableCellView {
 	
 	var isSelected = false {
 		didSet {
-			titleView.selected = isSelected
+//			titleView.selected = isSelected
 			unreadIndicatorView.isSelected = isSelected
 			updateTextFieldColors()
 			needsDisplay = true
@@ -139,6 +139,17 @@ private extension TimelineTableCellView {
 		return textField
 	}
 
+	static func multiLineTextField() -> NSTextField {
+
+		let textField = NSTextField(wrappingLabelWithString: "")
+		textField.usesSingleLineMode = false
+		textField.maximumNumberOfLines = 2
+		textField.isEditable = false
+		textField.lineBreakMode = .byTruncatingTail
+		textField.cell?.truncatesLastVisibleLine = true
+		return textField
+	}
+
 	static func imageView(with image: NSImage?, scaling: NSImageScaling) -> NSImageView {
 
 		let imageView = image != nil ? NSImageView(image: image!) : NSImageView(frame: NSRect.zero)
@@ -156,6 +167,10 @@ private extension TimelineTableCellView {
 		else {
 			feedNameView.textColor = cellAppearance.feedNameColor
 			dateView.textColor = cellAppearance.dateColor
+
+			if let attributedTitle = cellData?.attributedTitle {
+				titleView.attributedStringValue = attributedTitle
+			}
 		}
 	}
 
