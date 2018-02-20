@@ -128,7 +128,9 @@ func timelineSummaryForArticle(_ article: Article) -> String {
 
 	var s = body.rs_string(byStrippingHTML: 300)
 	s = timelineNormalizedText(s)
-
+	if s == "Comments" { // Hacker News.
+		s = ""
+	}
 	summaryCache[body] = s
 	return s
 }
