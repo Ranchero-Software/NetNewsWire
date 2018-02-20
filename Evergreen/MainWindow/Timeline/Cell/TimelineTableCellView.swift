@@ -236,7 +236,7 @@ private extension TimelineTableCellView {
 
 	func updateDateView() {
 
-		dateView.stringValue = cellData.attributedDateString.string
+		dateView.stringValue = cellData.dateString
 		needsLayout = true
 	}
 
@@ -246,7 +246,7 @@ private extension TimelineTableCellView {
 			if feedNameView.isHidden {
 				feedNameView.isHidden = false
 			}
-			feedNameView.stringValue = cellData.attributedFeedName.string
+			feedNameView.stringValue = cellData.feedName
 		}
 		else {
 			if !feedNameView.isHidden {

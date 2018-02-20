@@ -87,7 +87,7 @@ private extension TimelineCellLayout {
 
 	static func rectForDate(_ textBoxRect: NSRect, _ titleRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
 
-		return rectOfLineBelow(textBoxRect, titleRect, appearance.titleBottomMargin, cellData.attributedDateString)
+		return rectOfLineBelow(textBoxRect, titleRect, appearance.titleBottomMargin, cellData.dateString, appearance.dateFont)
 	}
 
 	static func rectForFeedName(_ textBoxRect: NSRect, _ dateRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
@@ -96,13 +96,12 @@ private extension TimelineCellLayout {
 			return NSZeroRect
 		}
 
-		return rectOfLineBelow(textBoxRect, dateRect, appearance.titleBottomMargin, cellData.attributedFeedName)
+		return rectOfLineBelow(textBoxRect, dateRect, appearance.titleBottomMargin, cellData.feedName, appearance.feedNameFont)
 	}
 
-	static func rectOfLineBelow(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ topMargin: CGFloat, _ attributedString: NSAttributedString) -> NSRect {
+	static func rectOfLineBelow(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ topMargin: CGFloat, _ value: String, _ font: NSFont) -> NSRect {
 
-		let font = attributedString.attribute(NSAttributedStringKey.font, at: 0, effectiveRange: nil) as! NSFont
-		let textFieldSize = SingleLineTextFieldSizer.size(for: attributedString.string, font: font)
+		let textFieldSize = SingleLineTextFieldSizer.size(for: value, font: font)
 		var r = NSZeroRect
 		r.size = textFieldSize
 		r.origin.y = NSMaxY(rectAbove) + topMargin
