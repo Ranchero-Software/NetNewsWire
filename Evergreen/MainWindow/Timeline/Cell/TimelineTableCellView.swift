@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSTextDrawing
+import RSCore
 
 class TimelineTableCellView: NSTableCellView {
 
@@ -161,16 +161,14 @@ private extension TimelineTableCellView {
 
 	func updateTextFieldColors() {
 
+		updateTitleView()
+		
 		if isEmphasized && isSelected {
 			textFields.forEach { $0.textColor = NSColor.white }
 		}
 		else {
 			feedNameView.textColor = cellAppearance.feedNameColor
 			dateView.textColor = cellAppearance.dateColor
-
-			if let attributedTitle = cellData?.attributedTitle {
-				titleView.attributedStringValue = attributedTitle
-			}
 		}
 	}
 
@@ -222,7 +220,17 @@ private extension TimelineTableCellView {
 
 	func updateTitleView() {
 
-		titleView.attributedStringValue = cellData.attributedTitle
+		if isEmphasized && isSelected {
+			if let attributedTitle = cellData?.attributedTitle {
+				titleView.attributedStringValue = attributedTitle.rs_attributedStringByMakingTextWhite()
+			}
+		}
+		else {
+			if let attributedTitle = cellData?.attributedTitle {
+				titleView.attributedStringValue = attributedTitle
+			}
+		}
+
 		needsLayout = true
 	}
 
