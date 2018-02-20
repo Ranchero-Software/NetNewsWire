@@ -108,7 +108,7 @@ private func attributedTitleString(_ title: String, _ text: String, _ appearance
 	if !title.isEmpty && !text.isEmpty {
 		
 		let titleMutable = NSMutableAttributedString(string: title, attributes: [NSAttributedStringKey.foregroundColor: appearance.titleColor, NSAttributedStringKey.font: appearance.titleFont])
-		let attributedText = NSAttributedString(string: "\n" + text, attributes: [NSAttributedStringKey.foregroundColor: appearance.textColor, NSAttributedStringKey.font: appearance.textFont])
+		let attributedText = NSAttributedString(string: " " + text, attributes: [NSAttributedStringKey.foregroundColor: appearance.textColor, NSAttributedStringKey.font: appearance.textFont])
 		titleMutable.append(attributedText)
 		return titleMutable
 	}
