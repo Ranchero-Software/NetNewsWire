@@ -135,7 +135,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	private func fontSizeDidChange() {
 
 		TimelineCellData.emptyCache()
-		RSSingleLineRenderer.emptyCache()
 		RSMultiLineRenderer.emptyCache()
 
 		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: false, fontSize: fontSize)

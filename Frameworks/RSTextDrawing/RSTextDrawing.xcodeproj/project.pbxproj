@@ -12,10 +12,6 @@
 		8439D9FF1C8937C800E5E4B4 /* RSTextDrawing.h in Headers */ = {isa = PBXBuildFile; fileRef = 8439D9FE1C8937C800E5E4B4 /* RSTextDrawing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8439DA061C8937C800E5E4B4 /* RSTextDrawing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8439D9FB1C8937C800E5E4B4 /* RSTextDrawing.framework */; };
 		8439DA0B1C8937C800E5E4B4 /* RSTextDrawingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8439DA0A1C8937C800E5E4B4 /* RSTextDrawingTests.m */; };
-		846416401C8938210064C661 /* RSSingleLineRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8464163E1C8938210064C661 /* RSSingleLineRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		846416411C8938210064C661 /* RSSingleLineRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8464163F1C8938210064C661 /* RSSingleLineRenderer.m */; };
-		84B717761CF9629000FF029D /* RSSingleLineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B717741CF9629000FF029D /* RSSingleLineView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		84B717771CF9629000FF029D /* RSSingleLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B717751CF9629000FF029D /* RSSingleLineView.m */; };
 		84B7177B1CF9665100FF029D /* RSMultiLineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B717791CF9665100FF029D /* RSMultiLineView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84B7177C1CF9665100FF029D /* RSMultiLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B7177A1CF9665100FF029D /* RSMultiLineView.m */; };
 		84B7177D1CF9834700FF029D /* RSMultiLineRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 846416431C8938470064C661 /* RSMultiLineRenderer.m */; };
@@ -43,12 +39,8 @@
 		8439DA051C8937C800E5E4B4 /* RSTextDrawingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RSTextDrawingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8439DA0A1C8937C800E5E4B4 /* RSTextDrawingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSTextDrawingTests.m; sourceTree = "<group>"; };
 		8439DA0C1C8937C800E5E4B4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8464163E1C8938210064C661 /* RSSingleLineRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RSSingleLineRenderer.h; path = RSTextDrawing/RSSingleLineRenderer.h; sourceTree = "<group>"; };
-		8464163F1C8938210064C661 /* RSSingleLineRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RSSingleLineRenderer.m; path = RSTextDrawing/RSSingleLineRenderer.m; sourceTree = "<group>"; };
 		846416421C8938470064C661 /* RSMultiLineRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RSMultiLineRenderer.h; path = RSTextDrawing/RSMultiLineRenderer.h; sourceTree = "<group>"; };
 		846416431C8938470064C661 /* RSMultiLineRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RSMultiLineRenderer.m; path = RSTextDrawing/RSMultiLineRenderer.m; sourceTree = "<group>"; };
-		84B717741CF9629000FF029D /* RSSingleLineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RSSingleLineView.h; path = RSTextDrawing/RSSingleLineView.h; sourceTree = "<group>"; };
-		84B717751CF9629000FF029D /* RSSingleLineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RSSingleLineView.m; path = RSTextDrawing/RSSingleLineView.m; sourceTree = "<group>"; };
 		84B717791CF9665100FF029D /* RSMultiLineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RSMultiLineView.h; path = RSTextDrawing/RSMultiLineView.h; sourceTree = "<group>"; };
 		84B7177A1CF9665100FF029D /* RSMultiLineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RSMultiLineView.m; path = RSTextDrawing/RSMultiLineView.m; sourceTree = "<group>"; };
 		84BA010D1C8D20C60029943B /* RSTextRendererProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RSTextRendererProtocol.h; path = RSTextDrawing/RSTextRendererProtocol.h; sourceTree = "<group>"; };
@@ -84,13 +76,9 @@
 			isa = PBXGroup;
 			children = (
 				8439D9FE1C8937C800E5E4B4 /* RSTextDrawing.h */,
-				84B717741CF9629000FF029D /* RSSingleLineView.h */,
-				84B717751CF9629000FF029D /* RSSingleLineView.m */,
 				84B717791CF9665100FF029D /* RSMultiLineView.h */,
 				84B7177A1CF9665100FF029D /* RSMultiLineView.m */,
 				84BA010D1C8D20C60029943B /* RSTextRendererProtocol.h */,
-				8464163E1C8938210064C661 /* RSSingleLineRenderer.h */,
-				8464163F1C8938210064C661 /* RSSingleLineRenderer.m */,
 				846416421C8938470064C661 /* RSMultiLineRenderer.h */,
 				846416431C8938470064C661 /* RSMultiLineRenderer.m */,
 				84193AB11CF4EEEB00EAC812 /* RSMultiLineRendererMeasurements.h */,
@@ -141,12 +129,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8439D9FF1C8937C800E5E4B4 /* RSTextDrawing.h in Headers */,
-				84B717761CF9629000FF029D /* RSSingleLineView.h in Headers */,
 				84B7177E1CF9834A00FF029D /* RSMultiLineRenderer.h in Headers */,
 				84BA010F1C8D20C60029943B /* RSTextRendererProtocol.h in Headers */,
 				84193AB31CF4EEEB00EAC812 /* RSMultiLineRendererMeasurements.h in Headers */,
 				84B7177B1CF9665100FF029D /* RSMultiLineView.h in Headers */,
-				846416401C8938210064C661 /* RSSingleLineRenderer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,9 +235,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84B717771CF9629000FF029D /* RSSingleLineView.m in Sources */,
 				84B7177C1CF9665100FF029D /* RSMultiLineView.m in Sources */,
-				846416411C8938210064C661 /* RSSingleLineRenderer.m in Sources */,
 				84B7177D1CF9834700FF029D /* RSMultiLineRenderer.m in Sources */,
 				84193AB41CF4EEEB00EAC812 /* RSMultiLineRendererMeasurements.m in Sources */,
 			);

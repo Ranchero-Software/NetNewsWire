@@ -109,7 +109,6 @@ private extension TimelineCellLayout {
 
 		let font = attributedString.attribute(NSAttributedStringKey.font, at: 0, effectiveRange: nil) as! NSFont
 		let textFieldSize = SingleLineTextFieldSizer.size(for: attributedString.string, font: font)
-//		let renderer = RSSingleLineRenderer(attributedTitle: attributedString)
 		var r = NSZeroRect
 		r.size = textFieldSize
 		r.origin.y = NSMaxY(rectAbove) + topMargin

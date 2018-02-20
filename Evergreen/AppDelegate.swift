@@ -165,7 +165,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func applicationDidResignActive(_ notification: Notification) {
 
-		RSSingleLineRenderer.emptyCache()
 		RSMultiLineRenderer.emptyCache()
 		TimelineCellData.emptyCache()
 		timelineEmptyCaches()

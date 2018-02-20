@@ -8,10 +8,8 @@
 
 @import AppKit;
 
-#import <RSTextDrawing/RSSingleLineView.h>
 #import <RSTextDrawing/RSMultiLineView.h>
 
-#import <RSTextDrawing/RSSingleLineRenderer.h>
 #import <RSTextDrawing/RSMultiLineRenderer.h>
 #import <RSTextDrawing/RSMultiLineRendererMeasurements.h>
 #import <RSTextDrawing/RSTextRendererProtocol.h>
