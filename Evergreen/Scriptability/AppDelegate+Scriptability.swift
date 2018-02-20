@@ -56,8 +56,18 @@ extension AppDelegate : AppDelegateAppleEvents {
     }
 }
 
+class EvergreenCreateElementCommand : NSCreateCommand {
+    override func performDefaultImplementation() -> Any? {
+         let classDescription = self.createClassDescription
+         if (classDescription.className == "feed") {
+             return ScriptableFeed.handleCreateElement(command:self)
+         }
+         return nil
+    }
+}
+
 class EvergreenExistsCommand : NSExistsCommand {
-    
+
     // cocoa default behavior doesn't work here, because of cases where we define an object's property
     // to be another object type.  e.g., 'permalink of the current article' parses as
     //    <property> of <property> of <top level object>

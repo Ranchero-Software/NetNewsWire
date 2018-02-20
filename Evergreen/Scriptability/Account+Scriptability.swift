@@ -45,6 +45,11 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
+    
+    @objc(isLocationRequiredToCreateForKey:)
+    func isLocationRequiredToCreate(forKey key:String) -> Bool {
+       return false;
+    }
 
     // MARK: --- Scriptable elements ---
     
@@ -61,7 +66,6 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         return ScriptableFeed(feed, container:self)
     }
     
-
     @objc(folders)
     var folders:NSArray  {
         let folders = account.children.compactMap { $0 as? Folder }
@@ -74,8 +78,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         let folders = account.children.compactMap { $0 as? Folder }
         guard let folder = folders.first(where:{$0.folderID == folderId}) else { return nil }
         return ScriptableFolder(folder, container:self)
-    }
-    
+    }    
 
     // MARK: --- Scriptable properties ---
 

@@ -13,6 +13,24 @@
             <result type="boolean" description="Does the object(s) exist?"/>
         </command>
 
+        <command name="make" code="corecrel" description="Create a new object.">
+            <cocoa class="Evergreen.EvergreenCreateElementCommand"/>
+            <access-group identifier="*"/>
+            <parameter name="new" code="kocl" type="type" description="The class of the new object.">
+                <cocoa key="ObjectClass"/>
+            </parameter>
+            <parameter name="at" code="insh" type="location specifier" optional="yes" description="The location at which to insert the object.">
+                <cocoa key="Location"/>
+            </parameter>
+            <parameter name="with data" code="data" type="any" optional="yes" description="The initial contents of the object.">
+                <cocoa key="ObjectData"/>
+            </parameter>
+            <parameter name="with properties" code="prdt" type="record" optional="yes" description="The initial values for properties of the object.">
+                <cocoa key="KeyDictionary"/>
+            </parameter>
+            <result type="specifier" description="The new object."/>
+        </command>
+
         <class name="application" code="capp" description="The application's top-level scripting object.">
             <cocoa class="NSApplication"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the application."/>

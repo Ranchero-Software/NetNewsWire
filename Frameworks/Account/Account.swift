@@ -257,6 +257,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		let feed = Feed(accountID: accountID, url: url, feedID: url)
 		feed.name = name
 		feed.editedName = editedName
+        
 		return feed
 	}
 	
