@@ -79,7 +79,7 @@ private extension TimelineCellLayout {
 	static func rectForTitle(_ textBoxRect: NSRect, _ cellData: TimelineCellData) -> NSRect {
 
 		var r = textBoxRect
-		let height = MultilineTextFieldSizer.size(for: cellData.attributedTitle, numberOfLines: 2, width: Int(textBoxRect.width))
+		let height = MultilineTextFieldSizer.size(for: cellData.title, font: appearance.titleFont, numberOfLines: 2, width: Int(textBoxRect.width))
 		r.size.height = CGFloat(height)
 
 		return r

@@ -136,6 +136,7 @@ private extension TimelineTableCellView {
 		textField.maximumNumberOfLines = 1
 		textField.isEditable = false
 		textField.lineBreakMode = .byTruncatingTail
+		textField.allowsDefaultTighteningForTruncation = false
 		return textField
 	}
 
@@ -147,6 +148,7 @@ private extension TimelineTableCellView {
 		textField.isEditable = false
 		textField.lineBreakMode = .byTruncatingTail
 		textField.cell?.truncatesLastVisibleLine = true
+		textField.allowsDefaultTighteningForTruncation = false
 		return textField
 	}
 
