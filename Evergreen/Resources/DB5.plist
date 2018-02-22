@@ -121,6 +121,8 @@
 					<integer>7</integer>
 					<key>starDimension</key>
 					<integer>13</integer>
+					<key>titleMaximumLines</key>
+					<integer>2</integer>
 				</dict>
 			</dict>
 			<key>Detail</key>

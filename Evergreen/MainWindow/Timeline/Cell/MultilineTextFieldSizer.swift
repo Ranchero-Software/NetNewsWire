@@ -90,7 +90,17 @@ private extension MultilineTextFieldSizer {
 		return newSizer
 	}
 
-	func sizeInfo(for string: String, width: Int) -> Int {
+	func sizeInfo(for string: String, width: Int) -> TextFieldSizeInfo {
+
+		let textFieldHeight = height(for: string, width: width)
+		let numberOfLinesUsed = numberOfLines(for: textFieldHeight)
+
+		let size = NSSize(width: width, height: textFieldHeight)
+		let sizeInfo = TextFieldSizeInfo(size: size, numberOfLinesUsed: numberOfLinesUsed)
+		return sizeInfo
+	}
+
+	func height(for string: String, width: Int) -> Int {
 
 		if cache[string] == nil {
 			cache[string] = WidthHeightCache()
@@ -133,6 +143,15 @@ private extension MultilineTextFieldSizer {
 		textField.preferredMaxLayoutWidth = CGFloat(width)
 		let size = textField.fittingSize
 		return Int(ceil(size.height))
+	}
+
+	func numberOfLines(for height: Int) -> Int {
+
+		// We’ll have to see if this really works reliably.
+
+		let averageHeight = CGFloat(doubleLineHeightEstimate) / 2.0
+		let lines = Int(round(CGFloat(height) / averageHeight))
+		return lines
 	}
 
 	func heightIsProbablySingleLineHeight(_ height: Int) -> Bool {

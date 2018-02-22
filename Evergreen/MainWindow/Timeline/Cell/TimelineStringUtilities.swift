@@ -10,12 +10,13 @@ import Foundation
 import Data
 import RSParser
 
+// TODO: Don’t make all this at top level.
+
 private var truncatedFeedNameCache = [String: String]()
 private let truncatedTitleCache = NSMutableDictionary()
 private let normalizedTextCache = NSMutableDictionary()
 private let textCache = NSMutableDictionary()
 private let summaryCache = NSMutableDictionary()
-//private var summaryCache = [String: String]()
 
 func timelineEmptyCaches() {
 	

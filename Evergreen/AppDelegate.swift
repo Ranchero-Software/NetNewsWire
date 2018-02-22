@@ -164,7 +164,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func applicationDidResignActive(_ notification: Notification) {
 
-		TimelineCellData.emptyCache()
 		timelineEmptyCaches()
 
 		saveState()

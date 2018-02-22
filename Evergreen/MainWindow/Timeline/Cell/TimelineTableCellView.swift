@@ -146,7 +146,7 @@ private extension TimelineTableCellView {
 		textField.usesSingleLineMode = false
 		textField.maximumNumberOfLines = 2
 		textField.isEditable = false
-		textField.lineBreakMode = .byTruncatingTail
+//		textField.lineBreakMode = .byTruncatingTail
 		textField.cell?.truncatesLastVisibleLine = true
 		textField.allowsDefaultTighteningForTruncation = false
 		return textField
@@ -171,6 +171,7 @@ private extension TimelineTableCellView {
 		else {
 			feedNameView.textColor = cellAppearance.feedNameColor
 			dateView.textColor = cellAppearance.dateColor
+			titleView.textColor = cellAppearance.titleColor
 		}
 	}
 
@@ -178,6 +179,7 @@ private extension TimelineTableCellView {
 
 		feedNameView.font = cellAppearance.feedNameFont
 		dateView.font = cellAppearance.dateFont
+		titleView.font = cellAppearance.titleFont
 	}
 
 	func updateTextFields() {
@@ -222,17 +224,7 @@ private extension TimelineTableCellView {
 
 	func updateTitleView() {
 
-		if isEmphasized && isSelected {
-			if let attributedTitle = cellData?.attributedTitle {
-				titleView.attributedStringValue = attributedTitle.rs_attributedStringByMakingTextWhite()
-			}
-		}
-		else {
-			if let attributedTitle = cellData?.attributedTitle {
-				titleView.attributedStringValue = attributedTitle
-			}
-		}
-
+		titleView.stringValue = cellData?.title ?? ""
 		needsLayout = true
 	}
 

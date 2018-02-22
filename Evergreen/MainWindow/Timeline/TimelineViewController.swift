@@ -133,8 +133,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	private func fontSizeDidChange() {
 
-		TimelineCellData.emptyCache()
-
 		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: false, fontSize: fontSize)
 		cellAppearanceWithAvatar = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: true, fontSize: fontSize)
 		updateRowHeights()
@@ -591,7 +589,7 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {
 
 		cell.objectValue = nil
-		cell.cellData = emptyCellData
+		cell.cellData = TimelineCellData()
 	}
 }
 
