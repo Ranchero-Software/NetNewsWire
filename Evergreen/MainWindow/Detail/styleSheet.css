@@ -30,7 +30,7 @@ a:hover {
 	color: rgba(0, 0, 0, 0.3);
 }
 #articleDateline img {
-	border-radius: 7px;
+	border-radius: 4px;
 }
 .articleDate {
 	color: #2db6ff;
@@ -47,7 +47,7 @@ a:hover {
 	text-align: left;
 }
 #authorAvatar img {
-	border-radius: 5px;
+	border-radius: 4px;
 }
 .rightAlign {
 	text-align: right;
@@ -70,13 +70,13 @@ a:hover {
 	height: 68px;
 }
 .avatar img {
-	border-radius: 7px;
+	border-radius: 4px;
 }
 .headerContainer a:link, .headerContainer a:visited {
 	color: rgba(0, 0, 0, 0.3);
 }
 .feedIcon {
-	border-radius: 5px;
+	border-radius: 4px;
 }
 h1 {
 	line-height: 1.15em;
