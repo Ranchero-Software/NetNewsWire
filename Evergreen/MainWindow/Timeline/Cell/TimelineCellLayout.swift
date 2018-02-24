@@ -54,7 +54,9 @@ struct TimelineCellLayout {
 			lastTextRect = textRect
 		}
 		else if numberOfLinesForTitle == 1 {
-			lastTextRect = summaryRect
+			if summaryRect.height > 0.1 {
+				lastTextRect = summaryRect
+			}
 		}
 		let dateRect = TimelineCellLayout.rectForDate(textBoxRect, lastTextRect, appearance, cellData)
 		let feedNameRect = TimelineCellLayout.rectForFeedName(textBoxRect, dateRect, appearance, cellData)
