@@ -1,10 +1,10 @@
 body {
 	color: #444;
 	background-color: white;
-	margin-top: 42px;
+	margin-top: 32px;
 	margin-bottom: 100px;
-	margin-left: 80px;
-	margin-right: 80px;
+	margin-left: 96px;
+	margin-right: 96px;
 	font-family: -apple-system;
 	font-size: 18px;
 }
@@ -19,25 +19,15 @@ a:hover {
 }
 .articleDateline {
 	color: rgba(0, 0, 0, 0.3);
-	border-bottxom: 1px solid rgba(0, 0, 0, 0.1);
-	border-txop: 1px solid rgba(0, 0, 0, 0.1);
+	border-bxottom: 1px solid rgba(0, 0, 0, 0.1);
+	border-toxp: 1px solid rgba(0, 0, 0, 0.1);
 	padding-bottom: 0px;
 	padding-top: 0px;
-	margin-bottom: 25px;
+	margin-bottom: 32px;
 	font-style: italic;
 }
-.articleDateline a:link, #articleDateline a:visited {
+.articleDateline, .articleDateline a:link, .articleDateline a:visited {
 	color: rgba(0, 0, 0, 0.3);
-}
-#articleDateline img {
-	border-radius: 4px;
-}
-.articleDate {
-	color: #2db6ff;
-	text-align: right;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.5);
-	padding-bottom: 8px;
-	margin-bottom: 1em;
 }
 #articleDescription {
 	line-height: 1.5em;
@@ -57,9 +47,14 @@ a:hover {
 }
 .articleTitle {
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	padding-top: 1em;
+	padding-bottom: 0;
+	margin-bottom: 0;
 }
 .headerContainer {
-	border-botxtom: 1px solid rgba(0, 0, 0, 0.1);
+	color: rgba(0, 0, 0, 0.3);
+}
+.headerContainer a:link, .headerContainer a:visited {
 	color: rgba(0, 0, 0, 0.3);
 }
 .header {
@@ -72,15 +67,12 @@ a:hover {
 .avatar img {
 	border-radius: 4px;
 }
-.headerContainer a:link, .headerContainer a:visited {
-	color: rgba(0, 0, 0, 0.3);
-}
 .feedIcon {
 	border-radius: 4px;
 }
 h1 {
 	line-height: 1.15em;
-	font-weight: medium;
+	font-weight: bold;
 }
 h1, h2, h3, h4, h5, h6 {
 	font-family: -apple-system, "Helvetica Neue"
