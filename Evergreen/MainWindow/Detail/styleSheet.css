@@ -121,6 +121,7 @@ img[src*="//ads."],
 img[src*="doubleclick"],
 img[src*="feedads"],
 img[src*="feedburner"],
+img[src*="feedblitz"],
 img[src*="share-buttons"] {
 	display: none !important;
 }
