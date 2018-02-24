@@ -21,6 +21,8 @@ class SidebarOutlineView : NSOutlineView {
 		// Don’t allow the pseudo-feeds at the top level to be indented.
 
 		var frame = super.frameOfCell(atColumn: column, row: row)
+		frame.origin.x += 4.0
+		frame.size.width -= 4.0
 
 		let node = item(atRow: row) as! Node
 		guard let parentNode = node.parent, parentNode.isRoot else {
