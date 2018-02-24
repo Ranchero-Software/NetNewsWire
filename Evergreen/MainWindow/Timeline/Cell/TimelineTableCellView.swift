@@ -237,7 +237,8 @@ private extension TimelineTableCellView {
 
 	func updatedLayoutRects() -> TimelineCellLayout {
 
-		return TimelineCellLayout(width: bounds.width, cellData: cellData, appearance: cellAppearance)
+		let layout = TimelineCellLayout(width: bounds.width, cellData: cellData, appearance: cellAppearance)
+		return layout.adjustedForHeight(bounds.height)
 	}
 
 	func updateAppearance() {

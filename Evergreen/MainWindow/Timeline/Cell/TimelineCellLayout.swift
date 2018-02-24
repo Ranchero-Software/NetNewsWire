@@ -76,11 +76,43 @@ struct TimelineCellLayout {
 		let layout = TimelineCellLayout(width: width, cellData: cellData, appearance: appearance)
 		return layout.height
 	}
+
+	func adjustedForHeight(_ newHeight: CGFloat) -> TimelineCellLayout {
+
+		// When the cell is laying out subviews, the height of the cell is known,
+		// and that height may not match the ideal height calculated in TimelineCellLayout.
+		// In that case we may need to adjust the layout.
+		
+		if abs(newHeight - height) < 0.01 {
+			return self
+		}
+
+		return TimelineCellLayout(otherLayout: self, height: newHeight)
+	}
 }
 
 // MARK: - Calculate Rects
 
 private extension TimelineCellLayout {
+
+	private init(otherLayout: TimelineCellLayout, height: CGFloat) {
+
+		self.width = otherLayout.width
+		self.feedNameRect = otherLayout.feedNameRect
+		self.dateRect = otherLayout.dateRect
+		self.titleRect = otherLayout.titleRect
+		self.numberOfLinesForTitle = otherLayout.numberOfLinesForTitle
+		self.summaryRect = otherLayout.summaryRect
+		self.textRect = otherLayout.textRect
+		self.unreadIndicatorRect = otherLayout.unreadIndicatorRect
+		self.starRect = otherLayout.starRect
+		self.paddingBottom = otherLayout.paddingBottom
+
+		let bounds = NSRect(x: 0.0, y: 0.0, width: otherLayout.width, height: height)
+		self.avatarImageRect = RSRectCenteredVerticallyInRect(otherLayout.avatarImageRect, bounds)
+
+		self.height = height
+	}
 
 	static func rectForTextBox(_ appearance: TimelineCellAppearance, _ cellData: TimelineCellData, _ width: CGFloat) -> NSRect {
 
