@@ -57,8 +57,8 @@ final class SidebarStatusBarView: NSView {
 			return
 		}
 
-		let color = NSColor(calibratedWhite: 0.96, alpha: 1.0)
-		layer.backgroundColor = color.cgColor
+//		let color = NSColor(calibratedWhite: 0.96, alpha: 1.0)
+		layer.backgroundColor = NSColor.white.cgColor
 		didConfigureLayer = true
 	}
 
