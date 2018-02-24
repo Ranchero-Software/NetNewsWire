@@ -17,7 +17,13 @@ class TimelineTableCellView: NSTableCellView {
 	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
 	private let dateView = TimelineTableCellView.singleLineTextField()
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
-	private let avatarImageView = TimelineTableCellView.imageView(with: AppImages.genericFeedImage, scaling: .scaleProportionallyDown)
+
+	private lazy var avatarImageView: NSImageView = {
+		let imageView = TimelineTableCellView.imageView(with: AppImages.genericFeedImage, scaling: .scaleProportionallyDown)
+		imageView.wantsLayer = true
+		return imageView
+	}()
+
 	private let starView = TimelineTableCellView.imageView(with: AppImages.timelineStar, scaling: .scaleNone)
 
 	private lazy var textFields = {
@@ -27,6 +33,7 @@ class TimelineTableCellView: NSTableCellView {
 	var cellAppearance: TimelineCellAppearance! {
 		didSet {
 			updateTextFields()
+			avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
 			needsLayout = true
 		}
 	}
@@ -297,25 +304,26 @@ private extension TimelineTableCellView {
 
 	func updateAvatar() {
 
-		if !cellData.showAvatar {
-			avatarImageView.image = nil
-			hideView(avatarImageView)
+		// The avatar should be bigger than a favicon. They’re too small; they look weird.
+		guard let image = cellData.avatar, cellData.showAvatar, image.size.height >= 22.0, image.size.width >= 22.0 else {
+			makeAvatarEmpty()
 			return
 		}
 
 		showView(avatarImageView)
-
-		if let image = cellData.avatar {
-			if avatarImageView.image !== image {
-				avatarImageView.image = image
-			}
+		if avatarImageView.image !== image {
+			avatarImageView.image = image
+			needsLayout = true
 		}
-		else {
+	}
+
+	func makeAvatarEmpty() {
+
+		if avatarImageView.image != nil {
 			avatarImageView.image = nil
+			needsLayout = true
 		}
-
-		avatarImageView.wantsLayer = true
-		avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
+		hideView(avatarImageView)
 	}
 
 	func hideView(_ view: NSView) {
