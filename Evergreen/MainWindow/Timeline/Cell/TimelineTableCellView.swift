@@ -12,6 +12,8 @@ import RSCore
 class TimelineTableCellView: NSTableCellView {
 
 	private let titleView = TimelineTableCellView.multiLineTextField()
+	private let summaryView = TimelineTableCellView.singleLineTextField()
+	private let textView = TimelineTableCellView.multiLineTextField()
 	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
 	private let dateView = TimelineTableCellView.singleLineTextField()
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
@@ -19,7 +21,7 @@ class TimelineTableCellView: NSTableCellView {
 	private let starView = TimelineTableCellView.imageView(with: AppImages.timelineStar, scaling: .scaleNone)
 
 	private lazy var textFields = {
-		return [self.dateView, self.feedNameView, self.titleView]
+		return [self.dateView, self.feedNameView, self.titleView, self.summaryView, self.textView]
 	}()
 
 	var cellAppearance: TimelineCellAppearance! {
@@ -101,9 +103,13 @@ class TimelineTableCellView: NSTableCellView {
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
 		
 		let layoutRects = updatedLayoutRects()
-		titleView.rs_setFrameIfNotEqual(layoutRects.titleRect)
-		unreadIndicatorView.rs_setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
+
+		setFrame(for: titleView, rect: layoutRects.titleRect)
+		setFrame(for: summaryView, rect: layoutRects.summaryRect)
+		setFrame(for: textView, rect: layoutRects.textRect)
+
 		dateView.rs_setFrameIfNotEqual(layoutRects.dateRect)
+		unreadIndicatorView.rs_setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
 		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
 		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
@@ -161,6 +167,17 @@ private extension TimelineTableCellView {
 		return imageView
 	}
 
+	func setFrame(for textField: NSTextField, rect: NSRect) {
+
+		if Int(floor(rect.height)) == 0 || Int(floor(rect.width)) == 0 {
+			hideView(textField)
+		}
+		else {
+			showView(textField)
+			textField.rs_setFrameIfNotEqual(rect)
+		}
+	}
+
 	func updateTextFieldColors() {
 
 		updateTitleView()
@@ -172,6 +189,8 @@ private extension TimelineTableCellView {
 			feedNameView.textColor = cellAppearance.feedNameColor
 			dateView.textColor = cellAppearance.dateColor
 			titleView.textColor = cellAppearance.titleColor
+			summaryView.textColor = cellAppearance.textColor
+			textView.textColor = cellAppearance.textOnlyColor
 		}
 	}
 
@@ -180,6 +199,8 @@ private extension TimelineTableCellView {
 		feedNameView.font = cellAppearance.feedNameFont
 		dateView.font = cellAppearance.dateFont
 		titleView.font = cellAppearance.titleFont
+		summaryView.font = cellAppearance.textFont
+		textView.font = cellAppearance.textOnlyFont
 	}
 
 	func updateTextFields() {
@@ -198,11 +219,13 @@ private extension TimelineTableCellView {
 	func commonInit() {
 
 		addSubviewAtInit(titleView, hidden: false)
+		addSubviewAtInit(summaryView, hidden: true)
+		addSubviewAtInit(textView, hidden: true)
 		addSubviewAtInit(unreadIndicatorView, hidden: true)
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
-		addSubviewAtInit(avatarImageView, hidden: false)
-		addSubviewAtInit(starView, hidden: false)
+		addSubviewAtInit(avatarImageView, hidden: true)
+		addSubviewAtInit(starView, hidden: true)
 	}
 
 	func updatedLayoutRects() -> TimelineCellLayout {
@@ -224,53 +247,63 @@ private extension TimelineTableCellView {
 
 	func updateTitleView() {
 
-		titleView.stringValue = cellData?.title ?? ""
-		needsLayout = true
+		updateTextFieldText(titleView, cellData?.title)
+	}
+
+	func updateSummaryView() {
+
+		updateTextFieldText(summaryView, cellData?.text)
+	}
+
+	func updateTextView() {
+
+		updateTextFieldText(textView, cellData?.text)
 	}
 
 	func updateDateView() {
 
-		dateView.stringValue = cellData.dateString
-		needsLayout = true
+		updateTextFieldText(dateView, cellData.dateString)
+	}
+
+	func updateTextFieldText(_ textField: NSTextField, _ text: String?) {
+
+		let s = text ?? ""
+		if textField.stringValue != s {
+			textField.stringValue = s
+			needsLayout = true
+		}
 	}
 
 	func updateFeedNameView() {
 
 		if cellData.showFeedName {
-			if feedNameView.isHidden {
-				feedNameView.isHidden = false
-			}
-			feedNameView.stringValue = cellData.feedName
+			showView(feedNameView)
+			updateTextFieldText(feedNameView, cellData.feedName)
 		}
 		else {
-			if !feedNameView.isHidden {
-				feedNameView.isHidden = true
-			}
+			hideView(feedNameView)
 		}
 	}
 
 	func updateUnreadIndicator() {
 
-		let shouldHide = cellData.read || cellData.starred
-		if unreadIndicatorView.isHidden != shouldHide {
-			unreadIndicatorView.isHidden = shouldHide
-		}
+		showOrHideView(unreadIndicatorView, cellData.read || cellData.starred)
 	}
 
 	func updateStarView() {
 
-		starView.isHidden = !cellData.starred
+		showOrHideView(starView, !cellData.starred)
 	}
 
 	func updateAvatar() {
 
 		if !cellData.showAvatar {
 			avatarImageView.image = nil
-			avatarImageView.isHidden = true
+			hideView(avatarImageView)
 			return
 		}
 
-		avatarImageView.isHidden = false
+		showView(avatarImageView)
 
 		if let image = cellData.avatar {
 			if avatarImageView.image !== image {
@@ -285,9 +318,30 @@ private extension TimelineTableCellView {
 		avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
 	}
 
+	func hideView(_ view: NSView) {
+
+		if !view.isHidden {
+			view.isHidden = true
+		}
+	}
+
+	func showView(_ view: NSView) {
+
+		if view.isHidden {
+			view.isHidden = false
+		}
+	}
+
+	func showOrHideView(_ view: NSView, _ shouldHide: Bool) {
+
+		shouldHide ? hideView(view) : showView(view)
+	}
+
 	func updateSubviews() {
 
 		updateTitleView()
+		updateSummaryView()
+		updateTextView()
 		updateDateView()
 		updateFeedNameView()
 		updateUnreadIndicator()

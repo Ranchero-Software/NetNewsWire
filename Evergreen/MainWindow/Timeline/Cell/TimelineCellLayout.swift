@@ -48,7 +48,15 @@ struct TimelineCellLayout {
 		let (titleRect, numberOfLinesForTitle) = TimelineCellLayout.rectForTitle(textBoxRect, appearance, cellData)
 		let summaryRect = numberOfLinesForTitle > 0 ? TimelineCellLayout.rectForSummary(textBoxRect, titleRect, numberOfLinesForTitle, appearance, cellData) : NSRect.zero
 		let textRect = numberOfLinesForTitle > 0 ? NSRect.zero : TimelineCellLayout.rectForText(textBoxRect, appearance, cellData)
-		let dateRect = TimelineCellLayout.rectForDate(textBoxRect, titleRect, appearance, cellData)
+
+		var lastTextRect = titleRect
+		if numberOfLinesForTitle == 0 {
+			lastTextRect = textRect
+		}
+		else if numberOfLinesForTitle == 1 {
+			lastTextRect = summaryRect
+		}
+		let dateRect = TimelineCellLayout.rectForDate(textBoxRect, lastTextRect, appearance, cellData)
 		let feedNameRect = TimelineCellLayout.rectForFeedName(textBoxRect, dateRect, appearance, cellData)
 
 		textBoxRect.size.height = ceil([titleRect, summaryRect, textRect, dateRect, feedNameRect].maxY() - textBoxRect.origin.y)
