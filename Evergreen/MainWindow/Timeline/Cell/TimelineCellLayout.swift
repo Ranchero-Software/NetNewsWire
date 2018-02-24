@@ -148,7 +148,7 @@ private extension TimelineCellLayout {
 			return NSZeroRect
 		}
 
-		return rectOfLineBelow(textBoxRect, dateRect, appearance.titleBottomMargin, cellData.feedName, appearance.feedNameFont)
+		return rectOfLineBelow(textBoxRect, dateRect, appearance.dateMarginBottom, cellData.feedName, appearance.feedNameFont)
 	}
 
 	static func rectOfLineBelow(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ topMargin: CGFloat, _ value: String, _ font: NSFont) -> NSRect {

@@ -80,7 +80,7 @@
 					<key>paddingRight</key>
 					<integer>20</integer>
 					<key>paddingTop</key>
-					<integer>16</integer>
+					<integer>14</integer>
 					<key>paddingBottom</key>
 					<integer>16</integer>
 					<key>feedNameColor</key>
@@ -92,9 +92,9 @@
 					<key>dateMarginLeft</key>
 					<integer>10</integer>
 					<key>dateMarginBottom</key>
-					<integer>2</integer>
+					<integer>1</integer>
 					<key>textColor</key>
-					<string>aaaaaa</string>
+					<string>999999</string>
 					<key>textOnlyColor</key>
 					<string>222222</string>
 					<key>titleColor</key>

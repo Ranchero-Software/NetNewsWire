@@ -18,6 +18,7 @@ struct TimelineCellAppearance: Equatable {
 
 	let dateColor: NSColor
 	let dateMarginLeft: CGFloat
+	let dateMarginBottom: CGFloat
 	let dateFont: NSFont
 	
 	let titleColor: NSColor
@@ -61,8 +62,9 @@ struct TimelineCellAppearance: Equatable {
 		self.feedNameFont = NSFont.systemFont(ofSize: smallItemFontSize)
 
 		self.dateColor = theme.color(forKey: "MainWindow.Timeline.cell.dateColor")
-		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize)
+		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize, weight: NSFont.Weight.bold)
 		self.dateMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginLeft")
+		self.dateMarginBottom = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginBottom")
 		
 		self.titleColor = theme.color(forKey: "MainWindow.Timeline.cell.titleColor")
 		self.titleFont = NSFont.systemFont(ofSize: largeItemFontSize, weight: NSFont.Weight.semibold)
