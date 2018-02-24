@@ -117,6 +117,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
         NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
 		pullObjectsFromDisk()
 		
@@ -447,23 +448,34 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	@objc func displayNameDidChange(_ note: Notification) {
+	@objc func childrenDidChange(_ note: Notification) {
 
-		if let feed = note.object as? Feed, let feedAccount = feed.account, feedAccount === self {
+		guard let object = note.object else {
+			return
+		}
+		if let account = object as? Account, account === self {
 			dirty = true
 		}
-		if let folder = note.object as? Folder, let folderAccount = folder.account, folderAccount === self {
+		if let folder = object as? Folder, folder.account === self {
+			dirty = true
+		}
+	}
+
+	@objc func displayNameDidChange(_ note: Notification) {
+
+		if let feed = note.object as? Feed, feed.account === self {
+			dirty = true
+		}
+		if let folder = note.object as? Folder, folder.account === self {
 			dirty = true
 		}
 	}
 
 	@objc func saveToDiskIfNeeded() {
 
-		guard dirty else {
-			return
+		if dirty {
+			saveToDisk()
 		}
-		saveToDisk()
-		dirty = false
 	}
 
 	// MARK: - Equatable
@@ -563,6 +575,7 @@ private extension Account {
 		catch let error as NSError {
 			NSApplication.shared.presentError(error)
 		}
+		dirty = false
 	}
 }
 
