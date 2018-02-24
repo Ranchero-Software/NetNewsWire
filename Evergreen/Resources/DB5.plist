@@ -118,7 +118,7 @@
 					<key>avatarAdjustmentTop</key>
 					<integer>4</integer>
 					<key>avatarCornerRadius</key>
-					<integer>7</integer>
+					<integer>4</integer>
 					<key>starDimension</key>
 					<integer>13</integer>
 					<key>titleMaximumLines</key>
