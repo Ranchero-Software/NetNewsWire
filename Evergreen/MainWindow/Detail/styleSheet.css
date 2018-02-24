@@ -12,7 +12,7 @@ a {
 	text-decoration: none;
 }
 a, a:link, a:visited {
-	color: #015cdc;
+	color: hsla(201, 100%, 45%, 1);
 }
 a:hover {
 	text-decoration: underline;
