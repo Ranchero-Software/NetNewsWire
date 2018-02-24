@@ -67,7 +67,7 @@
 				<key>gridColorAlpha</key>
 				<real>0.1</real>
 				<key>drawsGrid</key>
-				<false/>
+				<true/>
 				<key>header</key>
 				<dict>
 					<key>backgroundColor</key>
