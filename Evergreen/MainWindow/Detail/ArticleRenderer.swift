@@ -238,9 +238,20 @@ class ArticleRenderer {
 
 		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
 			if let s = base64String(forImage: favicon) {
-				var dimension = min(favicon.size.height, 48) // Assuming square images.
+				var dimension = min(favicon.size.height, CGFloat(avatarDimension)) // Assuming square images.
 				dimension = max(dimension, 16) // Some favicons say they’re < 16. Force them larger.
-				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=\(dimension) width=\(dimension) />"
+				if dimension >= CGFloat(avatarDimension) * 0.8 { //Close enough to scale up.
+					dimension = CGFloat(avatarDimension)
+				}
+
+				let imgTag: String
+				if dimension >= CGFloat(avatarDimension) {
+					// Use rounded corners.
+					imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=\(Int(dimension)) width=\(Int(dimension)) style=\"border-radius:4px\" />"
+				}
+				else {
+					imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=\(Int(dimension)) width=\(Int(dimension)) />"
+				}
 				ArticleRenderer.faviconImgTagCache[feed] = imgTag
 				return imgTag
 			}
