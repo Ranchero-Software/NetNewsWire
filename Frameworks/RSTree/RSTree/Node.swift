@@ -16,7 +16,7 @@ public final class Node: Hashable {
 	public let representedObject: AnyObject
 	public var canHaveChildNodes = false
 	public var isGroupItem = false
-	public var childNodes: [Node]?
+	public var childNodes = [Node]()
 	public let hashValue: Int
 	private static var incrementingID = 0
 
@@ -28,7 +28,7 @@ public final class Node: Hashable {
 	}
 	
 	public var numberOfChildNodes: Int {
-		return childNodes?.count ?? 0
+		return childNodes.count
 	}
 	
 	public var indexPath: IndexPath {
@@ -87,9 +87,6 @@ public final class Node: Hashable {
 
 	public func childAtIndex(_ index: Int) -> Node? {
 		
-		guard let childNodes = childNodes else {
-			return nil
-		}
 		if index >= childNodes.count || index < 0 {
 			return nil
 		}
@@ -98,7 +95,7 @@ public final class Node: Hashable {
 
 	public func indexOfChild(_ node: Node) -> Int? {
 		
-		return childNodes?.index{ (oneChildNode) -> Bool in
+		return childNodes.index{ (oneChildNode) -> Bool in
 			oneChildNode === node
 		}
 	}
@@ -189,9 +186,6 @@ private extension Node {
 
 	func findNodeRepresentingObject(_ obj: AnyObject, recursively: Bool = false) -> Node? {
 
-		guard let childNodes = childNodes else {
-			return nil
-		}
 		for childNode in childNodes {
 			if childNode.representedObject === obj {
 				return childNode
