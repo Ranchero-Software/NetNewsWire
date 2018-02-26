@@ -129,7 +129,7 @@ import RSCore
 
 		let nodesToDelete = treeController.normalizedSelectedNodes(selectedNodes)
         
-        guard let undoManager = undoManager, let deleteCommand = DeleteFromSidebarCommand(nodesToDelete: nodesToDelete, undoManager: undoManager) else {
+		guard let undoManager = undoManager, let deleteCommand = DeleteFromSidebarCommand(nodesToDelete: nodesToDelete, treeController: treeController, undoManager: undoManager) else {
             return
         }
         
