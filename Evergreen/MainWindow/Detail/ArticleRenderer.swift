@@ -222,7 +222,7 @@ class ArticleRenderer {
 
 		func html(dimension: Int) -> String {
 
-			let imageTag = "<img src=\"\(imageURL)\" width=\"\(dimension)\" height=\"\(dimension)\""
+			let imageTag = "<img src=\"\(imageURL)\" width=\(dimension) height=\(dimension) />"
 			if let url = url {
 				return linkWithText(imageTag, url)
 			}
@@ -238,7 +238,9 @@ class ArticleRenderer {
 
 		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
 			if let s = base64String(forImage: favicon) {
-				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=16 width=16 />"
+				var dimension = min(favicon.size.height, 48) // Assuming square images.
+				dimension = max(dimension, 16) // Some favicons say they’re < 16. Force them larger.
+				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=\(dimension) width=\(dimension) />"
 				ArticleRenderer.faviconImgTagCache[feed] = imgTag
 				return imgTag
 			}
