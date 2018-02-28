@@ -1,10 +1,10 @@
 body {
 	color: #444;
 	background-color: white;
-	margin-top: 32px;
+	margin-top: 0px;
 	margin-bottom: 100px;
-	margin-left: 64px;
-	margin-right: 64px;
+	margin-left: 0px;
+	margin-right: 0px;
 	font-family: -apple-system;
 	font-size: 18px;
 }
@@ -16,6 +16,10 @@ a, a:link, a:visited {
 }
 a:hover {
 	text-decoration: underline;
+}
+.content {
+	margin-left: 64px;
+	margin-right: 64px;
 }
 .articleDateline {
 	color: rgba(0, 0, 0, 0.3);
@@ -50,13 +54,19 @@ a:hover {
 	margin-bottom: 0;
 }
 .headerContainer {
-	color: rgba(0, 0, 0, 0.3);
+	padding-top: 10px;
+	padding-bottom: 10px;
+	background-color: rgba(66, 66, 73, 1.0);
 }
-.headerContainer a:link, .headerContainer a:visited {
-	color: rgba(0, 0, 0, 0.3);
+/*.headerContainer a:link, .headerContainer a:visited {*/
+/*	color: rgba(1, 1, 1, 0.3);*/
+/*}*/
+.header, .header a:link, .header a:visited {
+	color: rgba(255, 255, 255, 0.75);
 }
 .header {
-	color: rgba(0, 0, 0, 0.3);
+	padding-left: 64px;
+	padding-right: 64px;
 }
 .headerTable {
 	width: 100%;
