@@ -163,12 +163,10 @@ class ArticleRenderer {
 		var d = [String: String]()
 
 		let title = titleOrTitleLink()
-		d["newsitem_title"] = title
-		d["article_title"] = title
+		d["title"] = title
 
 		let body = article.body == nil ? "" : article.body
-		d["article_description"] = body
-		d["newsitem_description"] = body
+		d["body"] = body
 
 		d["avatars"] = ""
 		var didAddAvatar = false
@@ -462,7 +460,7 @@ class ArticleRenderer {
 
 		s += "\n\n</body></html>"
 
-//	print(s)
+	//print(s)
 
 		return s
 

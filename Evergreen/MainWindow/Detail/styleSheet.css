@@ -1,10 +1,10 @@
 body {
 	color: #444;
 	background-color: white;
-	margin-top: 0px;
-	margin-bottom: 100px;
-	margin-left: 0px;
-	margin-right: 0px;
+	margin-top: 20px;
+	margin-bottom: 64px;
+	margin-left: 64px;
+	margin-right: 64px;
 	font-family: -apple-system;
 	font-size: 18px;
 }
@@ -12,33 +12,33 @@ a {
 	text-decoration: none;
 }
 a, a:link, a:visited {
-	color: hsla(215, 99%, 43%, 1);
+	color: #416ED2;
 }
 a:hover {
 	text-decoration: underline;
 }
-.content {
-	margin-left: 64px;
-	margin-right: 64px;
+
+.headerTable {
+	width: 100%;
+	height: 68px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
-.articleDateline {
-	color: rgba(0, 0, 0, 0.3);
-	padding-bottom: 0px;
-	padding-top: 0px;
-	margin-bottom: 26px;
-	font-weight: medium;
-}
-.articleDateline, .articleDateline a:link, .articleDateline a:visited {
+.header a:link, .header a:visited {
 	color: rgba(0, 0, 0, 0.3);
 }
-#articleDescription {
-	line-height: 1.5em;
+.header {
+	color: rgba(0, 0, 0, 0.3);
 }
-#authorAvatar {
-	margin-top: 2em;
-	text-align: left;
+.feedlink {
+	font-weight: bold;
 }
-#authorAvatar img {
+.feedlink a:link, .feedlink a:visited {
+	color: rgba(0, 0, 0, 0.6);
+}
+.avatar img {
+	border-radius: 4px;
+}
+.feedIcon {
 	border-radius: 4px;
 }
 .rightAlign {
@@ -47,43 +47,26 @@ a:hover {
 .leftAlign {
 	text-align: left;
 }
+
 .articleTitle {
-	border-top: 1px solid rgba(0, 0, 0, 0.1);
-	padding-top: 1em;
-	padding-bottom: 0;
-	margin-bottom: 0;
+	margin-top: 26px;
 }
-.headerContainer {
-	padding-top: 10px;
-	padding-bottom: 10px;
-	background-color: rgba(66, 66, 73, 1.0);
+
+.articleDateline {
+	color: rgba(0, 0, 0, 0.3);
+	margin-bottom: 25px;
+	font-weight: bold;
 }
-/*.headerContainer a:link, .headerContainer a:visited {*/
-/*	color: rgba(1, 1, 1, 0.3);*/
-/*}*/
-.header, .header a:link, .header a:visited {
-	color: rgba(255, 255, 255, 0.75);
+.articleDateline, .articleDateline a:link, .articleDateline a:visited {
+	color: rgba(0, 0, 0, 0.3);
 }
-.header {
-	padding-left: 64px;
-	padding-right: 64px;
-}
-.headerTable {
-	width: 100%;
-	height: 68px;
-}
-.avatar img {
-	border-radius: 4px;
-}
-.feedIcon {
-	border-radius: 4px;
+
+.articleBody {
+	line-height: 1.6em;
 }
 h1 {
 	line-height: 1.15em;
 	font-weight: bold;
-}
-h1, h2, h3, h4, h5, h6 {
-	font-family: -apple-system, "Helvetica Neue"
 }
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
