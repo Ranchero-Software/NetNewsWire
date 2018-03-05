@@ -11,11 +11,17 @@ import Account
 import Data
 
 extension NSApplication : ScriptingObjectContainer {
-    
+
+    // MARK: --- ScriptingObjectContainer protocol ---
+
     var scriptingClassDescription: NSScriptClassDescription {
         return NSApplication.shared.classDescription as! NSScriptClassDescription
     }
-    
+
+    func deleteElement(_ element:ScriptingObject) {
+        print ("delete event not handled")
+    }
+
     var scriptingKey: String {
         return "application"
     }

@@ -7,10 +7,32 @@
     
     <suite name="Standard Suite" code="core" description="Subset of the Standard Suite.">
         <access-group identifier="com.ranchero.Evergreen" access="rw"/>
+        <command name="delete" code="coredelo" description="Delete an object.">
+            <cocoa class="Evergreen.EvergreenDeleteCommand"/>
+            <direct-parameter type="specifier" description="The object(s) to delete."/>
+        </command>
+
         <command name="exists" code="coredoex" description="Verify that an object exists.">
             <cocoa class="Evergreen.EvergreenExistsCommand"/>
             <direct-parameter type="any" requires-access="r" description="The object(s) to check."/>
             <result type="boolean" description="Does the object(s) exist?"/>
+        </command>
+
+        <command name="make" code="corecrel" description="Create a new object.">
+            <cocoa class="Evergreen.EvergreenCreateElementCommand"/>
+            <parameter name="new" code="kocl" type="type" description="The class of the new object.">
+                <cocoa key="ObjectClass"/>
+            </parameter>
+            <parameter name="at" code="insh" type="location specifier" optional="yes" description="The location at which to insert the object.">
+                <cocoa key="Location"/>
+            </parameter>
+            <parameter name="with data" code="data" type="any" optional="yes" description="The initial contents of the object.">
+                <cocoa key="ObjectData"/>
+            </parameter>
+            <parameter name="with properties" code="prdt" type="record" optional="yes" description="The initial values for properties of the object.">
+                <cocoa key="KeyDictionary"/>
+            </parameter>
+            <result type="specifier" description="The new object."/>
         </command>
 
         <class name="application" code="capp" description="The application's top-level scripting object.">
@@ -140,6 +162,9 @@
             <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the folder">
                 <cocoa key="opmlRepresentation"/>
             </property>
+            <element type="feed">
+                <cocoa key="feeds"/>
+            </element>
         </class>
 
         <class name="article" code="Arcl" plural="articles" description="An article in a feed">

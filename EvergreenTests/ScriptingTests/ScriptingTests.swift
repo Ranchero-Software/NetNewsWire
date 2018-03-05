@@ -56,6 +56,10 @@ class ScriptingTests: AppleScriptXCTestCase {
         _ = doIndividualScript(filename: "testTitleOfArticlesWhose")
     }
 
+    func testIterativeCreateAndDeleteScript() {
+        _ = doIndividualScriptWithExpectation(filename: "testIterativeCreateAndDeleteFeed")
+    }
+
     func doIndividualScriptWithExpectation(filename:String) {
         let queue = DispatchQueue(label:"testQueue")
         let scriptExpectation = self.expectation(description: filename+"expectation")

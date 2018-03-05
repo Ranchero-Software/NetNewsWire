@@ -47,6 +47,10 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
+    
+    func deleteElement(_ element:ScriptingObject) {
+        print ("delete event not handled")
+    }
 
     // MARK: --- Scriptable properties ---
     
