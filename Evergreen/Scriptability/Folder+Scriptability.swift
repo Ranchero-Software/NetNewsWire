@@ -8,9 +8,11 @@
 
 import Foundation
 import Account
+import Data
+import RSCore
 
 @objc(ScriptableFolder)
-class ScriptableFolder: NSObject, UniqueIdScriptingObject {
+class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let folder:Folder
     let container:ScriptingObjectContainer
@@ -41,6 +43,58 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject {
         return folder.folderID
     }
     
+    // MARK: --- ScriptingObjectContainer protocol ---
+    
+    var scriptingClassDescription: NSScriptClassDescription {
+        return self.classDescription as! NSScriptClassDescription
+    }
+ 
+    func deleteElement(_ element:ScriptingObject) {
+        if let scriptableFolder = element as? ScriptableFolder {
+            BatchUpdate.shared.perform {
+                folder.deleteFolder(scriptableFolder.folder)
+            }
+        } else if let scriptableFeed = element as? ScriptableFeed {
+            BatchUpdate.shared.perform {
+                folder.deleteFeed(scriptableFeed.feed)
+            }
+        }
+    }
+
+    // MARK: --- handle NSCreateCommand ---
+    /*
+        handle an AppleScript like
+           make new folder in account X with properties {name:"new folder name"}
+        or
+           tell account X to make new folder at end with properties {name:"new folder name"}
+    */
+    class func handleCreateElement(command:NSCreateCommand) -> Any?  {
+        guard command.isCreateCommand(forClass:"fold") else { return nil }
+        let name = command.property(forKey:"name") as? String ?? ""
+
+        // some combination of the tell target and the location specifier ("in" or "at")
+        // identifies where the new folder should be created
+        let (account, folder) = command.accountAndFolderForNewChild()
+        guard folder == nil else {
+            print("support for folders within folders is NYI");
+            return nil
+        }
+        let scriptableAccount = ScriptableAccount(account)        
+        if let newFolder = account.ensureFolder(with:name) {
+            let scriptableFolder = ScriptableFolder(newFolder, container:scriptableAccount)
+            return(scriptableFolder.objectSpecifier)
+        }
+        return nil
+    }
+    
+    // MARK: --- Scriptable elements ---
+    
+    @objc(feeds)
+    var feeds:NSArray  {
+        let feeds = folder.children.compactMap { $0 as? Feed }
+        return feeds.map { ScriptableFeed($0, container:self) } as NSArray
+    }
+
     // MARK: --- Scriptable properties ---
     
     @objc(uniqueId)

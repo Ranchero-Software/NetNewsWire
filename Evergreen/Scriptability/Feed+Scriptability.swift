@@ -54,8 +54,10 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         return self.classDescription as! NSScriptClassDescription
     }
     
+    func deleteElement(_ element:ScriptingObject) {
+    }
 
-    // MARK: --- Create Element Handlers ---
+    // MARK: --- handle NSCreateCommand ---
 
     class func parsedFeedForURL(_ urlString:String, _ completionHandler: @escaping (_ parsedFeed: ParsedFeed?) -> Void) {
         guard let url = URL(string: urlString) else {
@@ -79,105 +81,51 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         return url
     }
     
-    class func accountAndFolderForNewFeed(appleEvent:NSAppleEventDescriptor?) -> (Account, Folder?) {
-        var account = AccountManager.shared.localAccount
-        var folder:Folder? = nil
-        if let appleEvent = appleEvent {
-            var descriptorToConsider:NSAppleEventDescriptor?
-            if let insertionLocationDescriptor = appleEvent.paramDescriptor(forKeyword:keyAEInsertHere) {
-                 print("insertionLocation : \(insertionLocationDescriptor)")
-                 // insertion location can be a typeObjectSpecifier, e.g.  'in account "Acct"'
-                 // or a typeInsertionLocation, e.g.   'at end of folder "
-                 if (insertionLocationDescriptor.descriptorType == "insl".FourCharCode())  {
-                     descriptorToConsider = insertionLocationDescriptor.forKeyword("kobj".FourCharCode())
-                 } else if ( insertionLocationDescriptor.descriptorType == "obj ".FourCharCode())  {
-                     descriptorToConsider = insertionLocationDescriptor
-                 }
-            } else if let subjectDescriptor = appleEvent.attributeDescriptor(forKeyword:"subj".FourCharCode()) {
-                descriptorToConsider = subjectDescriptor
-            }
-            
-            if let descriptorToConsider = descriptorToConsider {
-                guard let newContainerSpecifier = NSScriptObjectSpecifier(descriptor:descriptorToConsider) else {return (account, folder)}
-                let newContainer = newContainerSpecifier.objectsByEvaluatingSpecifier
-                if let scriptableAccount = newContainer as? ScriptableAccount {
-                    account = scriptableAccount.account
-                } else if let scriptableFolder = newContainer as? ScriptableFolder {
-                    if let folderAccount = scriptableFolder.folder.account {
-                        folder = scriptableFolder.folder
-                        account = folderAccount
-                    }
-                }
-            }
-            print("found account : \(account)")
-            print("found folder : \(folder)")
+    class func scriptableFeed(_ feed:Feed, account:Account, folder:Folder?) -> ScriptableFeed  {
+        let scriptableAccount = ScriptableAccount(account)
+        if let folder = folder {
+            let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
+            return ScriptableFeed(feed, container:scriptableFolder)
+        } else  {
+            return ScriptableFeed(feed, container:scriptableAccount)
         }
-        return (account, folder)
     }
     
     class func handleCreateElement(command:NSCreateCommand) -> Any?  {
-        let appleEventManager = NSAppleEventManager.shared()
-        if let receivers = command.receiversSpecifier  {
-            print("receivers : \(receivers)")
-        }
-        if let evaluatedReceivers = command.evaluatedReceivers  {
-            print("evaluatedReceivers : \(evaluatedReceivers)")
-        }
-        if let evaluatedArguments = command.evaluatedArguments  {
-            print("evaluatedArguments : \(evaluatedArguments)")
-        }
-        if let directObject = command.directParameter  {
-            print("directObject : \(directObject)")
-        }
-        if let appleEvent = command.appleEvent  { // keyDirectObject
-            print("appleEvent : \(appleEvent)")
-            if let subjectDescriptor = appleEvent.attributeDescriptor(forKeyword:"subj".FourCharCode()) {
-                print("subjectDescriptor : \(subjectDescriptor)")
-                let subjectObjectSpecifier = NSScriptObjectSpecifier(descriptor:subjectDescriptor)
-                let subjects = subjectObjectSpecifier?.objectsByEvaluatingSpecifier
-                print("resolvedSubjects : \(subjects)")
-            }
-        }
-        let commandDescription = command.commandDescription
-        print("commandDescription : \(commandDescription)")
-        
-        let (account, folder) = self.accountAndFolderForNewFeed(appleEvent:command.appleEvent)
-        let scriptableAccount = ScriptableAccount(account)
+        guard command.isCreateCommand(forClass:"Feed") else { return nil }
         guard let arguments = command.arguments else {return nil}
-        guard let newObjectClass = arguments["ObjectClass"] as? Int else {return nil}
-        guard (newObjectClass.FourCharCode() == "Feed".FourCharCode()) else {return nil}
+        let titleFromArgs = command.property(forKey:"name") as? String
+        let (account, folder) = command.accountAndFolderForNewChild()
         guard let url = self.urlForNewFeed(arguments:arguments) else {return nil}
         
         if let existingFeed = account.existingFeed(withURL:url) {
-            return ScriptableFeed(existingFeed, container:scriptableAccount)
+            return self.scriptableFeed(existingFeed, account:account, folder:folder)
         }
     
-        // at this point, we have to download the feed and parse it.
-        // RS Parser does the callback for the download on the main thread
+        // at this point, we need to download the feed and parse it.
+        // RS Parser does the callback for the download on the main thread (which it probably shouldn't?)
         // because we can't wait here (on the main thread, maybe) for the callback, we have to return from this function
-        // generally, the means handling the appleEvent is over, but to prevent the apple event from returning
-        // we call suspendExecution here.  When we get the callback, we can resume execution
+        // Generally, returning from an AppleEvent handler function means that handling the appleEvent is over,
+        // but we don't yet have the result of the event yet, so we prevent the AppleEvent from returning by calling
+        // suspendExecution().  When we get the callback, we can supply the event result and call resumeExecution()
         command.suspendExecution()
         
         self.parsedFeedForURL(url, { (parsedFeedOptional) in
             if let parsedFeed = parsedFeedOptional {
                 let titleFromFeed = parsedFeed.title
-                let titleFromArgs = arguments["name"] as? String
-             
+                
                 guard let feed = account.createFeed(with: titleFromFeed, editedName: titleFromArgs, url: url) else {
                     command.resumeExecution(withResult:nil)
                     return
                 }
                 account.update(feed, with:parsedFeed, {})
                 
-                // add the feed, puttin git in a folder if needed
-                if account.addFeed(feed, to: folder) {
+                // add the feed, putting it in a folder if needed
+                if account.addFeed(feed, to:folder) {
                     NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
                 }
-
-                let resolvedKeyDictionary = command.resolvedKeyDictionary
-                print("resolvedKeyDictionary : \(resolvedKeyDictionary)")
-                let scriptableFeed = ScriptableFeed(feed, container:ScriptableAccount(account))
+                
+                let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
                 command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
             } else {
                 command.resumeExecution(withResult:nil)
@@ -185,12 +133,9 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         })
         return nil
     }
- 
-
- 
 
     // MARK: --- Scriptable properties ---
-    
+
     @objc(url)
     var url:String  {
         return self.feed.url
