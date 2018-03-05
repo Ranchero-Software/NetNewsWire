@@ -7,35 +7,33 @@
 //
 
 import Foundation
-import RSTextDrawing
+import RSCore
 
 class TimelineTableCellView: NSTableCellView {
 
-	private let titleView = RSMultiLineView(frame: NSZeroRect)
+	private let titleView = TimelineTableCellView.multiLineTextField()
+	private let summaryView = TimelineTableCellView.singleLineTextField()
+	private let textView = TimelineTableCellView.multiLineTextField()
 	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
-	private let dateView = RSSingleLineView(frame: NSZeroRect)
-	private let feedNameView = RSSingleLineView(frame: NSZeroRect)
+	private let dateView = TimelineTableCellView.singleLineTextField()
+	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
-	private let avatarImageView: NSImageView = {
-		let imageView = NSImageView(frame: NSRect.zero)
-		imageView.imageScaling = .scaleProportionallyDown
-		imageView.animates = false
-		imageView.imageAlignment = .alignCenter
-		imageView.image = AppImages.genericFeedImage
+	private lazy var avatarImageView: NSImageView = {
+		let imageView = TimelineTableCellView.imageView(with: AppImages.genericFeedImage, scaling: .scaleProportionallyDown)
+		imageView.wantsLayer = true
 		return imageView
 	}()
 
-	private let starView: NSImageView = {
-		let imageView = NSImageView(frame: NSRect.zero)
-		imageView.imageScaling = .scaleNone
-		imageView.animates = false
-		imageView.imageAlignment = .alignCenter
-		imageView.image = AppImages.timelineStar
-		return imageView
+	private let starView = TimelineTableCellView.imageView(with: AppImages.timelineStar, scaling: .scaleNone)
+
+	private lazy var textFields = {
+		return [self.dateView, self.feedNameView, self.titleView, self.summaryView, self.textView]
 	}()
 
 	var cellAppearance: TimelineCellAppearance! {
 		didSet {
+			updateTextFields()
+			avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
 			needsLayout = true
 		}
 	}
@@ -60,20 +58,18 @@ class TimelineTableCellView: NSTableCellView {
 
 	var isEmphasized = false {
 		didSet {
-			dateView.emphasized = isEmphasized
-			feedNameView.emphasized = isEmphasized
-			titleView.emphasized = isEmphasized
+//			titleView.emphasized = isEmphasized
 			unreadIndicatorView.isEmphasized = isEmphasized
+			updateTextFieldColors()
 			needsDisplay = true
 		}
 	}
 	
 	var isSelected = false {
 		didSet {
-			dateView.selected = isSelected
-			feedNameView.selected = isSelected
-			titleView.selected = isSelected
+//			titleView.selected = isSelected
 			unreadIndicatorView.isSelected = isSelected
+			updateTextFieldColors()
 			needsDisplay = true
 		}
 	}
@@ -114,9 +110,13 @@ class TimelineTableCellView: NSTableCellView {
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
 		
 		let layoutRects = updatedLayoutRects()
-		titleView.rs_setFrameIfNotEqual(layoutRects.titleRect)
-		unreadIndicatorView.rs_setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
+
+		setFrame(for: titleView, rect: layoutRects.titleRect)
+		setFrame(for: summaryView, rect: layoutRects.summaryRect)
+		setFrame(for: textView, rect: layoutRects.textRect)
+
 		dateView.rs_setFrameIfNotEqual(layoutRects.dateRect)
+		unreadIndicatorView.rs_setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
 		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
 		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
@@ -142,6 +142,80 @@ class TimelineTableCellView: NSTableCellView {
 
 private extension TimelineTableCellView {
 
+	static func singleLineTextField() -> NSTextField {
+
+		let textField = NSTextField(labelWithString: "")
+		textField.usesSingleLineMode = true
+		textField.maximumNumberOfLines = 1
+		textField.isEditable = false
+		textField.lineBreakMode = .byTruncatingTail
+		textField.allowsDefaultTighteningForTruncation = false
+		return textField
+	}
+
+	static func multiLineTextField() -> NSTextField {
+
+		let textField = NSTextField(wrappingLabelWithString: "")
+		textField.usesSingleLineMode = false
+		textField.maximumNumberOfLines = 2
+		textField.isEditable = false
+//		textField.lineBreakMode = .byTruncatingTail
+		textField.cell?.truncatesLastVisibleLine = true
+		textField.allowsDefaultTighteningForTruncation = false
+		return textField
+	}
+
+	static func imageView(with image: NSImage?, scaling: NSImageScaling) -> NSImageView {
+
+		let imageView = image != nil ? NSImageView(image: image!) : NSImageView(frame: NSRect.zero)
+		imageView.animates = false
+		imageView.imageAlignment = .alignCenter
+		imageView.imageScaling = scaling
+		return imageView
+	}
+
+	func setFrame(for textField: NSTextField, rect: NSRect) {
+
+		if Int(floor(rect.height)) == 0 || Int(floor(rect.width)) == 0 {
+			hideView(textField)
+		}
+		else {
+			showView(textField)
+			textField.rs_setFrameIfNotEqual(rect)
+		}
+	}
+
+	func updateTextFieldColors() {
+
+		updateTitleView()
+		
+		if isEmphasized && isSelected {
+			textFields.forEach { $0.textColor = NSColor.white }
+		}
+		else {
+			feedNameView.textColor = cellAppearance.feedNameColor
+			dateView.textColor = cellAppearance.dateColor
+			titleView.textColor = cellAppearance.titleColor
+			summaryView.textColor = cellAppearance.textColor
+			textView.textColor = cellAppearance.textOnlyColor
+		}
+	}
+
+	func updateTextFieldFonts() {
+
+		feedNameView.font = cellAppearance.feedNameFont
+		dateView.font = cellAppearance.dateFont
+		titleView.font = cellAppearance.titleFont
+		summaryView.font = cellAppearance.textFont
+		textView.font = cellAppearance.textOnlyFont
+	}
+
+	func updateTextFields() {
+
+		updateTextFieldColors()
+		updateTextFieldFonts()
+	}
+
 	func addSubviewAtInit(_ view: NSView, hidden: Bool) {
 
 		addSubview(view)
@@ -152,16 +226,18 @@ private extension TimelineTableCellView {
 	func commonInit() {
 
 		addSubviewAtInit(titleView, hidden: false)
+		addSubviewAtInit(summaryView, hidden: true)
+		addSubviewAtInit(textView, hidden: true)
 		addSubviewAtInit(unreadIndicatorView, hidden: true)
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
-		addSubviewAtInit(avatarImageView, hidden: false)
-		addSubviewAtInit(starView, hidden: false)
+		addSubviewAtInit(avatarImageView, hidden: true)
+		addSubviewAtInit(starView, hidden: true)
 	}
 
 	func updatedLayoutRects() -> TimelineCellLayout {
 
-		return TimelineCellLayout(width: bounds.width, cellData: cellData, appearance: cellAppearance)
+		return TimelineCellLayout(width: bounds.width, height: bounds.height, cellData: cellData, appearance: cellAppearance, hasAvatar: avatarImageView.image != nil)
 	}
 
 	func updateAppearance() {
@@ -178,70 +254,102 @@ private extension TimelineTableCellView {
 
 	func updateTitleView() {
 
-		titleView.attributedStringValue = cellData.attributedTitle
-		needsLayout = true
+		updateTextFieldText(titleView, cellData?.title)
+	}
+
+	func updateSummaryView() {
+
+		updateTextFieldText(summaryView, cellData?.text)
+	}
+
+	func updateTextView() {
+
+		updateTextFieldText(textView, cellData?.text)
 	}
 
 	func updateDateView() {
 
-		dateView.attributedStringValue = cellData.attributedDateString
-		needsLayout = true
+		updateTextFieldText(dateView, cellData.dateString)
+	}
+
+	func updateTextFieldText(_ textField: NSTextField, _ text: String?) {
+
+		let s = text ?? ""
+		if textField.stringValue != s {
+			textField.stringValue = s
+			needsLayout = true
+		}
 	}
 
 	func updateFeedNameView() {
 
 		if cellData.showFeedName {
-			if feedNameView.isHidden {
-				feedNameView.isHidden = false
-			}
-			feedNameView.attributedStringValue = cellData.attributedFeedName
+			showView(feedNameView)
+			updateTextFieldText(feedNameView, cellData.feedName)
 		}
 		else {
-			if !feedNameView.isHidden {
-				feedNameView.isHidden = true
-			}
+			hideView(feedNameView)
 		}
 	}
 
 	func updateUnreadIndicator() {
 
-		let shouldHide = cellData.read || cellData.starred
-		if unreadIndicatorView.isHidden != shouldHide {
-			unreadIndicatorView.isHidden = shouldHide
-		}
+		showOrHideView(unreadIndicatorView, cellData.read || cellData.starred)
 	}
 
 	func updateStarView() {
 
-		starView.isHidden = !cellData.starred
+		showOrHideView(starView, !cellData.starred)
 	}
 
 	func updateAvatar() {
 
-		if !cellData.showAvatar {
-			avatarImageView.image = nil
-			avatarImageView.isHidden = true
+		// The avatar should be bigger than a favicon. They’re too small; they look weird.
+		guard let image = cellData.avatar, cellData.showAvatar, image.size.height >= 22.0, image.size.width >= 22.0 else {
+			makeAvatarEmpty()
 			return
 		}
 
-		avatarImageView.isHidden = false
-
-		if let image = cellData.avatar {
-			if avatarImageView.image !== image {
-				avatarImageView.image = image
-			}
+		showView(avatarImageView)
+		if avatarImageView.image !== image {
+			avatarImageView.image = image
+			needsLayout = true
 		}
-		else {
+	}
+
+	func makeAvatarEmpty() {
+
+		if avatarImageView.image != nil {
 			avatarImageView.image = nil
+			needsLayout = true
 		}
+		hideView(avatarImageView)
+	}
 
-		avatarImageView.wantsLayer = true
-		avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
+	func hideView(_ view: NSView) {
+
+		if !view.isHidden {
+			view.isHidden = true
+		}
+	}
+
+	func showView(_ view: NSView) {
+
+		if view.isHidden {
+			view.isHidden = false
+		}
+	}
+
+	func showOrHideView(_ view: NSView, _ shouldHide: Bool) {
+
+		shouldHide ? hideView(view) : showView(view)
 	}
 
 	func updateSubviews() {
 
 		updateTitleView()
+		updateSummaryView()
+		updateTextView()
 		updateDateView()
 		updateFeedNameView()
 		updateUnreadIndicator()

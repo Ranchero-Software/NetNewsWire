@@ -18,11 +18,13 @@ struct TimelineCellAppearance: Equatable {
 
 	let dateColor: NSColor
 	let dateMarginLeft: CGFloat
+	let dateMarginBottom: CGFloat
 	let dateFont: NSFont
 	
 	let titleColor: NSColor
 	let titleFont: NSFont
 	let titleBottomMargin: CGFloat
+	let titleNumberOfLines: Int
 	
 	let textColor: NSColor
 	let textFont: NSFont
@@ -60,13 +62,15 @@ struct TimelineCellAppearance: Equatable {
 		self.feedNameFont = NSFont.systemFont(ofSize: smallItemFontSize)
 
 		self.dateColor = theme.color(forKey: "MainWindow.Timeline.cell.dateColor")
-		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize)
+		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize, weight: NSFont.Weight.bold)
 		self.dateMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginLeft")
+		self.dateMarginBottom = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginBottom")
 		
 		self.titleColor = theme.color(forKey: "MainWindow.Timeline.cell.titleColor")
 		self.titleFont = NSFont.systemFont(ofSize: largeItemFontSize, weight: NSFont.Weight.semibold)
 		self.titleBottomMargin = theme.float(forKey: "MainWindow.Timeline.cell.titleMarginBottom")
-		
+		self.titleNumberOfLines = theme.integer(forKey: "MainWindow.Timeline.cell.titleMaximumLines")
+
 		self.textColor = theme.color(forKey: "MainWindow.Timeline.cell.textColor")
 		self.textFont = NSFont.systemFont(ofSize: largeItemFontSize)
 
@@ -90,12 +94,10 @@ struct TimelineCellAppearance: Equatable {
 		self.showAvatar = showAvatar
 
 		let margin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight
-//		if showAvatar {
-//			margin += (self.avatarSize.width + self.avatarMarginRight)
-//		}
 		self.boxLeftMargin = margin
 	}
 
+	// TODO: update the below
 	static func ==(lhs: TimelineCellAppearance, rhs: TimelineCellAppearance) -> Bool {
 
 		return lhs.boxLeftMargin == rhs.boxLeftMargin && lhs.showAvatar == rhs.showAvatar && lhs.cellPadding == rhs.cellPadding && lhs.feedNameColor == rhs.feedNameColor && lhs.feedNameFont == rhs.feedNameFont && lhs.dateColor == rhs.dateColor && lhs.dateMarginLeft == rhs.dateMarginLeft && lhs.dateFont == rhs.dateFont && lhs.titleColor == rhs.titleColor && lhs.titleFont == rhs.titleFont && lhs.titleBottomMargin == rhs.titleBottomMargin && lhs.textColor == rhs.textColor && lhs.textFont == rhs.textFont && lhs.unreadCircleColor == rhs.unreadCircleColor && lhs.unreadCircleDimension == rhs.unreadCircleDimension && lhs.unreadCircleMarginRight == rhs.unreadCircleMarginRight && lhs.gridColor == rhs.gridColor && lhs.avatarSize == rhs.avatarSize && lhs.avatarMarginRight == rhs.avatarMarginRight && lhs.avatarAdjustmentTop == rhs.avatarAdjustmentTop && lhs.avatarCornerRadius == rhs.avatarCornerRadius

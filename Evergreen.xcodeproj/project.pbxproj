@@ -123,8 +123,6 @@
 		84B06FEA1ED3803A00F0B54B /* RSFeedFinder.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FE61ED3803200F0B54B /* RSFeedFinder.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B06FFD1ED3818D00F0B54B /* RSTree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FFA1ED3818000F0B54B /* RSTree.framework */; };
 		84B06FFE1ED3818D00F0B54B /* RSTree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FFA1ED3818000F0B54B /* RSTree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		84B0700A1ED3822600F0B54B /* RSTextDrawing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; };
-		84B0700B1ED3822600F0B54B /* RSTextDrawing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B070071ED3821900F0B54B /* RSTextDrawing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B7178C201E66580091657D /* SidebarViewController+ContextualMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B7178B201E66580091657D /* SidebarViewController+ContextualMenus.swift */; };
 		84B99C671FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */; };
 		84B99C691FAE36B800ECDEDB /* FeedListFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */; };
@@ -140,6 +138,8 @@
 		84D5BA20201E8FB6009092BD /* SidebarGearMenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */; };
 		84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */; };
 		84DAEE321F870B390058304B /* DockBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE311F870B390058304B /* DockBadge.swift */; };
+		84E185B3203B74E500F69BFA /* SingleLineTextFieldSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */; };
+		84E185C3203BB12600F69BFA /* MultilineTextFieldSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */; };
 		84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
 		84E850861FCB60CE0072EA88 /* AuthorAvatarDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E850851FCB60CE0072EA88 /* AuthorAvatarDownloader.swift */; };
 		84E8E0DB202EC49300562D8F /* TimelineViewController+ContextualMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E8E0DA202EC49300562D8F /* TimelineViewController+ContextualMenus.swift */; };
@@ -432,27 +432,6 @@
 			remoteGlobalIDString = 842A0BE01CFCB9BC00BF746C;
 			remoteInfo = RSTree;
 		};
-		84B070061ED3821900F0B54B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8439D9FB1C8937C800E5E4B4;
-			remoteInfo = RSTextDrawing;
-		};
-		84B070081ED3821900F0B54B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8439DA051C8937C800E5E4B4;
-			remoteInfo = RSTextDrawingTests;
-		};
-		84B0700C1ED3822600F0B54B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8439D9FA1C8937C800E5E4B4;
-			remoteInfo = RSTextDrawing;
-		};
 		84BB4B671F1174D400858766 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 84BB4B611F1174D400858766 /* Data.xcodeproj */;
@@ -488,7 +467,6 @@
 				849B897D1F0349D000578A8D /* RSParser.framework in Embed Frameworks */,
 				846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */,
 				84B06FB31ED37DBD00F0B54B /* RSDatabase.framework in Embed Frameworks */,
-				84B0700B1ED3822600F0B54B /* RSTextDrawing.framework in Embed Frameworks */,
 				84B06FEA1ED3803A00F0B54B /* RSFeedFinder.framework in Embed Frameworks */,
 				84B06FFE1ED3818D00F0B54B /* RSTree.framework in Embed Frameworks */,
 				84B06FAF1ED37DBD00F0B54B /* RSCore.framework in Embed Frameworks */,
@@ -648,7 +626,6 @@
 		84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DB5.xcodeproj; path = Frameworks/DB5/DB5.xcodeproj; sourceTree = "<group>"; };
 		84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSFeedFinder.xcodeproj; path = Frameworks/RSFeedFinder/RSFeedFinder.xcodeproj; sourceTree = "<group>"; };
 		84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTree.xcodeproj; path = Frameworks/RSTree/RSTree.xcodeproj; sourceTree = "<group>"; };
-		84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSTextDrawing.xcodeproj; path = Frameworks/RSTextDrawing/RSTextDrawing.xcodeproj; sourceTree = "<group>"; };
 		84B7178B201E66580091657D /* SidebarViewController+ContextualMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SidebarViewController+ContextualMenus.swift"; sourceTree = "<group>"; };
 		84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListFolder.swift; sourceTree = "<group>"; };
@@ -665,6 +642,8 @@
 		84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarGearMenuDelegate.swift; sourceTree = "<group>"; };
 		84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLImporter.swift; sourceTree = "<group>"; };
 		84DAEE311F870B390058304B /* DockBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DockBadge.swift; path = Evergreen/DockBadge.swift; sourceTree = "<group>"; };
+		84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleLineTextFieldSizer.swift; sourceTree = "<group>"; };
+		84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextFieldSizer.swift; sourceTree = "<group>"; };
 		84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDefaults.swift; path = Evergreen/AppDefaults.swift; sourceTree = "<group>"; };
 		84E850851FCB60CE0072EA88 /* AuthorAvatarDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorAvatarDownloader.swift; sourceTree = "<group>"; };
 		84E8E0DA202EC49300562D8F /* TimelineViewController+ContextualMenus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineViewController+ContextualMenus.swift"; sourceTree = "<group>"; };
@@ -746,7 +725,6 @@
 				84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */,
 				849B897C1F0349D000578A8D /* RSParser.framework in Frameworks */,
 				846E77411F6EF6A100A165E2 /* Database.framework in Frameworks */,
-				84B0700A1ED3822600F0B54B /* RSTextDrawing.framework in Frameworks */,
 				84B06FE91ED3803A00F0B54B /* RSFeedFinder.framework in Frameworks */,
 				84B06FFD1ED3818D00F0B54B /* RSTree.framework in Frameworks */,
 				84B06FAE1ED37DBD00F0B54B /* RSCore.framework in Frameworks */,
@@ -1014,6 +992,8 @@
 				849A97741ED9EC04007D329B /* TimelineTableCellView.swift */,
 				849A97701ED9EC04007D329B /* TimelineCellAppearance.swift */,
 				849A97721ED9EC04007D329B /* TimelineCellLayout.swift */,
+				84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */,
+				84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */,
 				849A97711ED9EC04007D329B /* TimelineCellData.swift */,
 				849A97731ED9EC04007D329B /* TimelineStringUtilities.swift */,
 				849A97751ED9EC04007D329B /* UnreadIndicatorView.swift */,
@@ -1148,7 +1128,6 @@
 				84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */,
 				84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */,
 				849B89681F0349C100578A8D /* RSParser.xcodeproj */,
-				84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */,
 				84B06FF41ED3818000F0B54B /* RSTree.xcodeproj */,
 				84B06FB61ED37E8B00F0B54B /* RSWeb.xcodeproj */,
 			);
@@ -1248,15 +1227,6 @@
 			children = (
 				84B06FFA1ED3818000F0B54B /* RSTree.framework */,
 				84B06FFC1ED3818000F0B54B /* RSTreeTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		84B070021ED3821800F0B54B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				84B070071ED3821900F0B54B /* RSTextDrawing.framework */,
-				84B070091ED3821900F0B54B /* RSTextDrawingTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1484,7 +1454,6 @@
 				84B06FD21ED37F7D00F0B54B /* PBXTargetDependency */,
 				84B06FEC1ED3803A00F0B54B /* PBXTargetDependency */,
 				84B070001ED3818D00F0B54B /* PBXTargetDependency */,
-				84B0700D1ED3822600F0B54B /* PBXTargetDependency */,
 				849B897F1F0349D000578A8D /* PBXTargetDependency */,
 				84BB4B7A1F11753300858766 /* PBXTargetDependency */,
 				846E77401F6EF67A00A165E2 /* PBXTargetDependency */,
@@ -1597,10 +1566,6 @@
 				{
 					ProductGroup = 849B89691F0349C100578A8D /* Products */;
 					ProjectRef = 849B89681F0349C100578A8D /* RSParser.xcodeproj */;
-				},
-				{
-					ProductGroup = 84B070021ED3821800F0B54B /* Products */;
-					ProjectRef = 84B070011ED3821800F0B54B /* RSTextDrawing.xcodeproj */;
 				},
 				{
 					ProductGroup = 84B06FF51ED3818000F0B54B /* Products */;
@@ -1768,20 +1733,6 @@
 			fileType = wrapper.cfbundle;
 			path = RSTreeTests.xctest;
 			remoteRef = 84B06FFB1ED3818000F0B54B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B070071ED3821900F0B54B /* RSTextDrawing.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = RSTextDrawing.framework;
-			remoteRef = 84B070061ED3821900F0B54B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B070091ED3821900F0B54B /* RSTextDrawingTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = RSTextDrawingTests.xctest;
-			remoteRef = 84B070081ED3821900F0B54B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		84BB4B681F1174D400858766 /* Data.framework */ = {
@@ -1958,6 +1909,7 @@
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
 				84E8E0DB202EC49300562D8F /* TimelineViewController+ContextualMenus.swift in Sources */,
 				849A97791ED9EC04007D329B /* TimelineStringUtilities.swift in Sources */,
+				84E185C3203BB12600F69BFA /* MultilineTextFieldSizer.swift in Sources */,
 				843A3B5620311E7700BF76EC /* FeedListOutlineView.swift in Sources */,
 				8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* FolderPasteboardWriter.swift in Sources */,
@@ -2010,6 +1962,7 @@
 				849A97851ED9ECCD007D329B /* PreferencesWindowController.swift in Sources */,
 				D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */,
 				84E850861FCB60CE0072EA88 /* AuthorAvatarDownloader.swift in Sources */,
+				84E185B3203B74E500F69BFA /* SingleLineTextFieldSizer.swift in Sources */,
 				8414AD251FCF5A1E00955102 /* TimelineHeaderView.swift in Sources */,
 				849EE71F20391DF20082A1EA /* MainWindowToolbarDelegate.swift in Sources */,
 				849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */,
@@ -2105,11 +2058,6 @@
 			isa = PBXTargetDependency;
 			name = RSTree;
 			targetProxy = 84B06FFF1ED3818D00F0B54B /* PBXContainerItemProxy */;
-		};
-		84B0700D1ED3822600F0B54B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RSTextDrawing;
-			targetProxy = 84B0700C1ED3822600F0B54B /* PBXContainerItemProxy */;
 		};
 		84BB4B7A1F11753300858766 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -54,7 +54,7 @@ class TimelineTableRowView : NSTableRowView {
 	override func drawSeparator(in dirtyRect: NSRect) {
 
 		let path = NSBezierPath()
-		let originX = floor(cellAppearance.boxLeftMargin)
+		let originX = floor(cellAppearance.boxLeftMargin) + 2.0
 		let destinationX = ceil(NSMaxX(bounds))
 		let y = floor(NSMaxY(bounds)) - 0.5
 		path.move(to: NSPoint(x: originX, y: y))

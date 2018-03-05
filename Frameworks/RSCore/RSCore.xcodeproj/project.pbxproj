@@ -161,6 +161,8 @@
 		84CFF56D1AC3D20A00CEA6C8 /* NSImage+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CFF56B1AC3D20A00CEA6C8 /* NSImage+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84CFF56E1AC3D20A00CEA6C8 /* NSImage+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CFF56C1AC3D20A00CEA6C8 /* NSImage+RSCore.m */; };
 		84D5BA1E201E87E2009092BD /* URLPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BA1D201E87E2009092BD /* URLPasteboardWriter.swift */; };
+		84E185C6203BEA7900F69BFA /* NSAttributedString+RSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E185C4203BEA7900F69BFA /* NSAttributedString+RSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		84E185C7203BEA7900F69BFA /* NSAttributedString+RSCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E185C5203BEA7900F69BFA /* NSAttributedString+RSCore.m */; };
 		84E34DA61F9FA1070077082F /* UndoableCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E34DA51F9FA1070077082F /* UndoableCommand.swift */; };
 		84E8E0D9202EC39800562D8F /* NSMenu+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E8E0D8202EC39800562D8F /* NSMenu+Extensions.swift */; };
 		84F20F831F16BA6200D8E682 /* PropertyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F20F821F16BA6200D8E682 /* PropertyList.swift */; };
@@ -285,6 +287,8 @@
 		84CFF56B1AC3D20A00CEA6C8 /* NSImage+RSCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+RSCore.h"; sourceTree = "<group>"; };
 		84CFF56C1AC3D20A00CEA6C8 /* NSImage+RSCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+RSCore.m"; sourceTree = "<group>"; };
 		84D5BA1D201E87E2009092BD /* URLPasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLPasteboardWriter.swift; path = AppKit/URLPasteboardWriter.swift; sourceTree = "<group>"; };
+		84E185C4203BEA7900F69BFA /* NSAttributedString+RSCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSAttributedString+RSCore.h"; path = "AppKit/NSAttributedString+RSCore.h"; sourceTree = "<group>"; };
+		84E185C5203BEA7900F69BFA /* NSAttributedString+RSCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "NSAttributedString+RSCore.m"; path = "AppKit/NSAttributedString+RSCore.m"; sourceTree = "<group>"; };
 		84E34DA51F9FA1070077082F /* UndoableCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UndoableCommand.swift; path = RSCore/UndoableCommand.swift; sourceTree = "<group>"; };
 		84E8E0D8202EC39800562D8F /* NSMenu+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSMenu+Extensions.swift"; path = "AppKit/NSMenu+Extensions.swift"; sourceTree = "<group>"; };
 		84F20F821F16BA6200D8E682 /* PropertyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyList.swift; sourceTree = "<group>"; };
@@ -460,6 +464,8 @@
 				84CFF5511AC3CF4700CEA6C8 /* NSColor+RSCore.h */,
 				84C6329E200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h */,
 				84C6329F200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.m */,
+				84E185C4203BEA7900F69BFA /* NSAttributedString+RSCore.h */,
+				84E185C5203BEA7900F69BFA /* NSAttributedString+RSCore.m */,
 				84C632A2200D356E007BEEAA /* SendToBlogEditorApp.h */,
 				84C632A3200D356E007BEEAA /* SendToBlogEditorApp.m */,
 				84CFF5521AC3CF4700CEA6C8 /* NSColor+RSCore.m */,
@@ -579,6 +585,7 @@
 				84CFF5271AC3C9A200CEA6C8 /* NSArray+RSCore.h in Headers */,
 				84CFF5531AC3CF4700CEA6C8 /* NSColor+RSCore.h in Headers */,
 				84CFF4FA1AC3C69700CEA6C8 /* RSCore.h in Headers */,
+				84E185C6203BEA7900F69BFA /* NSAttributedString+RSCore.h in Headers */,
 				844F91D51D90D86100820C48 /* RSTransparentContainerView.h in Headers */,
 				84CFF53F1AC3CD0100CEA6C8 /* NSMutableSet+RSCore.h in Headers */,
 				84C632A0200D30F1007BEEAA /* NSAppleEventDescriptor+RSCore.h in Headers */,
@@ -791,6 +798,7 @@
 				84CFF53C1AC3CCCA00CEA6C8 /* NSMutableDictionary+RSCore.m in Sources */,
 				8414CBAC1C95F8F700333C12 /* RSGeometry.m in Sources */,
 				84134D201C59D5450063FD24 /* NSCalendar+RSCore.m in Sources */,
+				84E185C7203BEA7900F69BFA /* NSAttributedString+RSCore.m in Sources */,
 				84CFF5651AC3D13C00CEA6C8 /* RSImageRenderer.m in Sources */,
 				849EE70D2039187D0082A1EA /* NSWindowController+RSCore.swift in Sources */,
 				84CFF5381AC3CBB200CEA6C8 /* NSMutableArray+RSCore.m in Sources */,

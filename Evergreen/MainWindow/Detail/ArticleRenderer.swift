@@ -163,12 +163,10 @@ class ArticleRenderer {
 		var d = [String: String]()
 
 		let title = titleOrTitleLink()
-		d["newsitem_title"] = title
-		d["article_title"] = title
+		d["title"] = title
 
 		let body = article.body == nil ? "" : article.body
-		d["article_description"] = body
-		d["newsitem_description"] = body
+		d["body"] = body
 
 		d["avatars"] = ""
 		var didAddAvatar = false
@@ -222,7 +220,7 @@ class ArticleRenderer {
 
 		func html(dimension: Int) -> String {
 
-			let imageTag = "<img src=\"\(imageURL)\" width=\"\(dimension)\" height=\"\(dimension)\""
+			let imageTag = "<img src=\"\(imageURL)\" width=\(dimension) height=\(dimension) />"
 			if let url = url {
 				return linkWithText(imageTag, url)
 			}
@@ -238,7 +236,20 @@ class ArticleRenderer {
 
 		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
 			if let s = base64String(forImage: favicon) {
-				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=16 width=16 />"
+				var dimension = min(favicon.size.height, CGFloat(avatarDimension)) // Assuming square images.
+				dimension = max(dimension, 16) // Some favicons say they’re < 16. Force them larger.
+				if dimension >= CGFloat(avatarDimension) * 0.8 { //Close enough to scale up.
+					dimension = CGFloat(avatarDimension)
+				}
+
+				let imgTag: String
+				if dimension >= CGFloat(avatarDimension) {
+					// Use rounded corners.
+					imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=\(Int(dimension)) width=\(Int(dimension)) style=\"border-radius:4px\" />"
+				}
+				else {
+					imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=\(Int(dimension)) width=\(Int(dimension)) />"
+				}
 				ArticleRenderer.faviconImgTagCache[feed] = imgTag
 				return imgTag
 			}
@@ -449,7 +460,7 @@ class ArticleRenderer {
 
 		s += "\n\n</body></html>"
 
-//	print(s)
+	//print(s)
 
 		return s
 

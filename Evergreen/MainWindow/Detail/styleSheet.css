@@ -1,10 +1,10 @@
 body {
 	color: #444;
 	background-color: white;
-	margin-top: 42px;
-	margin-bottom: 100px;
-	margin-left: 80px;
-	margin-right: 80px;
+	margin-top: 20px;
+	margin-bottom: 64px;
+	margin-left: 64px;
+	margin-right: 64px;
 	font-family: -apple-system;
 	font-size: 18px;
 }
@@ -12,42 +12,34 @@ a {
 	text-decoration: none;
 }
 a, a:link, a:visited {
-	color: #015cdc;
+	color: #416ED2;
 }
 a:hover {
 	text-decoration: underline;
 }
-.articleDateline {
-	color: rgba(0, 0, 0, 0.3);
-	border-bottxom: 1px solid rgba(0, 0, 0, 0.1);
-	border-txop: 1px solid rgba(0, 0, 0, 0.1);
-	padding-bottom: 0px;
-	padding-top: 0px;
-	margin-bottom: 25px;
-	font-style: italic;
+
+.headerTable {
+	width: 100%;
+	height: 68px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
-.articleDateline a:link, #articleDateline a:visited {
+.header a:link, .header a:visited {
 	color: rgba(0, 0, 0, 0.3);
 }
-#articleDateline img {
-	border-radius: 7px;
+.header {
+	color: rgba(0, 0, 0, 0.3);
 }
-.articleDate {
-	color: #2db6ff;
-	text-align: right;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.5);
-	padding-bottom: 8px;
-	margin-bottom: 1em;
+.feedlink {
+	font-weight: bold;
 }
-#articleDescription {
-	line-height: 1.5em;
+.feedlink a:link, .feedlink a:visited {
+	color: rgba(0, 0, 0, 0.6);
 }
-#authorAvatar {
-	margin-top: 2em;
-	text-align: left;
+.avatar img {
+	border-radius: 4px;
 }
-#authorAvatar img {
-	border-radius: 5px;
+.feedIcon {
+	border-radius: 4px;
 }
 .rightAlign {
 	text-align: right;
@@ -55,35 +47,26 @@ a:hover {
 .leftAlign {
 	text-align: left;
 }
+
 .articleTitle {
-	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	margin-top: 26px;
 }
-.headerContainer {
-	border-botxtom: 1px solid rgba(0, 0, 0, 0.1);
+
+.articleDateline {
+	color: rgba(0, 0, 0, 0.3);
+	margin-bottom: 25px;
+	font-weight: bold;
+}
+.articleDateline, .articleDateline a:link, .articleDateline a:visited {
 	color: rgba(0, 0, 0, 0.3);
 }
-.header {
-	color: rgba(0, 0, 0, 0.3);
-}
-.headerTable {
-	width: 100%;
-	height: 68px;
-}
-.avatar img {
-	border-radius: 7px;
-}
-.headerContainer a:link, .headerContainer a:visited {
-	color: rgba(0, 0, 0, 0.3);
-}
-.feedIcon {
-	border-radius: 5px;
+
+.articleBody {
+	line-height: 1.6em;
 }
 h1 {
 	line-height: 1.15em;
-	font-weight: medium;
-}
-h1, h2, h3, h4, h5, h6 {
-	font-family: -apple-system, "Helvetica Neue"
+	font-weight: bold;
 }
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
@@ -129,6 +112,7 @@ img[src*="//ads."],
 img[src*="doubleclick"],
 img[src*="feedads"],
 img[src*="feedburner"],
+img[src*="feedblitz"],
 img[src*="share-buttons"] {
 	display: none !important;
 }

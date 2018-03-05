@@ -80,7 +80,7 @@
 					<key>paddingRight</key>
 					<integer>20</integer>
 					<key>paddingTop</key>
-					<integer>16</integer>
+					<integer>14</integer>
 					<key>paddingBottom</key>
 					<integer>16</integer>
 					<key>feedNameColor</key>
@@ -92,15 +92,15 @@
 					<key>dateMarginLeft</key>
 					<integer>10</integer>
 					<key>dateMarginBottom</key>
-					<integer>2</integer>
+					<integer>1</integer>
 					<key>textColor</key>
-					<string>aaaaaa</string>
+					<string>999999</string>
 					<key>textOnlyColor</key>
 					<string>222222</string>
 					<key>titleColor</key>
 					<string>222222</string>
 					<key>titleMarginBottom</key>
-					<integer>2</integer>
+					<integer>1</integer>
 					<key>unreadCircleColor</key>
 					<string>#2db6ff</string>
 					<key>unreadCircleDimension</key>
@@ -108,9 +108,9 @@
 					<key>unreadCircleMarginRight</key>
 					<integer>8</integer>
 					<key>avatarHeight</key>
-					<integer>48</integer>
+					<integer>64</integer>
 					<key>avatarWidth</key>
-					<integer>48</integer>
+					<integer>64</integer>
 					<key>avatarMarginRight</key>
 					<integer>20</integer>
 					<key>avatarMarginLeft</key>
@@ -118,9 +118,11 @@
 					<key>avatarAdjustmentTop</key>
 					<integer>4</integer>
 					<key>avatarCornerRadius</key>
-					<integer>7</integer>
+					<integer>4</integer>
 					<key>starDimension</key>
 					<integer>13</integer>
+					<key>titleMaximumLines</key>
+					<integer>2</integer>
 				</dict>
 			</dict>
 			<key>Detail</key>

@@ -14,6 +14,7 @@ import Data
 
 final class DeleteFromSidebarCommand: UndoableCommand {
 
+	let treeController: TreeController
 	let undoManager: UndoManager
 	let undoActionName: String
 	var redoActionName: String {
@@ -22,7 +23,7 @@ final class DeleteFromSidebarCommand: UndoableCommand {
 
 	private let itemSpecifiers: [SidebarItemSpecifier]
 
-	init?(nodesToDelete: [Node], undoManager: UndoManager) {
+	init?(nodesToDelete: [Node], treeController: TreeController, undoManager: UndoManager) {
 
 		guard DeleteFromSidebarCommand.canDelete(nodesToDelete) else {
 			return nil
@@ -31,6 +32,7 @@ final class DeleteFromSidebarCommand: UndoableCommand {
 			return nil
 		}
 
+		self.treeController = treeController
 		self.undoActionName = actionName
 		self.undoManager = undoManager
 
@@ -45,6 +47,7 @@ final class DeleteFromSidebarCommand: UndoableCommand {
 
 		BatchUpdate.shared.perform {
 			itemSpecifiers.forEach { $0.delete() }
+			treeController.rebuild()
 		}
 		registerUndo()
 	}
@@ -53,6 +56,7 @@ final class DeleteFromSidebarCommand: UndoableCommand {
 
 		BatchUpdate.shared.perform {
 			itemSpecifiers.forEach { $0.restore() }
+			treeController.rebuild()
 		}
 		registerRedo()
 	}

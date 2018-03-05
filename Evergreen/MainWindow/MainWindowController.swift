@@ -31,6 +31,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		return window?.toolbar?.existingItem(withIdentifier: .Share)
 	}
 
+	private static var detailViewMinimumThickness = 384
+
 	// MARK: - NSWindowController
 
 	override func windowDidLoad() {
@@ -53,8 +55,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			}
 		}
 
-		detailSplitViewItem?.minimumThickness = 384
-		
+		detailSplitViewItem?.minimumThickness = CGFloat(MainWindowController.detailViewMinimumThickness)
+		restoreSplitViewState()
+
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidBegin, object: nil)
@@ -72,10 +75,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	func saveState() {
 
-		// TODO: save width of split view and anything else that should be saved.
-
-		
+		saveSplitViewState()
 	}
+
 
 	func selectedObjectsInSidebar() -> [AnyObject]? {
 
@@ -86,6 +88,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@objc func applicationWillTerminate(_ note: Notification) {
 
+		saveState()
 		window?.saveFrame(usingName: windowAutosaveName)
 	}
 
@@ -482,6 +485,40 @@ private extension MainWindowController {
 		else if unreadCount > 0 {
 			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
 		}
+	}
+
+	func saveSplitViewState() {
+
+		// TODO: Update this for multiple windows.
+
+		guard let splitView = splitViewController?.splitView else {
+			return
+		}
+
+		let widths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
+		AppDefaults.shared.mainWindowWidths = widths
+	}
+
+	func restoreSplitViewState() {
+
+		// TODO: Update this for multiple windows.
+
+		guard let splitView = splitViewController?.splitView, let widths = AppDefaults.shared.mainWindowWidths, widths.count == 3, let window = window else {
+			return
+		}
+
+		let windowWidth = Int(floor(window.frame.width))
+		let dividerThickness: Int = Int(splitView.dividerThickness)
+		let sidebarWidth: Int = widths[0]
+		let timelineWidth: Int = widths[1]
+
+		// Make sure the detail view has its mimimum thickness, at least.
+		if windowWidth < sidebarWidth + dividerThickness + timelineWidth + dividerThickness + MainWindowController.detailViewMinimumThickness {
+			return
+		}
+
+		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
+		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
 	}
 }
 

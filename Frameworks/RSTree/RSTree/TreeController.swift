@@ -53,8 +53,8 @@ public final class TreeController {
 				return oneNode
 			}
 
-			if recurse, oneNode.canHaveChildNodes, let childNodes = oneNode.childNodes {
-				if let foundNode = nodeInArrayRepresentingObject(nodes: childNodes, representedObject: representedObject, recurse: recurse) {
+			if recurse, oneNode.canHaveChildNodes {
+				if let foundNode = nodeInArrayRepresentingObject(nodes: oneNode.childNodes, representedObject: representedObject, recurse: recurse) {
 					return foundNode
 				}
 
@@ -89,7 +89,7 @@ private extension TreeController {
 	func visitNode(_ node: Node, _ visitBlock: NodeVisitBlock) {
 		
 		visitBlock(node)
-		node.childNodes?.forEach{ (oneChildNode) in
+		node.childNodes.forEach{ (oneChildNode) in
 			visitNode(oneChildNode, visitBlock)
 		}
 	}
@@ -117,14 +117,14 @@ private extension TreeController {
 		
 		var childNodesDidChange = false
 		
-		let childNodes = delegate?.treeController(treeController: self, childNodesFor: node)
+		let childNodes = delegate?.treeController(treeController: self, childNodesFor: node) ?? [Node]()
 		
 		childNodesDidChange = !nodeArraysAreEqual(childNodes, node.childNodes)
 		if (childNodesDidChange) {
 			node.childNodes = childNodes
 		}
 		
-		childNodes?.forEach{ (oneChildNode) in
+		childNodes.forEach{ (oneChildNode) in
 			if rebuildChildNodes(node: oneChildNode) {
 				childNodesDidChange = true
 			}

@@ -27,6 +27,7 @@ final class AppDefaults {
 		static let timelineSortDirection = "timelineSortDirection"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
+		static let mainWindowWidths = "mainWindowWidths"
 
 		// Hidden prefs
 		static let showTitleOnMainWindow = "KafasisTitleMode"
@@ -86,6 +87,15 @@ final class AppDefaults {
 		}
 	}
 
+	var mainWindowWidths: [Int]? {
+		get {
+			return UserDefaults.standard.object(forKey: Key.mainWindowWidths) as? [Int]
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.mainWindowWidths)
+		}
+	}
+	
 	private init() {
 
 		AppDefaults.registerDefaults()

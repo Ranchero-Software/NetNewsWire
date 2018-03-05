@@ -10,12 +10,13 @@ import Foundation
 import Data
 import RSParser
 
+// TODO: Don’t make all this at top level.
+
 private var truncatedFeedNameCache = [String: String]()
 private let truncatedTitleCache = NSMutableDictionary()
 private let normalizedTextCache = NSMutableDictionary()
 private let textCache = NSMutableDictionary()
 private let summaryCache = NSMutableDictionary()
-//private var summaryCache = [String: String]()
 
 func timelineEmptyCaches() {
 	
@@ -128,7 +129,9 @@ func timelineSummaryForArticle(_ article: Article) -> String {
 
 	var s = body.rs_string(byStrippingHTML: 300)
 	s = timelineNormalizedText(s)
-
+	if s == "Comments" { // Hacker News.
+		s = ""
+	}
 	summaryCache[body] = s
 	return s
 }

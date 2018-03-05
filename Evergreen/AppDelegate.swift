@@ -9,7 +9,6 @@
 import AppKit
 import DB5
 import Data
-import RSTextDrawing
 import RSTree
 import RSWeb
 import Account
@@ -165,9 +164,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func applicationDidResignActive(_ notification: Notification) {
 
-		RSSingleLineRenderer.emptyCache()
-		RSMultiLineRenderer.emptyCache()
-		TimelineCellData.emptyCache()
 		timelineEmptyCaches()
 
 		saveState()

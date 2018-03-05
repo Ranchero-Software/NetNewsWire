@@ -16,6 +16,6 @@ It’s pretty early still, and we have strong opinions about how we want to do t
 
 That said, we will seriously consider any pull requests we do get. Just note that we may not accept them, or we may accept them and do a bunch of revision.
 
-It’s probably a good idea to let us know first what you’d like to do. ([Ask on Twitter](https://twitter.com/evergreen_mac), or email brent@ranchero.com, or post something to the [bug tracker](https://github.com/brentsimmons/Evergreen/issues).)
+It’s probably a good idea to let us know first what you’d like to do. ([Ask on Micro.blog](https://micro.blog/brentsimmons), or email brent@ranchero.com, or post something to the [bug tracker](https://github.com/brentsimmons/Evergreen/issues).)
 
 In the future — some time after 1.0 ships — we expect to want contributions. The plan is *not* to make this a one-person show forever.

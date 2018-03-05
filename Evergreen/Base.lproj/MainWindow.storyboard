@@ -535,7 +535,7 @@
                                     <constraint firstItem="KZz-oC-IY4" firstAttribute="leading" secondItem="rE6-fd-xjY" secondAttribute="leading" id="dqI-OO-8A0"/>
                                 </constraints>
                             </customView>
-                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="96" horizontalPageScroll="10" verticalLineScroll="96" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Kfs-n2-RYk">
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="97" horizontalPageScroll="10" verticalLineScroll="97" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Kfs-n2-RYk">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                 <clipView key="contentView" copiesOnScroll="NO" id="yAN-Ex-RC7">
                                     <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
@@ -544,6 +544,7 @@
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="96" viewBased="YES" id="DRs-j8-R9a" customClass="TimelineTableView" customModule="Evergreen" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <size key="intercellSpacing" width="0.0" height="1"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                             <color key="gridColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <tableColumns>
@@ -565,7 +566,7 @@
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         </tableCellView>
                                                         <customView identifier="timelineRow" id="54E-Vz-WND" customClass="TimelineTableRowView" customModule="Evergreen" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="68" width="447" height="96"/>
+                                                            <rect key="frame" x="0.0" y="69" width="447" height="96"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         </customView>
                                                     </prototypeCellViews>
@@ -740,7 +741,7 @@
                                 </constraints>
                             </view>
                             <color key="borderColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <color key="fillColor" white="0.95999999999999996" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="fillColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </box>
                     </subviews>
                     <constraints>

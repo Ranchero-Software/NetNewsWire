@@ -91,7 +91,7 @@ extension FeedListViewController: NSOutlineViewDataSource {
 
 	func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
 
-		return nodeForItem(item as AnyObject?).childNodes![index]
+		return nodeForItem(item as AnyObject?).childNodes[index]
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {

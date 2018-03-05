@@ -171,7 +171,7 @@ private extension JSONFeedParser {
 		// If we find more feeds like this, we’ll add them here. If these feeds get fixed, we’ll remove them.
 
 		let lowerFeedURL = feedURL.lowercased()
-		let matchStrings = ["kottke.org", "pxlnv.com"]
+		let matchStrings = ["kottke.org", "pxlnv.com", "macstories.net"]
 		for matchString in matchStrings {
 			if lowerFeedURL.contains(matchString) {
 				return true

@@ -6,6 +6,38 @@
         <description>Most recent Evergreen changes with links to updates.</description>
         <language>en</language>
 
+	<item>
+          <title>Evergreen 1.0d42</title>
+            <description><![CDATA[
+            
+            <p>The app will now remember and restore the positions of split view dividers between runs. <i>Finally.</i></p>
+            <p>When a favicon is large, allow it to be drawn large in the detail view, instead of forcing it to be 16 x 16.</p>
+    						]]></description>
+            <pubDate>Mon, 26 Feb 2018 22:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d42.zip" sparkle:version="1090" sparkle:shortVersionString="1.0d42" length="7349890" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
+          <title>Evergreen 1.0d41</title>
+            <description><![CDATA[
+            
+            <h4>Timeline</h4>
+            <p>Text is now ellipsized.</p>
+            <p>Avatars and feed icons are now larger — 64pts instead of 48pts. This is the right size.</p>
+            <p>Improved the layout, especially when there’s little text and when there’s no avatar or feed icon and one is hoped-for.</p>
+            <p>Don’t show favicons in place of avatars and feed icons (when neither can be found) — they’re too small and don’t look good.</p>
+            
+            <h4>Sidebar</h4>
+            <p>Fixed a bug where deleting a thing wouldn’t stick — it could come back on the next run.</p>
+            <p>Fixed a bug where deleting a thing, and then deleting another thing, would result in the wrong thing being deleted.</p>
+            							 							 					
+    						]]></description>
+            <pubDate>Sun, 25 Feb 2018 22:10:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/Evergreen1.0d41.zip" sparkle:version="1084" sparkle:shortVersionString="1.0d41" length="7346094" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
 		<item>
           <title>Evergreen 1.0d40</title>
             <description><![CDATA[

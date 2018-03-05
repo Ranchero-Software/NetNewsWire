@@ -55,6 +55,7 @@
 #import <RSCore/NSAppleEventDescriptor+RSCore.h>
 #import <RSCore/SendToBlogEditorApp.h>
 
+#import <RSCore/NSAttributedString+RSCore.h>
 #endif
 
 

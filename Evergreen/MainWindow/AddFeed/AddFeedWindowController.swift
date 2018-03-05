@@ -147,9 +147,8 @@ private extension AddFeedWindowController {
 		menuItem.representedObject = folderTreeController.rootNode.representedObject
 		menu.addItem(menuItem)
 
-		if let childNodes = folderTreeController.rootNode.childNodes {
-			addFolderItemsToMenuWithNodes(menu: menu, nodes: childNodes, indentationLevel: 1)
-		}
+		let childNodes = folderTreeController.rootNode.childNodes
+		addFolderItemsToMenuWithNodes(menu: menu, nodes: childNodes, indentationLevel: 1)
 
 		return menu
 	}
@@ -166,7 +165,7 @@ private extension AddFeedWindowController {
 				menu.addItem(menuItem)
 
 				if oneNode.numberOfChildNodes > 0 {
-					addFolderItemsToMenuWithNodes(menu: menu, nodes: oneNode.childNodes!, indentationLevel: indentationLevel + 1)
+					addFolderItemsToMenuWithNodes(menu: menu, nodes: oneNode.childNodes, indentationLevel: indentationLevel + 1)
 				}
 			}
 		}
