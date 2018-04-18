@@ -3,7 +3,7 @@
 //  Evergreen
 //
 //  Created by Olof Hellman on 2/7/18.
-//  Copyright © 2018 Ranchero Software. All rights reserved.
+//  Copyright © 2018 Olof Hellman. All rights reserved.
 //
 
 import Foundation

@@ -7,9 +7,11 @@
 //
 
 import AppKit
+import Account
 
 protocol ScriptingObjectContainer: ScriptingObject {
     var scriptingClassDescription:NSScriptClassDescription { get }
+    func deleteElement(_ element:ScriptingObject)
 }
 
 extension ScriptingObjectContainer {

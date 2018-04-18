@@ -161,6 +161,7 @@
 		D5558FD32002245C0066386B /* ScriptingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD22002245C0066386B /* ScriptingTests.swift */; };
 		D5558FD5200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */; };
 		D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
+		D57BE6E0204CD35F00D11AAC /* NSScriptCommand+Evergreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57BE6DF204CD35F00D11AAC /* NSScriptCommand+Evergreen.swift */; };
 		D5907CA0200232A1005947E5 /* testGenericScript.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5907C9D20023249005947E5 /* testGenericScript.applescript */; };
 		D5907CA1200232A1005947E5 /* testGetURL.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD1200223F60066386B /* testGetURL.applescript */; };
 		D5907CA2200232AD005947E5 /* testGenericScript.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5907C9D20023249005947E5 /* testGenericScript.applescript */; };
@@ -174,6 +175,8 @@
 		D5A2679D201313A200A8D3C0 /* testNameOfAuthors.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5A2679B201312F900A8D3C0 /* testNameOfAuthors.applescript */; };
 		D5A267C120131B8300A8D3C0 /* testFeedOPML.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5A267B220131B8300A8D3C0 /* testFeedOPML.applescript */; };
 		D5A267C220131BA000A8D3C0 /* testFeedOPML.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5A267B220131B8300A8D3C0 /* testFeedOPML.applescript */; };
+		D5D07B18204B42050093F739 /* testIterativeCreateAndDeleteFeed.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5D07B09204B42050093F739 /* testIterativeCreateAndDeleteFeed.applescript */; };
+		D5D07B19204B423C0093F739 /* testIterativeCreateAndDeleteFeed.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5D07B09204B42050093F739 /* testIterativeCreateAndDeleteFeed.applescript */; };
 		D5D1751220020B980047B29D /* Evergreen.sdef in Resources */ = {isa = PBXBuildFile; fileRef = D5D175012002039D0047B29D /* Evergreen.sdef */; };
 		D5E4CC54202C1361009B4FFC /* AppDelegate+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */; };
 		D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */; };
@@ -480,6 +483,7 @@
 			dstPath = TestScripts;
 			dstSubfolderSpec = 7;
 			files = (
+				D5D07B19204B423C0093F739 /* testIterativeCreateAndDeleteFeed.applescript in CopyFiles */,
 				D5E4CCDE20303A66009B4FFC /* testCurrentArticleIsNil.applescript in CopyFiles */,
 				D5E4CCDF20303A66009B4FFC /* testURLsOfCurrentArticle.applescript in CopyFiles */,
 				D5E4CCDD20303A59009B4FFC /* establishMainWindowStartingState.applescript in CopyFiles */,
@@ -660,6 +664,7 @@
 		D5558FD22002245C0066386B /* ScriptingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScriptingTests.swift; path = EvergreenTests/ScriptingTests/ScriptingTests.swift; sourceTree = SOURCE_ROOT; };
 		D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSAppleEventDescriptor+UserRecordFields.swift"; path = "AppleEvents/NSAppleEventDescriptor+UserRecordFields.swift"; sourceTree = SOURCE_ROOT; };
 		D5558FD7200228B80066386B /* AppleEventUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleEventUtils.swift; sourceTree = "<group>"; };
+		D57BE6DF204CD35F00D11AAC /* NSScriptCommand+Evergreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScriptCommand+Evergreen.swift"; sourceTree = "<group>"; };
 		D5907C9D20023249005947E5 /* testGenericScript.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = testGenericScript.applescript; sourceTree = "<group>"; };
 		D5907CDC2002F0BE005947E5 /* Evergreen_project_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Evergreen_project_release.xcconfig; sourceTree = "<group>"; };
 		D5907CDD2002F0BE005947E5 /* Evergreen_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Evergreen_project_debug.xcconfig; sourceTree = "<group>"; };
@@ -672,6 +677,7 @@
 		D5A2678B20130ECF00A8D3C0 /* Author+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Author+Scriptability.swift"; sourceTree = "<group>"; };
 		D5A2679B201312F900A8D3C0 /* testNameOfAuthors.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testNameOfAuthors.applescript; sourceTree = "<group>"; };
 		D5A267B220131B8300A8D3C0 /* testFeedOPML.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testFeedOPML.applescript; sourceTree = "<group>"; };
+		D5D07B09204B42050093F739 /* testIterativeCreateAndDeleteFeed.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testIterativeCreateAndDeleteFeed.applescript; sourceTree = "<group>"; };
 		D5D175012002039D0047B29D /* Evergreen.sdef */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Evergreen.sdef; path = ../Resources/Evergreen.sdef; sourceTree = "<group>"; };
 		D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Scriptability.swift"; sourceTree = "<group>"; };
 		D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainWindowController+Scriptability.swift"; sourceTree = "<group>"; };
@@ -1325,6 +1331,7 @@
 				D5A2679B201312F900A8D3C0 /* testNameOfAuthors.applescript */,
 				D5F4EDD720075C1300B9E363 /* testNameOfEveryFolder.applescript */,
 				D55373A02018797B006D8857 /* testTitleOfArticlesWhose.applescript */,
+				D5D07B09204B42050093F739 /* testIterativeCreateAndDeleteFeed.applescript */,
 				D5E4CCD12030260E009B4FFC /* testCurrentArticleIsNil.applescript */,
 				D5E4CCCF203025FF009B4FFC /* testURLsOfCurrentArticle.applescript */,
 				D5E4CCB220300024009B4FFC /* uiScriptingTestSetup.applescript */,
@@ -1366,6 +1373,7 @@
 				D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */,
 				D5907DB12004BB37005947E5 /* ScriptingObjectContainer.swift */,
 				D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */,
+				D57BE6DF204CD35F00D11AAC /* NSScriptCommand+Evergreen.swift */,
 			);
 			name = Scriptability;
 			path = Evergreen/Scriptability;
@@ -1876,6 +1884,7 @@
 				849A97641ED9EB96007D329B /* SidebarOutlineView.swift in Sources */,
 				D5A2678C20130ECF00A8D3C0 /* Author+Scriptability.swift in Sources */,
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
+				D57BE6E0204CD35F00D11AAC /* NSScriptCommand+Evergreen.swift in Sources */,
 				D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */,
@@ -1971,6 +1980,7 @@
 				D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */,
 				D55373AF2018797C006D8857 /* testTitleOfArticlesWhose.applescript in Sources */,
 				D5907CA1200232A1005947E5 /* testGetURL.applescript in Sources */,
+				D5D07B18204B42050093F739 /* testIterativeCreateAndDeleteFeed.applescript in Sources */,
 				D5A267C120131B8300A8D3C0 /* testFeedOPML.applescript in Sources */,
 				D5A2679C201312F900A8D3C0 /* testNameOfAuthors.applescript in Sources */,
 				849C64761ED37A5D003D8FC0 /* EvergreenTests.swift in Sources */,

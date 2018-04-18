@@ -9,6 +9,7 @@
 import AppKit
 import Account
 import Data
+import RSCore
 
 @objc(ScriptableAccount)
 class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
@@ -45,6 +46,23 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
+    
+    func deleteElement(_ element:ScriptingObject) {
+       if let scriptableFolder = element as? ScriptableFolder {
+           BatchUpdate.shared.perform {
+               account.deleteFolder(scriptableFolder.folder)
+           }
+       } else if let scriptableFeed = element as? ScriptableFeed {
+           BatchUpdate.shared.perform {
+               account.deleteFeed(scriptableFeed.feed)
+           }
+       }
+    }
+
+    @objc(isLocationRequiredToCreateForKey:)
+    func isLocationRequiredToCreate(forKey key:String) -> Bool {
+       return false;
+    }
 
     // MARK: --- Scriptable elements ---
     
@@ -61,6 +79,12 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         return ScriptableFeed(feed, container:self)
     }
     
+    @objc(valueInFeedsWithName:)
+    func valueInFeeds(withName name:String) -> ScriptableFeed? {
+        let feeds = account.children.compactMap { $0 as? Feed }
+        guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
+        return ScriptableFeed(feed, container:self)
+    }
 
     @objc(folders)
     var folders:NSArray  {
@@ -74,8 +98,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         let folders = account.children.compactMap { $0 as? Folder }
         guard let folder = folders.first(where:{$0.folderID == folderId}) else { return nil }
         return ScriptableFolder(folder, container:self)
-    }
-    
+    }    
 
     // MARK: --- Scriptable properties ---
 
