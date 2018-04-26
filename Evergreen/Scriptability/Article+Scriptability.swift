@@ -38,6 +38,7 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     // articles have id in the Evergreen database and id in the feed
     // article.uniqueID here is the feed unique id
 
+    @objc(uniqueId)
     var scriptingUniqueId:Any {
         return article.uniqueID
     }
@@ -67,11 +68,6 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     @objc(externalUrl)
     var externalUrl:String?  {
         return article.externalURL
-    }
-
-    @objc(uniqueId)
-    var uniqueId:String  {
-        return article.uniqueID
     }
     
     @objc(title)

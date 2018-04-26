@@ -39,6 +39,7 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
 
+    @objc(uniqueId)
     var scriptingUniqueId:Any {
         return folder.folderID
     }
@@ -96,11 +97,6 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
     }
 
     // MARK: --- Scriptable properties ---
-    
-    @objc(uniqueId)
-    var uniqueId:Int  {
-        return self.folder.folderID
-    }
     
     @objc(name)
     var name:String  {
