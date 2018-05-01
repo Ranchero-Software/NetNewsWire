@@ -129,20 +129,41 @@ NSString *RSStringReplaceAll(NSString *stringToSearch, NSString *searchFor, NSSt
 	return self;
 }
 
+/*
+   given a URL that could be prefixed with 'feed:' or 'feeds:',
+   convert it to a URL that begins with 'http:' or 'https:'
+ 
+   Note: must handle edge case (like boingboing.net) where the feed URL is feed:http://boingboing.net/feed
+ 
+   Strategy:
+     1) note whether or not this is a feed: or feeds: or other prefix
+     2) strip the feed: or feeds: prefix
+     3) if the resulting string is not prefixed with http: or https:, then add http:// as a prefix
+ 
+*/
 - (NSString *)rs_normalizedURLString {
 	
 	NSString *s = [self rs_stringByTrimmingWhitespace];
 	
 	static NSString *feedPrefix = @"feed:";
 	static NSString *feedsPrefix = @"feeds:";
-	static NSString *httpPrefix = @"http:";
-	static NSString *httpsPrefix = @"https:";
+	static NSString *httpPrefix = @"http";
+	static NSString *httpsPrefix = @"https";
+	Boolean wasFeeds = false;
+ 
+    NSString *lowercaseS = [s lowercaseString];
+    if ([lowercaseS hasPrefix:feedPrefix] || [lowercaseS hasPrefix:feedsPrefix]) {
+        if ([lowercaseS hasPrefix:feedsPrefix]) {
+            wasFeeds = true;
+            s = [s rs_stringByStrippingPrefix:feedsPrefix caseSensitive:NO];
+        } else {
+            s = [s rs_stringByStrippingPrefix:feedPrefix caseSensitive:NO];
+        }
+    }
 	
-	s = [s rs_stringByReplacingPrefix:feedPrefix withHTTPPrefix:httpPrefix];
-	s = [s rs_stringByReplacingPrefix:feedsPrefix withHTTPPrefix:httpsPrefix];
-	
-	if (![s hasPrefix:@"http"]) {
-		s = [NSString stringWithFormat:@"http://%@", s];
+    lowercaseS = [s lowercaseString];
+	if (![lowercaseS hasPrefix:httpPrefix]) {
+		s = [NSString stringWithFormat: @"%@://%@", wasFeeds ? httpsPrefix : httpPrefix, s];
 	}
 	
 	return s;

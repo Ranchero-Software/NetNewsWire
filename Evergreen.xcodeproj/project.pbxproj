@@ -162,6 +162,8 @@
 		D5558FD5200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */; };
 		D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
 		D57BE6E0204CD35F00D11AAC /* NSScriptCommand+Evergreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57BE6DF204CD35F00D11AAC /* NSScriptCommand+Evergreen.swift */; };
+		D57BE7642051025E00D11AAC /* testFeedExists.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D57BE7562051025E00D11AAC /* testFeedExists.applescript */; };
+		D57BE7652051027D00D11AAC /* testFeedExists.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D57BE7562051025E00D11AAC /* testFeedExists.applescript */; };
 		D5907CA0200232A1005947E5 /* testGenericScript.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5907C9D20023249005947E5 /* testGenericScript.applescript */; };
 		D5907CA1200232A1005947E5 /* testGetURL.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD1200223F60066386B /* testGetURL.applescript */; };
 		D5907CA2200232AD005947E5 /* testGenericScript.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5907C9D20023249005947E5 /* testGenericScript.applescript */; };
@@ -483,6 +485,7 @@
 			dstPath = TestScripts;
 			dstSubfolderSpec = 7;
 			files = (
+				D57BE7652051027D00D11AAC /* testFeedExists.applescript in CopyFiles */,
 				D5D07B19204B423C0093F739 /* testIterativeCreateAndDeleteFeed.applescript in CopyFiles */,
 				D5E4CCDE20303A66009B4FFC /* testCurrentArticleIsNil.applescript in CopyFiles */,
 				D5E4CCDF20303A66009B4FFC /* testURLsOfCurrentArticle.applescript in CopyFiles */,
@@ -665,6 +668,7 @@
 		D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSAppleEventDescriptor+UserRecordFields.swift"; path = "AppleEvents/NSAppleEventDescriptor+UserRecordFields.swift"; sourceTree = SOURCE_ROOT; };
 		D5558FD7200228B80066386B /* AppleEventUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleEventUtils.swift; sourceTree = "<group>"; };
 		D57BE6DF204CD35F00D11AAC /* NSScriptCommand+Evergreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScriptCommand+Evergreen.swift"; sourceTree = "<group>"; };
+		D57BE7562051025E00D11AAC /* testFeedExists.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testFeedExists.applescript; sourceTree = "<group>"; };
 		D5907C9D20023249005947E5 /* testGenericScript.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = testGenericScript.applescript; sourceTree = "<group>"; };
 		D5907CDC2002F0BE005947E5 /* Evergreen_project_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Evergreen_project_release.xcconfig; sourceTree = "<group>"; };
 		D5907CDD2002F0BE005947E5 /* Evergreen_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Evergreen_project_debug.xcconfig; sourceTree = "<group>"; };
@@ -1325,6 +1329,7 @@
 				D5E4CCD620303823009B4FFC /* selectAFeed.applescript */,
 				D5E4CCD520303823009B4FFC /* selectAnArticle.applescript */,
 				D5907C9D20023249005947E5 /* testGenericScript.applescript */,
+				D57BE7562051025E00D11AAC /* testFeedExists.applescript */,
 				D5A267B220131B8300A8D3C0 /* testFeedOPML.applescript */,
 				D5558FD1200223F60066386B /* testGetURL.applescript */,
 				D5F4EDE720075C1800B9E363 /* testNameAndUrlOfEveryFeed.applescript */,
@@ -1993,6 +1998,7 @@
 				D5F4EDE620075C1300B9E363 /* testNameOfEveryFolder.applescript in Sources */,
 				D5E4CCD720303823009B4FFC /* selectAnArticle.applescript in Sources */,
 				D5E4CCD820303823009B4FFC /* selectAFeed.applescript in Sources */,
+				D57BE7642051025E00D11AAC /* testFeedExists.applescript in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -48,6 +48,10 @@ class ScriptingTests: AppleScriptXCTestCase {
         _ = doIndividualScript(filename: "testNameOfAuthors")
     }
     
+    func testFeedExists() {
+        _ = doIndividualScript(filename: "testFeedExists")
+    }
+    
     func testFeedOPML() {
         _ = doIndividualScript(filename: "testFeedOPML")
     }
