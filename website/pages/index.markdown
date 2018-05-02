@@ -23,7 +23,7 @@ However, a few notes about the future:
 
 * We don’t plan on doing an iOS version ever. We might change our minds, but we doubt it. (Update Dec. 5, 2017: Well, maaaaaybe…)
 * We don’t plan on making a for-pay version ever, either. We might change our minds, but it’s massively unlikely. [This app is written for love](http://inessential.com/2015/06/30/love), not money.
-* Future versions will add syncing via existing services (such as [FeedBin](https://feedbin.com/), [Feedly](https://feedly.com/), [Feed Wrangler](https://feedwrangler.net/), and others), though we make no promises about which ones and when. (This means that, some time in the future, you could use Evergreen on your Mac and [Unread](http://supertop.co/unread/), [Reeder](http://reederapp.com/ios/), or other feed reader on your iPhone and iPad.)
+* Future versions will add syncing via existing services (such as [NewsBlur](https://newsblur.com), [FeedBin](https://feedbin.com/), [Feedly](https://feedly.com/), [Feed Wrangler](https://feedwrangler.net/), and others), though we make no promises about which ones and when. (This means that, some time in the future, you could use Evergreen on your Mac and [Unread](http://supertop.co/unread/), [Reeder](http://reederapp.com/ios/), or other feed reader on your iPhone and iPad.)
 
 #### Technical Notes
 
