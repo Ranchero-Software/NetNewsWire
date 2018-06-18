@@ -109,8 +109,6 @@
 		84AD1EAA2031617300BC20B7 /* FolderPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EA92031617300BC20B7 /* FolderPasteboardWriter.swift */; };
 		84AD1EBA2031649C00BC20B7 /* SmartFeedPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */; };
 		84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */; };
-		84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */; };
-		84B06FB31ED37DBD00F0B54B /* RSDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B06FCF1ED37F7D00F0B54B /* DB5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FCC1ED37F7200F0B54B /* DB5.framework */; };
 		84B06FD01ED37F7D00F0B54B /* DB5.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FCC1ED37F7200F0B54B /* DB5.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B06FE91ED3803A00F0B54B /* RSFeedFinder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FE61ED3803200F0B54B /* RSFeedFinder.framework */; };
@@ -258,34 +256,6 @@
 			remoteGlobalIDString = 849C645F1ED37A5D003D8FC0;
 			remoteInfo = Evergreen;
 		};
-		84B06F9C1ED37DA000F0B54B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84F22C551B52E0D9000060CE;
-			remoteInfo = RSDatabase;
-		};
-		84B06F9E1ED37DA000F0B54B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84F22C5F1B52E0D9000060CE;
-			remoteInfo = RSDatabaseTests;
-		};
-		84B06FA01ED37DA000F0B54B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8400ABF71E0CFBD800AA7C57;
-			remoteInfo = RSDatabaseiOS;
-		};
-		84B06FB41ED37DBD00F0B54B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 84F22C541B52E0D9000060CE;
-			remoteInfo = RSDatabase;
-		};
 		84B06FCB1ED37F7200F0B54B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */;
@@ -361,7 +331,6 @@
 				84BB4B781F11753300858766 /* Data.framework in Embed Frameworks */,
 				84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */,
 				846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */,
-				84B06FB31ED37DBD00F0B54B /* RSDatabase.framework in Embed Frameworks */,
 				84B06FEA1ED3803A00F0B54B /* RSFeedFinder.framework in Embed Frameworks */,
 				846E773E1F6EF67A00A165E2 /* Account.framework in Embed Frameworks */,
 				84B06FD01ED37F7D00F0B54B /* DB5.framework in Embed Frameworks */,
@@ -512,7 +481,6 @@
 		84AD1EA92031617300BC20B7 /* FolderPasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPasteboardWriter.swift; sourceTree = "<group>"; };
 		84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeedPasteboardWriter.swift; sourceTree = "<group>"; };
 		84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarOutlineDataSource.swift; sourceTree = "<group>"; };
-		84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSDatabase.xcodeproj; path = Frameworks/RSDatabase/RSDatabase.xcodeproj; sourceTree = "<group>"; };
 		84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DB5.xcodeproj; path = Frameworks/DB5/DB5.xcodeproj; sourceTree = "<group>"; };
 		84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSFeedFinder.xcodeproj; path = Frameworks/RSFeedFinder/RSFeedFinder.xcodeproj; sourceTree = "<group>"; };
 		84B7178B201E66580091657D /* SidebarViewController+ContextualMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SidebarViewController+ContextualMenus.swift"; sourceTree = "<group>"; };
@@ -612,7 +580,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84BB4B771F11753300858766 /* Data.framework in Frameworks */,
-				84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */,
 				846E77411F6EF6A100A165E2 /* Database.framework in Frameworks */,
 				84B06FE91ED3803A00F0B54B /* RSFeedFinder.framework in Frameworks */,
 				84B06FCF1ED37F7D00F0B54B /* DB5.framework in Frameworks */,
@@ -1001,7 +968,6 @@
 				846E77161F6EF5D000A165E2 /* Database.xcodeproj */,
 				84BB4B611F1174D400858766 /* Data.xcodeproj */,
 				84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */,
-				84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */,
 				84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */,
 			);
 			sourceTree = "<group>";
@@ -1045,16 +1011,6 @@
 			);
 			name = Dinosaurs;
 			path = Evergreen/Dinosaurs;
-			sourceTree = "<group>";
-		};
-		84B06F971ED37DA000F0B54B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */,
-				84B06F9F1ED37DA000F0B54B /* RSDatabaseTests.xctest */,
-				84B06FA11ED37DA000F0B54B /* RSDatabase.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		84B06FC71ED37F7200F0B54B /* Products */ = {
@@ -1293,7 +1249,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				84B06FB51ED37DBD00F0B54B /* PBXTargetDependency */,
 				84B06FD21ED37F7D00F0B54B /* PBXTargetDependency */,
 				84B06FEC1ED3803A00F0B54B /* PBXTargetDependency */,
 				84BB4B7A1F11753300858766 /* PBXTargetDependency */,
@@ -1393,10 +1348,6 @@
 					ProjectRef = 84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */;
 				},
 				{
-					ProductGroup = 84B06F971ED37DA000F0B54B /* Products */;
-					ProjectRef = 84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */;
-				},
-				{
 					ProductGroup = 84B06FE11ED3803200F0B54B /* Products */;
 					ProjectRef = 84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */;
 				},
@@ -1439,27 +1390,6 @@
 			fileType = wrapper.cfbundle;
 			path = AccountTests.xctest;
 			remoteRef = 846E773B1F6EF5D700A165E2 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = RSDatabase.framework;
-			remoteRef = 84B06F9C1ED37DA000F0B54B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B06F9F1ED37DA000F0B54B /* RSDatabaseTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = RSDatabaseTests.xctest;
-			remoteRef = 84B06F9E1ED37DA000F0B54B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B06FA11ED37DA000F0B54B /* RSDatabase.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = RSDatabase.framework;
-			remoteRef = 84B06FA01ED37DA000F0B54B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		84B06FCC1ED37F7200F0B54B /* DB5.framework */ = {
@@ -1779,11 +1709,6 @@
 			isa = PBXTargetDependency;
 			target = 849C645F1ED37A5D003D8FC0 /* Evergreen */;
 			targetProxy = 849C64721ED37A5D003D8FC0 /* PBXContainerItemProxy */;
-		};
-		84B06FB51ED37DBD00F0B54B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RSDatabase;
-			targetProxy = 84B06FB41ED37DBD00F0B54B /* PBXContainerItemProxy */;
 		};
 		84B06FD21ED37F7D00F0B54B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
