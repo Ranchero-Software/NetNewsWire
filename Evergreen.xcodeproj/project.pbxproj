@@ -93,8 +93,6 @@
 		849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97A71ED9F9AA007D329B /* AddFeedSheet.xib */; };
 		849A97AC1ED9F9BC007D329B /* AddFolderSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97AA1ED9F9BC007D329B /* AddFolderSheet.xib */; };
 		849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849A97B01ED9FA69007D329B /* MainWindow.storyboard */; };
-		849B897C1F0349D000578A8D /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849B89751F0349C100578A8D /* RSParser.framework */; };
-		849B897D1F0349D000578A8D /* RSParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 849B89751F0349C100578A8D /* RSParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C64631ED37A5D003D8FC0 /* AppDelegate.swift */; };
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849C64691ED37A5D003D8FC0 /* Main.storyboard */; };
@@ -253,27 +251,6 @@
 			remoteGlobalIDString = 844BEE361F0AB3AA004AB7CD;
 			remoteInfo = Database;
 		};
-		849B89741F0349C100578A8D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 849B89681F0349C100578A8D /* RSParser.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84FF5F841EFA285800C15A01;
-			remoteInfo = RSParser;
-		};
-		849B89761F0349C100578A8D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 849B89681F0349C100578A8D /* RSParser.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84FF5F8D1EFA285800C15A01;
-			remoteInfo = RSParserTests;
-		};
-		849B897E1F0349D000578A8D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 849B89681F0349C100578A8D /* RSParser.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 84FF5F831EFA285800C15A01;
-			remoteInfo = RSParser;
-		};
 		849C64721ED37A5D003D8FC0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
@@ -383,7 +360,6 @@
 			files = (
 				84BB4B781F11753300858766 /* Data.framework in Embed Frameworks */,
 				84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */,
-				849B897D1F0349D000578A8D /* RSParser.framework in Embed Frameworks */,
 				846E77421F6EF6A100A165E2 /* Database.framework in Embed Frameworks */,
 				84B06FB31ED37DBD00F0B54B /* RSDatabase.framework in Embed Frameworks */,
 				84B06FEA1ED3803A00F0B54B /* RSFeedFinder.framework in Embed Frameworks */,
@@ -514,7 +490,6 @@
 		849A97A81ED9F9AA007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/AddFeedSheet.xib; sourceTree = SOURCE_ROOT; };
 		849A97AB1ED9F9BC007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/AddFolderSheet.xib; sourceTree = SOURCE_ROOT; };
 		849A97B11ED9FA69007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Evergreen/Base.lproj/MainWindow.storyboard; sourceTree = SOURCE_ROOT; };
-		849B89681F0349C100578A8D /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = Frameworks/RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64631ED37A5D003D8FC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Evergreen/AppDelegate.swift; sourceTree = "<group>"; };
 		849C64671ED37A5D003D8FC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Evergreen/Assets.xcassets; sourceTree = "<group>"; };
@@ -638,7 +613,6 @@
 			files = (
 				84BB4B771F11753300858766 /* Data.framework in Frameworks */,
 				84B06FB21ED37DBD00F0B54B /* RSDatabase.framework in Frameworks */,
-				849B897C1F0349D000578A8D /* RSParser.framework in Frameworks */,
 				846E77411F6EF6A100A165E2 /* Database.framework in Frameworks */,
 				84B06FE91ED3803A00F0B54B /* RSFeedFinder.framework in Frameworks */,
 				84B06FCF1ED37F7D00F0B54B /* DB5.framework in Frameworks */,
@@ -983,15 +957,6 @@
 			path = Evergreen/Extensions;
 			sourceTree = "<group>";
 		};
-		849B89691F0349C100578A8D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				849B89751F0349C100578A8D /* RSParser.framework */,
-				849B89771F0349C100578A8D /* RSParserTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		849C64571ED37A5D003D8FC0 = {
 			isa = PBXGroup;
 			children = (
@@ -1038,7 +1003,6 @@
 				84B06FC61ED37F7200F0B54B /* DB5.xcodeproj */,
 				84B06F961ED37DA000F0B54B /* RSDatabase.xcodeproj */,
 				84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */,
-				849B89681F0349C100578A8D /* RSParser.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1332,7 +1296,6 @@
 				84B06FB51ED37DBD00F0B54B /* PBXTargetDependency */,
 				84B06FD21ED37F7D00F0B54B /* PBXTargetDependency */,
 				84B06FEC1ED3803A00F0B54B /* PBXTargetDependency */,
-				849B897F1F0349D000578A8D /* PBXTargetDependency */,
 				84BB4B7A1F11753300858766 /* PBXTargetDependency */,
 				846E77401F6EF67A00A165E2 /* PBXTargetDependency */,
 				846E77441F6EF6A100A165E2 /* PBXTargetDependency */,
@@ -1437,10 +1400,6 @@
 					ProductGroup = 84B06FE11ED3803200F0B54B /* Products */;
 					ProjectRef = 84B06FE01ED3803200F0B54B /* RSFeedFinder.xcodeproj */;
 				},
-				{
-					ProductGroup = 849B89691F0349C100578A8D /* Products */;
-					ProjectRef = 849B89681F0349C100578A8D /* RSParser.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1480,20 +1439,6 @@
 			fileType = wrapper.cfbundle;
 			path = AccountTests.xctest;
 			remoteRef = 846E773B1F6EF5D700A165E2 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		849B89751F0349C100578A8D /* RSParser.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = RSParser.framework;
-			remoteRef = 849B89741F0349C100578A8D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		849B89771F0349C100578A8D /* RSParserTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = RSParserTests.xctest;
-			remoteRef = 849B89761F0349C100578A8D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		84B06F9D1ED37DA000F0B54B /* RSDatabase.framework */ = {
@@ -1829,11 +1774,6 @@
 			isa = PBXTargetDependency;
 			name = Database;
 			targetProxy = 846E77431F6EF6A100A165E2 /* PBXContainerItemProxy */;
-		};
-		849B897F1F0349D000578A8D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RSParser;
-			targetProxy = 849B897E1F0349D000578A8D /* PBXContainerItemProxy */;
 		};
 		849C64731ED37A5D003D8FC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
