@@ -1,4 +1,0 @@
-#include "./RSCore_ios_target.xcconfig"
-
-VALIDATE_PRODUCT = YES
-
