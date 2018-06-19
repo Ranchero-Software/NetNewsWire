@@ -114,7 +114,7 @@ if ((window.top === window) && 	(typeof safari != 'undefined') && (document.loca
 					var shouldValidate = (document.location != null) && (thisPageLinkObjects.length > 0);
 
 					// Pass back the same validationID we were handed so they can look up the correlated validationHandler
-					safari.extension.dispatchMessage("pong", { "validationID": event.message.validationID, "shouldValidate": thisPageLinkObjects.length > 0 });
+					safari.extension.dispatchMessage("pong", { "validationID": event.message.validationID, "shouldValidate": shouldValidate });
 				}
 			}, false);
 
