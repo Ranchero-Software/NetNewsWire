@@ -1,6 +1,6 @@
 //
-//  RSFeedFinderTests.m
-//  RSFeedFinderTests
+//  FeedFinderTests.m
+//  FeedFinderTests
 //
 //  Created by Brent Simmons on 3/7/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
@@ -8,11 +8,11 @@
 
 #import <XCTest/XCTest.h>
 
-@interface RSFeedFinderTests : XCTestCase
+@interface FeedFinderTests : XCTestCase
 
 @end
 
-@implementation RSFeedFinderTests
+@implementation FeedFinderTests
 
 - (void)setUp {
     [super setUp];

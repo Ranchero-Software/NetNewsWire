@@ -1,13 +1,13 @@
 //
 //  HTMLFeedFinderTests.swift
-//  RSFeedFinder
+//  FeedFinder
 //
 //  Created by Brent Simmons on 8/7/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
 import XCTest
-@testable import RSFeedFinder
+@testable import FeedFinder
 import RSParser
 
 class HTMLFeedFinderTests: XCTestCase {

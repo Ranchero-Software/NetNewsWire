@@ -7,21 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8430C4701D57ED6D00E02399 /* FeedSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8430C46F1D57ED6D00E02399 /* FeedSpecifier.swift */; };
-		8430C4721D57F88600E02399 /* HTMLFeedFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8430C4711D57F88600E02399 /* HTMLFeedFinder.swift */; };
-		8430C4741D57FE9600E02399 /* HTMLFeedFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8430C4731D57FE9600E02399 /* HTMLFeedFinderTests.swift */; };
-		8430C4761D57FF0600E02399 /* DaringFireball.html in Resources */ = {isa = PBXBuildFile; fileRef = 8430C4751D57FF0600E02399 /* DaringFireball.html */; };
-		8430C47A1D58033D00E02399 /* furbo.html in Resources */ = {isa = PBXBuildFile; fileRef = 8430C4771D58033D00E02399 /* furbo.html */; };
-		8430C47B1D58033D00E02399 /* inessential.html in Resources */ = {isa = PBXBuildFile; fileRef = 8430C4781D58033D00E02399 /* inessential.html */; };
-		8430C47C1D58033D00E02399 /* sixcolors.html in Resources */ = {isa = PBXBuildFile; fileRef = 8430C4791D58033D00E02399 /* sixcolors.html */; };
-		8444267C1D5138A00092EDD4 /* FeedFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444267B1D5138A00092EDD4 /* FeedFinder.swift */; };
-		8452130F1FCA45EA003B6E93 /* indiestack.html in Resources */ = {isa = PBXBuildFile; fileRef = 8452130E1FCA45EA003B6E93 /* indiestack.html */; };
 		84B06FEF1ED3808F00F0B54B /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FEE1ED3808F00F0B54B /* RSWeb.framework */; };
 		84B06FF31ED3812600F0B54B /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B06FF21ED3812600F0B54B /* RSCore.framework */; };
-		84BAAE231C8E6B3B009F5239 /* RSFeedFinder.h in Headers */ = {isa = PBXBuildFile; fileRef = 84BAAE221C8E6B3B009F5239 /* RSFeedFinder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		84BAAE2A1C8E6B3B009F5239 /* RSFeedFinder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BAAE1F1C8E6B3B009F5239 /* RSFeedFinder.framework */; };
-		84BAAE2F1C8E6B3B009F5239 /* RSFeedFinderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BAAE2E1C8E6B3B009F5239 /* RSFeedFinderTests.m */; };
+		84BAAE2A1C8E6B3B009F5239 /* FeedFinder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BAAE1F1C8E6B3B009F5239 /* FeedFinder.framework */; };
 		84F466571F03523100225386 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84F466561F03523100225386 /* RSParser.framework */; };
+		84FE13C220DC3D960029AB7B /* FeedFinder.h in Headers */ = {isa = PBXBuildFile; fileRef = 84FE13C120DC3D960029AB7B /* FeedFinder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		84FE13C420DC3DA70029AB7B /* FeedFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE13C320DC3DA70029AB7B /* FeedFinder.swift */; };
+		84FE13C620DC3DAE0029AB7B /* FeedSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE13C520DC3DAE0029AB7B /* FeedSpecifier.swift */; };
+		84FE13C820DC3DB50029AB7B /* HTMLFeedFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE13C720DC3DB50029AB7B /* HTMLFeedFinder.swift */; };
+		84FE13D420DC3DDF0029AB7B /* FeedFinderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 84FE13CB20DC3DDF0029AB7B /* FeedFinderTests.m */; };
+		84FE13D520DC3DDF0029AB7B /* indiestack.html in Resources */ = {isa = PBXBuildFile; fileRef = 84FE13CD20DC3DDF0029AB7B /* indiestack.html */; };
+		84FE13D620DC3DDF0029AB7B /* sixcolors.html in Resources */ = {isa = PBXBuildFile; fileRef = 84FE13CE20DC3DDF0029AB7B /* sixcolors.html */; };
+		84FE13D720DC3DDF0029AB7B /* DaringFireball.html in Resources */ = {isa = PBXBuildFile; fileRef = 84FE13CF20DC3DDF0029AB7B /* DaringFireball.html */; };
+		84FE13D820DC3DDF0029AB7B /* inessential.html in Resources */ = {isa = PBXBuildFile; fileRef = 84FE13D020DC3DDF0029AB7B /* inessential.html */; };
+		84FE13D920DC3DDF0029AB7B /* furbo.html in Resources */ = {isa = PBXBuildFile; fileRef = 84FE13D120DC3DDF0029AB7B /* furbo.html */; };
+		84FE13DA20DC3DDF0029AB7B /* HTMLFeedFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE13D220DC3DDF0029AB7B /* HTMLFeedFinderTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,33 +35,33 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8430C46F1D57ED6D00E02399 /* FeedSpecifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedSpecifier.swift; path = RSFeedFinder/FeedSpecifier.swift; sourceTree = "<group>"; };
-		8430C4711D57F88600E02399 /* HTMLFeedFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTMLFeedFinder.swift; path = RSFeedFinder/HTMLFeedFinder.swift; sourceTree = "<group>"; };
-		8430C4731D57FE9600E02399 /* HTMLFeedFinderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLFeedFinderTests.swift; sourceTree = "<group>"; };
-		8430C4751D57FF0600E02399 /* DaringFireball.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = DaringFireball.html; path = Resources/DaringFireball.html; sourceTree = "<group>"; };
-		8430C4771D58033D00E02399 /* furbo.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = furbo.html; path = Resources/furbo.html; sourceTree = "<group>"; };
-		8430C4781D58033D00E02399 /* inessential.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = inessential.html; path = Resources/inessential.html; sourceTree = "<group>"; };
-		8430C4791D58033D00E02399 /* sixcolors.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = sixcolors.html; path = Resources/sixcolors.html; sourceTree = "<group>"; };
-		8444267B1D5138A00092EDD4 /* FeedFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedFinder.swift; path = RSFeedFinder/FeedFinder.swift; sourceTree = "<group>"; };
-		8452130E1FCA45EA003B6E93 /* indiestack.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = indiestack.html; path = Resources/indiestack.html; sourceTree = "<group>"; };
 		84B06FEE1ED3808F00F0B54B /* RSWeb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSWeb.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Evergreen-edcdqyvewhytnmcfaiesnqiqeynn/Build/Products/Debug/RSWeb.framework"; sourceTree = "<group>"; };
 		84B06FF01ED380A700F0B54B /* RSXML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSXML.framework; path = ../RSXML/build/Debug/RSXML.framework; sourceTree = "<group>"; };
 		84B06FF21ED3812600F0B54B /* RSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSCore.framework; path = ../RSCore/build/Debug/RSCore.framework; sourceTree = "<group>"; };
-		84BAAE1F1C8E6B3B009F5239 /* RSFeedFinder.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RSFeedFinder.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		84BAAE221C8E6B3B009F5239 /* RSFeedFinder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RSFeedFinder.h; path = RSFeedFinder/RSFeedFinder.h; sourceTree = "<group>"; };
-		84BAAE241C8E6B3B009F5239 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = RSFeedFinder/Info.plist; sourceTree = "<group>"; };
-		84BAAE291C8E6B3B009F5239 /* RSFeedFinderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RSFeedFinderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		84BAAE2E1C8E6B3B009F5239 /* RSFeedFinderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSFeedFinderTests.m; sourceTree = "<group>"; };
-		84BAAE301C8E6B3B009F5239 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84BAAE1F1C8E6B3B009F5239 /* FeedFinder.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FeedFinder.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		84BAAE291C8E6B3B009F5239 /* FeedFinderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FeedFinderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		84E697E51C8E6C10009C585A /* RSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSCore.framework; path = ../RSCore/build/Debug/RSCore.framework; sourceTree = "<group>"; };
 		84E697E71C8E6C16009C585A /* RSXML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSXML.framework; path = ../RSXML/build/Debug/RSXML.framework; sourceTree = "<group>"; };
 		84E697E91C8E6C20009C585A /* RSWeb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSWeb.framework; path = ../RSWeb/build/Debug/RSWeb.framework; sourceTree = "<group>"; };
 		84F466561F03523100225386 /* RSParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RSParser.framework; path = ../RSParser/build/Debug/RSParser.framework; sourceTree = "<group>"; };
-		D511EF0920242E7A00712EC3 /* RSFeedFinder_project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = RSFeedFinder_project.xcconfig; sourceTree = "<group>"; };
-		D511EF0A20242E7A00712EC3 /* RSFeedFinder_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = RSFeedFinder_target.xcconfig; sourceTree = "<group>"; };
-		D511EF0B20242E7A00712EC3 /* RSFeedFinder_project_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = RSFeedFinder_project_release.xcconfig; sourceTree = "<group>"; };
-		D511EF0C20242E7A00712EC3 /* RSFeedFinderTests_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = RSFeedFinderTests_target.xcconfig; sourceTree = "<group>"; };
-		D511EF0D20242E7A00712EC3 /* RSFeedFinder_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = RSFeedFinder_project_debug.xcconfig; sourceTree = "<group>"; };
+		84FE13C120DC3D960029AB7B /* FeedFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedFinder.h; path = FeedFinder/FeedFinder.h; sourceTree = "<group>"; };
+		84FE13C320DC3DA70029AB7B /* FeedFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedFinder.swift; path = FeedFinder/FeedFinder.swift; sourceTree = "<group>"; };
+		84FE13C520DC3DAE0029AB7B /* FeedSpecifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedSpecifier.swift; path = FeedFinder/FeedSpecifier.swift; sourceTree = "<group>"; };
+		84FE13C720DC3DB50029AB7B /* HTMLFeedFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTMLFeedFinder.swift; path = FeedFinder/HTMLFeedFinder.swift; sourceTree = "<group>"; };
+		84FE13C920DC3DCA0029AB7B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = FeedFinder/Info.plist; sourceTree = "<group>"; };
+		84FE13CB20DC3DDF0029AB7B /* FeedFinderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedFinderTests.m; sourceTree = "<group>"; };
+		84FE13CD20DC3DDF0029AB7B /* indiestack.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = indiestack.html; sourceTree = "<group>"; };
+		84FE13CE20DC3DDF0029AB7B /* sixcolors.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = sixcolors.html; sourceTree = "<group>"; };
+		84FE13CF20DC3DDF0029AB7B /* DaringFireball.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DaringFireball.html; sourceTree = "<group>"; };
+		84FE13D020DC3DDF0029AB7B /* inessential.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = inessential.html; sourceTree = "<group>"; };
+		84FE13D120DC3DDF0029AB7B /* furbo.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = furbo.html; sourceTree = "<group>"; };
+		84FE13D220DC3DDF0029AB7B /* HTMLFeedFinderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLFeedFinderTests.swift; sourceTree = "<group>"; };
+		84FE13D320DC3DDF0029AB7B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84FE13DC20DC3E4E0029AB7B /* FeedFinder_project_debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeedFinder_project_debug.xcconfig; sourceTree = "<group>"; };
+		D511EF0920242E7A00712EC3 /* FeedFinder_project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = FeedFinder_project.xcconfig; sourceTree = "<group>"; };
+		D511EF0A20242E7A00712EC3 /* FeedFinder_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = FeedFinder_target.xcconfig; sourceTree = "<group>"; };
+		D511EF0B20242E7A00712EC3 /* FeedFinder_project_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = FeedFinder_project_release.xcconfig; sourceTree = "<group>"; };
+		D511EF0C20242E7A00712EC3 /* FeedFinderTests_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = FeedFinderTests_target.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84BAAE2A1C8E6B3B009F5239 /* RSFeedFinder.framework in Frameworks */,
+				84BAAE2A1C8E6B3B009F5239 /* FeedFinder.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,15 +100,15 @@
 		84BAAE151C8E6B3B009F5239 = {
 			isa = PBXGroup;
 			children = (
-				84BAAE221C8E6B3B009F5239 /* RSFeedFinder.h */,
-				8444267B1D5138A00092EDD4 /* FeedFinder.swift */,
-				8430C46F1D57ED6D00E02399 /* FeedSpecifier.swift */,
-				8430C4711D57F88600E02399 /* HTMLFeedFinder.swift */,
-				84BAAE241C8E6B3B009F5239 /* Info.plist */,
+				84FE13C120DC3D960029AB7B /* FeedFinder.h */,
+				84FE13C320DC3DA70029AB7B /* FeedFinder.swift */,
+				84FE13C520DC3DAE0029AB7B /* FeedSpecifier.swift */,
+				84FE13C720DC3DB50029AB7B /* HTMLFeedFinder.swift */,
+				84FE13C920DC3DCA0029AB7B /* Info.plist */,
 				84E697E91C8E6C20009C585A /* RSWeb.framework */,
 				84E697E71C8E6C16009C585A /* RSXML.framework */,
 				84E697E51C8E6C10009C585A /* RSCore.framework */,
-				84BAAE2D1C8E6B3B009F5239 /* RSFeedFinderTests */,
+				84FE13CA20DC3DDF0029AB7B /* FeedFinderTests */,
 				84BAAE201C8E6B3B009F5239 /* Products */,
 				84B06FED1ED3808E00F0B54B /* Frameworks */,
 				D511EF0820242E7A00712EC3 /* xcconfig */,
@@ -118,35 +118,43 @@
 		84BAAE201C8E6B3B009F5239 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84BAAE1F1C8E6B3B009F5239 /* RSFeedFinder.framework */,
-				84BAAE291C8E6B3B009F5239 /* RSFeedFinderTests.xctest */,
+				84BAAE1F1C8E6B3B009F5239 /* FeedFinder.framework */,
+				84BAAE291C8E6B3B009F5239 /* FeedFinderTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		84BAAE2D1C8E6B3B009F5239 /* RSFeedFinderTests */ = {
+		84FE13CA20DC3DDF0029AB7B /* FeedFinderTests */ = {
 			isa = PBXGroup;
 			children = (
-				84BAAE2E1C8E6B3B009F5239 /* RSFeedFinderTests.m */,
-				8430C4731D57FE9600E02399 /* HTMLFeedFinderTests.swift */,
-				8430C4751D57FF0600E02399 /* DaringFireball.html */,
-				8452130E1FCA45EA003B6E93 /* indiestack.html */,
-				8430C4771D58033D00E02399 /* furbo.html */,
-				8430C4781D58033D00E02399 /* inessential.html */,
-				8430C4791D58033D00E02399 /* sixcolors.html */,
-				84BAAE301C8E6B3B009F5239 /* Info.plist */,
+				84FE13CB20DC3DDF0029AB7B /* FeedFinderTests.m */,
+				84FE13CC20DC3DDF0029AB7B /* Resources */,
+				84FE13D220DC3DDF0029AB7B /* HTMLFeedFinderTests.swift */,
+				84FE13D320DC3DDF0029AB7B /* Info.plist */,
 			);
-			path = RSFeedFinderTests;
+			path = FeedFinderTests;
+			sourceTree = "<group>";
+		};
+		84FE13CC20DC3DDF0029AB7B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				84FE13CD20DC3DDF0029AB7B /* indiestack.html */,
+				84FE13CE20DC3DDF0029AB7B /* sixcolors.html */,
+				84FE13CF20DC3DDF0029AB7B /* DaringFireball.html */,
+				84FE13D020DC3DDF0029AB7B /* inessential.html */,
+				84FE13D120DC3DDF0029AB7B /* furbo.html */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		D511EF0820242E7A00712EC3 /* xcconfig */ = {
 			isa = PBXGroup;
 			children = (
-				D511EF0920242E7A00712EC3 /* RSFeedFinder_project.xcconfig */,
-				D511EF0D20242E7A00712EC3 /* RSFeedFinder_project_debug.xcconfig */,
-				D511EF0B20242E7A00712EC3 /* RSFeedFinder_project_release.xcconfig */,
-				D511EF0A20242E7A00712EC3 /* RSFeedFinder_target.xcconfig */,
-				D511EF0C20242E7A00712EC3 /* RSFeedFinderTests_target.xcconfig */,
+				D511EF0920242E7A00712EC3 /* FeedFinder_project.xcconfig */,
+				84FE13DC20DC3E4E0029AB7B /* FeedFinder_project_debug.xcconfig */,
+				D511EF0B20242E7A00712EC3 /* FeedFinder_project_release.xcconfig */,
+				D511EF0A20242E7A00712EC3 /* FeedFinder_target.xcconfig */,
+				D511EF0C20242E7A00712EC3 /* FeedFinderTests_target.xcconfig */,
 			);
 			path = xcconfig;
 			sourceTree = "<group>";
@@ -158,16 +166,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84BAAE231C8E6B3B009F5239 /* RSFeedFinder.h in Headers */,
+				84FE13C220DC3D960029AB7B /* FeedFinder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		84BAAE1E1C8E6B3B009F5239 /* RSFeedFinder */ = {
+		84BAAE1E1C8E6B3B009F5239 /* FeedFinder */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 84BAAE331C8E6B3B009F5239 /* Build configuration list for PBXNativeTarget "RSFeedFinder" */;
+			buildConfigurationList = 84BAAE331C8E6B3B009F5239 /* Build configuration list for PBXNativeTarget "FeedFinder" */;
 			buildPhases = (
 				84BAAE1A1C8E6B3B009F5239 /* Sources */,
 				84BAAE1B1C8E6B3B009F5239 /* Frameworks */,
@@ -178,14 +186,14 @@
 			);
 			dependencies = (
 			);
-			name = RSFeedFinder;
+			name = FeedFinder;
 			productName = RSFeedFinder;
-			productReference = 84BAAE1F1C8E6B3B009F5239 /* RSFeedFinder.framework */;
+			productReference = 84BAAE1F1C8E6B3B009F5239 /* FeedFinder.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		84BAAE281C8E6B3B009F5239 /* RSFeedFinderTests */ = {
+		84BAAE281C8E6B3B009F5239 /* FeedFinderTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 84BAAE361C8E6B3B009F5239 /* Build configuration list for PBXNativeTarget "RSFeedFinderTests" */;
+			buildConfigurationList = 84BAAE361C8E6B3B009F5239 /* Build configuration list for PBXNativeTarget "FeedFinderTests" */;
 			buildPhases = (
 				84BAAE251C8E6B3B009F5239 /* Sources */,
 				84BAAE261C8E6B3B009F5239 /* Frameworks */,
@@ -196,9 +204,9 @@
 			dependencies = (
 				84BAAE2C1C8E6B3B009F5239 /* PBXTargetDependency */,
 			);
-			name = RSFeedFinderTests;
+			name = FeedFinderTests;
 			productName = RSFeedFinderTests;
-			productReference = 84BAAE291C8E6B3B009F5239 /* RSFeedFinderTests.xctest */;
+			productReference = 84BAAE291C8E6B3B009F5239 /* FeedFinderTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -220,7 +228,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 84BAAE191C8E6B3B009F5239 /* Build configuration list for PBXProject "RSFeedFinder" */;
+			buildConfigurationList = 84BAAE191C8E6B3B009F5239 /* Build configuration list for PBXProject "FeedFinder" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -232,8 +240,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				84BAAE1E1C8E6B3B009F5239 /* RSFeedFinder */,
-				84BAAE281C8E6B3B009F5239 /* RSFeedFinderTests */,
+				84BAAE1E1C8E6B3B009F5239 /* FeedFinder */,
+				84BAAE281C8E6B3B009F5239 /* FeedFinderTests */,
 			);
 		};
 /* End PBXProject section */
@@ -250,11 +258,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8430C47B1D58033D00E02399 /* inessential.html in Resources */,
-				8430C4761D57FF0600E02399 /* DaringFireball.html in Resources */,
-				8452130F1FCA45EA003B6E93 /* indiestack.html in Resources */,
-				8430C47A1D58033D00E02399 /* furbo.html in Resources */,
-				8430C47C1D58033D00E02399 /* sixcolors.html in Resources */,
+				84FE13D820DC3DDF0029AB7B /* inessential.html in Resources */,
+				84FE13D920DC3DDF0029AB7B /* furbo.html in Resources */,
+				84FE13D720DC3DDF0029AB7B /* DaringFireball.html in Resources */,
+				84FE13D520DC3DDF0029AB7B /* indiestack.html in Resources */,
+				84FE13D620DC3DDF0029AB7B /* sixcolors.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,9 +273,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8430C4721D57F88600E02399 /* HTMLFeedFinder.swift in Sources */,
-				8430C4701D57ED6D00E02399 /* FeedSpecifier.swift in Sources */,
-				8444267C1D5138A00092EDD4 /* FeedFinder.swift in Sources */,
+				84FE13C420DC3DA70029AB7B /* FeedFinder.swift in Sources */,
+				84FE13C820DC3DB50029AB7B /* HTMLFeedFinder.swift in Sources */,
+				84FE13C620DC3DAE0029AB7B /* FeedSpecifier.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,8 +283,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8430C4741D57FE9600E02399 /* HTMLFeedFinderTests.swift in Sources */,
-				84BAAE2F1C8E6B3B009F5239 /* RSFeedFinderTests.m in Sources */,
+				84FE13DA20DC3DDF0029AB7B /* HTMLFeedFinderTests.swift in Sources */,
+				84FE13D420DC3DDF0029AB7B /* FeedFinderTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +293,7 @@
 /* Begin PBXTargetDependency section */
 		84BAAE2C1C8E6B3B009F5239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 84BAAE1E1C8E6B3B009F5239 /* RSFeedFinder */;
+			target = 84BAAE1E1C8E6B3B009F5239 /* FeedFinder */;
 			targetProxy = 84BAAE2B1C8E6B3B009F5239 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -293,50 +301,57 @@
 /* Begin XCBuildConfiguration section */
 		84BAAE311C8E6B3B009F5239 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D511EF0D20242E7A00712EC3 /* RSFeedFinder_project_debug.xcconfig */;
 			buildSettings = {
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
 		84BAAE321C8E6B3B009F5239 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D511EF0B20242E7A00712EC3 /* RSFeedFinder_project_release.xcconfig */;
+			baseConfigurationReference = D511EF0B20242E7A00712EC3 /* FeedFinder_project_release.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		84BAAE341C8E6B3B009F5239 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D511EF0A20242E7A00712EC3 /* RSFeedFinder_target.xcconfig */;
+			baseConfigurationReference = D511EF0A20242E7A00712EC3 /* FeedFinder_target.xcconfig */;
 			buildSettings = {
+				INFOPLIST_FILE = FeedFinder/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.FeedFinder;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
 		84BAAE351C8E6B3B009F5239 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D511EF0A20242E7A00712EC3 /* RSFeedFinder_target.xcconfig */;
+			baseConfigurationReference = D511EF0A20242E7A00712EC3 /* FeedFinder_target.xcconfig */;
 			buildSettings = {
+				INFOPLIST_FILE = FeedFinder/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.FeedFinder;
 			};
 			name = Release;
 		};
 		84BAAE371C8E6B3B009F5239 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D511EF0C20242E7A00712EC3 /* RSFeedFinderTests_target.xcconfig */;
+			baseConfigurationReference = D511EF0C20242E7A00712EC3 /* FeedFinderTests_target.xcconfig */;
 			buildSettings = {
+				INFOPLIST_FILE = FeedFinderTests/Info.plist;
 			};
 			name = Debug;
 		};
 		84BAAE381C8E6B3B009F5239 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D511EF0C20242E7A00712EC3 /* RSFeedFinderTests_target.xcconfig */;
+			baseConfigurationReference = D511EF0C20242E7A00712EC3 /* FeedFinderTests_target.xcconfig */;
 			buildSettings = {
+				INFOPLIST_FILE = FeedFinderTests/Info.plist;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		84BAAE191C8E6B3B009F5239 /* Build configuration list for PBXProject "RSFeedFinder" */ = {
+		84BAAE191C8E6B3B009F5239 /* Build configuration list for PBXProject "FeedFinder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				84BAAE311C8E6B3B009F5239 /* Debug */,
@@ -345,7 +360,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		84BAAE331C8E6B3B009F5239 /* Build configuration list for PBXNativeTarget "RSFeedFinder" */ = {
+		84BAAE331C8E6B3B009F5239 /* Build configuration list for PBXNativeTarget "FeedFinder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				84BAAE341C8E6B3B009F5239 /* Debug */,
@@ -354,7 +369,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		84BAAE361C8E6B3B009F5239 /* Build configuration list for PBXNativeTarget "RSFeedFinderTests" */ = {
+		84BAAE361C8E6B3B009F5239 /* Build configuration list for PBXNativeTarget "FeedFinderTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				84BAAE371C8E6B3B009F5239 /* Debug */,

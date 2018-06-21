@@ -1,4 +1,4 @@
-#include "./RSFeedFinder_project.xcconfig"
+#include "./FeedFinder_project.xcconfig"
 
 DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
 ENABLE_NS_ASSERTIONS = NO
