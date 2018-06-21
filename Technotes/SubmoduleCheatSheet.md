@@ -6,3 +6,8 @@ To add a submodule:
 
 	git submodule add https://github.com/username/path
 
+(It’s unlikely you’ll need to do that. Adding a submodule is done super-rarely, if ever, and it’s Brent’s call.)
+
+To update a submodule — to get the latest changes:
+
+	TBD I surely wish I knew how
