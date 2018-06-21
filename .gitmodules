@@ -1,0 +1,3 @@
+[submodule "submodules/RSCore"]
+	path = submodules/RSCore
+	url = https://github.com/brentsimmons/RSCore
