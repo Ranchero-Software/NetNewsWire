@@ -10,4 +10,6 @@ To add a submodule:
 
 To update a submodule — to get the latest changes:
 
-	TBD I surely wish I knew how
+	git submodule update
+
+I think. Not sure about the above.
