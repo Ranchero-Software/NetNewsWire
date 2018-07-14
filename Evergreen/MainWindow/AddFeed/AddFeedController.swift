@@ -10,7 +10,6 @@ import AppKit
 import RSCore
 import RSTree
 import Data
-import RSFeedFinder
 import Account
 import RSParser
 
