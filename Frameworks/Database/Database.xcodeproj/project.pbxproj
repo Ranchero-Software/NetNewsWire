@@ -20,16 +20,16 @@
 		845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580751F0AF670003CCFA1 /* Article+Database.swift */; };
 		8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */; };
 		8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */; };
-		846146271F0ABC7B00870CB3 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846146241F0ABC7400870CB3 /* RSParser.framework */; };
 		846FB36B1F4A937B00EAB81D /* Feed+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846FB36A1F4A937B00EAB81D /* Feed+Database.swift */; };
 		848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */; };
-		84BB4BA21F119C5400858766 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BB4B981F119C4900858766 /* RSCore.framework */; };
+		848E3EB920FBCFD20004B7ED /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EB820FBCFD20004B7ED /* RSCore.framework */; };
+		848E3EBB20FBCFD80004B7ED /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EBA20FBCFD80004B7ED /* RSParser.framework */; };
+		848E3EBD20FBCFDE0004B7ED /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EBC20FBCFDE0004B7ED /* RSDatabase.framework */; };
 		84E156EA1F0AB80500F8CC05 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156E91F0AB80500F8CC05 /* Database.swift */; };
 		84E156EC1F0AB80E00F8CC05 /* ArticlesTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156EB1F0AB80E00F8CC05 /* ArticlesTable.swift */; };
 		84E156EE1F0AB81400F8CC05 /* StatusesTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156ED1F0AB81400F8CC05 /* StatusesTable.swift */; };
 		84E156F01F0AB81F00F8CC05 /* CreateStatements.sql in Resources */ = {isa = PBXBuildFile; fileRef = 84E156EF1F0AB81F00F8CC05 /* CreateStatements.sql */; };
 		84E156FD1F0AB86100F8CC05 /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E156F81F0AB83600F8CC05 /* Data.framework */; };
-		84E1570C1F0AB8A500F8CC05 /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E157071F0AB89B00F8CC05 /* RSDatabase.framework */; };
 		84F20F8F1F180D8700D8E682 /* AuthorsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F20F8E1F180D8700D8E682 /* AuthorsTable.swift */; };
 /* End PBXBuildFile section */
 
@@ -131,6 +131,9 @@
 		8461461E1F0ABC7300870CB3 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		846FB36A1F4A937B00EAB81D /* Feed+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Feed+Database.swift"; path = "Extensions/Feed+Database.swift"; sourceTree = "<group>"; };
 		848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCountDictionary.swift; sourceTree = "<group>"; };
+		848E3EB820FBCFD20004B7ED /* RSCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		848E3EBA20FBCFD80004B7ED /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		848E3EBC20FBCFDE0004B7ED /* RSDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84BB4B8F1F119C4900858766 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		84E156E81F0AB75600F8CC05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84E156E91F0AB80500F8CC05 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
@@ -153,9 +156,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84BB4BA21F119C5400858766 /* RSCore.framework in Frameworks */,
-				846146271F0ABC7B00870CB3 /* RSParser.framework in Frameworks */,
-				84E1570C1F0AB8A500F8CC05 /* RSDatabase.framework in Frameworks */,
+				848E3EBD20FBCFDE0004B7ED /* RSDatabase.framework in Frameworks */,
+				848E3EBB20FBCFD80004B7ED /* RSParser.framework in Frameworks */,
+				848E3EB920FBCFD20004B7ED /* RSCore.framework in Frameworks */,
 				84E156FD1F0AB86100F8CC05 /* Data.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -257,6 +260,9 @@
 		84E156FB1F0AB83A00F8CC05 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				848E3EBC20FBCFDE0004B7ED /* RSDatabase.framework */,
+				848E3EBA20FBCFD80004B7ED /* RSParser.framework */,
+				848E3EB820FBCFD20004B7ED /* RSCore.framework */,
 				84E156F11F0AB83600F8CC05 /* Data.xcodeproj */,
 				84E157001F0AB89B00F8CC05 /* RSDatabase.xcodeproj */,
 				84BB4B8F1F119C4900858766 /* RSCore.xcodeproj */,

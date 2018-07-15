@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		840405CA1F1A8E4300DF0296 /* DatabaseID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840405C91F1A8E4300DF0296 /* DatabaseID.swift */; };
 		8419741C1F6DD613006346C4 /* UnreadCountProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419741B1F6DD613006346C4 /* UnreadCountProvider.swift */; };
-		843079FA1F0AB57F00B4B7F7 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEEA31F0AB512004AB7CD /* RSCore.framework */; };
 		844BEE651F0AB3C9004AB7CD /* Data.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEE5B1F0AB3C8004AB7CD /* Data.framework */; };
 		844BEE6A1F0AB3C9004AB7CD /* DataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE691F0AB3C9004AB7CD /* DataTests.swift */; };
 		844BEE7D1F0AB4C4004AB7CD /* Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE7C1F0AB4C4004AB7CD /* Feed.swift */; };
@@ -17,7 +16,8 @@
 		844BEE811F0AB4D0004AB7CD /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE801F0AB4D0004AB7CD /* Author.swift */; };
 		844BEE831F0AB4D6004AB7CD /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE821F0AB4D6004AB7CD /* Attachment.swift */; };
 		844BEE851F0AB4DB004AB7CD /* ArticleStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE841F0AB4DB004AB7CD /* ArticleStatus.swift */; };
-		84C490F41F705D5F003131D2 /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C490F51F705D5F003131D2 /* RSWeb.framework */; };
+		848E3EB420FBCFAE0004B7ED /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EB320FBCFAE0004B7ED /* RSCore.framework */; };
+		848E3EB520FBCFB50004B7ED /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C490F51F705D5F003131D2 /* RSWeb.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +65,7 @@
 		844BEE821F0AB4D6004AB7CD /* Attachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		844BEE841F0AB4DB004AB7CD /* ArticleStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleStatus.swift; sourceTree = "<group>"; };
 		844BEE9C1F0AB512004AB7CD /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
+		848E3EB320FBCFAE0004B7ED /* RSCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C490F51F705D5F003131D2 /* RSWeb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSWeb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D511EEC420242DF400712EC3 /* DataTests_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DataTests_target.xcconfig; sourceTree = "<group>"; };
 		D511EEC520242DF400712EC3 /* Data_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Data_project_debug.xcconfig; sourceTree = "<group>"; };
@@ -83,8 +84,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84C490F41F705D5F003131D2 /* RSWeb.framework in Frameworks */,
-				843079FA1F0AB57F00B4B7F7 /* RSCore.framework in Frameworks */,
+				848E3EB520FBCFB50004B7ED /* RSWeb.framework in Frameworks */,
+				848E3EB420FBCFAE0004B7ED /* RSCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,6 +150,7 @@
 		844BEEA81F0AB520004AB7CD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				848E3EB320FBCFAE0004B7ED /* RSCore.framework */,
 				84C490F51F705D5F003131D2 /* RSWeb.framework */,
 				844BEE9C1F0AB512004AB7CD /* RSCore.xcodeproj */,
 			);
@@ -240,13 +242,13 @@
 				TargetAttributes = {
 					844BEE5A1F0AB3C8004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = M8L2WTLA8W;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 					844BEE631F0AB3C9004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Automatic;
 					};
 				};
