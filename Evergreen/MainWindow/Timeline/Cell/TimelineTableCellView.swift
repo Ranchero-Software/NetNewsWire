@@ -188,17 +188,23 @@ private extension TimelineTableCellView {
 	func updateTextFieldColors() {
 
 		updateTitleView()
+
+		titleView.textColor = NSColor.labelColor
+		feedNameView.textColor = NSColor.secondaryLabelColor
+		dateView.textColor = NSColor.secondaryLabelColor
+		summaryView.textColor = NSColor.secondaryLabelColor
+		textView.textColor = NSColor.labelColor
 		
-		if isEmphasized && isSelected {
-			textFields.forEach { $0.textColor = NSColor.white }
-		}
-		else {
-			feedNameView.textColor = cellAppearance.feedNameColor
-			dateView.textColor = cellAppearance.dateColor
-			titleView.textColor = cellAppearance.titleColor
-			summaryView.textColor = cellAppearance.textColor
-			textView.textColor = cellAppearance.textOnlyColor
-		}
+//		if isEmphasized && isSelected {
+//			textFields.forEach { $0.textColor = NSColor.white }
+//		}
+//		else {
+//			feedNameView.textColor = cellAppearance.feedNameColor
+//			dateView.textColor = cellAppearance.dateColor
+//			titleView.textColor = cellAppearance.titleColor
+//			summaryView.textColor = cellAppearance.textColor
+//			textView.textColor = cellAppearance.textOnlyColor
+//		}
 	}
 
 	func updateTextFieldFonts() {
