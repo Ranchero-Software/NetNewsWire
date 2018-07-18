@@ -236,7 +236,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="581" height="300"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
-                            <containerView appearanceType="aqua" translatesAutoresizingMaskIntoConstraints="NO" id="K1o-Ws-XMQ">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="K1o-Ws-XMQ">
                                 <rect key="frame" x="0.0" y="0.0" width="581" height="300"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
@@ -579,7 +579,6 @@
                                             </connections>
                                         </tableView>
                                     </subviews>
-                                    <nil key="backgroundColor"/>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="9r2-h4-K46">
                                     <rect key="frame" x="-100" y="-100" width="223" height="15"/>
