@@ -48,13 +48,13 @@ class TimelineTableCellView: NSTableCellView {
 		return true
 	}
 
-	override var isOpaque: Bool {
-		return true
-	}
-
-	override var wantsUpdateLayer: Bool {
-		return true
-	}
+//	override var isOpaque: Bool {
+//		return true
+//	}
+//
+//	override var wantsUpdateLayer: Bool {
+//		return true
+//	}
 
 	var isEmphasized = false {
 		didSet {
@@ -122,20 +122,20 @@ class TimelineTableCellView: NSTableCellView {
 		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
 	}
 
-	override func updateLayer() {
-
-		let color: NSColor
-		if isSelected {
-			color = isEmphasized ? NSColor.alternateSelectedControlColor : NSColor.secondarySelectedControlColor
-		}
-		else {
-			color = NSColor.white
-		}
-
-		if layer?.backgroundColor != color.cgColor {
-			layer?.backgroundColor = color.cgColor
-		}
-	}
+//	override func updateLayer() {
+//
+//		let color: NSColor
+//		if isSelected {
+//			color = isEmphasized ? NSColor.alternateSelectedControlColor : NSColor.secondarySelectedControlColor
+//		}
+//		else {
+//			color = NSColor.white
+//		}
+//
+//		if layer?.backgroundColor != color.cgColor {
+//			layer?.backgroundColor = color.cgColor
+//		}
+//	}
 }
 
 // MARK: - Private
