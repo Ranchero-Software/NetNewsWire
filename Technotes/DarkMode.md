@@ -1,4 +1,4 @@
-# Dark Mode
+# Dark Mode - WWDC 2018
 
 https://developer.apple.com/documentation/appkit/supporting_dark_mode_in_your_interface
 https://developer.apple.com/videos/play/wwdc2018/210/
@@ -36,4 +36,19 @@ Build with 10.14 SDK
 NSAppearanceCustomization
 NSView, NSWindow conforms
 NSWindow.appearanceSource
+Configure NSBox to fill color to get desired material
+visualEffectView.maskImage
+	Can do drawing handler images - for instance with a path
+backgroundStyle on rows - .normal and .emphasized
 
+Backward deployment…
+Most system colors are available pre-Mo
+Asset catalogs available on 10.13
+Find hardcoded colors, use asset catalog colors
+NSColor(named: "SomeColor")
+Prefer block-based image drawing instead of lockFocus
+Prefer NSTextField to drawing strings
+
+
+
+	
