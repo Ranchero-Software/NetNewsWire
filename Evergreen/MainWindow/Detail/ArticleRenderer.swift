@@ -453,7 +453,7 @@ class ArticleRenderer {
 
 		"""
 
-		s += "\n\n</head><body onload='startup()'>\n\n"
+		s += "\n\n</head><body onload='startup()' class=dark>\n\n"
 
 
 		s += RSMacroProcessor.renderedText(withTemplate: template(), substitutions: substitutions(), macroStart: "[[", macroEnd: "]]")
