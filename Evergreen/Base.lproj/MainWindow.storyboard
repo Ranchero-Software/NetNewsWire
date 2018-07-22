@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14306.4" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14295.6" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14306.4"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14295.6"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -364,7 +364,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="166" height="28"/>
                                 <subviews>
                                     <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="gZE-LB-FdW">
-                                        <rect key="frame" x="8" y="3" width="40" height="23"/>
+                                        <rect key="frame" x="8" y="5" width="40" height="19"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="40" id="7UB-w9-Vc2"/>
                                         </constraints>
@@ -739,7 +739,7 @@
                                 </constraints>
                             </view>
                             <color key="borderColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <color key="fillColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="fillColor" name="underPageBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </box>
                     </subviews>
                     <constraints>
@@ -762,12 +762,12 @@
         <image name="NSMobileMe" width="128" height="128"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
-        <image name="action" width="19" height="19"/>
-        <image name="markAllRead" width="22" height="19"/>
-        <image name="markRead" width="19" height="19"/>
-        <image name="newFolder" width="19" height="19"/>
-        <image name="nextUnread" width="24" height="19"/>
-        <image name="openInBrowser" width="19" height="19"/>
-        <image name="star" width="19" height="19"/>
+        <image name="action" width="9.5" height="9.5"/>
+        <image name="markAllRead" width="11" height="9.5"/>
+        <image name="markRead" width="9.5" height="9.5"/>
+        <image name="newFolder" width="9.5" height="9.5"/>
+        <image name="nextUnread" width="12" height="9.5"/>
+        <image name="openInBrowser" width="9.5" height="9.5"/>
+        <image name="star" width="9.5" height="9.5"/>
     </resources>
 </document>
