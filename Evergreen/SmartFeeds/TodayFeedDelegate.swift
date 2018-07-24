@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Data
+import Articles
 import Account
 
 struct TodayFeedDelegate: SmartFeedDelegate {

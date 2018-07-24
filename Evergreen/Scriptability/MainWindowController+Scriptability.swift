@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Data
+import Articles
 
 protocol ScriptingMainWindowController {
     var scriptingCurrentArticle: Article? { get }

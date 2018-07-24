@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Data
+import Articles
 import RSCore
 
 protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconProvider, PasteboardWriterOwner {

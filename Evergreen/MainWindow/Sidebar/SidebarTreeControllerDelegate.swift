@@ -8,7 +8,7 @@
 
 import Foundation
 import RSTree
-import Data
+import Articles
 import Account
 
 final class SidebarTreeControllerDelegate: TreeControllerDelegate {

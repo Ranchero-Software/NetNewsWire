@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSParser
 import RSWeb
-import Data
+import Articles
 
 final class LocalAccountRefresher {
 	

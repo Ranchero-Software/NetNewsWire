@@ -9,7 +9,7 @@
 import Foundation
 import RSParser
 import Account
-import Data
+import Articles
 
 @objc(ScriptableFeed)
 class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer{

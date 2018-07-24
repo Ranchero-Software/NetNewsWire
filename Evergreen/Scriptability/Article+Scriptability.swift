@@ -8,7 +8,7 @@
 
 import Foundation
 import Account
-import Data
+import Articles
 
 @objc(ScriptableArticle)
 class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {

@@ -8,9 +8,9 @@
 
 import Foundation
 import RSCore
-import Data
+import Articles
 import RSParser
-import Database
+import ArticlesDatabase
 import RSWeb
 
 public extension Notification.Name {
@@ -53,7 +53,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	var idToFeedDictionary = [String: Feed]()
 	let settingsFile: String
 	let dataFolder: String
-	let database: Database
+	let database: ArticlesDatabase
 	let delegate: AccountDelegate
 	var username: String?
 	static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
@@ -109,7 +109,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.hashValue = accountID.hashValue
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
-		self.database = Database(databaseFilePath: databaseFilePath, accountID: accountID)
+		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)

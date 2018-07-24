@@ -8,7 +8,7 @@
 
 import AppKit
 import RSCore
-import Data
+import Articles
 
 final class SendToMarsEditCommand: SendToCommand {
 

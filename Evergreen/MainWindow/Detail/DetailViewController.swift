@@ -9,7 +9,7 @@
 import Foundation
 import WebKit
 import RSCore
-import Data
+import Articles
 import RSWeb
 
 final class DetailViewController: NSViewController, WKUIDelegate {

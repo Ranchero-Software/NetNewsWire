@@ -8,7 +8,7 @@
 
 import Foundation
 import Account
-import Data
+import Articles
 
 @objc(ScriptableAuthor)
 class ScriptableAuthor: NSObject, UniqueIdScriptingObject {

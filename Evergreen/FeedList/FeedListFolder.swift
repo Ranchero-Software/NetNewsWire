@@ -8,7 +8,7 @@
 
 import Foundation
 import RSCore
-import Data
+import Articles
 
 final class FeedListFolder: Hashable, DisplayNameProvider {
 

@@ -7,7 +7,7 @@
 //
 
 import AppKit
-import Data
+import Articles
 
 struct TimelineCellData {
 	
