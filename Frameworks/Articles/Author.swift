@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import RSCore
 
 public struct Author: Hashable {
 
@@ -82,7 +81,7 @@ public struct Author: Hashable {
 		return lhs.hashValue == rhs.hashValue && lhs.authorID == rhs.authorID
 	}
 
-	static func authorsWithDiskArray(_ diskArray: [[String: Any]]) -> Set<Author>? {
+	public static func authorsWithDiskArray(_ diskArray: [[String: Any]]) -> Set<Author>? {
 
 		let authors = diskArray.compactMap { Author(dictionary: $0) }
 		return authors.isEmpty ? nil : Set(authors)
@@ -91,7 +90,7 @@ public struct Author: Hashable {
 
 extension Set where Element == Author {
 
-	func diskArray() -> [[String: Any]]? {
+	public func diskArray() -> [[String: Any]]? {
 
 		if self.isEmpty {
 			return nil

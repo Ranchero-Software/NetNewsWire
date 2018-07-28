@@ -8,6 +8,7 @@
 
 import AppKit
 import Articles
+import Account
 import RSWeb
 import RSParser
 

@@ -17,16 +17,12 @@ public struct UnreadCountDictionary {
 		return dictionary.count < 1
 	}
 	
-	subscript(_ feedID: String) -> Int? {
+	public subscript(_ feedID: String) -> Int? {
 		get {
 			return dictionary[feedID]
 		}
 		set {
 			dictionary[feedID] = newValue
 		}
-	}
-	
-	public subscript(_ feed: Feed) -> Int? {
-		return dictionary[feed.feedID]
 	}
 }

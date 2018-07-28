@@ -41,9 +41,8 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: Fetching
 	
-	func fetchArticles(_ feed: Feed) -> Set<Article> {
+	func fetchArticles(_ feedID: String) -> Set<Article> {
 		
-		let feedID = feed.feedID
 		var articles = Set<Article>()
 
 		queue.fetchSync { (database) in
@@ -53,9 +52,7 @@ final class ArticlesTable: DatabaseTable {
 		return articles
 	}
 
-	func fetchArticlesAsync(_ feed: Feed, withLimits: Bool, _ resultBlock: @escaping ArticleResultBlock) {
-
-		let feedID = feed.feedID
+	func fetchArticlesAsync(_ feedID: String, withLimits: Bool, _ resultBlock: @escaping ArticleResultBlock) {
 
 		queue.fetch { (database) in
 
@@ -67,24 +64,24 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 	
-	func fetchUnreadArticles(for feeds: Set<Feed>) -> Set<Article> {
+	func fetchUnreadArticles(for feedIDs: Set<String>) -> Set<Article> {
 
-		return fetchUnreadArticles(feeds.feedIDs())
+		return fetchUnreadArticles(feedIDs)
 	}
 
-	public func fetchTodayArticles(for feeds: Set<Feed>) -> Set<Article> {
+	public func fetchTodayArticles(for feedIDs: Set<String>) -> Set<Article> {
 
-		return fetchTodayArticles(feeds.feedIDs())
+		return fetchTodayArticles(feedIDs)
 	}
 
-	public func fetchStarredArticles(for feeds: Set<Feed>) -> Set<Article> {
+	public func fetchStarredArticles(for feedIDs: Set<String>) -> Set<Article> {
 
-		return fetchStarredArticles(feeds.feedIDs())
+		return fetchStarredArticles(feedIDs)
 	}
 
 	// MARK: Updating
 	
-	func update(_ feed: Feed, _ parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
+	func update(_ feedID: String, _ parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
 
 		if parsedFeed.items.isEmpty {
 			completion(nil, nil)
@@ -99,7 +96,6 @@ final class ArticlesTable: DatabaseTable {
 		// 6. Create array of updated Articles and save what’s changed.
 		// 7. Call back with new and updated Articles.
 		
-		let feedID = feed.feedID
 		let articleIDs = Set(parsedFeed.items.map { $0.articleID })
 		
 		self.queue.update { (database) in
@@ -131,14 +127,13 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: Unread Counts
 	
-	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: @escaping UnreadCountCompletionBlock) {
+	func fetchUnreadCounts(_ feedIDs: Set<String>, _ completion: @escaping UnreadCountCompletionBlock) {
 		
-		if feeds.isEmpty {
+		if feedIDs.isEmpty {
 			completion(UnreadCountDictionary())
 			return
 		}
 
-		let feedIDs = feeds.feedIDs()
 		var unreadCountDictionary = UnreadCountDictionary()
 
 		queue.fetch { (database) in
@@ -153,16 +148,15 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func fetchUnreadCount(_ feeds: Set<Feed>, _ since: Date, _ callback: @escaping (Int) -> Void) {
+	func fetchUnreadCount(_ feedIDs: Set<String>, _ since: Date, _ callback: @escaping (Int) -> Void) {
 
 		// Get unread count for today, for instance.
 
-		if feeds.isEmpty {
+		if feedIDs.isEmpty {
 			callback(0)
 			return
 		}
 		
-		let feedIDs = feeds.feedIDs()
 		queue.fetch { (database) in
 
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
@@ -211,14 +205,13 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func fetchStarredAndUnreadCount(_ feeds: Set<Feed>, _ callback: @escaping (Int) -> Void) {
+	func fetchStarredAndUnreadCount(_ feedIDs: Set<String>, _ callback: @escaping (Int) -> Void) {
 
-		if feeds.isEmpty {
+		if feedIDs.isEmpty {
 			callback(0)
 			return
 		}
 
-		let feedIDs = feeds.feedIDs()
 		queue.fetch { (database) in
 
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!

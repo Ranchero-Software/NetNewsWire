@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import RSWeb
+import Articles
 
 public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
@@ -189,3 +190,10 @@ extension Feed: OPMLRepresentable {
 	}
 }
 
+extension Set where Element == Feed {
+
+	func feedIDs() -> Set<String> {
+
+		return Set<String>(map { $0.feedID })
+	}
+}

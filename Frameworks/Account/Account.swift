@@ -140,7 +140,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		feed.takeSettings(from: parsedFeed)
 
-		database.update(feed: feed, parsedFeed: parsedFeed) { (newArticles, updatedArticles) in
+		database.update(feedID: feed.feedID, parsedFeed: parsedFeed) { (newArticles, updatedArticles) in
 
 			var userInfo = [String: Any]()
 			if let newArticles = newArticles, !newArticles.isEmpty {
@@ -302,10 +302,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return
 		}
 		
-		database.fetchUnreadCounts(for: feeds) { (unreadCountDictionary) in
+		database.fetchUnreadCounts(for: feeds.feedIDs()) { (unreadCountDictionary) in
 
 			for feed in feeds {
-				if let unreadCount = unreadCountDictionary[feed] {
+				if let unreadCount = unreadCountDictionary[feed.feedID] {
 					feed.unreadCount = unreadCount
 				}
 			}
@@ -314,14 +314,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func fetchArticles(for feed: Feed) -> Set<Article> {
 
-		let articles = database.fetchArticles(for: feed)
+		let articles = database.fetchArticles(for: feed.feedID)
 		validateUnreadCount(feed, articles)
 		return articles
 	}
 
 	public func fetchUnreadArticles(for feed: Feed) -> Set<Article> {
 
-		let articles = database.fetchUnreadArticles(for: Set([feed]))
+		let articles = database.fetchUnreadArticles(for: Set([feed.feedID]))
 		validateUnreadCount(feed, articles)
 		return articles
 	}
@@ -339,19 +339,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func fetchUnreadArticles(forContainer container: Container) -> Set<Article> {
 
 		let feeds = container.flattenedFeeds()
-		let articles = database.fetchUnreadArticles(for: feeds)
+		let articles = database.fetchUnreadArticles(for: feeds.feedIDs())
 		feeds.forEach { validateUnreadCount($0, articles) }
 		return articles
 	}
 
 	public func fetchTodayArticles() -> Set<Article> {
 
-		return database.fetchTodayArticles(for: flattenedFeeds())
+		return database.fetchTodayArticles(for: flattenedFeeds().feedIDs())
 	}
 
 	public func fetchStarredArticles() -> Set<Article> {
 
-		return database.fetchStarredArticles(for: flattenedFeeds())
+		return database.fetchStarredArticles(for: flattenedFeeds().feedIDs())
 	}
 
 	private func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
@@ -372,12 +372,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func fetchUnreadCountForToday(_ callback: @escaping (Int) -> Void) {
 
 		let startOfToday = NSCalendar.startOfToday()
-		database.fetchUnreadCount(for: flattenedFeeds(), since: startOfToday, callback: callback)
+		database.fetchUnreadCount(for: flattenedFeeds().feedIDs(), since: startOfToday, callback: callback)
 	}
 
 	public func fetchUnreadCountForStarredArticles(_ callback: @escaping (Int) -> Void) {
 
-		database.fetchStarredAndUnreadCount(for: flattenedFeeds(), callback: callback)
+		database.fetchStarredAndUnreadCount(for: flattenedFeeds().feedIDs(), callback: callback)
 	}
 
 	public func markEverywhereAsRead() {
@@ -680,7 +680,7 @@ private extension Account {
 
 				// When the unread count is zero, it won’t appear in unreadCountDictionary.
 
-				if let unreadCount = unreadCountDictionary[feed] {
+				if let unreadCount = unreadCountDictionary[feed.feedID] {
 					feed.unreadCount = unreadCount
 				}
 				else {

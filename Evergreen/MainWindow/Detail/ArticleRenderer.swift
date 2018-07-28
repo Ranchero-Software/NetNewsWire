@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import Articles
+import Account
 
 var cachedStyleString = ""
 var cachedTemplate = ""

@@ -21,7 +21,6 @@
 		845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580751F0AF670003CCFA1 /* Article+Database.swift */; };
 		8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */; };
 		8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */; };
-		846FB36B1F4A937B00EAB81D /* Feed+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846FB36A1F4A937B00EAB81D /* Feed+Database.swift */; };
 		848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */; };
 		848E3EB920FBCFD20004B7ED /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EB820FBCFD20004B7ED /* RSCore.framework */; };
 		848E3EBB20FBCFD80004B7ED /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EBA20FBCFD80004B7ED /* RSParser.framework */; };
@@ -130,7 +129,6 @@
 		845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ArticleStatus+Database.swift"; path = "Extensions/ArticleStatus+Database.swift"; sourceTree = "<group>"; };
 		8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Attachment+Database.swift"; path = "Extensions/Attachment+Database.swift"; sourceTree = "<group>"; };
 		8461461E1F0ABC7300870CB3 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
-		846FB36A1F4A937B00EAB81D /* Feed+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Feed+Database.swift"; path = "Extensions/Feed+Database.swift"; sourceTree = "<group>"; };
 		848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCountDictionary.swift; sourceTree = "<group>"; };
 		848E3EB820FBCFD20004B7ED /* RSCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		848E3EBA20FBCFD80004B7ED /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -227,7 +225,6 @@
 		8461462A1F0AC44100870CB3 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				846FB36A1F4A937B00EAB81D /* Feed+Database.swift */,
 				845580751F0AF670003CCFA1 /* Article+Database.swift */,
 				843702C21F70D15D00B18807 /* ParsedArticle+Database.swift */,
 				845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */,
@@ -500,7 +497,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */,
-				846FB36B1F4A937B00EAB81D /* Feed+Database.swift in Sources */,
 				843CB9961F34174100EE6581 /* Author+Database.swift in Sources */,
 				848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
