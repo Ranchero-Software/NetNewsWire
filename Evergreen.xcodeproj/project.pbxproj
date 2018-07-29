@@ -15,7 +15,6 @@
 		840D618B2029031D009BC708 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 840D61892029031D009BC708 /* LaunchScreen.storyboard */; };
 		840D61962029031D009BC708 /* Evergreen_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61952029031D009BC708 /* Evergreen_iOSTests.swift */; };
 		840D61A12029031E009BC708 /* Evergreen_iOSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61A02029031E009BC708 /* Evergreen_iOSUITests.swift */; };
-		8414AD251FCF5A1E00955102 /* TimelineHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8414AD241FCF5A1E00955102 /* TimelineHeaderView.swift */; };
 		84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */; };
 		84162A252038C1E000035290 /* TimelineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84162A242038C1E000035290 /* TimelineDataSource.swift */; };
 		841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */; };
@@ -493,7 +492,6 @@
 		840D619C2029031D009BC708 /* Evergreen-iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Evergreen-iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		840D61A02029031E009BC708 /* Evergreen_iOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Evergreen_iOSUITests.swift; sourceTree = "<group>"; };
 		840D61A22029031E009BC708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8414AD241FCF5A1E00955102 /* TimelineHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineHeaderView.swift; sourceTree = "<group>"; };
 		84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkCommandValidationStatus.swift; sourceTree = "<group>"; };
 		84162A242038C1E000035290 /* TimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineDataSource.swift; sourceTree = "<group>"; };
 		841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingInspectorViewController.swift; sourceTree = "<group>"; };
@@ -964,7 +962,6 @@
 				849A976A1ED9EBC8007D329B /* TimelineTableView.swift */,
 				844B5B6C1FEA282400C7C76A /* Keyboard */,
 				84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */,
-				8414AD241FCF5A1E00955102 /* TimelineHeaderView.swift */,
 				84AAF2BE202CF684004A0BC4 /* TimelineContextualMenuDelegate.swift */,
 				849A976F1ED9EC04007D329B /* Cell */,
 			);
@@ -1928,7 +1925,6 @@
 				D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */,
 				84E850861FCB60CE0072EA88 /* AuthorAvatarDownloader.swift in Sources */,
 				84E185B3203B74E500F69BFA /* SingleLineTextFieldSizer.swift in Sources */,
-				8414AD251FCF5A1E00955102 /* TimelineHeaderView.swift in Sources */,
 				849EE71F20391DF20082A1EA /* MainWindowToolbarDelegate.swift in Sources */,
 				849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */,
 				849A97761ED9EC04007D329B /* TimelineCellAppearance.swift in Sources */,
