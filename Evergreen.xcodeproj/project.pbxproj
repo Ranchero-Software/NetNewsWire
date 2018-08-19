@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
+		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
+		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
+		6581C74020CED60100F4AD34 /* evergreen-subscribe-to-feed.js in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73F20CED60100F4AD34 /* evergreen-subscribe-to-feed.js */; };
+		6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */; };
+		6581C74620CED60100F4AD34 /* Subscribe to Feed.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		840D617F2029031C009BC708 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D617E2029031C009BC708 /* AppDelegate.swift */; };
 		840D61812029031C009BC708 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61802029031C009BC708 /* MasterViewController.swift */; };
 		840D61832029031C009BC708 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61822029031C009BC708 /* DetailViewController.swift */; };
@@ -204,6 +210,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6581C74420CED60100F4AD34 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6581C73220CED60000F4AD34;
+			remoteInfo = "Subscribe to Feed";
+		};
 		840D61922029031D009BC708 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
@@ -431,6 +444,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		6581C75720CED60100F4AD34 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				6581C74620CED60100F4AD34 /* Subscribe to Feed.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84B06F681ED37B9000F0B54B /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -477,6 +501,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6581C73420CED60100F4AD34 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionHandler.swift; sourceTree = "<group>"; };
+		6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionViewController.swift; sourceTree = "<group>"; };
+		6581C73C20CED60100F4AD34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SafariExtensionViewController.xib; sourceTree = "<group>"; };
+		6581C73E20CED60100F4AD34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6581C73F20CED60100F4AD34 /* evergreen-subscribe-to-feed.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "evergreen-subscribe-to-feed.js"; sourceTree = "<group>"; };
+		6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ToolbarItemIcon.pdf; sourceTree = "<group>"; };
+		6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Subscribe_to_Feed.entitlements; sourceTree = "<group>"; };
 		8403E75A201C4A79007F7246 /* FeedListKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListKeyboardDelegate.swift; sourceTree = "<group>"; };
 		840D617C2029031C009BC708 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		840D617E2029031C009BC708 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -672,6 +705,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6581C73020CED60000F4AD34 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6581C73520CED60100F4AD34 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		840D61792029031C009BC708 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -719,6 +760,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6581C73620CED60100F4AD34 /* Safari Extension */ = {
+			isa = PBXGroup;
+			children = (
+				6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */,
+				6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */,
+				6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */,
+				6581C73E20CED60100F4AD34 /* Info.plist */,
+				6581C73F20CED60100F4AD34 /* evergreen-subscribe-to-feed.js */,
+				6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */,
+				6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */,
+			);
+			path = "Safari Extension";
+			sourceTree = "<group>";
+		};
 		840D617D2029031C009BC708 /* Evergreen-iOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -1090,6 +1145,7 @@
 				840D617D2029031C009BC708 /* Evergreen-iOS */,
 				840D61942029031D009BC708 /* Evergreen-iOSTests */,
 				840D619F2029031E009BC708 /* Evergreen-iOSUITests */,
+				6581C73620CED60100F4AD34 /* Safari Extension */,
 				84FB9A2C1EDCD6A4003D53B9 /* Frameworks */,
 				849C64741ED37A5D003D8FC0 /* EvergreenTests */,
 				D5907CDA2002F084005947E5 /* xcconfig */,
@@ -1114,6 +1170,7 @@
 				840D617C2029031C009BC708 /* Evergreen.app */,
 				840D61912029031D009BC708 /* Evergreen-iOSTests.xctest */,
 				840D619C2029031D009BC708 /* Evergreen-iOSUITests.xctest */,
+				6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1278,6 +1335,7 @@
 			children = (
 				847752FE2008879500D93690 /* CoreServices.framework */,
 				84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */,
+				6581C73420CED60100F4AD34 /* Cocoa.framework */,
 			);
 			name = Frameworks;
 			path = Evergreen/Extensions;
@@ -1358,6 +1416,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6581C73220CED60000F4AD34 /* Subscribe to Feed */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6581C75620CED60100F4AD34 /* Build configuration list for PBXNativeTarget "Subscribe to Feed" */;
+			buildPhases = (
+				6581C72F20CED60000F4AD34 /* Sources */,
+				6581C73020CED60000F4AD34 /* Frameworks */,
+				6581C73120CED60000F4AD34 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Subscribe to Feed";
+			productName = "Subscribe to Feed";
+			productReference = 6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		840D617B2029031C009BC708 /* Evergreen-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 840D61A32029031E009BC708 /* Build configuration list for PBXNativeTarget "Evergreen-iOS" */;
@@ -1420,6 +1495,7 @@
 				849C645E1ED37A5D003D8FC0 /* Resources */,
 				84C987A52000AC9E0066B150 /* ShellScript */,
 				84B06F681ED37B9000F0B54B /* Embed Frameworks */,
+				6581C75720CED60100F4AD34 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
@@ -1553,6 +1629,7 @@
 				840D617B2029031C009BC708 /* Evergreen-iOS */,
 				840D61902029031D009BC708 /* Evergreen-iOSTests */,
 				840D619B2029031D009BC708 /* Evergreen-iOSUITests */,
+				6581C73220CED60000F4AD34 /* Subscribe to Feed */,
 			);
 		};
 /* End PBXProject section */
@@ -1708,6 +1785,16 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6581C73120CED60000F4AD34 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */,
+				6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */,
+				6581C74020CED60100F4AD34 /* evergreen-subscribe-to-feed.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		840D617A2029031C009BC708 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1785,6 +1872,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6581C72F20CED60000F4AD34 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */,
+				6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		840D61782029031C009BC708 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1961,6 +2057,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6581C74520CED60100F4AD34 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6581C73220CED60000F4AD34 /* Subscribe to Feed */;
+			targetProxy = 6581C74420CED60100F4AD34 /* PBXContainerItemProxy */;
+		};
 		840D61932029031D009BC708 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 840D617B2029031C009BC708 /* Evergreen-iOS */;
@@ -2019,6 +2120,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6581C73C20CED60100F4AD34 /* Base */,
+			);
+			name = SafariExtensionViewController.xib;
+			sourceTree = "<group>";
+		};
 		840D61842029031C009BC708 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2095,6 +2204,30 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		6581C74720CED60100F4AD34 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* Evergreen_target.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Safari Extension/Subscribe_to_Feed.entitlements";
+				INFOPLIST_FILE = "Safari Extension/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.Evergreen.Subscribe-to-Feed";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		6581C74820CED60100F4AD34 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* Evergreen_target.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Safari Extension/Subscribe_to_Feed.entitlements";
+				INFOPLIST_FILE = "Safari Extension/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.Evergreen.Subscribe-to-Feed";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		840D61A42029031E009BC708 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2545,6 +2678,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6581C75620CED60100F4AD34 /* Build configuration list for PBXNativeTarget "Subscribe to Feed" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6581C74720CED60100F4AD34 /* Debug */,
+				6581C74820CED60100F4AD34 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		840D61A32029031E009BC708 /* Build configuration list for PBXNativeTarget "Evergreen-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
