@@ -18,7 +18,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 	// to verify whether our code is installed.
 
 	// I tried to use a NSMapTable from String to the closure directly, but Swift
-	// complains that the object as to be a class type.
+	// complains that the object has to be a class type.
 	typealias ValidationHandler = (Bool, String) -> Void
 	class ValidationWrapper {
 		let validationHandler: ValidationHandler
@@ -30,6 +30,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 
 	// Maps from UUID to a validation wrapper
 	static var gPingPongMap = Dictionary<String, ValidationWrapper>()
+	static var validationQueue = DispatchQueue(label: "Toolbar Validation")
 
 	// Bottleneck for calling through to a validation handler we have saved, and removing it from the list.
 	static func callValidationHandler(forHandlerID handlerID: String, withShouldValidate shouldValidate: Bool) {
@@ -38,8 +39,6 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 			gPingPongMap.removeValue(forKey: handlerID)
 		}
 	}
-
-	var validationQueue = DispatchQueue(label: "Toolbar Validation")
 
     override func messageReceived(withName messageName: String, from page: SFSafariPage, userInfo: [String : Any]?) {
 		if (messageName == "subscribeToFeed") {
@@ -73,12 +72,25 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 
 		let uniqueValidationID = NSUUID().uuidString
 
-		// Save it right away to eliminate any doubt of whether the handler gets deallocated while
-		// we are waiting for a callback from the getActiveTab or getActivatePage methods below.
-		let validationWrapper = ValidationWrapper(validationHandler: validationHandler)
-		SafariExtensionHandler.gPingPongMap[uniqueValidationID] = validationWrapper
+		SafariExtensionHandler.validationQueue.sync {
 
-		validationQueue.sync {
+			// Save it right away to eliminate any doubt of whether the handler gets deallocated while
+			// we are waiting for a callback from the getActiveTab or getActivatePage methods below.
+			let validationWrapper = ValidationWrapper(validationHandler: validationHandler)
+			SafariExtensionHandler.gPingPongMap[uniqueValidationID] = validationWrapper
+
+			// To avoid problems with validation handlers dispatched after we've, for example,
+			// switched to a new tab, we aggressively clear out the map of any pending validations,
+			// and focus only on the newest validation request we've been asked for.
+			for thisValidationID in SafariExtensionHandler.gPingPongMap.keys {
+				if thisValidationID != uniqueValidationID {
+					// Default to valid ... we'll know soon enough whether the latest state
+					// is actually still valid or not...
+					SafariExtensionHandler.callValidationHandler(forHandlerID: thisValidationID, withShouldValidate: true);
+
+				}
+			}
+
 			// See comments above where gPingPongMap is declared. Upon being asked to validate the
 			// toolbar icon for a specific page, we save the validationHandler and postpone calling
 			// it until we have either received a response from our installed JavaScript, or until
@@ -101,7 +113,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 								// Capture the uniqueValidationID to ensure it doesn't change out from under us on a future call
 								activePage.dispatchMessageToScript(withName: "ping", userInfo: ["validationID": uniqueValidationID])
 
-								let pongTimeoutInNanoseconds = Int(NSEC_PER_SEC / UInt64(1))
+								let pongTimeoutInNanoseconds = Int(Double(NSEC_PER_SEC) * 0.5)
 								let timeoutDeadline = DispatchTime.now() + DispatchTimeInterval.nanoseconds(pongTimeoutInNanoseconds)
 								DispatchQueue.main.asyncAfter(deadline: timeoutDeadline, execute: { [timedOutValidationID = uniqueValidationID] in
 									SafariExtensionHandler.callValidationHandler(forHandlerID: timedOutValidationID, withShouldValidate:false)
