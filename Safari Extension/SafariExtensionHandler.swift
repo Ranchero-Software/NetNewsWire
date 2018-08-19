@@ -101,7 +101,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 								// Capture the uniqueValidationID to ensure it doesn't change out from under us on a future call
 								activePage.dispatchMessageToScript(withName: "ping", userInfo: ["validationID": uniqueValidationID])
 
-								let pongTimeoutInNanoseconds = Int(NSEC_PER_SEC / UInt64(1))
+								let pongTimeoutInNanoseconds = Int(NSEC_PER_SEC * UInt64(1))
 								let timeoutDeadline = DispatchTime.now() + DispatchTimeInterval.nanoseconds(pongTimeoutInNanoseconds)
 								DispatchQueue.main.asyncAfter(deadline: timeoutDeadline, execute: { [timedOutValidationID = uniqueValidationID] in
 									SafariExtensionHandler.callValidationHandler(forHandlerID: timedOutValidationID, withShouldValidate:false)
