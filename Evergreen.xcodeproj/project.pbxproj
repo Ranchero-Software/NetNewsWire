@@ -38,6 +38,8 @@
 		842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */; };
 		842E45E71ED8C747000A8B52 /* DB5.plist in Resources */ = {isa = PBXBuildFile; fileRef = 842E45E61ED8C747000A8B52 /* DB5.plist */; };
 		843A3B5620311E7700BF76EC /* FeedListOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843A3B5520311E7700BF76EC /* FeedListOutlineView.swift */; };
+		8440C8AD2129F9F5002353D1 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D682106B3E100DD04E6 /* ArticlesDatabase.framework */; };
+		8440C8AE2129F9F5002353D1 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D682106B3E100DD04E6 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E701FE5FBFA004B527F /* SmallIconProvider.swift */; };
 		8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
 		844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */; };
@@ -210,13 +212,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		6581C74420CED60100F4AD34 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6581C73220CED60000F4AD34;
-			remoteInfo = "Subscribe to Feed";
-		};
 		840D61922029031D009BC708 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
@@ -265,6 +260,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 844BEE5A1F0AB3C8004AB7CD;
 			remoteInfo = Articles;
+		};
+		8440C8AF2129F9F5002353D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 844BEE361F0AB3AA004AB7CD;
+			remoteInfo = ArticlesDatabase;
 		};
 		846E77391F6EF5D700A165E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -469,6 +471,7 @@
 				84C37FB620DD8DBB00CA8CF5 /* RSParser.framework in Embed Frameworks */,
 				84C37FA620DD8D8400CA8CF5 /* RSCore.framework in Embed Frameworks */,
 				846E773E1F6EF67A00A165E2 /* Account.framework in Embed Frameworks */,
+				8440C8AE2129F9F5002353D1 /* ArticlesDatabase.framework in Embed Frameworks */,
 				841D4D6C2106B3ED00DD04E6 /* Articles.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -709,7 +712,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6581C73520CED60100F4AD34 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -746,6 +748,7 @@
 				846E773D1F6EF67A00A165E2 /* Account.framework in Frameworks */,
 				84C37FA520DD8D8400CA8CF5 /* RSCore.framework in Frameworks */,
 				84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */,
+				8440C8AD2129F9F5002353D1 /* ArticlesDatabase.framework in Frameworks */,
 				841D4D6B2106B3ED00DD04E6 /* Articles.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1508,6 +1511,7 @@
 				84C37FB820DD8DBB00CA8CF5 /* PBXTargetDependency */,
 				84C37FC820DD8E1D00CA8CF5 /* PBXTargetDependency */,
 				841D4D6E2106B3ED00DD04E6 /* PBXTargetDependency */,
+				8440C8B02129F9F5002353D1 /* PBXTargetDependency */,
 			);
 			name = Evergreen;
 			productName = Evergreen;
@@ -1543,6 +1547,10 @@
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
+					6581C73220CED60000F4AD34 = {
+						DevelopmentTeam = M8L2WTLA8W;
+						ProvisioningStyle = Manual;
+					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
 						DevelopmentTeam = 9C84TZ7Q6Z;
@@ -1867,7 +1875,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# See https://blog.curtisherbert.com/automated-build-numbers/\n\ngit=`sh /etc/profile; which git`\nbranch_name=`$git symbolic-ref HEAD | sed -e 's,.*/\\\\(.*\\\\),\\\\1,'`\ngit_count=`$git rev-list $branch_name |wc -l | sed 's/^ *//;s/ *$//'`\nsimple_branch_name=`$git rev-parse --abbrev-ref HEAD`\n\nbuild_number=\"$git_count\"\nif [ $CONFIGURATION != \"Release\" ]; then\nbuild_number+=\"-$simple_branch_name\"\nfi\n\nplist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\ndsym_plist=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\nif [ -f \"$DSYM_INFO_PLIST\" ] ; then\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$dsym_plist\"\nfi";
+			shellScript = "# See https://blog.curtisherbert.com/automated-build-numbers/\n\ngit=`sh /etc/profile; which git`\nbranch_name=`$git symbolic-ref HEAD | sed -e 's,.*/\\\\(.*\\\\),\\\\1,'`\ngit_count=`$git rev-list $branch_name |wc -l | sed 's/^ *//;s/ *$//'`\nsimple_branch_name=`$git rev-parse --abbrev-ref HEAD`\n\nbuild_number=\"$git_count\"\nif [ $CONFIGURATION != \"Release\" ]; then\nbuild_number+=\"-$simple_branch_name\"\nfi\n\nplist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\ndsym_plist=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\nif [ -f \"$DSYM_INFO_PLIST\" ] ; then\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$dsym_plist\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2057,11 +2065,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		6581C74520CED60100F4AD34 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6581C73220CED60000F4AD34 /* Subscribe to Feed */;
-			targetProxy = 6581C74420CED60100F4AD34 /* PBXContainerItemProxy */;
-		};
 		840D61932029031D009BC708 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 840D617B2029031C009BC708 /* Evergreen-iOS */;
@@ -2076,6 +2079,11 @@
 			isa = PBXTargetDependency;
 			name = Articles;
 			targetProxy = 841D4D6D2106B3ED00DD04E6 /* PBXContainerItemProxy */;
+		};
+		8440C8B02129F9F5002353D1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ArticlesDatabase;
+			targetProxy = 8440C8AF2129F9F5002353D1 /* PBXContainerItemProxy */;
 		};
 		846E77401F6EF67A00A165E2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
