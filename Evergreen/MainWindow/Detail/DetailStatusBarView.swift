@@ -8,7 +8,7 @@
 
 import AppKit
 import DB5
-import Data
+import Articles
 
 final class DetailStatusBarView: NSView {
 

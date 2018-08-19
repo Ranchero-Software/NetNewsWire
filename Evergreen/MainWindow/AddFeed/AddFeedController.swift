@@ -9,8 +9,7 @@
 import AppKit
 import RSCore
 import RSTree
-import Data
-import RSFeedFinder
+import Articles
 import Account
 import RSParser
 

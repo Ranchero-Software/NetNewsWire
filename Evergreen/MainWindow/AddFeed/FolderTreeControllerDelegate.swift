@@ -9,7 +9,7 @@
 import Foundation
 import RSCore
 import RSTree
-import Data
+import Articles
 import Account
 
 final class FolderTreeControllerDelegate: TreeControllerDelegate {

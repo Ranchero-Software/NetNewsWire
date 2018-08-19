@@ -1,6 +1,4 @@
 body {
-	color: #444;
-	background-color: white;
 	margin-top: 20px;
 	margin-bottom: 64px;
 	margin-left: 64px;
@@ -8,29 +6,52 @@ body {
 	font-family: -apple-system;
 	font-size: 18px;
 }
+
 a {
 	text-decoration: none;
-}
-a, a:link, a:visited {
-	color: #416ED2;
 }
 a:hover {
 	text-decoration: underline;
 }
-
+.feedlink {
+	font-weight: bold;
+}
 .headerTable {
 	width: 100%;
 	height: 68px;
+}
+
+/* Light mode */
+
+body.light {
+	color: 	-webkit-text;
+	background-color: -apple-system-text-background;
+}
+
+body.light a, body.light a:link, body.light a:visited {
+	color: -apple-system-blue;
+}
+body.light .headerTable {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
+/* Dark mode */
+
+body.dark {
+	color: #d2d2d2;
+	background-color: #2d2d2d;
+}
+body.dark a, body.dark a:link, body.dark a:visited {
+	color: #4490e2;
+}
+body.dark .headerTable {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .header a:link, .header a:visited {
 	color: rgba(0, 0, 0, 0.3);
 }
 .header {
 	color: rgba(0, 0, 0, 0.3);
-}
-.feedlink {
-	font-weight: bold;
 }
 .feedlink a:link, .feedlink a:visited {
 	color: rgba(0, 0, 0, 0.6);

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Data
+import Articles
 import Account
 
 // These handle multiple accounts.

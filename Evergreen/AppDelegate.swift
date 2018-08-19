@@ -8,7 +8,7 @@
 
 import AppKit
 import DB5
-import Data
+import Articles
 import RSTree
 import RSWeb
 import Account
@@ -104,7 +104,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func applicationDidFinishLaunching(_ note: Notification) {
 
-		appName = Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String
+		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {

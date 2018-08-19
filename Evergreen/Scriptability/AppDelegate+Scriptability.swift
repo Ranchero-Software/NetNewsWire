@@ -17,7 +17,7 @@
 */
 
 import Foundation
-import Data
+import Articles
 
 protocol AppDelegateAppleEvents {
     func installAppleEventHandlers()

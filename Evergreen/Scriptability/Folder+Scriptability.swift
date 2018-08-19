@@ -8,7 +8,7 @@
 
 import Foundation
 import Account
-import Data
+import Articles
 import RSCore
 
 @objc(ScriptableFolder)

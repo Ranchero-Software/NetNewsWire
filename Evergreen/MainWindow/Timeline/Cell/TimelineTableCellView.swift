@@ -48,13 +48,13 @@ class TimelineTableCellView: NSTableCellView {
 		return true
 	}
 
-	override var isOpaque: Bool {
-		return true
-	}
-
-	override var wantsUpdateLayer: Bool {
-		return true
-	}
+//	override var isOpaque: Bool {
+//		return true
+//	}
+//
+//	override var wantsUpdateLayer: Bool {
+//		return true
+//	}
 
 	var isEmphasized = false {
 		didSet {
@@ -122,20 +122,20 @@ class TimelineTableCellView: NSTableCellView {
 		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
 	}
 
-	override func updateLayer() {
-
-		let color: NSColor
-		if isSelected {
-			color = isEmphasized ? NSColor.alternateSelectedControlColor : NSColor.secondarySelectedControlColor
-		}
-		else {
-			color = NSColor.white
-		}
-
-		if layer?.backgroundColor != color.cgColor {
-			layer?.backgroundColor = color.cgColor
-		}
-	}
+//	override func updateLayer() {
+//
+//		let color: NSColor
+//		if isSelected {
+//			color = isEmphasized ? NSColor.alternateSelectedControlColor : NSColor.secondarySelectedControlColor
+//		}
+//		else {
+//			color = NSColor.white
+//		}
+//
+//		if layer?.backgroundColor != color.cgColor {
+//			layer?.backgroundColor = color.cgColor
+//		}
+//	}
 }
 
 // MARK: - Private
@@ -188,17 +188,23 @@ private extension TimelineTableCellView {
 	func updateTextFieldColors() {
 
 		updateTitleView()
+
+		titleView.textColor = NSColor.labelColor
+		feedNameView.textColor = NSColor.secondaryLabelColor
+		dateView.textColor = NSColor.secondaryLabelColor
+		summaryView.textColor = NSColor.secondaryLabelColor
+		textView.textColor = NSColor.labelColor
 		
-		if isEmphasized && isSelected {
-			textFields.forEach { $0.textColor = NSColor.white }
-		}
-		else {
-			feedNameView.textColor = cellAppearance.feedNameColor
-			dateView.textColor = cellAppearance.dateColor
-			titleView.textColor = cellAppearance.titleColor
-			summaryView.textColor = cellAppearance.textColor
-			textView.textColor = cellAppearance.textOnlyColor
-		}
+//		if isEmphasized && isSelected {
+//			textFields.forEach { $0.textColor = NSColor.white }
+//		}
+//		else {
+//			feedNameView.textColor = cellAppearance.feedNameColor
+//			dateView.textColor = cellAppearance.dateColor
+//			titleView.textColor = cellAppearance.titleColor
+//			summaryView.textColor = cellAppearance.textColor
+//			textView.textColor = cellAppearance.textOnlyColor
+//		}
 	}
 
 	func updateTextFieldFonts() {

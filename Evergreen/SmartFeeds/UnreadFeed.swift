@@ -8,7 +8,7 @@
 
 import AppKit
 import Account
-import Data
+import Articles
 
 // This just shows the global unread count, which appDelegate already has. Easy.
 

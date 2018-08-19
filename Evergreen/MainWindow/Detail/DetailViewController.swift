@@ -9,7 +9,7 @@
 import Foundation
 import WebKit
 import RSCore
-import Data
+import Articles
 import RSWeb
 
 final class DetailViewController: NSViewController, WKUIDelegate {
@@ -249,11 +249,11 @@ final class DetailContainerView: NSView {
 	
 	weak var viewController: DetailViewController? = nil
 
-	private var didConfigureLayer = false
-
-	override var wantsUpdateLayer: Bool {
-		return true
-	}
+//	private var didConfigureLayer = false
+//
+//	override var wantsUpdateLayer: Bool {
+//		return true
+//	}
 
 	var contentView: NSView? {
 		didSet {
@@ -278,17 +278,21 @@ final class DetailContainerView: NSView {
 		viewController?.viewDidEndLiveResize()
 	}
 
-	override func updateLayer() {
-
-		guard !didConfigureLayer else {
-			return
-		}
-		if let layer = layer {
-			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.backgroundColor")
-			layer.backgroundColor = color.cgColor
-			didConfigureLayer = true
-		}
+	override func draw(_ dirtyRect: NSRect) {
+		NSColor.textBackgroundColor.setFill()
+		dirtyRect.fill()
 	}
+//	override func updateLayer() {
+//
+//		guard !didConfigureLayer else {
+//			return
+//		}
+//		if let layer = layer {
+//			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.backgroundColor")
+//			layer.backgroundColor = color.cgColor
+//			didConfigureLayer = true
+//		}
+//	}
 }
 
 // MARK: -

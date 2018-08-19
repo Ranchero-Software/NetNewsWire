@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Data
+import Articles
 import RSParser
 
 public extension Notification.Name {

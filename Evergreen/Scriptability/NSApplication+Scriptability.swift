@@ -8,7 +8,7 @@
 
 import AppKit
 import Account
-import Data
+import Articles
 
 extension NSApplication : ScriptingObjectContainer {
 

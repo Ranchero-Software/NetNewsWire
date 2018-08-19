@@ -9,7 +9,7 @@
 import AppKit
 import RSCore
 import RSTree
-import Data
+import Articles
 import Account
 
 protocol AddFeedWindowControllerDelegate: class {

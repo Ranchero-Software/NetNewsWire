@@ -7,7 +7,8 @@
 //
 
 import AppKit
-import Data
+import Articles
+import Account
 import RSCore
 
 extension Notification.Name {

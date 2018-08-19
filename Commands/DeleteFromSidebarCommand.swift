@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSTree
 import Account
-import Data
+import Articles
 
 final class DeleteFromSidebarCommand: UndoableCommand {
 

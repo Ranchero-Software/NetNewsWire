@@ -8,7 +8,7 @@
 
 import AppKit
 import RSCore
-import Data
+import Articles
 import RSWeb
 import Account
 
@@ -16,8 +16,6 @@ final class SidebarStatusBarView: NSView {
 
 	@IBOutlet var progressIndicator: NSProgressIndicator!
 	@IBOutlet var progressLabel: NSTextField!
-
-	private var didConfigureLayer = false
 
 	private var isAnimatingProgress = false {
 		didSet {
@@ -35,10 +33,6 @@ final class SidebarStatusBarView: NSView {
 		return true
 	}
 
-	override var wantsUpdateLayer: Bool {
-		return true
-	}
-
 	override func awakeFromNib() {
 
 		progressIndicator.isHidden = true
@@ -49,17 +43,6 @@ final class SidebarStatusBarView: NSView {
 		progressLabel.stringValue = ""		
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
-	}
-
-	override func updateLayer() {
-
-		guard let layer = layer, !didConfigureLayer else {
-			return
-		}
-
-		let color = NSColor(calibratedWhite: 0.96, alpha: 1.0)
-		layer.backgroundColor = color.cgColor
-		didConfigureLayer = true
 	}
 
 	@objc func updateUI() {

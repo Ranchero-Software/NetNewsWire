@@ -7,7 +7,8 @@
 //
 
 import AppKit
-import Data
+import Articles
+import Account
 import DB5
 
 final class FeedInspectorViewController: NSViewController, Inspector {

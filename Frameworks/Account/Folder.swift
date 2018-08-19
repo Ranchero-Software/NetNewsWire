@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Data
+import Articles
 import RSCore
 
 public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, Hashable {    

@@ -37,8 +37,13 @@ class UnreadIndicatorView: NSView {
 
     override func draw(_ dirtyRect: NSRect) {
 
-		let color = isEmphasized && isSelected ? NSColor.white : UnreadIndicatorView.unreadCircleColor
-		color.setFill()
+		if #available(OSX 10.14, *) {
+			let color = isEmphasized && isSelected ? NSColor.white : NSColor.controlAccentColor
+			color.setFill()
+		} else {
+			let color = isEmphasized && isSelected ? NSColor.white : NSColor.systemBlue
+			color.setFill()
+		}
 		UnreadIndicatorView.bezierPath.fill()
     }
     

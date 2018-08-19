@@ -10,9 +10,9 @@ import AppKit
 
 class MainWindowSplitView: NSSplitView {
 	
-	private let splitViewDividerColor = NSColor(calibratedWhite: 0.75, alpha: 1.0)
-	
-	override var dividerColor: NSColor {
-		return splitViewDividerColor
-	}
+//	private let splitViewDividerColor = NSColor(calibratedWhite: 0.75, alpha: 1.0)
+//	
+//	override var dividerColor: NSColor {
+//		return splitViewDividerColor
+//	}
 }

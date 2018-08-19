@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Data
+import Articles
 
 public protocol ArticleFetcher {
 

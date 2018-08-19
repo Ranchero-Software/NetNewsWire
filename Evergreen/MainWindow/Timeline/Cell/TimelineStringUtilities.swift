@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Data
+import Articles
 import RSParser
 
 // TODO: Don’t make all this at top level.
