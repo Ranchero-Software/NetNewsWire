@@ -6,8 +6,6 @@ This roadmap reflects thinking at the time of the last update. Anything can chan
 
 ## Evergreen 1.0 for macOS
 
-Ship: March 26, 2018 (we hope!)
-
 Features:
 
 * Standalone feed reading (unsynced)
@@ -16,17 +14,14 @@ Features:
 * Searching
 * Starring
 * Keyboard shortcuts
-* Multiple windows
 * Feed Directory
 * AppleScript support
 * Inspector
 * Gestures
 * Notifications
 * Sharing
-* Share extension
 * Feed and user avatars
-* Microblog full-post rendering in the timeline
-* Thumbnail images in the timeline
+* Mojave Dark Mode
 
 Milestones:
 
@@ -36,12 +31,15 @@ Milestones:
 
 (See [What Development, Alpha, Beta, and Final Mean for Evergreen](DevelopmentAlphaBeta.md) for definitions.)
 
-## Evergreen 2.0 for macOS
-
-Ship: March 26, 2019 (seems unlikely)
+## Future
 
 Features:
 
+* Thumbnail images in the timeline
+* Microblog full-post rendering in the timeline
+* Share extension
+* Multiple windows
+* iOS App
 * Syncing via Feedly and other similar systems — not yet decided which ones exactly
 * Syncing via CloudKit (maaaaaybe, if feasible)
 * Smart feeds — edit and create
@@ -50,7 +48,6 @@ Features:
 * Hiding read subscriptions
 * Hiding read articles
 * Deleting articles
-* [Dark mode](https://github.com/brentsimmons/Evergreen/issues/97)
 * Dinosaurs
 * Dock menu items
 * [Article themes](https://github.com/brentsimmons/Evergreen/issues/257)
@@ -59,8 +56,3 @@ Features:
 * [Import OPML from URL](https://github.com/brentsimmons/Evergreen/issues/136)
 * [Traditional vertical layout](https://github.com/brentsimmons/Evergreen/issues/102)
 
-Milestones:
-
-[Evergreen 2.0 alpha](https://github.com/brentsimmons/Evergreen/milestone/4)<br />
-[Evergreen 2.0 beta](https://github.com/brentsimmons/Evergreen/milestone/5)<br />
-[Evergreen 2.0](https://github.com/brentsimmons/Evergreen/milestone/6)
