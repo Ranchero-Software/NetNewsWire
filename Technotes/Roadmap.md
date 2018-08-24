@@ -1,6 +1,6 @@
 # Roadmap
 
-<i>Updated Dec. 23, 2017</i>
+<i>Updated Aug. 23, 2018</i>
 
 This roadmap reflects thinking at the time of the last update. Anything can change at any time.
 
