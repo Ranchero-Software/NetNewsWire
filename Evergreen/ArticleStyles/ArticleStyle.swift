@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ArticleStyle: Equatable {
+struct ArticleStyle: Equatable {
 
 	static let defaultStyle = ArticleStyle()
 	let path: String?
@@ -74,9 +74,4 @@ private func stringAtPath(_ f: String) -> String? {
 		return s
 	}
 	return nil
-}
-
-public func ==(lhs: ArticleStyle, rhs: ArticleStyle) -> Bool {
-
-	return lhs.path == rhs.path && lhs.template == rhs.template && lhs.css == rhs.css && lhs.info == rhs.info
 }
