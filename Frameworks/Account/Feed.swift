@@ -30,7 +30,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	public var conditionalGetInfo: HTTPConditionalGetInfo?
 	public var contentHash: String?
-	public let hashValue: Int
 
 	// MARK: - DisplayNameProvider
 
@@ -61,7 +60,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		self.accountID = accountID
 		self.url = url
 		self.feedID = feedID
-		self.hashValue = feedID.hashValue
 	}
 
 	// MARK: - Disk Dictionary
@@ -160,6 +158,12 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 		conditionalGetInfo = nil
 		contentHash = nil
+	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(feedID)
 	}
 
 	// MARK: - Equatable

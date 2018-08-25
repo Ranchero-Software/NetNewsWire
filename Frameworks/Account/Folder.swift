@@ -24,7 +24,6 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 	public let folderID: Int // not saved: per-run only
 	static var incrementingID = 0
-	public let hashValue: Int
 
 	// MARK: - DisplayNameProvider
 
@@ -52,7 +51,6 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		let folderID = Folder.incrementingID
 		Folder.incrementingID += 1
 		self.folderID = folderID
-		self.hashValue = folderID
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: self)
@@ -140,6 +138,12 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 	@objc func childrenDidChange(_ note: Notification) {
 
 		updateUnreadCount()
+	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(folderID)
 	}
 
 	// MARK: - Equatable

@@ -47,7 +47,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public let accountID: String
 	public let type: AccountType
 	public var nameForDisplay = ""
-	public let hashValue: Int
 	public var children = [AnyObject]()
 	var urlToFeedDictionary = [String: Feed]()
 	var idToFeedDictionary = [String: Feed]()
@@ -106,7 +105,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.type = type
 		self.settingsFile = settingsFile
 		self.dataFolder = dataFolder
-		self.hashValue = accountID.hashValue
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
 		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID)
@@ -477,6 +475,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		if dirty {
 			saveToDisk()
 		}
+	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(accountID)
 	}
 
 	// MARK: - Equatable
