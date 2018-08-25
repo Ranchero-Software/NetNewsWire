@@ -14,40 +14,16 @@ import AppKit
 
 typealias WidthHeightCache = [Int: Int] // width: height
 
-private struct TextFieldSizerSpecifier: Equatable, Hashable {
+private struct TextFieldSizerSpecifier: Hashable {
 
 	let numberOfLines: Int
 	let font: NSFont
-
-	init(numberOfLines: Int, font: NSFont) {
-		self.numberOfLines = numberOfLines
-		self.font = font
-	}
-
-	// MARK: - Hashable
-
-	public func hash(into hasher: inout Hasher) {
-		hasher.combine(font)
-		hasher.combine(numberOfLines)
-	}
-
-	// MARK: - Equatable
-
-	static func ==(lhs : TextFieldSizerSpecifier, rhs: TextFieldSizerSpecifier) -> Bool {
-
-		return lhs.numberOfLines == rhs.numberOfLines && lhs.font == rhs.font
-	}
 }
 
 struct TextFieldSizeInfo {
 
 	let size: NSSize // Integral size (ceiled)
 	let numberOfLinesUsed: Int // A two-line text field may only use one line, for instance. This would equal 1, then.
-
-	init(size: NSSize, numberOfLinesUsed: Int) {
-		self.size = size
-		self.numberOfLinesUsed = numberOfLinesUsed
-	}
 }
 
 final class MultilineTextFieldSizer {
