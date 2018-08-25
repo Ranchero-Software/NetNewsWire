@@ -26,10 +26,5 @@ struct SidebarCellAppearance: Equatable {
 		self.imageMarginRight = theme.float(forKey: "MainWindow.SourceList.favicon.marginRight")
 		self.unreadCountMarginLeft = theme.float(forKey: "MainWindow.SourceList.unreadCount.marginLeft")
 	}
-
-	static func ==(lhs: SidebarCellAppearance, rhs: SidebarCellAppearance) -> Bool {
-
-		return lhs.imageSize == rhs.imageSize && lhs.imageMarginRight == rhs.imageMarginRight && lhs.unreadCountMarginLeft == rhs.unreadCountMarginLeft && lhs.textFieldFontSize == rhs.textFieldFontSize
-	}
 }
 
