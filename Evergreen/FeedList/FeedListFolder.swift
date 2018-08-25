@@ -23,16 +23,4 @@ final class FeedListFolder: Hashable, DisplayNameProvider {
 		self.name = name
 		self.feeds = feeds
 	}
-
-	// MARK: - Hashable
-
-	public func hash(into hasher: inout Hasher) {
-		hasher.combine(name)
-	}
-
-	// MARK: - Equatable
-
-	static func ==(lhs: FeedListFolder, rhs: FeedListFolder) -> Bool {
-		return lhs.name == rhs.name && lhs.feeds == rhs.feeds
-	}
 }
