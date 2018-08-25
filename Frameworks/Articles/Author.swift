@@ -15,7 +15,6 @@ public struct Author: Hashable {
 	public let url: String?
 	public let avatarURL: String?
 	public let emailAddress: String?
-	public let hashValue: Int
 	
 	public init?(authorID: String?, name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
 
@@ -27,16 +26,14 @@ public struct Author: Hashable {
 		self.avatarURL = avatarURL
 		self.emailAddress = emailAddress
 
-		var s = name ?? ""
-		s += url ?? ""
-		s += avatarURL ?? ""
-		s += emailAddress ?? ""
-		self.hashValue = s.hashValue
-
 		if let authorID = authorID {
 			self.authorID = authorID
 		}
 		else {
+			var s = name ?? ""
+			s += url ?? ""
+			s += avatarURL ?? ""
+			s += emailAddress ?? ""
 			self.authorID = databaseIDWithString(s)
 		}
 	}
@@ -76,15 +73,23 @@ public struct Author: Hashable {
 		return d
 	}
 
-	public static func ==(lhs: Author, rhs: Author) -> Bool {
-
-		return lhs.hashValue == rhs.hashValue && lhs.authorID == rhs.authorID
-	}
-
 	public static func authorsWithDiskArray(_ diskArray: [[String: Any]]) -> Set<Author>? {
 
 		let authors = diskArray.compactMap { Author(dictionary: $0) }
 		return authors.isEmpty ? nil : Set(authors)
+	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(authorID)
+	}
+
+	// MARK: - Equatable
+
+	public static func ==(lhs: Author, rhs: Author) -> Bool {
+
+		return lhs.authorID == rhs.authorID
 	}
 }
 

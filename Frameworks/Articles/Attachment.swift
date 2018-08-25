@@ -16,7 +16,6 @@ public struct Attachment: Hashable {
 	public let title: String?
 	public let sizeInBytes: Int?
 	public let durationInSeconds: Int?
-	public let hashValue: Int
 
 	public init(attachmentID: String?, url: String, mimeType: String?, title: String?, sizeInBytes: Int?, durationInSeconds: Int?) {
 
@@ -36,27 +35,33 @@ public struct Attachment: Hashable {
 			self.durationInSeconds = nil
 		}
 
-		var s = url
-		s += mimeType ?? ""
-		s += title ?? ""
-		if let sizeInBytes = sizeInBytes {
-			s += "\(sizeInBytes)"
-		}
-		if let durationInSeconds = durationInSeconds {
-			s += "\(durationInSeconds)"
-		}
-		self.hashValue = s.hashValue
-
 		if let attachmentID = attachmentID {
 			self.attachmentID = attachmentID
 		}
 		else {
+			var s = url
+			s += mimeType ?? ""
+			s += title ?? ""
+			if let sizeInBytes = sizeInBytes {
+				s += "\(sizeInBytes)"
+			}
+			if let durationInSeconds = durationInSeconds {
+				s += "\(durationInSeconds)"
+			}
 			self.attachmentID = databaseIDWithString(s)
 		}
 	}
 
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(attachmentID)
+	}
+
+	// MARK: - Equatable
+
 	public static func ==(lhs: Attachment, rhs: Attachment) -> Bool {
 
-		return lhs.hashValue == rhs.hashValue && lhs.attachmentID == rhs.attachmentID
+		return lhs.attachmentID == rhs.attachmentID
 	}
 }

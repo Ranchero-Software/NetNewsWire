@@ -24,7 +24,6 @@ public final class ArticleStatus: Hashable {
 	
 	public let articleID: String
 	public let dateArrived: Date
-	public let hashValue: Int
 
 	public var read = false
 	public var starred = false
@@ -37,7 +36,6 @@ public final class ArticleStatus: Hashable {
 		self.starred = starred
 		self.userDeleted = userDeleted
 		self.dateArrived = dateArrived
-		self.hashValue = articleID.hashValue
 	}
 
 	public convenience init(articleID: String, dateArrived: Date) {
@@ -69,9 +67,17 @@ public final class ArticleStatus: Hashable {
 		}
 	}
 
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(articleID)
+	}
+
+	// MARK: - Equatable
+
 	public static func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
 		
-		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred && lhs.userDeleted == rhs.userDeleted
+		return lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred && lhs.userDeleted == rhs.userDeleted
 	}
 }
 

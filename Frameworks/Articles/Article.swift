@@ -27,7 +27,6 @@ public struct Article: Hashable {
 	public let authors: Set<Author>?
 	public let attachments: Set<Attachment>?
 	public let status: ArticleStatus
-	public let hashValue: Int
 
 	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, attachments: Set<Attachment>?, status: ArticleStatus) {
 		
@@ -54,18 +53,25 @@ public struct Article: Hashable {
 		else {
 			self.articleID = Article.calculatedArticleID(feedID: feedID, uniqueID: uniqueID)
 		}
-
-		self.hashValue = (accountID + self.articleID).hashValue
 	}
 
 	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {
 		
 		return databaseIDWithString("\(feedID) \(uniqueID)")
 	}
-	
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(accountID)
+		hasher.combine(articleID)
+	}
+
+	// MARK: - Equatable
+
 	public static func ==(lhs: Article, rhs: Article) -> Bool {
 
-		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.authors == rhs.authors && lhs.attachments == rhs.attachments
+		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.authors == rhs.authors && lhs.attachments == rhs.attachments
 	}
 }
 
