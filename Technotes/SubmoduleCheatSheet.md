@@ -5,8 +5,7 @@ Evergreen uses [Git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodu
 After your first checkout:
 
 	git submodule init
-  git submodule update
-
+	git submodule update
 
 To add a submodule:
 
