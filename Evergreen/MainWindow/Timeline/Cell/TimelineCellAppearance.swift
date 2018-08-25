@@ -96,12 +96,6 @@ struct TimelineCellAppearance: Equatable {
 		let margin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight
 		self.boxLeftMargin = margin
 	}
-
-	// TODO: update the below
-	static func ==(lhs: TimelineCellAppearance, rhs: TimelineCellAppearance) -> Bool {
-
-		return lhs.boxLeftMargin == rhs.boxLeftMargin && lhs.showAvatar == rhs.showAvatar && lhs.cellPadding == rhs.cellPadding && lhs.feedNameColor == rhs.feedNameColor && lhs.feedNameFont == rhs.feedNameFont && lhs.dateColor == rhs.dateColor && lhs.dateMarginLeft == rhs.dateMarginLeft && lhs.dateFont == rhs.dateFont && lhs.titleColor == rhs.titleColor && lhs.titleFont == rhs.titleFont && lhs.titleBottomMargin == rhs.titleBottomMargin && lhs.textColor == rhs.textColor && lhs.textFont == rhs.textFont && lhs.unreadCircleColor == rhs.unreadCircleColor && lhs.unreadCircleDimension == rhs.unreadCircleDimension && lhs.unreadCircleMarginRight == rhs.unreadCircleMarginRight && lhs.gridColor == rhs.gridColor && lhs.avatarSize == rhs.avatarSize && lhs.avatarMarginRight == rhs.avatarMarginRight && lhs.avatarAdjustmentTop == rhs.avatarAdjustmentTop && lhs.avatarCornerRadius == rhs.avatarCornerRadius
-	}
 }
 
 extension NSEdgeInsets: Equatable {
