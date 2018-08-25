@@ -28,7 +28,6 @@ struct DatabaseArticle: Hashable {
 	let datePublished: Date?
 	let dateModified: Date?
 	let status: ArticleStatus
-	let hashValue: Int
 
 	init(articleID: String, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, status: ArticleStatus) {
 
@@ -46,13 +45,21 @@ struct DatabaseArticle: Hashable {
 		self.datePublished = datePublished
 		self.dateModified = dateModified
 		self.status = status
-		self.hashValue = articleID.hashValue
 	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(articleID)
+	}
+
+	// MARK: - Equatable
 
 	static func ==(lhs: DatabaseArticle, rhs: DatabaseArticle) -> Bool {
 
-		return lhs.hashValue == rhs.hashValue && lhs.articleID == rhs.articleID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.status == rhs.status
+		return lhs.articleID == rhs.articleID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.status == rhs.status
 	}
+
 }
 
 
