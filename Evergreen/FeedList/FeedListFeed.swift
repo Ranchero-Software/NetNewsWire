@@ -21,7 +21,6 @@ final class FeedListFeed: Hashable, DisplayNameProvider {
 	let name: String
 	let url: String
 	let homePageURL: String
-	let hashValue: Int
 	var lastDownloadAttemptDate: Date? = nil
 
 	var parsedFeed: ParsedFeed? = nil {
@@ -39,7 +38,6 @@ final class FeedListFeed: Hashable, DisplayNameProvider {
 		self.name = name
 		self.url = url
 		self.homePageURL = homePageURL
-		self.hashValue = url.hashValue
 	}
 
 	private struct Key {
@@ -73,9 +71,17 @@ final class FeedListFeed: Hashable, DisplayNameProvider {
 //		}
 	}
 
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(url)
+	}
+
+	// MARK: - Equatable
+
 	static func ==(lhs: FeedListFeed, rhs: FeedListFeed) -> Bool {
 
-		return lhs.hashValue == rhs.hashValue && lhs.url == rhs.url && lhs.name == rhs.name && lhs.homePageURL == rhs.homePageURL
+		return lhs.url == rhs.url && lhs.name == rhs.name && lhs.homePageURL == rhs.homePageURL
 	}
 }
 

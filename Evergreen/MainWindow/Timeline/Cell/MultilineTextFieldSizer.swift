@@ -18,13 +18,20 @@ private struct TextFieldSizerSpecifier: Equatable, Hashable {
 
 	let numberOfLines: Int
 	let font: NSFont
-	let hashValue: Int
 
 	init(numberOfLines: Int, font: NSFont) {
 		self.numberOfLines = numberOfLines
 		self.font = font
-		self.hashValue = font.hashValue ^ numberOfLines
 	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(font)
+		hasher.combine(numberOfLines)
+	}
+
+	// MARK: - Equatable
 
 	static func ==(lhs : TextFieldSizerSpecifier, rhs: TextFieldSizerSpecifier) -> Bool {
 

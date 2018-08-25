@@ -23,7 +23,6 @@ public struct FeedSpecifier: Hashable {
 	public let title: String?
 	public let urlString: String
 	public let source: Source
-	public let hashValue: Int
 	public var score: Int {
 		return calculatedScore()
 	}
@@ -33,12 +32,6 @@ public struct FeedSpecifier: Hashable {
 		self.title = title
 		self.urlString = urlString
 		self.source = source
-		self.hashValue = urlString.hashValue
-	}
-
-	public static func ==(lhs: FeedSpecifier, rhs: FeedSpecifier) -> Bool {
-
-		return lhs.urlString == rhs.urlString && lhs.title == rhs.title && lhs.source == rhs.source
 	}
 
 	func feedSpecifierByMerging(_ feedSpecifier: FeedSpecifier) -> FeedSpecifier {
@@ -73,6 +66,20 @@ public struct FeedSpecifier: Hashable {
 		
 		return currentBestFeed
 	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(urlString)
+	}
+
+	// MARK: - Equatable
+
+	public static func ==(lhs: FeedSpecifier, rhs: FeedSpecifier) -> Bool {
+		return lhs.urlString == rhs.urlString && lhs.title == rhs.title && lhs.source == rhs.source
+	}
+
+
 }
 
 private extension FeedSpecifier {
