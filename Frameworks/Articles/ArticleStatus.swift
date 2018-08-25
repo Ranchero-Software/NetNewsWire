@@ -76,7 +76,7 @@ public final class ArticleStatus: Hashable {
 	// MARK: - Equatable
 
 	public static func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
-		
+
 		return lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred && lhs.userDeleted == rhs.userDeleted
 	}
 }

@@ -59,20 +59,6 @@ public struct Article: Hashable {
 		
 		return databaseIDWithString("\(feedID) \(uniqueID)")
 	}
-
-	// MARK: - Hashable
-
-	public func hash(into hasher: inout Hasher) {
-		hasher.combine(accountID)
-		hasher.combine(articleID)
-	}
-
-	// MARK: - Equatable
-
-	public static func ==(lhs: Article, rhs: Article) -> Bool {
-
-		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.authors == rhs.authors && lhs.attachments == rhs.attachments
-	}
 }
 
 public extension Set where Element == Article {

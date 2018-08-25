@@ -78,19 +78,6 @@ public struct Author: Hashable {
 		let authors = diskArray.compactMap { Author(dictionary: $0) }
 		return authors.isEmpty ? nil : Set(authors)
 	}
-
-	// MARK: - Hashable
-
-	public func hash(into hasher: inout Hasher) {
-		hasher.combine(authorID)
-	}
-
-	// MARK: - Equatable
-
-	public static func ==(lhs: Author, rhs: Author) -> Bool {
-
-		return lhs.authorID == rhs.authorID
-	}
 }
 
 extension Set where Element == Author {

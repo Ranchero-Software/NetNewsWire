@@ -51,17 +51,4 @@ public struct Attachment: Hashable {
 			self.attachmentID = databaseIDWithString(s)
 		}
 	}
-
-	// MARK: - Hashable
-
-	public func hash(into hasher: inout Hasher) {
-		hasher.combine(attachmentID)
-	}
-
-	// MARK: - Equatable
-
-	public static func ==(lhs: Attachment, rhs: Attachment) -> Bool {
-
-		return lhs.attachmentID == rhs.attachmentID
-	}
 }
