@@ -8,9 +8,9 @@
 
 import Foundation
 
-public struct FeedSpecifier: Hashable {
+struct FeedSpecifier: Hashable {
 
-	public enum Source: Int {
+	enum Source: Int {
 
 		case UserEntered = 0, HTMLHead, HTMLLink
 
@@ -66,20 +66,6 @@ public struct FeedSpecifier: Hashable {
 		
 		return currentBestFeed
 	}
-
-	// MARK: - Hashable
-
-	public func hash(into hasher: inout Hasher) {
-		hasher.combine(urlString)
-	}
-
-	// MARK: - Equatable
-
-	public static func ==(lhs: FeedSpecifier, rhs: FeedSpecifier) -> Bool {
-		return lhs.urlString == rhs.urlString && lhs.title == rhs.title && lhs.source == rhs.source
-	}
-
-
 }
 
 private extension FeedSpecifier {

@@ -11,21 +11,21 @@ import RSParser
 import RSWeb
 import RSCore
 
-public protocol FeedFinderDelegate: class {
+protocol FeedFinderDelegate: class {
 
 	func feedFinder(_: FeedFinder, didFindFeeds: Set<FeedSpecifier>)
 }
 
-public class FeedFinder {
+class FeedFinder {
 
 	fileprivate weak var delegate: FeedFinderDelegate?
 	fileprivate var feedSpecifiers = [String: FeedSpecifier]()
 	fileprivate var didNotifyDelegate = false
 
-	public var initialDownloadError: Error?
-	public var initialDownloadStatusCode = -1
+	var initialDownloadError: Error?
+	var initialDownloadStatusCode = -1
 
-	public init(url: URL, delegate: FeedFinderDelegate) {
+	init(url: URL, delegate: FeedFinderDelegate) {
 
 		self.delegate = delegate
 
