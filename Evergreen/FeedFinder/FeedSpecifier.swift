@@ -27,13 +27,6 @@ struct FeedSpecifier: Hashable {
 		return calculatedScore()
 	}
 	
-	init(title: String?, urlString: String, source: Source) {
-
-		self.title = title
-		self.urlString = urlString
-		self.source = source
-	}
-
 	func feedSpecifierByMerging(_ feedSpecifier: FeedSpecifier) -> FeedSpecifier {
 
 		// Take the best data (non-nil title, better source) to create a new feed specifier;
