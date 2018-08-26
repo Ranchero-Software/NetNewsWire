@@ -12,12 +12,7 @@ import RSParser
 
 struct FeedbinGetSubscriptionsDelegate: APICallDelegate {
 
-	private let provider: Feedbin
-
-	init(provider: Feedbin) {
-
-		self.provider = provider
-	}
+	let provider: Feedbin
 
 	func apiCallURLRequest(_ call: APICall) -> URLRequest? {
 
