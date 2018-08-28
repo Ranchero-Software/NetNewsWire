@@ -81,7 +81,7 @@
                                 <toolbarItem implicitItemIdentifier="D783290E-C822-40DF-8CB8-925D92EA4D83" label="Next Unread" paletteLabel="Next Unread" toolTip="Go to Next Unread" image="nextUnread" id="p7Y-Vm-ILH" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
-                                    <button key="view" verticalHuggingPriority="750" id="1g8-XX-BhA">
+                                    <button key="view" verticalHuggingPriority="750" id="1g8-XX-BhA" customClass="RSDarkModeAdaptingToolbarButton" customModule="RSCore">
                                         <rect key="frame" x="18" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="nextUnread" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="aBl-Z6-Tfa">
