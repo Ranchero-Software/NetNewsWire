@@ -188,7 +188,7 @@
 		D5A267C220131BA000A8D3C0 /* testFeedOPML.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5A267B220131B8300A8D3C0 /* testFeedOPML.applescript */; };
 		D5D07B18204B42050093F739 /* testIterativeCreateAndDeleteFeed.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5D07B09204B42050093F739 /* testIterativeCreateAndDeleteFeed.applescript */; };
 		D5D07B19204B423C0093F739 /* testIterativeCreateAndDeleteFeed.applescript in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5D07B09204B42050093F739 /* testIterativeCreateAndDeleteFeed.applescript */; };
-		D5D1751220020B980047B29D /* Evergreen.sdef in Resources */ = {isa = PBXBuildFile; fileRef = D5D175012002039D0047B29D /* Evergreen.sdef */; };
+		D5D1751220020B980047B29D /* NetNewsWire.sdef in Resources */ = {isa = PBXBuildFile; fileRef = D5D175012002039D0047B29D /* NetNewsWire.sdef */; };
 		D5E4CC54202C1361009B4FFC /* AppDelegate+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */; };
 		D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */; };
 		D5E4CCB320300024009B4FFC /* uiScriptingTestSetup.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CCB220300024009B4FFC /* uiScriptingTestSetup.applescript */; };
@@ -514,7 +514,7 @@
 		6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ToolbarItemIcon.pdf; sourceTree = "<group>"; };
 		6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Subscribe_to_Feed.entitlements; sourceTree = "<group>"; };
 		8403E75A201C4A79007F7246 /* FeedListKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListKeyboardDelegate.swift; sourceTree = "<group>"; };
-		840D617C2029031C009BC708 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		840D617C2029031C009BC708 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		840D617E2029031C009BC708 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		840D61802029031C009BC708 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		840D61822029031C009BC708 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
@@ -522,10 +522,10 @@
 		840D61872029031D009BC708 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		840D618A2029031D009BC708 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		840D618C2029031D009BC708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		840D61912029031D009BC708 /* Evergreen-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Evergreen-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		840D61912029031D009BC708 /* NetNewsWire-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NetNewsWire-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		840D61952029031D009BC708 /* Evergreen_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Evergreen_iOSTests.swift; sourceTree = "<group>"; };
 		840D61972029031D009BC708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		840D619C2029031D009BC708 /* Evergreen-iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Evergreen-iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		840D619C2029031D009BC708 /* NetNewsWire-iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NetNewsWire-iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		840D61A02029031E009BC708 /* Evergreen_iOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Evergreen_iOSUITests.swift; sourceTree = "<group>"; };
 		840D61A22029031E009BC708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkCommandValidationStatus.swift; sourceTree = "<group>"; };
@@ -607,12 +607,12 @@
 		849A97A81ED9F9AA007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/AddFeedSheet.xib; sourceTree = SOURCE_ROOT; };
 		849A97AB1ED9F9BC007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Evergreen/Base.lproj/AddFolderSheet.xib; sourceTree = SOURCE_ROOT; };
 		849A97B11ED9FA69007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Evergreen/Base.lproj/MainWindow.storyboard; sourceTree = SOURCE_ROOT; };
-		849C64601ED37A5D003D8FC0 /* Evergreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Evergreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		849C64601ED37A5D003D8FC0 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64631ED37A5D003D8FC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Evergreen/AppDelegate.swift; sourceTree = "<group>"; };
 		849C64671ED37A5D003D8FC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Evergreen/Assets.xcassets; sourceTree = "<group>"; };
 		849C646A1ED37A5D003D8FC0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		849C646C1ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
-		849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EvergreenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64751ED37A5D003D8FC0 /* EvergreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvergreenTests.swift; sourceTree = "<group>"; };
 		849C64771ED37A5D003D8FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		849EE70E203919360082A1EA /* AppImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppImages.swift; path = Evergreen/AppImages.swift; sourceTree = "<group>"; };
@@ -690,7 +690,7 @@
 		D5A2679B201312F900A8D3C0 /* testNameOfAuthors.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testNameOfAuthors.applescript; sourceTree = "<group>"; };
 		D5A267B220131B8300A8D3C0 /* testFeedOPML.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testFeedOPML.applescript; sourceTree = "<group>"; };
 		D5D07B09204B42050093F739 /* testIterativeCreateAndDeleteFeed.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testIterativeCreateAndDeleteFeed.applescript; sourceTree = "<group>"; };
-		D5D175012002039D0047B29D /* Evergreen.sdef */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Evergreen.sdef; path = ../Resources/Evergreen.sdef; sourceTree = "<group>"; };
+		D5D175012002039D0047B29D /* NetNewsWire.sdef */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = NetNewsWire.sdef; path = ../Resources/NetNewsWire.sdef; sourceTree = "<group>"; };
 		D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Scriptability.swift"; sourceTree = "<group>"; };
 		D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainWindowController+Scriptability.swift"; sourceTree = "<group>"; };
 		D5E4CCB220300024009B4FFC /* uiScriptingTestSetup.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = uiScriptingTestSetup.applescript; sourceTree = "<group>"; };
@@ -1103,7 +1103,7 @@
 		849A97991ED9EFB6007D329B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D5D175012002039D0047B29D /* Evergreen.sdef */,
+				D5D175012002039D0047B29D /* NetNewsWire.sdef */,
 				849C646C1ED37A5D003D8FC0 /* Info.plist */,
 				84EB380F1FBA8B9F000D2111 /* KeyboardShortcuts */,
 			);
@@ -1168,11 +1168,11 @@
 		849C64611ED37A5D003D8FC0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				849C64601ED37A5D003D8FC0 /* Evergreen.app */,
-				849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */,
-				840D617C2029031C009BC708 /* Evergreen.app */,
-				840D61912029031D009BC708 /* Evergreen-iOSTests.xctest */,
-				840D619C2029031D009BC708 /* Evergreen-iOSUITests.xctest */,
+				849C64601ED37A5D003D8FC0 /* NetNewsWire.app */,
+				849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */,
+				840D617C2029031C009BC708 /* NetNewsWire.app */,
+				840D61912029031D009BC708 /* NetNewsWire-iOSTests.xctest */,
+				840D619C2029031D009BC708 /* NetNewsWire-iOSUITests.xctest */,
 				6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */,
 			);
 			name = Products;
@@ -1436,9 +1436,9 @@
 			productReference = 6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		840D617B2029031C009BC708 /* Evergreen-iOS */ = {
+		840D617B2029031C009BC708 /* NetNewsWire-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 840D61A32029031E009BC708 /* Build configuration list for PBXNativeTarget "Evergreen-iOS" */;
+			buildConfigurationList = 840D61A32029031E009BC708 /* Build configuration list for PBXNativeTarget "NetNewsWire-iOS" */;
 			buildPhases = (
 				840D61782029031C009BC708 /* Sources */,
 				840D61792029031C009BC708 /* Frameworks */,
@@ -1448,14 +1448,14 @@
 			);
 			dependencies = (
 			);
-			name = "Evergreen-iOS";
+			name = "NetNewsWire-iOS";
 			productName = "Evergreen-iOS";
-			productReference = 840D617C2029031C009BC708 /* Evergreen.app */;
+			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
 			productType = "com.apple.product-type.application";
 		};
-		840D61902029031D009BC708 /* Evergreen-iOSTests */ = {
+		840D61902029031D009BC708 /* NetNewsWire-iOSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 840D61A62029031E009BC708 /* Build configuration list for PBXNativeTarget "Evergreen-iOSTests" */;
+			buildConfigurationList = 840D61A62029031E009BC708 /* Build configuration list for PBXNativeTarget "NetNewsWire-iOSTests" */;
 			buildPhases = (
 				840D618D2029031D009BC708 /* Sources */,
 				840D618E2029031D009BC708 /* Frameworks */,
@@ -1466,14 +1466,14 @@
 			dependencies = (
 				840D61932029031D009BC708 /* PBXTargetDependency */,
 			);
-			name = "Evergreen-iOSTests";
+			name = "NetNewsWire-iOSTests";
 			productName = "Evergreen-iOSTests";
-			productReference = 840D61912029031D009BC708 /* Evergreen-iOSTests.xctest */;
+			productReference = 840D61912029031D009BC708 /* NetNewsWire-iOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		840D619B2029031D009BC708 /* Evergreen-iOSUITests */ = {
+		840D619B2029031D009BC708 /* NetNewsWire-iOSUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 840D61A92029031E009BC708 /* Build configuration list for PBXNativeTarget "Evergreen-iOSUITests" */;
+			buildConfigurationList = 840D61A92029031E009BC708 /* Build configuration list for PBXNativeTarget "NetNewsWire-iOSUITests" */;
 			buildPhases = (
 				840D61982029031D009BC708 /* Sources */,
 				840D61992029031D009BC708 /* Frameworks */,
@@ -1484,14 +1484,14 @@
 			dependencies = (
 				840D619E2029031E009BC708 /* PBXTargetDependency */,
 			);
-			name = "Evergreen-iOSUITests";
+			name = "NetNewsWire-iOSUITests";
 			productName = "Evergreen-iOSUITests";
-			productReference = 840D619C2029031D009BC708 /* Evergreen-iOSUITests.xctest */;
+			productReference = 840D619C2029031D009BC708 /* NetNewsWire-iOSUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		849C645F1ED37A5D003D8FC0 /* Evergreen */ = {
+		849C645F1ED37A5D003D8FC0 /* NetNewsWire */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 849C647A1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "Evergreen" */;
+			buildConfigurationList = 849C647A1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "NetNewsWire" */;
 			buildPhases = (
 				849C645C1ED37A5D003D8FC0 /* Sources */,
 				849C645D1ED37A5D003D8FC0 /* Frameworks */,
@@ -1513,14 +1513,14 @@
 				841D4D6E2106B3ED00DD04E6 /* PBXTargetDependency */,
 				8440C8B02129F9F5002353D1 /* PBXTargetDependency */,
 			);
-			name = Evergreen;
+			name = NetNewsWire;
 			productName = Evergreen;
-			productReference = 849C64601ED37A5D003D8FC0 /* Evergreen.app */;
+			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
 			productType = "com.apple.product-type.application";
 		};
-		849C64701ED37A5D003D8FC0 /* EvergreenTests */ = {
+		849C64701ED37A5D003D8FC0 /* NetNewsWireTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 849C647D1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "EvergreenTests" */;
+			buildConfigurationList = 849C647D1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "NetNewsWireTests" */;
 			buildPhases = (
 				849C646D1ED37A5D003D8FC0 /* Sources */,
 				849C646E1ED37A5D003D8FC0 /* Frameworks */,
@@ -1532,9 +1532,9 @@
 			dependencies = (
 				849C64731ED37A5D003D8FC0 /* PBXTargetDependency */,
 			);
-			name = EvergreenTests;
+			name = NetNewsWireTests;
 			productName = EvergreenTests;
-			productReference = 849C64711ED37A5D003D8FC0 /* EvergreenTests.xctest */;
+			productReference = 849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -1581,7 +1581,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 849C645B1ED37A5D003D8FC0 /* Build configuration list for PBXProject "Evergreen" */;
+			buildConfigurationList = 849C645B1ED37A5D003D8FC0 /* Build configuration list for PBXProject "NetNewsWire" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1632,11 +1632,11 @@
 			);
 			projectRoot = "";
 			targets = (
-				849C645F1ED37A5D003D8FC0 /* Evergreen */,
-				849C64701ED37A5D003D8FC0 /* EvergreenTests */,
-				840D617B2029031C009BC708 /* Evergreen-iOS */,
-				840D61902029031D009BC708 /* Evergreen-iOSTests */,
-				840D619B2029031D009BC708 /* Evergreen-iOSUITests */,
+				849C645F1ED37A5D003D8FC0 /* NetNewsWire */,
+				849C64701ED37A5D003D8FC0 /* NetNewsWireTests */,
+				840D617B2029031C009BC708 /* NetNewsWire-iOS */,
+				840D61902029031D009BC708 /* NetNewsWire-iOSTests */,
+				840D619B2029031D009BC708 /* NetNewsWire-iOSUITests */,
 				6581C73220CED60000F4AD34 /* Subscribe to Feed */,
 			);
 		};
@@ -1850,7 +1850,7 @@
 				849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */,
 				84A37CBB201ECE590087C5AF /* RenameSheet.xib in Resources */,
 				84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */,
-				D5D1751220020B980047B29D /* Evergreen.sdef in Resources */,
+				D5D1751220020B980047B29D /* NetNewsWire.sdef in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2067,12 +2067,12 @@
 /* Begin PBXTargetDependency section */
 		840D61932029031D009BC708 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 840D617B2029031C009BC708 /* Evergreen-iOS */;
+			target = 840D617B2029031C009BC708 /* NetNewsWire-iOS */;
 			targetProxy = 840D61922029031D009BC708 /* PBXContainerItemProxy */;
 		};
 		840D619E2029031E009BC708 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 840D617B2029031C009BC708 /* Evergreen-iOS */;
+			target = 840D617B2029031C009BC708 /* NetNewsWire-iOS */;
 			targetProxy = 840D619D2029031E009BC708 /* PBXContainerItemProxy */;
 		};
 		841D4D6E2106B3ED00DD04E6 /* PBXTargetDependency */ = {
@@ -2092,7 +2092,7 @@
 		};
 		849C64731ED37A5D003D8FC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 849C645F1ED37A5D003D8FC0 /* Evergreen */;
+			target = 849C645F1ED37A5D003D8FC0 /* NetNewsWire */;
 			targetProxy = 849C64721ED37A5D003D8FC0 /* PBXContainerItemProxy */;
 		};
 		84C37FA820DD8D8400CA8CF5 /* PBXTargetDependency */ = {
@@ -2218,7 +2218,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Safari Extension/Subscribe_to_Feed.entitlements";
 				INFOPLIST_FILE = "Safari Extension/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.Evergreen.Subscribe-to-Feed";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen.Subscribe-to-Feed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -2230,7 +2230,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Safari Extension/Subscribe_to_Feed.entitlements";
 				INFOPLIST_FILE = "Safari Extension/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.Evergreen.Subscribe-to-Feed";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen.Subscribe-to-Feed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -2296,7 +2296,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.Evergreen-iOS";
-				PRODUCT_NAME = Evergreen;
+				PRODUCT_NAME = NetNewsWire;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -2358,7 +2358,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.Evergreen-iOS";
-				PRODUCT_NAME = Evergreen;
+				PRODUCT_NAME = NetNewsWire;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 4.0;
@@ -2434,7 +2434,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Evergreen-iOS.app/Evergreen-iOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NetNewsWire-iOS.app/NetNewsWire-iOS";
 			};
 			name = Debug;
 		};
@@ -2497,7 +2497,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Evergreen-iOS.app/Evergreen-iOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NetNewsWire-iOS.app/NetNewsWire-iOS";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -2657,6 +2657,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen";
+				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Debug;
 		};
@@ -2666,6 +2668,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen";
+				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Release;
 		};
@@ -2673,6 +2677,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDF2002F0F9005947E5 /* EvergreenTests_target.xcconfig */;
 			buildSettings = {
+				PRODUCT_NAME = NetNewsWireTests;
 			};
 			name = Debug;
 		};
@@ -2680,6 +2685,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDF2002F0F9005947E5 /* EvergreenTests_target.xcconfig */;
 			buildSettings = {
+				PRODUCT_NAME = NetNewsWireTests;
 			};
 			name = Release;
 		};
@@ -2695,7 +2701,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		840D61A32029031E009BC708 /* Build configuration list for PBXNativeTarget "Evergreen-iOS" */ = {
+		840D61A32029031E009BC708 /* Build configuration list for PBXNativeTarget "NetNewsWire-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				840D61A42029031E009BC708 /* Debug */,
@@ -2704,7 +2710,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		840D61A62029031E009BC708 /* Build configuration list for PBXNativeTarget "Evergreen-iOSTests" */ = {
+		840D61A62029031E009BC708 /* Build configuration list for PBXNativeTarget "NetNewsWire-iOSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				840D61A72029031E009BC708 /* Debug */,
@@ -2713,7 +2719,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		840D61A92029031E009BC708 /* Build configuration list for PBXNativeTarget "Evergreen-iOSUITests" */ = {
+		840D61A92029031E009BC708 /* Build configuration list for PBXNativeTarget "NetNewsWire-iOSUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				840D61AA2029031E009BC708 /* Debug */,
@@ -2722,7 +2728,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		849C645B1ED37A5D003D8FC0 /* Build configuration list for PBXProject "Evergreen" */ = {
+		849C645B1ED37A5D003D8FC0 /* Build configuration list for PBXProject "NetNewsWire" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				849C64781ED37A5D003D8FC0 /* Debug */,
@@ -2731,7 +2737,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		849C647A1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "Evergreen" */ = {
+		849C647A1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "NetNewsWire" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				849C647B1ED37A5D003D8FC0 /* Debug */,
@@ -2740,7 +2746,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		849C647D1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "EvergreenTests" */ = {
+		849C647D1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "NetNewsWireTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				849C647E1ED37A5D003D8FC0 /* Debug */,

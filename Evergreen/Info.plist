@@ -17,34 +17,26 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0d42</string>
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Viewer</string>
-            <key>CFBundleURLName</key>
-            <string>RSS Feed</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>feed</string>
-            </array>
-        </dict>
-    </array>
+	<string>5.0d42</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleURLName</key>
+			<string>RSS Feed</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>feed</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>522</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.news</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
-	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2017-2018 Ranchero Software, LLC. All rights reserved.</string>
-	<key>NSMainStoryboardFile</key>
-	<string>Main</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
-	<key>SUFeedURL</key>
-	<string>https://ranchero.com/downloads/evergreen-beta.xml</string>
-	<key>UserAgent</key>
-	<string>Evergreen (macOS; RSS Reader; https://ranchero.com/evergreen/)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -52,7 +44,17 @@
 	</dict>
 	<key>NSAppleScriptEnabled</key>
 	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2017-2018 Ranchero Software, LLC. All rights reserved.</string>
+	<key>NSMainStoryboardFile</key>
+	<string>Main</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
 	<key>OSAScriptingDefinition</key>
-	<string>Evergreen.sdef</string>
+	<string>NetNewsWire.sdef</string>
+	<key>SUFeedURL</key>
+	<string>https://ranchero.com/downloads/evergreen-beta.xml</string>
+	<key>UserAgent</key>
+	<string>Evergreen (macOS; RSS Reader; https://ranchero.com/evergreen/)</string>
 </dict>
 </plist>
