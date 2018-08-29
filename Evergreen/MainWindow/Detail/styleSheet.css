@@ -34,6 +34,16 @@ body.light a, body.light a:link, body.light a:visited {
 body.light .headerTable {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
+body.light .header {
+	color: rgba(0, 0, 0, 0.3);
+}
+body.light .header a:link, body.light .header a:visited {
+	color: rgba(0, 0, 0, 0.3);
+}
+body.light .articleDateline, body.light .articleDateLine.a:link, body.light .articleDateline a:visited {
+	color: rgba(0, 0, 0, 0.3);
+}
+
 /* Dark mode */
 
 body.dark {
@@ -47,12 +57,19 @@ body.dark .headerTable {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.header a:link, .header a:visited {
-	color: rgba(0, 0, 0, 0.3);
+body.dark .header a:link, body.dark .header a:visited {
+	color: #4490e2;
 }
-.header {
-	color: rgba(0, 0, 0, 0.3);
+body.dark .header {
+	color: #d2d2d2;
 }
+body.dark .articleDateline {
+	color: #d2d2d2;
+}
+body.dark .articleDateline, body.dark .articleDateLine.a:link, body.dark .articleDateline a:visited {
+	color: #d2d2d2;
+}
+
 .feedlink a:link, .feedlink a:visited {
 	color: rgba(0, 0, 0, 0.6);
 }
@@ -74,7 +91,6 @@ body.dark .headerTable {
 }
 
 .articleDateline {
-	color: rgba(0, 0, 0, 0.3);
 	margin-bottom: 25px;
 	font-weight: bold;
 }
