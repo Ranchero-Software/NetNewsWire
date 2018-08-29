@@ -1,6 +1,6 @@
 # Git Submodules
 
-Evergreen uses [Git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) to include shared frameworks. At this writing (June 2018) they are DB5, RSCore, RSDatabase, RSWeb, RSTree, and RSParser.
+NetNewsWire uses [Git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) to include shared frameworks. At this writing (June 2018) they are DB5, RSCore, RSDatabase, RSWeb, RSTree, and RSParser.
 
 After your first checkout:
 

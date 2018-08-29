@@ -4,7 +4,7 @@
 <array>
 	<dict>
 		<key>note</key>
-		<string>By Brent Simmons, Evergreen developer</string>
+		<string>By Brent Simmons, NetNewsWire developer</string>
 		<key>editedName</key>
 		<string>Inessential</string>
 		<key>homePageURL</key>
@@ -96,11 +96,11 @@
 	</dict>
 	<dict>
 		<key>homePageURL</key>
-		<string>https://ranchero.com/evergreen/</string>
+		<string>https://ranchero.com/netnewswire/</string>
 		<key>editedName</key>
-		<string>Evergreen News</string>
+		<string>NetNewsWire News</string>
 		<key>url</key>
-		<string>https://ranchero.com/evergreen/feed.json</string>
+		<string>https://ranchero.com/netnewswire/feed.json</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>

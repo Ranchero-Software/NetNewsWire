@@ -1,4 +1,4 @@
-# What Development, Alpha, Beta, and Final Mean for Evergreen
+# What Development, Alpha, Beta, and Final Mean for NetNewsWire
 
 #### Development version
 

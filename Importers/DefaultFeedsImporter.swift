@@ -1,6 +1,6 @@
 //
 //  DefaultFeedsImporter.swift
-//  Evergreen
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 8/13/15.
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.

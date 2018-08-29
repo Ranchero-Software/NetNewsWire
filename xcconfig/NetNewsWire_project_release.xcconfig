@@ -1,0 +1,8 @@
+#include "./NetNewsWire_project.xcconfig"
+
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+ENABLE_NS_ASSERTIONS = NO
+OTHER_SWIFT_FLAGS = -DRELEASE
+SWIFT_OPTIMIZATION_LEVEL = -Owholemodule
+MTL_ENABLE_DEBUG_INFO = NO
+ 

@@ -1,0 +1,20 @@
+#!/bin/sh
+
+rm -rf ~/.build
+mkdir ~/.build
+
+rm ~/Desktop/NetNewsWire$1.zip
+rm -rf ~/Desktop/NetNewsWire.app
+
+xcodebuild -workspace NetNewsWire.xcworkspace -scheme "NetNewsWire" -derivedDataPath ~/.build -configuration Release 
+
+ditto /Users/brent/.build/Build/Products/Release/NetNewsWire.app ~/Desktop/NetNewsWire.app
+open ~/Desktop
+
+pushd ~/Desktop
+
+zip --symlinks -r "NetNewsWire$1.zip" "NetNewsWire.app/"
+zip --symlinks -r "NetNewsWire-latest.zip" "NetNewsWire.app/"
+ditto NetNewsWire$1.zip ~/Archive/Releases/
+
+popd

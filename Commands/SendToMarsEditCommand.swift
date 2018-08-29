@@ -1,6 +1,6 @@
 //
 //  SendToMarsEditCommand.swift
-//  Evergreen
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 1/8/18.
 //  Copyright © 2018 Ranchero Software. All rights reserved.

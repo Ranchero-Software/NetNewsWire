@@ -44,7 +44,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 		if (messageName == "subscribeToFeed") {
 			if let feedURLString = userInfo?["url"] as? String {
 				if let feedURL = URL(string: feedURLString) {
-					// We could do something more Evergreen-specific like invoke an app-specific scheme
+					// We could do something more NetNewsWire-specific like invoke an app-specific scheme
 					// to subscribe in the app. For starters we just let NSWorkspace open the URL in the
 					// default "feed:" URL scheme handler.
 					NSWorkspace.shared.open(feedURL)

@@ -2,7 +2,7 @@ CODE_SIGN_IDENTITY = Mac Developer
 CODE_SIGN_STYLE = Automatic
 DEVELOPMENT_TEAM = 9C84TZ7Q6Z
 
-// See the notes in Evergreen_target.xcconfig on why the
+// See the notes in NetNewsWire_target.xcconfig on why the
 // DeveloperSettings.xcconfig is #included here
 
 #include? "../../../SharedXcodeSettings/DeveloperSettings.xcconfig"

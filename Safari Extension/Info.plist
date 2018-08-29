@@ -32,7 +32,7 @@
 		<array>
 			<dict>
 				<key>Script</key>
-				<string>evergreen-subscribe-to-feed.js</string>
+				<string>netnewswire-subscribe-to-feed.js</string>
 			</dict>
 		</array>
 		<key>SFSafariToolbarItem</key>

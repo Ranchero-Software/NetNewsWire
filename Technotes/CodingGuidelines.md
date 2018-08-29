@@ -1,6 +1,6 @@
 # Coding Guidelines
 
-Evergreen’s coding values are, in order:
+NetNewsWire’s coding values are, in order:
 
 * No data loss
 * No crashes
@@ -58,7 +58,7 @@ Use `// MARK:` as appropriate.
 
 Subclassing is inevitable — there’s no way out of subclassing things like `NSView` and `NSViewController`, because that’s how AppKit works.
 
-But in all the rest of Evergreen, frameworks included, you’d have a hard time finding a class that was designed to be subclassed. It’s rare enough that one would have to look pretty hard to find an example, if there is one at all.
+But in all the rest of NetNewsWire, frameworks included, you’d have a hard time finding a class that was designed to be subclassed. It’s rare enough that one would have to look pretty hard to find an example, if there is one at all.
 
 Consider this a hard rule: all Swift classes must be marked as `final`, and all Objective-C classes must be treated as if they were so marked.
 
@@ -96,7 +96,7 @@ Don’t fight the built-in frameworks and don’t try to hide them. Let’s not 
 
 #### Ours
 
-Evergreen is layered into frameworks. There’s an app level and a bunch of frameworks below that. Each framework has its own reason for being. Dependencies between frameworks should be as minimal as possible, but those dependencies do exist.
+NetNewsWire is layered into frameworks. There’s an app level and a bunch of frameworks below that. Each framework has its own reason for being. Dependencies between frameworks should be as minimal as possible, but those dependencies do exist.
 
 Some frameworks are not permitted to add dependencies, and should be treated as at the bottom of the cake: RSCore, RSWeb, RSDatabase, RSParser, RSTree, and DB5. This simplifies things for us, and makes it easier for us and other people to use these frameworks in other apps.
 
@@ -134,7 +134,7 @@ Well, no, not exactly. *Almost* everything happens on the main thread.
 
 The exceptions are things that can be perfectly isolated, such as parsing an RSS feed or fetching from the database. We use `DispatchQueue` to run those in the background, often on a serial queue.
 
-Those things must run without locks — locks are almost completely unused in Evergreen. 
+Those things must run without locks — locks are almost completely unused in NetNewsWire. 
 
 Any time a background task with a callback is finished, it must call back on the main queue (except for completely private cases, and then it must be noted in the code).
 

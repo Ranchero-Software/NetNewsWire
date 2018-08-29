@@ -8,7 +8,7 @@
 
 ## Notes
 
-[What Development, Alpha, Beta, and Final Mean for Evergreen](DevelopmentAlphaBeta.md)
+[What Development, Alpha, Beta, and Final Mean for NetNewsWire](DevelopmentAlphaBeta.md)
 
 [Hidden Preferences](HiddenPrefs.md)
 

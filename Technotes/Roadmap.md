@@ -4,7 +4,7 @@
 
 This roadmap reflects thinking at the time of the last update. Anything can change at any time.
 
-## Evergreen 1.0 for macOS
+## NetNewsWire 1.0 for macOS
 
 Features:
 
@@ -25,11 +25,11 @@ Features:
 
 Milestones:
 
-[Evergreen 1.0 alpha](https://github.com/brentsimmons/Evergreen/milestone/1)<br />
-[Evergreen 1.0 beta](https://github.com/brentsimmons/Evergreen/milestone/2)<br />
-[Evergreen 1.0](https://github.com/brentsimmons/Evergreen/milestone/3)
+[NetNewsWire 1.0 alpha](https://github.com/brentsimmons/NetNewsWire/milestone/1)<br />
+[NetNewsWire 1.0 beta](https://github.com/brentsimmons/NetNewsWire/milestone/2)<br />
+[NetNewsWire 1.0](https://github.com/brentsimmons/NetNewsWire/milestone/3)
 
-(See [What Development, Alpha, Beta, and Final Mean for Evergreen](DevelopmentAlphaBeta.md) for definitions.)
+(See [What Development, Alpha, Beta, and Final Mean for NetNewsWire](DevelopmentAlphaBeta.md) for definitions.)
 
 ## Future
 
@@ -50,9 +50,9 @@ Features:
 * Deleting articles
 * Dinosaurs
 * Dock menu items
-* [Article themes](https://github.com/brentsimmons/Evergreen/issues/257)
+* [Article themes](https://github.com/brentsimmons/NetNewsWire/issues/257)
 * Back/forward commands
-* [Article view zooming](https://github.com/brentsimmons/Evergreen/issues/38)
-* [Import OPML from URL](https://github.com/brentsimmons/Evergreen/issues/136)
-* [Traditional vertical layout](https://github.com/brentsimmons/Evergreen/issues/102)
+* [Article view zooming](https://github.com/brentsimmons/NetNewsWire/issues/38)
+* [Import OPML from URL](https://github.com/brentsimmons/NetNewsWire/issues/136)
+* [Traditional vertical layout](https://github.com/brentsimmons/NetNewsWire/issues/102)
 

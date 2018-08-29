@@ -1,6 +1,6 @@
 //
 //  DeleteFromSidebarCommand.swift
-//  Evergreen
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 11/4/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.

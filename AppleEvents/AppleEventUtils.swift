@@ -1,6 +1,6 @@
 //
 //  AppleEventUtils.swift
-//  EvergreenTests
+//  NetNewsWireTests
 //
 //  Created by Olof Hellman on 1/7/18.
 //  Copyright © 2018 Olof Hellman. All rights reserved.

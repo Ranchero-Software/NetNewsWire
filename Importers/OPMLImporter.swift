@@ -1,6 +1,6 @@
 //
 //  OPMLImporter.swift
-//  Evergreen
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 10/5/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
