@@ -24,12 +24,12 @@ a:hover {
 /* Light mode */
 
 body.light {
-	color: 	-webkit-text;
+	color: 	#444;
 	background-color: -apple-system-text-background;
 }
 
 body.light a, body.light a:link, body.light a:visited {
-	color: -apple-system-blue;
+	color: hsla(215, 99%, 43%, 1);
 }
 body.light .headerTable {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -93,9 +93,6 @@ body.dark .articleDateline, body.dark .articleDateLine.a:link, body.dark .articl
 .articleDateline {
 	margin-bottom: 25px;
 	font-weight: bold;
-}
-.articleDateline, .articleDateline a:link, .articleDateline a:visited {
-	color: rgba(0, 0, 0, 0.3);
 }
 
 .articleBody {
