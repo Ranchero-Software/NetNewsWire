@@ -1,20 +1,62 @@
-#!/bin/sh
+#!/usr/bin/env python
+import os
+import subprocess
+import shutil
+import re
 
-rm -rf ~/.build
-mkdir ~/.build
+buildProductName = "NetNewsWire"
+buildProductBundleName = "%s.app" % (buildProductName,)
 
-rm ~/Desktop/NetNewsWire$1.zip
-rm -rf ~/Desktop/NetNewsWire.app
+# WARNING: This will be deleted and replaced during build. It must
+# correspond to a directory you are willing to see deleted often.
+buildDir = os.path.expanduser("~/.build2")
 
-xcodebuild -workspace NetNewsWire.xcworkspace -scheme "NetNewsWire" -derivedDataPath ~/.build -configuration Release 
+# Remove previous build folder and re-create it 
+print("Removing existing build dir: %s" % buildDir)
+if os.path.exists(buildDir):
+    shutil.rmtree(buildDir)
+os.mkdir(buildDir)
 
-ditto /Users/brent/.build/Build/Products/Release/NetNewsWire.app ~/Desktop/NetNewsWire.app
-open ~/Desktop
+# Perform the build
+print("Building...")
+subprocess.call(["xcodebuild", "-workspace", "NetNewsWire.xcworkspace", "-scheme", "NetNewsWire", "-derivedDataPath", buildDir, "-configuration", "Release"])
 
-pushd ~/Desktop
+# Obtain the version from the built product
+currentVersionBuiltAppPath = os.path.join(buildDir, "Build", "Products", "Release", buildProductBundleName)
+infoPlistPath = os.path.join(currentVersionBuiltAppPath, "Contents/Info.plist")
+infoPlistFile = open(infoPlistPath, "r")
+infoPlistContent = infoPlistFile.read()
+infoPlistFile.close()
+bundleVersionPattern = "(?s)[\t ]*<key>CFBundleShortVersionString<\/key>[\n\t ]*<string>(.*?)<\/string>"
+matches = re.search(bundleVersionPattern, infoPlistContent)
+appVersion = matches.group(1)
 
-zip --symlinks -r "NetNewsWire$1.zip" "NetNewsWire.app/"
-zip --symlinks -r "NetNewsWire-latest.zip" "NetNewsWire.app/"
-ditto NetNewsWire$1.zip ~/Archive/Releases/
+# Remove previous build artifacts 
+outputDir = os.path.expanduser("~")
+currentVersionStagedAppPath = os.path.join(outputDir, buildProductBundleName)
+currentVersionZipName = "NetNewsWire%s.zip" % appVersion
+currentVersionZipPath = os.path.join(outputDir, currentVersionZipName)
+if os.path.exists(currentVersionZipPath):
+    print("Removing previous app at %s" % currentVersionZipPath)
+    os.remove(currentVersionZipPath)
 
-popd
+# Package new build artifacts
+print("Copying build product from \"%s\" to \"%s\"" % (currentVersionBuiltAppPath, currentVersionStagedAppPath))
+subprocess.call(["ditto", currentVersionBuiltAppPath,  currentVersionStagedAppPath])
+print("Zipping to \"%s\"" % currentVersionZipName)
+subprocess.call(["zip", "--symlinks", "-r", currentVersionZipPath, currentVersionBuiltAppPath])
+
+# Archive a permanent copy 
+archiveDir = os.path.expanduser("~/Archive/Releases")
+currentVersionArchivePath = os.path.join(archiveDir, currentVersionZipName)
+print("Copying archive to to \"%s\"" % currentVersionArchivePath)
+subprocess.call(["ditto", currentVersionZipPath, currentVersionArchivePath])
+
+latestVersionZipName = "NetNewsWire-latest.zip"
+latestVersionZipPath = os.path.join(outputDir, latestVersionZipName)
+print("Copying archive to to \"%s\"" % latestVersionZipPath)
+subprocess.call(["cp", currentVersionZipPath, latestVersionZipPath])
+
+# Reveal the built archive
+print("Revealing in Finder: \"%s\"" % latestVersionZipPath)
+subprocess.call(["open", "-R", latestVersionZipPath])
