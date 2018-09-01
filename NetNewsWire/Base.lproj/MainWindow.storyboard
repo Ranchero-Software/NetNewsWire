@@ -660,7 +660,7 @@
                                 </constraints>
                             </view>
                             <color key="borderColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <color key="fillColor" name="underPageBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            <color key="fillColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </box>
                     </subviews>
                     <constraints>

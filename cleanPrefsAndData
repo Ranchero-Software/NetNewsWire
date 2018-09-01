@@ -1,7 +1,7 @@
 #!/bin/sh
 
-defaults delete com.ranchero.evergreen
+defaults delete com.ranchero.NetNewsWire-Evergreen
 killall cfprefsd
 
-rm -rf ~/Library/Application\ Support/Evergreen/
+rm -rf ~/Library/Application\ Support/NetNewsWire/
 

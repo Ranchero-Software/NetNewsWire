@@ -4,7 +4,7 @@
 
 This roadmap reflects thinking at the time of the last update. Anything can change at any time.
 
-## NetNewsWire 1.0 for macOS
+## NetNewsWire 5.0 for macOS
 
 Features:
 
@@ -25,9 +25,9 @@ Features:
 
 Milestones:
 
-[NetNewsWire 1.0 alpha](https://github.com/brentsimmons/NetNewsWire/milestone/1)<br />
-[NetNewsWire 1.0 beta](https://github.com/brentsimmons/NetNewsWire/milestone/2)<br />
-[NetNewsWire 1.0](https://github.com/brentsimmons/NetNewsWire/milestone/3)
+[NetNewsWire 5.0 alpha](https://github.com/brentsimmons/NetNewsWire/milestone/1)<br />
+[NetNewsWire 5.0 beta](https://github.com/brentsimmons/NetNewsWire/milestone/2)<br />
+[NetNewsWire 5.0](https://github.com/brentsimmons/NetNewsWire/milestone/3)
 
 (See [What Development, Alpha, Beta, and Final Mean for NetNewsWire](DevelopmentAlphaBeta.md) for definitions.)
 
