@@ -170,7 +170,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 
 		detailViewController.canScrollDown { (canScroll) in
-
+			NSCursor.setHiddenUntilMouseMoves(true)
 			canScroll ? detailViewController.scrollPageDown(sender) : self.nextUnread(sender)
 		}
 	}
