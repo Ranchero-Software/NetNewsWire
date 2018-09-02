@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>NetNewsWire Betas</title>
+        <link>https://ranchero.com/downloads/netnewswire-beta.xml</link>
+        <description>Most recent NetNewsWire changes with links to updates.</description>
+        <language>en</language>
+
+	<item>
+          <title>NetNewsWire 5.0d2</title>
+            <description><![CDATA[
+            
+            <p>Fixed a performance issue when fetching articles — it’s much faster now. You’ll especially notice when you select something with hundreds of articles.</p>
+            <p>Handle bad home page URLs in a feed. (AppleInsider, for instance.)</p>
+            <p>Allow .xml as an extension when importing an OPML file.</p>
+            <p>Hide cursor when paging via the space bar.</p>
+    						]]></description>
+            <pubDate>Sun, 02 Sep 2018 12:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d2.zip" sparkle:version="1225" sparkle:shortVersionString="5.0d2" length="11322264" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	
+
+    </channel>
+</rss>
