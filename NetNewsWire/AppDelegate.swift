@@ -352,7 +352,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		panel.allowsMultipleSelection = false
 		panel.canChooseDirectories = false
 		panel.resolvesAliases = true
-		panel.allowedFileTypes = ["opml"]
+		panel.allowedFileTypes = ["opml", "xml"]
 		panel.allowsOtherFileTypes = false
 
 		let result = panel.runModal()
