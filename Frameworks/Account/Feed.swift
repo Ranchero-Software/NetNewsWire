@@ -86,7 +86,9 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		let feedID = dictionary[Key.feedID] as? String ?? url
 		
 		self.init(accountID: accountID, url: url, feedID: feedID)
-		self.homePageURL = dictionary[Key.homePageURL] as? String
+		if let homePageURL = dictionary[Key.homePageURL] as? String {
+			self.homePageURL = homePageURL.rs_normalizedURL()
+		}
 		self.iconURL = dictionary[Key.iconURL] as? String
 		self.faviconURL = dictionary[Key.faviconURL] as? String
 		self.name = dictionary[Key.name] as? String
