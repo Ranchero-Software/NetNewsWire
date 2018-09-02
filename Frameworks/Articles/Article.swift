@@ -27,7 +27,10 @@ public struct Article: Hashable {
 	public let authors: Set<Author>?
 	public let attachments: Set<Attachment>?
 	public let status: ArticleStatus
-
+	public var hashValue: Int {
+		return articleID.hashValue
+	}
+	
 	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, attachments: Set<Attachment>?, status: ArticleStatus) {
 		
 		self.accountID = accountID

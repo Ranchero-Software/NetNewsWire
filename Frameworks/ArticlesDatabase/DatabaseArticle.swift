@@ -28,6 +28,9 @@ struct DatabaseArticle: Hashable {
 	let datePublished: Date?
 	let dateModified: Date?
 	let status: ArticleStatus
+	var hashValue: Int {
+		return articleID.hashValue
+	}
 }
 
 
