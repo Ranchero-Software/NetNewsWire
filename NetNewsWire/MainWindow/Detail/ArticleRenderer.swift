@@ -198,7 +198,7 @@ class ArticleRenderer {
 		let longDate = longDateFormatter.string(from: article.logicalDatePublished)
 		let mediumDate = mediumDateFormatter.string(from: article.logicalDatePublished)
 		let shortDate = shortDateFormatter.string(from: article.logicalDatePublished)
-		if let permalink = article.url {
+		if dateShouldBeLink() || self.title == "", let permalink = article.url {
 			d["date_long"] = linkWithText(longDate, permalink)
 			d["date_medium"] = linkWithText(mediumDate, permalink)
 			d["date_short"] = linkWithText(shortDate, permalink)
@@ -213,6 +213,16 @@ class ArticleRenderer {
 		//		d["author_avatar"] = authorAvatar()
 
 		return d
+	}
+
+	private func dateShouldBeLink() -> Bool {
+		guard let permalink = article.url else {
+			return false
+		}
+		guard let preferredLink = article.preferredLink else { // Title uses preferredLink
+			return false
+		}
+		return permalink != preferredLink // Make date a link if it’s a different link from the title’s link
 	}
 
 	struct Avatar {
