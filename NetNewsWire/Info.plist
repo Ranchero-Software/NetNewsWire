@@ -28,6 +28,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>feed</string>
+				<string>feeds</string>
 			</array>
 		</dict>
 	</array>
