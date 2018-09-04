@@ -65,13 +65,9 @@ function subscribeToFeed(theFeed) {
 	// in the PageLoadEnd.js so we can be more confident it's a
 	// good feed: URL.
 	var feedURL = theFeed.href;
-	if (feedURL.match(/^http[s]?:\/\//))
+	if (!feedURL.startsWith('feed:'))
 	{
-		feedURL = feedURL.replace(/^http[s]?:\/\//, "feed://");
-	}
-	else if (feedURL.match(/^feed:/) == false)
-	{
-		feedURL = "feed:" + feedURL;
+		feedURL = 'feed:' + feedURL;
 	}
 
 	safari.extension.dispatchMessage("subscribeToFeed", { "url": feedURL });
