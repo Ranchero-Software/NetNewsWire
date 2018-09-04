@@ -105,7 +105,7 @@
 		849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 849C64691ED37A5D003D8FC0 /* Main.storyboard */; };
 		849EE70F203919360082A1EA /* AppImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849EE70E203919360082A1EA /* AppImages.swift */; };
 		849EE71F20391DF20082A1EA /* MainWindowToolbarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849EE71E20391DF20082A1EA /* MainWindowToolbarDelegate.swift */; };
-		849EE72120391F560082A1EA /* MainWindowSharingServicePickerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849EE72020391F560082A1EA /* MainWindowSharingServicePickerDelegate.swift */; };
+		849EE72120391F560082A1EA /* SharingServicePickerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849EE72020391F560082A1EA /* SharingServicePickerDelegate.swift */; };
 		84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */; };
 		84A1500320048D660046AD9A /* SendToCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500220048D660046AD9A /* SendToCommand.swift */; };
 		84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */; };
@@ -588,7 +588,7 @@
 		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		849EE70E203919360082A1EA /* AppImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppImages.swift; path = NetNewsWire/AppImages.swift; sourceTree = "<group>"; };
 		849EE71E20391DF20082A1EA /* MainWindowToolbarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowToolbarDelegate.swift; sourceTree = "<group>"; };
-		849EE72020391F560082A1EA /* MainWindowSharingServicePickerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowSharingServicePickerDelegate.swift; sourceTree = "<group>"; };
+		849EE72020391F560082A1EA /* SharingServicePickerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServicePickerDelegate.swift; sourceTree = "<group>"; };
 		84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMicroBlogCommand.swift; sourceTree = "<group>"; };
 		84A1500220048D660046AD9A /* SendToCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToCommand.swift; sourceTree = "<group>"; };
 		84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMarsEditCommand.swift; sourceTree = "<group>"; };
@@ -825,7 +825,7 @@
 				842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */,
 				849A975D1ED9EB72007D329B /* MainWindowController.swift */,
 				849EE71E20391DF20082A1EA /* MainWindowToolbarDelegate.swift */,
-				849EE72020391F560082A1EA /* MainWindowSharingServicePickerDelegate.swift */,
+				849EE72020391F560082A1EA /* SharingServicePickerDelegate.swift */,
 				842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */,
 				844B5B6B1FEA224B00C7C76A /* Keyboard */,
 				849A975F1ED9EB95007D329B /* Sidebar */,
@@ -1957,7 +1957,7 @@
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
 				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,
 				84F3EE1820DEC97E003FADEB /* FeedSpecifier.swift in Sources */,
-				849EE72120391F560082A1EA /* MainWindowSharingServicePickerDelegate.swift in Sources */,
+				849EE72120391F560082A1EA /* SharingServicePickerDelegate.swift in Sources */,
 				849A97981ED9EFAA007D329B /* Node-Extensions.swift in Sources */,
 				849EE70F203919360082A1EA /* AppImages.swift in Sources */,
 				849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */,

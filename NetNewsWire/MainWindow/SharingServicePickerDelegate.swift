@@ -1,5 +1,5 @@
 //
-//  MainWindowSharingServicePickerDelegate.swift
+//  SharingServicePickerDelegate.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 2/17/18.
@@ -8,11 +8,16 @@
 
 import AppKit
 
-@objc final class MainWindowSharingServicePickerDelegate: NSObject, NSSharingServicePickerDelegate {
+@objc final class SharingServicePickerDelegate: NSObject, NSSharingServicePickerDelegate {
 
 	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
 
-		let sendToServices = appDelegate.sendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
+		return proposedServices + SharingServicePickerDelegate.customSharingServices(for: items)
+	}
+
+	static func customSharingServices(for items: [Any]) -> [NSSharingService] {
+
+		let customServices = appDelegate.sendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
 
 			guard let object = items.first else {
 				return nil
@@ -26,6 +31,6 @@ import AppKit
 				sendToCommand.sendObject(object, selectedText: nil)
 			}
 		}
-		return proposedServices + sendToServices
+		return customServices
 	}
 }

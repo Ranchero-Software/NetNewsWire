@@ -14,7 +14,7 @@ import RSCore
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBOutlet var toolbarDelegate: MainWindowToolbarDelegate?
-	private let sharingServicePickerDelegate = MainWindowSharingServicePickerDelegate()
+	private let sharingServicePickerDelegate = SharingServicePickerDelegate()
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: "MainWindow")
 	static var didPositionWindowOnFirstRun = false
