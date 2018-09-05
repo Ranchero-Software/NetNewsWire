@@ -192,6 +192,7 @@ import RSCore
 			return
 		}
 		
+		NSCursor.setHiddenUntilMouseMoves(true)
 		outlineView.selectRowIndexes(IndexSet([row]), byExtendingSelection: false)
 	}
 

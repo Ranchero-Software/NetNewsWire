@@ -280,6 +280,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		guard let ix = indexOfNextUnreadArticle() else {
 			return
 		}
+		NSCursor.setHiddenUntilMouseMoves(true)
 		tableView.rs_selectRow(ix)
 		tableView.scrollTo(row: ix)
 	}

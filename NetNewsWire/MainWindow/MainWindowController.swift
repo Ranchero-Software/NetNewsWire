@@ -202,6 +202,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
 			return
 		}
+
+		NSCursor.setHiddenUntilMouseMoves(true)
 		
 		if timelineViewController.canGoToNextUnread() {
 			goToNextUnreadInTimeline()
