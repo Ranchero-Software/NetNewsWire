@@ -261,7 +261,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
 
-		timelineViewController?.markOlderArticlesAsRead()
+		timelineViewController?.markOlderArticlesRead()
 	}
 
 	@IBAction func navigateToTimeline(_ sender: Any?) {

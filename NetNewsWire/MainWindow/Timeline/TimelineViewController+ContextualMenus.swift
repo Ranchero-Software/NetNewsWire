@@ -44,7 +44,15 @@ extension TimelineViewController {
 		guard let articles = articles(from: sender) else {
 			return
 		}
-		markArticles(articles, read: false)
+		markOlderArticlesRead(articles)
+	}
+
+	@objc func markOlderArticlesReadFromContextualMenu(_ sender: Any?) {
+
+		guard let articles = articles(from: sender) else {
+			return
+		}
+		markOlderArticlesRead(articles)
 	}
 
 	@objc func markArticlesStarredFromContextualMenu(_ sender: Any?) {
@@ -134,6 +142,9 @@ private extension TimelineViewController {
 		if articles.anyArticleIsStarred() {
 			menu.addItem(markUnstarredMenuItem(articles))
 		}
+		if articles.count > 0 {
+			menu.addItem(markOlderReadMenuItem(articles))
+		}
 		menu.addSeparatorIfNeeded()
 
 		if articles.count == 1, let link = articles.first!.preferredLink {
@@ -193,6 +204,10 @@ private extension TimelineViewController {
 	func markUnstarredMenuItem(_ articles: [Article]) -> NSMenuItem {
 
 		return menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles)
+	}
+
+	func markOlderReadMenuItem(_ articles: [Article]) -> NSMenuItem {
+		return menuItem(NSLocalizedString("Mark Older as Read", comment: "Command"),  #selector(markOlderArticlesReadFromContextualMenu(_:)), articles)
 	}
 
 	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {

@@ -240,9 +240,16 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		return MarkCommandValidationStatus.statusFor(selectedArticles) { $0.anyArticleIsUnread() }
 	}
 
-	func markOlderArticlesAsRead() {
+	func markOlderArticlesRead() {
+		markOlderArticlesRead(selectedArticles)
+	}
 
-		// Mark articles the same age or older than the selected article(s) as read.
+	func canMarkOlderArticlesAsRead() -> Bool {
+		return !selectedArticles.isEmpty
+	}
+
+	func markOlderArticlesRead(_ selectedArticles: [Article]) {
+		// Mark articles the same age or older than the selectedArticles(s) as read.
 
 		var cutoffDate: Date? = nil
 		for article in selectedArticles {
@@ -266,11 +273,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return
 		}
 		runCommand(markReadCommand)
-	}
-
-	func canMarkOlderArticlesAsRead() -> Bool {
-
-		return !selectedArticles.isEmpty
 	}
 
 	// MARK: - Navigation
