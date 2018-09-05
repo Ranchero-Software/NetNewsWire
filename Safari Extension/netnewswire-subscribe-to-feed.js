@@ -42,18 +42,14 @@ function scanForSyndicationFeeds() {
 	// variables to empty instead of null.
 	thisPageLinkObjects = []
 
-	thisPageLinks = document.getElementsByTagName("link");
+	thisPageLinks = document.querySelectorAll("link[href][rel~='alternate'][type]");
 
 	for (thisLinkIndex = 0; thisLinkIndex < thisPageLinks.length; thisLinkIndex++)
 	{
 		var thisLink = thisPageLinks[thisLinkIndex];
-		var thisLinkRel = thisLink.getAttribute("rel");
-		if (thisLinkRel == "alternate")
+		if (isValidFeedLink(thisLink))
 		{
-			if (isValidFeedLink(thisLink))
-			{
-				thisPageLinkObjects.push(objectFromLink(thisLink));
-			}
+			thisPageLinkObjects.push(objectFromLink(thisLink));
 		}
 	}
 }
