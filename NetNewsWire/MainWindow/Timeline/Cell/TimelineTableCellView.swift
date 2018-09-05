@@ -189,22 +189,26 @@ private extension TimelineTableCellView {
 
 		updateTitleView()
 
+		if #available(macOS 10.14, *) {
+			makeTextFieldColorsNormal()
+		}
+		else {
+			// Pre-Mojave: manually set colors to white when needed.
+			if isEmphasized && isSelected {
+				textFields.forEach { $0.textColor = NSColor.white }
+			}
+			else {
+				makeTextFieldColorsNormal()
+			}
+		}
+	}
+
+	func makeTextFieldColorsNormal() {
 		titleView.textColor = NSColor.labelColor
 		feedNameView.textColor = NSColor.secondaryLabelColor
 		dateView.textColor = NSColor.secondaryLabelColor
 		summaryView.textColor = NSColor.secondaryLabelColor
 		textView.textColor = NSColor.labelColor
-		
-//		if isEmphasized && isSelected {
-//			textFields.forEach { $0.textColor = NSColor.white }
-//		}
-//		else {
-//			feedNameView.textColor = cellAppearance.feedNameColor
-//			dateView.textColor = cellAppearance.dateColor
-//			titleView.textColor = cellAppearance.titleColor
-//			summaryView.textColor = cellAppearance.textColor
-//			textView.textColor = cellAppearance.textOnlyColor
-//		}
 	}
 
 	func updateTextFieldFonts() {
