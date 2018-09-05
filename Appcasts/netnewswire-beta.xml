@@ -7,6 +7,22 @@
         <language>en</language>
 
 	<item>
+          <title>NetNewsWire 5.0d3</title>
+            <description><![CDATA[
+            
+            <p>Fixed appearance of timeline cell when highlighted (in High Sierra) — text now turns white, as expected.</p>
+            <p>Reduced size of download by several MB by not including Swift libraries in Safari extension.</p>
+            <p>Made the Safari extension preserve https scheme, for better security.</p>
+            <p>Added Share submenu to timeline contextual menu.</p>
+            <p>Detail view doesn’t make date a link when it would be to the same URL as the title link.</p>
+            
+    						]]></description>
+            <pubDate>Tue, 04 Sep 2018 21:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d3.zip" sparkle:version="1241" sparkle:shortVersionString="5.0d3" length="7730920" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
           <title>NetNewsWire 5.0d2</title>
             <description><![CDATA[
             
