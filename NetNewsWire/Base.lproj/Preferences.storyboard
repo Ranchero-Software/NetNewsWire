@@ -76,12 +76,12 @@
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cSu-T2-Jby">
                                 <rect key="frame" x="198" y="45" width="212" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bEy-Qx-Grl" id="Dyk-WN-XOo">
+                                <popUpButtonCell key="cell" type="push" title="This doesn’t work yet" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bEy-Qx-Grl" id="Dyk-WN-XOo">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="8PF-kj-u99">
                                         <items>
-                                            <menuItem title="Item 1" state="on" id="bEy-Qx-Grl"/>
+                                            <menuItem title="This doesn’t work yet" state="on" id="bEy-Qx-Grl"/>
                                             <menuItem title="Item 2" id="ZB8-D2-BS4"/>
                                             <menuItem title="Item 3" id="aSx-R2-4eg"/>
                                         </items>
