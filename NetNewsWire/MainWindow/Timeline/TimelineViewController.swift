@@ -249,14 +249,14 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	func markOlderArticlesRead(_ selectedArticles: [Article]) {
-		// Mark articles the same age or older than the selectedArticles(s) as read.
+		// Mark articles older than the selectedArticles(s) as read.
 
 		var cutoffDate: Date? = nil
 		for article in selectedArticles {
 			if cutoffDate == nil {
 				cutoffDate = article.logicalDatePublished
 			}
-			else if cutoffDate! < article.logicalDatePublished {
+			else if cutoffDate! > article.logicalDatePublished {
 				cutoffDate = article.logicalDatePublished
 			}
 		}
@@ -264,7 +264,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return
 		}
 
-		let articlesToMark = articles.filter { $0.logicalDatePublished <= cutoffDate! }
+		let articlesToMark = articles.filter { $0.logicalDatePublished < cutoffDate! }
 		if articlesToMark.isEmpty {
 			return
 		}
