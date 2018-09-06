@@ -44,7 +44,7 @@ extension TimelineViewController {
 		guard let articles = articles(from: sender) else {
 			return
 		}
-		markOlderArticlesRead(articles)
+		markArticles(articles, read: false)
 	}
 
 	@objc func markOlderArticlesReadFromContextualMenu(_ sender: Any?) {
