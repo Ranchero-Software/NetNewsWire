@@ -193,6 +193,7 @@
 				D511EEE620242E0800712EC3 /* xcconfig */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		844BEE381F0AB3AA004AB7CD /* Products */ = {
 			isa = PBXGroup;
@@ -353,13 +354,13 @@
 				TargetAttributes = {
 					844BEE361F0AB3AA004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 					844BEE3F1F0AB3AB004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 				};

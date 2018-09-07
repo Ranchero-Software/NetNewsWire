@@ -34,7 +34,7 @@ class HTMLFeedFinder {
 			for oneBodyLink in bodyLinks {
 
 				if linkMightBeFeed(oneBodyLink) {
-                    let normalizedURL = oneBodyLink.urlString.rs_normalizedURL()
+					let normalizedURL = oneBodyLink.urlString.rs_normalizedURL()
 					let oneFeedSpecifier = FeedSpecifier(title: oneBodyLink.text, urlString: normalizedURL, source: .HTMLLink)
 					addFeedSpecifier(oneFeedSpecifier)
 				}

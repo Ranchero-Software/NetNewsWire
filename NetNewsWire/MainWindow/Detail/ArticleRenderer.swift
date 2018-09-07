@@ -400,16 +400,16 @@ class ArticleRenderer {
 			return ""
 		}
 
-        // If the author's name is the same as the feed, then we don't want to display it.
-        // This code assumes that multiple authors would never match the feed name so that
-        // if there feed owner has an article co-author all authors are given the byline.
-        if authors.count == 1, let author = authors.first {
-            if author.name == article.feed?.nameForDisplay {
-                return ""
-            }
-        }
-        
-        var byline = ""
+		// If the author's name is the same as the feed, then we don't want to display it.
+		// This code assumes that multiple authors would never match the feed name so that
+		// if there feed owner has an article co-author all authors are given the byline.
+		if authors.count == 1, let author = authors.first {
+			if author.name == article.feed?.nameForDisplay {
+				return ""
+			}
+		}
+		
+		var byline = ""
 		var isFirstAuthor = true
 
 		for author in authors {

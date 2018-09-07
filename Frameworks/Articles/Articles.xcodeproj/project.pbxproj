@@ -104,6 +104,7 @@
 				D511EEE520242DFB00712EC3 /* xcconfig */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		844BEE5C1F0AB3C8004AB7CD /* Products */ = {
 			isa = PBXGroup;
