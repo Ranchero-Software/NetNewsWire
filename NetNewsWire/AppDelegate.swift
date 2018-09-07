@@ -155,10 +155,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-
-		if (!flag) {
-			createAndShowMainWindow()
-		}
+		createAndShowMainWindow()
 		return false
 	}
 
