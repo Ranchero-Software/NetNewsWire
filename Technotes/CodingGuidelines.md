@@ -26,7 +26,7 @@ Similarly: always work at the highest level possible, but not higher and certain
 
 ### Language
 
-Write new code in Swift 4.
+Write new code in Swift 4.2.
 
 The one exception to this is when dealing with C APIs, which are often much easier to deal with in Objective-C than in Swift. Still, though, this is rare, and is much more likely to be needed in a lower-level framework such as RSParser — it shouldn’t happen at the app level.
 
@@ -167,3 +167,7 @@ Every commit message should begin with a present-tense verb.
 Don’t show off. If your code looks like kindergarten code, then _good_.
 
 Points are granted for not trying to amass points.
+
+### Really Last Thing
+
+Tabs vs. spaces? Tabs. We had to pick, and we picked tabs, because it lets people decide their own tab width.
