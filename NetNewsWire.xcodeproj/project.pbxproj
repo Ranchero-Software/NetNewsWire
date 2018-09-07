@@ -1140,6 +1140,7 @@
 				84C37F9820DD8D0400CA8CF5 /* RSWeb.xcodeproj */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		849C64611ED37A5D003D8FC0 /* Products */ = {
 			isa = PBXGroup;
