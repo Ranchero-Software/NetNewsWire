@@ -24,7 +24,7 @@ final class FeedListTreeControllerDelegate: TreeControllerDelegate {
 
 	init() {
 
-//		let netnewswireNewsFeed = FeedListFeed(name: "NetNewsWire News", url: "https://ranchero.com/netnewswire/feed.json", homePageURL: "https://ranchero.com/netnewswire/blog/")
+//		let netnewswireNewsFeed = FeedListFeed(name: "NetNewsWire News", url: "https://nnw.ranchero.com/feed.json", homePageURL: "https://nnw.ranchero.com/")
 		self.topLevelFeeds = Set<FeedListFeed>() //Set([netnewswireNewsFeedNewsFeed])
 
 		let defaultFeeds = FeedListReader.defaultFeeds()

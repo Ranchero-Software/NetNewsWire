@@ -96,11 +96,11 @@
 	</dict>
 	<dict>
 		<key>homePageURL</key>
-		<string>https://ranchero.com/netnewswire/</string>
+		<string>https://nnw.ranchero.com/</string>
 		<key>editedName</key>
-		<string>NetNewsWire News</string>
+		<string>NetNewsWire Blog</string>
 		<key>url</key>
-		<string>https://ranchero.com/netnewswire/feed.json</string>
+		<string>https://nnw.ranchero.com/feed.json</string>
 	</dict>
 	<dict>
 		<key>homePageURL</key>
