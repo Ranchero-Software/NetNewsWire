@@ -14,7 +14,7 @@ import RSCore
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBOutlet var toolbarDelegate: MainWindowToolbarDelegate?
-	private let sharingServicePickerDelegate = SharingServicePickerDelegate()
+	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: "MainWindow")
 	static var didPositionWindowOnFirstRun = false
@@ -39,6 +39,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		super.windowDidLoad()
 
+		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
+		
 		if !AppDefaults.shared.showTitleOnMainWindow {
 			window?.titleVisibility = .hidden
 		}
