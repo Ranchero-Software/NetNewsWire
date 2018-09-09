@@ -7,6 +7,20 @@
         <language>en</language>
 
 	<item>
+          <title>NetNewsWire 5.0d5</title>
+            <description><![CDATA[
+            
+            <p>Major bandwidth-use bug fixed — sometimes it would request the home page of a site multiple times all at once. Now it just does one request.</p>
+            <p>Sharing: lightboxed the share sheet.</p>
+            <p>Sharing: added subject to Mail message.</p>
+
+    						]]></description>
+            <pubDate>Sun, 09 Sep 2018 12:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d5.zip" sparkle:version="1267" sparkle:shortVersionString="5.0d5" length="7742716" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
           <title>NetNewsWire 5.0d3</title>
             <description><![CDATA[
             
