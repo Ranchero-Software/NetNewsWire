@@ -8,6 +8,8 @@
 
 import Foundation
 import DB5
+import Account
+import RSTree
 
 private var textSizeCache = [String: NSSize]()
 
@@ -111,6 +113,22 @@ class SidebarCell : NSTableCellView {
 		let layout = SidebarCellLayout(appearance: cellAppearance, cellSize: bounds.size, shouldShowImage: shouldShowImage, textField: textField, unreadCountView: unreadCountView)
 		layoutWith(layout)
 	}
+	
+	@IBAction func editingEnded(_ sender: NSTextField) {
+		
+		guard let node = objectValue as? Node else {
+			return
+		}
+		
+		if let feed = node.representedObject as? Feed {
+			feed.editedName = sender.stringValue
+		}
+		else if let folder = node.representedObject as? Folder {
+			folder.name = sender.stringValue
+		}
+		
+	}
+	
 }
 
 private extension SidebarCell {
