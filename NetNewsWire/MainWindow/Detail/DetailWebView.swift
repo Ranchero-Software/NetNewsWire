@@ -30,6 +30,12 @@ final class DetailWebView: WKWebView {
 
 		super.willOpenMenu(menu, with: event)
 	}
+
+	override func viewDidChangeEffectiveAppearance() {
+		let bodyClass = effectiveAppearance.isDarkMode ? "dark" : "light"
+		evaluateJavaScript("document.getElementById('bodyId').className = '\(bodyClass)'")
+	}
+
 }
 
 private extension NSUserInterfaceItemIdentifier {

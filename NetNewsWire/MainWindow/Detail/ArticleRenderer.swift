@@ -20,6 +20,8 @@ class ArticleRenderer {
 
 	let article: Article
 	let articleStyle: ArticleStyle
+	let appearance: NSAppearance?
+	
 	static var faviconImgTagCache = [Feed: String]()
 	static var feedIconImgTagCache = [Feed: String]()
 
@@ -87,10 +89,12 @@ class ArticleRenderer {
 		return renderedHTML()
 	}
 
-	init(article: Article, style: ArticleStyle) {
+	init(article: Article, style: ArticleStyle, appearance: NSAppearance? = nil) {
 
 		self.article = article
 		self.articleStyle = style
+		self.appearance = appearance
+		
 	}
 
 	// MARK: Private
@@ -472,9 +476,9 @@ class ArticleRenderer {
 		</script>
 
 		"""
-
-		s += "\n\n</head><body onload='startup()' class=light>\n\n"
-
+		
+		let appearanceClass = appearance?.isDarkMode ?? false ? "dark" : "light"
+		s += "\n\n</head><body id='bodyId' onload='startup()' class=\(appearanceClass)>\n\n"
 
 		s += RSMacroProcessor.renderedText(withTemplate: template(), substitutions: substitutions(), macroStart: "[[", macroEnd: "]]")
 
