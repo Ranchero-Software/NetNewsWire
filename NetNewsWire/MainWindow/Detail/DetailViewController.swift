@@ -195,7 +195,9 @@ private extension DetailViewController {
 	func reloadHTML() {
 
 		if let article = article {
-			let articleRenderer = ArticleRenderer(article: article, style: ArticleStylesManager.shared.currentStyle)
+			let articleRenderer = ArticleRenderer(article: article,
+												  style: ArticleStylesManager.shared.currentStyle,
+												  appearance: self.view.effectiveAppearance)
 			webview.loadHTMLString(articleRenderer.html, baseURL: articleRenderer.baseURL)
 		}
 		else {
