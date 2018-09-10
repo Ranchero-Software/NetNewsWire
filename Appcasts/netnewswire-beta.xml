@@ -7,6 +7,19 @@
         <language>en</language>
 
 	<item>
+          <title>NetNewsWire 5.0d6</title>
+            <description><![CDATA[
+            
+            <p>Supports Mojave dark mode in the detail view, which should complete dark mode support.</p>
+            <p>Sidebar: feed and folder names can be edited inline.</p>
+
+    						]]></description>
+            <pubDate>Mon, 10 Sep 2018 13:15:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d6.zip" sparkle:version="1272" sparkle:shortVersionString="5.0d6" length="7805208" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
           <title>NetNewsWire 5.0d5</title>
             <description><![CDATA[
             
