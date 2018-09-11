@@ -338,7 +338,22 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		let feeds = container.flattenedFeeds()
 		let articles = database.fetchUnreadArticles(for: feeds.feedIDs())
-		feeds.forEach { validateUnreadCount($0, articles) }
+
+		// Validate unread counts. This was the site of a performance slowdown:
+		// it was calling going through the entire list of articles once per feed:
+		// feeds.forEach { validateUnreadCount($0, articles) }
+		// Now we loop through articles exactly once. This makes a huge difference.
+
+		var unreadCountStorage = [String: Int]() // [FeedID: Int]
+		articles.forEach { (article) in
+			precondition(!article.status.read)
+			unreadCountStorage[article.feedID, default: 0] += 1
+		}
+		feeds.forEach { (feed) in
+			let unreadCount = unreadCountStorage[feed.feedID, default: 0]
+			feed.unreadCount = unreadCount
+		}
+
 		return articles
 	}
 
