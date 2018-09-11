@@ -14,7 +14,7 @@ final class DetailStatusBarView: NSView {
 
 	@IBOutlet var urlLabel: NSTextField!
 
-	private var didConfigureLayer = false
+	private var didConfigureLayerRadius = false
 	private var mouseoverLink: String? {
 		didSet {
 			updateLinkForDisplay()
@@ -49,15 +49,16 @@ final class DetailStatusBarView: NSView {
 
 	override func updateLayer() {
 
-		guard !didConfigureLayer else {
+		guard let layer = layer else {
 			return
 		}
-		if let layer = layer {
-			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.statusBar.backgroundColor")
-			layer.backgroundColor = color.cgColor
+		if !didConfigureLayerRadius {
 			layer.cornerRadius = 4.0
-			didConfigureLayer = true
+			didConfigureLayerRadius = true
 		}
+
+		let color = self.effectiveAppearance.isDarkMode ? NSColor.textBackgroundColor : appDelegate.currentTheme.color(forKey: "MainWindow.Detail.statusBar.backgroundColor")
+		layer.backgroundColor = color.cgColor
 	}
 
 	override func awakeFromNib() {
