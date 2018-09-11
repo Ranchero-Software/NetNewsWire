@@ -76,7 +76,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	func logMessage(_ message: String, type: LogItem.ItemType) {
 
 		#if DEBUG
+		if type == .debug {
 			print("logMessage: \(message) - \(type)")
+		}
 		#endif
 
 		let logItem = LogItem(type: type, message: message)
