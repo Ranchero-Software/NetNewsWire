@@ -76,8 +76,10 @@ extension FeedListViewController {
 	}
 
 	@IBAction func addToFeeds(_ sender: Any?) {
-
+		let selectedFeeds = selectedObjects.map { $0 as! FeedListFeed }
+		appDelegate.showAddFeedFromListOnMainWindow(selectedFeeds)
 	}
+	
 }
 
 // MARK: - NSOutlineViewDataSource

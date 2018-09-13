@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
+		51EC11A1214A94AD00B296E3 /* AddFeedFromListSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51EC1193214A94AC00B296E3 /* AddFeedFromListSheet.xib */; };
+		51EC11A3214A990000B296E3 /* AddFeedFromListWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC11A2214A990000B296E3 /* AddFeedFromListWindowController.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
@@ -482,6 +484,8 @@
 /* Begin PBXFileReference section */
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderTreeMenu.swift; path = AddFeed/FolderTreeMenu.swift; sourceTree = "<group>"; };
+		51EC1194214A94AC00B296E3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = NetNewsWire/Base.lproj/AddFeedFromListSheet.xib; sourceTree = SOURCE_ROOT; };
+		51EC11A2214A990000B296E3 /* AddFeedFromListWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedFromListWindowController.swift; path = AddFeed/AddFeedFromListWindowController.swift; sourceTree = "<group>"; };
 		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6581C73420CED60100F4AD34 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionHandler.swift; sourceTree = "<group>"; };
@@ -950,6 +954,8 @@
 		849A97551ED9EAC3007D329B /* Add Feed */ = {
 			isa = PBXGroup;
 			children = (
+				51EC1193214A94AC00B296E3 /* AddFeedFromListSheet.xib */,
+				51EC11A2214A990000B296E3 /* AddFeedFromListWindowController.swift */,
 				849A97A71ED9F9AA007D329B /* AddFeedSheet.xib */,
 				849A97511ED9EAC0007D329B /* AddFeedController.swift */,
 				849A97521ED9EAC0007D329B /* AddFeedWindowController.swift */,
@@ -1814,6 +1820,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51EC11A1214A94AD00B296E3 /* AddFeedFromListSheet.xib in Resources */,
 				84EB381F1FBA8B9F000D2111 /* KeyboardShortcuts.html in Resources */,
 				849A97951ED9EF7A007D329B /* IndeterminateProgressWindow.xib in Resources */,
 				844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */,
@@ -1943,6 +1950,7 @@
 				8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */,
 				84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */,
 				84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */,
+				51EC11A3214A990000B296E3 /* AddFeedFromListWindowController.swift in Sources */,
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,
 				84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */,
 				849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */,
@@ -2117,6 +2125,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		51EC1193214A94AC00B296E3 /* AddFeedFromListSheet.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				51EC1194214A94AC00B296E3 /* Base */,
+			);
+			name = AddFeedFromListSheet.xib;
+			sourceTree = "<group>";
+		};
 		6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
