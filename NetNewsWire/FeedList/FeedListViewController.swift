@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import Account
 import RSTree
 import RSCore
 
@@ -22,10 +23,12 @@ struct FeedListUserInfoKey {
 
 final class FeedListViewController: NSViewController {
 
-	@IBOutlet var outlineView: NSOutlineView!
-	@IBOutlet var openHomePageButton: NSButton!
-	@IBOutlet var addToFeedsButton: NSButton!
-	
+	@IBOutlet weak var outlineView: NSOutlineView!
+	@IBOutlet weak var openHomePageButton: NSButton!
+	@IBOutlet weak var addToFeedsButton: NSButton!
+    @IBOutlet weak var folderPopupButton: NSPopUpButton!
+    
+	fileprivate var folderTreeController: TreeController?
 	private var sidebarCellAppearance: SidebarCellAppearance!
 	private let treeControllerDelegate = FeedListTreeControllerDelegate()
 	lazy var treeController: TreeController = {
@@ -51,16 +54,24 @@ final class FeedListViewController: NSViewController {
 
 		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
+		
 		outlineView.needsLayout = true
-		updateUI()
+
+		updateFolderMenu()
+		updateButtons()
+		
 	}
 
 	// MARK: - Notifications
-
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-
 		configureAvailableCells()
 	}
+	
+	@objc func childrenDidChange(_ note: Notification) {
+		updateFolderMenu()
+	}
+	
 }
 
 // MARK: Actions
@@ -77,6 +88,51 @@ extension FeedListViewController {
 
 	@IBAction func addToFeeds(_ sender: Any?) {
 
+		guard let container = folderPopupButton.selectedItem?.representedObject as? Container else {
+			assertionFailure("Expected the folderPopupButton to have a container.")
+			return
+		}
+		
+		var account: Account?
+		var folder: Folder?
+		if container is Folder {
+			folder = (container as! Folder)
+			account = folder!.account
+		} else {
+			account = (container as! Account)
+		}
+		
+		for selectedObject in selectedObjects {
+			
+			guard let feedListFeed = selectedObject as? FeedListFeed else {
+				continue
+			}
+			
+			if account!.hasFeed(withURL: feedListFeed.url) {
+				continue
+			}
+			
+			guard let feed = account!.createFeed(with: feedListFeed.nameForDisplay, editedName: nil, url: feedListFeed.url) else {
+				continue
+			}
+
+			guard let url = URL(string: feedListFeed.url) else {
+				assertionFailure("Malformed URL string: \(feedListFeed.url).")
+				continue
+			}
+			
+			if account!.addFeed(feed, to: folder) {
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+			}
+
+			InitialFeedDownloader.download(url) { (parsedFeed) in
+				if let parsedFeed = parsedFeed {
+					account!.update(feed, with: parsedFeed, {})
+				}
+			}
+			
+		}
+		
 	}
 }
 
@@ -124,8 +180,8 @@ extension FeedListViewController: NSOutlineViewDelegate {
 
 	func outlineViewSelectionDidChange(_ notification: Notification) {
 
-		updateUI()
-
+		updateButtons()
+		
 		let selectedRow = self.outlineView.selectedRow
 
 		if selectedRow < 0 || selectedRow == NSNotFound {
@@ -211,11 +267,15 @@ private extension FeedListViewController {
 		NotificationCenter.default.post(name: .FeedListSidebarSelectionDidChange, object: self, userInfo: userInfo)
 	}
 
-	func updateUI() {
-
-		updateButtons()
+	func updateFolderMenu() {
+		
+		let rootNode = Node(representedObject: AccountManager.shared.localAccount, parent: nil)
+		rootNode.canHaveChildNodes = true
+		folderTreeController = TreeController(delegate: FolderTreeControllerDelegate(), rootNode: rootNode)
+		
+		folderPopupButton.menu = FolderTreeMenu.createFolderPopupMenu(with: folderTreeController!.rootNode)
 	}
-
+	
 	func updateButtons() {
 
 		let objects = selectedObjects
@@ -223,10 +283,12 @@ private extension FeedListViewController {
 		if objects.isEmpty {
 			openHomePageButton.isEnabled = false
 			addToFeedsButton.isEnabled = false
+			folderPopupButton.isEnabled = false
 			return
 		}
 
 		addToFeedsButton.isEnabled = true
+		folderPopupButton.isEnabled = true
 
 		if let _ = singleSelectedHomePageURL() {
 			openHomePageButton.isEnabled = true
