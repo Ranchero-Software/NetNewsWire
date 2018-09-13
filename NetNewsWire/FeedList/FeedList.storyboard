@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="z5E-aV-xMb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14092" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="z5E-aV-xMb">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.13.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14092"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Window Controller-->
         <scene sceneID="joN-Oe-nep">
             <objects>
-                <windowController showSeguePresentationStyle="single" id="z5E-aV-xMb" customClass="FeedListWindowController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" identifier="feedDirectoryWindow" title="Feed Directory" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="Ty3-Oi-cUp">
+                <windowController showSeguePresentationStyle="single" id="z5E-aV-xMb" customClass="FeedListWindowController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" identifier="feedDirectoryWindow" title="Feed Directory" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="Ty3-Oi-cUp">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="425" y="461" width="300" height="600"/>
@@ -33,25 +32,25 @@
         <!--Feed List View Controller-->
         <scene sceneID="TKm-CD-zMs">
             <objects>
-                <viewController id="QX3-Wg-cdZ" customClass="FeedListViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="QX3-Wg-cdZ" customClass="FeedListViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="vp3-VV-Mzw">
                         <rect key="frame" x="0.0" y="0.0" width="328" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="27" horizontalPageScroll="10" verticalLineScroll="27" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rir-se-YCO">
-                                <rect key="frame" x="0.0" y="67" width="328" height="233"/>
+                                <rect key="frame" x="0.0" y="32" width="328" height="268"/>
                                 <clipView key="contentView" drawsBackground="NO" id="vli-sv-HLg">
-                                    <rect key="frame" x="0.0" y="0.0" width="328" height="233"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="328" height="268"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="27" outlineTableColumn="Ytm-dS-0WJ" id="Hxu-8i-6rp" customClass="FeedListOutlineView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="328" height="233"/>
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="27" outlineTableColumn="Ytm-dS-0WJ" id="Hxu-8i-6rp" customClass="FeedListOutlineView" customModule="Evergreen" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="328" height="268"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="2" height="3"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn width="326" minWidth="16" maxWidth="1000" id="Ytm-dS-0WJ">
+                                                <tableColumn identifier="" width="326" minWidth="16" maxWidth="1000" id="Ytm-dS-0WJ">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -82,7 +81,7 @@
                                                                 <outlet property="textField" destination="vm6-1A-a5G" id="Ygp-YV-bUa"/>
                                                             </connections>
                                                         </tableCellView>
-                                                        <tableCellView identifier="FeedListCell" id="M2x-Bb-n1x" customClass="SidebarCell" customModule="NetNewsWire" customModuleProvider="target">
+                                                        <tableCellView identifier="FeedListCell" id="M2x-Bb-n1x" customClass="SidebarCell" customModule="Evergreen" customModuleProvider="target">
                                                             <rect key="frame" x="1" y="21" width="326" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
@@ -121,24 +120,21 @@
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="512" id="9NC-nE-xTp"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="240" id="ldQ-7U-jou"/>
                                 </constraints>
-                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="X3r-hu-K2f">
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="X3r-hu-K2f">
                                     <rect key="frame" x="-100" y="-100" width="285" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Qg7-sg-Bly">
+                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="Qg7-sg-Bly">
                                     <rect key="frame" x="224" y="17" width="15" height="102"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
                             <customView horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="xKq-9P-ibo">
-                                <rect key="frame" x="20" y="0.0" width="288" height="67"/>
+                                <rect key="frame" x="20" y="0.0" width="288" height="32"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bv8-Eq-0cT">
-                                        <rect key="frame" x="220" y="7" width="60" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="60" id="koV-lZ-YjH"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundTextured" title="Add" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0gj-Cw-KCE">
+                                        <rect key="frame" x="20" y="3" width="120" height="25"/>
+                                        <buttonCell key="cell" type="roundTextured" title="Add to Feeds" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0gj-Cw-KCE">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -146,30 +142,8 @@
                                             <action selector="addToFeeds:" target="MKk-xD-0Fh" id="43Z-VU-PTO"/>
                                         </connections>
                                     </button>
-                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Y7Q-9h-CQt">
-                                        <rect key="frame" x="57" y="5" width="158" height="25"/>
-                                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="mdb-2T-Agc" id="v51-oe-wo7">
-                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
-                                            <menu key="menu" id="Wos-y0-k5e">
-                                                <items>
-                                                    <menuItem title="Item 1" state="on" id="mdb-2T-Agc"/>
-                                                    <menuItem title="Item 2" id="Ynb-dc-srr"/>
-                                                    <menuItem title="Item 3" id="g5j-fH-Vn8"/>
-                                                </items>
-                                            </menu>
-                                        </popUpButtonCell>
-                                    </popUpButton>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F1T-Qb-TlD">
-                                        <rect key="frame" x="6" y="10" width="47" height="17"/>
-                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Folder:" id="4xq-Sg-pQF">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ohy-a3-XkT">
-                                        <rect key="frame" x="84" y="36" width="120" height="23"/>
+                                        <rect key="frame" x="148" y="3" width="120" height="25"/>
                                         <buttonCell key="cell" type="roundTextured" title="Open Home Page" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hom-If-fbd">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -180,33 +154,29 @@
                                     </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="Bv8-Eq-0cT" firstAttribute="leading" secondItem="Y7Q-9h-CQt" secondAttribute="trailing" constant="8" id="CRG-dw-kiJ"/>
-                                    <constraint firstAttribute="bottom" secondItem="Y7Q-9h-CQt" secondAttribute="bottom" constant="8" id="Lgt-k2-AWs"/>
-                                    <constraint firstItem="Y7Q-9h-CQt" firstAttribute="leading" secondItem="F1T-Qb-TlD" secondAttribute="trailing" constant="8" id="Sfd-Fz-kr1"/>
-                                    <constraint firstItem="Y7Q-9h-CQt" firstAttribute="top" secondItem="Ohy-a3-XkT" secondAttribute="bottom" constant="8" id="TfX-Nt-esZ"/>
-                                    <constraint firstItem="Ohy-a3-XkT" firstAttribute="top" secondItem="xKq-9P-ibo" secondAttribute="top" constant="8" id="V9t-1t-Krq"/>
-                                    <constraint firstItem="Ohy-a3-XkT" firstAttribute="centerX" secondItem="xKq-9P-ibo" secondAttribute="centerX" id="gFQ-Mg-YTf"/>
-                                    <constraint firstAttribute="trailing" secondItem="Bv8-Eq-0cT" secondAttribute="trailing" constant="8" id="gTK-Pb-nd1"/>
-                                    <constraint firstAttribute="bottom" secondItem="Bv8-Eq-0cT" secondAttribute="bottom" constant="8" id="oXN-5G-MYC"/>
-                                    <constraint firstItem="F1T-Qb-TlD" firstAttribute="centerY" secondItem="Y7Q-9h-CQt" secondAttribute="centerY" id="ohA-kz-Fc0"/>
-                                    <constraint firstItem="F1T-Qb-TlD" firstAttribute="leading" secondItem="xKq-9P-ibo" secondAttribute="leading" constant="8" id="oph-Aa-L1K"/>
+                                    <constraint firstItem="Ohy-a3-XkT" firstAttribute="width" secondItem="Bv8-Eq-0cT" secondAttribute="width" id="1Kl-sg-GHU"/>
+                                    <constraint firstItem="Ohy-a3-XkT" firstAttribute="leading" secondItem="Bv8-Eq-0cT" secondAttribute="trailing" constant="8" symbolic="YES" id="5Og-09-12P"/>
+                                    <constraint firstItem="Ohy-a3-XkT" firstAttribute="centerY" secondItem="xKq-9P-ibo" secondAttribute="centerY" id="7Yu-Ab-dfe"/>
+                                    <constraint firstAttribute="trailing" secondItem="Ohy-a3-XkT" secondAttribute="trailing" constant="20" symbolic="YES" id="ACJ-M3-QR1"/>
+                                    <constraint firstItem="Bv8-Eq-0cT" firstAttribute="leading" secondItem="xKq-9P-ibo" secondAttribute="leading" constant="20" symbolic="YES" id="Iph-MK-E6k"/>
+                                    <constraint firstAttribute="height" constant="32" id="dH4-pR-OmT"/>
+                                    <constraint firstItem="Bv8-Eq-0cT" firstAttribute="centerY" secondItem="xKq-9P-ibo" secondAttribute="centerY" id="qgr-sL-IFQ"/>
                                 </constraints>
                             </customView>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="xKq-9P-ibo" secondAttribute="bottom" id="2cb-L2-JEt"/>
                             <constraint firstAttribute="trailing" secondItem="rir-se-YCO" secondAttribute="trailing" id="7WI-u5-sU6"/>
-                            <constraint firstItem="xKq-9P-ibo" firstAttribute="leading" secondItem="vp3-VV-Mzw" secondAttribute="leading" constant="20" symbolic="YES" id="I6a-ro-vaw"/>
+                            <constraint firstItem="xKq-9P-ibo" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="vp3-VV-Mzw" secondAttribute="leading" constant="20" symbolic="YES" id="I6a-ro-vaw"/>
                             <constraint firstItem="rir-se-YCO" firstAttribute="top" secondItem="vp3-VV-Mzw" secondAttribute="top" id="Koo-lp-EvO"/>
                             <constraint firstItem="xKq-9P-ibo" firstAttribute="centerX" secondItem="vp3-VV-Mzw" secondAttribute="centerX" id="Mv4-A4-oeJ"/>
-                            <constraint firstAttribute="trailing" secondItem="xKq-9P-ibo" secondAttribute="trailing" constant="20" symbolic="YES" id="TYr-VP-3lc"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="xKq-9P-ibo" secondAttribute="trailing" constant="20" symbolic="YES" id="TYr-VP-3lc"/>
                             <constraint firstItem="xKq-9P-ibo" firstAttribute="top" secondItem="rir-se-YCO" secondAttribute="bottom" id="WN7-F2-8Cn"/>
                             <constraint firstItem="rir-se-YCO" firstAttribute="leading" secondItem="vp3-VV-Mzw" secondAttribute="leading" id="bGY-bf-MdA"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="addToFeedsButton" destination="Bv8-Eq-0cT" id="ZD6-YN-9oa"/>
-                        <outlet property="folderPopupButton" destination="Y7Q-9h-CQt" id="OLi-Wx-HDj"/>
                         <outlet property="openHomePageButton" destination="Ohy-a3-XkT" id="G55-UY-RQ8"/>
                         <outlet property="outlineView" destination="Hxu-8i-6rp" id="Hm2-on-0JP"/>
                     </connections>
