@@ -208,6 +208,29 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		NSPasteboard.general.copyObjects(selectedArticles)
 	}
 
+	func toggleReadStatusForSelectedArticles() {
+		
+		// If any one of the selected articles is unread, then mark them as read.
+		// If all articles are read, then mark them as unread them.
+		
+		let commandStatus = markReadCommandStatus()
+		let markingRead: Bool
+		switch commandStatus {
+		case .canMark:
+			markingRead = true
+		case .canUnmark:
+			markingRead = false
+		case .canDoNothing:
+			return
+		}
+		
+		guard let undoManager = undoManager, let markStarredCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: markingRead, undoManager: undoManager) else {
+			return
+		}
+		
+		runCommand(markStarredCommand)
+	}
+	
 	func toggleStarredStatusForSelectedArticles() {
 
 		// If any one of the selected articles is not starred, then star them.

@@ -129,8 +129,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return canMarkAllAsRead()
 		}
 
-		if item.action == #selector(markRead(_:)) {
-			return canMarkRead()
+		if item.action == #selector(toggleRead(_:)) {
+			return validateToggleRead(item)
 		}
 
 		if item.action == #selector(toggleStarred(_:)) {
@@ -223,9 +223,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		timelineViewController?.markAllAsRead()
 	}
 
-	@IBAction func markRead(_ sender: Any?) {
+	@IBAction func toggleRead(_ sender: Any?) {
 
-		timelineViewController?.markSelectedArticlesAsRead(sender)
+		timelineViewController?.toggleReadStatusForSelectedArticles()
 	}
 
 	@IBAction func markUnread(_ sender: Any?) {
@@ -407,9 +407,35 @@ private extension MainWindowController {
 		return timelineViewController?.canMarkAllAsRead() ?? false
 	}
 
-	func canMarkRead() -> Bool {
+	func validateToggleRead(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
-		return timelineViewController?.canMarkSelectedArticlesAsRead() ?? false
+		let validationStatus = timelineViewController?.markReadCommandStatus() ?? .canDoNothing
+		let markingRead: Bool
+		let result: Bool
+		
+		switch validationStatus {
+		case .canMark:
+			markingRead = true
+			result = true
+		case .canUnmark:
+			markingRead = false
+			result = true
+		case .canDoNothing:
+			markingRead = true
+			result = false
+		}
+		
+		let commandName = markingRead ? NSLocalizedString("Mark as Read", comment: "Command") : NSLocalizedString("Mark as Unread", comment: "Command")
+		
+		if let toolbarItem = item as? NSToolbarItem {
+			toolbarItem.toolTip = commandName
+		}
+		
+		if let menuItem = item as? NSMenuItem {
+			menuItem.title = commandName
+		}
+		
+		return result
 	}
 
 	func canMarkOlderArticlesAsRead() -> Bool {
