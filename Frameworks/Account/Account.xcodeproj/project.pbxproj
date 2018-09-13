@@ -31,6 +31,7 @@
 		84C3654A1F899F3B001EC85C /* CombinedRefreshProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */; };
 		84C8B3F41F89DE430053CCA6 /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */; };
 		84CAD7161FDF2E22000F0755 /* FeedbinArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CAD7151FDF2E22000F0755 /* FeedbinArticle.swift */; };
+		84EAC4822148CC6300F154AB /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EAC4812148CC6300F154AB /* RSDatabase.framework */; };
 		84F73CF1202788D90000BCEF /* ArticleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F73CF0202788D80000BCEF /* ArticleFetcher.swift */; };
 /* End PBXBuildFile section */
 
@@ -107,6 +108,7 @@
 		84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombinedRefreshProgress.swift; sourceTree = "<group>"; };
 		84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtensions.swift; sourceTree = "<group>"; };
 		84CAD7151FDF2E22000F0755 /* FeedbinArticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinArticle.swift; sourceTree = "<group>"; };
+		84EAC4812148CC6300F154AB /* RSDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84F73CF0202788D80000BCEF /* ArticleFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleFetcher.swift; sourceTree = "<group>"; };
 		D511EEB5202422BB00712EC3 /* Account_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_debug.xcconfig; sourceTree = "<group>"; };
 		D511EEB6202422BB00712EC3 /* Account_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_target.xcconfig; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84EAC4822148CC6300F154AB /* RSDatabase.framework in Frameworks */,
 				844B2981210CE3BF004020B3 /* RSWeb.framework in Frameworks */,
 				841D4D722106B40A00DD04E6 /* Articles.framework in Frameworks */,
 				841D4D702106B40400DD04E6 /* ArticlesDatabase.framework in Frameworks */,
@@ -182,6 +185,7 @@
 		8469F80F1F6DC3C10084783E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				84EAC4812148CC6300F154AB /* RSDatabase.framework */,
 				844B2980210CE3BF004020B3 /* RSWeb.framework */,
 				841D4D712106B40A00DD04E6 /* Articles.framework */,
 				841D4D6F2106B40400DD04E6 /* ArticlesDatabase.framework */,
