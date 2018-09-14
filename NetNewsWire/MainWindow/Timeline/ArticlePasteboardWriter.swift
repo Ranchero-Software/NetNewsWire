@@ -38,14 +38,8 @@ extension Article: PasteboardWriterOwner {
 	// MARK: - NSPasteboardWriting
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
-
 		var types = [ArticlePasteboardWriter.articleUTIType]
-
-		if let link = article.preferredLink, let _ = URL(string: link) {
-			types += [.URL]
-		}
-		types += [.string, .html, ArticlePasteboardWriter.articleUTIInternalType]
-
+		types += [.rtf, .string, .html, ArticlePasteboardWriter.articleUTIInternalType]
 		return types
 	}
 
@@ -54,6 +48,11 @@ extension Article: PasteboardWriterOwner {
 		let plist: Any?
 
 		switch type {
+		case .rtf:
+			guard let data = renderedHTML.data(using: .utf16) else {
+				return nil
+			}
+			return try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
 		case .html:
 			return renderedHTML
 		case .string:
