@@ -78,7 +78,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
         didSet {
             if unreadCount != oldValue {
                 postUnreadCountDidChangeNotification()
-				settingsTable.set(unreadCount, name: SettingsKey.unreadCount)
             }
         }
     }

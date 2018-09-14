@@ -116,7 +116,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		self.faviconURL = dictionary[Key.faviconURL] as? String
 		self.name = dictionary[Key.name] as? String
 		self.editedName = dictionary[Key.editedName] as? String
-//		self.contentHash = dictionary[Key.contentHash] as? String
 
 		if let conditionalGetInfoDictionary = dictionary[Key.conditionalGetInfo] as? [String: String] {
 			self.conditionalGetInfo = HTTPConditionalGetInfo(dictionary: conditionalGetInfoDictionary)
@@ -160,9 +159,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		if let authorsArray = authors?.diskArray() {
 			d[Key.authors] = authorsArray
 		}
-//		if let contentHash = contentHash {
-//			d[Key.contentHash] = contentHash
-//		}
 		if let conditionalGetInfo = conditionalGetInfo {
 			d[Key.conditionalGetInfo] = conditionalGetInfo.dictionary
 		}
