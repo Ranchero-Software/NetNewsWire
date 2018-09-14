@@ -17,10 +17,6 @@ public extension Notification.Name {
 
 public extension Feed {
 
-	public var account: Account? {
-		return AccountManager.shared.existingAccount(with: accountID)
-	}
-	
 	public func takeSettings(from parsedFeed: ParsedFeed) {
 
 		var didChangeAtLeastOneSetting = false

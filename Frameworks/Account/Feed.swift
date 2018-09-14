@@ -14,7 +14,7 @@ import RSDatabase
 
 public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
-	public let accountID: String
+	public weak var account: Account?
 	public let url: String
 	public let feedID: String
 
@@ -69,17 +69,16 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		}
 	}
 
-	private lazy var settingsTable: ODBRawValueTable? = {
-		return account?.settingsTableForFeed(feedID: feedID)
-	}()
+	private let settingsTable: ODBRawValueTable
 
 	// MARK: - Init
 
-	public init(accountID: String, url: String, feedID: String) {
+	public init(account: Account, url: String, feedID: String) {
 
-		self.accountID = accountID
+		self.account = account
 		self.url = url
 		self.feedID = feedID
+		self.settingsTable = account.settingsTableForFeed(feedID: feedID)!
 	}
 
 	// MARK: - Disk Dictionary
@@ -97,14 +96,14 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		static let contentHash = "contentHash"
 	}
 
-	convenience public init?(accountID: String, dictionary: [String: Any]) {
+	convenience public init?(account: Account, dictionary: [String: Any]) {
 
 		guard let url = dictionary[Key.url] as? String else {
 			return nil
 		}
 		let feedID = dictionary[Key.feedID] as? String ?? url
 		
-		self.init(accountID: accountID, url: url, feedID: feedID)
+		self.init(account: account, url: url, feedID: feedID)
 		self.homePageURL = dictionary[Key.homePageURL] as? String
 		self.iconURL = dictionary[Key.iconURL] as? String
 		self.faviconURL = dictionary[Key.faviconURL] as? String

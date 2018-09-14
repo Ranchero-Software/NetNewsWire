@@ -270,7 +270,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return feed
 		}
 		
-		let feed = Feed(accountID: accountID, url: url, feedID: url)
+		let feed = Feed(account: self, url: url, feedID: url)
 		feed.name = name
 		feed.editedName = editedName
         
@@ -456,7 +456,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	@objc func feedSettingDidChange(_ note: Notification) {
 
-		if let feed = note.object as? Feed, let feedAccount = feed.account, feedAccount === self {
+		if let feed = note.object as? Feed, feed.account === self {
 			dirty = true
 		}
 	}
@@ -540,7 +540,7 @@ private extension Account {
 	func object(with diskObject: [String: Any]) -> AnyObject? {
 
 		if Feed.isFeedDictionary(diskObject) {
-			return Feed(accountID: accountID, dictionary: diskObject)
+			return Feed(account: self, dictionary: diskObject)
 		}
 		return Folder(account: self, dictionary: diskObject)
 	}
@@ -635,7 +635,7 @@ private extension Account {
 
 	func createFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 
-		let feed = Feed(accountID: accountID, url: opmlFeedSpecifier.feedURL, feedID: opmlFeedSpecifier.feedURL)
+		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, feedID: opmlFeedSpecifier.feedURL)
 		feed.editedName = opmlFeedSpecifier.title
 		return feed
 	}

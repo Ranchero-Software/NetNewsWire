@@ -198,7 +198,7 @@ private extension Folder {
 		for diskObject in diskObjects {
 
 			if Feed.isFeedDictionary(diskObject) {
-				if let feed = Feed(accountID: account.accountID, dictionary: diskObject) {
+				if let feed = Feed(account: account, dictionary: diskObject) {
 					feeds.insert(feed)
 				}
 			}
