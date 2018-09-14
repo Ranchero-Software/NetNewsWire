@@ -122,8 +122,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.settingsODB.vacuum()
 		let settingsPath = ODBPath.path(["settings"])
 		self.settingsTable = settingsODB.ensureTable(settingsPath)!
-		let unreadCount = self.settingsTable.rawValue(SettingsKey.unreadCount) as? Int ?? 0
-		self.unreadCount = unreadCount
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -568,12 +566,6 @@ private extension Account {
 		children = objects(with: childrenArray)
 		rebuildFeedDictionaries()
 
-//		if let savedUnreadCount = d[Key.unreadCount] as? Int {
-//			DispatchQueue.main.async {
-//				self.unreadCount = savedUnreadCount
-//			}
-//		}
-
 		let userInfo = d[Key.userInfo] as? NSDictionary
 		delegate.update(account: self, withUserInfo: userInfo)
 	}
@@ -593,7 +585,6 @@ private extension Account {
 
 		var d = [String: Any]()
 		d[Key.children] = diskObjects as NSArray
-//		d[Key.unreadCount] = unreadCount
 
 		if let userInfo = delegate.userInfo(for: self) {
 			d[Key.userInfo] = userInfo
