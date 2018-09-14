@@ -14,6 +14,19 @@ import RSDatabase
 
 public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
+	private struct Key {
+		static let url = "url"
+		static let feedID = "feedID"
+		static let homePageURL = "homePageURL"
+		static let iconURL = "iconURL"
+		static let faviconURL = "faviconURL"
+		static let name = "name"
+		static let editedName = "editedName"
+		static let authors = "authors"
+		static let conditionalGetInfo = "conditionalGetInfo"
+		static let contentHash = "contentHash"
+	}
+
 	public weak var account: Account?
 	public let url: String
 	public let feedID: String
@@ -45,7 +58,14 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	}
 
 	public var conditionalGetInfo: HTTPConditionalGetInfo?
-	public var contentHash: String?
+	public var contentHash: String? {
+		get {
+			return settingsTable.string(for: Key.contentHash)
+		}
+		set {
+			settingsTable.setString(newValue, for: Key.contentHash)
+		}
+	}
 
 	// MARK: - DisplayNameProvider
 
@@ -83,19 +103,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	// MARK: - Disk Dictionary
 
-	private struct Key {
-		static let url = "url"
-		static let feedID = "feedID"
-		static let homePageURL = "homePageURL"
-		static let iconURL = "iconURL"
-		static let faviconURL = "faviconURL"
-		static let name = "name"
-		static let editedName = "editedName"
-		static let authors = "authors"
-		static let conditionalGetInfo = "conditionalGetInfo"
-		static let contentHash = "contentHash"
-	}
-
 	convenience public init?(account: Account, dictionary: [String: Any]) {
 
 		guard let url = dictionary[Key.url] as? String else {
@@ -109,7 +116,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		self.faviconURL = dictionary[Key.faviconURL] as? String
 		self.name = dictionary[Key.name] as? String
 		self.editedName = dictionary[Key.editedName] as? String
-		self.contentHash = dictionary[Key.contentHash] as? String
+//		self.contentHash = dictionary[Key.contentHash] as? String
 
 		if let conditionalGetInfoDictionary = dictionary[Key.conditionalGetInfo] as? [String: String] {
 			self.conditionalGetInfo = HTTPConditionalGetInfo(dictionary: conditionalGetInfoDictionary)
@@ -153,9 +160,9 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		if let authorsArray = authors?.diskArray() {
 			d[Key.authors] = authorsArray
 		}
-		if let contentHash = contentHash {
-			d[Key.contentHash] = contentHash
-		}
+//		if let contentHash = contentHash {
+//			d[Key.contentHash] = contentHash
+//		}
 		if let conditionalGetInfo = conditionalGetInfo {
 			d[Key.conditionalGetInfo] = conditionalGetInfo.dictionary
 		}
