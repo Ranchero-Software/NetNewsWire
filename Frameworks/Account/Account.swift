@@ -60,6 +60,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	private let settingsODB: ODB
 	private let settingsTable: ODBTable
+	private let feedsPath: ODBPath
+	private let feedsTable: ODBTable
 
 	private struct SettingsKey {
 		static let unreadCount = "unreadCount"
@@ -122,6 +124,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.settingsODB.vacuum()
 		let settingsPath = ODBPath.path(["settings"])
 		self.settingsTable = settingsODB.ensureTable(settingsPath)!
+		self.feedsPath = ODBPath.path(["feeds"])
+		self.feedsTable = settingsODB.ensureTable(self.feedsPath)!
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -134,7 +138,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		pullObjectsFromDisk()
 		
 		DispatchQueue.main.async {
-			self.updateUnreadCount()
 			self.fetchAllUnreadCounts()
 		}
 
@@ -439,27 +442,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	@objc func unreadCountDidChange(_ note: Notification) {
 
 		// Update the unread count if it’s a direct child.
-		// If the object is owned by this account, then mark dirty —
-		// since unread counts are saved to disk along with other feed info.
 
-		if let object = note.object {
-
-			if objectIsChild(object as AnyObject) {
-				updateUnreadCount()
-				self.dirty = true
-				return
-			}
-
-			if let feed = object as? Feed {
-				if feed.account === self {
-					self.dirty = true
-				}
-			}
-			if let folder = object as? Folder {
-				if folder.account === self {
-					self.dirty = true
-				}
-			}
+		if let object = note.object, objectIsChild(object as AnyObject) {
+			updateUnreadCount()
 		}
 	}
     
@@ -528,6 +513,12 @@ extension Account {
 	func objects(with diskObjects: [[String: Any]]) -> [AnyObject] {
 
 		return diskObjects.compactMap { object(with: $0) }
+	}
+
+	func settingsTableForFeed(feedID: String) -> ODBRawValueTable? {
+		let feedPath = feedsPath + feedID
+		let table = settingsODB.ensureTable(feedPath)
+		return table?.rawValueTable
 	}
 }
 
@@ -713,6 +704,7 @@ private extension Account {
 					feed.unreadCount = 0
 				}
 			}
+			self.updateUnreadCount()
 		}
 	}
 }

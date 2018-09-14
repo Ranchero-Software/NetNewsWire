@@ -60,7 +60,6 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 
 	private struct Key {
 		static let name = "name"
-		static let unreadCount = "unreadCount"
 		static let children = "children"
 	}
 
@@ -71,10 +70,6 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 
 		if let childrenArray = dictionary[Key.children] as? [[String: Any]] {
 			self.children = Folder.objects(with: childrenArray, account: account)
-		}
-
-		if let savedUnreadCount = dictionary[Key.unreadCount] as? Int {
-			self.unreadCount = savedUnreadCount
 		}
 	}
 
@@ -88,10 +83,7 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		if let name = name {
 			d[Key.name] = name
 		}
-		if unreadCount > 0 {
-			d[Key.unreadCount] = unreadCount
-		}
-		
+
 		let childObjects = children.compactMap { (child) -> [String: Any]? in
 			
 			if let feed = child as? Feed {

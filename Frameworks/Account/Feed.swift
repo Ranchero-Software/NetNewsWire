@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import RSWeb
 import Articles
+import RSDatabase
 
 public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
@@ -68,6 +69,10 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		}
 	}
 
+	private lazy var settingsTable: ODBRawValueTable? = {
+		return account?.settingsTableForFeed(feedID: feedID)
+	}()
+
 	// MARK: - Init
 
 	public init(accountID: String, url: String, feedID: String) {
@@ -90,7 +95,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		static let authors = "authors"
 		static let conditionalGetInfo = "conditionalGetInfo"
 		static let contentHash = "contentHash"
-		static let unreadCount = "unreadCount"
 	}
 
 	convenience public init?(accountID: String, dictionary: [String: Any]) {
@@ -110,10 +114,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 		if let conditionalGetInfoDictionary = dictionary[Key.conditionalGetInfo] as? [String: String] {
 			self.conditionalGetInfo = HTTPConditionalGetInfo(dictionary: conditionalGetInfoDictionary)
-		}
-
-		if let savedUnreadCount = dictionary[Key.unreadCount] as? Int {
-			self.unreadCount = savedUnreadCount
 		}
 
 		if let authorsDiskArray = dictionary[Key.authors] as? [[String: Any]] {
@@ -156,9 +156,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		}
 		if let contentHash = contentHash {
 			d[Key.contentHash] = contentHash
-		}
-		if unreadCount > 0 {
-			d[Key.unreadCount] = unreadCount
 		}
 		if let conditionalGetInfo = conditionalGetInfo {
 			d[Key.conditionalGetInfo] = conditionalGetInfo.dictionary
