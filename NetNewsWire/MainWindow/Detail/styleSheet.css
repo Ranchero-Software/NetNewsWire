@@ -21,6 +21,13 @@ a:hover {
 	height: 68px;
 }
 
+.systemMessage {
+	position: absolute;
+	top: 45%;
+	left: 50%;
+	transform: translateX(-55%) translateY(-50%);
+}
+
 /* Light mode */
 
 body.light {

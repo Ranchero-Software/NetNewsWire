@@ -27,7 +27,7 @@ extension Article: PasteboardWriterOwner {
 
 	private lazy var renderedHTML: String = {
 		let articleRenderer = ArticleRenderer(article: article, style: ArticleStylesManager.shared.currentStyle)
-		return articleRenderer.html
+		return articleRenderer.articleHTML
 	}()
 
 	init(article: Article) {

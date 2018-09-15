@@ -15,7 +15,6 @@ import RSWeb
 final class DetailViewController: NSViewController, WKUIDelegate {
 
 	@IBOutlet var containerView: DetailContainerView!
-	@IBOutlet var noSelectionView: NoSelectionView!
 
 	var webview: DetailWebView!
 
@@ -26,19 +25,13 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 				return
 			}
 			article = nil
-			if let _ = articles {
-				noSelectionView.showMultipleSelection()
-			}
-			else {
-				noSelectionView.showNoSelection()
-			}
+			reloadHTML()
 		}
 	}
 	
 	private var article: Article? {
 		didSet {
 			reloadHTML()
-			showOrHideWebView()
 		}
 	}
 
@@ -78,9 +71,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 			webview.customUserAgent = userAgent
 		}
 
+		reloadHTML()
+		containerView.contentView = webview
 		containerView.viewController = self
 
-		showOrHideWebView()
 	}
 
 	// MARK: - Scrolling
@@ -194,33 +188,19 @@ private extension DetailViewController {
 
 	func reloadHTML() {
 
-		if let article = article {
-			let articleRenderer = ArticleRenderer(article: article,
-												  style: ArticleStylesManager.shared.currentStyle,
-												  appearance: self.view.effectiveAppearance)
-			webview.loadHTMLString(articleRenderer.html, baseURL: articleRenderer.baseURL)
+		let articleRenderer = ArticleRenderer(article: article,
+											  style: ArticleStylesManager.shared.currentStyle,
+											  appearance: self.view.effectiveAppearance)
+		
+		if article != nil {
+			webview.loadHTMLString(articleRenderer.articleHTML, baseURL: articleRenderer.baseURL)
+		}
+		else if articles != nil {
+			webview.loadHTMLString(articleRenderer.multipleSelectionHTML, baseURL: nil)
 		}
 		else {
-			webview.loadHTMLString("", baseURL: nil)
+			webview.loadHTMLString(articleRenderer.noSelectionHTML, baseURL: nil)
 		}
-	}
-
-	func showOrHideWebView() {
-
-		if let _ = article {
-			switchToView(webview)
-		}
-		else {
-			switchToView(noSelectionView)
-		}
-	}
-
-	func switchToView(_ view: NSView) {
-
-		if containerView.contentView == view {
-			return
-		}
-		containerView.contentView = view
 	}
 
 	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {
@@ -251,12 +231,6 @@ final class DetailContainerView: NSView {
 	
 	weak var viewController: DetailViewController? = nil
 
-//	private var didConfigureLayer = false
-//
-//	override var wantsUpdateLayer: Bool {
-//		return true
-//	}
-
 	var contentView: NSView? {
 		didSet {
 			if let oldContentView = oldValue {
@@ -284,37 +258,8 @@ final class DetailContainerView: NSView {
 		NSColor.textBackgroundColor.setFill()
 		dirtyRect.fill()
 	}
-//	override func updateLayer() {
-//
-//		guard !didConfigureLayer else {
-//			return
-//		}
-//		if let layer = layer {
-//			let color = appDelegate.currentTheme.color(forKey: "MainWindow.Detail.backgroundColor")
-//			layer.backgroundColor = color.cgColor
-//			didConfigureLayer = true
-//		}
-//	}
-}
 
-// MARK: -
-
-final class NoSelectionView: NSView {
-
-	@IBOutlet var noSelectionLabel: NSTextField!
-	@IBOutlet var multipleSelectionLabel: NSTextField!
-
-	func showMultipleSelection() {
-
-		noSelectionLabel.isHidden = true
-		multipleSelectionLabel.isHidden = false
-	}
-
-	func showNoSelection() {
-
-		noSelectionLabel.isHidden = false
-		multipleSelectionLabel.isHidden = true
-	}
+	
 }
 
 // MARK: -
