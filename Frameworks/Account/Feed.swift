@@ -84,8 +84,14 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	}
 
 	public var editedName: String? {
-		didSet {
-			postDisplayNameDidChangeNotification()
+		get {
+			return settingsTable.string(for: Key.editedName)
+		}
+		set {
+			if newValue != editedName {
+				settingsTable.setString(newValue, for: Key.editedName)
+				postDisplayNameDidChangeNotification()
+			}
 		}
 	}
 
