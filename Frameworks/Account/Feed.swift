@@ -110,11 +110,16 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	// MARK: - UnreadCountProvider
 	
-	public var unreadCount = 0 {
-		didSet {
-			if unreadCount != oldValue {
-				postUnreadCountDidChangeNotification()
+	public var unreadCount: Int {
+		get {
+			return account?.unreadCount(for: self) ?? 0
+		}
+		set {
+			if unreadCount == newValue {
+				return
 			}
+			account?.setUnreadCount(newValue, for: self)
+			postUnreadCountDidChangeNotification()
 		}
 	}
 

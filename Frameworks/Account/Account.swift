@@ -63,6 +63,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	private let feedsPath: ODBPath
 	private let feedsTable: ODBTable
 
+	private var unreadCounts = [String: Int]() // [feedID: Int]
 	private let opmlFilePath: String
 
 	private struct SettingsKey {
@@ -445,6 +446,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		let opml = openingText + middleText + closingText
 		return opml
+	}
+
+	public func unreadCount(for feed: Feed) -> Int {
+		return unreadCounts[feed.feedID] ?? 0
+	}
+
+	public func setUnreadCount(_ unreadCount: Int, for feed: Feed) {
+		unreadCounts[feed.feedID] = unreadCount
 	}
 
 	// MARK: - Debug
