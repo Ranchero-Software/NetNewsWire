@@ -65,7 +65,19 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		}
 	}
 
-	public var name: String?
+	public var name: String? {
+		get {
+			return settingsTable.string(for: Key.name)
+		}
+		set {
+			let oldNameForDisplay = nameForDisplay
+			settingsTable.setString(newValue, for: Key.name)
+			if oldNameForDisplay != nameForDisplay {
+				postDisplayNameDidChangeNotification()
+			}
+		}
+	}
+
 	public var authors: Set<Author>? {
 		get {
 			guard let authorsJSON = settingsTable.string(for: Key.authors) else {
@@ -167,8 +179,8 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		let feedID = dictionary[Key.feedID] as? String ?? url
 		
 		self.init(account: account, url: url, feedID: feedID)
-		self.name = dictionary[Key.name] as? String
 		self.editedName = dictionary[Key.editedName] as? String
+		self.name = dictionary[Key.name] as? String
 	}
 
 	public static func isFeedDictionary(_ d: [String: Any]) -> Bool {
