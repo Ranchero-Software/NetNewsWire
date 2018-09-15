@@ -135,7 +135,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
@@ -491,13 +490,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		rebuildFeedDictionaries()
         updateUnreadCount()
     }
-
-	@objc func feedSettingDidChange(_ note: Notification) {
-
-		if let feed = note.object as? Feed, feed.account === self {
-			dirty = true
-		}
-	}
 
 	@objc func childrenDidChange(_ note: Notification) {
 
