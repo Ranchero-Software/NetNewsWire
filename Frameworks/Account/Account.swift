@@ -506,9 +506,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	@objc func displayNameDidChange(_ note: Notification) {
 
-		if let feed = note.object as? Feed, feed.account === self {
-			dirty = true
-		}
 		if let folder = note.object as? Folder, folder.account === self {
 			dirty = true
 		}
