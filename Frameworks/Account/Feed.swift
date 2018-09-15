@@ -24,6 +24,8 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		static let editedName = "editedName"
 		static let authors = "authors"
 		static let conditionalGetInfo = "conditionalGetInfo"
+		static let conditionalGetLastModified = "lastModified"
+		static let conditionalGetEtag = "etag"
 		static let contentHash = "contentHash"
 	}
 
@@ -57,7 +59,18 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		}
 	}
 
-	public var conditionalGetInfo: HTTPConditionalGetInfo?
+	public var conditionalGetInfo: HTTPConditionalGetInfo? {
+		get {
+			let lastModified = settingsTable.string(for: Key.conditionalGetLastModified)
+			let etag = settingsTable.string(for: Key.conditionalGetEtag)
+			return HTTPConditionalGetInfo(lastModified: lastModified, etag: etag)
+		}
+		set {
+			settingsTable.setString(newValue?.lastModified, for: Key.conditionalGetLastModified)
+			settingsTable.setString(newValue?.etag, for: Key.conditionalGetEtag)
+		}
+	}
+	
 	public var contentHash: String? {
 		get {
 			return settingsTable.string(for: Key.contentHash)
