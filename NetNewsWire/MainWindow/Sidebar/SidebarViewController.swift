@@ -194,6 +194,8 @@ import RSCore
 		
 		NSCursor.setHiddenUntilMouseMoves(true)
 		outlineView.selectRowIndexes(IndexSet([row]), byExtendingSelection: false)
+		outlineView.scrollTo(row: row)
+		
 	}
 
 	func focus() {
