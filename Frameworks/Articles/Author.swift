@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Author: Hashable {
+public struct Author: Codable, Hashable {
 
 	public let authorID: String // calculated
 	public let name: String?
@@ -73,6 +73,23 @@ public struct Author: Hashable {
 		return d
 	}
 
+	public static func authorsWithJSON(_ jsonString: String) -> Set<Author>? {
+		// This is JSON stored in the database, not the JSON Feed version of an author.
+		guard let data = jsonString.data(using: .utf8) else {
+			return nil
+		}
+
+		let decoder = JSONDecoder()
+		do {
+			let authors = try decoder.decode([Author].self, from: data)
+			return Set(authors)
+		}
+		catch {
+			assertionFailure("JSON representation of Author array could not be decoded: \(jsonString) error: \(error)")
+		}
+		return nil
+	}
+
 	public static func authorsWithDiskArray(_ diskArray: [[String: Any]]) -> Set<Author>? {
 
 		let authors = diskArray.compactMap { Author(dictionary: $0) }
@@ -88,5 +105,17 @@ extension Set where Element == Author {
 			return nil
 		}
 		return self.map{ $0.dictionary }
+	}
+
+	public func json() -> String? {
+		let encoder = JSONEncoder()
+		do {
+			let jsonData = try encoder.encode(Array(self))
+			return String(data: jsonData, encoding: .utf8)
+		}
+		catch {
+			assertionFailure("JSON representation of Author array could not be encoded: \(self) error: \(error)")
+		}
+		return nil
 	}
 }
