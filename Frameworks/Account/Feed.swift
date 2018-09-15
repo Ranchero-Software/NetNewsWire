@@ -124,12 +124,14 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	}
 
 	private let settingsTable: ODBRawValueTable
+	private let accountID: String // Used for hashing and equality; account may turn nil
 
 	// MARK: - Init
 
 	public init(account: Account, url: String, feedID: String) {
 
 		self.account = account
+		self.accountID = account.accountID
 		self.url = url
 		self.feedID = feedID
 		self.settingsTable = account.settingsTableForFeed(feedID: feedID)!
@@ -197,13 +199,14 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(feedID)
+		hasher.combine(accountID)
 	}
 
 	// MARK: - Equatable
 
 	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
 
-		return lhs === rhs
+		return lhs.feedID == rhs.feedID && lhs.accountID == rhs.accountID
 	}
 }
 
