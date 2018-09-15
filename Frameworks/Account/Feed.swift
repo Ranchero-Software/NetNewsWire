@@ -33,17 +33,16 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	public let url: String
 	public let feedID: String
 
-	private var _homePageURL: String?
 	public var homePageURL: String? {
 		get {
-			return _homePageURL
+			return settingsTable.string(for: Key.homePageURL)
 		}
 		set {
 			if let url = newValue {
-				_homePageURL = url.rs_normalizedURL()
+				settingsTable.setString(url.rs_normalizedURL(), for: Key.homePageURL)
 			}
 			else {
-				_homePageURL = nil
+				settingsTable.setString(nil, for: Key.homePageURL)
 			}
 		}
 	}
@@ -147,7 +146,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		let feedID = dictionary[Key.feedID] as? String ?? url
 		
 		self.init(account: account, url: url, feedID: feedID)
-		self.homePageURL = dictionary[Key.homePageURL] as? String
 		self.name = dictionary[Key.name] as? String
 		self.editedName = dictionary[Key.editedName] as? String
 
@@ -171,9 +169,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 			d[Key.feedID] = feedID
 		}
 		
-		if let homePageURL = homePageURL {
-			d[Key.homePageURL] = homePageURL
-		}
 		if let name = name {
 			d[Key.name] = name
 		}
