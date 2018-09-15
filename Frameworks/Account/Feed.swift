@@ -48,8 +48,24 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		}
 	}
 
-	public var iconURL: String?
-	public var faviconURL: String?
+	public var iconURL: String? {
+		get {
+			return settingsTable.string(for: Key.iconURL)
+		}
+		set {
+			settingsTable.setString(newValue, for: Key.iconURL)
+		}
+	}
+
+	public var faviconURL: String? {
+		get {
+			return settingsTable.string(for: Key.faviconURL)
+		}
+		set {
+			settingsTable.setString(newValue, for: Key.faviconURL)
+		}
+	}
+
 	public var name: String?
 	public var authors: Set<Author>?
 
@@ -70,7 +86,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 			settingsTable.setString(newValue?.etag, for: Key.conditionalGetEtag)
 		}
 	}
-	
+
 	public var contentHash: String? {
 		get {
 			return settingsTable.string(for: Key.contentHash)
@@ -125,14 +141,8 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		
 		self.init(account: account, url: url, feedID: feedID)
 		self.homePageURL = dictionary[Key.homePageURL] as? String
-		self.iconURL = dictionary[Key.iconURL] as? String
-		self.faviconURL = dictionary[Key.faviconURL] as? String
 		self.name = dictionary[Key.name] as? String
 		self.editedName = dictionary[Key.editedName] as? String
-
-		if let conditionalGetInfoDictionary = dictionary[Key.conditionalGetInfo] as? [String: String] {
-			self.conditionalGetInfo = HTTPConditionalGetInfo(dictionary: conditionalGetInfoDictionary)
-		}
 
 		if let authorsDiskArray = dictionary[Key.authors] as? [[String: Any]] {
 			self.authors = Author.authorsWithDiskArray(authorsDiskArray)
@@ -157,12 +167,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		if let homePageURL = homePageURL {
 			d[Key.homePageURL] = homePageURL
 		}
-		if let iconURL = iconURL {
-			d[Key.iconURL] = iconURL
-		}
-		if let faviconURL = faviconURL {
-			d[Key.faviconURL] = faviconURL
-		}
 		if let name = name {
 			d[Key.name] = name
 		}
@@ -172,10 +176,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		if let authorsArray = authors?.diskArray() {
 			d[Key.authors] = authorsArray
 		}
-		if let conditionalGetInfo = conditionalGetInfo {
-			d[Key.conditionalGetInfo] = conditionalGetInfo.dictionary
-		}
-		
+
 		return d
 	}
 
