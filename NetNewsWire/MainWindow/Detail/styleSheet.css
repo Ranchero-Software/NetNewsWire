@@ -51,6 +51,10 @@ body.light .articleDateline, body.light .articleDateLine.a:link, body.light .art
 	color: rgba(0, 0, 0, 0.3);
 }
 
+.light > .systemMessage {
+	color: #cbcbcb;
+}
+
 /* Dark mode */
 
 body.dark {
@@ -75,6 +79,10 @@ body.dark .articleDateline {
 }
 body.dark .articleDateline, body.dark .articleDateLine.a:link, body.dark .articleDateline a:visited {
 	color: #d2d2d2;
+}
+
+.dark > .systemMessage {
+	color: #5f5f5f;
 }
 
 .feedlink a:link, .feedlink a:visited {
