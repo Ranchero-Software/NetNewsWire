@@ -21,6 +21,13 @@ a:hover {
 	height: 68px;
 }
 
+.systemMessage {
+	position: absolute;
+	top: 45%;
+	left: 50%;
+	transform: translateX(-55%) translateY(-50%);
+}
+
 /* Light mode */
 
 body.light {
@@ -42,6 +49,10 @@ body.light .header a:link, body.light .header a:visited {
 }
 body.light .articleDateline, body.light .articleDateLine.a:link, body.light .articleDateline a:visited {
 	color: rgba(0, 0, 0, 0.3);
+}
+
+.light > .systemMessage {
+	color: #cbcbcb;
 }
 
 /* Dark mode */
@@ -68,6 +79,10 @@ body.dark .articleDateline {
 }
 body.dark .articleDateline, body.dark .articleDateLine.a:link, body.dark .articleDateline a:visited {
 	color: #d2d2d2;
+}
+
+.dark > .systemMessage {
+	color: #5f5f5f;
 }
 
 .feedlink a:link, .feedlink a:visited {

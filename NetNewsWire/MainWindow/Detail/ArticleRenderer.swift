@@ -18,7 +18,7 @@ var cachedTemplate = ""
 
 class ArticleRenderer {
 
-	let article: Article
+	let article: Article?
 	let articleStyle: ArticleStyle
 	let appearance: NSAppearance?
 	
@@ -47,7 +47,7 @@ class ArticleRenderer {
 	}()
 	
 	lazy var title: String = {
-		if let articleTitle = self.article.title {
+		if let articleTitle = self.article?.title {
 			return articleTitle
 		}
 
@@ -56,12 +56,12 @@ class ArticleRenderer {
 
 	lazy var baseURL: URL? = {
 
-		var s = self.article.url
+		var s = self.article?.url
 		if s == nil {
-			s = self.article.feed?.homePageURL
+			s = self.article?.feed?.homePageURL
 		}
 		if s == nil {
-			s = self.article.feed?.url
+			s = self.article?.feed?.url
 		}
 		if s == nil {
 			return nil
@@ -84,17 +84,25 @@ class ArticleRenderer {
 		return nil
 		}()
 
-	var html: String {
-
-		return renderedHTML()
+	var articleHTML: String {
+		let body = RSMacroProcessor.renderedText(withTemplate: template(), substitutions: substitutions(), macroStart: "[[", macroEnd: "]]")
+		return renderHTML(withBody: body)
 	}
 
-	init(article: Article, style: ArticleStyle, appearance: NSAppearance? = nil) {
-
+	var multipleSelectionHTML: String {
+		let body = "<h3 class='systemMessage'>Multiple selection</h3>"
+		return renderHTML(withBody: body)
+	}
+	
+	var noSelectionHTML: String {
+		let body = "<h3 class='systemMessage'>No selection</h3>"
+		return renderHTML(withBody: body)
+	}
+	
+	init(article: Article?, style: ArticleStyle, appearance: NSAppearance? = nil) {
 		self.article = article
 		self.articleStyle = style
 		self.appearance = appearance
-		
 	}
 
 	// MARK: Private
@@ -157,7 +165,7 @@ class ArticleRenderer {
 
 	private func titleOrTitleLink() -> String {
 
-		if let link = article.preferredLink {
+		if let link = article?.preferredLink {
 			return linkWithText(title, link)
 		}
 		return title
@@ -167,6 +175,11 @@ class ArticleRenderer {
 
 		var d = [String: String]()
 
+		guard let article = article else {
+			assertionFailure("Article should have been set before calling this function.")
+			return d
+		}
+		
 		let title = titleOrTitleLink()
 		d["title"] = title
 
@@ -220,10 +233,10 @@ class ArticleRenderer {
 	}
 
 	private func dateShouldBeLink() -> Bool {
-		guard let permalink = article.url else {
+		guard let permalink = article?.url else {
 			return false
 		}
-		guard let preferredLink = article.preferredLink else { // Title uses preferredLink
+		guard let preferredLink = article?.preferredLink else { // Title uses preferredLink
 			return false
 		}
 		return permalink != preferredLink // Make date a link if it’s a different link from the title’s link
@@ -301,7 +314,7 @@ class ArticleRenderer {
 
 		// The author of this article, if just one.
 
-		if let authors = article.authors, authors.count == 1 {
+		if let authors = article?.authors, authors.count == 1 {
 			return authors.first!
 		}
 		return nil
@@ -309,7 +322,7 @@ class ArticleRenderer {
 
 	private func singleFeedSpecifiedAuthor() -> Author? {
 
-		if let authors = article.feed?.authors, authors.count == 1 {
+		if let authors = article?.feed?.authors, authors.count == 1 {
 			return authors.first!
 		}
 		return nil
@@ -317,10 +330,10 @@ class ArticleRenderer {
 
 	private func feedAvatar() -> Avatar? {
 
-		guard let feedIconURL = article.feed?.iconURL else {
+		guard let feedIconURL = article?.feed?.iconURL else {
 			return nil
 		}
-		return Avatar(imageURL: feedIconURL, url: article.feed?.homePageURL ?? article.feed?.url)
+		return Avatar(imageURL: feedIconURL, url: article?.feed?.homePageURL ?? article?.feed?.url)
 	}
 
 	private func authorAvatar() -> Avatar? {
@@ -354,8 +367,8 @@ class ArticleRenderer {
 		if let author = singleArticleSpecifiedAuthor(), let imageURL = author.avatarURL {
 			return Avatar(imageURL: imageURL, url: author.url)
 		}
-		if let feedIconURL = article.feed?.iconURL {
-			return Avatar(imageURL: feedIconURL, url: article.feed?.homePageURL ?? article.feed?.url)
+		if let feedIconURL = article?.feed?.iconURL {
+			return Avatar(imageURL: feedIconURL, url: article?.feed?.homePageURL ?? article?.feed?.url)
 		}
 		if let author = singleFeedSpecifiedAuthor(), let imageURL = author.avatarURL {
 			return Avatar(imageURL: imageURL, url: author.url)
@@ -370,11 +383,11 @@ class ArticleRenderer {
 		if let author = singleArticleSpecifiedAuthor(), let imageURL = author.avatarURL {
 			return Avatar(imageURL: imageURL, url: author.url).html(dimension: avatarDimension)
 		}
-		if let feed = article.feed, let imgTag = feedIconImgTag(forFeed: feed) {
+		if let feed = article?.feed, let imgTag = feedIconImgTag(forFeed: feed) {
 			return imgTag
 		}
-		if let feedIconURL = article.feed?.iconURL {
-			return Avatar(imageURL: feedIconURL, url: article.feed?.homePageURL ?? article.feed?.url).html(dimension: avatarDimension)
+		if let feedIconURL = article?.feed?.iconURL {
+			return Avatar(imageURL: feedIconURL, url: article?.feed?.homePageURL ?? article?.feed?.url).html(dimension: avatarDimension)
 		}
 		if let author = singleFeedSpecifiedAuthor(), let imageURL = author.avatarURL {
 			return Avatar(imageURL: imageURL, url: author.url).html(dimension: avatarDimension)
@@ -400,7 +413,7 @@ class ArticleRenderer {
 
 	private func byline() -> String {
 
-		guard let authors = article.authors ?? article.feed?.authors, !authors.isEmpty else {
+		guard let authors = article?.authors ?? article?.feed?.authors, !authors.isEmpty else {
 			return ""
 		}
 
@@ -408,7 +421,7 @@ class ArticleRenderer {
 		// This code assumes that multiple authors would never match the feed name so that
 		// if there feed owner has an article co-author all authors are given the byline.
 		if authors.count == 1, let author = authors.first {
-			if author.name == article.feed?.nameForDisplay {
+			if author.name == article?.feed?.nameForDisplay {
 				return ""
 			}
 		}
@@ -447,7 +460,7 @@ class ArticleRenderer {
         
 	}
 
-	private func renderedHTML() -> String {
+	private func renderHTML(withBody body: String) -> String {
 
 		var s = "<!DOCTYPE html><html><head>\n\n"
 		s += textInsideTag(title, "title")
@@ -480,7 +493,7 @@ class ArticleRenderer {
 		let appearanceClass = appearance?.isDarkMode ?? false ? "dark" : "light"
 		s += "\n\n</head><body id='bodyId' onload='startup()' class=\(appearanceClass)>\n\n"
 
-		s += RSMacroProcessor.renderedText(withTemplate: template(), substitutions: substitutions(), macroStart: "[[", macroEnd: "]]")
+		s += body
 
 		s += "\n\n</body></html>"
 
