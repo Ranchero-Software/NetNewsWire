@@ -127,11 +127,6 @@
 			</dict>
 			<key>Detail</key>
 			<dict>
-				<key>noSelectionView</key>
-				<dict>
-					<key>backgroundColor</key>
-					<string>FFFFFF</string>
-				</dict>
 				<key>statusBar</key>
 				<dict>
 					<key>backgroundColor</key>

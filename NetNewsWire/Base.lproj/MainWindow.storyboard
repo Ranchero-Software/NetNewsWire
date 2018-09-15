@@ -624,59 +624,9 @@
                     </customView>
                     <connections>
                         <outlet property="containerView" destination="cJ9-6s-66u" id="gXc-Pz-9sQ"/>
-                        <outlet property="noSelectionView" destination="aEc-1k-VmJ" id="KLS-ln-T1K"/>
                     </connections>
                 </viewController>
                 <customObject id="vzM-Vn-mEn" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <customView id="aEc-1k-VmJ" customClass="NoSelectionView" customModule="NetNewsWire" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="0.0" width="613" height="96"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <subviews>
-                        <box boxType="custom" borderType="none" borderWidth="0.0" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Zb8-hH-gIZ">
-                            <rect key="frame" x="0.0" y="0.0" width="613" height="96"/>
-                            <view key="contentView" id="Gmh-qL-lA5">
-                                <rect key="frame" x="0.0" y="0.0" width="613" height="96"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ECt-Wi-zkb">
-                                        <rect key="frame" x="266" y="40" width="109" height="22"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="No selection" usesSingleLineMode="YES" id="oNn-so-m7W">
-                                            <font key="font" metaFont="systemSemibold" size="18"/>
-                                            <color key="textColor" name="tertiaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1AW-Ay-XS8">
-                                        <rect key="frame" x="408" y="39" width="154" height="22"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Multiple selection" usesSingleLineMode="YES" id="vhD-gM-NUy">
-                                            <font key="font" metaFont="systemSemibold" size="18"/>
-                                            <color key="textColor" name="tertiaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="1AW-Ay-XS8" firstAttribute="centerY" secondItem="Gmh-qL-lA5" secondAttribute="centerY" constant="-64" id="9uN-K3-d35"/>
-                                    <constraint firstItem="ECt-Wi-zkb" firstAttribute="centerX" secondItem="Gmh-qL-lA5" secondAttribute="centerX" id="QDc-Y3-Nn4"/>
-                                    <constraint firstItem="1AW-Ay-XS8" firstAttribute="centerX" secondItem="Gmh-qL-lA5" secondAttribute="centerX" id="QV5-qP-Ys6"/>
-                                    <constraint firstItem="ECt-Wi-zkb" firstAttribute="centerY" secondItem="Gmh-qL-lA5" secondAttribute="centerY" constant="-64" id="yQr-wJ-pBL"/>
-                                </constraints>
-                            </view>
-                            <color key="borderColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <color key="fillColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </box>
-                    </subviews>
-                    <constraints>
-                        <constraint firstItem="Zb8-hH-gIZ" firstAttribute="leading" secondItem="aEc-1k-VmJ" secondAttribute="leading" id="5Ay-6o-LZ1"/>
-                        <constraint firstItem="Zb8-hH-gIZ" firstAttribute="top" secondItem="aEc-1k-VmJ" secondAttribute="top" id="Wb7-Zp-hj0"/>
-                        <constraint firstAttribute="trailing" secondItem="Zb8-hH-gIZ" secondAttribute="trailing" id="cYM-up-kUN"/>
-                        <constraint firstAttribute="bottom" secondItem="Zb8-hH-gIZ" secondAttribute="bottom" id="gCy-5R-aK2"/>
-                    </constraints>
-                    <connections>
-                        <outlet property="multipleSelectionLabel" destination="1AW-Ay-XS8" id="gK2-Ya-Dz7"/>
-                        <outlet property="noSelectionLabel" destination="ECt-Wi-zkb" id="Dvq-DU-MxC"/>
-                    </connections>
-                </customView>
             </objects>
             <point key="canvasLocation" x="68" y="946"/>
         </scene>
