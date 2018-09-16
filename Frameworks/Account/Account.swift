@@ -49,7 +49,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public let type: AccountType
 	public var nameForDisplay = ""
 	public var children = [AnyObject]()
-	var urlToFeedDictionary = [String: Feed]()
+//	var urlToFeedDictionary = [String: Feed]()
 	var idToFeedDictionary = [String: Feed]()
 	let settingsFile: String
 	let dataFolder: String
@@ -240,21 +240,21 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		// If it already existed in that folder, return true.
 
 		var didAddFeed = false
-		let uniquedFeed = existingFeed(with: feed.feedID) ?? feed
-		
+//		let uniquedFeed = existingFeed(with: feed.feedID) ?? feed
+
 		if let folder = folder {
-			didAddFeed = folder.addFeed(uniquedFeed)
+			didAddFeed = folder.addFeed(feed)
 		}
 		else {
-			if !topLevelObjectsContainsFeed(uniquedFeed) {
-				children += [uniquedFeed]
+			if !topLevelObjectsContainsFeed(feed) {
+				children += [feed]
 				postChildrenDidChangeNotification()
 			}
 			didAddFeed = true
 		}
 
 		if didAddFeed {
-			addToFeedDictionaries(uniquedFeed)
+			addToFeedDictionaries(feed)
 			dirty = true
 		}
 		
@@ -266,17 +266,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		// For syncing, this may need to be an async method with a callback,
 		// since it will likely need to call the server.
 		
-		if let feed = existingFeed(withURL: url) {
-			if let editedName = editedName {
-				feed.editedName = editedName
-			}
-			return feed
-		}
-		
 		let feed = Feed(account: self, url: url, feedID: url)
-		feed.name = name
-		feed.editedName = editedName
-        
+		if let name = name, feed.name == nil {
+			feed.name = name
+		}
+		if let editedName = editedName, feed.editedName == nil {
+			feed.editedName = editedName
+		}
+
 		return feed
 	}
 	
@@ -696,13 +693,13 @@ private extension Account {
 			idDictionary[feed.feedID] = feed
 		}
 
-		urlToFeedDictionary = urlDictionary
+//		urlToFeedDictionary = urlDictionary
 		idToFeedDictionary = idDictionary
 	}
 
 	func addToFeedDictionaries(_ feed: Feed) {
 
-		urlToFeedDictionary[feed.url] = feed
+//		urlToFeedDictionary[feed.url] = feed
 		idToFeedDictionary[feed.feedID] = feed
 	}
 
@@ -798,10 +795,10 @@ private extension Account {
 
 extension Account {
 
-	public func existingFeed(withURL url: String) -> Feed? {
-
-		return urlToFeedDictionary[url]
-	}
+//	public func existingFeed(withURL url: String) -> Feed? {
+//
+//		return urlToFeedDictionary[url]
+//	}
 
 	public func existingFeed(with feedID: String) -> Feed? {
 
