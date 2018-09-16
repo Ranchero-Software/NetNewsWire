@@ -574,54 +574,102 @@ private extension Account {
 
 	func pullObjectsFromDisk() {
 
-		let settingsFileURL = URL(fileURLWithPath: settingsFile)
-		guard let d = NSDictionary(contentsOf: settingsFileURL) as? [String: Any] else {
+		// 9/16/2018: Turning a corner — we used to store data in a plist file,
+		// but now we’re switching over to OPML. Read the plist file one last time,
+		// then rename it so we never read from it again.
+
+		if FileManager.default.fileExists(atPath: settingsFile) {
+			// Old code for reading in plist file.
+			let settingsFileURL = URL(fileURLWithPath: settingsFile)
+			guard let d = NSDictionary(contentsOf: settingsFileURL) as? [String: Any] else {
+				return
+			}
+			guard let childrenArray = d[Key.children] as? [[String: Any]] else {
+				return
+			}
+			children = objects(with: childrenArray)
+			rebuildFeedDictionaries()
+
+			let userInfo = d[Key.userInfo] as? NSDictionary
+			delegate.update(account: self, withUserInfo: userInfo)
+
+			// Rename plist file so we don’t see it next time.
+			let renamedFilePath = (dataFolder as NSString).appendingPathComponent("AccountData-old.plist")
+			do {
+				try FileManager.default.moveItem(atPath: settingsFile, toPath: renamedFilePath)
+			}
+			catch {}
+
+			dirty = true // Ensure OPML file will be written soon.
 			return
 		}
-		guard let childrenArray = d[Key.children] as? [[String: Any]] else {
+
+		importOPMLFile(path: opmlFilePath)
+	}
+
+	func importOPMLFile(path: String) {
+		let opmlFileURL = URL(fileURLWithPath: path)
+		var fileData: Data?
+		do {
+			fileData = try Data(contentsOf: opmlFileURL)
+		} catch {
+			NSApplication.shared.presentError(error)
 			return
 		}
-		children = objects(with: childrenArray)
-		rebuildFeedDictionaries()
-
-		let userInfo = d[Key.userInfo] as? NSDictionary
-		delegate.update(account: self, withUserInfo: userInfo)
-	}
-
-	func diskDictionary() -> NSDictionary {
-
-		let diskObjects = children.compactMap { (object) -> [String: Any]? in
-
-			if let folder = object as? Folder {
-				return folder.dictionary
-			}
-			else if let feed = object as? Feed {
-				return feed.dictionary
-			}
-			return nil
+		guard let opmlData = fileData else {
+			return
 		}
 
-		var d = [String: Any]()
-		d[Key.children] = diskObjects as NSArray
+		let parserData = ParserData(url: opmlFileURL.absoluteString, data: opmlData)
+		var opmlDocument: RSOPMLDocument?
 
-		if let userInfo = delegate.userInfo(for: self) {
-			d[Key.userInfo] = userInfo
+		do {
+			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+		} catch {
+			NSApplication.shared.presentError(error)
+			return
+		}
+		guard let parsedOPML = opmlDocument else {
+			return
 		}
 
-		return d as NSDictionary
+		importOPML(parsedOPML)
 	}
+
+//	func diskDictionary() -> NSDictionary {
+//
+//		let diskObjects = children.compactMap { (object) -> [String: Any]? in
+//
+//			if let folder = object as? Folder {
+//				return folder.dictionary
+//			}
+//			else if let feed = object as? Feed {
+//				return feed.dictionary
+//			}
+//			return nil
+//		}
+//
+//		var d = [String: Any]()
+//		d[Key.children] = diskObjects as NSArray
+//
+//		if let userInfo = delegate.userInfo(for: self) {
+//			d[Key.userInfo] = userInfo
+//		}
+//
+//		return d as NSDictionary
+//	}
 
 	func saveToDisk() {
 
 		dirty = false
 
-		let d = diskDictionary()
-		do {
-			try RSPlist.write(d, filePath: settingsFile)
-		}
-		catch let error as NSError {
-			NSApplication.shared.presentError(error)
-		}
+//		let d = diskDictionary()
+//		do {
+//			try RSPlist.write(d, filePath: settingsFile)
+//		}
+//		catch let error as NSError {
+//			NSApplication.shared.presentError(error)
+//		}
 
 		let opmlDocumentString = opmlDocument()
 		do {

@@ -73,36 +73,36 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		}
 	}
 
-	var dictionary: [String: Any] {
-		
-		var d = [String: Any]()
-		guard let account = account else {
-			return d
-		}
-		
-		if let name = name {
-			d[Key.name] = name
-		}
+//	var dictionary: [String: Any] {
+//
+//		var d = [String: Any]()
+//		guard let account = account else {
+//			return d
+//		}
+//
+//		if let name = name {
+//			d[Key.name] = name
+//		}
+//
+//		let childObjects = children.compactMap { (child) -> [String: Any]? in
+//
+//			if let feed = child as? Feed {
+//				return feed.dictionary
+//			}
+//			if let folder = child as? Folder, account.supportsSubFolders {
+//				return folder.dictionary
+//			}
+//			assertionFailure("Expected a feed or a folder.");
+//			return nil
+//		}
+//
+//		if !childObjects.isEmpty {
+//			d[Key.children] = childObjects
+//		}
+//
+//		return d
+//	}
 
-		let childObjects = children.compactMap { (child) -> [String: Any]? in
-			
-			if let feed = child as? Feed {
-				return feed.dictionary
-			}
-			if let folder = child as? Folder, account.supportsSubFolders {
-				return folder.dictionary
-			}
-			assertionFailure("Expected a feed or a folder.");
-			return nil
-		}
-		
-		if !childObjects.isEmpty {
-			d[Key.children] = childObjects
-		}
-		
-		return d
-	}
-	
 	// MARK: Feeds
 	
 	func addFeed(_ feed: Feed) -> Bool {
