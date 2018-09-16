@@ -156,16 +156,9 @@ private extension Folder {
 	}
 
 	func childrenContain(_ feed: Feed) -> Bool {
-		
 		return children.contains(where: { (object) -> Bool in
-			if object === feed {
-				return true
-			}
 			if let oneFeed = object as? Feed {
-				if oneFeed.feedID == feed.feedID {
-					assertionFailure("Expected feeds to match by pointer equality rather than by feedID.")
-					return true
-				}
+				return oneFeed == feed
 			}
 			return false
 		})
