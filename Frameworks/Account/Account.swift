@@ -49,7 +49,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public let type: AccountType
 	public var nameForDisplay = ""
 	public var children = [AnyObject]()
-//	var urlToFeedDictionary = [String: Feed]()
 	var idToFeedDictionary = [String: Feed]()
 	let settingsFile: String
 	let dataFolder: String
@@ -240,7 +239,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		// If it already existed in that folder, return true.
 
 		var didAddFeed = false
-//		let uniquedFeed = existingFeed(with: feed.feedID) ?? feed
 
 		if let folder = folder {
 			didAddFeed = folder.addFeed(feed)
@@ -633,40 +631,9 @@ private extension Account {
 		importOPML(parsedOPML)
 	}
 
-//	func diskDictionary() -> NSDictionary {
-//
-//		let diskObjects = children.compactMap { (object) -> [String: Any]? in
-//
-//			if let folder = object as? Folder {
-//				return folder.dictionary
-//			}
-//			else if let feed = object as? Feed {
-//				return feed.dictionary
-//			}
-//			return nil
-//		}
-//
-//		var d = [String: Any]()
-//		d[Key.children] = diskObjects as NSArray
-//
-//		if let userInfo = delegate.userInfo(for: self) {
-//			d[Key.userInfo] = userInfo
-//		}
-//
-//		return d as NSDictionary
-//	}
-
 	func saveToDisk() {
 
 		dirty = false
-
-//		let d = diskDictionary()
-//		do {
-//			try RSPlist.write(d, filePath: settingsFile)
-//		}
-//		catch let error as NSError {
-//			NSApplication.shared.presentError(error)
-//		}
 
 		let opmlDocumentString = opmlDocument()
 		do {
@@ -693,13 +660,11 @@ private extension Account {
 			idDictionary[feed.feedID] = feed
 		}
 
-//		urlToFeedDictionary = urlDictionary
 		idToFeedDictionary = idDictionary
 	}
 
 	func addToFeedDictionaries(_ feed: Feed) {
 
-//		urlToFeedDictionary[feed.url] = feed
 		idToFeedDictionary[feed.feedID] = feed
 	}
 
@@ -794,11 +759,6 @@ private extension Account {
 // MARK: - Container Overrides
 
 extension Account {
-
-//	public func existingFeed(withURL url: String) -> Feed? {
-//
-//		return urlToFeedDictionary[url]
-//	}
 
 	public func existingFeed(with feedID: String) -> Feed? {
 

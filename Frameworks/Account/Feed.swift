@@ -188,26 +188,6 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 		return d[Key.url] != nil
 	}
 
-//	public var dictionary: [String: Any] {
-//		var d = [String: Any]()
-//		
-//		d[Key.url] = url
-//		
-//		// feedID is not repeated when it’s the same as url
-//		if (feedID != url) {
-//			d[Key.feedID] = feedID
-//		}
-//		
-//		if let name = name {
-//			d[Key.name] = name
-//		}
-//		if let editedName = editedName {
-//			d[Key.editedName] = editedName
-//		}
-//
-//		return d
-//	}
-
 	// MARK: - Debug
 
 	public func debugDropConditionalGetInfo() {
