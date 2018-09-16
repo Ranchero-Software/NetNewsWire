@@ -161,9 +161,7 @@ private struct SidebarItemSpecifier {
 		guard let account = account, let feed = feed else {
 			return
 		}
-
-		let feedToUse = uniquedFeed(feed)
-		account.addFeed(feedToUse, to: resolvedFolder())
+		account.addFeed(feed, to: resolvedFolder())
 	}
 
 	private func restoreFolder() {
@@ -172,16 +170,6 @@ private struct SidebarItemSpecifier {
 			return
 		}
 		account.addFolder(folder, to: nil)
-	}
-
-	private func uniquedFeed(_ feed: Feed) -> Feed {
-
-		// A Feed may appear in multiple places in a given account,
-		// but it’s best if they’re the same Feed instance.
-		// Usually this will return the same Feed that was passed-in,
-		// but not necessarily always.
-
-		return account?.existingFeed(with: feed.feedID) ?? feed
 	}
 
 	private func resolvedFolder() -> Folder? {
