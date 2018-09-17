@@ -81,6 +81,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	private var _flattenedFeeds = Set<Feed>()
 	private var flattenedFeedsNeedUpdate = true
 
+	private var startingUp = true
+
 	private struct SettingsKey {
 		static let unreadCount = "unreadCount"
 	}
@@ -160,6 +162,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 
 		self.delegate.accountDidInitialize(self)
+		startingUp = false
 	}
 	
 	// MARK: - API
@@ -221,7 +224,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		let folder = Folder(account: self, name: name)
 		folders!.insert(folder)
-		dirty = true
+		structureDidChange()
 
 		postChildrenDidChangeNotification()
 		return folder
@@ -476,7 +479,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func structureDidChange() {
 		// Feeds were added or deleted. Or folders added or deleted.
 		// Or feeds inside folders were added or deleted.
-		dirty = true
+		if !startingUp {
+			dirty = true
+		}
 		flattenedFeedsNeedUpdate = true
 		feedDictionaryNeedsUpdate = true
 	}
