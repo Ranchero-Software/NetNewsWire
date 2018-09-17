@@ -10,11 +10,13 @@ import Foundation
 import Articles
 import RSCore
 
-public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, Hashable {    
+public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, Hashable {
+
 
 	public weak var account: Account?
-	public var children = [AnyObject]()
-
+	public var topLevelFeeds: Set<Feed> = Set<Feed>()
+	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
+	
 	public var name: String? {
 		didSet {
 			postDisplayNameDidChangeNotification()
@@ -69,21 +71,28 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		self.init(account: account, name: name)
 
 		if let childrenArray = dictionary[Key.children] as? [[String: Any]] {
-			self.children = Folder.objects(with: childrenArray, account: account)
+			self.topLevelFeeds = Folder.feedsOnly(with: childrenArray, account: account)
 		}
 	}
 
 	// MARK: Feeds
-	
+
+	/// Add a single feed. Return true if number of feeds in folder changes.
 	func addFeed(_ feed: Feed) -> Bool {
-		
-		// Return true in the case where the feed is already a child.
-		
-		if !childrenContain(feed) {
-			children += [feed]
+		return addFeeds(Set([feed]))
+	}
+
+	/// Add one or more feeds. Return true if number of feeds in folder changes.
+	@discardableResult
+	func addFeeds(_ feedsToAdd: Set<Feed>) -> Bool {
+		let feedCount = topLevelFeeds.count
+		topLevelFeeds.formUnion(feedsToAdd)
+
+		if feedCount != topLevelFeeds.count {
 			postChildrenDidChangeNotification()
+			return true
 		}
-		return true
+		return false
 	}
     
 	// MARK: - Notifications
@@ -100,6 +109,30 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 	@objc func childrenDidChange(_ note: Notification) {
 
 		updateUnreadCount()
+	}
+
+	// MARK: Container
+
+	public func flattenedFeeds() -> Set<Feed> {
+		// Since sub-folders are not supported, it’s always the top-level feeds.
+		return topLevelFeeds
+	}
+
+	public func objectIsChild(_ object: AnyObject) -> Bool {
+		// Folders contain Feed objects only, at least for now.
+		guard let feed = object as? Feed else {
+			return false
+		}
+		return topLevelFeeds.contains(feed)
+	}
+
+	public func deleteFeed(_ feed: Feed) {
+		topLevelFeeds.remove(feed)
+		postChildrenDidChangeNotification()
+	}
+
+	public func deleteFolder(_ folder: Folder) {
+		// Nothing to do
 	}
 
 	// MARK: - Hashable
@@ -121,34 +154,21 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 private extension Folder {
 
 	func updateUnreadCount() {
-		
-		unreadCount = calculateUnreadCount(children)
+		var updatedUnreadCount = 0
+		for feed in topLevelFeeds {
+			updatedUnreadCount += feed.unreadCount
+		}
+		unreadCount = updatedUnreadCount
 	}
 
 	func childrenContain(_ feed: Feed) -> Bool {
-		return children.contains(where: { (object) -> Bool in
-			if let oneFeed = object as? Feed {
-				return oneFeed == feed
-			}
-			return false
-		})
+		return topLevelFeeds.contains(feed)
 	}
 }
 
 // MARK: - Disk
 
 private extension Folder {
-
-	static func objects(with diskObjects: [[String: Any]], account: Account) -> [AnyObject] {
-
-		if account.supportsSubFolders {
-			return account.objects(with: diskObjects)
-		}
-		else {
-			let flattenedFeeds = feedsOnly(with: diskObjects, account: account)
-			return Array(flattenedFeeds) as [AnyObject]
-		}
-	}
 
 	static func feedsOnly(with diskObjects: [[String: Any]], account: Account) -> Set<Feed> {
 
@@ -187,11 +207,9 @@ extension Folder: OPMLRepresentable {
 
 		var hasAtLeastOneChild = false
 
-		for child in children  {
-			if let opmlObject = child as? OPMLRepresentable {
-				s += opmlObject.OPMLString(indentLevel: indentLevel + 1)
-				hasAtLeastOneChild = true
-			}
+		for feed in topLevelFeeds  {
+			s += feed.OPMLString(indentLevel: indentLevel + 1)
+			hasAtLeastOneChild = true
 		}
 
 		if !hasAtLeastOneChild {

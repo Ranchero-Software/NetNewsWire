@@ -37,6 +37,7 @@ public enum AccountType: Int {
 
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
+
     public struct UserInfoKey {
 		public static let newArticles = "newArticles" // AccountDidDownloadArticles
 		public static let updatedArticles = "updatedArticles" // AccountDidDownloadArticles
@@ -48,8 +49,20 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public let accountID: String
 	public let type: AccountType
 	public var nameForDisplay = ""
-	public var children = [AnyObject]()
-	var idToFeedDictionary = [String: Feed]()
+	public var topLevelFeeds = Set<Feed>()
+	public var folders: Set<Folder>? = Set<Folder>()
+
+	private var feedDictionaryNeedsUpdate = true
+	private var _idToFeedDictionary = [String: Feed]()
+	var idToFeedDictionary: [String: Feed] {
+		if feedDictionaryNeedsUpdate {
+			rebuildFeedDictionaries()
+		}
+		return _idToFeedDictionary
+	}
+
+	private var fetchingAllUnreadCounts = false
+
 	let settingsFile: String
 	let dataFolder: String
 	let database: ArticlesDatabase
@@ -64,6 +77,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	private var unreadCounts = [String: Int]() // [feedID: Int]
 	private let opmlFilePath: String
+
+	private var _flattenedFeeds = Set<Feed>()
+	private var flattenedFeedsNeedUpdate = true
 
 	private struct SettingsKey {
 		static let unreadCount = "unreadCount"
@@ -204,7 +220,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 
 		let folder = Folder(account: self, name: name)
-		children += [folder]
+		folders!.insert(folder)
 		dirty = true
 
 		postChildrenDidChangeNotification()
@@ -244,19 +260,28 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			didAddFeed = folder.addFeed(feed)
 		}
 		else {
-			if !topLevelObjectsContainsFeed(feed) {
-				children += [feed]
+			if !topLevelFeeds.contains(feed) {
+				topLevelFeeds.insert(feed)
 				postChildrenDidChangeNotification()
+				didAddFeed = true
 			}
-			didAddFeed = true
 		}
 
 		if didAddFeed {
-			addToFeedDictionaries(feed)
-			dirty = true
+			structureDidChange()
 		}
-		
+
 		return didAddFeed
+	}
+
+	public func addFeeds(_ feeds: Set<Feed>, to folder: Folder?) {
+		if let folder = folder {
+			folder.addFeeds(feeds)
+		}
+		else {
+			topLevelFeeds.formUnion(feeds)
+		}
+		structureDidChange()
 	}
 
 	public func createFeed(with name: String?, editedName: String?, url: String) -> Feed? {
@@ -285,13 +310,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		// TODO: support subfolders, maybe, some day, if one of the sync systems
 		// supports subfolders. But, for now, parentFolder is ignored.
-
-		if objectIsChild(folder) {
+		if folders!.contains(folder) {
 			return true
 		}
-		children += [folder]
+		folders!.insert(folder)
 		postChildrenDidChangeNotification()
-		rebuildFeedDictionaries()
+		structureDidChange()
 		return true
 	}
 
@@ -300,9 +324,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		guard let children = opmlDocument.children else {
 			return
 		}
-		rebuildFeedDictionaries()
 		importOPMLItems(children, parentFolder: nil)
-		saveToDisk()
+		structureDidChange()
 
 		DispatchQueue.main.async {
 			self.refreshAll()
@@ -450,6 +473,35 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		unreadCounts[feed.feedID] = unreadCount
 	}
 
+	public func structureDidChange() {
+		// Feeds were added or deleted. Or folders added or deleted.
+		// Or feeds inside folders were added or deleted.
+		dirty = true
+		flattenedFeedsNeedUpdate = true
+		feedDictionaryNeedsUpdate = true
+	}
+
+	// MARK: - Container
+
+	public func flattenedFeeds() -> Set<Feed> {
+		if flattenedFeedsNeedUpdate {
+			updateFlattenedFeeds()
+		}
+		return _flattenedFeeds
+	}
+
+	public func deleteFeed(_ feed: Feed) {
+		topLevelFeeds.remove(feed)
+		structureDidChange()
+		postChildrenDidChangeNotification()
+	}
+
+	public func deleteFolder(_ folder: Folder) {
+		folders?.remove(folder)
+		structureDidChange()
+		postChildrenDidChangeNotification()
+	}
+
 	// MARK: - Debug
 
 	public func debugDropConditionalGetInfo() {
@@ -482,6 +534,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
     
     @objc func batchUpdateDidPerform(_ note: Notification) {
 
+		flattenedFeedsNeedUpdate = true
 		rebuildFeedDictionaries()
         updateUnreadCount()
     }
@@ -492,17 +545,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return
 		}
 		if let account = object as? Account, account === self {
-			dirty = true
+			structureDidChange()
 		}
 		if let folder = object as? Folder, folder.account === self {
-			dirty = true
+			structureDidChange()
 		}
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
 
 		if let folder = note.object as? Folder, folder.account === self {
-			dirty = true
+			structureDidChange()
 		}
 	}
 
@@ -582,11 +635,20 @@ private extension Account {
 			guard let childrenArray = d[Key.children] as? [[String: Any]] else {
 				return
 			}
-			children = objects(with: childrenArray)
-			rebuildFeedDictionaries()
-
-			let userInfo = d[Key.userInfo] as? NSDictionary
-			delegate.update(account: self, withUserInfo: userInfo)
+			let children = objects(with: childrenArray)
+			var feeds = Set<Feed>()
+			var folders = Set<Folder>()
+			for oneChild in children {
+				if let feed = oneChild as? Feed {
+					feeds.insert(feed)
+				}
+				else if let folder = oneChild as? Folder {
+					folders.insert(folder)
+				}
+			}
+			self.topLevelFeeds = feeds
+			self.folders = folders
+			structureDidChange()
 
 			// Rename plist file so we don’t see it next time.
 			let renamedFilePath = (dataFolder as NSString).appendingPathComponent("AccountData-old.plist")
@@ -624,11 +686,13 @@ private extension Account {
 			NSApplication.shared.presentError(error)
 			return
 		}
-		guard let parsedOPML = opmlDocument else {
+		guard let parsedOPML = opmlDocument, let children = parsedOPML.children else {
 			return
 		}
 
-		importOPML(parsedOPML)
+		BatchUpdate.shared.perform {
+			importOPMLItems(children, parentFolder: nil)
+		}
 	}
 
 	func saveToDisk() {
@@ -650,50 +714,47 @@ private extension Account {
 
 private extension Account {
 
+	func updateFlattenedFeeds() {
+		var feeds = Set<Feed>()
+		feeds.formUnion(topLevelFeeds)
+		for folder in folders! {
+			feeds.formUnion(folder.flattenedFeeds())
+		}
+
+		_flattenedFeeds = feeds
+		flattenedFeedsNeedUpdate = false
+	}
+
 	func rebuildFeedDictionaries() {
 
-		var urlDictionary = [String: Feed]()
 		var idDictionary = [String: Feed]()
 
 		flattenedFeeds().forEach { (feed) in
-			urlDictionary[feed.url] = feed
 			idDictionary[feed.feedID] = feed
 		}
 
-		idToFeedDictionary = idDictionary
-	}
-
-	func addToFeedDictionaries(_ feed: Feed) {
-
-		idToFeedDictionary[feed.feedID] = feed
-	}
-
-	func topLevelObjectsContainsFeed(_ feed: Feed) -> Bool {
-		
-		return children.contains(where: { (object) -> Bool in
-			if let oneFeed = object as? Feed {
-				if oneFeed.feedID == feed.feedID {
-					return true
-				}
-			}
-			return false
-		})
+		_idToFeedDictionary = idDictionary
+		feedDictionaryNeedsUpdate = false
 	}
 
 	func createFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, feedID: opmlFeedSpecifier.feedURL)
-		feed.editedName = opmlFeedSpecifier.title
+		if let feedTitle = opmlFeedSpecifier.title, feed.editedName == nil {
+			feed.editedName = feedTitle
+		}
 		return feed
 	}
 
 	func importOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
 
+		var feedsToAdd = Set<Feed>()
+
 		items.forEach { (item) in
 
 			if let feedSpecifier = item.feedSpecifier {
 				let feed = createFeed(with: feedSpecifier)
-				addFeed(feed, to: parentFolder)
+				feedsToAdd.insert(feed)
 				return
 			}
 
@@ -713,11 +774,21 @@ private extension Account {
 				importOPMLItems(itemChildren, parentFolder: folder)
 			}
 		}
+
+		if !feedsToAdd.isEmpty {
+			addFeeds(feedsToAdd, to: parentFolder)
+		}
 	}
     
     func updateUnreadCount() {
-
-		unreadCount = calculateUnreadCount(flattenedFeeds())
+		if fetchingAllUnreadCounts {
+			return
+		}
+		var updatedUnreadCount = 0
+		for feed in flattenedFeeds() {
+			updatedUnreadCount += feed.unreadCount
+		}
+		unreadCount = updatedUnreadCount
     }
     
     func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
@@ -734,6 +805,7 @@ private extension Account {
 
 	func fetchAllUnreadCounts() {
 
+		fetchingAllUnreadCounts = true
 		database.fetchAllNonZeroUnreadCounts { (unreadCountDictionary) in
 
 			if unreadCountDictionary.isEmpty {
@@ -751,6 +823,7 @@ private extension Account {
 					feed.unreadCount = 0
 				}
 			}
+			self.fetchingAllUnreadCounts = false
 			self.updateUnreadCount()
 		}
 	}
@@ -764,6 +837,7 @@ extension Account {
 
 		return idToFeedDictionary[feedID]
 	}
+
 }
 
 // MARK: - OPMLRepresentable
@@ -773,10 +847,11 @@ extension Account: OPMLRepresentable {
 	public func OPMLString(indentLevel: Int) -> String {
 
 		var s = ""
-		for oneObject in children {
-			if let oneOPMLObject = oneObject as? OPMLRepresentable {
-				s += oneOPMLObject.OPMLString(indentLevel: indentLevel + 1)
-			}
+		for feed in topLevelFeeds {
+			s += feed.OPMLString(indentLevel: indentLevel + 1)
+		}
+		for folder in folders! {
+			s += folder.OPMLString(indentLevel: indentLevel + 1)
 		}
 		return s
 	}

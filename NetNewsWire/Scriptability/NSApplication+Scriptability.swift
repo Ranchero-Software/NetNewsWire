@@ -77,7 +77,7 @@ extension NSApplication : ScriptingObjectContainer {
         let accounts = AccountManager.shared.accounts
         let emptyFeeds:[Feed] = []
         return accounts.reduce(emptyFeeds) { (result, nthAccount) -> [Feed] in
-              let accountFeeds = nthAccount.children.compactMap { $0 as? Feed }
+              let accountFeeds = Array(nthAccount.topLevelFeeds)
               return result + accountFeeds
         }
     }

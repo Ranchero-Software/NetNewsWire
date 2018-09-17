@@ -68,34 +68,35 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     
     @objc(feeds)
     var feeds:NSArray  {
-        let feeds = account.children.compactMap { $0 as? Feed }
-        return feeds.map { ScriptableFeed($0, container:self) } as NSArray
+        return account.topLevelFeeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
     
     @objc(valueInFeedsWithUniqueID:)
     func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
-        let feeds = account.children.compactMap { $0 as? Feed }
+        let feeds = Array(account.topLevelFeeds)
         guard let feed = feeds.first(where:{$0.feedID == id}) else { return nil }
         return ScriptableFeed(feed, container:self)
     }
     
     @objc(valueInFeedsWithName:)
     func valueInFeeds(withName name:String) -> ScriptableFeed? {
-        let feeds = account.children.compactMap { $0 as? Feed }
+		let feeds = Array(account.topLevelFeeds)
         guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
         return ScriptableFeed(feed, container:self)
     }
 
     @objc(folders)
     var folders:NSArray  {
-        let folders = account.children.compactMap { $0 as? Folder }
-        return folders.map { ScriptableFolder($0, container:self) } as NSArray
+		let foldersSet = account.folders ?? Set<Folder>()
+		let folders = Array(foldersSet)
+		return folders.map { ScriptableFolder($0, container:self) } as NSArray
     }
     
     @objc(valueInFoldersWithUniqueID:)
     func valueInFolders(withUniqueID id:NSNumber) -> ScriptableFolder? {
         let folderId = id.intValue
-        let folders = account.children.compactMap { $0 as? Folder }
+		let foldersSet = account.folders ?? Set<Folder>()
+		let folders = Array(foldersSet)
         guard let folder = folders.first(where:{$0.folderID == folderId}) else { return nil }
         return ScriptableFolder(folder, container:self)
     }    
@@ -105,14 +106,15 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     @objc(contents)
     var contents:NSArray  {
         var contentsArray:[AnyObject] = []
-        for child in account.children {
-            if let aFeed = child as? Feed {
-                contentsArray.append(ScriptableFeed(aFeed, container:self))
-            } else if let aFolder = child as? Folder {
-                contentsArray.append(ScriptableFolder(aFolder, container:self))
-            }
-        }
-        return contentsArray as NSArray
+		for feed in account.topLevelFeeds {
+			contentsArray.append(ScriptableFeed(feed, container: self))
+		}
+		if let folders = account.folders {
+			for folder in folders {
+				contentsArray.append(ScriptableFolder(folder, container:self))
+			}
+		}
+		return contentsArray as NSArray
     }
 
     @objc(opmlRepresentation)

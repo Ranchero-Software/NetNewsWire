@@ -92,7 +92,7 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
     
     @objc(feeds)
     var feeds:NSArray  {
-        let feeds = folder.children.compactMap { $0 as? Feed }
+		let feeds = Array(folder.topLevelFeeds)
         return feeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
 

@@ -27,15 +27,10 @@ private extension FolderTreeControllerDelegate {
 		// Root node is “Top Level” and children are folders. Folders can’t have subfolders.
 		// This will have to be revised later.
 
-		var folderNodes = [Node]()
-
-		for oneRepresentedObject in AccountManager.shared.localAccount.children {
-
-			if let folder = oneRepresentedObject as? Folder {
-				folderNodes += [createNode(folder, parent: node)]
-			}
+		guard let folders = AccountManager.shared.localAccount.folders else {
+			return nil
 		}
-
+		let folderNodes = folders.map { createNode($0, parent: node) }
 		return folderNodes.sortedAlphabetically()
 	}
 

@@ -51,9 +51,15 @@ private extension SidebarTreeControllerDelegate {
 
 		let container = containerNode.representedObject as! Container
 
+		var children = [AnyObject]()
+		children.append(contentsOf: Array(container.topLevelFeeds))
+		if let folders = container.folders {
+			children.append(contentsOf: Array(folders))
+		}
+
 		var updatedChildNodes = [Node]()
 
-		container.children.forEach { (representedObject) in
+		children.forEach { (representedObject) in
 
 			if let existingNode = containerNode.childNodeRepresentingObject(representedObject) {
 				if !updatedChildNodes.contains(existingNode) {
