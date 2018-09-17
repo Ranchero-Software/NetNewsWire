@@ -524,10 +524,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
-
-		// Update the unread count if it’s a direct child.
-
-		if let object = note.object, objectIsChild(object as AnyObject) {
+		if let feed = note.object as? Feed, feed.account === self {
 			updateUnreadCount()
 		}
 	}
