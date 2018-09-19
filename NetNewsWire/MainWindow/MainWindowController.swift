@@ -19,7 +19,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: "MainWindow")
 	static var didPositionWindowOnFirstRun = false
 
-	private var currentFeedOrFolder: DisplayNameProvider? = nil {
+	private var currentFeedOrFolder: AnyObject? = nil {
 		didSet {
 			updateWindowTitle()
 		}
@@ -107,12 +107,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return
 		}
 		
-		guard let displayNameProvider = selectedObjects?[0] as? DisplayNameProvider else {
+		guard selectedObjects?[0] is DisplayNameProvider && selectedObjects?[0] is UnreadCountProvider else {
 			currentFeedOrFolder = nil
 			return
 		}
 		
-		currentFeedOrFolder = displayNameProvider
+		currentFeedOrFolder = selectedObjects?[0]
 		
 	}
 	
@@ -126,16 +126,17 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	private func updateWindowTitleIfNecessary(_ object: Any?) {
 		
-		if let folder = currentFeedOrFolder as? Folder, let countNote = object as? Folder {
-			if folder == countNote {
+		if let folder = currentFeedOrFolder as? Folder, let noteObject = object as? Folder {
+			if folder == noteObject {
 				updateWindowTitle()
 				return
 			}
 		}
 		
-		if let feed = currentFeedOrFolder as? Feed, let countNote = object as? Feed {
-			if feed == countNote {
+		if let feed = currentFeedOrFolder as? Feed, let noteObject = object as? Feed {
+			if feed == noteObject {
 				updateWindowTitle()
+				return
 			}
 		}
 		
@@ -544,28 +545,27 @@ private extension MainWindowController {
 
 	func updateWindowTitle() {
 
-		if currentFeedOrFolder == nil {
+		var displayName: String? = nil
+		var unreadCount: Int? = nil
+		
+		if let displayNameProvider = currentFeedOrFolder as? DisplayNameProvider {
+			displayName = displayNameProvider.nameForDisplay
+		}
+		
+		if let unreadCountProvider = currentFeedOrFolder as? UnreadCountProvider {
+			unreadCount = unreadCountProvider.unreadCount
+		}
+		
+		if displayName != nil {
+			if unreadCount ?? 0 > 0 {
+				window?.title = "\(displayName!) (\(unreadCount!))"
+			}
+			else {
+				window?.title = "\(displayName!)"
+			}
+		}
+		else {
 			window?.title = appDelegate.appName!
-			return
-		}
-		
-		if let folder = currentFeedOrFolder as? Folder {
-			if folder.unreadCount < 1 {
-				window?.title = "\(folder.nameForDisplay)"
-			}
-			else {
-				window?.title = "\(folder.nameForDisplay) (\(folder.unreadCount))"
-			}
-			return
-		}
-		
-		if let feed = currentFeedOrFolder as? Feed {
-			if feed.unreadCount < 1 {
-				window?.title = "\(feed.nameForDisplay)"
-			}
-			else {
-				window?.title = "\(feed.nameForDisplay) (\(feed.unreadCount))"
-			}
 			return
 		}
 		
