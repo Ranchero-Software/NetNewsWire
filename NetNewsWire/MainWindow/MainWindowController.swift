@@ -102,12 +102,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@objc func sidebarSelectionDidChange(_ note: Notification) {
 		
 		let selectedObjects = selectedObjectsInSidebar()
+		
+		// We can only meaninfully display one feed or folder at a time
 		guard selectedObjects?.count == 1 else {
 			currentFeedOrFolder = nil
 			return
 		}
 		
-		guard selectedObjects?[0] is DisplayNameProvider && selectedObjects?[0] is UnreadCountProvider else {
+		guard selectedObjects?[0] is DisplayNameProvider else {
 			currentFeedOrFolder = nil
 			return
 		}
@@ -124,19 +126,28 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		updateWindowTitleIfNecessary(note.object)
 	}
 
-	private func updateWindowTitleIfNecessary(_ object: Any?) {
+	private func updateWindowTitleIfNecessary(_ noteObject: Any?) {
 		
-		if let folder = currentFeedOrFolder as? Folder, let noteObject = object as? Folder {
+		if let folder = currentFeedOrFolder as? Folder, let noteObject = noteObject as? Folder {
 			if folder == noteObject {
 				updateWindowTitle()
 				return
 			}
 		}
 		
-		if let feed = currentFeedOrFolder as? Feed, let noteObject = object as? Feed {
+		if let feed = currentFeedOrFolder as? Feed, let noteObject = noteObject as? Feed {
 			if feed == noteObject {
 				updateWindowTitle()
 				return
+			}
+		}
+		
+		// If we don't recognize the changed object, we will test it for identity instead
+		// of equality.  This works well for us if the window display is displaying a
+		// PsuedoFeed object.
+		if let currentObject = currentFeedOrFolder, let noteObject = noteObject {
+			if currentObject === noteObject as AnyObject {
+				updateWindowTitle()
 			}
 		}
 		
