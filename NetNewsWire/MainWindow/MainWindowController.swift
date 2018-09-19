@@ -19,14 +19,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: "MainWindow")
 	static var didPositionWindowOnFirstRun = false
 
-	private var unreadCount: Int = 0 {
+	private var currentFeedOrFolder: DisplayNameProvider? = nil {
 		didSet {
-			if unreadCount != oldValue {
-				updateWindowTitle()
-			}
+			updateWindowTitle()
 		}
 	}
-
+	
 	private var shareToolbarItem: NSToolbarItem? {
 		return window?.toolbar?.existingItem(withIdentifier: .Share)
 	}
@@ -66,7 +64,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
+		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
@@ -99,13 +99,48 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		CoalescingQueue.standard.add(self, #selector(makeToolbarValidate))
 	}
 
-	@objc func unreadCountDidChange(_ note: Notification) {
-
-		if note.object is AccountManager {
-			unreadCount = AccountManager.shared.unreadCount
+	@objc func sidebarSelectionDidChange(_ note: Notification) {
+		
+		let selectedObjects = selectedObjectsInSidebar()
+		guard selectedObjects?.count == 1 else {
+			currentFeedOrFolder = nil
+			return
 		}
+		
+		guard let displayNameProvider = selectedObjects?[0] as? DisplayNameProvider else {
+			currentFeedOrFolder = nil
+			return
+		}
+		
+		currentFeedOrFolder = displayNameProvider
+		
+	}
+	
+	@objc func unreadCountDidChange(_ note: Notification) {
+		updateWindowTitleIfNecessary(note.object)
+	}
+	
+	@objc func displayNameDidChange(_ note: Notification) {
+		updateWindowTitleIfNecessary(note.object)
 	}
 
+	private func updateWindowTitleIfNecessary(_ object: Any?) {
+		
+		if let folder = currentFeedOrFolder as? Folder, let countNote = object as? Folder {
+			if folder == countNote {
+				updateWindowTitle()
+				return
+			}
+		}
+		
+		if let feed = currentFeedOrFolder as? Feed, let countNote = object as? Feed {
+			if feed == countNote {
+				updateWindowTitle()
+			}
+		}
+		
+	}
+	
 	// MARK: - Toolbar
 	
 	@objc func makeToolbarValidate() {
@@ -509,12 +544,31 @@ private extension MainWindowController {
 
 	func updateWindowTitle() {
 
-		if unreadCount < 1 {
+		if currentFeedOrFolder == nil {
 			window?.title = appDelegate.appName!
+			return
 		}
-		else if unreadCount > 0 {
-			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
+		
+		if let folder = currentFeedOrFolder as? Folder {
+			if folder.unreadCount < 1 {
+				window?.title = "\(folder.nameForDisplay)"
+			}
+			else {
+				window?.title = "\(folder.nameForDisplay) (\(folder.unreadCount))"
+			}
+			return
 		}
+		
+		if let feed = currentFeedOrFolder as? Feed {
+			if feed.unreadCount < 1 {
+				window?.title = "\(feed.nameForDisplay)"
+			}
+			else {
+				window?.title = "\(feed.nameForDisplay) (\(feed.unreadCount))"
+			}
+			return
+		}
+		
 	}
 
 	func saveSplitViewState() {
