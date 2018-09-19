@@ -45,7 +45,7 @@ import RSCore
 		outlineView.dataSource = dataSource
 		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)
 		outlineView.setDraggingSourceOperationMask(.copy, forLocal: false)
-		outlineView.registerForDraggedTypes([FeedPasteboardWriter.feedUTIInternalType, FolderPasteboardWriter.folderUTIInternalType, FeedPasteboardWriter.feedUTIType])
+		outlineView.registerForDraggedTypes([FeedPasteboardWriter.feedUTIInternalType, FeedPasteboardWriter.feedUTIType])
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
