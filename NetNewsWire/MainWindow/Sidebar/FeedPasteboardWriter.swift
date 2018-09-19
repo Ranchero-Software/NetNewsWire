@@ -89,6 +89,7 @@ private extension FeedPasteboardWriter {
 
 		var d = [String: Any]()
 
+		d[Key.feedID] = feed.feedID
 		d[Key.url] = feed.url
 		if let homePageURL = feed.homePageURL {
 			d[Key.homePageURL] = homePageURL
