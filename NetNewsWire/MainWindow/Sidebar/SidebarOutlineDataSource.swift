@@ -44,8 +44,20 @@ import RSCore
 			// This will have to be revisited later when there are user-created smart feeds that *can* be dragged.
 			return nil
 		}
-		
+
 		return (node.representedObject as? PasteboardWriterOwner)?.pasteboardWriter
+	}
+
+	// MARK: - Drag and Drop
+
+	func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
+//		let draggingSourceOutlineView = info.draggingSource() as? NSOutlineView
+//		let isLocalDrop = draggingSourceOutlineView == outlineView
+		return NSDragOperation(rawValue: 0)
+	}
+
+	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
+		return false
 	}
 }
 
