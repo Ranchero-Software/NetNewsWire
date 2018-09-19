@@ -37,8 +37,14 @@ import RSCore
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> NSPasteboardWriting? {
-
 		let node = nodeForItem(item as AnyObject?)
+
+		guard !(node.representedObject is PseudoFeed) else {
+			// We don’t allow the built-in smart feeds to be dragged.
+			// This will have to be revisited later when there are user-created smart feeds that *can* be dragged.
+			return nil
+		}
+		
 		return (node.representedObject as? PasteboardWriterOwner)?.pasteboardWriter
 	}
 }
