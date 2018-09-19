@@ -143,7 +143,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 		
 		// If we don't recognize the changed object, we will test it for identity instead
-		// of equality.  This works well for us if the window display is displaying a
+		// of equality.  This works well for us if the window title is displaying a
 		// PsuedoFeed object.
 		if let currentObject = currentFeedOrFolder, let noteObject = noteObject {
 			if currentObject === noteObject as AnyObject {
