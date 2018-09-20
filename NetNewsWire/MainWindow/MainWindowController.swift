@@ -19,14 +19,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: "MainWindow")
 	static var didPositionWindowOnFirstRun = false
 
-	private var unreadCount: Int = 0 {
+	private var currentFeedOrFolder: AnyObject? = nil {
 		didSet {
-			if unreadCount != oldValue {
-				updateWindowTitle()
-			}
+			updateWindowTitle()
 		}
 	}
-
+	
 	private var shareToolbarItem: NSToolbarItem? {
 		return window?.toolbar?.existingItem(withIdentifier: .Share)
 	}
@@ -66,7 +64,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
+		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
@@ -99,13 +99,60 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		CoalescingQueue.standard.add(self, #selector(makeToolbarValidate))
 	}
 
-	@objc func unreadCountDidChange(_ note: Notification) {
-
-		if note.object is AccountManager {
-			unreadCount = AccountManager.shared.unreadCount
+	@objc func sidebarSelectionDidChange(_ note: Notification) {
+		
+		let selectedObjects = selectedObjectsInSidebar()
+		
+		// We can only meaninfully display one feed or folder at a time
+		guard selectedObjects?.count == 1 else {
+			currentFeedOrFolder = nil
+			return
 		}
+		
+		guard selectedObjects?[0] is DisplayNameProvider else {
+			currentFeedOrFolder = nil
+			return
+		}
+		
+		currentFeedOrFolder = selectedObjects?[0]
+		
+	}
+	
+	@objc func unreadCountDidChange(_ note: Notification) {
+		updateWindowTitleIfNecessary(note.object)
+	}
+	
+	@objc func displayNameDidChange(_ note: Notification) {
+		updateWindowTitleIfNecessary(note.object)
 	}
 
+	private func updateWindowTitleIfNecessary(_ noteObject: Any?) {
+		
+		if let folder = currentFeedOrFolder as? Folder, let noteObject = noteObject as? Folder {
+			if folder == noteObject {
+				updateWindowTitle()
+				return
+			}
+		}
+		
+		if let feed = currentFeedOrFolder as? Feed, let noteObject = noteObject as? Feed {
+			if feed == noteObject {
+				updateWindowTitle()
+				return
+			}
+		}
+		
+		// If we don't recognize the changed object, we will test it for identity instead
+		// of equality.  This works well for us if the window title is displaying a
+		// PsuedoFeed object.
+		if let currentObject = currentFeedOrFolder, let noteObject = noteObject {
+			if currentObject === noteObject as AnyObject {
+				updateWindowTitle()
+			}
+		}
+		
+	}
+	
 	// MARK: - Toolbar
 	
 	@objc func makeToolbarValidate() {
@@ -509,12 +556,30 @@ private extension MainWindowController {
 
 	func updateWindowTitle() {
 
-		if unreadCount < 1 {
+		var displayName: String? = nil
+		var unreadCount: Int? = nil
+		
+		if let displayNameProvider = currentFeedOrFolder as? DisplayNameProvider {
+			displayName = displayNameProvider.nameForDisplay
+		}
+		
+		if let unreadCountProvider = currentFeedOrFolder as? UnreadCountProvider {
+			unreadCount = unreadCountProvider.unreadCount
+		}
+		
+		if displayName != nil {
+			if unreadCount ?? 0 > 0 {
+				window?.title = "\(displayName!) (\(unreadCount!))"
+			}
+			else {
+				window?.title = "\(displayName!)"
+			}
+		}
+		else {
 			window?.title = appDelegate.appName!
+			return
 		}
-		else if unreadCount > 0 {
-			window?.title = "\(appDelegate.appName!) (\(unreadCount))"
-		}
+		
 	}
 
 	func saveSplitViewState() {
