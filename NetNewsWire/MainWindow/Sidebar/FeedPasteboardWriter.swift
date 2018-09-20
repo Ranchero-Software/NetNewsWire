@@ -26,6 +26,18 @@ extension Feed: PasteboardWriterOwner {
 	static let feedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.feed"
 	static let feedUTIInternalType = NSPasteboard.PasteboardType(rawValue: feedUTIInternal)
 
+	private struct Key {
+
+		static let url = "URL"
+		static let homePageURL = "homePageURL"
+		static let name = "name"
+
+		// Internal
+		static let accountID = "accountID"
+		static let feedID = "feedID"
+		static let editedName = "editedName"
+	}
+
 	init(feed: Feed) {
 
 		self.feed = feed
@@ -57,22 +69,19 @@ extension Feed: PasteboardWriterOwner {
 
 		return plist
 	}
+
+	// MARK: - Dragged Feed
+
+	static func draggedFeeds(with pasteboard: NSPasteboard) -> Set<DraggedFeed>? {
+		guard let items = pasteboard.pasteboardItems else {
+			return nil
+		}
+		let feeds = items.compactMap { draggedFeed(with: $0) }
+		return feeds.isEmpty ? nil : Set(feeds)
+	}
 }
 
 private extension FeedPasteboardWriter {
-
-	private struct Key {
-
-		static let url = "URL"
-		static let homePageURL = "homePageURL"
-		static let name = "name"
-
-		// Internal
-		static let accountID = "accountID"
-		static let feedID = "feedID"
-		static let editedName = "editedName"
-		static let unreadCount = "unreadCount"
-	}
 
 	func exportDictionary() -> [String: String] {
 
@@ -100,11 +109,51 @@ private extension FeedPasteboardWriter {
 		if let editedName = feed.editedName {
 			d[Key.editedName] = editedName
 		}
-		if feed.unreadCount > 0 {
-			d[Key.unreadCount] = feed.unreadCount
+		if let accountID = feed.account?.accountID {
+			d[Key.accountID] = accountID
 		}
 
 		return d
-
 	}
+
+	static func draggedFeed(with dictionary: [String: String]) -> DraggedFeed? {
+		guard let url = dictionary[Key.url] else {
+			return nil
+		}
+		let homePageURL = dictionary[Key.homePageURL]
+		let name = dictionary[Key.name]
+		let accountID = dictionary[Key.accountID]
+		let feedID = dictionary[Key.feedID]
+		let editedName = dictionary[Key.editedName]
+
+		return DraggedFeed(url: url, feedID: feedID, homePageURL: homePageURL, name: name, editedName: editedName, accountID: accountID)
+	}
+
+	static func draggedFeed(with pasteboardItem: NSPasteboardItem) -> DraggedFeed? {
+
+		// TODO: This needs to handle strings and URLs also.
+		var pasteboardType: NSPasteboard.PasteboardType?
+		if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIInternalType) {
+			pasteboardType = FeedPasteboardWriter.feedUTIInternalType
+		}
+		else if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIType) {
+			pasteboardType = FeedPasteboardWriter.feedUTIType
+		}
+		guard let foundType = pasteboardType else {
+			return nil
+		}
+
+		let feedDictionary = pasteboardItem.propertyList(forType: foundType) as! [String: String]
+		return draggedFeed(with: feedDictionary)
+	}
+}
+
+struct DraggedFeed: Hashable {
+
+	let url: String
+	let feedID: String?
+	let homePageURL: String?
+	let name: String?
+	let editedName: String?
+	let accountID: String?
 }

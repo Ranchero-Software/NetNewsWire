@@ -25,21 +25,21 @@ import Account
 
 	func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
 
-		return nodeForItem(item as AnyObject?).numberOfChildNodes
+		return nodeForItem(item).numberOfChildNodes
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
 
-		return nodeForItem(item as AnyObject?).childNodes[index]
+		return nodeForItem(item).childNodes[index]
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
 
-		return nodeForItem(item as AnyObject?).canHaveChildNodes
+		return nodeForItem(item).canHaveChildNodes
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> NSPasteboardWriting? {
-		let node = nodeForItem(item as AnyObject?)
+		let node = nodeForItem(item)
 		guard nodeRepresentsDraggableItem(node) else {
 			return nil
 		}
@@ -49,10 +49,29 @@ import Account
 	// MARK: - Drag and Drop
 
 	func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
+		let parentNode = nodeForItem(item)
+		if parentNode == treeController.rootNode {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+
+		guard let draggedFeeds = FeedPasteboardWriter.draggedFeeds(with: info.draggingPasteboard()) else {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+
 		let draggingSourceOutlineView = info.draggingSource() as? NSOutlineView
 		let isLocalDrop = draggingSourceOutlineView == outlineView
+
+//		// If NSOutlineViewDropOnItemIndex, retarget to parent of parent item, if possible.
+//		if index == NSOutlineViewDropOnItemIndex && !parentNode.canHaveChildNodes {
+//			guard let grandparentNode = parentNode.parent, grandparentNode.canHaveChildNodes else {
+//				return SidebarOutlineDataSource.dragOperationNone
+//			}
+//			outlineView.setDropItem(grandparentNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
+//			return isLocalDrop ? .move : .copy
+//		}
+
 		if isLocalDrop {
-			return validateLocalDrop(info, proposedItem: item, proposedChildIndex: index)
+			return validateLocalDrop(draggedFeeds, proposedItem: item, proposedChildIndex: index)
 		}
 		return SidebarOutlineDataSource.dragOperationNone
 	}
@@ -66,8 +85,7 @@ import Account
 
 private extension SidebarOutlineDataSource {
 
-	func nodeForItem(_ item: AnyObject?) -> Node {
-
+	func nodeForItem(_ item: Any?) -> Node {
 		if item == nil {
 			return treeController.rootNode
 		}
@@ -82,10 +100,10 @@ private extension SidebarOutlineDataSource {
 		return node.representedObject is Feed
 	}
 
-	func validateLocalDrop(_ info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
+	func validateLocalDrop(_ draggedFeeds: Set<DraggedFeed>, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
 
-//		let node = nodeForItem(item)
+//		let parentNode = nodeForItem(item)
+
 		return SidebarOutlineDataSource.dragOperationNone
-
 	}
 }
