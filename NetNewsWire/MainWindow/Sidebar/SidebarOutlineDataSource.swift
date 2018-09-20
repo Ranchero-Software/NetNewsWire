@@ -54,7 +54,7 @@ import Account
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 
-		guard let draggedFeeds = FeedPasteboardWriter.draggedFeeds(with: info.draggingPasteboard()) else {
+		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard()) else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 
@@ -100,7 +100,7 @@ private extension SidebarOutlineDataSource {
 		return node.representedObject is Feed
 	}
 
-	func validateLocalDrop(_ draggedFeeds: Set<DraggedFeed>, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
+	func validateLocalDrop(_ draggedFeeds: Set<PasteboardFeed>, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
 
 //		let parentNode = nodeForItem(item)
 
