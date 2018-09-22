@@ -87,6 +87,23 @@ import Account
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
+		let parentNode = nodeForItem(item)
+		if parentNode == treeController.rootNode {
+			return false
+		}
+		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard()), !draggedFeeds.isEmpty else {
+			return false
+		}
+		let contentsType = draggedFeedContentsType(draggedFeeds)
+		if contentsType == .empty || contentsType == .mixed || contentsType == .multipleNonLocal {
+			return false
+		}
+
+		if contentsType == .singleNonLocal {
+			let draggedNonLocalFeed = singleNonLocalFeed(from: draggedFeeds)!
+			return acceptSingleNonLocalFeedDrop(outlineView, draggedNonLocalFeed, parentNode, index)
+		}
+
 		return false
 	}
 }
@@ -173,13 +190,28 @@ private extension SidebarOutlineDataSource {
 		return node.representedObject is Account || node.representedObject is Folder
 	}
 
+	func nodeIsDropTarget(_ node: Node) -> Bool {
+		return node.canHaveChildNodes && nodeIsAccountOrFolder(node)
+	}
+
 	func ancestorThatCanAcceptNonLocalFeed(_ node: Node) -> Node? {
-		if node.canHaveChildNodes && nodeIsAccountOrFolder(node) {
+		if nodeIsDropTarget(node) {
 			return node
 		}
 		guard let parentNode = node.parent else {
 			return nil
 		}
 		return ancestorThatCanAcceptNonLocalFeed(parentNode)
+	}
+
+	func acceptSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> Bool {
+		guard nodeIsDropTarget(parentNode), index == NSOutlineViewDropOnItemIndex else {
+			return false
+		}
+		
+		// Show the add-feed sheet.
+		let folder = parentNode.representedObject as? Folder
+		appDelegate.addFeed(draggedFeed.url, name: nil, folder: folder)
+		return true
 	}
 }
