@@ -195,10 +195,14 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func ancestorThatCanAcceptNonLocalFeed(_ node: Node) -> Node? {
+		// Default to the On My Mac account, if needed, so we can always accept a nonlocal feed drop.
 		if nodeIsDropTarget(node) {
 			return node
 		}
 		guard let parentNode = node.parent else {
+			if let onMyMacAccountNode = treeController.nodeInTreeRepresentingObject(AccountManager.shared.localAccount) {
+				return onMyMacAccountNode
+			}
 			return nil
 		}
 		return ancestorThatCanAcceptNonLocalFeed(parentNode)
@@ -208,7 +212,7 @@ private extension SidebarOutlineDataSource {
 		guard nodeIsDropTarget(parentNode), index == NSOutlineViewDropOnItemIndex else {
 			return false
 		}
-		
+
 		// Show the add-feed sheet.
 		let folder = parentNode.representedObject as? Folder
 		appDelegate.addFeed(draggedFeed.url, name: nil, folder: folder)
