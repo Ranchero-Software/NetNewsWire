@@ -215,7 +215,7 @@ private extension SidebarOutlineDataSource {
 
 		// Show the add-feed sheet.
 		let folder = parentNode.representedObject as? Folder
-		appDelegate.addFeed(draggedFeed.url, name: nil, folder: folder)
+		appDelegate.addFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, folder: folder)
 		return true
 	}
 }
