@@ -34,9 +34,9 @@ struct PasteboardFeed: Hashable {
 	let accountID: String?
 
 	init(url: String, feedID: String?, homePageURL: String?, name: String?, editedName: String?, accountID: String?) {
-		self.url = url
+		self.url = url.rs_normalizedURL()
 		self.feedID = feedID
-		self.homePageURL = homePageURL
+		self.homePageURL = homePageURL?.rs_normalizedURL()
 		self.name = name
 		self.editedName = editedName
 		self.accountID = accountID
@@ -59,7 +59,6 @@ struct PasteboardFeed: Hashable {
 	}
 
 	init?(pasteboardItem: NSPasteboardItem) {
-		// TODO: This needs to handle strings and URLs also.
 		var pasteboardType: NSPasteboard.PasteboardType?
 		if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIInternalType) {
 			pasteboardType = FeedPasteboardWriter.feedUTIInternalType
@@ -67,15 +66,31 @@ struct PasteboardFeed: Hashable {
 		else if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIType) {
 			pasteboardType = FeedPasteboardWriter.feedUTIType
 		}
-		guard let foundType = pasteboardType else {
+		if let foundType = pasteboardType {
+			if let feedDictionary = pasteboardItem.propertyList(forType: foundType) as? PasteboardFeedDictionary {
+				self.init(dictionary: feedDictionary)
+				return
+			}
 			return nil
 		}
 
-		guard let feedDictionary = pasteboardItem.propertyList(forType: foundType) as? [String: String] else {
-			return nil
+		// Check for URL or a string that may be a URL.
+		if pasteboardItem.types.contains(.URL) {
+			pasteboardType = .URL
+		}
+		else if pasteboardItem.types.contains(.string) {
+			pasteboardType = .string
+		}
+		if let foundType = pasteboardType {
+			if let possibleURLString = pasteboardItem.string(forType: foundType) {
+				if possibleURLString.rs_stringMayBeURL() {
+					self.init(url: possibleURLString, feedID: nil, homePageURL: nil, name: nil, editedName: nil, accountID: nil)
+					return
+				}
+			}
 		}
 
-		self.init(dictionary: feedDictionary)
+		return nil
 	}
 
 	static func pasteboardFeeds(with pasteboard: NSPasteboard) -> Set<PasteboardFeed>? {
