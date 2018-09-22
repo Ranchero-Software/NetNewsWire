@@ -29,6 +29,7 @@ class AddFeedWindowController : NSWindowController {
 
 	private var urlString: String?
 	private var initialName: String?
+	private var initialFolder: Folder?
 	fileprivate weak var delegate: AddFeedWindowControllerDelegate?
 	fileprivate var folderTreeController: TreeController!
 
@@ -43,11 +44,12 @@ class AddFeedWindowController : NSWindowController {
 	
     var hostWindow: NSWindow!
 
-	convenience init(urlString: String?, name: String?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
+	convenience init(urlString: String?, name: String?, folder: Folder?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
 		
 		self.init(windowNibName: NSNib.Name(rawValue: "AddFeedSheet"))
 		self.urlString = urlString
 		self.initialName = name
+		self.initialFolder = folder
 		self.delegate = delegate
 		self.folderTreeController = folderTreeController
 	}
@@ -69,6 +71,10 @@ class AddFeedWindowController : NSWindowController {
 		}
 
 		folderPopupButton.menu = FolderTreeMenu.createFolderPopupMenu(with: folderTreeController.rootNode)
+		if let folder = initialFolder {
+			FolderTreeMenu.select(folder, in: folderPopupButton)
+		}
+		
 		updateUI()
 	}
 

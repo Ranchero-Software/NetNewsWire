@@ -97,10 +97,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
-	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?) {
+	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, folder: Folder?) {
 
 		addFeedController = AddFeedController(hostWindow: window)
-		addFeedController?.showAddFeedSheet(urlString, name)
+		addFeedController?.showAddFeedSheet(urlString, name, folder)
 	}
 	
 	func showAddFeedFromListOnMainWindow(_ feedListFeeds: [FeedListFeed]) {
@@ -256,14 +256,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	// MARK: Add Feed
 
-	func addFeed(_ urlString: String?, _ name: String? = nil) {
+	func addFeed(_ urlString: String?, name: String? = nil, folder: Folder? = nil) {
 
 		createAndShowMainWindow()
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
 
-		showAddFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name)
+		showAddFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, folder: folder)
 	}
 
 	// MARK: - Actions
@@ -416,7 +416,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 			return
 		}
-		addFeed(appNewsURLString, "NetNewsWire News")
+		addFeed(appNewsURLString, name: "NetNewsWire News")
 	}
 
 	@IBAction func openWebsite(_ sender: Any?) {

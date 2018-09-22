@@ -9,6 +9,7 @@
 import AppKit
 import RSCore
 import RSTree
+import Account
 
 class FolderTreeMenu {
 
@@ -25,7 +26,16 @@ class FolderTreeMenu {
 		
 		return menu
 	}
-	
+
+	static func select(_ folder: Folder, in popupButton: NSPopUpButton) {
+		for menuItem in popupButton.itemArray {
+			if let oneFolder = menuItem.representedObject as? Folder, oneFolder == folder {
+				popupButton.select(menuItem)
+				return
+			}
+		}
+	}
+
 	private static func addFolderItemsToMenuWithNodes(menu: NSMenu, nodes: [Node], indentationLevel: Int) {
 		
 		nodes.forEach { (oneNode) in
