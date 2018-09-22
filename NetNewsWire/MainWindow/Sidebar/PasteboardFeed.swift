@@ -32,6 +32,7 @@ struct PasteboardFeed: Hashable {
 	let name: String?
 	let editedName: String?
 	let accountID: String?
+	let isLocalFeed: Bool
 
 	init(url: String, feedID: String?, homePageURL: String?, name: String?, editedName: String?, accountID: String?) {
 		self.url = url.rs_normalizedURL()
@@ -40,6 +41,7 @@ struct PasteboardFeed: Hashable {
 		self.name = name
 		self.editedName = editedName
 		self.accountID = accountID
+		self.isLocalFeed = accountID != nil
 	}
 
 	// MARK: - Reading

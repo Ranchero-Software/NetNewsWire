@@ -54,12 +54,22 @@ import Account
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 
-		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard()) else {
+		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard()), !draggedFeeds.isEmpty else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 
-		let draggingSourceOutlineView = info.draggingSource() as? NSOutlineView
-		let isLocalDrop = draggingSourceOutlineView == outlineView
+		let contentsType = draggedFeedContentsType(draggedFeeds)
+		if contentsType == .empty || contentsType == .mixed || contentsType == .multipleNonLocal {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+
+		if contentsType == .singleNonLocal {
+			let draggedNonLocalFeed = singleNonLocalFeed(from: draggedFeeds)!
+			return validateSingleNonLocalFeedDrop(outlineView, draggedNonLocalFeed, parentNode, index)
+		}
+
+//		let draggingSourceOutlineView = info.draggingSource() as? NSOutlineView
+//		let isLocalDrop = draggingSourceOutlineView == outlineView
 
 //		// If NSOutlineViewDropOnItemIndex, retarget to parent of parent item, if possible.
 //		if index == NSOutlineViewDropOnItemIndex && !parentNode.canHaveChildNodes {
@@ -70,9 +80,9 @@ import Account
 //			return isLocalDrop ? .move : .copy
 //		}
 
-		if isLocalDrop {
-			return validateLocalDrop(draggedFeeds, proposedItem: item, proposedChildIndex: index)
-		}
+//		if isLocalDrop {
+//			return validateLocalDrop(draggedFeeds, parentNode: parentNode, proposedChildIndex: index)
+//		}
 		return SidebarOutlineDataSource.dragOperationNone
 	}
 
@@ -100,10 +110,76 @@ private extension SidebarOutlineDataSource {
 		return node.representedObject is Feed
 	}
 
-	func validateLocalDrop(_ draggedFeeds: Set<PasteboardFeed>, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
+	// MARK: - Drag and Drop
+
+	enum DraggedFeedsContentsType {
+		case empty, singleLocal, singleNonLocal, multipleLocal, multipleNonLocal, mixed
+	}
+
+	func draggedFeedContentsType(_ draggedFeeds: Set<PasteboardFeed>) -> DraggedFeedsContentsType {
+		if draggedFeeds.isEmpty {
+			return .empty
+		}
+		if draggedFeeds.count == 1 {
+			let feed = draggedFeeds.first!
+			return feed.isLocalFeed ? .singleLocal : .singleNonLocal
+		}
+
+		var hasLocalFeed = false
+		var hasNonLocalFeed = false
+		for feed in draggedFeeds {
+			if feed.isLocalFeed {
+				hasLocalFeed = true
+			}
+			else {
+				hasNonLocalFeed = true
+			}
+			if hasLocalFeed && hasNonLocalFeed {
+				return .mixed
+			}
+		}
+		if hasLocalFeed {
+			return .multipleLocal
+		}
+		return .multipleNonLocal
+	}
+
+	func singleNonLocalFeed(from feeds: Set<PasteboardFeed>) -> PasteboardFeed? {
+		guard feeds.count == 1, let feed = feeds.first else {
+			return nil
+		}
+		return feed.isLocalFeed ? nil : feed
+	}
+
+	func validateLocalDrop(_ draggedFeeds: Set<PasteboardFeed>, parentNode: Node, proposedChildIndex index: Int) -> NSDragOperation {
 
 //		let parentNode = nodeForItem(item)
 
 		return SidebarOutlineDataSource.dragOperationNone
+	}
+
+	func validateSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+		// A non-local feed should always drag on to an Account or Folder node, with NSOutlineViewDropOnItemIndex — since we don’t know where it would sort till we read the feed.
+		guard let dropTargetNode = ancestorThatCanAcceptNonLocalFeed(parentNode) else {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		if parentNode !== dropTargetNode || index != NSOutlineViewDropOnItemIndex {
+			outlineView.setDropItem(dropTargetNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
+		}
+		return .copy
+	}
+
+	func nodeIsAccountOrFolder(_ node: Node) -> Bool {
+		return node.representedObject is Account || node.representedObject is Folder
+	}
+
+	func ancestorThatCanAcceptNonLocalFeed(_ node: Node) -> Node? {
+		if node.canHaveChildNodes && nodeIsAccountOrFolder(node) {
+			return node
+		}
+		guard let parentNode = node.parent else {
+			return nil
+		}
+		return ancestorThatCanAcceptNonLocalFeed(parentNode)
 	}
 }
