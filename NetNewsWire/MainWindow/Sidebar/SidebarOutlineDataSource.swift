@@ -49,43 +49,27 @@ import Account
 	// MARK: - Drag and Drop
 
 	func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
-		let parentNode = nodeForItem(item)
-		if parentNode == treeController.rootNode {
-			return SidebarOutlineDataSource.dragOperationNone
-		}
-
 		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard()), !draggedFeeds.isEmpty else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 
+		let parentNode = nodeForItem(item)
 		let contentsType = draggedFeedContentsType(draggedFeeds)
-		if contentsType == .empty || contentsType == .mixed || contentsType == .multipleNonLocal {
-			return SidebarOutlineDataSource.dragOperationNone
-		}
 
-		if contentsType == .singleNonLocal {
+		switch contentsType {
+		case .singleNonLocal:
 			let draggedNonLocalFeed = singleNonLocalFeed(from: draggedFeeds)!
 			return validateSingleNonLocalFeedDrop(outlineView, draggedNonLocalFeed, parentNode, index)
+		case .singleLocal:
+			let draggedFeed = draggedFeeds.first!
+			return validateSingleLocalFeedDrop(outlineView, draggedFeed, parentNode, index)
+		case .multipleLocal:
+			return validateLocalFeedsDrop(outlineView, draggedFeeds, parentNode, index)
+		case .multipleNonLocal, .mixed, .empty:
+			return SidebarOutlineDataSource.dragOperationNone
 		}
-
-//		let draggingSourceOutlineView = info.draggingSource() as? NSOutlineView
-//		let isLocalDrop = draggingSourceOutlineView == outlineView
-
-//		// If NSOutlineViewDropOnItemIndex, retarget to parent of parent item, if possible.
-//		if index == NSOutlineViewDropOnItemIndex && !parentNode.canHaveChildNodes {
-//			guard let grandparentNode = parentNode.parent, grandparentNode.canHaveChildNodes else {
-//				return SidebarOutlineDataSource.dragOperationNone
-//			}
-//			outlineView.setDropItem(grandparentNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
-//			return isLocalDrop ? .move : .copy
-//		}
-
-//		if isLocalDrop {
-//			return validateLocalDrop(draggedFeeds, parentNode: parentNode, proposedChildIndex: index)
-//		}
-		return SidebarOutlineDataSource.dragOperationNone
 	}
-
+	
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
 		let parentNode = nodeForItem(item)
 		if parentNode == treeController.rootNode {
@@ -168,13 +152,6 @@ private extension SidebarOutlineDataSource {
 		return feed.isLocalFeed ? nil : feed
 	}
 
-	func validateLocalDrop(_ draggedFeeds: Set<PasteboardFeed>, parentNode: Node, proposedChildIndex index: Int) -> NSDragOperation {
-
-//		let parentNode = nodeForItem(item)
-
-		return SidebarOutlineDataSource.dragOperationNone
-	}
-
 	func validateSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		// A non-local feed should always drag on to an Account or Folder node, with NSOutlineViewDropOnItemIndex — since we don’t know where it would sort till we read the feed.
 		guard let dropTargetNode = ancestorThatCanAcceptNonLocalFeed(parentNode) else {
@@ -186,12 +163,51 @@ private extension SidebarOutlineDataSource {
 		return .copy
 	}
 
+	func validateSingleLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+		// A local feed should always drag on to an Account or Folder node, and we can provide an index.
+		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		if nodeHasChildRepresentingDraggedFeed(dropTargetNode, draggedFeed) {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		let updatedIndex = indexWhereDraggedFeedWouldAppear(dropTargetNode, draggedFeed)
+		if parentNode !== dropTargetNode || index != updatedIndex {
+			outlineView.setDropItem(dropTargetNode, dropChildIndex: updatedIndex)
+		}
+		return .move
+	}
+
+	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+		// Local feeds should always drag on to an Account or Folder node, and index should be NSOutlineViewDropOnItemIndex since we can’t provide multiple indexes.
+		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		if nodeHasChildRepresentingAnyDraggedFeed(dropTargetNode, draggedFeeds) {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		if parentNode !== dropTargetNode || index != NSOutlineViewDropOnItemIndex {
+			outlineView.setDropItem(dropTargetNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
+		}
+		return .move
+	}
+
 	func nodeIsAccountOrFolder(_ node: Node) -> Bool {
 		return node.representedObject is Account || node.representedObject is Folder
 	}
 
 	func nodeIsDropTarget(_ node: Node) -> Bool {
 		return node.canHaveChildNodes && nodeIsAccountOrFolder(node)
+	}
+
+	func ancestorThatCanAcceptLocalFeed(_ node: Node) -> Node? {
+		if nodeIsDropTarget(node) {
+			return node
+		}
+		guard let parentNode = node.parent else {
+			return nil
+		}
+		return ancestorThatCanAcceptLocalFeed(parentNode)
 	}
 
 	func ancestorThatCanAcceptNonLocalFeed(_ node: Node) -> Node? {
@@ -217,5 +233,53 @@ private extension SidebarOutlineDataSource {
 		let folder = parentNode.representedObject as? Folder
 		appDelegate.addFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, folder: folder)
 		return true
+	}
+
+	func nodeHasChildRepresentingDraggedFeed(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Bool {
+		return nodeHasChildRepresentingAnyDraggedFeed(parentNode, Set([draggedFeed]))
+	}
+
+	func nodeRepresentsAnyDraggedFeed(_ node: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
+		guard let feed = node.representedObject as? Feed else {
+			return false
+		}
+		for draggedFeed in draggedFeeds {
+			if feed.url == draggedFeed.url {
+				return true
+			}
+		}
+		return false
+	}
+
+	func nodeHasChildRepresentingAnyDraggedFeed(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
+		for node in parentNode.childNodes {
+			if nodeRepresentsAnyDraggedFeed(node, draggedFeeds) {
+				return true
+			}
+		}
+		return false
+	}
+
+	func indexWhereDraggedFeedWouldAppear(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Int {
+		let draggedFeedWrapper = PasteboardFeedObjectWrapper(pasteboardFeed: draggedFeed)
+		let draggedFeedNode = Node(representedObject: draggedFeedWrapper, parent: nil)
+		let nodes = parentNode.childNodes + [draggedFeedNode]
+
+		// Revisit if the tree controller can ever be sorted in some other way.
+		let sortedNodes = nodes.sortedAlphabeticallyWithFoldersAtEnd()
+		let index = sortedNodes.firstIndex(of: draggedFeedNode)!
+		return index
+	}
+}
+
+final class PasteboardFeedObjectWrapper: DisplayNameProvider {
+
+	var nameForDisplay: String {
+		return pasteboardFeed.editedName ?? pasteboardFeed.name ?? ""
+	}
+	let pasteboardFeed: PasteboardFeed
+
+	init(pasteboardFeed: PasteboardFeed) {
+		self.pasteboardFeed = pasteboardFeed
 	}
 }
