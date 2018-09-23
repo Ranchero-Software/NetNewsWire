@@ -71,24 +71,25 @@ import Account
 	}
 	
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
-		let parentNode = nodeForItem(item)
-		if parentNode == treeController.rootNode {
-			return false
-		}
 		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard()), !draggedFeeds.isEmpty else {
 			return false
 		}
-		let contentsType = draggedFeedContentsType(draggedFeeds)
-		if contentsType == .empty || contentsType == .mixed || contentsType == .multipleNonLocal {
-			return false
-		}
 
-		if contentsType == .singleNonLocal {
+		let parentNode = nodeForItem(item)
+		let contentsType = draggedFeedContentsType(draggedFeeds)
+
+		switch contentsType {
+		case .singleNonLocal:
 			let draggedNonLocalFeed = singleNonLocalFeed(from: draggedFeeds)!
 			return acceptSingleNonLocalFeedDrop(outlineView, draggedNonLocalFeed, parentNode, index)
+		case .singleLocal:
+			let draggedFeed = draggedFeeds.first!
+			return acceptSingleLocalFeedDrop(outlineView, draggedFeed, parentNode, index)
+		case .multipleLocal:
+			return acceptLocalFeedsDrop(outlineView, draggedFeeds, parentNode, index)
+		case .multipleNonLocal, .mixed, .empty:
+			return false
 		}
-
-		return false
 	}
 }
 
@@ -178,6 +179,10 @@ private extension SidebarOutlineDataSource {
 		return .move
 	}
 
+	func acceptSingleLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> Bool {
+		return false
+	}
+
 	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		// Local feeds should always drag on to an Account or Folder node, and index should be NSOutlineViewDropOnItemIndex since we can’t provide multiple indexes.
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
@@ -190,6 +195,10 @@ private extension SidebarOutlineDataSource {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
 		}
 		return .move
+	}
+
+	func acceptLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> Bool {
+		return false
 	}
 
 	func nodeIsAccountOrFolder(_ node: Node) -> Bool {
