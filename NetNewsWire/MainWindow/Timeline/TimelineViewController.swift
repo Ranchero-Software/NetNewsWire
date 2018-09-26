@@ -30,12 +30,14 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			if articles != oldValue {
 				dataSource.articles = articles
 				updateShowAvatars()
+				articleRowMap = [String: Int]()
 				tableView.reloadData()
 			}
 		}
 	}
 
 	var undoableCommands = [UndoableCommand]()
+	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	private var cellAppearance: TimelineCellAppearance!
 	private var cellAppearanceWithAvatar: TimelineCellAppearance!
 	private var showFeedNames = false {
@@ -695,7 +697,48 @@ private extension TimelineViewController {
 		block()
 		restoreSelection(savedSelection)
 	}
-	
+
+	func row(for articleID: String) -> Int? {
+		updateArticleRowMapIfNeeded()
+		return articleRowMap[articleID]
+	}
+
+	func row(for article: Article) -> Int? {
+		return row(for: article.articleID)
+	}
+
+	func updateArticleRowMap() {
+		var rowMap = [String: Int]()
+		var index = 0
+		articles.forEach { (article) in
+			rowMap[article.articleID] = index
+			index += 1
+		}
+		articleRowMap = rowMap
+	}
+
+	func updateArticleRowMapIfNeeded() {
+		if articleRowMap.isEmpty {
+			updateArticleRowMap()
+		}
+	}
+
+	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
+
+		var indexes = IndexSet()
+
+		articleIDs.forEach { (articleID) in
+			guard let oneIndex = row(for: articleID) else {
+				return
+			}
+			if oneIndex != NSNotFound {
+				indexes.insert(oneIndex)
+			}
+		}
+
+		return indexes
+	}
+
 	// MARK: Fetching Articles
 
 	func fetchArticles() {
