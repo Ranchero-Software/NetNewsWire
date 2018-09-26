@@ -8,8 +8,6 @@ CREATE TABLE if not EXISTS authorsLookup (authorID TEXT NOT NULL, articleID TEXT
 CREATE TABLE if not EXISTS attachments(attachmentID TEXT NOT NULL PRIMARY KEY, url TEXT NOT NULL, mimeType TEXT, title TEXT, sizeInBytes INTEGER, durationInSeconds INTEGER);
 CREATE TABLE if not EXISTS attachmentsLookup(attachmentID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(attachmentID, articleID));
 
-CREATE INDEX if not EXISTS articles_feedID_index on articles (feedID);
+CREATE INDEX if not EXISTS articles_feedID_datePublished_articleID on articles (feedID, datePublished, articleID);
 
-CREATE INDEX if not EXISTS statuses_read_index on statuses (read);
 CREATE INDEX if not EXISTS statuses_starred_index on statuses (starred);
-
