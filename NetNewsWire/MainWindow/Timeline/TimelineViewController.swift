@@ -17,6 +17,8 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	@IBOutlet var contextualMenuDelegate: TimelineContextualMenuDelegate?
 	@IBOutlet var dataSource: TimelineDataSource!
 
+	var sharingServiceDelegate: NSSharingServiceDelegate?
+	
 	var selectedArticles: [Article] {
 		return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
 	}
@@ -127,6 +129,10 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 				didRegisterForNotifications = true
 		}
+	}
+	
+	override func viewDidAppear() {
+		sharingServiceDelegate = SharingServiceDelegate(self.view.window)
 	}
 
 	// MARK: Appearance Change
