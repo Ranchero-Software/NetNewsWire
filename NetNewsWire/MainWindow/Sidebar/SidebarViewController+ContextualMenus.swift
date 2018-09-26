@@ -73,6 +73,12 @@ extension SidebarViewController {
 
 	@objc func deleteFromContextualMenu(_ sender: Any?) {
 
+		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [AnyObject] else {
+			return
+		}
+		
+		let nodes = objects.compactMap { treeController.nodeInTreeRepresentingObject($0) }
+		deleteNodes(nodes)
 	}
 
 	@objc func renameFromContextualMenu(_ sender: Any?) {
@@ -141,7 +147,7 @@ private extension SidebarViewController {
 		menu.addItem(NSMenuItem.separator())
 
 		menu.addItem(renameMenuItem(feed))
-//		menu.addItem(deleteMenuItem([feed]))
+		menu.addItem(deleteMenuItem([feed]))
 
 		return menu
 	}
@@ -156,7 +162,7 @@ private extension SidebarViewController {
 		}
 
 		menu.addItem(renameMenuItem(folder))
-//		menu.addItem(deleteMenuItem([folder]))
+		menu.addItem(deleteMenuItem([folder]))
 
 		return menu.numberOfItems > 0 ? menu : nil
 	}
@@ -173,18 +179,16 @@ private extension SidebarViewController {
 
 	func menuForMultipleObjects(_ objects: [Any]) -> NSMenu? {
 
-//		guard allObjectsAreFeedsAndOrFolders(objects) else {
-//			return nil
-//		}
-
 		let menu = NSMenu(title: "")
 
 		if anyObjectInArrayHasNonZeroUnreadCount(objects) {
 			menu.addItem(markAllReadMenuItem(objects))
-//			menu.addItem(NSMenuItem.separator())
 		}
 
-//		menu.addItem(deleteMenuItem(objects))
+		if allObjectsAreFeedsAndOrFolders(objects) {
+			menu.addSeparatorIfNeeded()
+			menu.addItem(deleteMenuItem(objects))
+		}
 
 		return menu.numberOfItems > 0 ? menu : nil
 	}
