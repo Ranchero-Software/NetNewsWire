@@ -166,7 +166,8 @@ private extension TimelineViewController {
 			return nil
 		}
 
-		let items = articles.map { ArticlePasteboardWriter(article: $0) }
+		let sortedArticles = selectedArticles.sortedByDate(.orderedAscending)
+		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
 		let standardServices = NSSharingService.sharingServices(forItems: items)
 		let customServices = SharingServicePickerDelegate.customSharingServices(for: items)
 		let services = standardServices + customServices
@@ -176,6 +177,7 @@ private extension TimelineViewController {
 
 		let menu = NSMenu(title: NSLocalizedString("Share", comment: "Share menu name"))
 		services.forEach { (service) in
+			service.delegate = sharingServiceDelegate
 			let menuItem = NSMenuItem(title: service.menuItemTitle, action: #selector(performShareServiceFromContextualMenu(_:)), keyEquivalent: "")
 			menuItem.image = service.image
 			let sharingCommandInfo = SharingCommandInfo(service: service, items: items)

@@ -363,7 +363,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return
 		}
 
-		let items = selectedArticles.map { ArticlePasteboardWriter(article: $0) }
+		let sortedArticles = selectedArticles.sortedByDate(.orderedAscending)
+		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
 		let sharingServicePicker = NSSharingServicePicker(items: items)
 		sharingServicePicker.delegate = sharingServicePickerDelegate
 		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
