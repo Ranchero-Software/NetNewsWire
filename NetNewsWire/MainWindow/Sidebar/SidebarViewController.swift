@@ -54,6 +54,7 @@ import RSCore
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidRequestSidebarSelection(_:)), name: .UserDidRequestSidebarSelection, object: nil)
 
 		outlineView.reloadData()
 
@@ -120,6 +121,14 @@ import RSCore
 		configureCellsForRepresentedObject(object as AnyObject)
 	}
 
+	@objc func userDidRequestSidebarSelection(_ note: Notification) {
+		
+		guard let feed = note.userInfo?[UserInfoKey.feed] else {
+			return
+		}
+		revealAndSelectRepresentedObject(feed as AnyObject)
+	}
+	
 	// MARK: - Actions
 
 	@IBAction func delete(_ sender: AnyObject?) {
