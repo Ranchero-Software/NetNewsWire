@@ -672,7 +672,9 @@ private extension Account {
 		do {
 			fileData = try Data(contentsOf: opmlFileURL)
 		} catch {
-			NSApplication.shared.presentError(error)
+			// Commented out because it’s not an error on first run.
+			// TODO: make it so we know if it’s first run or not.
+			//NSApplication.shared.presentError(error)
 			return
 		}
 		guard let opmlData = fileData else {
@@ -811,6 +813,8 @@ private extension Account {
 		database.fetchAllNonZeroUnreadCounts { (unreadCountDictionary) in
 
 			if unreadCountDictionary.isEmpty {
+				self.fetchingAllUnreadCounts = false
+				self.updateUnreadCount()
 				return
 			}
 

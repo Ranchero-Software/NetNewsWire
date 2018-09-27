@@ -45,13 +45,9 @@ struct FeedsImporter {
 		let feedsToImport = feeds(with: feedDictionaries, account: account)
 		
 		BatchUpdate.shared.perform {
-			for feed in feedsToImport {
-				if !account.hasFeed(with: feed.feedID) {
-					account.addFeed(feed, to: nil)
-				}
-			}
+			feedsToImport.forEach{ account.addFeed($0, to: nil) }
 		}
-		account.dirty = true
+		account.structureDidChange()
 	}
 	
 	private static func feeds(with feedDictionaries: [DiskFeedDictionary], account: Account) -> Set<Feed> {
