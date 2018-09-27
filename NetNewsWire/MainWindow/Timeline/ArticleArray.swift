@@ -50,20 +50,6 @@ extension Array where Element == Article {
 		})
 	}
 
-	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
-
-		var indexes = IndexSet()
-
-		articleIDs.forEach { (articleID) in
-			let oneIndex = rowForArticleID(articleID)
-			if oneIndex != NSNotFound {
-				indexes.insert(oneIndex)
-			}
-		}
-
-		return indexes
-	}
-
 	func sortedByDate(_ sortDirection: ComparisonResult) -> ArticleArray {
 
 		let articles = sorted { (article1, article2) -> Bool in
@@ -118,19 +104,3 @@ extension Array where Element == Article {
 	}
 }
 
-private extension Array where Element == Article {
-
-	func rowForArticleID(_ articleID: String) -> Int {
-
-		if let index = index(where: { $0.articleID == articleID }) {
-			return index
-		}
-
-		return NSNotFound
-	}
-
-	func rowForArticle(_ article: Article) -> Int {
-
-		return rowForArticleID(article.articleID)
-	}
-}

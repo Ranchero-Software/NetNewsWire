@@ -361,7 +361,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
 			return
 		}
-		reloadCellsForArticleIDs(articles.articleIDs())
+		reloadVisibleCells(for: articles)
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
@@ -369,10 +369,15 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		let articlesToReload = articles.filter { (article) -> Bool in
+		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
+			guard let article = articles.articleAtRow(row) else {
+				return false
+			}
 			return feed == article.feed
 		}
-		reloadCellsForArticles(articlesToReload)
+		if let indexesToReload = indexesToReload {
+			reloadCells(for: indexesToReload)
+		}
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
@@ -432,22 +437,32 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		return nil
 	}
 	
-	private func reloadCellsForArticles(_ articles: [Article]) {
-		
-		reloadCellsForArticleIDs(Set(articles.articleIDs()))
+	private func reloadVisibleCells(for articles: [Article]) {
+		reloadVisibleCells(for: Set(articles.articleIDs()))
+	}
+
+	private func reloadVisibleCells(for articles: Set<Article>) {
+		reloadVisibleCells(for: articles.articleIDs())
 	}
 	
-	private func reloadCellsForArticleIDs(_ articleIDs: Set<String>) {
-
+	private func reloadVisibleCells(for articleIDs: Set<String>) {
 		if articleIDs.isEmpty {
 			return
 		}
-		let indexes = articles.indexesForArticleIDs(articleIDs)
-		reloadCells(for: indexes)
+		let indexes = indexesForArticleIDs(articleIDs)
+		reloadVisibleCells(for: indexes)
+	}
+
+	private func reloadVisibleCells(for indexes: IndexSet) {
+		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
+			return indexes.contains(row)
+		}
+		if let indexesToReload = indexesToReload {
+			reloadCells(for: indexesToReload)
+		}
 	}
 
 	private func reloadCells(for indexes: IndexSet) {
-
 		if indexes.isEmpty {
 			return
 		}
@@ -776,7 +791,7 @@ private extension TimelineViewController {
 
 	func selectArticles(_ articleIDs: [String]) {
 
-		let indexesToSelect = articles.indexesForArticleIDs(Set(articleIDs))
+		let indexesToSelect = indexesForArticleIDs(Set(articleIDs))
 		if indexesToSelect.isEmpty {
 			tableView.deselectAll(self)
 			return
