@@ -307,6 +307,14 @@
 			<key>url</key>
 			<string>https://marcysutton.com/feed/</string>
 		</dict>
+		<dict>
+			<key>name</key>
+			<string>Hillel Wayne</string>
+			<key>homePageURL</key>
+			<string>https://www.hillelwayne.com/</string>
+			<key>url</key>
+			<string>https://www.hillelwayne.com/index.xml</string>
+		</dict>
 	</array>
 	<key>Writers</key>
 	<array>
