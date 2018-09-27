@@ -127,25 +127,7 @@ import RSCore
 		if outlineView.selectionIsEmpty {
 			return
 		}
-
-		let nodesToDelete = treeController.normalizedSelectedNodes(selectedNodes)
-        
-		guard let undoManager = undoManager, let deleteCommand = DeleteFromSidebarCommand(nodesToDelete: nodesToDelete, treeController: treeController, undoManager: undoManager) else {
-            return
-        }
-        
-		animatingChanges = true
-		outlineView.beginUpdates()
-
-		let indexSetsGroupedByParent = Node.indexSetsGroupedByParent(nodesToDelete)
-		for (parent, indexSet) in indexSetsGroupedByParent {
-			outlineView.removeItems(at: indexSet, inParent: parent.isRoot ? nil : parent, withAnimation: [.slideDown])
-		}
-
-		outlineView.endUpdates()
-		
-		runCommand(deleteCommand)
-		animatingChanges = false
+		deleteNodes(selectedNodes)
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -278,6 +260,31 @@ import RSCore
 
 		postSidebarSelectionDidChangeNotification(selectedObjects.isEmpty ? nil : selectedObjects)
     }
+
+	//MARK: - Node Manipulation
+	
+	func deleteNodes(_ nodes: [Node]) {
+		
+		let nodesToDelete = treeController.normalizedSelectedNodes(nodes)
+		
+		guard let undoManager = undoManager, let deleteCommand = DeleteFromSidebarCommand(nodesToDelete: nodesToDelete, treeController: treeController, undoManager: undoManager) else {
+			return
+		}
+		
+		animatingChanges = true
+		outlineView.beginUpdates()
+		
+		let indexSetsGroupedByParent = Node.indexSetsGroupedByParent(nodesToDelete)
+		for (parent, indexSet) in indexSetsGroupedByParent {
+			outlineView.removeItems(at: indexSet, inParent: parent.isRoot ? nil : parent, withAnimation: [.slideDown])
+		}
+		
+		outlineView.endUpdates()
+		
+		runCommand(deleteCommand)
+		animatingChanges = false
+	}
+
 }
 
 // MARK: - NSUserInterfaceValidations
