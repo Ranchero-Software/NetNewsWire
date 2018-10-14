@@ -7,6 +7,29 @@
         <language>en</language>
 
 	<item>
+          <title>NetNewsWire 5.0d7</title>
+            <description><![CDATA[
+            
+            <p>Multiple significant performance improvements that will be especially noticeable with high feed counts.</p>
+            <p>Sidebar: Delete command now in contextual menu and in gear menu.</p>
+            <p>Sidebar: scrolls to show feed or folder, when needed, when going to the next unread article.</p>
+            <p>Timeline: contextual menu command to select feed in sidebar.</p>
+            <p>Detail view: fixed — at least mostly — an issue where the detail view’s web view might flash white while in dark mode.</p>
+            <p>Detail view: give URL status bar a dark background color when in Dark Mode.</p>
+            <p>Sharing: sort articles by publication date on sharing.<p>
+            <p>Sharing: set email subject when sharing to Mail.</p>
+            <p>Window title now reflects sidebar selection. (Which will only be noticeable in the Window menu, but will be meaningful  when we add support for tabs.)</p>
+            <p>Dock icon menu now includes Refresh command.</p>
+            <p>Subscriptions are now stored as an OPML file instead of a plist, which means you don’t even have to export to OPML to get an OPML version of your feeds. Feed metadata is now stored in Settings.odb.</p>
+            <p>Toolbar: Mark As Read toggles back and forth between states.</p>
+            <p>Feed Directory: Add to Feeds button now works, though we want to revisit the UI.</p>
+    						]]></description>
+            <pubDate>Wed, 26 Sep 2018 22:10:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d7.zip" sparkle:version="1357" sparkle:shortVersionString="5.0d7" length="7799513" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
           <title>NetNewsWire 5.0d6</title>
             <description><![CDATA[
             
