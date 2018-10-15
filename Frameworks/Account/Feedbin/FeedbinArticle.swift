@@ -12,6 +12,8 @@ import RSCore
 
 struct FeedbinArticle {
 
+	// https://github.com/feedbin/feedbin-api/blob/master/content/entries.md
+	//
 	//	"id": 2077,
 	//	"feed_id": 135,
 	//	"title": "Objective-C Runtime Releases",
@@ -21,6 +23,16 @@ struct FeedbinArticle {
 	//	"summary": "Bavarious created a GitHub repository that shows the differences between versions of Apple\u2019s Objective-C runtime that shipped with different versions of Mac OS X.",
 	//	"published": "2013-02-03T01:00:19.000000Z",
 	//	"created_at": "2013-02-04T01:00:19.127893Z"
+
+	let syncID: String
+	let feedID: String
+	let title: String?
+	let url: String?
+	let authorName: String?
+	let contentHTML: String?
+	let summary: String?
+	let datePublished: Date?
+	let dateArrived: Date?
 
 	struct Key {
 		static let syncID = "id"
@@ -33,16 +45,6 @@ struct FeedbinArticle {
 		static let datePublished = "published"
 		static let dateArrived = "created_at"
 	}
-
-	let syncID: String
-	let feedID: String
-	let title: String?
-	let url: String?
-	let authorName: String?
-	let contentHTML: String?
-	let summary: String?
-	let datePublished: Date?
-	let dateArrived: Date?
 
 	init?(jsonDictionary: JSONDictionary) {
 

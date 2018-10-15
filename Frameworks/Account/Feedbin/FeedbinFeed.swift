@@ -1,5 +1,5 @@
 //
-//  FeedbinSubscription.swift
+//  FeedbinFeed.swift
 //  Account
 //
 //  Created by Brent Simmons on 12/10/17.
@@ -10,7 +10,16 @@ import Foundation
 import RSCore
 import RSParser
 
-struct FeedbinSubscription {
+struct FeedbinFeed {
+
+	// https://github.com/feedbin/feedbin-api/blob/master/content/feeds.md
+	//
+	//	"id": 525,
+	//	"created_at": "2013-03-12T11:30:25.209432Z",
+	//	"feed_id": 47,
+	//	"title": "Daring Fireball",
+	//	"feed_url": "http://daringfireball.net/index.xml",
+	//	"site_url": "http://daringfireball.net/"
 
 	let subscriptionID: String
 	let feedID: String
@@ -18,13 +27,6 @@ struct FeedbinSubscription {
 	let name: String?
 	let url: String
 	let homePageURL: String?
-
-	//	"id": 525,
-	//	"created_at": "2013-03-12T11:30:25.209432Z",
-	//	"feed_id": 47,
-	//	"title": "Daring Fireball",
-	//	"feed_url": "http://daringfireball.net/index.xml",
-	//	"site_url": "http://daringfireball.net/"
 
 	struct Key {
 		static let subscriptionID = "id"
@@ -47,8 +49,8 @@ struct FeedbinSubscription {
 			return nil
 		}
 
-		self.subscriptionID = "\(subscriptionIDInt)"
-		self.feedID = "\(feedIDInt)"
+		self.subscriptionID = String(subscriptionIDInt)
+		self.feedID = String(feedIDInt)
 		self.url = url
 
 		if let creationDateString = dictionary[Key.creationDate] as? String {
@@ -62,9 +64,9 @@ struct FeedbinSubscription {
 		self.homePageURL = dictionary[Key.homePageURL] as? String
 	}
 
-	static func subscriptions(with array: JSONArray) -> [FeedbinSubscription]? {
+	static func feeds(with array: JSONArray) -> [FeedbinFeed]? {
 
-		let subs = array.compactMap { FeedbinSubscription(dictionary: $0) }
+		let subs = array.compactMap { FeedbinFeed(dictionary: $0) }
 		return subs.isEmpty ? nil : subs
 	}
 }
