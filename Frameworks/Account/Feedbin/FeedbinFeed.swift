@@ -21,8 +21,8 @@ struct FeedbinFeed {
 	//	"feed_url": "http://daringfireball.net/index.xml",
 	//	"site_url": "http://daringfireball.net/"
 
-	let subscriptionID: String
-	let feedID: String
+	let subscriptionID: Int
+	let feedID: Int
 	let creationDate: Date?
 	let name: String?
 	let url: String
@@ -39,18 +39,18 @@ struct FeedbinFeed {
 
 	init?(dictionary: JSONDictionary) {
 
-		guard let subscriptionIDInt = dictionary[Key.subscriptionID] as? Int else {
+		guard let subscriptionID = dictionary[Key.subscriptionID] as? Int else {
 			return nil
 		}
-		guard let feedIDInt = dictionary[Key.feedID] as? Int else {
+		guard let feedID = dictionary[Key.feedID] as? Int else {
 			return nil
 		}
 		guard let url = dictionary[Key.url] as? String else {
 			return nil
 		}
 
-		self.subscriptionID = String(subscriptionIDInt)
-		self.feedID = String(feedIDInt)
+		self.subscriptionID = subscriptionID
+		self.feedID = feedID
 		self.url = url
 
 		if let creationDateString = dictionary[Key.creationDate] as? String {
