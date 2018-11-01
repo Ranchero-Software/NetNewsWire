@@ -14,7 +14,6 @@ import RSCore
 	weak var appDelegate: AppDelegate?
 
 	func update() {
-
 		CoalescingQueue.standard.add(self, #selector(updateBadge))
 	}
 

@@ -74,7 +74,7 @@ class TimelineTableRowView : NSTableRowView {
 	}
 
 	func invalidateGridRect() {
-		
+
 		setNeedsDisplay(gridRect)
 	}
 }

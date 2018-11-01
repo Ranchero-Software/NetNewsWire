@@ -12,7 +12,7 @@ import RSCore
 import Articles
 
 extension Notification.Name {
-	
+
 	public static let ChildrenDidChange = Notification.Name("ChildrenDidChange")
 }
 
@@ -29,7 +29,7 @@ public protocol Container: class {
 
     func deleteFeed(_ feed: Feed)
     func deleteFolder(_ folder: Folder)
-    
+
 	//Recursive — checks subfolders
 	func flattenedFeeds() -> Set<Feed>
 	func hasFeed(with feedID: String) -> Bool

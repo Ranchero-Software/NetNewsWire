@@ -26,7 +26,7 @@ struct FeedSpecifier: Hashable {
 	public var score: Int {
 		return calculatedScore()
 	}
-	
+
 	func feedSpecifierByMerging(_ feedSpecifier: FeedSpecifier) -> FeedSpecifier {
 
 		// Take the best data (non-nil title, better source) to create a new feed specifier;
@@ -36,19 +36,19 @@ struct FeedSpecifier: Hashable {
 
 		return FeedSpecifier(title: mergedTitle, urlString: urlString, source: mergedSource)
 	}
-	
+
 	public static func bestFeed(in feedSpecifiers: Set<FeedSpecifier>) -> FeedSpecifier? {
-		
+
 		if feedSpecifiers.isEmpty {
 			return nil
 		}
 		if feedSpecifiers.count == 1 {
 			return feedSpecifiers.anyObject()
 		}
-		
+
 		var currentHighScore = 0
 		var currentBestFeed: FeedSpecifier? = nil
-		
+
 		for oneFeedSpecifier in feedSpecifiers {
 			let oneScore = oneFeedSpecifier.score
 			if oneScore > currentHighScore {
@@ -56,24 +56,24 @@ struct FeedSpecifier: Hashable {
 				currentBestFeed = oneFeedSpecifier
 			}
 		}
-		
+
 		return currentBestFeed
 	}
 }
 
 private extension FeedSpecifier {
-	
+
 	func calculatedScore() -> Int {
-		
+
 		var score = 0
-		
+
 		if source == .UserEntered {
 			return 1000
 		}
 		else if source == .HTMLHead {
 			score = score + 50
 		}
-		
+
 		if urlString.rs_caseInsensitiveContains("comments") {
 			score = score - 10
 		}
@@ -89,7 +89,7 @@ private extension FeedSpecifier {
 		if urlString.rs_caseInsensitiveContains("json") {
 			score = score + 6
 		}
-		
+
 		if let title = title {
 			if title.rs_caseInsensitiveContains("comments") {
 				score = score - 10
@@ -98,7 +98,7 @@ private extension FeedSpecifier {
 				score = score + 1
 			}
 		}
-		
+
 		return score
 	}
 }

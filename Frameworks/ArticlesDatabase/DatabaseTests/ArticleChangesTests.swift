@@ -11,5 +11,5 @@ import XCTest
 
 class ArticleChangesTests: XCTestCase {
 
-	
+
 }

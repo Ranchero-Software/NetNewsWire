@@ -60,7 +60,7 @@ private extension SendToMarsEditCommand {
 		let sender = SendToBlogEditorApp(targetDesciptor: targetDescriptor, title: article.title, body: body, summary: article.summary, link: article.externalURL, permalink: article.url, subject: nil, creator: authorName, commentsURL: nil, guid: article.uniqueID, sourceName: article.feed?.nameForDisplay, sourceHomeURL: article.feed?.homePageURL, sourceFeedURL: article.feed?.url)
 		let _ = sender.send()
 	}
-	
+
 	func appToUse() -> UserApp? {
 
 		marsEditApps.forEach{ $0.updateStatus() }

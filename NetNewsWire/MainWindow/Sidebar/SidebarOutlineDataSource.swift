@@ -69,7 +69,7 @@ import Account
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 	}
-	
+
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
 		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard()), !draggedFeeds.isEmpty else {
 			return false

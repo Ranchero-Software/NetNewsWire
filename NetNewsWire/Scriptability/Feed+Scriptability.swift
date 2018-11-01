@@ -16,7 +16,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
 
     let feed:Feed
     let container:ScriptingObjectContainer
-    
+
     init (_ feed:Feed, container:ScriptingObjectContainer) {
         self.feed = feed
         self.container = container
@@ -49,11 +49,11 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
-    
+
     var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
-    
+
     func deleteElement(_ element:ScriptingObject) {
     }
 
@@ -68,7 +68,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
             completionHandler(parsedFeed)
         }
     }
-    
+
     class func urlForNewFeed(arguments:[String:Any]) -> String?  {
         var url:String?
         if let withDataParam = arguments["ObjectData"] {
@@ -80,7 +80,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         }
         return url
     }
-    
+
     class func scriptableFeed(_ feed:Feed, account:Account, folder:Folder?) -> ScriptableFeed  {
         let scriptableAccount = ScriptableAccount(account)
         if let folder = folder {
@@ -90,18 +90,18 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
             return ScriptableFeed(feed, container:scriptableAccount)
         }
     }
-    
+
     class func handleCreateElement(command:NSCreateCommand) -> Any?  {
         guard command.isCreateCommand(forClass:"Feed") else { return nil }
         guard let arguments = command.arguments else {return nil}
         let titleFromArgs = command.property(forKey:"name") as? String
         let (account, folder) = command.accountAndFolderForNewChild()
         guard let url = self.urlForNewFeed(arguments:arguments) else {return nil}
-        
+
         if let existingFeed = account.existingFeed(withURL:url) {
             return self.scriptableFeed(existingFeed, account:account, folder:folder)
         }
-    
+
         // at this point, we need to download the feed and parse it.
         // RS Parser does the callback for the download on the main thread (which it probably shouldn't?)
         // because we can't wait here (on the main thread, maybe) for the callback, we have to return from this function
@@ -109,22 +109,22 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         // but we don't yet have the result of the event yet, so we prevent the AppleEvent from returning by calling
         // suspendExecution().  When we get the callback, we can supply the event result and call resumeExecution()
         command.suspendExecution()
-        
+
         self.parsedFeedForURL(url, { (parsedFeedOptional) in
             if let parsedFeed = parsedFeedOptional {
                 let titleFromFeed = parsedFeed.title
-                
+
                 guard let feed = account.createFeed(with: titleFromFeed, editedName: titleFromArgs, url: url) else {
                     command.resumeExecution(withResult:nil)
                     return
                 }
                 account.update(feed, with:parsedFeed, {})
-                
+
                 // add the feed, putting it in a folder if needed
                 if account.addFeed(feed, to:folder) {
                     NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
                 }
-                
+
                 let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
                 command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
             } else {
@@ -140,7 +140,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
     var url:String  {
         return self.feed.url
     }
-    
+
     @objc(name)
     var name:String  {
         return self.feed.name ?? ""
@@ -165,7 +165,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
     var opmlRepresentation:String  {
         return self.feed.OPMLString(indentLevel:0)
     }
-    
+
     // MARK: --- scriptable elements ---
 
     @objc(authors)
@@ -173,13 +173,13 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         let feedAuthors = feed.authors ?? []
         return feedAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
     }
-     
+
     @objc(valueInAuthorsWithUniqueID:)
     func valueInAuthors(withUniqueID id:String) -> ScriptableAuthor? {
         guard let author = feed.authors?.first(where:{$0.authorID == id}) else { return nil }
         return ScriptableAuthor(author, container:self)
     }
-    
+
     @objc(articles)
     var articles:NSArray {
         let feedArticles = feed.fetchArticles()
@@ -189,7 +189,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         })
         return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
     }
-    
+
     @objc(valueInArticlesWithUniqueID:)
     func valueInArticles(withUniqueID id:String) -> ScriptableArticle? {
         let articles = feed.fetchArticles()

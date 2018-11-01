@@ -15,22 +15,22 @@ import Foundation
 // and it won’t be mutated ever on a background thread.
 
 public final class ArticleStatus: Hashable {
-	
+
 	public enum Key: String {
 		case read = "read"
 		case starred = "starred"
 		case userDeleted = "userDeleted"
 	}
-	
+
 	public let articleID: String
 	public let dateArrived: Date
 
 	public var read = false
 	public var starred = false
 	public var userDeleted = false
-	
+
 	public init(articleID: String, read: Bool, starred: Bool, userDeleted: Bool, dateArrived: Date) {
-		
+
 		self.articleID = articleID
 		self.read = read
 		self.starred = starred
@@ -44,7 +44,7 @@ public final class ArticleStatus: Hashable {
 	}
 
 	public func boolStatus(forKey key: ArticleStatus.Key) -> Bool {
-		
+
 		switch key {
 		case .read:
 			return read
@@ -54,7 +54,7 @@ public final class ArticleStatus: Hashable {
 			return userDeleted
 		}
 	}
-	
+
 	public func setBoolStatus(_ status: Bool, forKey key: ArticleStatus.Key) {
 
 		switch key {
@@ -82,17 +82,17 @@ public final class ArticleStatus: Hashable {
 }
 
 public extension Set where Element == ArticleStatus {
-	
+
 	public func articleIDs() -> Set<String> {
-		
+
 		return Set<String>(map { $0.articleID })
 	}
 }
 
 public extension Array where Element == ArticleStatus {
-	
+
 	public func articleIDs() -> [String] {
-		
+
 		return map { $0.articleID }
 	}
 }

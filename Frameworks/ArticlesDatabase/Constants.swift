@@ -11,7 +11,7 @@ import Foundation
 // MARK: - Database structure
 
 struct DatabaseTableName {
-	
+
 	static let articles = "articles"
 	static let authors = "authors"
 	static let authorsLookup = "authorsLookup"
@@ -21,12 +21,12 @@ struct DatabaseTableName {
 }
 
 struct DatabaseKey {
-	
+
 	// Shared
 	static let articleID = "articleID"
 	static let url = "url"
 	static let title = "title"
-	
+
 	// Article
 	static let feedID = "feedID"
 	static let uniqueID = "uniqueID"
@@ -40,7 +40,7 @@ struct DatabaseKey {
 	static let dateModified = "dateModified"
 	static let authors = "authors"
 	static let attachments = "attachments"
-	
+
 	// ArticleStatus
 	static let read = "read"
 	static let starred = "starred"
@@ -55,7 +55,7 @@ struct DatabaseKey {
 
 	// Tag
 	static let tagName = "tagName"
-	
+
 	// Author
 	static let authorID = "authorID"
 	static let name = "name"
@@ -64,7 +64,7 @@ struct DatabaseKey {
 }
 
 struct RelationshipName {
-	
+
 	static let authors = "authors"
 	static let attachments = "attachments"
 }

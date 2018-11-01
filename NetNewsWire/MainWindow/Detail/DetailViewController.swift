@@ -28,7 +28,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 			reloadHTML()
 		}
 	}
-	
+
 	private var article: Article? {
 		didSet {
 			reloadHTML()
@@ -45,9 +45,9 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	}
 
 	override func viewDidLoad() {
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange(_:)), name: .TimelineSelectionDidChange, object: nil)
-		
+
 		let preferences = WKPreferences()
 		preferences.minimumFontSize = 12.0
 		preferences.javaScriptCanOpenWindowsAutomatically = false
@@ -62,7 +62,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		userContentController.add(self, name: MessageName.mouseDidEnter)
 		userContentController.add(self, name: MessageName.mouseDidExit)
 		configuration.userContentController = userContentController
-		
+
 		webview = DetailWebView(frame: self.view.bounds, configuration: configuration)
 		webview.uiDelegate = self
 		webview.navigationDelegate = self
@@ -109,18 +109,18 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		guard let timelineView = userInfo[UserInfoKey.view] as? NSView, timelineView.window === view.window else {
 			return
 		}
-		
+
 		let timelineArticles = userInfo[UserInfoKey.articles] as? ArticleArray
 		articles = timelineArticles
 	}
 
 	func viewWillStartLiveResize() {
-		
+
 		webview.evaluateJavaScript("document.body.style.overflow = 'hidden';", completionHandler: nil)
 	}
-	
+
 	func viewDidEndLiveResize() {
-		
+
 		webview.evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
 	}
 }
@@ -191,7 +191,7 @@ private extension DetailViewController {
 		let articleRenderer = ArticleRenderer(article: article,
 											  style: ArticleStylesManager.shared.currentStyle,
 											  appearance: self.view.effectiveAppearance)
-		
+
 		if article != nil {
 			webview.loadHTMLString(articleRenderer.articleHTML, baseURL: articleRenderer.baseURL)
 		}
@@ -228,7 +228,7 @@ private extension DetailViewController {
 final class DetailContainerView: NSView {
 
 	@IBOutlet var detailStatusBarView: DetailStatusBarView!
-	
+
 	weak var viewController: DetailViewController? = nil
 
 	var contentView: NSView? {
@@ -245,12 +245,12 @@ final class DetailContainerView: NSView {
 	}
 
 	override func viewWillStartLiveResize() {
-		
+
 		viewController?.viewWillStartLiveResize()
 	}
-	
+
 	override func viewDidEndLiveResize() {
-		
+
 		viewController?.viewDidEndLiveResize()
 	}
 
@@ -259,7 +259,7 @@ final class DetailContainerView: NSView {
 		dirtyRect.fill()
 	}
 
-	
+
 }
 
 // MARK: -

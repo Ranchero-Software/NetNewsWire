@@ -19,7 +19,7 @@ private var textAttributes: [NSAttributedStringKey: AnyObject] = [NSAttributedSt
 private var textSizeCache = [Int: NSSize]()
 
 class UnreadCountView : NSView {
-	
+
 	var unreadCount = 0 {
 		didSet {
 			invalidateIntrinsicContentSize()
@@ -32,7 +32,7 @@ class UnreadCountView : NSView {
 
 	private var intrinsicContentSizeIsValid = false
 	private var _intrinsicContentSize = NSZeroSize
-	
+
 	override var intrinsicContentSize: NSSize {
 		if !intrinsicContentSizeIsValid {
 			var size = NSZeroSize
@@ -46,13 +46,13 @@ class UnreadCountView : NSView {
 		}
 		return _intrinsicContentSize
 	}
-	
+
 	override var isFlipped: Bool {
 		return true
 	}
-	
+
 	override func invalidateIntrinsicContentSize() {
-		
+
 		intrinsicContentSizeIsValid = false
 	}
 
@@ -94,6 +94,6 @@ class UnreadCountView : NSView {
 			unreadCountString.draw(at: textRect().origin, withAttributes: textAttributes)
 		}
 	}
-	
+
 }
 

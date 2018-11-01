@@ -46,14 +46,14 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		return false
 	}
-	
+
 	public var combinedRefreshProgress: CombinedRefreshProgress {
 		let downloadProgressArray = accounts.map { $0.refreshProgress }
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
-	
+
 	public init() {
-		
+
 		// The local "On My Mac" account must always exist, even if it's empty.
 
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
@@ -72,19 +72,19 @@ public final class AccountManager: UnreadCountProvider {
 		readNonLocalAccountsFromDisk()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		
+
 		DispatchQueue.main.async {
 			self.updateUnreadCount()
 		}
 	}
 
 	// MARK: API
-	
+
 	public func existingAccount(with accountID: String) -> Account? {
-		
+
 		return accountsDictionary[accountID]
 	}
-	
+
 	public func refreshAll() {
 
 		accounts.forEach { $0.refreshAll() }
@@ -102,7 +102,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
-		
+
 		for account in accounts {
 			if let _ = account.existingFeed(withURL: urlString) {
 				return true
@@ -110,22 +110,22 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		return false
 	}
-	
+
 	func updateUnreadCount() {
 
 		unreadCount = calculateUnreadCount(accounts)
 	}
-	
+
 	// MARK: Notifications
-	
+
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
-		
+
 		guard let _ = notification.object as? Account else {
 			return
 		}
 		updateUnreadCount()
 	}
-	
+
 	// MARK: Private
 
 	private func createAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
@@ -166,9 +166,9 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	private func accountsSortedByName() -> [Account] {
-		
+
 		// LocalAccount is first.
-		
+
 		return accounts.sorted { (account1, account2) -> Bool in
 
 			if account1 === localAccount {

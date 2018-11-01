@@ -27,7 +27,7 @@ public final class ArticlesDatabase {
 	public init(databaseFilePath: String, accountID: String) {
 
 		self.accountID = accountID
-		
+
 		let queue = RSDatabaseQueue(filepath: databaseFilePath, excludeFromBackup: false)
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue)
 
@@ -53,12 +53,12 @@ public final class ArticlesDatabase {
 	}
 
 	public func fetchUnreadArticles(for feedIDs: Set<String>) -> Set<Article> {
-		
+
 		return articlesTable.fetchUnreadArticles(for: feedIDs)
 	}
 
 	public func fetchTodayArticles(for feedIDs: Set<String>) -> Set<Article> {
-		
+
 		return articlesTable.fetchTodayArticles(for: feedIDs)
 	}
 
@@ -68,7 +68,7 @@ public final class ArticlesDatabase {
 	}
 
 	// MARK: - Unread Counts
-	
+
 	public func fetchUnreadCounts(for feedIDs: Set<String>, _ completion: @escaping UnreadCountCompletionBlock) {
 
 		articlesTable.fetchUnreadCounts(feedIDs, completion)
@@ -95,9 +95,9 @@ public final class ArticlesDatabase {
 
 		return articlesTable.update(feedID, parsedFeed, completion)
 	}
-	
+
 	// MARK: - Status
-	
+
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {
 
 		return articlesTable.mark(articles, statusKey, flag)

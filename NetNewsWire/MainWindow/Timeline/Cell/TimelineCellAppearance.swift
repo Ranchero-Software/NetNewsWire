@@ -12,7 +12,7 @@ import DB5
 struct TimelineCellAppearance: Equatable {
 
 	let cellPadding: NSEdgeInsets
-	
+
 	let feedNameColor: NSColor
 	let feedNameFont: NSFont
 
@@ -20,12 +20,12 @@ struct TimelineCellAppearance: Equatable {
 	let dateMarginLeft: CGFloat
 	let dateMarginBottom: CGFloat
 	let dateFont: NSFont
-	
+
 	let titleColor: NSColor
 	let titleFont: NSFont
 	let titleBottomMargin: CGFloat
 	let titleNumberOfLines: Int
-	
+
 	let textColor: NSColor
 	let textFont: NSFont
 
@@ -57,7 +57,7 @@ struct TimelineCellAppearance: Equatable {
 		let largeItemFontSize = floor(actualFontSize * 1.1)
 
 		self.cellPadding = theme.edgeInsets(forKey: "MainWindow.Timeline.cell.padding")
-		
+
 		self.feedNameColor = theme.color(forKey: "MainWindow.Timeline.cell.feedNameColor")
 		self.feedNameFont = NSFont.systemFont(ofSize: smallItemFontSize)
 
@@ -65,7 +65,7 @@ struct TimelineCellAppearance: Equatable {
 		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize, weight: NSFont.Weight.bold)
 		self.dateMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginLeft")
 		self.dateMarginBottom = theme.float(forKey: "MainWindow.Timeline.cell.dateMarginBottom")
-		
+
 		self.titleColor = theme.color(forKey: "MainWindow.Timeline.cell.titleColor")
 		self.titleFont = NSFont.systemFont(ofSize: largeItemFontSize, weight: NSFont.Weight.semibold)
 		self.titleBottomMargin = theme.float(forKey: "MainWindow.Timeline.cell.titleMarginBottom")
@@ -82,10 +82,10 @@ struct TimelineCellAppearance: Equatable {
 		self.unreadCircleMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.unreadCircleMarginRight")
 
 		self.starDimension = theme.float(forKey: "MainWindow.Timeline.cell.starDimension")
-		
+
 		self.gridColor = theme.colorWithAlpha(forKey: "MainWindow.Timeline.gridColor")
 		self.drawsGrid = theme.bool(forKey: "MainWindow.Timeline.drawsGrid")
-		
+
 		self.avatarSize = theme.size(forKey: "MainWindow.Timeline.cell.avatar")
 		self.avatarMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginRight")
 		self.avatarMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginLeft")

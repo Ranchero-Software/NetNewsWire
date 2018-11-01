@@ -74,7 +74,7 @@ final class FaviconDownloader {
 		if homePageURLsWithNoFaviconURL.contains(url) {
 			return nil
 		}
-		
+
 		if let faviconURL = homePageToFaviconURLCache[url] {
 			return favicon(with: faviconURL)
 		}

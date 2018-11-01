@@ -24,7 +24,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			updateWindowTitle()
 		}
 	}
-	
+
 	private var shareToolbarItem: NSToolbarItem? {
 		return window?.toolbar?.existingItem(withIdentifier: .Share)
 	}
@@ -38,7 +38,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		super.windowDidLoad()
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
-		
+
 		if !AppDefaults.shared.showTitleOnMainWindow {
 			window?.titleVisibility = .hidden
 		}
@@ -100,48 +100,48 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@objc func sidebarSelectionDidChange(_ note: Notification) {
-		
+
 		let selectedObjects = selectedObjectsInSidebar()
-		
+
 		// We can only meaninfully display one feed or folder at a time
 		guard selectedObjects?.count == 1 else {
 			currentFeedOrFolder = nil
 			return
 		}
-		
+
 		guard selectedObjects?[0] is DisplayNameProvider else {
 			currentFeedOrFolder = nil
 			return
 		}
-		
+
 		currentFeedOrFolder = selectedObjects?[0]
-		
+
 	}
-	
+
 	@objc func unreadCountDidChange(_ note: Notification) {
 		updateWindowTitleIfNecessary(note.object)
 	}
-	
+
 	@objc func displayNameDidChange(_ note: Notification) {
 		updateWindowTitleIfNecessary(note.object)
 	}
 
 	private func updateWindowTitleIfNecessary(_ noteObject: Any?) {
-		
+
 		if let folder = currentFeedOrFolder as? Folder, let noteObject = noteObject as? Folder {
 			if folder == noteObject {
 				updateWindowTitle()
 				return
 			}
 		}
-		
+
 		if let feed = currentFeedOrFolder as? Feed, let noteObject = noteObject as? Feed {
 			if feed == noteObject {
 				updateWindowTitle()
 				return
 			}
 		}
-		
+
 		// If we don't recognize the changed object, we will test it for identity instead
 		// of equality.  This works well for us if the window title is displaying a
 		// PsuedoFeed object.
@@ -150,28 +150,28 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 				updateWindowTitle()
 			}
 		}
-		
+
 	}
-	
+
 	// MARK: - Toolbar
-	
+
 	@objc func makeToolbarValidate() {
-		
+
 		window?.toolbar?.validateVisibleItems()
 	}
 
 	// MARK: - NSUserInterfaceValidations
-	
+
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		
+
 		if item.action == #selector(openArticleInBrowser(_:)) {
 			return currentLink != nil
 		}
-		
+
 		if item.action == #selector(nextUnread(_:)) {
 			return canGoToNextUnread()
 		}
-		
+
 		if item.action == #selector(markAllAsRead(_:)) {
 			return canMarkAllAsRead()
 		}
@@ -235,10 +235,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
-		
+
 		if let link = currentLink {
 			Browser.open(link)
-		}		
+		}
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -247,13 +247,13 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func nextUnread(_ sender: Any?) {
-		
+
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
 			return
 		}
 
 		NSCursor.setHiddenUntilMouseMoves(true)
-		
+
 		if timelineViewController.canGoToNextUnread() {
 			goToNextUnreadInTimeline()
 		}
@@ -266,7 +266,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func markAllAsRead(_ sender: Any?) {
-		
+
 		timelineViewController?.markAllAsRead()
 	}
 
@@ -304,7 +304,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func toggleSidebar(_ sender: Any?) {
-		
+
 		splitViewController!.toggleSidebar(sender)
 	}
 
@@ -377,7 +377,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 /*
     the ScriptingMainWindowController protocol exposes a narrow set of accessors with
     internal visibility which are very similar to some private vars.
-    
+
     These would be unnecessary if the similar accessors were marked internal rather than private,
     but for now, we'll keep the stratification of visibility
 */
@@ -396,7 +396,7 @@ extension MainWindowController : ScriptingMainWindowController {
 // MARK: - Private
 
 private extension MainWindowController {
-	
+
 	var splitViewController: NSSplitViewController? {
 		guard let viewController = contentViewController else {
 			return nil
@@ -407,7 +407,7 @@ private extension MainWindowController {
 	var sidebarViewController: SidebarViewController? {
 		return splitViewController?.splitViewItems[0].viewController as? SidebarViewController
 	}
-	
+
 	var timelineViewController: TimelineViewController? {
 		return splitViewController?.splitViewItems[1].viewController as? TimelineViewController
 	}
@@ -419,7 +419,7 @@ private extension MainWindowController {
 	var detailSplitViewItem: NSSplitViewItem? {
 		return splitViewController?.splitViewItems[2]
 	}
-	
+
 	var detailViewController: DetailViewController? {
 		return splitViewController?.splitViewItems[2].viewController as? DetailViewController
 	}
@@ -442,16 +442,16 @@ private extension MainWindowController {
 	// MARK: - Command Validation
 
 	func canGoToNextUnread() -> Bool {
-		
+
 		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
 			return false
 		}
 
 		return timelineViewController.canGoToNextUnread() || sidebarViewController.canGoToNextUnread()
 	}
-	
+
 	func canMarkAllAsRead() -> Bool {
-		
+
 		return timelineViewController?.canMarkAllAsRead() ?? false
 	}
 
@@ -460,7 +460,7 @@ private extension MainWindowController {
 		let validationStatus = timelineViewController?.markReadCommandStatus() ?? .canDoNothing
 		let markingRead: Bool
 		let result: Bool
-		
+
 		switch validationStatus {
 		case .canMark:
 			markingRead = true
@@ -472,17 +472,17 @@ private extension MainWindowController {
 			markingRead = true
 			result = false
 		}
-		
+
 		let commandName = markingRead ? NSLocalizedString("Mark as Read", comment: "Command") : NSLocalizedString("Mark as Unread", comment: "Command")
-		
+
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
 		}
-		
+
 		if let menuItem = item as? NSMenuItem {
 			menuItem.title = commandName
 		}
-		
+
 		return result
 	}
 
@@ -559,15 +559,15 @@ private extension MainWindowController {
 
 		var displayName: String? = nil
 		var unreadCount: Int? = nil
-		
+
 		if let displayNameProvider = currentFeedOrFolder as? DisplayNameProvider {
 			displayName = displayNameProvider.nameForDisplay
 		}
-		
+
 		if let unreadCountProvider = currentFeedOrFolder as? UnreadCountProvider {
 			unreadCount = unreadCountProvider.unreadCount
 		}
-		
+
 		if displayName != nil {
 			if unreadCount ?? 0 > 0 {
 				window?.title = "\(displayName!) (\(unreadCount!))"
@@ -580,7 +580,7 @@ private extension MainWindowController {
 			window?.title = appDelegate.appName!
 			return
 		}
-		
+
 	}
 
 	func saveSplitViewState() {

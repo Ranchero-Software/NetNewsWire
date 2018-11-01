@@ -93,7 +93,7 @@ final class ArticleStylesManager {
 		if styleName == defaultStyleName {
 			return ArticleStyle.defaultStyle
 		}
-		
+
 		guard let path = pathForStyleName(styleName, folder: folderPath) else {
 			return nil
 		}

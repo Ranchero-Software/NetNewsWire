@@ -46,7 +46,7 @@ extension Attachment {
 }
 
 private func optionalIntForColumn(_ row: FMResultSet, _ columnName: String) -> Int? {
-	
+
 	let intValue = row.long(forColumn: columnName)
 	if intValue < 1 {
 		return nil
@@ -55,7 +55,7 @@ private func optionalIntForColumn(_ row: FMResultSet, _ columnName: String) -> I
 }
 
 extension Attachment: DatabaseObject {
-	
+
 	public var databaseID: String {
 		return attachmentID
 	}

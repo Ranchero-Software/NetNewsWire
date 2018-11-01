@@ -10,7 +10,7 @@ import AppKit
 import Articles
 
 struct TimelineCellData {
-	
+
 	let title: String
 	let text: String
 	let dateString: String
@@ -41,13 +41,13 @@ struct TimelineCellData {
 		self.showAvatar = showAvatar
 		self.avatar = avatar
 		self.featuredImage = featuredImage
-		
+
 		self.read = article.status.read
 		self.starred = article.status.starred
 	}
 
 	init() { //Empty
-		
+
 		self.title = ""
 		self.text = ""
 		self.dateString = ""

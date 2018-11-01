@@ -34,9 +34,9 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 	private var feedFinder: FeedFinder?
 	private var isFindingFeed = false
 	private var bestFeedSpecifier: FeedSpecifier?
-	
+
 	init(hostWindow: NSWindow) {
-		
+
 		self.hostWindow = hostWindow
 	}
 
@@ -88,7 +88,7 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 
 		isFindingFeed = false
 		endShowingProgress()
-		
+
 		if let error = feedFinder.initialDownloadError {
 			if feedFinder.initialDownloadStatusCode == 404 {
 				showNoFeedsErrorMessage()
@@ -130,7 +130,7 @@ private extension AddFeedController {
 		}
 		return nil
 	}
-	
+
 	struct AccountAndFolderSpecifier {
 		let account: Account
 		let folder: Folder?
@@ -194,10 +194,10 @@ private extension AddFeedController {
 			assertionFailure("Expected userEnteredURL.")
 			return
 		}
-		
+
 		isFindingFeed = true
 		feedFinder = FeedFinder(url: url, delegate: self)
-		
+
 		beginShowingProgress()
 	}
 
@@ -239,12 +239,12 @@ private extension AddFeedController {
 	// MARK: Progress
 
 	func beginShowingProgress() {
-		
+
 		runIndeterminateProgressWithMessage(NSLocalizedString("Finding feed…", comment:"Feed finder"))
 	}
-	
+
 	func endShowingProgress() {
-		
+
 		stopIndeterminateProgress()
 		hostWindow.makeKeyAndOrderFront(self)
 	}

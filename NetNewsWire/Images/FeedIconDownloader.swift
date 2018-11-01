@@ -35,7 +35,7 @@ public final class FeedIconDownloader {
 		if let cachedImage = cache[feed] {
 			return cachedImage
 		}
-		
+
 		if let iconURL = feed.iconURL {
 			if let image = icon(forURL: iconURL) {
 				postFeedIconDidBecomeAvailableNotification(feed)

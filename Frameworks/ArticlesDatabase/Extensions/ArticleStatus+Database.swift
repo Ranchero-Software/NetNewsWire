@@ -11,20 +11,20 @@ import RSDatabase
 import Articles
 
 extension ArticleStatus {
-	
+
 	convenience init(articleID: String, dateArrived: Date, row: FMResultSet) {
-		
+
 		let read = row.bool(forColumn: DatabaseKey.read)
 		let starred = row.bool(forColumn: DatabaseKey.starred)
 		let userDeleted = row.bool(forColumn: DatabaseKey.userDeleted)
-		
+
 		self.init(articleID: articleID, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived)
 	}
-	
+
 }
 
 extension ArticleStatus: DatabaseObject {
-	
+
 	public var databaseID: String {
 		return articleID
 	}

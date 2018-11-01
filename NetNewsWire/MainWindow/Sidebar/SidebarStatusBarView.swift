@@ -40,8 +40,8 @@ final class SidebarStatusBarView: NSView {
 
 		let progressLabelFontSize = progressLabel.font?.pointSize ?? 13.0
 		progressLabel.font = NSFont.monospacedDigitSystemFont(ofSize: progressLabelFontSize, weight: NSFont.Weight.regular)
-		progressLabel.stringValue = ""		
-		
+		progressLabel.stringValue = ""
+
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 	}
 
@@ -67,7 +67,7 @@ final class SidebarStatusBarView: NSView {
 private extension SidebarStatusBarView {
 
 	// MARK: Progress
-	
+
 	func stopProgressIfNeeded() {
 
 		if !isAnimatingProgress {

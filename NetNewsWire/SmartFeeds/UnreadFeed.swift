@@ -27,7 +27,7 @@ final class UnreadFeed: PseudoFeed {
 	var pasteboardWriter: NSPasteboardWriting {
 		return SmartFeedPasteboardWriter(smartFeed: self)
 	}
-	
+
 	init() {
 
 		self.unreadCount = appDelegate.unreadCount

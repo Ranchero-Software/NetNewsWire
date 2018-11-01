@@ -11,7 +11,7 @@ import Articles
 import Account
 
 class AddFolderWindowController : NSWindowController {
-    
+
     @IBOutlet var folderNameTextField: NSTextField!
     @IBOutlet var accountPopupButton: NSPopUpButton!
     var hostWindow: NSWindow?
@@ -22,12 +22,12 @@ class AddFolderWindowController : NSWindowController {
 	}
 
     // MARK: API
-    
+
     func runSheetOnWindow(_ w: NSWindow) {
 
 		hostWindow = w
 		hostWindow!.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
-			
+
 			if returnCode == NSApplication.ModalResponse.OK {
 				self.addFolderIfNeeded()
 			}
@@ -35,9 +35,9 @@ class AddFolderWindowController : NSWindowController {
     }
 
 	// MARK: NSViewController
-	
+
 	override func windowDidLoad() {
-		
+
 		accountPopupButton.removeAllItems()
 		let menu = NSMenu()
 		for oneAccount in AccountManager.shared.sortedAccounts {
@@ -48,34 +48,34 @@ class AddFolderWindowController : NSWindowController {
 		}
 		accountPopupButton.menu = menu
 	}
-	
+
 	// MARK: Private
-	
+
 	private func addFolderIfNeeded() {
-		
+
 		guard let menuItem = accountPopupButton.selectedItem else {
 			return
 		}
 		let account = menuItem.representedObject as! Account
-		
+
 		let folderName = self.folderNameTextField.stringValue
 		if folderName.isEmpty {
 			return
 		}
-		
+
 		account.ensureFolder(with: folderName)
 	}
-	
+
 	// MARK: Actions
-	
+
     @IBAction func cancel(_ sender: Any?) {
-        
+
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
     }
-    
+
     @IBAction func addFolder(_ sender: Any?) {
-        
+
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
     }
-    
+
 }

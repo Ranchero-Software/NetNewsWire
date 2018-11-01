@@ -17,7 +17,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	var refreshProgress: DownloadProgress {
 		return refresher.progress
 	}
-	
+
 	func refreshAll(for account: Account) {
 
 		refresher.refreshFeeds(account.flattenedFeeds())
@@ -29,7 +29,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	// MARK: Disk
-	
+
 	func update(account: Account, withUserInfo: NSDictionary?) {
 
 

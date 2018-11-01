@@ -10,13 +10,13 @@ import Foundation
 import Articles
 
 public struct UnreadCountDictionary {
-	
+
 	private var dictionary = [String: Int]()
 
 	public var isEmpty: Bool {
 		return dictionary.count < 1
 	}
-	
+
 	public subscript(_ feedID: String) -> Int? {
 		get {
 			return dictionary[feedID]

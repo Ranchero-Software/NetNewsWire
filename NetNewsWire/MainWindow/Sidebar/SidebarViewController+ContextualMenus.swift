@@ -63,7 +63,7 @@ extension SidebarViewController {
 		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [Any] else {
 			return
 		}
-		
+
 		let articles = unreadArticles(for: objects)
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
 			return
@@ -76,7 +76,7 @@ extension SidebarViewController {
 		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [AnyObject] else {
 			return
 		}
-		
+
 		let nodes = objects.compactMap { treeController.nodeInTreeRepresentingObject($0) }
 		deleteNodes(nodes)
 	}

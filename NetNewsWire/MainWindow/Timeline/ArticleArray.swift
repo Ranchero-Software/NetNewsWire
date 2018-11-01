@@ -58,7 +58,7 @@ extension Array where Element == Article {
 			}
 			return article1.logicalDatePublished < article2.logicalDatePublished
 		}
-		
+
 		return articles
 	}
 

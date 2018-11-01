@@ -13,16 +13,16 @@ class ScriptingTests: AppleScriptXCTestCase {
     override func setUp() {
         super.setUp()
     }
-    
+
     override func tearDown() {
         super.tearDown()
     }
 
-    
+
     /*
         @function testGenericScript
         @brief  An example of how a script can be run as part of an XCTest
-                the applescript returns 
+                the applescript returns
                      {test_result:true, script_result:"Geoducks!"}
                 doIndividualScript() verifies the test_result portion
                 this code verifies the script_result portion
@@ -31,27 +31,27 @@ class ScriptingTests: AppleScriptXCTestCase {
         let scriptResult = doIndividualScript(filename: "testGenericScript")
         XCTAssert( scriptResult?.stringValue == "Geoducks!")
     }
-    
+
     func testGetUrlScript() {
         _ = doIndividualScript(filename: "testGetURL")
     }
-    
+
     func testNameAndUrlOfEveryFeedScript() {
         _ = doIndividualScript(filename: "testNameAndUrlOfEveryFeed")
     }
-    
+
     func testNameOfEveryFolderScript() {
         _ = doIndividualScript(filename: "testNameOfEveryFolder")
     }
-    
+
     func testNameOfAuthorsScript() {
         _ = doIndividualScript(filename: "testNameOfAuthors")
     }
-    
+
     func testFeedExists() {
         _ = doIndividualScript(filename: "testFeedExists")
     }
-    
+
     func testFeedOPML() {
         _ = doIndividualScript(filename: "testFeedOPML")
     }

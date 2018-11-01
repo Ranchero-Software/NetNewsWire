@@ -13,7 +13,7 @@ import Articles
 import Account
 
 final class FolderTreeControllerDelegate: TreeControllerDelegate {
-	
+
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 
 		return node.isRoot ? childNodesForRootNode(node) : nil
@@ -21,9 +21,9 @@ final class FolderTreeControllerDelegate: TreeControllerDelegate {
 }
 
 private extension FolderTreeControllerDelegate {
-	
+
 	func childNodesForRootNode(_ node: Node) -> [Node]? {
-		
+
 		// Root node is “Top Level” and children are folders. Folders can’t have subfolders.
 		// This will have to be revised later.
 
@@ -35,7 +35,7 @@ private extension FolderTreeControllerDelegate {
 	}
 
 	func createNode(_ folder: Folder, parent: Node) -> Node {
-		
+
 		let node = Node(representedObject: folder, parent: parent)
 		node.canHaveChildNodes = false
 		return node

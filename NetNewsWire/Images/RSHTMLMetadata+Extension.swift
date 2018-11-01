@@ -70,7 +70,7 @@ extension RSHTMLMetadata {
 		if let appleTouchIcon = largestAppleTouchIcon() {
 			return appleTouchIcon
 		}
-		
+
 		if let openGraphImageURL = largestOpenGraphImageURL() {
 			return openGraphImageURL
 		}

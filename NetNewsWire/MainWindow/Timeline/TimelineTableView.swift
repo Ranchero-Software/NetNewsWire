@@ -9,11 +9,11 @@
 import AppKit
 
 class TimelineTableView: NSTableView {
-	
+
 	@IBOutlet var keyboardDelegate: KeyboardDelegate!
-	
+
 	//MARK: NSResponder
-	
+
 	override func keyDown(with event: NSEvent) {
 
 		if keyboardDelegate.keydown(event, in: self) {
@@ -21,17 +21,17 @@ class TimelineTableView: NSTableView {
 		}
 		super.keyDown(with: event)
 	}
-	
+
 	override func viewWillStartLiveResize() {
-		
+
 		if let scrollView = self.enclosingScrollView {
 			scrollView.hasVerticalScroller = false
 		}
 		super.viewWillStartLiveResize()
 	}
-	
+
 	override func viewDidEndLiveResize() {
-		
+
 		if let scrollView = self.enclosingScrollView {
 			scrollView.hasVerticalScroller = true
 		}

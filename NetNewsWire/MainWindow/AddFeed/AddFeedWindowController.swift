@@ -21,7 +21,7 @@ protocol AddFeedWindowControllerDelegate: class {
 }
 
 class AddFeedWindowController : NSWindowController {
-    
+
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!
@@ -41,11 +41,11 @@ class AddFeedWindowController : NSWindowController {
 		}
 		return s
 	}
-	
+
     var hostWindow: NSWindow!
 
 	convenience init(urlString: String?, name: String?, folder: Folder?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
-		
+
 		self.init(windowNibName: NSNib.Name(rawValue: "AddFeedSheet"))
 		self.urlString = urlString
 		self.initialName = name
@@ -53,9 +53,9 @@ class AddFeedWindowController : NSWindowController {
 		self.delegate = delegate
 		self.folderTreeController = folderTreeController
 	}
-	
+
     func runSheetOnWindow(_ w: NSWindow) {
-        
+
         hostWindow = w
         hostWindow.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
 		}
@@ -74,7 +74,7 @@ class AddFeedWindowController : NSWindowController {
 		if let folder = initialFolder {
 			FolderTreeMenu.select(folder, in: folderPopupButton)
 		}
-		
+
 		updateUI()
 	}
 
@@ -90,14 +90,14 @@ class AddFeedWindowController : NSWindowController {
 	}
 
     // MARK: Actions
-    
+
     @IBAction func cancel(_ sender: Any?) {
-        
+
 		cancelSheet()
     }
-    
+
     @IBAction func addFeed(_ sender: Any?) {
-		
+
 		let urlString = urlTextField.stringValue
 		let normalizedURLString = (urlString as NSString).rs_normalizedURL()
 
@@ -114,11 +114,11 @@ class AddFeedWindowController : NSWindowController {
     }
 
 	@IBAction func localShowFeedList(_ sender: Any?) {
-		
+
 		NSApplication.shared.sendAction(NSSelectorFromString("showFeedList:"), to: nil, from: sender)
 		hostWindow.endSheet(window!, returnCode: NSApplication.ModalResponse.continue)
 	}
-	
+
 	// MARK: NSTextFieldDelegate
 
 	override func controlTextDidEndEditing(_ obj: Notification) {
@@ -133,7 +133,7 @@ class AddFeedWindowController : NSWindowController {
 }
 
 private extension AddFeedWindowController {
-	
+
 	func cancelSheet() {
 
 		delegate?.addFeedWindowControllerUserDidCancel(self)

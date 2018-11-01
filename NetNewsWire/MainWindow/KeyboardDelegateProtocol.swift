@@ -11,7 +11,7 @@ import AppKit
 let keypadEnter: unichar = 3
 
 @objc protocol KeyboardDelegate: class {
-	
+
 	// Return true if handled.
 	func keydown(_: NSEvent, in view: NSView) -> Bool
 }

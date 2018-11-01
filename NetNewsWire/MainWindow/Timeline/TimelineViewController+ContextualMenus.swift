@@ -72,18 +72,18 @@ extension TimelineViewController {
 	}
 
 	@objc func selectFeedInSidebarFromContextualMenu(_ sender: Any?) {
-		
+
 		guard let menuItem = sender as? NSMenuItem, let feed = menuItem.representedObject as? Feed else {
 			return
 		}
-		
+
 		var userInfo = UserInfoDictionary()
 		userInfo[UserInfoKey.feed] = feed
-		
+
 		NotificationCenter.default.post(name: .UserDidRequestSidebarSelection, object: self, userInfo: userInfo)
-		
+
 	}
-	
+
 	@objc func openInBrowserFromContextualMenu(_ sender: Any?) {
 
 		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
@@ -160,11 +160,11 @@ private extension TimelineViewController {
 		}
 
 		menu.addSeparatorIfNeeded()
-		
+
 		if articles.count == 1, let feed = articles.first!.feed {
 			menu.addItem(selectFeedInSidebar(feed))
 		}
-		
+
 		if articles.count == 1, let link = articles.first!.preferredLink {
 			menu.addSeparatorIfNeeded()
 			menu.addItem(openInBrowserMenuItem(link))

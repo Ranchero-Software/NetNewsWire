@@ -18,7 +18,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	@IBOutlet var dataSource: TimelineDataSource!
 
 	var sharingServiceDelegate: NSSharingServiceDelegate?
-	
+
 	var selectedArticles: [Article] {
 		return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
 	}
@@ -132,7 +132,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 				didRegisterForNotifications = true
 		}
 	}
-	
+
 	override func viewDidAppear() {
 		sharingServiceDelegate = SharingServiceDelegate(self.view.window)
 	}
@@ -150,7 +150,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	// MARK: - API
-	
+
 	func markAllAsRead() {
 
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
@@ -172,14 +172,14 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
-		
+
 		if let link = oneSelectedArticle?.preferredLink {
 			Browser.open(link)
 		}
 	}
-	
+
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {
-	
+
 		guard !selectedArticles.isEmpty else {
 			return
 		}
@@ -202,9 +202,9 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 		runCommand(markReadCommand)
 	}
-	
+
 	@IBAction func markSelectedArticlesAsUnread(_ sender: Any?) {
-		
+
 		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: false, undoManager: undoManager) else {
 			return
 		}
@@ -217,10 +217,10 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	func toggleReadStatusForSelectedArticles() {
-		
+
 		// If any one of the selected articles is unread, then mark them as read.
 		// If all articles are read, then mark them as unread them.
-		
+
 		let commandStatus = markReadCommandStatus()
 		let markingRead: Bool
 		switch commandStatus {
@@ -231,14 +231,14 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		case .canDoNothing:
 			return
 		}
-		
+
 		guard let undoManager = undoManager, let markStarredCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: markingRead, undoManager: undoManager) else {
 			return
 		}
-		
+
 		runCommand(markStarredCommand)
 	}
-	
+
 	func toggleStarredStatusForSelectedArticles() {
 
 		// If any one of the selected articles is not starred, then star them.
@@ -307,9 +307,9 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	// MARK: - Navigation
-	
+
 	func goToNextUnread() {
-		
+
 		guard let ix = indexOfNextUnreadArticle() else {
 			return
 		}
@@ -317,15 +317,15 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		tableView.rs_selectRow(ix)
 		tableView.scrollTo(row: ix)
 	}
-	
+
 	func canGoToNextUnread() -> Bool {
-		
+
 		guard let _ = indexOfNextUnreadArticle() else {
 			return false
 		}
 		return true
 	}
-	
+
 	func indexOfNextUnreadArticle() -> Int? {
 
 		return articles.rowOfNextUnreadArticle(tableView.selectedRow)
@@ -361,7 +361,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			representedObjects = nil
 		}
 	}
-	
+
 	@objc func statusesDidChange(_ note: Notification) {
 
 		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
@@ -436,13 +436,13 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	// MARK: - Reloading Data
 
 	private func cellForRowView(_ rowView: NSView) -> NSView? {
-		
+
 		for oneView in rowView.subviews where oneView is TimelineTableCellView {
 			return oneView
 		}
 		return nil
 	}
-	
+
 	private func reloadVisibleCells(for articles: [Article]) {
 		reloadVisibleCells(for: Set(articles.articleIDs()))
 	}
@@ -450,7 +450,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	private func reloadVisibleCells(for articles: Set<Article>) {
 		reloadVisibleCells(for: articles.articleIDs())
 	}
-	
+
 	private func reloadVisibleCells(for articleIDs: Set<String>) {
 		if articleIDs.isEmpty {
 			return
@@ -474,7 +474,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 		tableView.reloadData(forRowIndexes: indexes, columnIndexes: NSIndexSet(index: 0) as IndexSet)
 	}
-	
+
 	// MARK: - Cell Configuring
 
 	private func calculateRowHeight(showingFeedNames: Bool) -> CGFloat {
@@ -483,7 +483,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
-		
+
 		let prototypeCellData = TimelineCellData(article: prototypeArticle, appearance: cellAppearance, showFeedName: showingFeedNames, feedName: "Prototype Feed Name", avatar: nil, showAvatar: false, featuredImage: nil)
 		let height = TimelineCellLayout.height(for: 100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height

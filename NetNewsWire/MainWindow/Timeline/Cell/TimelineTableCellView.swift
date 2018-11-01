@@ -37,13 +37,13 @@ class TimelineTableCellView: NSTableCellView {
 			needsLayout = true
 		}
 	}
-	
+
 	var cellData: TimelineCellData! {
 		didSet {
 			updateSubviews()
 		}
 	}
-	
+
 	override var isFlipped: Bool {
 		return true
 	}
@@ -64,7 +64,7 @@ class TimelineTableCellView: NSTableCellView {
 			needsDisplay = true
 		}
 	}
-	
+
 	var isSelected = false {
 		didSet {
 //			titleView.selected = isSelected
@@ -75,40 +75,40 @@ class TimelineTableCellView: NSTableCellView {
 	}
 
 	override init(frame frameRect: NSRect) {
-		
+
 		super.init(frame: frameRect)
 		commonInit()
 	}
-	
+
 	required init?(coder: NSCoder) {
-		
+
 		super.init(coder: coder)
 		commonInit()
 	}
-	
+
 	override func setFrameSize(_ newSize: NSSize) {
-		
+
 		if newSize == self.frame.size {
 			return
 		}
-		
+
 		super.setFrameSize(newSize)
 		needsLayout = true
 	}
 
 	override func viewDidMoveToSuperview() {
-		
+
 		updateSubviews()
 		updateAppearance()
 	}
-	
+
 	override func layout() {
 
 		resizeSubviews(withOldSize: NSZeroSize)
 	}
-	
+
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
-		
+
 		let layoutRects = updatedLayoutRects()
 
 		setFrame(for: titleView, rect: layoutRects.titleRect)

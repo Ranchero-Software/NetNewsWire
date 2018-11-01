@@ -11,12 +11,12 @@ import AppKit
 class UnreadIndicatorView: NSView {
 
 	static let unreadCircleDimension = appDelegate.currentTheme.float(forKey: "MainWindow.Timeline.cell.unreadCircleDimension")
-	
+
 	static let bezierPath: NSBezierPath = {
 		let r = NSRect(x: 0.0, y: 0.0, width: unreadCircleDimension, height: unreadCircleDimension)
 		return NSBezierPath(ovalIn: r)
 	}()
-	
+
 	static let unreadCircleColor = appDelegate.currentTheme.color(forKey: "MainWindow.Timeline.cell.unreadCircleColor")
 
 	var isEmphasized = false {
@@ -46,5 +46,5 @@ class UnreadIndicatorView: NSView {
 		}
 		UnreadIndicatorView.bezierPath.fill()
     }
-    
+
 }

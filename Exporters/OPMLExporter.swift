@@ -24,7 +24,7 @@ struct OPMLExporter {
 					<title>\(escapedTitle)</title>
 				</head>
 			<body>
-			
+
 			"""
 
 		let middleText = account.OPMLString(indentLevel: 0)

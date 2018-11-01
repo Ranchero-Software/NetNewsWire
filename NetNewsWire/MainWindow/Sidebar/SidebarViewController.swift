@@ -13,11 +13,11 @@ import Account
 import RSCore
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, UndoableCommandRunner {
-    
+
 	@IBOutlet var outlineView: SidebarOutlineView!
 	@IBOutlet var gearMenuDelegate: SidebarGearMenuDelegate!
 	@IBOutlet var contextualMenuDelegate: SidebarContextualMenuDelegate!
-	
+
 	let treeControllerDelegate = SidebarTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
@@ -75,7 +75,7 @@ import RSCore
 	// MARK: - Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {
-		
+
 		guard let representedObject = note.object else {
 			return
 		}
@@ -88,10 +88,10 @@ import RSCore
 	}
 
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		
+
 		rebuildTreeAndReloadDataIfNeeded()
 	}
-	
+
 	@objc func userDidAddFeed(_ notification: Notification) {
 
 		guard let feed = notification.userInfo?[UserInfoKey.feed] else {
@@ -122,13 +122,13 @@ import RSCore
 	}
 
 	@objc func userDidRequestSidebarSelection(_ note: Notification) {
-		
+
 		guard let feed = note.userInfo?[UserInfoKey.feed] else {
 			return
 		}
 		revealAndSelectRepresentedObject(feed as AnyObject)
 	}
-	
+
 	// MARK: - Actions
 
 	@IBAction func delete(_ sender: AnyObject?) {
@@ -168,26 +168,26 @@ import RSCore
 	}
 
 	// MARK: - Navigation
-	
+
 	func canGoToNextUnread() -> Bool {
-		
+
 		if let _ = nextSelectableRowWithUnreadArticle() {
 			return true
 		}
 		return false
 	}
-	
+
 	func goToNextUnread() {
-		
+
 		guard let row = nextSelectableRowWithUnreadArticle() else {
 			assertionFailure("goToNextUnread called before checking if there is a next unread.")
 			return
 		}
-		
+
 		NSCursor.setHiddenUntilMouseMoves(true)
 		outlineView.selectRowIndexes(IndexSet([row]), byExtendingSelection: false)
 		outlineView.scrollTo(row: row)
-		
+
 	}
 
 	func focus() {
@@ -216,13 +216,13 @@ import RSCore
 			// If the clickedRow is part of the selected rows, then do a contextual menu for all the selected rows.
 			return contextualMenuForSelectedObjects()
 		}
-		
+
 		let object = node.representedObject
 		return menu(for: [object])
 	}
 
 	// MARK: - NSOutlineViewDelegate
-    
+
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
 
 		let node = item as! Node
@@ -271,25 +271,25 @@ import RSCore
     }
 
 	//MARK: - Node Manipulation
-	
+
 	func deleteNodes(_ nodes: [Node]) {
-		
+
 		let nodesToDelete = treeController.normalizedSelectedNodes(nodes)
-		
+
 		guard let undoManager = undoManager, let deleteCommand = DeleteFromSidebarCommand(nodesToDelete: nodesToDelete, treeController: treeController, undoManager: undoManager) else {
 			return
 		}
-		
+
 		animatingChanges = true
 		outlineView.beginUpdates()
-		
+
 		let indexSetsGroupedByParent = Node.indexSetsGroupedByParent(nodesToDelete)
 		for (parent, indexSet) in indexSetsGroupedByParent {
 			outlineView.removeItems(at: indexSet, inParent: parent.isRoot ? nil : parent, withAnimation: [.slideDown])
 		}
-		
+
 		outlineView.endUpdates()
-		
+
 		runCommand(deleteCommand)
 		animatingChanges = false
 	}
@@ -312,7 +312,7 @@ extension SidebarViewController: NSUserInterfaceValidations {
 //MARK: - Private
 
 private extension SidebarViewController {
-	
+
 	var selectedNodes: [Node] {
 		if let nodes = outlineView.selectedItems as? [Node] {
 			return nodes
@@ -335,13 +335,13 @@ private extension SidebarViewController {
 	}
 
 	func rebuildTreeAndReloadDataIfNeeded() {
-		
+
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
 			treeController.rebuild()
 			outlineView.reloadData()
 		}
 	}
-	
+
 	func postSidebarSelectionDidChangeNotification(_ selectedObjects: [AnyObject]?) {
 
 		var userInfo = UserInfoDictionary()
@@ -377,19 +377,19 @@ private extension SidebarViewController {
 	}
 
 	func nodeForRow(_ row: Int) -> Node? {
-		
+
 		if row < 0 || row >= outlineView.numberOfRows {
 			return nil
 		}
-		
+
 		if let node = outlineView.item(atRow: row) as? Node {
 			return node
 		}
 		return nil
 	}
-	
+
 	func rowHasAtLeastOneUnreadArticle(_ row: Int) -> Bool {
-		
+
 		if let oneNode = nodeForRow(row) {
 			if let unreadCountProvider = oneNode.representedObject as? UnreadCountProvider {
 				if unreadCountProvider.unreadCount > 0 {
@@ -415,14 +415,14 @@ private extension SidebarViewController {
 		let selectedRow = outlineView.selectedRow
 		let numberOfRows = outlineView.numberOfRows
 		var row = selectedRow + 1
-		
+
 		while (row < numberOfRows) {
 			if rowHasAtLeastOneUnreadArticle(row) && !rowIsGroupItem(row) {
 				return row
 			}
 			row += 1
 		}
-		
+
 		row = 0
 		while (row <= selectedRow) {
 			if rowHasAtLeastOneUnreadArticle(row) && !rowIsGroupItem(row) {
@@ -430,7 +430,7 @@ private extension SidebarViewController {
 			}
 			row += 1
 		}
-		
+
 		return nil
 	}
 
@@ -542,9 +542,9 @@ private extension SidebarViewController {
 
 		return outlineView.revealAndSelectRepresentedObject(representedObject, treeController)
 	}
-	
+
 	func folderParentForNode(_ node: Node) -> Container? {
-		
+
 		if let folder = node.parent?.representedObject as? Container {
 			return folder
 		}
@@ -556,18 +556,18 @@ private extension SidebarViewController {
 		}
 		return nil
 	}
-	
+
 	func deleteItemForNode(_ node: Node) {
-		
+
 //		if let folder = folderParentForNode(node) {
 //			folder.deleteItems([node.representedObject])
 //		}
 	}
-	
+
 	func deleteItemsForNodes(_ nodes: [Node]) {
-		
+
 		nodes.forEach { (oneNode) in
-			
+
 			deleteItemForNode(oneNode)
 		}
 	}

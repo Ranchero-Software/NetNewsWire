@@ -25,7 +25,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var feedIconDownloader: FeedIconDownloader!
 	var appName: String!
-	
+
 	@IBOutlet var debugMenuItem: NSMenuItem!
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
@@ -102,13 +102,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFeedController = AddFeedController(hostWindow: window)
 		addFeedController?.showAddFeedSheet(urlString, name, folder)
 	}
-	
+
 	func showAddFeedFromListOnMainWindow(_ feedListFeeds: [FeedListFeed]) {
-		
+
 		addFeedFromListController = AddFeedFromListWindowController(feedListFeeds)
-		
+
 		createAndShowMainWindow()
-		
+
 		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
 		if !isDisplayingSheet, let mainWindow = mainWindowController?.window {
 			addFeedFromListController!.runSheetOnWindow(mainWindow)
@@ -354,7 +354,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		logWindowController!.showWindow(self)
 	}
-	
+
 	@IBAction func importOPMLFromFile(_ sender: Any?) {
 
 		let panel = NSOpenPanel()
@@ -379,7 +379,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		}
 	}
-	
+
 	@IBAction func importOPMLFromURL(_ sender: Any?) {
 
 	}
@@ -410,7 +410,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		}
 	}
-	
+
 	@IBAction func addAppNews(_ sender: Any?) {
 
 		if AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
@@ -516,7 +516,7 @@ private extension AppDelegate {
 /*
     the ScriptingAppDelegate protocol exposes a narrow set of accessors with
     internal visibility which are very similar to some private vars.
-    
+
     These would be unnecessary if the similar accessors were marked internal rather than private,
     but for now, we'll keep the stratification of visibility
 */

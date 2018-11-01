@@ -20,7 +20,7 @@ public extension Notification.Name {
 	public static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
 	public static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
 	public static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
-	
+
 	public static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
 }
 
@@ -101,7 +101,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
             }
         }
     }
-    
+
 	var refreshInProgress = false {
 		didSet {
 			if refreshInProgress != oldValue {
@@ -119,13 +119,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	var refreshProgress: DownloadProgress {
 		return delegate.refreshProgress
 	}
-	
+
 	var supportsSubFolders: Bool {
 		return delegate.supportsSubFolders
 	}
-	
+
 	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
-		
+
 		// TODO: support various syncing systems.
 		precondition(type == .onMyMac)
 		self.delegate = LocalAccountDelegate()
@@ -156,7 +156,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
 		pullObjectsFromDisk()
-		
+
 		DispatchQueue.main.async {
 			self.fetchAllUnreadCounts()
 		}
@@ -164,7 +164,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.delegate.accountDidInitialize(self)
 		startingUp = false
 	}
-	
+
 	// MARK: - API
 
 	public func refreshAll() {
@@ -201,10 +201,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		guard let updatedStatuses = database.mark(articles, statusKey: statusKey, flag: flag) else {
 			return nil
 		}
-		
+
 		let updatedArticleIDs = updatedStatuses.articleIDs()
 		let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
-        
+
         noteStatusesForArticlesDidChange(updatedArticles)
 		return updatedArticles
 	}
@@ -288,10 +288,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func createFeed(with name: String?, editedName: String?, url: String) -> Feed? {
-		
+
 		// For syncing, this may need to be an async method with a callback,
 		// since it will likely need to call the server.
-		
+
 		let feed = Feed(account: self, url: url, feedID: url)
 		if let name = name, feed.name == nil {
 			feed.name = name
@@ -302,7 +302,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		return feed
 	}
-	
+
 	public func canAddFolder(_ folder: Folder, to containingFolder: Folder?) -> Bool {
 
 		return false // TODO
@@ -340,7 +340,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		if feeds.isEmpty {
 			return
 		}
-		
+
 		database.fetchUnreadCounts(for: feeds.feedIDs()) { (unreadCountDictionary) in
 
 			for feed in feeds {
@@ -439,7 +439,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		// Does not support undo.
 
 		database.markEverywhereAsRead()
-		flattenedFeeds().forEach { $0.unreadCount = 0 }		
+		flattenedFeeds().forEach { $0.unreadCount = 0 }
 	}
 
 	public func opmlDocument() -> String {
@@ -527,13 +527,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		refreshInProgress = refreshProgress.numberRemaining > 0
 		NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
 	}
-	
+
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if let feed = note.object as? Feed, feed.account === self {
 			updateUnreadCount()
 		}
 	}
-    
+
     @objc func batchUpdateDidPerform(_ note: Notification) {
 
 		flattenedFeedsNeedUpdate = true
@@ -602,7 +602,7 @@ extension Account {
 // MARK: - Disk (Private)
 
 private extension Account {
-	
+
 	struct Key {
 		static let children = "children"
 		static let userInfo = "userInfo"
@@ -783,7 +783,7 @@ private extension Account {
 			addFeeds(feedsToAdd, to: parentFolder)
 		}
 	}
-    
+
     func updateUnreadCount() {
 		if fetchingAllUnreadCounts {
 			return
@@ -794,16 +794,16 @@ private extension Account {
 		}
 		unreadCount = updatedUnreadCount
     }
-    
+
     func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
-        
+
 		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
-        
+
         // .UnreadCountDidChange notification will get sent to Folder and Account objects,
         // which will update their own unread counts.
         updateUnreadCounts(for: feeds)
-        
+
         NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.feeds: feeds])
     }
 

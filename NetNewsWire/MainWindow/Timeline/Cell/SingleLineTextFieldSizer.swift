@@ -35,7 +35,7 @@ final class SingleLineTextFieldSizer {
 		var calculatedSize = textField.fittingSize
 		calculatedSize.height = ceil(calculatedSize.height)
 		calculatedSize.width = ceil(calculatedSize.width)
-		
+
 		cache[text] = calculatedSize
 		return calculatedSize
 	}

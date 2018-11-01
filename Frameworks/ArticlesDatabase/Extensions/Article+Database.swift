@@ -12,7 +12,7 @@ import Articles
 import RSParser
 
 extension Article {
-	
+
 	init(databaseArticle: DatabaseArticle, accountID: String, authors: Set<Author>?, attachments: Set<Attachment>?) {
 
 		self.init(accountID: accountID, articleID: databaseArticle.articleID, feedID: databaseArticle.feedID, uniqueID: databaseArticle.uniqueID, title: databaseArticle.title, contentHTML: databaseArticle.contentHTML, contentText: databaseArticle.contentText, url: databaseArticle.url, externalURL: databaseArticle.externalURL, summary: databaseArticle.summary, imageURL: databaseArticle.imageURL, bannerImageURL: databaseArticle.bannerImageURL, datePublished: databaseArticle.datePublished, dateModified: databaseArticle.dateModified, authors: authors, attachments: attachments, status: databaseArticle.status)
@@ -27,18 +27,18 @@ extension Article {
 	}
 
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: NSMutableDictionary) {
-		
+
 		if self[keyPath: comparisonKeyPath] != otherArticle[keyPath: comparisonKeyPath] {
 			dictionary.addOptionalStringDefaultingEmpty(self[keyPath: comparisonKeyPath], key)
 		}
 	}
-	
+
 	func changesFrom(_ otherArticle: Article) -> NSDictionary? {
-		
+
 		if self == otherArticle {
 			return nil
 		}
-		
+
 		let d = NSMutableDictionary()
 		if uniqueID != otherArticle.uniqueID {
 			// This should be super-rare, if ever.
@@ -46,7 +46,7 @@ extension Article {
 				d[DatabaseKey.uniqueID] = otherArticle.uniqueID
 			}
 		}
-		
+
 		addPossibleStringChangeWithKeyPath(\Article.title, otherArticle, DatabaseKey.title, d)
 		addPossibleStringChangeWithKeyPath(\Article.contentHTML, otherArticle, DatabaseKey.contentHTML, d)
 		addPossibleStringChangeWithKeyPath(\Article.contentText, otherArticle, DatabaseKey.contentText, d)
@@ -58,7 +58,7 @@ extension Article {
 
 		// If updated versions of dates are nil, and we have existing dates, keep the existing dates.
 		// This is data that’s good to have, and it’s likely that a feed removing dates is doing so in error.
-		
+
 		if datePublished != otherArticle.datePublished {
 			if let updatedDatePublished = otherArticle.datePublished {
 				d[DatabaseKey.datePublished] = updatedDatePublished
@@ -69,19 +69,19 @@ extension Article {
 				d[DatabaseKey.dateModified] = updatedDateModified
 			}
 		}
-		
+
 		if d.count < 1 {
 			return nil
 		}
-		
+
 		return d
 	}
 
 	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ accountID: String, _ feedID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
-	
+
 		return Set(parsedItems.map{ Article(parsedItem: $0, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
 	}
-	
+
 }
 
 extension Article: DatabaseObject {
@@ -108,7 +108,7 @@ extension Article: DatabaseObject {
 
 		return (d.copy() as! NSDictionary)
 	}
-	
+
 	public var databaseID: String {
 		return articleID
 	}
@@ -140,7 +140,7 @@ extension Set where Element == Article {
 
 		return Set<ArticleStatus>(map { $0.status })
 	}
-	
+
 	func dictionary() -> [String: Article] {
 
 		var d = [String: Article]()
@@ -171,7 +171,7 @@ private extension NSMutableDictionary {
 	}
 
 	func addOptionalStringDefaultingEmpty(_ value: String?, _ key: String) {
-		
+
 		if let value = value {
 			self[key] = value
 		}
@@ -179,7 +179,7 @@ private extension NSMutableDictionary {
 			self[key] = ""
 		}
 	}
-	
+
 	func addOptionalDate(_ date: Date?, _ key: String) {
 
 		if let date = date {

@@ -14,7 +14,7 @@ import Account
 final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
-		
+
 		if node.isRoot {
 			return childNodesForRootNode(node)
 		}
@@ -26,11 +26,11 @@ final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 		}
 
 		return nil
-	}	
+	}
 }
 
 private extension SidebarTreeControllerDelegate {
-	
+
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 
 		// The top-level nodes are Smart Feeds and accounts.
@@ -77,7 +77,7 @@ private extension SidebarTreeControllerDelegate {
 	}
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {
-		
+
 		if let feed = representedObject as? Feed {
 			return createNode(feed: feed, parent: parent)
 		}
@@ -90,12 +90,12 @@ private extension SidebarTreeControllerDelegate {
 
 		return nil
 	}
-	
+
 	func createNode(feed: Feed, parent: Node) -> Node {
 
 		return parent.createChildNode(feed)
 	}
-	
+
 	func createNode(folder: Folder, parent: Node) -> Node {
 
 		let node = parent.createChildNode(folder)
@@ -123,7 +123,7 @@ private extension SidebarTreeControllerDelegate {
 	}
 
 	func nodeInArrayRepresentingObject(_ nodes: [Node], _ representedObject: AnyObject) -> Node? {
-		
+
 		for oneNode in nodes {
 			if oneNode.representedObject === representedObject {
 				return oneNode

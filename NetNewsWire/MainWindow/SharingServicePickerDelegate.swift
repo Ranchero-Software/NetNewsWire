@@ -9,17 +9,17 @@
 import AppKit
 
 @objc final class SharingServicePickerDelegate: NSObject, NSSharingServicePickerDelegate {
-	
+
 	private let sharingServiceDelegate: SharingServiceDelegate
-	
+
 	init(_ window: NSWindow?) {
 		sharingServiceDelegate = SharingServiceDelegate(window)
 	}
-	
+
 	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
 
 		return proposedServices + SharingServicePickerDelegate.customSharingServices(for: items)
-		
+
 	}
 
 	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, delegateFor sharingService: NSSharingService) -> NSSharingServiceDelegate? {

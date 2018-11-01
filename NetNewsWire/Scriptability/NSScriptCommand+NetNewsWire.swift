@@ -13,12 +13,12 @@ extension NSScriptCommand {
     func property(forKey key:String) -> Any? {
         if let evaluatedArguments = self.evaluatedArguments  {
             if let props = evaluatedArguments["KeyDictionary"] as? [String: Any] {
-                return props[key] 
+                return props[key]
             }
         }
         return nil
     }
-    
+
     func isCreateCommand(forClass whatClass:String) -> Bool {
         guard let arguments = self.arguments else {return false}
         guard let newObjectClass = arguments["ObjectClass"] as? Int else {return false}
@@ -44,7 +44,7 @@ extension NSScriptCommand {
             } else if let subjectDescriptor = appleEvent.attributeDescriptor(forKeyword:"subj".FourCharCode()) {
                 descriptorToConsider = subjectDescriptor
             }
-            
+
             if let descriptorToConsider = descriptorToConsider {
                 guard let newContainerSpecifier = NSScriptObjectSpecifier(descriptor:descriptorToConsider) else {return (account, folder)}
                 let newContainer = newContainerSpecifier.objectsByEvaluatingSpecifier

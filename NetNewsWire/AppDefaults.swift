@@ -37,7 +37,7 @@ final class AppDefaults {
 	private let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
 	let isFirstRun: Bool
-	
+
 	var openInBrowserInBackground: Bool {
 		get {
 			return bool(for: Key.openInBrowserInBackground)
@@ -95,7 +95,7 @@ final class AppDefaults {
 			UserDefaults.standard.set(newValue, forKey: Key.mainWindowWidths)
 		}
 	}
-	
+
 	private init() {
 
 		AppDefaults.registerDefaults()
@@ -137,9 +137,9 @@ private extension AppDefaults {
 	}
 
 	static func registerDefaults() {
-		
+
 		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false]
-		
+
 		UserDefaults.standard.register(defaults: defaults)
 	}
 
@@ -157,11 +157,11 @@ private extension AppDefaults {
 //		}
 //		return FontSize(rawValue: rawFontSize)!
 	}
-	
+
 	func setFontSize(for key: String, _ fontSize: FontSize) {
 		setInt(for: key, fontSize.rawValue)
 	}
-	
+
 	func bool(for key: String) -> Bool {
 		return UserDefaults.standard.bool(forKey: key)
 	}
@@ -173,11 +173,11 @@ private extension AppDefaults {
 	func int(for key: String) -> Int {
 		return UserDefaults.standard.integer(forKey: key)
 	}
-	
+
 	func setInt(for key: String, _ x: Int) {
 		UserDefaults.standard.set(x, forKey: key)
 	}
-	
+
 	func date(for key: String) -> Date? {
 		return UserDefaults.standard.object(forKey: key) as? Date
 	}

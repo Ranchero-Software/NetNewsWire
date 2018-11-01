@@ -11,7 +11,7 @@ import AppKit
 @objc final class TimelineDataSource: NSObject, NSTableViewDataSource {
 
 	var articles = ArticleArray()
-	
+
 	func numberOfRows(in tableView: NSTableView) -> Int {
 
 		return articles.count

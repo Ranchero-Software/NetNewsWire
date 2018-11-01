@@ -21,7 +21,7 @@ class ArticleRenderer {
 	let article: Article?
 	let articleStyle: ArticleStyle
 	let appearance: NSAppearance?
-	
+
 	static var faviconImgTagCache = [Feed: String]()
 	static var feedIconImgTagCache = [Feed: String]()
 
@@ -38,14 +38,14 @@ class ArticleRenderer {
 		dateFormatter.timeStyle = .short
 		return dateFormatter
 	}()
-	
+
 	lazy var shortDateFormatter: DateFormatter = {
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateStyle = .short
 		dateFormatter.timeStyle = .short
 		return dateFormatter
 	}()
-	
+
 	lazy var title: String = {
 		if let articleTitle = self.article?.title {
 			return articleTitle
@@ -93,12 +93,12 @@ class ArticleRenderer {
 		let body = "<h3 class='systemMessage'>Multiple selection</h3>"
 		return renderHTML(withBody: body)
 	}
-	
+
 	var noSelectionHTML: String {
 		let body = "<h3 class='systemMessage'>No selection</h3>"
 		return renderHTML(withBody: body)
 	}
-	
+
 	init(article: Article?, style: ArticleStyle, appearance: NSAppearance? = nil) {
 		self.article = article
 		self.articleStyle = style
@@ -144,10 +144,10 @@ class ArticleRenderer {
 	}
 
 	private func linkWithTextAndClass(_ text: String, _ href: String, _ className: String) -> String {
-		
+
 		return "<a class=\"\(className)\" href=\"\(href)\">\(text)</a>"
 	}
-	
+
 	private func linkWithText(_ text: String, _ href: String) -> String {
 
 		return ArticleRenderer.linkWithText(text, href)
@@ -179,7 +179,7 @@ class ArticleRenderer {
 			assertionFailure("Article should have been set before calling this function.")
 			return d
 		}
-		
+
 		let title = titleOrTitleLink()
 		d["title"] = title
 
@@ -425,7 +425,7 @@ class ArticleRenderer {
 				return ""
 			}
 		}
-		
+
 		var byline = ""
 		var isFirstAuthor = true
 
@@ -457,7 +457,7 @@ class ArticleRenderer {
 		}
 
 		return byline
-        
+
 	}
 
 	private func renderHTML(withBody body: String) -> String {
@@ -489,7 +489,7 @@ class ArticleRenderer {
 		</script>
 
 		"""
-		
+
 		let appearanceClass = appearance?.isDarkMode ?? false ? "dark" : "light"
 		s += "\n\n</head><body id='bodyId' onload='startup()' class=\(appearanceClass)>\n\n"
 

@@ -11,7 +11,7 @@ import RSParser
 import Articles
 
 extension ParsedItem {
-	
+
 	var articleID: String {
 		if let s = syncServiceID {
 			return s

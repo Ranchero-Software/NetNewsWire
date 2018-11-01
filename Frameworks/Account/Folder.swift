@@ -16,13 +16,13 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 	public weak var account: Account?
 	public var topLevelFeeds: Set<Feed> = Set<Feed>()
 	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
-	
+
 	public var name: String? {
 		didSet {
 			postDisplayNameDidChangeNotification()
 		}
 	}
-	
+
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 	public let folderID: Int // not saved: per-run only
 	static var incrementingID = 0
@@ -46,7 +46,7 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 	// MARK: - Init
 
 	init(account: Account, name: String?) {
-		
+
 		self.account = account
 		self.name = name
 
@@ -94,7 +94,7 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		}
 		return false
 	}
-    
+
 	// MARK: - Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {

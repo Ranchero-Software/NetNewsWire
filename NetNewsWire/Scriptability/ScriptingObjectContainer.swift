@@ -25,7 +25,7 @@ extension ScriptingObjectContainer {
                                         containerSpecifier:containerScriptObjectSpecifier, key:scriptingKey, name:name)
         return specifier
     }
-    
+
     func makeFormUniqueIDScriptObjectSpecifier(forObject object:UniqueIdScriptingObject) -> NSScriptObjectSpecifier? {
         let containerClassDescription = self.scriptingClassDescription
         let containerScriptObjectSpecifier = self.objectSpecifier

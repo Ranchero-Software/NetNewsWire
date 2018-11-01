@@ -76,7 +76,7 @@ struct FeedbinArticle {
 		else {
 			self.contentDiffHTML = nil
 		}
-		
+
 		if let summary = jsonDictionary[Key.summary] as? String, !summary.isEmpty {
 			self.summary = summary
 		}

@@ -141,7 +141,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 	}
 
 	// MARK: - UnreadCountProvider
-	
+
 	public var unreadCount: Int {
 		get {
 			return account?.unreadCount(for: self) ?? 0
@@ -177,7 +177,7 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 			return nil
 		}
 		let feedID = dictionary[Key.feedID] as? String ?? url
-		
+
 		self.init(account: account, url: url, feedID: feedID)
 		self.editedName = dictionary[Key.editedName] as? String
 		self.name = dictionary[Key.name] as? String

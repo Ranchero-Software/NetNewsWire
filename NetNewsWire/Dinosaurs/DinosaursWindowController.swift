@@ -30,6 +30,6 @@ class DinosaursWindowController: NSWindowController {
 	}
 
 	@IBAction func unsubscribe(_ sender: Any?) {
-		
+
 	}
 }

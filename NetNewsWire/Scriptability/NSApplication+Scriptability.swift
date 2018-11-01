@@ -25,7 +25,7 @@ extension NSApplication : ScriptingObjectContainer {
     var scriptingKey: String {
         return "application"
     }
-    
+
     @objc(currentArticle)
     func currentArticle() -> ScriptableArticle? {
         var scriptableArticle: ScriptableArticle?
@@ -59,7 +59,7 @@ extension NSApplication : ScriptingObjectContainer {
         let accounts = AccountManager.shared.accounts
         return accounts.map { ScriptableAccount($0) } as NSArray
     }
-    
+
     @objc(valueInAccountsWithUniqueID:)
     func valueInAccounts(withUniqueID id:String) -> ScriptableAccount? {
         let accounts = AccountManager.shared.accounts
@@ -71,8 +71,8 @@ extension NSApplication : ScriptingObjectContainer {
         accessing feeds from the application object skips the 'account' containment hierarchy
         this allows a script like 'articles of feed "The Shape of Everything"' as a shorthand
         for  'articles of feed "The Shape of Everything" of account "On My Mac"'
-    */  
-      
+    */
+
     func allFeeds() -> [Feed] {
         let accounts = AccountManager.shared.accounts
         let emptyFeeds:[Feed] = []

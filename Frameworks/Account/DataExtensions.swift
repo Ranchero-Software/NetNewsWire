@@ -55,7 +55,7 @@ public extension Article {
 	public var account: Account? {
 		return AccountManager.shared.existingAccount(with: accountID)
 	}
-	
+
 	public var feed: Feed? {
 		return account?.existingFeed(with: feedID)
 	}

@@ -30,9 +30,9 @@ public struct Article: Hashable {
 	public var hashValue: Int {
 		return articleID.hashValue
 	}
-	
+
 	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, attachments: Set<Attachment>?, status: ArticleStatus) {
-		
+
 		self.accountID = accountID
 		self.feedID = feedID
 		self.uniqueID = uniqueID
@@ -49,7 +49,7 @@ public struct Article: Hashable {
 		self.authors = authors
 		self.attachments = attachments
 		self.status = status
-		
+
 		if let articleID = articleID {
 			self.articleID = articleID
 		}
@@ -59,15 +59,15 @@ public struct Article: Hashable {
 	}
 
 	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {
-		
+
 		return databaseIDWithString("\(feedID) \(uniqueID)")
 	}
 }
 
 public extension Set where Element == Article {
-	
+
 	public func articleIDs() -> Set<String> {
-		
+
 		return Set<String>(map { $0.articleID })
 	}
 
@@ -79,9 +79,9 @@ public extension Set where Element == Article {
 }
 
 public extension Array where Element == Article {
-	
+
 	public func articleIDs() -> [String] {
-		
+
 		return map { $0.articleID }
 	}
 }

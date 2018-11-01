@@ -19,7 +19,7 @@ private let textCache = NSMutableDictionary()
 private let summaryCache = NSMutableDictionary()
 
 func timelineEmptyCaches() {
-	
+
 	truncatedFeedNameCache = [String: String]()
 	truncatedTitleCache.removeAllObjects()
 	normalizedTextCache.removeAllObjects()
@@ -59,7 +59,7 @@ func timelineTruncatedTitle(_ article: Article) -> String {
 	s = s.replacingOccurrences(of: "\t", with: "")
 	s = s.replacingOccurrences(of: "↦", with: "")
 	s = s.rs_stringByTrimmingWhitespace()
-	
+
 	let maxLength = 1000
 	if s.count < maxLength {
 		truncatedTitleCache[title] = s
@@ -72,7 +72,7 @@ func timelineTruncatedTitle(_ article: Article) -> String {
 }
 
 func timelineTruncatedSummary(_ article: Article) -> String {
-	
+
 	return timelineSummaryForArticle(article)
 }
 
@@ -137,7 +137,7 @@ func timelineSummaryForArticle(_ article: Article) -> String {
 }
 
 private let dateFormatter: DateFormatter = {
-	
+
 	let formatter = DateFormatter()
 	formatter.dateStyle = .medium
 	formatter.timeStyle = .none
@@ -145,7 +145,7 @@ private let dateFormatter: DateFormatter = {
 }()
 
 private let timeFormatter: DateFormatter = {
-	
+
 	let formatter = DateFormatter()
 	formatter.dateStyle = .none
 	formatter.timeStyle = .short
@@ -155,11 +155,11 @@ private let timeFormatter: DateFormatter = {
 private var token: Int = 0
 
 func timelineDateString(_ date: Date) -> String {
-	
+
 	if NSCalendar.rs_dateIsToday(date) {
 		return timeFormatter.string(from: date)
 	}
-	
+
 	return dateFormatter.string(from: date)
 }
 

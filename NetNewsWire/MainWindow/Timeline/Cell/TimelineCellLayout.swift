@@ -10,7 +10,7 @@ import AppKit
 import RSCore
 
 struct TimelineCellLayout {
-	
+
 	let width: CGFloat
 	let height: CGFloat
 	let feedNameRect: NSRect
@@ -23,9 +23,9 @@ struct TimelineCellLayout {
 	let starRect: NSRect
 	let avatarImageRect: NSRect
 	let paddingBottom: CGFloat
-	
+
 	init(width: CGFloat, height: CGFloat, feedNameRect: NSRect, dateRect: NSRect, titleRect: NSRect, numberOfLinesForTitle: Int, summaryRect: NSRect, textRect: NSRect, unreadIndicatorRect: NSRect, starRect: NSRect, avatarImageRect: NSRect, paddingBottom: CGFloat) {
-		
+
 		self.width = width
 		self.feedNameRect = feedNameRect
 		self.dateRect = dateRect
@@ -110,7 +110,7 @@ private extension TimelineCellLayout {
 			r.size.height = 0
 			return (r, 0)
 		}
-		
+
 		let sizeInfo = MultilineTextFieldSizer.size(for: cellData.title, font: appearance.titleFont, numberOfLines: appearance.titleNumberOfLines, width: Int(textBoxRect.width))
 		r.size.height = sizeInfo.size.height
 		if sizeInfo.numberOfLinesUsed < 1 {

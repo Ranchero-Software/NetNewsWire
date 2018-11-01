@@ -13,9 +13,9 @@ private struct PreferencesToolbarItemSpec {
 	let identifier: NSToolbarItem.Identifier
 	let name: String
 	let imageName: NSImage.Name
-	
+
 	init(identifierRawValue: String, name: String, imageName: NSImage.Name) {
-		
+
 		self.identifier = NSToolbarItem.Identifier(rawValue: identifierRawValue)
 		self.name = name
 		self.imageName = imageName
@@ -25,7 +25,7 @@ private struct PreferencesToolbarItemSpec {
 private let toolbarItemIdentifierGeneral = "General"
 
 class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
-	
+
 	private let windowFrameName = "Preferences"
 	fileprivate var viewControllers = [String: NSViewController]()
 	fileprivate let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
@@ -48,7 +48,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		window?.toolbar = toolbar
 
 		window?.setFrameAutosaveName(NSWindow.FrameAutosaveName(rawValue: windowFrameName))
-		
+
 		switchToViewAtIndex(0)
 	}
 
@@ -83,12 +83,12 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	}
 
 	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		
+
 		return toolbarDefaultItemIdentifiers(toolbar)
 	}
 
 	func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		
+
 		return toolbarDefaultItemIdentifiers(toolbar)
 	}
 }
@@ -121,7 +121,7 @@ private extension PreferencesWindowController {
 			assertionFailure("Preferences window: no view controller matching \(identifier).")
 			return
 		}
-		
+
 		if newViewController.view == currentView {
 			return
 		}
@@ -158,28 +158,28 @@ private extension PreferencesWindowController {
 		viewControllers[identifier] = viewController
 		return viewController
 	}
-	
+
 	func resizeWindow(toFitView view: NSView) {
-		
+
 		let viewFrame = view.frame
 		let windowFrame = window!.frame
 		let contentViewFrame = window!.contentView!.frame
-		
+
 		let deltaHeight = NSHeight(contentViewFrame) - NSHeight(viewFrame)
 		let heightForWindow = NSHeight(windowFrame) - deltaHeight
 		let windowOriginY = NSMinY(windowFrame)// + deltaHeight
-		
+
 		var updatedWindowFrame = windowFrame
 		updatedWindowFrame.size.height = heightForWindow
 		updatedWindowFrame.origin.y = windowOriginY
 		updatedWindowFrame.size.width = NSWidth(viewFrame)
-		
+
 		var updatedViewFrame = viewFrame
 		updatedViewFrame.origin = NSZeroPoint
 		if viewFrame != updatedViewFrame {
 			view.frame = updatedViewFrame
 		}
-		
+
 		if windowFrame != updatedWindowFrame {
 			window!.setFrame(updatedWindowFrame, display: true, animate: true)
 		}

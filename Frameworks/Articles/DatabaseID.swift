@@ -22,11 +22,11 @@ public func databaseIDWithString(_ s: String) -> String {
 	defer {
 		os_unfair_lock_unlock(&databaseIDCacheLock)
 	}
-	
+
 	if let identifier = databaseIDCache[s] {
 		return identifier
 	}
-	
+
 	let identifier = (s as NSString).rs_md5Hash()
 	databaseIDCache[s] = identifier
 	return identifier

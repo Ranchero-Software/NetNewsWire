@@ -25,7 +25,7 @@ final class FeedListViewController: NSViewController {
 	@IBOutlet var outlineView: NSOutlineView!
 	@IBOutlet var openHomePageButton: NSButton!
 	@IBOutlet var addToFeedsButton: NSButton!
-	
+
 	private var sidebarCellAppearance: SidebarCellAppearance!
 	private let treeControllerDelegate = FeedListTreeControllerDelegate()
 	lazy var treeController: TreeController = {
@@ -79,7 +79,7 @@ extension FeedListViewController {
 		let selectedFeeds = selectedObjects.map { $0 as! FeedListFeed }
 		appDelegate.showAddFeedFromListOnMainWindow(selectedFeeds)
 	}
-	
+
 }
 
 // MARK: - NSOutlineViewDataSource
@@ -87,7 +87,7 @@ extension FeedListViewController {
 extension FeedListViewController: NSOutlineViewDataSource {
 
 	func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
-		
+
 		return nodeForItem(item as AnyObject?).numberOfChildNodes
 	}
 

@@ -20,7 +20,7 @@ final class AttachmentsTable: DatabaseRelatedObjectsTable {
 
 		self.name = name
 	}
-	
+
 	// MARK: DatabaseRelatedObjectsTable
 
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {

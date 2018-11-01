@@ -10,10 +10,10 @@ import Foundation
 
 /*
    @function usrfDictionary()
-   @brief    When an apple event record contains key-value pairs for which the keys are 
-   			 not associated with FourCharCode keys, the keys and values appear in a 
-             "user record fields" AEList, in which the odd items are the keys and the 
-             even items are the values.  This function unpacks user record fields and 
+   @brief    When an apple event record contains key-value pairs for which the keys are
+   			 not associated with FourCharCode keys, the keys and values appear in a
+             "user record fields" AEList, in which the odd items are the keys and the
+             even items are the values.  This function unpacks user record fields and
              returns an analogous Swift dictionary
 */
 extension NSAppleEventDescriptor {

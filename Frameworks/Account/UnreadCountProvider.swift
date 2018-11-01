@@ -23,9 +23,9 @@ public protocol UnreadCountProvider {
 
 
 public extension UnreadCountProvider {
-	
+
 	public func postUnreadCountDidChangeNotification() {
-		
+
 		NotificationCenter.default.post(name: .UnreadCountDidChange, object: self, userInfo: nil)
 	}
 

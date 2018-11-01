@@ -10,10 +10,10 @@ import Foundation
 
 /*
    @function FourCharCode()
-   @brief    FourCharCode values like OSType, DescType or AEKeyword  are really just 
-             4 byte values commonly represented as values like 'odoc' where each byte is 
-             represented as its ASCII character.  This function turns a swift string into 
-             its FourCharCode equivalent, as swift doesn't recognize FourCharCode types 
+   @brief    FourCharCode values like OSType, DescType or AEKeyword  are really just
+             4 byte values commonly represented as values like 'odoc' where each byte is
+             represented as its ASCII character.  This function turns a swift string into
+             its FourCharCode equivalent, as swift doesn't recognize FourCharCode types
              natively just yet.  With this extension, one can use
                   "odoc".FourCharCode()
              where one would really want to use 'odoc'

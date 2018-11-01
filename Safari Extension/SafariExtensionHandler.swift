@@ -59,7 +59,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 			}
 		}
     }
-    
+
     override func toolbarItemClicked(in window: SFSafariWindow) {
 		window.getActiveTab { (activeTab) in
 			activeTab?.getActivePage(completionHandler: { (activePage) in
@@ -104,7 +104,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 				activeTab.getActivePage { (activePage) in
 					guard let activePage = activePage else {
 						SafariExtensionHandler.callValidationHandler(forHandlerID: uniqueValidationID, withShouldValidate:false);
-						return						
+						return
 					}
 
 					activePage.getPropertiesWithCompletionHandler { (pageProperties) in

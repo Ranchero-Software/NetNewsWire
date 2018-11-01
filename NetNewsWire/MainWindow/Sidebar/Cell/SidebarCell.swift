@@ -14,7 +14,7 @@ import RSTree
 private var textSizeCache = [String: NSSize]()
 
 class SidebarCell : NSTableCellView {
-	
+
 	var image: NSImage? {
 		didSet {
 			if let image = image {
@@ -79,23 +79,23 @@ class SidebarCell : NSTableCellView {
 	override var isFlipped: Bool {
 		return true
 	}
-	
+
 	private func commonInit() {
-		
+
 		unreadCountView.translatesAutoresizingMaskIntoConstraints = false
 		imageView?.translatesAutoresizingMaskIntoConstraints = false
 		textField?.translatesAutoresizingMaskIntoConstraints = false
 		addSubview(unreadCountView)
 	}
-	
+
 	override init(frame frameRect: NSRect) {
-		
+
 		super.init(frame: frameRect)
 		commonInit()
 	}
-	
+
 	required init?(coder: NSCoder) {
-		
+
 		super.init(coder: coder)
 		commonInit()
 	}
@@ -113,22 +113,22 @@ class SidebarCell : NSTableCellView {
 		let layout = SidebarCellLayout(appearance: cellAppearance, cellSize: bounds.size, shouldShowImage: shouldShowImage, textField: textField, unreadCountView: unreadCountView)
 		layoutWith(layout)
 	}
-	
+
 	@IBAction func editingEnded(_ sender: NSTextField) {
-		
+
 		guard let node = objectValue as? Node else {
 			return
 		}
-		
+
 		if let feed = node.representedObject as? Feed {
 			feed.editedName = sender.stringValue
 		}
 		else if let folder = node.representedObject as? Folder {
 			folder.name = sender.stringValue
 		}
-		
+
 	}
-	
+
 }
 
 private extension SidebarCell {

@@ -31,13 +31,13 @@ protocol ScriptingAppDelegate {
 }
 
 extension AppDelegate : AppDelegateAppleEvents {
-    
+
     // MARK: GetURL Apple Event
 
     func installAppleEventHandlers() {
         NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.getURL(_:_:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
     }
-    
+
     @objc func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor) {
 
         guard let urlString = event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue else {
@@ -93,7 +93,7 @@ class NetNewsWireDeleteCommand : NSDeleteCommand {
             container.deleteElement(element)
         }
     }
-    
+
     /*
         delete(specifier:, from container:)
         At this point in handling the command, the container could be a list or a single object,
@@ -125,7 +125,7 @@ class NetNewsWireDeleteCommand : NSDeleteCommand {
          if let receiversSpecifier = self.receiversSpecifier {
              if let receiverObjects = receiversSpecifier.objectsByEvaluatingSpecifier {
                 self.delete(specifier:self.keySpecifier, from:receiverObjects)
-             } 
+             }
          }
          return nil
     }
@@ -142,7 +142,7 @@ class NetNewsWireExistsCommand : NSExistsCommand {
     // must not exist.  Otherwise, we return the result of the defaultImplementation
     // The wrinkle is that it is possible that the direct object is a list, so we need to
     // handle that case as well
-    
+
     override func performDefaultImplementation() -> Any? {
          guard let result = super.performDefaultImplementation() else { return NSNumber(booleanLiteral:false) }
          return result

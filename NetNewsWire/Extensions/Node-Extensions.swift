@@ -27,38 +27,38 @@ extension Array where Element == Node {
 private extension Node {
 
 	class func nodesSortedAlphabetically(_ nodes: [Node]) -> [Node] {
-		
+
 		return nodes.sorted { (node1, node2) -> Bool in
-			
+
 			guard let obj1 = node1.representedObject as? DisplayNameProvider, let obj2 = node2.representedObject as? DisplayNameProvider else {
 				return false
 			}
-			
+
 			let name1 = obj1.nameForDisplay
 			let name2 = obj2.nameForDisplay
-			
+
 			return name1.localizedStandardCompare(name2) == .orderedAscending
 		}
 	}
-	
+
 	class func nodesSortedAlphabeticallyWithFoldersAtEnd(_ nodes: [Node]) -> [Node] {
-		
+
 		return nodes.sorted { (node1, node2) -> Bool in
-			
+
 			if node1.canHaveChildNodes != node2.canHaveChildNodes {
 				if node1.canHaveChildNodes {
 					return false
 				}
 				return true
 			}
-			
+
 			guard let obj1 = node1.representedObject as? DisplayNameProvider, let obj2 = node2.representedObject as? DisplayNameProvider else {
 				return false
 			}
-			
+
 			let name1 = obj1.nameForDisplay
 			let name2 = obj2.nameForDisplay
-			
+
 			return name1.localizedStandardCompare(name2) == .orderedAscending
 		}
 	}
