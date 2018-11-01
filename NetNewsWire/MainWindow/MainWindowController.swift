@@ -58,15 +58,15 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		detailSplitViewItem?.minimumThickness = CGFloat(MainWindowController.detailViewMinimumThickness)
 		restoreSplitViewState()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate), name: NSApplication.willTerminateNotification, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidBegin, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidFinish, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange), name: .AccountRefreshDidBegin, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange), name: .AccountRefreshDidFinish, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange), name: .AccountRefreshProgressDidChange, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange), name: .SidebarSelectionDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
@@ -164,35 +164,35 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
-		if item.action == #selector(openArticleInBrowser(_:)) {
+		if item.action == #selector(openArticleInBrowser) {
 			return currentLink != nil
 		}
 
-		if item.action == #selector(nextUnread(_:)) {
+		if item.action == #selector(nextUnread) {
 			return canGoToNextUnread()
 		}
 
-		if item.action == #selector(markAllAsRead(_:)) {
+		if item.action == #selector(markAllAsRead) {
 			return canMarkAllAsRead()
 		}
 
-		if item.action == #selector(toggleRead(_:)) {
+		if item.action == #selector(toggleRead) {
 			return validateToggleRead(item)
 		}
 
-		if item.action == #selector(toggleStarred(_:)) {
+		if item.action == #selector(toggleStarred) {
 			return validateToggleStarred(item)
 		}
 
-		if item.action == #selector(markOlderArticlesAsRead(_:)) {
+		if item.action == #selector(markOlderArticlesAsRead) {
 			return canMarkOlderArticlesAsRead()
 		}
 
-		if item.action == #selector(toolbarShowShareMenu(_:)) {
+		if item.action == #selector(toolbarShowShareMenu) {
 			return canShowShareMenu()
 		}
 
-		if item.action == #selector(toggleSidebar(_:)) {
+		if item.action == #selector(toggleSidebar) {
 
 			guard let splitViewItem = sidebarSplitViewItem else {
 				return false

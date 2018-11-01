@@ -71,7 +71,7 @@ public final class AccountManager: UnreadCountProvider {
 
 		readNonLocalAccountsFromDisk()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange), name: .UnreadCountDidChange, object: nil)
 
 		DispatchQueue.main.async {
 			self.updateUnreadCount()

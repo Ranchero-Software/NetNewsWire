@@ -19,7 +19,7 @@ class MasterViewController: UITableViewController {
 		// Do any additional setup after loading the view, typically from a nib.
 		navigationItem.leftBarButtonItem = editButtonItem
 
-		let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
+		let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject))
 		navigationItem.rightBarButtonItem = addButton
 		if let split = splitViewController {
 		    let controllers = split.viewControllers

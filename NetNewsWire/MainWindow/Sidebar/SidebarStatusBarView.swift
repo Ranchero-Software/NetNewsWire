@@ -42,7 +42,7 @@ final class SidebarStatusBarView: NSView {
 		progressLabel.font = NSFont.monospacedDigitSystemFont(ofSize: progressLabelFontSize, weight: NSFont.Weight.regular)
 		progressLabel.stringValue = ""
 
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange), name: .AccountRefreshProgressDidChange, object: nil)
 	}
 
 	@objc func updateUI() {

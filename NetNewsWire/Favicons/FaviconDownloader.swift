@@ -35,7 +35,7 @@ final class FaviconDownloader {
 		self.diskCache = BinaryDiskCache(folder: folder)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
 
-		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon), name: .DidLoadFavicon, object: nil)
 	}
 
 	// MARK: - API

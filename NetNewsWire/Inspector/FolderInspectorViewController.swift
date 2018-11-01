@@ -45,7 +45,7 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 
 		updateUI()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 	}
 
 	// MARK: Notifications

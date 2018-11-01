@@ -197,7 +197,7 @@ private extension TimelineViewController {
 		let menu = NSMenu(title: NSLocalizedString("Share", comment: "Share menu name"))
 		services.forEach { (service) in
 			service.delegate = sharingServiceDelegate
-			let menuItem = NSMenuItem(title: service.menuItemTitle, action: #selector(performShareServiceFromContextualMenu(_:)), keyEquivalent: "")
+			let menuItem = NSMenuItem(title: service.menuItemTitle, action: #selector(performShareServiceFromContextualMenu), keyEquivalent: "")
 			menuItem.image = service.image
 			let sharingCommandInfo = SharingCommandInfo(service: service, items: items)
 			menuItem.representedObject = sharingCommandInfo
@@ -209,36 +209,36 @@ private extension TimelineViewController {
 
 	func markReadMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Read", comment: "Command"), #selector(markArticlesReadFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("Mark as Read", comment: "Command"), #selector(markArticlesReadFromContextualMenu), articles)
 	}
 
 	func markUnreadMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Unread", comment: "Command"), #selector(markArticlesUnreadFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("Mark as Unread", comment: "Command"), #selector(markArticlesUnreadFromContextualMenu), articles)
 	}
 
 	func markStarredMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Starred", comment: "Command"), #selector(markArticlesStarredFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("Mark as Starred", comment: "Command"), #selector(markArticlesStarredFromContextualMenu), articles)
 	}
 
 	func markUnstarredMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu), articles)
 	}
 
 	func markOlderReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Older as Read", comment: "Command"),  #selector(markOlderArticlesReadFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("Mark Older as Read", comment: "Command"),  #selector(markOlderArticlesReadFromContextualMenu), articles)
 	}
 
 	func selectFeedInSidebar(_ feed: Feed) -> NSMenuItem {
 		let menuText = "Select “\(feed.nameForDisplay)” in Sidebar"
-		return menuItem(NSLocalizedString(menuText, comment: "Command"), #selector(selectFeedInSidebarFromContextualMenu(_:)), feed)
+		return menuItem(NSLocalizedString(menuText, comment: "Command"), #selector(selectFeedInSidebarFromContextualMenu), feed)
 	}
 
 	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString)
+		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu), urlString)
 	}
 
 	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any) -> NSMenuItem {

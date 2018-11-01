@@ -40,7 +40,7 @@ final class SmartFeed: PseudoFeed {
 	init(delegate: SmartFeedDelegate) {
 
 		self.delegate = delegate
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange), name: .UnreadCountDidChange, object: nil)
 		queueFetchUnreadCounts() // Fetch unread count at startup
 	}
 

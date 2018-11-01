@@ -68,7 +68,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		}
 
 		let toolbarItem = NSToolbarItem(itemIdentifier: toolbarItemSpec.identifier)
-		toolbarItem.action = #selector(toolbarItemClicked(_:))
+		toolbarItem.action = #selector(toolbarItemClicked)
 		toolbarItem.target = self
 		toolbarItem.label = toolbarItemSpec.name
 		toolbarItem.paletteLabel = toolbarItem.label

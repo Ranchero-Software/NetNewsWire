@@ -66,8 +66,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		super.init()
 		dockBadge.appDelegate = self
 
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange), name: .SidebarSelectionDidChange, object: nil)
 
 		appDelegate = self
 	}
@@ -150,8 +150,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
         createAndShowMainWindow()
         installAppleEventHandlers()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange), name: .FeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
 
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
@@ -239,16 +239,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
 
-		if item.action == #selector(refreshAll(_:)) {
+		if item.action == #selector(refreshAll) {
 			return !AccountManager.shared.refreshInProgress
 		}
-		if item.action == #selector(addAppNews(_:)) {
+		if item.action == #selector(addAppNews) {
 			return !isDisplayingSheet && !AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString)
 		}
-		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
+		if item.action == #selector(sortByNewestArticleOnTop) || item.action == #selector(sortByOldestArticleOnTop) {
 			return mainWindowController?.isOpen ?? false
 		}
-		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
+		if item.action == #selector(showAddFeedWindow) || item.action == #selector(showAddFolderWindow) {
 			return !isDisplayingSheet
 		}
 		return true

@@ -50,7 +50,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 		updateUI()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable), name: .ImageDidBecomeAvailable, object: nil)
 	}
 
 	// MARK: Notifications

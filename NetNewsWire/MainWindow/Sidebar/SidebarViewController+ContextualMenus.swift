@@ -116,8 +116,8 @@ private extension SidebarViewController {
 
 		let menu = NSMenu(title: "")
 
-		menu.addItem(withTitle: NSLocalizedString("New Feed", comment: "Command"), action: #selector(MainWindowController.showAddFeedWindow(_:)), keyEquivalent: "")
-		menu.addItem(withTitle: NSLocalizedString("New Folder", comment: "Command"), action: #selector(MainWindowController.showAddFolderWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("New Feed", comment: "Command"), action: #selector(MainWindowController.showAddFeedWindow), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("New Folder", comment: "Command"), action: #selector(MainWindowController.showAddFolderWindow), keyEquivalent: "")
 
 		return menu
 	}
@@ -132,16 +132,16 @@ private extension SidebarViewController {
 		}
 
 		if let homePageURL = feed.homePageURL, let _ = URL(string: homePageURL) {
-			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL)
+			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu), homePageURL)
 			menu.addItem(item)
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), feed.url)
+		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu), feed.url)
 		menu.addItem(copyFeedURLItem)
 
 		if let homePageURL = feed.homePageURL {
-			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL)
+			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu), homePageURL)
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
@@ -195,17 +195,17 @@ private extension SidebarViewController {
 
 	func markAllReadMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects)
+		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu), objects)
 	}
 
 	func deleteMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu(_:)), objects)
+		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu), objects)
 	}
 
 	func renameMenuItem(_ object: Any) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu(_:)), object)
+		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu), object)
 	}
 
 	func anyObjectInArrayHasNonZeroUnreadCount(_ objects: [Any]) -> Bool {

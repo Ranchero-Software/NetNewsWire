@@ -54,8 +54,8 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		Folder.incrementingID += 1
 		self.folderID = folderID
 
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: self)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange), name: .ChildrenDidChange, object: self)
 	}
 
 	// MARK: - Disk Dictionary

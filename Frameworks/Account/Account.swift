@@ -148,12 +148,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.feedsPath = ODBPath.path(["feeds"])
 		self.feedsTable = settingsODB.ensureTable(self.feedsPath)!
 
-		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange), name: .DownloadProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange), name: .UnreadCountDidChange, object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform), name: .BatchUpdateDidPerform, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange), name: .ChildrenDidChange, object: nil)
 
 		pullObjectsFromDisk()
 

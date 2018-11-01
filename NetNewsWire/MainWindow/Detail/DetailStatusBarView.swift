@@ -63,10 +63,10 @@ final class DetailStatusBarView: NSView {
 
 	override func awakeFromNib() {
 
-		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange(_:)), name: .TimelineSelectionDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange), name: .TimelineSelectionDidChange, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(mouseDidEnterLink(_:)), name: .MouseDidEnterLink, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(mouseDidExitLink(_:)), name: .MouseDidExitLink, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(mouseDidEnterLink), name: .MouseDidEnterLink, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(mouseDidExitLink), name: .MouseDidExitLink, object: nil)
 
 		alphaValue = 0.9
 	}

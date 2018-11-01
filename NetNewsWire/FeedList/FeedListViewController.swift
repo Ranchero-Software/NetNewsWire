@@ -50,7 +50,7 @@ final class FeedListViewController: NSViewController {
 		view.translatesAutoresizingMaskIntoConstraints = false
 
 		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable), name: .FaviconDidBecomeAvailable, object: nil)
 		outlineView.needsLayout = true
 		updateUI()
 	}

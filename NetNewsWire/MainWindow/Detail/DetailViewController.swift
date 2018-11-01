@@ -46,7 +46,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	override func viewDidLoad() {
 
-		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange(_:)), name: .TimelineSelectionDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange), name: .TimelineSelectionDidChange, object: nil)
 
 		let preferences = WKPreferences()
 		preferences.minimumFontSize = 12.0

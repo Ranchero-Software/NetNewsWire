@@ -23,7 +23,7 @@ final class AuthorAvatarDownloader {
 	init(imageDownloader: ImageDownloader) {
 
 		self.imageDownloader = imageDownloader
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable), name: .ImageDidBecomeAvailable, object: imageDownloader)
 	}
 
 	func image(for author: Author) -> NSImage? {

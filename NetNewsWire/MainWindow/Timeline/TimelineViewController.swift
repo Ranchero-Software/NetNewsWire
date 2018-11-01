@@ -115,19 +115,19 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		updateRowHeights()
 		tableView.rowHeight = currentRowHeight
 		tableView.target = self
-		tableView.doubleAction = #selector(openArticleInBrowser(_:))
+		tableView.doubleAction = #selector(openArticleInBrowser)
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 
 		if !didRegisterForNotifications {
 
-			NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange), name: .SidebarSelectionDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange), name: .StatusesDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable), name: .FeedIconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable), name: .AvatarDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable), name: .ImageDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable), name: .FaviconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles), name: .AccountDidDownloadArticles, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
 
 				didRegisterForNotifications = true
 		}
@@ -525,7 +525,7 @@ extension TimelineViewController: NSUserInterfaceValidations {
 
 	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
-		if item.action == #selector(copy(_:)) {
+		if item.action == #selector(copy) {
 			return NSPasteboard.general.canCopyAtLeastOneObject(selectedArticles)
 		}
 		return true
