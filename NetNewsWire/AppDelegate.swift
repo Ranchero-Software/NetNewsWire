@@ -49,7 +49,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var readerWindows = [NSWindowController]()
 	private var feedListWindowController: NSWindowController?
 	private var addFeedController: AddFeedController?
-	private var addFeedFromListController: AddFeedFromListWindowController?
+//	private var addFeedFromListController: AddFeedFromListWindowController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
@@ -103,17 +103,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFeedController?.showAddFeedSheet(urlString, name, folder)
 	}
 	
-	func showAddFeedFromListOnMainWindow(_ feedListFeeds: [FeedListFeed]) {
-		
-		addFeedFromListController = AddFeedFromListWindowController(feedListFeeds)
-		
-		createAndShowMainWindow()
-		
-		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
-		if !isDisplayingSheet, let mainWindow = mainWindowController?.window {
-			addFeedFromListController!.runSheetOnWindow(mainWindow)
-		}
-	}
+//	func showAddFeedFromListOnMainWindow(_ feedListFeeds: [FeedListFeed]) {
+//		
+//		addFeedFromListController = AddFeedFromListWindowController(feedListFeeds)
+//		
+//		createAndShowMainWindow()
+//		
+//		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
+//		if !isDisplayingSheet, let mainWindow = mainWindowController?.window {
+//			addFeedFromListController!.runSheetOnWindow(mainWindow)
+//		}
+//	}
 
 	// MARK: - NSApplicationDelegate
 
@@ -305,13 +305,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		showAddFolderSheetOnWindow(mainWindowController!.window!)
 	}
 
-	@IBAction func showFeedList(_ sender: Any?) {
-
-		if feedListWindowController == nil {
-			feedListWindowController = windowControllerWithName("FeedList")
-		}
-		feedListWindowController!.showWindow(self)
-	}
+//	@IBAction func showFeedList(_ sender: Any?) {
+//
+//		if feedListWindowController == nil {
+//			feedListWindowController = windowControllerWithName("FeedList")
+//		}
+//		feedListWindowController!.showWindow(self)
+//	}
 
 	@IBAction func showKeyboardShortcutsWindow(_ sender: Any?) {
 

@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
-		51EC11A1214A94AD00B296E3 /* AddFeedFromListSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51EC1193214A94AC00B296E3 /* AddFeedFromListSheet.xib */; };
-		51EC11A3214A990000B296E3 /* AddFeedFromListWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC11A2214A990000B296E3 /* AddFeedFromListWindowController.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
@@ -41,7 +39,6 @@
 		842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */; };
 		842E45E51ED8C6B7000A8B52 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */; };
 		842E45E71ED8C747000A8B52 /* DB5.plist in Resources */ = {isa = PBXBuildFile; fileRef = 842E45E61ED8C747000A8B52 /* DB5.plist */; };
-		843A3B5620311E7700BF76EC /* FeedListOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843A3B5520311E7700BF76EC /* FeedListOutlineView.swift */; };
 		8440C8AD2129F9F5002353D1 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D682106B3E100DD04E6 /* ArticlesDatabase.framework */; };
 		8440C8AE2129F9F5002353D1 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D682106B3E100DD04E6 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E701FE5FBFA004B527F /* SmallIconProvider.swift */; };
@@ -91,7 +88,6 @@
 		849A97851ED9ECCD007D329B /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97841ED9ECCD007D329B /* PreferencesWindowController.swift */; };
 		849A97891ED9ECEF007D329B /* ArticleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97871ED9ECEF007D329B /* ArticleStyle.swift */; };
 		849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97881ED9ECEF007D329B /* ArticleStylesManager.swift */; };
-		849A978D1ED9EE4D007D329B /* FeedListWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A978C1ED9EE4D007D329B /* FeedListWindowController.swift */; };
 		849A978F1ED9EE72007D329B /* DefaultFeeds.plist in Resources */ = {isa = PBXBuildFile; fileRef = 849A978E1ED9EE72007D329B /* DefaultFeeds.plist */; };
 		849A97921ED9EF65007D329B /* IndeterminateProgressWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97911ED9EF65007D329B /* IndeterminateProgressWindowController.swift */; };
 		849A97951ED9EF7A007D329B /* IndeterminateProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97931ED9EF7A007D329B /* IndeterminateProgressWindow.xib */; };
@@ -121,13 +117,9 @@
 		84AD1EBA2031649C00BC20B7 /* SmartFeedPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */; };
 		84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */; };
 		84B7178C201E66580091657D /* SidebarViewController+ContextualMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B7178B201E66580091657D /* SidebarViewController+ContextualMenus.swift */; };
-		84B99C671FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C661FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift */; };
-		84B99C691FAE36B800ECDEDB /* FeedListFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C681FAE36B800ECDEDB /* FeedListFolder.swift */; };
-		84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C6A1FAE370B00ECDEDB /* FeedListFeed.swift */; };
 		84B99C9D1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */; };
 		84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84BBB12B20142A4700F054F5 /* Inspector.storyboard */; };
 		84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BBB12C20142A4700F054F5 /* InspectorWindowController.swift */; };
-		84C12A151FF5B0080009A267 /* FeedList.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C12A141FF5B0080009A267 /* FeedList.storyboard */; };
 		84C37FA520DD8D8400CA8CF5 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8120DD8CF200CA8CF5 /* RSCore.framework */; };
 		84C37FA620DD8D8400CA8CF5 /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8120DD8CF200CA8CF5 /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84C37FA920DD8D9000CA8CF5 /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F9F20DD8D0500CA8CF5 /* RSWeb.framework */; };
@@ -151,10 +143,8 @@
 		84E850861FCB60CE0072EA88 /* AuthorAvatarDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E850851FCB60CE0072EA88 /* AuthorAvatarDownloader.swift */; };
 		84E8E0DB202EC49300562D8F /* TimelineViewController+ContextualMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E8E0DA202EC49300562D8F /* TimelineViewController+ContextualMenus.swift */; };
 		84E8E0EB202F693600562D8F /* DetailWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E8E0EA202F693600562D8F /* DetailWebView.swift */; };
-		84E95CF71FABB3C800552D99 /* FeedList.plist in Resources */ = {isa = PBXBuildFile; fileRef = 84E95CF61FABB3C800552D99 /* FeedList.plist */; };
 		84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */; };
 		84EB381F1FBA8B9F000D2111 /* KeyboardShortcuts.html in Resources */ = {isa = PBXBuildFile; fileRef = 84EB38101FBA8B9F000D2111 /* KeyboardShortcuts.html */; };
-		84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204CD1FAACB660076E152 /* FeedListViewController.swift */; };
 		84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
 		84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5351FC22FCB00998D64 /* PseudoFeed.swift */; };
 		84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5361FC22FCB00998D64 /* TodayFeedDelegate.swift */; };
@@ -1820,7 +1810,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51EC11A1214A94AD00B296E3 /* AddFeedFromListSheet.xib in Resources */,
 				84EB381F1FBA8B9F000D2111 /* KeyboardShortcuts.html in Resources */,
 				849A97951ED9EF7A007D329B /* IndeterminateProgressWindow.xib in Resources */,
 				844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */,
@@ -1831,8 +1820,6 @@
 				842E45E71ED8C747000A8B52 /* DB5.plist in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				849A97AC1ED9F9BC007D329B /* AddFolderSheet.xib in Resources */,
-				84C12A151FF5B0080009A267 /* FeedList.storyboard in Resources */,
-				84E95CF71FABB3C800552D99 /* FeedList.plist in Resources */,
 				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
 				849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */,
 				849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */,
@@ -1949,7 +1936,6 @@
 				8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */,
 				84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */,
 				84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */,
-				51EC11A3214A990000B296E3 /* AddFeedFromListWindowController.swift in Sources */,
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,
 				84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */,
 				849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */,
@@ -1966,10 +1952,8 @@
 				84E8E0DB202EC49300562D8F /* TimelineViewController+ContextualMenus.swift in Sources */,
 				849A97791ED9EC04007D329B /* TimelineStringUtilities.swift in Sources */,
 				84E185C3203BB12600F69BFA /* MultilineTextFieldSizer.swift in Sources */,
-				843A3B5620311E7700BF76EC /* FeedListOutlineView.swift in Sources */,
 				8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* FolderPasteboardWriter.swift in Sources */,
-				84F204CE1FAACB660076E152 /* FeedListViewController.swift in Sources */,
 				84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */,
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
 				84F3EE1620DEC97E003FADEB /* FeedFinder.swift in Sources */,
@@ -1992,9 +1976,7 @@
 				849A97801ED9EC42007D329B /* DetailViewController.swift in Sources */,
 				8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */,
 				849A976E1ED9EBC8007D329B /* TimelineViewController.swift in Sources */,
-				849A978D1ED9EE4D007D329B /* FeedListWindowController.swift in Sources */,
 				849A97771ED9EC04007D329B /* TimelineCellData.swift in Sources */,
-				84B99C6B1FAE370B00ECDEDB /* FeedListFeed.swift in Sources */,
 				841ABA6020145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift in Sources */,
 				D5E4CC54202C1361009B4FFC /* AppDelegate+Scriptability.swift in Sources */,
 				D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */,
@@ -2011,9 +1993,7 @@
 				84162A252038C1E000035290 /* TimelineDataSource.swift in Sources */,
 				84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */,
 				D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */,
-				84B99C671FAE35E600ECDEDB /* FeedListTreeControllerDelegate.swift in Sources */,
 				84D5BA20201E8FB6009092BD /* SidebarGearMenuDelegate.swift in Sources */,
-				84B99C691FAE36B800ECDEDB /* FeedListFolder.swift in Sources */,
 				84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */,
 				844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */,
 				51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */,

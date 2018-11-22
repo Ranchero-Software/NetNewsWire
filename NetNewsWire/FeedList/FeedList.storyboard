@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14092" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="z5E-aV-xMb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="z5E-aV-xMb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14092"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Window Controller-->
         <scene sceneID="joN-Oe-nep">
             <objects>
-                <windowController showSeguePresentationStyle="single" id="z5E-aV-xMb" customClass="FeedListWindowController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" identifier="feedDirectoryWindow" title="Feed Directory" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="Ty3-Oi-cUp">
+                <windowController showSeguePresentationStyle="single" id="z5E-aV-xMb" customClass="FeedListWindowController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" identifier="feedDirectoryWindow" title="Feed Directory" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="Ty3-Oi-cUp">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="425" y="461" width="300" height="600"/>
@@ -32,7 +33,7 @@
         <!--Feed List View Controller-->
         <scene sceneID="TKm-CD-zMs">
             <objects>
-                <viewController id="QX3-Wg-cdZ" customClass="FeedListViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="QX3-Wg-cdZ" customClass="FeedListViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="vp3-VV-Mzw">
                         <rect key="frame" x="0.0" y="0.0" width="328" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -43,14 +44,14 @@
                                     <rect key="frame" x="0.0" y="0.0" width="328" height="268"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="27" outlineTableColumn="Ytm-dS-0WJ" id="Hxu-8i-6rp" customClass="FeedListOutlineView" customModule="Evergreen" customModuleProvider="target">
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="27" outlineTableColumn="Ytm-dS-0WJ" id="Hxu-8i-6rp" customClass="FeedListOutlineView" customModule="NetNewsWire" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="328" height="268"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="2" height="3"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn identifier="" width="326" minWidth="16" maxWidth="1000" id="Ytm-dS-0WJ">
+                                                <tableColumn width="326" minWidth="16" maxWidth="1000" id="Ytm-dS-0WJ">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -81,7 +82,7 @@
                                                                 <outlet property="textField" destination="vm6-1A-a5G" id="Ygp-YV-bUa"/>
                                                             </connections>
                                                         </tableCellView>
-                                                        <tableCellView identifier="FeedListCell" id="M2x-Bb-n1x" customClass="SidebarCell" customModule="Evergreen" customModuleProvider="target">
+                                                        <tableCellView identifier="FeedListCell" id="M2x-Bb-n1x" customClass="SidebarCell" customModule="NetNewsWire" customModuleProvider="target">
                                                             <rect key="frame" x="1" y="21" width="326" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
@@ -120,11 +121,11 @@
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="512" id="9NC-nE-xTp"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="240" id="ldQ-7U-jou"/>
                                 </constraints>
-                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="X3r-hu-K2f">
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="X3r-hu-K2f">
                                     <rect key="frame" x="-100" y="-100" width="285" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="Qg7-sg-Bly">
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Qg7-sg-Bly">
                                     <rect key="frame" x="224" y="17" width="15" height="102"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
@@ -133,7 +134,7 @@
                                 <rect key="frame" x="20" y="0.0" width="288" height="32"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bv8-Eq-0cT">
-                                        <rect key="frame" x="20" y="3" width="120" height="25"/>
+                                        <rect key="frame" x="20" y="4" width="120" height="23"/>
                                         <buttonCell key="cell" type="roundTextured" title="Add to Feeds" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0gj-Cw-KCE">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -143,7 +144,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ohy-a3-XkT">
-                                        <rect key="frame" x="148" y="3" width="120" height="25"/>
+                                        <rect key="frame" x="148" y="4" width="120" height="23"/>
                                         <buttonCell key="cell" type="roundTextured" title="Open Home Page" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hom-If-fbd">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
