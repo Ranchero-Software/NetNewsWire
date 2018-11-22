@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import DB5
 import Account
 import RSTree
@@ -14,7 +15,13 @@ import RSTree
 private var textSizeCache = [String: NSSize]()
 
 class SidebarCell : NSTableCellView {
-	
+
+	override var objectValue: Any? {
+		didSet {
+			didSetObjectValue()
+		}
+	}
+
 	var image: NSImage? {
 		didSet {
 			if let image = image {
@@ -76,16 +83,20 @@ class SidebarCell : NSTableCellView {
 		}
 	}
 
+	var node: Node? {
+		return objectValue as? Node
+	}
+
 	override var isFlipped: Bool {
 		return true
 	}
 	
 	private func commonInit() {
-		
 		unreadCountView.translatesAutoresizingMaskIntoConstraints = false
 		imageView?.translatesAutoresizingMaskIntoConstraints = false
 		textField?.translatesAutoresizingMaskIntoConstraints = false
 		addSubview(unreadCountView)
+		updateTextFieldIsEditable()
 	}
 	
 	override init(frame frameRect: NSRect) {
@@ -113,31 +124,32 @@ class SidebarCell : NSTableCellView {
 		let layout = SidebarCellLayout(appearance: cellAppearance, cellSize: bounds.size, shouldShowImage: shouldShowImage, textField: textField, unreadCountView: unreadCountView)
 		layoutWith(layout)
 	}
-	
+
 	@IBAction func editingEnded(_ sender: NSTextField) {
-		
-		guard let node = objectValue as? Node else {
-			return
+		if let renamableItem = node?.representedObject as? Renamable {
+			renamableItem.rename(to: sender.stringValue)
 		}
-		
-		if let feed = node.representedObject as? Feed {
-			feed.editedName = sender.stringValue
-		}
-		else if let folder = node.representedObject as? Folder {
-			folder.name = sender.stringValue
-		}
-		
 	}
-	
 }
 
 private extension SidebarCell {
 
 	func layoutWith(_ layout: SidebarCellLayout) {
-
 		imageView?.rs_setFrameIfNotEqual(layout.faviconRect)
 		textField?.rs_setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.rs_setFrameIfNotEqual(layout.unreadCountRect)
+	}
+
+	func didSetObjectValue() {
+		updateTextFieldIsEditable()
+	}
+
+	func updateTextFieldIsEditable() {
+		var canRename = false
+		if let _ = node?.representedObject as? Renamable {
+			canRename = true
+		}
+		textField?.isEditable = canRename
 	}
 }
 
