@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import RSCore
 
-public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, Hashable {
+public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCountProvider, Hashable {
 
 
 	public weak var account: Account?
@@ -43,6 +43,12 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		}
 	}
 
+	// MARK: - Renamable
+
+	public func rename(to newName: String) {
+		name = newName
+	}
+	
 	// MARK: - Init
 
 	init(account: Account, name: String?) {

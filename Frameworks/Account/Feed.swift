@@ -12,7 +12,7 @@ import RSWeb
 import Articles
 import RSDatabase
 
-public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
+public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Hashable {
 
 	private struct Key {
 		static let url = "url"
@@ -138,6 +138,12 @@ public final class Feed: DisplayNameProvider, UnreadCountProvider, Hashable {
 			return s
 		}
 		return NSLocalizedString("Untitled", comment: "Feed name")
+	}
+
+	// MARK: - Renamable
+
+	public func rename(to newName: String) {
+		editedName = newName
 	}
 
 	// MARK: - UnreadCountProvider
