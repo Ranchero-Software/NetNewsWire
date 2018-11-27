@@ -117,6 +117,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	// MARK: - NSApplicationDelegate
 
+	func applicationWillFinishLaunching(_ notification: Notification) {
+		installAppleEventHandlers()
+	}
+	
 	func applicationDidFinishLaunching(_ note: Notification) {
 
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
