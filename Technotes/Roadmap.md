@@ -14,11 +14,8 @@ Features:
 * Searching
 * Starring
 * Keyboard shortcuts
-* Feed Directory
 * AppleScript support
 * Inspector
-* Gestures
-* Notifications
 * Sharing
 * Feed and user avatars
 * Mojave Dark Mode
@@ -35,6 +32,9 @@ Milestones:
 
 Features:
 
+* Notifications
+* Gestures
+* Feed Directory
 * Thumbnail images in the timeline
 * Microblog full-post rendering in the timeline
 * Share extension
