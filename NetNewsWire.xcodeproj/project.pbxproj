@@ -79,7 +79,7 @@
 		849A97761ED9EC04007D329B /* TimelineCellAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97701ED9EC04007D329B /* TimelineCellAppearance.swift */; };
 		849A97771ED9EC04007D329B /* TimelineCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97711ED9EC04007D329B /* TimelineCellData.swift */; };
 		849A97781ED9EC04007D329B /* TimelineCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97721ED9EC04007D329B /* TimelineCellLayout.swift */; };
-		849A97791ED9EC04007D329B /* TimelineStringUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97731ED9EC04007D329B /* TimelineStringUtilities.swift */; };
+		849A97791ED9EC04007D329B /* TimelineStringFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97731ED9EC04007D329B /* TimelineStringFormatter.swift */; };
 		849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97741ED9EC04007D329B /* TimelineTableCellView.swift */; };
 		849A977B1ED9EC04007D329B /* UnreadIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97751ED9EC04007D329B /* UnreadIndicatorView.swift */; };
 		849A977F1ED9EC42007D329B /* ArticleRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A977D1ED9EC42007D329B /* ArticleRenderer.swift */; };
@@ -557,7 +557,7 @@
 		849A97701ED9EC04007D329B /* TimelineCellAppearance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineCellAppearance.swift; sourceTree = "<group>"; };
 		849A97711ED9EC04007D329B /* TimelineCellData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineCellData.swift; sourceTree = "<group>"; };
 		849A97721ED9EC04007D329B /* TimelineCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineCellLayout.swift; sourceTree = "<group>"; };
-		849A97731ED9EC04007D329B /* TimelineStringUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineStringUtilities.swift; sourceTree = "<group>"; };
+		849A97731ED9EC04007D329B /* TimelineStringFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineStringFormatter.swift; sourceTree = "<group>"; };
 		849A97741ED9EC04007D329B /* TimelineTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineTableCellView.swift; sourceTree = "<group>"; };
 		849A97751ED9EC04007D329B /* UnreadIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadIndicatorView.swift; sourceTree = "<group>"; };
 		849A977D1ED9EC42007D329B /* ArticleRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleRenderer.swift; sourceTree = "<group>"; };
@@ -1013,7 +1013,7 @@
 				84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */,
 				84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */,
 				849A97711ED9EC04007D329B /* TimelineCellData.swift */,
-				849A97731ED9EC04007D329B /* TimelineStringUtilities.swift */,
+				849A97731ED9EC04007D329B /* TimelineStringFormatter.swift */,
 				849A97751ED9EC04007D329B /* UnreadIndicatorView.swift */,
 			);
 			path = Cell;
@@ -1950,7 +1950,7 @@
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
 				519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */,
 				84E8E0DB202EC49300562D8F /* TimelineViewController+ContextualMenus.swift in Sources */,
-				849A97791ED9EC04007D329B /* TimelineStringUtilities.swift in Sources */,
+				849A97791ED9EC04007D329B /* TimelineStringFormatter.swift in Sources */,
 				84E185C3203BB12600F69BFA /* MultilineTextFieldSizer.swift in Sources */,
 				8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* FolderPasteboardWriter.swift in Sources */,

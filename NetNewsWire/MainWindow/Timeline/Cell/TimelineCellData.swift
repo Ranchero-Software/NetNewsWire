@@ -24,13 +24,13 @@ struct TimelineCellData {
 
 	init(article: Article, appearance: TimelineCellAppearance, showFeedName: Bool, feedName: String?, avatar: NSImage?, showAvatar: Bool, featuredImage: NSImage?) {
 
-		self.title = timelineTruncatedTitle(article)
-		self.text = timelineTruncatedSummary(article)
+		self.title = TimelineStringFormatter.truncatedTitle(article)
+		self.text = TimelineStringFormatter.truncatedSummary(article)
 
-		self.dateString = timelineDateString(article.logicalDatePublished)
+		self.dateString = TimelineStringFormatter.dateString(article.logicalDatePublished)
 
 		if let feedName = feedName {
-			self.feedName = timelineTruncatedFeedName(feedName)
+			self.feedName = TimelineStringFormatter.truncatedFeedName(feedName)
 		}
 		else {
 			self.feedName = ""

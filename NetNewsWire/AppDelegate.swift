@@ -180,7 +180,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func applicationDidResignActive(_ notification: Notification) {
 
-		timelineEmptyCaches()
+		TimelineStringFormatter.emptyCaches()
 
 		saveState()
 	}
