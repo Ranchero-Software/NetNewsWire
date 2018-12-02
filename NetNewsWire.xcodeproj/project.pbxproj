@@ -23,6 +23,7 @@
 		840D618B2029031D009BC708 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 840D61892029031D009BC708 /* LaunchScreen.storyboard */; };
 		840D61962029031D009BC708 /* NetNewsWire_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61952029031D009BC708 /* NetNewsWire_iOSTests.swift */; };
 		840D61A12029031E009BC708 /* NetNewsWire_iOSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61A02029031E009BC708 /* NetNewsWire_iOSUITests.swift */; };
+		840F7C0821B4671B0057E851 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 840F7C0721B4671B0057E851 /* Credits.rtf */; };
 		84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */; };
 		84162A252038C1E000035290 /* TimelineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84162A242038C1E000035290 /* TimelineDataSource.swift */; };
 		841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */; };
@@ -500,6 +501,7 @@
 		840D619C2029031D009BC708 /* NetNewsWire-iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NetNewsWire-iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		840D61A02029031E009BC708 /* NetNewsWire_iOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetNewsWire_iOSUITests.swift; sourceTree = "<group>"; };
 		840D61A22029031E009BC708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		840F7C0721B4671B0057E851 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; name = Credits.rtf; path = NetNewsWire/Resources/Credits.rtf; sourceTree = SOURCE_ROOT; };
 		84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkCommandValidationStatus.swift; sourceTree = "<group>"; };
 		84162A242038C1E000035290 /* TimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineDataSource.swift; sourceTree = "<group>"; };
 		841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingInspectorViewController.swift; sourceTree = "<group>"; };
@@ -1081,6 +1083,7 @@
 		849A97991ED9EFB6007D329B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				840F7C0721B4671B0057E851 /* Credits.rtf */,
 				D5D175012002039D0047B29D /* NetNewsWire.sdef */,
 				849C646C1ED37A5D003D8FC0 /* Info.plist */,
 				84EB380F1FBA8B9F000D2111 /* KeyboardShortcuts */,
@@ -1823,6 +1826,7 @@
 				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
 				849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */,
 				849A97B21ED9FA69007D329B /* MainWindow.storyboard in Resources */,
+				840F7C0821B4671B0057E851 /* Credits.rtf in Resources */,
 				849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */,
 				849A97A61ED9F94D007D329B /* Preferences.storyboard in Resources */,
 				84A37CBB201ECE590087C5AF /* RenameSheet.xib in Resources */,
