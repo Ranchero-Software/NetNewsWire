@@ -521,9 +521,9 @@ private extension MainWindowController {
 
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
-			if let button = toolbarItem.view as? NSButton {
-				button.image = NSImage(named: starring ? .star : .unstar)
-			}
+//			if let button = toolbarItem.view as? NSButton {
+//				button.image = NSImage(named: starring ? .star : .unstar)
+//			}
 		}
 
 		if let menuItem = item as? NSMenuItem {
