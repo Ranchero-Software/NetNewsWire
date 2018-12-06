@@ -90,13 +90,23 @@ class SidebarCell : NSTableCellView {
 	override var isFlipped: Bool {
 		return true
 	}
-	
+
+	override var textField: NSTextField? {
+		didSet {
+			textField?.translatesAutoresizingMaskIntoConstraints = false
+			updateTextFieldIsEditable()
+		}
+	}
+
+	override var imageView: NSImageView? {
+		didSet {
+			imageView?.translatesAutoresizingMaskIntoConstraints = false
+		}
+	}
+
 	private func commonInit() {
 		unreadCountView.translatesAutoresizingMaskIntoConstraints = false
-		imageView?.translatesAutoresizingMaskIntoConstraints = false
-		textField?.translatesAutoresizingMaskIntoConstraints = false
 		addSubview(unreadCountView)
-		updateTextFieldIsEditable()
 	}
 	
 	override init(frame frameRect: NSRect) {
