@@ -502,6 +502,7 @@
 		840D61A02029031E009BC708 /* NetNewsWire_iOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetNewsWire_iOSUITests.swift; sourceTree = "<group>"; };
 		840D61A22029031E009BC708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		840F7C0721B4671B0057E851 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; name = Credits.rtf; path = NetNewsWire/Resources/Credits.rtf; sourceTree = SOURCE_ROOT; };
+		840F7C0921BCA1B10057E851 /* NetNewsWire.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = NetNewsWire.entitlements; path = NetNewsWire/NetNewsWire.entitlements; sourceTree = "<group>"; };
 		84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkCommandValidationStatus.swift; sourceTree = "<group>"; };
 		84162A242038C1E000035290 /* TimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineDataSource.swift; sourceTree = "<group>"; };
 		841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingInspectorViewController.swift; sourceTree = "<group>"; };
@@ -1095,6 +1096,7 @@
 		849C64571ED37A5D003D8FC0 = {
 			isa = PBXGroup;
 			children = (
+				840F7C0921BCA1B10057E851 /* NetNewsWire.entitlements */,
 				845B14A51FC2299E0013CF92 /* README.md */,
 				84CBDDAE1FD3674C005A61AA /* Technotes */,
 				842E45E61ED8C747000A8B52 /* DB5.plist */,
@@ -1554,6 +1556,11 @@
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
+						};
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -2649,6 +2656,8 @@
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_ENTITLEMENTS = NetNewsWire/NetNewsWire.entitlements;
+				ENABLE_HARDENED_RUNTIME = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen";
 				PRODUCT_NAME = NetNewsWire;
@@ -2660,6 +2669,8 @@
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_ENTITLEMENTS = NetNewsWire/NetNewsWire.entitlements;
+				ENABLE_HARDENED_RUNTIME = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen";
 				PRODUCT_NAME = NetNewsWire;
