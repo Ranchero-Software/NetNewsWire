@@ -16,7 +16,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBOutlet var toolbarDelegate: MainWindowToolbarDelegate?
 	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
-	private let windowAutosaveName = NSWindow.FrameAutosaveName(rawValue: "MainWindow")
+	private let windowAutosaveName = NSWindow.FrameAutosaveName("MainWindow")
 	static var didPositionWindowOnFirstRun = false
 
 	private var currentFeedOrFolder: AnyObject? = nil {
@@ -401,7 +401,7 @@ private extension MainWindowController {
 		guard let viewController = contentViewController else {
 			return nil
 		}
-		return viewController.childViewControllers.first as? NSSplitViewController
+		return viewController.children.first as? NSSplitViewController
 	}
 
 	var sidebarViewController: SidebarViewController? {

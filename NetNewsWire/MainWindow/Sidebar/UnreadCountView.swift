@@ -15,7 +15,7 @@ private let backgroundColor = appDelegate.currentTheme.colorWithAlpha(forKey: "M
 private let textColor = appDelegate.currentTheme.colorWithAlpha(forKey: "MainWindow.SourceList.unreadCount.color")
 private let textSize = appDelegate.currentTheme.float(forKey: "MainWindow.SourceList.unreadCount.fontSize")
 private let textFont = NSFont.systemFont(ofSize: textSize, weight: NSFont.Weight.semibold)
-private var textAttributes: [NSAttributedStringKey: AnyObject] = [NSAttributedStringKey.foregroundColor: textColor, NSAttributedStringKey.font: textFont, NSAttributedStringKey.kern: NSNull()]
+private var textAttributes: [NSAttributedString.Key: AnyObject] = [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
 private var textSizeCache = [Int: NSSize]()
 
 class UnreadCountView : NSView {

@@ -57,7 +57,7 @@ private final class IndeterminateProgressWindowController: NSWindowController {
 
 	convenience init(message: String) {
 
-		self.init(windowNibName: NSNib.Name(rawValue: "IndeterminateProgressWindow"))
+		self.init(windowNibName: NSNib.Name("IndeterminateProgressWindow"))
 		self.message = message
 	}
 

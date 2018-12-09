@@ -229,7 +229,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func windowControllerWithName(_ storyboardName: String) -> NSWindowController {
 
-		let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: storyboardName), bundle: nil)
+		let storyboard = NSStoryboard(name: NSStoryboard.Name(storyboardName), bundle: nil)
 		return storyboard.instantiateInitialController()! as! NSWindowController
 	}
 

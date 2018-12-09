@@ -63,7 +63,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 extension FeedInspectorViewController: NSTextFieldDelegate {
 
-	override func controlTextDidChange(_ note: Notification) {
+	func controlTextDidChange(_ note: Notification) {
 
 		guard let feed = feed, let nameTextField = nameTextField else {
 			return

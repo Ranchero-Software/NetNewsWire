@@ -17,7 +17,7 @@ protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconP
 
 private var smartFeedIcon: NSImage = {
 
-	return NSImage(named: NSImage.Name.smartBadgeTemplate)!
+	return NSImage(named: NSImage.smartBadgeTemplateName)!
 }()
 
 extension PseudoFeed {

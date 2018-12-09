@@ -25,7 +25,7 @@ final class RenameWindowController: NSWindowController {
 
 	convenience init(originalTitle: String, representedObject: Any, delegate: RenameWindowControllerDelegate) {
 
-		self.init(windowNibName: NSNib.Name(rawValue: "RenameSheet"))
+		self.init(windowNibName: NSNib.Name("RenameSheet"))
 		self.originalTitle = originalTitle
 		self.representedObject = representedObject
 		self.delegate = delegate
@@ -62,7 +62,7 @@ final class RenameWindowController: NSWindowController {
 
 extension RenameWindowController: NSTextFieldDelegate {
 
-	override func controlTextDidChange(_ obj: Notification) {
+	func controlTextDidChange(_ obj: Notification) {
 
 		updateUI()
 	}

@@ -55,7 +55,7 @@ final class InspectorWindowController: NSWindowController {
 
 		let nothingInspector = window?.contentViewController as! InspectorViewController
 
-		let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Inspector"), bundle: nil)
+		let storyboard = NSStoryboard(name: NSStoryboard.Name("Inspector"), bundle: nil)
 		let feedInspector = inspector("Feed", storyboard)
 		let folderInspector = inspector("Folder", storyboard)
 		let builtinSmartFeedInspector = inspector("BuiltinSmartFeed", storyboard)
@@ -100,7 +100,7 @@ private extension InspectorWindowController {
 
 	func inspector(_ identifier: String, _ storyboard: NSStoryboard) -> InspectorViewController {
 
-		return storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: identifier)) as! InspectorViewController
+		return storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(identifier)) as! InspectorViewController
 	}
 
 	func show(_ inspector: InspectorViewController) {

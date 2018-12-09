@@ -49,7 +49,7 @@ import Account
 	// MARK: - Drag and Drop
 
 	func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
-		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard()), !draggedFeeds.isEmpty else {
+		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard), !draggedFeeds.isEmpty else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 
@@ -71,7 +71,7 @@ import Account
 	}
 	
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
-		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard()), !draggedFeeds.isEmpty else {
+		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard), !draggedFeeds.isEmpty else {
 			return false
 		}
 

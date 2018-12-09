@@ -46,7 +46,7 @@ class AddFeedWindowController : NSWindowController {
 
 	convenience init(urlString: String?, name: String?, folder: Folder?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
 		
-		self.init(windowNibName: NSNib.Name(rawValue: "AddFeedSheet"))
+		self.init(windowNibName: NSNib.Name("AddFeedSheet"))
 		self.urlString = urlString
 		self.initialName = name
 		self.initialFolder = folder
@@ -121,12 +121,12 @@ class AddFeedWindowController : NSWindowController {
 	
 	// MARK: NSTextFieldDelegate
 
-	override func controlTextDidEndEditing(_ obj: Notification) {
+	func controlTextDidEndEditing(_ obj: Notification) {
 
 		updateUI()
 	}
 
-	override func controlTextDidChange(_ obj: Notification) {
+	func controlTextDidChange(_ obj: Notification) {
 
 		updateUI()
 	}

@@ -30,14 +30,14 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	fileprivate var viewControllers = [String: NSViewController]()
 	fileprivate let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
 		var specs = [PreferencesToolbarItemSpec]()
-		specs += [PreferencesToolbarItemSpec(identifierRawValue: toolbarItemIdentifierGeneral, name: NSLocalizedString("General", comment: "Preferences"), imageName: NSImage.Name.preferencesGeneral)]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: toolbarItemIdentifierGeneral, name: NSLocalizedString("General", comment: "Preferences"), imageName: NSImage.preferencesGeneralName)]
 		return specs
 	}()
 
 
 	override func windowDidLoad() {
 
-		let toolbar = NSToolbar(identifier: NSToolbar.Identifier(rawValue: "PreferencesToolbar"))
+		let toolbar = NSToolbar(identifier: NSToolbar.Identifier("PreferencesToolbar"))
 		toolbar.delegate = self
 		toolbar.autosavesConfiguration = false
 		toolbar.allowsUserCustomization = false
@@ -47,7 +47,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		window?.showsToolbarButton = false
 		window?.toolbar = toolbar
 
-		window?.setFrameAutosaveName(NSWindow.FrameAutosaveName(rawValue: windowFrameName))
+		window?.setFrameAutosaveName(NSWindow.FrameAutosaveName(windowFrameName))
 		
 		switchToViewAtIndex(0)
 	}
@@ -149,8 +149,8 @@ private extension PreferencesWindowController {
 			return cachedViewController
 		}
 
-		let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Preferences"), bundle: nil)
-		guard let viewController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: identifier)) as? NSViewController else {
+		let storyboard = NSStoryboard(name: NSStoryboard.Name("Preferences"), bundle: nil)
+		guard let viewController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(identifier)) as? NSViewController else {
 			assertionFailure("Unknown preferences view controller: \(identifier)")
 			return nil
 		}

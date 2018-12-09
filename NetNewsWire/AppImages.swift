@@ -9,9 +9,9 @@
 import AppKit
 
 extension NSImage.Name {
-	static let star = NSImage.Name(rawValue: "star")
-	static let unstar = NSImage.Name(rawValue: "unstar")
-	static let timelineStar = NSImage.Name(rawValue: "timelineStar")
+	static let star = NSImage.Name("star")
+	static let unstar = NSImage.Name("unstar")
+	static let timelineStar = NSImage.Name("timelineStar")
 }
 
 struct AppImages {

@@ -18,7 +18,7 @@ class AddFolderWindowController : NSWindowController {
 
 	convenience init() {
 
-		self.init(windowNibName: NSNib.Name(rawValue: "AddFolderSheet"))
+		self.init(windowNibName: NSNib.Name("AddFolderSheet"))
 	}
 
     // MARK: API

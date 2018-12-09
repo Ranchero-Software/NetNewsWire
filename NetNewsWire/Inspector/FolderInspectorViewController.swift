@@ -61,7 +61,7 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 
 extension FolderInspectorViewController: NSTextFieldDelegate {
 
-	override func controlTextDidChange(_ note: Notification) {
+	func controlTextDidChange(_ note: Notification) {
 
 		guard let folder = folder, let nameTextField = nameTextField else {
 			return
