@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0830"
+   LastUpgradeVersion = "1010"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "849C645F1ED37A5D003D8FC0"
-               BuildableName = "NetNewsWire.app"
-               BlueprintName = "NetNewsWire"
+               BlueprintIdentifier = "840F7C0A21BDA4B40057E851"
+               BuildableName = "NetNewsWire-MAS.app"
+               BlueprintName = "NetNewsWire-MAS"
                ReferencedContainer = "container:NetNewsWire.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,23 +28,13 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "849C64701ED37A5D003D8FC0"
-               BuildableName = "NetNewsWireTests.xctest"
-               BlueprintName = "NetNewsWireTests"
-               ReferencedContainer = "container:NetNewsWire.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "849C645F1ED37A5D003D8FC0"
-            BuildableName = "NetNewsWire.app"
-            BlueprintName = "NetNewsWire"
+            BlueprintIdentifier = "840F7C0A21BDA4B40057E851"
+            BuildableName = "NetNewsWire-MAS.app"
+            BlueprintName = "NetNewsWire-MAS"
             ReferencedContainer = "container:NetNewsWire.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -55,23 +45,19 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      disableMainThreadChecker = "YES"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
-      stopOnEveryThreadSanitizerIssue = "YES"
-      stopOnEveryUBSanitizerIssue = "YES"
-      stopOnEveryMainThreadCheckerIssue = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "849C645F1ED37A5D003D8FC0"
-            BuildableName = "NetNewsWire.app"
-            BlueprintName = "NetNewsWire"
+            BlueprintIdentifier = "840F7C0A21BDA4B40057E851"
+            BuildableName = "NetNewsWire-MAS.app"
+            BlueprintName = "NetNewsWire-MAS"
             ReferencedContainer = "container:NetNewsWire.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -88,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "849C645F1ED37A5D003D8FC0"
-            BuildableName = "NetNewsWire.app"
-            BlueprintName = "NetNewsWire"
+            BlueprintIdentifier = "840F7C0A21BDA4B40057E851"
+            BuildableName = "NetNewsWire-MAS.app"
+            BlueprintName = "NetNewsWire-MAS"
             ReferencedContainer = "container:NetNewsWire.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

@@ -29,7 +29,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBOutlet var debugMenuItem: NSMenuItem!
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
-
+	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
+	
 	lazy var sendToCommands: [SendToCommand] = {
 		return [SendToMicroBlogCommand(), SendToMarsEditCommand()]
 	}()
@@ -123,6 +124,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	func applicationDidFinishLaunching(_ note: Notification) {
 
+		#if MAC_APP_STORE
+			checkForUpdatesMenuItem.isHidden = true
+		#endif
+		
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
