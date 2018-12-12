@@ -140,7 +140,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		currentTheme = themeLoader.defaultTheme
 
 		let tempDirectory = NSTemporaryDirectory()
-		let cacheFolder = (tempDirectory as NSString).appendingPathComponent("com.ranchero.NetNewsWire-Evergreen")
+		let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
+		let cacheFolder = (tempDirectory as NSString).appendingPathComponent(bundleIdentifier)
 
 		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
 		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
