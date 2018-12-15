@@ -16,12 +16,6 @@ private var textSizeCache = [String: NSSize]()
 
 class SidebarCell : NSTableCellView {
 
-	override var objectValue: Any? {
-		didSet {
-			didSetObjectValue()
-		}
-	}
-
 	var image: NSImage? {
 		didSet {
 			if let image = image {
@@ -94,7 +88,6 @@ class SidebarCell : NSTableCellView {
 	override var textField: NSTextField? {
 		didSet {
 			textField?.translatesAutoresizingMaskIntoConstraints = false
-			updateTextFieldIsEditable()
 		}
 	}
 
@@ -134,12 +127,6 @@ class SidebarCell : NSTableCellView {
 		let layout = SidebarCellLayout(appearance: cellAppearance, cellSize: bounds.size, shouldShowImage: shouldShowImage, textField: textField, unreadCountView: unreadCountView)
 		layoutWith(layout)
 	}
-
-	@IBAction func editingEnded(_ sender: NSTextField) {
-		if let renamableItem = node?.representedObject as? Renamable {
-			renamableItem.rename(to: sender.stringValue)
-		}
-	}
 }
 
 private extension SidebarCell {
@@ -148,18 +135,6 @@ private extension SidebarCell {
 		imageView?.rs_setFrameIfNotEqual(layout.faviconRect)
 		textField?.rs_setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.rs_setFrameIfNotEqual(layout.unreadCountRect)
-	}
-
-	func didSetObjectValue() {
-		updateTextFieldIsEditable()
-	}
-
-	func updateTextFieldIsEditable() {
-		var canRename = false
-		if let _ = node?.representedObject as? Renamable {
-			canRename = true
-		}
-		textField?.isEditable = canRename
 	}
 }
 
