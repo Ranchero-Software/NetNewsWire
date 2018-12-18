@@ -759,7 +759,6 @@
 		840F7CBD21BDA6730057E851 /* NetNewsWire-MAS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "NetNewsWire-MAS.entitlements"; path = "NetNewsWire/NetNewsWire-MAS.entitlements"; sourceTree = "<group>"; };
 		840F7CC021BDAD2C0057E851 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; name = Credits.rtf; path = NetNewsWire/Resources/MAS/Credits.rtf; sourceTree = SOURCE_ROOT; };
 		840F7CCE21BF58890057E851 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		840F7CCF21BF588A0057E851 /* Subscribe-to-Feed-MAS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Subscribe-to-Feed-MAS-Info.plist"; path = "/Users/brent/Projects/NetNewsWire/Subscribe-to-Feed-MAS-Info.plist"; sourceTree = "<absolute>"; };
 		84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkCommandValidationStatus.swift; sourceTree = "<group>"; };
 		84162A242038C1E000035290 /* TimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineDataSource.swift; sourceTree = "<group>"; };
 		841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingInspectorViewController.swift; sourceTree = "<group>"; };
@@ -799,6 +798,7 @@
 		84754C89213E471B009CFDFB /* GeneralPrefencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GeneralPrefencesViewController.swift; path = NetNewsWire/Preferences/GeneralPrefencesViewController.swift; sourceTree = "<group>"; };
 		847752FE2008879500D93690 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		847FA120202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarContextualMenuDelegate.swift; sourceTree = "<group>"; };
+		848B930921C8B0BF0038DC0D /* Subscribe-to-Feed-MAS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Subscribe-to-Feed-MAS-Info.plist"; sourceTree = "<group>"; };
 		848D578D21543519005FFAD5 /* PasteboardFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardFeed.swift; sourceTree = "<group>"; };
 		848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconDownloader.swift; sourceTree = "<group>"; };
 		849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderWindowController.swift; sourceTree = "<group>"; };
@@ -1026,6 +1026,7 @@
 				6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */,
 				6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */,
 				6581C73E20CED60100F4AD34 /* Info.plist */,
+				848B930921C8B0BF0038DC0D /* Subscribe-to-Feed-MAS-Info.plist */,
 				6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */,
 				6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */,
 				6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */,
@@ -1427,7 +1428,6 @@
 				84C37F8620DD8CF800CA8CF5 /* RSParser.xcodeproj */,
 				84C37F8F20DD8CFD00CA8CF5 /* RSTree.xcodeproj */,
 				84C37F9820DD8D0400CA8CF5 /* RSWeb.xcodeproj */,
-				840F7CCF21BF588A0057E851 /* Subscribe-to-Feed-MAS-Info.plist */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
@@ -3239,7 +3239,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_ENTITLEMENTS = "Safari Extension/Subscribe_to_Feed.entitlements";
-				INFOPLIST_FILE = "Subscribe-to-Feed-MAS-Info.plist";
+				INFOPLIST_FILE = "Safari Extension/Subscribe-to-Feed-MAS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen.mas.Subscribe-to-Feed";
 				PRODUCT_NAME = "Subscribe to Feed";
@@ -3254,7 +3254,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_ENTITLEMENTS = "Safari Extension/Subscribe_to_Feed.entitlements";
 				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
-				INFOPLIST_FILE = "Subscribe-to-Feed-MAS-Info.plist";
+				INFOPLIST_FILE = "Safari Extension/Subscribe-to-Feed-MAS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen.mas.Subscribe-to-Feed";
 				PRODUCT_NAME = "Subscribe to Feed";
