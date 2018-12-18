@@ -214,6 +214,7 @@
 		8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* FeedInspectorViewController.swift */; };
 		84754C8A213E471B009CFDFB /* GeneralPrefencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84754C89213E471B009CFDFB /* GeneralPrefencesViewController.swift */; };
 		847FA121202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847FA120202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift */; };
+		848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848B937121C8C5540038DC0D /* CrashReporter.swift */; };
 		848D578E21543519005FFAD5 /* PasteboardFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848D578D21543519005FFAD5 /* PasteboardFeed.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
 		849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
@@ -891,6 +892,7 @@
 		847FA120202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarContextualMenuDelegate.swift; sourceTree = "<group>"; };
 		848B930921C8B0BF0038DC0D /* Subscribe-to-Feed-MAS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Subscribe-to-Feed-MAS-Info.plist"; sourceTree = "<group>"; };
 		848B934321C8B8A00038DC0D /* CrashReporter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CrashReporter.xcodeproj; path = submodules/CrashReporter/CrashReporter.xcodeproj; sourceTree = "<group>"; };
+		848B937121C8C5540038DC0D /* CrashReporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrashReporter.swift; sourceTree = "<group>"; };
 		848D578D21543519005FFAD5 /* PasteboardFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardFeed.swift; sourceTree = "<group>"; };
 		848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconDownloader.swift; sourceTree = "<group>"; };
 		849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderWindowController.swift; sourceTree = "<group>"; };
@@ -1316,6 +1318,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		848B937021C8C5540038DC0D /* CrashReporter */ = {
+			isa = PBXGroup;
+			children = (
+				848B937121C8C5540038DC0D /* CrashReporter.swift */,
+			);
+			name = CrashReporter;
+			path = NetNewsWire/CrashReporter;
+			sourceTree = "<group>";
+		};
 		848F6AE31FC29CFA002D422E /* Favicons */ = {
 			isa = PBXGroup;
 			children = (
@@ -1522,6 +1533,7 @@
 				849A97961ED9EFAA007D329B /* Extensions */,
 				D5907D6F2004AB67005947E5 /* Scriptability */,
 				D5558FD6200227E60066386B /* AppleEvents */,
+				848B937021C8C5540038DC0D /* CrashReporter */,
 				849A97991ED9EFB6007D329B /* Resources */,
 				84F9EACF213660A100CF2DE4 /* NetNewsWireTests */,
 				840D617D2029031C009BC708 /* NetNewsWire-iOS */,
@@ -2642,6 +2654,7 @@
 			files = (
 				84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */,
 				849C64641ED37A5D003D8FC0 /* AppDelegate.swift in Sources */,
+				848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */,
 				84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */,
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,
 				D5907D972004B7EB005947E5 /* Account+Scriptability.swift in Sources */,
