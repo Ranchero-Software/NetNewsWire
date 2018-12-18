@@ -16,6 +16,3 @@
 [submodule "submodules/RSDatabase"]
 	path = submodules/RSDatabase
 	url = https://github.com/brentsimmons/RSDatabase
-[submodule "submodules/CrashReporter"]
-	path = submodules/CrashReporter
-	url = https://github.com/brentsimmons/plcrashreporter
