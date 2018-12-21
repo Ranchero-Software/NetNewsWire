@@ -17,18 +17,64 @@ import Foundation
 // future apps can use it.
 
 
-struct CrashReporter {
+class CrashReporter {
+
+	static let shared = CrashReporter()
+
+	private struct DefaultsKey {
+		static let lastSeenCrashLogDateKey = "LastSeenCrashLogDate"
+		static let hashOfLastSeenCrashLogKey = "LastSeenCrashLogHash"
+		static let sendCrashLogsAutomaticallyKey = "SendCrashLogsAutomatically"
+	}
+
+	private var sendCrashLogsAutomatically: Bool {
+		get {
+			return UserDefaults.standard.bool(forKey: DefaultsKey.sendCrashLogsAutomaticallyKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: DefaultsKey.sendCrashLogsAutomaticallyKey)
+		}
+	}
+
+	private var hashOfLastSeenCrashLog: String? {
+		get {
+			return UserDefaults.standard.string(forKey: DefaultsKey.hashOfLastSeenCrashLogKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: DefaultsKey.hashOfLastSeenCrashLogKey)
+		}
+	}
+
+	private var lastSeenCrashLogDate: Date? {
+		get {
+			let lastSeenCrashLogDouble = UserDefaults.standard.double(forKey: DefaultsKey.lastSeenCrashLogDateKey)
+			if lastSeenCrashLogDouble < 1.0 {
+				return nil
+			}
+			return Date(timeIntervalSince1970: lastSeenCrashLogDouble)
+		}
+		set {
+			UserDefaults.standard.set(newValue!.timeIntervalSince1970, forKey: DefaultsKey.hashOfLastSeenCrashLogKey)
+		}
+	}
 
 	/// Look in ~/Library/Logs/DiagnosticReports/ for a new crash log for this app.
 	/// Show a crash log catcher window if found.
-	static func check(appName: String) throws {
+	func check(appName: String) {
 		let folder = ("~/Library/Logs/DiagnosticReports/" as NSString).expandingTildeInPath
 		let crashSuffix = ".crash"
 		let lowerAppName = appName.lowercased()
-		let filenames = try FileManager.default.contentsOfDirectory(atPath: folder)
+
+		var filenames = [String]()
+		do {
+			filenames = try FileManager.default.contentsOfDirectory(atPath: folder)
+		}
+		catch {
+			return
+		}
 
 		var mostRecentFilePath: String? = nil
-		var mostRecentFileDate = NSDate.distantPast
+		var mostRecentFileDate = Date.distantPast
 		for filename in filenames {
 			if !filename.lowercased().hasPrefix(lowerAppName) {
 				continue
@@ -38,7 +84,13 @@ struct CrashReporter {
 			}
 
 			let path = (folder as NSString).appendingPathComponent(filename)
-			let fileAttributes = try FileManager.default.attributesOfItem(atPath: path)
+			var fileAttributes = [FileAttributeKey: Any]()
+			do {
+				fileAttributes = try FileManager.default.attributesOfItem(atPath: path)
+			}
+			catch {
+				continue
+			}
 			if let fileModificationDate = fileAttributes[.modificationDate] as? Date {
 				if fileModificationDate > mostRecentFileDate {
 					mostRecentFileDate = fileModificationDate
@@ -50,23 +102,34 @@ struct CrashReporter {
 		guard let crashLogPath = mostRecentFilePath else {
 			return
 		}
-		guard let crashLog = try? NSString(contentsOfFile: crashLogPath, usedEncoding: nil) else {
+
+		if let lastSeenCrashLogDate = lastSeenCrashLogDate, lastSeenCrashLogDate >= mostRecentFileDate {
 			return
 		}
 
-		// Check to see if we’ve already reported this crash log. This should be common.
-		let hashOfLog = crashLog.rs_md5Hash()
-		let hashOfLastReportedCrashLogKey = "hashOfLastReportedCrashLog"
-		if let lastLogHash = UserDefaults.standard.string(forKey: hashOfLastReportedCrashLogKey) {
-			if hashOfLog == lastLogHash {
-				return // Don’t report this crash log again.
-			}
+		guard let crashLog = try? NSString(contentsOfFile: crashLogPath, usedEncoding: nil) as String else {
+			return
 		}
-		UserDefaults.standard.set(hashOfLog, forKey: hashOfLastReportedCrashLogKey)
+		let hashOfFoundLog = crashLog.rs_md5Hash()
 
+		// Check to see if we’ve already reported this crash log. Just in case date comparison fails.
+		if let lastSeenHash = hashOfLastSeenCrashLog, lastSeenHash == hashOfFoundLog {
+			return
+		}
+		hashOfLastSeenCrashLog = hashOfFoundLog
+		lastSeenCrashLogDate = mostRecentFileDate
 
-
+		// Run crash log window.
+		if sendCrashLogsAutomatically {
+			sendCrashLog(crashLog)
+			return
+		}
 	}
 }
 
+private extension CrashReporter {
 
+	func sendCrashLog(_ crashLog: String) {
+		// TODO
+	}
+}
