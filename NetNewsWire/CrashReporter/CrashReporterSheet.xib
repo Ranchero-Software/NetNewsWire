@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner"/>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Crash Log Reporter" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="496" height="416"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="496" height="498"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="QBv-7S-WQv">
+                        <rect key="frame" x="18" y="459" width="460" height="19"/>
+                        <textFieldCell key="cell" selectable="YES" title="NetNewsWire Crash Log Found" id="k6r-PA-hYf">
+                            <font key="font" size="16" name=".AppleSystemUIFontBold"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="b7P-9Z-RkD">
+                        <rect key="frame" x="18" y="417" width="460" height="34"/>
+                        <textFieldCell key="cell" selectable="YES" id="O6E-xl-G55">
+                            <font key="font" metaFont="system"/>
+                            <string key="title">To help us fix crashing bugs, click Send Crash Log. Below is the text that will be sent to Brent. No other information will be sent.</string>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <scrollView borderType="line" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UTe-5f-47F">
+                        <rect key="frame" x="20" y="153" width="456" height="256"/>
+                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="MeG-49-sPS">
+                            <rect key="frame" x="1" y="1" width="454" height="254"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="hW5-cq-81L">
+                                    <rect key="frame" x="0.0" y="0.0" width="454" height="254"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <size key="minSize" width="454" height="254"/>
+                                    <size key="maxSize" width="456" height="10000000"/>
+                                    <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                </textView>
+                            </subviews>
+                        </clipView>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="256" id="t2l-lf-pj5"/>
+                        </constraints>
+                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="wLl-nc-XBT">
+                            <rect key="frame" x="439" y="1" width="16" height="254"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MDs-Wi-EiJ">
+                        <rect key="frame" x="18" y="118" width="460" height="18"/>
+                        <buttonCell key="cell" type="check" title="Send crash reports automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="hsB-Hx-Fgs">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <binding destination="Owf-g6-irL" name="value" keyPath="values.SendCrashLogsAutomatically" id="jSt-MH-Wqe">
+                                <dictionary key="options">
+                                    <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                    <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                    <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                    <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                    <integer key="NSNullPlaceholder" value="0"/>
+                                    <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D5D-Vb-5TR">
+                        <rect key="frame" x="18" y="61" width="460" height="51"/>
+                        <textFieldCell key="cell" allowsUndo="NO" id="nou-5k-c1U">
+                            <font key="font" metaFont="system"/>
+                            <string key="title">You can skip this window in the future by telling NetNewsWire to automatically send crash reports. You can also turn this setting on and off in the Preferences window.</string>
+                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fcK-kG-dtY">
+                        <rect key="frame" x="345" y="13" width="137" height="32"/>
+                        <buttonCell key="cell" type="push" title="Send Crash Log" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7ot-Ev-JTY">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="o4V-7L-v6D">
+                        <rect key="frame" x="208" y="13" width="137" height="32"/>
+                        <buttonCell key="cell" type="push" title="Don’t Send" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gzj-Vz-pdb">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                    </button>
+                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="foM-ga-1Pk">
+                        <rect key="frame" x="18" y="18" width="25" height="25"/>
+                        <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nth-10-D5n">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="QBv-7S-WQv" secondAttribute="trailing" constant="20" symbolic="YES" id="36B-NT-JKz"/>
+                    <constraint firstAttribute="trailing" secondItem="fcK-kG-dtY" secondAttribute="trailing" constant="20" symbolic="YES" id="6md-gj-Ebi"/>
+                    <constraint firstItem="D5D-Vb-5TR" firstAttribute="top" secondItem="MDs-Wi-EiJ" secondAttribute="bottom" constant="8" id="CfF-vN-jCe"/>
+                    <constraint firstAttribute="trailing" secondItem="D5D-Vb-5TR" secondAttribute="trailing" constant="20" symbolic="YES" id="CsH-Gv-cwP"/>
+                    <constraint firstAttribute="trailing" secondItem="MDs-Wi-EiJ" secondAttribute="trailing" constant="20" symbolic="YES" id="ElN-Oc-O2s"/>
+                    <constraint firstItem="D5D-Vb-5TR" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="GRh-Au-gHX"/>
+                    <constraint firstItem="UTe-5f-47F" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="U1O-9z-jYz"/>
+                    <constraint firstItem="fcK-kG-dtY" firstAttribute="width" secondItem="o4V-7L-v6D" secondAttribute="width" id="U5j-x8-wHK"/>
+                    <constraint firstItem="fcK-kG-dtY" firstAttribute="firstBaseline" secondItem="o4V-7L-v6D" secondAttribute="firstBaseline" id="Vpq-7Z-UNR"/>
+                    <constraint firstAttribute="trailing" secondItem="b7P-9Z-RkD" secondAttribute="trailing" constant="20" symbolic="YES" id="W19-0H-DVN"/>
+                    <constraint firstItem="MDs-Wi-EiJ" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="Zwd-5k-iXD"/>
+                    <constraint firstItem="UTe-5f-47F" firstAttribute="top" secondItem="b7P-9Z-RkD" secondAttribute="bottom" constant="8" symbolic="YES" id="aED-61-b2W"/>
+                    <constraint firstItem="fcK-kG-dtY" firstAttribute="top" secondItem="D5D-Vb-5TR" secondAttribute="bottom" constant="20" id="eFz-oU-MeW"/>
+                    <constraint firstItem="b7P-9Z-RkD" firstAttribute="top" secondItem="QBv-7S-WQv" secondAttribute="bottom" constant="8" symbolic="YES" id="eOP-Vs-QAJ"/>
+                    <constraint firstItem="QBv-7S-WQv" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="kab-GW-in9"/>
+                    <constraint firstItem="b7P-9Z-RkD" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="kuR-dt-lWl"/>
+                    <constraint firstAttribute="bottom" secondItem="fcK-kG-dtY" secondAttribute="bottom" constant="20" symbolic="YES" id="kur-mc-PCf"/>
+                    <constraint firstAttribute="trailing" secondItem="UTe-5f-47F" secondAttribute="trailing" constant="20" symbolic="YES" id="mgo-OJ-3aJ"/>
+                    <constraint firstItem="fcK-kG-dtY" firstAttribute="leading" secondItem="o4V-7L-v6D" secondAttribute="trailing" constant="12" symbolic="YES" id="oSf-uE-ggL"/>
+                    <constraint firstItem="foM-ga-1Pk" firstAttribute="firstBaseline" secondItem="o4V-7L-v6D" secondAttribute="firstBaseline" id="uM1-QE-ZRn"/>
+                    <constraint firstItem="MDs-Wi-EiJ" firstAttribute="top" secondItem="hW5-cq-81L" secondAttribute="bottom" constant="20" id="uOq-NF-b2t"/>
+                    <constraint firstItem="foM-ga-1Pk" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="v0O-ZB-l5R"/>
+                    <constraint firstItem="QBv-7S-WQv" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="zQj-wQ-ppH"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="136" y="-14"/>
+        </window>
+        <userDefaultsController representsSharedInstance="YES" id="Owf-g6-irL"/>
+    </objects>
+</document>
