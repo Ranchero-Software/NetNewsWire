@@ -178,7 +178,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		#endif
 
-		CrashReporter.shared.check(appName: "NetNewsWire")
+		CrashReporter.check(appName: "NetNewsWire")
 	}
 
 	func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {

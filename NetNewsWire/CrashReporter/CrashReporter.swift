@@ -17,119 +17,109 @@ import Foundation
 // future apps can use it.
 
 
-class CrashReporter {
+struct CrashLog {
 
-	static let shared = CrashReporter()
+	let path: String
+	let modificationDate: Date
+	let content: String
+	let contentHash: String
 
-	private struct DefaultsKey {
+	init?(path: String, modificationDate: Date) {
+		guard let s = try? NSString(contentsOfFile: path, usedEncoding: nil) as String, !s.isEmpty else {
+			return nil
+		}
+		self.content = s
+		self.contentHash = s.rs_md5Hash()
+		self.path = path
+		self.modificationDate = modificationDate
+	}
+}
+
+struct CrashReporter {
+
+	struct DefaultsKey {
 		static let lastSeenCrashLogDateKey = "LastSeenCrashLogDate"
 		static let hashOfLastSeenCrashLogKey = "LastSeenCrashLogHash"
 		static let sendCrashLogsAutomaticallyKey = "SendCrashLogsAutomatically"
 	}
 
-	private var sendCrashLogsAutomatically: Bool {
-		get {
-			return UserDefaults.standard.bool(forKey: DefaultsKey.sendCrashLogsAutomaticallyKey)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: DefaultsKey.sendCrashLogsAutomaticallyKey)
-		}
-	}
-
-	private var hashOfLastSeenCrashLog: String? {
-		get {
-			return UserDefaults.standard.string(forKey: DefaultsKey.hashOfLastSeenCrashLogKey)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: DefaultsKey.hashOfLastSeenCrashLogKey)
-		}
-	}
-
-	private var lastSeenCrashLogDate: Date? {
-		get {
-			let lastSeenCrashLogDouble = UserDefaults.standard.double(forKey: DefaultsKey.lastSeenCrashLogDateKey)
-			if lastSeenCrashLogDouble < 1.0 {
-				return nil
-			}
-			return Date(timeIntervalSince1970: lastSeenCrashLogDouble)
-		}
-		set {
-			UserDefaults.standard.set(newValue!.timeIntervalSince1970, forKey: DefaultsKey.hashOfLastSeenCrashLogKey)
-		}
-	}
-
 	/// Look in ~/Library/Logs/DiagnosticReports/ for a new crash log for this app.
-	/// Show a crash log catcher window if found.
-	func check(appName: String) {
+	/// Show a crash log reporter window if found.
+	static func check(appName: String) {
 		let folder = ("~/Library/Logs/DiagnosticReports/" as NSString).expandingTildeInPath
-		let crashSuffix = ".crash"
-		let lowerAppName = appName.lowercased()
-
-		var filenames = [String]()
-		do {
-			filenames = try FileManager.default.contentsOfDirectory(atPath: folder)
-		}
-		catch {
+		guard let filenames = try? FileManager.default.contentsOfDirectory(atPath: folder) else {
 			return
 		}
+
+		let crashSuffix = ".crash"
+		let lowerAppName = appName.lowercased()
+		let lastSeenCrashLogDate: Date = {
+			let lastSeenCrashLogDouble = UserDefaults.standard.double(forKey: DefaultsKey.lastSeenCrashLogDateKey)
+			return Date(timeIntervalSince1970: lastSeenCrashLogDouble)
+		}()
 
 		var mostRecentFilePath: String? = nil
 		var mostRecentFileDate = Date.distantPast
 		for filename in filenames {
-			if !filename.lowercased().hasPrefix(lowerAppName) {
-				continue
-			}
-			if !filename.hasSuffix(crashSuffix) {
+			if !filename.lowercased().hasPrefix(lowerAppName) || !filename.hasSuffix(crashSuffix) {
 				continue
 			}
 
 			let path = (folder as NSString).appendingPathComponent(filename)
-			var fileAttributes = [FileAttributeKey: Any]()
-			do {
-				fileAttributes = try FileManager.default.attributesOfItem(atPath: path)
-			}
-			catch {
-				continue
-			}
+			let fileAttributes = (try? FileManager.default.attributesOfItem(atPath: path)) ?? [FileAttributeKey: Any]()
 			if let fileModificationDate = fileAttributes[.modificationDate] as? Date {
-				if fileModificationDate > mostRecentFileDate {
+				if fileModificationDate > lastSeenCrashLogDate && fileModificationDate > mostRecentFileDate { // Ignore if previously seen
 					mostRecentFileDate = fileModificationDate
 					mostRecentFilePath = path
 				}
 			}
 		}
 
-		guard let crashLogPath = mostRecentFilePath else {
+		guard let crashLogPath = mostRecentFilePath, let crashLog = CrashLog(path: crashLogPath, modificationDate: mostRecentFileDate) else {
 			return
 		}
 
-		if let lastSeenCrashLogDate = lastSeenCrashLogDate, lastSeenCrashLogDate >= mostRecentFileDate {
+		if hasSeen(crashLog) {
 			return
 		}
+		remember(crashLog)
 
-		guard let crashLog = try? NSString(contentsOfFile: crashLogPath, usedEncoding: nil) as String else {
-			return
-		}
-		let hashOfFoundLog = crashLog.rs_md5Hash()
-
-		// Check to see if we’ve already reported this crash log. Just in case date comparison fails.
-		if let lastSeenHash = hashOfLastSeenCrashLog, lastSeenHash == hashOfFoundLog {
-			return
-		}
-		hashOfLastSeenCrashLog = hashOfFoundLog
-		lastSeenCrashLogDate = mostRecentFileDate
-
-		// Run crash log window.
-		if sendCrashLogsAutomatically {
+		if shouldSendCrashLogsAutomatically() {
 			sendCrashLog(crashLog)
-			return
+		}
+		else {
+			runCrashReporterWindow(crashLog)
 		}
 	}
+
+	static func sendCrashLog(_ crashLog: CrashLog) {
+		// TODO
+	}
+
+	static func runCrashReporterWindow(_ crashLog: CrashLog) {
+		// TODO
+	}
+
 }
 
 private extension CrashReporter {
 
-	func sendCrashLog(_ crashLog: String) {
-		// TODO
+	static func hasSeen(_ crashLog: CrashLog) -> Bool {
+		// No need to compare dates, because that’s done in the file loop.
+		// Check to see if we’ve already reported this exact crash log.
+		guard let hashOfLastSeenCrashLog = UserDefaults.standard.string(forKey: DefaultsKey.hashOfLastSeenCrashLogKey) else {
+			return false
+		}
+		return hashOfLastSeenCrashLog == crashLog.contentHash
+	}
+
+	static func remember(_ crashLog: CrashLog) {
+		// Save the modification date and hash, so we don’t send duplicates.
+		UserDefaults.standard.set(crashLog.contentHash, forKey: DefaultsKey.hashOfLastSeenCrashLogKey)
+		UserDefaults.standard.set(crashLog.modificationDate.timeIntervalSince1970, forKey: DefaultsKey.lastSeenCrashLogDateKey)
+	}
+
+	static func shouldSendCrashLogsAutomatically() -> Bool {
+		return UserDefaults.standard.bool(forKey: DefaultsKey.sendCrashLogsAutomaticallyKey)
 	}
 }
