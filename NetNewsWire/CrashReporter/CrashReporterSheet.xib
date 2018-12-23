@@ -105,13 +105,6 @@ Gw
 </string>
                         </buttonCell>
                     </button>
-                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="foM-ga-1Pk">
-                        <rect key="frame" x="18" y="18" width="25" height="25"/>
-                        <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nth-10-D5n">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="QBv-7S-WQv" secondAttribute="trailing" constant="20" symbolic="YES" id="36B-NT-JKz"/>
@@ -133,9 +126,7 @@ Gw
                     <constraint firstAttribute="bottom" secondItem="fcK-kG-dtY" secondAttribute="bottom" constant="20" symbolic="YES" id="kur-mc-PCf"/>
                     <constraint firstAttribute="trailing" secondItem="UTe-5f-47F" secondAttribute="trailing" constant="20" symbolic="YES" id="mgo-OJ-3aJ"/>
                     <constraint firstItem="fcK-kG-dtY" firstAttribute="leading" secondItem="o4V-7L-v6D" secondAttribute="trailing" constant="12" symbolic="YES" id="oSf-uE-ggL"/>
-                    <constraint firstItem="foM-ga-1Pk" firstAttribute="firstBaseline" secondItem="o4V-7L-v6D" secondAttribute="firstBaseline" id="uM1-QE-ZRn"/>
                     <constraint firstItem="MDs-Wi-EiJ" firstAttribute="top" secondItem="hW5-cq-81L" secondAttribute="bottom" constant="20" id="uOq-NF-b2t"/>
-                    <constraint firstItem="foM-ga-1Pk" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="v0O-ZB-l5R"/>
                     <constraint firstItem="QBv-7S-WQv" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="zQj-wQ-ppH"/>
                 </constraints>
             </view>
