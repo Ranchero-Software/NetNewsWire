@@ -26,9 +26,13 @@ import AppKit
 		return sharingServiceDelegate
 	}
 
+	private static let sendToCommands: [SendToCommand] = {
+		return [SendToMicroBlogCommand(), SendToMarsEditCommand()]
+	}()
+
 	static func customSharingServices(for items: [Any]) -> [NSSharingService] {
 
-		let customServices = appDelegate.sendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
+		let customServices = sendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
 
 			guard let object = items.first else {
 				return nil

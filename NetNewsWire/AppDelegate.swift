@@ -31,10 +31,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
 	
-	lazy var sendToCommands: [SendToCommand] = {
-		return [SendToMicroBlogCommand(), SendToMarsEditCommand()]
-	}()
-
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
