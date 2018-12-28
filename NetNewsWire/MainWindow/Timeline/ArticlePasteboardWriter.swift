@@ -10,12 +10,6 @@ import AppKit
 import Articles
 import RSCore
 
-extension Article: PasteboardWriterOwner {
-
-	public var pasteboardWriter: NSPasteboardWriting {
-		return ArticlePasteboardWriter(article: self)
-	}
-}
 
 @objc final class ArticlePasteboardWriter: NSObject, NSPasteboardWriting {
 
@@ -31,14 +25,12 @@ extension Article: PasteboardWriterOwner {
 	}()
 
 	init(article: Article) {
-
 		self.article = article
 	}
 
 	// MARK: - NSPasteboardWriting
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
-
 		var types = [ArticlePasteboardWriter.articleUTIType]
 
 		if let link = article.preferredLink, let _ = URL(string: link) {
@@ -50,7 +42,6 @@ extension Article: PasteboardWriterOwner {
 	}
 
 	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
-
 		let plist: Any?
 
 		switch type {
@@ -75,7 +66,6 @@ extension Article: PasteboardWriterOwner {
 private extension ArticlePasteboardWriter {
 
 	func plainText() -> String {
-
 		var s = ""
 
 		if let title = article.title {
@@ -113,7 +103,6 @@ private extension ArticlePasteboardWriter {
 	}
 
 	private struct Key {
-
 		static let articleID = "articleID" // database ID, unique per account
 		static let uniqueID = "uniqueID" // unique ID, unique per feed (guid, or possibly calculated)
 		static let feedURL = "feedURL"
@@ -153,7 +142,6 @@ private extension ArticlePasteboardWriter {
 	}
 
 	func exportDictionary() -> [String: Any] {
-
 		var d = [String: Any]()
 
 		d[Key.articleID] = article.articleID
@@ -182,14 +170,12 @@ private extension ArticlePasteboardWriter {
 	}
 
 	func internalDictionary() -> [String: Any] {
-
 		var d = exportDictionary()
 		d[Key.accountID] = article.accountID
 		return d
 	}
 
 	func authorDictionary(_ author: Author) -> [String: Any] {
-
 		var d = [String: Any]()
 
 		d[Key.authorName] = author.name ?? nil
@@ -202,7 +188,6 @@ private extension ArticlePasteboardWriter {
 	}
 
 	func attachmentDictionary(_ attachment: Attachment) -> [String: Any] {
-
 		var d = [String: Any]()
 
 		d[Key.attachmentURL] = attachment.url
@@ -215,7 +200,6 @@ private extension ArticlePasteboardWriter {
 	}
 
 	func authorDictionaries() -> [[String: Any]]? {
-
 		guard let authors = article.authors, !authors.isEmpty else {
 			return nil
 		}
@@ -223,7 +207,6 @@ private extension ArticlePasteboardWriter {
 	}
 
 	func attachmentDictionaries() -> [[String: Any]]? {
-
 		guard let attachments = article.attachments, !attachments.isEmpty else {
 			return nil
 		}
