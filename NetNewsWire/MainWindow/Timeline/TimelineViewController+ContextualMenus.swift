@@ -185,7 +185,7 @@ private extension TimelineViewController {
 			return nil
 		}
 
-		let sortedArticles = selectedArticles.sortedByDate(.orderedAscending)
+		let sortedArticles = articles.sortedByDate(.orderedAscending)
 		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
 		let standardServices = NSSharingService.sharingServices(forItems: items)
 		let customServices = SharingServicePickerDelegate.customSharingServices(for: items)
