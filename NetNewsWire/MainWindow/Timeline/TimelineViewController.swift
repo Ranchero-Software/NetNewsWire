@@ -15,7 +15,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
 	@IBOutlet var contextualMenuDelegate: TimelineContextualMenuDelegate?
-	@IBOutlet var dataSource: TimelineDataSource!
 
 	var sharingServiceDelegate: NSSharingServiceDelegate?
 	
@@ -30,7 +29,6 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	var articles = ArticleArray() {
 		didSet {
 			if articles != oldValue {
-				dataSource.articles = articles
 				updateShowAvatars()
 				articleRowMap = [String: Int]()
 				tableView.reloadData()
@@ -529,6 +527,26 @@ extension TimelineViewController: NSUserInterfaceValidations {
 			return NSPasteboard.general.canCopyAtLeastOneObject(selectedArticles)
 		}
 		return true
+	}
+}
+
+// MARK: - NSTableViewDataSource
+
+extension TimelineViewController: NSTableViewDataSource {
+
+	func numberOfRows(in tableView: NSTableView) -> Int {
+		return articles.count
+	}
+
+	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+		return articles.articleAtRow(row) ?? nil
+	}
+
+	func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
+		guard let article = articles.articleAtRow(row) else {
+			return nil
+		}
+		return ArticlePasteboardWriter(article: article)
 	}
 }
 
