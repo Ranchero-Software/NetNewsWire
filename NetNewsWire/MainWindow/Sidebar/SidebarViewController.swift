@@ -40,7 +40,7 @@ import RSCore
 
 	override func viewDidLoad() {
 
-		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.shared.sidebarFontSize)
+		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.sidebarFontSize)
 
 		outlineView.dataSource = dataSource
 		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)

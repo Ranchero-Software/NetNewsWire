@@ -15,7 +15,7 @@ struct Browser {
 	static func open(_ urlString: String) {
 
 		// Opens according to prefs.
-		open(urlString, inBackground: AppDefaults.shared.openInBrowserInBackground)
+		open(urlString, inBackground: AppDefaults.openInBrowserInBackground)
 	}
 
 	static func open(_ urlString: String, inBackground: Bool) {

@@ -39,12 +39,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 		
-		if !AppDefaults.shared.showTitleOnMainWindow {
+		if !AppDefaults.showTitleOnMainWindow {
 			window?.titleVisibility = .hidden
 		}
 
 		window?.setFrameUsingName(windowAutosaveName, force: true)
-		if AppDefaults.shared.isFirstRun && !MainWindowController.didPositionWindowOnFirstRun {
+		if AppDefaults.isFirstRun && !MainWindowController.didPositionWindowOnFirstRun {
 
 			if let window = window {
 				let point = NSPoint(x: 128, y: 64)
@@ -592,14 +592,14 @@ private extension MainWindowController {
 		}
 
 		let widths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
-		AppDefaults.shared.mainWindowWidths = widths
+		AppDefaults.mainWindowWidths = widths
 	}
 
 	func restoreSplitViewState() {
 
 		// TODO: Update this for multiple windows.
 
-		guard let splitView = splitViewController?.splitView, let widths = AppDefaults.shared.mainWindowWidths, widths.count == 3, let window = window else {
+		guard let splitView = splitViewController?.splitView, let widths = AppDefaults.mainWindowWidths, widths.count == 3, let window = window else {
 			return
 		}
 

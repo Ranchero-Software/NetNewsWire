@@ -128,7 +128,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 
-		let isFirstRun = AppDefaults.shared.isFirstRun
+		AppDefaults.registerDefaults()
+		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			logDebugMessage("Is first run.")
 		}
@@ -492,12 +493,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
 
-		AppDefaults.shared.timelineSortDirection = .orderedAscending
+		AppDefaults.timelineSortDirection = .orderedAscending
 	}
 
 	@IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
 
-		AppDefaults.shared.timelineSortDirection = .orderedDescending
+		AppDefaults.timelineSortDirection = .orderedDescending
 	}
 }
 
@@ -524,7 +525,7 @@ private extension AppDelegate {
 
 	func updateSortMenuItems() {
 
-		let sortByNewestOnTop = AppDefaults.shared.timelineSortDirection == .orderedDescending
+		let sortByNewestOnTop = AppDefaults.timelineSortDirection == .orderedDescending
 		sortByNewestArticleOnTopMenuItem.state = sortByNewestOnTop ? .on : .off
 		sortByOldestArticleOnTopMenuItem.state = sortByNewestOnTop ? .off : .on
 	}

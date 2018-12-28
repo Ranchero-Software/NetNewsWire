@@ -9,16 +9,13 @@
 import AppKit
 
 enum FontSize: Int {
-
 	case small = 0
 	case medium = 1
 	case large = 2
 	case veryLarge = 3
 }
 
-final class AppDefaults {
-
-	static let shared = AppDefaults()
+struct AppDefaults {
 
 	struct Key {
 		static let firstRunDate = "firstRunDate"
@@ -33,12 +30,18 @@ final class AppDefaults {
 		static let showTitleOnMainWindow = "KafasisTitleMode"
 	}
 
-	private let smallestFontSizeRawValue = FontSize.small.rawValue
-	private let largestFontSizeRawValue = FontSize.veryLarge.rawValue
+	private static let smallestFontSizeRawValue = FontSize.small.rawValue
+	private static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
-	let isFirstRun: Bool
+	static let isFirstRun: Bool = {
+		if let _ = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date {
+			return false
+		}
+		firstRunDate = Date()
+		return true
+	}()
 	
-	var openInBrowserInBackground: Bool {
+	static var openInBrowserInBackground: Bool {
 		get {
 			return bool(for: Key.openInBrowserInBackground)
 		}
@@ -47,7 +50,7 @@ final class AppDefaults {
 		}
 	}
 
-	var sidebarFontSize: FontSize {
+	static var sidebarFontSize: FontSize {
 		get {
 			return fontSize(for: Key.sidebarFontSize)
 		}
@@ -56,7 +59,7 @@ final class AppDefaults {
 		}
 	}
 
-	var timelineFontSize: FontSize {
+	static var timelineFontSize: FontSize {
 		get {
 			return fontSize(for: Key.timelineFontSize)
 		}
@@ -65,7 +68,7 @@ final class AppDefaults {
 		}
 	}
 
-	var detailFontSize: FontSize {
+	static var detailFontSize: FontSize {
 		get {
 			return fontSize(for: Key.detailFontSize)
 		}
@@ -74,11 +77,11 @@ final class AppDefaults {
 		}
 	}
 
-	var showTitleOnMainWindow: Bool {
+	static var showTitleOnMainWindow: Bool {
 		return bool(for: Key.showTitleOnMainWindow)
 	}
 
-	var timelineSortDirection: ComparisonResult {
+	static var timelineSortDirection: ComparisonResult {
 		get {
 			return sortDirection(for: Key.timelineSortDirection)
 		}
@@ -87,7 +90,7 @@ final class AppDefaults {
 		}
 	}
 
-	var mainWindowWidths: [Int]? {
+	static var mainWindowWidths: [Int]? {
 		get {
 			return UserDefaults.standard.object(forKey: Key.mainWindowWidths) as? [Int]
 		}
@@ -95,19 +98,11 @@ final class AppDefaults {
 			UserDefaults.standard.set(newValue, forKey: Key.mainWindowWidths)
 		}
 	}
-	
-	private init() {
 
-		AppDefaults.registerDefaults()
+	static func registerDefaults() {
+		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false]
 
-		let firstRunDate = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date
-		if firstRunDate == nil {
-			self.isFirstRun = true
-			self.firstRunDate = Date()
-		}
-		else {
-			self.isFirstRun = false
-		}
+		UserDefaults.standard.register(defaults: defaults)
 	}
 
 	static func actualFontSize(for fontSize: FontSize) -> CGFloat {
@@ -127,7 +122,7 @@ final class AppDefaults {
 
 private extension AppDefaults {
 
-	var firstRunDate: Date? {
+	static var firstRunDate: Date? {
 		get {
 			return date(for: Key.firstRunDate)
 		}
@@ -136,14 +131,7 @@ private extension AppDefaults {
 		}
 	}
 
-	static func registerDefaults() {
-		
-		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false]
-		
-		UserDefaults.standard.register(defaults: defaults)
-	}
-
-	func fontSize(for key: String) -> FontSize {
+	static func fontSize(for key: String) -> FontSize {
 
 		// Punted till after 1.0.
 		return .medium
@@ -158,35 +146,35 @@ private extension AppDefaults {
 //		return FontSize(rawValue: rawFontSize)!
 	}
 	
-	func setFontSize(for key: String, _ fontSize: FontSize) {
+	static func setFontSize(for key: String, _ fontSize: FontSize) {
 		setInt(for: key, fontSize.rawValue)
 	}
 	
-	func bool(for key: String) -> Bool {
+	static func bool(for key: String) -> Bool {
 		return UserDefaults.standard.bool(forKey: key)
 	}
 
-	func setBool(for key: String, _ flag: Bool) {
+	static func setBool(for key: String, _ flag: Bool) {
 		UserDefaults.standard.set(flag, forKey: key)
 	}
 
-	func int(for key: String) -> Int {
+	static func int(for key: String) -> Int {
 		return UserDefaults.standard.integer(forKey: key)
 	}
 	
-	func setInt(for key: String, _ x: Int) {
+	static func setInt(for key: String, _ x: Int) {
 		UserDefaults.standard.set(x, forKey: key)
 	}
 	
-	func date(for key: String) -> Date? {
+	static func date(for key: String) -> Date? {
 		return UserDefaults.standard.object(forKey: key) as? Date
 	}
 
-	func setDate(for key: String, _ date: Date?) {
+	static func setDate(for key: String, _ date: Date?) {
 		UserDefaults.standard.set(date, forKey: key)
 	}
 
-	func sortDirection(for key:String) -> ComparisonResult {
+	static func sortDirection(for key:String) -> ComparisonResult {
 
 		let rawInt = int(for: key)
 		if rawInt == ComparisonResult.orderedAscending.rawValue {
@@ -195,7 +183,7 @@ private extension AppDefaults {
 		return .orderedDescending
 	}
 
-	func setSortDirection(for key: String, _ value: ComparisonResult) {
+	static func setSortDirection(for key: String, _ value: ComparisonResult) {
 
 		if value == .orderedAscending {
 			setInt(for: key, ComparisonResult.orderedAscending.rawValue)

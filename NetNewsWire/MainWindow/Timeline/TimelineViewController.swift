@@ -62,14 +62,14 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	private var didRegisterForNotifications = false
 	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 
-	private var sortDirection = AppDefaults.shared.timelineSortDirection {
+	private var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
 				sortDirectionDidChange()
 			}
 		}
 	}
-	private var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
+	private var fontSize: FontSize = AppDefaults.timelineFontSize {
 		didSet {
 			if fontSize != oldValue {
 				fontSizeDidChange()
@@ -429,8 +429,8 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
 
-		self.fontSize = AppDefaults.shared.timelineFontSize
-		self.sortDirection = AppDefaults.shared.timelineSortDirection
+		self.fontSize = AppDefaults.timelineFontSize
+		self.sortDirection = AppDefaults.timelineSortDirection
 	}
 
 	// MARK: - Reloading Data
