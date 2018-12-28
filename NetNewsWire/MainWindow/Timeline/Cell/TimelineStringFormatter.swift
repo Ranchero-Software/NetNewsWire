@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import RSParser
 
-class TimelineStringFormatter {
+struct TimelineStringFormatter {
 
 	private static var feedNameCache = [String: String]()
 	private static var titleCache = [String: String]()
