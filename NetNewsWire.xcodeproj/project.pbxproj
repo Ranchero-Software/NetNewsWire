@@ -33,7 +33,6 @@
 		840F7C2421BDA4B40057E851 /* SidebarContextualMenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847FA120202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift */; };
 		840F7C2521BDA4B40057E851 /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppNotifications.swift */; };
 		840F7C2621BDA4B40057E851 /* TimelineKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B5A1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift */; };
-		840F7C2721BDA4B40057E851 /* DockBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE311F870B390058304B /* DockBadge.swift */; };
 		840F7C2821BDA4B40057E851 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
 		840F7C2921BDA4B40057E851 /* KeyboardDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */; };
 		840F7C2A21BDA4B40057E851 /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
@@ -291,7 +290,6 @@
 		84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */; };
 		84D5BA20201E8FB6009092BD /* SidebarGearMenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */; };
 		84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */; };
-		84DAEE321F870B390058304B /* DockBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE311F870B390058304B /* DockBadge.swift */; };
 		84E185B3203B74E500F69BFA /* SingleLineTextFieldSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */; };
 		84E185C3203BB12600F69BFA /* MultilineTextFieldSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */; };
 		84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
@@ -884,7 +882,6 @@
 		84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailStatusBarView.swift; sourceTree = "<group>"; };
 		84D5BA1F201E8FB6009092BD /* SidebarGearMenuDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarGearMenuDelegate.swift; sourceTree = "<group>"; };
 		84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLImporter.swift; sourceTree = "<group>"; };
-		84DAEE311F870B390058304B /* DockBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DockBadge.swift; path = NetNewsWire/DockBadge.swift; sourceTree = "<group>"; };
 		84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleLineTextFieldSizer.swift; sourceTree = "<group>"; };
 		84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextFieldSizer.swift; sourceTree = "<group>"; };
 		84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDefaults.swift; path = NetNewsWire/AppDefaults.swift; sourceTree = "<group>"; };
@@ -1403,7 +1400,6 @@
 				84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */,
 				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
 				849EE70E203919360082A1EA /* AppImages.swift */,
-				84DAEE311F870B390058304B /* DockBadge.swift */,
 				842E45DC1ED8C54B000A8B52 /* Browser.swift */,
 				84702AB31FA27AE8006B8943 /* Commands */,
 				842E45E11ED8C681000A8B52 /* MainWindow */,
@@ -2332,7 +2328,6 @@
 				840F7C2421BDA4B40057E851 /* SidebarContextualMenuDelegate.swift in Sources */,
 				840F7C2521BDA4B40057E851 /* AppNotifications.swift in Sources */,
 				840F7C2621BDA4B40057E851 /* TimelineKeyboardDelegate.swift in Sources */,
-				840F7C2721BDA4B40057E851 /* DockBadge.swift in Sources */,
 				840F7C2821BDA4B40057E851 /* Browser.swift in Sources */,
 				840F7C2921BDA4B40057E851 /* KeyboardDelegateProtocol.swift in Sources */,
 				840F7C2A21BDA4B40057E851 /* AppleEventUtils.swift in Sources */,
@@ -2458,7 +2453,6 @@
 				847FA121202BA34100BB56C8 /* SidebarContextualMenuDelegate.swift in Sources */,
 				842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */,
 				844B5B5B1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift in Sources */,
-				84DAEE321F870B390058304B /* DockBadge.swift in Sources */,
 				842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */,
 				842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */,
 				D5907DB32005F45D005947E5 /* AppleEventUtils.swift in Sources */,

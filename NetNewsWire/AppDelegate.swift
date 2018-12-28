@@ -38,7 +38,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
-				dockBadge.update()
+				CoalescingQueue.standard.add(self, #selector(updateDockBadge))
 				postUnreadCountDidChangeNotification()
 			}
 		}
@@ -59,13 +59,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private let log = Log()
 	private let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
-	private let dockBadge = DockBadge()
 
 	override init() {
 
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
-		dockBadge.appDelegate = self
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
@@ -276,6 +274,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 
 		showAddFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, folder: folder)
+	}
+
+	// MARK: - Dock Badge
+
+	@objc func updateDockBadge() {
+		let label = unreadCount > 0 ? "\(unreadCount)" : ""
+		NSApplication.shared.dockTile.badgeLabel = label
 	}
 
 	// MARK: - Actions
