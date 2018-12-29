@@ -16,8 +16,6 @@
 		6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */; };
 		6581C74620CED60100F4AD34 /* Subscribe to Feed.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		840BEE4121D70E64009BBAFA /* CrashReportWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840BEE4021D70E64009BBAFA /* CrashReportWindowController.swift */; };
-		840BEE4321D7158A009BBAFA /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840BEE4221D7158A009BBAFA /* AppConstants.swift */; };
-		840BEE4421D7158A009BBAFA /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840BEE4221D7158A009BBAFA /* AppConstants.swift */; };
 		840D617F2029031C009BC708 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D617E2029031C009BC708 /* AppDelegate.swift */; };
 		840D61812029031C009BC708 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61802029031C009BC708 /* MasterViewController.swift */; };
 		840D61832029031C009BC708 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61822029031C009BC708 /* DetailViewController.swift */; };
@@ -741,7 +739,6 @@
 		6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Subscribe_to_Feed.entitlements; sourceTree = "<group>"; };
 		8403E75A201C4A79007F7246 /* FeedListKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListKeyboardDelegate.swift; sourceTree = "<group>"; };
 		840BEE4021D70E64009BBAFA /* CrashReportWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReportWindowController.swift; sourceTree = "<group>"; };
-		840BEE4221D7158A009BBAFA /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppConstants.swift; path = NetNewsWire/AppConstants.swift; sourceTree = "<group>"; };
 		840D617C2029031C009BC708 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		840D617E2029031C009BC708 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		840D61802029031C009BC708 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
@@ -1401,7 +1398,6 @@
 				849C64631ED37A5D003D8FC0 /* AppDelegate.swift */,
 				84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */,
 				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
-				840BEE4221D7158A009BBAFA /* AppConstants.swift */,
 				849EE70E203919360082A1EA /* AppImages.swift */,
 				842E45DC1ED8C54B000A8B52 /* Browser.swift */,
 				84702AB31FA27AE8006B8943 /* Commands */,
@@ -2341,7 +2337,6 @@
 				840F7C2F21BDA4B40057E851 /* SidebarCellLayout.swift in Sources */,
 				840F7C3021BDA4B40057E851 /* SmartFeedPasteboardWriter.swift in Sources */,
 				840F7C3121BDA4B40057E851 /* SmartFeedsController.swift in Sources */,
-				840BEE4421D7158A009BBAFA /* AppConstants.swift in Sources */,
 				840F7C3221BDA4B40057E851 /* SidebarViewController.swift in Sources */,
 				840F7C3321BDA4B40057E851 /* SidebarOutlineView.swift in Sources */,
 				840F7C3421BDA4B40057E851 /* Author+Scriptability.swift in Sources */,
@@ -2515,7 +2510,6 @@
 				849A97831ED9EC63007D329B /* SidebarStatusBarView.swift in Sources */,
 				84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */,
 				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
-				840BEE4321D7158A009BBAFA /* AppConstants.swift in Sources */,
 				845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */,
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
 				844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */,

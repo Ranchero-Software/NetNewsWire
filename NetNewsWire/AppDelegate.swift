@@ -459,8 +459,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func donateToAppCampForGirls(_ sender: Any?) {
-
 		Browser.open("https://appcamp4girls.com/contribute/", inBackground: false)
+	}
+
+	@IBAction func showPrivacyPolicy(_ sender: Any?) {
+		Browser.open("https://ranchero.com/netnewswire/privacypolicy", inBackground: false)
 	}
 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
@@ -503,10 +506,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
 
 		AppDefaults.timelineSortDirection = .orderedDescending
-	}
-
-	@IBAction func showPrivacyPolicy(_ sender: Any?) {
-		Browser.open(AppConstants.privacyPolicyURL, inBackground: false)
 	}
 }
 
