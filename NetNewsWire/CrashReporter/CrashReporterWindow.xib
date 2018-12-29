@@ -5,7 +5,13 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner"/>
+        <customObject id="-2" userLabel="File's Owner" customClass="CrashReportWindowController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="dontSendButton" destination="o4V-7L-v6D" id="Sxa-iT-OTj"/>
+                <outlet property="sendCrashLogButton" destination="fcK-kG-dtY" id="T04-pD-qZq"/>
+                <outlet property="textView" destination="hW5-cq-81L" id="RLj-Ti-pGC"/>
+            </connections>
+        </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Crash Log Reporter" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
@@ -84,7 +90,7 @@
                         <rect key="frame" x="18" y="61" width="460" height="51"/>
                         <textFieldCell key="cell" allowsUndo="NO" id="nou-5k-c1U">
                             <font key="font" metaFont="system"/>
-                            <string key="title">You can skip this window in the future by telling NetNewsWire to automatically send crash reports. You can also turn this setting on and off in the Preferences window, in the Advanced section.</string>
+                            <string key="title">You can skip this window in the future by telling NetNewsWire to automatically send crash logs. You can also turn this setting on and off in the Preferences window, in the Advanced section.</string>
                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -98,6 +104,9 @@
 DQ
 </string>
                         </buttonCell>
+                        <connections>
+                            <action selector="sendCrashReport:" target="-2" id="mob-bL-tRb"/>
+                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="o4V-7L-v6D">
                         <rect key="frame" x="208" y="13" width="137" height="32"/>
@@ -108,6 +117,9 @@ DQ
 Gw
 </string>
                         </buttonCell>
+                        <connections>
+                            <action selector="dontSendCrashReport:" target="-2" id="r3y-TC-h8U"/>
+                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fEy-Fg-JhO">
                         <rect key="frame" x="14" y="13" width="137" height="32"/>
@@ -115,6 +127,9 @@ Gw
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="showPrivacyPolicy:" target="-1" id="7TB-8O-Edu"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>
