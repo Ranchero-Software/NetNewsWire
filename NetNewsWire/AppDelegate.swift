@@ -51,6 +51,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
 	private var logWindowController: LogWindowController?
+	private var crashReportWindowController: CrashReportWindowController? // For testing only
 
 	private let log = Log()
 	private let themeLoader = VSThemeLoader()
@@ -465,6 +466,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
 		#if DEBUG
 			AccountManager.shared.accounts.forEach{ $0.debugDropConditionalGetInfo() }
+		#endif
+	}
+
+	@IBAction func debugTestCrashReporterWindow(_ sender: Any?) {
+		#if DEBUG
+			crashReportWindowController = CrashReportWindowController(crashLogText: "This is a test crash log.")
+			crashReportWindowController!.testing = true
+			crashReportWindowController!.showWindow(self)
 		#endif
 	}
 

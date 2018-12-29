@@ -449,6 +449,12 @@
                                                 <action selector="debugDropConditionalGetInfo:" target="Voe-Tx-rLC" id="MTC-K8-rkx"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Test Crash Reporter Window" id="Taw-kN-HFc">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="debugTestCrashReporterWindow:" target="Ady-hI-5gd" id="QNm-AM-i7p"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
