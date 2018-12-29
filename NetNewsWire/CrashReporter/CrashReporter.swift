@@ -85,14 +85,14 @@ struct CrashReporter {
 		remember(crashLog)
 
 		if shouldSendCrashLogsAutomatically() {
-			sendCrashLog(crashLog)
+			sendCrashLogText(crashLog.content)
 		}
 		else {
 			runCrashReporterWindow(crashLog)
 		}
 	}
 
-	static func sendCrashLog(_ crashLog: CrashLog) {
+	static func sendCrashLogText(_ crashLogText: String) {
 		// TODO
 	}
 

@@ -14,7 +14,7 @@ final class CrashReportWindowController: NSWindowController {
 		didSet {
 			textView.font = NSFont.userFixedPitchFont(ofSize: 0.0)
 			textView.textContainerInset = NSSize(width: 5.0, height: 5.0)
-			textView.string = crashLog.content
+			textView.string = crashLogText
 		}
 	}
 
@@ -22,8 +22,8 @@ final class CrashReportWindowController: NSWindowController {
 	@IBOutlet var dontSendButton: NSButton!
 
 	var testing = false // If true, crashLog won’t actually be sent.
-	
-	private var crashLog: CrashLog!
+
+	private var crashLogText: String!
 
 	private var didSendCrashLog = false {
 		didSet {
@@ -32,15 +32,14 @@ final class CrashReportWindowController: NSWindowController {
 		}
 	}
 
-	convenience init(crashLog: CrashLog) {
+	convenience init(crashLogText: String) {
 		self.init(windowNibName: "CrashReporterWindow")
-		self.crashLog = crashLog
+		self.crashLogText = crashLogText
 	}
 
-	override func showWindow(_ sender: Any?) {
-		super.showWindow(sender)
+	override func windowDidLoad() {
+		super.windowDidLoad()
 		window!.center()
-		window!.makeKeyAndOrderFront(sender)
 	}
 
 	// MARK: - Actions
@@ -51,7 +50,7 @@ final class CrashReportWindowController: NSWindowController {
 		}
 		didSendCrashLog = true
 		if !testing {
-			CrashReporter.sendCrashLog(crashLog)
+			CrashReporter.sendCrashLogText(crashLogText)
 		}
 		showThanksSheet()
 	}
@@ -71,7 +70,7 @@ private extension CrashReportWindowController {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
 		alert.messageText = NSLocalizedString("Crash Report Sent", comment: "Crash Report Window")
-		alert.informativeText = NSLocalizedString("Thank you! This helps us to know about crashing bugs, so we can fix them.", comment: "Crash Report Window")
+		alert.informativeText = NSLocalizedString("Thank you! You rock! This is a big help to us.", comment: "Crash Report Window")
 		alert.beginSheetModal(for: window)
 	}
 }

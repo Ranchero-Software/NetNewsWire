@@ -10,6 +10,7 @@
                 <outlet property="dontSendButton" destination="o4V-7L-v6D" id="Sxa-iT-OTj"/>
                 <outlet property="sendCrashLogButton" destination="fcK-kG-dtY" id="T04-pD-qZq"/>
                 <outlet property="textView" destination="hW5-cq-81L" id="RLj-Ti-pGC"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="4kq-h9-osI"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -20,8 +21,8 @@
             <rect key="contentRect" x="251" y="776" width="496" height="416"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="maxSize" type="size" width="2048" height="2048"/>
-            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="496" height="498"/>
+            <view key="contentView" wantsLayer="YES" misplaced="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="496" height="416"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="QBv-7S-WQv">
@@ -47,7 +48,7 @@
                             <rect key="frame" x="1" y="1" width="454" height="254"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="hW5-cq-81L">
+                                <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" allowsCharacterPickerTouchBarItem="NO" textCompletion="NO" id="hW5-cq-81L">
                                     <rect key="frame" x="0.0" y="0.0" width="454" height="254"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
