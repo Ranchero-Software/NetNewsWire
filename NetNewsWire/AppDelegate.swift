@@ -495,6 +495,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		AppDefaults.timelineSortDirection = .orderedDescending
 	}
+
+	@IBAction func showPrivacyPolicy(_ sender: Any?) {
+		Browser.open(AppConstants.privacyPolicyURL, inBackground: false)
+	}
 }
 
 private extension AppDelegate {
