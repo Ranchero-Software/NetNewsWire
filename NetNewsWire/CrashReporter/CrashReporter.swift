@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSWeb
 
 // Based originally on Uli Kusterer's UKCrashReporter: http://www.zathras.de/angelweb/blog-ukcrashreporter-oh-one.htm
 // Then based on the crash reporter included in NetNewsWire 3 and NetNewsWire Lite 4.
@@ -93,7 +94,19 @@ struct CrashReporter {
 	}
 
 	static func sendCrashLogText(_ crashLogText: String) {
-		// TODO
+		let request = NSMutableURLRequest(url: URL(string: "https://ranchero.com/netnewswire/crashreportcatcher.php")!, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 60.0)
+		request.httpMethod = HTTPMethod.post
+
+		let boundary = "0xKhTmLbOuNdArY"
+
+		let contentType = "multipart/form-data; boundary=%@\(boundary)"
+		request.setValue(contentType, forHTTPHeaderField:HTTPRequestHeader.contentType)
+
+		let formString = "--\(boundary)\r\nContent-Disposition: form-data; name=\"crashlog\"\r\n\r\n\(crashLogText)\r\n--\(boundary)--\r\n"
+		let formData = formString.data(using: .utf8, allowLossyConversion: true)
+		request.httpBody = formData
+
+		// TODO: Implement one-shot-download method in RSWeb that takes a URL request.
 	}
 
 	static func runCrashReporterWindow(_ crashLog: CrashLog) {
