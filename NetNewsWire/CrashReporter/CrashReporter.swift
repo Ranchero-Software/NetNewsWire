@@ -44,6 +44,8 @@ struct CrashReporter {
 		static let sendCrashLogsAutomaticallyKey = "SendCrashLogsAutomatically"
 	}
 
+	private static var crashReportWindowController: CrashReportWindowController?
+
 	/// Look in ~/Library/Logs/DiagnosticReports/ for a new crash log for this app.
 	/// Show a crash log reporter window if found.
 	static func check(appName: String) {
@@ -112,9 +114,9 @@ struct CrashReporter {
 	}
 
 	static func runCrashReporterWindow(_ crashLog: CrashLog) {
-		// TODO
+		crashReportWindowController = CrashReportWindowController(crashLogText: crashLog.content)
+		crashReportWindowController!.showWindow(self)
 	}
-
 }
 
 private extension CrashReporter {

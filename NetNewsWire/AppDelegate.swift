@@ -173,7 +173,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		#endif
 
-		CrashReporter.check(appName: "NetNewsWire")
+		DispatchQueue.main.async {
+			CrashReporter.check(appName: "NetNewsWire")
+		}
 	}
 
 	func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
