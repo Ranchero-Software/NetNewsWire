@@ -94,7 +94,7 @@ struct CrashReporter {
 	}
 
 	static func sendCrashLogText(_ crashLogText: String) {
-		let request = NSMutableURLRequest(url: URL(string: "https://ranchero.com/netnewswire/crashreportcatcher.php")!, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 60.0)
+		var request = URLRequest(url: URL(string: "https://ranchero.com/netnewswire/crashreportcatcher.php")!)
 		request.httpMethod = HTTPMethod.post
 
 		let boundary = "0xKhTmLbOuNdArY"
@@ -106,7 +106,9 @@ struct CrashReporter {
 		let formData = formString.data(using: .utf8, allowLossyConversion: true)
 		request.httpBody = formData
 
-		// TODO: Implement one-shot-download method in RSWeb that takes a URL request.
+		download(request) { (_, _, _) in
+			// Don’t care about the result.
+		}
 	}
 
 	static func runCrashReporterWindow(_ crashLog: CrashLog) {
