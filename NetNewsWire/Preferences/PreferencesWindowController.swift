@@ -15,22 +15,25 @@ private struct PreferencesToolbarItemSpec {
 	let imageName: NSImage.Name
 	
 	init(identifierRawValue: String, name: String, imageName: NSImage.Name) {
-		
-		self.identifier = NSToolbarItem.Identifier(rawValue: identifierRawValue)
+		self.identifier = NSToolbarItem.Identifier(identifierRawValue)
 		self.name = name
 		self.imageName = imageName
 	}
 }
 
-private let toolbarItemIdentifierGeneral = "General"
+private struct ToolbarItemIdentifier {
+	static let General = "General"
+	static let Advanced = "Advanced"
+}
 
 class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	
 	private let windowFrameName = "Preferences"
-	fileprivate var viewControllers = [String: NSViewController]()
-	fileprivate let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
+	private var viewControllers = [String: NSViewController]()
+	private let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
 		var specs = [PreferencesToolbarItemSpec]()
-		specs += [PreferencesToolbarItemSpec(identifierRawValue: toolbarItemIdentifierGeneral, name: NSLocalizedString("General", comment: "Preferences"), imageName: NSImage.preferencesGeneralName)]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General, name: NSLocalizedString("General", comment: "Preferences"), imageName: NSImage.preferencesGeneralName)]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced, name: NSLocalizedString("Advanced", comment: "Preferences"), imageName: NSImage.advancedName)]
 		return specs
 	}()
 

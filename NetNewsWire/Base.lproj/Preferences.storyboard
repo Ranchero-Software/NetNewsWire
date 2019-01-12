@@ -31,11 +31,11 @@
             <objects>
                 <viewController title="General" storyboardIdentifier="General" id="iuH-lz-18x" customClass="GeneralPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="WnV-px-wCT">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="201"/>
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="120"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ucw-vG-yLt">
-                                <rect key="frame" x="102" y="162" width="92" height="17"/>
+                                <rect key="frame" x="102" y="81" width="92" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Refresh feeds:" id="F7c-lm-g97">
                                     <font key="font" metaFont="system"/>
@@ -44,7 +44,7 @@
                                 </textFieldCell>
                             </textField>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SFF-mL-yc8">
-                                <rect key="frame" x="198" y="156" width="220" height="26"/>
+                                <rect key="frame" x="198" y="75" width="220" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <popUpButtonCell key="cell" type="push" title="Every 30 minutes" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rZU-Tg-xwo" id="Jwn-HD-eP6">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -64,7 +64,7 @@
                                 </popUpButtonCell>
                             </popUpButton>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rbK-cS-VQl">
-                                <rect key="frame" x="71" y="131" width="123" height="17"/>
+                                <rect key="frame" x="71" y="50" width="123" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Default RSS reader:" id="bUb-r3-SmS">
                                     <font key="font" metaFont="system"/>
@@ -73,7 +73,7 @@
                                 </textFieldCell>
                             </textField>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cSu-T2-Jby">
-                                <rect key="frame" x="198" y="126" width="220" height="25"/>
+                                <rect key="frame" x="198" y="45" width="220" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <popUpButtonCell key="cell" type="push" title="NetNewsWire" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bEy-Qx-Grl" id="Dyk-WN-XOo" userLabel="Popup">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -89,7 +89,7 @@
                                 </connections>
                             </popUpButton>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wsb-Lr-8Q7">
-                                <rect key="frame" x="118" y="101" width="76" height="17"/>
+                                <rect key="frame" x="118" y="20" width="76" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Web pages:" id="CgU-dE-Qtb">
                                     <font key="font" metaFont="system"/>
@@ -97,38 +97,8 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rXv-h5-mOj">
-                                <rect key="frame" x="121" y="76" width="73" height="17"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Crash logs:" id="YBr-he-vH8">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5uQ-2y-sGY">
-                                <rect key="frame" x="198" y="75" width="219" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Send automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="kuq-Lv-urZ">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <binding destination="mAF-gO-1PI" name="value" keyPath="values.SendCrashLogsAutomatically" id="FlS-gt-xiq">
-                                        <dictionary key="options">
-                                            <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
-                                            <bool key="NSConditionallySetsEnabled" value="NO"/>
-                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                            <integer key="NSNullPlaceholder" value="0"/>
-                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
-                                        </dictionary>
-                                    </binding>
-                                </connections>
-                            </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ubm-Pk-l7x">
-                                <rect key="frame" x="198" y="100" width="219" height="18"/>
+                                <rect key="frame" x="198" y="19" width="219" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Open in background in browser" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="t0a-LN-rCv">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -148,15 +118,6 @@
                                     </binding>
                                 </connections>
                             </button>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="haC-TG-v2X">
-                                <rect key="frame" x="216" y="20" width="201" height="51"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" selectable="YES" allowsUndo="NO" title="Your crash log is confidential, and no other information is sent. This helps us fix crashing bugs." id="pRk-pW-5Po">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                         </subviews>
                     </view>
                     <connections>
@@ -166,7 +127,72 @@
                 <customObject id="bSQ-tq-wd3" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="mAF-gO-1PI"/>
             </objects>
-            <point key="canvasLocation" x="-61" y="463.5"/>
+            <point key="canvasLocation" x="-61" y="423"/>
+        </scene>
+        <!--Advanced Preferences View Controller-->
+        <scene sceneID="z1G-rc-sP5">
+            <objects>
+                <viewController storyboardIdentifier="Advanced" id="GNh-Wp-giO" customClass="AdvancedPreferencesViewController" sceneMemberID="viewController">
+                    <view key="view" id="Hij-7D-6Pw">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="121"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SUN-k3-ZEb">
+                                <rect key="frame" x="77" y="84" width="73" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Crash logs:" id="qcq-fU-Ks0">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button translatesAutoresizingMaskIntoConstraints="NO" id="UHg-1l-FlD">
+                                <rect key="frame" x="154" y="71" width="278" height="32"/>
+                                <buttonCell key="cell" type="check" title="Send automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="jnc-C5-4oI">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="mAF-gO-1PI" name="value" keyPath="values.SendCrashLogsAutomatically" id="Dpa-sM-Gk5">
+                                        <dictionary key="options">
+                                            <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                            <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </button>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aka-26-p3i">
+                                <rect key="frame" x="172" y="20" width="260" height="51"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="219" id="0lu-nm-XoD"/>
+                                </constraints>
+                                <textFieldCell key="cell" selectable="YES" allowsUndo="NO" title="Your crash log is confidential, and no other information is sent. This helps us fix crashing bugs." id="aEC-mb-L1h">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="aka-26-p3i" firstAttribute="leading" secondItem="UHg-1l-FlD" secondAttribute="leading" constant="18" id="Ewz-eo-xW5"/>
+                            <constraint firstAttribute="trailing" secondItem="aka-26-p3i" secondAttribute="trailing" constant="20" symbolic="YES" id="H6L-BV-Rdw"/>
+                            <constraint firstAttribute="bottom" secondItem="aka-26-p3i" secondAttribute="bottom" constant="20" symbolic="YES" id="QQE-Sd-oP9"/>
+                            <constraint firstItem="UHg-1l-FlD" firstAttribute="top" secondItem="Hij-7D-6Pw" secondAttribute="top" constant="20" symbolic="YES" id="XzC-QQ-IqR"/>
+                            <constraint firstItem="aka-26-p3i" firstAttribute="top" secondItem="UHg-1l-FlD" secondAttribute="bottom" constant="2" id="elX-cJ-jD4"/>
+                            <constraint firstItem="SUN-k3-ZEb" firstAttribute="leading" secondItem="Hij-7D-6Pw" secondAttribute="leading" constant="79" id="f8B-sA-kut"/>
+                            <constraint firstItem="UHg-1l-FlD" firstAttribute="leading" secondItem="SUN-k3-ZEb" secondAttribute="trailing" constant="8" symbolic="YES" id="jhD-Kv-DgO"/>
+                            <constraint firstAttribute="trailing" secondItem="UHg-1l-FlD" secondAttribute="trailing" constant="20" symbolic="YES" id="rIp-Xg-2xQ"/>
+                            <constraint firstItem="SUN-k3-ZEb" firstAttribute="top" secondItem="Hij-7D-6Pw" secondAttribute="top" constant="20" id="u3p-Z0-j4s"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="VX1-M3-K0J" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-235" y="727.5"/>
         </scene>
         <!--Container-->
         <scene sceneID="fzS-hg-3TF">
