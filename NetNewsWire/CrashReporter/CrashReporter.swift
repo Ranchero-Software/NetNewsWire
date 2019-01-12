@@ -99,7 +99,7 @@ struct CrashReporter {
 
 		let boundary = "0xKhTmLbOuNdArY"
 
-		let contentType = "multipart/form-data; boundary=%@\(boundary)"
+		let contentType = "multipart/form-data; boundary=\(boundary)"
 		request.setValue(contentType, forHTTPHeaderField:HTTPRequestHeader.contentType)
 
 		let formString = "--\(boundary)\r\nContent-Disposition: form-data; name=\"crashlog\"\r\n\r\n\(crashLogText)\r\n--\(boundary)--\r\n"
