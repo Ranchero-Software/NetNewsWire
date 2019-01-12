@@ -480,6 +480,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		#endif
 	}
 
+	@IBAction func debugTestCrashReportSending(_ sender: Any?) {
+		#if DEBUG
+			CrashReporter.sendCrashLogText("This is a test. Hi, Brent.")
+		#endif
+	}
+
 	@IBAction func gotoToday(_ sender: Any?) {
 
 		createAndShowMainWindow()
