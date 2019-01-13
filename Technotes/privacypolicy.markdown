@@ -1,5 +1,4 @@
-@template nnw_page.html
-@title Privacy Policy
+# NetNewsWire Privacy Policy
 
 This policy describes the information Ranchero Software and Brent Simmons may receive from NetNewsWire users and how that information is handled.
 
