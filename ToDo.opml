@@ -2,121 +2,22 @@
 <opml version="2.0">
   <head><!-- <editor scale-mac="1.25">
       <sidebar width="203"/>
-      <column name="text" width="706"/>
+      <column name="text" width="979"/>
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>12,42,45,60,65,67,78,79</expansionState>
+    <expansionState>0,1</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>614</windowTop>
-    <windowLeft>59</windowLeft>
-    <windowRight>791</windowRight>
-    <windowBottom>1373</windowBottom>
+    <windowTop>313</windowTop>
+    <windowLeft>52</windowLeft>
+    <windowRight>1057</windowRight>
+    <windowBottom>1046</windowBottom>
   </head>
   <body>
-    <outline text="App">
-      <outline text="Delete feed from sidebar - with undo support"/>
-      <outline text="Delete folder from sidebar - with undo support"/>
-      <outline text="Delete multiple selection from sidebar - with undo support"/>
-      <outline text="Use new app icon"/>
-      <outline text="Store colors in accent catalog"/>
-      <outline text="Restorable state"/>
-      <outline text="Update current timeline when articles changed (added/removed/modified)"/>
-      <outline text="Periodic refresh"/>
-      <outline text="Update Sparkle"/>
-      <outline text="OPML Import">
-        <outline text="Accessory view in choose-file sheet for choosing account"/>
-        <outline text="Import from URL">
-          <outline text="Sheet with URL text field and account popup"/>
-          <outline text="Download URL"/>
-          <outline text="Progress while downloading URL"/>
-          <outline text="Report error if needed"/>
-        </outline>
-      </outline>
-      <outline text="Commands">
-        <outline text="Star"/>
-        <outline text="Toggle sidebar"/>
-      </outline>
-      <outline text="Main window">
-        <outline text="Toolbar">
-          <outline text="Share menu"/>
-        </outline>
-        <outline text="Keyboard navigation between panes"/>
-        <outline text="Source list">
-          <outline text="Space out feed list more to match Finder (see text message from Brad)"/>
-          <outline text="Contextual menu"/>
-          <outline text="Gear menu"/>
-        </outline>
-        <outline text="Timeline">
-          <outline text="Use NSTextView instead of custom renderer"/>
-          <outline text="Variable height cells"/>
-          <outline text="Microblog post detection"/>
-          <outline text="Microblog post layout"/>
-          <outline text="Contextual menu"/>
-        </outline>
-        <outline text="Detail">
-          <outline text="Design"/>
-        </outline>
-      </outline>
-      <outline text="Feeds window">
-        <outline text="Source list"/>
-        <outline text="Inspector"/>
-      </outline>
-      <outline text="Menubar">
-        <outline text="Wire up commands"/>
-        <outline text="File"/>
-      </outline>
-    </outline>
-    <outline text="Frameworks">
-      <outline text="Account">
-        <outline text="Update feed unread counts at startup"/>
-      </outline>
-      <outline text="Database">
-        <outline text="Update cutoff date periodically"/>
-        <outline text="Cleanup">
-          <outline text="Delete old articles, statuses, authors, and attachments"/>
-        </outline>
-        <outline text="Tags table">
-          <outline text="Search on tags using COLLATE NOCASE"/>
-        </outline>
-        <outline text="Unit tests">
-          <outline text="fetching articles"/>
-          <outline text="fetching unread articles"/>
-          <outline text="fetching unread counts"/>
-          <outline text="saving articles"/>
-          <outline text="saving updated articles"/>
-          <outline text="mark as read"/>
-          <outline text="mark as starred"/>
-          <outline text="mark as userDeleted"/>
-          <outline text="article.changesFrom(otherArticle)">
-            <outline text="No changes"/>
-            <outline text="Related objects changes (should result in empty changes)"/>
-            <outline text="Date changes, including where dates disappear"/>
-            <outline text="String changes"/>
-          </outline>
-        </outline>
-      </outline>
-      <outline text="Data">
-        <outline text="Make model classes quicklookable"/>
-      </outline>
-      <outline text="RSParser">
-        <outline text="ParsedItem == should compare all properties"/>
-        <outline text="Parse attachments - Atom"/>
-        <outline text="Parse attachments - RSS"/>
-      </outline>
-      <outline text="RSWebImages">
-        <outline text="Create"/>
-        <outline text="Download favicons"/>
-        <outline text="Download apple touch images"/>
-        <outline text="Download images from articles"/>
-      </outline>
-      <outline text="RSImageCache">
-        <outline text="Create"/>
-      </outline>
-      <outline text="RSFeedFinder">
-        <outline text="Tests">
-          <outline text="bitsplitting — don’t get podcast feed"/>
-        </outline>
+    <outline text="NetNewsWire 5.0 Alpha - Mac">
+      <outline text="Preferences">
+        <outline text="Make Advanced prefs appear on click of toolbar button"/>
+        <outline text=""/>
       </outline>
     </outline>
   </body>
