@@ -2,23 +2,48 @@
 <opml version="2.0">
   <head><!-- <editor scale-mac="1.25">
       <sidebar width="203"/>
-      <column name="text" width="979"/>
+      <column name="text" width="909"/>
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,1</expansionState>
+    <expansionState>0,3,9,14,17,21</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>313</windowTop>
-    <windowLeft>52</windowLeft>
-    <windowRight>1057</windowRight>
-    <windowBottom>1046</windowBottom>
+    <windowTop>247</windowTop>
+    <windowLeft>21</windowLeft>
+    <windowRight>956</windowRight>
+    <windowBottom>984</windowBottom>
   </head>
   <body>
     <outline text="NetNewsWire 5.0 Alpha - Mac">
+      <outline text="Refreshing">
+        <outline text="Add timer"/>
+        <outline text="Update timer when pref changes">
+          <outline text="Observe defaults"/>
+          <outline text="Keep old copy of pref"/>
+          <outline text="Check new against old"/>
+        </outline>
+      </outline>
       <outline text="Preferences">
         <outline text="Make Advanced prefs appear on click of toolbar button"/>
-        <outline text=""/>
+        <outline text="Account preferences">
+          <outline text="Create view controller"/>
+          <outline text="Design view"/>
+          <outline text="Add toolbar item spec"/>
+          <outline text="Account types: syncing, posting — just syncing in 5.0"/>
+        </outline>
       </outline>
+      <outline text="Notarize app">
+        <outline text="Figure out build settings"/>
+        <outline text="Try notarization step"/>
+      </outline>
+      <outline text="Next build">
+        <outline text="Refreshing"/>
+        <outline text="Crash log advanced prefs"/>
+        <outline text="Notarization"/>
+      </outline>
+    </outline>
+    <outline text="Website">
+      <outline text="Privacy policy — fix link_tbd links"/>
     </outline>
   </body>
 </opml>
