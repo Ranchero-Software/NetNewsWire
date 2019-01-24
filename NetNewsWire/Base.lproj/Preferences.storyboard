@@ -31,22 +31,22 @@
             <objects>
                 <viewController title="General" storyboardIdentifier="General" id="iuH-lz-18x" customClass="GeneralPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="WnV-px-wCT">
-                        <rect key="frame" x="0.0" y="0.0" width="501" height="120"/>
+                        <rect key="frame" x="0.0" y="0.0" width="501" height="119"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ut3-yd-q6G">
-                                <rect key="frame" x="84" y="20" width="334" height="80"/>
+                            <customView horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ut3-yd-q6G">
+                                <rect key="frame" x="83" y="16" width="334" height="83"/>
                                 <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ucw-vG-yLt">
-                                        <rect key="frame" x="29" y="61" width="92" height="17"/>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ucw-vG-yLt">
+                                        <rect key="frame" x="29" y="64" width="92" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Refresh feeds:" id="F7c-lm-g97">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SFF-mL-yc8">
-                                        <rect key="frame" x="125" y="56" width="212" height="25"/>
+                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SFF-mL-yc8">
+                                        <rect key="frame" x="125" y="59" width="212" height="25"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="N1a-qV-4Os"/>
                                         </constraints>
@@ -67,16 +67,16 @@
                                             </menu>
                                         </popUpButtonCell>
                                     </popUpButton>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rbK-cS-VQl">
-                                        <rect key="frame" x="-2" y="30" width="123" height="17"/>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rbK-cS-VQl">
+                                        <rect key="frame" x="-2" y="33" width="123" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Default RSS reader:" id="bUb-r3-SmS">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cSu-T2-Jby">
-                                        <rect key="frame" x="125" y="25" width="212" height="25"/>
+                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cSu-T2-Jby">
+                                        <rect key="frame" x="125" y="28" width="212" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="NetNewsWire" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bEy-Qx-Grl" id="Dyk-WN-XOo" userLabel="Popup">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -90,16 +90,16 @@
                                             <action selector="rssReaderPopupDidChangeValue:" target="iuH-lz-18x" id="pyX-Bp-ws0"/>
                                         </connections>
                                     </popUpButton>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wsb-Lr-8Q7">
-                                        <rect key="frame" x="45" y="-1" width="76" height="17"/>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Wsb-Lr-8Q7">
+                                        <rect key="frame" x="45" y="3" width="76" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Web pages:" id="CgU-dE-Qtb">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <button verticalHuggingPriority="1000" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ubm-Pk-l7x">
-                                        <rect key="frame" x="125" y="-2" width="211" height="18"/>
+                                    <button verticalHuggingPriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ubm-Pk-l7x">
+                                        <rect key="frame" x="125" y="2" width="211" height="18"/>
                                         <buttonCell key="cell" type="check" title="Open in background in browser" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="t0a-LN-rCv">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -126,8 +126,8 @@
                                     <constraint firstAttribute="trailing" secondItem="cSu-T2-Jby" secondAttribute="trailing" id="4L1-zz-ztr"/>
                                     <constraint firstItem="cSu-T2-Jby" firstAttribute="width" secondItem="SFF-mL-yc8" secondAttribute="width" id="4Zo-pu-jyl"/>
                                     <constraint firstItem="Ubm-Pk-l7x" firstAttribute="leading" secondItem="SFF-mL-yc8" secondAttribute="leading" id="7cy-O4-Zz2"/>
-                                    <constraint firstItem="Ubm-Pk-l7x" firstAttribute="top" secondItem="cSu-T2-Jby" secondAttribute="bottom" constant="14" id="Djw-BF-2qv"/>
-                                    <constraint firstAttribute="bottom" secondItem="Ubm-Pk-l7x" secondAttribute="bottom" id="JpQ-qK-UId"/>
+                                    <constraint firstItem="Ubm-Pk-l7x" firstAttribute="top" secondItem="cSu-T2-Jby" secondAttribute="bottom" constant="13" id="Djw-BF-2qv"/>
+                                    <constraint firstAttribute="bottom" secondItem="Ubm-Pk-l7x" secondAttribute="bottom" constant="4" id="JpQ-qK-UId"/>
                                     <constraint firstItem="Ubm-Pk-l7x" firstAttribute="leading" secondItem="Wsb-Lr-8Q7" secondAttribute="trailing" constant="8" symbolic="YES" id="Mgj-Eq-IgQ"/>
                                     <constraint firstItem="cSu-T2-Jby" firstAttribute="leading" secondItem="SFF-mL-yc8" secondAttribute="leading" id="Mk0-6R-yC3"/>
                                     <constraint firstAttribute="trailing" secondItem="SFF-mL-yc8" secondAttribute="trailing" id="N39-Q9-X5Q"/>
@@ -135,6 +135,7 @@
                                     <constraint firstItem="cSu-T2-Jby" firstAttribute="top" secondItem="SFF-mL-yc8" secondAttribute="bottom" constant="10" id="fI9-cF-7sm"/>
                                     <constraint firstItem="SFF-mL-yc8" firstAttribute="top" secondItem="Ut3-yd-q6G" secondAttribute="top" id="fXo-df-bJh"/>
                                     <constraint firstItem="ucw-vG-yLt" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="gJ9-Cu-GzZ"/>
+                                    <constraint firstItem="rbK-cS-VQl" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="jBC-cr-zIT"/>
                                     <constraint firstItem="rbK-cS-VQl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="k6n-MY-jmI"/>
                                     <constraint firstItem="cSu-T2-Jby" firstAttribute="leading" secondItem="rbK-cS-VQl" secondAttribute="trailing" constant="8" symbolic="YES" id="o6s-o6-i3O"/>
                                     <constraint firstItem="Ubm-Pk-l7x" firstAttribute="firstBaseline" secondItem="Wsb-Lr-8Q7" secondAttribute="firstBaseline" id="uET-8x-UNO"/>
@@ -144,8 +145,8 @@
                             </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Ut3-yd-q6G" firstAttribute="centerX" secondItem="WnV-px-wCT" secondAttribute="centerX" id="87C-ym-WzY"/>
-                            <constraint firstAttribute="bottom" secondItem="Ut3-yd-q6G" secondAttribute="bottom" constant="20" symbolic="YES" id="FVX-gg-o9H"/>
+                            <constraint firstItem="Ut3-yd-q6G" firstAttribute="centerX" secondItem="WnV-px-wCT" secondAttribute="centerX" constant="-1" id="87C-ym-WzY"/>
+                            <constraint firstAttribute="bottom" secondItem="Ut3-yd-q6G" secondAttribute="bottom" constant="16" id="FVX-gg-o9H"/>
                             <constraint firstItem="Ut3-yd-q6G" firstAttribute="top" secondItem="WnV-px-wCT" secondAttribute="top" constant="20" symbolic="YES" id="jtz-mW-ptL"/>
                         </constraints>
                     </view>
