@@ -164,65 +164,82 @@
             <objects>
                 <viewController storyboardIdentifier="Advanced" id="GNh-Wp-giO" customClass="AdvancedPreferencesViewController" sceneMemberID="viewController">
                     <view key="view" id="Hij-7D-6Pw">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="121"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="115"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SUN-k3-ZEb">
-                                <rect key="frame" x="77" y="84" width="73" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Crash logs:" id="qcq-fU-Ks0">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <button translatesAutoresizingMaskIntoConstraints="NO" id="UHg-1l-FlD">
-                                <rect key="frame" x="154" y="71" width="308" height="32"/>
-                                <buttonCell key="cell" type="check" title="Send automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="jnc-C5-4oI">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <binding destination="mAF-gO-1PI" name="value" keyPath="values.SendCrashLogsAutomatically" id="Dpa-sM-Gk5">
-                                        <dictionary key="options">
-                                            <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
-                                            <bool key="NSConditionallySetsEnabled" value="NO"/>
-                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                            <integer key="NSNullPlaceholder" value="0"/>
-                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
-                                        </dictionary>
-                                    </binding>
-                                </connections>
-                            </button>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aka-26-p3i">
-                                <rect key="frame" x="172" y="20" width="290" height="51"/>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="YHH-fu-i0y">
+                                <rect key="frame" x="116" y="74" width="219" height="25"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="SUN-k3-ZEb">
+                                        <rect key="frame" x="2" y="4" width="73" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Crash logs:" id="qcq-fU-Ks0">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="UHg-1l-FlD">
+                                        <rect key="frame" x="79" y="3" width="138" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Send automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="jnc-C5-4oI">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.SendCrashLogsAutomatically" id="Dpa-sM-Gk5">
+                                                <dictionary key="options">
+                                                    <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                                    <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                                    <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                                    <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                                    <integer key="NSNullPlaceholder" value="0"/>
+                                                    <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="219" id="0lu-nm-XoD"/>
+                                    <constraint firstItem="SUN-k3-ZEb" firstAttribute="top" secondItem="YHH-fu-i0y" secondAttribute="top" constant="4" id="1ob-SX-cEr"/>
+                                    <constraint firstItem="SUN-k3-ZEb" firstAttribute="leading" secondItem="YHH-fu-i0y" secondAttribute="leading" constant="4" id="4S2-oa-ux0"/>
+                                    <constraint firstAttribute="bottom" secondItem="SUN-k3-ZEb" secondAttribute="bottom" constant="4" id="Jca-Ye-1QG"/>
+                                    <constraint firstItem="UHg-1l-FlD" firstAttribute="leading" secondItem="SUN-k3-ZEb" secondAttribute="trailing" constant="8" symbolic="YES" id="VR4-qB-pAv"/>
+                                    <constraint firstItem="UHg-1l-FlD" firstAttribute="firstBaseline" secondItem="SUN-k3-ZEb" secondAttribute="firstBaseline" id="fsO-Cm-ojt"/>
+                                    <constraint firstAttribute="trailing" secondItem="UHg-1l-FlD" secondAttribute="trailing" constant="4" id="gW6-Lm-rC4"/>
                                 </constraints>
-                                <textFieldCell key="cell" selectable="YES" allowsUndo="NO" title="Your crash log is confidential, and no other information is sent. This helps us fix crashing bugs." id="aEC-mb-L1h">
+                            </customView>
+                            <textField horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aka-26-p3i">
+                                <rect key="frame" x="134" y="49" width="183" height="17"/>
+                                <textFieldCell key="cell" selectable="YES" allowsUndo="NO" title="Your crash log is confidential." id="aEC-mb-L1h">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uuc-f2-OFX">
+                                <rect key="frame" x="163" y="13" width="124" height="32"/>
+                                <buttonCell key="cell" type="push" title="Privacy Policy" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kSv-Wu-NYx">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="aka-26-p3i" firstAttribute="leading" secondItem="UHg-1l-FlD" secondAttribute="leading" constant="18" id="Ewz-eo-xW5"/>
-                            <constraint firstAttribute="trailing" secondItem="aka-26-p3i" secondAttribute="trailing" constant="20" symbolic="YES" id="H6L-BV-Rdw"/>
-                            <constraint firstAttribute="bottom" secondItem="aka-26-p3i" secondAttribute="bottom" constant="20" symbolic="YES" id="QQE-Sd-oP9"/>
-                            <constraint firstItem="UHg-1l-FlD" firstAttribute="top" secondItem="Hij-7D-6Pw" secondAttribute="top" constant="20" symbolic="YES" id="XzC-QQ-IqR"/>
-                            <constraint firstItem="aka-26-p3i" firstAttribute="top" secondItem="UHg-1l-FlD" secondAttribute="bottom" constant="2" id="elX-cJ-jD4"/>
-                            <constraint firstItem="SUN-k3-ZEb" firstAttribute="leading" secondItem="Hij-7D-6Pw" secondAttribute="leading" constant="79" id="f8B-sA-kut"/>
-                            <constraint firstItem="UHg-1l-FlD" firstAttribute="leading" secondItem="SUN-k3-ZEb" secondAttribute="trailing" constant="8" symbolic="YES" id="jhD-Kv-DgO"/>
-                            <constraint firstAttribute="trailing" secondItem="UHg-1l-FlD" secondAttribute="trailing" constant="20" symbolic="YES" id="rIp-Xg-2xQ"/>
-                            <constraint firstItem="SUN-k3-ZEb" firstAttribute="top" secondItem="Hij-7D-6Pw" secondAttribute="top" constant="20" id="u3p-Z0-j4s"/>
+                            <constraint firstItem="YHH-fu-i0y" firstAttribute="centerX" secondItem="Hij-7D-6Pw" secondAttribute="centerX" id="A8h-AD-wpA"/>
+                            <constraint firstItem="uuc-f2-OFX" firstAttribute="top" secondItem="aka-26-p3i" secondAttribute="bottom" constant="8" symbolic="YES" id="Bbh-HK-fdH"/>
+                            <constraint firstItem="aka-26-p3i" firstAttribute="top" secondItem="YHH-fu-i0y" secondAttribute="bottom" constant="8" id="PgF-WS-ngP"/>
+                            <constraint firstAttribute="bottom" secondItem="uuc-f2-OFX" secondAttribute="bottom" constant="20" symbolic="YES" id="Qfi-i7-9Tw"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="aka-26-p3i" secondAttribute="trailing" constant="64" id="RKt-LV-td5"/>
+                            <constraint firstItem="YHH-fu-i0y" firstAttribute="top" secondItem="Hij-7D-6Pw" secondAttribute="top" constant="16" id="Vjr-8X-8Ib"/>
+                            <constraint firstItem="aka-26-p3i" firstAttribute="centerX" secondItem="Hij-7D-6Pw" secondAttribute="centerX" id="XB7-HC-0DI"/>
+                            <constraint firstItem="uuc-f2-OFX" firstAttribute="centerX" secondItem="Hij-7D-6Pw" secondAttribute="centerX" id="frb-uz-KeI"/>
+                            <constraint firstItem="aka-26-p3i" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Hij-7D-6Pw" secondAttribute="leading" constant="64" id="yGw-WS-Iy7"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="VX1-M3-K0J" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-235" y="727.5"/>
+            <point key="canvasLocation" x="-327" y="739.5"/>
         </scene>
         <!--Container-->
         <scene sceneID="fzS-hg-3TF">
