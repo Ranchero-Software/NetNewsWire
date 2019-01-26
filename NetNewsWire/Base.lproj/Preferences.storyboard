@@ -185,7 +185,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.SendCrashLogsAutomatically" id="Dpa-sM-Gk5">
+                                            <binding destination="Y8q-yi-F5Z" name="value" keyPath="values.SendCrashLogsAutomatically" id="giy-fd-7YN">
                                                 <dictionary key="options">
                                                     <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
                                                     <bool key="NSConditionallySetsEnabled" value="NO"/>
@@ -222,6 +222,9 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="showPrivacyPolicy:" target="VX1-M3-K0J" id="s1x-cP-hGd"/>
+                                </connections>
                             </button>
                         </subviews>
                         <constraints>
@@ -238,6 +241,7 @@
                     </view>
                 </viewController>
                 <customObject id="VX1-M3-K0J" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController id="Y8q-yi-F5Z"/>
             </objects>
             <point key="canvasLocation" x="-327" y="739.5"/>
         </scene>
