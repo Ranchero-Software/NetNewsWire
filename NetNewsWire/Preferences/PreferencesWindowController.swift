@@ -29,6 +29,7 @@ private struct ToolbarItemIdentifier {
 class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	
 	private let windowFrameName = "Preferences"
+	private let windowWidth = CGFloat(512.0) // Width is constant for all views; only the height changes
 	private var viewControllers = [String: NSViewController]()
 	private let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
 		var specs = [PreferencesToolbarItemSpec]()
@@ -36,7 +37,6 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced, name: NSLocalizedString("Advanced", comment: "Preferences"), imageName: NSImage.advancedName)]
 		return specs
 	}()
-
 
 	override func windowDidLoad() {
 
@@ -163,24 +163,24 @@ private extension PreferencesWindowController {
 		viewControllers[identifier] = viewController
 		return viewController
 	}
-	
+
 	func resizeWindow(toFitView view: NSView) {
-		
 		let viewFrame = view.frame
 		let windowFrame = window!.frame
 		let contentViewFrame = window!.contentView!.frame
 		
 		let deltaHeight = NSHeight(contentViewFrame) - NSHeight(viewFrame)
 		let heightForWindow = NSHeight(windowFrame) - deltaHeight
-		let windowOriginY = NSMinY(windowFrame)// + deltaHeight
+		let windowOriginY = NSMinY(windowFrame) + deltaHeight
 		
 		var updatedWindowFrame = windowFrame
 		updatedWindowFrame.size.height = heightForWindow
 		updatedWindowFrame.origin.y = windowOriginY
-		updatedWindowFrame.size.width = NSWidth(viewFrame)
+		updatedWindowFrame.size.width = windowWidth //NSWidth(viewFrame)
 		
 		var updatedViewFrame = viewFrame
 		updatedViewFrame.origin = NSZeroPoint
+		updatedViewFrame.size.width = windowWidth
 		if viewFrame != updatedViewFrame {
 			view.frame = updatedViewFrame
 		}
