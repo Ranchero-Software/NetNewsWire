@@ -13,6 +13,14 @@
 		<string>http://inessential.com/feed.json</string>
 	</dict>
 	<dict>
+		<key>editedName</key>
+		<string>Xcoders</string>
+		<key>homePageURL</key>
+		<string>https://xcoders.org/</string>
+		<key>url</key>
+		<string>https://xcoders.org/feed.json</string>
+	</dict>
+	<dict>
 		<key>homePageURL</key>
 		<string>https://daringfireball.net/</string>
 		<key>editedName</key>
