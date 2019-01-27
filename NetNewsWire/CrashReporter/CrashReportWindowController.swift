@@ -52,7 +52,8 @@ final class CrashReportWindowController: NSWindowController {
 		if !testing {
 			CrashReporter.sendCrashLogText(crashLogText)
 		}
-		showThanksSheet()
+//		showThanksSheet()
+		close()
 	}
 
 	@IBAction func dontSendCrashReport(_ sender: Any?) {
@@ -60,17 +61,17 @@ final class CrashReportWindowController: NSWindowController {
 	}
 }
 
-private extension CrashReportWindowController {
-
-	func showThanksSheet() {
-		guard let window = window else {
-			return
-		}
-
-		let alert = NSAlert()
-		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("Crash Report Sent", comment: "Crash Report Window")
-		alert.informativeText = NSLocalizedString("Thank you! You rock! This is a big help to us.", comment: "Crash Report Window")
-		alert.beginSheetModal(for: window)
-	}
-}
+//private extension CrashReportWindowController {
+//
+//	func showThanksSheet() {
+//		guard let window = window else {
+//			return
+//		}
+//
+//		let alert = NSAlert()
+//		alert.alertStyle = .informational
+//		alert.messageText = NSLocalizedString("Crash Report Sent", comment: "Crash Report Window")
+//		alert.informativeText = NSLocalizedString("Thank you! You rock! This is a big help to us.", comment: "Crash Report Window")
+//		alert.beginSheetModal(for: window)
+//	}
+//}
