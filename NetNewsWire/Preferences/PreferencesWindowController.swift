@@ -58,8 +58,10 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	// MARK: Actions
 
 	@objc func toolbarItemClicked(_ sender: Any?) {
-		
-
+		guard let toolbarItem = sender as? NSToolbarItem else {
+			return
+		}
+		switchToView(identifier: toolbarItem.itemIdentifier.rawValue)
 	}
 
 	// MARK: NSToolbarDelegate
