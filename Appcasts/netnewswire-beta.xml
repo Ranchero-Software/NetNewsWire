@@ -7,6 +7,29 @@
         <language>en</language>
 
 	<item>
+          <title>NetNewsWire 5.0d8</title>
+            <description><![CDATA[
+							<p><b>Important compatibility note!</b> NetNewsWire now requires macOS 10.14 (Mojave). Don’t update if you’re running an older macOS.</p>
+							<p>Sidebar: you can drag a feed from an external app to subscribe to that feed.</p>
+							<p>Crash log catcher opens a window on next launch after a crash. It offers to send the crash log to us. (Crash logs are kept confidential.)</p>
+							<p>Wrote a privacy policy because it was needed for crash log collection. <a href="https://ranchero.com/netnewswire/privacypolicy">ranchero.com/netnewswire/privacypolicy</a></p>
+							<p>Removed the Feed Directory. The current plan is to have it return some time after 5.0 ships.</p>
+							<p>Preferences: you can set the default aggregator now.</p>
+							<p>Preferences: added Advanced pane. Right now it has just one pref — you can have crash logs sent automatically.</p>
+							<p>Added credits to About window.</p>
+							<p>Fixed bug where contextual menu for article might not have Share menu filled in properly.</p>
+							<p>Fixed bug where text in the sidebar was too gray most of the time.</p>
+							<p>Made the Star toolbar button static, because any other solution was confusing. (Show the current state? Or show the state it would have if you clicked? Both answers are good, and they’re mutually exclusive.)</p>
+							<p>Disabled inline editing in the sidebar. You can still edit feed and folder names, just not by clicking in the sidebar in just the right way. (It’s a relatively rare thing to want to do, so having text sometimes appear as editable was more confusing than useful.)</p>
+							<p>Default feeds: added Xcoders.org feed.</p>
+							<p>Enabled the hardened runtime.</p>
+    						]]></description>
+            <pubDate>Sun, 27 Jan 2018 10:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d8.zip" sparkle:version="1453" sparkle:shortVersionString="5.0d8" length="7759445" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
           <title>NetNewsWire 5.0d7</title>
             <description><![CDATA[
             
