@@ -24,7 +24,7 @@
 							<p>Default feeds: added Xcoders.org feed.</p>
 							<p>Enabled the hardened runtime.</p>
     						]]></description>
-            <pubDate>Sun, 27 Jan 2018 10:00:00 -0800</pubDate>
+            <pubDate>Sun, 27 Jan 2019 10:00:00 -0800</pubDate>
             <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d8.zip" sparkle:version="1453" sparkle:shortVersionString="5.0d8" length="7759445" type="application/zip" />
             <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
         </item>
