@@ -30,8 +30,8 @@ class AddFeedWindowController : NSWindowController {
 	private var urlString: String?
 	private var initialName: String?
 	private var initialFolder: Folder?
-	fileprivate weak var delegate: AddFeedWindowControllerDelegate?
-	fileprivate var folderTreeController: TreeController!
+	private weak var delegate: AddFeedWindowControllerDelegate?
+	private var folderTreeController: TreeController!
 
 	private var userEnteredTitle: String? {
 		var s = nameTextField.stringValue
@@ -45,7 +45,6 @@ class AddFeedWindowController : NSWindowController {
     var hostWindow: NSWindow!
 
 	convenience init(urlString: String?, name: String?, folder: Folder?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
-		
 		self.init(windowNibName: NSNib.Name("AddFeedSheet"))
 		self.urlString = urlString
 		self.initialName = name
@@ -54,15 +53,12 @@ class AddFeedWindowController : NSWindowController {
 		self.folderTreeController = folderTreeController
 	}
 	
-    func runSheetOnWindow(_ w: NSWindow) {
-        
-        hostWindow = w
-        hostWindow.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
+    func runSheetOnWindow(_ hostWindow: NSWindow) {
+		hostWindow.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
 		}
     }
 
 	override func windowDidLoad() {
-
 		if let urlString = urlString {
 			urlTextField.stringValue = urlString
 		}
@@ -78,26 +74,13 @@ class AddFeedWindowController : NSWindowController {
 		updateUI()
 	}
 
-	private func updateUI() {
-
-		var addButtonEnabled = false
-		let urlString = urlTextField.stringValue
-		if urlString.rs_stringMayBeURL() {
-			addButtonEnabled = true
-		}
-
-		addButton.isEnabled = addButtonEnabled
-	}
-
     // MARK: Actions
     
     @IBAction func cancel(_ sender: Any?) {
-        
 		cancelSheet()
     }
     
     @IBAction func addFeed(_ sender: Any?) {
-		
 		let urlString = urlTextField.stringValue
 		let normalizedURLString = (urlString as NSString).rs_normalizedURL()
 
@@ -114,35 +97,32 @@ class AddFeedWindowController : NSWindowController {
     }
 
 	@IBAction func localShowFeedList(_ sender: Any?) {
-		
 		NSApplication.shared.sendAction(NSSelectorFromString("showFeedList:"), to: nil, from: sender)
 		hostWindow.endSheet(window!, returnCode: NSApplication.ModalResponse.continue)
 	}
 	
 	// MARK: NSTextFieldDelegate
 
-	func controlTextDidEndEditing(_ obj: Notification) {
-
+	@objc func controlTextDidEndEditing(_ obj: Notification) {
 		updateUI()
 	}
 
-	func controlTextDidChange(_ obj: Notification) {
-
+	@objc func controlTextDidChange(_ obj: Notification) {
 		updateUI()
 	}
 }
 
 private extension AddFeedWindowController {
 	
-	func cancelSheet() {
+	private func updateUI() {
+		addButton.isEnabled = urlTextField.stringValue.rs_stringMayBeURL()
+	}
 
+	func cancelSheet() {
 		delegate?.addFeedWindowControllerUserDidCancel(self)
 	}
 
-
 	func selectedContainer() -> Container? {
-
 		return folderPopupButton.selectedItem?.representedObject as? Container
 	}
-
 }
