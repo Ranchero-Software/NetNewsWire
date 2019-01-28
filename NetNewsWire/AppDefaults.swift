@@ -15,6 +15,16 @@ enum FontSize: Int {
 	case veryLarge = 3
 }
 
+enum RefreshInterval: Int {
+	case manually = 1
+	case every10Minutes = 2
+	case every30Minutes = 3
+	case everyHour = 4
+	case every2Hours = 5
+	case every4Hours = 6
+	case every8Hours = 7
+}
+
 struct AppDefaults {
 
 	struct Key {
@@ -25,6 +35,7 @@ struct AppDefaults {
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 		static let mainWindowWidths = "mainWindowWidths"
+		static let refreshInterval = "refreshInterval"
 
 		// Hidden prefs
 		static let showTitleOnMainWindow = "KafasisTitleMode"
@@ -99,8 +110,19 @@ struct AppDefaults {
 		}
 	}
 
+	static var refreshInterval: RefreshInterval {
+		get {
+			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
+			return RefreshInterval(rawValue: rawValue) ?? RefreshInterval.everyHour
+		}
+		set {
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.refreshInterval)
+		}
+
+	}
+
 	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false]
+		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false, Key.refreshInterval: RefreshInterval.everyHour.rawValue]
 
 		UserDefaults.standard.register(defaults: defaults)
 	}
