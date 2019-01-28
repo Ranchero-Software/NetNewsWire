@@ -762,20 +762,18 @@ private extension Account {
 				return
 			}
 
-			guard item.isFolder, let itemChildren = item.children else {
-				return
-			}
-
-			// TODO: possibly support sub folders.
-
 			guard let folderName = item.titleFromAttributes else {
 				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
-				importOPMLItems(itemChildren, parentFolder: parentFolder)
+				if let itemChildren = item.children {
+					importOPMLItems(itemChildren, parentFolder: parentFolder)
+				}
 				return
 			}
 
 			if let folder = ensureFolder(with: folderName) {
-				importOPMLItems(itemChildren, parentFolder: folder)
+				if let itemChildren = item.children {
+					importOPMLItems(itemChildren, parentFolder: folder)
+				}
 			}
 		}
 
