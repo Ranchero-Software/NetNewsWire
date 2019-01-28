@@ -50,21 +50,34 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="N1a-qV-4Os"/>
                                         </constraints>
-                                        <popUpButtonCell key="cell" type="push" title="Every 30 minutes" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rZU-Tg-xwo" id="Jwn-HD-eP6">
+                                        <popUpButtonCell key="cell" type="push" title="Every 30 minutes" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="3" imageScaling="proportionallyDown" inset="2" selectedItem="rZU-Tg-xwo" id="Jwn-HD-eP6">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
                                             <menu key="menu" id="v0m-Z7-oG3">
                                                 <items>
-                                                    <menuItem title="Manually only" id="doa-Wq-4Uq"/>
+                                                    <menuItem title="Manually only" tag="1" id="doa-Wq-4Uq"/>
                                                     <menuItem isSeparatorItem="YES" id="OcH-tD-W9Y"/>
-                                                    <menuItem title="Every 10 minutes" id="zmy-xe-mVw"/>
-                                                    <menuItem title="Every 30 minutes" state="on" id="rZU-Tg-xwo"/>
-                                                    <menuItem title="Every hour" id="Qjt-qr-WER"/>
-                                                    <menuItem title="Every 2 hours" id="o1h-xo-elW"/>
-                                                    <menuItem title="Every 4 hours" id="7e2-TV-hth"/>
-                                                    <menuItem title="Every 8 hours" id="7gV-gL-Nue"/>
+                                                    <menuItem title="Every 10 minutes" tag="2" id="zmy-xe-mVw"/>
+                                                    <menuItem title="Every 30 minutes" state="on" tag="3" id="rZU-Tg-xwo"/>
+                                                    <menuItem title="Every hour" tag="4" id="Qjt-qr-WER"/>
+                                                    <menuItem title="Every 2 hours" tag="5" id="o1h-xo-elW"/>
+                                                    <menuItem title="Every 4 hours" tag="6" id="7e2-TV-hth"/>
+                                                    <menuItem title="Every 8 hours" tag="7" id="7gV-gL-Nue"/>
                                                 </items>
                                             </menu>
+                                            <connections>
+                                                <binding destination="mAF-gO-1PI" name="selectedTag" keyPath="values.refreshInterval" id="nim-aj-YfM">
+                                                    <dictionary key="options">
+                                                        <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                                        <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                                        <integer key="NSMultipleValuesPlaceholder" value="4"/>
+                                                        <integer key="NSNoSelectionPlaceholder" value="4"/>
+                                                        <integer key="NSNotApplicablePlaceholder" value="4"/>
+                                                        <integer key="NSNullPlaceholder" value="4"/>
+                                                        <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
                                         </popUpButtonCell>
                                     </popUpButton>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rbK-cS-VQl">
