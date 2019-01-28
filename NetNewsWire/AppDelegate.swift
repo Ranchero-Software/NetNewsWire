@@ -195,7 +195,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-		createAndShowMainWindow()
+		// https://github.com/brentsimmons/NetNewsWire/issues/522
+		// I couldn’t reproduce the crashing bug, but it appears to happen on creating a main window
+		// and its views and view controllers. The check below is so that the app does nothing
+		// if the window doesn’t already exist — because it absolutely *should* exist already.
+		// And if the window exists, then maybe the views and view controllers are also already loaded?
+		// We’ll try this, and then see if we get more crash logs like this or not.
+		guard let mainWindowController = mainWindowController, mainWindowController.isWindowLoaded else {
+			return false
+		}
+		mainWindowController.showWindow(self)
 		return false
 	}
 
@@ -334,7 +343,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if let currentNextFireDate = refreshTimer?.fireDate, currentNextFireDate == nextRefreshTime {
 			return
 		}
-		
+
 		invalidateRefreshTimer()
 		let timer = Timer(fireAt: nextRefreshTime, interval: 0, target: self, selector: #selector(timedRefresh(_:)), userInfo: nil, repeats: false)
 		RunLoop.main.add(timer, forMode: .common)
