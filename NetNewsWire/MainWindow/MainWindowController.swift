@@ -592,7 +592,9 @@ private extension MainWindowController {
 		}
 
 		let widths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
-		AppDefaults.mainWindowWidths = widths
+		if AppDefaults.mainWindowWidths != widths {
+			AppDefaults.mainWindowWidths = widths
+		}
 	}
 
 	func restoreSplitViewState() {
