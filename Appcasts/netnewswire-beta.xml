@@ -7,6 +7,20 @@
         <language>en</language>
 
 	<item>
+          <title>NetNewsWire 5.0d9</title>
+            <description><![CDATA[
+            	<p>Refresh automatically based on your settings in the General preferences pane.</p>
+            	<p>Crashing bug: possible fix for the <a href="https://github.com/brentsimmons/NetNewsWire/issues/522">SidebarViewController.viewDidLoad() crash</a>. (I couldn’t reproduce it. We’ll just have to watch and see if the crashes stop.)</p>
+							<p>Add feed window: fixed bug where Add button would be disabled sometimes.</p>
+							<p>Sidebar: fixed bug where empty folders would be lost between runs.</p>
+							<p>Crash reporter: close the window after sending the crash log.</p>
+    						]]></description>
+            <pubDate>Mon, 28 Jan 2019 20:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d9.zip" sparkle:version="1464" sparkle:shortVersionString="5.0d9" length="7764853" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
           <title>NetNewsWire 5.0d8</title>
             <description><![CDATA[
 							<p><b>Important compatibility note!</b> NetNewsWire now requires macOS 10.14 (Mojave). Don’t update if you’re running an older macOS.</p>
