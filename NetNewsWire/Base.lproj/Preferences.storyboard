@@ -177,11 +177,11 @@
             <objects>
                 <viewController storyboardIdentifier="Advanced" id="GNh-Wp-giO" customClass="AdvancedPreferencesViewController" sceneMemberID="viewController">
                     <view key="view" id="Hij-7D-6Pw">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="115"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="93"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="YHH-fu-i0y">
-                                <rect key="frame" x="116" y="74" width="219" height="25"/>
+                                <rect key="frame" x="116" y="52" width="219" height="25"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="SUN-k3-ZEb">
                                         <rect key="frame" x="2" y="4" width="73" height="17"/>
@@ -221,14 +221,6 @@
                                     <constraint firstAttribute="trailing" secondItem="UHg-1l-FlD" secondAttribute="trailing" constant="4" id="gW6-Lm-rC4"/>
                                 </constraints>
                             </customView>
-                            <textField horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aka-26-p3i">
-                                <rect key="frame" x="134" y="49" width="183" height="17"/>
-                                <textFieldCell key="cell" selectable="YES" allowsUndo="NO" title="Your crash log is confidential." id="aEC-mb-L1h">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uuc-f2-OFX">
                                 <rect key="frame" x="163" y="13" width="124" height="32"/>
                                 <buttonCell key="cell" type="push" title="Privacy Policy" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kSv-Wu-NYx">
@@ -242,14 +234,10 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="YHH-fu-i0y" firstAttribute="centerX" secondItem="Hij-7D-6Pw" secondAttribute="centerX" id="A8h-AD-wpA"/>
-                            <constraint firstItem="uuc-f2-OFX" firstAttribute="top" secondItem="aka-26-p3i" secondAttribute="bottom" constant="8" symbolic="YES" id="Bbh-HK-fdH"/>
-                            <constraint firstItem="aka-26-p3i" firstAttribute="top" secondItem="YHH-fu-i0y" secondAttribute="bottom" constant="8" id="PgF-WS-ngP"/>
+                            <constraint firstItem="uuc-f2-OFX" firstAttribute="top" secondItem="UHg-1l-FlD" secondAttribute="bottom" constant="16" id="Iyi-OX-Im2"/>
                             <constraint firstAttribute="bottom" secondItem="uuc-f2-OFX" secondAttribute="bottom" constant="20" symbolic="YES" id="Qfi-i7-9Tw"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="aka-26-p3i" secondAttribute="trailing" constant="64" id="RKt-LV-td5"/>
                             <constraint firstItem="YHH-fu-i0y" firstAttribute="top" secondItem="Hij-7D-6Pw" secondAttribute="top" constant="16" id="Vjr-8X-8Ib"/>
-                            <constraint firstItem="aka-26-p3i" firstAttribute="centerX" secondItem="Hij-7D-6Pw" secondAttribute="centerX" id="XB7-HC-0DI"/>
                             <constraint firstItem="uuc-f2-OFX" firstAttribute="centerX" secondItem="Hij-7D-6Pw" secondAttribute="centerX" id="frb-uz-KeI"/>
-                            <constraint firstItem="aka-26-p3i" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Hij-7D-6Pw" secondAttribute="leading" constant="64" id="yGw-WS-Iy7"/>
                         </constraints>
                     </view>
                 </viewController>
