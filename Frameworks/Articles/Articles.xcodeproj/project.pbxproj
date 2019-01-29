@@ -349,6 +349,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Articles;
 				PRODUCT_NAME = Articles;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -360,6 +361,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Articles;
 				PRODUCT_NAME = Articles;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
