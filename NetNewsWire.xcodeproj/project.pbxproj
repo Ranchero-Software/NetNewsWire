@@ -3302,6 +3302,7 @@
 			baseConfigurationReference = D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
@@ -3311,6 +3312,7 @@
 			baseConfigurationReference = D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
