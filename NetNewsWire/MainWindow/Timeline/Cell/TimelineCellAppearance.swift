@@ -53,8 +53,8 @@ struct TimelineCellAppearance: Equatable {
 	init(theme: VSTheme, showAvatar: Bool, fontSize: FontSize) {
 
 		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
-		let smallItemFontSize = floor(actualFontSize * 0.95)
-		let largeItemFontSize = floor(actualFontSize * 1.1)
+		let smallItemFontSize = actualFontSize //floor(actualFontSize * 0.95)
+		let largeItemFontSize = actualFontSize //floor(actualFontSize * 1.1)
 
 		self.cellPadding = theme.edgeInsets(forKey: "MainWindow.Timeline.cell.padding")
 		
