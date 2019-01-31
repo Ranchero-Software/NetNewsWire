@@ -108,9 +108,9 @@
 					<key>unreadCircleMarginRight</key>
 					<integer>8</integer>
 					<key>avatarHeight</key>
-					<integer>64</integer>
+					<integer>48</integer>
 					<key>avatarWidth</key>
-					<integer>64</integer>
+					<integer>48</integer>
 					<key>avatarMarginRight</key>
 					<integer>20</integer>
 					<key>avatarMarginLeft</key>
