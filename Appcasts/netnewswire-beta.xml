@@ -6,6 +6,18 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
+<item>
+          <title>NetNewsWire 5.0d10</title>
+            <description><![CDATA[
+            	<p>Restored 10.13 compatibility. (Figured out how to get it building for 10.13 again.)</p>
+            	<p>Timeline: tightened it up. Increased information density. Uses small margins, smaller avatar, and smaller title font size.</p>
+            	<p>Notarized the app, as Apple wants us to do.</p>
+	   						]]></description>
+            <pubDate>Wed, 30 Jan 2019 22:05:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d10.zip" sparkle:version="1474" sparkle:shortVersionString="5.0d10" length="7205444" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
 	<item>
           <title>NetNewsWire 5.0d9</title>
             <description><![CDATA[
