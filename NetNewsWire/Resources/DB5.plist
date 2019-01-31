@@ -76,9 +76,9 @@
 				<key>cell</key>
 				<dict>
 					<key>paddingLeft</key>
-					<integer>20</integer>
+					<integer>18</integer>
 					<key>paddingRight</key>
-					<integer>20</integer>
+					<integer>18</integer>
 					<key>paddingTop</key>
 					<integer>8</integer>
 					<key>paddingBottom</key>
@@ -111,8 +111,6 @@
 					<integer>48</integer>
 					<key>avatarWidth</key>
 					<integer>48</integer>
-					<key>avatarMarginRight</key>
-					<integer>20</integer>
 					<key>avatarMarginLeft</key>
 					<integer>8</integer>
 					<key>avatarAdjustmentTop</key>

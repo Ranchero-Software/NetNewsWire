@@ -205,14 +205,15 @@ private extension TimelineCellLayout {
 		}
 		r.size = appearance.avatarSize
 		r.origin.x = (width - appearance.cellPadding.right) - r.size.width
-		r = RSRectCenteredVerticallyInRect(r, textBoxRect)
-		if height > 0.1 {
-			let bounds = NSRect(x: 0.0, y: 0.0, width: width, height: height)
-			r = RSRectCenteredVerticallyInRect(r, bounds)
-		}
-		else {
-			r = RSRectCenteredVerticallyInRect(r, textBoxRect)
-		}
+		r.origin.y = textBoxRect.origin.y + 4.0
+//		r = RSRectCenteredVerticallyInRect(r, textBoxRect)
+//		if height > 0.1 {
+//			let bounds = NSRect(x: 0.0, y: 0.0, width: width, height: height)
+//			r = RSRectCenteredVerticallyInRect(r, bounds)
+//		}
+//		else {
+//			r = RSRectCenteredVerticallyInRect(r, textBoxRect)
+//		}
 
 		return r
 	}

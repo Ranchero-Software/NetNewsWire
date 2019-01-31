@@ -42,7 +42,6 @@ struct TimelineCellAppearance: Equatable {
 	let drawsGrid: Bool
 
 	let avatarSize: NSSize
-	let avatarMarginRight: CGFloat
 	let avatarMarginLeft: CGFloat
 	let avatarAdjustmentTop: CGFloat
 	let avatarCornerRadius: CGFloat
@@ -87,7 +86,6 @@ struct TimelineCellAppearance: Equatable {
 		self.drawsGrid = theme.bool(forKey: "MainWindow.Timeline.drawsGrid")
 		
 		self.avatarSize = theme.size(forKey: "MainWindow.Timeline.cell.avatar")
-		self.avatarMarginRight = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginRight")
 		self.avatarMarginLeft = theme.float(forKey: "MainWindow.Timeline.cell.avatarMarginLeft")
 		self.avatarAdjustmentTop = theme.float(forKey: "MainWindow.Timeline.cell.avatarAdjustmentTop")
 		self.avatarCornerRadius = theme.float(forKey: "MainWindow.Timeline.cell.avatarCornerRadius")
