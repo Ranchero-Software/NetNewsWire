@@ -258,18 +258,18 @@
         <scene sceneID="Yae-mu-VsH">
             <objects>
                 <viewController id="XML-A3-pDn" userLabel="Sidebar View Controller" customClass="SidebarViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="bJZ-bH-vgc">
+                    <view key="view" wantsLayer="YES" id="bJZ-bH-vgc">
                         <rect key="frame" x="0.0" y="0.0" width="166" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
-                                <rect key="frame" x="0.0" y="28" width="166" height="272"/>
+                                <rect key="frame" x="0.0" y="0.0" width="166" height="300"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="2eU-Wz-F9g">
-                                    <rect key="frame" x="0.0" y="0.0" width="166" height="272"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="166" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="14" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="167" height="272"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="167" height="300"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -355,36 +355,19 @@
                                 </scroller>
                             </scrollView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="HZs-Zf-G8s" customClass="SidebarStatusBarView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="166" height="28"/>
+                                <rect key="frame" x="0.0" y="0.0" width="166" height="0.0"/>
                                 <subviews>
-                                    <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="gZE-LB-FdW">
-                                        <rect key="frame" x="8" y="5" width="40" height="19"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="40" id="7UB-w9-Vc2"/>
-                                        </constraints>
-                                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" inset="2" pullsDown="YES" selectedItem="8Fv-OJ-wij" id="SM6-uZ-3Ag">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
-                                            <menu key="menu" id="BmH-U4-6EU">
-                                                <items>
-                                                    <menuItem state="on" image="action" hidden="YES" id="8Fv-OJ-wij"/>
-                                                    <menuItem title="Item 2" id="8qw-qv-HEP"/>
-                                                    <menuItem title="Item 3" id="V2t-4f-IAM"/>
-                                                </items>
-                                                <connections>
-                                                    <outlet property="delegate" destination="f3Y-bi-SLk" id="bVa-Lg-nGG"/>
-                                                </connections>
-                                            </menu>
-                                        </popUpButtonCell>
-                                    </popUpButton>
+                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="agw-l1-HkL">
+                                        <rect key="frame" x="0.0" y="-3" width="166" height="5"/>
+                                    </box>
                                     <progressIndicator hidden="YES" wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="y9c-Xf-2fS">
-                                        <rect key="frame" x="56" y="3" width="40" height="20"/>
+                                        <rect key="frame" x="20" y="-11" width="40" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="40" id="1Yw-ER-8pT"/>
                                         </constraints>
                                     </progressIndicator>
                                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iyL-pW-cT6">
-                                        <rect key="frame" x="98" y="6" width="62" height="17"/>
+                                        <rect key="frame" x="62" y="-8" width="86" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="dVE-XG-mlU">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -394,14 +377,16 @@
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="y9c-Xf-2fS" firstAttribute="centerY" secondItem="HZs-Zf-G8s" secondAttribute="centerY" constant="1" id="5Du-sw-hBK"/>
+                                    <constraint firstItem="agw-l1-HkL" firstAttribute="leading" secondItem="HZs-Zf-G8s" secondAttribute="leading" id="FVd-l8-q2q"/>
                                     <constraint firstItem="iyL-pW-cT6" firstAttribute="centerY" secondItem="HZs-Zf-G8s" secondAttribute="centerY" id="Hht-GZ-3Ls"/>
+                                    <constraint firstAttribute="trailing" secondItem="agw-l1-HkL" secondAttribute="trailing" id="MaE-c5-LIY"/>
                                     <constraint firstItem="iyL-pW-cT6" firstAttribute="leading" secondItem="y9c-Xf-2fS" secondAttribute="trailing" constant="4" id="TAM-VN-Syu"/>
-                                    <constraint firstItem="y9c-Xf-2fS" firstAttribute="leading" secondItem="gZE-LB-FdW" secondAttribute="trailing" constant="8" id="UZa-wq-vjU"/>
-                                    <constraint firstItem="gZE-LB-FdW" firstAttribute="leading" secondItem="HZs-Zf-G8s" secondAttribute="leading" constant="8" id="Uy1-2v-MRU"/>
-                                    <constraint firstItem="gZE-LB-FdW" firstAttribute="centerY" secondItem="HZs-Zf-G8s" secondAttribute="centerY" id="cwG-1N-9Ou"/>
-                                    <constraint firstAttribute="height" constant="28" id="xOq-XX-qcd"/>
+                                    <constraint firstItem="y9c-Xf-2fS" firstAttribute="leading" secondItem="HZs-Zf-G8s" secondAttribute="leading" constant="20" symbolic="YES" id="TV9-iE-nuE"/>
+                                    <constraint firstItem="agw-l1-HkL" firstAttribute="top" secondItem="HZs-Zf-G8s" secondAttribute="top" id="rBv-S6-j3b"/>
+                                    <constraint firstAttribute="height" id="xOq-XX-qcd"/>
                                 </constraints>
                                 <connections>
+                                    <outlet property="heightConstraint" destination="xOq-XX-qcd" id="wOf-xs-dFM"/>
                                     <outlet property="progressIndicator" destination="y9c-Xf-2fS" id="gaf-6e-siu"/>
                                     <outlet property="progressLabel" destination="iyL-pW-cT6" id="Zpv-44-cfX"/>
                                 </connections>
@@ -410,7 +395,7 @@
                         <constraints>
                             <constraint firstItem="HZs-Zf-G8s" firstAttribute="top" secondItem="cJj-Wv-9ep" secondAttribute="bottom" id="0Zg-oW-o7U"/>
                             <constraint firstItem="cJj-Wv-9ep" firstAttribute="leading" secondItem="bJZ-bH-vgc" secondAttribute="leading" id="5Rs-9M-TKq"/>
-                            <constraint firstAttribute="trailing" secondItem="iyL-pW-cT6" secondAttribute="trailing" constant="8" id="Mnm-9S-Qpm"/>
+                            <constraint firstAttribute="trailing" secondItem="iyL-pW-cT6" secondAttribute="trailing" constant="20" id="Mnm-9S-Qpm"/>
                             <constraint firstAttribute="bottom" secondItem="HZs-Zf-G8s" secondAttribute="bottom" id="UN9-Wa-uxb"/>
                             <constraint firstAttribute="trailing" secondItem="HZs-Zf-G8s" secondAttribute="trailing" id="iNE-nb-QEB"/>
                             <constraint firstItem="HZs-Zf-G8s" firstAttribute="leading" secondItem="bJZ-bH-vgc" secondAttribute="leading" id="tPp-xB-CgB"/>
@@ -629,7 +614,6 @@
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
-        <image name="action" width="9.5" height="9.5"/>
         <image name="markAllRead" width="11" height="9.5"/>
         <image name="markRead" width="9.5" height="9.5"/>
         <image name="newFolder" width="9.5" height="9.5"/>

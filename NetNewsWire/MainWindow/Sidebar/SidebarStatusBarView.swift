@@ -16,7 +16,8 @@ final class SidebarStatusBarView: NSView {
 
 	@IBOutlet var progressIndicator: NSProgressIndicator!
 	@IBOutlet var progressLabel: NSTextField!
-
+	@IBOutlet var heightConstraint: NSLayoutConstraint!
+	
 	private var isAnimatingProgress = false {
 		didSet {
 			progressIndicator.isHidden = !isAnimatingProgress
@@ -74,9 +75,19 @@ private extension SidebarStatusBarView {
 			return
 		}
 
-		progressIndicator.stopAnimation(self)
 		isAnimatingProgress = false
-		progressIndicator.needsDisplay = true
+//		progressIndicator.needsDisplay = true
+
+		superview?.layoutSubtreeIfNeeded()
+
+		NSAnimationContext.runAnimationGroup({ (context) in
+			context.duration = 0.2
+			context.allowsImplicitAnimation = true
+			heightConstraint.constant = 0
+			superview?.layoutSubtreeIfNeeded()
+		}) {
+			progressIndicator.stopAnimation(self)
+		}
 	}
 
 	func startProgressIfNeeded() {
@@ -86,6 +97,7 @@ private extension SidebarStatusBarView {
 		}
 		isAnimatingProgress = true
 		progressIndicator.startAnimation(self)
+		heightConstraint.constant = 28
 	}
 
 	func updateProgressIndicator(_ progress: CombinedRefreshProgress) {
