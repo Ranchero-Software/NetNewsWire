@@ -118,6 +118,7 @@ import RSCore
 		guard let object = note.object else {
 			return
 		}
+		rebuildTreeAndReloadDataIfNeeded()
 		configureCellsForRepresentedObject(object as AnyObject)
 	}
 
