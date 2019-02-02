@@ -7,6 +7,19 @@
         <language>en</language>
 
 <item>
+          <title>NetNewsWire 5.0d11</title>
+            <description><![CDATA[
+            	<p>Probably fixed a crashing bug (with three reports) that could happen when using a single-letter keyboard shortcut.</p>
+            	<p>Sidebar: removed gear menu — the trend these days is a clean look at the bottom of the window. (See Mail and other apps.)</p>
+            	<p>Sidebar: during refresh, animate in the refresh-status view. Animate out when done. (A la Mail.)</p>
+            	<p>Fixed bug where the ATP feed would have empty articles. The fix was for the parser to ignore empty content:encoded elements. (This bug won’t automatically fix any already-downloaded articles in that feed. You’ll see the fix in action the next time the feed updates.)</p>
+ 	   						]]></description>
+            <pubDate>Fri, 01 Feb 2019 22:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d11.zip" sparkle:version="1478" sparkle:shortVersionString="5.0d11" length="7206003" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
           <title>NetNewsWire 5.0d10</title>
             <description><![CDATA[
             	<p>Restored 10.13 compatibility. (Figured out how to get it building for 10.13 again.)</p>
