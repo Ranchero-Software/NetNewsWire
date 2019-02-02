@@ -16,14 +16,10 @@ final class SidebarStatusBarView: NSView {
 
 	@IBOutlet var progressIndicator: NSProgressIndicator!
 	@IBOutlet var progressLabel: NSTextField!
+	@IBOutlet var bottomConstraint: NSLayoutConstraint!
 	@IBOutlet var heightConstraint: NSLayoutConstraint!
-	
-	private var isAnimatingProgress = false {
-		didSet {
-			progressIndicator.isHidden = !isAnimatingProgress
-			progressLabel.isHidden = !isAnimatingProgress
-		}
-	}
+
+	private var isAnimatingProgress = false
 
 	private var progress: CombinedRefreshProgress? = nil {
 		didSet {
@@ -68,25 +64,26 @@ final class SidebarStatusBarView: NSView {
 private extension SidebarStatusBarView {
 
 	// MARK: Progress
-	
+
+	static let animationDuration = 0.2
+
 	func stopProgressIfNeeded() {
 
 		if !isAnimatingProgress {
 			return
 		}
-
 		isAnimatingProgress = false
-//		progressIndicator.needsDisplay = true
+		self.progressIndicator.stopAnimation(self)
+		progressIndicator.isHidden = true
+		progressLabel.isHidden = true
 
 		superview?.layoutSubtreeIfNeeded()
 
-		NSAnimationContext.runAnimationGroup({ (context) in
-			context.duration = 0.2
+		NSAnimationContext.runAnimationGroup{ (context) in
+			context.duration = SidebarStatusBarView.animationDuration
 			context.allowsImplicitAnimation = true
-			heightConstraint.constant = 0
+			bottomConstraint.constant = -(heightConstraint.constant)
 			superview?.layoutSubtreeIfNeeded()
-		}) {
-			progressIndicator.stopAnimation(self)
 		}
 	}
 
@@ -96,8 +93,18 @@ private extension SidebarStatusBarView {
 			return
 		}
 		isAnimatingProgress = true
+		progressIndicator.isHidden = false
+		progressLabel.isHidden = false
 		progressIndicator.startAnimation(self)
-		heightConstraint.constant = 28
+
+		superview?.layoutSubtreeIfNeeded()
+
+		NSAnimationContext.runAnimationGroup{ (context) in
+			context.duration = SidebarStatusBarView.animationDuration
+			context.allowsImplicitAnimation = true
+			bottomConstraint.constant = 0
+			superview?.layoutSubtreeIfNeeded()
+		}
 	}
 
 	func updateProgressIndicator(_ progress: CombinedRefreshProgress) {
@@ -127,11 +134,8 @@ private extension SidebarStatusBarView {
 			return
 		}
 
-		let numberOfTasks = progress.numberOfTasks
-		let numberCompleted = progress.numberCompleted
-
 		let formatString = NSLocalizedString("%@ of %@", comment: "Status bar progress")
-		let s = NSString(format: formatString as NSString, NSNumber(value: numberCompleted), NSNumber(value: numberOfTasks))
+		let s = NSString(format: formatString as NSString, NSNumber(value: progress.numberCompleted), NSNumber(value: progress.numberOfTasks))
 
 		progressLabel.stringValue = s as String
 	}

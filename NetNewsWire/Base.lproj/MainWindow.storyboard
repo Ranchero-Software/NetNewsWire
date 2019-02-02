@@ -355,19 +355,19 @@
                                 </scroller>
                             </scrollView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="HZs-Zf-G8s" customClass="SidebarStatusBarView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="166" height="0.0"/>
+                                <rect key="frame" x="0.0" y="-28" width="166" height="28"/>
                                 <subviews>
                                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="agw-l1-HkL">
-                                        <rect key="frame" x="0.0" y="-3" width="166" height="5"/>
+                                        <rect key="frame" x="0.0" y="25" width="166" height="5"/>
                                     </box>
                                     <progressIndicator hidden="YES" wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="y9c-Xf-2fS">
-                                        <rect key="frame" x="20" y="-11" width="40" height="20"/>
+                                        <rect key="frame" x="20" y="3" width="40" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="40" id="1Yw-ER-8pT"/>
                                         </constraints>
                                     </progressIndicator>
                                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iyL-pW-cT6">
-                                        <rect key="frame" x="62" y="-8" width="86" height="17"/>
+                                        <rect key="frame" x="62" y="6" width="86" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="dVE-XG-mlU">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -383,10 +383,11 @@
                                     <constraint firstItem="iyL-pW-cT6" firstAttribute="leading" secondItem="y9c-Xf-2fS" secondAttribute="trailing" constant="4" id="TAM-VN-Syu"/>
                                     <constraint firstItem="y9c-Xf-2fS" firstAttribute="leading" secondItem="HZs-Zf-G8s" secondAttribute="leading" constant="20" symbolic="YES" id="TV9-iE-nuE"/>
                                     <constraint firstItem="agw-l1-HkL" firstAttribute="top" secondItem="HZs-Zf-G8s" secondAttribute="top" id="rBv-S6-j3b"/>
-                                    <constraint firstAttribute="height" id="xOq-XX-qcd"/>
+                                    <constraint firstAttribute="height" constant="28" id="xOq-XX-qcd"/>
                                 </constraints>
                                 <connections>
-                                    <outlet property="heightConstraint" destination="xOq-XX-qcd" id="wOf-xs-dFM"/>
+                                    <outlet property="bottomConstraint" destination="UN9-Wa-uxb" id="SYv-ax-8md"/>
+                                    <outlet property="heightConstraint" destination="xOq-XX-qcd" id="ktU-yd-g8x"/>
                                     <outlet property="progressIndicator" destination="y9c-Xf-2fS" id="gaf-6e-siu"/>
                                     <outlet property="progressLabel" destination="iyL-pW-cT6" id="Zpv-44-cfX"/>
                                 </connections>
@@ -396,7 +397,7 @@
                             <constraint firstItem="HZs-Zf-G8s" firstAttribute="top" secondItem="cJj-Wv-9ep" secondAttribute="bottom" id="0Zg-oW-o7U"/>
                             <constraint firstItem="cJj-Wv-9ep" firstAttribute="leading" secondItem="bJZ-bH-vgc" secondAttribute="leading" id="5Rs-9M-TKq"/>
                             <constraint firstAttribute="trailing" secondItem="iyL-pW-cT6" secondAttribute="trailing" constant="20" id="Mnm-9S-Qpm"/>
-                            <constraint firstAttribute="bottom" secondItem="HZs-Zf-G8s" secondAttribute="bottom" id="UN9-Wa-uxb"/>
+                            <constraint firstAttribute="bottom" secondItem="HZs-Zf-G8s" secondAttribute="bottom" constant="-28" id="UN9-Wa-uxb"/>
                             <constraint firstAttribute="trailing" secondItem="HZs-Zf-G8s" secondAttribute="trailing" id="iNE-nb-QEB"/>
                             <constraint firstItem="HZs-Zf-G8s" firstAttribute="leading" secondItem="bJZ-bH-vgc" secondAttribute="leading" id="tPp-xB-CgB"/>
                             <constraint firstItem="cJj-Wv-9ep" firstAttribute="top" secondItem="bJZ-bH-vgc" secondAttribute="top" id="vAT-Wo-8fl"/>
