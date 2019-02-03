@@ -775,6 +775,8 @@
 		842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardDelegateProtocol.swift; sourceTree = "<group>"; };
 		842E45E41ED8C6B7000A8B52 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowSplitView.swift; sourceTree = "<group>"; };
 		842E45E61ED8C747000A8B52 /* DB5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DB5.plist; path = NetNewsWire/Resources/DB5.plist; sourceTree = "<group>"; };
+		842E5ED12206B1010012DBE1 /* DatabaseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseWindowController.swift; sourceTree = "<group>"; };
+		842E5ED42206B1190012DBE1 /* DatabaseWindow.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DatabaseWindow.storyboard; sourceTree = "<group>"; };
 		843A3B5520311E7700BF76EC /* FeedListOutlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListOutlineView.swift; sourceTree = "<group>"; };
 		84411E701FE5FBFA004B527F /* SmallIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallIconProvider.swift; sourceTree = "<group>"; };
 		8444C8F11FED81840051386C /* OPMLExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLExporter.swift; sourceTree = "<group>"; };
@@ -1127,6 +1129,16 @@
 			path = NetNewsWire/MainWindow;
 			sourceTree = "<group>";
 		};
+		842E5EC42206B0D60012DBE1 /* DatabaseWindow */ = {
+			isa = PBXGroup;
+			children = (
+				842E5ED42206B1190012DBE1 /* DatabaseWindow.storyboard */,
+				842E5ED12206B1010012DBE1 /* DatabaseWindowController.swift */,
+			);
+			name = DatabaseWindow;
+			path = NetNewsWire/DatabaseWindow;
+			sourceTree = "<group>";
+		};
 		8444C9011FED81880051386C /* Exporters */ = {
 			isa = PBXGroup;
 			children = (
@@ -1423,6 +1435,7 @@
 				D5907D6F2004AB67005947E5 /* Scriptability */,
 				D5558FD6200227E60066386B /* AppleEvents */,
 				848B937021C8C5540038DC0D /* CrashReporter */,
+				842E5EC42206B0D60012DBE1 /* DatabaseWindow */,
 				849A97991ED9EFB6007D329B /* Resources */,
 				84F9EACF213660A100CF2DE4 /* NetNewsWireTests */,
 				840D617D2029031C009BC708 /* NetNewsWire-iOS */,
