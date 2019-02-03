@@ -58,6 +58,6 @@
 	<key>SUFeedURL</key>
 	<string>https://ranchero.com/downloads/netnewswire-beta.xml</string>
 	<key>UserAgent</key>
-	<string>NetNewsWire (macOS; RSS Reader; https://ranchero.com/netnewswire/)</string>
+	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
 </dict>
 </plist>
