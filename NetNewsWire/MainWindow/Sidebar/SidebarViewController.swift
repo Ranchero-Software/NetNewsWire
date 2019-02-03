@@ -118,8 +118,10 @@ import RSCore
 		guard let object = note.object else {
 			return
 		}
+		let savedSelection = selectedNodes
 		rebuildTreeAndReloadDataIfNeeded()
 		configureCellsForRepresentedObject(object as AnyObject)
+		restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
 	}
 
 	@objc func userDidRequestSidebarSelection(_ note: Notification) {
@@ -342,7 +344,27 @@ private extension SidebarViewController {
 			outlineView.reloadData()
 		}
 	}
-	
+
+	func restoreSelection(to nodes: [Node], sendNotificationIfChanged: Bool) {
+		if selectedNodes == nodes { // Nothing to do?
+			return
+		}
+
+		var indexes = IndexSet()
+		for node in nodes {
+			let row = outlineView.row(forItem: node as Any)
+			if row > -1 {
+				indexes.insert(row)
+			}
+		}
+
+		outlineView.selectRowIndexes(indexes, byExtendingSelection: false)
+
+		if selectedNodes != nodes && sendNotificationIfChanged {
+			postSidebarSelectionDidChangeNotification(selectedObjects)
+		}
+	}
+
 	func postSidebarSelectionDidChangeNotification(_ selectedObjects: [AnyObject]?) {
 
 		var userInfo = UserInfoDictionary()
