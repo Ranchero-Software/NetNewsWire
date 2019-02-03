@@ -7,6 +7,19 @@
         <language>en</language>
 
 <item>
+          <title>NetNewsWire 5.0d12</title>
+            <description><![CDATA[
+            	<p>Timeline: refresh smart feeds when new articles are downloaded.</p>
+            	<p>Sidebar: re-sort after renaming a feed or folder.</p>
+           	  <p>Fixed a bug importing OPML where the OPML file doesn’t have title attributes.</p>
+             	<p>Simplified user-agent to “NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)”.</p>
+ 	   						]]></description>
+            <pubDate>Sun, 03 Feb 2019 12:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d12.zip" sparkle:version="1489" sparkle:shortVersionString="5.0d12" length="7207751" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
           <title>NetNewsWire 5.0d11</title>
             <description><![CDATA[
             	<p>Probably fixed a crashing bug (with three reports) that could happen when using a single-letter keyboard shortcut.</p>
