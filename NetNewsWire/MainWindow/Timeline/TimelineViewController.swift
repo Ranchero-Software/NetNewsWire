@@ -419,7 +419,7 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return
 		}
 
-		let shouldFetchAndMergeArticles = representedObjectsContainsAnyFeed(feeds)
+		let shouldFetchAndMergeArticles = representedObjectsContainsAnyFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
 		if shouldFetchAndMergeArticles {
 			queueFetchAndMergeArticles()
 		}
@@ -848,6 +848,18 @@ private extension TimelineViewController {
 			ix += 1
 		}
 		return true
+	}
+
+	func representedObjectsContainsAnyPseudoFeed() -> Bool {
+		guard let representedObjects = representedObjects else {
+			return false
+		}
+		for representedObject in representedObjects {
+			if representedObject is PseudoFeed {
+				return true
+			}
+		}
+		return false
 	}
 
 	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
