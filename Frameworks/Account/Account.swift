@@ -744,8 +744,13 @@ private extension Account {
 	func createFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, feedID: opmlFeedSpecifier.feedURL)
-		if let feedTitle = opmlFeedSpecifier.title, feed.editedName == nil {
-			feed.editedName = feedTitle
+		if let feedTitle = opmlFeedSpecifier.title {
+			if feed.name == nil {
+				feed.name = feedTitle
+			}
+			if feed.editedName == nil {
+				feed.editedName = feedTitle
+			}
 		}
 		return feed
 	}
