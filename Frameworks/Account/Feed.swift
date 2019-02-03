@@ -96,12 +96,21 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 	}
 
 	public var editedName: String? {
+		// Don’t let editedName == ""
 		get {
-			return settingsTable.string(for: Key.editedName)
+			guard let s = settingsTable.string(for: Key.editedName), !s.isEmpty else {
+				return nil
+			}
+			return s
 		}
 		set {
 			if newValue != editedName {
-				settingsTable.setString(newValue, for: Key.editedName)
+				if let valueToSet = newValue, !valueToSet.isEmpty {
+					settingsTable.setString(valueToSet, for: Key.editedName)
+				}
+				else {
+					settingsTable.setString(nil, for: Key.editedName)
+				}
 				postDisplayNameDidChangeNotification()
 			}
 		}
