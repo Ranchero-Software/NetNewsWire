@@ -29,7 +29,10 @@ public protocol Container: class {
 
     func deleteFeed(_ feed: Feed)
     func deleteFolder(_ folder: Folder)
-    
+
+	func addFeed(_ feed: Feed)
+	func addFeeds(_ feeds: Set<Feed>)
+
 	//Recursive — checks subfolders
 	func flattenedFeeds() -> Set<Feed>
 	func hasFeed(with feedID: String) -> Bool
@@ -43,6 +46,18 @@ public protocol Container: class {
 }
 
 public extension Container {
+
+	func addFeed(_ feed: Feed) {
+		addFeeds(Set([feed]))
+	}
+
+	func addFeeds(_ feeds: Set<Feed>) {
+		let feedCount = topLevelFeeds.count
+		topLevelFeeds.formUnion(feeds)
+		if feedCount != topLevelFeeds.count {
+			postChildrenDidChangeNotification()
+		}
+	}
 
 	func hasAtLeastOneFeed() -> Bool {
 		return topLevelFeeds.count > 0

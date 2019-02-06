@@ -230,8 +230,8 @@ private extension SidebarOutlineDataSource {
 		}
 
 		BatchUpdate.shared.perform {
-			account.addFeed(feed, to: destinationFolder)
 			sourceContainer?.deleteFeed(feed)
+			account.addFeed(feed, to: destinationFolder)
 		}
 
 		return true

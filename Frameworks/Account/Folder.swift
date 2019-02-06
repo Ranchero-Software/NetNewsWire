@@ -81,26 +81,6 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 		}
 	}
 
-	// MARK: Feeds
-
-	/// Add a single feed. Return true if number of feeds in folder changes.
-	func addFeed(_ feed: Feed) -> Bool {
-		return addFeeds(Set([feed]))
-	}
-
-	/// Add one or more feeds. Return true if number of feeds in folder changes.
-	@discardableResult
-	func addFeeds(_ feedsToAdd: Set<Feed>) -> Bool {
-		let feedCount = topLevelFeeds.count
-		topLevelFeeds.formUnion(feedsToAdd)
-
-		if feedCount != topLevelFeeds.count {
-			postChildrenDidChangeNotification()
-			return true
-		}
-		return false
-	}
-    
 	// MARK: - Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {

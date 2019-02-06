@@ -251,30 +251,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return true // TODO
 	}
 
-	@discardableResult
-	public func addFeed(_ feed: Feed, to folder: Folder?) -> Bool {
-
-		// Return false if it couldn’t be added.
-		// If it already existed in that folder, return true.
-
-		var didAddFeed = false
-
+	public func addFeed(_ feed: Feed, to folder: Folder?) {
 		if let folder = folder {
-			didAddFeed = folder.addFeed(feed)
+			folder.addFeed(feed)
 		}
 		else {
-			if !topLevelFeeds.contains(feed) {
-				topLevelFeeds.insert(feed)
-				postChildrenDidChangeNotification()
-				didAddFeed = true
-			}
+			addFeed(feed)
 		}
-
-		if didAddFeed {
-			structureDidChange()
-		}
-
-		return didAddFeed
 	}
 
 	public func addFeeds(_ feeds: Set<Feed>, to folder: Folder?) {
@@ -282,9 +265,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			folder.addFeeds(feeds)
 		}
 		else {
-			topLevelFeeds.formUnion(feeds)
+			addFeeds(feeds)
 		}
-		structureDidChange()
 	}
 
 	public func createFeed(with name: String?, editedName: String?, url: String) -> Feed? {

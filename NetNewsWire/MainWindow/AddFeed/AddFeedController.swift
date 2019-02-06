@@ -181,9 +181,8 @@ private extension AddFeedController {
 			account.update(feed, with: parsedFeed, {})
 		}
 
-		if account.addFeed(feed, to: userEnteredFolder) {
-			NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-		}
+		account.addFeed(feed, to: userEnteredFolder)
+		NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 	}
 
 	// MARK: Find Feeds

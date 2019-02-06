@@ -121,10 +121,9 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
                 account.update(feed, with:parsedFeed, {})
                 
                 // add the feed, putting it in a folder if needed
-                if account.addFeed(feed, to:folder) {
-                    NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-                }
-                
+                account.addFeed(feed, to:folder)
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+
                 let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
                 command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
             } else {
