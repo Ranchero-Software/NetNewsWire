@@ -83,13 +83,11 @@ import RSCore
 	}
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
-
-		rebuildTreeAndReloadDataIfNeeded()
+		rebuildTreeAndRestoreSelection()
 	}
 
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		
-		rebuildTreeAndReloadDataIfNeeded()
+		rebuildTreeAndRestoreSelection()
 	}
 	
 	@objc func userDidAddFeed(_ notification: Notification) {
@@ -297,6 +295,13 @@ import RSCore
 		animatingChanges = false
 	}
 
+	// MARK: - API
+
+	func rebuildTreeAndRestoreSelection() {
+		let savedSelection = selectedNodes
+		rebuildTreeAndReloadDataIfNeeded()
+		restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
+	}
 }
 
 // MARK: - NSUserInterfaceValidations
