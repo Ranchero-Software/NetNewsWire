@@ -172,9 +172,9 @@ extension Feed: PasteboardWriterOwner {
 		case .URL:
 			plist = feed.url
 		case FeedPasteboardWriter.feedUTIType:
-			plist = exportDictionary()
+			plist = exportDictionary
 		case FeedPasteboardWriter.feedUTIInternalType:
-			plist = internalDictionary()
+			plist = internalDictionary
 		default:
 			plist = nil
 		}
@@ -185,13 +185,15 @@ extension Feed: PasteboardWriterOwner {
 
 private extension FeedPasteboardWriter {
 
-	func exportDictionary() -> [String: String] {
-		let pasteboardFeed = PasteboardFeed(url: feed.url, feedID: feed.feedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID)
+	var pasteboardFeed: PasteboardFeed {
+		return PasteboardFeed(url: feed.url, feedID: feed.feedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID)
+	}
+
+	var exportDictionary: PasteboardFeedDictionary {
 		return pasteboardFeed.exportDictionary()
 	}
 
-	func internalDictionary() -> [String: Any] {
-		let pasteboardFeed = PasteboardFeed(url: feed.url, feedID: feed.feedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID)
+	var internalDictionary: PasteboardFeedDictionary {
 		return pasteboardFeed.internalDictionary()
 	}
 }
