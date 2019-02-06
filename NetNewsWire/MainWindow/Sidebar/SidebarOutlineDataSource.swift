@@ -16,6 +16,7 @@ import Account
 
 	let treeController: TreeController
 	static let dragOperationNone = NSDragOperation(rawValue: 0)
+	private var draggedNodes: [Node]? = nil
 
 	init(treeController: TreeController) {
 		self.treeController = treeController
@@ -47,6 +48,10 @@ import Account
 	}
 
 	// MARK: - Drag and Drop
+
+	func outlineView(_ outlineView: NSOutlineView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItems draggedItems: [Any]) {
+		draggedNodes = draggedItems.map { nodeForItem($0) }
+	}
 
 	func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
 		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard), !draggedFeeds.isEmpty else {
@@ -86,7 +91,7 @@ import Account
 			let draggedFeed = draggedFeeds.first!
 			return acceptSingleLocalFeedDrop(outlineView, draggedFeed, parentNode, index)
 		case .multipleLocal:
-			return acceptLocalFeedsDrop(outlineView, draggedFeeds, parentNode, index)
+			return acceptMultipleLocalFeedsDrop(outlineView, draggedFeeds, parentNode, index)
 		case .multipleNonLocal, .mixed, .empty:
 			return false
 		}
@@ -179,8 +184,57 @@ private extension SidebarOutlineDataSource {
 		return .move
 	}
 
+	private func singleDraggedNode() -> Node? {
+		guard let draggedNodes = draggedNodes, draggedNodes.count == 1 else {
+			return nil
+		}
+		return draggedNodes.first!
+	}
+
+	private func singleDraggedFeed() -> Feed? {
+		return singleDraggedNode()?.representedObject as? Feed
+	}
+
+	private func accountForNode(_ node: Node) -> Account? {
+		if let account = node.representedObject as? Account {
+			return account
+		}
+		if let folder = node.representedObject as? Folder {
+			return folder.account
+		}
+		if let feed = node.representedObject as? Feed {
+			return feed.account
+		}
+		return nil
+	}
+
 	func acceptSingleLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> Bool {
-		return false
+		guard let draggedNode = singleDraggedNode(), let feed = singleDraggedFeed() else {
+			return false
+		}
+		guard let sourceAccount = accountForNode(draggedNode) else {
+			return false
+		}
+		let sourceContainer = draggedNode.parent?.representedObject as? Container
+
+		guard let destination = parentNode.representedObject as? Container else {
+			return false
+		}
+		let destinationFolder = destination as? Folder
+		var destinationAccount: Account? = destination as? Account
+		if destinationAccount == nil {
+			destinationAccount = destinationFolder?.account
+		}
+		guard let account = destinationAccount, account == sourceAccount else {
+			return false
+		}
+
+		BatchUpdate.shared.perform {
+			account.addFeed(feed, to: destinationFolder)
+			sourceContainer?.deleteFeed(feed)
+		}
+
+		return true
 	}
 
 	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
@@ -197,7 +251,7 @@ private extension SidebarOutlineDataSource {
 		return .move
 	}
 
-	func acceptLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> Bool {
+	func acceptMultipleLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> Bool {
 		return false
 	}
 
