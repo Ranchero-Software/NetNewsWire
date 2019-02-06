@@ -127,6 +127,16 @@ class SidebarCell : NSTableCellView {
 		let layout = SidebarCellLayout(appearance: cellAppearance, cellSize: bounds.size, shouldShowImage: shouldShowImage, textField: textField, unreadCountView: unreadCountView)
 		layoutWith(layout)
 	}
+
+	override func accessibilityLabel() -> String? {
+		if unreadCount > 0 {
+			let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessiblity")
+			return "\(name) \(unreadCount) \(unreadLabel)"
+		} else {
+			return name
+		}
+	}
+	
 }
 
 private extension SidebarCell {
