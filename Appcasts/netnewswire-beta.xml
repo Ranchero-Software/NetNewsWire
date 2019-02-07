@@ -7,6 +7,17 @@
         <language>en</language>
 
 <item>
+          <title>NetNewsWire 5.0d13</title>
+            <description><![CDATA[
+            	<p>Sidebar: you can now drag feeds into and out of folders. It’s rough still — the drag images are a mess, and spring-loaded folders don’t close. (Those bugs have been filed and will get fixed.)</p>
+							<p>Fixed a bug where a feed’s title could get set to “Untitled” in the database — it should just be nil or empty.</p>
+ 	   					]]></description>
+            <pubDate>Wed, 06 Feb 2019 22:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d13.zip" sparkle:version="1501" sparkle:shortVersionString="5.0d13" length="7212955" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
           <title>NetNewsWire 5.0d12</title>
             <description><![CDATA[
             	<p>Timeline: refresh smart feeds when new articles are downloaded.</p>
