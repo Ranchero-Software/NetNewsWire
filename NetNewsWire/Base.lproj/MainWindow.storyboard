@@ -262,13 +262,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="166" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
                                 <rect key="frame" x="0.0" y="0.0" width="166" height="300"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="2eU-Wz-F9g">
                                     <rect key="frame" x="0.0" y="0.0" width="166" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="24" rowSizeStyle="medium" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="14" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="26" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="23" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="167" height="300"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
