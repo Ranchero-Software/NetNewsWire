@@ -88,9 +88,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	public var dirty = false {
 		didSet {
-			if dirty && !refreshInProgress {
-				queueSaveToDiskIfNeeded()
-			}
+			queueSaveToDiskIfNeeded()
 		}
 	}
 
