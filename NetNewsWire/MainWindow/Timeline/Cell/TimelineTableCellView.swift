@@ -32,9 +32,12 @@ class TimelineTableCellView: NSTableCellView {
 
 	var cellAppearance: TimelineCellAppearance! {
 		didSet {
-			updateTextFields()
-			avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
-			needsLayout = true
+			if cellAppearance != oldValue {
+				updateTextFieldColors()
+				updateTextFieldFonts()
+				avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
+				needsLayout = true
+			}
 		}
 	}
 	
@@ -187,10 +190,10 @@ private extension TimelineTableCellView {
 
 	func updateTextFieldColors() {
 
-		updateTitleView()
+//		updateTitleView()
 
 		if #available(macOS 10.14, *) {
-			makeTextFieldColorsNormal()
+			//makeTextFieldColorsNormal()
 		}
 		else {
 			// Pre-Mojave: manually set colors to white when needed.
@@ -220,12 +223,6 @@ private extension TimelineTableCellView {
 		textView.font = cellAppearance.textOnlyFont
 	}
 
-	func updateTextFields() {
-
-		updateTextFieldColors()
-		updateTextFieldFonts()
-	}
-
 	func addSubviewAtInit(_ view: NSView, hidden: Bool) {
 
 		addSubview(view)
@@ -234,7 +231,6 @@ private extension TimelineTableCellView {
 	}
 
 	func commonInit() {
-
 		addSubviewAtInit(titleView, hidden: false)
 		addSubviewAtInit(summaryView, hidden: true)
 		addSubviewAtInit(textView, hidden: true)
@@ -243,6 +239,8 @@ private extension TimelineTableCellView {
 		addSubviewAtInit(feedNameView, hidden: true)
 		addSubviewAtInit(avatarImageView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
+
+		makeTextFieldColorsNormal()
 	}
 
 	func updatedLayoutRects() -> TimelineCellLayout {
@@ -356,7 +354,6 @@ private extension TimelineTableCellView {
 	}
 
 	func updateSubviews() {
-
 		updateTitleView()
 		updateSummaryView()
 		updateTextView()

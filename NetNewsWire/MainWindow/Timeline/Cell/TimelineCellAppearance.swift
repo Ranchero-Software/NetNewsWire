@@ -11,6 +11,8 @@ import DB5
 
 struct TimelineCellAppearance: Equatable {
 
+	let showAvatar: Bool
+
 	let cellPadding: NSEdgeInsets
 	
 	let feedNameColor: NSColor
@@ -45,7 +47,6 @@ struct TimelineCellAppearance: Equatable {
 	let avatarMarginLeft: CGFloat
 	let avatarAdjustmentTop: CGFloat
 	let avatarCornerRadius: CGFloat
-	let showAvatar: Bool
 
 	let boxLeftMargin: CGFloat
 
