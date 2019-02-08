@@ -51,17 +51,8 @@ class TimelineTableCellView: NSTableCellView {
 		return true
 	}
 
-//	override var isOpaque: Bool {
-//		return true
-//	}
-//
-//	override var wantsUpdateLayer: Bool {
-//		return true
-//	}
-
 	var isEmphasized = false {
 		didSet {
-//			titleView.emphasized = isEmphasized
 			unreadIndicatorView.isEmphasized = isEmphasized
 			updateTextFieldColors()
 			needsDisplay = true
@@ -70,7 +61,6 @@ class TimelineTableCellView: NSTableCellView {
 	
 	var isSelected = false {
 		didSet {
-//			titleView.selected = isSelected
 			unreadIndicatorView.isSelected = isSelected
 			updateTextFieldColors()
 			needsDisplay = true
@@ -124,21 +114,6 @@ class TimelineTableCellView: NSTableCellView {
 		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
 		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
 	}
-
-//	override func updateLayer() {
-//
-//		let color: NSColor
-//		if isSelected {
-//			color = isEmphasized ? NSColor.alternateSelectedControlColor : NSColor.secondarySelectedControlColor
-//		}
-//		else {
-//			color = NSColor.white
-//		}
-//
-//		if layer?.backgroundColor != color.cgColor {
-//			layer?.backgroundColor = color.cgColor
-//		}
-//	}
 }
 
 // MARK: - Private
@@ -162,7 +137,6 @@ private extension TimelineTableCellView {
 		textField.usesSingleLineMode = false
 		textField.maximumNumberOfLines = 2
 		textField.isEditable = false
-//		textField.lineBreakMode = .byTruncatingTail
 		textField.cell?.truncatesLastVisibleLine = true
 		textField.allowsDefaultTighteningForTruncation = false
 		return textField
@@ -189,11 +163,7 @@ private extension TimelineTableCellView {
 	}
 
 	func updateTextFieldColors() {
-
-//		updateTitleView()
-
 		if #available(macOS 10.14, *) {
-			//makeTextFieldColorsNormal()
 		}
 		else {
 			// Pre-Mojave: manually set colors to white when needed.

@@ -557,7 +557,6 @@ extension TimelineViewController: NSTableViewDelegate {
 	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
 
 		let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineRow"), owner: self) as! TimelineTableRowView
-		rowView.cellAppearance = showAvatars ? cellAppearanceWithAvatar: cellAppearance
 		return rowView
 	}
 
@@ -577,8 +576,6 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	func tableViewSelectionDidChange(_ notification: Notification) {
-
-		tableView.redrawGrid()
 
 		if selectedArticles.isEmpty {
 			postTimelineSelectionDidChangeNotification(nil)
