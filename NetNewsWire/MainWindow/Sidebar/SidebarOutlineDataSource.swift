@@ -176,6 +176,9 @@ private extension SidebarOutlineDataSource {
 		if nodeHasChildRepresentingDraggedFeed(dropTargetNode, draggedFeed) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
+		if parentNode == dropTargetNode && index == NSOutlineViewDropOnItemIndex {
+			return .move
+		}
 		let updatedIndex = indexWhereDraggedFeedWouldAppear(dropTargetNode, draggedFeed)
 		if parentNode !== dropTargetNode || index != updatedIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: updatedIndex)
@@ -250,6 +253,7 @@ private extension SidebarOutlineDataSource {
 		BatchUpdate.shared.perform {
 			draggedNodes.forEach { move(node: $0, to: parentNode, account: account) }
 		}
+		account.structureDidChange()
 		return true
 	}
 
