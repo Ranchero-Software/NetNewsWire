@@ -7,6 +7,20 @@
         <language>en</language>
 
 <item>
+          <title>NetNewsWire 5.0d14</title>
+            <description><![CDATA[
+            	<p>Bogus future dates are now discarded when updating the database.</p>
+							<p>Fixed a bug where updating changed dates in articles didn’t work.</p>
+							<p>Fixed bug fetching unread count for the Today feed — it was skipping items without a pubDate but that were logically part of Today because they arrived today.</p>
+							<p>Timeline: do ever-so-slightly less work in the cells, which should result in an imperceptible performance increase with scrolling.</p>
+							<p>Sidebar: make rows a little taller. Adds a little breathing room.</p>
+ 	   					]]></description>
+            <pubDate>Fri, 08 Feb 2019 22:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d14.zip" sparkle:version="1514" sparkle:shortVersionString="5.0d14" length="7209999" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
           <title>NetNewsWire 5.0d13</title>
             <description><![CDATA[
             	<p>Sidebar: you can now drag feeds into and out of folders. It’s rough still — the drag images are a mess, and spring-loaded folders don’t close. (Those bugs have been filed and will get fixed.)</p>
