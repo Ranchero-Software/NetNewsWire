@@ -160,10 +160,11 @@ final class ArticlesTable: DatabaseTable {
 		queue.fetch { (database) in
 
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and datePublished > ? and read=0 and userDeleted=0;"
+			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0 and userDeleted=0;"
 
 			var parameters = [Any]()
 			parameters += Array(feedIDs) as [Any]
+			parameters += [since] as [Any]
 			parameters += [since] as [Any]
 
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
