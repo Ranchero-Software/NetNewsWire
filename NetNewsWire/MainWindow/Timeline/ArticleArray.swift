@@ -102,5 +102,20 @@ extension Array where Element == Article {
 		let articles = self.filter{ !$0.status.read }
 		return articles.isEmpty ? nil : articles
 	}
+
+	func representSameArticlesInSameOrder(as otherArticles: [Article]) -> Bool {
+		if self.count != otherArticles.count {
+			return false
+		}
+		var i = 0
+		for article in self {
+			let otherArticle = otherArticles[i]
+			if article.account != otherArticle.account || article.articleID != otherArticle.articleID {
+				return false
+			}
+			i += 1
+		}
+		return true
+	}
 }
 

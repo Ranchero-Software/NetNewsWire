@@ -28,11 +28,20 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	var articles = ArticleArray() {
 		didSet {
-			if articles != oldValue {
-				updateShowAvatars()
-				articleRowMap = [String: Int]()
-				tableView.reloadData()
+			if articles == oldValue {
+				return
 			}
+			if articles.representSameArticlesInSameOrder(as: oldValue) {
+				// When the array is the same — same articles, same order —
+				// but some data in some of the articles may have changed.
+				// Just reload visible cells in this case: don’t call reloadData.
+				articleRowMap = [String: Int]()
+				reloadVisibleCells()
+				return
+			}
+			updateShowAvatars()
+			articleRowMap = [String: Int]()
+			tableView.reloadData()
 		}
 	}
 
@@ -439,6 +448,13 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return oneView
 		}
 		return nil
+	}
+
+	private func reloadVisibleCells() {
+		guard let indexes = tableView.indexesOfAvailableRows() else {
+			return
+		}
+		reloadVisibleCells(for: indexes)
 	}
 	
 	private func reloadVisibleCells(for articles: [Article]) {
