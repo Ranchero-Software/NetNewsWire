@@ -31,7 +31,9 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	
 	private var article: Article? {
 		didSet {
-			reloadHTML()
+			if article != nil, article != oldValue {
+				reloadHTML()
+			}
 		}
 	}
 
