@@ -33,48 +33,39 @@ extension Article {
 		}
 	}
 	
-	func changesFrom(_ otherArticle: Article) -> NSDictionary? {
-		
-		if self == otherArticle {
+	func changesFrom(_ existingArticle: Article) -> NSDictionary? {
+		if self == existingArticle {
 			return nil
 		}
 		
 		let d = NSMutableDictionary()
-		if uniqueID != otherArticle.uniqueID {
-			// This should be super-rare, if ever.
-			if !otherArticle.uniqueID.isEmpty {
-				d[DatabaseKey.uniqueID] = otherArticle.uniqueID
-			}
+		if uniqueID != existingArticle.uniqueID {
+			d[DatabaseKey.uniqueID] = uniqueID
 		}
-		
-		addPossibleStringChangeWithKeyPath(\Article.title, otherArticle, DatabaseKey.title, d)
-		addPossibleStringChangeWithKeyPath(\Article.contentHTML, otherArticle, DatabaseKey.contentHTML, d)
-		addPossibleStringChangeWithKeyPath(\Article.contentText, otherArticle, DatabaseKey.contentText, d)
-		addPossibleStringChangeWithKeyPath(\Article.url, otherArticle, DatabaseKey.url, d)
-		addPossibleStringChangeWithKeyPath(\Article.externalURL, otherArticle, DatabaseKey.externalURL, d)
-		addPossibleStringChangeWithKeyPath(\Article.summary, otherArticle, DatabaseKey.summary, d)
-		addPossibleStringChangeWithKeyPath(\Article.imageURL, otherArticle, DatabaseKey.imageURL, d)
-		addPossibleStringChangeWithKeyPath(\Article.bannerImageURL, otherArticle, DatabaseKey.bannerImageURL, d)
+
+		addPossibleStringChangeWithKeyPath(\Article.title, existingArticle, DatabaseKey.title, d)
+		addPossibleStringChangeWithKeyPath(\Article.contentHTML, existingArticle, DatabaseKey.contentHTML, d)
+		addPossibleStringChangeWithKeyPath(\Article.contentText, existingArticle, DatabaseKey.contentText, d)
+		addPossibleStringChangeWithKeyPath(\Article.url, existingArticle, DatabaseKey.url, d)
+		addPossibleStringChangeWithKeyPath(\Article.externalURL, existingArticle, DatabaseKey.externalURL, d)
+		addPossibleStringChangeWithKeyPath(\Article.summary, existingArticle, DatabaseKey.summary, d)
+		addPossibleStringChangeWithKeyPath(\Article.imageURL, existingArticle, DatabaseKey.imageURL, d)
+		addPossibleStringChangeWithKeyPath(\Article.bannerImageURL, existingArticle, DatabaseKey.bannerImageURL, d)
 
 		// If updated versions of dates are nil, and we have existing dates, keep the existing dates.
 		// This is data that’s good to have, and it’s likely that a feed removing dates is doing so in error.
-		
-		if datePublished != otherArticle.datePublished {
-			if let updatedDatePublished = otherArticle.datePublished {
+		if datePublished != existingArticle.datePublished {
+			if let updatedDatePublished = datePublished {
 				d[DatabaseKey.datePublished] = updatedDatePublished
 			}
 		}
-		if dateModified != otherArticle.dateModified {
-			if let updatedDateModified = otherArticle.dateModified {
+		if dateModified != existingArticle.dateModified {
+			if let updatedDateModified = dateModified {
 				d[DatabaseKey.dateModified] = updatedDateModified
 			}
 		}
-		
-		if d.count < 1 {
-			return nil
-		}
-		
-		return d
+
+		return d.count < 1 ? nil : d
 	}
 
 	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ accountID: String, _ feedID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
