@@ -7,6 +7,16 @@
         <language>en</language>
 
 <item>
+          <title>NetNewsWire 5.0d15</title>
+            <description><![CDATA[
+            	<p>Sidebar: the drag images are no longer terrible. They’re good — they’re what you expect.</p>
+ 	   					]]></description>
+            <pubDate>Sat, 09 Feb 2019 21:25:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d15.zip" sparkle:version="1517" sparkle:shortVersionString="5.0d15" length="7208509" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
           <title>NetNewsWire 5.0d14</title>
             <description><![CDATA[
             	<p>Bogus future dates are now discarded when updating the database.</p>
