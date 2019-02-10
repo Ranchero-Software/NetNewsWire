@@ -12,8 +12,6 @@ import DB5
 import Account
 import RSTree
 
-private var textSizeCache = [String: NSSize]()
-
 class SidebarCell : NSTableCellView {
 
 	var image: NSImage? {
@@ -71,10 +69,6 @@ class SidebarCell : NSTableCellView {
 				needsLayout = true
 			}
 		}
-	}
-
-	var node: Node? {
-		return objectValue as? Node
 	}
 
 	private let titleView: NSTextField = {

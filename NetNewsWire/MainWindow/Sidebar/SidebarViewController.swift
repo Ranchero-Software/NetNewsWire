@@ -463,9 +463,7 @@ private extension SidebarViewController {
 	}
 
 	func configure(_ cell: SidebarCell, _ node: Node) {
-
 		cell.cellAppearance = sidebarCellAppearance
-		cell.objectValue = node
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
 		configureFavicon(cell, node)
@@ -483,8 +481,6 @@ private extension SidebarViewController {
 	}
 
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
-
-		cell.objectValue = node
 		cell.textField?.stringValue = nameFor(node)
 	}
 
