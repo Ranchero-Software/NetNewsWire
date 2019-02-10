@@ -50,25 +50,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 
-	private let windowControllers = NSMutableArray()
 	private var preferencesWindowController: NSWindowController?
 	private var mainWindowController: MainWindowController?
-	private var readerWindows = [NSWindowController]()
-	private var feedListWindowController: NSWindowController?
 	private var addFeedController: AddFeedController?
-//	private var addFeedFromListController: AddFeedFromListWindowController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
-	private var logWindowController: LogWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
-
 	private let log = Log()
 	private let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
 
 	override init() {
-
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
 
@@ -109,18 +102,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFeedController?.showAddFeedSheet(urlString, name, folder)
 	}
 	
-//	func showAddFeedFromListOnMainWindow(_ feedListFeeds: [FeedListFeed]) {
-//		
-//		addFeedFromListController = AddFeedFromListWindowController(feedListFeeds)
-//		
-//		createAndShowMainWindow()
-//		
-//		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
-//		if !isDisplayingSheet, let mainWindow = mainWindowController?.window {
-//			addFeedFromListController!.runSheetOnWindow(mainWindow)
-//		}
-//	}
-
 	// MARK: - NSApplicationDelegate
 
 	func applicationWillFinishLaunching(_ notification: Notification) {
@@ -372,13 +353,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	// MARK: - Actions
 
-	@IBAction func newReaderWindow(_ sender: Any?) {
-
-		let readerWindow = createReaderWindow()
-		readerWindows += [readerWindow]
-		readerWindow.showWindow(self)
-	}
-
 	@IBAction func showPreferences(_ sender: Any?) {
 
 		if preferencesWindowController == nil {
@@ -408,14 +382,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		createAndShowMainWindow()
 		showAddFolderSheetOnWindow(mainWindowController!.window!)
 	}
-
-//	@IBAction func showFeedList(_ sender: Any?) {
-//
-//		if feedListWindowController == nil {
-//			feedListWindowController = windowControllerWithName("FeedList")
-//		}
-//		feedListWindowController!.showWindow(self)
-//	}
 
 	@IBAction func showKeyboardShortcutsWindow(_ sender: Any?) {
 
@@ -450,15 +416,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 
-	@IBAction func showLogWindow(_ sender: Any?) {
-
-		if logWindowController == nil {
-			logWindowController = LogWindowController(title: "Errors", log: log)
-		}
-
-		logWindowController!.showWindow(self)
-	}
-	
 	@IBAction func importOPMLFromFile(_ sender: Any?) {
 
 		let panel = NSOpenPanel()
@@ -484,10 +441,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 	
-	@IBAction func importOPMLFromURL(_ sender: Any?) {
-
-	}
-
 	@IBAction func exportOPML(_ sender: Any?) {
 
 		let panel = NSSavePanel()
