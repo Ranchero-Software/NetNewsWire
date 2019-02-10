@@ -18,9 +18,9 @@ protocol FeedFinderDelegate: class {
 
 class FeedFinder {
 
-	fileprivate weak var delegate: FeedFinderDelegate?
-	fileprivate var feedSpecifiers = [String: FeedSpecifier]()
-	fileprivate var didNotifyDelegate = false
+	private weak var delegate: FeedFinderDelegate?
+	private var feedSpecifiers = [String: FeedSpecifier]()
+	private var didNotifyDelegate = false
 
 	var initialDownloadError: Error?
 	var initialDownloadStatusCode = -1

@@ -17,7 +17,7 @@ class HTMLFeedFinder {
 		return Set(feedSpecifiersDictionary.values)
 	}
 	
-	fileprivate var feedSpecifiersDictionary = [String: FeedSpecifier]()
+	private var feedSpecifiersDictionary = [String: FeedSpecifier]()
 	
 	init(parserData: ParserData) {
 		
