@@ -12,11 +12,9 @@ import Articles
 import Account
 import RSCore
 
-@objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, UndoableCommandRunner {
+@objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, NSMenuDelegate, UndoableCommandRunner {
     
 	@IBOutlet var outlineView: SidebarOutlineView!
-	@IBOutlet var gearMenuDelegate: SidebarGearMenuDelegate!
-	@IBOutlet var contextualMenuDelegate: SidebarContextualMenuDelegate!
 	
 	let treeControllerDelegate = SidebarTreeControllerDelegate()
 	lazy var treeController: TreeController = {
@@ -221,6 +219,17 @@ import RSCore
 		let object = node.representedObject
 		return menu(for: [object])
 	}
+
+	// MARK: NSMenuDelegate
+	
+	public func menuNeedsUpdate(_ menu: NSMenu) {
+		menu.removeAllItems()
+		guard let contextualMenu = contextualMenuForClickedRows() else {
+			return
+		}
+		menu.takeItems(from: contextualMenu)
+	}
+
 
 	// MARK: - NSOutlineViewDelegate
     

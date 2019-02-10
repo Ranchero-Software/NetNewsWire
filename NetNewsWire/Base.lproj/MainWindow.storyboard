@@ -385,8 +385,6 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="contextualMenuDelegate" destination="GIi-rR-u3i" id="HnU-AM-kBV"/>
-                        <outlet property="gearMenuDelegate" destination="f3Y-bi-SLk" id="2on-6C-laM"/>
                         <outlet property="outlineView" destination="cnV-kg-Dn2" id="FVf-OT-E3h"/>
                     </connections>
                 </viewController>
@@ -404,22 +402,12 @@
                         </menuItem>
                     </items>
                     <connections>
-                        <outlet property="delegate" destination="GIi-rR-u3i" id="xCL-ce-fof"/>
+                        <outlet property="delegate" destination="XML-A3-pDn" id="XJm-Ua-9UB"/>
                     </connections>
                 </menu>
-                <customObject id="f3Y-bi-SLk" customClass="SidebarGearMenuDelegate" customModule="NetNewsWire" customModuleProvider="target">
-                    <connections>
-                        <outlet property="sidebarViewController" destination="XML-A3-pDn" id="Tw0-4c-1Go"/>
-                    </connections>
-                </customObject>
                 <customObject id="h5K-zR-cUa" customClass="SidebarKeyboardDelegate" customModule="NetNewsWire" customModuleProvider="target">
                     <connections>
                         <outlet property="sidebarViewController" destination="XML-A3-pDn" id="kwd-Zc-HJm"/>
-                    </connections>
-                </customObject>
-                <customObject id="GIi-rR-u3i" customClass="SidebarContextualMenuDelegate" customModule="NetNewsWire" customModuleProvider="target">
-                    <connections>
-                        <outlet property="sidebarViewController" destination="XML-A3-pDn" id="cFr-ow-5mf"/>
                     </connections>
                 </customObject>
             </objects>
