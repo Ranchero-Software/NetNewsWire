@@ -513,24 +513,6 @@ private extension SidebarViewController {
 		return rowView.view(atColumn: 0) as? SidebarCell
 	}
 
-	func availableSidebarCells() -> [SidebarCell] {
-
-		var cells = [SidebarCell]()
-
-		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, _: Int) -> Void in
-			if let cell = cellForRowView(rowView) {
-				cells += [cell]
-			}
-		}
-
-		return cells
-	}
-
-	func configureAvailableCells() {
-
-		applyToAvailableCells(configure)
-	}
-
 	func applyToAvailableCells(_ callback: (SidebarCell, Node) -> Void) {
 
 		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) -> Void in
@@ -565,52 +547,6 @@ private extension SidebarViewController {
 	func revealAndSelectRepresentedObject(_ representedObject: AnyObject) -> Bool {
 
 		return outlineView.revealAndSelectRepresentedObject(representedObject, treeController)
-	}
-	
-	func folderParentForNode(_ node: Node) -> Container? {
-		
-		if let folder = node.parent?.representedObject as? Container {
-			return folder
-		}
-		if let feed = node.representedObject as? Feed {
-			return feed.account
-		}
-		if let folder = node.representedObject as? Folder {
-			return folder.account
-		}
-		return nil
-	}
-	
-	func deleteItemForNode(_ node: Node) {
-		
-//		if let folder = folderParentForNode(node) {
-//			folder.deleteItems([node.representedObject])
-//		}
-	}
-	
-	func deleteItemsForNodes(_ nodes: [Node]) {
-		
-		nodes.forEach { (oneNode) in
-			
-			deleteItemForNode(oneNode)
-		}
-	}
-
-	func commonParentItemForNodes(_ nodes: [Node]) -> Node? {
-
-		if nodes.isEmpty {
-			return nil
-		}
-
-		guard let parent = nodes.first!.parent else {
-			return nil
-		}
-		for node in nodes {
-			if node.parent !== parent {
-				return nil
-			}
-		}
-		return parent
 	}
 }
 
