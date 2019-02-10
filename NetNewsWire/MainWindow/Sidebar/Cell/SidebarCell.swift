@@ -19,12 +19,12 @@ class SidebarCell : NSTableCellView {
 	var image: NSImage? {
 		didSet {
 			if let image = image {
-				imageView?.image = shouldShowImage ? image : nil
-				imageView?.alphaValue = image.isTemplate ? 0.75 : 1.0
+				faviconImageView.image = shouldShowImage ? image : nil
+				faviconImageView.alphaValue = image.isTemplate ? 0.75 : 1.0
 			}
 			else {
-				imageView?.image = nil
-				imageView?.alphaValue = 1.0
+				faviconImageView.image = nil
+				faviconImageView.alphaValue = 1.0
 			}
 		}
 	}
@@ -34,11 +34,10 @@ class SidebarCell : NSTableCellView {
 			if shouldShowImage != oldValue {
 				needsLayout = true
 			}
-			imageView?.image = shouldShowImage ? image : nil
+			faviconImageView.image = shouldShowImage ? image : nil
 		}
 	}
 
-	private let unreadCountView = UnreadCountView(frame: NSZeroRect)
 
 	var cellAppearance: SidebarCellAppearance? {
 		didSet {
@@ -63,14 +62,11 @@ class SidebarCell : NSTableCellView {
 
 	var name: String {
 		get {
-			if let s = textField?.stringValue {
-				return s
-			}
-			return ""
+			return titleView.stringValue
 		}
 		set {
-			if textField?.stringValue != newValue {
-				textField?.stringValue = newValue
+			if titleView.stringValue != newValue {
+				titleView.stringValue = newValue
 				needsDisplay = true
 				needsLayout = true
 			}
@@ -81,50 +77,52 @@ class SidebarCell : NSTableCellView {
 		return objectValue as? Node
 	}
 
+	private let titleView: NSTextField = {
+		let textField = NSTextField(labelWithString: "")
+		textField.usesSingleLineMode = true
+		textField.maximumNumberOfLines = 1
+		textField.isEditable = false
+		textField.lineBreakMode = .byTruncatingTail
+		textField.allowsDefaultTighteningForTruncation = false
+		return textField
+	}()
+
+	private let faviconImageView: NSImageView = {
+		let image = AppImages.genericFeedImage
+		let imageView = image != nil ? NSImageView(image: image!) : NSImageView(frame: NSRect.zero)
+		imageView.animates = false
+		imageView.imageAlignment = .alignCenter
+		imageView.imageScaling = .scaleProportionallyDown
+		imageView.wantsLayer = true
+		return imageView
+	}()
+
+	private let unreadCountView = UnreadCountView(frame: NSZeroRect)
+
 	override var isFlipped: Bool {
 		return true
 	}
 
-	override var textField: NSTextField? {
-		didSet {
-			textField?.translatesAutoresizingMaskIntoConstraints = false
-		}
-	}
-
-	override var imageView: NSImageView? {
-		didSet {
-			imageView?.translatesAutoresizingMaskIntoConstraints = false
-		}
-	}
-
-	private func commonInit() {
-		unreadCountView.translatesAutoresizingMaskIntoConstraints = false
-		addSubview(unreadCountView)
-	}
-	
 	override init(frame frameRect: NSRect) {
-		
 		super.init(frame: frameRect)
 		commonInit()
 	}
 	
-	required init?(coder: NSCoder) {
-		
+	required init?(coder: NSCoder) {		
 		super.init(coder: coder)
 		commonInit()
 	}
 
 	override func layout() {
-
 		resizeSubviews(withOldSize: NSZeroSize)
 	}
 
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
 
-		guard let textField = textField, let cellAppearance = cellAppearance else {
+		guard let cellAppearance = cellAppearance else {
 			return
 		}
-		let layout = SidebarCellLayout(appearance: cellAppearance, cellSize: bounds.size, shouldShowImage: shouldShowImage, textField: textField, unreadCountView: unreadCountView)
+		let layout = SidebarCellLayout(appearance: cellAppearance, cellSize: bounds.size, shouldShowImage: shouldShowImage, textField: titleView, unreadCountView: unreadCountView)
 		layoutWith(layout)
 	}
 
@@ -136,14 +134,24 @@ class SidebarCell : NSTableCellView {
 			return name
 		}
 	}
-	
 }
 
 private extension SidebarCell {
 
+	func commonInit() {
+		addSubviewAtInit(unreadCountView)
+		addSubviewAtInit(faviconImageView)
+		addSubviewAtInit(titleView)
+	}
+
+	func addSubviewAtInit(_ view: NSView) {
+		addSubview(view)
+		view.translatesAutoresizingMaskIntoConstraints = false
+	}
+
 	func layoutWith(_ layout: SidebarCellLayout) {
-		imageView?.rs_setFrameIfNotEqual(layout.faviconRect)
-		textField?.rs_setFrameIfNotEqual(layout.titleRect)
+		faviconImageView.rs_setFrameIfNotEqual(layout.faviconRect)
+		titleView.rs_setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.rs_setFrameIfNotEqual(layout.unreadCountRect)
 	}
 }
