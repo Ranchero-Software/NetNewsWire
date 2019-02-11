@@ -15,7 +15,8 @@ import RSWeb
 final class DetailViewController: NSViewController, WKUIDelegate {
 
 	@IBOutlet var containerView: DetailContainerView!
-
+	@IBOutlet var statusBarView: DetailStatusBarView!
+	
 	var webview: DetailWebView!
 
 	var articles: [Article]? {
@@ -24,6 +25,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 				article = articles.first!
 				return
 			}
+			statusBarView.mouseoverLink = nil
 			article = nil
 			reloadHTML()
 		}
@@ -32,6 +34,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	private var article: Article? {
 		didSet {
 			if article != nil, article != oldValue {
+				statusBarView.mouseoverLink = nil
 				reloadHTML()
 			}
 		}
@@ -76,7 +79,6 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		reloadHTML()
 		containerView.contentView = webview
 		containerView.viewController = self
-
 	}
 
 	// MARK: - Scrolling
@@ -162,25 +164,14 @@ extension DetailViewController: WKScriptMessageHandler {
 	}
 
 	private func mouseDidEnter(_ link: String) {
-
-		if link.isEmpty {
+		guard !link.isEmpty else {
 			return
 		}
-
-		var userInfo = UserInfoDictionary()
-		userInfo[UserInfoKey.view] = view
-		userInfo[UserInfoKey.url] = link
-
-		NotificationCenter.default.post(name: .MouseDidEnterLink, object: self, userInfo: userInfo)
+		statusBarView.mouseoverLink = link
 	}
 
 	private func mouseDidExit(_ link: String) {
-
-		var userInfo = UserInfoDictionary()
-		userInfo[UserInfoKey.view] = view
-		userInfo[UserInfoKey.url] = link
-
-		NotificationCenter.default.post(name: .MouseDidExitLink, object: self, userInfo: userInfo)
+		statusBarView.mouseoverLink = nil
 	}
 }
 
