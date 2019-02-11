@@ -225,7 +225,7 @@ private extension DetailViewController {
 	}
 }
 
-// MARK: -
+// MARK: - DetailContainerView
 
 final class DetailContainerView: NSView {
 
@@ -235,9 +235,10 @@ final class DetailContainerView: NSView {
 
 	var contentView: NSView? {
 		didSet {
-			if let oldContentView = oldValue {
-				oldContentView.removeFromSuperviewWithoutNeedingDisplay()
+			if contentView == oldValue {
+				return
 			}
+			oldValue?.removeFromSuperviewWithoutNeedingDisplay()
 			if let contentView = contentView {
 				contentView.translatesAutoresizingMaskIntoConstraints = false
 				addSubview(contentView, positioned: .below, relativeTo: detailStatusBarView)
@@ -247,12 +248,10 @@ final class DetailContainerView: NSView {
 	}
 
 	override func viewWillStartLiveResize() {
-		
 		viewController?.viewWillStartLiveResize()
 	}
 	
 	override func viewDidEndLiveResize() {
-		
 		viewController?.viewDidEndLiveResize()
 	}
 
@@ -260,8 +259,6 @@ final class DetailContainerView: NSView {
 		NSColor.textBackgroundColor.setFill()
 		dirtyRect.fill()
 	}
-
-	
 }
 
 // MARK: -
