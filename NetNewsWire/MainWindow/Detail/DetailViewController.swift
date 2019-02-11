@@ -21,23 +21,16 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	var articles: [Article]? {
 		didSet {
-			if let articles = articles, articles.count == 1 {
-				article = articles.first!
+			if articles == articles {
 				return
 			}
 			statusBarView.mouseoverLink = nil
-			article = nil
 			reloadHTML()
 		}
 	}
-	
+
 	private var article: Article? {
-		didSet {
-			if article != nil, article != oldValue {
-				statusBarView.mouseoverLink = nil
-				reloadHTML()
-			}
-		}
+		return articles?.first
 	}
 
 	private var webviewIsHidden: Bool {
