@@ -14,7 +14,6 @@ import Account
 class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
-	@IBOutlet var contextualMenuDelegate: TimelineContextualMenuDelegate?
 
 	var sharingServiceDelegate: NSSharingServiceDelegate?
 	
@@ -533,7 +532,20 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 }
 
-// MARK: NSUserInterfaceValidations
+// MARK: - NSMenuDelegate
+
+extension TimelineViewController: NSMenuDelegate {
+
+	public func menuNeedsUpdate(_ menu: NSMenu) {
+		menu.removeAllItems()
+		guard let contextualMenu = contextualMenuForClickedRows() else {
+			return
+		}
+		menu.takeItems(from: contextualMenu)
+	}
+}
+
+// MARK: - NSUserInterfaceValidations
 
 extension TimelineViewController: NSUserInterfaceValidations {
 

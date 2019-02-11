@@ -485,7 +485,6 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="contextualMenuDelegate" destination="iD1-KK-gFc" id="b0j-aW-e4B"/>
                         <outlet property="tableView" destination="DRs-j8-R9a" id="2AG-SP-7n2"/>
                     </connections>
                 </viewController>
@@ -503,17 +502,12 @@
                         </menuItem>
                     </items>
                     <connections>
-                        <outlet property="delegate" destination="iD1-KK-gFc" id="q4j-wE-tnf"/>
+                        <outlet property="delegate" destination="36G-bQ-b96" id="mno-4b-OJB"/>
                     </connections>
                 </menu>
                 <customObject id="ZOV-xh-WJE" customClass="TimelineKeyboardDelegate" customModule="NetNewsWire" customModuleProvider="target">
                     <connections>
                         <outlet property="timelineViewController" destination="36G-bQ-b96" id="rED-2Z-kh6"/>
-                    </connections>
-                </customObject>
-                <customObject id="iD1-KK-gFc" customClass="TimelineContextualMenuDelegate" customModule="NetNewsWire" customModuleProvider="target">
-                    <connections>
-                        <outlet property="timelineViewController" destination="36G-bQ-b96" id="oE9-uV-TNi"/>
                     </connections>
                 </customObject>
             </objects>
