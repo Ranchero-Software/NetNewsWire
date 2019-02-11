@@ -28,8 +28,6 @@ struct SidebarCellLayout {
 		}
 		self.faviconRect = rFavicon
 
-//		textField.sizeToFit()
-//		let textFieldSize = textField.fittingSize//frame.size
 		let textFieldSize = SingleLineTextFieldSizer.size(for: textField.stringValue, font: textField.font!)
 
 		var rTextField = NSRect(x: 0.0, y: 0.0, width: textFieldSize.width, height: textFieldSize.height)
