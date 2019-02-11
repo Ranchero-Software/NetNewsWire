@@ -21,7 +21,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	var articles: [Article]? {
 		didSet {
-			if articles == articles {
+			if articles == oldValue {
 				return
 			}
 			statusBarView.mouseoverLink = nil
@@ -43,7 +43,6 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	}
 
 	override func viewDidLoad() {
-		
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange(_:)), name: .TimelineSelectionDidChange, object: nil)
 		
 		let preferences = WKPreferences()
@@ -74,10 +73,9 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		containerView.viewController = self
 	}
 
-	// MARK: - Scrolling
+	// MARK: Scrolling
 
 	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
-
 		if webviewIsHidden {
 			callback(false)
 			return
@@ -96,7 +94,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		webview.scrollPageDown(sender)
 	}
 
-	// MARK: - Notifications
+	// MARK: Notifications
 
 	@objc func timelineSelectionDidChange(_ notification: Notification) {
 
@@ -122,7 +120,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	}
 }
 
-// MARK: - WKNavigationDelegate
+// MARK: WKNavigationDelegate
 
 extension DetailViewController: WKNavigationDelegate {
 
@@ -142,7 +140,7 @@ extension DetailViewController: WKNavigationDelegate {
 	}
 }
 
-// MARK: - WKScriptMessageHandler
+// MARK: WKScriptMessageHandler
 
 extension DetailViewController: WKScriptMessageHandler {
 
@@ -168,29 +166,29 @@ extension DetailViewController: WKScriptMessageHandler {
 	}
 }
 
-// MARK: - Private
+// MARK: Private
 
 private extension DetailViewController {
 
 	func reloadHTML() {
+		let articleRendererResult: ArticleRendererResult
+		let style = ArticleStylesManager.shared.currentStyle
+		let appearance = self.view.effectiveAppearance
 
-		let articleRenderer = ArticleRenderer(article: article,
-											  style: ArticleStylesManager.shared.currentStyle,
-											  appearance: self.view.effectiveAppearance)
-		
-		if article != nil {
-			webview.loadHTMLString(articleRenderer.articleHTML, baseURL: articleRenderer.baseURL)
+		if let articles = articles, articles.count > 1 {
+			articleRendererResult = ArticleRenderer.multipleSelectionHTML(style: style, appearance: appearance)
 		}
-		else if articles != nil {
-			webview.loadHTMLString(articleRenderer.multipleSelectionHTML, baseURL: nil)
+		else if let article = article {
+			articleRendererResult = ArticleRenderer.articleHTML(article: article, style: style, appearance: appearance)
 		}
 		else {
-			webview.loadHTMLString(articleRenderer.noSelectionHTML, baseURL: nil)
+			articleRendererResult = ArticleRenderer.noSelectionHTML(style: style, appearance: appearance)
 		}
+
+		webview.loadHTMLString(articleRendererResult.html, baseURL: articleRendererResult.baseURL)
 	}
 
 	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {
-
 		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
 		webview.evaluateJavaScript(javascriptString) { (info, error) in
 
@@ -245,7 +243,7 @@ final class DetailContainerView: NSView {
 	}
 }
 
-// MARK: -
+// MARK: - ScrollInfo
 
 private struct ScrollInfo {
 
@@ -256,7 +254,6 @@ private struct ScrollInfo {
 	let canScrollUp: Bool
 
 	init(contentHeight: CGFloat, viewHeight: CGFloat, offsetY: CGFloat) {
-
 		self.contentHeight = contentHeight
 		self.viewHeight = viewHeight
 		self.offsetY = offsetY

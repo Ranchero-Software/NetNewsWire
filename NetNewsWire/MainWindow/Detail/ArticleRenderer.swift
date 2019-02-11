@@ -11,31 +11,20 @@ import RSCore
 import Articles
 import Account
 
-class ArticleRenderer {
-
+struct ArticleRendererResult {
+	let html: String
 	let baseURL: URL?
+}
 
-	var articleHTML: String {
-		let body = RSMacroProcessor.renderedText(withTemplate: template(), substitutions: substitutions(), macroStart: "[[", macroEnd: "]]")
-		return renderHTML(withBody: body)
-	}
+struct ArticleRenderer {
 
-	var multipleSelectionHTML: String {
-		let body = "<h3 class='systemMessage'>Multiple selection</h3>"
-		return renderHTML(withBody: body)
-	}
-
-	var noSelectionHTML: String {
-		let body = "<h3 class='systemMessage'>No selection</h3>"
-		return renderHTML(withBody: body)
-	}
-
+	private let baseURL: URL?
 	private let article: Article?
 	private let articleStyle: ArticleStyle
 	private let appearance: NSAppearance?
 	private let title: String
 
-	init(article: Article?, style: ArticleStyle, appearance: NSAppearance? = nil) {
+	private init(article: Article?, style: ArticleStyle, appearance: NSAppearance?) {
 		self.article = article
 		self.articleStyle = style
 		self.appearance = appearance
@@ -47,11 +36,43 @@ class ArticleRenderer {
 			self.baseURL = nil
 		}
 	}
+
+	// MARK: - API
+
+	static func articleHTML(article: Article, style: ArticleStyle, appearance: NSAppearance?) -> ArticleRendererResult {
+		let renderer = ArticleRenderer(article: article, style: style, appearance: appearance)
+		return ArticleRendererResult(html: renderer.articleHTML, baseURL: renderer.baseURL)
+	}
+
+	static func multipleSelectionHTML(style: ArticleStyle, appearance: NSAppearance?) -> ArticleRendererResult {
+		let renderer = ArticleRenderer(article: nil, style: style, appearance: appearance)
+		return ArticleRendererResult(html: renderer.multipleSelectionHTML, baseURL: nil)
+	}
+
+	static func noSelectionHTML(style: ArticleStyle, appearance: NSAppearance?) -> ArticleRendererResult {
+		let renderer = ArticleRenderer(article: nil, style: style, appearance: appearance)
+		return ArticleRendererResult(html: renderer.noSelectionHTML, baseURL: nil)
+	}
 }
 
-// MARK: Private
+// MARK: - Private
 
 private extension ArticleRenderer {
+
+	private var articleHTML: String {
+		let body = RSMacroProcessor.renderedText(withTemplate: template(), substitutions: substitutions(), macroStart: "[[", macroEnd: "]]")
+		return renderHTML(withBody: body)
+	}
+
+	private var multipleSelectionHTML: String {
+		let body = "<h3 class='systemMessage'>Multiple selection</h3>"
+		return renderHTML(withBody: body)
+	}
+
+	private var noSelectionHTML: String {
+		let body = "<h3 class='systemMessage'>No selection</h3>"
+		return renderHTML(withBody: body)
+	}
 
 	static var faviconImgTagCache = [Feed: String]()
 	static var feedIconImgTagCache = [Feed: String]()
@@ -362,6 +383,5 @@ private extension ArticleRenderer {
 		//print(s)
 
 		return s
-
 	}
 }
