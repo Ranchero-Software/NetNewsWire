@@ -68,10 +68,6 @@ private extension ArticleRenderer {
 		return s as String
 	}()
 
-//	func textInsideTag(_ text: String, _ tag: String) -> String {
-//		return "<\(tag)>\(text)</\(tag)>"
-//	}
-
 	func styleString() -> String {
 		return articleStyle.css ?? ArticleRenderer.defaultStyleSheet
 	}
