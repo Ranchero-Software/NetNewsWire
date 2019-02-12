@@ -6,7 +6,7 @@
 //  Copyright © 2018 Ranchero Software. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 
 final class CrashReportWindowController: NSWindowController {
 

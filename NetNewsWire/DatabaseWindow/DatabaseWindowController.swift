@@ -6,7 +6,7 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 
 class DatabaseWindowController: NSWindowController {
 
