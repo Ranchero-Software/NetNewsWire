@@ -121,19 +121,22 @@ private extension DetailWebViewController {
 			html = ArticleRenderer.multipleSelectionHTML(style: style, appearance: appearance)
 		case .article(let article):
 			html = ArticleRenderer.articleHTML(article: article, style: style, appearance: appearance)
-			baseURL = DetailWebViewController.baseURL(for: article)
+			baseURL = article.baseURL
 		}
 
 		webview.loadHTMLString(html, baseURL: baseURL)
 	}
+}
 
-	static func baseURL(for article: Article) -> URL? {
-		var s = article.url
+private extension Article {
+
+	var baseURL: URL? {
+		var s = url
 		if s == nil {
-			s = article.feed?.homePageURL
+			s = feed?.homePageURL
 		}
 		if s == nil {
-			s = article.feed?.url
+			s = feed?.url
 		}
 
 		guard let urlString = s else {
