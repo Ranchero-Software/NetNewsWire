@@ -11,11 +11,6 @@ import RSCore
 import Articles
 import Account
 
-struct ArticleRendererResult {
-	let html: String
-	let baseURL: URL?
-}
-
 struct ArticleRenderer {
 
 	private let baseURL: URL?
@@ -39,19 +34,44 @@ struct ArticleRenderer {
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, style: ArticleStyle, appearance: NSAppearance?) -> ArticleRendererResult {
+	static func articleHTML(article: Article, style: ArticleStyle, appearance: NSAppearance?) -> String {
 		let renderer = ArticleRenderer(article: article, style: style, appearance: appearance)
-		return ArticleRendererResult(html: renderer.articleHTML, baseURL: renderer.baseURL)
+		return renderer.articleHTML
 	}
 
-	static func multipleSelectionHTML(style: ArticleStyle, appearance: NSAppearance?) -> ArticleRendererResult {
+	static func multipleSelectionHTML(style: ArticleStyle, appearance: NSAppearance?) -> String {
 		let renderer = ArticleRenderer(article: nil, style: style, appearance: appearance)
-		return ArticleRendererResult(html: renderer.multipleSelectionHTML, baseURL: nil)
+		return renderer.multipleSelectionHTML
 	}
 
-	static func noSelectionHTML(style: ArticleStyle, appearance: NSAppearance?) -> ArticleRendererResult {
+	static func noSelectionHTML(style: ArticleStyle, appearance: NSAppearance?) -> String {
 		let renderer = ArticleRenderer(article: nil, style: style, appearance: appearance)
-		return ArticleRendererResult(html: renderer.noSelectionHTML, baseURL: nil)
+		return renderer.noSelectionHTML
+	}
+
+	static func baseURL(for article: Article) -> URL? {
+		var s = article.url
+		if s == nil {
+			s = article.feed?.homePageURL
+		}
+		if s == nil {
+			s = article.feed?.url
+		}
+
+		guard let urlString = s else {
+			return nil
+		}
+		var urlComponents = URLComponents(string: urlString)
+		if urlComponents == nil {
+			return nil
+		}
+
+		// Can’t use url-with-fragment as base URL. The webview won’t load. See scripting.com/rss.xml for example.
+		urlComponents!.fragment = nil
+		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
+			return nil
+		}
+		return url
 	}
 }
 
@@ -318,31 +338,6 @@ private extension ArticleRenderer {
 		dateFormatter.dateStyle = dateStyle
 		dateFormatter.timeStyle = timeStyle
 		return dateFormatter.string(from: date)
-	}
-
-	static func baseURL(for article: Article) -> URL? {
-		var s = article.url
-		if s == nil {
-			s = article.feed?.homePageURL
-		}
-		if s == nil {
-			s = article.feed?.url
-		}
-
-		guard let urlString = s else {
-			return nil
-		}
-		var urlComponents = URLComponents(string: urlString)
-		if urlComponents == nil {
-			return nil
-		}
-
-		// Can’t use url-with-fragment as base URL. The webview won’t load. See scripting.com/rss.xml for example.
-		urlComponents!.fragment = nil
-		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
-			return nil
-		}
-		return url
 	}
 
 	func renderHTML(withBody body: String) -> String {

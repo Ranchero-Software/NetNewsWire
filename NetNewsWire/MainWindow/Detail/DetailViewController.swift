@@ -37,11 +37,6 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		return containerView.contentView !== webview
 	}
 
-	private struct MessageName {
-		static let mouseDidEnter = "mouseDidEnter"
-		static let mouseDidExit = "mouseDidExit"
-	}
-
 	override func viewDidLoad() {
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineSelectionDidChange(_:)), name: .TimelineSelectionDidChange, object: nil)
 		
@@ -71,6 +66,11 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		reloadHTML()
 		containerView.contentView = webview
 		containerView.viewController = self
+	}
+
+	private struct MessageName {
+		static let mouseDidEnter = "mouseDidEnter"
+		static let mouseDidExit = "mouseDidExit"
 	}
 
 	// MARK: Scrolling
@@ -171,21 +171,23 @@ extension DetailViewController: WKScriptMessageHandler {
 private extension DetailViewController {
 
 	func reloadHTML() {
-		let articleRendererResult: ArticleRendererResult
+		let html: String
 		let style = ArticleStylesManager.shared.currentStyle
 		let appearance = self.view.effectiveAppearance
+		var baseURL: URL? = nil
 
 		if let articles = articles, articles.count > 1 {
-			articleRendererResult = ArticleRenderer.multipleSelectionHTML(style: style, appearance: appearance)
+			html = ArticleRenderer.multipleSelectionHTML(style: style, appearance: appearance)
 		}
 		else if let article = article {
-			articleRendererResult = ArticleRenderer.articleHTML(article: article, style: style, appearance: appearance)
+			html = ArticleRenderer.articleHTML(article: article, style: style, appearance: appearance)
+			baseURL = ArticleRenderer.baseURL(for: article)
 		}
 		else {
-			articleRendererResult = ArticleRenderer.noSelectionHTML(style: style, appearance: appearance)
+			html = ArticleRenderer.noSelectionHTML(style: style, appearance: appearance)
 		}
 
-		webview.loadHTMLString(articleRendererResult.html, baseURL: articleRendererResult.baseURL)
+		webview.loadHTMLString(html, baseURL: baseURL)
 	}
 
 	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {

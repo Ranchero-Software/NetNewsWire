@@ -177,6 +177,8 @@
 		841ABA6020145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */; };
 		841D4D6B2106B3ED00DD04E6 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D5B2106B3D600DD04E6 /* Articles.framework */; };
 		841D4D6C2106B3ED00DD04E6 /* Articles.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D5B2106B3D600DD04E6 /* Articles.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84216D0322128B9D0049B9B9 /* DetailWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */; };
+		84216D0422128B9D0049B9B9 /* DetailWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */; };
 		8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611891FCB67AA0086A189 /* FeedIconDownloader.swift */; };
 		8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
 		842611A01FCB72600086A189 /* FeaturedImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119F1FCB72600086A189 /* FeaturedImageDownloader.swift */; };
@@ -758,6 +760,7 @@
 		841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinSmartFeedInspectorViewController.swift; sourceTree = "<group>"; };
 		841D4D542106B3D500DD04E6 /* Articles.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Articles.xcodeproj; path = Frameworks/Articles/Articles.xcodeproj; sourceTree = "<group>"; };
 		841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ArticlesDatabase.xcodeproj; path = Frameworks/ArticlesDatabase/ArticlesDatabase.xcodeproj; sourceTree = "<group>"; };
+		84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailWebViewController.swift; sourceTree = "<group>"; };
 		842611891FCB67AA0086A189 /* FeedIconDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedIconDownloader.swift; sourceTree = "<group>"; };
 		8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataDownloader.swift; sourceTree = "<group>"; };
 		8426119F1FCB72600086A189 /* FeaturedImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedImageDownloader.swift; sourceTree = "<group>"; };
@@ -1316,6 +1319,7 @@
 			isa = PBXGroup;
 			children = (
 				849A977E1ED9EC42007D329B /* DetailViewController.swift */,
+				84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */,
 				84E8E0EA202F693600562D8F /* DetailWebView.swift */,
 				849A977D1ED9EC42007D329B /* ArticleRenderer.swift */,
 				84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */,
@@ -2344,6 +2348,7 @@
 				840F7C2321BDA4B40057E851 /* NothingInspectorViewController.swift in Sources */,
 				840F7C2521BDA4B40057E851 /* AppNotifications.swift in Sources */,
 				840F7C2621BDA4B40057E851 /* TimelineKeyboardDelegate.swift in Sources */,
+				84216D0422128B9D0049B9B9 /* DetailWebViewController.swift in Sources */,
 				840F7C2821BDA4B40057E851 /* Browser.swift in Sources */,
 				840F7C2921BDA4B40057E851 /* KeyboardDelegateProtocol.swift in Sources */,
 				840F7C2A21BDA4B40057E851 /* AppleEventUtils.swift in Sources */,
@@ -2467,6 +2472,7 @@
 				842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */,
 				842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */,
 				D5907DB32005F45D005947E5 /* AppleEventUtils.swift in Sources */,
+				84216D0322128B9D0049B9B9 /* DetailWebViewController.swift in Sources */,
 				8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */,
 				849A975E1ED9EB72007D329B /* MainWindowController.swift in Sources */,
 				84F2D53A1FC2308B00998D64 /* UnreadFeed.swift in Sources */,
