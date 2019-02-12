@@ -16,12 +16,12 @@ import RSDatabase
 
 public extension Notification.Name {
 
-	public static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
-	public static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
-	public static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
-	public static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
+	static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
+	static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
+	static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
+	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	
-	public static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
+	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
 }
 
 public enum AccountType: Int {

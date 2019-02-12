@@ -12,12 +12,12 @@ import RSParser
 
 public extension Notification.Name {
 
-	public static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
+	static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
 }
 
 public extension Feed {
 
-	public func takeSettings(from parsedFeed: ParsedFeed) {
+	func takeSettings(from parsedFeed: ParsedFeed) {
 
 		var didChangeAtLeastOneSetting = false
 
@@ -52,11 +52,11 @@ public extension Feed {
 
 public extension Article {
 
-	public var account: Account? {
+	var account: Account? {
 		return AccountManager.shared.existingAccount(with: accountID)
 	}
 	
-	public var feed: Feed? {
+	var feed: Feed? {
 		return account?.existingFeed(with: feedID)
 	}
 }

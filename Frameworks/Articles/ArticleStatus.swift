@@ -83,7 +83,7 @@ public final class ArticleStatus: Hashable {
 
 public extension Set where Element == ArticleStatus {
 	
-	public func articleIDs() -> Set<String> {
+	func articleIDs() -> Set<String> {
 		
 		return Set<String>(map { $0.articleID })
 	}
@@ -91,7 +91,7 @@ public extension Set where Element == ArticleStatus {
 
 public extension Array where Element == ArticleStatus {
 	
-	public func articleIDs() -> [String] {
+	func articleIDs() -> [String] {
 		
 		return map { $0.articleID }
 	}
