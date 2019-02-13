@@ -9,19 +9,17 @@
 import AppKit
 import WebKit
 
-// There’s no API for affecting a WKWebView’s contextual menu.
-// (WebView had API for this.)
-//
-// This a minor hack. It hides unwanted menu items.
-// The menu item identifiers are not documented anywhere;
-// they could change, and this code would need updating.
-
 final class DetailWebView: WKWebView {
 
 	// MARK: NSView
 
 	override func willOpenMenu(_ menu: NSMenu, with event: NSEvent) {
-
+		// There’s no API for affecting a WKWebView’s contextual menu.
+		// (WebView had API for this.)
+		//
+		// This a minor hack. It hides unwanted menu items.
+		// The menu item identifiers are not documented anywhere;
+		// they could change, and this code would need updating.
 		for menuItem in menu.items {
 			if shouldHideMenuItem(menuItem) {
 				menuItem.isHidden = true
@@ -46,6 +44,8 @@ final class DetailWebView: WKWebView {
 		evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
 	}
 }
+
+// MARK: - Private
 
 private extension NSUserInterfaceItemIdentifier {
 
