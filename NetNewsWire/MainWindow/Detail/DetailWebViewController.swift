@@ -57,7 +57,6 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		if let userAgent = UserAgent.fromInfoPlist() {
 			webview.customUserAgent = userAgent
 		}
-		webview.nextResponder = self
 		view = webview
 	}
 
