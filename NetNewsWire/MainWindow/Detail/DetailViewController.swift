@@ -153,15 +153,20 @@ extension DetailViewController: WKScriptMessageHandler {
 			mouseDidExit(link)
 		}
 	}
+}
 
-	private func mouseDidEnter(_ link: String) {
+// MARK: DetailWebViewControllerDelegate
+
+extension DetailViewController: DetailWebViewControllerDelegate {
+
+	func mouseDidEnter(_ link: String) {
 		guard !link.isEmpty else {
 			return
 		}
 		statusBarView.mouseoverLink = link
 	}
 
-	private func mouseDidExit(_ link: String) {
+	func mouseDidExit(_ link: String) {
 		statusBarView.mouseoverLink = nil
 	}
 }

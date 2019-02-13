@@ -17,8 +17,14 @@ enum DetailWebViewState: Equatable {
 	case article(Article)
 }
 
+protocol DetailWebViewControllerDelegate: class {
+	func mouseDidEnter(_ link: String)
+	func mouseDidExit(_ link: String)
+}
+
 final class DetailWebViewController: NSViewController, WKUIDelegate {
 
+	weak var delegate: DetailWebViewControllerDelegate?
 	var webview: DetailWebView!
 	var state: DetailWebViewState = .noSelection {
 		didSet {
@@ -66,24 +72,12 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 extension DetailWebViewController: WKScriptMessageHandler {
 
 	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-
 		if message.name == MessageName.mouseDidEnter, let link = message.body as? String {
-			mouseDidEnter(link)
+			delegate?.mouseDidEnter(link)
 		}
 		else if message.name == MessageName.mouseDidExit, let link = message.body as? String{
-			mouseDidExit(link)
+			delegate?.mouseDidExit(link)
 		}
-	}
-
-	private func mouseDidEnter(_ link: String) {
-		guard !link.isEmpty else {
-			return
-		}
-//		statusBarView.mouseoverLink = link
-	}
-
-	private func mouseDidExit(_ link: String) {
-//		statusBarView.mouseoverLink = nil
 	}
 }
 
