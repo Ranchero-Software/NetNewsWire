@@ -423,7 +423,7 @@
                         <subviews>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="96" horizontalPageScroll="10" verticalLineScroll="96" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Kfs-n2-RYk">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
-                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="yAN-Ex-RC7">
+                                <clipView key="contentView" copiesOnScroll="NO" id="yAN-Ex-RC7">
                                     <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -465,7 +465,6 @@
                                             </connections>
                                         </tableView>
                                     </subviews>
-                                    <nil key="backgroundColor"/>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="9r2-h4-K46">
                                     <rect key="frame" x="-100" y="-100" width="223" height="15"/>

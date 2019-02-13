@@ -212,6 +212,10 @@ final class DetailContainerView: NSView {
 	
 	weak var viewController: DetailViewController? = nil
 
+	override var isOpaque: Bool {
+		return true
+	}
+	
 	var contentView: NSView? {
 		didSet {
 			if contentView == oldValue {
