@@ -13,7 +13,6 @@ import Account
 
 struct ArticleRenderer {
 
-	private let baseURL: URL?
 	private let article: Article?
 	private let articleStyle: ArticleStyle
 	private let appearance: NSAppearance?
@@ -24,12 +23,6 @@ struct ArticleRenderer {
 		self.articleStyle = style
 		self.appearance = appearance
 		self.title = article?.title ?? ""
-		if let article = article {
-			self.baseURL = ArticleRenderer.baseURL(for: article)
-		}
-		else {
-			self.baseURL = nil
-		}
 	}
 
 	// MARK: - API
@@ -47,31 +40,6 @@ struct ArticleRenderer {
 	static func noSelectionHTML(style: ArticleStyle, appearance: NSAppearance?) -> String {
 		let renderer = ArticleRenderer(article: nil, style: style, appearance: appearance)
 		return renderer.noSelectionHTML
-	}
-
-	static func baseURL(for article: Article) -> URL? {
-		var s = article.url
-		if s == nil {
-			s = article.feed?.homePageURL
-		}
-		if s == nil {
-			s = article.feed?.url
-		}
-
-		guard let urlString = s else {
-			return nil
-		}
-		var urlComponents = URLComponents(string: urlString)
-		if urlComponents == nil {
-			return nil
-		}
-
-		// Can’t use url-with-fragment as base URL. The webview won’t load. See scripting.com/rss.xml for example.
-		urlComponents!.fragment = nil
-		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
-			return nil
-		}
-		return url
 	}
 }
 
