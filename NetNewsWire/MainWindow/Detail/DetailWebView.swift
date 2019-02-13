@@ -36,6 +36,15 @@ final class DetailWebView: WKWebView {
 		evaluateJavaScript("document.getElementById('bodyId').className = '\(bodyClass)'")
 	}
 
+	override func viewWillStartLiveResize() {
+		super.viewWillStartLiveResize()
+		evaluateJavaScript("document.body.style.overflow = 'hidden';", completionHandler: nil)
+	}
+
+	override func viewDidEndLiveResize() {
+		super.viewDidEndLiveResize()
+		evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
+	}
 }
 
 private extension NSUserInterfaceItemIdentifier {

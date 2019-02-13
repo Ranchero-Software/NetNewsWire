@@ -108,16 +108,6 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		let timelineArticles = userInfo[UserInfoKey.articles] as? ArticleArray
 		articles = timelineArticles
 	}
-
-	func viewWillStartLiveResize() {
-		
-		webview.evaluateJavaScript("document.body.style.overflow = 'hidden';", completionHandler: nil)
-	}
-	
-	func viewDidEndLiveResize() {
-		
-		webview.evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
-	}
 }
 
 // MARK: WKNavigationDelegate
@@ -234,14 +224,6 @@ final class DetailContainerView: NSView {
 				rs_addFullSizeConstraints(forSubview: contentView)
 			}
 		}
-	}
-
-	override func viewWillStartLiveResize() {
-		viewController?.viewWillStartLiveResize()
-	}
-	
-	override func viewDidEndLiveResize() {
-		viewController?.viewDidEndLiveResize()
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
