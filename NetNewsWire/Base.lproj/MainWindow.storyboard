@@ -445,16 +445,6 @@
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                                    <prototypeCellViews>
-                                                        <tableCellView identifier="timelineCell" id="58o-U2-ss4" customClass="TimelineTableCellView" customModule="NetNewsWire" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="447" height="68"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                        </tableCellView>
-                                                        <customView identifier="timelineRow" id="54E-Vz-WND" customClass="TimelineTableRowView" customModule="NetNewsWire" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="68" width="447" height="96"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        </customView>
-                                                    </prototypeCellViews>
                                                 </tableColumn>
                                             </tableColumns>
                                             <connections>

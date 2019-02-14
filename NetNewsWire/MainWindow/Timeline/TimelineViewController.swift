@@ -11,6 +11,10 @@ import RSCore
 import Articles
 import Account
 
+protocol TimelineDelegate: class  {
+	func selectionDidChange(in: TimelineViewController, mode: TimelineSourceMode)
+}
+
 class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
@@ -582,24 +586,39 @@ extension TimelineViewController: NSTableViewDataSource {
 
 extension TimelineViewController: NSTableViewDelegate {
 
-	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineRow")
 
-		let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineRow"), owner: self) as! TimelineTableRowView
+	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+		if let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: TimelineViewController.rowViewIdentifier, owner: nil) as? TimelineTableRowView {
+			return rowView
+		}
+		let rowView = TimelineTableRowView()
+		rowView.identifier = TimelineViewController.rowViewIdentifier
 		return rowView
 	}
 
+	private static let timelineCellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineCell")
+
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 
-		let cell: TimelineTableCellView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "timelineCell"), owner: self) as! TimelineTableCellView
-		cell.cellAppearance = showAvatars ? cellAppearanceWithAvatar: cellAppearance
-
-		if let article = articles.articleAtRow(row) {
-			configureTimelineCell(cell, article: article)
+		func configure(_ cell: TimelineTableCellView) {
+			cell.cellAppearance = showAvatars ? cellAppearanceWithAvatar : cellAppearance
+			if let article = articles.articleAtRow(row) {
+				configureTimelineCell(cell, article: article)
+			}
+			else {
+				makeTimelineCellEmpty(cell)
+			}
 		}
-		else {
-			makeTimelineCellEmpty(cell)
+
+		if let cell = tableView.makeView(withIdentifier: TimelineViewController.timelineCellIdentifier, owner: nil) as? TimelineTableCellView {
+			configure(cell)
+			return cell
 		}
 
+		let cell = TimelineTableCellView()
+		cell.identifier = TimelineViewController.timelineCellIdentifier
+		configure(cell)
 		return cell
 	}
 

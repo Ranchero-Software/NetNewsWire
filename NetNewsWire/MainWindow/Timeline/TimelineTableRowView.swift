@@ -10,6 +10,14 @@ import AppKit
 
 class TimelineTableRowView : NSTableRowView {
 
+	init() {
+		super.init(frame: NSRect.zero)
+	}
+
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+	}
+	
 	private var cellView: TimelineTableCellView? {
 		for oneSubview in subviews {
 			if let foundView = oneSubview as? TimelineTableCellView {

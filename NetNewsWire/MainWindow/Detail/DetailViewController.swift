@@ -23,10 +23,6 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	@IBOutlet var containerView: DetailContainerView!
 	@IBOutlet var statusBarView: DetailStatusBarView!
 
-	enum WebViewType {
-		case regular, search
-	}
-
 	lazy var regularWebViewController = {
 		return createWebViewController()
 	}()
@@ -52,7 +48,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	// MARK: - API
 
-	func showState(_ state: DetailState, in webViewType: WebViewType) {
+	func showState(_ state: DetailState, mode: TimelineSourceMode) {
 		// TODO: also to-do is caller
 	}
 

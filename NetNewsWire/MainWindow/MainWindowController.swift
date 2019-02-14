@@ -11,6 +11,10 @@ import Articles
 import Account
 import RSCore
 
+enum TimelineSourceMode {
+	case regular, search
+}
+
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBOutlet var toolbarDelegate: MainWindowToolbarDelegate?

@@ -68,17 +68,19 @@ class TimelineTableCellView: NSTableCellView {
 	}
 
 	override init(frame frameRect: NSRect) {
-		
 		super.init(frame: frameRect)
 		commonInit()
 	}
 	
-	required init?(coder: NSCoder) {
-		
+	required init?(coder: NSCoder) {		
 		super.init(coder: coder)
 		commonInit()
 	}
-	
+
+	convenience init() {
+		self.init(frame: NSRect.zero)
+	}
+
 	override func setFrameSize(_ newSize: NSSize) {
 		
 		if newSize == self.frame.size {
