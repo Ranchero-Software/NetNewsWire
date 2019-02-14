@@ -1,16 +1,14 @@
 //
-//  DetailContainerView.swift
+//  TimelineContainerView.swift
 //  NetNewsWire
 //
-//  Created by Brent Simmons on 2/12/19.
+//  Created by Brent Simmons on 2/13/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
 import AppKit
 
-final class DetailContainerView: NSView {
-
-	@IBOutlet var detailStatusBarView: DetailStatusBarView!
+final class TimelineContainerView: NSView {
 
 	override var isOpaque: Bool {
 		return true
@@ -32,7 +30,7 @@ final class DetailContainerView: NSView {
 
 			if let contentView = contentView {
 				contentView.translatesAutoresizingMaskIntoConstraints = false
-				addSubview(contentView, positioned: .below, relativeTo: detailStatusBarView)
+				addSubview(contentView)
 				let constraints = constraintsToMakeSubViewFullSize(contentView)
 				NSLayoutConstraint.activate(constraints)
 				contentViewConstraints = constraints
