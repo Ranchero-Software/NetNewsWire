@@ -78,11 +78,17 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations, NSW
 	// MARK: - Notifications
 
 	func window(_ window: NSWindow, willEncodeRestorableState state: NSCoder) {
+
 		saveSplitViewState(to: state)
 	}
 
 	func window(_ window: NSWindow, didDecodeRestorableState state: NSCoder) {
+		
 		restoreSplitViewState(from: state)
+
+		// Make sure the timeline view is first responder if possible, to start out viewing
+		// whatever preserved selection might have been restored
+		makeTimelineViewFirstResponder()
 	}
 
 	@objc func refreshProgressDidChange(_ note: Notification) {

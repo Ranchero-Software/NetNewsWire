@@ -143,6 +143,26 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 		sharingServiceDelegate = SharingServiceDelegate(self.view.window)
 	}
 
+	// MARK: State Restoration
+
+	private static let stateRestorationSelectedArticles = "selectedArticles"
+
+	override func encodeRestorableState(with coder: NSCoder) {
+
+		super.encodeRestorableState(with: coder)
+
+		coder.encode(self.selectedArticleIDs(), forKey: TimelineViewController.stateRestorationSelectedArticles)
+	}
+
+	override func restoreState(with coder: NSCoder) {
+
+		super.restoreState(with: coder)
+
+		if let restoredArticleIDs = (try? coder.decodeTopLevelObject(forKey: TimelineViewController.stateRestorationSelectedArticles)) as? [String] {
+			self.restoreSelection(restoredArticleIDs)
+		}
+	}
+
 	// MARK: Appearance Change
 
 	private func fontSizeDidChange() {
@@ -618,6 +638,8 @@ extension TimelineViewController: NSTableViewDelegate {
 		}
 
 		postTimelineSelectionDidChangeNotification(selectedArticles)
+
+		self.invalidateRestorableState()
 	}
 
 	private func postTimelineSelectionDidChangeNotification(_ selectedArticles: ArticleArray?) {
