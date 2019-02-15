@@ -70,6 +70,26 @@ import RSCore
 		}
 	}
 
+	// MARK: State Restoration
+
+	private static let stateRestorationSelectedRowIndexes = "selectedRowIndexes"
+
+	override func encodeRestorableState(with coder: NSCoder) {
+
+		super.encodeRestorableState(with: coder)
+
+		coder.encode(outlineView.selectedRowIndexes, forKey: SidebarViewController.stateRestorationSelectedRowIndexes)
+	}
+
+	override func restoreState(with coder: NSCoder) {
+
+		super.restoreState(with: coder)
+
+		if let restoredRowIndexes = coder.decodeObject(of: [NSIndexSet.self], forKey: SidebarViewController.stateRestorationSelectedRowIndexes) as? IndexSet {
+			outlineView.selectRowIndexes(restoredRowIndexes, byExtendingSelection: false)
+		}
+	}
+
 	// MARK: - Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -278,6 +298,8 @@ import RSCore
     func outlineViewSelectionDidChange(_ notification: Notification) {
 
 		postSidebarSelectionDidChangeNotification(selectedObjects.isEmpty ? nil : selectedObjects)
+
+		self.invalidateRestorableState()
     }
 
 	//MARK: - Node Manipulation

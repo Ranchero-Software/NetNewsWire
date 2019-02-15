@@ -53,7 +53,6 @@ struct AppDefaults {
 		static let timelineSortDirection = "timelineSortDirection"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
-		static let mainWindowWidths = "mainWindowWidths"
 		static let refreshInterval = "refreshInterval"
 
 		// Hidden prefs
@@ -117,15 +116,6 @@ struct AppDefaults {
 		}
 		set {
 			setSortDirection(for: Key.timelineSortDirection, newValue)
-		}
-	}
-
-	static var mainWindowWidths: [Int]? {
-		get {
-			return UserDefaults.standard.object(forKey: Key.mainWindowWidths) as? [Int]
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.mainWindowWidths)
 		}
 	}
 
