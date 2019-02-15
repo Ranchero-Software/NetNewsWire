@@ -51,6 +51,10 @@ body.light .articleDateline, body.light .articleDateLine.a:link, body.light .art
 	color: rgba(0, 0, 0, 0.3);
 }
 
+body.light code, body.light pre {
+	color: #666;
+}
+
 .light > .systemMessage {
 	color: #cbcbcb;
 }
@@ -79,6 +83,10 @@ body.dark .articleDateline {
 }
 body.dark .articleDateline, body.dark .articleDateLine.a:link, body.dark .articleDateline a:visited {
 	color: #d2d2d2;
+}
+
+body.dark code, body.dark pre {
+	color: #b2b2b2;
 }
 
 .dark > .systemMessage {
@@ -120,7 +128,6 @@ h1 {
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
 	font-size: 14px;
-	color: #666;
 }
 pre  {
 	white-space: pre-wrap;
