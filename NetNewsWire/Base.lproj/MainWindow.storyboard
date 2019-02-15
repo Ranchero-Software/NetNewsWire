@@ -416,7 +416,7 @@
         <!--Timeline View Controller-->
         <scene sceneID="zUD-i8-QYC">
             <objects>
-                <viewController id="36G-bQ-b96" userLabel="Timeline View Controller" customClass="TimelineViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="36G-bQ-b96" userLabel="Timeline View Controller" customClass="TimelineContainerViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Dnl-L5-xFP">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                         <autoresizingMask key="autoresizingMask"/>

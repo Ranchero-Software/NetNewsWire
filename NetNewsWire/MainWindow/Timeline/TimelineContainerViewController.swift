@@ -1,5 +1,5 @@
 //
-//  TimelineTableViewController.swift
+//  TimelineContainerViewController.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 2/14/19.
@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class TimelineTableViewController: NSViewController {
+class TimelineContainerViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
