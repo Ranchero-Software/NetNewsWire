@@ -40,6 +40,9 @@
                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                             </tableColumn>
                         </tableColumns>
+                        <connections>
+                            <outlet property="menu" destination="zCu-LD-kHw" id="nNl-iz-nVl"/>
+                        </connections>
                     </tableView>
                 </subviews>
             </clipView>
@@ -52,5 +55,21 @@
                 <autoresizingMask key="autoresizingMask"/>
             </scroller>
         </scrollView>
+        <menu id="zCu-LD-kHw">
+            <items>
+                <menuItem title="Item 1" id="AJc-Qw-NnP">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Item 2" id="YKj-q3-QDG">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Item 3" id="IJ0-IS-a6R">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+            </items>
+            <connections>
+                <outlet property="delegate" destination="opA-RM-DKR" id="QpK-G8-xCm"/>
+            </connections>
+        </menu>
     </objects>
 </document>

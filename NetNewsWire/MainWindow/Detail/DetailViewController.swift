@@ -48,7 +48,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	// MARK: - API
 
-	func showState(_ state: DetailState, mode: TimelineSourceMode) {
+	func setState(_ state: DetailState, mode: TimelineSourceMode) {
 		// TODO: also to-do is caller
 	}
 

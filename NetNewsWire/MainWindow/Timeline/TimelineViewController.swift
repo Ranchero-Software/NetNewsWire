@@ -12,13 +12,20 @@ import Articles
 import Account
 
 protocol TimelineDelegate: class  {
-	func selectionDidChange(in: TimelineViewController, mode: TimelineSourceMode)
+	func selectionDidChange(in: TimelineViewController)
 }
 
-class TimelineViewController: NSViewController, UndoableCommandRunner {
+final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
 
+	var state: TimelineState = .empty {
+		didSet {
+			// TODO
+		}
+	}
+
+	private weak var delegate: TimelineDelegate?
 	var sharingServiceDelegate: NSSharingServiceDelegate?
 	
 	var selectedArticles: [Article] {
@@ -115,6 +122,11 @@ class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	private var oneSelectedArticle: Article? {
 		return selectedArticles.count == 1 ? selectedArticles.first : nil
+	}
+
+	convenience init(delegate: TimelineDelegate) {
+		self.init(nibName: "TimelineTableView", bundle: nil)
+		self.delegate = delegate
 	}
 
 	override func viewDidLoad() {

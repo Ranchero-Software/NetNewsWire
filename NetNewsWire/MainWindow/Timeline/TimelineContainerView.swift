@@ -10,11 +10,7 @@ import AppKit
 
 final class TimelineContainerView: NSView {
 
-	override var isOpaque: Bool {
-		return true
-	}
-
-	var contentViewConstraints: [NSLayoutConstraint]?
+	private var contentViewConstraints: [NSLayoutConstraint]?
 
 	var contentView: NSView? {
 		didSet {
@@ -38,8 +34,13 @@ final class TimelineContainerView: NSView {
 		}
 	}
 
+	override var isOpaque: Bool {
+		return true
+	}
+
 	override func draw(_ dirtyRect: NSRect) {
 		NSColor.textBackgroundColor.setFill()
 		dirtyRect.fill()
 	}
 }
+
