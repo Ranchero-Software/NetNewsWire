@@ -43,7 +43,7 @@
                         <connections>
                             <outlet property="dataSource" destination="-2" id="zir-Wd-WsF"/>
                             <outlet property="delegate" destination="-2" id="nbI-3q-mrc"/>
-                            <outlet property="menu" destination="zCu-LD-kHw" id="nNl-iz-nVl"/>
+                            <outlet property="menu" destination="MjV-3b-ZXR" id="kCm-mz-dAV"/>
                         </connections>
                     </tableView>
                 </subviews>
@@ -57,20 +57,20 @@
                 <autoresizingMask key="autoresizingMask"/>
             </scroller>
         </scrollView>
-        <menu id="zCu-LD-kHw">
+        <menu id="MjV-3b-ZXR">
             <items>
-                <menuItem title="Item 1" id="AJc-Qw-NnP">
+                <menuItem title="Item 1" id="xfn-qr-Hmg">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="Item 2" id="YKj-q3-QDG">
+                <menuItem title="Item 2" id="CKG-yd-eyo">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="Item 3" id="IJ0-IS-a6R">
+                <menuItem title="Item 3" id="SwU-HI-Iqz">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
             </items>
             <connections>
-                <outlet property="delegate" destination="opA-RM-DKR" id="QpK-G8-xCm"/>
+                <outlet property="delegate" destination="-2" id="t1E-bi-ix5"/>
             </connections>
         </menu>
     </objects>

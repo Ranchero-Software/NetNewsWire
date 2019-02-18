@@ -17,6 +17,16 @@ final class TimelineContainerViewController: NSViewController {
 
 	@IBOutlet var containerView: TimelineContainerView!
 
+	var currentTimelineViewController: TimelineViewController? {
+		didSet {
+			let view = currentTimelineViewController?.view
+			if containerView.contentView === view {
+				return
+			}
+			containerView.contentView = view
+		}
+	}
+
 	weak var delegate: TimelineContainerViewControllerDelegate?
 
 	private lazy var regularTimelineViewController = {
@@ -39,7 +49,7 @@ final class TimelineContainerViewController: NSViewController {
 	}
 
 	func showTimeline(_ mode: TimelineSourceMode) {
-		containerView.contentView = timelineViewController(for: mode).view
+		currentTimelineViewController = timelineViewController(for: mode)
 	}
 }
 
