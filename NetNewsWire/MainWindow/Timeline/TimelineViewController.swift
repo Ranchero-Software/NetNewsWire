@@ -147,7 +147,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 		if !didRegisterForNotifications {
 
-//			NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
@@ -372,23 +371,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	// MARK: - Notifications
 
-//	@objc func sidebarSelectionDidChange(_ notification: Notification) {
-//
-//		guard let userInfo = notification.userInfo else {
-//			return
-//		}
-//		guard let sidebarView = userInfo[UserInfoKey.view] as? NSView, sidebarView.window === tableView.window else {
-//			return
-//		}
-//
-//		if let objects = userInfo[UserInfoKey.objects] as? [AnyObject] {
-//			representedObjects = objects
-//		}
-//		else {
-//			representedObjects = nil
-//		}
-//	}
-	
 	@objc func statusesDidChange(_ note: Notification) {
 
 		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {

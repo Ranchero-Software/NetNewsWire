@@ -282,8 +282,7 @@ protocol SidebarDelegate: class {
 	}
 
     func outlineViewSelectionDidChange(_ notification: Notification) {
-
-		postSidebarSelectionDidChangeNotification(selectedObjects.isEmpty ? nil : selectedObjects)
+		selectionDidChange(selectedObjects.isEmpty ? nil : selectedObjects)
     }
 
 	//MARK: - Node Manipulation
@@ -381,19 +380,12 @@ private extension SidebarViewController {
 		outlineView.selectRowIndexes(indexes, byExtendingSelection: false)
 
 		if selectedNodes != nodes && sendNotificationIfChanged {
-			postSidebarSelectionDidChangeNotification(selectedObjects)
+			selectionDidChange(selectedObjects)
 		}
 	}
 
-	func postSidebarSelectionDidChangeNotification(_ selectedObjects: [AnyObject]?) {
+	func selectionDidChange(_ selectedObjects: [AnyObject]?) {
 		delegate?.selectionDidChange(to: selectedObjects)
-//		var userInfo = UserInfoDictionary()
-//		if let objects = selectedObjects {
-//			userInfo[UserInfoKey.objects] = objects
-//		}
-//		userInfo[UserInfoKey.view] = outlineView
-//
-//		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: userInfo)
 	}
 
 	func updateUnreadCounts(for objects: [AnyObject]) {
