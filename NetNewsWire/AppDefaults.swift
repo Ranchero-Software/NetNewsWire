@@ -53,7 +53,6 @@ struct AppDefaults {
 		static let timelineSortDirection = "timelineSortDirection"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
-		static let mainWindowWidths = "mainWindowWidths"
 		static let refreshInterval = "refreshInterval"
 
 		// Hidden prefs
@@ -120,15 +119,6 @@ struct AppDefaults {
 		}
 	}
 
-	static var mainWindowWidths: [Int]? {
-		get {
-			return UserDefaults.standard.object(forKey: Key.mainWindowWidths) as? [Int]
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.mainWindowWidths)
-		}
-	}
-
 	static var refreshInterval: RefreshInterval {
 		get {
 			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
@@ -143,6 +133,18 @@ struct AppDefaults {
 		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false, Key.refreshInterval: RefreshInterval.everyHour.rawValue]
 
 		UserDefaults.standard.register(defaults: defaults)
+
+		// It seems that registering a default for NSQuitAlwaysKeepsWindows to true
+		// is not good enough to get the system to respect it, so we have to literally
+		// set it as the default to get it to take effect. This overrides a system-wide
+		// setting in the System Preferences, which is ostensibly meant to "close windows"
+		// in an app, but has the side-effect of also not preserving or restoring any state
+		// for the window. Since we've switched to using the standard state preservation and
+		// restoration mechanisms, and because it seems highly unlikely any user would object
+		// to NetNewsWire preserving this state, we'll force the preference on. If this becomes
+		// an issue, this could be changed to proactively look for whether the default has been
+		// set _by the user_ to false, and respect that default if it is so-set.
+		UserDefaults.standard.set(true, forKey: "NSQuitAlwaysKeepsWindows")
 	}
 
 	static func actualFontSize(for fontSize: FontSize) -> CGFloat {
