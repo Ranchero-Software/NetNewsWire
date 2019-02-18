@@ -41,6 +41,8 @@
                             </tableColumn>
                         </tableColumns>
                         <connections>
+                            <outlet property="dataSource" destination="-2" id="zir-Wd-WsF"/>
+                            <outlet property="delegate" destination="-2" id="nbI-3q-mrc"/>
                             <outlet property="menu" destination="zCu-LD-kHw" id="nNl-iz-nVl"/>
                         </connections>
                     </tableView>

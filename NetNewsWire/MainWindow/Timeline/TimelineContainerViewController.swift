@@ -8,17 +8,10 @@
 
 import Cocoa
 
-enum TimelineState {
-	case empty
-	case representedObjects([AnyObject])
-}
-
 final class TimelineContainerViewController: NSViewController {
 
 	@IBOutlet var containerView: TimelineContainerView!
 	
-	private var states: [TimelineSourceMode: TimelineState] = [.regular: .empty, .search: .empty]
-
 	private lazy var regularTimelineViewController = {
 		return TimelineViewController(delegate: self)
 	}()
@@ -28,17 +21,17 @@ final class TimelineContainerViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setState(.empty, mode: .regular)
-		showTimeline(for: .regular)
+        setRepresentedObjects(nil, mode: .regular)
+		showTimeline(.regular)
     }
 
 	// MARK: - API
 
-	func setState(_ state: TimelineState, mode: TimelineSourceMode) {
-		timelineViewController(for: mode).state = state
+	func setRepresentedObjects(_ objects: [AnyObject]?, mode: TimelineSourceMode) {
+		timelineViewController(for: mode).representedObjects = objects
 	}
 
-	func showTimeline(for mode: TimelineSourceMode) {
+	func showTimeline(_ mode: TimelineSourceMode) {
 		containerView.contentView = timelineViewController(for: mode).view
 	}
 }

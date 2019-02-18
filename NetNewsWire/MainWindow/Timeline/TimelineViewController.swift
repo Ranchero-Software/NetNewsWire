@@ -19,13 +19,27 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@IBOutlet var tableView: TimelineTableView!
 
-	var state: TimelineState = .empty {
+	var representedObjects: [AnyObject]? {
 		didSet {
-			switch state {
-			case .empty:
-				representedObjects = nil
-			case .representedObjects(let updatedRepresentedObjects):
-				representedObjects = updatedRepresentedObjects
+			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
+
+				if let representedObjects = representedObjects {
+					if representedObjects.count == 1 && representedObjects.first is Feed {
+						showFeedNames = false
+					}
+					else {
+						showFeedNames = true
+					}
+				}
+				else {
+					showFeedNames = false
+				}
+
+				postTimelineSelectionDidChangeNotification(nil)
+				fetchArticles()
+				if articles.count > 0 {
+					tableView.scrollRowToVisible(0)
+				}
 			}
 		}
 	}
@@ -95,32 +109,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 		didSet {
 			if fontSize != oldValue {
 				fontSizeDidChange()
-			}
-		}
-	}
-
-	private var representedObjects: [AnyObject]? {
-		didSet {
-			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
-
-				if let representedObjects = representedObjects {
-					if representedObjects.count == 1 && representedObjects.first is Feed {
-						showFeedNames = false
-					}
-					else {
-						showFeedNames = true
-					}
-				}
-				else {
-					showFeedNames = false
-				}
-
-				postTimelineSelectionDidChangeNotification(nil)
-				articles = ArticleArray()
-				fetchArticles()
-				if articles.count > 0 {
-					tableView.scrollRowToVisible(0)
-				}
 			}
 		}
 	}

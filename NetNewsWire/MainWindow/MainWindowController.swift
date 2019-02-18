@@ -37,6 +37,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	private static var detailViewMinimumThickness = 384
 	private var sidebarViewController: SidebarViewController!
+	private var timelineContainerViewController: TimelineContainerViewController!
 
 	// MARK: - NSWindowController
 
@@ -64,8 +65,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		detailSplitViewItem?.minimumThickness = CGFloat(MainWindowController.detailViewMinimumThickness)
 		restoreSplitViewState()
+
 		sidebarViewController = splitViewController?.splitViewItems[0].viewController as? SidebarViewController
 		sidebarViewController.delegate = self
+
+		timelineContainerViewController = splitViewController?.splitViewItems[1].viewController as? TimelineContainerViewController
 
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
 
@@ -365,8 +369,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 extension MainWindowController: SidebarDelegate {
 
-	func selectionDidChange(to selectedObjects: [AnyObject]?) {
-		// TODO: communicate with TimelineViewController
+	func sidebarSelectionDidChange(to selectedObjects: [AnyObject]?) {
+		// TODO: if searching, cancel search
+		timelineContainerViewController.setRepresentedObjects(selectedObjects, mode: .regular)
+		timelineContainerViewController.showTimeline(.regular)
 		updateWindowTitle()
 		NotificationCenter.default.post(name: .InspectableObjectsDidChange, object: nil)
 	}

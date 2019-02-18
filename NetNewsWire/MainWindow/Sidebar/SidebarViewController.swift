@@ -13,7 +13,7 @@ import Account
 import RSCore
 
 protocol SidebarDelegate: class {
-	func selectionDidChange(to: [AnyObject]?)
+	func sidebarSelectionDidChange(to: [AnyObject]?)
 }
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, NSMenuDelegate, UndoableCommandRunner {
@@ -385,7 +385,7 @@ private extension SidebarViewController {
 	}
 
 	func selectionDidChange(_ selectedObjects: [AnyObject]?) {
-		delegate?.selectionDidChange(to: selectedObjects)
+		delegate?.sidebarSelectionDidChange(to: selectedObjects)
 	}
 
 	func updateUnreadCounts(for objects: [AnyObject]) {
