@@ -12,7 +12,7 @@ import Articles
 import Account
 
 protocol TimelineDelegate: class  {
-	func selectionDidChange(in: TimelineViewController)
+	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
 }
 
 final class TimelineViewController: NSViewController, UndoableCommandRunner {

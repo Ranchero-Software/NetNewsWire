@@ -6,12 +6,19 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import Cocoa
+import AppKit
+import Articles
+
+protocol TimelineContainerViewControllerDelegate: class {
+	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode)
+}
 
 final class TimelineContainerViewController: NSViewController {
 
 	@IBOutlet var containerView: TimelineContainerView!
-	
+
+	weak var delegate: TimelineContainerViewControllerDelegate?
+
 	private lazy var regularTimelineViewController = {
 		return TimelineViewController(delegate: self)
 	}()
@@ -38,8 +45,8 @@ final class TimelineContainerViewController: NSViewController {
 
 extension TimelineContainerViewController: TimelineDelegate {
 
-	func selectionDidChange(in: TimelineViewController) {
-		// TODO: notify MainWindowController
+	func timelineSelectionDidChange(_ timelineViewController: TimelineViewController, selectedArticles: [Article]?) {
+		delegate?.timelineSelectionDidChange(self, articles: selectedArticles, mode: mode(for: timelineViewController))
 	}
 }
 
@@ -52,5 +59,16 @@ private extension TimelineContainerViewController {
 		case .search:
 			return searchTimelineViewController
 		}
+	}
+
+	func mode(for timelineViewController: TimelineViewController) -> TimelineSourceMode {
+		if timelineViewController === regularTimelineViewController {
+			return .regular
+		}
+		else if timelineViewController === searchTimelineViewController {
+			return .search
+		}
+		assertionFailure("Expected timelineViewController to match either regular or search timelineViewController, but it doesn’t.")
+		return .regular // Should never get here.
 	}
 }

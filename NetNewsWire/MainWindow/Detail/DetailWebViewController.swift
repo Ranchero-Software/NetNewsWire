@@ -12,8 +12,8 @@ import RSWeb
 import Articles
 
 protocol DetailWebViewControllerDelegate: class {
-	func mouseDidEnter(_ link: String)
-	func mouseDidExit(_ link: String)
+	func mouseDidEnter(_: DetailWebViewController, link: String)
+	func mouseDidExit(_: DetailWebViewController, link: String)
 }
 
 final class DetailWebViewController: NSViewController, WKUIDelegate {
@@ -85,10 +85,10 @@ extension DetailWebViewController: WKScriptMessageHandler {
 
 	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
 		if message.name == MessageName.mouseDidEnter, let link = message.body as? String {
-			delegate?.mouseDidEnter(link)
+			delegate?.mouseDidEnter(self, link: link)
 		}
 		else if message.name == MessageName.mouseDidExit, let link = message.body as? String{
-			delegate?.mouseDidExit(link)
+			delegate?.mouseDidExit(self, link: link)
 		}
 	}
 }

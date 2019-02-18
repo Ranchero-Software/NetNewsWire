@@ -49,7 +49,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	// MARK: - API
 
 	func setState(_ state: DetailState, mode: TimelineSourceMode) {
-		// TODO: also to-do is caller
+		webViewController(for: mode).state = state
 	}
 
 	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
@@ -65,14 +65,17 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 extension DetailViewController: DetailWebViewControllerDelegate {
 
-	func mouseDidEnter(_ link: String) {
-		guard !link.isEmpty else {
+	func mouseDidEnter(_ detailWebViewController: DetailWebViewController, link: String) {
+		guard !link.isEmpty, detailWebViewController === currentWebViewController else {
 			return
 		}
 		statusBarView.mouseoverLink = link
 	}
 
-	func mouseDidExit(_ link: String) {
+	func mouseDidExit(_ detailWebViewController: DetailWebViewController, link: String) {
+		guard detailWebViewController === currentWebViewController else {
+			return
+		}
 		statusBarView.mouseoverLink = nil
 	}
 }
@@ -86,5 +89,14 @@ private extension DetailViewController {
 		controller.delegate = self
 		controller.state = .noSelection
 		return controller
+	}
+
+	func webViewController(for mode: TimelineSourceMode) -> DetailWebViewController {
+		switch mode {
+		case .regular:
+			return regularWebViewController
+		case .search:
+			return searchWebViewController
+		}
 	}
 }

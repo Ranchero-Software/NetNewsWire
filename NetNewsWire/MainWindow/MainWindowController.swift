@@ -70,6 +70,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		sidebarViewController.delegate = self
 
 		timelineContainerViewController = splitViewController?.splitViewItems[1].viewController as? TimelineContainerViewController
+		timelineContainerViewController.delegate = self
 
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
 
@@ -369,12 +370,28 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 extension MainWindowController: SidebarDelegate {
 
-	func sidebarSelectionDidChange(to selectedObjects: [AnyObject]?) {
+	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?) {
 		// TODO: if searching, cancel search
 		timelineContainerViewController.setRepresentedObjects(selectedObjects, mode: .regular)
 		timelineContainerViewController.showTimeline(.regular)
 		updateWindowTitle()
 		NotificationCenter.default.post(name: .InspectableObjectsDidChange, object: nil)
+	}
+}
+
+// MARK: - TimelineContainerViewControllerDelegate
+
+extension MainWindowController: TimelineContainerViewControllerDelegate {
+
+	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode) {
+		let detailState: DetailState
+		if let articles = articles {
+			detailState = articles.count == 1 ? .article(articles.first!) : .multipleSelection
+		}
+		else {
+			detailState = .noSelection
+		}
+		detailViewController?.setState(detailState, mode: mode)
 	}
 }
 
