@@ -148,7 +148,6 @@ struct AppDefaults {
 	}
 
 	static func actualFontSize(for fontSize: FontSize) -> CGFloat {
-
 		switch fontSize {
 		case .small:
 			return NSFont.systemFontSize
@@ -174,7 +173,6 @@ private extension AppDefaults {
 	}
 
 	static func fontSize(for key: String) -> FontSize {
-
 		// Punted till after 1.0.
 		return .medium
 
@@ -217,7 +215,6 @@ private extension AppDefaults {
 	}
 
 	static func sortDirection(for key:String) -> ComparisonResult {
-
 		let rawInt = int(for: key)
 		if rawInt == ComparisonResult.orderedAscending.rawValue {
 			return .orderedAscending
@@ -226,7 +223,6 @@ private extension AppDefaults {
 	}
 
 	static func setSortDirection(for key: String, _ value: ComparisonResult) {
-
 		if value == .orderedAscending {
 			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
 		}
