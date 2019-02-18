@@ -6,40 +6,31 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,3,9,14,17,21</expansionState>
+    <expansionState>0,1,9,10,15</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>247</windowTop>
-    <windowLeft>21</windowLeft>
-    <windowRight>956</windowRight>
-    <windowBottom>984</windowBottom>
+    <windowTop>1343</windowTop>
+    <windowLeft>472</windowLeft>
+    <windowRight>1407</windowRight>
+    <windowBottom>2080</windowBottom>
   </head>
   <body>
     <outline text="NetNewsWire 5.0 Alpha - Mac">
-      <outline text="Refreshing">
-        <outline text="Add timer"/>
-        <outline text="Update timer when pref changes">
-          <outline text="Observe defaults"/>
-          <outline text="Keep old copy of pref"/>
-          <outline text="Check new against old"/>
-        </outline>
+      <outline text="Search">
+        <outline text="Create toolbar search field delegate"/>
+        <outline text="Wire up toolbar search field delegate"/>
+        <outline text="Implement delegate methods"/>
+        <outline text="Keep track of current mode in MainWindowController"/>
+        <outline text="Implement fetch-search in database"/>
+        <outline text="Swap timeline and detail view on begin search"/>
+        <outline text="Swap back timeline and detail view on end search"/>
       </outline>
       <outline text="Preferences">
-        <outline text="Make Advanced prefs appear on click of toolbar button"/>
         <outline text="Account preferences">
           <outline text="Create view controller"/>
           <outline text="Design view"/>
           <outline text="Add toolbar item spec"/>
           <outline text="Account types: syncing, posting — just syncing in 5.0"/>
         </outline>
-      </outline>
-      <outline text="Notarize app">
-        <outline text="Figure out build settings"/>
-        <outline text="Try notarization step"/>
-      </outline>
-      <outline text="Next build">
-        <outline text="Refreshing"/>
-        <outline text="Crash log advanced prefs"/>
-        <outline text="Notarization"/>
       </outline>
     </outline>
     <outline text="Website">
