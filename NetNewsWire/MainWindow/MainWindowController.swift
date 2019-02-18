@@ -36,9 +36,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	private static var detailViewMinimumThickness = 384
-	private var sidebarViewController: SidebarViewController!
-	private var timelineContainerViewController: TimelineContainerViewController!
-	private var detailViewController: DetailViewController!
+	private var sidebarViewController: SidebarViewController?
+	private var timelineContainerViewController: TimelineContainerViewController?
+	private var detailViewController: DetailViewController?
 
 	// MARK: - NSWindowController
 
@@ -68,10 +68,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		restoreSplitViewState()
 
 		sidebarViewController = splitViewController?.splitViewItems[0].viewController as? SidebarViewController
-		sidebarViewController.delegate = self
+		sidebarViewController!.delegate = self
 
 		timelineContainerViewController = splitViewController?.splitViewItems[1].viewController as? TimelineContainerViewController
-		timelineContainerViewController.delegate = self
+		timelineContainerViewController!.delegate = self
 
 		detailViewController = splitViewController?.splitViewItems[2].viewController as? DetailViewController
 
@@ -210,43 +210,41 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	// MARK: - Actions
 
 	@IBAction func scrollOrGoToNextUnread(_ sender: Any?) {
-
+		guard let detailViewController = detailViewController else {
+			return
+		}
 		detailViewController.canScrollDown { (canScroll) in
 			NSCursor.setHiddenUntilMouseMoves(true)
-			canScroll ? self.detailViewController.scrollPageDown(sender) : self.nextUnread(sender)
+			canScroll ? detailViewController.scrollPageDown(sender) : self.nextUnread(sender)
 		}
 	}
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {
-
 		appDelegate.showAddFolderSheetOnWindow(window!)
 	}
 
 	@IBAction func showAddFeedWindow(_ sender: Any?) {
-
 		appDelegate.showAddFeedSheetOnWindow(window!, urlString: nil, name: nil, folder: nil)
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
-		
 		if let link = currentLink {
 			Browser.open(link)
 		}		
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
-
 		openArticleInBrowser(sender)
 	}
 
 	@IBAction func nextUnread(_ sender: Any?) {
-		
-		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
+		guard let timelineViewController = currentTimelineViewController, let sidebarViewController = sidebarViewController else {
 			return
 		}
 
 		NSCursor.setHiddenUntilMouseMoves(true)
-		
+
+		// TODO: handle search mode
 		if timelineViewController.canGoToNextUnread() {
 			goToNextUnreadInTimeline()
 		}
@@ -259,90 +257,77 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func markAllAsRead(_ sender: Any?) {
-		
-		timelineViewController?.markAllAsRead()
+		currentTimelineViewController?.markAllAsRead()
 	}
 
 	@IBAction func toggleRead(_ sender: Any?) {
+		currentTimelineViewController?.toggleReadStatusForSelectedArticles()
+	}
 
-		timelineViewController?.toggleReadStatusForSelectedArticles()
+	@IBAction func markRead(_ sender: Any?) {
+		currentTimelineViewController?.markSelectedArticlesAsRead(sender)
 	}
 
 	@IBAction func markUnread(_ sender: Any?) {
-
-		timelineViewController?.markSelectedArticlesAsUnread(sender)
+		currentTimelineViewController?.markSelectedArticlesAsUnread(sender)
 	}
 
 	@IBAction func toggleStarred(_ sender: Any?) {
-
-		timelineViewController?.toggleStarredStatusForSelectedArticles()
+		currentTimelineViewController?.toggleStarredStatusForSelectedArticles()
 	}
 
 	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
-
 		markAllAsRead(sender)
 		nextUnread(sender)
 	}
 
 	@IBAction func markUnreadAndGoToNextUnread(_ sender: Any?) {
-
 		markUnread(sender)
 		nextUnread(sender)
 	}
 
 	@IBAction func markReadAndGoToNextUnread(_ sender: Any?) {
-
 		markUnread(sender)
 		nextUnread(sender)
 	}
 
 	@IBAction func toggleSidebar(_ sender: Any?) {
-		
 		splitViewController!.toggleSidebar(sender)
 	}
 
 	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
-
-		timelineViewController?.markOlderArticlesRead()
+		currentTimelineViewController?.markOlderArticlesRead()
 	}
 
 	@IBAction func navigateToTimeline(_ sender: Any?) {
-
-		timelineViewController?.focus()
+		currentTimelineViewController?.focus()
 	}
 
 	@IBAction func navigateToSidebar(_ sender: Any?) {
-
 		sidebarViewController?.focus()
 	}
 
 	@IBAction func goToPreviousSubscription(_ sender: Any?) {
-
 		sidebarViewController?.outlineView.selectPreviousRow(sender)
 	}
 
 	@IBAction func goToNextSubscription(_ sender: Any?) {
-
 		sidebarViewController?.outlineView.selectNextRow(sender)
 	}
 
 	@IBAction func gotoToday(_ sender: Any?) {
-
 		sidebarViewController?.gotoToday(sender)
 	}
 
 	@IBAction func gotoAllUnread(_ sender: Any?) {
-
 		sidebarViewController?.gotoAllUnread(sender)
 	}
 
 	@IBAction func gotoStarred(_ sender: Any?) {
-
 		sidebarViewController?.gotoStarred(sender)
 	}
 
 	@IBAction func toolbarShowShareMenu(_ sender: Any?) {
-
 		guard let selectedArticles = selectedArticles, !selectedArticles.isEmpty else {
 			assertionFailure("Expected toolbarShowShareMenu to be called only when there are selected articles.")
 			return
@@ -371,8 +356,8 @@ extension MainWindowController: SidebarDelegate {
 
 	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?) {
 		// TODO: if searching, cancel search
-		timelineContainerViewController.setRepresentedObjects(selectedObjects, mode: .regular)
-		timelineContainerViewController.showTimeline(.regular)
+		timelineContainerViewController?.setRepresentedObjects(selectedObjects, mode: .regular)
+		timelineContainerViewController?.showTimeline(.regular)
 		updateWindowTitle()
 		NotificationCenter.default.post(name: .InspectableObjectsDidChange, object: nil)
 	}
@@ -426,8 +411,8 @@ private extension MainWindowController {
 		return viewController.children.first as? NSSplitViewController
 	}
 
-	var timelineViewController: TimelineViewController? {
-		return splitViewController?.splitViewItems[1].viewController as? TimelineViewController
+	var currentTimelineViewController: TimelineViewController? {
+		return timelineContainerViewController?.currentTimelineViewController
 	}
 
 	var sidebarSplitViewItem: NSSplitViewItem? {
@@ -439,7 +424,7 @@ private extension MainWindowController {
 	}
 	
 	var selectedArticles: [Article]? {
-		return timelineViewController?.selectedArticles
+		return currentTimelineViewController?.selectedArticles
 	}
 
 	var oneSelectedArticle: Article? {
@@ -457,21 +442,21 @@ private extension MainWindowController {
 
 	func canGoToNextUnread() -> Bool {
 		
-		guard let timelineViewController = timelineViewController, let sidebarViewController = sidebarViewController else {
+		guard let timelineViewController = currentTimelineViewController, let sidebarViewController = sidebarViewController else {
 			return false
 		}
-
+		// TODO: handle search mode
 		return timelineViewController.canGoToNextUnread() || sidebarViewController.canGoToNextUnread()
 	}
 	
 	func canMarkAllAsRead() -> Bool {
 		
-		return timelineViewController?.canMarkAllAsRead() ?? false
+		return currentTimelineViewController?.canMarkAllAsRead() ?? false
 	}
 
 	func validateToggleRead(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
-		let validationStatus = timelineViewController?.markReadCommandStatus() ?? .canDoNothing
+		let validationStatus = currentTimelineViewController?.markReadCommandStatus() ?? .canDoNothing
 		let markingRead: Bool
 		let result: Bool
 		
@@ -502,7 +487,7 @@ private extension MainWindowController {
 
 	func canMarkOlderArticlesAsRead() -> Bool {
 
-		return timelineViewController?.canMarkOlderArticlesAsRead() ?? false
+		return currentTimelineViewController?.canMarkOlderArticlesAsRead() ?? false
 	}
 
 	func canShowShareMenu() -> Bool {
@@ -515,7 +500,7 @@ private extension MainWindowController {
 
 	func validateToggleStarred(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
-		let validationStatus = timelineViewController?.markStarredCommandStatus() ?? .canDoNothing
+		let validationStatus = currentTimelineViewController?.markStarredCommandStatus() ?? .canDoNothing
 		let starring: Bool
 		let result: Bool
 
@@ -551,7 +536,7 @@ private extension MainWindowController {
 
 	func goToNextUnreadInTimeline() {
 
-		guard let timelineViewController = timelineViewController else {
+		guard let timelineViewController = currentTimelineViewController else {
 			return
 		}
 
@@ -563,7 +548,7 @@ private extension MainWindowController {
 
 	func makeTimelineViewFirstResponder() {
 
-		guard let window = window, let timelineViewController = timelineViewController else {
+		guard let window = window, let timelineViewController = currentTimelineViewController else {
 			return
 		}
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(timelineViewController.tableView)
