@@ -13,13 +13,11 @@ import RSWeb
 struct Browser {
 
 	static func open(_ urlString: String) {
-
 		// Opens according to prefs.
 		open(urlString, inBackground: AppDefaults.openInBrowserInBackground)
 	}
 
 	static func open(_ urlString: String, inBackground: Bool) {
-
 		if let url = URL(string: urlString) {
 			MacWebBrowser.openURL(url, inBackground: inBackground)
 		}
