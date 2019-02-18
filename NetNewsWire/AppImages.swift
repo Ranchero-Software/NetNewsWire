@@ -10,7 +10,6 @@ import AppKit
 
 extension NSImage.Name {
 	static let star = NSImage.Name("star")
-	static let unstar = NSImage.Name("unstar")
 	static let timelineStar = NSImage.Name("timelineStar")
 }
 
