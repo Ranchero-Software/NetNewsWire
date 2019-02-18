@@ -38,6 +38,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private static var detailViewMinimumThickness = 384
 	private var sidebarViewController: SidebarViewController!
 	private var timelineContainerViewController: TimelineContainerViewController!
+	private var detailViewController: DetailViewController!
 
 	// MARK: - NSWindowController
 
@@ -71,6 +72,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		timelineContainerViewController = splitViewController?.splitViewItems[1].viewController as? TimelineContainerViewController
 		timelineContainerViewController.delegate = self
+
+		detailViewController = splitViewController?.splitViewItems[2].viewController as? DetailViewController
 
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
 
@@ -208,13 +211,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func scrollOrGoToNextUnread(_ sender: Any?) {
 
-		guard let detailViewController = detailViewController else {
-			return
-		}
-
 		detailViewController.canScrollDown { (canScroll) in
 			NSCursor.setHiddenUntilMouseMoves(true)
-			canScroll ? detailViewController.scrollPageDown(sender) : self.nextUnread(sender)
+			canScroll ? self.detailViewController.scrollPageDown(sender) : self.nextUnread(sender)
 		}
 	}
 
@@ -439,10 +438,6 @@ private extension MainWindowController {
 		return splitViewController?.splitViewItems[2]
 	}
 	
-	var detailViewController: DetailViewController? {
-		return splitViewController?.splitViewItems[2].viewController as? DetailViewController
-	}
-
 	var selectedArticles: [Article]? {
 		return timelineViewController?.selectedArticles
 	}

@@ -117,6 +117,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 		return selectedArticles.count == 1 ? selectedArticles.first : nil
 	}
 
+	private let keyboardDelegate = TimelineKeyboardDelegate()
+
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
@@ -132,7 +134,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 		tableView.target = self
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
-
+		tableView.keyboardDelegate = keyboardDelegate
+		
 		if !didRegisterForNotifications {
 
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
@@ -628,6 +631,8 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	private func postTimelineSelectionDidChangeNotification(_ selectedArticles: ArticleArray?) {
 
+		delegate?.timelineSelectionDidChange(self, selectedArticles: selectedArticles)
+
 		var userInfo = UserInfoDictionary()
 		if let selectedArticles = selectedArticles {
 			userInfo[UserInfoKey.articles] = selectedArticles
@@ -635,6 +640,7 @@ extension TimelineViewController: NSTableViewDelegate {
 		userInfo[UserInfoKey.view] = tableView
 
 		NotificationCenter.default.post(name: .TimelineSelectionDidChange, object: self, userInfo: userInfo)
+
 	}
 
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
