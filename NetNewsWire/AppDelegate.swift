@@ -66,7 +66,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		super.init()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 
 		appDelegate = self
 	}
@@ -230,7 +230,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		let _ = faviconDownloader.favicon(for: feed)
 	}
 
-	@objc func sidebarSelectionDidChange(_ note: Notification) {
+	@objc func inspectableObjectsDidChange(_ note: Notification) {
 
 		guard let inspectorWindowController = inspectorWindowController, inspectorWindowController.isOpen else {
 			return

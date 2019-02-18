@@ -23,10 +23,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private let windowAutosaveName = NSWindow.FrameAutosaveName("MainWindow")
 	static var didPositionWindowOnFirstRun = false
 
-	private var currentFeedOrFolder: AnyObject? = nil {
-		didSet {
-			updateWindowTitle()
+	private var currentFeedOrFolder: AnyObject? {
+		// Nil for none or multiple selection.
+		guard let selectedObjects = selectedObjectsInSidebar(), selectedObjects.count == 1 else {
+			return nil
 		}
+		return selectedObjects.first
 	}
 	
 	private var shareToolbarItem: NSToolbarItem? {
@@ -34,6 +36,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	private static var detailViewMinimumThickness = 384
+	private var sidebarViewController: SidebarViewController!
 
 	// MARK: - NSWindowController
 
@@ -61,6 +64,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		detailSplitViewItem?.minimumThickness = CGFloat(MainWindowController.detailViewMinimumThickness)
 		restoreSplitViewState()
+		sidebarViewController = splitViewController?.splitViewItems[0].viewController as? SidebarViewController
+		sidebarViewController.delegate = self
 
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
 
@@ -68,7 +73,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
+//		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSelectionDidChange(_:)), name: .SidebarSelectionDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
@@ -103,25 +108,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		CoalescingQueue.standard.add(self, #selector(makeToolbarValidate))
 	}
 
-	@objc func sidebarSelectionDidChange(_ note: Notification) {
-		
-		let selectedObjects = selectedObjectsInSidebar()
-		
-		// We can only meaninfully display one feed or folder at a time
-		guard selectedObjects?.count == 1 else {
-			currentFeedOrFolder = nil
-			return
-		}
-		
-		guard selectedObjects?[0] is DisplayNameProvider else {
-			currentFeedOrFolder = nil
-			return
-		}
-		
-		currentFeedOrFolder = selectedObjects?[0]
-		
-	}
-	
 	@objc func unreadCountDidChange(_ note: Notification) {
 		updateWindowTitleIfNecessary(note.object)
 	}
@@ -376,6 +362,17 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 }
 
+// MARK: - SidebarDelegate
+
+extension MainWindowController: SidebarDelegate {
+
+	func selectionDidChange(to selectedObjects: [AnyObject]?) {
+		// TODO: communicate with TimelineViewController
+		updateWindowTitle()
+		NotificationCenter.default.post(name: .InspectableObjectsDidChange, object: nil)
+	}
+}
+
 // MARK: - Scripting Access
 
 /*
@@ -408,10 +405,6 @@ private extension MainWindowController {
 		return viewController.children.first as? NSSplitViewController
 	}
 
-	var sidebarViewController: SidebarViewController? {
-		return splitViewController?.splitViewItems[0].viewController as? SidebarViewController
-	}
-	
 	var timelineViewController: TimelineViewController? {
 		return splitViewController?.splitViewItems[1].viewController as? TimelineViewController
 	}

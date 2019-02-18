@@ -12,10 +12,16 @@ import Articles
 import Account
 import RSCore
 
+protocol SidebarDelegate: class {
+	func selectionDidChange(to: [AnyObject]?)
+}
+
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, NSMenuDelegate, UndoableCommandRunner {
     
 	@IBOutlet var outlineView: SidebarOutlineView!
-	
+
+	weak var delegate: SidebarDelegate?
+
 	let treeControllerDelegate = SidebarTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
@@ -380,14 +386,14 @@ private extension SidebarViewController {
 	}
 
 	func postSidebarSelectionDidChangeNotification(_ selectedObjects: [AnyObject]?) {
-
-		var userInfo = UserInfoDictionary()
-		if let objects = selectedObjects {
-			userInfo[UserInfoKey.objects] = objects
-		}
-		userInfo[UserInfoKey.view] = outlineView
-
-		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: userInfo)
+		delegate?.selectionDidChange(to: selectedObjects)
+//		var userInfo = UserInfoDictionary()
+//		if let objects = selectedObjects {
+//			userInfo[UserInfoKey.objects] = objects
+//		}
+//		userInfo[UserInfoKey.view] = outlineView
+//
+//		NotificationCenter.default.post(name: .SidebarSelectionDidChange, object: self, userInfo: userInfo)
 	}
 
 	func updateUnreadCounts(for objects: [AnyObject]) {
