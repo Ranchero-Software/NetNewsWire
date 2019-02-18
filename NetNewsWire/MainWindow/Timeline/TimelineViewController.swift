@@ -35,7 +35,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 					showFeedNames = false
 				}
 
-				postTimelineSelectionDidChangeNotification(nil)
+				selectionDidChange(nil)
 				fetchArticles()
 				if articles.count > 0 {
 					tableView.scrollRowToVisible(0)
@@ -633,9 +633,8 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	func tableViewSelectionDidChange(_ notification: Notification) {
-
 		if selectedArticles.isEmpty {
-			postTimelineSelectionDidChangeNotification(nil)
+			selectionDidChange(nil)
 			return
 		}
 
@@ -646,30 +645,18 @@ extension TimelineViewController: NSTableViewDelegate {
 			}
 		}
 
-		postTimelineSelectionDidChangeNotification(selectedArticles)
+		selectionDidChange(selectedArticles)
 
 		self.invalidateRestorableState()
 	}
 
-	private func postTimelineSelectionDidChangeNotification(_ selectedArticles: ArticleArray?) {
-
+	private func selectionDidChange(_ selectedArticles: ArticleArray?) {
 		delegate?.timelineSelectionDidChange(self, selectedArticles: selectedArticles)
-
-		var userInfo = UserInfoDictionary()
-		if let selectedArticles = selectedArticles {
-			userInfo[UserInfoKey.articles] = selectedArticles
-		}
-		userInfo[UserInfoKey.view] = tableView
-
-		NotificationCenter.default.post(name: .TimelineSelectionDidChange, object: self, userInfo: userInfo)
-
 	}
 
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
-
 		cell.objectValue = article
 
-//		let favicon = showFeedNames ? article.feed?.smallIcon : nil
 		var avatar = avatarFor(article)
 		if avatar == nil, let feed = article.feed {
 			avatar = appDelegate.faviconDownloader.favicon(for: feed)
@@ -680,7 +667,6 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	private func avatarFor(_ article: Article) -> NSImage? {
-
 		if !showAvatars {
 			return nil
 		}
@@ -700,7 +686,6 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	private func avatarForAuthor(_ author: Author) -> NSImage? {
-
 		return appDelegate.authorAvatarDownloader.image(for: author)
 	}
 
