@@ -461,6 +461,12 @@
                                                 <action selector="debugTestCrashReportSending:" target="Ady-hI-5gd" id="olQ-kb-kkm"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Debug Search" id="9Ot-wC-s5U">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="debugSearch:" target="Ady-hI-5gd" id="HvM-F7-u7s"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

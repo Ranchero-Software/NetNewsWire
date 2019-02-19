@@ -496,6 +496,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		#endif
 	}
 
+	public func debugRunSearch() {
+		#if DEBUG
+			database.fetchArticlesMatching("Brent Simmons") { (articles) in
+				print(articles)
+			}
+		#endif
+	}
+
 	// MARK: - Notifications
 
 	@objc func downloadProgressDidChange(_ note: Notification) {

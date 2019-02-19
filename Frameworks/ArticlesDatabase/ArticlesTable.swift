@@ -79,6 +79,15 @@ final class ArticlesTable: DatabaseTable {
 		return fetchStarredArticles(feedIDs)
 	}
 
+	func fetchArticlesMatching(_ searchString: String, _ resultBlock: @escaping ArticleResultBlock) {
+		queue.fetch { (database) in
+			let articles = self.fetchArticlesMatching(searchString, database)
+			DispatchQueue.main.async {
+				resultBlock(articles)
+			}
+		}
+	}
+
 	// MARK: Updating
 	
 	func update(_ feedID: String, _ parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
@@ -425,6 +434,11 @@ private extension ArticlesTable {
 		return articles
 	}
 
+	func fetchArticlesMatching(_ searchString: String, _ database: FMDatabase) -> Set<Article> {
+		let whereClause = "(starred=1 or dateArrived>?) and userDeleted=0 and (textMatchesSearchString(title,?) or textMatchesSearchString(contentHTML,?) or textMatchesSearchString(contentText,?) or textMatchesSearchString(summary,?))"
+		let parameters: [AnyObject] = [articleCutoffDate as AnyObject, searchString as AnyObject, searchString as AnyObject, searchString as AnyObject, searchString as AnyObject]
+		return self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
+	}
 
 	func articlesWithSQL(_ sql: String, _ parameters: [AnyObject], _ database: FMDatabase) -> Set<Article> {
 

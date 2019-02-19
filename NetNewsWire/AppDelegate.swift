@@ -558,6 +558,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 }
 
+// MARK: - Debug Menu
+extension AppDelegate {
+
+	@IBAction func debugSearch(_ sender: Any?) {
+		AccountManager.shared.localAccount.debugRunSearch()
+	}
+}
+
 private extension AppDelegate {
 
 	func createReaderWindow() -> MainWindowController {

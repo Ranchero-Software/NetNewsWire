@@ -25,7 +25,6 @@ public final class ArticlesDatabase {
 	private let articlesTable: ArticlesTable
 
 	public init(databaseFilePath: String, accountID: String) {
-
 		self.accountID = accountID
 		
 		let queue = RSDatabaseQueue(filepath: databaseFilePath, excludeFromBackup: false)
@@ -43,69 +42,60 @@ public final class ArticlesDatabase {
 	// MARK: - Fetching Articles
 
 	public func fetchArticles(for feedID: String) -> Set<Article> {
-
 		return articlesTable.fetchArticles(feedID)
 	}
 
 	public func fetchArticlesAsync(for feedID: String, _ resultBlock: @escaping ArticleResultBlock) {
-
 		articlesTable.fetchArticlesAsync(feedID, withLimits: true, resultBlock)
 	}
 
 	public func fetchUnreadArticles(for feedIDs: Set<String>) -> Set<Article> {
-		
 		return articlesTable.fetchUnreadArticles(for: feedIDs)
 	}
 
 	public func fetchTodayArticles(for feedIDs: Set<String>) -> Set<Article> {
-		
 		return articlesTable.fetchTodayArticles(for: feedIDs)
 	}
 
 	public func fetchStarredArticles(for feedIDs: Set<String>) -> Set<Article> {
-
 		return articlesTable.fetchStarredArticles(for: feedIDs)
+	}
+
+	public func fetchArticlesMatching(_ searchString: String, _ resultBlock: @escaping ArticleResultBlock) {
+		articlesTable.fetchArticlesMatching(searchString, resultBlock)
 	}
 
 	// MARK: - Unread Counts
 	
 	public func fetchUnreadCounts(for feedIDs: Set<String>, _ completion: @escaping UnreadCountCompletionBlock) {
-
 		articlesTable.fetchUnreadCounts(feedIDs, completion)
 	}
 
 	public func fetchUnreadCount(for feedIDs: Set<String>, since: Date, callback: @escaping (Int) -> Void) {
-
 		articlesTable.fetchUnreadCount(feedIDs, since, callback)
 	}
 
 	public func fetchStarredAndUnreadCount(for feedIDs: Set<String>, callback: @escaping (Int) -> Void) {
-
 		articlesTable.fetchStarredAndUnreadCount(feedIDs, callback)
 	}
 
 	public func fetchAllNonZeroUnreadCounts(_ completion: @escaping UnreadCountCompletionBlock) {
-
 		articlesTable.fetchAllUnreadCounts(completion)
 	}
 
 	// MARK: - Saving and Updating Articles
 
 	public func update(feedID: String, parsedFeed: ParsedFeed, completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
-
 		return articlesTable.update(feedID, parsedFeed, completion)
 	}
 	
 	// MARK: - Status
 	
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {
-
 		return articlesTable.mark(articles, statusKey, flag)
 	}
 
 	public func markEverywhereAsRead() {
-
 		articlesTable.markEverywhereAsRead()
 	}
 }
-
