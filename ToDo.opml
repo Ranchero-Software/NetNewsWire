@@ -8,10 +8,10 @@
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
     <expansionState>0,1,8,13</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>1343</windowTop>
-    <windowLeft>472</windowLeft>
-    <windowRight>1407</windowRight>
-    <windowBottom>2080</windowBottom>
+    <windowTop>1514</windowTop>
+    <windowLeft>478</windowLeft>
+    <windowRight>1413</windowRight>
+    <windowBottom>2251</windowBottom>
   </head>
   <body>
     <outline text="NetNewsWire 5.0 Alpha - Mac">
@@ -31,7 +31,7 @@
         </outline>
       </outline>
       <outline text="Go">
-        <outline text="First Unread in Current Timeline"/>
+        <outline text="Add to bug tracker: First Unread in Current Timeline"/>
       </outline>
     </outline>
     <outline text="Website">
