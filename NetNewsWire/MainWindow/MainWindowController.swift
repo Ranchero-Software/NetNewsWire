@@ -17,7 +17,6 @@ enum TimelineSourceMode {
 
 class MainWindowController : NSWindowController, NSUserInterfaceValidations, NSWindowDelegate {
 
-	@IBOutlet var toolbarDelegate: MainWindowToolbarDelegate?
 	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
 	static var didPositionWindowOnFirstRun = false
@@ -373,6 +372,19 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 			detailState = .noSelection
 		}
 		detailViewController?.setState(detailState, mode: mode)
+	}
+}
+
+// MARK: - NSSearchFieldDelegate
+
+extension MainWindowController: NSSearchFieldDelegate {
+
+	func searchFieldDidStartSearching(_ sender: NSSearchField) {
+		// TODO
+	}
+
+	func searchFieldDidEndSearching(_ sender: NSSearchField) {
+		// TODO
 	}
 }
 

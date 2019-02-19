@@ -19,7 +19,7 @@
                             <allowedToolbarItems>
                                 <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="d4b-Sp-qek"/>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="YMs-P5-Xhn"/>
-                                <toolbarItem implicitItemIdentifier="DD0FA79F-72C1-488B-B113-0D2DE89AA468" label="Search" paletteLabel="Search" toolTip="Search Articles" id="1Ql-WJ-KYi">
+                                <toolbarItem implicitItemIdentifier="DD0FA79F-72C1-488B-B113-0D2DE89AA468" explicitItemIdentifier="search" label="Search" paletteLabel="Search" toolTip="Search Articles" id="1Ql-WJ-KYi">
                                     <size key="minSize" width="96" height="22"/>
                                     <size key="maxSize" width="320" height="28"/>
                                     <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" id="Fcs-4u-xuP">
@@ -183,7 +183,7 @@
                                 <toolbarItem reference="nv0-Ju-lP7"/>
                             </defaultToolbarItems>
                             <connections>
-                                <outlet property="delegate" destination="V3e-nc-6hW" id="ncd-Wh-qZU"/>
+                                <outlet property="delegate" destination="B8D-0N-5wS" id="bgf-8m-klH"/>
                             </connections>
                         </toolbar>
                         <connections>
@@ -191,12 +191,10 @@
                         </connections>
                     </window>
                     <connections>
-                        <outlet property="toolbarDelegate" destination="V3e-nc-6hW" id="0rl-4U-DkU"/>
                         <segue destination="reS-fe-pD8" kind="relationship" relationship="window.shadowedContentViewController" id="WS2-WB-dc4"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <customObject id="V3e-nc-6hW" customClass="MainWindowToolbarDelegate" customModule="NetNewsWire" customModuleProvider="target"/>
             </objects>
             <point key="canvasLocation" x="-666" y="-124"/>
         </scene>
