@@ -6,7 +6,7 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,1,9,10,15</expansionState>
+    <expansionState>0,1,8,13</expansionState>
     <vertScrollState>0</vertScrollState>
     <windowTop>1343</windowTop>
     <windowLeft>472</windowLeft>
@@ -16,8 +16,6 @@
   <body>
     <outline text="NetNewsWire 5.0 Alpha - Mac">
       <outline text="Search">
-        <outline text="Create toolbar search field delegate"/>
-        <outline text="Wire up toolbar search field delegate"/>
         <outline text="Implement delegate methods"/>
         <outline text="Keep track of current mode in MainWindowController"/>
         <outline text="Implement fetch-search in database"/>
@@ -31,6 +29,9 @@
           <outline text="Add toolbar item spec"/>
           <outline text="Account types: syncing, posting — just syncing in 5.0"/>
         </outline>
+      </outline>
+      <outline text="Go">
+        <outline text="First Unread in Current Timeline"/>
       </outline>
     </outline>
     <outline text="Website">
