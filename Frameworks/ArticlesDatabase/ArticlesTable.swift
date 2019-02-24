@@ -21,6 +21,10 @@ final class ArticlesTable: DatabaseTable {
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
 
+	private lazy var searchTable: SearchTable = {
+		return SearchTable(queue: queue, articlesTable: self)
+	}()
+
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	private var articleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	private var maximumArticleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 4 * 31)!
@@ -31,7 +35,7 @@ final class ArticlesTable: DatabaseTable {
 		self.accountID = accountID
 		self.queue = queue
 		self.statusesTable = StatusesTable(queue: queue)
-		
+
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
 		
@@ -88,6 +92,31 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	func fetchArticleSearchInfos(_ articleIDs: Set<String>, in database: FMDatabase) -> Set<ArticleSearchInfo>? {
+		let parameters = articleIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+		let sql = "select articleID, title, contentHTML, contentText, summary, searchRowID from articles where articleID in \(placeholders);";
+
+		if let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) {
+			return resultSet.mapToSet { (row) -> ArticleSearchInfo? in
+				let articleID = row.string(forColumn: DatabaseKey.articleID)!
+				let title = row.string(forColumn: DatabaseKey.title)
+				let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
+				let contentText = row.string(forColumn: DatabaseKey.contentText)
+				let summary = row.string(forColumn: DatabaseKey.summary)
+
+				let searchRowIDObject = row.object(forColumnName: DatabaseKey.searchRowID)
+				var searchRowID: Int? = nil
+				if searchRowIDObject != nil && !(searchRowIDObject is NSNull) {
+					searchRowID = Int(row.longLongInt(forColumn: DatabaseKey.searchRowID))
+				}
+
+				return ArticleSearchInfo(articleID: articleID, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, searchRowID: searchRowID)
+			}
+		}
+		return nil
+	}
+
 	// MARK: Updating
 	
 	func update(_ feedID: String, _ parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
@@ -104,7 +133,8 @@ final class ArticlesTable: DatabaseTable {
 		// 5. Create array of Articles not in database and save them.
 		// 6. Create array of updated Articles and save what’s changed.
 		// 7. Call back with new and updated Articles.
-		
+		// 8. Update search index.
+
 		let articleIDs = Set(parsedFeed.items.map { $0.articleID })
 		
 		self.queue.update { (database) in
@@ -131,6 +161,22 @@ final class ArticlesTable: DatabaseTable {
 			let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
 			
 			self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
+
+			// 8. Update search index.
+			var articlesToIndex = Set<Article>()
+			if let newArticles = newArticles {
+				articlesToIndex.formUnion(newArticles)
+			}
+			if let updatedArticles = updatedArticles {
+				articlesToIndex.formUnion(updatedArticles)
+			}
+			let articleIDs = articlesToIndex.articleIDs()
+			if articleIDs.isEmpty {
+				return
+			}
+			DispatchQueue.main.async() {
+				self.searchTable.ensureIndexedArticles(for: articleIDs)
+			}
 		}
 	}
 
@@ -246,6 +292,26 @@ final class ArticlesTable: DatabaseTable {
 	func markEverywhereAsRead() {
 
 		return statusesTable.markEverywhereAsRead()
+	}
+
+	// MARK: Indexing
+
+	func indexUnindexedArticles() {
+		queue.fetch { (database) in
+			let sql = "select articleID from articles where searchRowID is null limit 500;"
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
+				return
+			}
+			let articleIDs = resultSet.mapToSet{ $0.string(forColumn: DatabaseKey.articleID) }
+			if articleIDs.isEmpty {
+				return
+			}
+			self.searchTable.ensureIndexedArticles(for: articleIDs)
+
+			DispatchQueue.main.async {
+				self.indexUnindexedArticles()
+			}
+		}
 	}
 }
 

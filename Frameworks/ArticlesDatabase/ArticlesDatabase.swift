@@ -38,6 +38,9 @@ public final class ArticlesDatabase {
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;")
 		}
 		queue.vacuumIfNeeded()
+		DispatchQueue.main.async {
+			self.articlesTable.indexUnindexedArticles()
+		}
 	}
 
 	// MARK: - Fetching Articles

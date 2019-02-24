@@ -28,16 +28,17 @@ struct DatabaseArticle: Hashable {
 	let datePublished: Date?
 	let dateModified: Date?
 	let status: ArticleStatus
-	var hashValue: Int {
-		return articleID.hashValue
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(articleID)
 	}
 }
-
 
 extension Set where Element == DatabaseArticle {
 
 	func articleIDs() -> Set<String> {
-
 		return Set<String>(map { $0.articleID })
 	}
 }
