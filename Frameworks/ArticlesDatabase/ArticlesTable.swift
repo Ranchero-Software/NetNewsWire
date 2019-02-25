@@ -501,9 +501,37 @@ private extension ArticlesTable {
 	}
 
 	func fetchArticlesMatching(_ searchString: String, _ database: FMDatabase) -> Set<Article> {
-		let whereClause = "(starred=1 or dateArrived>?) and userDeleted=0 and (textMatchesSearchString(title,?) or textMatchesSearchString(contentHTML,?) or textMatchesSearchString(contentText,?) or textMatchesSearchString(summary,?))"
-		let parameters: [AnyObject] = [articleCutoffDate as AnyObject, searchString as AnyObject, searchString as AnyObject, searchString as AnyObject, searchString as AnyObject]
-		return self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
+		let sql = "select rowid from search where search match ?;"
+		let sqlSearchString = sqliteSearchString(with: searchString)
+		let searchStringParameters = [sqlSearchString]
+		guard let resultSet = database.executeQuery(sql, withArgumentsIn: searchStringParameters) else {
+			return Set<Article>()
+		}
+		let searchRowIDs = resultSet.mapToSet { $0.longLongInt(forColumn: DatabaseKey.rowID) }
+		resultSet.close()
+		if searchRowIDs.isEmpty {
+			return Set<Article>()
+		}
+
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))!
+		let whereClause = "searchRowID in \(placeholders);"
+		let parameters: [AnyObject] = Array(searchRowIDs) as [AnyObject]
+		return self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
+	}
+
+	func sqliteSearchString(with searchString: String) -> String {
+		var s = ""
+		searchString.enumerateSubstrings(in: searchString.startIndex..<searchString.endIndex, options: .byWords) { (word, range, enclosingRange, stop) in
+			guard let word = word else {
+				return
+			}
+			s += word
+			if s != "AND" && s != "OR" {
+				s += "*"
+			}
+			s += " "
+		}
+		return s
 	}
 
 	func articlesWithSQL(_ sql: String, _ parameters: [AnyObject], _ database: FMDatabase) -> Set<Article> {
