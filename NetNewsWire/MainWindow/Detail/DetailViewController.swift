@@ -52,6 +52,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		webViewController(for: mode).state = state
 	}
 
+	func showDetail(for mode: TimelineSourceMode) {
+		currentWebViewController = webViewController(for: mode)
+	}
+
 	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
 		currentWebViewController.canScrollDown(callback)
 	}

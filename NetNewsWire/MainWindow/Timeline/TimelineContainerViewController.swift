@@ -39,7 +39,7 @@ final class TimelineContainerViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setRepresentedObjects(nil, mode: .regular)
-		showTimeline(.regular)
+		showTimeline(for: .regular)
     }
 
 	// MARK: - API
@@ -48,7 +48,7 @@ final class TimelineContainerViewController: NSViewController {
 		timelineViewController(for: mode).representedObjects = objects
 	}
 
-	func showTimeline(_ mode: TimelineSourceMode) {
+	func showTimeline(for mode: TimelineSourceMode) {
 		currentTimelineViewController = timelineViewController(for: mode)
 	}
 }

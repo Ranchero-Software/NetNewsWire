@@ -37,6 +37,16 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations, NSW
 	private var sidebarViewController: SidebarViewController?
 	private var timelineContainerViewController: TimelineContainerViewController?
 	private var detailViewController: DetailViewController?
+	private var currentSearchField: NSSearchField? = nil
+	private var searchString: String? = nil
+	private var lastSentSearchString: String? = nil
+	private var timelineSourceMode: TimelineSourceMode = .regular {
+		didSet {
+			timelineContainerViewController?.showTimeline(for: timelineSourceMode)
+			detailViewController?.showDetail(for: timelineSourceMode)
+		}
+	}
+	private var searchSmartFeed: SmartFeed? = nil
 
 	// MARK: - NSWindowController
 
@@ -353,7 +363,7 @@ extension MainWindowController: SidebarDelegate {
 	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?) {
 		// TODO: if searching, cancel search
 		timelineContainerViewController?.setRepresentedObjects(selectedObjects, mode: .regular)
-		timelineContainerViewController?.showTimeline(.regular)
+		forceSearchToEnd()
 		updateWindowTitle()
 		NotificationCenter.default.post(name: .InspectableObjectsDidChange, object: nil)
 	}
@@ -380,11 +390,61 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 extension MainWindowController: NSSearchFieldDelegate {
 
 	func searchFieldDidStartSearching(_ sender: NSSearchField) {
-		// TODO
+		startSearchingIfNeeded()
 	}
 
 	func searchFieldDidEndSearching(_ sender: NSSearchField) {
-		// TODO
+		stopSearchingIfNeeded()
+	}
+
+	@IBAction func runSearch(_ sender: NSSearchField) {
+		if sender.stringValue == "" {
+			return
+		}
+		startSearchingIfNeeded()
+		handleSearchFieldTextChange(sender)
+	}
+
+	private func handleSearchFieldTextChange(_ searchField: NSSearchField) {
+		let s = searchField.stringValue
+		if s == searchString {
+			return
+		}
+		searchString = s
+		updateSmartFeed()
+	}
+
+	func updateSmartFeed() {
+		guard timelineSourceMode == .search, let searchString = searchString else {
+			return
+		}
+		if searchString == lastSentSearchString {
+			return
+		}
+		lastSentSearchString = searchString
+		let smartFeed = SmartFeed(delegate: SearchFeedDelegate(searchString: searchString))
+		timelineContainerViewController?.setRepresentedObjects([smartFeed], mode: .search)
+		searchSmartFeed = smartFeed
+	}
+
+	func forceSearchToEnd() {
+		timelineSourceMode = .regular
+		searchString = nil
+		lastSentSearchString = nil
+		if let searchField = currentSearchField {
+			searchField.stringValue = ""
+		}
+	}
+
+	private func startSearchingIfNeeded() {
+		timelineSourceMode = .search
+	}
+
+	private func stopSearchingIfNeeded() {
+		searchString = nil
+		lastSentSearchString = nil
+		timelineSourceMode = .regular
+		timelineContainerViewController?.setRepresentedObjects(nil, mode: .search)
 	}
 }
 
@@ -407,6 +467,47 @@ extension MainWindowController : ScriptingMainWindowController {
     internal var scriptingSelectedArticles: [Article] {
         return self.selectedArticles ?? []
     }
+}
+
+// MARK: - NSToolbarDelegate
+
+extension NSToolbarItem.Identifier {
+	static let Share = NSToolbarItem.Identifier("share")
+	static let Search = NSToolbarItem.Identifier("search")
+}
+
+extension MainWindowController: NSToolbarDelegate {
+
+	func toolbarWillAddItem(_ notification: Notification) {
+		guard let item = notification.userInfo?["item"] as? NSToolbarItem else {
+			return
+		}
+
+		if item.itemIdentifier == .Share, let button = item.view as? NSButton {
+			// The share button should send its action on mouse down, not mouse up.
+			button.sendAction(on: .leftMouseDown)
+		}
+
+		if item.itemIdentifier == .Search, let searchField = item.view as? NSSearchField {
+			searchField.delegate = self
+			searchField.target = self
+			searchField.action = #selector(runSearch(_:))
+			currentSearchField = searchField
+		}
+	}
+
+	func toolbarDidRemoveItem(_ notification: Notification) {
+		guard let item = notification.userInfo?["item"] as? NSToolbarItem else {
+			return
+		}
+
+		if item.itemIdentifier == .Search, let searchField = item.view as? NSSearchField {
+			searchField.delegate = nil
+			searchField.target = nil
+			searchField.action = nil
+			currentSearchField = nil
+		}
+	}
 }
 
 // MARK: - Private
