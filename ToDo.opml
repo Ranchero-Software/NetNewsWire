@@ -6,22 +6,15 @@
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,1,8,13</expansionState>
+    <expansionState>0,1,2,7</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>1514</windowTop>
-    <windowLeft>478</windowLeft>
-    <windowRight>1413</windowRight>
-    <windowBottom>2251</windowBottom>
+    <windowTop>1586</windowTop>
+    <windowLeft>448</windowLeft>
+    <windowRight>1383</windowRight>
+    <windowBottom>2323</windowBottom>
   </head>
   <body>
     <outline text="NetNewsWire 5.0 Alpha - Mac">
-      <outline text="Search">
-        <outline text="Implement delegate methods"/>
-        <outline text="Keep track of current mode in MainWindowController"/>
-        <outline text="Implement fetch-search in database"/>
-        <outline text="Swap timeline and detail view on begin search"/>
-        <outline text="Swap back timeline and detail view on end search"/>
-      </outline>
       <outline text="Preferences">
         <outline text="Account preferences">
           <outline text="Create view controller"/>
