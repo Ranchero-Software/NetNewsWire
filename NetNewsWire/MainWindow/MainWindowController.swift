@@ -195,8 +195,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations, NSW
 			return canShowShareMenu()
 		}
 
-		if item.action == #selector(toggleSidebar(_:)) {
+		if item.action == #selector(moveFocusToSearchField(_:)) {
+			return currentSearchField != nil
+		}
 
+		if item.action == #selector(toggleSidebar(_:)) {
 			guard let splitViewItem = sidebarSplitViewItem else {
 				return false
 			}
@@ -354,6 +357,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations, NSW
 		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
 	}
 
+	@IBAction func moveFocusToSearchField(_ sender: Any?) {
+		guard let searchField = currentSearchField else {
+			return
+		}
+		window?.makeFirstResponder(searchField)
+	}
 }
 
 // MARK: - SidebarDelegate
