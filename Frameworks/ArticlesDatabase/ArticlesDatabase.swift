@@ -65,8 +65,8 @@ public final class ArticlesDatabase {
 		return articlesTable.fetchStarredArticles(for: feedIDs)
 	}
 
-	public func fetchArticlesMatching(_ searchString: String, _ resultBlock: @escaping ArticleResultBlock) {
-		articlesTable.fetchArticlesMatching(searchString, resultBlock)
+	public func fetchArticlesMatching(_ searchString: String, for feedIDs: Set<String>) -> Set<Article> {
+		return articlesTable.fetchArticlesMatching(searchString, for: feedIDs)
 	}
 
 	// MARK: - Unread Counts

@@ -388,6 +388,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return database.fetchStarredArticles(for: flattenedFeeds().feedIDs())
 	}
 
+	public func fetchArticlesMatching(_ searchString: String) -> Set<Article> {
+		return database.fetchArticlesMatching(searchString, for: flattenedFeeds().feedIDs())
+	}
+
 	private func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
 
 		// articles must contain all the unread articles for the feed.
@@ -498,9 +502,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func debugRunSearch() {
 		#if DEBUG
-			database.fetchArticlesMatching("Brent Simmons") { (articles) in
-				print(articles)
-			}
+			let t1 = Date()
+			let articles = fetchArticlesMatching("Brent NetNewsWire")
+			let t2 = Date()
+			print(t2.timeIntervalSince(t1))
+			print(articles.count)
 		#endif
 	}
 

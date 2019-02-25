@@ -83,13 +83,13 @@ final class ArticlesTable: DatabaseTable {
 		return fetchStarredArticles(feedIDs)
 	}
 
-	func fetchArticlesMatching(_ searchString: String, _ resultBlock: @escaping ArticleResultBlock) {
-		queue.fetch { (database) in
-			let articles = self.fetchArticlesMatching(searchString, database)
-			DispatchQueue.main.async {
-				resultBlock(articles)
-			}
+	func fetchArticlesMatching(_ searchString: String, for feedIDs: Set<String>) -> Set<Article> {
+		var articles: Set<Article> = Set<Article>()
+		queue.fetchSync { (database) in
+			articles = self.fetchArticlesMatching(searchString, database)
 		}
+		articles = articles.filter{ feedIDs.contains($0.feedID) }
+		return articles
 	}
 
 	func fetchArticleSearchInfos(_ articleIDs: Set<String>, in database: FMDatabase) -> Set<ArticleSearchInfo>? {

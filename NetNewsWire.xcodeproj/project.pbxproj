@@ -219,6 +219,8 @@
 		84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* FeedInspectorViewController.swift */; };
 		84754C8A213E471B009CFDFB /* GeneralPrefencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84754C89213E471B009CFDFB /* GeneralPrefencesViewController.swift */; };
+		8477ACBE22238E9500DF7F37 /* SearchFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */; };
+		8477ACBF22238E9500DF7F37 /* SearchFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */; };
 		848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848B937121C8C5540038DC0D /* CrashReporter.swift */; };
 		848D578E21543519005FFAD5 /* PasteboardFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848D578D21543519005FFAD5 /* PasteboardFeed.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
@@ -809,6 +811,7 @@
 		8472058020142E8900AD578B /* FeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedInspectorViewController.swift; sourceTree = "<group>"; };
 		84754C89213E471B009CFDFB /* GeneralPrefencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GeneralPrefencesViewController.swift; path = NetNewsWire/Preferences/GeneralPrefencesViewController.swift; sourceTree = "<group>"; };
 		847752FE2008879500D93690 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
+		8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFeedDelegate.swift; sourceTree = "<group>"; };
 		848B930921C8B0BF0038DC0D /* Subscribe-to-Feed-MAS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Subscribe-to-Feed-MAS-Info.plist"; sourceTree = "<group>"; };
 		848B937121C8C5540038DC0D /* CrashReporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrashReporter.swift; sourceTree = "<group>"; };
 		848D578D21543519005FFAD5 /* PasteboardFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardFeed.swift; sourceTree = "<group>"; };
@@ -1609,6 +1612,7 @@
 				845EE7C01FC2488C00854A1F /* SmartFeed.swift */,
 				84F2D5361FC22FCB00998D64 /* TodayFeedDelegate.swift */,
 				845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */,
+				8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */,
 				84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */,
 			);
 			name = SmartFeeds;
@@ -2405,6 +2409,7 @@
 				840F7C4621BDA4B40057E851 /* SendToMicroBlogCommand.swift in Sources */,
 				840F7C4721BDA4B40057E851 /* ArticleStyle.swift in Sources */,
 				840F7C4821BDA4B40057E851 /* FaviconURLFinder.swift in Sources */,
+				8477ACBF22238E9500DF7F37 /* SearchFeedDelegate.swift in Sources */,
 				840F7C4921BDA4B40057E851 /* SidebarViewController+ContextualMenus.swift in Sources */,
 				840F7C4A21BDA4B40057E851 /* RSHTMLMetadata+Extension.swift in Sources */,
 				840F7C4B21BDA4B40057E851 /* SendToMarsEditCommand.swift in Sources */,
@@ -2542,6 +2547,7 @@
 				84E8E0DB202EC49300562D8F /* TimelineViewController+ContextualMenus.swift in Sources */,
 				849A97791ED9EC04007D329B /* TimelineStringFormatter.swift in Sources */,
 				84E185C3203BB12600F69BFA /* MultilineTextFieldSizer.swift in Sources */,
+				8477ACBE22238E9500DF7F37 /* SearchFeedDelegate.swift in Sources */,
 				8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* FolderPasteboardWriter.swift in Sources */,
 				84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */,
