@@ -53,6 +53,7 @@ struct AppDefaults {
 		static let timelineSortDirection = "timelineSortDirection"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
+		static let mainWindowWidths = "mainWindowWidths"
 		static let refreshInterval = "refreshInterval"
 
 		// Hidden prefs
@@ -119,6 +120,15 @@ struct AppDefaults {
 		}
 	}
 
+	static var mainWindowWidths: [Int]? {
+		get {
+			return UserDefaults.standard.object(forKey: Key.mainWindowWidths) as? [Int]
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.mainWindowWidths)
+		}
+	}
+
 	static var refreshInterval: RefreshInterval {
 		get {
 			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
@@ -144,7 +154,9 @@ struct AppDefaults {
 		// to NetNewsWire preserving this state, we'll force the preference on. If this becomes
 		// an issue, this could be changed to proactively look for whether the default has been
 		// set _by the user_ to false, and respect that default if it is so-set.
-		UserDefaults.standard.set(true, forKey: "NSQuitAlwaysKeepsWindows")
+//		UserDefaults.standard.set(true, forKey: "NSQuitAlwaysKeepsWindows")
+
+		// TODO: revisit the above when coming back to state restoration issues.
 	}
 
 	static func actualFontSize(for fontSize: FontSize) -> CGFloat {

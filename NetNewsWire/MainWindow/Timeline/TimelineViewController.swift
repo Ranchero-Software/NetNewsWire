@@ -156,23 +156,23 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	// MARK: State Restoration
 
-	private static let stateRestorationSelectedArticles = "selectedArticles"
-
-	override func encodeRestorableState(with coder: NSCoder) {
-
-		super.encodeRestorableState(with: coder)
-
-		coder.encode(self.selectedArticleIDs(), forKey: TimelineViewController.stateRestorationSelectedArticles)
-	}
-
-	override func restoreState(with coder: NSCoder) {
-
-		super.restoreState(with: coder)
-
-		if let restoredArticleIDs = (try? coder.decodeTopLevelObject(forKey: TimelineViewController.stateRestorationSelectedArticles)) as? [String] {
-			self.restoreSelection(restoredArticleIDs)
-		}
-	}
+//	private static let stateRestorationSelectedArticles = "selectedArticles"
+//
+//	override func encodeRestorableState(with coder: NSCoder) {
+//
+//		super.encodeRestorableState(with: coder)
+//
+//		coder.encode(self.selectedArticleIDs(), forKey: TimelineViewController.stateRestorationSelectedArticles)
+//	}
+//
+//	override func restoreState(with coder: NSCoder) {
+//
+//		super.restoreState(with: coder)
+//
+//		if let restoredArticleIDs = (try? coder.decodeTopLevelObject(forKey: TimelineViewController.stateRestorationSelectedArticles)) as? [String] {
+//			self.restoreSelection(restoredArticleIDs)
+//		}
+//	}
 
 	// MARK: Appearance Change
 
@@ -647,7 +647,7 @@ extension TimelineViewController: NSTableViewDelegate {
 
 		selectionDidChange(selectedArticles)
 
-		self.invalidateRestorableState()
+//		self.invalidateRestorableState()
 	}
 
 	private func selectionDidChange(_ selectedArticles: ArticleArray?) {

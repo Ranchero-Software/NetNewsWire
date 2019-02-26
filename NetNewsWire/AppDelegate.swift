@@ -584,6 +584,7 @@ private extension AppDelegate {
 	func saveState() {
 
 		inspectorWindowController?.saveState()
+		mainWindowController?.saveState()
 	}
 
 	func updateSortMenuItems() {
