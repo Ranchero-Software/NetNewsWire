@@ -508,7 +508,6 @@ private extension ArticlesTable {
 			return Set<Article>()
 		}
 		let searchRowIDs = resultSet.mapToSet { $0.longLongInt(forColumn: DatabaseKey.rowID) }
-		resultSet.close()
 		if searchRowIDs.isEmpty {
 			return Set<Article>()
 		}
