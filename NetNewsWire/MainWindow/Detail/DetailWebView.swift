@@ -11,6 +11,17 @@ import WebKit
 
 final class DetailWebView: WKWebView {
 
+	weak var keyboardDelegate: KeyboardDelegate?
+	
+	// MARK: - NSResponder
+	
+	override func keyDown(with event: NSEvent) {
+		if keyboardDelegate?.keydown(event, in: self) ?? false {
+			return
+		}
+		super.keyDown(with: event)
+	}
+
 	// MARK: NSView
 
 	override func willOpenMenu(_ menu: NSMenu, with event: NSEvent) {

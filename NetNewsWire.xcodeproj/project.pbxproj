@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5127B2052229E07B006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B2032229E07B006D641D /* DetailKeyboardDelegate.swift */; };
+		5127B2062229E07B006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B2032229E07B006D641D /* DetailKeyboardDelegate.swift */; };
+		5127B2072229E07B006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B2042229E07B006D641D /* DetailKeyboardShortcuts.plist */; };
+		5127B2082229E07B006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B2042229E07B006D641D /* DetailKeyboardShortcuts.plist */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
@@ -729,6 +733,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5127B2032229E07B006D641D /* DetailKeyboardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailKeyboardDelegate.swift; sourceTree = "<group>"; };
+		5127B2042229E07B006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderTreeMenu.swift; path = AddFeed/FolderTreeMenu.swift; sourceTree = "<group>"; };
 		51EC1194214A94AC00B296E3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = NetNewsWire/Base.lproj/AddFeedFromListSheet.xib; sourceTree = SOURCE_ROOT; };
@@ -1029,6 +1035,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5127B1F62229DFED006D641D /* Keyboard */ = {
+			isa = PBXGroup;
+			children = (
+				5127B2032229E07B006D641D /* DetailKeyboardDelegate.swift */,
+				5127B2042229E07B006D641D /* DetailKeyboardShortcuts.plist */,
+			);
+			path = Keyboard;
+			sourceTree = "<group>";
+		};
 		6581C73620CED60100F4AD34 /* Safari Extension */ = {
 			isa = PBXGroup;
 			children = (
@@ -1343,6 +1358,7 @@
 				84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */,
 				849A979A1ED9EFEB007D329B /* styleSheet.css */,
 				849A979B1ED9EFEB007D329B /* template.html */,
+				5127B1F62229DFED006D641D /* Keyboard */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -1899,8 +1915,8 @@
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
@@ -1920,8 +1936,8 @@
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					840F7C0A21BDA4B40057E851 = {
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -1929,13 +1945,13 @@
 						};
 					};
 					840F7CC221BF58890057E851 = {
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -1944,7 +1960,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -2218,6 +2234,7 @@
 				840F7CA321BDA4B40057E851 /* MainWindow.storyboard in Resources */,
 				840F7CA521BDA4B40057E851 /* styleSheet.css in Resources */,
 				840F7CA621BDA4B40057E851 /* Preferences.storyboard in Resources */,
+				5127B2082229E07B006D641D /* DetailKeyboardShortcuts.plist in Resources */,
 				840F7CC121BDAD2C0057E851 /* Credits.rtf in Resources */,
 				840F7CA721BDA4B40057E851 /* RenameSheet.xib in Resources */,
 				840F7CA821BDA4B40057E851 /* Inspector.storyboard in Resources */,
@@ -2243,6 +2260,7 @@
 				849A97951ED9EF7A007D329B /* IndeterminateProgressWindow.xib in Resources */,
 				844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */,
 				849A978F1ED9EE72007D329B /* DefaultFeeds.plist in Resources */,
+				5127B2072229E07B006D641D /* DetailKeyboardShortcuts.plist in Resources */,
 				845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */,
 				849A979D1ED9EFEB007D329B /* template.html in Resources */,
 				849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */,
@@ -2382,6 +2400,7 @@
 				840F7C2F21BDA4B40057E851 /* SidebarCellLayout.swift in Sources */,
 				840F7C3021BDA4B40057E851 /* SmartFeedPasteboardWriter.swift in Sources */,
 				840F7C3121BDA4B40057E851 /* SmartFeedsController.swift in Sources */,
+				5127B2062229E07B006D641D /* DetailKeyboardDelegate.swift in Sources */,
 				840F7C3221BDA4B40057E851 /* SidebarViewController.swift in Sources */,
 				840F7C3321BDA4B40057E851 /* SidebarOutlineView.swift in Sources */,
 				840F7C3421BDA4B40057E851 /* Author+Scriptability.swift in Sources */,
@@ -2508,6 +2527,7 @@
 				84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */,
 				849A97661ED9EB96007D329B /* SidebarViewController.swift in Sources */,
 				849A97641ED9EB96007D329B /* SidebarOutlineView.swift in Sources */,
+				5127B2052229E07B006D641D /* DetailKeyboardDelegate.swift in Sources */,
 				8405DD9922153B6B008CE1BF /* TimelineContainerView.swift in Sources */,
 				D5A2678C20130ECF00A8D3C0 /* Author+Scriptability.swift in Sources */,
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
