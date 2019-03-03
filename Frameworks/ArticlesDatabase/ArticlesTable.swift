@@ -507,7 +507,7 @@ private extension ArticlesTable {
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: searchStringParameters) else {
 			return Set<Article>()
 		}
-		let searchRowIDs = resultSet.mapToSet { $0.longLongInt(forColumn: DatabaseKey.rowID) }
+		let searchRowIDs = resultSet.mapToSet { $0.longLongInt(forColumnIndex: 0) }
 		if searchRowIDs.isEmpty {
 			return Set<Article>()
 		}
