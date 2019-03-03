@@ -513,7 +513,7 @@ private extension ArticlesTable {
 		}
 
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))!
-		let whereClause = "searchRowID in \(placeholders);"
+		let whereClause = "searchRowID in \(placeholders)"
 		let parameters: [AnyObject] = Array(searchRowIDs) as [AnyObject]
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
 	}
