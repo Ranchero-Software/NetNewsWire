@@ -40,31 +40,30 @@ extension Article {
 		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, attachments: attachments, status: status)
 	}
 
-	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: NSMutableDictionary) {
-		
+	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
 		if self[keyPath: comparisonKeyPath] != otherArticle[keyPath: comparisonKeyPath] {
-			dictionary.addOptionalStringDefaultingEmpty(self[keyPath: comparisonKeyPath], key)
+			dictionary[key] = self[keyPath: comparisonKeyPath] ?? ""
 		}
 	}
 	
-	func changesFrom(_ existingArticle: Article) -> NSDictionary? {
+	func changesFrom(_ existingArticle: Article) -> DatabaseDictionary? {
 		if self == existingArticle {
 			return nil
 		}
 		
-		let d = NSMutableDictionary()
+		var d = DatabaseDictionary()
 		if uniqueID != existingArticle.uniqueID {
 			d[DatabaseKey.uniqueID] = uniqueID
 		}
 
-		addPossibleStringChangeWithKeyPath(\Article.title, existingArticle, DatabaseKey.title, d)
-		addPossibleStringChangeWithKeyPath(\Article.contentHTML, existingArticle, DatabaseKey.contentHTML, d)
-		addPossibleStringChangeWithKeyPath(\Article.contentText, existingArticle, DatabaseKey.contentText, d)
-		addPossibleStringChangeWithKeyPath(\Article.url, existingArticle, DatabaseKey.url, d)
-		addPossibleStringChangeWithKeyPath(\Article.externalURL, existingArticle, DatabaseKey.externalURL, d)
-		addPossibleStringChangeWithKeyPath(\Article.summary, existingArticle, DatabaseKey.summary, d)
-		addPossibleStringChangeWithKeyPath(\Article.imageURL, existingArticle, DatabaseKey.imageURL, d)
-		addPossibleStringChangeWithKeyPath(\Article.bannerImageURL, existingArticle, DatabaseKey.bannerImageURL, d)
+		addPossibleStringChangeWithKeyPath(\Article.title, existingArticle, DatabaseKey.title, &d)
+		addPossibleStringChangeWithKeyPath(\Article.contentHTML, existingArticle, DatabaseKey.contentHTML, &d)
+		addPossibleStringChangeWithKeyPath(\Article.contentText, existingArticle, DatabaseKey.contentText, &d)
+		addPossibleStringChangeWithKeyPath(\Article.url, existingArticle, DatabaseKey.url, &d)
+		addPossibleStringChangeWithKeyPath(\Article.externalURL, existingArticle, DatabaseKey.externalURL, &d)
+		addPossibleStringChangeWithKeyPath(\Article.summary, existingArticle, DatabaseKey.summary, &d)
+		addPossibleStringChangeWithKeyPath(\Article.imageURL, existingArticle, DatabaseKey.imageURL, &d)
+		addPossibleStringChangeWithKeyPath(\Article.bannerImageURL, existingArticle, DatabaseKey.bannerImageURL, &d)
 
 		// If updated versions of dates are nil, and we have existing dates, keep the existing dates.
 		// This is data that’s good to have, and it’s likely that a feed removing dates is doing so in error.
@@ -91,27 +90,44 @@ extension Article {
 
 extension Article: DatabaseObject {
 
-	public func databaseDictionary() -> NSDictionary? {
-
-		let d = NSMutableDictionary()
+	public func databaseDictionary() -> DatabaseDictionary? {
+		var d = DatabaseDictionary()
 
 		d[DatabaseKey.articleID] = articleID
 		d[DatabaseKey.feedID] = feedID
 		d[DatabaseKey.uniqueID] = uniqueID
 
-		d.addOptionalString(title, DatabaseKey.title)
-		d.addOptionalString(contentHTML, DatabaseKey.contentHTML)
-		d.addOptionalString(contentText, DatabaseKey.contentText)
-		d.addOptionalString(url, DatabaseKey.url)
-		d.addOptionalString(externalURL, DatabaseKey.externalURL)
-		d.addOptionalString(summary, DatabaseKey.summary)
-		d.addOptionalString(imageURL, DatabaseKey.imageURL)
-		d.addOptionalString(bannerImageURL, DatabaseKey.bannerImageURL)
-
-		d.addOptionalDate(datePublished, DatabaseKey.datePublished)
-		d.addOptionalDate(dateModified, DatabaseKey.dateModified)
-
-		return (d.copy() as! NSDictionary)
+		if let title = title {
+			d[DatabaseKey.title] = title
+		}
+		if let contentHTML = contentHTML {
+			d[DatabaseKey.contentHTML] = contentHTML
+		}
+		if let contentText = contentText {
+			d[DatabaseKey.contentText] = contentText
+		}
+		if let url = url {
+			d[DatabaseKey.url] = url
+		}
+		if let externalURL = externalURL {
+			d[DatabaseKey.externalURL] = externalURL
+		}
+		if let summary = summary {
+			d[DatabaseKey.summary] = summary
+		}
+		if let imageURL = imageURL {
+			d[DatabaseKey.imageURL] = imageURL
+		}
+		if let bannerImageURL = bannerImageURL {
+			d[DatabaseKey.bannerImageURL] = bannerImageURL
+		}
+		if let datePublished = datePublished {
+			d[DatabaseKey.datePublished] = datePublished
+		}
+		if let dateModified = dateModified {
+			d[DatabaseKey.dateModified] = dateModified
+		}
+		return d
 	}
 	
 	public var databaseID: String {
@@ -160,35 +176,8 @@ extension Set where Element == Article {
 		return self.map{ $0 as DatabaseObject }
 	}
 
-	func databaseDictionaries() -> [NSDictionary]? {
+	func databaseDictionaries() -> [DatabaseDictionary]? {
 
 		return self.compactMap { $0.databaseDictionary() }
-	}
-}
-
-private extension NSMutableDictionary {
-
-	func addOptionalString(_ value: String?, _ key: String) {
-
-		if let value = value {
-			self[key] = value
-		}
-	}
-
-	func addOptionalStringDefaultingEmpty(_ value: String?, _ key: String) {
-		
-		if let value = value {
-			self[key] = value
-		}
-		else {
-			self[key] = ""
-		}
-	}
-	
-	func addOptionalDate(_ date: Date?, _ key: String) {
-
-		if let date = date {
-			self[key] = date as NSDate
-		}
 	}
 }

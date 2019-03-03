@@ -108,9 +108,11 @@ private extension SearchTable {
 	}
 
 	func insert(_ article: ArticleSearchInfo, _ database: FMDatabase) -> Int {
-		let rowDictionary = NSMutableDictionary()
-		rowDictionary.setObject(article.title ?? "", forKey: DatabaseKey.title as NSString)
-		rowDictionary.setObject(article.bodyForIndex, forKey: DatabaseKey.body as NSString)
+		let rowDictionary: DatabaseDictionary = [DatabaseKey.body: article.bodyForIndex, DatabaseKey.title: article.title ?? ""]
+//		rowDictionary[DatabaseKey.title] = article.title ?? ""
+//		rowDictionary[DatabaseKey.body] = article.bodyForIndex
+//		rowDictionary.setObject(article.title ?? "", forKey: DatabaseKey.title as NSString)
+//		rowDictionary.setObject(article.bodyForIndex, forKey: DatabaseKey.body as NSString)
 		insertRow(rowDictionary, insertType: .normal, in: database)
 		return Int(database.lastInsertRowId())
 	}
@@ -168,12 +170,12 @@ private extension SearchTable {
 			return
 		}
 
-		let updateDictionary = NSMutableDictionary()
+		var updateDictionary = DatabaseDictionary()
 		if title != searchInfo.title {
-			updateDictionary.setObject(title, forKey: DatabaseKey.title as NSString)
+			updateDictionary[DatabaseKey.title] = title
 		}
 		if article.bodyForIndex != searchInfo.body {
-			updateDictionary.setObject(article.bodyForIndex, forKey: DatabaseKey.body as NSString)
+			updateDictionary[DatabaseKey.body] = article.bodyForIndex
 		}
 		updateRowsWithDictionary(updateDictionary, whereKey: DatabaseKey.rowID, matches: searchInfo.rowID, database: database)
 	}
