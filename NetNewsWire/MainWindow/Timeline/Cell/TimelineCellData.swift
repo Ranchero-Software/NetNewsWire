@@ -22,7 +22,7 @@ struct TimelineCellData {
 	let read: Bool
 	let starred: Bool
 
-	init(article: Article, appearance: TimelineCellAppearance, showFeedName: Bool, feedName: String?, avatar: NSImage?, showAvatar: Bool, featuredImage: NSImage?) {
+	init(article: Article, showFeedName: Bool, feedName: String?, avatar: NSImage?, showAvatar: Bool, featuredImage: NSImage?) {
 
 		self.title = TimelineStringFormatter.truncatedTitle(article)
 		self.text = TimelineStringFormatter.truncatedSummary(article)
@@ -47,7 +47,6 @@ struct TimelineCellData {
 	}
 
 	init() { //Empty
-		
 		self.title = ""
 		self.text = ""
 		self.dateString = ""
