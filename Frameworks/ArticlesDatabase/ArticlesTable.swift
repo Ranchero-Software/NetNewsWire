@@ -515,7 +515,7 @@ private extension ArticlesTable {
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))!
 		let whereClause = "searchRowID in \(placeholders);"
 		let parameters: [AnyObject] = Array(searchRowIDs) as [AnyObject]
-		return self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
 	}
 
 	func sqliteSearchString(with searchString: String) -> String {
