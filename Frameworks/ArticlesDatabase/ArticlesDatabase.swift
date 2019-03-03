@@ -35,6 +35,7 @@ public final class ArticlesDatabase {
 			if !self.articlesTable.containsColumn("searchRowID", in: database) {
 				database.executeStatements("ALTER TABLE articles add column searchRowID INTEGER;")
 			}
+			database.executeStatements("CREATE INDEX if not EXISTS articles_searchRowID on articles(searchRowID);")
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;")
 		}
 		queue.vacuumIfNeeded()
