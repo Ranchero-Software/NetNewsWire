@@ -369,15 +369,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	func focus() {
-
+		
 		guard let window = tableView.window else {
 			return
 		}
-
+		
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(tableView)
-		if !hasAtLeastOneSelectedArticle && articles.count > 0 {
-			tableView.rs_selectRowAndScrollToVisible(0)
-		}
 	}
 
 	// MARK: - Notifications
