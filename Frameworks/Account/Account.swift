@@ -71,7 +71,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
 
 	private let settingsODB: ODB
-	private let settingsTable: ODBTable
 	private let feedsPath: ODBPath
 	private let feedsTable: ODBTable
 
@@ -141,8 +140,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		let settingsODBFilePath = (dataFolder as NSString).appendingPathComponent("Settings.odb")
 		self.settingsODB = ODB(filepath: settingsODBFilePath)
 		self.settingsODB.vacuum()
-		let settingsPath = ODBPath.path(["settings"])
-		self.settingsTable = settingsODB.ensureTable(settingsPath)!
 		self.feedsPath = ODBPath.path(["feeds"])
 		self.feedsTable = settingsODB.ensureTable(self.feedsPath)!
 
