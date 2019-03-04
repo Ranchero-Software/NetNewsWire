@@ -24,6 +24,7 @@ final class TimelineContainerViewController: NSViewController {
 				return
 			}
 			containerView.contentView = view
+			view?.window?.recalculateKeyViewLoop()
 		}
 	}
 
