@@ -392,7 +392,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 			if let window = keyboardShortcutsWindowController?.window {
 				let point = NSPoint(x: 128, y: 64)
-				let size = NSSize(width: 620, height: 1000)
+				let size = NSSize(width: 620, height: 1100)
 				let minSize = NSSize(width: 400, height: 400)
 				window.setPointAndSizeAdjustingForScreen(point: point, size: size, minimumSize: minSize)
 			}
