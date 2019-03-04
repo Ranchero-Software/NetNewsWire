@@ -6,13 +6,7 @@
 		<key>key</key>
 		<string>[leftarrow]</string>
 		<key>action</key>
-		<string>navigateToSidebar:</string>
-	</dict>
-	<dict>
-		<key>key</key>
-		<string>[rightarrow]</string>
-		<key>action</key>
-		<string>navigateToDetail:</string>
+		<string>navigateToTimeline:</string>
 	</dict>
 </array>
 </plist>

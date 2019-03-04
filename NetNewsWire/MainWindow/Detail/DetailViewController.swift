@@ -63,6 +63,17 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	override func scrollPageDown(_ sender: Any?) {
 		currentWebViewController.scrollPageDown(sender)
 	}
+	
+	// MARK: - Navigation
+	
+	func focus() {
+		
+		guard let window = currentWebViewController.view.window else {
+			return
+		}
+		window.makeFirstResponderUnlessDescendantIsFirstResponder(currentWebViewController.view)
+	}
+	
 }
 
 // MARK: - DetailWebViewControllerDelegate

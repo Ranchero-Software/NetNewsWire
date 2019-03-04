@@ -27,7 +27,9 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 			}
 		}
 	}
-
+	
+	private let keyboardDelegate = DetailKeyboardDelegate()
+	
 	private struct MessageName {
 		static let mouseDidEnter = "mouseDidEnter"
 		static let mouseDidExit = "mouseDidExit"
@@ -52,6 +54,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		webview = DetailWebView(frame: NSRect.zero, configuration: configuration)
 		webview.uiDelegate = self
 		webview.navigationDelegate = self
+		webview.keyboardDelegate = keyboardDelegate
 		webview.translatesAutoresizingMaskIntoConstraints = false
 		if let userAgent = UserAgent.fromInfoPlist() {
 			webview.customUserAgent = userAgent

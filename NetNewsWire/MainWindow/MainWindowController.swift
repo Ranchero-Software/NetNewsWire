@@ -331,6 +331,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		sidebarViewController?.focus()
 	}
 
+	@IBAction func navigateToDetail(_ sender: Any?) {
+		detailViewController?.focus()
+	}
+	
 	@IBAction func goToPreviousSubscription(_ sender: Any?) {
 		sidebarViewController?.outlineView.selectPreviousRow(sender)
 	}
