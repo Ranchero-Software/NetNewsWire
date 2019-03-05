@@ -4,6 +4,12 @@
 <array>
 	<dict>
 		<key>key</key>
+		<string>[tab]</string>
+		<key>action</key>
+		<string>navigateToTimeline:</string>
+	</dict>
+	<dict>
+		<key>key</key>
 		<string>,</string>
 		<key>action</key>
 		<string>collapseSelectedRows:</string>

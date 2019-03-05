@@ -375,6 +375,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 		
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(tableView)
+		if !hasAtLeastOneSelectedArticle && articles.count > 0 {
+			tableView.rs_selectRowAndScrollToVisible(0)
+		}
 	}
 
 	// MARK: - Notifications
