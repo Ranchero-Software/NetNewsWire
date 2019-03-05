@@ -20,16 +20,6 @@ class TimelineTableView: NSTableView {
 		}
 		super.keyDown(with: event)
 	}
-	
-//	override func becomeFirstResponder() -> Bool {
-//		if super.becomeFirstResponder() {
-//			if selectedRow == -1 && numberOfRows > 0 {
-//				rs_selectRowAndScrollToVisible(0)
-//			}
-//			return true
-//		}
-//		return false
-//	}
 
 	// MARK: - NSView
 
