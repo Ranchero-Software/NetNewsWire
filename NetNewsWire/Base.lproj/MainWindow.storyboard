@@ -321,7 +321,7 @@
                                     <nil key="backgroundColor"/>
                                 </clipView>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="pzy-wh-tgi"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="166" id="pzy-wh-tgi"/>
                                 </constraints>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="vs5-5h-CXe">
                                     <rect key="frame" x="-100" y="-100" width="238" height="15"/>
