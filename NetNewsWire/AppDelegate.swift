@@ -347,7 +347,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	// MARK: - Dock Badge
 
 	@objc func updateDockBadge() {
-		let label = unreadCount > 0 ? "\(unreadCount)" : ""
+		let label = unreadCount > 0 && !AppDefaults.hideDockUnreadCount ? "\(unreadCount)" : ""
 		NSApplication.shared.dockTile.badgeLabel = label
 	}
 
