@@ -58,6 +58,7 @@ struct AppDefaults {
 
 		// Hidden prefs
 		static let showTitleOnMainWindow = "KafasisTitleMode"
+		static let hideDockUnreadCount = "Issue246HideDockUnreadCount"
 	}
 
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
@@ -109,6 +110,10 @@ struct AppDefaults {
 
 	static var showTitleOnMainWindow: Bool {
 		return bool(for: Key.showTitleOnMainWindow)
+	}
+
+	static var hideDockUnreadCount: Bool {
+		return bool(for: Key.hideDockUnreadCount)
 	}
 
 	static var timelineSortDirection: ComparisonResult {
