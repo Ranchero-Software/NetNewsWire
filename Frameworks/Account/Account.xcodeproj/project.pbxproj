@@ -24,6 +24,7 @@
 		846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846E77531F6F00E300A165E2 /* AccountManager.swift */; };
 		848935001F62484F00CEBD24 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848934F61F62484F00CEBD24 /* Account.framework */; };
 		848935051F62485000CEBD24 /* AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848935041F62485000CEBD24 /* AccountTests.swift */; };
+		84B2D4D02238CD8A00498ADA /* FeedMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B2D4CE2238C13D00498ADA /* FeedMetadata.swift */; };
 		84B99C9F1FAE8D3200ECDEDB /* ContainerPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9E1FAE8D3200ECDEDB /* ContainerPath.swift */; };
 		84C3654A1F899F3B001EC85C /* CombinedRefreshProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */; };
 		84C8B3F41F89DE430053CCA6 /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */; };
@@ -101,6 +102,8 @@
 		848935041F62485000CEBD24 /* AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTests.swift; sourceTree = "<group>"; };
 		848935061F62485000CEBD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		848935101F62486800CEBD24 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		84AF4EA3222CFDD100F6A800 /* AccountSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettings.swift; sourceTree = "<group>"; };
+		84B2D4CE2238C13D00498ADA /* FeedMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedMetadata.swift; sourceTree = "<group>"; };
 		84B99C9E1FAE8D3200ECDEDB /* ContainerPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerPath.swift; sourceTree = "<group>"; };
 		84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombinedRefreshProgress.swift; sourceTree = "<group>"; };
 		84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtensions.swift; sourceTree = "<group>"; };
@@ -200,9 +203,11 @@
 			children = (
 				846E77531F6F00E300A165E2 /* AccountManager.swift */,
 				848935101F62486800CEBD24 /* Account.swift */,
+				84AF4EA3222CFDD100F6A800 /* AccountSettings.swift */,
 				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
 				841974001F6DD1EC006346C4 /* Folder.swift */,
 				844B297C2106C7EC004020B3 /* Feed.swift */,
+				84B2D4CE2238C13D00498ADA /* FeedMetadata.swift */,
 				844B297E210CE37E004020B3 /* UnreadCountProvider.swift */,
 				84B99C9E1FAE8D3200ECDEDB /* ContainerPath.swift */,
 				84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */,
@@ -417,6 +422,7 @@
 				841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */,
 				846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */,
 				844B297D2106C7EC004020B3 /* Feed.swift in Sources */,
+				84B2D4D02238CD8A00498ADA /* FeedMetadata.swift in Sources */,
 				84B99C9F1FAE8D3200ECDEDB /* ContainerPath.swift in Sources */,
 				846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */,
 				84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */,
