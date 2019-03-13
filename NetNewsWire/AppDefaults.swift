@@ -58,7 +58,7 @@ struct AppDefaults {
 
 		// Hidden prefs
 		static let showTitleOnMainWindow = "KafasisTitleMode"
-		static let hideDockUnreadCount = "Issue246HideDockUnreadCount"
+		static let hideDockUnreadCount = "JustinMillerHideDockUnreadCount"
 	}
 
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
