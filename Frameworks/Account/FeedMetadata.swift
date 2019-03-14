@@ -96,9 +96,8 @@ final class FeedMetadata: Codable {
 
 	weak var delegate: FeedMetadataDelegate?
 
-	init(feedID: String, delegate: FeedMetadataDelegate) {
+	init(feedID: String) {
 		self.feedID = feedID
-		self.delegate = delegate
 	}
 
 	func valueDidChange(_ key: CodingKeys) {

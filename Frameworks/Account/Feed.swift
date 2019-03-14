@@ -35,33 +35,33 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	public var homePageURL: String? {
 		get {
-			return settingsTable.string(for: Key.homePageURL)
+			return metadata?.homePageURL
 		}
 		set {
 			if let url = newValue {
-				settingsTable.setString(url.rs_normalizedURL(), for: Key.homePageURL)
+				metadata?.homePageURL = url.rs_normalizedURL()
 			}
 			else {
-				settingsTable.setString(nil, for: Key.homePageURL)
+				metadata?.homePageURL = nil
 			}
 		}
 	}
 
 	public var iconURL: String? {
 		get {
-			return settingsTable.string(for: Key.iconURL)
+			return metadata?.iconURL
 		}
 		set {
-			settingsTable.setString(newValue, for: Key.iconURL)
+			metadata?.iconURL = newValue
 		}
 	}
 
 	public var faviconURL: String? {
 		get {
-			return settingsTable.string(for: Key.faviconURL)
+			return metadata?.faviconURL
 		}
 		set {
-			settingsTable.setString(newValue, for: Key.faviconURL)
+			metadata?.faviconURL = newValue
 		}
 	}
 
@@ -80,17 +80,17 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	public var authors: Set<Author>? {
 		get {
-			guard let authorsJSON = settingsTable.string(for: Key.authors) else {
-				return nil
+			if let authorsArray = metadata?.authors {
+				return Set(authorsArray)
 			}
-			return Author.authorsWithJSON(authorsJSON)
+			return nil
 		}
 		set {
-			if let authorsJSON = newValue?.json() {
-				settingsTable.setString(authorsJSON, for: Key.authors)
+			if let authorsSet = newValue {
+				metadata?.authors = Array(authorsSet)
 			}
 			else {
-				settingsTable.setString(nil, for: Key.authors)
+				metadata?.authors = nil
 			}
 		}
 	}
@@ -118,22 +118,19 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	public var conditionalGetInfo: HTTPConditionalGetInfo? {
 		get {
-			let lastModified = settingsTable.string(for: Key.conditionalGetLastModified)
-			let etag = settingsTable.string(for: Key.conditionalGetEtag)
-			return HTTPConditionalGetInfo(lastModified: lastModified, etag: etag)
+			return metadata?.conditionalGetInfo
 		}
 		set {
-			settingsTable.setString(newValue?.lastModified, for: Key.conditionalGetLastModified)
-			settingsTable.setString(newValue?.etag, for: Key.conditionalGetEtag)
+			metadata?.conditionalGetInfo = newValue
 		}
 	}
 
 	public var contentHash: String? {
 		get {
-			return settingsTable.string(for: Key.contentHash)
+			return metadata?.contentHash
 		}
 		set {
-			settingsTable.setString(newValue, for: Key.contentHash)
+			metadata?.contentHash = newValue
 		}
 	}
 
@@ -172,6 +169,15 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	private let settingsTable: ODBRawValueTable
 	private let accountID: String // Used for hashing and equality; account may turn nil
+
+	private var _metadata: FeedMetadata?
+	private var metadata: FeedMetadata? {
+		if let cachedMetadata = _metadata {
+			return cachedMetadata
+		}
+		_metadata = account?.metadata(for: self)
+		return _metadata
+	}
 
 	// MARK: - Init
 
