@@ -590,16 +590,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 }
 
 
-// MARK: - Disk (Public)
-
-extension Account {
-
-	func objects(with diskObjects: [[String: Any]]) -> [AnyObject] {
-
-		return diskObjects.compactMap { object(with: $0) }
-	}
-}
-
 // MARK: - FeedMetadataDelegate
 
 extension Account: FeedMetadataDelegate {
@@ -622,14 +612,6 @@ private extension Account {
 	func queueSaveToDiskIfNeeded() {
 
 		Account.saveQueue.add(self, #selector(saveToDiskIfNeeded))
-	}
-
-	func object(with diskObject: [String: Any]) -> AnyObject? {
-
-		if Feed.isFeedDictionary(diskObject) {
-			return Feed(account: self, dictionary: diskObject)
-		}
-		return Folder(account: self, dictionary: diskObject)
 	}
 
 	func pullObjectsFromDisk() {

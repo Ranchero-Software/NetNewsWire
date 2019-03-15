@@ -12,7 +12,6 @@ import RSCore
 
 public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCountProvider, Hashable {
 
-
 	public weak var account: Account?
 	public var topLevelFeeds: Set<Feed> = Set<Feed>()
 	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
@@ -62,23 +61,6 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: self)
-	}
-
-	// MARK: - Disk Dictionary
-
-	private struct Key {
-		static let name = "name"
-		static let children = "children"
-	}
-
-	convenience init?(account: Account, dictionary: [String: Any]) {
-
-		let name = dictionary[Key.name] as? String
-		self.init(account: account, name: name)
-
-		if let childrenArray = dictionary[Key.children] as? [[String: Any]] {
-			self.topLevelFeeds = Folder.feedsOnly(with: childrenArray, account: account)
-		}
 	}
 
 	// MARK: - Notifications
@@ -152,36 +134,7 @@ private extension Folder {
 	}
 }
 
-// MARK: - Disk
-
-private extension Folder {
-
-	static func feedsOnly(with diskObjects: [[String: Any]], account: Account) -> Set<Feed> {
-
-		// This Folder doesn’t support subfolders, but they might exist on disk.
-		// (For instance: a user might manually edit the plist to add subfolders.)
-		// Create a flattened version of the feeds.
-
-		var feeds = Set<Feed>()
-
-		for diskObject in diskObjects {
-
-			if Feed.isFeedDictionary(diskObject) {
-				if let feed = Feed(account: account, dictionary: diskObject) {
-					feeds.insert(feed)
-				}
-			}
-			else { // Folder
-				if let subFolderChildren = diskObject[Key.children] as? [[String: Any]] {
-					let subFolderFeeds = feedsOnly(with: subFolderChildren, account: account)
-					feeds.formUnion(subFolderFeeds)
-				}
-			}
-		}
-
-		return feeds
-	}
-}
+// MARK: - OPMLRepresentable
 
 extension Folder: OPMLRepresentable {
 

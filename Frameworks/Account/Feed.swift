@@ -10,24 +10,8 @@ import Foundation
 import RSCore
 import RSWeb
 import Articles
-import RSDatabase
 
 public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Hashable {
-
-	private struct Key {
-		static let url = "url"
-		static let feedID = "feedID"
-		static let homePageURL = "homePageURL"
-		static let iconURL = "iconURL"
-		static let faviconURL = "faviconURL"
-		static let name = "name"
-		static let editedName = "editedName"
-		static let authors = "authors"
-		static let conditionalGetInfo = "conditionalGetInfo"
-		static let conditionalGetLastModified = "lastModified"
-		static let conditionalGetEtag = "etag"
-		static let contentHash = "contentHash"
-	}
 
 	public weak var account: Account?
 	public let url: String
@@ -185,25 +169,6 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		self.accountID = account.accountID
 		self.url = url
 		self.feedID = feedID
-	}
-
-	// MARK: - Disk Dictionary
-
-	convenience public init?(account: Account, dictionary: [String: Any]) {
-
-		guard let url = dictionary[Key.url] as? String else {
-			return nil
-		}
-		let feedID = dictionary[Key.feedID] as? String ?? url
-		
-		self.init(account: account, url: url, feedID: feedID)
-		self.editedName = dictionary[Key.editedName] as? String
-		self.name = dictionary[Key.name] as? String
-	}
-
-	public static func isFeedDictionary(_ d: [String: Any]) -> Bool {
-
-		return d[Key.url] != nil
 	}
 
 	// MARK: - Debug
