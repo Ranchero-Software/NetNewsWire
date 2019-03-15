@@ -4,7 +4,7 @@
     <title>Default Feeds</title>
   </head>
   <body>
-    <outline text="inessential.com" title="inessential.com" type="rss" version="RSS" htmlUrl="http://inessential.com/" xmlUrl="http://inessential.com/feed.json"/>
+    <outline text="inessential" title="inessential" type="rss" version="RSS" htmlUrl="http://inessential.com/" xmlUrl="http://inessential.com/feed.json"/>
     <outline text="Accidentally in Code" title="Accidentally in Code" type="rss" version="RSS" htmlUrl="https://cate.blog/" xmlUrl="https://cate.blog/feed/"/>
     <outline text="Becky Hansmeyer" title="Becky Hansmeyer" type="rss" version="RSS" htmlUrl="http://becky.coffee/" xmlUrl="https://beckyhansmeyer.com/feed/"/>
     <outline text="The Shape of Everything" title="The Shape of Everything" type="rss" version="RSS" htmlUrl="https://shapeof.com/" xmlUrl="https://shapeof.com/feed.json"/>
