@@ -70,10 +70,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	var username: String?
 	static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
 
-	private let settingsODB: ODB
-	private let feedsPath: ODBPath
-	private let feedsTable: ODBTable
-
 	private var unreadCounts = [String: Int]() // [feedID: Int]
 	private let opmlFilePath: String
 
@@ -147,11 +143,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID)
 
 		self.feedMetadataPath = (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist")
-		let settingsODBFilePath = (dataFolder as NSString).appendingPathComponent("Settings.odb")
-		self.settingsODB = ODB(filepath: settingsODBFilePath)
-		self.settingsODB.vacuum()
-		self.feedsPath = ODBPath.path(["feeds"])
-		self.feedsTable = settingsODB.ensureTable(self.feedsPath)!
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -608,12 +599,6 @@ extension Account {
 	func objects(with diskObjects: [[String: Any]]) -> [AnyObject] {
 
 		return diskObjects.compactMap { object(with: $0) }
-	}
-
-	func settingsTableForFeed(feedID: String) -> ODBRawValueTable? {
-		let feedPath = feedsPath + feedID
-		let table = settingsODB.ensureTable(feedPath)
-		return table?.rawValueTable
 	}
 }
 

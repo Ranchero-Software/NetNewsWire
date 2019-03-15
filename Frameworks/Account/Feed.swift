@@ -67,11 +67,11 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	public var name: String? {
 		get {
-			return settingsTable.string(for: Key.name)
+			return metadata?.name
 		}
 		set {
 			let oldNameForDisplay = nameForDisplay
-			settingsTable.setString(newValue, for: Key.name)
+			metadata?.name = newValue
 			if oldNameForDisplay != nameForDisplay {
 				postDisplayNameDidChangeNotification()
 			}
@@ -98,7 +98,7 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 	public var editedName: String? {
 		// Don’t let editedName == ""
 		get {
-			guard let s = settingsTable.string(for: Key.editedName), !s.isEmpty else {
+			guard let s = metadata?.editedName, !s.isEmpty else {
 				return nil
 			}
 			return s
@@ -106,10 +106,10 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		set {
 			if newValue != editedName {
 				if let valueToSet = newValue, !valueToSet.isEmpty {
-					settingsTable.setString(valueToSet, for: Key.editedName)
+					metadata?.editedName = valueToSet
 				}
 				else {
-					settingsTable.setString(nil, for: Key.editedName)
+					metadata?.editedName = nil
 				}
 				postDisplayNameDidChangeNotification()
 			}
@@ -167,7 +167,6 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
-	private let settingsTable: ODBRawValueTable
 	private let accountID: String // Used for hashing and equality; account may turn nil
 
 	private var _metadata: FeedMetadata?
@@ -182,12 +181,10 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 	// MARK: - Init
 
 	public init(account: Account, url: String, feedID: String) {
-
 		self.account = account
 		self.accountID = account.accountID
 		self.url = url
 		self.feedID = feedID
-		self.settingsTable = account.settingsTableForFeed(feedID: feedID)!
 	}
 
 	// MARK: - Disk Dictionary
