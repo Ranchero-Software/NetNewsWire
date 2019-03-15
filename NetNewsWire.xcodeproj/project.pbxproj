@@ -275,6 +275,9 @@
 		84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */; };
 		84A37CB5201ECD610087C5AF /* RenameWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A37CB4201ECD610087C5AF /* RenameWindowController.swift */; };
 		84A37CBB201ECE590087C5AF /* RenameSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84A37CB9201ECE590087C5AF /* RenameSheet.xib */; };
+		84A3EE5F223B667F00557320 /* DefaultFeeds.opml in Resources */ = {isa = PBXBuildFile; fileRef = 84A3EE52223B667F00557320 /* DefaultFeeds.opml */; };
+		84A3EE60223B667F00557320 /* DefaultFeeds.opml in Resources */ = {isa = PBXBuildFile; fileRef = 84A3EE52223B667F00557320 /* DefaultFeeds.opml */; };
+		84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */ = {isa = PBXBuildFile; fileRef = 84A3EE52223B667F00557320 /* DefaultFeeds.opml */; };
 		84AD1EAA2031617300BC20B7 /* FolderPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EA92031617300BC20B7 /* FolderPasteboardWriter.swift */; };
 		84AD1EBA2031649C00BC20B7 /* SmartFeedPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */; };
 		84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */; };
@@ -872,6 +875,7 @@
 		84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMarsEditCommand.swift; sourceTree = "<group>"; };
 		84A37CB4201ECD610087C5AF /* RenameWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenameWindowController.swift; sourceTree = "<group>"; };
 		84A37CBA201ECE590087C5AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = NetNewsWire/Base.lproj/RenameSheet.xib; sourceTree = SOURCE_ROOT; };
+		84A3EE52223B667F00557320 /* DefaultFeeds.opml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DefaultFeeds.opml; sourceTree = "<group>"; };
 		84A6B6931FB8D43C006754AC /* DinosaursWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DinosaursWindow.xib; sourceTree = "<group>"; };
 		84A6B6951FB8DBD2006754AC /* DinosaursWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DinosaursWindowController.swift; sourceTree = "<group>"; };
 		84AD1EA92031617300BC20B7 /* FolderPasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPasteboardWriter.swift; sourceTree = "<group>"; };
@@ -1592,6 +1596,7 @@
 				84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */,
 				849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */,
 				849A978E1ED9EE72007D329B /* DefaultFeeds.plist */,
+				84A3EE52223B667F00557320 /* DefaultFeeds.opml */,
 			);
 			path = Importers;
 			sourceTree = "<group>";
@@ -2197,6 +2202,7 @@
 				840D618B2029031D009BC708 /* LaunchScreen.storyboard in Resources */,
 				840D61882029031D009BC708 /* Assets.xcassets in Resources */,
 				840D61862029031C009BC708 /* Main.storyboard in Resources */,
+				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2221,6 +2227,7 @@
 				840F7C9721BDA4B40057E851 /* KeyboardShortcuts.html in Resources */,
 				840F7C9821BDA4B40057E851 /* IndeterminateProgressWindow.xib in Resources */,
 				840F7C9921BDA4B40057E851 /* GlobalKeyboardShortcuts.plist in Resources */,
+				84A3EE60223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				840F7C9A21BDA4B40057E851 /* DefaultFeeds.plist in Resources */,
 				8405DDA322168920008CE1BF /* TimelineTableView.xib in Resources */,
 				840F7C9B21BDA4B40057E851 /* TimelineKeyboardShortcuts.plist in Resources */,
@@ -2266,6 +2273,7 @@
 				849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */,
 				842E45E71ED8C747000A8B52 /* DB5.plist in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
+				84A3EE5F223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				849A97AC1ED9F9BC007D329B /* AddFolderSheet.xib in Resources */,
 				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
 				849C646B1ED37A5D003D8FC0 /* Main.storyboard in Resources */,

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>Default Feeds</title>
+  </head>
+  <body>
+    <outline text="inessential.com" title="inessential.com" type="rss" version="RSS" htmlUrl="http://inessential.com/" xmlUrl="http://inessential.com/feed.json"/>
+    <outline text="Accidentally in Code" title="Accidentally in Code" type="rss" version="RSS" htmlUrl="https://cate.blog/" xmlUrl="https://cate.blog/feed/"/>
+    <outline text="Becky Hansmeyer" title="Becky Hansmeyer" type="rss" version="RSS" htmlUrl="http://becky.coffee/" xmlUrl="https://beckyhansmeyer.com/feed/"/>
+    <outline text="The Shape of Everything" title="The Shape of Everything" type="rss" version="RSS" htmlUrl="https://shapeof.com/" xmlUrl="https://shapeof.com/feed.json"/>
+    <outline text="Daring Fireball" title="Daring Fireball" type="rss" version="RSS" htmlUrl="https://daringfireball.net/" xmlUrl="https://daringfireball.net/feeds/json"/>
+    <outline text="Manton Reece" title="Manton Reece" type="rss" version="RSS" htmlUrl="https://manton.org/" xmlUrl="https://www.manton.org/feed/json"/>
+    <outline text="Julia Evans" title="Julia Evans" type="rss" version="RSS" htmlUrl="https://jvns.ca/" xmlUrl="https://jvns.ca/atom.xml"/>
+    <outline text="Jason Kottke" title="Jason Kottke" type="rss" version="RSS" htmlUrl="https://kottke.org/" xmlUrl="http://feeds.kottke.org/json"/>
+    <outline text="Six Colors" title="Six Colors" type="rss" version="RSS" htmlUrl="https://sixcolors.com/" xmlUrl="https://sixcolors.com/feed.json"/>
+    <outline text="Loop Insight" title="Loop Insight" type="rss" version="RSS" htmlUrl="http://www.loopinsight.com/" xmlUrl="http://www.loopinsight.com/feed/"/>
+    <outline text="NetNewsWire Blog" title="NetNewsWire Blog" type="rss" version="RSS" htmlUrl="https://nnw.ranchero.com/" xmlUrl="https://nnw.ranchero.com/feed.json"/>
+    <outline text="Erica Sadun" title="Erica Sadun" type="rss" version="RSS" htmlUrl="https://ericasadun.com/" xmlUrl="https://ericasadun.com/feed/"/>
+    <outline text="One Foot Tsunami" title="One Foot Tsunami" type="rss" version="RSS" htmlUrl="https://onefoottsunami.com/" xmlUrl="https://onefoottsunami.com/feed/json/"/>
+    <outline text="The Omni Blog" title="The Omni Blog" type="rss" version="RSS" htmlUrl="https://www.omnigroup.com/blog/" xmlUrl="https://www.omnigroup.com/blog/rss/"/>
+    <outline text="Om Malik" title="Om Malik" type="rss" version="RSS" htmlUrl="https://om.co/" xmlUrl="https://om.co/feed"/>
+    <outline text="Xcoders" title="Xcoders" type="rss" version="RSS" htmlUrl="https://xcoders.org/" xmlUrl="https://xcoders.org/feed.json"/>
+  </body>
+</opml>
