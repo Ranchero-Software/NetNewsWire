@@ -65,8 +65,7 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 
-		let localAccountSettingsFile = accountFilePathWithFolder(localAccountFolder)
-		localAccount = Account(dataFolder: localAccountFolder, settingsFile: localAccountSettingsFile, type: .onMyMac, accountID: localAccountIdentifier)!
+		localAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: localAccountIdentifier)!
         accountsDictionary[localAccount.accountID] = localAccount
 
 		readNonLocalAccountsFromDisk()

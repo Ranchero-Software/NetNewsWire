@@ -63,7 +63,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	private var fetchingAllUnreadCounts = false
 
-	let settingsFile: String
 	let dataFolder: String
 	let database: ArticlesDatabase
 	let delegate: AccountDelegate
@@ -126,7 +125,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.supportsSubFolders
 	}
 	
-	init?(dataFolder: String, settingsFile: String, type: AccountType, accountID: String) {
+	init?(dataFolder: String, type: AccountType, accountID: String) {
 		
 		// TODO: support various syncing systems.
 		precondition(type == .onMyMac)
@@ -134,7 +133,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		self.accountID = accountID
 		self.type = type
-		self.settingsFile = settingsFile
 		self.dataFolder = dataFolder
 
 		self.opmlFilePath = (dataFolder as NSString).appendingPathComponent("Subscriptions.opml")
@@ -635,46 +633,6 @@ private extension Account {
 	}
 
 	func pullObjectsFromDisk() {
-		
-		// 9/16/2018: Turning a corner — we used to store data in a plist file,
-		// but now we’re switching over to OPML. Read the plist file one last time,
-		// then rename it so we never read from it again.
-
-		if FileManager.default.fileExists(atPath: settingsFile) {
-			// Old code for reading in plist file.
-			let settingsFileURL = URL(fileURLWithPath: settingsFile)
-			guard let d = NSDictionary(contentsOf: settingsFileURL) as? [String: Any] else {
-				return
-			}
-			guard let childrenArray = d[Key.children] as? [[String: Any]] else {
-				return
-			}
-			let children = objects(with: childrenArray)
-			var feeds = Set<Feed>()
-			var folders = Set<Folder>()
-			for oneChild in children {
-				if let feed = oneChild as? Feed {
-					feeds.insert(feed)
-				}
-				else if let folder = oneChild as? Folder {
-					folders.insert(folder)
-				}
-			}
-			self.topLevelFeeds = feeds
-			self.folders = folders
-			structureDidChange()
-
-			// Rename plist file so we don’t see it next time.
-			let renamedFilePath = (dataFolder as NSString).appendingPathComponent("AccountData-old.plist")
-			do {
-				try FileManager.default.moveItem(atPath: settingsFile, toPath: renamedFilePath)
-			}
-			catch {}
-
-			dirty = true // Ensure OPML file will be written soon.
-			return
-		}
-
 		importFeedMetadata()
 		importOPMLFile(path: opmlFilePath)
 	}
