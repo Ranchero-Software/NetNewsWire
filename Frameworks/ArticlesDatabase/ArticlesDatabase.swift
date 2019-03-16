@@ -99,10 +99,6 @@ public final class ArticlesDatabase {
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {
 		return articlesTable.mark(articles, statusKey, flag)
 	}
-
-	public func markEverywhereAsRead() {
-		articlesTable.markEverywhereAsRead()
-	}
 }
 
 // MARK: - Private

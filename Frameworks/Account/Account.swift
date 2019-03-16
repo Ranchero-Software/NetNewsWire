@@ -426,14 +426,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.fetchStarredAndUnreadCount(for: flattenedFeeds().feedIDs(), callback: callback)
 	}
 
-	public func markEverywhereAsRead() {
-
-		// Does not support undo.
-
-		database.markEverywhereAsRead()
-		flattenedFeeds().forEach { $0.unreadCount = 0 }		
-	}
-
 	public func opmlDocument() -> String {
 		let escapedTitle = nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
 		let openingText =

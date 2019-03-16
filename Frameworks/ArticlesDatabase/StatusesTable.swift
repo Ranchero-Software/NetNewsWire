@@ -76,20 +76,6 @@ final class StatusesTable: DatabaseTable {
 		return updatedStatuses
 	}
 
-	func markEverywhereAsRead() {
-
-		queue.update { (database) in
-
-			let _ = database.executeUpdate("update statuses set read=1;", withArgumentsIn: nil)
-
-			let cachedStatuses = self.cache.cachedStatuses
-
-			DispatchQueue.main.async {
-				cachedStatuses.forEach { $0.read = true }
-			}
-		}
-	}
-
 	// MARK: Fetching
 
 	func statusWithRow(_ row: FMResultSet) -> ArticleStatus? {
