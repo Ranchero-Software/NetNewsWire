@@ -156,7 +156,7 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	// MARK: - Init
 
-	public init(account: Account, url: String, feedID: String, metadata: FeedMetadata) {
+	init(account: Account, url: String, feedID: String, metadata: FeedMetadata) {
 		self.account = account
 		self.accountID = account.accountID
 		self.url = url
