@@ -740,9 +740,6 @@ private extension Account {
 			if feed.name == nil {
 				feed.name = feedTitle
 			}
-			if feed.editedName == nil {
-				feed.editedName = feedTitle
-			}
 		}
 		return feed
 	}
