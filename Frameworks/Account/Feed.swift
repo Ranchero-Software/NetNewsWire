@@ -19,43 +19,43 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	public var homePageURL: String? {
 		get {
-			return metadata?.homePageURL
+			return metadata.homePageURL
 		}
 		set {
 			if let url = newValue {
-				metadata?.homePageURL = url.rs_normalizedURL()
+				metadata.homePageURL = url.rs_normalizedURL()
 			}
 			else {
-				metadata?.homePageURL = nil
+				metadata.homePageURL = nil
 			}
 		}
 	}
 
 	public var iconURL: String? {
 		get {
-			return metadata?.iconURL
+			return metadata.iconURL
 		}
 		set {
-			metadata?.iconURL = newValue
+			metadata.iconURL = newValue
 		}
 	}
 
 	public var faviconURL: String? {
 		get {
-			return metadata?.faviconURL
+			return metadata.faviconURL
 		}
 		set {
-			metadata?.faviconURL = newValue
+			metadata.faviconURL = newValue
 		}
 	}
 
 	public var name: String? {
 		get {
-			return metadata?.name
+			return metadata.name
 		}
 		set {
 			let oldNameForDisplay = nameForDisplay
-			metadata?.name = newValue
+			metadata.name = newValue
 			if oldNameForDisplay != nameForDisplay {
 				postDisplayNameDidChangeNotification()
 			}
@@ -64,17 +64,17 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	public var authors: Set<Author>? {
 		get {
-			if let authorsArray = metadata?.authors {
+			if let authorsArray = metadata.authors {
 				return Set(authorsArray)
 			}
 			return nil
 		}
 		set {
 			if let authorsSet = newValue {
-				metadata?.authors = Array(authorsSet)
+				metadata.authors = Array(authorsSet)
 			}
 			else {
-				metadata?.authors = nil
+				metadata.authors = nil
 			}
 		}
 	}
@@ -82,7 +82,7 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 	public var editedName: String? {
 		// Don’t let editedName == ""
 		get {
-			guard let s = metadata?.editedName, !s.isEmpty else {
+			guard let s = metadata.editedName, !s.isEmpty else {
 				return nil
 			}
 			return s
@@ -90,10 +90,10 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		set {
 			if newValue != editedName {
 				if let valueToSet = newValue, !valueToSet.isEmpty {
-					metadata?.editedName = valueToSet
+					metadata.editedName = valueToSet
 				}
 				else {
-					metadata?.editedName = nil
+					metadata.editedName = nil
 				}
 				postDisplayNameDidChangeNotification()
 			}
@@ -102,19 +102,19 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	public var conditionalGetInfo: HTTPConditionalGetInfo? {
 		get {
-			return metadata?.conditionalGetInfo
+			return metadata.conditionalGetInfo
 		}
 		set {
-			metadata?.conditionalGetInfo = newValue
+			metadata.conditionalGetInfo = newValue
 		}
 	}
 
 	public var contentHash: String? {
 		get {
-			return metadata?.contentHash
+			return metadata.contentHash
 		}
 		set {
-			metadata?.contentHash = newValue
+			metadata.contentHash = newValue
 		}
 	}
 
@@ -152,23 +152,16 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 	}
 
 	private let accountID: String // Used for hashing and equality; account may turn nil
-
-	private var _metadata: FeedMetadata?
-	private var metadata: FeedMetadata? {
-		if let cachedMetadata = _metadata {
-			return cachedMetadata
-		}
-		_metadata = account?.metadata(for: self)
-		return _metadata
-	}
+	private let metadata: FeedMetadata
 
 	// MARK: - Init
 
-	public init(account: Account, url: String, feedID: String) {
+	public init(account: Account, url: String, feedID: String, metadata: FeedMetadata) {
 		self.account = account
 		self.accountID = account.accountID
 		self.url = url
 		self.feedID = feedID
+		self.metadata = metadata
 	}
 
 	// MARK: - Debug

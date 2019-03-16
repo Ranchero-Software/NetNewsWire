@@ -14,7 +14,7 @@ protocol FeedMetadataDelegate: class {
 	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys)
 }
 
-final class FeedMetadata: Codable {
+public final class FeedMetadata: Codable {
 
 	let feedID: String
 

@@ -166,14 +166,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.refreshAll(for: self)
 	}
 
-	func metadata(for feed: Feed) -> FeedMetadata {
-		if let d = feedMetadata[feed.feedID] {
+	func metadata(feedID: String) -> FeedMetadata {
+		if let d = feedMetadata[feedID] {
 			assert(d.delegate === self)
 			return d
 		}
-		let d = FeedMetadata(feedID: feed.feedID)
+		let d = FeedMetadata(feedID: feedID)
 		d.delegate = self
-		feedMetadata[feed.feedID] = d
+		feedMetadata[feedID] = d
 		return d
 	}
 
@@ -278,8 +278,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		// For syncing, this may need to be an async method with a callback,
 		// since it will likely need to call the server.
-		
-		let feed = Feed(account: self, url: url, feedID: url)
+
+		let feedMetadata = metadata(feedID: url)
+		let feed = Feed(account: self, url: url, feedID: url, metadata: feedMetadata)
 		if let name = name, feed.name == nil {
 			feed.name = name
 		}
@@ -732,8 +733,9 @@ private extension Account {
 	}
 
 	func createFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
-
-		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, feedID: opmlFeedSpecifier.feedURL)
+		let feedID = opmlFeedSpecifier.feedURL
+		let feedMetadata = metadata(feedID: feedID)
+		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, feedID: feedID, metadata: feedMetadata)
 		if let feedTitle = opmlFeedSpecifier.title {
 			if feed.name == nil {
 				feed.name = feedTitle
