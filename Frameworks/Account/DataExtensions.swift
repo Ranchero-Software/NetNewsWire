@@ -11,42 +11,38 @@ import Articles
 import RSParser
 
 public extension Notification.Name {
-
 	static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
 }
 
 public extension Feed {
 
+	public static let FeedSettingUserInfoKey = "feedSetting"
+
+	public struct FeedSettingKey {
+		static let homePageURL = "homePageURL"
+		static let iconURL = "iconURL"
+		static let faviconURL = "faviconURL"
+		static let name = "name"
+		static let editedName = "editedName"
+		static let authors = "authors"
+		static let contentHash = "contentHash"
+		static let conditionalGetInfo = "conditionalGetInfo"
+	}
+}
+
+extension Feed {
+
 	func takeSettings(from parsedFeed: ParsedFeed) {
+		iconURL = parsedFeed.iconURL
+		faviconURL = parsedFeed.faviconURL
+		homePageURL = parsedFeed.homePageURL
+		name = parsedFeed.title
+		authors = Author.authorsWithParsedAuthors(parsedFeed.authors)
+	}
 
-		var didChangeAtLeastOneSetting = false
-
-		if iconURL != parsedFeed.iconURL {
-			iconURL = parsedFeed.iconURL
-			didChangeAtLeastOneSetting = true
-		}
-		if faviconURL != parsedFeed.faviconURL {
-			faviconURL = parsedFeed.faviconURL
-			didChangeAtLeastOneSetting = true
-		}
-		if homePageURL != parsedFeed.homePageURL {
-			homePageURL = parsedFeed.homePageURL
-			didChangeAtLeastOneSetting = true
-		}
-		if name != parsedFeed.title {
-			name = parsedFeed.title
-			didChangeAtLeastOneSetting = true
-		}
-
-		let updatedAuthors = Author.authorsWithParsedAuthors(parsedFeed.authors)
-		if authors != updatedAuthors {
-			authors = updatedAuthors
-			didChangeAtLeastOneSetting = true
-		}
-
-		if didChangeAtLeastOneSetting {
-			NotificationCenter.default.post(name: .FeedSettingDidChange, object: self)
-		}
+	func postFeedSettingDidChangeNotification(_ codingKey: FeedMetadata.CodingKeys) {
+		let userInfo = [Feed.FeedSettingUserInfoKey: codingKey.stringValue]
+		NotificationCenter.default.post(name: .FeedSettingDidChange, object: self, userInfo: userInfo)
 	}
 }
 

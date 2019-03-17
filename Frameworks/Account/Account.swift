@@ -571,6 +571,10 @@ extension Account: FeedMetadataDelegate {
 
 	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
 		feedMetadataDirty = true
+		guard let feed = existingFeed(with: feedMetadata.feedID) else {
+			return
+		}
+		feed.postFeedSettingDidChangeNotification(key)
 	}
 }
 
