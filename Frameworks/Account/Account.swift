@@ -12,10 +12,8 @@ import Articles
 import RSParser
 import ArticlesDatabase
 import RSWeb
-import RSDatabase
 
 public extension Notification.Name {
-
 	static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
 	static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
 	static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
@@ -25,7 +23,6 @@ public extension Notification.Name {
 }
 
 public enum AccountType: Int {
-
 	// Raw values should not change since they’re stored on disk.
 	case onMyMac = 1
 	case feedly = 16
@@ -36,7 +33,6 @@ public enum AccountType: Int {
 }
 
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
-
 
     public struct UserInfoKey {
 		public static let newArticles = "newArticles" // AccountDidDownloadArticles
