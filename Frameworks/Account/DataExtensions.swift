@@ -19,14 +19,14 @@ public extension Feed {
 	public static let FeedSettingUserInfoKey = "feedSetting"
 
 	public struct FeedSettingKey {
-		static let homePageURL = "homePageURL"
-		static let iconURL = "iconURL"
-		static let faviconURL = "faviconURL"
-		static let name = "name"
-		static let editedName = "editedName"
-		static let authors = "authors"
-		static let contentHash = "contentHash"
-		static let conditionalGetInfo = "conditionalGetInfo"
+		public static let homePageURL = "homePageURL"
+		public static let iconURL = "iconURL"
+		public static let faviconURL = "faviconURL"
+		public static let name = "name"
+		public static let editedName = "editedName"
+		public static let authors = "authors"
+		public static let contentHash = "contentHash"
+		public static let conditionalGetInfo = "conditionalGetInfo"
 	}
 }
 

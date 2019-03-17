@@ -224,10 +224,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@objc func feedSettingDidChange(_ note: Notification) {
 
-		guard let feed = note.object as? Feed else {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
 			return
 		}
-		let _ = faviconDownloader.favicon(for: feed)
+		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
+			let _ = faviconDownloader.favicon(for: feed)
+		}
 	}
 
 	@objc func inspectableObjectsDidChange(_ note: Notification) {

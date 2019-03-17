@@ -129,10 +129,12 @@ protocol SidebarDelegate: class {
 
 	@objc func feedSettingDidChange(_ note: Notification) {
 
-		guard let feed = note.object as? Feed else {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
 			return
 		}
-		configureCellsForRepresentedObject(feed)
+		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
+			configureCellsForRepresentedObject(feed)
+		}
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
