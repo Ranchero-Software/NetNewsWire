@@ -82,9 +82,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	private var startingUp = true
 
-	private struct SettingsKey {
-		static let unreadCount = "unreadCount"
-	}
 	public var dirty = false {
 		didSet {
 			queueSaveToDiskIfNeeded()
@@ -160,17 +157,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func refreshAll() {
 
 		delegate.refreshAll(for: self)
-	}
-
-	func metadata(feedID: String) -> FeedMetadata {
-		if let d = feedMetadata[feedID] {
-			assert(d.delegate === self)
-			return d
-		}
-		let d = FeedMetadata(feedID: feedID)
-		d.delegate = self
-		feedMetadata[feedID] = d
-		return d
 	}
 
 	public func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
@@ -697,6 +683,17 @@ private extension Account {
 
 private extension Account {
 
+	func metadata(feedID: String) -> FeedMetadata {
+		if let d = feedMetadata[feedID] {
+			assert(d.delegate === self)
+			return d
+		}
+		let d = FeedMetadata(feedID: feedID)
+		d.delegate = self
+		feedMetadata[feedID] = d
+		return d
+	}
+
 	func updateFlattenedFeeds() {
 		var feeds = Set<Feed>()
 		feeds.formUnion(topLevelFeeds)
@@ -709,7 +706,6 @@ private extension Account {
 	}
 
 	func rebuildFeedDictionaries() {
-
 		var idDictionary = [String: Feed]()
 
 		flattenedFeeds().forEach { (feed) in
