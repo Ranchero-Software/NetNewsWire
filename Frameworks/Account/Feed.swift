@@ -151,6 +151,8 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
+	// MARK: - Private
+
 	private let accountID: String // Used for hashing and equality; account may turn nil
 	private let metadata: FeedMetadata
 
@@ -167,7 +169,6 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 	// MARK: - Debug
 
 	public func debugDropConditionalGetInfo() {
-
 		conditionalGetInfo = nil
 		contentHash = nil
 	}
@@ -182,7 +183,6 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 	// MARK: - Equatable
 
 	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
-
 		return lhs.feedID == rhs.feedID && lhs.accountID == rhs.accountID
 	}
 }
@@ -220,7 +220,6 @@ extension Feed: OPMLRepresentable {
 extension Set where Element == Feed {
 
 	func feedIDs() -> Set<String> {
-
 		return Set<String>(map { $0.feedID })
 	}
 }
