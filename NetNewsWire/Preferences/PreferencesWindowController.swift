@@ -180,7 +180,9 @@ private extension PreferencesWindowController {
 		}
 		
 		if windowFrame != updatedWindowFrame {
+			window!.contentView?.alphaValue = 0.0
 			window!.setFrame(updatedWindowFrame, display: true, animate: true)
+			window!.contentView?.alphaValue = 1.0
 		}
 	}
 }
