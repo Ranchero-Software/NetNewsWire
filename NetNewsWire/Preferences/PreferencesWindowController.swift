@@ -23,6 +23,7 @@ private struct PreferencesToolbarItemSpec {
 
 private struct ToolbarItemIdentifier {
 	static let General = "General"
+	static let Accounts = "Accounts"
 	static let Advanced = "Advanced"
 }
 
@@ -34,12 +35,12 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	private let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
 		var specs = [PreferencesToolbarItemSpec]()
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General, name: NSLocalizedString("General", comment: "Preferences"), imageName: NSImage.preferencesGeneralName)]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts, name: NSLocalizedString("Accounts", comment: "Preferences"), imageName: NSImage.userAccountsName)]
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced, name: NSLocalizedString("Advanced", comment: "Preferences"), imageName: NSImage.advancedName)]
 		return specs
 	}()
 
 	override func windowDidLoad() {
-
 		let toolbar = NSToolbar(identifier: NSToolbar.Identifier("PreferencesToolbar"))
 		toolbar.delegate = self
 		toolbar.autosavesConfiguration = false
@@ -83,17 +84,14 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	}
 
 	func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-
 		return toolbarItemSpecs.map { $0.identifier }
 	}
 
 	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		
 		return toolbarDefaultItemIdentifiers(toolbar)
 	}
 
 	func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		
 		return toolbarDefaultItemIdentifiers(toolbar)
 	}
 }
@@ -105,18 +103,15 @@ private extension PreferencesWindowController {
 	}
 
 	func toolbarItemSpec(for identifier: String) -> PreferencesToolbarItemSpec? {
-
 		return toolbarItemSpecs.first(where: { $0.identifier.rawValue == identifier })
 	}
 
 	func switchToViewAtIndex(_ index: Int) {
-
 		let identifier = toolbarItemSpecs[index].identifier
 		switchToView(identifier: identifier.rawValue)
 	}
 
 	func switchToView(identifier: String) {
-
 		guard let toolbarItemSpec = toolbarItemSpec(for: identifier) else {
 			assertionFailure("Preferences window: no toolbarItemSpec matching \(identifier).")
 			return
@@ -149,7 +144,6 @@ private extension PreferencesWindowController {
 	}
 
 	func viewController(identifier: String) -> NSViewController? {
-
 		if let cachedViewController = viewControllers[identifier] {
 			return cachedViewController
 		}

@@ -299,6 +299,8 @@
 		84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
 		84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */; };
 		84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */; };
+		84E01AFD223F3050009D63C3 /* AccountsPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E01AFC223F3050009D63C3 /* AccountsPreferencesViewController.swift */; };
+		84E01AFE223F3050009D63C3 /* AccountsPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E01AFC223F3050009D63C3 /* AccountsPreferencesViewController.swift */; };
 		84E185B3203B74E500F69BFA /* SingleLineTextFieldSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */; };
 		84E185C3203BB12600F69BFA /* MultilineTextFieldSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */; };
 		84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
@@ -898,6 +900,7 @@
 		84CC88171FE59CBF00644329 /* SmartFeedsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeedsController.swift; sourceTree = "<group>"; };
 		84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailStatusBarView.swift; sourceTree = "<group>"; };
 		84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLImporter.swift; sourceTree = "<group>"; };
+		84E01AFC223F3050009D63C3 /* AccountsPreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccountsPreferencesViewController.swift; path = NetNewsWire/Preferences/AccountsPreferencesViewController.swift; sourceTree = "<group>"; };
 		84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleLineTextFieldSizer.swift; sourceTree = "<group>"; };
 		84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextFieldSizer.swift; sourceTree = "<group>"; };
 		84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDefaults.swift; path = NetNewsWire/AppDefaults.swift; sourceTree = "<group>"; };
@@ -1125,6 +1128,7 @@
 				849A97A41ED9F94D007D329B /* Preferences.storyboard */,
 				849A97841ED9ECCD007D329B /* PreferencesWindowController.swift */,
 				84754C89213E471B009CFDFB /* GeneralPrefencesViewController.swift */,
+				84E01AFC223F3050009D63C3 /* AccountsPreferencesViewController.swift */,
 				84595CA121E9C880003E15A4 /* AdvancedPreferencesViewController.swift */,
 			);
 			name = Preferences;
@@ -2487,6 +2491,7 @@
 				840F7C8321BDA4B40057E851 /* Feed+Scriptability.swift in Sources */,
 				840F7C8421BDA4B40057E851 /* AuthorAvatarDownloader.swift in Sources */,
 				840F7C8521BDA4B40057E851 /* SingleLineTextFieldSizer.swift in Sources */,
+				84E01AFE223F3050009D63C3 /* AccountsPreferencesViewController.swift in Sources */,
 				840F7C8721BDA4B40057E851 /* TimelineTableCellView.swift in Sources */,
 				840F7C8821BDA4B40057E851 /* TimelineCellAppearance.swift in Sources */,
 				840F7C8921BDA4B40057E851 /* InitialFeedDownloader.swift in Sources */,
@@ -2556,6 +2561,7 @@
 				84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */,
 				84B7178C201E66580091657D /* SidebarViewController+ContextualMenus.swift in Sources */,
 				842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */,
+				84E01AFD223F3050009D63C3 /* AccountsPreferencesViewController.swift in Sources */,
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
