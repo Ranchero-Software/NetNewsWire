@@ -2,24 +2,22 @@
 <opml version="2.0">
   <head><!-- <editor scale-mac="1.25">
       <sidebar width="203"/>
-      <column name="text" width="909"/>
+      <column name="text" width="696"/>
     </editor> -->
     <title>ToDo</title>
     <dateCreated>Tue, 12 Sep 2017 20:15:17 GMT</dateCreated>
-    <expansionState>0,1,2,7</expansionState>
+    <expansionState>0,1,2,5</expansionState>
     <vertScrollState>0</vertScrollState>
-    <windowTop>1586</windowTop>
-    <windowLeft>448</windowLeft>
-    <windowRight>1383</windowRight>
-    <windowBottom>2323</windowBottom>
+    <windowTop>3495</windowTop>
+    <windowLeft>414</windowLeft>
+    <windowRight>1136</windowRight>
+    <windowBottom>4381</windowBottom>
   </head>
   <body>
     <outline text="NetNewsWire 5.0 Alpha - Mac">
       <outline text="Preferences">
         <outline text="Account preferences">
-          <outline text="Create view controller"/>
           <outline text="Design view"/>
-          <outline text="Add toolbar item spec"/>
           <outline text="Account types: syncing, posting — just syncing in 5.0"/>
         </outline>
       </outline>
