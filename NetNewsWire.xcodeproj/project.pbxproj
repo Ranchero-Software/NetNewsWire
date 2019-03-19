@@ -195,6 +195,8 @@
 		8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
 		842611A01FCB72600086A189 /* FeaturedImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119F1FCB72600086A189 /* FeaturedImageDownloader.swift */; };
 		842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611A11FCB769D0086A189 /* RSHTMLMetadata+Extension.swift */; };
+		842AE5A72240ADED004A742C /* AccountsControlsBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842AE5A62240ADED004A742C /* AccountsControlsBackgroundView.swift */; };
+		842AE5A82240ADED004A742C /* AccountsControlsBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842AE5A62240ADED004A742C /* AccountsControlsBackgroundView.swift */; };
 		842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppNotifications.swift */; };
 		842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
 		842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */; };
@@ -789,6 +791,7 @@
 		8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataDownloader.swift; sourceTree = "<group>"; };
 		8426119F1FCB72600086A189 /* FeaturedImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedImageDownloader.swift; sourceTree = "<group>"; };
 		842611A11FCB769D0086A189 /* RSHTMLMetadata+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSHTMLMetadata+Extension.swift"; sourceTree = "<group>"; };
+		842AE5A62240ADED004A742C /* AccountsControlsBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccountsControlsBackgroundView.swift; path = NetNewsWire/Preferences/AccountsControlsBackgroundView.swift; sourceTree = "<group>"; };
 		842E45CD1ED8C308000A8B52 /* AppNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppNotifications.swift; path = NetNewsWire/AppNotifications.swift; sourceTree = "<group>"; };
 		842E45DC1ED8C54B000A8B52 /* Browser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Browser.swift; path = NetNewsWire/Browser.swift; sourceTree = "<group>"; };
 		842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardDelegateProtocol.swift; sourceTree = "<group>"; };
@@ -1129,6 +1132,7 @@
 				849A97841ED9ECCD007D329B /* PreferencesWindowController.swift */,
 				84754C89213E471B009CFDFB /* GeneralPrefencesViewController.swift */,
 				84E01AFC223F3050009D63C3 /* AccountsPreferencesViewController.swift */,
+				842AE5A62240ADED004A742C /* AccountsControlsBackgroundView.swift */,
 				84595CA121E9C880003E15A4 /* AdvancedPreferencesViewController.swift */,
 			);
 			name = Preferences;
@@ -2419,6 +2423,7 @@
 				840F7C3B21BDA4B40057E851 /* NSApplication+Scriptability.swift in Sources */,
 				840F7C3C21BDA4B40057E851 /* SidebarCell.swift in Sources */,
 				840F7C3D21BDA4B40057E851 /* SidebarTreeControllerDelegate.swift in Sources */,
+				842AE5A82240ADED004A742C /* AccountsControlsBackgroundView.swift in Sources */,
 				840F7C3E21BDA4B40057E851 /* UnreadCountView.swift in Sources */,
 				840F7C3F21BDA4B40057E851 /* FeedIconDownloader.swift in Sources */,
 				840F7C4021BDA4B40057E851 /* MarkCommandValidationStatus.swift in Sources */,
@@ -2608,6 +2613,7 @@
 				849A977B1ED9EC04007D329B /* UnreadIndicatorView.swift in Sources */,
 				84B99C9D1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift in Sources */,
 				849A97541ED9EAC0007D329B /* AddFeedWindowController.swift in Sources */,
+				842AE5A72240ADED004A742C /* AccountsControlsBackgroundView.swift in Sources */,
 				849A976D1ED9EBC8007D329B /* TimelineTableView.swift in Sources */,
 				84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */,
 				D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */,

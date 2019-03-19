@@ -320,6 +320,25 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="1gP-iQ-hAV" customClass="AccountsControlsBackgroundView" customModule="NetNewsWire" customModuleProvider="target">
+                                <rect key="frame" x="83" y="20" width="65" height="24"/>
+                                <subviews>
+                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="EKJ-HA-PtK">
+                                        <rect key="frame" x="0.0" y="-2" width="64" height="5"/>
+                                    </box>
+                                    <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="QRx-wf-Jl2">
+                                        <rect key="frame" x="62" y="1" width="5" height="23"/>
+                                    </box>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="EKJ-HA-PtK" firstAttribute="leading" secondItem="1gP-iQ-hAV" secondAttribute="leading" id="5wB-HU-dPm"/>
+                                    <constraint firstAttribute="bottom" secondItem="EKJ-HA-PtK" secondAttribute="bottom" id="7yJ-Rx-DYv"/>
+                                    <constraint firstAttribute="trailing" secondItem="EKJ-HA-PtK" secondAttribute="trailing" constant="1" id="E2G-q6-m8G"/>
+                                    <constraint firstAttribute="bottom" secondItem="QRx-wf-Jl2" secondAttribute="bottom" constant="1" id="goT-ym-EVA"/>
+                                    <constraint firstAttribute="trailing" secondItem="QRx-wf-Jl2" secondAttribute="trailing" id="jIW-Xk-22D"/>
+                                    <constraint firstItem="QRx-wf-Jl2" firstAttribute="top" secondItem="1gP-iQ-hAV" secondAttribute="top" id="zZo-7d-ZEG"/>
+                                </constraints>
+                            </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Y7D-xQ-wep">
                                 <rect key="frame" x="156" y="20" width="274" height="260"/>
                             </customView>
@@ -327,10 +346,12 @@
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="QbY-Xt-QmB" secondAttribute="bottom" constant="20" symbolic="YES" id="1KO-Lu-ZGN"/>
                             <constraint firstItem="Y7D-xQ-wep" firstAttribute="leading" secondItem="PaF-du-r3c" secondAttribute="trailing" constant="8" symbolic="YES" id="6HJ-Kp-fDJ"/>
+                            <constraint firstItem="1gP-iQ-hAV" firstAttribute="height" secondItem="9qe-g9-RR3" secondAttribute="height" id="83d-nY-WgE"/>
+                            <constraint firstItem="1gP-iQ-hAV" firstAttribute="trailing" secondItem="PaF-du-r3c" secondAttribute="trailing" id="9Wz-8u-aBI"/>
                             <constraint firstAttribute="trailing" secondItem="Y7D-xQ-wep" secondAttribute="trailing" constant="20" symbolic="YES" id="BiM-sH-Dno"/>
                             <constraint firstItem="QbY-Xt-QmB" firstAttribute="top" secondItem="PaF-du-r3c" secondAttribute="bottom" constant="-1" id="CwF-cb-6WI"/>
                             <constraint firstItem="9qe-g9-RR3" firstAttribute="width" secondItem="QbY-Xt-QmB" secondAttribute="width" id="DAw-bV-gAa"/>
-                            <constraint firstItem="9qe-g9-RR3" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="PaF-du-r3c" secondAttribute="trailing" id="NXV-59-TMC"/>
+                            <constraint firstItem="1gP-iQ-hAV" firstAttribute="bottom" secondItem="9qe-g9-RR3" secondAttribute="bottom" id="NxN-Hb-0Ov"/>
                             <constraint firstItem="PaF-du-r3c" firstAttribute="top" secondItem="GrE-GP-fYK" secondAttribute="top" constant="20" symbolic="YES" id="V61-Mz-6aS"/>
                             <constraint firstItem="QbY-Xt-QmB" firstAttribute="leading" secondItem="GrE-GP-fYK" secondAttribute="leading" constant="20" symbolic="YES" id="a8Q-Yv-mKh"/>
                             <constraint firstItem="Y7D-xQ-wep" firstAttribute="top" secondItem="GrE-GP-fYK" secondAttribute="top" constant="20" symbolic="YES" id="aLy-Bj-FNe"/>
@@ -339,6 +360,7 @@
                             <constraint firstItem="QbY-Xt-QmB" firstAttribute="height" secondItem="9qe-g9-RR3" secondAttribute="height" id="n5c-gE-KiS"/>
                             <constraint firstAttribute="bottom" secondItem="Y7D-xQ-wep" secondAttribute="bottom" constant="20" symbolic="YES" id="o1k-4Z-ABq"/>
                             <constraint firstItem="9qe-g9-RR3" firstAttribute="leading" secondItem="QbY-Xt-QmB" secondAttribute="trailing" constant="-1" id="ygJ-cM-1bf"/>
+                            <constraint firstItem="1gP-iQ-hAV" firstAttribute="leading" secondItem="9qe-g9-RR3" secondAttribute="trailing" id="zce-qz-sim"/>
                         </constraints>
                     </view>
                 </viewController>
