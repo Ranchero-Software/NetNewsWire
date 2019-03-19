@@ -38,6 +38,12 @@
 	</dict>
 	<dict>
 		<key>key</key>
+		<string>n</string>
+		<key>action</key>
+		<string>nextUnread:</string>
+	</dict>
+	<dict>
+		<key>key</key>
 		<string>r</string>
 		<key>action</key>
 		<string>markRead:</string>
