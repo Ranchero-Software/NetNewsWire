@@ -11,11 +11,11 @@ import RSCore
 
 final class AccountsControlsBackgroundView: NSView {
 
-	private static let lightModeFillColor = NSColor(white: 0.97, alpha: 1.0)
-	private static let darkModeFillColor = NSColor(white: 0.24, alpha: 1.0)
+	private let lightModeFillColor = NSColor(white: 0.97, alpha: 1.0)
+	private let darkModeFillColor = NSColor(red: 0.32, green: 0.34, blue: 0.35, alpha: 1.0)
 
-	private static let lightModeBorderColor = NSColor(white: 0.71, alpha: 1.0)
-	private static let darkModeBorderColor = NSColor(white: 0.5, alpha: 1.0)
+	private let lightModeBorderColor = NSColor(white: 0.71, alpha: 1.0)
+	private let darkModeBorderColor = NSColor(red: 0.41, green: 0.43, blue: 0.44, alpha: 1.0)
 
 	override var isFlipped: Bool {
 		return true
@@ -26,11 +26,11 @@ final class AccountsControlsBackgroundView: NSView {
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
-		let fillColor = self.effectiveAppearance.isDarkMode ? AccountsControlsBackgroundView.darkModeFillColor : AccountsControlsBackgroundView.lightModeFillColor
+		let fillColor = self.effectiveAppearance.isDarkMode ? darkModeFillColor : lightModeFillColor
 		fillColor.setFill()
 		dirtyRect.fill()
 
-		let borderColor = self.effectiveAppearance.isDarkMode ? AccountsControlsBackgroundView.darkModeBorderColor : AccountsControlsBackgroundView.lightModeBorderColor
+		let borderColor = self.effectiveAppearance.isDarkMode ? darkModeBorderColor : lightModeBorderColor
 		borderColor.set()
 
 		let topPath = NSBezierPath()

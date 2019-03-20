@@ -6,4 +6,11 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+import AppKit
+
+final class AccountsPreferencesViewController: NSViewController {
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+	}
+}
