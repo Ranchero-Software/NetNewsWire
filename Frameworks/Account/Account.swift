@@ -45,6 +45,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public let accountID: String
 	public let type: AccountType
 	public var nameForDisplay = ""
+	public var name = ""
 	public var topLevelFeeds = Set<Feed>()
 	public var folders: Set<Folder>? = Set<Folder>()
 
@@ -70,6 +71,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	private var _flattenedFeeds = Set<Feed>()
 	private var flattenedFeedsNeedUpdate = true
+
+	private let settingsPath: String
+	private var settings = AccountSettings()
 
 	private let feedMetadataPath: String
 	private typealias FeedMetadataDictionary = [String: FeedMetadata]
@@ -134,6 +138,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID)
 
 		self.feedMetadataPath = (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist")
+		self.settingsPath = (dataFolder as NSString).appendingPathComponent("Settings.plist")
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -582,20 +587,23 @@ extension Account: FeedMetadataDelegate {
 
 private extension Account {
 	
-	struct Key {
-		static let children = "children"
-		static let userInfo = "userInfo"
-		static let unreadCount = "unreadCount"
-	}
-
 	func queueSaveToDiskIfNeeded() {
-
 		Account.saveQueue.add(self, #selector(saveToDiskIfNeeded))
 	}
 
 	func pullObjectsFromDisk() {
+		importSettings()
 		importFeedMetadata()
 		importOPMLFile(path: opmlFilePath)
+	}
+
+	func importSettings() {
+		let url = URL(fileURLWithPath: settingsPath)
+		guard let data = try? Data(contentsOf: url) else {
+			return
+		}
+		let decoder = PropertyListDecoder()
+		settings = (try? decoder.decode(AccountSettings.self, from: data)) ?? AccountSettings()
 	}
 
 	func importFeedMetadata() {

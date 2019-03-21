@@ -8,3 +8,6 @@
 
 import Foundation
 
+final class AccountSettings: Codable {
+	
+}

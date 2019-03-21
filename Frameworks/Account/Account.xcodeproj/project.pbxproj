@@ -33,6 +33,7 @@
 		84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D09622217418DC00D77525 /* FeedbinTagging.swift */; };
 		84D0962521741B8500D77525 /* FeedbinSavedSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D0962421741B8500D77525 /* FeedbinSavedSearch.swift */; };
 		84EAC4822148CC6300F154AB /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EAC4812148CC6300F154AB /* RSDatabase.framework */; };
+		84F1F06E2243524700DA0616 /* AccountSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AF4EA3222CFDD100F6A800 /* AccountSettings.swift */; };
 		84F73CF1202788D90000BCEF /* ArticleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F73CF0202788D80000BCEF /* ArticleFetcher.swift */; };
 /* End PBXBuildFile section */
 
@@ -431,6 +432,7 @@
 				841974011F6DD1EC006346C4 /* Folder.swift in Sources */,
 				846E774F1F6EF9C000A165E2 /* LocalAccountDelegate.swift in Sources */,
 				844B297F210CE37E004020B3 /* UnreadCountProvider.swift in Sources */,
+				84F1F06E2243524700DA0616 /* AccountSettings.swift in Sources */,
 				84245C851FDDD8CB0074AFBB /* FeedbinFeed.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

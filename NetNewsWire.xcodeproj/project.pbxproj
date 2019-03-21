@@ -314,6 +314,10 @@
 		84EB381F1FBA8B9F000D2111 /* KeyboardShortcuts.html in Resources */ = {isa = PBXBuildFile; fileRef = 84EB38101FBA8B9F000D2111 /* KeyboardShortcuts.html */; };
 		84F1F0562242038B00DA0616 /* AccountsTableViewBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F1F0552242038B00DA0616 /* AccountsTableViewBackgroundView.swift */; };
 		84F1F0572242038B00DA0616 /* AccountsTableViewBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F1F0552242038B00DA0616 /* AccountsTableViewBackgroundView.swift */; };
+		84F1F0692243455C00DA0616 /* LocalAccount.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84F1F0682243455C00DA0616 /* LocalAccount.xib */; };
+		84F1F06A2243455C00DA0616 /* LocalAccount.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84F1F0682243455C00DA0616 /* LocalAccount.xib */; };
+		84F1F06C2243457C00DA0616 /* LocalAccountPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F1F06B2243457C00DA0616 /* LocalAccountPreferencesViewController.swift */; };
+		84F1F06D2243457C00DA0616 /* LocalAccountPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F1F06B2243457C00DA0616 /* LocalAccountPreferencesViewController.swift */; };
 		84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
 		84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5351FC22FCB00998D64 /* PseudoFeed.swift */; };
 		84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5361FC22FCB00998D64 /* TodayFeedDelegate.swift */; };
@@ -917,6 +921,8 @@
 		84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticlePasteboardWriter.swift; sourceTree = "<group>"; };
 		84EB38101FBA8B9F000D2111 /* KeyboardShortcuts.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = KeyboardShortcuts.html; sourceTree = "<group>"; };
 		84F1F0552242038B00DA0616 /* AccountsTableViewBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsTableViewBackgroundView.swift; sourceTree = "<group>"; };
+		84F1F0682243455C00DA0616 /* LocalAccount.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LocalAccount.xib; sourceTree = "<group>"; };
+		84F1F06B2243457C00DA0616 /* LocalAccountPreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAccountPreferencesViewController.swift; sourceTree = "<group>"; };
 		84F204CD1FAACB660076E152 /* FeedListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListViewController.swift; sourceTree = "<group>"; };
 		84F204DF1FAACBB30076E152 /* ArticleArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleArray.swift; sourceTree = "<group>"; };
 		84F2D5351FC22FCB00998D64 /* PseudoFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PseudoFeed.swift; sourceTree = "<group>"; };
@@ -1135,6 +1141,7 @@
 				842AE5B82241F37B004A742C /* AccountsPreferencesViewController.swift */,
 				842AE5B72241F37B004A742C /* AccountsControlsBackgroundView.swift */,
 				84F1F0552242038B00DA0616 /* AccountsTableViewBackgroundView.swift */,
+				84F1F0672243455C00DA0616 /* Local */,
 			);
 			name = Accounts;
 			path = NetNewsWire/Preferences/Accounts;
@@ -1655,6 +1662,15 @@
 			name = KeyboardShortcuts;
 			path = NetNewsWire/Resources/KeyboardShortcuts;
 			sourceTree = SOURCE_ROOT;
+		};
+		84F1F0672243455C00DA0616 /* Local */ = {
+			isa = PBXGroup;
+			children = (
+				84F1F0682243455C00DA0616 /* LocalAccount.xib */,
+				84F1F06B2243457C00DA0616 /* LocalAccountPreferencesViewController.swift */,
+			);
+			path = Local;
+			sourceTree = "<group>";
 		};
 		84F2D5341FC22FCB00998D64 /* SmartFeeds */ = {
 			isa = PBXGroup;
@@ -2267,6 +2283,7 @@
 				8405DDA322168920008CE1BF /* TimelineTableView.xib in Resources */,
 				840F7C9B21BDA4B40057E851 /* TimelineKeyboardShortcuts.plist in Resources */,
 				840F7C9C21BDA4B40057E851 /* template.html in Resources */,
+				84F1F06A2243455C00DA0616 /* LocalAccount.xib in Resources */,
 				840F7C9D21BDA4B40057E851 /* AddFeedSheet.xib in Resources */,
 				840F7C9E21BDA4B40057E851 /* DB5.plist in Resources */,
 				840F7C9F21BDA4B40057E851 /* SidebarKeyboardShortcuts.plist in Resources */,
@@ -2306,6 +2323,7 @@
 				849A979D1ED9EFEB007D329B /* template.html in Resources */,
 				849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */,
 				842E45E71ED8C747000A8B52 /* DB5.plist in Resources */,
+				84F1F0692243455C00DA0616 /* LocalAccount.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				84A3EE5F223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				849A97AC1ED9F9BC007D329B /* AddFolderSheet.xib in Resources */,
@@ -2482,6 +2500,7 @@
 				840F7C5221BDA4B40057E851 /* FeedInspectorViewController.swift in Sources */,
 				840F7C5321BDA4B40057E851 /* FolderPasteboardWriter.swift in Sources */,
 				840F7C5421BDA4B40057E851 /* SidebarOutlineDataSource.swift in Sources */,
+				84F1F06D2243457C00DA0616 /* LocalAccountPreferencesViewController.swift in Sources */,
 				840F7C5521BDA4B40057E851 /* SidebarCellAppearance.swift in Sources */,
 				840F7C5621BDA4B40057E851 /* FeedFinder.swift in Sources */,
 				840F7C5721BDA4B40057E851 /* StarredFeedDelegate.swift in Sources */,
@@ -2603,6 +2622,7 @@
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
+				84F1F06C2243457C00DA0616 /* LocalAccountPreferencesViewController.swift in Sources */,
 				8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */,
 				519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */,
 				84E8E0DB202EC49300562D8F /* TimelineViewController+ContextualMenus.swift in Sources */,
