@@ -175,7 +175,7 @@
         <!--Advanced Preferences View Controller-->
         <scene sceneID="z1G-rc-sP5">
             <objects>
-                <viewController storyboardIdentifier="Advanced" id="GNh-Wp-giO" customClass="AdvancedPreferencesViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Advanced" id="GNh-Wp-giO" customClass="AdvancedPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Hij-7D-6Pw">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="93"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -246,10 +246,10 @@
             </objects>
             <point key="canvasLocation" x="-29" y="347"/>
         </scene>
-        <!--View Controller-->
+        <!--Accounts Preferences View Controller-->
         <scene sceneID="Rsj-41-ZOj">
             <objects>
-                <viewController storyboardIdentifier="Accounts" id="z5c-Js-Up9" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Accounts" id="z5c-Js-Up9" customClass="AccountsPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="GrE-GP-fYK">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -290,6 +290,10 @@
                                                             </prototypeCellViews>
                                                         </tableColumn>
                                                     </tableColumns>
+                                                    <connections>
+                                                        <outlet property="dataSource" destination="z5c-Js-Up9" id="mzL-4s-IOm"/>
+                                                        <outlet property="delegate" destination="z5c-Js-Up9" id="ac0-N6-gi5"/>
+                                                    </connections>
                                                 </tableView>
                                             </subviews>
                                         </clipView>
