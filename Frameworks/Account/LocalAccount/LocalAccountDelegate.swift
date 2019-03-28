@@ -24,8 +24,6 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
-
-		account.nameForDisplay = NSLocalizedString("On My Mac", comment: "Local Account Name")
 	}
 
 	// MARK: Disk

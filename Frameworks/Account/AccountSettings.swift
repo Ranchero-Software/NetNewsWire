@@ -9,5 +9,6 @@
 import Foundation
 
 final class AccountSettings: Codable {
-	
+
+	var name: String?
 }

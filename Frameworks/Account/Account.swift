@@ -44,11 +44,28 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public let accountID: String
 	public let type: AccountType
-	public var nameForDisplay = ""
-	public var name = ""
+	public var nameForDisplay: String {
+		guard let name = name, !name.isEmpty else {
+			return defaultName
+		}
+		return name
+	}
+
+	public var name: String? {
+		get {
+			return settings.name
+		}
+		set {
+			if newValue != settings.name {
+				settings.name = newValue
+
+			}
+		}
+	}
+	public let defaultName: String
+
 	public var topLevelFeeds = Set<Feed>()
 	public var folders: Set<Folder>? = Set<Folder>()
-
 	private var feedDictionaryNeedsUpdate = true
 	private var _idToFeedDictionary = [String: Feed]()
 	var idToFeedDictionary: [String: Feed] {
@@ -74,6 +91,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	private let settingsPath: String
 	private var settings = AccountSettings()
+	private var settingsDirty = false {
+		didSet {
+			queueSaveSettingsIfNeeded()
+		}
+	}
 
 	private let feedMetadataPath: String
 	private typealias FeedMetadataDictionary = [String: FeedMetadata]
@@ -139,6 +161,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		self.feedMetadataPath = (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist")
 		self.settingsPath = (dataFolder as NSString).appendingPathComponent("Settings.plist")
+
+		switch type {
+		case .onMyMac:
+			defaultName = NSLocalizedString("On My Mac", comment: "Account name")
+		case .feedly:
+			defaultName = "Feedly"
+		case .feedbin:
+			defaultName = "Feedbin"
+		case .feedWrangler:
+			defaultName = "FeedWrangler"
+		case .newsBlur:
+			defaultName = "NewsBlur"
+		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -555,6 +590,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
+	@objc func saveSettingsIfNeeded() {
+		if settingsDirty {
+			saveSettings()
+		}
+	}
+
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {
@@ -683,6 +724,25 @@ private extension Account {
 		let url = URL(fileURLWithPath: feedMetadataPath)
 		do {
 			let data = try encoder.encode(d)
+			try data.write(to: url)
+		}
+		catch {
+			assertionFailure(error.localizedDescription)
+		}
+	}
+
+	func queueSaveSettingsIfNeeded() {
+		Account.saveQueue.add(self, #selector(saveSettingsIfNeeded))
+	}
+
+	func saveSettings() {
+		settingsDirty = false
+
+		let encoder = PropertyListEncoder()
+		encoder.outputFormat = .binary
+		let url = URL(fileURLWithPath: settingsPath)
+		do {
+			let data = try encoder.encode(settings)
 			try data.write(to: url)
 		}
 		catch {
