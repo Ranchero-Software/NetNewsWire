@@ -16,9 +16,9 @@ public extension Notification.Name {
 
 public extension Feed {
 
-	public static let FeedSettingUserInfoKey = "feedSetting"
+	static let FeedSettingUserInfoKey = "feedSetting"
 
-	public struct FeedSettingKey {
+	struct FeedSettingKey {
 		public static let homePageURL = "homePageURL"
 		public static let iconURL = "iconURL"
 		public static let faviconURL = "faviconURL"
