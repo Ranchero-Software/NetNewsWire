@@ -2032,6 +2032,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -3423,7 +3424,6 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -3433,7 +3433,6 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
