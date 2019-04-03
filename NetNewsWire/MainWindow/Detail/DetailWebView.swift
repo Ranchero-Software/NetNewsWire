@@ -40,11 +40,6 @@ final class DetailWebView: WKWebView {
 		super.willOpenMenu(menu, with: event)
 	}
 
-	override func viewDidChangeEffectiveAppearance() {
-		let bodyClass = effectiveAppearance.isDarkMode ? "dark" : "light"
-		evaluateJavaScript("document.getElementById('bodyId').className = '\(bodyClass)'")
-	}
-
 	override func viewWillStartLiveResize() {
 		super.viewWillStartLiveResize()
 		evaluateJavaScript("document.body.style.overflow = 'hidden';", completionHandler: nil)
