@@ -27,25 +27,4 @@ class TimelineTableRowView : NSTableRowView {
 		return nil
 	}
 
-	override var isEmphasized: Bool {
-		didSet {
-			if #available(macOS 10.14, *) {
-				return
-			}
-			if let cellView = cellView {
-				cellView.isEmphasized = isEmphasized
-			}
-		}
-	}
-
-	override var isSelected: Bool {
-		didSet {
-			if #available(macOS 10.14, *) {
-				return
-			}
-			if let cellView = cellView {
-				cellView.isSelected = isSelected
-			}
-		}
-	}
 }

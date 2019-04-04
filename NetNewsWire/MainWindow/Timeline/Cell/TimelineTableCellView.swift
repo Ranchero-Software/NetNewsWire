@@ -33,7 +33,6 @@ class TimelineTableCellView: NSTableCellView {
 	var cellAppearance: TimelineCellAppearance! {
 		didSet {
 			if cellAppearance != oldValue {
-				updateTextFieldColors()
 				updateTextFieldFonts()
 				avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
 				needsLayout = true
@@ -49,22 +48,6 @@ class TimelineTableCellView: NSTableCellView {
 	
 	override var isFlipped: Bool {
 		return true
-	}
-
-	var isEmphasized = false {
-		didSet {
-			unreadIndicatorView.isEmphasized = isEmphasized
-			updateTextFieldColors()
-			needsDisplay = true
-		}
-	}
-	
-	var isSelected = false {
-		didSet {
-			unreadIndicatorView.isSelected = isSelected
-			updateTextFieldColors()
-			needsDisplay = true
-		}
 	}
 
 	override init(frame frameRect: NSRect) {
@@ -94,7 +77,6 @@ class TimelineTableCellView: NSTableCellView {
 	override func viewDidMoveToSuperview() {
 		
 		updateSubviews()
-		updateAppearance()
 	}
 	
 	override func layout() {
@@ -164,20 +146,6 @@ private extension TimelineTableCellView {
 		}
 	}
 
-	func updateTextFieldColors() {
-		if #available(macOS 10.14, *) {
-		}
-		else {
-			// Pre-Mojave: manually set colors to white when needed.
-			if isEmphasized && isSelected {
-				textFields.forEach { $0.textColor = NSColor.white }
-			}
-			else {
-				makeTextFieldColorsNormal()
-			}
-		}
-	}
-
 	func makeTextFieldColorsNormal() {
 		titleView.textColor = NSColor.labelColor
 		feedNameView.textColor = NSColor.secondaryLabelColor
@@ -218,18 +186,6 @@ private extension TimelineTableCellView {
 	func updatedLayoutRects() -> TimelineCellLayout {
 
 		return TimelineCellLayout(width: bounds.width, height: bounds.height, cellData: cellData, appearance: cellAppearance, hasAvatar: avatarImageView.image != nil)
-	}
-
-	func updateAppearance() {
-
-		if let rowView = superview as? NSTableRowView {
-			isEmphasized = rowView.isEmphasized
-			isSelected = rowView.isSelected
-		}
-		else {
-			isEmphasized = false
-			isSelected = false
-		}
 	}
 
 	func updateTitleView() {
