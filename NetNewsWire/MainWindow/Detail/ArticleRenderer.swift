@@ -15,30 +15,28 @@ struct ArticleRenderer {
 
 	private let article: Article?
 	private let articleStyle: ArticleStyle
-	private let appearance: NSAppearance?
 	private let title: String
 
-	private init(article: Article?, style: ArticleStyle, appearance: NSAppearance?) {
+	private init(article: Article?, style: ArticleStyle) {
 		self.article = article
 		self.articleStyle = style
-		self.appearance = appearance
 		self.title = article?.title ?? ""
 	}
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, style: ArticleStyle, appearance: NSAppearance?) -> String {
-		let renderer = ArticleRenderer(article: article, style: style, appearance: appearance)
+	static func articleHTML(article: Article, style: ArticleStyle) -> String {
+		let renderer = ArticleRenderer(article: article, style: style)
 		return renderer.articleHTML
 	}
 
-	static func multipleSelectionHTML(style: ArticleStyle, appearance: NSAppearance?) -> String {
-		let renderer = ArticleRenderer(article: nil, style: style, appearance: appearance)
+	static func multipleSelectionHTML(style: ArticleStyle) -> String {
+		let renderer = ArticleRenderer(article: nil, style: style)
 		return renderer.multipleSelectionHTML
 	}
 
-	static func noSelectionHTML(style: ArticleStyle, appearance: NSAppearance?) -> String {
-		let renderer = ArticleRenderer(article: nil, style: style, appearance: appearance)
+	static func noSelectionHTML(style: ArticleStyle) -> String {
+		let renderer = ArticleRenderer(article: nil, style: style)
 		return renderer.noSelectionHTML
 	}
 }
@@ -338,8 +336,7 @@ private extension ArticleRenderer {
 
 		"""
 		
-		let appearanceClass = appearance?.isDarkMode ?? false ? "dark" : "light"
-		s += "\n\n</head><body id='bodyId' onload='startup()' class=\(appearanceClass)>\n\n"
+		s += "\n\n</head><body onload='startup()'>\n\n"
 		s += body
 		s += "\n\n</body></html>"
 

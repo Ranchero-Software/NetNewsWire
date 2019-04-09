@@ -61,12 +61,8 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		}
 
 		view = webview
-
-		DispatchQueue.main.async {
-			// Must do this async, because reloadHTML references view.effectiveAppearance,
-			// which causes loadView to get called. Infinite loop.
-			self.reloadHTML()
-		}
+		
+		self.reloadHTML()
 	}
 
 	// MARK: Scrolling
@@ -119,17 +115,16 @@ private extension DetailWebViewController {
 
 	func reloadHTML() {
 		let style = ArticleStylesManager.shared.currentStyle
-		let appearance = view.effectiveAppearance
 		let html: String
 		var baseURL: URL? = nil
 
 		switch state {
 		case .noSelection:
-			html = ArticleRenderer.noSelectionHTML(style: style, appearance: appearance)
+			html = ArticleRenderer.noSelectionHTML(style: style)
 		case .multipleSelection:
-			html = ArticleRenderer.multipleSelectionHTML(style: style, appearance: appearance)
+			html = ArticleRenderer.multipleSelectionHTML(style: style)
 		case .article(let article):
-			html = ArticleRenderer.articleHTML(article: article, style: style, appearance: appearance)
+			html = ArticleRenderer.articleHTML(article: article, style: style)
 			baseURL = article.baseURL
 		}
 
