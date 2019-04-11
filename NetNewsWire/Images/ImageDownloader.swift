@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import AppKit
+import Foundation
 import RSCore
 import RSWeb
 
@@ -20,7 +20,7 @@ final class ImageDownloader {
 	private let folder: String
 	private var diskCache: BinaryDiskCache
 	private let queue: DispatchQueue
-	private var imageCache = [String: NSImage]() // url: image
+	private var imageCache = [String: Data]() // url: image
 	private var urlsInProgress = Set<String>()
 	private var badURLs = Set<String>() // That return a 404 or whatever. Just skip them in the future.
 
@@ -32,10 +32,10 @@ final class ImageDownloader {
 	}
 
 	@discardableResult
-	func image(for url: String) -> NSImage? {
+	func image(for url: String) -> Data? {
 
-		if let image = imageCache[url] {
-			return image
+		if let data = imageCache[url] {
+			return data
 		}
 
 		findImage(url)
@@ -45,7 +45,7 @@ final class ImageDownloader {
 
 private extension ImageDownloader {
 
-	func cacheImage(_ url: String, _ image: NSImage) {
+	func cacheImage(_ url: String, _ image: Data) {
 
 		imageCache[url] = image
 		postImageDidBecomeAvailableNotification(url)
@@ -76,12 +76,14 @@ private extension ImageDownloader {
 		}
 	}
 
-	func readFromDisk(_ url: String, _ callback: @escaping (NSImage?) -> Void) {
+	func readFromDisk(_ url: String, _ callback: @escaping (Data?) -> Void) {
 
 		queue.async {
 
 			if let data = self.diskCache[self.diskKey(url)], !data.isEmpty {
-				NSImage.rs_image(with: data, imageResultBlock: callback)
+				DispatchQueue.main.async {
+					callback(data)
+				}
 				return
 			}
 
@@ -91,7 +93,7 @@ private extension ImageDownloader {
 		}
 	}
 
-	func downloadImage(_ url: String, _ callback: @escaping (NSImage?) -> Void) {
+	func downloadImage(_ url: String, _ callback: @escaping (Data?) -> Void) {
 
 		guard let imageURL = URL(string: url) else {
 			callback(nil)
@@ -102,7 +104,7 @@ private extension ImageDownloader {
 
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 				self.saveToDisk(url, data)
-				NSImage.rs_image(with: data, imageResultBlock: callback)
+				callback(data)
 				return
 			}
 

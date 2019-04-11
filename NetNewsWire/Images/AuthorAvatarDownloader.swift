@@ -6,8 +6,9 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import AppKit
+import Foundation
 import Articles
+import RSCore
 
 extension Notification.Name {
 
@@ -17,7 +18,7 @@ extension Notification.Name {
 final class AuthorAvatarDownloader {
 
 	private let imageDownloader: ImageDownloader
-	private var cache = [String: NSImage]() // avatarURL: NSImage
+	private var cache = [String: RSImage]() // avatarURL: RSImage
 	private var waitingForAvatarURLs = Set<String>()
 
 	init(imageDownloader: ImageDownloader) {
@@ -26,19 +27,22 @@ final class AuthorAvatarDownloader {
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
 	}
 
-	func image(for author: Author) -> NSImage? {
+	func image(for author: Author) -> RSImage? {
 
 		guard let avatarURL = author.avatarURL else {
 			return nil
 		}
+		
 		if let cachedImage = cache[avatarURL] {
 			return cachedImage
 		}
-		if let image = imageDownloader.image(for: avatarURL) {
-			handleImageDidBecomeAvailable(avatarURL, image)
-			return image
-		}
-		else {
+		
+		if let imageData = imageDownloader.image(for: avatarURL) {
+			if let image = RSImage.scaledForAvatar(imageData) {
+				handleImageDidBecomeAvailable(avatarURL, image)
+				return image
+			}
+		} else {
 			waitingForAvatarURLs.insert(avatarURL)
 		}
 
@@ -50,20 +54,24 @@ final class AuthorAvatarDownloader {
 		guard let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
+		
 		guard waitingForAvatarURLs.contains(avatarURL) else {
 			return
 		}
-		guard let image = imageDownloader.image(for: avatarURL) else {
+		
+		guard let imageData = imageDownloader.image(for: avatarURL),
+			let image = RSImage.scaledForAvatar(imageData) else {
 			return
 		}
 
 		handleImageDidBecomeAvailable(avatarURL, image)
+		
 	}
 }
 
 private extension AuthorAvatarDownloader {
 
-	func handleImageDidBecomeAvailable(_ avatarURL: String, _ image: NSImage) {
+	func handleImageDidBecomeAvailable(_ avatarURL: String, _ image: RSImage) {
 
 		if cache[avatarURL] == nil {
 			cache[avatarURL] = image

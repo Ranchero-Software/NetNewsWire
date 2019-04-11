@@ -25,7 +25,7 @@ final class SingleFaviconDownloader {
 	}
 
 	let faviconURL: String
-	var image: NSImage?
+	var image: RSImage?
 
 	private var lastDownloadAttemptDate: Date
 	private var diskStatus = DiskStatus.unknown
@@ -89,7 +89,7 @@ private extension SingleFaviconDownloader {
 		}
 	}
 
-	func readFromDisk(_ callback: @escaping (NSImage?) -> Void) {
+	func readFromDisk(_ callback: @escaping (RSImage?) -> Void) {
 
 		guard diskStatus != .notOnDisk else {
 			callback(nil)
@@ -99,7 +99,7 @@ private extension SingleFaviconDownloader {
 		queue.async {
 
 			if let data = self.diskCache[self.diskKey], !data.isEmpty {
-				NSImage.rs_image(with: data, imageResultBlock: callback)
+				RSImage.scaledForAvatar(data, imageResultBlock: callback)
 				return
 			}
 
@@ -123,7 +123,7 @@ private extension SingleFaviconDownloader {
 		}
 	}
 
-	func downloadFavicon(_ callback: @escaping (NSImage?) -> Void) {
+	func downloadFavicon(_ callback: @escaping (RSImage?) -> Void) {
 
 		guard let url = URL(string: faviconURL) else {
 			callback(nil)
@@ -134,7 +134,7 @@ private extension SingleFaviconDownloader {
 
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 				self.saveToDisk(data)
-				NSImage.rs_image(with: data, imageResultBlock: callback)
+				RSImage.scaledForAvatar(data, imageResultBlock: callback)
 				return
 			}
 
@@ -151,4 +151,5 @@ private extension SingleFaviconDownloader {
 		assert(Thread.isMainThread)
 		NotificationCenter.default.post(name: .DidLoadFavicon, object: self)
 	}
+	
 }

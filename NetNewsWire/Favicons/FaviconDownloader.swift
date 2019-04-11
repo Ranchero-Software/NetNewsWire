@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import AppKit
+import Foundation
 import Articles
 import Account
 import RSCore
@@ -40,7 +40,7 @@ final class FaviconDownloader {
 
 	// MARK: - API
 
-	func favicon(for feed: Feed) -> NSImage? {
+	func favicon(for feed: Feed) -> RSImage? {
 
 		assert(Thread.isMainThread)
 
@@ -62,13 +62,13 @@ final class FaviconDownloader {
 		return nil
 	}
 
-	func favicon(with faviconURL: String) -> NSImage? {
+	func favicon(with faviconURL: String) -> RSImage? {
 
 		let downloader = faviconDownloader(withURL: faviconURL)
 		return downloader.image
 	}
 
-	func favicon(withHomePageURL homePageURL: String) -> NSImage? {
+	func favicon(withHomePageURL homePageURL: String) -> RSImage? {
 
 		let url = homePageURL.rs_normalizedURL()
 		if homePageURLsWithNoFaviconURL.contains(url) {

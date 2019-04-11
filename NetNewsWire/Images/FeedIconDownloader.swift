@@ -9,6 +9,7 @@
 import AppKit
 import Articles
 import Account
+import RSCore
 import RSWeb
 import RSParser
 
@@ -23,14 +24,14 @@ public final class FeedIconDownloader {
 	private var homePageToIconURLCache = [String: String]()
 	private var homePagesWithNoIconURL = Set<String>()
 	private var urlsInProgress = Set<String>()
-	private var cache = [Feed: NSImage]()
+	private var cache = [Feed: RSImage]()
 
 	init(imageDownloader: ImageDownloader) {
 
 		self.imageDownloader = imageDownloader
 	}
 
-	func icon(for feed: Feed) -> NSImage? {
+	func icon(for feed: Feed) -> RSImage? {
 
 		if let cachedImage = cache[feed] {
 			return cachedImage
@@ -58,7 +59,7 @@ public final class FeedIconDownloader {
 
 private extension FeedIconDownloader {
 
-	func icon(forHomePageURL homePageURL: String) -> NSImage? {
+	func icon(forHomePageURL homePageURL: String) -> RSImage? {
 
 		if homePagesWithNoIconURL.contains(homePageURL) {
 			return nil
@@ -72,9 +73,11 @@ private extension FeedIconDownloader {
 		return nil
 	}
 
-	func icon(forURL url: String) -> NSImage? {
-
-		return imageDownloader.image(for: url)
+	func icon(forURL url: String) -> RSImage? {
+		if let imageData = imageDownloader.image(for: url), let image = RSImage.scaledForAvatar(imageData) {
+			return image
+		}
+		return nil
 	}
 
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {

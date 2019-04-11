@@ -6,8 +6,9 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import AppKit
+import Foundation
 import Articles
+import RSCore
 import RSParser
 
 final class FeaturedImageDownloader {
@@ -22,7 +23,7 @@ final class FeaturedImageDownloader {
 		self.imageDownloader = imageDownloader
 	}
 
-	func image(for article: Article) -> NSImage? {
+	func image(for article: Article) -> RSImage? {
 
 		if let url = article.imageURL {
 			return image(forFeaturedImageURL: url)
@@ -33,7 +34,7 @@ final class FeaturedImageDownloader {
 		return nil
 	}
 
-	func image(forArticleURL articleURL: String) -> NSImage? {
+	func image(forArticleURL articleURL: String) -> RSImage? {
 
 		if articleURLsWithNoFeaturedImage.contains(articleURL) {
 			return nil
@@ -46,10 +47,13 @@ final class FeaturedImageDownloader {
 		return nil
 	}
 
-	func image(forFeaturedImageURL featuredImageURL: String) -> NSImage? {
-
-		return imageDownloader.image(for: featuredImageURL)
+	func image(forFeaturedImageURL featuredImageURL: String) -> RSImage? {
+		if let data = imageDownloader.image(for: featuredImageURL) {
+			return RSImage(data: data)
+		}
+		return nil
 	}
+	
 }
 
 private extension FeaturedImageDownloader {

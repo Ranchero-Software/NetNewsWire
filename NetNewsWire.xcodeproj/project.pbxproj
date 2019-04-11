@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
+		51126DA5225FDE2F00722696 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B239222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
@@ -747,6 +749,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
 		5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailKeyboardDelegate.swift; sourceTree = "<group>"; };
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
@@ -1457,6 +1460,7 @@
 			children = (
 				849A97971ED9EFAA007D329B /* Node-Extensions.swift */,
 				8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */,
+				51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */,
 			);
 			name = Extensions;
 			path = NetNewsWire/Extensions;
@@ -2497,6 +2501,7 @@
 				840F7C4A21BDA4B40057E851 /* RSHTMLMetadata+Extension.swift in Sources */,
 				840F7C4B21BDA4B40057E851 /* SendToMarsEditCommand.swift in Sources */,
 				842AE5BC2241F37B004A742C /* AccountsPreferencesViewController.swift in Sources */,
+				51126DA5225FDE2F00722696 /* RSImage-Extensions.swift in Sources */,
 				840F7C4C21BDA4B40057E851 /* ScriptingObjectContainer.swift in Sources */,
 				840F7C4D21BDA4B40057E851 /* ArticleStylesManager.swift in Sources */,
 				840F7C4E21BDA4B40057E851 /* SharingServiceDelegate.swift in Sources */,
@@ -2682,6 +2687,7 @@
 				844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */,
 				51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */,
 				849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */,
+				51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */,
 				84A1500320048D660046AD9A /* SendToCommand.swift in Sources */,
 				845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */,
 				849A97851ED9ECCD007D329B /* PreferencesWindowController.swift in Sources */,

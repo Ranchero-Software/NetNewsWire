@@ -692,13 +692,16 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func featuredImageFor(_ article: Article) -> NSImage? {
 
 		if let url = article.imageURL {
-			return appDelegate.imageDownloader.image(for: url)
+			if let imageData = appDelegate.imageDownloader.image(for: url) {
+				return NSImage(data: imageData)
+			}
 		}
+		
 		return nil
+		
 	}
 
 	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {
-
 		cell.objectValue = nil
 		cell.cellData = TimelineCellData()
 	}
