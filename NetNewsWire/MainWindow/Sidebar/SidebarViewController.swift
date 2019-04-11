@@ -44,7 +44,7 @@ protocol SidebarDelegate: class {
 
 	override func viewDidLoad() {
 
-		sidebarCellAppearance = SidebarCellAppearance(theme: appDelegate.currentTheme, fontSize: AppDefaults.sidebarFontSize)
+		sidebarCellAppearance = SidebarCellAppearance(fontSize: AppDefaults.sidebarFontSize)
 
 		outlineView.dataSource = dataSource
 		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)

@@ -7,24 +7,18 @@
 //
 
 import AppKit
-import DB5
 
 struct SidebarCellAppearance: Equatable {
 
-	let imageSize: CGSize
-	let imageMarginRight: CGFloat
-	let unreadCountMarginLeft: CGFloat
+	let imageSize = CGSize(width: 16, height: 16)
+	let imageMarginRight: CGFloat = 4.0
+	let unreadCountMarginLeft: CGFloat = 10.0
 	let textFieldFontSize: CGFloat
 	let textFieldFont: NSFont
 
-	init(theme: VSTheme, fontSize: FontSize) {
-
+	init(fontSize: FontSize) {
 		self.textFieldFontSize = AppDefaults.actualFontSize(for: fontSize)
 		self.textFieldFont = NSFont.systemFont(ofSize: textFieldFontSize)
-
-		self.imageSize = theme.size(forKey: "MainWindow.SourceList.favicon.image")
-		self.imageMarginRight = theme.float(forKey: "MainWindow.SourceList.favicon.marginRight")
-		self.unreadCountMarginLeft = theme.float(forKey: "MainWindow.SourceList.unreadCount.marginLeft")
 	}
 }
 
