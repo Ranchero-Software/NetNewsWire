@@ -16,34 +16,9 @@ class UnreadIndicatorView: NSView {
 		let r = NSRect(x: 0.0, y: 0.0, width: unreadCircleDimension, height: unreadCircleDimension)
 		return NSBezierPath(ovalIn: r)
 	}()
-	
-	static let unreadCircleColor = appDelegate.currentTheme.color(forKey: "MainWindow.Timeline.cell.unreadCircleColor")
-
-	var isEmphasized = false {
-		didSet {
-			if isEmphasized != oldValue {
-				needsDisplay = true
-			}
-		}
-	}
-
-	var isSelected = false {
-		didSet {
-			if isSelected != oldValue {
-				needsDisplay = true
-			}
-		}
-	}
 
     override func draw(_ dirtyRect: NSRect) {
-
-		if #available(OSX 10.14, *) {
-			let color = isEmphasized && isSelected ? NSColor.white : NSColor.controlAccentColor
-			color.setFill()
-		} else {
-			let color = isEmphasized && isSelected ? NSColor.white : NSColor.systemBlue
-			color.setFill()
-		}
+		NSColor.controlAccentColor.setFill()
 		UnreadIndicatorView.bezierPath.fill()
     }
     
