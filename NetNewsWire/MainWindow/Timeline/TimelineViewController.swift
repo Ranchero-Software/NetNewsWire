@@ -253,6 +253,51 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 		NSPasteboard.general.copyObjects(selectedArticles)
 	}
 
+	@IBAction func selectNextUp(_ sender: Any?) {
+		
+		guard let lastSelectedRow = tableView.selectedRowIndexes.last else {
+			return
+		}
+		
+		let nextRowIndex = lastSelectedRow - 1
+		if nextRowIndex <= 0 {
+			tableView.scrollTo(row: 0, extraHeight: 0)
+		}
+		
+		tableView.rs_selectRow(nextRowIndex)
+		
+		let followingRowIndex = nextRowIndex - 1
+		if followingRowIndex < 0 {
+			return
+		}
+		
+		tableView.scrollToIfNotVisable(index: followingRowIndex)
+		
+	}
+	
+	@IBAction func selectNextDown(_ sender: Any?) {
+		
+		guard let firstSelectedRow = tableView.selectedRowIndexes.first else {
+			return
+		}
+		
+		let tableMaxIndex = tableView.numberOfRows - 1
+		let nextRowIndex = firstSelectedRow + 1
+		if nextRowIndex >= tableMaxIndex {
+			tableView.scrollTo(row: tableMaxIndex, extraHeight: 0)
+		}
+		
+		tableView.rs_selectRow(nextRowIndex)
+		
+		let followingRowIndex = nextRowIndex + 1
+		if followingRowIndex > tableMaxIndex {
+			return
+		}
+
+		tableView.scrollToIfNotVisable(index: followingRowIndex)
+
+	}
+	
 	func toggleReadStatusForSelectedArticles() {
 		
 		// If any one of the selected articles is unread, then mark them as read.

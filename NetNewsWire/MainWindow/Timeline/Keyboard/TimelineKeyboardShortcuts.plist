@@ -4,6 +4,18 @@
 <array>
 	<dict>
 		<key>key</key>
+		<string>[uparrow]</string>
+		<key>action</key>
+		<string>selectNextUp:</string>
+	</dict>
+	<dict>
+		<key>key</key>
+		<string>[downarrow]</string>
+		<key>action</key>
+		<string>selectNextDown:</string>
+	</dict>
+	<dict>
+		<key>key</key>
 		<string>[leftarrow]</string>
 		<key>action</key>
 		<string>navigateToSidebar:</string>
