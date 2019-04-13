@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import RSCore
 
 class TimelineTableView: NSTableView {
 	
