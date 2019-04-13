@@ -7,7 +7,6 @@
 //
 
 import AppKit
-import DB5
 import Articles
 import RSTree
 import RSWeb
@@ -19,7 +18,6 @@ var appDelegate: AppDelegate!
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UnreadCountProvider {
 
-	var currentTheme: VSTheme!
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
@@ -58,7 +56,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var inspectorWindowController: InspectorWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private let log = Log()
-	private let themeLoader = VSThemeLoader()
 	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
 
 	override init() {
@@ -123,8 +120,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 		let localAccount = AccountManager.shared.localAccount
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
-
-		currentTheme = themeLoader.defaultTheme
 
 		let tempDirectory = NSTemporaryDirectory()
 		let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)

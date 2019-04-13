@@ -10,7 +10,7 @@ import AppKit
 
 class UnreadIndicatorView: NSView {
 
-	static let unreadCircleDimension = appDelegate.currentTheme.float(forKey: "MainWindow.Timeline.cell.unreadCircleDimension")
+	static let unreadCircleDimension: CGFloat = 8.0
 	
 	static let bezierPath: NSBezierPath = {
 		let r = NSRect(x: 0.0, y: 0.0, width: unreadCircleDimension, height: unreadCircleDimension)

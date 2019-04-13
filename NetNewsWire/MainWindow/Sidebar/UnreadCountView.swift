@@ -6,20 +6,20 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-import Foundation
 import AppKit
 
-private let padding = appDelegate.currentTheme.edgeInsets(forKey: "MainWindow.SourceList.unreadCount.padding")
-private let cornerRadius = appDelegate.currentTheme.float(forKey: "MainWindow.SourceList.unreadCount.cornerRadius")
-private let backgroundColor = appDelegate.currentTheme.colorWithAlpha(forKey: "MainWindow.SourceList.unreadCount.backgroundColor")
-private let textColor = appDelegate.currentTheme.colorWithAlpha(forKey: "MainWindow.SourceList.unreadCount.color")
-private let textSize = appDelegate.currentTheme.float(forKey: "MainWindow.SourceList.unreadCount.fontSize")
-private let textFont = NSFont.systemFont(ofSize: textSize, weight: NSFont.Weight.semibold)
-private var textAttributes: [NSAttributedString.Key: AnyObject] = [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
-private var textSizeCache = [Int: NSSize]()
-
 class UnreadCountView : NSView {
-	
+
+	struct Appearance {
+		static let padding = NSEdgeInsets(top: 1.0, left: 7.0, bottom: 1.0, right: 7.0)
+		static let cornerRadius: CGFloat = 8.0
+		static let backgroundColor = NSColor(named: "SidebarUnreadCountBackground")!
+		static let textColor = NSColor(named: "SidebarUnreadCountText")!
+		static let textSize: CGFloat = 11.0
+		static let textFont = NSFont.systemFont(ofSize: textSize, weight: NSFont.Weight.semibold)
+		static let textAttributes: [NSAttributedString.Key: AnyObject] = [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
+	}
+
 	var unreadCount = 0 {
 		didSet {
 			invalidateIntrinsicContentSize()
@@ -38,8 +38,8 @@ class UnreadCountView : NSView {
 			var size = NSZeroSize
 			if unreadCount > 0 {
 				size = textSize()
-				size.width += (padding.left + padding.right)
-				size.height += (padding.top + padding.bottom)
+				size.width += (Appearance.padding.left + Appearance.padding.right)
+				size.height += (Appearance.padding.top + Appearance.padding.bottom)
 			}
 			_intrinsicContentSize = size
 			intrinsicContentSizeIsValid = true
@@ -52,48 +52,45 @@ class UnreadCountView : NSView {
 	}
 	
 	override func invalidateIntrinsicContentSize() {
-		
 		intrinsicContentSizeIsValid = false
 	}
 
-	private func textSize() -> NSSize {
+	private static var textSizeCache = [Int: NSSize]()
 
+	private func textSize() -> NSSize {
 		if unreadCount < 1 {
 			return NSZeroSize
 		}
 
-		if let cachedSize = textSizeCache[unreadCount] {
+		if let cachedSize = UnreadCountView.textSizeCache[unreadCount] {
 			return cachedSize
 		}
 
-		var size = unreadCountString.size(withAttributes: textAttributes)
+		var size = unreadCountString.size(withAttributes: Appearance.textAttributes)
 		size.height = ceil(size.height)
 		size.width = ceil(size.width)
 
-		textSizeCache[unreadCount] = size
+		UnreadCountView.textSizeCache[unreadCount] = size
 		return size
 	}
 
 	private func textRect() -> NSRect {
-
 		let size = textSize()
 		var r = NSZeroRect
 		r.size = size
-		r.origin.x = (NSMaxX(bounds) - padding.right) - r.size.width
-		r.origin.y = padding.top
+		r.origin.x = (NSMaxX(bounds) - Appearance.padding.right) - r.size.width
+		r.origin.y = Appearance.padding.top
 		return r
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
-
-		let path = NSBezierPath(roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius)
-		backgroundColor.setFill()
+		let path = NSBezierPath(roundedRect: bounds, xRadius: Appearance.cornerRadius, yRadius: Appearance.cornerRadius)
+		Appearance.backgroundColor.setFill()
 		path.fill()
 
 		if unreadCount > 0 {
-			unreadCountString.draw(at: textRect().origin, withAttributes: textAttributes)
+			unreadCountString.draw(at: textRect().origin, withAttributes: Appearance.textAttributes)
 		}
 	}
-	
 }
 
