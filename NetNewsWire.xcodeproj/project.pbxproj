@@ -157,7 +157,6 @@
 		840F7C9B21BDA4B40057E851 /* TimelineKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */; };
 		840F7C9C21BDA4B40057E851 /* template.html in Resources */ = {isa = PBXBuildFile; fileRef = 849A979B1ED9EFEB007D329B /* template.html */; };
 		840F7C9D21BDA4B40057E851 /* AddFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97A71ED9F9AA007D329B /* AddFeedSheet.xib */; };
-		840F7C9E21BDA4B40057E851 /* DB5.plist in Resources */ = {isa = PBXBuildFile; fileRef = 842E45E61ED8C747000A8B52 /* DB5.plist */; };
 		840F7C9F21BDA4B40057E851 /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
 		840F7CA021BDA4B40057E851 /* AddFolderSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97AA1ED9F9BC007D329B /* AddFolderSheet.xib */; };
 		840F7CA121BDA4B40057E851 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
@@ -207,7 +206,6 @@
 		842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppNotifications.swift */; };
 		842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
 		842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */; };
-		842E45E71ED8C747000A8B52 /* DB5.plist in Resources */ = {isa = PBXBuildFile; fileRef = 842E45E61ED8C747000A8B52 /* DB5.plist */; };
 		8440C8AD2129F9F5002353D1 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D682106B3E100DD04E6 /* ArticlesDatabase.framework */; };
 		8440C8AE2129F9F5002353D1 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D682106B3E100DD04E6 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E701FE5FBFA004B527F /* SmallIconProvider.swift */; };
@@ -810,7 +808,6 @@
 		842E45CD1ED8C308000A8B52 /* AppNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppNotifications.swift; path = NetNewsWire/AppNotifications.swift; sourceTree = "<group>"; };
 		842E45DC1ED8C54B000A8B52 /* Browser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Browser.swift; path = NetNewsWire/Browser.swift; sourceTree = "<group>"; };
 		842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardDelegateProtocol.swift; sourceTree = "<group>"; };
-		842E45E61ED8C747000A8B52 /* DB5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DB5.plist; path = NetNewsWire/Resources/DB5.plist; sourceTree = "<group>"; };
 		842E5ED12206B1010012DBE1 /* DatabaseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseWindowController.swift; sourceTree = "<group>"; };
 		842E5ED42206B1190012DBE1 /* DatabaseWindow.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DatabaseWindow.storyboard; sourceTree = "<group>"; };
 		843A3B5520311E7700BF76EC /* FeedListOutlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListOutlineView.swift; sourceTree = "<group>"; };
@@ -1486,7 +1483,6 @@
 				840F7CBD21BDA6730057E851 /* NetNewsWire-MAS.entitlements */,
 				845B14A51FC2299E0013CF92 /* README.md */,
 				84CBDDAE1FD3674C005A61AA /* Technotes */,
-				842E45E61ED8C747000A8B52 /* DB5.plist */,
 				849C64671ED37A5D003D8FC0 /* Assets.xcassets */,
 				849C64691ED37A5D003D8FC0 /* Main.storyboard */,
 				849C64631ED37A5D003D8FC0 /* AppDelegate.swift */,
@@ -2294,7 +2290,6 @@
 				840F7C9C21BDA4B40057E851 /* template.html in Resources */,
 				84F1F06A2243455C00DA0616 /* LocalAccount.xib in Resources */,
 				840F7C9D21BDA4B40057E851 /* AddFeedSheet.xib in Resources */,
-				840F7C9E21BDA4B40057E851 /* DB5.plist in Resources */,
 				840F7C9F21BDA4B40057E851 /* SidebarKeyboardShortcuts.plist in Resources */,
 				840F7CA021BDA4B40057E851 /* AddFolderSheet.xib in Resources */,
 				840F7CA121BDA4B40057E851 /* Assets.xcassets in Resources */,
@@ -2331,7 +2326,6 @@
 				845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */,
 				849A979D1ED9EFEB007D329B /* template.html in Resources */,
 				849A97A91ED9F9AA007D329B /* AddFeedSheet.xib in Resources */,
-				842E45E71ED8C747000A8B52 /* DB5.plist in Resources */,
 				84F1F0692243455C00DA0616 /* LocalAccount.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				84A3EE5F223B667F00557320 /* DefaultFeeds.opml in Resources */,
