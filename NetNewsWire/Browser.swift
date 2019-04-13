@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import CoreServices
 import RSWeb
 
 struct Browser {
