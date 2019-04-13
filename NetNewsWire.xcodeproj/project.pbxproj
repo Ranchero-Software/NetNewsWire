@@ -131,7 +131,6 @@
 		840F7C7D21BDA4B40057E851 /* SidebarKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */; };
 		840F7C7E21BDA4B40057E851 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
 		840F7C7F21BDA4B40057E851 /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
-		840F7C8021BDA4B40057E851 /* SendToCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500220048D660046AD9A /* SendToCommand.swift */; };
 		840F7C8121BDA4B40057E851 /* SingleFaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */; };
 		840F7C8221BDA4B40057E851 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97841ED9ECCD007D329B /* PreferencesWindowController.swift */; };
 		840F7C8321BDA4B40057E851 /* Feed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */; };
@@ -272,7 +271,6 @@
 		849EE70F203919360082A1EA /* AppImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849EE70E203919360082A1EA /* AppImages.swift */; };
 		849EE72120391F560082A1EA /* SharingServicePickerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849EE72020391F560082A1EA /* SharingServicePickerDelegate.swift */; };
 		84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */; };
-		84A1500320048D660046AD9A /* SendToCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500220048D660046AD9A /* SendToCommand.swift */; };
 		84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */; };
 		84A37CB5201ECD610087C5AF /* RenameWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A37CB4201ECD610087C5AF /* RenameWindowController.swift */; };
 		84A37CBB201ECE590087C5AF /* RenameSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84A37CB9201ECE590087C5AF /* RenameSheet.xib */; };
@@ -847,7 +845,6 @@
 		849EE70E203919360082A1EA /* AppImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppImages.swift; path = NetNewsWire/AppImages.swift; sourceTree = "<group>"; };
 		849EE72020391F560082A1EA /* SharingServicePickerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServicePickerDelegate.swift; sourceTree = "<group>"; };
 		84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMicroBlogCommand.swift; sourceTree = "<group>"; };
-		84A1500220048D660046AD9A /* SendToCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToCommand.swift; sourceTree = "<group>"; };
 		84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToMarsEditCommand.swift; sourceTree = "<group>"; };
 		84A37CB4201ECD610087C5AF /* RenameWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenameWindowController.swift; sourceTree = "<group>"; };
 		84A37CBA201ECE590087C5AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = NetNewsWire/Base.lproj/RenameSheet.xib; sourceTree = SOURCE_ROOT; };
@@ -1242,7 +1239,6 @@
 				84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */,
 				84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */,
 				84B99C9C1FAE83C600ECDEDB /* DeleteFromSidebarCommand.swift */,
-				84A1500220048D660046AD9A /* SendToCommand.swift */,
 				84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */,
 				84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */,
 			);
@@ -2468,7 +2464,6 @@
 				840F7C7D21BDA4B40057E851 /* SidebarKeyboardDelegate.swift in Sources */,
 				840F7C7E21BDA4B40057E851 /* FolderTreeMenu.swift in Sources */,
 				840F7C7F21BDA4B40057E851 /* FolderTreeControllerDelegate.swift in Sources */,
-				840F7C8021BDA4B40057E851 /* SendToCommand.swift in Sources */,
 				840F7C8121BDA4B40057E851 /* SingleFaviconDownloader.swift in Sources */,
 				840F7C8221BDA4B40057E851 /* PreferencesWindowController.swift in Sources */,
 				840F7C8321BDA4B40057E851 /* Feed+Scriptability.swift in Sources */,
@@ -2600,7 +2595,6 @@
 				51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */,
 				849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */,
 				51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */,
-				84A1500320048D660046AD9A /* SendToCommand.swift in Sources */,
 				845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */,
 				849A97851ED9ECCD007D329B /* PreferencesWindowController.swift in Sources */,
 				D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */,
