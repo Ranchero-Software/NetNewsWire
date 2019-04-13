@@ -1,9 +1,6 @@
 [submodule "submodules/RSCore"]
 	path = submodules/RSCore
 	url = https://github.com/brentsimmons/RSCore
-[submodule "submodules/DB5"]
-	path = submodules/DB5
-	url = https://github.com/brentsimmons/DB5
 [submodule "submodules/RSWeb"]
 	path = submodules/RSWeb
 	url = https://github.com/brentsimmons/RSWeb
