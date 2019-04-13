@@ -51,7 +51,6 @@
 		840F7C2621BDA4B40057E851 /* TimelineKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B5A1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift */; };
 		840F7C2821BDA4B40057E851 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
 		840F7C2921BDA4B40057E851 /* KeyboardDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45E21ED8C681000A8B52 /* KeyboardDelegateProtocol.swift */; };
-		840F7C2A21BDA4B40057E851 /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
 		840F7C2B21BDA4B40057E851 /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
 		840F7C2C21BDA4B40057E851 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A975D1ED9EB72007D329B /* MainWindowController.swift */; };
 		840F7C2E21BDA4B40057E851 /* UnreadFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5391FC2308B00998D64 /* UnreadFeed.swift */; };
@@ -350,12 +349,10 @@
 		84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */; };
 		D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D553737C20186C1F006D8857 /* Article+Scriptability.swift */; };
 		D5558FD5200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */; };
-		D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
 		D57BE6E0204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57BE6DF204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift */; };
 		D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */; };
 		D5907D972004B7EB005947E5 /* Account+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907D962004B7EB005947E5 /* Account+Scriptability.swift */; };
 		D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907DB12004BB37005947E5 /* ScriptingObjectContainer.swift */; };
-		D5907DB32005F45D005947E5 /* AppleEventUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5558FD7200228B80066386B /* AppleEventUtils.swift */; };
 		D5A2678C20130ECF00A8D3C0 /* Author+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A2678B20130ECF00A8D3C0 /* Author+Scriptability.swift */; };
 		D5D1751220020B980047B29D /* NetNewsWire.sdef in Resources */ = {isa = PBXBuildFile; fileRef = D5D175012002039D0047B29D /* NetNewsWire.sdef */; };
 		D5E4CC54202C1361009B4FFC /* AppDelegate+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */; };
@@ -922,7 +919,6 @@
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
 		D553737C20186C1F006D8857 /* Article+Scriptability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Article+Scriptability.swift"; sourceTree = "<group>"; };
 		D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSAppleEventDescriptor+UserRecordFields.swift"; path = "AppleEvents/NSAppleEventDescriptor+UserRecordFields.swift"; sourceTree = SOURCE_ROOT; };
-		D5558FD7200228B80066386B /* AppleEventUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleEventUtils.swift; sourceTree = "<group>"; };
 		D57BE6DF204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScriptCommand+NetNewsWire.swift"; sourceTree = "<group>"; };
 		D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_project_release.xcconfig; sourceTree = "<group>"; };
 		D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_project_debug.xcconfig; sourceTree = "<group>"; };
@@ -1712,7 +1708,6 @@
 		D5558FD6200227E60066386B /* AppleEvents */ = {
 			isa = PBXGroup;
 			children = (
-				D5558FD7200228B80066386B /* AppleEventUtils.swift */,
 				D5558FD4200225680066386B /* NSAppleEventDescriptor+UserRecordFields.swift */,
 			);
 			path = AppleEvents;
@@ -2390,7 +2385,6 @@
 				84216D0422128B9D0049B9B9 /* DetailWebViewController.swift in Sources */,
 				840F7C2821BDA4B40057E851 /* Browser.swift in Sources */,
 				840F7C2921BDA4B40057E851 /* KeyboardDelegateProtocol.swift in Sources */,
-				840F7C2A21BDA4B40057E851 /* AppleEventUtils.swift in Sources */,
 				840F7C2B21BDA4B40057E851 /* OPMLExporter.swift in Sources */,
 				842AE5C42241F39C004A742C /* AdvancedPreferencesViewController.swift in Sources */,
 				840F7C2C21BDA4B40057E851 /* MainWindowController.swift in Sources */,
@@ -2520,7 +2514,6 @@
 				844B5B5B1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift in Sources */,
 				842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */,
 				842E45E31ED8C681000A8B52 /* KeyboardDelegateProtocol.swift in Sources */,
-				D5907DB32005F45D005947E5 /* AppleEventUtils.swift in Sources */,
 				84216D0322128B9D0049B9B9 /* DetailWebViewController.swift in Sources */,
 				8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */,
 				849A975E1ED9EB72007D329B /* MainWindowController.swift in Sources */,
@@ -2645,7 +2638,6 @@
 				84F9EAE9213660A100CF2DE4 /* testNameAndUrlOfEveryFeed.applescript in Sources */,
 				84F9EAF3213660A100CF2DE4 /* testCurrentArticleIsNil.applescript in Sources */,
 				84F9EAEE213660A100CF2DE4 /* testURLsOfCurrentArticle.applescript in Sources */,
-				D5558FD9200228D30066386B /* AppleEventUtils.swift in Sources */,
 				84F9EAE7213660A100CF2DE4 /* testNameOfAuthors.applescript in Sources */,
 				84F9EAEF213660A100CF2DE4 /* testNameOfEveryFolder.applescript in Sources */,
 				84F9EAF5213660A100CF2DE4 /* establishMainWindowStartingState.applescript in Sources */,

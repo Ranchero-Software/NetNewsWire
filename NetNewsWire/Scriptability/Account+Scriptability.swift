@@ -137,6 +137,6 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         case .newsBlur:
                 osType = "NBlr"
         }
-        return osType.FourCharCode()
+        return osType.fourCharCode()
     }
 }
