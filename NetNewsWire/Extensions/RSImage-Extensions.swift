@@ -32,7 +32,7 @@ extension RSImage {
 		#if os(iOS)
 		return RSImage(cgImage: cgImage)
 		#else
-		let size = NSSize(width: scaledMaxPixelSize, height: scaledMaxPixelSize)
+		let size = NSSize(width: cgImage.width, height: cgImage.height)
 		return RSImage(cgImage: cgImage, size: size)
 		#endif
 		
