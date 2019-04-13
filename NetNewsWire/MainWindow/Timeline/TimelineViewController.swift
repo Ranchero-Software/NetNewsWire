@@ -126,8 +126,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	override func viewDidLoad() {
 
-		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: false, fontSize: fontSize)
-		cellAppearanceWithAvatar = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: true, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(showAvatar: false, fontSize: fontSize)
+		cellAppearanceWithAvatar = TimelineCellAppearance(showAvatar: true, fontSize: fontSize)
 
 		updateRowHeights()
 		tableView.rowHeight = currentRowHeight
@@ -178,8 +178,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	private func fontSizeDidChange() {
 
-		cellAppearance = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: false, fontSize: fontSize)
-		cellAppearanceWithAvatar = TimelineCellAppearance(theme: appDelegate.currentTheme, showAvatar: true, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(showAvatar: false, fontSize: fontSize)
+		cellAppearanceWithAvatar = TimelineCellAppearance(showAvatar: true, fontSize: fontSize)
 		updateRowHeights()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
