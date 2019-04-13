@@ -271,7 +271,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return
 		}
 		
-		tableView.scrollToIfNotVisable(index: followingRowIndex)
+		tableView.scrollToRowIfNotVisible(followingRowIndex)
 		
 	}
 	
@@ -294,7 +294,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return
 		}
 
-		tableView.scrollToIfNotVisable(index: followingRowIndex)
+		tableView.scrollToRowIfNotVisible(followingRowIndex)
 
 	}
 	
