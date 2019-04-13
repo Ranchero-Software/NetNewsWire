@@ -42,10 +42,8 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	// MARK: NSViewController
 
 	override func viewDidLoad() {
-
 		imageView!.wantsLayer = true
-		let cornerRadius = appDelegate.currentTheme.float(forKey: "MainWindow.Timeline.cell.avatarCornerRadius")
-		imageView!.layer?.cornerRadius = cornerRadius
+		imageView!.layer?.cornerRadius = 4.0
 
 		updateUI()
 

@@ -56,7 +56,7 @@ final class DetailStatusBarView: NSView {
 			didConfigureLayerRadius = true
 		}
 
-		let color = self.effectiveAppearance.isDarkMode ? NSColor.textBackgroundColor : appDelegate.currentTheme.color(forKey: "MainWindow.Detail.statusBar.backgroundColor")
+		let color = self.effectiveAppearance.isDarkMode ? NSColor.textBackgroundColor : NSColor(named: "DetailStatusBarBackground")!
 		layer.backgroundColor = color.cgColor
 	}
 }
