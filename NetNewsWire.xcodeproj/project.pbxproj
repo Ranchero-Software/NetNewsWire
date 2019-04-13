@@ -106,7 +106,6 @@
 		840F7C6321BDA4B40057E851 /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
 		840F7C6421BDA4B40057E851 /* MainWIndowKeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B661FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift */; };
 		840F7C6521BDA4B40057E851 /* PasteboardFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848D578D21543519005FFAD5 /* PasteboardFeed.swift */; };
-		840F7C6621BDA4B40057E851 /* IndeterminateProgressWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97911ED9EF65007D329B /* IndeterminateProgressWindowController.swift */; };
 		840F7C6721BDA4B40057E851 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A977E1ED9EC42007D329B /* DetailViewController.swift */; };
 		840F7C6821BDA4B40057E851 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
 		840F7C6921BDA4B40057E851 /* TimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A976B1ED9EBC8007D329B /* TimelineViewController.swift */; };
@@ -148,7 +147,6 @@
 		840F7C9421BDA4B40057E851 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D682106B3E100DD04E6 /* ArticlesDatabase.framework */; };
 		840F7C9521BDA4B40057E851 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D5B2106B3D600DD04E6 /* Articles.framework */; };
 		840F7C9721BDA4B40057E851 /* KeyboardShortcuts.html in Resources */ = {isa = PBXBuildFile; fileRef = 84EB38101FBA8B9F000D2111 /* KeyboardShortcuts.html */; };
-		840F7C9821BDA4B40057E851 /* IndeterminateProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97931ED9EF7A007D329B /* IndeterminateProgressWindow.xib */; };
 		840F7C9921BDA4B40057E851 /* GlobalKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */; };
 		840F7C9B21BDA4B40057E851 /* TimelineKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */; };
 		840F7C9C21BDA4B40057E851 /* template.html in Resources */ = {isa = PBXBuildFile; fileRef = 849A979B1ED9EFEB007D329B /* template.html */; };
@@ -251,8 +249,6 @@
 		849A97851ED9ECCD007D329B /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97841ED9ECCD007D329B /* PreferencesWindowController.swift */; };
 		849A97891ED9ECEF007D329B /* ArticleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97871ED9ECEF007D329B /* ArticleStyle.swift */; };
 		849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97881ED9ECEF007D329B /* ArticleStylesManager.swift */; };
-		849A97921ED9EF65007D329B /* IndeterminateProgressWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97911ED9EF65007D329B /* IndeterminateProgressWindowController.swift */; };
-		849A97951ED9EF7A007D329B /* IndeterminateProgressWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849A97931ED9EF7A007D329B /* IndeterminateProgressWindow.xib */; };
 		849A97981ED9EFAA007D329B /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
 		849A979C1ED9EFEB007D329B /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 849A979A1ED9EFEB007D329B /* styleSheet.css */; };
 		849A979D1ED9EFEB007D329B /* template.html in Resources */ = {isa = PBXBuildFile; fileRef = 849A979B1ED9EFEB007D329B /* template.html */; };
@@ -821,8 +817,6 @@
 		849A97871ED9ECEF007D329B /* ArticleStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleStyle.swift; sourceTree = "<group>"; };
 		849A97881ED9ECEF007D329B /* ArticleStylesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleStylesManager.swift; sourceTree = "<group>"; };
 		849A978C1ED9EE4D007D329B /* FeedListWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedListWindowController.swift; sourceTree = "<group>"; };
-		849A97911ED9EF65007D329B /* IndeterminateProgressWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndeterminateProgressWindowController.swift; sourceTree = "<group>"; };
-		849A97941ED9EF7A007D329B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = NetNewsWire/Base.lproj/IndeterminateProgressWindow.xib; sourceTree = SOURCE_ROOT; };
 		849A97971ED9EFAA007D329B /* Node-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Node-Extensions.swift"; sourceTree = "<group>"; };
 		849A979A1ED9EFEB007D329B /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = styleSheet.css; path = NetNewsWire/MainWindow/Detail/styleSheet.css; sourceTree = SOURCE_ROOT; };
 		849A979B1ED9EFEB007D329B /* template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = template.html; path = NetNewsWire/MainWindow/Detail/template.html; sourceTree = SOURCE_ROOT; };
@@ -1393,16 +1387,6 @@
 			path = NetNewsWire/FeedList;
 			sourceTree = "<group>";
 		};
-		849A97901ED9EF65007D329B /* Progress Window */ = {
-			isa = PBXGroup;
-			children = (
-				849A97931ED9EF7A007D329B /* IndeterminateProgressWindow.xib */,
-				849A97911ED9EF65007D329B /* IndeterminateProgressWindowController.swift */,
-			);
-			name = "Progress Window";
-			path = NetNewsWire/ProgressWindow;
-			sourceTree = "<group>";
-		};
 		849A97961ED9EFAA007D329B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1448,7 +1432,6 @@
 				849A97861ED9ECEF007D329B /* Article Styles */,
 				84A6B6921FB8D43C006754AC /* Dinosaurs */,
 				849A978B1ED9EE4D007D329B /* Feed List */,
-				849A97901ED9EF65007D329B /* Progress Window */,
 				84DAEE201F86CAE00058304B /* Importers */,
 				8444C9011FED81880051386C /* Exporters */,
 				84F2D5341FC22FCB00998D64 /* SmartFeeds */,
@@ -2194,7 +2177,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				840F7C9721BDA4B40057E851 /* KeyboardShortcuts.html in Resources */,
-				840F7C9821BDA4B40057E851 /* IndeterminateProgressWindow.xib in Resources */,
 				840F7C9921BDA4B40057E851 /* GlobalKeyboardShortcuts.plist in Resources */,
 				84A3EE60223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				8405DDA322168920008CE1BF /* TimelineTableView.xib in Resources */,
@@ -2232,7 +2214,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84EB381F1FBA8B9F000D2111 /* KeyboardShortcuts.html in Resources */,
-				849A97951ED9EF7A007D329B /* IndeterminateProgressWindow.xib in Resources */,
 				844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */,
 				5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */,
 				845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */,
@@ -2434,7 +2415,6 @@
 				840F7C6321BDA4B40057E851 /* AddFolderWindowController.swift in Sources */,
 				840F7C6421BDA4B40057E851 /* MainWIndowKeyboardHandler.swift in Sources */,
 				840F7C6521BDA4B40057E851 /* PasteboardFeed.swift in Sources */,
-				840F7C6621BDA4B40057E851 /* IndeterminateProgressWindowController.swift in Sources */,
 				840F7C6721BDA4B40057E851 /* DetailViewController.swift in Sources */,
 				840F7C6821BDA4B40057E851 /* HTMLMetadataDownloader.swift in Sources */,
 				840F7C6921BDA4B40057E851 /* TimelineViewController.swift in Sources */,
@@ -2562,7 +2542,6 @@
 				8405DDA522168C62008CE1BF /* TimelineContainerViewController.swift in Sources */,
 				844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */,
 				848D578E21543519005FFAD5 /* PasteboardFeed.swift in Sources */,
-				849A97921ED9EF65007D329B /* IndeterminateProgressWindowController.swift in Sources */,
 				849A97801ED9EC42007D329B /* DetailViewController.swift in Sources */,
 				8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */,
 				849A976E1ED9EBC8007D329B /* TimelineViewController.swift in Sources */,
@@ -2764,14 +2743,6 @@
 				840D618A2029031D009BC708 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		849A97931ED9EF7A007D329B /* IndeterminateProgressWindow.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				849A97941ED9EF7A007D329B /* Base */,
-			);
-			name = IndeterminateProgressWindow.xib;
 			sourceTree = "<group>";
 		};
 		849A97A41ED9F94D007D329B /* Preferences.storyboard */ = {
