@@ -16,11 +16,13 @@ struct ArticleRenderer {
 	private let article: Article?
 	private let articleStyle: ArticleStyle
 	private let title: String
+	private let baseURL: String?
 
 	private init(article: Article?, style: ArticleStyle) {
 		self.article = article
 		self.articleStyle = style
 		self.title = article?.title ?? ""
+		self.baseURL = article?.baseURL?.absoluteString
 	}
 
 	// MARK: - API
@@ -309,6 +311,9 @@ private extension ArticleRenderer {
 	func renderHTML(withBody body: String) -> String {
 
 		var s = "<!DOCTYPE html><html><head>\n\n"
+		if let baseURL = baseURL {
+			s += ("<base href=\"" + baseURL + "\"\n>")
+		}
 		s += title.htmlBySurroundingWithTag("title")
 		s += styleString().htmlBySurroundingWithTag("style")
 
@@ -345,3 +350,34 @@ private extension ArticleRenderer {
 		return s
 	}
 }
+
+// MARK: - Article extension
+
+private extension Article {
+
+	var baseURL: URL? {
+		var s = url
+		if s == nil {
+			s = feed?.homePageURL
+		}
+		if s == nil {
+			s = feed?.url
+		}
+
+		guard let urlString = s else {
+			return nil
+		}
+		var urlComponents = URLComponents(string: urlString)
+		if urlComponents == nil {
+			return nil
+		}
+
+		// Can’t use url-with-fragment as base URL. The webview won’t load. See scripting.com/rss.xml for example.
+		urlComponents!.fragment = nil
+		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
+			return nil
+		}
+		return url
+	}
+}
+

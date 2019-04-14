@@ -116,7 +116,6 @@ private extension DetailWebViewController {
 	func reloadHTML() {
 		let style = ArticleStylesManager.shared.currentStyle
 		let html: String
-		var baseURL: URL? = nil
 
 		switch state {
 		case .noSelection:
@@ -125,10 +124,9 @@ private extension DetailWebViewController {
 			html = ArticleRenderer.multipleSelectionHTML(style: style)
 		case .article(let article):
 			html = ArticleRenderer.articleHTML(article: article, style: style)
-			baseURL = article.baseURL
 		}
 
-		webview.loadHTMLString(html, baseURL: baseURL)
+		webview.loadHTMLString(html, baseURL: nil)
 	}
 
 	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {
@@ -149,37 +147,6 @@ private extension DetailWebViewController {
 		}
 	}
 }
-
-// MARK: - Article extension
-
-private extension Article {
-
-	var baseURL: URL? {
-		var s = url
-		if s == nil {
-			s = feed?.homePageURL
-		}
-		if s == nil {
-			s = feed?.url
-		}
-
-		guard let urlString = s else {
-			return nil
-		}
-		var urlComponents = URLComponents(string: urlString)
-		if urlComponents == nil {
-			return nil
-		}
-
-		// Can’t use url-with-fragment as base URL. The webview won’t load. See scripting.com/rss.xml for example.
-		urlComponents!.fragment = nil
-		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
-			return nil
-		}
-		return url
-	}
-}
-
 
 // MARK: - ScrollInfo
 
