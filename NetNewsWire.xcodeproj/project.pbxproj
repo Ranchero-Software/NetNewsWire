@@ -11,6 +11,12 @@
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
+		51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
+		51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51C451B9226377C900C03939 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; };
+		51C451BA226377C900C03939 /* Articles.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51C451BD226377D000C03939 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; };
+		51C451BE226377D000C03939 /* Account.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
@@ -196,6 +202,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		51C451AB226377C300C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 844BEE361F0AB3AA004AB7CD;
+			remoteInfo = ArticlesDatabase;
+		};
+		51C451BB226377C900C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841D4D542106B3D500DD04E6 /* Articles.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 844BEE5A1F0AB3C8004AB7CD;
+			remoteInfo = Articles;
+		};
+		51C451BF226377D000C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 848934F51F62484F00CEBD24;
+			remoteInfo = Account;
+		};
 		840716692262A60D00344432 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
@@ -401,7 +428,10 @@
 				84C37FAA20DD8D9000CA8CF5 /* RSWeb.framework in Embed Frameworks */,
 				84C37FC620DD8E1D00CA8CF5 /* RSDatabase.framework in Embed Frameworks */,
 				84C37FAE20DD8D9900CA8CF5 /* RSTree.framework in Embed Frameworks */,
+				51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */,
 				84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */,
+				51C451BE226377D000C03939 /* Account.framework in Embed Frameworks */,
+				51C451BA226377C900C03939 /* Articles.framework in Embed Frameworks */,
 				84C37FB620DD8DBB00CA8CF5 /* RSParser.framework in Embed Frameworks */,
 				84C37FA620DD8D8400CA8CF5 /* RSCore.framework in Embed Frameworks */,
 			);
@@ -648,7 +678,10 @@
 				84C37FA920DD8D9000CA8CF5 /* RSWeb.framework in Frameworks */,
 				84C37FC520DD8E1D00CA8CF5 /* RSDatabase.framework in Frameworks */,
 				84C37FAD20DD8D9900CA8CF5 /* RSTree.framework in Frameworks */,
+				51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */,
 				84C37FB520DD8DBB00CA8CF5 /* RSParser.framework in Frameworks */,
+				51C451BD226377D000C03939 /* Account.framework in Frameworks */,
+				51C451B9226377C900C03939 /* Articles.framework in Frameworks */,
 				84C37FA520DD8D8400CA8CF5 /* RSCore.framework in Frameworks */,
 				84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */,
 			);
@@ -1397,6 +1430,9 @@
 				84C37FB020DD8D9900CA8CF5 /* PBXTargetDependency */,
 				84C37FB820DD8DBB00CA8CF5 /* PBXTargetDependency */,
 				84C37FC820DD8E1D00CA8CF5 /* PBXTargetDependency */,
+				51C451AC226377C300C03939 /* PBXTargetDependency */,
+				51C451BC226377C900C03939 /* PBXTargetDependency */,
+				51C451C0226377D000C03939 /* PBXTargetDependency */,
 			);
 			name = NetNewsWire;
 			productName = NetNewsWire;
@@ -1941,6 +1977,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		51C451AC226377C300C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ArticlesDatabase;
+			targetProxy = 51C451AB226377C300C03939 /* PBXContainerItemProxy */;
+		};
+		51C451BC226377C900C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Articles;
+			targetProxy = 51C451BB226377C900C03939 /* PBXContainerItemProxy */;
+		};
+		51C451C0226377D000C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Account;
+			targetProxy = 51C451BF226377D000C03939 /* PBXContainerItemProxy */;
+		};
 		840D61932029031D009BC708 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 840D617B2029031C009BC708 /* NetNewsWire-iOS */;
