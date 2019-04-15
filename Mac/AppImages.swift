@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import RSCore
 
 extension NSImage.Name {
 	static let star = NSImage.Name("star")
@@ -15,13 +16,13 @@ extension NSImage.Name {
 
 struct AppImages {
 
-	static var genericFeedImage: NSImage? = {
+	static var genericFeedImage: RSImage? = {
 		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/BookmarkIcon.icns"
-		let image = NSImage(contentsOfFile: path)
+		let image = RSImage(contentsOfFile: path)
 		return image
 	}()
 
-	static var timelineStar: NSImage! = {
-		return NSImage(named: .timelineStar)
+	static var timelineStar: RSImage! = {
+		return RSImage(named: .timelineStar)
 	}()
 }

@@ -1,28 +1,106 @@
 //
 //  AppDelegate.swift
-//  NetNewsWire-iOS
+//  NetNewsWire
 //
-//  Created by Brent Simmons on 2/5/18.
-//  Copyright © 2018 Ranchero Software. All rights reserved.
+//  Created by Maurice Parker on 4/8/19.
+//  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
 import UIKit
+import RSCore
+import Account
+
+var appDelegate: AppDelegate!
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate, UnreadCountProvider {
 
 	var window: UIWindow?
 
+	var faviconDownloader: FaviconDownloader!
+	var imageDownloader: ImageDownloader!
+	var authorAvatarDownloader: AuthorAvatarDownloader!
+	var feedIconDownloader: FeedIconDownloader!
+
+	private let log = Log()
+
+	var unreadCount = 0 {
+		didSet {
+			if unreadCount != oldValue {
+				postUnreadCountDidChangeNotification()
+			}
+		}
+	}
+	
+	override init() {
+		
+		super.init()
+		appDelegate = self
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+
+		// Initialize the AccountManager as soon as possible or it will cause problems
+		// if the application is restoring preserved state.
+		_ = AccountManager.shared
+		
+	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-		// Override point for customization after application launch.
+		
+		// Set up the split view
 		let splitViewController = window!.rootViewController as! UISplitViewController
 		let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
 		navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
 		splitViewController.delegate = self
+		
+		AppDefaults.registerDefaults()
+		let isFirstRun = AppDefaults.isFirstRun
+		if isFirstRun {
+			logDebugMessage("Is first run.")
+		}
+		
+		let localAccount = AccountManager.shared.localAccount
+		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
+		
+		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
+		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
+		faviconDownloader = FaviconDownloader(folder: faviconsFolderURL.absoluteString)
+		
+		let imagesFolderURL = tempDir.appendingPathComponent("Images")
+		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
+		imageDownloader = ImageDownloader(folder: imagesFolderURL.absoluteString)
+
+		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
+		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader)
+
+		DispatchQueue.main.async {
+			self.unreadCount = AccountManager.shared.unreadCount
+		}
+		
 		return true
+		
 	}
 
+//	func application(_ application: UIApplication, shouldSaveApplicationState coder: NSCoder) -> Bool {
+//
+//		let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+//		coder.encode(versionNumber, forKey: "VersionNumber")
+//
+//		return true
+//
+//	}
+//
+//	func application(_ application: UIApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
+//		if let storedVersionNumber = coder.decodeObject(forKey: "VersionNumber") as? String {
+//			let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+//			if versionNumber == storedVersionNumber {
+//				return true
+//			}
+//		}
+//		return false
+//	}
+	
 	func applicationWillResignActive(_ application: UIApplication) {
 		// Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
 		// Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
@@ -50,12 +128,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
 	    guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
 	    guard let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController else { return false }
-	    if topAsDetailController.detailItem == nil {
+	    if topAsDetailController.article == nil {
 	        // Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
 	        return true
 	    }
 	    return false
 	}
 
+	// MARK: Notifications
+	
+	@objc func unreadCountDidChange(_ note: Notification) {
+		if note.object is AccountManager {
+			unreadCount = AccountManager.shared.unreadCount
+		}
+	}
+
+	// MARK: - API
+	
+	func logMessage(_ message: String, type: LogItem.ItemType) {
+		
+		#if DEBUG
+		if type == .debug {
+			print("logMessage: \(message) - \(type)")
+		}
+		#endif
+		
+		let logItem = LogItem(type: type, message: message)
+		log.add(logItem)
+		
+	}
+	
+	func logDebugMessage(_ message: String) {
+		logMessage(message, type: .debug)
+	}
+	
 }
 

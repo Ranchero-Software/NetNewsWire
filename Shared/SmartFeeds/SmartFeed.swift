@@ -29,9 +29,11 @@ final class SmartFeed: PseudoFeed {
 		}
 	}
 
+	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {
 		return SmartFeedPasteboardWriter(smartFeed: self)
 	}
+	#endif
 
 	private let delegate: SmartFeedDelegate
 	private var unreadCounts = [Account: Int]()

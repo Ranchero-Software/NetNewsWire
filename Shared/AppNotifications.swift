@@ -6,7 +6,7 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-import AppKit
+import Foundation
 import Articles
 
 extension Notification.Name {

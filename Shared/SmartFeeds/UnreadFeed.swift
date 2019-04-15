@@ -6,7 +6,11 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
+#if os(macOS)
 import AppKit
+#else
+import Foundation
+#endif
 import Account
 import Articles
 
@@ -24,9 +28,11 @@ final class UnreadFeed: PseudoFeed {
 		}
 	}
 
+	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {
 		return SmartFeedPasteboardWriter(smartFeed: self)
 	}
+	#endif
 	
 	init() {
 

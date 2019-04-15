@@ -196,7 +196,11 @@ private extension ArticleRenderer {
 
 		if let icon = appDelegate.feedIconDownloader.icon(for: feed) {
 			if let s = base64String(forImage: icon) {
+				#if os(macOS)
 				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=48 width=48 />"
+				#else
+				let imgTag = "<img src=\"data:image/png;base64, " + s + "\" height=48 width=48 />"
+				#endif
 				ArticleRenderer.feedIconImgTagCache[feed] = imgTag
 				return imgTag
 			}
@@ -205,8 +209,12 @@ private extension ArticleRenderer {
 		return nil
 	}
 
-	func base64String(forImage image: NSImage) -> String? {
+	func base64String(forImage image: RSImage) -> String? {
+		#if os(macOS)
 		return image.tiffRepresentation?.base64EncodedString()
+		#else
+		return image.pngData()?.base64EncodedString()
+		#endif
 	}
 
 	func singleArticleSpecifiedAuthor() -> Author? {
@@ -308,6 +316,8 @@ private extension ArticleRenderer {
 		return dateFormatter.string(from: date)
 	}
 
+	#if os(macOS)
+	
 	func renderHTML(withBody body: String) -> String {
 
 		var s = "<!DOCTYPE html><html><head>\n\n"
@@ -349,6 +359,25 @@ private extension ArticleRenderer {
 
 		return s
 	}
+	
+	#else
+	
+	func renderHTML(withBody body: String) -> String {
+		
+		var s = "<!DOCTYPE html><html><head>\n"
+		s += "<meta name=\"viewport\" content=\"width=device-width\">\n"
+		s += title.htmlBySurroundingWithTag("title")
+		s += styleString().htmlBySurroundingWithTag("style")
+		s += "\n\n</head><body>\n\n"
+		s += body
+		s += "\n\n</body></html>"
+		
+		return s
+		
+	}
+	
+	#endif
+	
 }
 
 // MARK: - Article extension

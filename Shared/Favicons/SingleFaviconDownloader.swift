@@ -6,7 +6,7 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import AppKit
+import Foundation
 import RSCore
 import RSWeb
 

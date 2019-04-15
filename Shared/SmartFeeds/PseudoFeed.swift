@@ -6,7 +6,9 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+#if os(macOS)
+
+import AppKit
 import Articles
 import Account
 import RSCore
@@ -15,14 +17,36 @@ protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconP
 
 }
 
-private var smartFeedIcon: NSImage = {
+private var smartFeedIcon: RSImage = {
 
-	return NSImage(named: NSImage.smartBadgeTemplateName)!
+	return RSImage(named: NSImage.smartBadgeTemplateName)!
 }()
 
 extension PseudoFeed {
 
-	var smallIcon: NSImage? {
+	var smallIcon: RSImage? {
 		return smartFeedIcon
 	}
 }
+#else
+
+import Foundation
+import Articles
+import Account
+import RSCore
+
+protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconProvider {
+	
+}
+
+private var smartFeedIcon: UIImage = {
+	return AppAssets.cogImage
+}()
+
+extension PseudoFeed {
+	var smallIcon: UIImage? {
+		return smartFeedIcon
+	}
+}
+
+#endif

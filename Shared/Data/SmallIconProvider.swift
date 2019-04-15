@@ -6,28 +6,37 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
-import AppKit
+import Foundation
 import Articles
 import Account
+import RSCore
 
 protocol SmallIconProvider {
 
-	var smallIcon: NSImage? { get }
+	var smallIcon: RSImage? { get }
 }
 
 extension Feed: SmallIconProvider {
 
-	var smallIcon: NSImage? {
+	var smallIcon: RSImage? {
 		if let image = appDelegate.faviconDownloader.favicon(for: self) {
 			return image
 		}
+		#if os(macOS)
 		return AppImages.genericFeedImage
+		#else
+		return AppAssets.feedImage
+		#endif
 	}
 }
 
 extension Folder: SmallIconProvider {
 
-	var smallIcon: NSImage? {
-		return NSImage(named: NSImage.folderName)
+	var smallIcon: RSImage? {
+		#if os(macOS)
+		return RSImage(named: NSImage.folderName)
+		#else
+		return AppAssets.masterFolderImage
+		#endif
 	}
 }
