@@ -681,7 +681,11 @@ private extension Account {
 		do {
 			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
 		} catch {
+			#if os(macOS)
 			NSApplication.shared.presentError(error)
+			#else
+			UIApplication.shared.presentError(error)
+			#endif
 			return
 		}
 		guard let parsedOPML = opmlDocument, let children = parsedOPML.children else {
@@ -703,7 +707,11 @@ private extension Account {
 			try opmlDocumentString.write(to: url, atomically: true, encoding: .utf8)
 		}
 		catch let error as NSError {
+			#if os(macOS)
 			NSApplication.shared.presentError(error)
+			#else
+			UIApplication.shared.presentError(error)
+			#endif
 		}
 	}
 

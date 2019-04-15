@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		51C451FF2264CF2100C03939 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C451FE2264CF2100C03939 /* RSParser.framework */; };
 		840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840405CE1F1A963700DF0296 /* AttachmentsTable.swift */; };
 		841D4D742106B59F00DD04E6 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D732106B59F00DD04E6 /* Articles.framework */; };
 		84288A001F6A3C4400395871 /* DatabaseObject+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */; };
@@ -24,7 +25,6 @@
 		8477ACBC2221E76F00DF7F37 /* SearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBB2221E76F00DF7F37 /* SearchTable.swift */; };
 		848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */; };
 		848E3EB920FBCFD20004B7ED /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EB820FBCFD20004B7ED /* RSCore.framework */; };
-		848E3EBB20FBCFD80004B7ED /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EBA20FBCFD80004B7ED /* RSParser.framework */; };
 		848E3EBD20FBCFDE0004B7ED /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EBC20FBCFDE0004B7ED /* RSDatabase.framework */; };
 		84E156EA1F0AB80500F8CC05 /* ArticlesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156E91F0AB80500F8CC05 /* ArticlesDatabase.swift */; };
 		84E156EC1F0AB80E00F8CC05 /* ArticlesTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156EB1F0AB80E00F8CC05 /* ArticlesTable.swift */; };
@@ -113,6 +113,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		51C451FE2264CF2100C03939 /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		840405CE1F1A963700DF0296 /* AttachmentsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsTable.swift; sourceTree = "<group>"; };
 		841D4D732106B59F00DD04E6 /* Articles.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Articles.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseObject+Database.swift"; sourceTree = "<group>"; };
@@ -155,9 +156,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51C451FF2264CF2100C03939 /* RSParser.framework in Frameworks */,
 				841D4D742106B59F00DD04E6 /* Articles.framework in Frameworks */,
 				848E3EBD20FBCFDE0004B7ED /* RSDatabase.framework in Frameworks */,
-				848E3EBB20FBCFD80004B7ED /* RSParser.framework in Frameworks */,
 				848E3EB920FBCFD20004B7ED /* RSCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -259,6 +260,7 @@
 		84E156FB1F0AB83A00F8CC05 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				51C451FE2264CF2100C03939 /* RSParser.framework */,
 				841D4D732106B59F00DD04E6 /* Articles.framework */,
 				848E3EBC20FBCFDE0004B7ED /* RSDatabase.framework */,
 				848E3EBA20FBCFD80004B7ED /* RSParser.framework */,
@@ -354,13 +356,13 @@
 				TargetAttributes = {
 					844BEE361F0AB3AA004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 					844BEE3F1F0AB3AB004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -541,6 +543,7 @@
 			baseConfigurationReference = D511EEEA20242E0800712EC3 /* ArticlesDatabase_project_debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Debug;
@@ -550,6 +553,7 @@
 			baseConfigurationReference = D511EEEB20242E0800712EC3 /* ArticlesDatabase_project_release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;

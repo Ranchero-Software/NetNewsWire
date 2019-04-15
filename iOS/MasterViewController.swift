@@ -25,6 +25,7 @@ class MasterViewController: UITableViewController {
 		    let controllers = split.viewControllers
 		    detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
 		}
+
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -81,7 +82,7 @@ class MasterViewController: UITableViewController {
 		return true
 	}
 
-	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 		    objects.remove(at: indexPath.row)
 		    tableView.deleteRows(at: [indexPath], with: .fade)
@@ -89,7 +90,6 @@ class MasterViewController: UITableViewController {
 		    // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
 		}
 	}
-
 
 }
 

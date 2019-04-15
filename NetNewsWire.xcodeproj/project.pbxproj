@@ -17,6 +17,22 @@
 		51C451BA226377C900C03939 /* Articles.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51C451BD226377D000C03939 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; };
 		51C451BE226377D000C03939 /* Account.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51C451D22264C7F200C03939 /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FA320DD8D0500CA8CF5 /* RSWeb.framework */; };
+		51C451D32264C7F200C03939 /* RSWeb.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FA320DD8D0500CA8CF5 /* RSWeb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51C451E02264C7F900C03939 /* RSTree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F9520DD8CFE00CA8CF5 /* RSTree.framework */; };
+		51C451E12264C7F900C03939 /* RSTree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F9520DD8CFE00CA8CF5 /* RSTree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51C451E42264C80600C03939 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8C20DD8CF800CA8CF5 /* RSParser.framework */; };
+		51C451E52264C80600C03939 /* RSParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8C20DD8CF800CA8CF5 /* RSParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51C451E82264C81000C03939 /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FC420DD8E0C00CA8CF5 /* RSDatabase.framework */; };
+		51C451E92264C81000C03939 /* RSDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FC420DD8E0C00CA8CF5 /* RSDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51C451EC2264C81B00C03939 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8520DD8CF200CA8CF5 /* RSCore.framework */; };
+		51C451ED2264C81B00C03939 /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8520DD8CF200CA8CF5 /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51C451F02264C83100C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
+		51C451F12264C83100C03939 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51C451F42264C83900C03939 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; };
+		51C451F52264C83900C03939 /* Articles.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51C451F82264C83E00C03939 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; };
+		51C451F92264C83E00C03939 /* Account.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
@@ -143,7 +159,6 @@
 		84C9FC8E22629E8F00D921D6 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8922629E8F00D921D6 /* Credits.rtf */; };
 		84C9FC8F22629E8F00D921D6 /* NetNewsWire.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8A22629E8F00D921D6 /* NetNewsWire.sdef */; };
 		84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9B2262A1A900D921D6 /* Assets.xcassets */; };
-		84C9FC9E2262A1A900D921D6 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9C2262A1A900D921D6 /* Info.plist */; };
 		84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9F2262A1B300D921D6 /* Main.storyboard */; };
 		84C9FCA42262A1B800D921D6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FCA22262A1B800D921D6 /* LaunchScreen.storyboard */; };
 		84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
@@ -217,6 +232,62 @@
 			remoteInfo = Articles;
 		};
 		51C451BF226377D000C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 848934F51F62484F00CEBD24;
+			remoteInfo = Account;
+		};
+		51C451D42264C7F200C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84C37F9820DD8D0400CA8CF5 /* RSWeb.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 849C08D41E0CACA3006B03FA;
+			remoteInfo = RSWebiOS;
+		};
+		51C451E22264C7F900C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84C37F8F20DD8CFD00CA8CF5 /* RSTree.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 842A0BE01CFCB9BC00BF746C;
+			remoteInfo = RSTree;
+		};
+		51C451E62264C80600C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84C37F8620DD8CF800CA8CF5 /* RSParser.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 84FF5F831EFA285800C15A01;
+			remoteInfo = RSParser;
+		};
+		51C451EA2264C81000C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84C37FB920DD8E0C00CA8CF5 /* RSDatabase.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8400ABF61E0CFBD800AA7C57;
+			remoteInfo = RSDatabaseiOS;
+		};
+		51C451EE2264C81B00C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84C37F7A20DD8CF200CA8CF5 /* RSCore.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 842DD7BB1E14993900E061EB;
+			remoteInfo = RSCoreiOS;
+		};
+		51C451F22264C83100C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 844BEE361F0AB3AA004AB7CD;
+			remoteInfo = ArticlesDatabase;
+		};
+		51C451F62264C83900C03939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 841D4D542106B3D500DD04E6 /* Articles.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 844BEE5A1F0AB3C8004AB7CD;
+			remoteInfo = Articles;
+		};
+		51C451FA2264C83E00C03939 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
 			proxyType = 1;
@@ -408,6 +479,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		51C451DF2264C7F200C03939 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				51C451D32264C7F200C03939 /* RSWeb.framework in Embed Frameworks */,
+				51C451E12264C7F900C03939 /* RSTree.framework in Embed Frameworks */,
+				51C451F92264C83E00C03939 /* Account.framework in Embed Frameworks */,
+				51C451F12264C83100C03939 /* ArticlesDatabase.framework in Embed Frameworks */,
+				51C451F52264C83900C03939 /* Articles.framework in Embed Frameworks */,
+				51C451E92264C81000C03939 /* RSDatabase.framework in Embed Frameworks */,
+				51C451ED2264C81B00C03939 /* RSCore.framework in Embed Frameworks */,
+				51C451E52264C80600C03939 /* RSParser.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6581C75720CED60100F4AD34 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -661,6 +750,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51C451D22264C7F200C03939 /* RSWeb.framework in Frameworks */,
+				51C451E02264C7F900C03939 /* RSTree.framework in Frameworks */,
+				51C451F82264C83E00C03939 /* Account.framework in Frameworks */,
+				51C451F02264C83100C03939 /* ArticlesDatabase.framework in Frameworks */,
+				51C451F42264C83900C03939 /* Articles.framework in Frameworks */,
+				51C451E82264C81000C03939 /* RSDatabase.framework in Frameworks */,
+				51C451EC2264C81B00C03939 /* RSCore.framework in Frameworks */,
+				51C451E42264C80600C03939 /* RSParser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1382,10 +1479,19 @@
 				840D61782029031C009BC708 /* Sources */,
 				840D61792029031C009BC708 /* Frameworks */,
 				840D617A2029031C009BC708 /* Resources */,
+				51C451DF2264C7F200C03939 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				51C451D52264C7F200C03939 /* PBXTargetDependency */,
+				51C451E32264C7F900C03939 /* PBXTargetDependency */,
+				51C451E72264C80600C03939 /* PBXTargetDependency */,
+				51C451EB2264C81000C03939 /* PBXTargetDependency */,
+				51C451EF2264C81B00C03939 /* PBXTargetDependency */,
+				51C451F32264C83100C03939 /* PBXTargetDependency */,
+				51C451F72264C83900C03939 /* PBXTargetDependency */,
+				51C451FB2264C83E00C03939 /* PBXTargetDependency */,
 			);
 			name = "NetNewsWire-iOS";
 			productName = "NetNewsWire-iOS";
@@ -1711,7 +1817,6 @@
 			files = (
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreen.storyboard in Resources */,
-				84C9FC9E2262A1A900D921D6 /* Info.plist in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
 			);
@@ -1992,6 +2097,46 @@
 			name = Account;
 			targetProxy = 51C451BF226377D000C03939 /* PBXContainerItemProxy */;
 		};
+		51C451D52264C7F200C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RSWebiOS;
+			targetProxy = 51C451D42264C7F200C03939 /* PBXContainerItemProxy */;
+		};
+		51C451E32264C7F900C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RSTree;
+			targetProxy = 51C451E22264C7F900C03939 /* PBXContainerItemProxy */;
+		};
+		51C451E72264C80600C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RSParser;
+			targetProxy = 51C451E62264C80600C03939 /* PBXContainerItemProxy */;
+		};
+		51C451EB2264C81000C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RSDatabaseiOS;
+			targetProxy = 51C451EA2264C81000C03939 /* PBXContainerItemProxy */;
+		};
+		51C451EF2264C81B00C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RSCoreiOS;
+			targetProxy = 51C451EE2264C81B00C03939 /* PBXContainerItemProxy */;
+		};
+		51C451F32264C83100C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ArticlesDatabase;
+			targetProxy = 51C451F22264C83100C03939 /* PBXContainerItemProxy */;
+		};
+		51C451F72264C83900C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Articles;
+			targetProxy = 51C451F62264C83900C03939 /* PBXContainerItemProxy */;
+		};
+		51C451FB2264C83E00C03939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Account;
+			targetProxy = 51C451FA2264C83E00C03939 /* PBXContainerItemProxy */;
+		};
 		840D61932029031D009BC708 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 840D617B2029031C009BC708 /* NetNewsWire-iOS */;
@@ -2138,6 +2283,7 @@
 		840D61A42029031E009BC708 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2189,8 +2335,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = "NetNewsWire-iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				INFOPLIST_FILE = iOS/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2206,6 +2352,7 @@
 		840D61A52029031E009BC708 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2251,8 +2398,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = "NetNewsWire-iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				INFOPLIST_FILE = iOS/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen.iOS";

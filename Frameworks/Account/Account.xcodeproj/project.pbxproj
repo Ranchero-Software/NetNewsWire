@@ -461,6 +461,7 @@
 			baseConfigurationReference = D511EEB5202422BB00712EC3 /* Account_project_debug.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 			};
 			name = Debug;
 		};
@@ -469,6 +470,7 @@
 			baseConfigurationReference = D511EEB7202422BB00712EC3 /* Account_project_release.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 			};
 			name = Release;
 		};
