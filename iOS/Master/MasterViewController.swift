@@ -233,16 +233,14 @@ class MasterViewController: UITableViewController {
 
 	func rename(indexPath: IndexPath) {
 		
-		let title = NSLocalizedString("Rename", comment: "Rename")
+		let name = (nodeFor(indexPath: indexPath)?.representedObject as? DisplayNameProvider)?.nameForDisplay ?? ""
+		let formatString = NSLocalizedString("Rename “%@”", comment: "Feed finder")
+		let title = NSString.localizedStringWithFormat(formatString as NSString, name) as String
+		
 		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
 		
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
-		
-		// TODO: Add the title of what is being renamed...
-//		let formatString = NSLocalizedString("Rename “%@”", comment: "Feed finder")
-//		let message = NSString.localizedStringWithFormat(formatString as NSString, )
-
 		
 		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
 		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] action in
