@@ -596,6 +596,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOS_target.xcconfig; sourceTree = "<group>"; };
 		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
 		5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailKeyboardDelegate.swift; sourceTree = "<group>"; };
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
@@ -1636,6 +1637,7 @@
 				D5907CDE2002F0BE005947E5 /* NetNewsWire_project.xcconfig */,
 				D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */,
 				D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */,
+				51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */,
 			);
 			path = xcconfig;
 			sourceTree = "<group>";
@@ -2544,6 +2546,7 @@
 		};
 		840D61A42029031E009BC708 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2613,6 +2616,7 @@
 		};
 		840D61A52029031E009BC708 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
