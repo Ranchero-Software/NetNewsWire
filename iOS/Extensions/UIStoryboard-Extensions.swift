@@ -14,6 +14,10 @@ extension UIStoryboard {
 		return UIStoryboard(name: "Main", bundle: nil)
 	}
 	
+	static var add: UIStoryboard {
+		return UIStoryboard(name: "Add", bundle: nil)
+	}
+	
 	func instantiateController<T>(ofType type: T.Type = T.self) -> T where T: UIViewController {
 		
 		let storyboardId = String(describing: type)

@@ -1,4 +1,11 @@
-//Copyright © 2019 Vincode, Inc. All rights reserved.
+//
+//  AddFeedFolderPickerData.swift
+//  NetNewsWire
+//
+//  Created by Maurice Parker on 4/16/19.
+//  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
+//
+
 
 import Foundation
 import Account

@@ -1,4 +1,10 @@
-//Copyright © 2019 Vincode, Inc. All rights reserved.
+//
+//  AddFeedViewController.swift
+//  NetNewsWire
+//
+//  Created by Maurice Parker on 4/16/19.
+//  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
+//
 
 import UIKit
 import Account
@@ -42,7 +48,11 @@ class AddFeedViewController: UITableViewController {
 		pickerData = AddFeedFolderPickerData()
 		folderPickerView.dataSource = self
 		folderPickerView.delegate = self
+		folderPickerView.showsSelectionIndicator = true
 		folderLabel.text = pickerData.containerNames[0]
+
+		// I couldn't figure out the gap at the top of the UITableView, so I took a hammer to it.
+		tableView.contentInset = UIEdgeInsets(top: -28, left: 0, bottom: 0, right: 0)
 		
     }
 	

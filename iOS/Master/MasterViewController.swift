@@ -175,15 +175,8 @@ class MasterViewController: UITableViewController {
 	
 	// MARK: Actions
 	
-	@IBAction func addFeed(_ sender: UIBarButtonItem) {
-		let feedViewController = UIStoryboard(name: "Add", bundle: nil).instantiateViewController(withIdentifier: "AddFeedNavigationController")
-		feedViewController.modalPresentationStyle = .popover
-		feedViewController.popoverPresentationController?.barButtonItem = sender
-		self.present(feedViewController, animated: true)
-	}
-
-	@IBAction func addFolder(_ sender: UIBarButtonItem) {
-		let feedViewController = UIStoryboard(name: "Add", bundle: nil).instantiateViewController(withIdentifier: "AddFolderNavigationController")
+	@IBAction func add(_ sender: UIBarButtonItem) {
+		let feedViewController = UIStoryboard.add.instantiateInitialViewController()!
 		feedViewController.modalPresentationStyle = .popover
 		feedViewController.popoverPresentationController?.barButtonItem = sender
 		self.present(feedViewController, animated: true)
