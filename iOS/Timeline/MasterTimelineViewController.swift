@@ -11,7 +11,9 @@ import RSCore
 import Account
 import Articles
 
-class MasterTimelineViewController: UITableViewController {
+class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
+
+	var undoableCommands = [UndoableCommand]()
 
 	private var showAvatars = false
 	private var rowHeightWithFeedName: CGFloat = 0.0
@@ -93,6 +95,10 @@ class MasterTimelineViewController: UITableViewController {
 		}
 	}
 	
+	override var canBecomeFirstResponder: Bool {
+		return true
+	}
+	
 	override func viewDidLoad() {
 		
 		super.viewDidLoad()
@@ -108,6 +114,16 @@ class MasterTimelineViewController: UITableViewController {
 
 	}
 	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		becomeFirstResponder()
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		resignFirstResponder()
+	}
+
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "showDetail" {
 			if let indexPath = tableView.indexPathForSelectedRow {
@@ -134,8 +150,14 @@ class MasterTimelineViewController: UITableViewController {
 		
 		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-			guard let articles = self?.articles else { return }
-			markArticles(Set(articles), statusKey: .read, flag: true)
+
+			guard let articles = self?.articles,
+				let undoManager = self?.undoManager,
+				let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
+				return
+			}
+			self?.runCommand(markReadCommand)
+			
 		}
 		alertController.addAction(markAction)
 		
@@ -162,8 +184,12 @@ class MasterTimelineViewController: UITableViewController {
 			NSLocalizedString("Unstar", comment: "Unstar") :
 			NSLocalizedString("Star", comment: "Star")
 		
-		let starAction = UIContextualAction(style: .normal, title: starTitle) { (action, view, completionHandler) in
-			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
+		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (action, view, completionHandler) in
+			guard let undoManager = self?.undoManager,
+				let markReadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
+					return
+			}
+			self?.runCommand(markReadCommand)
 			completionHandler(true)
 		}
 		
@@ -175,8 +201,12 @@ class MasterTimelineViewController: UITableViewController {
 			NSLocalizedString("Unread", comment: "Unread") :
 			NSLocalizedString("Read", comment: "Read")
 		
-		let readAction = UIContextualAction(style: .normal, title: readTitle) { (action, view, completionHandler) in
-			markArticles(Set([article]), statusKey: .read, flag: !article.status.read)
+		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completionHandler) in
+			guard let undoManager = self?.undoManager,
+				let markReadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
+					return
+			}
+			self?.runCommand(markReadCommand)
 			completionHandler(true)
 		}
 		
