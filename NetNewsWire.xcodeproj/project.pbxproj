@@ -93,6 +93,7 @@
 		51C452B1226510E600C03939 /* InitialFeedDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A01ED9F180007D329B /* InitialFeedDownloader.swift */; };
 		51C452B42265141B00C03939 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C452B32265141B00C03939 /* WebKit.framework */; };
 		51C452B82265178500C03939 /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 51C452B72265178500C03939 /* styleSheet.css */; };
+		51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
@@ -2135,6 +2136,7 @@
 				51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */,
 				51C452A522650A2D00C03939 /* SmallIconProvider.swift in Sources */,
 				51C452A122650A1900C03939 /* FeaturedImageDownloader.swift in Sources */,
+				51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
 				51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */,

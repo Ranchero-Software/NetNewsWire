@@ -8,11 +8,13 @@
 
 import UIKit
 import Account
+import Articles
 import RSCore
 import RSTree
 
-class MasterViewController: UITableViewController {
+class MasterViewController: UITableViewController, UndoableCommandRunner {
 
+	var undoableCommands = [UndoableCommand]()
 	var animatingChanges = false
 	
 	let treeControllerDelegate = MasterTreeControllerDelegate()
@@ -20,6 +22,10 @@ class MasterViewController: UITableViewController {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
 	
+	override var canBecomeFirstResponder: Bool {
+		return true
+	}
+
 	override func viewDidLoad() {
 
 		super.viewDidLoad()
@@ -42,7 +48,17 @@ class MasterViewController: UITableViewController {
 		clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
 		super.viewWillAppear(animated)
 	}
-
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		becomeFirstResponder()
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		resignFirstResponder()
+	}
+	
 	@objc private func refreshAccounts(_ sender: Any) {
 		AccountManager.shared.refreshAll()
 	}
@@ -174,6 +190,40 @@ class MasterViewController: UITableViewController {
 	}
 	
 	// MARK: Actions
+	
+	@IBAction func markAllAsRead(_ sender: Any) {
+		
+		let title = NSLocalizedString("Mark All Read", comment: "Mark All Read")
+		let message = NSLocalizedString("Mark all articles in all accounts as read?", comment: "Mark all articles")
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
+		alertController.addAction(cancelAction)
+		
+		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
+		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
+			
+			let accounts = AccountManager.shared.accounts
+			var articles = Set<Article>()
+			accounts.forEach { account in
+				articles.formUnion(account.fetchUnreadArticles())
+			}
+			
+			guard let undoManager = self?.undoManager,
+				let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
+					return
+			}
+			
+			self?.runCommand(markReadCommand)
+			
+		}
+		
+		alertController.addAction(markAction)
+		
+		present(alertController, animated: true)
+		
+	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
 		let feedViewController = UIStoryboard.add.instantiateInitialViewController()!
