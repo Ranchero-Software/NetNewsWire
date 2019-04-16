@@ -8,14 +8,27 @@
 
 import UIKit
 
+protocol AddContainerViewControllerChild: UIViewController {
+	var delegate: AddContainerViewControllerChildDelegate? {get set}
+	func cancel()
+	func add()
+}
+
+protocol AddContainerViewControllerChildDelegate: UIViewController {
+	func readyToAdd(state: Bool)
+	func processingDidBegin()
+	func processingDidEnd()
+}
+
 class AddContainerViewController: UIViewController {
 
 	@IBOutlet weak var cancelButton: UIBarButtonItem!
 	@IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
 	@IBOutlet weak var addButton: UIBarButtonItem!
+	@IBOutlet weak var typeSelectorSegmentedControl: UISegmentedControl!
 	@IBOutlet weak var containerView: UIView!
 	
-	private var currentViewController: UIViewController?
+	private var currentViewController: AddContainerViewControllerChild?
 	
 	override func viewDidLoad() {
 		
@@ -40,12 +53,37 @@ class AddContainerViewController: UIViewController {
 	}
 	
 	@IBAction func cancel(_ sender: Any) {
+		currentViewController?.cancel()
 		dismiss(animated: true)
 	}
 	
 	@IBAction func add(_ sender: Any) {
+		currentViewController?.add()
 	}
 	
+}
+
+extension AddContainerViewController: AddContainerViewControllerChildDelegate {
+	
+	func readyToAdd(state: Bool) {
+		addButton.isEnabled = state
+	}
+	
+	func processingDidBegin() {
+		addButton.isEnabled = false
+		typeSelectorSegmentedControl.isEnabled = false
+		activityIndicatorView.isHidden = false
+		activityIndicatorView.startAnimating()
+	}
+	
+	func processingDidEnd() {
+		addButton.isEnabled = true
+		typeSelectorSegmentedControl.isEnabled = true
+		activityIndicatorView.isHidden = true
+		activityIndicatorView.stopAnimating()
+		dismiss(animated: true)
+	}
+
 }
 
 private extension AddContainerViewController {
@@ -54,6 +92,7 @@ private extension AddContainerViewController {
 		guard !(currentViewController is AddFeedViewController) else {
 			return
 		}
+		resetUI()
 		hideCurrentController()
 		displayContentController(UIStoryboard.add.instantiateController(ofType: AddFeedViewController.self))
 	}
@@ -62,6 +101,7 @@ private extension AddContainerViewController {
 		guard !(currentViewController is AddFolderViewController) else {
 			return
 		}
+		resetUI()
 		hideCurrentController()
 		displayContentController(UIStoryboard.add.instantiateController(ofType: AddFolderViewController.self))
 	}
@@ -70,11 +110,19 @@ private extension AddContainerViewController {
 		guard !(currentViewController is AddAccountViewController) else {
 			return
 		}
+		resetUI()
 		hideCurrentController()
 		displayContentController(UIStoryboard.add.instantiateController(ofType: AddAccountViewController.self))
 	}
 	
-	func displayContentController(_ controller: UIViewController) {
+	func resetUI() {
+		addButton.isEnabled = false
+	}
+	
+	func displayContentController(_ controller: AddContainerViewControllerChild) {
+		
+		currentViewController = controller
+		controller.delegate = self
 		
 		addChild(controller)
 		

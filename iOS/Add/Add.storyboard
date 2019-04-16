@@ -33,9 +33,6 @@
                                                     <nil key="textColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
-                                                    <connections>
-                                                        <outlet property="delegate" destination="7aE-6a-iP7" id="zCK-Sy-4Zr"/>
-                                                    </connections>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -131,36 +128,15 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Add Feed" id="i1W-2z-PAk">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="vdU-kc-SkI">
-                            <connections>
-                                <action selector="cancel:" destination="7aE-6a-iP7" id="v9C-5Y-7Pf"/>
-                            </connections>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="r7V-oB-aHz">
+                            <view key="customView" contentMode="scaleToFill" id="4in-Eb-Rxp">
+                                <rect key="frame" x="339" y="12" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                         </barButtonItem>
-                        <rightBarButtonItems>
-                            <barButtonItem enabled="NO" title="Add" id="M4A-Uu-rC9">
-                                <connections>
-                                    <action selector="add:" destination="7aE-6a-iP7" id="WZ4-RF-9k2"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem style="plain" id="r7V-oB-aHz">
-                                <view key="customView" contentMode="scaleToFill" id="4in-Eb-Rxp">
-                                    <rect key="frame" x="335" y="12" width="20" height="20"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <subviews>
-                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="3ZH-9O-T3i">
-                                            <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        </activityIndicatorView>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </view>
-                            </barButtonItem>
-                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
-                        <outlet property="activityIndicatorView" destination="3ZH-9O-T3i" id="Z7G-Qb-tV9"/>
-                        <outlet property="addButton" destination="M4A-Uu-rC9" id="HXl-Sg-Zgw"/>
-                        <outlet property="cancelButton" destination="vdU-kc-SkI" id="AKF-i4-V5Q"/>
                         <outlet property="folderLabel" destination="vaV-kY-CaE" id="xeO-Ks-LIy"/>
                         <outlet property="folderPickerView" destination="v2n-nX-8jq" id="qwz-Gg-GdQ"/>
                         <outlet property="nameTextField" destination="u7n-VL-Ho9" id="YQV-Xq-f9q"/>
@@ -228,7 +204,7 @@
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem title="Add" id="tVq-rz-5pe">
+                            <barButtonItem enabled="NO" title="Add" id="tVq-rz-5pe">
                                 <connections>
                                     <action selector="add:" destination="G8j-dh-7Ji" id="fWb-l7-nc0"/>
                                 </connections>
@@ -253,6 +229,7 @@
                         <outlet property="addButton" destination="tVq-rz-5pe" id="kNP-KC-naP"/>
                         <outlet property="cancelButton" destination="Uz9-n0-t2M" id="dZu-nz-p4J"/>
                         <outlet property="containerView" destination="TUN-mZ-uLE" id="8p5-N0-LRa"/>
+                        <outlet property="typeSelectorSegmentedControl" destination="1Ce-E7-rG2" id="3JA-Su-PFn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KrE-EC-ioA" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -282,9 +259,6 @@
                                                     <nil key="textColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
-                                                    <connections>
-                                                        <outlet property="delegate" destination="3dI-34-ljo" id="rrs-yw-joz"/>
-                                                    </connections>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -356,22 +330,10 @@
                             <outlet property="delegate" destination="3dI-34-ljo" id="ZXX-gI-6ii"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Add Folder" id="LuA-AC-n99">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="v7P-5Z-FqV">
-                            <connections>
-                                <action selector="cancel:" destination="3dI-34-ljo" id="FA8-9i-9CA"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Add" id="dgF-XT-J4d">
-                            <connections>
-                                <action selector="add:" destination="3dI-34-ljo" id="BIP-Db-2K5"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Add Folder" id="LuA-AC-n99"/>
                     <connections>
                         <outlet property="accountLabel" destination="mxj-Bw-Jfx" id="l4A-ta-dUi"/>
                         <outlet property="accountPickerView" destination="eGY-V8-gzJ" id="zGk-k4-Jnd"/>
-                        <outlet property="addButton" destination="dgF-XT-J4d" id="Zu1-fQ-xdl"/>
                         <outlet property="nameTextField" destination="lZK-wx-jbo" id="Xvq-LH-kwC"/>
                     </connections>
                 </tableViewController>

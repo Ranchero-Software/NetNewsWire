@@ -8,8 +8,9 @@
 
 import UIKit
 
-class AddAccountViewController: UITableViewController {
-
+class AddAccountViewController: UITableViewController, AddContainerViewControllerChild {
+	var delegate: AddContainerViewControllerChildDelegate?
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -18,4 +19,12 @@ class AddAccountViewController: UITableViewController {
 
 	}
 
+	func cancel() {
+		
+	}
+	
+	func add() {
+		
+	}
+	
 }

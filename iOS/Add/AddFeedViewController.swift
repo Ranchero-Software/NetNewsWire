@@ -12,11 +12,7 @@ import RSCore
 import RSTree
 import RSParser
 
-class AddFeedViewController: UITableViewController {
-	
-	@IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
-	@IBOutlet weak var cancelButton: UIBarButtonItem!
-	@IBOutlet weak var addButton: UIBarButtonItem!
+class AddFeedViewController: UITableViewController, AddContainerViewControllerChild {
 	
 	@IBOutlet weak var urlTextField: UITextField!
 	@IBOutlet weak var nameTextField: UITextField!
@@ -35,12 +31,12 @@ class AddFeedViewController: UITableViewController {
 	private var titleFromFeed: String?
 
 	private var userCancelled = false
+
+	var delegate: AddContainerViewControllerChildDelegate?
 	
 	override func viewDidLoad() {
 		
         super.viewDidLoad()
-		
-		activityIndicatorView.isHidden = true
 		
 		urlTextField.autocorrectionType = .no
 		urlTextField.autocapitalizationType = .none
@@ -54,20 +50,22 @@ class AddFeedViewController: UITableViewController {
 		// I couldn't figure out the gap at the top of the UITableView, so I took a hammer to it.
 		tableView.contentInset = UIEdgeInsets(top: -28, left: 0, bottom: 0, right: 0)
 		
-    }
-	
-	@IBAction func cancel(_ sender: Any) {
-		userCancelled = true
-		dismiss(animated: true)
+		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: urlTextField)
+
 	}
 	
-	@IBAction func add(_ sender: Any) {
+	func cancel() {
+		userCancelled = true
+		delegate?.processingDidEnd()
+	}
+	
+	func add() {
 
 		let urlString = urlTextField.text ?? ""
 		let normalizedURLString = (urlString as NSString).rs_normalizedURL()
 		
 		guard !normalizedURLString.isEmpty, let url = URL(string: normalizedURLString) else {
-			dismiss(animated: true)
+			delegate?.processingDidEnd()
 			return
 		}
 		
@@ -93,10 +91,14 @@ class AddFeedViewController: UITableViewController {
  			return
 		}
 		
-		beginShowingProgress()
-		
+		delegate?.processingDidBegin()
+
 		feedFinder = FeedFinder(url: url, delegate: self)
 
+	}
+	
+	@objc func textDidChange(_ note: Notification) {
+		delegate?.readyToAdd(state: urlTextField.text?.rs_stringMayBeURL() ?? false)
 	}
 	
 }
@@ -121,42 +123,28 @@ extension AddFeedViewController: UIPickerViewDataSource, UIPickerViewDelegate {
 	
 }
 
-extension AddFeedViewController: UITextFieldDelegate {
-
-	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-		updateUI()
-		return true
-	}
-	
-	func textFieldDidEndEditing(_ textField: UITextField) {
-			updateUI()
-	}
-	
-}
-
 extension AddFeedViewController: FeedFinderDelegate {
 	
 	public func feedFinder(_ feedFinder: FeedFinder, didFindFeeds feedSpecifiers: Set<FeedSpecifier>) {
 		
 		if userCancelled {
-			endShowingProgress()
 			return
 		}
 		
 		if let error = feedFinder.initialDownloadError {
 			if feedFinder.initialDownloadStatusCode == 404 {
-				endShowingProgress()
 				showNoFeedsErrorMessage()
+				delegate?.processingDidEnd()
 			} else {
-				endShowingProgress()
 				showInitialDownloadError(error)
+				delegate?.processingDidEnd()
 			}
 			return
 		}
 		
 		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers) else {
-			endShowingProgress()
 			showNoFeedsErrorMessage()
+			delegate?.processingDidEnd()
 			return
 		}
 		
@@ -170,7 +158,7 @@ extension AddFeedViewController: FeedFinderDelegate {
 			}
 		} else {
 			// Shouldn't happen.
-			endShowingProgress()
+			delegate?.processingDidEnd()
 			showNoFeedsErrorMessage()
 		}
 		
@@ -179,22 +167,6 @@ extension AddFeedViewController: FeedFinderDelegate {
 }
 
 private extension AddFeedViewController {
-	
-	private func updateUI() {
-		addButton.isEnabled = urlTextField.text?.rs_stringMayBeURL() ?? false
-	}
-	
-	private func beginShowingProgress() {
-		activityIndicatorView.isHidden = false
-		activityIndicatorView.startAnimating()
-		addButton.isEnabled = false
-	}
-	
-	private func endShowingProgress() {
-		activityIndicatorView.isHidden = true
-		activityIndicatorView.stopAnimating()
-		addButton.isEnabled = true
-	}
 	
 	private func showAlreadySubscribedError() {
 		let title = NSLocalizedString("Already subscribed", comment: "Feed finder")
@@ -218,27 +190,29 @@ private extension AddFeedViewController {
 	func addFeedIfPossible(_ parsedFeed: ParsedFeed?) {
 		
 		if userCancelled {
-			endShowingProgress()
 			return
 		}
 
 		guard let account = userEnteredAccount else {
 			assertionFailure("Expected account.")
+			delegate?.processingDidEnd()
 			return
 		}
+		
 		guard let feedURLString = foundFeedURLString else {
 			assertionFailure("Expected feedURLString.")
+			delegate?.processingDidEnd()
 			return
 		}
 		
 		if account.hasFeed(withURL: feedURLString) {
-			endShowingProgress()
 			showAlreadySubscribedError()
+			delegate?.processingDidEnd()
 			return
 		}
 		
 		guard let feed = account.createFeed(with: titleFromFeed, editedName: userEnteredTitle, url: feedURLString) else {
-			endShowingProgress()
+			delegate?.processingDidEnd()
 			return
 		}
 		
@@ -249,9 +223,8 @@ private extension AddFeedViewController {
 		account.addFeed(feed, to: userEnteredFolder)
 		NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 		
-		endShowingProgress()
-		dismiss(animated: true)
-		
+		delegate?.processingDidEnd()
+
 	}
 	
 }
