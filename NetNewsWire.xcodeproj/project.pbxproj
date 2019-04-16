@@ -932,12 +932,12 @@
 		51C4526F2265091600C03939 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				51C452702265091600C03939 /* MultilineUILabelSizer.swift */,
-				51C452712265091600C03939 /* MasterTimelineCellData.swift */,
 				51C452722265091600C03939 /* MasterTimelineTableViewCell.swift */,
-				51C452732265091600C03939 /* SingleLineUILabelSizer.swift */,
-				51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */,
+				51C452712265091600C03939 /* MasterTimelineCellData.swift */,
 				51C452752265091600C03939 /* MasterTimelineCellLayout.swift */,
+				51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */,
+				51C452732265091600C03939 /* SingleLineUILabelSizer.swift */,
+				51C452702265091600C03939 /* MultilineUILabelSizer.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";

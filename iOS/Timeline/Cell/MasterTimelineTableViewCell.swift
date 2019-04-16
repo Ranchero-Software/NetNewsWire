@@ -18,8 +18,10 @@ class MasterTimelineTableViewCell: UITableViewCell {
 	private let dateView = MasterTimelineTableViewCell.singleLineUILabel()
 	private let feedNameView = MasterTimelineTableViewCell.singleLineUILabel()
 	
-	private lazy var avatarImageView = {
-		return UIImageView(image: AppAssets.feedImage)
+	private lazy var avatarImageView: UIImageView = {
+		let imageView = UIImageView(image: AppAssets.feedImage)
+		imageView.contentMode = .scaleAspectFit
+		return imageView
 	}()
 	
 	private lazy var starView = {
