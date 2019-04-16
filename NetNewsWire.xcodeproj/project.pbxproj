@@ -54,10 +54,9 @@
 		51C4527C2265091600C03939 /* MasterTimelineCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452752265091600C03939 /* MasterTimelineCellLayout.swift */; };
 		51C4527F2265092C00C03939 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4527E2265092C00C03939 /* DetailViewController.swift */; };
 		51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452812265093600C03939 /* AddFeedFolderPickerData.swift */; };
-		51C452862265093600C03939 /* AddFeed.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C452822265093600C03939 /* AddFeed.storyboard */; };
+		51C452862265093600C03939 /* Add.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C452822265093600C03939 /* Add.storyboard */; };
 		51C452872265093600C03939 /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452832265093600C03939 /* FolderTreeControllerDelegate.swift */; };
 		51C452882265093600C03939 /* AddFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452842265093600C03939 /* AddFeedViewController.swift */; };
-		51C4528C2265095F00C03939 /* AddFolder.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C4528A2265095F00C03939 /* AddFolder.storyboard */; };
 		51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4528B2265095F00C03939 /* AddFolderViewController.swift */; };
 		51C4528E2265099C00C03939 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
 		51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5391FC2308B00998D64 /* UnreadFeed.swift */; };
@@ -622,10 +621,9 @@
 		51C452752265091600C03939 /* MasterTimelineCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineCellLayout.swift; sourceTree = "<group>"; };
 		51C4527E2265092C00C03939 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		51C452812265093600C03939 /* AddFeedFolderPickerData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedFolderPickerData.swift; sourceTree = "<group>"; };
-		51C452822265093600C03939 /* AddFeed.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AddFeed.storyboard; sourceTree = "<group>"; };
+		51C452822265093600C03939 /* Add.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Add.storyboard; sourceTree = "<group>"; };
 		51C452832265093600C03939 /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		51C452842265093600C03939 /* AddFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedViewController.swift; sourceTree = "<group>"; };
-		51C4528A2265095F00C03939 /* AddFolder.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AddFolder.storyboard; sourceTree = "<group>"; };
 		51C4528B2265095F00C03939 /* AddFolderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C452B72265178500C03939 /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
@@ -953,21 +951,13 @@
 		51C452802265093600C03939 /* Add Feed */ = {
 			isa = PBXGroup;
 			children = (
+				51C452822265093600C03939 /* Add.storyboard */,
 				51C452812265093600C03939 /* AddFeedFolderPickerData.swift */,
-				51C452822265093600C03939 /* AddFeed.storyboard */,
 				51C452832265093600C03939 /* FolderTreeControllerDelegate.swift */,
 				51C452842265093600C03939 /* AddFeedViewController.swift */,
-			);
-			path = "Add Feed";
-			sourceTree = "<group>";
-		};
-		51C452892265095F00C03939 /* Add Folder */ = {
-			isa = PBXGroup;
-			children = (
-				51C4528A2265095F00C03939 /* AddFolder.storyboard */,
 				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
 			);
-			path = "Add Folder";
+			path = "Add Feed";
 			sourceTree = "<group>";
 		};
 		51C452A822650DA100C03939 /* Article Rendering */ = {
@@ -1514,7 +1504,6 @@
 				51C4526D2265091600C03939 /* Timeline */,
 				51C4527D2265092C00C03939 /* Detail */,
 				51C452802265093600C03939 /* Add Feed */,
-				51C452892265095F00C03939 /* Add Folder */,
 				51C45245226506C800C03939 /* Extensions */,
 				84C9FC9A2262A1A900D921D6 /* Resources */,
 			);
@@ -2023,9 +2012,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51C452862265093600C03939 /* AddFeed.storyboard in Resources */,
+				51C452862265093600C03939 /* Add.storyboard in Resources */,
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
-				51C4528C2265095F00C03939 /* AddFolder.storyboard in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreen.storyboard in Resources */,
 				51C452AB22650DC600C03939 /* template.html in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
