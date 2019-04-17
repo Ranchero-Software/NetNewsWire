@@ -11,9 +11,15 @@ import RSCore
 import Account
 import RSTree
 
+protocol MasterTableViewCellDelegate: class {
+	func disclosureSelected(_ sender: MasterTableViewCell, expanding: Bool)
+}
+
 class MasterTableViewCell : UITableViewCell {
 
 	private var accessoryButton: UIButton?
+	
+	weak var delegate: MasterTableViewCellDelegate?
 	
 	override var accessibilityLabel: String? {
 		set {}
@@ -108,12 +114,14 @@ class MasterTableViewCell : UITableViewCell {
 		
 		if sender.imageView?.image == AppAssets.chevronRightImage {
 			sender.setImage(AppAssets.chevronDownImage, for: .normal)
+			delegate?.disclosureSelected(self, expanding: true)
 		} else {
 			sender.setImage(AppAssets.chevronRightImage, for: .normal)
+			delegate?.disclosureSelected(self, expanding: false)
 		}
 		
-		
 	}
+	
 }
 
 private extension MasterTableViewCell {

@@ -916,9 +916,9 @@
 		51C45260226508F600C03939 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				51C45261226508F600C03939 /* MasterUnreadCountView.swift */,
 				51C45262226508F600C03939 /* MasterTableViewCell.swift */,
 				51C45263226508F600C03939 /* MasterTableViewCellLayout.swift */,
+				51C45261226508F600C03939 /* MasterUnreadCountView.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";

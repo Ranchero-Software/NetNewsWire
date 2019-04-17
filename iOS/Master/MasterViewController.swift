@@ -287,6 +287,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: API
 	
 	func configure(_ cell: MasterTableViewCell, _ node: Node) {
+		cell.delegate = self
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
 		configureFavicon(cell, node)
@@ -387,6 +388,16 @@ extension MasterViewController: UIDocumentPickerDelegate {
 			}
 		}
 		
+	}
+	
+}
+
+// MARK: MasterTableViewCellDelegate
+
+extension MasterViewController: MasterTableViewCellDelegate {
+	
+	func disclosureSelected(_ sender: MasterTableViewCell, expanding: Bool) {
+//		let indexSet = tableView.indexPath(for: sender)
 	}
 	
 }
