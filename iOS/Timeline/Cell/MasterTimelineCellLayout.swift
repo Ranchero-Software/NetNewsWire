@@ -39,6 +39,8 @@ struct MasterTimelineCellLayout {
 	static let avatarMarginLeft = CGFloat(integerLiteral: 8)
 	static let avatarCornerRadius = CGFloat(integerLiteral: 4)
 	
+	static let chevronWidth = CGFloat(integerLiteral: 28)
+
 	let width: CGFloat
 	let height: CGFloat
 	let feedNameRect: CGRect
@@ -54,7 +56,7 @@ struct MasterTimelineCellLayout {
 	
 	init(width: CGFloat, height: CGFloat, feedNameRect: CGRect, dateRect: CGRect, titleRect: CGRect, numberOfLinesForTitle: Int, summaryRect: CGRect, textRect: CGRect, unreadIndicatorRect: CGRect, starRect: CGRect, avatarImageRect: CGRect, paddingBottom: CGFloat) {
 		
-		self.width = width
+		self.width = width - MasterTimelineCellLayout.chevronWidth
 		self.feedNameRect = feedNameRect
 		self.dateRect = dateRect
 		self.titleRect = titleRect
@@ -76,6 +78,8 @@ struct MasterTimelineCellLayout {
 
 	init(width: CGFloat, height: CGFloat, cellData: MasterTimelineCellData, hasAvatar: Bool) {
 
+		let width = width - MasterTimelineCellLayout.chevronWidth
+		
 		// If height == 0.0, then height is calculated.
 
 		let showAvatar = hasAvatar && cellData.showAvatar

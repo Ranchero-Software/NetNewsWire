@@ -13,6 +13,8 @@ import RSTree
 
 class MasterTableViewCell : UITableViewCell {
 
+	private var accessoryButton: UIButton?
+	
 	override var accessibilityLabel: String? {
 		set {}
 		get {
@@ -102,14 +104,35 @@ class MasterTableViewCell : UITableViewCell {
 		layoutWith(layout)
 	}
 	
+	@objc func buttonPressed(_ sender: UIButton) {
+		
+		if sender.imageView?.image == AppAssets.chevronRightImage {
+			sender.setImage(AppAssets.chevronDownImage, for: .normal)
+		} else {
+			sender.setImage(AppAssets.chevronRightImage, for: .normal)
+		}
+		
+		
+	}
 }
 
 private extension MasterTableViewCell {
 
 	func commonInit() {
+		addAccessoryView()
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(faviconImageView)
 		addSubviewAtInit(titleView)
+	}
+	
+	func addAccessoryView() {
+		let button = UIButton(type: .roundedRect)
+		button.frame = CGRect(x: 0, y: 0, width: 15.0, height: 15.0)
+		button.setImage(AppAssets.chevronRightImage, for: .normal)
+		button.tintColor = AppAssets.chevronDisclosureColor
+		button.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
+		accessoryButton = button
+		accessoryView = button
 	}
 
 	func addSubviewAtInit(_ view: UIView) {

@@ -107,6 +107,7 @@ private extension MasterTimelineTableViewCell {
 	
 	func commonInit() {
 		
+		addAccessoryView()
 		addSubviewAtInit(titleView, hidden: false)
 		addSubviewAtInit(summaryView, hidden: true)
 		addSubviewAtInit(textView, hidden: true)
@@ -117,7 +118,11 @@ private extension MasterTimelineTableViewCell {
 		addSubviewAtInit(starView, hidden: true)
 		
 	}
-	
+
+	func addAccessoryView() {
+		accessoryView = UIImageView(image: AppAssets.chevronRightImage)
+	}
+
 	func updatedLayoutRects() -> MasterTimelineCellLayout {
 		
 		return MasterTimelineCellLayout(width: bounds.width, height: bounds.height, cellData: cellData, hasAvatar: avatarImageView.image != nil)

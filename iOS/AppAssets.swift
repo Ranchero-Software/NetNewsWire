@@ -18,6 +18,20 @@ struct AppAssets {
 		return RSImage(named: "circleOpenImage")!
 	}()
 	
+	static var chevronDisclosureColor: UIColor = {
+		return UIColor(named: "chevronDisclosureColor")!
+	}()
+	
+	static var chevronDownImage: RSImage = {
+		let image = RSImage(named: "chevronDownImage")!
+		return image.maskWithColor(color: AppAssets.chevronDisclosureColor)!
+	}()
+	
+	static var chevronRightImage: RSImage = {
+		let image = RSImage(named: "chevronRightImage")!
+		return image.maskWithColor(color: AppAssets.chevronDisclosureColor)!
+	}()
+	
 	static var cogImage: RSImage = {
 		return RSImage(named: "cogImage")!
 	}()
@@ -34,8 +48,8 @@ struct AppAssets {
 		return UIColor(named: "masterFolderColor")!
 	}()
 	
-	static var masterFolderImage: UIImage = {
-		let image = UIImage(named: "folderImage")!
+	static var masterFolderImage: RSImage = {
+		let image = RSImage(named: "folderImage")!
 		return image.maskWithColor(color: AppAssets.masterFolderColor)!
 	}()
 	

@@ -17,13 +17,23 @@ struct MasterTableViewCellLayout {
 	private static let unreadCountMarginLeft = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginRight = CGFloat(integerLiteral: 8)
 
+	private static let chevronWidth = CGFloat(integerLiteral: 40)
+	
 	let faviconRect: CGRect
 	let titleRect: CGRect
 	let unreadCountRect: CGRect
 	
 	init(cellSize: CGSize, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView, showingEditingControl: Bool) {
 
-		let bounds = CGRect(x: 0.0, y: 0.0, width: floor(cellSize.width), height: floor(cellSize.height))
+		let adjustedWidth: CGFloat = {
+			if showingEditingControl {
+				return floor(cellSize.width)
+			} else {
+				return floor(cellSize.width) - MasterTableViewCellLayout.chevronWidth
+			}
+		}()
+		
+		let bounds = CGRect(x: 0.0, y: 0.0, width: adjustedWidth, height: floor(cellSize.height))
 
 		var rFavicon = CGRect.zero
 		if shouldShowImage {
