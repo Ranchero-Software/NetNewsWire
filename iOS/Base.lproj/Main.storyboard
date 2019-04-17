@@ -205,11 +205,14 @@
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8">
-                        <barButtonItem key="leftBarButtonItem" title="Tools" image="toolsImage" id="2lM-3y-hKs">
-                            <connections>
-                                <action selector="showOPMLImportExport:" destination="7bK-jq-Zjz" id="qIa-yP-E6a"/>
-                            </connections>
-                        </barButtonItem>
+                        <leftBarButtonItems>
+                            <barButtonItem image="settingsImage" id="7xz-3z-0PJ"/>
+                            <barButtonItem title="Tools" image="toolsImage" id="2lM-3y-hKs">
+                                <connections>
+                                    <action selector="showOPMLImportExport:" destination="7bK-jq-Zjz" id="qIa-yP-E6a"/>
+                                </connections>
+                            </barButtonItem>
+                        </leftBarButtonItems>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
@@ -280,10 +283,11 @@
         </scene>
     </scenes>
     <resources>
-        <image name="browserImage" width="20" height="20"/>
-        <image name="circleOpenImage" width="20" height="20"/>
-        <image name="starOpenImage" width="18" height="18"/>
-        <image name="toolsImage" width="20" height="18"/>
+        <image name="browserImage" width="22" height="22"/>
+        <image name="circleOpenImage" width="22" height="22"/>
+        <image name="settingsImage" width="24" height="24"/>
+        <image name="starOpenImage" width="24" height="24"/>
+        <image name="toolsImage" width="24" height="22"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="RT3-gH-cyN"/>

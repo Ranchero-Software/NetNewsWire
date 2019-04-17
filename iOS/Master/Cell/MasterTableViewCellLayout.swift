@@ -21,13 +21,14 @@ struct MasterTableViewCellLayout {
 	let titleRect: CGRect
 	let unreadCountRect: CGRect
 	
-	init(cellSize: CGSize, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView) {
+	init(cellSize: CGSize, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView, isEditing: Bool) {
 
 		let bounds = CGRect(x: 0.0, y: 0.0, width: floor(cellSize.width), height: floor(cellSize.height))
 
 		var rFavicon = CGRect.zero
 		if shouldShowImage {
-			rFavicon = CGRect(x: MasterTableViewCellLayout.imageMarginLeft, y: 0.0, width: MasterTableViewCellLayout.imageSize.width, height: MasterTableViewCellLayout.imageSize.height)
+			let indent = isEditing ? MasterTableViewCellLayout.imageMarginLeft + 40 : MasterTableViewCellLayout.imageMarginLeft
+			rFavicon = CGRect(x: indent, y: 0.0, width: MasterTableViewCellLayout.imageSize.width, height: MasterTableViewCellLayout.imageSize.height)
 			rFavicon = MasterTableViewCellLayout.centerVertically(rFavicon, bounds)
 		}
 		self.faviconRect = rFavicon

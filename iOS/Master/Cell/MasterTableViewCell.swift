@@ -92,7 +92,7 @@ class MasterTableViewCell : UITableViewCell {
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView)
+		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, isEditing: isEditing)
 		layoutWith(layout)
 	}
 

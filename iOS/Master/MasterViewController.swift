@@ -30,6 +30,8 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 		super.viewDidLoad()
 
+		navigationItem.rightBarButtonItem = editButtonItem
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
