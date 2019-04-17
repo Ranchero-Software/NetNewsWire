@@ -84,18 +84,24 @@ class MasterTableViewCell : UITableViewCell {
 	}()
 
 	private let unreadCountView = MasterUnreadCountView(frame: CGRect.zero)
+	private var showingEditControl = false
 
 	required init?(coder: NSCoder) {		
 		super.init(coder: coder)
 		commonInit()
 	}
 
+	override func willTransition(to state: UITableViewCell.StateMask) {
+		super.willTransition(to: state)
+		showingEditControl = state == .showingEditControl
+	}
+	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, isEditing: isEditing)
+		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl)
 		layoutWith(layout)
 	}
-
+	
 }
 
 private extension MasterTableViewCell {
