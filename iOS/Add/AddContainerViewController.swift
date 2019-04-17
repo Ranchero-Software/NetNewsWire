@@ -17,6 +17,7 @@ protocol AddContainerViewControllerChild: UIViewController {
 protocol AddContainerViewControllerChildDelegate: UIViewController {
 	func readyToAdd(state: Bool)
 	func processingDidBegin()
+	func processingDidCancel()
 	func processingDidEnd()
 }
 
@@ -76,11 +77,14 @@ extension AddContainerViewController: AddContainerViewControllerChildDelegate {
 		activityIndicatorView.startAnimating()
 	}
 	
-	func processingDidEnd() {
+	func processingDidCancel() {
 		addButton.isEnabled = true
 		typeSelectorSegmentedControl.isEnabled = true
 		activityIndicatorView.isHidden = true
 		activityIndicatorView.stopAnimating()
+	}
+	
+	func processingDidEnd() {
 		dismiss(animated: true)
 	}
 

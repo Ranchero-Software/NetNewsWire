@@ -56,7 +56,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 	
 	func cancel() {
 		userCancelled = true
-		delegate?.processingDidEnd()
+		delegate?.processingDidCancel()
 	}
 	
 	func add() {
@@ -65,7 +65,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		let normalizedURLString = (urlString as NSString).rs_normalizedURL()
 		
 		guard !normalizedURLString.isEmpty, let url = URL(string: normalizedURLString) else {
-			delegate?.processingDidEnd()
+			delegate?.processingDidCancel()
 			return
 		}
 		
@@ -134,17 +134,17 @@ extension AddFeedViewController: FeedFinderDelegate {
 		if let error = feedFinder.initialDownloadError {
 			if feedFinder.initialDownloadStatusCode == 404 {
 				showNoFeedsErrorMessage()
-				delegate?.processingDidEnd()
+				delegate?.processingDidCancel()
 			} else {
 				showInitialDownloadError(error)
-				delegate?.processingDidEnd()
+				delegate?.processingDidCancel()
 			}
 			return
 		}
 		
 		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers) else {
 			showNoFeedsErrorMessage()
-			delegate?.processingDidEnd()
+			delegate?.processingDidCancel()
 			return
 		}
 		
@@ -158,8 +158,8 @@ extension AddFeedViewController: FeedFinderDelegate {
 			}
 		} else {
 			// Shouldn't happen.
-			delegate?.processingDidEnd()
 			showNoFeedsErrorMessage()
+			delegate?.processingDidCancel()
 		}
 		
 	}
@@ -195,19 +195,19 @@ private extension AddFeedViewController {
 
 		guard let account = userEnteredAccount else {
 			assertionFailure("Expected account.")
-			delegate?.processingDidEnd()
+			delegate?.processingDidCancel()
 			return
 		}
 		
 		guard let feedURLString = foundFeedURLString else {
 			assertionFailure("Expected feedURLString.")
-			delegate?.processingDidEnd()
+			delegate?.processingDidCancel()
 			return
 		}
 		
 		if account.hasFeed(withURL: feedURLString) {
 			showAlreadySubscribedError()
-			delegate?.processingDidEnd()
+			delegate?.processingDidCancel()
 			return
 		}
 		
@@ -228,4 +228,3 @@ private extension AddFeedViewController {
 	}
 	
 }
-
