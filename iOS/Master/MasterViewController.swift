@@ -17,6 +17,9 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 	var animatingChanges = false
 	
+	var expandedNodes = [Node]()
+	var shadowTable = [[Node]]()
+	
 	let treeControllerDelegate = MasterTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
@@ -43,6 +46,13 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
+		// Set up the backing structures
+		for _ in treeController.rootNode.childNodes {
+			shadowTable.append([Node]())
+		}
+		
+		rebuildShadow()
 		
 	}
 
@@ -124,7 +134,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return treeController.rootNode.childAtIndex(section)?.numberOfChildNodes ?? 0
+		return shadowTable[section].count
 	}
 	
 	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -302,12 +312,17 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: API
 	
 	func configure(_ cell: MasterTableViewCell, _ node: Node) {
+		
 		cell.delegate = self
-		cell.allowDisclosureSelection =  node.canHaveChildNodes
+		cell.indent = node.parent?.representedObject is Folder
+		cell.disclosureExpanded = expandedNodes.contains(node)
+		cell.allowDisclosureSelection = node.canHaveChildNodes
+		
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
 		configureFavicon(cell, node)
 		cell.shouldShowImage = node.representedObject is SmallIconProvider
+		
 	}
 	
 	func configureUnreadCount(_ cell: MasterTableViewCell, _ node: Node) {
@@ -341,8 +356,8 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	
 	func delete(indexPath: IndexPath) {
 		
-		guard let containerNode = treeController.rootNode.childAtIndex(indexPath.section),
-			let deleteNode = containerNode.childAtIndex(indexPath.row),
+		guard let deleteNode = nodeFor(indexPath: indexPath),
+			let containerNode = deleteNode.parent,
 			let container = containerNode.representedObject as? Container else {
 				return
 		}
@@ -357,7 +372,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			container.deleteFolder(folder)
 		}
 		
-		treeController.rebuild()
+		rebuildBackingStructures()
 		tableView.deleteRows(at: [indexPath], with: .automatic)
 		
 		animatingChanges = false
@@ -405,7 +420,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	func nodeFor(indexPath: IndexPath) -> Node? {
-		return treeController.rootNode.childAtIndex(indexPath.section)?.childAtIndex(indexPath.row)
+		return shadowTable[indexPath.section][indexPath.row]
 	}
 	
 }
@@ -433,7 +448,11 @@ extension MasterViewController: UIDocumentPickerDelegate {
 extension MasterViewController: MasterTableViewCellDelegate {
 	
 	func disclosureSelected(_ sender: MasterTableViewCell, expanding: Bool) {
-//		let indexSet = tableView.indexPath(for: sender)
+		if expanding {
+			expandCell(sender)
+		} else {
+			collapseCell(sender)
+		}
 	}
 	
 }
@@ -444,7 +463,7 @@ private extension MasterViewController {
 	
 	func rebuildTreeAndReloadDataIfNeeded() {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
-			treeController.rebuild()
+			rebuildBackingStructures()
 			tableView.reloadData()
 		}
 	}
@@ -473,6 +492,98 @@ private extension MasterViewController {
 			}
 			callback(cell as! MasterTableViewCell, node)
 		}
+	}
+	
+	func rebuildBackingStructures() {
+		treeController.rebuild()
+		rebuildShadow()
+	}
+	
+	func rebuildShadow() {
+		
+		for i in 0..<treeController.rootNode.numberOfChildNodes {
+			
+			var result = [Node]()
+			
+			if let nodes = treeController.rootNode.childAtIndex(i)?.childNodes {
+				for node in nodes {
+					result.append(node)
+					if expandedNodes.contains(node) {
+						for child in node.childNodes {
+							result.append(child)
+						}
+					}
+				}
+			}
+			
+			shadowTable[i] = result
+			
+		}
+		
+
+	}
+	
+	func expandCell(_ cell: MasterTableViewCell) {
+		
+		animatingChanges = true
+		
+		guard let indexPath = tableView.indexPath(for: cell)  else {
+			return
+		}
+		
+		let expandNode = shadowTable[indexPath.section][indexPath.row]
+		expandedNodes.append(expandNode)
+		
+		var indexPathsToInsert = [IndexPath]()
+		for i in 0..<expandNode.childNodes.count {
+			if let child = expandNode.childAtIndex(i) {
+				let nextIndex = indexPath.row + i + 1
+				indexPathsToInsert.append(IndexPath(row: nextIndex, section: indexPath.section))
+				shadowTable[indexPath.section].insert(child, at: nextIndex)
+			}
+		}
+		
+		tableView.beginUpdates()
+		tableView.insertRows(at: indexPathsToInsert, with: .automatic)
+		tableView.endUpdates()
+		
+		animatingChanges = false
+		
+	}
+	
+	func collapseCell(_ cell: MasterTableViewCell) {
+		
+		animatingChanges = true
+
+		guard let indexPath = tableView.indexPath(for: cell) else {
+			return
+		}
+		
+		let collapseNode = shadowTable[indexPath.section][indexPath.row]
+		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
+			expandedNodes.remove(at: removeNode)
+		}
+		
+		var indexPathsToRemove = [IndexPath]()
+		
+		for child in collapseNode.childNodes {
+			if let index = shadowTable[indexPath.section].firstIndex(of: child) {
+				indexPathsToRemove.append(IndexPath(row: index, section: indexPath.section))
+			}
+		}
+		
+		for child in collapseNode.childNodes {
+			if let index = shadowTable[indexPath.section].firstIndex(of: child) {
+				shadowTable[indexPath.section].remove(at: index)
+			}
+		}
+		
+		tableView.beginUpdates()
+		tableView.deleteRows(at: indexPathsToRemove, with: .automatic)
+		tableView.endUpdates()
+		
+		animatingChanges = false
+		
 	}
 	
 }

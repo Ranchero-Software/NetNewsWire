@@ -19,7 +19,7 @@ class MasterTableViewCell : UITableViewCell {
 
 	weak var delegate: MasterTableViewCellDelegate?
 	var allowDisclosureSelection = false
-	
+
 	override var accessibilityLabel: String? {
 		set {}
 		get {
@@ -32,6 +32,24 @@ class MasterTableViewCell : UITableViewCell {
 		}
 	}
 
+	var indent = false {
+		didSet {
+			if indent != oldValue {
+				setNeedsLayout()
+			}
+		}
+	}
+	
+	var disclosureExpanded = false {
+		didSet {
+			if disclosureExpanded {
+				accessoryButton?.setImage(AppAssets.chevronDownImage, for: .normal)
+			} else {
+				accessoryButton?.setImage(AppAssets.chevronRightImage, for: .normal)
+			}
+		}
+	}
+	
 	var faviconImage: UIImage? {
 		didSet {
 			if let image = faviconImage {
@@ -106,7 +124,7 @@ class MasterTableViewCell : UITableViewCell {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl)
+		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indent)
 		layoutWith(layout)
 	}
 	
@@ -116,13 +134,15 @@ class MasterTableViewCell : UITableViewCell {
 			return
 		}
 		
-		if sender.imageView?.image == AppAssets.chevronRightImage {
+		if !disclosureExpanded {
 			sender.setImage(AppAssets.chevronDownImage, for: .normal)
 			delegate?.disclosureSelected(self, expanding: true)
 		} else {
 			sender.setImage(AppAssets.chevronRightImage, for: .normal)
 			delegate?.disclosureSelected(self, expanding: false)
 		}
+		
+		disclosureExpanded = !disclosureExpanded
 		
 	}
 	
@@ -138,13 +158,21 @@ private extension MasterTableViewCell {
 	}
 	
 	func addAccessoryView() {
+		
 		let button = UIButton(type: .roundedRect)
 		button.frame = CGRect(x: 0, y: 0, width: 25.0, height: 25.0)
-		button.setImage(AppAssets.chevronRightImage, for: .normal)
+		
+		if disclosureExpanded {
+			button.setImage(AppAssets.chevronDownImage, for: .normal)
+		} else {
+			button.setImage(AppAssets.chevronRightImage, for: .normal)
+		}
+		
 		button.tintColor = AppAssets.chevronDisclosureColor
 		button.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
 		accessoryButton = button
 		accessoryView = button
+		
 	}
 
 	func addSubviewAtInit(_ view: UIView) {

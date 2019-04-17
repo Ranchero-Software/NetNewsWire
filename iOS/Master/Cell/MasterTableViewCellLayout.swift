@@ -23,7 +23,7 @@ struct MasterTableViewCellLayout {
 	let titleRect: CGRect
 	let unreadCountRect: CGRect
 	
-	init(cellSize: CGSize, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView, showingEditingControl: Bool) {
+	init(cellSize: CGSize, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView, showingEditingControl: Bool, indent: Bool) {
 
 		let adjustedWidth: CGFloat = {
 			if showingEditingControl {
@@ -37,8 +37,9 @@ struct MasterTableViewCellLayout {
 
 		var rFavicon = CGRect.zero
 		if shouldShowImage {
-			let indent = showingEditingControl ? MasterTableViewCellLayout.imageMarginLeft + 40 : MasterTableViewCellLayout.imageMarginLeft
-			rFavicon = CGRect(x: indent, y: 0.0, width: MasterTableViewCellLayout.imageSize.width, height: MasterTableViewCellLayout.imageSize.height)
+			var indentX = showingEditingControl ? MasterTableViewCellLayout.imageMarginLeft + 40 : MasterTableViewCellLayout.imageMarginLeft
+			indentX = indent ? indentX + 20 : indentX
+			rFavicon = CGRect(x: indentX, y: 0.0, width: MasterTableViewCellLayout.imageSize.width, height: MasterTableViewCellLayout.imageSize.height)
 			rFavicon = MasterTableViewCellLayout.centerVertically(rFavicon, bounds)
 		}
 		self.faviconRect = rFavicon
