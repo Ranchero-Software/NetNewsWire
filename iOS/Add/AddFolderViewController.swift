@@ -1,17 +1,24 @@
-//Copyright © 2019 Vincode, Inc. All rights reserved.
+//
+//  AddFolderViewController.swift
+//  NetNewsWire
+//
+//  Created by Maurice Parker on 4/16/19.
+//  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
+//
 
 import UIKit
 import Account
 import RSCore
 
-class AddFolderViewController: UITableViewController {
+class AddFolderViewController: UITableViewController, AddContainerViewControllerChild {
 
-	@IBOutlet weak var addButton: UIBarButtonItem!
 	@IBOutlet weak var nameTextField: UITextField!
 	@IBOutlet weak var accountLabel: UILabel!
 	@IBOutlet weak var accountPickerView: UIPickerView!
 	
 	private var accounts: [Account]!
+	
+	var delegate: AddContainerViewControllerChildDelegate?
 	
 	override func viewDidLoad() {
 
@@ -23,21 +30,27 @@ class AddFolderViewController: UITableViewController {
 		accountPickerView.dataSource = self
 		accountPickerView.delegate = self
 		
+		// I couldn't figure out the gap at the top of the UITableView, so I took a hammer to it.
+		tableView.contentInset = UIEdgeInsets(top: -28, left: 0, bottom: 0, right: 0)
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: nameTextField)
+		
     }
 
-	@IBAction func cancel(_ sender: Any) {
-		dismiss(animated: true)
+	func cancel() {
+		delegate?.processingDidEnd()
 	}
 	
-	@IBAction func add(_ sender: Any) {
-		
+	func add() {
 		let account = accounts[accountPickerView.selectedRow(inComponent: 0)]
 		if let folderName = nameTextField.text {
 			account.ensureFolder(with: folderName)
 		}
-		
-		dismiss(animated: true)
-		
+		delegate?.processingDidEnd()
+	}
+
+	@objc func textDidChange(_ note: Notification) {
+		delegate?.readyToAdd(state: !(nameTextField.text?.isEmpty ?? false))
 	}
 	
 }
@@ -60,25 +73,4 @@ extension AddFolderViewController: UIPickerViewDataSource, UIPickerViewDelegate 
 		accountLabel.text = (accounts[row] as DisplayNameProvider).nameForDisplay
 	}
 	
-}
-
-extension AddFolderViewController: UITextFieldDelegate {
-	
-	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-		updateUI()
-		return true
-	}
-	
-	func textFieldDidEndEditing(_ textField: UITextField) {
-		updateUI()
-	}
-	
-}
-
-private extension AddFolderViewController {
-	
-	private func updateUI() {
-		addButton.isEnabled = !(nameTextField.text?.isEmpty ?? false)
-	}
-
 }

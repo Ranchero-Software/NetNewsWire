@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -486,11 +486,11 @@
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
-        <image name="markAllRead" width="11" height="9.5"/>
-        <image name="markRead" width="9.5" height="9.5"/>
-        <image name="newFolder" width="9.5" height="9.5"/>
-        <image name="nextUnread" width="12" height="9.5"/>
-        <image name="openInBrowser" width="9.5" height="9.5"/>
-        <image name="star" width="9.5" height="9.5"/>
+        <image name="markAllRead" width="22" height="19"/>
+        <image name="markRead" width="19" height="19"/>
+        <image name="newFolder" width="19" height="19"/>
+        <image name="nextUnread" width="24" height="19"/>
+        <image name="openInBrowser" width="19" height="19"/>
+        <image name="star" width="19" height="19"/>
     </resources>
 </document>

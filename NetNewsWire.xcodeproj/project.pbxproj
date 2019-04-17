@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
+		5115CAF42266301400B21BCE /* AddContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
+		517D9075226639F500323654 /* AddAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517D906B2266392900323654 /* AddAccountViewController.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
 		51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -54,10 +56,9 @@
 		51C4527C2265091600C03939 /* MasterTimelineCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452752265091600C03939 /* MasterTimelineCellLayout.swift */; };
 		51C4527F2265092C00C03939 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4527E2265092C00C03939 /* DetailViewController.swift */; };
 		51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452812265093600C03939 /* AddFeedFolderPickerData.swift */; };
-		51C452862265093600C03939 /* AddFeed.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C452822265093600C03939 /* AddFeed.storyboard */; };
+		51C452862265093600C03939 /* Add.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C452822265093600C03939 /* Add.storyboard */; };
 		51C452872265093600C03939 /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452832265093600C03939 /* FolderTreeControllerDelegate.swift */; };
 		51C452882265093600C03939 /* AddFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452842265093600C03939 /* AddFeedViewController.swift */; };
-		51C4528C2265095F00C03939 /* AddFolder.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C4528A2265095F00C03939 /* AddFolder.storyboard */; };
 		51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4528B2265095F00C03939 /* AddFolderViewController.swift */; };
 		51C4528E2265099C00C03939 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
 		51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5391FC2308B00998D64 /* UnreadFeed.swift */; };
@@ -597,9 +598,11 @@
 
 /* Begin PBXFileReference section */
 		51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOS_target.xcconfig; sourceTree = "<group>"; };
+		51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContainerViewController.swift; sourceTree = "<group>"; };
 		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
 		5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailKeyboardDelegate.swift; sourceTree = "<group>"; };
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
+		517D906B2266392900323654 /* AddAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountViewController.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard-Extensions.swift"; sourceTree = "<group>"; };
 		51C4524F226506F400C03939 /* UIImage-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage-Extensions.swift"; sourceTree = "<group>"; };
@@ -622,10 +625,9 @@
 		51C452752265091600C03939 /* MasterTimelineCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineCellLayout.swift; sourceTree = "<group>"; };
 		51C4527E2265092C00C03939 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		51C452812265093600C03939 /* AddFeedFolderPickerData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedFolderPickerData.swift; sourceTree = "<group>"; };
-		51C452822265093600C03939 /* AddFeed.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AddFeed.storyboard; sourceTree = "<group>"; };
+		51C452822265093600C03939 /* Add.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Add.storyboard; sourceTree = "<group>"; };
 		51C452832265093600C03939 /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		51C452842265093600C03939 /* AddFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedViewController.swift; sourceTree = "<group>"; };
-		51C4528A2265095F00C03939 /* AddFolder.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AddFolder.storyboard; sourceTree = "<group>"; };
 		51C4528B2265095F00C03939 /* AddFolderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C452B72265178500C03939 /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
@@ -932,12 +934,12 @@
 		51C4526F2265091600C03939 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				51C452702265091600C03939 /* MultilineUILabelSizer.swift */,
-				51C452712265091600C03939 /* MasterTimelineCellData.swift */,
 				51C452722265091600C03939 /* MasterTimelineTableViewCell.swift */,
-				51C452732265091600C03939 /* SingleLineUILabelSizer.swift */,
-				51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */,
+				51C452712265091600C03939 /* MasterTimelineCellData.swift */,
 				51C452752265091600C03939 /* MasterTimelineCellLayout.swift */,
+				51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */,
+				51C452732265091600C03939 /* SingleLineUILabelSizer.swift */,
+				51C452702265091600C03939 /* MultilineUILabelSizer.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -950,24 +952,18 @@
 			path = Detail;
 			sourceTree = "<group>";
 		};
-		51C452802265093600C03939 /* Add Feed */ = {
+		51C452802265093600C03939 /* Add */ = {
 			isa = PBXGroup;
 			children = (
-				51C452812265093600C03939 /* AddFeedFolderPickerData.swift */,
-				51C452822265093600C03939 /* AddFeed.storyboard */,
-				51C452832265093600C03939 /* FolderTreeControllerDelegate.swift */,
+				51C452822265093600C03939 /* Add.storyboard */,
+				51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */,
 				51C452842265093600C03939 /* AddFeedViewController.swift */,
-			);
-			path = "Add Feed";
-			sourceTree = "<group>";
-		};
-		51C452892265095F00C03939 /* Add Folder */ = {
-			isa = PBXGroup;
-			children = (
-				51C4528A2265095F00C03939 /* AddFolder.storyboard */,
+				51C452812265093600C03939 /* AddFeedFolderPickerData.swift */,
+				51C452832265093600C03939 /* FolderTreeControllerDelegate.swift */,
 				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
+				517D906B2266392900323654 /* AddAccountViewController.swift */,
 			);
-			path = "Add Folder";
+			path = Add;
 			sourceTree = "<group>";
 		};
 		51C452A822650DA100C03939 /* Article Rendering */ = {
@@ -1513,8 +1509,7 @@
 				51C4525D226508F600C03939 /* Master */,
 				51C4526D2265091600C03939 /* Timeline */,
 				51C4527D2265092C00C03939 /* Detail */,
-				51C452802265093600C03939 /* Add Feed */,
-				51C452892265095F00C03939 /* Add Folder */,
+				51C452802265093600C03939 /* Add */,
 				51C45245226506C800C03939 /* Extensions */,
 				84C9FC9A2262A1A900D921D6 /* Resources */,
 			);
@@ -2023,9 +2018,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51C452862265093600C03939 /* AddFeed.storyboard in Resources */,
+				51C452862265093600C03939 /* Add.storyboard in Resources */,
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
-				51C4528C2265095F00C03939 /* AddFolder.storyboard in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreen.storyboard in Resources */,
 				51C452AB22650DC600C03939 /* template.html in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
@@ -2149,6 +2143,7 @@
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
 				51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
+				517D9075226639F500323654 /* AddAccountViewController.swift in Sources */,
 				51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */,
 				51C45292226509C800C03939 /* TodayFeedDelegate.swift in Sources */,
 				84F3EE1B20DEC97E003FADEB /* HTMLFeedFinder.swift in Sources */,
@@ -2169,6 +2164,7 @@
 				51C4529C22650A1000C03939 /* SingleFaviconDownloader.swift in Sources */,
 				51C45290226509C100C03939 /* PseudoFeed.swift in Sources */,
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,
+				5115CAF42266301400B21BCE /* AddContainerViewController.swift in Sources */,
 				51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */,
 				51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
@@ -2583,7 +2579,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2653,7 +2648,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2715,7 +2709,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2785,7 +2778,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9C84TZ7Q6Z;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2814,7 +2806,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = M8L2WTLA8W;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 			};
 			name = Debug;
@@ -2823,7 +2815,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = M8L2WTLA8W;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 			};
 			name = Release;
