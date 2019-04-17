@@ -107,8 +107,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="199.66666666666666"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v2n-nX-8jq">
-                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="170"/>
+                                                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="v2n-nX-8jq">
+                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="199.66666666666666"/>
                                                 </pickerView>
                                             </subviews>
                                             <constraints>
@@ -128,7 +128,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Add Feed" id="i1W-2z-PAk">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="r7V-oB-aHz">
+                        <barButtonItem key="rightBarButtonItem" id="r7V-oB-aHz">
                             <view key="customView" contentMode="scaleToFill" id="4in-Eb-Rxp">
                                 <rect key="frame" x="339" y="12" width="20" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -209,7 +209,7 @@
                                     <action selector="add:" destination="G8j-dh-7Ji" id="fWb-l7-nc0"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem style="plain" id="chA-NW-oNo">
+                            <barButtonItem id="chA-NW-oNo">
                                 <view key="customView" contentMode="scaleToFill" id="nG1-ZO-oLQ">
                                     <rect key="frame" x="300" y="12" width="20" height="20"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -303,15 +303,15 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="159" id="zRi-p6-4KU">
-                                        <rect key="frame" x="0.0" y="129" width="375" height="159"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="200" id="zRi-p6-4KU">
+                                        <rect key="frame" x="0.0" y="129" width="375" height="200"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zRi-p6-4KU" id="wek-Qh-OXr">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="158.66666666666666"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="199.66666666666666"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eGY-V8-gzJ">
-                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="170"/>
+                                                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eGY-V8-gzJ">
+                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="199.66666666666666"/>
                                                 </pickerView>
                                             </subviews>
                                             <constraints>
