@@ -57,7 +57,7 @@ struct MasterTableViewCellLayout {
 		self.unreadCountRect = rUnread
 
 		if rLabel.maxX > bounds.maxX {
-			rLabel.size.width = bounds.maxX - rLabel.maxX
+			rLabel.size.width = bounds.maxX - rLabel.minX
 		}
 		
 		self.titleRect = rLabel
