@@ -6,6 +6,10 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
+#if os(iOS)
+import UIKit
+#endif
+
 import Foundation
 import RSCore
 import Articles
@@ -167,7 +171,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		switch type {
 		case .onMyMac:
+			#if os(macOS)
 			defaultName = NSLocalizedString("On My Mac", comment: "Account name")
+			#else
+			if UIDevice.current.userInterfaceIdiom == .pad {
+				defaultName = NSLocalizedString("On My iPad", comment: "Account name")
+			} else {
+				defaultName = NSLocalizedString("On My iPhone", comment: "Account name")
+			}
+			#endif
 		case .feedly:
 			defaultName = "Feedly"
 		case .feedbin:
