@@ -303,6 +303,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	
 	func configure(_ cell: MasterTableViewCell, _ node: Node) {
 		cell.delegate = self
+		cell.allowDisclosureSelection =  node.canHaveChildNodes
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
 		configureFavicon(cell, node)

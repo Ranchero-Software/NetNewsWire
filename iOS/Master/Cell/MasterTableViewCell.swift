@@ -17,9 +17,8 @@ protocol MasterTableViewCellDelegate: class {
 
 class MasterTableViewCell : UITableViewCell {
 
-	private var accessoryButton: UIButton?
-	
 	weak var delegate: MasterTableViewCellDelegate?
+	var allowDisclosureSelection = false
 	
 	override var accessibilityLabel: String? {
 		set {}
@@ -93,8 +92,9 @@ class MasterTableViewCell : UITableViewCell {
 
 	private let unreadCountView = MasterUnreadCountView(frame: CGRect.zero)
 	private var showingEditControl = false
-
-	required init?(coder: NSCoder) {		
+	private var accessoryButton: UIButton?
+	
+	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
@@ -111,6 +111,10 @@ class MasterTableViewCell : UITableViewCell {
 	}
 	
 	@objc func buttonPressed(_ sender: UIButton) {
+		
+		guard allowDisclosureSelection else {
+			return
+		}
 		
 		if sender.imageView?.image == AppAssets.chevronRightImage {
 			sender.setImage(AppAssets.chevronDownImage, for: .normal)
