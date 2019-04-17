@@ -205,14 +205,11 @@
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8">
-                        <leftBarButtonItems>
-                            <barButtonItem image="settingsImage" id="7xz-3z-0PJ"/>
-                            <barButtonItem title="Tools" image="toolsImage" id="2lM-3y-hKs">
-                                <connections>
-                                    <action selector="showOPMLImportExport:" destination="7bK-jq-Zjz" id="qIa-yP-E6a"/>
-                                </connections>
-                            </barButtonItem>
-                        </leftBarButtonItems>
+                        <barButtonItem key="leftBarButtonItem" image="settingsImage" id="2lM-3y-hKs">
+                            <connections>
+                                <action selector="showTools:" destination="7bK-jq-Zjz" id="3el-OE-Sfi"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
@@ -287,7 +284,6 @@
         <image name="circleOpenImage" width="22" height="22"/>
         <image name="settingsImage" width="24" height="24"/>
         <image name="starOpenImage" width="24" height="24"/>
-        <image name="toolsImage" width="24" height="22"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="RT3-gH-cyN"/>
