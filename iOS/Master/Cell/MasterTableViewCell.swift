@@ -135,7 +135,7 @@ private extension MasterTableViewCell {
 	
 	func addAccessoryView() {
 		let button = UIButton(type: .roundedRect)
-		button.frame = CGRect(x: 0, y: 0, width: 15.0, height: 15.0)
+		button.frame = CGRect(x: 0, y: 0, width: 25.0, height: 25.0)
 		button.setImage(AppAssets.chevronRightImage, for: .normal)
 		button.tintColor = AppAssets.chevronDisclosureColor
 		button.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
