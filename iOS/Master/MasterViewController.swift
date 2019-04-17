@@ -60,6 +60,8 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		super.viewWillDisappear(animated)
 		resignFirstResponder()
 	}
+
+	// MARK: Notifications
 	
 	@objc private func refreshAccounts(_ sender: Any) {
 		AccountManager.shared.refreshAll()
@@ -117,6 +119,21 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 	// MARK: Table View
 	
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		return treeController.rootNode.numberOfChildNodes
+	}
+	
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return treeController.rootNode.childAtIndex(section)?.numberOfChildNodes ?? 0
+	}
+	
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		guard let nameProvider = treeController.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
+			return nil
+		}
+		return nameProvider.nameForDisplay
+	}
+
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTableViewCell
@@ -168,27 +185,25 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		
+		let timeline = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+		
 		if let pseudoFeed = node.representedObject as? PseudoFeed {
-			let timeline = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
 			timeline.title = pseudoFeed.nameForDisplay
 			timeline.representedObjects = [pseudoFeed]
-			self.navigationController?.pushViewController(timeline, animated: true)
 		}
 		
 		if let folder = node.representedObject as? Folder {
-			let secondary = UIStoryboard.main.instantiateController(ofType: MasterSecondaryViewController.self)
-			secondary.title = folder.nameForDisplay
-			secondary.viewRootNode = node
-			self.navigationController?.pushViewController(secondary, animated: true)
+			timeline.title = folder.nameForDisplay
+			timeline.representedObjects = [folder]
 		}
 		
 		if let feed = node.representedObject as? Feed {
-			let timeline = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
 			timeline.title = feed.nameForDisplay
 			timeline.representedObjects = [feed]
-			self.navigationController?.pushViewController(timeline, animated: true)
 		}
 		
+		self.navigationController?.pushViewController(timeline, animated: true)
+
 	}
 	
 	// MARK: Actions
@@ -324,9 +339,30 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	func delete(indexPath: IndexPath) {
-		assertionFailure()
+		
+		guard let containerNode = treeController.rootNode.childAtIndex(indexPath.section),
+			let deleteNode = containerNode.childAtIndex(indexPath.row),
+			let container = containerNode.representedObject as? Container else {
+				return
+		}
+		
+		animatingChanges = true
+		
+		if let feed = deleteNode.representedObject as? Feed {
+			container.deleteFeed(feed)
+		}
+		
+		if let folder = deleteNode.representedObject as? Folder {
+			container.deleteFolder(folder)
+		}
+		
+		treeController.rebuild()
+		tableView.deleteRows(at: [indexPath], with: .automatic)
+		
+		animatingChanges = false
+		
 	}
-
+	
 	func rename(indexPath: IndexPath) {
 		
 		let name = (nodeFor(indexPath: indexPath)?.representedObject as? DisplayNameProvider)?.nameForDisplay ?? ""
@@ -368,8 +404,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	func nodeFor(indexPath: IndexPath) -> Node? {
-		assertionFailure()
-		return nil
+		return treeController.rootNode.childAtIndex(indexPath.section)?.childAtIndex(indexPath.row)
 	}
 	
 }

@@ -40,8 +40,6 @@
 		51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */; };
 		51C4525B226508DA00C03939 /* UIImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4524F226506F400C03939 /* UIImage-Extensions.swift */; };
 		51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45250226506F400C03939 /* String-Extensions.swift */; };
-		51C45266226508F600C03939 /* MasterSecondaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4525E226508F600C03939 /* MasterSecondaryViewController.swift */; };
-		51C45267226508F600C03939 /* MasterPrimaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4525F226508F600C03939 /* MasterPrimaryViewController.swift */; };
 		51C45268226508F600C03939 /* MasterUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45261226508F600C03939 /* MasterUnreadCountView.swift */; };
 		51C45269226508F600C03939 /* MasterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45262226508F600C03939 /* MasterTableViewCell.swift */; };
 		51C4526A226508F600C03939 /* MasterTableViewCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45263226508F600C03939 /* MasterTableViewCellLayout.swift */; };
@@ -610,8 +608,6 @@
 		51C45250226506F400C03939 /* String-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String-Extensions.swift"; sourceTree = "<group>"; };
 		51C45254226507D200C03939 /* AppAssets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppAssets.swift; sourceTree = "<group>"; };
 		51C45255226507D200C03939 /* AppDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
-		51C4525E226508F600C03939 /* MasterSecondaryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterSecondaryViewController.swift; sourceTree = "<group>"; };
-		51C4525F226508F600C03939 /* MasterPrimaryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterPrimaryViewController.swift; sourceTree = "<group>"; };
 		51C45261226508F600C03939 /* MasterUnreadCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterUnreadCountView.swift; sourceTree = "<group>"; };
 		51C45262226508F600C03939 /* MasterTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTableViewCell.swift; sourceTree = "<group>"; };
 		51C45263226508F600C03939 /* MasterTableViewCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTableViewCellLayout.swift; sourceTree = "<group>"; };
@@ -904,8 +900,6 @@
 		51C4525D226508F600C03939 /* Master */ = {
 			isa = PBXGroup;
 			children = (
-				51C4525E226508F600C03939 /* MasterSecondaryViewController.swift */,
-				51C4525F226508F600C03939 /* MasterPrimaryViewController.swift */,
 				51C45264226508F600C03939 /* MasterViewController.swift */,
 				51C45265226508F600C03939 /* MasterTreeControllerDelegate.swift */,
 				51C45260226508F600C03939 /* Cell */,
@@ -2155,7 +2149,6 @@
 				51C45258226508CF00C03939 /* AppAssets.swift in Sources */,
 				51C4527C2265091600C03939 /* MasterTimelineCellLayout.swift in Sources */,
 				51C4529A22650A0400C03939 /* ArticleStyle.swift in Sources */,
-				51C45267226508F600C03939 /* MasterPrimaryViewController.swift in Sources */,
 				51C4527F2265092C00C03939 /* DetailViewController.swift in Sources */,
 				51C4526A226508F600C03939 /* MasterTableViewCellLayout.swift in Sources */,
 				51C452AE2265104D00C03939 /* TimelineStringFormatter.swift in Sources */,
@@ -2181,7 +2174,6 @@
 				51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */,
 				51C45259226508D300C03939 /* AppDefaults.swift in Sources */,
 				51C45293226509C800C03939 /* StarredFeedDelegate.swift in Sources */,
-				51C45266226508F600C03939 /* MasterSecondaryViewController.swift in Sources */,
 				51C45298226509E600C03939 /* OPMLImporter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
