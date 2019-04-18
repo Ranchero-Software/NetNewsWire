@@ -22,7 +22,7 @@ protocol SidebarDelegate: class {
 
 	weak var delegate: SidebarDelegate?
 
-	let treeControllerDelegate = SidebarTreeControllerDelegate()
+	let treeControllerDelegate = FeedTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
 	}()

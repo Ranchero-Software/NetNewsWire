@@ -20,7 +20,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	var expandedNodes = [Node]()
 	var shadowTable = [[Node]]()
 	
-	let treeControllerDelegate = MasterTreeControllerDelegate()
+	let treeControllerDelegate = FeedTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
 	}()

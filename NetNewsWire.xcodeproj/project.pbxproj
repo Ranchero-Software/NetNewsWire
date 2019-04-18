@@ -11,6 +11,8 @@
 		5115CAF42266301400B21BCE /* AddContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
+		512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
+		512E08E72268801200BDCFDD /* FeedTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */; };
 		517D9075226639F500323654 /* AddAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517D906B2266392900323654 /* AddAccountViewController.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
@@ -44,7 +46,6 @@
 		51C45269226508F600C03939 /* MasterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45262226508F600C03939 /* MasterTableViewCell.swift */; };
 		51C4526A226508F600C03939 /* MasterTableViewCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45263226508F600C03939 /* MasterTableViewCellLayout.swift */; };
 		51C4526B226508F600C03939 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45264226508F600C03939 /* MasterViewController.swift */; };
-		51C4526C226508F600C03939 /* MasterTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45265226508F600C03939 /* MasterTreeControllerDelegate.swift */; };
 		51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4526E2265091600C03939 /* MasterTimelineViewController.swift */; };
 		51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452702265091600C03939 /* MultilineUILabelSizer.swift */; };
 		51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452712265091600C03939 /* MasterTimelineCellData.swift */; };
@@ -55,7 +56,6 @@
 		51C4527F2265092C00C03939 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4527E2265092C00C03939 /* DetailViewController.swift */; };
 		51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452812265093600C03939 /* AddFeedFolderPickerData.swift */; };
 		51C452862265093600C03939 /* Add.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C452822265093600C03939 /* Add.storyboard */; };
-		51C452872265093600C03939 /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452832265093600C03939 /* FolderTreeControllerDelegate.swift */; };
 		51C452882265093600C03939 /* AddFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452842265093600C03939 /* AddFeedViewController.swift */; };
 		51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4528B2265095F00C03939 /* AddFolderViewController.swift */; };
 		51C4528E2265099C00C03939 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
@@ -153,7 +153,7 @@
 		849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */; };
 		849A975E1ED9EB72007D329B /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A975D1ED9EB72007D329B /* MainWindowController.swift */; };
 		849A97641ED9EB96007D329B /* SidebarOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97601ED9EB96007D329B /* SidebarOutlineView.swift */; };
-		849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* SidebarTreeControllerDelegate.swift */; };
+		849A97651ED9EB96007D329B /* FeedTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */; };
 		849A97661ED9EB96007D329B /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97621ED9EB96007D329B /* SidebarViewController.swift */; };
 		849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97631ED9EB96007D329B /* UnreadCountView.swift */; };
 		849A976C1ED9EBC8007D329B /* TimelineTableRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97691ED9EBC8007D329B /* TimelineTableRowView.swift */; };
@@ -612,7 +612,6 @@
 		51C45262226508F600C03939 /* MasterTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTableViewCell.swift; sourceTree = "<group>"; };
 		51C45263226508F600C03939 /* MasterTableViewCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTableViewCellLayout.swift; sourceTree = "<group>"; };
 		51C45264226508F600C03939 /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
-		51C45265226508F600C03939 /* MasterTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		51C4526E2265091600C03939 /* MasterTimelineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineViewController.swift; sourceTree = "<group>"; };
 		51C452702265091600C03939 /* MultilineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultilineUILabelSizer.swift; sourceTree = "<group>"; };
 		51C452712265091600C03939 /* MasterTimelineCellData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineCellData.swift; sourceTree = "<group>"; };
@@ -623,7 +622,6 @@
 		51C4527E2265092C00C03939 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		51C452812265093600C03939 /* AddFeedFolderPickerData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedFolderPickerData.swift; sourceTree = "<group>"; };
 		51C452822265093600C03939 /* Add.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Add.storyboard; sourceTree = "<group>"; };
-		51C452832265093600C03939 /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		51C452842265093600C03939 /* AddFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedViewController.swift; sourceTree = "<group>"; };
 		51C4528B2265095F00C03939 /* AddFolderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -700,7 +698,7 @@
 		849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultFeedsImporter.swift; sourceTree = "<group>"; };
 		849A975D1ED9EB72007D329B /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		849A97601ED9EB96007D329B /* SidebarOutlineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarOutlineView.swift; sourceTree = "<group>"; };
-		849A97611ED9EB96007D329B /* SidebarTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarTreeControllerDelegate.swift; sourceTree = "<group>"; };
+		849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		849A97621ED9EB96007D329B /* SidebarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarViewController.swift; sourceTree = "<group>"; };
 		849A97631ED9EB96007D329B /* UnreadCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadCountView.swift; sourceTree = "<group>"; };
 		849A97691ED9EBC8007D329B /* TimelineTableRowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineTableRowView.swift; sourceTree = "<group>"; };
@@ -720,7 +718,7 @@
 		849A97971ED9EFAA007D329B /* Node-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Node-Extensions.swift"; sourceTree = "<group>"; };
 		849A979E1ED9F130007D329B /* SidebarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarCell.swift; sourceTree = "<group>"; };
 		849A97A01ED9F180007D329B /* InitialFeedDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialFeedDownloader.swift; sourceTree = "<group>"; };
-		849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FolderTreeControllerDelegate.swift; path = AddFeed/FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
+		849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64671ED37A5D003D8FC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -887,6 +885,15 @@
 			path = Keyboard;
 			sourceTree = "<group>";
 		};
+		512E08DD22687FA000BDCFDD /* Tree */ = {
+			isa = PBXGroup;
+			children = (
+				849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */,
+				849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */,
+			);
+			path = Tree;
+			sourceTree = "<group>";
+		};
 		51C45245226506C800C03939 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -901,7 +908,6 @@
 			isa = PBXGroup;
 			children = (
 				51C45264226508F600C03939 /* MasterViewController.swift */,
-				51C45265226508F600C03939 /* MasterTreeControllerDelegate.swift */,
 				51C45260226508F600C03939 /* Cell */,
 			);
 			path = Master;
@@ -954,7 +960,6 @@
 				51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */,
 				51C452842265093600C03939 /* AddFeedViewController.swift */,
 				51C452812265093600C03939 /* AddFeedFolderPickerData.swift */,
-				51C452832265093600C03939 /* FolderTreeControllerDelegate.swift */,
 				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
 				517D906B2266392900323654 /* AddAccountViewController.swift */,
 			);
@@ -1176,7 +1181,6 @@
 				849A97511ED9EAC0007D329B /* AddFeedController.swift */,
 				849A97521ED9EAC0007D329B /* AddFeedWindowController.swift */,
 				51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */,
-				849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */,
 			);
 			name = "Add Feed";
 			sourceTree = "<group>";
@@ -1197,7 +1201,6 @@
 				84B7178B201E66580091657D /* SidebarViewController+ContextualMenus.swift */,
 				84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */,
 				849A97601ED9EB96007D329B /* SidebarOutlineView.swift */,
-				849A97611ED9EB96007D329B /* SidebarTreeControllerDelegate.swift */,
 				849A97631ED9EB96007D329B /* UnreadCountView.swift */,
 				848D578D21543519005FFAD5 /* PasteboardFeed.swift */,
 				84AD1EA92031617300BC20B7 /* FolderPasteboardWriter.swift */,
@@ -1417,6 +1420,7 @@
 				8426119C1FCB6ED40086A189 /* HTMLMetadata */,
 				84F3EE0420DEC97E003FADEB /* FeedFinder */,
 				849A97561ED9EB0D007D329B /* Data */,
+				512E08DD22687FA000BDCFDD /* Tree */,
 				849A97961ED9EFAA007D329B /* Extensions */,
 			);
 			path = Shared;
@@ -2117,12 +2121,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				840D617F2029031C009BC708 /* AppDelegate.swift in Sources */,
+				512E08E72268801200BDCFDD /* FeedTreeControllerDelegate.swift in Sources */,
 				51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,
 				51C45296226509D300C03939 /* OPMLExporter.swift in Sources */,
 				51C4525B226508DA00C03939 /* UIImage-Extensions.swift in Sources */,
 				84F3EE1720DEC97E003FADEB /* FeedFinder.swift in Sources */,
-				51C452872265093600C03939 /* FolderTreeControllerDelegate.swift in Sources */,
 				51C45291226509C800C03939 /* SmartFeed.swift in Sources */,
 				51C452A722650A3D00C03939 /* RSImage-Extensions.swift in Sources */,
 				51C45269226508F600C03939 /* MasterTableViewCell.swift in Sources */,
@@ -2145,13 +2149,13 @@
 				84F3EE1B20DEC97E003FADEB /* HTMLFeedFinder.swift in Sources */,
 				51C452A222650A1900C03939 /* RSHTMLMetadata+Extension.swift in Sources */,
 				51C4529D22650A1000C03939 /* FaviconURLFinder.swift in Sources */,
-				51C4526C226508F600C03939 /* MasterTreeControllerDelegate.swift in Sources */,
 				51C45258226508CF00C03939 /* AppAssets.swift in Sources */,
 				51C4527C2265091600C03939 /* MasterTimelineCellLayout.swift in Sources */,
 				51C4529A22650A0400C03939 /* ArticleStyle.swift in Sources */,
 				51C4527F2265092C00C03939 /* DetailViewController.swift in Sources */,
 				51C4526A226508F600C03939 /* MasterTableViewCellLayout.swift in Sources */,
 				51C452AE2265104D00C03939 /* TimelineStringFormatter.swift in Sources */,
+				512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */,
 				51C4529922650A0000C03939 /* ArticleStylesManager.swift in Sources */,
 				51C452AF2265108300C03939 /* ArticleArray.swift in Sources */,
 				84F3EE1920DEC97E003FADEB /* FeedSpecifier.swift in Sources */,
@@ -2219,7 +2223,7 @@
 				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
 				8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
-				849A97651ED9EB96007D329B /* SidebarTreeControllerDelegate.swift in Sources */,
+				849A97651ED9EB96007D329B /* FeedTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
 				840BEE4121D70E64009BBAFA /* CrashReportWindowController.swift in Sources */,
 				8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */,
