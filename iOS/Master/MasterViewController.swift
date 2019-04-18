@@ -35,6 +35,8 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 		navigationItem.rightBarButtonItem = editButtonItem
 		
+		tableView.register(MasterTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
@@ -94,10 +96,22 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
+		
 		guard let representedObject = note.object else {
 			return
 		}
+		
+		if let account = representedObject as? Account {
+			if let node = treeController.rootNode.childNodeRepresentingObject(account) {
+				let sectionIndex = treeController.rootNode.indexOfChild(node)!
+				let headerView = tableView.headerView(forSection: sectionIndex) as! MasterTableViewSectionHeader
+				headerView.unreadCount = account.unreadCount
+			}
+			return
+		}
+		
 		configureUnreadCountForCellsForRepresentedObject(representedObject as AnyObject)
+		
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -137,11 +151,21 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		return shadowTable[section].count
 	}
 	
-	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		
 		guard let nameProvider = treeController.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
 			return nil
 		}
-		return nameProvider.nameForDisplay
+		
+		let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! MasterTableViewSectionHeader
+		headerView.name = nameProvider.nameForDisplay
+		
+		if let account = treeController.rootNode.childAtIndex(section)?.representedObject as? Account {
+			headerView.unreadCount = account.unreadCount
+		}
+		
+		return headerView
+		
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -519,7 +543,6 @@ private extension MasterViewController {
 			shadowTable[i] = result
 			
 		}
-		
 
 	}
 	

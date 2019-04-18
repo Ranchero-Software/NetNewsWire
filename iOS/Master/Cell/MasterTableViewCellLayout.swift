@@ -43,7 +43,10 @@ struct MasterTableViewCellLayout {
 		var rLabel = CGRect(x: 0.0, y: 0.0, width: labelSize.width, height: labelSize.height)
 		if shouldShowImage {
 			rLabel.origin.x = rFavicon.maxX + MasterTableViewCellLayout.imageMarginRight
+		} else {
+			rLabel.origin.x = indent ? 20 : 0
 		}
+		
 		rLabel = MasterTableViewCellLayout.centerVertically(rLabel, bounds)
 
 		// Unread Count
