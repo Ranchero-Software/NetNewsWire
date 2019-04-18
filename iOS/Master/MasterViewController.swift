@@ -604,10 +604,20 @@ private extension MasterViewController {
 		animatingChanges = true
 		
 		var indexPathsToInsert = [IndexPath]()
-		for i in 0..<expandNode.childNodes.count {
-			if let child = expandNode.childAtIndex(i) {
-				indexPathsToInsert.append(IndexPath(row: i, section: section))
-				shadowTable[section].insert(child, at: i)
+		var i = 0
+		
+		func addNode(_ node: Node) {
+			indexPathsToInsert.append(IndexPath(row: i, section: section))
+			shadowTable[section].insert(node, at: i)
+			i = i + 1
+		}
+		
+		for child in expandNode.childNodes {
+			addNode(child)
+			if expandedNodes.contains(child) {
+				for gChild in child.childNodes {
+					addNode(gChild)
+				}
 			}
 		}
 		
