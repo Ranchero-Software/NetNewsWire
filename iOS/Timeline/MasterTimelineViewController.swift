@@ -132,6 +132,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 				controller.article = article
 				controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
 				controller.navigationItem.leftItemsSupplementBackButton = true
+				splitViewController?.toggleMasterView()
 			}
 		}
 	}
