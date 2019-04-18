@@ -12,7 +12,7 @@ import RSTree
 import Account
 import Articles
 
-final class DeleteFromSidebarCommand: UndoableCommand {
+final class DeleteCommand: UndoableCommand {
 
 	let treeController: TreeController
 	let undoManager: UndoManager
@@ -25,7 +25,7 @@ final class DeleteFromSidebarCommand: UndoableCommand {
 
 	init?(nodesToDelete: [Node], treeController: TreeController, undoManager: UndoManager) {
 
-		guard DeleteFromSidebarCommand.canDelete(nodesToDelete) else {
+		guard DeleteCommand.canDelete(nodesToDelete) else {
 			return nil
 		}
 		guard let actionName = DeleteActionName.name(for: nodesToDelete) else {

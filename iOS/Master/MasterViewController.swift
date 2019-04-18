@@ -54,7 +54,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			shadowTable.append([Node]())
 		}
 		
-		rebuildShadow()
+		rebuildShadowTable()
 		
 	}
 
@@ -379,24 +379,18 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	func delete(indexPath: IndexPath) {
-		
-		guard let deleteNode = nodeFor(indexPath: indexPath),
-			let containerNode = deleteNode.parent,
-			let container = containerNode.representedObject as? Container else {
-				return
+
+		guard let undoManager = undoManager,
+			let deleteNode = nodeFor(indexPath: indexPath),
+			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: treeController, undoManager: undoManager)
+				else {
+					return
 		}
 		
 		animatingChanges = true
-		
-		if let feed = deleteNode.representedObject as? Feed {
-			container.deleteFeed(feed)
-		}
-		
-		if let folder = deleteNode.representedObject as? Folder {
-			container.deleteFolder(folder)
-		}
-		
-		rebuildBackingStructures()
+
+		runCommand(deleteCommand)
+		rebuildShadowTable()
 		tableView.deleteRows(at: [indexPath], with: .automatic)
 		
 		animatingChanges = false
@@ -520,10 +514,10 @@ private extension MasterViewController {
 	
 	func rebuildBackingStructures() {
 		treeController.rebuild()
-		rebuildShadow()
+		rebuildShadowTable()
 	}
 	
-	func rebuildShadow() {
+	func rebuildShadowTable() {
 		
 		for i in 0..<treeController.rootNode.numberOfChildNodes {
 			
