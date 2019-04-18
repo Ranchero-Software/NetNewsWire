@@ -111,7 +111,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
+		refreshControl = UIRefreshControl()
+		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -237,6 +241,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	// MARK: Notifications
+
+	@objc dynamic func progressDidChange(_ notification: Notification) {
+		if AccountManager.shared.combinedRefreshProgress.isComplete {
+			refreshControl?.endRefreshing()
+		} else {
+			refreshControl?.beginRefreshing()
+		}
+	}
 
 	@objc func statusesDidChange(_ note: Notification) {
 		
@@ -398,6 +410,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 // MARK: Private
 
 private extension MasterTimelineViewController {
+	
+	@objc private func refreshAccounts(_ sender: Any) {
+		AccountManager.shared.refreshAll()
+	}
 	
 	func configureTimelineCell(_ cell: MasterTimelineTableViewCell, article: Article) {
 		

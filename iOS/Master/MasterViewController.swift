@@ -76,10 +76,6 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 	// MARK: Notifications
 	
-	@objc private func refreshAccounts(_ sender: Any) {
-		AccountManager.shared.refreshAll()
-	}
-
 	@objc dynamic func progressDidChange(_ notification: Notification) {
 		if AccountManager.shared.combinedRefreshProgress.isComplete {
 			refreshControl?.endRefreshing()
@@ -536,6 +532,10 @@ extension MasterViewController: MasterTableViewCellDelegate {
 // MARK: Private
 
 private extension MasterViewController {
+	
+	@objc private func refreshAccounts(_ sender: Any) {
+		AccountManager.shared.refreshAll()
+	}
 	
 	func rebuildBackingStoresAndReloadDataIfNeeded() {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
