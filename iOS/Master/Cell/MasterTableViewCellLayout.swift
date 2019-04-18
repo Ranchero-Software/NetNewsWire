@@ -12,7 +12,7 @@ import RSCore
 struct MasterTableViewCellLayout {
 
 	private static let imageSize = CGSize(width: 16, height: 16)
-	private static let imageMarginLeft = CGFloat(integerLiteral: 8)
+	private static let marginLeft = CGFloat(integerLiteral: 8)
 	private static let imageMarginRight = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginLeft = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginRight = CGFloat(integerLiteral: 0)
@@ -30,7 +30,7 @@ struct MasterTableViewCellLayout {
 		// Favicon
 		var rFavicon = CGRect.zero
 		if shouldShowImage {
-			var indentX = showingEditingControl ? MasterTableViewCellLayout.imageMarginLeft + 40 : MasterTableViewCellLayout.imageMarginLeft
+			var indentX = showingEditingControl ? MasterTableViewCellLayout.marginLeft + 40 : MasterTableViewCellLayout.marginLeft
 			indentX = indent ? indentX + 20 : indentX
 			rFavicon = CGRect(x: indentX, y: 0.0, width: MasterTableViewCellLayout.imageSize.width, height: MasterTableViewCellLayout.imageSize.height)
 			rFavicon = MasterTableViewCellLayout.centerVertically(rFavicon, bounds)
@@ -44,7 +44,7 @@ struct MasterTableViewCellLayout {
 		if shouldShowImage {
 			rLabel.origin.x = rFavicon.maxX + MasterTableViewCellLayout.imageMarginRight
 		} else {
-			rLabel.origin.x = indent ? 20 : 0
+			rLabel.origin.x = indent ? MasterTableViewCellLayout.marginLeft + 10 : MasterTableViewCellLayout.marginLeft
 		}
 		
 		rLabel = MasterTableViewCellLayout.centerVertically(rLabel, bounds)

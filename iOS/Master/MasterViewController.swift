@@ -394,7 +394,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
 		configureFavicon(cell, node)
-		cell.shouldShowImage = node.representedObject is SmallIconProvider
+		cell.shouldShowImage = node.representedObject is Feed
 		
 	}
 	
