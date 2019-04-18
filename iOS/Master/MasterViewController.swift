@@ -43,7 +43,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
 		refreshControl = UIRefreshControl()
@@ -88,11 +88,11 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
-		rebuildTreeAndReloadDataIfNeeded()
+		rebuildBackingStoresAndReloadDataIfNeeded()
 	}
 	
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		rebuildTreeAndReloadDataIfNeeded()
+		rebuildBackingStoresAndReloadDataIfNeeded()
 	}
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -136,9 +136,34 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		
-		rebuildTreeAndReloadDataIfNeeded()
+		rebuildBackingStoresAndReloadDataIfNeeded()
 		configureCellsForRepresentedObject(object as AnyObject)
 		
+	}
+
+	@objc func userDidAddFeed(_ notification: Notification) {
+		
+		guard let feed = notification.userInfo?[UserInfoKey.feed],
+			let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
+				return
+		}
+		
+		if let indexPath = indexPathFor(node) {
+			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+			return
+		}
+	
+		// It wasn't already visable, so expand its folder and try again
+		guard let parent = node.parent, let indexPath = indexPathFor(parent) else {
+			return
+		}
+		
+		expand(indexPath)
+
+		if let indexPath = indexPathFor(node) {
+			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+		}
+
 	}
 
 	// MARK: Table View
@@ -172,7 +197,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTableViewCell
 		
-		guard let node = nodeFor(indexPath: indexPath) else {
+		guard let node = nodeFor(indexPath) else {
 			return cell
 		}
 		
@@ -182,7 +207,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-		guard let node = nodeFor(indexPath: indexPath), !(node.representedObject is PseudoFeed) else {
+		guard let node = nodeFor(indexPath), !(node.representedObject is PseudoFeed) else {
 			return false
 		}
 		return true
@@ -214,7 +239,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
-		guard let node = nodeFor(indexPath: indexPath) else {
+		guard let node = nodeFor(indexPath) else {
 			assertionFailure()
 			return
 		}
@@ -381,7 +406,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	func delete(indexPath: IndexPath) {
 
 		guard let undoManager = undoManager,
-			let deleteNode = nodeFor(indexPath: indexPath),
+			let deleteNode = nodeFor(indexPath),
 			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: treeController, undoManager: undoManager)
 				else {
 					return
@@ -399,7 +424,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	
 	func rename(indexPath: IndexPath) {
 		
-		let name = (nodeFor(indexPath: indexPath)?.representedObject as? DisplayNameProvider)?.nameForDisplay ?? ""
+		let name = (nodeFor(indexPath)?.representedObject as? DisplayNameProvider)?.nameForDisplay ?? ""
 		let formatString = NSLocalizedString("Rename “%@”", comment: "Feed finder")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, name) as String
 		
@@ -411,7 +436,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
 		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] action in
 			
-			guard let node = self?.nodeFor(indexPath: indexPath),
+			guard let node = self?.nodeFor(indexPath),
 				let name = alertController.textFields?[0].text,
 				!name.isEmpty else {
 					return
@@ -437,8 +462,17 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		
 	}
 
-	func nodeFor(indexPath: IndexPath) -> Node? {
+	func nodeFor(_ indexPath: IndexPath) -> Node? {
 		return shadowTable[indexPath.section][indexPath.row]
+	}
+	
+	func indexPathFor(_ node: Node) -> IndexPath? {
+		for i in 0..<shadowTable.count {
+			if let row = shadowTable[i].firstIndex(of: node) {
+				return IndexPath(row: row, section: i)
+			}
+		}
+		return nil
 	}
 	
 }
@@ -467,9 +501,9 @@ extension MasterViewController: MasterTableViewCellDelegate {
 	
 	func disclosureSelected(_ sender: MasterTableViewCell, expanding: Bool) {
 		if expanding {
-			expandCell(sender)
+			expand(sender)
 		} else {
-			collapseCell(sender)
+			collapse(sender)
 		}
 	}
 	
@@ -479,9 +513,10 @@ extension MasterViewController: MasterTableViewCellDelegate {
 
 private extension MasterViewController {
 	
-	func rebuildTreeAndReloadDataIfNeeded() {
+	func rebuildBackingStoresAndReloadDataIfNeeded() {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
-			rebuildBackingStructures()
+			treeController.rebuild()
+			rebuildShadowTable()
 			tableView.reloadData()
 		}
 	}
@@ -505,16 +540,11 @@ private extension MasterViewController {
 	
 	func applyToAvailableCells(_ callback: (MasterTableViewCell, Node) -> Void) {
 		tableView.visibleCells.forEach { cell in
-			guard let indexPath = tableView.indexPath(for: cell), let node = nodeFor(indexPath: indexPath) else {
+			guard let indexPath = tableView.indexPath(for: cell), let node = nodeFor(indexPath) else {
 				return
 			}
 			callback(cell as! MasterTableViewCell, node)
 		}
-	}
-	
-	func rebuildBackingStructures() {
-		treeController.rebuild()
-		rebuildShadowTable()
 	}
 	
 	func rebuildShadowTable() {
@@ -540,13 +570,16 @@ private extension MasterViewController {
 
 	}
 	
-	func expandCell(_ cell: MasterTableViewCell) {
-		
-		animatingChanges = true
-		
+	func expand(_ cell: MasterTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell)  else {
 			return
 		}
+		expand(indexPath)
+	}
+	
+	func expand(_ indexPath: IndexPath) {
+		
+		animatingChanges = true
 		
 		let expandNode = shadowTable[indexPath.section][indexPath.row]
 		expandedNodes.append(expandNode)
@@ -568,13 +601,16 @@ private extension MasterViewController {
 		
 	}
 	
-	func collapseCell(_ cell: MasterTableViewCell) {
-		
-		animatingChanges = true
-
+	func collapse(_ cell: MasterTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell) else {
 			return
 		}
+		collapse(indexPath)
+	}
+	
+	func collapse(_ indexPath: IndexPath) {
+		
+		animatingChanges = true
 		
 		let collapseNode = shadowTable[indexPath.section][indexPath.row]
 		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
