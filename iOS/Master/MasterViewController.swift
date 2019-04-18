@@ -49,8 +49,9 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
-		// Set up the backing structures
-		for _ in treeController.rootNode.childNodes {
+		// Default the sections to expanded and set up the shadow table
+		for section in treeController.rootNode.childNodes {
+			expandedNodes.append(section)
 			shadowTable.append([Node]())
 		}
 		
@@ -191,6 +192,11 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			headerView.unreadCount = 0
 		}
 		
+		headerView.tag = section
+		
+		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
+		headerView.addGestureRecognizer(tap)
+
 		return headerView
 		
 	}
@@ -358,6 +364,22 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		feedViewController.modalPresentationStyle = .popover
 		feedViewController.popoverPresentationController?.barButtonItem = sender
 		self.present(feedViewController, animated: true)
+	}
+	
+	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
+		
+		guard let sectionIndex = sender.view?.tag,
+			let sectionNode = treeController.rootNode.childAtIndex(sectionIndex)
+				else {
+					return
+		}
+		
+		if expandedNodes.contains(sectionNode) {
+			collapse(section: sectionIndex)
+		} else {
+			expand(section: sectionIndex)
+		}
+		
 	}
 	
 	// MARK: API
@@ -572,6 +594,31 @@ private extension MasterViewController {
 
 	}
 	
+	func expand(section: Int) {
+		
+		guard let expandNode = treeController.rootNode.childAtIndex(section) else {
+			return
+		}
+		expandedNodes.append(expandNode)
+		
+		animatingChanges = true
+		
+		var indexPathsToInsert = [IndexPath]()
+		for i in 0..<expandNode.childNodes.count {
+			if let child = expandNode.childAtIndex(i) {
+				indexPathsToInsert.append(IndexPath(row: i, section: section))
+				shadowTable[section].insert(child, at: i)
+			}
+		}
+		
+		tableView.beginUpdates()
+		tableView.insertRows(at: indexPathsToInsert, with: .automatic)
+		tableView.endUpdates()
+		
+		animatingChanges = false
+		
+	}
+	
 	func expand(_ cell: MasterTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell)  else {
 			return
@@ -581,10 +628,10 @@ private extension MasterViewController {
 	
 	func expand(_ indexPath: IndexPath) {
 		
-		animatingChanges = true
-		
 		let expandNode = shadowTable[indexPath.section][indexPath.row]
 		expandedNodes.append(expandNode)
+		
+		animatingChanges = true
 		
 		var indexPathsToInsert = [IndexPath]()
 		for i in 0..<expandNode.childNodes.count {
@@ -601,6 +648,30 @@ private extension MasterViewController {
 		
 		animatingChanges = false
 		
+	}
+	
+	func collapse(section: Int) {
+
+		animatingChanges = true
+		
+		guard let collapseNode = treeController.rootNode.childAtIndex(section) else {
+			return
+		}
+		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
+			expandedNodes.remove(at: removeNode)
+		}
+
+		var indexPathsToRemove = [IndexPath]()
+		for i in 0..<shadowTable[section].count {
+			indexPathsToRemove.append(IndexPath(row: i, section: section))
+		}
+		shadowTable[section] = [Node]()
+		
+		tableView.beginUpdates()
+		tableView.deleteRows(at: indexPathsToRemove, with: .automatic)
+		tableView.endUpdates()
+		
+		animatingChanges = false
 	}
 	
 	func collapse(_ cell: MasterTableViewCell) {
