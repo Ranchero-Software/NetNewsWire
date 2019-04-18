@@ -187,6 +187,8 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		
 		if let account = treeController.rootNode.childAtIndex(section)?.representedObject as? Account {
 			headerView.unreadCount = account.unreadCount
+		} else {
+			headerView.unreadCount = 0
 		}
 		
 		return headerView
