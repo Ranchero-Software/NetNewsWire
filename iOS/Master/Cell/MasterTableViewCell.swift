@@ -42,11 +42,7 @@ class MasterTableViewCell : UITableViewCell {
 	
 	var disclosureExpanded = false {
 		didSet {
-			if disclosureExpanded {
-				accessoryButton?.setImage(AppAssets.chevronDownImage, for: .normal)
-			} else {
-				accessoryButton?.setImage(AppAssets.chevronRightImage, for: .normal)
-			}
+			updateDisclosureImage()
 		}
 	}
 	
@@ -110,7 +106,7 @@ class MasterTableViewCell : UITableViewCell {
 
 	private let unreadCountView = MasterUnreadCountView(frame: CGRect.zero)
 	private var showingEditControl = false
-	private var accessoryButton: UIButton?
+	private var disclosureButton: UIButton?
 	
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
@@ -124,26 +120,15 @@ class MasterTableViewCell : UITableViewCell {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indent)
+		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indent, shouldShowDisclosure: true)
 		layoutWith(layout)
 	}
 	
 	@objc func buttonPressed(_ sender: UIButton) {
-		
-		guard allowDisclosureSelection else {
-			return
+		if allowDisclosureSelection {
+			disclosureExpanded = !disclosureExpanded
+			delegate?.disclosureSelected(self, expanding: disclosureExpanded)
 		}
-		
-		if !disclosureExpanded {
-			sender.setImage(AppAssets.chevronDownImage, for: .normal)
-			delegate?.disclosureSelected(self, expanding: true)
-		} else {
-			sender.setImage(AppAssets.chevronRightImage, for: .normal)
-			delegate?.disclosureSelected(self, expanding: false)
-		}
-		
-		disclosureExpanded = !disclosureExpanded
-		
 	}
 	
 }
@@ -151,28 +136,29 @@ class MasterTableViewCell : UITableViewCell {
 private extension MasterTableViewCell {
 
 	func commonInit() {
-		addAccessoryView()
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(faviconImageView)
 		addSubviewAtInit(titleView)
+		addDisclosureView()
 	}
 	
-	func addAccessoryView() {
+	func addDisclosureView() {
 		
-		let button = UIButton(type: .roundedRect)
-		button.frame = CGRect(x: 0, y: 0, width: 25.0, height: 25.0)
+		disclosureButton = UIButton(type: .roundedRect)
+		disclosureButton!.tintColor = AppAssets.chevronDisclosureColor
+		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
 		
+		updateDisclosureImage()
+		addSubviewAtInit(disclosureButton!)
+		
+	}
+	
+	func updateDisclosureImage() {
 		if disclosureExpanded {
-			button.setImage(AppAssets.chevronDownImage, for: .normal)
+			disclosureButton?.setImage(AppAssets.chevronDownImage, for: .normal)
 		} else {
-			button.setImage(AppAssets.chevronRightImage, for: .normal)
+			disclosureButton?.setImage(AppAssets.chevronRightImage, for: .normal)
 		}
-		
-		button.tintColor = AppAssets.chevronDisclosureColor
-		button.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
-		accessoryButton = button
-		accessoryView = button
-		
 	}
 
 	func addSubviewAtInit(_ view: UIView) {
@@ -184,6 +170,7 @@ private extension MasterTableViewCell {
 		faviconImageView.rs_setFrameIfNotEqual(layout.faviconRect)
 		titleView.rs_setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.rs_setFrameIfNotEqual(layout.unreadCountRect)
+		disclosureButton?.rs_setFrameIfNotEqual(layout.disclosureButtonRect)
 	}
 	
 }

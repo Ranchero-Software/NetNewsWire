@@ -15,26 +15,19 @@ struct MasterTableViewCellLayout {
 	private static let imageMarginLeft = CGFloat(integerLiteral: 8)
 	private static let imageMarginRight = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginLeft = CGFloat(integerLiteral: 8)
-	private static let unreadCountMarginRight = CGFloat(integerLiteral: 8)
-
-	private static let chevronWidth = CGFloat(integerLiteral: 40)
+	private static let unreadCountMarginRight = CGFloat(integerLiteral: 0)
+	private static let disclosureButtonSize = CGSize(width: 44, height: 44)
 	
 	let faviconRect: CGRect
 	let titleRect: CGRect
 	let unreadCountRect: CGRect
+	let disclosureButtonRect: CGRect
 	
-	init(cellSize: CGSize, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView, showingEditingControl: Bool, indent: Bool) {
+	init(cellSize: CGSize, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
 
-		let adjustedWidth: CGFloat = {
-			if showingEditingControl {
-				return floor(cellSize.width)
-			} else {
-				return floor(cellSize.width) - MasterTableViewCellLayout.chevronWidth
-			}
-		}()
-		
-		let bounds = CGRect(x: 0.0, y: 0.0, width: adjustedWidth, height: floor(cellSize.height))
+		let bounds = CGRect(x: 0.0, y: 0.0, width: floor(cellSize.width), height: floor(cellSize.height))
 
+		// Favicon
 		var rFavicon = CGRect.zero
 		if shouldShowImage {
 			var indentX = showingEditingControl ? MasterTableViewCellLayout.imageMarginLeft + 40 : MasterTableViewCellLayout.imageMarginLeft
@@ -44,6 +37,7 @@ struct MasterTableViewCellLayout {
 		}
 		self.faviconRect = rFavicon
 
+		// Title
 		let labelSize = SingleLineUILabelSizer.size(for: label.text ?? "", font: label.font!)
 
 		var rLabel = CGRect(x: 0.0, y: 0.0, width: labelSize.width, height: labelSize.height)
@@ -52,26 +46,52 @@ struct MasterTableViewCellLayout {
 		}
 		rLabel = MasterTableViewCellLayout.centerVertically(rLabel, bounds)
 
+		// Unread Count
 		let unreadCountSize = unreadCountView.intrinsicContentSize
 		let unreadCountIsHidden = unreadCountView.unreadCount < 1
 
 		var rUnread = CGRect.zero
 		if !unreadCountIsHidden {
+			
 			rUnread.size = unreadCountSize
-			rUnread.origin.x = (bounds.maxX - unreadCountSize.width) - MasterTableViewCellLayout.unreadCountMarginRight
+			rUnread.origin.x = bounds.maxX -
+				(unreadCountSize.width + MasterTableViewCellLayout.unreadCountMarginRight + MasterTableViewCellLayout.disclosureButtonSize.width)
 			rUnread = MasterTableViewCellLayout.centerVertically(rUnread, bounds)
+			
+			// Cap the Title width based on the unread indicator button
 			let labelMaxX = rUnread.minX - MasterTableViewCellLayout.unreadCountMarginLeft
 			if rLabel.maxX > labelMaxX {
 				rLabel.size.width = labelMaxX - rLabel.minX
 			}
+			
 		}
 		self.unreadCountRect = rUnread
+		
+		// Disclosure Button
+		var rDisclosure = CGRect.zero
+		if shouldShowDisclosure {
+			
+			rDisclosure.size = MasterTableViewCellLayout.disclosureButtonSize
+			rDisclosure.origin.x = bounds.maxX - MasterTableViewCellLayout.disclosureButtonSize.width
+			rDisclosure = MasterTableViewCellLayout.centerVertically(rDisclosure, bounds)
+			
+			// Cap the Title width based on the disclosure button
+			let labelMaxX = rDisclosure.minX
+			if rLabel.maxX > labelMaxX {
+				rLabel.size.width = labelMaxX - rLabel.minX
+			}
+		
+		}
+		self.disclosureButtonRect = rDisclosure
 
+		
+		// Cap the Title width based on total width
 		if rLabel.maxX > bounds.maxX {
 			rLabel.size.width = bounds.maxX - rLabel.minX
 		}
 		
 		self.titleRect = rLabel
+		
 	}
 	
 	// Ideally this will be implemented in RSCore (see RSGeometry)
