@@ -1,5 +1,5 @@
 //
-//  String+.swift
+//  String-Extensions.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/8/19.
