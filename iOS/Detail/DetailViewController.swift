@@ -64,7 +64,7 @@ class DetailViewController: UIViewController {
 		}
 		let style = ArticleStylesManager.shared.currentStyle
 		let html = ArticleRenderer.articleHTML(article: article, style: style)
-		webView.loadHTMLString(html, baseURL: article.baseURL)
+		webView.loadHTMLString(html, baseURL: nil)
 	}
 	
 	@objc func statusesDidChange(_ note: Notification) {
@@ -154,34 +154,6 @@ extension DetailViewController: WKNavigationDelegate {
 			
 		}
 		
-	}
-}
-
-private extension Article {
-	
-	var baseURL: URL? {
-		var s = url
-		if s == nil {
-			s = feed?.homePageURL
-		}
-		if s == nil {
-			s = feed?.url
-		}
-		
-		guard let urlString = s else {
-			return nil
-		}
-		var urlComponents = URLComponents(string: urlString)
-		if urlComponents == nil {
-			return nil
-		}
-		
-		// Can’t use url-with-fragment as base URL. The webview won’t load. See scripting.com/rss.xml for example.
-		urlComponents!.fragment = nil
-		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
-			return nil
-		}
-		return url
 	}
 	
 }
