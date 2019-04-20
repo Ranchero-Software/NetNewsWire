@@ -115,12 +115,12 @@ class MasterTableViewCell : UITableViewCell {
 
 	override func willTransition(to state: UITableViewCell.StateMask) {
 		super.willTransition(to: state)
-		showingEditControl = state == .showingEditControl
+		showingEditControl = state.contains(.showingEditControl)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indent, shouldShowDisclosure: true)
+		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indent, shouldShowDisclosure: !showsReorderControl)
 		layoutWith(layout)
 	}
 	
