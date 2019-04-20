@@ -167,18 +167,10 @@ private extension MasterTableViewCell {
 	}
 
 	func layoutWith(_ layout: MasterTableViewCellLayout) {
-		faviconImageView.rs_setFrameIfNotEqual(layout.faviconRect)
-		titleView.rs_setFrameIfNotEqual(layout.titleRect)
-		unreadCountView.rs_setFrameIfNotEqual(layout.unreadCountRect)
-		disclosureButton?.rs_setFrameIfNotEqual(layout.disclosureButtonRect)
+		faviconImageView.setFrameIfNotEqual(layout.faviconRect)
+		titleView.setFrameIfNotEqual(layout.titleRect)
+		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
+		disclosureButton?.setFrameIfNotEqual(layout.disclosureButtonRect)
 	}
 	
-}
-
-extension UIView {
-	func rs_setFrameIfNotEqual(_ rect: CGRect) {
-		if !self.frame.equalTo(rect) {
-			self.frame = rect
-		}
-	}
 }

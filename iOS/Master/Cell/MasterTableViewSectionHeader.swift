@@ -91,8 +91,8 @@ private extension MasterTableViewSectionHeader {
 	}
 	
 	func layoutWith(_ layout: MasterTableViewCellLayout) {
-		titleView.rs_setFrameIfNotEqual(layout.titleRect)
-		unreadCountView.rs_setFrameIfNotEqual(layout.unreadCountRect)
+		titleView.setFrameIfNotEqual(layout.titleRect)
+		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 	}
 	
 }
