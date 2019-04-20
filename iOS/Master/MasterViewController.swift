@@ -324,20 +324,27 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	
 	override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
 
-		let movementAdjustment = sourceIndexPath > destinationIndexPath ? 1 : 0
-		let adjustedDestIndexPath = IndexPath(row: destinationIndexPath.row - movementAdjustment, section: destinationIndexPath.section)
-		
-		guard let sourceNode = nodeFor(sourceIndexPath),
-			let destNode = nodeFor(adjustedDestIndexPath),
-			let feed = sourceNode.representedObject as? Feed else {
-				return
+		guard let sourceNode = nodeFor(sourceIndexPath), let feed = sourceNode.representedObject as? Feed else {
+			return
 		}
-		
+
+		// Based on the drop we have to determine a node to start looking for a parent container.
+		let destNode: Node = {
+			if destinationIndexPath.row == 0 {
+				return treeController.rootNode.childAtIndex(destinationIndexPath.section)!
+			} else {
+				let movementAdjustment = sourceIndexPath > destinationIndexPath ? 1 : 0
+				let adjustedDestIndexPath = IndexPath(row: destinationIndexPath.row - movementAdjustment, section: destinationIndexPath.section)
+				return nodeFor(adjustedDestIndexPath)!
+			}
+		}()
+
+		// Now we start looking for the parent container
 		let destParentNode: Node? = {
-			if destNode.representedObject is Folder {
+			if destNode.representedObject is Container {
 				return destNode
 			} else {
-				if destNode.parent?.representedObject is Folder {
+				if destNode.parent?.representedObject is Container {
 					return destNode.parent!
 				} else {
 					return nil
@@ -345,6 +352,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			}
 		}()
 		
+		// Move the Feed
 		let account = accountForNode(destNode)
 		let sourceContainer = sourceNode.parent?.representedObject as? Container
 		let destinationFolder = destParentNode?.representedObject as? Folder
