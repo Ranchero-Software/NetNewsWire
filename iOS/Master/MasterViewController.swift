@@ -489,6 +489,8 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		cell.delegate = self
 		if node.parent?.representedObject is Folder {
 			cell.indentationLevel = 1
+		} else {
+			cell.indentationLevel = 0
 		}
 		cell.disclosureExpanded = expandedNodes.contains(node)
 		cell.allowDisclosureSelection = node.canHaveChildNodes

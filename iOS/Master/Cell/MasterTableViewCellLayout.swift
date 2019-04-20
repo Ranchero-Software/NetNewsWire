@@ -25,9 +25,9 @@ struct MasterTableViewCellLayout {
 	let unreadCountRect: CGRect
 	let disclosureButtonRect: CGRect
 	
-	init(cellSize: CGSize, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
+	init(cellSize: CGSize, insets: UIEdgeInsets, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
 
-		var initialIndent = MasterTableViewCellLayout.marginLeft
+		var initialIndent = MasterTableViewCellLayout.marginLeft + insets.left
 		if indent {
 			initialIndent += MasterTableViewCellLayout.indent
 		}
@@ -35,7 +35,7 @@ struct MasterTableViewCellLayout {
 			initialIndent += MasterTableViewCellLayout.editingControlIndent
 		}
 		
-		let bounds = CGRect(x: initialIndent, y: 0.0, width: floor(cellSize.width - initialIndent), height: floor(cellSize.height))
+		let bounds = CGRect(x: initialIndent, y: 0.0, width: floor(cellSize.width - initialIndent - insets.right), height: floor(cellSize.height))
 		
 		// Favicon
 		var rFavicon = CGRect.zero

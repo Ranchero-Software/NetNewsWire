@@ -71,7 +71,7 @@ class MasterTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: false)
+		let layout = MasterTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: false)
 		layoutWith(layout)
 	}
 	
