@@ -59,11 +59,11 @@ class MasterTimelineTableViewCell: UITableViewCell {
 		setFrame(for: summaryView, rect: layoutRects.summaryRect)
 		setFrame(for: textView, rect: layoutRects.textRect)
 		
-		dateView.rs_setFrameIfNotEqual(layoutRects.dateRect)
-		unreadIndicatorView.rs_setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
-		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
-		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
-		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
+		dateView.setFrameIfNotEqual(layoutRects.dateRect)
+		unreadIndicatorView.setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
+		feedNameView.setFrameIfNotEqual(layoutRects.feedNameRect)
+		avatarImageView.setFrameIfNotEqual(layoutRects.avatarImageRect)
+		starView.setFrameIfNotEqual(layoutRects.starRect)
 		
 	}
 	
@@ -94,7 +94,7 @@ private extension MasterTimelineTableViewCell {
 			hideView(label)
 		} else {
 			showView(label)
-			label.rs_setFrameIfNotEqual(rect)
+			label.setFrameIfNotEqual(rect)
 		}
 		
 	}

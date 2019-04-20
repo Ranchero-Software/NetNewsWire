@@ -365,6 +365,9 @@ private extension ArticleRenderer {
 	func renderHTML(withBody body: String) -> String {
 		
 		var s = "<!DOCTYPE html><html><head>\n"
+		if let baseURL = baseURL {
+			s += ("<base href=\"" + baseURL + "\"\n>")
+		}
 		s += "<meta name=\"viewport\" content=\"width=device-width\">\n"
 		s += title.htmlBySurroundingWithTag("title")
 		s += styleString().htmlBySurroundingWithTag("style")

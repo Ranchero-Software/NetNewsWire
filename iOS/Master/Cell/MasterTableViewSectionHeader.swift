@@ -71,7 +71,7 @@ class MasterTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: false)
+		let layout = MasterTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: false)
 		layoutWith(layout)
 	}
 	
@@ -80,7 +80,9 @@ class MasterTableViewSectionHeader: UITableViewHeaderFooterView {
 private extension MasterTableViewSectionHeader {
 	
 	func commonInit() {
-		backgroundColor = AppAssets.tableSectionHeaderColor
+		let view = UIView()
+		view.backgroundColor = AppAssets.tableSectionHeaderColor
+		backgroundView = view
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(titleView)
 	}
@@ -91,8 +93,8 @@ private extension MasterTableViewSectionHeader {
 	}
 	
 	func layoutWith(_ layout: MasterTableViewCellLayout) {
-		titleView.rs_setFrameIfNotEqual(layout.titleRect)
-		unreadCountView.rs_setFrameIfNotEqual(layout.unreadCountRect)
+		titleView.setFrameIfNotEqual(layout.titleRect)
+		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 	}
 	
 }

@@ -1,4 +1,10 @@
-//Copyright © 2019 Vincode, Inc. All rights reserved.
+//
+//  UIImage-Extensions.swift
+//  NetNewsWire
+//
+//  Created by Maurice Parker on 4/18/19.
+//  Copyright © 2019 Ranchero Software. All rights reserved.
+//
 
 import UIKit
 

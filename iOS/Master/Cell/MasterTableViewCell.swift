@@ -32,14 +32,6 @@ class MasterTableViewCell : UITableViewCell {
 		}
 	}
 
-	var indent = false {
-		didSet {
-			if indent != oldValue {
-				setNeedsLayout()
-			}
-		}
-	}
-	
 	var disclosureExpanded = false {
 		didSet {
 			updateDisclosureImage()
@@ -115,12 +107,12 @@ class MasterTableViewCell : UITableViewCell {
 
 	override func willTransition(to state: UITableViewCell.StateMask) {
 		super.willTransition(to: state)
-		showingEditControl = state == .showingEditControl
+		showingEditControl = state.contains(.showingEditControl)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indent, shouldShowDisclosure: true)
+		let layout = MasterTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: !showsReorderControl)
 		layoutWith(layout)
 	}
 	
@@ -167,18 +159,10 @@ private extension MasterTableViewCell {
 	}
 
 	func layoutWith(_ layout: MasterTableViewCellLayout) {
-		faviconImageView.rs_setFrameIfNotEqual(layout.faviconRect)
-		titleView.rs_setFrameIfNotEqual(layout.titleRect)
-		unreadCountView.rs_setFrameIfNotEqual(layout.unreadCountRect)
-		disclosureButton?.rs_setFrameIfNotEqual(layout.disclosureButtonRect)
+		faviconImageView.setFrameIfNotEqual(layout.faviconRect)
+		titleView.setFrameIfNotEqual(layout.titleRect)
+		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
+		disclosureButton?.setFrameIfNotEqual(layout.disclosureButtonRect)
 	}
 	
-}
-
-extension UIView {
-	func rs_setFrameIfNotEqual(_ rect: CGRect) {
-		if !self.frame.equalTo(rect) {
-			self.frame = rect
-		}
-	}
 }

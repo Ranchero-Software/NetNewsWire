@@ -11,6 +11,8 @@ import RSCore
 
 struct MasterTableViewCellLayout {
 
+	private static let indent = CGFloat(integerLiteral: 14)
+	private static let editingControlIndent = CGFloat(integerLiteral: 40)
 	private static let imageSize = CGSize(width: 16, height: 16)
 	private static let marginLeft = CGFloat(integerLiteral: 8)
 	private static let imageMarginRight = CGFloat(integerLiteral: 8)
@@ -23,16 +25,22 @@ struct MasterTableViewCellLayout {
 	let unreadCountRect: CGRect
 	let disclosureButtonRect: CGRect
 	
-	init(cellSize: CGSize, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
+	init(cellSize: CGSize, insets: UIEdgeInsets, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
 
-		let bounds = CGRect(x: 0.0, y: 0.0, width: floor(cellSize.width), height: floor(cellSize.height))
-
+		var initialIndent = MasterTableViewCellLayout.marginLeft + insets.left
+		if indent {
+			initialIndent += MasterTableViewCellLayout.indent
+		}
+		if showingEditingControl {
+			initialIndent += MasterTableViewCellLayout.editingControlIndent
+		}
+		
+		let bounds = CGRect(x: initialIndent, y: 0.0, width: floor(cellSize.width - initialIndent - insets.right), height: floor(cellSize.height))
+		
 		// Favicon
 		var rFavicon = CGRect.zero
 		if shouldShowImage {
-			var indentX = showingEditingControl ? MasterTableViewCellLayout.marginLeft + 40 : MasterTableViewCellLayout.marginLeft
-			indentX = indent ? indentX + 20 : indentX
-			rFavicon = CGRect(x: indentX, y: 0.0, width: MasterTableViewCellLayout.imageSize.width, height: MasterTableViewCellLayout.imageSize.height)
+			rFavicon = CGRect(x: bounds.origin.x, y: 0.0, width: MasterTableViewCellLayout.imageSize.width, height: MasterTableViewCellLayout.imageSize.height)
 			rFavicon = MasterTableViewCellLayout.centerVertically(rFavicon, bounds)
 		}
 		self.faviconRect = rFavicon
@@ -44,7 +52,7 @@ struct MasterTableViewCellLayout {
 		if shouldShowImage {
 			rLabel.origin.x = rFavicon.maxX + MasterTableViewCellLayout.imageMarginRight
 		} else {
-			rLabel.origin.x = indent ? MasterTableViewCellLayout.marginLeft + 10 : MasterTableViewCellLayout.marginLeft
+			rLabel.origin.x = bounds.minX
 		}
 		
 		rLabel = MasterTableViewCellLayout.centerVertically(rLabel, bounds)

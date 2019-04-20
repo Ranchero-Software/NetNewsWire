@@ -268,6 +268,110 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		self.navigationController?.pushViewController(timeline, animated: true)
 
 	}
+
+	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+		guard let node = nodeFor(indexPath) else {
+			return false
+		}
+		return node.representedObject is Feed
+	}
+	
+	override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+
+		// Adjust the index path so that it will never be in the smart feeds area
+		let destIndexPath: IndexPath = {
+			if proposedDestinationIndexPath.section == 0 {
+				return IndexPath(row: 0, section: 1)
+			}
+			return proposedDestinationIndexPath
+		}()
+		
+		guard let draggedNode = nodeFor(sourceIndexPath), let destNode = nodeFor(destIndexPath), let parentNode = destNode.parent else {
+			assertionFailure("This should never happen")
+			return sourceIndexPath
+		}
+		
+		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
+		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !expandedNodes.contains(destNode)) {
+			let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
+			return IndexPath(row: destIndexPath.row + movementAdjustment, section: destIndexPath.section)
+		}
+		
+		// If we are dragging around in the same container, just return the original source
+		if parentNode.childNodes.contains(draggedNode) {
+			return sourceIndexPath
+		}
+		
+		// Suggest to the user the best place to drop the feed
+		// Revisit if the tree controller can ever be sorted in some other way.
+		let nodes = parentNode.childNodes + [draggedNode]
+		var sortedNodes = nodes.sortedAlphabeticallyWithFoldersAtEnd()
+		let index = sortedNodes.firstIndex(of: draggedNode)!
+
+		if index == 0 {
+			
+			if parentNode.representedObject is Account {
+				return IndexPath(row: 0, section: destIndexPath.section)
+			} else {
+				return indexPathFor(parentNode)!
+			}
+			
+		} else {
+			
+			sortedNodes.remove(at: index)
+			
+			let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
+			let adjustedIndex = index - movementAdjustment
+			if adjustedIndex >= sortedNodes.count {
+				let lastSortedIndexPath = indexPathFor(sortedNodes[sortedNodes.count - 1])!
+				return IndexPath(row: lastSortedIndexPath.row + 1, section: lastSortedIndexPath.section)
+			} else {
+				return indexPathFor(sortedNodes[adjustedIndex])!
+			}
+			
+		}
+		
+	}
+	
+	override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+
+		guard let sourceNode = nodeFor(sourceIndexPath), let feed = sourceNode.representedObject as? Feed else {
+			return
+		}
+
+		// Based on the drop we have to determine a node to start looking for a parent container.
+		let destNode: Node = {
+			if destinationIndexPath.row == 0 {
+				return treeController.rootNode.childAtIndex(destinationIndexPath.section)!
+			} else {
+				let movementAdjustment = sourceIndexPath > destinationIndexPath ? 1 : 0
+				let adjustedDestIndexPath = IndexPath(row: destinationIndexPath.row - movementAdjustment, section: destinationIndexPath.section)
+				return nodeFor(adjustedDestIndexPath)!
+			}
+		}()
+
+		// Now we start looking for the parent container
+		let destParentNode: Node? = {
+			if destNode.representedObject is Container {
+				return destNode
+			} else {
+				if destNode.parent?.representedObject is Container {
+					return destNode.parent!
+				} else {
+					return nil
+				}
+			}
+		}()
+		
+		// Move the Feed
+		let account = accountForNode(destNode)
+		let sourceContainer = sourceNode.parent?.representedObject as? Container
+		let destinationFolder = destParentNode?.representedObject as? Folder
+		sourceContainer?.deleteFeed(feed)
+		account?.addFeed(feed, to: destinationFolder)
+		account?.structureDidChange()
+
+	}
 	
 	// MARK: Actions
 	
@@ -383,7 +487,11 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	func configure(_ cell: MasterTableViewCell, _ node: Node) {
 		
 		cell.delegate = self
-		cell.indent = node.parent?.representedObject is Folder
+		if node.parent?.representedObject is Folder {
+			cell.indentationLevel = 1
+		} else {
+			cell.indentationLevel = 0
+		}
 		cell.disclosureExpanded = expandedNodes.contains(node)
 		cell.allowDisclosureSelection = node.canHaveChildNodes
 		
@@ -570,7 +678,20 @@ private extension MasterViewController {
 			callback(cell as! MasterTableViewCell, node)
 		}
 	}
-	
+
+	private func accountForNode(_ node: Node) -> Account? {
+		if let account = node.representedObject as? Account {
+			return account
+		}
+		if let folder = node.representedObject as? Folder {
+			return folder.account
+		}
+		if let feed = node.representedObject as? Feed {
+			return feed.account
+		}
+		return nil
+	}
+
 	func rebuildShadowTable() {
 		
 		for i in 0..<treeController.rootNode.numberOfChildNodes {
