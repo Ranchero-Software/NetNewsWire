@@ -293,7 +293,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		
 		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
 		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !expandedNodes.contains(destNode)) {
-			let movementAdjustment = sourceIndexPath > proposedDestinationIndexPath ? 1 : 0
+			let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
 			return IndexPath(row: destIndexPath.row + movementAdjustment, section: destIndexPath.section)
 		}
 		
@@ -309,15 +309,26 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		let index = sortedNodes.firstIndex(of: draggedNode)!
 
 		if index == 0 {
+			
 			if parentNode.representedObject is Account {
 				return IndexPath(row: 0, section: destIndexPath.section)
 			} else {
 				return indexPathFor(parentNode)!
 			}
+			
 		} else {
-			sortedNodes.remove(at: sortedNodes.firstIndex(of: draggedNode)!)
-			let movementAdjustment = sourceIndexPath < proposedDestinationIndexPath ? 1 : 0
-			return indexPathFor(sortedNodes[index - movementAdjustment])!
+			
+			sortedNodes.remove(at: index)
+			
+			let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
+			let adjustedIndex = index - movementAdjustment
+			if adjustedIndex >= sortedNodes.count {
+				let lastSortedIndexPath = indexPathFor(sortedNodes[sortedNodes.count - 1])!
+				return IndexPath(row: lastSortedIndexPath.row + 1, section: lastSortedIndexPath.section)
+			} else {
+				return indexPathFor(sortedNodes[adjustedIndex])!
+			}
+			
 		}
 		
 	}
