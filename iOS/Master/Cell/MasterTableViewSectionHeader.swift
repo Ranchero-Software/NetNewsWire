@@ -48,6 +48,12 @@ class MasterTableViewSectionHeader: UITableViewHeaderFooterView {
 		}
 	}
 	
+	var disclosureExpanded = false {
+		didSet {
+			updateDisclosureImage()
+		}
+	}
+	
 	private let titleView: UILabel = {
 		let label = UILabel()
 		label.font = UIFont.boldSystemFont(ofSize: 17.0)
@@ -58,7 +64,12 @@ class MasterTableViewSectionHeader: UITableViewHeaderFooterView {
 	}()
 	
 	private let unreadCountView = MasterUnreadCountView(frame: CGRect.zero)
-	
+	private var disclosureView: UIImageView = {
+		let iView = UIImageView()
+		iView.contentMode = .center
+		return iView
+	}()
+
 	override init(reuseIdentifier: String?) {
 		super.init(reuseIdentifier: reuseIdentifier)
 		commonInit()
@@ -71,10 +82,11 @@ class MasterTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: false)
+		let layout = MasterTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: true)
 		layoutWith(layout)
 	}
 	
+
 }
 
 private extension MasterTableViewSectionHeader {
@@ -85,8 +97,18 @@ private extension MasterTableViewSectionHeader {
 		backgroundView = view
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(titleView)
+		updateDisclosureImage()
+		addSubviewAtInit(disclosureView)
 	}
 	
+	func updateDisclosureImage() {
+		if disclosureExpanded {
+			disclosureView.image = AppAssets.chevronDownImage
+		} else {
+			disclosureView.image = AppAssets.chevronRightImage
+		}
+	}
+
 	func addSubviewAtInit(_ view: UIView) {
 		addSubview(view)
 		view.translatesAutoresizingMaskIntoConstraints = false
@@ -95,6 +117,7 @@ private extension MasterTableViewSectionHeader {
 	func layoutWith(_ layout: MasterTableViewCellLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
+		disclosureView.setFrameIfNotEqual(layout.disclosureButtonRect)
 	}
 	
 }

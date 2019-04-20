@@ -173,6 +173,10 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		return shadowTable[section].count
 	}
 	
+	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		return CGFloat(integerLiteral: 44)
+	}
+	
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		
 		guard let nameProvider = treeController.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
@@ -182,19 +186,32 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! MasterTableViewSectionHeader
 		headerView.name = nameProvider.nameForDisplay
 		
-		if let account = treeController.rootNode.childAtIndex(section)?.representedObject as? Account {
+		guard let sectionNode = treeController.rootNode.childAtIndex(section) else {
+			return headerView
+		}
+		
+		if let account = sectionNode.representedObject as? Account {
 			headerView.unreadCount = account.unreadCount
 		} else {
 			headerView.unreadCount = 0
 		}
 		
 		headerView.tag = section
-		
+		headerView.disclosureExpanded = expandedNodes.contains(sectionNode)
+
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
 
 		return headerView
 		
+	}
+	
+	override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+		return CGFloat.leastNormalMagnitude
+	}
+
+	override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+		return UIView(frame: CGRect.zero)
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -469,14 +486,17 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
 		
 		guard let sectionIndex = sender.view?.tag,
-			let sectionNode = treeController.rootNode.childAtIndex(sectionIndex)
+			let sectionNode = treeController.rootNode.childAtIndex(sectionIndex),
+			let headerView = sender.view as? MasterTableViewSectionHeader
 				else {
 					return
 		}
 		
 		if expandedNodes.contains(sectionNode) {
+			headerView.disclosureExpanded = false
 			collapse(section: sectionIndex)
 		} else {
+			headerView.disclosureExpanded = true
 			expand(section: sectionIndex)
 		}
 		
@@ -788,6 +808,7 @@ private extension MasterViewController {
 		guard let collapseNode = treeController.rootNode.childAtIndex(section) else {
 			return
 		}
+		
 		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
 			expandedNodes.remove(at: removeNode)
 		}
@@ -803,6 +824,7 @@ private extension MasterViewController {
 		tableView.endUpdates()
 		
 		animatingChanges = false
+		
 	}
 	
 	func collapse(_ cell: MasterTableViewCell) {
