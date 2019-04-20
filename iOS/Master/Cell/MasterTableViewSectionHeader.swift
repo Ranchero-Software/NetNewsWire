@@ -80,7 +80,9 @@ class MasterTableViewSectionHeader: UITableViewHeaderFooterView {
 private extension MasterTableViewSectionHeader {
 	
 	func commonInit() {
-		backgroundColor = AppAssets.tableSectionHeaderColor
+		let view = UIView()
+		view.backgroundColor = AppAssets.tableSectionHeaderColor
+		backgroundView = view
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(titleView)
 	}
