@@ -129,12 +129,19 @@ class MasterTableViewCell : UITableViewCell {
 private extension MasterTableViewCell {
 
 	func commonInit() {
+		theme()
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(faviconImageView)
 		addSubviewAtInit(titleView)
 		addDisclosureView()
 	}
-	
+
+	func theme() {
+		let bgView = UIView()
+		bgView.backgroundColor = AppAssets.selectionBackgroundColor
+		selectedBackgroundView = bgView
+	}
+
 	func addDisclosureView() {
 		
 		disclosureButton = UIButton(type: .roundedRect)

@@ -53,6 +53,10 @@ struct AppAssets {
 		return image.maskWithColor(color: AppAssets.masterFolderColor)!
 	}()
 	
+	static var selectionBackgroundColor: UIColor = {
+		return UIColor(named: "selectionBackgroundColor")!
+	}()
+	
 	static var starColor: UIColor = {
 		return UIColor(named: "starColor")!
 	}()

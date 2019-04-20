@@ -107,6 +107,7 @@ private extension MasterTimelineTableViewCell {
 	
 	func commonInit() {
 		
+		theme()
 		addAccessoryView()
 		addSubviewAtInit(titleView, hidden: false)
 		addSubviewAtInit(summaryView, hidden: true)
@@ -117,6 +118,12 @@ private extension MasterTimelineTableViewCell {
 		addSubviewAtInit(avatarImageView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
 		
+	}
+	
+	func theme() {
+		let bgView = UIView()
+		bgView.backgroundColor = AppAssets.selectionBackgroundColor
+		selectedBackgroundView = bgView
 	}
 
 	func addAccessoryView() {
