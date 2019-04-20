@@ -126,7 +126,7 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Timeline" id="wcC-1L-ug4"/>
+                    <navigationItem key="navigationItem" title="Timeline" largeTitleDisplayMode="never" id="wcC-1L-ug4"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nzm-Gf-Xce" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -137,8 +137,8 @@
         <scene sceneID="uQv-y4-hI4">
             <objects>
                 <navigationController storyboardIdentifier="MasterTimelineNavigationViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" toolbarHidden="NO" id="vHh-eJ-Wug" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="Df0-za-Olh">
-                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Df0-za-Olh">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Tqe-Na-Jew">
