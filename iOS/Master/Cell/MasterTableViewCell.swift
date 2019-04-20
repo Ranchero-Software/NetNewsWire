@@ -32,14 +32,6 @@ class MasterTableViewCell : UITableViewCell {
 		}
 	}
 
-	var indent = false {
-		didSet {
-			if indent != oldValue {
-				setNeedsLayout()
-			}
-		}
-	}
-	
 	var disclosureExpanded = false {
 		didSet {
 			updateDisclosureImage()
@@ -120,7 +112,7 @@ class MasterTableViewCell : UITableViewCell {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indent, shouldShowDisclosure: !showsReorderControl)
+		let layout = MasterTableViewCellLayout(cellSize: bounds.size, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: !showsReorderControl)
 		layoutWith(layout)
 	}
 	
