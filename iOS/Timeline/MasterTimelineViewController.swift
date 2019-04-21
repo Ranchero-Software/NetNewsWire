@@ -274,7 +274,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			if !article.status.read {
 				markArticles(Set([article]), statusKey: .read, flag: true)
 			}
-			tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+			// TODO: make this scroll like the desktop version
+			if tableView.indexPathForSelectedRow != indexPath {
+				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+			}
 		}
 		
 	}
