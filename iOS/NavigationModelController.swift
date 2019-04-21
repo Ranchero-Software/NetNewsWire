@@ -10,6 +10,7 @@ import Foundation
 import Account
 import Articles
 import RSCore
+import RSTree
 
 public extension Notification.Name {
 	static let ShowFeedNamesDidChange = Notification.Name(rawValue: "ShowFeedNamesDidChange")
@@ -18,14 +19,17 @@ public extension Notification.Name {
 	static let ArticlesDidChange = Notification.Name(rawValue: "ArticlesDidChange")
 }
 
-class AppModelController {
+class NavigationModelController {
 
 	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	
-	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
-	}
+	var expandedNodes = [Node]()
+	var shadowTable = [[Node]]()
+	
+	let treeControllerDelegate = FeedTreeControllerDelegate()
+	lazy var treeController: TreeController = {
+		return TreeController(delegate: treeControllerDelegate)
+	}()
 	
 	private var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
@@ -72,6 +76,20 @@ class AppModelController {
 	
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
 
+	init() {
+
+		for section in treeController.rootNode.childNodes {
+			expandedNodes.append(section)
+			shadowTable.append([Node]())
+		}
+		
+		rebuildShadowTable()
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
+		
+	}
+	
 	// MARK: Notifications
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
@@ -93,6 +111,42 @@ class AppModelController {
 
 	// MARK: API
 
+	func rebuildShadowTable() {
+		
+		for i in 0..<treeController.rootNode.numberOfChildNodes {
+			
+			var result = [Node]()
+			
+			if let nodes = treeController.rootNode.childAtIndex(i)?.childNodes {
+				for node in nodes {
+					result.append(node)
+					if expandedNodes.contains(node) {
+						for child in node.childNodes {
+							result.append(child)
+						}
+					}
+				}
+			}
+			
+			shadowTable[i] = result
+			
+		}
+		
+	}
+
+	func nodeFor(_ indexPath: IndexPath) -> Node? {
+		return shadowTable[indexPath.section][indexPath.row]
+	}
+	
+	func indexPathFor(_ node: Node) -> IndexPath? {
+		for i in 0..<shadowTable.count {
+			if let row = shadowTable[i].firstIndex(of: node) {
+				return IndexPath(row: row, section: i)
+			}
+		}
+		return nil
+	}
+	
 	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
 		
 		var indexes = IndexSet()
@@ -111,7 +165,7 @@ class AppModelController {
 	
 }
 
-private extension AppModelController {
+private extension NavigationModelController {
 
 	// MARK: Fetching Articles
 	
@@ -166,7 +220,7 @@ private extension AppModelController {
 	}
 	
 	func queueFetchAndMergeArticles() {
-		AppModelController.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
+		NavigationModelController.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
 	}
 	
 	@objc func fetchAndMergeArticles() {

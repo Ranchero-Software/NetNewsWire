@@ -17,15 +17,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 	var animatingChanges = false
 	
-	var expandedNodes = [Node]()
-	var shadowTable = [[Node]]()
-	
-	let appModelController = AppModelController()
-	let treeControllerDelegate = FeedTreeControllerDelegate()
-	lazy var treeController: TreeController = {
-		return TreeController(delegate: treeControllerDelegate)
-	}()
-	
+	let nmc = NavigationModelController()
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -49,14 +41,6 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		
-		// Default the sections to expanded and set up the shadow table
-		for section in treeController.rootNode.childNodes {
-			expandedNodes.append(section)
-			shadowTable.append([Node]())
-		}
-		
-		rebuildShadowTable()
 		
 	}
 
@@ -100,8 +84,8 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		if let account = representedObject as? Account {
-			if let node = treeController.rootNode.childNodeRepresentingObject(account) {
-				let sectionIndex = treeController.rootNode.indexOfChild(node)!
+			if let node = nmc.treeController.rootNode.childNodeRepresentingObject(account) {
+				let sectionIndex = nmc.treeController.rootNode.indexOfChild(node)!
 				let headerView = tableView.headerView(forSection: sectionIndex) as! MasterTableViewSectionHeader
 				headerView.unreadCount = account.unreadCount
 			}
@@ -142,23 +126,23 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	@objc func userDidAddFeed(_ notification: Notification) {
 		
 		guard let feed = notification.userInfo?[UserInfoKey.feed],
-			let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
+			let node = nmc.treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
 				return
 		}
 		
-		if let indexPath = indexPathFor(node) {
+		if let indexPath = nmc.indexPathFor(node) {
 			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
 			return
 		}
 	
 		// It wasn't already visable, so expand its folder and try again
-		guard let parent = node.parent, let indexPath = indexPathFor(parent) else {
+		guard let parent = node.parent, let indexPath = nmc.indexPathFor(parent) else {
 			return
 		}
 		
 		expand(indexPath)
 
-		if let indexPath = indexPathFor(node) {
+		if let indexPath = nmc.indexPathFor(node) {
 			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
 		}
 
@@ -167,11 +151,11 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: Table View
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
-		return treeController.rootNode.numberOfChildNodes
+		return nmc.treeController.rootNode.numberOfChildNodes
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return shadowTable[section].count
+		return nmc.shadowTable[section].count
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -180,14 +164,14 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		
-		guard let nameProvider = treeController.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
+		guard let nameProvider = nmc.treeController.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
 			return nil
 		}
 		
 		let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! MasterTableViewSectionHeader
 		headerView.name = nameProvider.nameForDisplay
 		
-		guard let sectionNode = treeController.rootNode.childAtIndex(section) else {
+		guard let sectionNode = nmc.treeController.rootNode.childAtIndex(section) else {
 			return headerView
 		}
 		
@@ -198,7 +182,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		headerView.tag = section
-		headerView.disclosureExpanded = expandedNodes.contains(sectionNode)
+		headerView.disclosureExpanded = nmc.expandedNodes.contains(sectionNode)
 
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
@@ -219,7 +203,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTableViewCell
 		
-		guard let node = nodeFor(indexPath) else {
+		guard let node = nmc.nodeFor(indexPath) else {
 			return cell
 		}
 		
@@ -229,7 +213,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-		guard let node = nodeFor(indexPath), !(node.representedObject is PseudoFeed) else {
+		guard let node = nmc.nodeFor(indexPath), !(node.representedObject is PseudoFeed) else {
 			return false
 		}
 		return true
@@ -261,7 +245,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
-		guard let node = nodeFor(indexPath) else {
+		guard let node = nmc.nodeFor(indexPath) else {
 			assertionFailure()
 			return
 		}
@@ -269,21 +253,21 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		let timeline = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
 		
 		if let fetcher = node.representedObject as? ArticleFetcher {
-			appModelController.timelineFetcher = fetcher
+			nmc.timelineFetcher = fetcher
 		}
 		
 		if let nameProvider = node.representedObject as? DisplayNameProvider {
 			timeline.title = nameProvider.nameForDisplay
 		}
 		
-		timeline.appModelController = appModelController
+		timeline.nmc = nmc
 
 		self.navigationController?.pushViewController(timeline, animated: true)
 
 	}
 
 	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-		guard let node = nodeFor(indexPath) else {
+		guard let node = nmc.nodeFor(indexPath) else {
 			return false
 		}
 		return node.representedObject is Feed
@@ -299,13 +283,13 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			return proposedDestinationIndexPath
 		}()
 		
-		guard let draggedNode = nodeFor(sourceIndexPath), let destNode = nodeFor(destIndexPath), let parentNode = destNode.parent else {
+		guard let draggedNode = nmc.nodeFor(sourceIndexPath), let destNode = nmc.nodeFor(destIndexPath), let parentNode = destNode.parent else {
 			assertionFailure("This should never happen")
 			return sourceIndexPath
 		}
 		
 		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
-		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !expandedNodes.contains(destNode)) {
+		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !nmc.expandedNodes.contains(destNode)) {
 			let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
 			return IndexPath(row: destIndexPath.row + movementAdjustment, section: destIndexPath.section)
 		}
@@ -326,7 +310,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			if parentNode.representedObject is Account {
 				return IndexPath(row: 0, section: destIndexPath.section)
 			} else {
-				return indexPathFor(parentNode)!
+				return nmc.indexPathFor(parentNode)!
 			}
 			
 		} else {
@@ -336,10 +320,10 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
 			let adjustedIndex = index - movementAdjustment
 			if adjustedIndex >= sortedNodes.count {
-				let lastSortedIndexPath = indexPathFor(sortedNodes[sortedNodes.count - 1])!
+				let lastSortedIndexPath = nmc.indexPathFor(sortedNodes[sortedNodes.count - 1])!
 				return IndexPath(row: lastSortedIndexPath.row + 1, section: lastSortedIndexPath.section)
 			} else {
-				return indexPathFor(sortedNodes[adjustedIndex])!
+				return nmc.indexPathFor(sortedNodes[adjustedIndex])!
 			}
 			
 		}
@@ -348,18 +332,18 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	
 	override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
 
-		guard let sourceNode = nodeFor(sourceIndexPath), let feed = sourceNode.representedObject as? Feed else {
+		guard let sourceNode = nmc.nodeFor(sourceIndexPath), let feed = sourceNode.representedObject as? Feed else {
 			return
 		}
 
 		// Based on the drop we have to determine a node to start looking for a parent container.
 		let destNode: Node = {
 			if destinationIndexPath.row == 0 {
-				return treeController.rootNode.childAtIndex(destinationIndexPath.section)!
+				return nmc.treeController.rootNode.childAtIndex(destinationIndexPath.section)!
 			} else {
 				let movementAdjustment = sourceIndexPath > destinationIndexPath ? 1 : 0
 				let adjustedDestIndexPath = IndexPath(row: destinationIndexPath.row - movementAdjustment, section: destinationIndexPath.section)
-				return nodeFor(adjustedDestIndexPath)!
+				return nmc.nodeFor(adjustedDestIndexPath)!
 			}
 		}()
 
@@ -482,13 +466,13 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
 		
 		guard let sectionIndex = sender.view?.tag,
-			let sectionNode = treeController.rootNode.childAtIndex(sectionIndex),
+			let sectionNode = nmc.treeController.rootNode.childAtIndex(sectionIndex),
 			let headerView = sender.view as? MasterTableViewSectionHeader
 				else {
 					return
 		}
 		
-		if expandedNodes.contains(sectionNode) {
+		if nmc.expandedNodes.contains(sectionNode) {
 			headerView.disclosureExpanded = false
 			collapse(section: sectionIndex)
 		} else {
@@ -508,7 +492,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		} else {
 			cell.indentationLevel = 0
 		}
-		cell.disclosureExpanded = expandedNodes.contains(node)
+		cell.disclosureExpanded = nmc.expandedNodes.contains(node)
 		cell.allowDisclosureSelection = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
@@ -550,8 +534,8 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	func delete(indexPath: IndexPath) {
 
 		guard let undoManager = undoManager,
-			let deleteNode = nodeFor(indexPath),
-			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: treeController, undoManager: undoManager)
+			let deleteNode = nmc.nodeFor(indexPath),
+			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: nmc.treeController, undoManager: undoManager)
 				else {
 					return
 		}
@@ -559,7 +543,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		animatingChanges = true
 
 		runCommand(deleteCommand)
-		rebuildShadowTable()
+		nmc.rebuildShadowTable()
 		tableView.deleteRows(at: [indexPath], with: .automatic)
 		
 		animatingChanges = false
@@ -568,7 +552,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	
 	func rename(indexPath: IndexPath) {
 		
-		let name = (nodeFor(indexPath)?.representedObject as? DisplayNameProvider)?.nameForDisplay ?? ""
+		let name = (nmc.nodeFor(indexPath)?.representedObject as? DisplayNameProvider)?.nameForDisplay ?? ""
 		let formatString = NSLocalizedString("Rename “%@”", comment: "Feed finder")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, name) as String
 		
@@ -580,7 +564,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
 		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] action in
 			
-			guard let node = self?.nodeFor(indexPath),
+			guard let node = self?.nmc.nodeFor(indexPath),
 				let name = alertController.textFields?[0].text,
 				!name.isEmpty else {
 					return
@@ -604,19 +588,6 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			
 		}
 		
-	}
-
-	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		return shadowTable[indexPath.section][indexPath.row]
-	}
-	
-	func indexPathFor(_ node: Node) -> IndexPath? {
-		for i in 0..<shadowTable.count {
-			if let row = shadowTable[i].firstIndex(of: node) {
-				return IndexPath(row: row, section: i)
-			}
-		}
-		return nil
 	}
 	
 }
@@ -663,8 +634,8 @@ private extension MasterViewController {
 	
 	func rebuildBackingStoresAndReloadDataIfNeeded() {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
-			treeController.rebuild()
-			rebuildShadowTable()
+			nmc.treeController.rebuild()
+			nmc.rebuildShadowTable()
 			tableView.reloadData()
 		}
 	}
@@ -688,7 +659,7 @@ private extension MasterViewController {
 	
 	func applyToAvailableCells(_ callback: (MasterTableViewCell, Node) -> Void) {
 		tableView.visibleCells.forEach { cell in
-			guard let indexPath = tableView.indexPath(for: cell), let node = nodeFor(indexPath) else {
+			guard let indexPath = tableView.indexPath(for: cell), let node = nmc.nodeFor(indexPath) else {
 				return
 			}
 			callback(cell as! MasterTableViewCell, node)
@@ -708,35 +679,12 @@ private extension MasterViewController {
 		return nil
 	}
 
-	func rebuildShadowTable() {
-		
-		for i in 0..<treeController.rootNode.numberOfChildNodes {
-			
-			var result = [Node]()
-			
-			if let nodes = treeController.rootNode.childAtIndex(i)?.childNodes {
-				for node in nodes {
-					result.append(node)
-					if expandedNodes.contains(node) {
-						for child in node.childNodes {
-							result.append(child)
-						}
-					}
-				}
-			}
-			
-			shadowTable[i] = result
-			
-		}
-
-	}
-	
 	func expand(section: Int) {
 		
-		guard let expandNode = treeController.rootNode.childAtIndex(section) else {
+		guard let expandNode = nmc.treeController.rootNode.childAtIndex(section) else {
 			return
 		}
-		expandedNodes.append(expandNode)
+		nmc.expandedNodes.append(expandNode)
 		
 		animatingChanges = true
 		
@@ -745,13 +693,13 @@ private extension MasterViewController {
 		
 		func addNode(_ node: Node) {
 			indexPathsToInsert.append(IndexPath(row: i, section: section))
-			shadowTable[section].insert(node, at: i)
+			nmc.shadowTable[section].insert(node, at: i)
 			i = i + 1
 		}
 		
 		for child in expandNode.childNodes {
 			addNode(child)
-			if expandedNodes.contains(child) {
+			if nmc.expandedNodes.contains(child) {
 				for gChild in child.childNodes {
 					addNode(gChild)
 				}
@@ -775,8 +723,8 @@ private extension MasterViewController {
 	
 	func expand(_ indexPath: IndexPath) {
 		
-		let expandNode = shadowTable[indexPath.section][indexPath.row]
-		expandedNodes.append(expandNode)
+		let expandNode = nmc.shadowTable[indexPath.section][indexPath.row]
+		nmc.expandedNodes.append(expandNode)
 		
 		animatingChanges = true
 		
@@ -785,7 +733,7 @@ private extension MasterViewController {
 			if let child = expandNode.childAtIndex(i) {
 				let nextIndex = indexPath.row + i + 1
 				indexPathsToInsert.append(IndexPath(row: nextIndex, section: indexPath.section))
-				shadowTable[indexPath.section].insert(child, at: nextIndex)
+				nmc.shadowTable[indexPath.section].insert(child, at: nextIndex)
 			}
 		}
 		
@@ -801,19 +749,19 @@ private extension MasterViewController {
 
 		animatingChanges = true
 		
-		guard let collapseNode = treeController.rootNode.childAtIndex(section) else {
+		guard let collapseNode = nmc.treeController.rootNode.childAtIndex(section) else {
 			return
 		}
 		
-		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
-			expandedNodes.remove(at: removeNode)
+		if let removeNode = nmc.expandedNodes.firstIndex(of: collapseNode) {
+			nmc.expandedNodes.remove(at: removeNode)
 		}
 
 		var indexPathsToRemove = [IndexPath]()
-		for i in 0..<shadowTable[section].count {
+		for i in 0..<nmc.shadowTable[section].count {
 			indexPathsToRemove.append(IndexPath(row: i, section: section))
 		}
-		shadowTable[section] = [Node]()
+		nmc.shadowTable[section] = [Node]()
 		
 		tableView.beginUpdates()
 		tableView.deleteRows(at: indexPathsToRemove, with: .automatic)
@@ -834,22 +782,22 @@ private extension MasterViewController {
 		
 		animatingChanges = true
 		
-		let collapseNode = shadowTable[indexPath.section][indexPath.row]
-		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
-			expandedNodes.remove(at: removeNode)
+		let collapseNode = nmc.shadowTable[indexPath.section][indexPath.row]
+		if let removeNode = nmc.expandedNodes.firstIndex(of: collapseNode) {
+			nmc.expandedNodes.remove(at: removeNode)
 		}
 		
 		var indexPathsToRemove = [IndexPath]()
 		
 		for child in collapseNode.childNodes {
-			if let index = shadowTable[indexPath.section].firstIndex(of: child) {
+			if let index = nmc.shadowTable[indexPath.section].firstIndex(of: child) {
 				indexPathsToRemove.append(IndexPath(row: index, section: indexPath.section))
 			}
 		}
 		
 		for child in collapseNode.childNodes {
-			if let index = shadowTable[indexPath.section].firstIndex(of: child) {
-				shadowTable[indexPath.section].remove(at: index)
+			if let index = nmc.shadowTable[indexPath.section].firstIndex(of: child) {
+				nmc.shadowTable[indexPath.section].remove(at: index)
 			}
 		}
 		
