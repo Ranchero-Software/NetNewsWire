@@ -13,6 +13,7 @@ import RSCore
 import RSTree
 
 public extension Notification.Name {
+	static let BackingStoresDidRebuild = Notification.Name(rawValue: "BackingStoresDidRebuild")
 	static let ShowFeedNamesDidChange = Notification.Name(rawValue: "ShowFeedNamesDidChange")
 	static let ArticlesReinitialized = Notification.Name(rawValue: "ArticlesReinitialized")
 	static let ArticleDataDidChange = Notification.Name(rawValue: "ArticleDataDidChange")
@@ -23,6 +24,7 @@ class NavigationModelController {
 
 	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	
+	var animatingChanges = false
 	var expandedNodes = [Node]()
 	var shadowTable = [[Node]]()
 	
@@ -85,6 +87,10 @@ class NavigationModelController {
 		
 		rebuildShadowTable()
 		
+		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		
@@ -92,6 +98,18 @@ class NavigationModelController {
 	
 	// MARK: Notifications
 	
+	@objc func containerChildrenDidChange(_ note: Notification) {
+		rebuildBackingStores()
+	}
+	
+	@objc func batchUpdateDidPerform(_ notification: Notification) {
+		rebuildBackingStores()
+	}
+	
+	@objc func displayNameDidChange(_ note: Notification) {
+		rebuildBackingStores()
+	}
+
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		self.sortDirection = AppDefaults.timelineSortDirection
 	}
@@ -111,6 +129,14 @@ class NavigationModelController {
 
 	// MARK: API
 
+	func rebuildBackingStores() {
+		if !animatingChanges && !BatchUpdate.shared.isPerforming {
+			treeController.rebuild()
+			rebuildShadowTable()
+			NotificationCenter.default.post(name: .BackingStoresDidRebuild, object: self, userInfo: nil)
+		}
+	}
+	
 	func rebuildShadowTable() {
 		
 		for i in 0..<treeController.rootNode.numberOfChildNodes {

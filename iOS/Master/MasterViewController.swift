@@ -15,7 +15,6 @@ import RSTree
 class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 	var undoableCommands = [UndoableCommand]()
-	var animatingChanges = false
 	
 	let nmc = NavigationModelController()
 	override var canBecomeFirstResponder: Bool {
@@ -30,12 +29,10 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		
 		tableView.register(MasterTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		
+		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
@@ -61,6 +58,10 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 	// MARK: Notifications
 	
+	@objc dynamic func backingStoresDidRebuild(_ notification: Notification) {
+		tableView.reloadData()
+	}
+	
 	@objc dynamic func progressDidChange(_ notification: Notification) {
 		if AccountManager.shared.combinedRefreshProgress.isComplete {
 			refreshControl?.endRefreshing()
@@ -69,14 +70,6 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 
-	@objc func containerChildrenDidChange(_ note: Notification) {
-		rebuildBackingStoresAndReloadDataIfNeeded()
-	}
-	
-	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		rebuildBackingStoresAndReloadDataIfNeeded()
-	}
-	
 	@objc func unreadCountDidChange(_ note: Notification) {
 		
 		guard let representedObject = note.object else {
@@ -112,17 +105,6 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		
 	}
 	
-	@objc func displayNameDidChange(_ note: Notification) {
-		
-		guard let object = note.object else {
-			return
-		}
-		
-		rebuildBackingStoresAndReloadDataIfNeeded()
-		configureCellsForRepresentedObject(object as AnyObject)
-		
-	}
-
 	@objc func userDidAddFeed(_ notification: Notification) {
 		
 		guard let feed = notification.userInfo?[UserInfoKey.feed],
@@ -540,13 +522,13 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 					return
 		}
 		
-		animatingChanges = true
+		nmc.animatingChanges = true
 
 		runCommand(deleteCommand)
 		nmc.rebuildShadowTable()
 		tableView.deleteRows(at: [indexPath], with: .automatic)
 		
-		animatingChanges = false
+		nmc.animatingChanges = false
 		
 	}
 	
@@ -632,14 +614,6 @@ private extension MasterViewController {
 		AccountManager.shared.refreshAll()
 	}
 	
-	func rebuildBackingStoresAndReloadDataIfNeeded() {
-		if !animatingChanges && !BatchUpdate.shared.isPerforming {
-			nmc.treeController.rebuild()
-			nmc.rebuildShadowTable()
-			tableView.reloadData()
-		}
-	}
-	
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
 		
 		applyToCellsForRepresentedObject(representedObject, configure)
@@ -686,7 +660,7 @@ private extension MasterViewController {
 		}
 		nmc.expandedNodes.append(expandNode)
 		
-		animatingChanges = true
+		nmc.animatingChanges = true
 		
 		var indexPathsToInsert = [IndexPath]()
 		var i = 0
@@ -710,7 +684,7 @@ private extension MasterViewController {
 		tableView.insertRows(at: indexPathsToInsert, with: .automatic)
 		tableView.endUpdates()
 		
-		animatingChanges = false
+		nmc.animatingChanges = false
 		
 	}
 	
@@ -726,7 +700,7 @@ private extension MasterViewController {
 		let expandNode = nmc.shadowTable[indexPath.section][indexPath.row]
 		nmc.expandedNodes.append(expandNode)
 		
-		animatingChanges = true
+		nmc.animatingChanges = true
 		
 		var indexPathsToInsert = [IndexPath]()
 		for i in 0..<expandNode.childNodes.count {
@@ -741,13 +715,13 @@ private extension MasterViewController {
 		tableView.insertRows(at: indexPathsToInsert, with: .automatic)
 		tableView.endUpdates()
 		
-		animatingChanges = false
+		nmc.animatingChanges = false
 		
 	}
 	
 	func collapse(section: Int) {
 
-		animatingChanges = true
+		nmc.animatingChanges = true
 		
 		guard let collapseNode = nmc.treeController.rootNode.childAtIndex(section) else {
 			return
@@ -767,7 +741,7 @@ private extension MasterViewController {
 		tableView.deleteRows(at: indexPathsToRemove, with: .automatic)
 		tableView.endUpdates()
 		
-		animatingChanges = false
+		nmc.animatingChanges = false
 		
 	}
 	
@@ -780,7 +754,7 @@ private extension MasterViewController {
 	
 	func collapse(_ indexPath: IndexPath) {
 		
-		animatingChanges = true
+		nmc.animatingChanges = true
 		
 		let collapseNode = nmc.shadowTable[indexPath.section][indexPath.row]
 		if let removeNode = nmc.expandedNodes.firstIndex(of: collapseNode) {
@@ -805,7 +779,7 @@ private extension MasterViewController {
 		tableView.deleteRows(at: indexPathsToRemove, with: .automatic)
 		tableView.endUpdates()
 		
-		animatingChanges = false
+		nmc.animatingChanges = false
 		
 	}
 	
