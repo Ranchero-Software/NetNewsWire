@@ -173,6 +173,114 @@ class NavigationModelController {
 		return nil
 	}
 	
+	func expand(section: Int, completion: ([IndexPath]) -> ()) {
+		
+		guard let expandNode = treeController.rootNode.childAtIndex(section) else {
+			return
+		}
+		expandedNodes.append(expandNode)
+		
+		animatingChanges = true
+		
+		var indexPathsToInsert = [IndexPath]()
+		var i = 0
+		
+		func addNode(_ node: Node) {
+			indexPathsToInsert.append(IndexPath(row: i, section: section))
+			shadowTable[section].insert(node, at: i)
+			i = i + 1
+		}
+		
+		for child in expandNode.childNodes {
+			addNode(child)
+			if expandedNodes.contains(child) {
+				for gChild in child.childNodes {
+					addNode(gChild)
+				}
+			}
+		}
+		
+		completion(indexPathsToInsert)
+		
+		animatingChanges = false
+		
+	}
+	
+	func expand(_ indexPath: IndexPath, completion: ([IndexPath]) -> ()) {
+		
+		let expandNode = shadowTable[indexPath.section][indexPath.row]
+		expandedNodes.append(expandNode)
+		
+		animatingChanges = true
+		
+		var indexPathsToInsert = [IndexPath]()
+		for i in 0..<expandNode.childNodes.count {
+			if let child = expandNode.childAtIndex(i) {
+				let nextIndex = indexPath.row + i + 1
+				indexPathsToInsert.append(IndexPath(row: nextIndex, section: indexPath.section))
+				shadowTable[indexPath.section].insert(child, at: nextIndex)
+			}
+		}
+		
+		completion(indexPathsToInsert)
+		
+		animatingChanges = false
+		
+	}
+	
+	func collapse(section: Int, completion: ([IndexPath]) -> ()) {
+		
+		animatingChanges = true
+		
+		guard let collapseNode = treeController.rootNode.childAtIndex(section) else {
+			return
+		}
+		
+		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
+			expandedNodes.remove(at: removeNode)
+		}
+		
+		var indexPathsToRemove = [IndexPath]()
+		for i in 0..<shadowTable[section].count {
+			indexPathsToRemove.append(IndexPath(row: i, section: section))
+		}
+		shadowTable[section] = [Node]()
+		
+		completion(indexPathsToRemove)
+		
+		animatingChanges = false
+		
+	}
+	
+	func collapse(_ indexPath: IndexPath, completion: ([IndexPath]) -> ()) {
+		
+		animatingChanges = true
+		
+		let collapseNode = shadowTable[indexPath.section][indexPath.row]
+		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
+			expandedNodes.remove(at: removeNode)
+		}
+		
+		var indexPathsToRemove = [IndexPath]()
+		
+		for child in collapseNode.childNodes {
+			if let index = shadowTable[indexPath.section].firstIndex(of: child) {
+				indexPathsToRemove.append(IndexPath(row: index, section: indexPath.section))
+			}
+		}
+		
+		for child in collapseNode.childNodes {
+			if let index = shadowTable[indexPath.section].firstIndex(of: child) {
+				shadowTable[indexPath.section].remove(at: index)
+			}
+		}
+		
+		completion(indexPathsToRemove)
+		
+		animatingChanges = false
+		
+	}
+	
 	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
 		
 		var indexes = IndexSet()

@@ -122,7 +122,11 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		
-		expand(indexPath)
+		nmc.expand(indexPath) { [weak self] indexPaths in
+			self?.tableView.beginUpdates()
+			self?.tableView.insertRows(at: indexPaths, with: .automatic)
+			self?.tableView.endUpdates()
+		}
 
 		if let indexPath = nmc.indexPathFor(node) {
 			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
@@ -133,7 +137,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: Table View
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
-		return nmc.treeController.rootNode.numberOfChildNodes
+		return nmc.shadowTable.count
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -456,10 +460,18 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		
 		if nmc.expandedNodes.contains(sectionNode) {
 			headerView.disclosureExpanded = false
-			collapse(section: sectionIndex)
+			nmc.collapse(section: sectionIndex) { [weak self] indexPaths in
+				self?.tableView.beginUpdates()
+				self?.tableView.deleteRows(at: indexPaths, with: .automatic)
+				self?.tableView.endUpdates()
+			}
 		} else {
 			headerView.disclosureExpanded = true
-			expand(section: sectionIndex)
+			nmc.expand(section: sectionIndex) { [weak self] indexPaths in
+				self?.tableView.beginUpdates()
+				self?.tableView.insertRows(at: indexPaths, with: .automatic)
+				self?.tableView.endUpdates()
+			}
 		}
 		
 	}
@@ -653,134 +665,26 @@ private extension MasterViewController {
 		return nil
 	}
 
-	func expand(section: Int) {
-		
-		guard let expandNode = nmc.treeController.rootNode.childAtIndex(section) else {
-			return
-		}
-		nmc.expandedNodes.append(expandNode)
-		
-		nmc.animatingChanges = true
-		
-		var indexPathsToInsert = [IndexPath]()
-		var i = 0
-		
-		func addNode(_ node: Node) {
-			indexPathsToInsert.append(IndexPath(row: i, section: section))
-			nmc.shadowTable[section].insert(node, at: i)
-			i = i + 1
-		}
-		
-		for child in expandNode.childNodes {
-			addNode(child)
-			if nmc.expandedNodes.contains(child) {
-				for gChild in child.childNodes {
-					addNode(gChild)
-				}
-			}
-		}
-		
-		tableView.beginUpdates()
-		tableView.insertRows(at: indexPathsToInsert, with: .automatic)
-		tableView.endUpdates()
-		
-		nmc.animatingChanges = false
-		
-	}
-	
 	func expand(_ cell: MasterTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell)  else {
 			return
 		}
-		expand(indexPath)
-	}
-	
-	func expand(_ indexPath: IndexPath) {
-		
-		let expandNode = nmc.shadowTable[indexPath.section][indexPath.row]
-		nmc.expandedNodes.append(expandNode)
-		
-		nmc.animatingChanges = true
-		
-		var indexPathsToInsert = [IndexPath]()
-		for i in 0..<expandNode.childNodes.count {
-			if let child = expandNode.childAtIndex(i) {
-				let nextIndex = indexPath.row + i + 1
-				indexPathsToInsert.append(IndexPath(row: nextIndex, section: indexPath.section))
-				nmc.shadowTable[indexPath.section].insert(child, at: nextIndex)
-			}
+		nmc.expand(indexPath) { [weak self] indexPaths in
+			self?.tableView.beginUpdates()
+			self?.tableView.insertRows(at: indexPaths, with: .automatic)
+			self?.tableView.endUpdates()
 		}
-		
-		tableView.beginUpdates()
-		tableView.insertRows(at: indexPathsToInsert, with: .automatic)
-		tableView.endUpdates()
-		
-		nmc.animatingChanges = false
-		
 	}
-	
-	func collapse(section: Int) {
 
-		nmc.animatingChanges = true
-		
-		guard let collapseNode = nmc.treeController.rootNode.childAtIndex(section) else {
-			return
-		}
-		
-		if let removeNode = nmc.expandedNodes.firstIndex(of: collapseNode) {
-			nmc.expandedNodes.remove(at: removeNode)
-		}
-
-		var indexPathsToRemove = [IndexPath]()
-		for i in 0..<nmc.shadowTable[section].count {
-			indexPathsToRemove.append(IndexPath(row: i, section: section))
-		}
-		nmc.shadowTable[section] = [Node]()
-		
-		tableView.beginUpdates()
-		tableView.deleteRows(at: indexPathsToRemove, with: .automatic)
-		tableView.endUpdates()
-		
-		nmc.animatingChanges = false
-		
-	}
-	
 	func collapse(_ cell: MasterTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell) else {
 			return
 		}
-		collapse(indexPath)
+		nmc.collapse(indexPath) { [weak self] indexPaths in
+			self?.tableView.beginUpdates()
+			self?.tableView.deleteRows(at: indexPaths, with: .automatic)
+			self?.tableView.endUpdates()
+		}
 	}
-	
-	func collapse(_ indexPath: IndexPath) {
-		
-		nmc.animatingChanges = true
-		
-		let collapseNode = nmc.shadowTable[indexPath.section][indexPath.row]
-		if let removeNode = nmc.expandedNodes.firstIndex(of: collapseNode) {
-			nmc.expandedNodes.remove(at: removeNode)
-		}
-		
-		var indexPathsToRemove = [IndexPath]()
-		
-		for child in collapseNode.childNodes {
-			if let index = nmc.shadowTable[indexPath.section].firstIndex(of: child) {
-				indexPathsToRemove.append(IndexPath(row: index, section: indexPath.section))
-			}
-		}
-		
-		for child in collapseNode.childNodes {
-			if let index = nmc.shadowTable[indexPath.section].firstIndex(of: child) {
-				nmc.shadowTable[indexPath.section].remove(at: index)
-			}
-		}
-		
-		tableView.beginUpdates()
-		tableView.deleteRows(at: indexPathsToRemove, with: .automatic)
-		tableView.endUpdates()
-		
-		nmc.animatingChanges = false
-		
-	}
-	
+
 }
