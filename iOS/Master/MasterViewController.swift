@@ -137,11 +137,11 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: Table View
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
-		return navState.shadowTable.count
+		return navState.numberOfSections
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return navState.shadowTable[section].count
+		return navState.rowsInSection(section)
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -168,7 +168,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		headerView.tag = section
-		headerView.disclosureExpanded = navState.expandedNodes.contains(sectionNode)
+		headerView.disclosureExpanded = navState.isExpanded(sectionNode)
 
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
@@ -275,7 +275,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
-		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !navState.expandedNodes.contains(destNode)) {
+		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !navState.isExpanded(destNode)) {
 			let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
 			return IndexPath(row: destIndexPath.row + movementAdjustment, section: destIndexPath.section)
 		}
@@ -458,7 +458,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 					return
 		}
 		
-		if navState.expandedNodes.contains(sectionNode) {
+		if navState.isExpanded(sectionNode) {
 			headerView.disclosureExpanded = false
 			navState.collapse(section: sectionIndex) { [weak self] indexPaths in
 				self?.tableView.beginUpdates()
@@ -486,7 +486,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		} else {
 			cell.indentationLevel = 0
 		}
-		cell.disclosureExpanded = navState.expandedNodes.contains(node)
+		cell.disclosureExpanded = navState.isExpanded(node)
 		cell.allowDisclosureSelection = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
@@ -534,13 +534,13 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 					return
 		}
 		
-		navState.animatingChanges = true
+		navState.beginUpdates()
 
 		runCommand(deleteCommand)
 		navState.rebuildShadowTable()
 		tableView.deleteRows(at: [indexPath], with: .automatic)
 		
-		navState.animatingChanges = false
+		navState.endUpdates()
 		
 	}
 	

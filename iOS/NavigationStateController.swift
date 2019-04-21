@@ -27,10 +27,9 @@ class NavigationStateController {
 	
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	
-	// Eventually I want these to be private too -Maurice
-	var animatingChanges = false
-	var expandedNodes = [Node]()
-	var shadowTable = [[Node]]()
+	private var animatingChanges = false
+	private var expandedNodes = [Node]()
+	private var shadowTable = [[Node]]()
 	
 	private var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
@@ -47,6 +46,10 @@ class NavigationStateController {
 	
 	var rootNode: Node {
 		return treeController.rootNode
+	}
+	
+	var numberOfSections: Int {
+		return shadowTable.count
 	}
 	
 	var showFeedNames = false {
@@ -178,7 +181,19 @@ class NavigationStateController {
 	}
 
 	// MARK: API
+	
+	func beginUpdates() {
+		animatingChanges = true
+	}
 
+	func endUpdates() {
+		animatingChanges = false
+	}
+	
+	func rowsInSection(_ section: Int) -> Int {
+		return shadowTable[section].count
+	}
+	
 	func rebuildBackingStores() {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
 			treeController.rebuild()
@@ -210,6 +225,10 @@ class NavigationStateController {
 		
 	}
 
+	func isExpanded(_ node: Node) -> Bool {
+		return expandedNodes.contains(node)
+	}
+	
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
 		guard indexPath.section < shadowTable.count || indexPath.row < shadowTable[indexPath.section].count else {
 			return nil
