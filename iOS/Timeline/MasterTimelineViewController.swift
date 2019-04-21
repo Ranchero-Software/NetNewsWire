@@ -17,10 +17,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private var rowHeightWithoutFeedName: CGFloat = 0.0
 	
 	private var currentRowHeight: CGFloat {
-		return nmc.showFeedNames ? rowHeightWithFeedName : rowHeightWithoutFeedName
+		return navState?.showFeedNames ?? false ? rowHeightWithFeedName : rowHeightWithoutFeedName
 	}
 
-	var nmc: NavigationModelController!
+	weak var navState: NavigationStateController?
 	var undoableCommands = [UndoableCommand]()
 	
 	var detailViewController: DetailViewController? {
@@ -47,10 +47,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: nmc)
-		NotificationCenter.default.addObserver(self, selector: #selector(showFeedNamesDidChange(_:)), name: .ShowFeedNamesDidChange, object: nmc)
-		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: nmc)
-		NotificationCenter.default.addObserver(self, selector: #selector(articlesDidChange(_:)), name: .ArticlesDidChange, object: nmc)
+		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(showFeedNamesDidChange(_:)), name: .ShowFeedNamesDidChange, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(articlesDidChange(_:)), name: .ArticlesDidChange, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionChange(_:)), name: .ArticleSelectionChange, object: navState)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -69,14 +70,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "showDetail" {
-			if let indexPath = tableView.indexPathForSelectedRow {
-				let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-				let article = nmc.articles[indexPath.row]
-				controller.article = article
-				controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-				controller.navigationItem.leftItemsSupplementBackButton = true
-				splitViewController?.toggleMasterView()
-			}
+			let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+			controller.navState = navState
+			controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+			controller.navigationItem.leftItemsSupplementBackButton = true
+			splitViewController?.toggleMasterView()
 		}
 	}
 	
@@ -95,7 +93,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
 
-			guard let articles = self?.nmc.articles,
+			guard let articles = self?.navState?.articles,
 				let undoManager = self?.undoManager,
 				let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
 				return
@@ -116,12 +114,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return nmc.articles.count
+        return navState?.articles.count ?? 0
     }
 
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		
-		let article = nmc.articles[indexPath.row]
+		guard let article = navState?.articles[indexPath.row] else {
+			return nil
+		}
 		
 		// Set up the star action
 		let starTitle = article.status.starred ?
@@ -165,7 +165,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
-		let article = nmc.articles[indexPath.row]
+
+		guard let article = navState?.articles[indexPath.row] else {
+			return cell
+		}
 
 		configureTimelineCell(cell, article: article)
 		
@@ -173,10 +176,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		let article = nmc.articles[indexPath.row]
-		if !article.status.read {
-			markArticles(Set([article]), statusKey: .read, flag: true)
-		}
+		navState?.currentArticleIndexPath = indexPath
 	}
 	
 	// MARK: Notifications
@@ -206,7 +206,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		performBlockAndRestoreSelection {
 			tableView.indexPathsForVisibleRows?.forEach { indexPath in
 				
-				guard let article = nmc.articles.articleAtRow(indexPath.row) else {
+				guard let article = navState?.articles.articleAtRow(indexPath.row) else {
 					return
 				}
 				
@@ -222,14 +222,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 		
-		guard nmc.showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+		guard navState?.showAvatars ?? false, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
 		
 		performBlockAndRestoreSelection {
 			tableView.indexPathsForVisibleRows?.forEach { indexPath in
 				
-				guard let article = nmc.articles.articleAtRow(indexPath.row), let authors = article.authors, !authors.isEmpty else {
+				guard let article = navState?.articles.articleAtRow(indexPath.row), let authors = article.authors, !authors.isEmpty else {
 					return
 				}
 				
@@ -245,13 +245,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		if nmc.showAvatars {
+		if navState?.showAvatars ?? false {
 			queueReloadVisableCells()
 		}
 	}
 
 	@objc func articlesReinitialized(_ note: Notification) {
-		if nmc.articles.count > 0 {
+		if navState?.articles.count ?? 0 > 0 {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
 	}
@@ -268,6 +268,17 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		tableView.reloadData()
 	}
 	
+	@objc func articleSelectionChange(_ note: Notification) {
+		
+		if let indexPath = navState?.currentArticleIndexPath, let article = navState?.articles[indexPath.row] {
+			if !article.status.read {
+				markArticles(Set([article]), statusKey: .read, flag: true)
+			}
+			tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+		}
+		
+	}
+
 	// MARK: Reloading
 	
 	@objc func reloadAllVisibleCells() {
@@ -290,8 +301,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		if articleIDs.isEmpty {
 			return
 		}
-		let indexes = nmc.indexesForArticleIDs(articleIDs)
-		reloadVisibleCells(for: indexes)
+		if let indexes = navState?.indexesForArticleIDs(articleIDs) {
+			reloadVisibleCells(for: indexes)
+		}
 	}
 	
 	private func reloadVisibleCells(for indexes: IndexSet) {
@@ -344,13 +356,15 @@ private extension MasterTimelineViewController {
 		}
 		let featuredImage = featuredImageFor(article)
 		
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: nmc.showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: nmc.showAvatars, featuredImage: featuredImage)
+		let showFeedNames = navState?.showFeedNames ?? false
+		let showAvatars = navState?.showAvatars ?? false
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatars, featuredImage: featuredImage)
 		
 	}
 	
 	func avatarFor(_ article: Article) -> UIImage? {
 		
-		if !nmc.showAvatars {
+		if !(navState?.showAvatars ?? false) {
 			return nil
 		}
 		

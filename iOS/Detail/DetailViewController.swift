@@ -14,18 +14,16 @@ import SafariServices
 
 class DetailViewController: UIViewController {
 
+	@IBOutlet weak var nextUnreadBarButtonItem: UIBarButtonItem!
+	@IBOutlet weak var prevArticleBarButtonItem: UIBarButtonItem!
+	@IBOutlet weak var nextArticleBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var readBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var starBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var actionBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var browserBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var webView: WKWebView!
 	
-	var article: Article? {
-		didSet {
-			reloadUI()
-			reloadHTML()
-		}
-	}
+	weak var navState: NavigationStateController?
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -34,11 +32,15 @@ class DetailViewController: UIViewController {
 		reloadUI()
 		reloadHTML()
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionChange(_:)), name: .ArticleSelectionChange, object: navState)
 	}
 
 	func reloadUI() {
 		
-		guard let article = article else {
+		guard let article = navState?.currentArticle else {
+			nextUnreadBarButtonItem.isEnabled = false
+			prevArticleBarButtonItem.isEnabled = false
+			nextArticleBarButtonItem.isEnabled = false
 			readBarButtonItem.isEnabled = false
 			starBarButtonItem.isEnabled = false
 			browserBarButtonItem.isEnabled = false
@@ -46,6 +48,10 @@ class DetailViewController: UIViewController {
 			return
 		}
 		
+		nextArticleBarButtonItem.isEnabled = false
+		prevArticleBarButtonItem.isEnabled = navState?.isPrevArticleAvailable ?? false
+		nextArticleBarButtonItem.isEnabled = navState?.isNextArticleAvailable ?? false
+
 		readBarButtonItem.isEnabled = true
 		starBarButtonItem.isEnabled = true
 		browserBarButtonItem.isEnabled = true
@@ -60,47 +66,67 @@ class DetailViewController: UIViewController {
 	}
 	
 	func reloadHTML() {
-		guard let article = article, let webView = webView else {
+		
+		guard let article = navState?.currentArticle, let webView = webView else {
 			return
 		}
 		let style = ArticleStylesManager.shared.currentStyle
 		let html = ArticleRenderer.articleHTML(article: article, style: style)
 		webView.loadHTMLString(html, baseURL: nil)
+		
 	}
 	
 	@objc func statusesDidChange(_ note: Notification) {
 		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
 			return
 		}
-		if articles.count == 1 && articles.first?.articleID == article?.articleID {
+		if articles.count == 1 && articles.first?.articleID == navState?.currentArticle?.articleID {
 			reloadUI()
 		}
 	}
 
+	@objc func articleSelectionChange(_ note: Notification) {
+		reloadUI()
+		reloadHTML()
+	}
+	
+	// MARK: Actions
+	
+	@IBAction func nextUnread(_ sender: Any) {
+	}
+	
+	@IBAction func prevArticle(_ sender: Any) {
+		navState?.currentArticleIndexPath = navState?.prevArticleIndexPath
+	}
+	
+	@IBAction func nextArticle(_ sender: Any) {
+		navState?.currentArticleIndexPath = navState?.nextArticleIndexPath
+	}
+	
 	@IBAction func toggleRead(_ sender: Any) {
-		if let article = article {
+		if let article = navState?.currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: !article.status.read)
 		}
 	}
 	
 	@IBAction func toggleStar(_ sender: Any) {
-		if let article = article {
+		if let article = navState?.currentArticle {
 			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
 		}
 	}
 	
 	@IBAction func openBrowser(_ sender: Any) {
-		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
+		guard let preferredLink = navState?.currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}
 		UIApplication.shared.open(url, options: [:])
 	}
 	
 	@IBAction func showActivityDialog(_ sender: Any) {
-		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
+		guard let preferredLink = navState?.currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}
-		let itemSource = ArticleActivityItemSource(url: url, subject: article?.title)
+		let itemSource = ArticleActivityItemSource(url: url, subject: navState?.currentArticle?.title)
 		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
 		present(activityViewController, animated: true)
 	}

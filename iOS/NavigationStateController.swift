@@ -18,24 +18,19 @@ public extension Notification.Name {
 	static let ArticlesReinitialized = Notification.Name(rawValue: "ArticlesReinitialized")
 	static let ArticleDataDidChange = Notification.Name(rawValue: "ArticleDataDidChange")
 	static let ArticlesDidChange = Notification.Name(rawValue: "ArticlesDidChange")
+	static let ArticleSelectionChange = Notification.Name(rawValue: "ArticleSelectionChange")
 }
 
-class NavigationModelController {
+class NavigationStateController {
 
 	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	
+	private var articleRowMap = [String: Int]() // articleID: rowIndex
+	
+	// Eventually I want these to be private too -Maurice
 	var animatingChanges = false
 	var expandedNodes = [Node]()
 	var shadowTable = [[Node]]()
-	
-	let treeControllerDelegate = FeedTreeControllerDelegate()
-	lazy var treeController: TreeController = {
-		return TreeController(delegate: treeControllerDelegate)
-	}()
-	
-	var rootNode: Node {
-		return treeController.rootNode
-	}
 	
 	private var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
@@ -43,6 +38,15 @@ class NavigationModelController {
 				sortDirectionDidChange()
 			}
 		}
+	}
+
+	private let treeControllerDelegate = FeedTreeControllerDelegate()
+	lazy var treeController: TreeController = {
+		return TreeController(delegate: treeControllerDelegate)
+	}()
+	
+	var rootNode: Node {
+		return treeController.rootNode
 	}
 	
 	var showFeedNames = false {
@@ -54,6 +58,7 @@ class NavigationModelController {
 	
 	var timelineFetcher: ArticleFetcher? {
 		didSet {
+			currentArticleIndexPath = nil
 			if timelineFetcher is Feed {
 				showFeedNames = false
 			} else {
@@ -63,7 +68,50 @@ class NavigationModelController {
 			NotificationCenter.default.post(name: .ArticlesReinitialized, object: self, userInfo: nil)
 		}
 	}
-
+	
+	var isPrevArticleAvailable: Bool {
+		guard let indexPath = currentArticleIndexPath else {
+			return false
+		}
+		return indexPath.row > 0
+	}
+	
+	var isNextArticleAvailable: Bool {
+		guard let indexPath = currentArticleIndexPath else {
+			return false
+		}
+		return indexPath.row + 1 < articles.count
+	}
+	
+	var prevArticleIndexPath: IndexPath? {
+		guard let indexPath = currentArticleIndexPath else {
+			return nil
+		}
+		return IndexPath(row: indexPath.row - 1, section: indexPath.section)
+	}
+	
+	var nextArticleIndexPath: IndexPath? {
+		guard let indexPath = currentArticleIndexPath else {
+			return nil
+		}
+		return IndexPath(row: indexPath.row + 1, section: indexPath.section)
+	}
+	
+	var currentArticle: Article? {
+		if let indexPath = currentArticleIndexPath {
+			return articles[indexPath.row]
+		}
+		return nil
+	}
+	
+	var currentArticleIndexPath: IndexPath? {
+		didSet {
+			if currentArticleIndexPath != oldValue {
+				NotificationCenter.default.post(name: .ArticleSelectionChange, object: self, userInfo: nil)
+			}
+		}
+	}
+	
 	var articles = ArticleArray() {
 		didSet {
 			if articles == oldValue {
@@ -80,8 +128,6 @@ class NavigationModelController {
 		}
 	}
 	
-	private var articleRowMap = [String: Int]() // articleID: rowIndex
-
 	init() {
 
 		for section in treeController.rootNode.childNodes {
@@ -165,6 +211,9 @@ class NavigationModelController {
 	}
 
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
+		guard indexPath.section < shadowTable.count || indexPath.row < shadowTable[indexPath.section].count else {
+			return nil
+		}
 		return shadowTable[indexPath.section][indexPath.row]
 	}
 	
@@ -303,7 +352,7 @@ class NavigationModelController {
 	
 }
 
-private extension NavigationModelController {
+private extension NavigationStateController {
 
 	// MARK: Fetching Articles
 	
@@ -358,7 +407,7 @@ private extension NavigationModelController {
 	}
 	
 	func queueFetchAndMergeArticles() {
-		NavigationModelController.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
+		NavigationStateController.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
 	}
 	
 	@objc func fetchAndMergeArticles() {
