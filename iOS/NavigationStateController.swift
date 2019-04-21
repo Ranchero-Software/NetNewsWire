@@ -194,14 +194,6 @@ class NavigationStateController {
 		return shadowTable[section].count
 	}
 	
-	func rebuildBackingStores() {
-		if !animatingChanges && !BatchUpdate.shared.isPerforming {
-			treeController.rebuild()
-			rebuildShadowTable()
-			NotificationCenter.default.post(name: .BackingStoresDidRebuild, object: self, userInfo: nil)
-		}
-	}
-	
 	func rebuildShadowTable() {
 		
 		for i in 0..<treeController.rootNode.numberOfChildNodes {
@@ -373,6 +365,14 @@ class NavigationStateController {
 
 private extension NavigationStateController {
 
+	func rebuildBackingStores() {
+		if !animatingChanges && !BatchUpdate.shared.isPerforming {
+			treeController.rebuild()
+			rebuildShadowTable()
+			NotificationCenter.default.post(name: .BackingStoresDidRebuild, object: self, userInfo: nil)
+		}
+	}
+	
 	// MARK: Fetching Articles
 	
 	func fetchArticles() {
