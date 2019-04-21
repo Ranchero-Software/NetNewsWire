@@ -10,6 +10,7 @@ import UIKit
 import WebKit
 import Account
 import Articles
+import SafariServices
 
 class DetailViewController: UIViewController {
 
@@ -142,7 +143,8 @@ extension DetailViewController: WKNavigationDelegate {
 			
 			let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 			if components?.scheme == "http" || components?.scheme == "https" {
-				UIApplication.shared.open(url)
+				let vc = SFSafariViewController(url: url)
+				present(vc, animated: true)
 				decisionHandler(.cancel)
 			} else {
 				decisionHandler(.allow)
