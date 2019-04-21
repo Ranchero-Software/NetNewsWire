@@ -39,7 +39,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t8d-md-Yhc">
-                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <wkWebViewConfiguration key="configuration">
                                     <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
@@ -56,31 +56,35 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
                     </view>
-                    <toolbarItems/>
-                    <navigationItem key="navigationItem" id="mOI-FS-AaM">
-                        <rightBarButtonItems>
-                            <barButtonItem systemItem="action" id="9Ut-5B-JKP">
-                                <connections>
-                                    <action selector="showActivityDialog:" destination="JEX-9P-axG" id="t7U-uT-fs5"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem image="browserImage" id="DMh-3X-ebd">
-                                <connections>
-                                    <action selector="openBrowser:" destination="JEX-9P-axG" id="R0r-fI-NI7"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem image="starOpenImage" id="wU4-eH-wC9">
-                                <connections>
-                                    <action selector="toggleStar:" destination="JEX-9P-axG" id="4Mp-Ir-N5v"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem image="circleOpenImage" id="hy0-LS-MzE">
-                                <connections>
-                                    <action selector="toggleRead:" destination="JEX-9P-axG" id="A8V-r1-o9u"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
-                    </navigationItem>
+                    <toolbarItems>
+                        <barButtonItem enabled="NO" image="nextUnreadImage" id="2w5-e9-C2V"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="Myj-ux-Zc5"/>
+                        <barButtonItem image="circleOpenImage" id="hy0-LS-MzE">
+                            <connections>
+                                <action selector="toggleRead:" destination="JEX-9P-axG" id="A8V-r1-o9u"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="n8Q-7d-yb4"/>
+                        <barButtonItem image="starOpenImage" id="wU4-eH-wC9">
+                            <connections>
+                                <action selector="toggleStar:" destination="JEX-9P-axG" id="4Mp-Ir-N5v"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="bf9-AH-def"/>
+                        <barButtonItem systemItem="action" id="9Ut-5B-JKP">
+                            <connections>
+                                <action selector="showActivityDialog:" destination="JEX-9P-axG" id="t7U-uT-fs5"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="KUq-GZ-WY9"/>
+                        <barButtonItem image="browserImage" id="DMh-3X-ebd">
+                            <connections>
+                                <action selector="openBrowser:" destination="JEX-9P-axG" id="R0r-fI-NI7"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
+                    <navigationItem key="navigationItem" id="mOI-FS-AaM"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="actionBarButtonItem" destination="9Ut-5B-JKP" id="9bO-kz-cTz"/>
                         <outlet property="browserBarButtonItem" destination="DMh-3X-ebd" id="PkT-Tn-8kG"/>
@@ -125,6 +129,8 @@
                                 <action selector="markAllAsRead:" destination="Kyk-vK-QRX" id="4nd-Gg-APm"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="93y-8j-WBh"/>
+                        <barButtonItem enabled="NO" title="First Unread" id="2v2-jD-C9k"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Timeline" largeTitleDisplayMode="never" id="wcC-1L-ug4"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
@@ -220,11 +226,15 @@
         <!--Navigation Controller-->
         <scene sceneID="r7l-gg-dq7">
             <objects>
-                <navigationController storyboardIdentifier="DetailNavigationViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="vC3-pB-5Vb" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="DetailNavigationViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" toolbarHidden="NO" id="vC3-pB-5Vb" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="DjV-YW-jjY">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Skn-vK-czG">
+                        <rect key="frame" x="0.0" y="813" width="414" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="JEX-9P-axG" kind="relationship" relationship="rootViewController" id="GKi-kA-LjT"/>
                     </connections>
@@ -237,8 +247,9 @@
     <resources>
         <image name="browserImage" width="22" height="22"/>
         <image name="circleOpenImage" width="22" height="22"/>
+        <image name="nextUnreadImage" width="27" height="22"/>
         <image name="settingsImage" width="24" height="24"/>
-        <image name="starOpenImage" width="24" height="24"/>
+        <image name="starOpenImage" width="26" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="RT3-gH-cyN"/>
