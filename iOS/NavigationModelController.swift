@@ -33,6 +33,10 @@ class NavigationModelController {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
 	
+	var rootNode: Node {
+		return treeController.rootNode
+	}
+	
 	private var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {

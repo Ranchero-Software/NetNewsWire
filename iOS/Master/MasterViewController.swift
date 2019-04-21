@@ -77,8 +77,8 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		if let account = representedObject as? Account {
-			if let node = nmc.treeController.rootNode.childNodeRepresentingObject(account) {
-				let sectionIndex = nmc.treeController.rootNode.indexOfChild(node)!
+			if let node = nmc.rootNode.childNodeRepresentingObject(account) {
+				let sectionIndex = nmc.rootNode.indexOfChild(node)!
 				let headerView = tableView.headerView(forSection: sectionIndex) as! MasterTableViewSectionHeader
 				headerView.unreadCount = account.unreadCount
 			}
@@ -108,7 +108,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	@objc func userDidAddFeed(_ notification: Notification) {
 		
 		guard let feed = notification.userInfo?[UserInfoKey.feed],
-			let node = nmc.treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
+			let node = nmc.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
 				return
 		}
 		
@@ -150,14 +150,14 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		
-		guard let nameProvider = nmc.treeController.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
+		guard let nameProvider = nmc.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
 			return nil
 		}
 		
 		let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! MasterTableViewSectionHeader
 		headerView.name = nameProvider.nameForDisplay
 		
-		guard let sectionNode = nmc.treeController.rootNode.childAtIndex(section) else {
+		guard let sectionNode = nmc.rootNode.childAtIndex(section) else {
 			return headerView
 		}
 		
@@ -325,7 +325,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		// Based on the drop we have to determine a node to start looking for a parent container.
 		let destNode: Node = {
 			if destinationIndexPath.row == 0 {
-				return nmc.treeController.rootNode.childAtIndex(destinationIndexPath.section)!
+				return nmc.rootNode.childAtIndex(destinationIndexPath.section)!
 			} else {
 				let movementAdjustment = sourceIndexPath > destinationIndexPath ? 1 : 0
 				let adjustedDestIndexPath = IndexPath(row: destinationIndexPath.row - movementAdjustment, section: destinationIndexPath.section)
@@ -452,7 +452,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
 		
 		guard let sectionIndex = sender.view?.tag,
-			let sectionNode = nmc.treeController.rootNode.childAtIndex(sectionIndex),
+			let sectionNode = nmc.rootNode.childAtIndex(sectionIndex),
 			let headerView = sender.view as? MasterTableViewSectionHeader
 				else {
 					return
