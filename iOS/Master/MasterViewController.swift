@@ -20,6 +20,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	var expandedNodes = [Node]()
 	var shadowTable = [[Node]]()
 	
+	let appModelController = AppModelController()
 	let treeControllerDelegate = FeedTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
@@ -267,21 +268,16 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		
 		let timeline = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
 		
-		if let pseudoFeed = node.representedObject as? PseudoFeed {
-			timeline.title = pseudoFeed.nameForDisplay
-			timeline.representedObjects = [pseudoFeed]
+		if let fetcher = node.representedObject as? ArticleFetcher {
+			appModelController.timelineFetcher = fetcher
 		}
 		
-		if let folder = node.representedObject as? Folder {
-			timeline.title = folder.nameForDisplay
-			timeline.representedObjects = [folder]
+		if let nameProvider = node.representedObject as? DisplayNameProvider {
+			timeline.title = nameProvider.nameForDisplay
 		}
 		
-		if let feed = node.representedObject as? Feed {
-			timeline.title = feed.nameForDisplay
-			timeline.representedObjects = [feed]
-		}
-		
+		timeline.appModelController = appModelController
+
 		self.navigationController?.pushViewController(timeline, animated: true)
 
 	}

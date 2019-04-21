@@ -13,18 +13,16 @@ import Articles
 
 class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
 
-	var undoableCommands = [UndoableCommand]()
-
-	private var showAvatars = false
 	private var rowHeightWithFeedName: CGFloat = 0.0
 	private var rowHeightWithoutFeedName: CGFloat = 0.0
 	
 	private var currentRowHeight: CGFloat {
-		return showFeedNames ? rowHeightWithFeedName : rowHeightWithoutFeedName
+		return appModelController.showFeedNames ? rowHeightWithFeedName : rowHeightWithoutFeedName
 	}
 
-	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
-
+	var appModelController: AppModelController!
+	var undoableCommands = [UndoableCommand]()
+	
 	var detailViewController: DetailViewController? {
 		if let split = splitViewController {
 			let controllers = split.viewControllers
@@ -32,69 +30,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 		return nil
 	}
-	
-	var representedObjects: [AnyObject]? {
-		didSet {
-			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
-				
-				if let representedObjects = representedObjects {
-					if representedObjects.count == 1 && representedObjects.first is Feed {
-						showFeedNames = false
-					}
-					else {
-						showFeedNames = true
-					}
-				}
-				else {
-					showFeedNames = false
-				}
-				
-				fetchArticles()
-				if articles.count > 0 {
-					tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-				}
-				
-			}
-		}
-	}
-	
-	var articles = ArticleArray() {
-		didSet {
-			if articles == oldValue {
-				return
-			}
-			if articles.representSameArticlesInSameOrder(as: oldValue) {
-				// When the array is the same — same articles, same order —
-				// but some data in some of the articles may have changed.
-				// Just reload visible cells in this case: don’t call reloadData.
-				articleRowMap = [String: Int]()
-				reloadAllVisibleCells()
-				return
-			}
-			updateShowAvatars()
-			articleRowMap = [String: Int]()
-			tableView.reloadData()
-		}
-	}
-
-	private var articleRowMap = [String: Int]() // articleID: rowIndex
-	private var showFeedNames = false {
-		didSet {
-			if showFeedNames != oldValue {
-				updateShowAvatars()
-				updateTableViewRowHeight()
-			}
-		}
-	}
-	
-	private var sortDirection = AppDefaults.timelineSortDirection {
-		didSet {
-			if sortDirection != oldValue {
-				sortDirectionDidChange()
-			}
-		}
-	}
-	
+		
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -109,9 +45,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+
+		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: appModelController)
+		NotificationCenter.default.addObserver(self, selector: #selector(showFeedNamesDidChange(_:)), name: .ShowFeedNamesDidChange, object: appModelController)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: appModelController)
+		NotificationCenter.default.addObserver(self, selector: #selector(articlesDidChange(_:)), name: .ArticlesDidChange, object: appModelController)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -132,7 +71,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		if segue.identifier == "showDetail" {
 			if let indexPath = tableView.indexPathForSelectedRow {
 				let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-				let article = articles[indexPath.row]
+				let article = appModelController.articles[indexPath.row]
 				controller.article = article
 				controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
 				controller.navigationItem.leftItemsSupplementBackButton = true
@@ -156,7 +95,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
 
-			guard let articles = self?.articles,
+			guard let articles = self?.appModelController.articles,
 				let undoManager = self?.undoManager,
 				let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
 				return
@@ -177,12 +116,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return articles.count
+        return appModelController.articles.count
     }
 
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		
-		let article = articles[indexPath.row]
+		let article = appModelController.articles[indexPath.row]
 		
 		// Set up the star action
 		let starTitle = article.status.starred ?
@@ -226,7 +165,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
-		let article = articles[indexPath.row]
+		let article = appModelController.articles[indexPath.row]
 
 		configureTimelineCell(cell, article: article)
 		
@@ -234,7 +173,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		let article = articles[indexPath.row]
+		let article = appModelController.articles[indexPath.row]
 		if !article.status.read {
 			markArticles(Set([article]), statusKey: .read, flag: true)
 		}
@@ -267,7 +206,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		performBlockAndRestoreSelection {
 			tableView.indexPathsForVisibleRows?.forEach { indexPath in
 				
-				guard let article = articles.articleAtRow(indexPath.row) else {
+				guard let article = appModelController.articles.articleAtRow(indexPath.row) else {
 					return
 				}
 				
@@ -283,14 +222,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 		
-		guard showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+		guard appModelController.showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
 		
 		performBlockAndRestoreSelection {
 			tableView.indexPathsForVisibleRows?.forEach { indexPath in
 				
-				guard let article = articles.articleAtRow(indexPath.row), let authors = article.authors, !authors.isEmpty else {
+				guard let article = appModelController.articles.articleAtRow(indexPath.row), let authors = article.authors, !authors.isEmpty else {
 					return
 				}
 				
@@ -306,27 +245,29 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		if showAvatars {
+		if appModelController.showAvatars {
 			queueReloadVisableCells()
 		}
 	}
 
-	@objc func accountDidDownloadArticles(_ note: Notification) {
-		
-		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
-			return
-		}
-		
-		let shouldFetchAndMergeArticles = representedObjectsContainsAnyFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
-		if shouldFetchAndMergeArticles {
-			queueFetchAndMergeArticles()
+	@objc func articlesReinitialized(_ note: Notification) {
+		if appModelController.articles.count > 0 {
+			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
 	}
 	
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		self.sortDirection = AppDefaults.timelineSortDirection
+	@objc func showFeedNamesDidChange(_ note: Notification) {
+		updateTableViewRowHeight()
 	}
-
+	
+	@objc func articleDataDidChange(_ note: Notification) {
+		reloadAllVisibleCells()
+	}
+	
+	@objc func articlesDidChange(_ note: Notification) {
+		tableView.reloadData()
+	}
+	
 	// MARK: Reloading
 	
 	@objc func reloadAllVisibleCells() {
@@ -349,7 +290,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		if articleIDs.isEmpty {
 			return
 		}
-		let indexes = indexesForArticleIDs(articleIDs)
+		let indexes = appModelController.indexesForArticleIDs(articleIDs)
 		reloadVisibleCells(for: indexes)
 	}
 	
@@ -385,26 +326,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		updateTableViewRowHeight()
 	}
 	
-	@objc func fetchAndMergeArticles() {
-		
-		guard let representedObjects = representedObjects else {
-			return
-		}
-		
-		var unsortedArticles = fetchUnsortedArticles(for: representedObjects)
-		
-		// Merge articles by articleID. For any unique articleID in current articles, add to unsortedArticles.
-		let unsortedArticleIDs = unsortedArticles.articleIDs()
-		for article in articles {
-			if !unsortedArticleIDs.contains(article.articleID) {
-				unsortedArticles.insert(article)
-			}
-		}
-		
-		updateArticles(with: unsortedArticles)
-
-	}
-
 }
 
 // MARK: Private
@@ -423,13 +344,13 @@ private extension MasterTimelineViewController {
 		}
 		let featuredImage = featuredImageFor(article)
 		
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatars, featuredImage: featuredImage)
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: appModelController.showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: appModelController.showAvatars, featuredImage: featuredImage)
 		
 	}
 	
 	func avatarFor(_ article: Article) -> UIImage? {
 		
-		if !showAvatars {
+		if !appModelController.showAvatars {
 			return nil
 		}
 		
@@ -468,73 +389,6 @@ private extension MasterTimelineViewController {
 		tableView.rowHeight = currentRowHeight
 		tableView.estimatedRowHeight = currentRowHeight
 	}
-	
-	func updateShowAvatars() {
-		
-		if showFeedNames {
-			self.showAvatars = true
-			return
-		}
-		
-		for article in articles {
-			if let authors = article.authors {
-				for author in authors {
-					if author.avatarURL != nil {
-						self.showAvatars = true
-						return
-					}
-				}
-			}
-		}
-		
-		self.showAvatars = false
-	}
-
-	func representedObjectArraysAreEqual(_ objects1: [AnyObject]?, _ objects2: [AnyObject]?) -> Bool {
-		
-		if objects1 == nil && objects2 == nil {
-			return true
-		}
-		guard let objects1 = objects1, let objects2 = objects2 else {
-			return false
-		}
-		if objects1.count != objects2.count {
-			return false
-		}
-		
-		var ix = 0
-		for oneObject in objects1 {
-			if oneObject !== objects2[ix] {
-				return false
-			}
-			ix += 1
-		}
-		return true
-	}
-
-	// MARK: Fetching Articles
-	
-	func fetchArticles() {
-		
-		guard let representedObjects = representedObjects else {
-			emptyTheTimeline()
-			return
-		}
-		
-		let fetchedArticles = fetchUnsortedArticles(for: representedObjects)
-		updateArticles(with: fetchedArticles)
-		
-	}
-	
-	func emptyTheTimeline() {
-		if !articles.isEmpty {
-			articles = [Article]()
-		}
-	}
-
-	func sortDirectionDidChange() {
-		updateArticles(with: Set(articles))
-	}
 
 	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
 		let indexPaths = tableView.indexPathsForSelectedRows
@@ -542,108 +396,6 @@ private extension MasterTimelineViewController {
 		indexPaths?.forEach { [weak self] indexPath in
 			self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 		}
-	}
-
-	func updateArticles(with unsortedArticles: Set<Article>) {
-		
-		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
-		if articles != sortedArticles {
-			articles = sortedArticles
-		}
-		
-	}
-	
-	func fetchUnsortedArticles(for representedObjects: [Any]) -> Set<Article> {
-		
-		var fetchedArticles = Set<Article>()
-		
-		for object in representedObjects {
-			
-			if let articleFetcher = object as? ArticleFetcher {
-				fetchedArticles.formUnion(articleFetcher.fetchArticles())
-			}
-		}
-		
-		return fetchedArticles
-	}
-
-	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
-		
-		var indexes = IndexSet()
-		
-		articleIDs.forEach { (articleID) in
-			guard let oneIndex = row(for: articleID) else {
-				return
-			}
-			if oneIndex != NSNotFound {
-				indexes.insert(oneIndex)
-			}
-		}
-		
-		return indexes
-	}
-
-	func row(for articleID: String) -> Int? {
-		updateArticleRowMapIfNeeded()
-		return articleRowMap[articleID]
-	}
-	
-	func updateArticleRowMap() {
-		var rowMap = [String: Int]()
-		var index = 0
-		articles.forEach { (article) in
-			rowMap[article.articleID] = index
-			index += 1
-		}
-		articleRowMap = rowMap
-	}
-	
-	func updateArticleRowMapIfNeeded() {
-		if articleRowMap.isEmpty {
-			updateArticleRowMap()
-		}
-	}
-
-	func queueFetchAndMergeArticles() {
-		MasterTimelineViewController.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
-	}
-	
-	func representedObjectsContainsAnyPseudoFeed() -> Bool {
-		guard let representedObjects = representedObjects else {
-			return false
-		}
-		for representedObject in representedObjects {
-			if representedObject is PseudoFeed {
-				return true
-			}
-		}
-		return false
-	}
-	
-	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
-		
-		// Return true if there’s a match or if a folder contains (recursively) one of feeds
-		
-		guard let representedObjects = representedObjects else {
-			return false
-		}
-		for representedObject in representedObjects {
-			if let feed = representedObject as? Feed {
-				for oneFeed in feeds {
-					if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
-						return true
-					}
-				}
-			}
-			else if let folder = representedObject as? Folder {
-				for oneFeed in feeds {
-					if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
-						return true
-					}
-				}
-			}
-		}
-		return false
 	}
 	
 }
