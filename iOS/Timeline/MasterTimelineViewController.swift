@@ -359,7 +359,7 @@ private extension MasterTimelineViewController {
 
 	func changeToDisplayMode(_ displayMode: UISplitViewController.DisplayMode) {
 		
-		if displayMode == .allVisible {
+		if UIDevice.current.userInterfaceIdiom == .pad && displayMode == .allVisible {
 			nextUnreadButton.isEnabled = false
 			nextUnreadButton.title = ""
 		} else {
