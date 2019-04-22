@@ -36,6 +36,8 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
+		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: navState)
+
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
@@ -134,6 +136,16 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 	}
 
+	@objc func masterSelectionDidChange(_ note: Notification) {
+		
+		if let indexPath = navState.currentMasterIndexPath {
+			if tableView.indexPathForSelectedRow != indexPath {
+				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+			}
+		}
+		
+	}
+	
 	// MARK: Table View
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -231,23 +243,9 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
-		guard let node = navState.nodeFor(indexPath) else {
-			assertionFailure()
-			return
-		}
-		
 		let timeline = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-		
-		if let fetcher = node.representedObject as? ArticleFetcher {
-			navState.timelineFetcher = fetcher
-		}
-		
-		if let nameProvider = node.representedObject as? DisplayNameProvider {
-			timeline.title = nameProvider.nameForDisplay
-		}
-		
 		timeline.navState = navState
-
+		navState.currentMasterIndexPath = indexPath
 		self.navigationController?.pushViewController(timeline, animated: true)
 
 	}

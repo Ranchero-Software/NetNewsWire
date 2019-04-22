@@ -13,12 +13,12 @@ import RSCore
 import RSTree
 
 public extension Notification.Name {
+	static let MasterSelectionDidChange = Notification.Name(rawValue: "MasterSelectionDidChange")
 	static let BackingStoresDidRebuild = Notification.Name(rawValue: "BackingStoresDidRebuild")
-	static let ShowFeedNamesDidChange = Notification.Name(rawValue: "ShowFeedNamesDidChange")
 	static let ArticlesReinitialized = Notification.Name(rawValue: "ArticlesReinitialized")
 	static let ArticleDataDidChange = Notification.Name(rawValue: "ArticleDataDidChange")
 	static let ArticlesDidChange = Notification.Name(rawValue: "ArticlesDidChange")
-	static let ArticleSelectionChange = Notification.Name(rawValue: "ArticleSelectionChange")
+	static let ArticleSelectionDidChange = Notification.Name(rawValue: "ArticleSelectionDidChange")
 }
 
 class NavigationStateController {
@@ -51,13 +51,22 @@ class NavigationStateController {
 	var numberOfSections: Int {
 		return shadowTable.count
 	}
-	
-	var showFeedNames = false {
+
+	var currentMasterIndexPath: IndexPath? {
 		didSet {
-			NotificationCenter.default.post(name: .ShowFeedNamesDidChange, object: self, userInfo: nil)
+			guard let ip = currentMasterIndexPath, let node = nodeFor(ip) else {
+				assertionFailure()
+				return
+			}
+			if let fetcher = node.representedObject as? ArticleFetcher {
+				timelineFetcher = fetcher
+			}
 		}
 	}
-	var showAvatars = false
+	
+	var timelineName: String? {
+		return (timelineFetcher as? DisplayNameProvider)?.nameForDisplay
+	}
 	
 	var timelineFetcher: ArticleFetcher? {
 		didSet {
@@ -72,6 +81,10 @@ class NavigationStateController {
 		}
 	}
 	
+	
+	var showFeedNames = false
+	var showAvatars = false
+
 	var isPrevArticleAvailable: Bool {
 		guard let indexPath = currentArticleIndexPath else {
 			return false
@@ -110,7 +123,7 @@ class NavigationStateController {
 	var currentArticleIndexPath: IndexPath? {
 		didSet {
 			if currentArticleIndexPath != oldValue {
-				NotificationCenter.default.post(name: .ArticleSelectionChange, object: self, userInfo: nil)
+				NotificationCenter.default.post(name: .ArticleSelectionDidChange, object: self, userInfo: nil)
 			}
 		}
 	}

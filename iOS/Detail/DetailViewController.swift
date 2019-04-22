@@ -33,7 +33,7 @@ class DetailViewController: UIViewController {
 		reloadUI()
 		reloadHTML()
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionChange(_:)), name: .ArticleSelectionChange, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: navState)
 	}
 
 	func markAsRead() {
@@ -92,7 +92,7 @@ class DetailViewController: UIViewController {
 		}
 	}
 
-	@objc func articleSelectionChange(_ note: Notification) {
+	@objc func articleSelectionDidChange(_ note: Notification) {
 		markAsRead()
 		reloadUI()
 		reloadHTML()

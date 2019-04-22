@@ -42,15 +42,19 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: navState)
-		NotificationCenter.default.addObserver(self, selector: #selector(showFeedNamesDidChange(_:)), name: .ShowFeedNamesDidChange, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(articlesDidChange(_:)), name: .ArticlesDidChange, object: navState)
-		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionChange(_:)), name: .ArticleSelectionChange, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: navState)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
-		splitViewController?.delegate = self
+		if let splitViewController = splitViewController {
+			splitViewController.delegate = self
+			changeToDisplayMode(splitViewController.displayMode)
+		}
+		
+		reloadUI()
 		
 	}
 	
@@ -247,13 +251,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func articlesReinitialized(_ note: Notification) {
-		if navState?.articles.count ?? 0 > 0 {
-			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-		}
-	}
-	
-	@objc func showFeedNamesDidChange(_ note: Notification) {
-		updateTableViewRowHeight()
+		reloadUI()
 	}
 	
 	@objc func articleDataDidChange(_ note: Notification) {
@@ -264,7 +262,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		tableView.reloadData()
 	}
 	
-	@objc func articleSelectionChange(_ note: Notification) {
+	@objc func articleSelectionDidChange(_ note: Notification) {
 		
 		if let indexPath = navState?.currentArticleIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
@@ -338,6 +336,20 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 extension MasterTimelineViewController: UISplitViewControllerDelegate {
 	
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+		changeToDisplayMode(displayMode)
+	}
+	
+}
+
+// MARK: Private
+
+private extension MasterTimelineViewController {
+
+	@objc private func refreshAccounts(_ sender: Any) {
+		AccountManager.shared.refreshAll()
+	}
+
+	func changeToDisplayMode(_ displayMode: UISplitViewController.DisplayMode) {
 		if displayMode == .allVisible {
 			nextUnreadButton.isEnabled = false
 			nextUnreadButton.title = ""
@@ -347,14 +359,15 @@ extension MasterTimelineViewController: UISplitViewControllerDelegate {
 		}
 	}
 	
-}
-
-// MARK: Private
-
-private extension MasterTimelineViewController {
-	
-	@objc private func refreshAccounts(_ sender: Any) {
-		AccountManager.shared.refreshAll()
+	func reloadUI() {
+		
+		updateTableViewRowHeight()
+		title = navState?.timelineName
+		
+		if navState?.articles.count ?? 0 > 0 {
+			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+		}
+		
 	}
 	
 	func configureTimelineCell(_ cell: MasterTimelineTableViewCell, article: Article) {
