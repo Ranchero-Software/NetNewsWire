@@ -81,8 +81,9 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		if let account = representedObject as? Account {
 			if let node = navState.rootNode.childNodeRepresentingObject(account) {
 				let sectionIndex = navState.rootNode.indexOfChild(node)!
-				let headerView = tableView.headerView(forSection: sectionIndex) as! MasterTableViewSectionHeader
-				headerView.unreadCount = account.unreadCount
+				if let headerView = tableView.headerView(forSection: sectionIndex) as? MasterTableViewSectionHeader {
+					headerView.unreadCount = account.unreadCount
+				}
 			}
 			return
 		}

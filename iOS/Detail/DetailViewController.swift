@@ -55,7 +55,7 @@ class DetailViewController: UIViewController {
 			return
 		}
 		
-		nextArticleBarButtonItem.isEnabled = false
+		nextUnreadBarButtonItem.isEnabled = navState?.isNextUnreadAvailable ?? false
 		prevArticleBarButtonItem.isEnabled = navState?.isPrevArticleAvailable ?? false
 		nextArticleBarButtonItem.isEnabled = navState?.isNextArticleAvailable ?? false
 
@@ -101,6 +101,7 @@ class DetailViewController: UIViewController {
 	// MARK: Actions
 	
 	@IBAction func nextUnread(_ sender: Any) {
+		navState?.selectNextUnread()
 	}
 	
 	@IBAction func prevArticle(_ sender: Any) {

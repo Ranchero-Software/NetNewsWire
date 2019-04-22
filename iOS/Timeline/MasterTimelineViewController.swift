@@ -54,7 +54,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			changeToDisplayMode(splitViewController.displayMode)
 		}
 		
-		reloadUI()
+		resetUI()
 		
 	}
 	
@@ -105,6 +105,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		present(alertController, animated: true)
 		
+	}
+	
+	@IBAction func nextUnread(_ sender: Any) {
+		navState?.selectNextUnread()
 	}
 	
 	// MARK: - Table view
@@ -251,7 +255,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func articlesReinitialized(_ note: Notification) {
-		reloadUI()
+		resetUI()
 	}
 	
 	@objc func articleDataDidChange(_ note: Notification) {
@@ -269,6 +273,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
 			}
 		}
+		
+		reloadUI()
 		
 	}
 
@@ -350,6 +356,7 @@ private extension MasterTimelineViewController {
 	}
 
 	func changeToDisplayMode(_ displayMode: UISplitViewController.DisplayMode) {
+		
 		if displayMode == .allVisible {
 			nextUnreadButton.isEnabled = false
 			nextUnreadButton.title = ""
@@ -357,9 +364,12 @@ private extension MasterTimelineViewController {
 			nextUnreadButton.isEnabled = false
 			nextUnreadButton.title = NSLocalizedString("First Unread", comment: "First Unread")
 		}
+		
+		reloadUI()
+		
 	}
 	
-	func reloadUI() {
+	func resetUI() {
 		
 		updateTableViewRowHeight()
 		title = navState?.timelineName
@@ -368,6 +378,15 @@ private extension MasterTimelineViewController {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
 		
+		reloadUI()
+		
+	}
+	
+	func reloadUI() {
+		// Since there is no hidden property on a bar button item, we just hide its title
+		if !(nextUnreadButton.title?.isEmpty ?? true) {
+			nextUnreadButton.isEnabled = navState?.isNextUnreadAvailable ?? false
+		}
 	}
 	
 	func configureTimelineCell(_ cell: MasterTimelineTableViewCell, article: Article) {

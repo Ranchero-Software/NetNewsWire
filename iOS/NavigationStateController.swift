@@ -61,6 +61,7 @@ class NavigationStateController {
 			if let fetcher = node.representedObject as? ArticleFetcher {
 				timelineFetcher = fetcher
 			}
+			NotificationCenter.default.post(name: .MasterSelectionDidChange, object: self, userInfo: nil)
 		}
 	}
 	
@@ -142,6 +143,10 @@ class NavigationStateController {
 			articleRowMap = [String: Int]()
 			NotificationCenter.default.post(name: .ArticlesDidChange, object: self, userInfo: nil)
 		}
+	}
+	
+	var isNextUnreadAvailable: Bool {
+		return appDelegate.unreadCount > 0
 	}
 	
 	init() {
@@ -374,8 +379,25 @@ class NavigationStateController {
 		return indexes
 	}
 	
+	func selectNextUnread() {
+		
+		// This should never happen, but I don't want to risk throwing us
+		// into an infinate loop searching for an unread that isn't there.
+		if appDelegate.unreadCount < 1 {
+			return
+		}
+		
+		if selectNextUnreadArticleInTimeline() {
+			return
+		}
+		
+		selectNextUnreadFeedFetcher()
+		selectNextUnreadArticleInTimeline()
+		
+	}
+	
 }
-
+	
 private extension NavigationStateController {
 
 	func rebuildBackingStores() {
@@ -384,6 +406,105 @@ private extension NavigationStateController {
 			rebuildShadowTable()
 			NotificationCenter.default.post(name: .BackingStoresDidRebuild, object: self, userInfo: nil)
 		}
+	}
+	
+	func updateShowAvatars() {
+		
+		if showFeedNames {
+			self.showAvatars = true
+			return
+		}
+		
+		for article in articles {
+			if let authors = article.authors {
+				for author in authors {
+					if author.avatarURL != nil {
+						self.showAvatars = true
+						return
+					}
+				}
+			}
+		}
+		
+		self.showAvatars = false
+	}
+	
+	// MARK: Select Next Unread
+
+	@discardableResult
+	func selectNextUnreadArticleInTimeline() -> Bool {
+		
+		let startingRow: Int = {
+			if let indexPath = currentArticleIndexPath {
+				return indexPath.row
+			} else {
+				return 0
+			}
+		}()
+		
+		for i in startingRow..<articles.count {
+			let article = articles[i]
+			if !article.status.read {
+				currentArticleIndexPath = IndexPath(row: i, section: 0)
+				return true
+			}
+		}
+		
+		return false
+		
+	}
+	
+	func selectNextUnreadFeedFetcher() {
+		
+		guard let indexPath = currentMasterIndexPath else {
+			assertionFailure()
+			return
+		}
+		
+		// Increment or wrap around the IndexPath
+		let nextIndexPath: IndexPath = {
+			if indexPath.row + 1 >= shadowTable[indexPath.section].count {
+				if indexPath.section + 1 >= shadowTable.count {
+					return IndexPath(row: 0, section: 0)
+				} else {
+					return IndexPath(row: 0, section: indexPath.section + 1)
+				}
+			} else {
+				return IndexPath(row: indexPath.row + 1, section: indexPath.section)
+			}
+		}()
+		
+		if selectNextUnreadFeedFetcher(startingWith: nextIndexPath) {
+			return
+		}
+		selectNextUnreadFeedFetcher(startingWith: IndexPath(row: 0, section: 0))
+		
+	}
+	
+	@discardableResult
+	func selectNextUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
+		
+		for i in indexPath.section..<shadowTable.count {
+			
+			for j in indexPath.row..<shadowTable[indexPath.section].count {
+				
+				let nextIndexPath = IndexPath(row: j, section: i)
+				guard let node = nodeFor(nextIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
+					assertionFailure()
+					return true
+				}
+				
+				if unreadCountProvider.unreadCount > 0 {
+					currentMasterIndexPath = nextIndexPath
+					return true
+				}
+				
+			}
+			
+		}
+		
+		return false
+		
 	}
 	
 	// MARK: Fetching Articles
@@ -486,32 +607,9 @@ private extension NavigationStateController {
 				}
 			}
 		}
-
+		
 		return false
 		
-	}
-
-	// MARK: Misc
-	
-	func updateShowAvatars() {
-		
-		if showFeedNames {
-			self.showAvatars = true
-			return
-		}
-		
-		for article in articles {
-			if let authors = article.authors {
-				for author in authors {
-					if author.avatarURL != nil {
-						self.showAvatars = true
-						return
-					}
-				}
-			}
-		}
-		
-		self.showAvatars = false
 	}
 	
 }

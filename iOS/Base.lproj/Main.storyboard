@@ -149,7 +149,11 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="93y-8j-WBh"/>
-                        <barButtonItem enabled="NO" title="First Unread" id="2v2-jD-C9k"/>
+                        <barButtonItem enabled="NO" title="First Unread" id="2v2-jD-C9k">
+                            <connections>
+                                <action selector="nextUnread:" destination="Kyk-vK-QRX" id="lwt-VU-zdW"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Timeline" largeTitleDisplayMode="never" id="wcC-1L-ug4"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
