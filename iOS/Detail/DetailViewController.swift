@@ -29,12 +29,19 @@ class DetailViewController: UIViewController {
 		super.viewDidLoad()
 		self.navigationController?.navigationItem.largeTitleDisplayMode = .never
 		webView.navigationDelegate = self
+		markAsRead()
 		reloadUI()
 		reloadHTML()
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionChange(_:)), name: .ArticleSelectionChange, object: navState)
 	}
 
+	func markAsRead() {
+		if let article = navState?.currentArticle {
+			markArticles(Set([article]), statusKey: .read, flag: true)
+		}
+	}
+	
 	func reloadUI() {
 		
 		guard let article = navState?.currentArticle else {
@@ -86,6 +93,7 @@ class DetailViewController: UIViewController {
 	}
 
 	@objc func articleSelectionChange(_ note: Notification) {
+		markAsRead()
 		reloadUI()
 		reloadHTML()
 	}
