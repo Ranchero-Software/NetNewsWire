@@ -20,17 +20,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		return navState?.showFeedNames ?? false ? rowHeightWithFeedName : rowHeightWithoutFeedName
 	}
 
+	@IBOutlet weak var nextUnreadButton: UIBarButtonItem!
+	
 	weak var navState: NavigationStateController?
 	var undoableCommands = [UndoableCommand]()
 	
-	var detailViewController: DetailViewController? {
-		if let split = splitViewController {
-			let controllers = split.viewControllers
-			return (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
-		}
-		return nil
-	}
-		
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -55,6 +49,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
+		splitViewController?.delegate = self
 		
 	}
 	
@@ -335,6 +331,20 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		rowHeightWithFeedName = calculateRowHeight(showingFeedNames: true)
 		rowHeightWithoutFeedName = calculateRowHeight(showingFeedNames: false)
 		updateTableViewRowHeight()
+	}
+	
+}
+
+extension MasterTimelineViewController: UISplitViewControllerDelegate {
+	
+	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+		if displayMode == .allVisible {
+			nextUnreadButton.isEnabled = false
+			nextUnreadButton.title = ""
+		} else {
+			nextUnreadButton.isEnabled = false
+			nextUnreadButton.title = NSLocalizedString("First Unread", comment: "First Unread")
+		}
 	}
 	
 }
