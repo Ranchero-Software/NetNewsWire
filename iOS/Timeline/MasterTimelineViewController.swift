@@ -263,7 +263,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@objc func articlesDidChange(_ note: Notification) {
-		tableView.reloadData()
+		performBlockAndRestoreSelection {
+			tableView.reloadData()
+		}
 	}
 	
 	@objc func articleSelectionDidChange(_ note: Notification) {
