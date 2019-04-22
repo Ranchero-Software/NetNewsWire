@@ -85,7 +85,7 @@ class MasterTableViewCell : UITableViewCell {
 	}
 
 	private let titleView: UILabel = {
-		let label = UILabel()
+		let label = NonIntrinsicLabel()
 		label.numberOfLines = 1
 		label.lineBreakMode = .byTruncatingTail
 		label.allowsDefaultTighteningForTruncation = false

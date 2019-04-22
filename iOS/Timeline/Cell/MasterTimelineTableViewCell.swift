@@ -74,14 +74,14 @@ class MasterTimelineTableViewCell: UITableViewCell {
 private extension MasterTimelineTableViewCell {
 	
 	static func singleLineUILabel() -> UILabel {
-		let label = UILabel()
+		let label = NonIntrinsicLabel()
 		label.lineBreakMode = .byTruncatingTail
 		label.allowsDefaultTighteningForTruncation = false
 		return label
 	}
 	
 	static func multiLineUILabel() -> UILabel {
-		let label = UILabel()
+		let label = NonIntrinsicLabel()
 		label.numberOfLines = 0
 		label.lineBreakMode = .byWordWrapping
 		label.allowsDefaultTighteningForTruncation = false
