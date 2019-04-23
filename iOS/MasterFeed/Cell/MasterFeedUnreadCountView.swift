@@ -16,7 +16,7 @@ private let textFont = UIFont.systemFont(ofSize: 11.0, weight: UIFont.Weight.sem
 private var textAttributes: [NSAttributedString.Key: AnyObject] = [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
 private var textSizeCache = [Int: CGSize]()
 
-class MasterUnreadCountView : UIView {
+class MasterFeedUnreadCountView : UIView {
 	
 	var unreadCount = 0 {
 		didSet {

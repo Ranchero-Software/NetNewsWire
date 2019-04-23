@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MasterTableViewSectionHeader: UITableViewHeaderFooterView {
+class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	override var accessibilityLabel: String? {
 		set {}
@@ -63,7 +63,7 @@ class MasterTableViewSectionHeader: UITableViewHeaderFooterView {
 		return label
 	}()
 	
-	private let unreadCountView = MasterUnreadCountView(frame: CGRect.zero)
+	private let unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
 	private var disclosureView: UIImageView = {
 		let iView = UIImageView()
 		iView.contentMode = .center
@@ -82,14 +82,14 @@ class MasterTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: true)
+		let layout = MasterFeedTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: true)
 		layoutWith(layout)
 	}
 	
 
 }
 
-private extension MasterTableViewSectionHeader {
+private extension MasterFeedTableViewSectionHeader {
 	
 	func commonInit() {
 		let view = UIView()
@@ -114,7 +114,7 @@ private extension MasterTableViewSectionHeader {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
-	func layoutWith(_ layout: MasterTableViewCellLayout) {
+	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureView.setFrameIfNotEqual(layout.disclosureButtonRect)

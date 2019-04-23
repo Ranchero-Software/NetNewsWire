@@ -12,7 +12,7 @@ import Articles
 import RSCore
 import RSTree
 
-class MasterViewController: ProgressTableViewController, UndoableCommandRunner {
+class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunner {
 
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	
@@ -29,7 +29,7 @@ class MasterViewController: ProgressTableViewController, UndoableCommandRunner {
 
 		navigationItem.rightBarButtonItem = editButtonItem
 		
-		tableView.register(MasterTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+		tableView.register(MasterFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
@@ -76,7 +76,7 @@ class MasterViewController: ProgressTableViewController, UndoableCommandRunner {
 		if let account = representedObject as? Account {
 			if let node = navState.rootNode.childNodeRepresentingObject(account) {
 				let sectionIndex = navState.rootNode.indexOfChild(node)!
-				if let headerView = tableView.headerView(forSection: sectionIndex) as? MasterTableViewSectionHeader {
+				if let headerView = tableView.headerView(forSection: sectionIndex) as? MasterFeedTableViewSectionHeader {
 					headerView.unreadCount = account.unreadCount
 				}
 			}
@@ -161,7 +161,7 @@ class MasterViewController: ProgressTableViewController, UndoableCommandRunner {
 			return nil
 		}
 		
-		let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! MasterTableViewSectionHeader
+		let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! MasterFeedTableViewSectionHeader
 		headerView.name = nameProvider.nameForDisplay
 		
 		guard let sectionNode = navState.rootNode.childAtIndex(section) else {
@@ -194,7 +194,7 @@ class MasterViewController: ProgressTableViewController, UndoableCommandRunner {
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTableViewCell
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterFeedTableViewCell
 		
 		guard let node = navState.nodeFor(indexPath) else {
 			return cell
@@ -446,7 +446,7 @@ class MasterViewController: ProgressTableViewController, UndoableCommandRunner {
 		
 		guard let sectionIndex = sender.view?.tag,
 			let sectionNode = navState.rootNode.childAtIndex(sectionIndex),
-			let headerView = sender.view as? MasterTableViewSectionHeader
+			let headerView = sender.view as? MasterFeedTableViewSectionHeader
 				else {
 					return
 		}
@@ -471,7 +471,7 @@ class MasterViewController: ProgressTableViewController, UndoableCommandRunner {
 	
 	// MARK: API
 	
-	func configure(_ cell: MasterTableViewCell, _ node: Node) {
+	func configure(_ cell: MasterFeedTableViewCell, _ node: Node) {
 		
 		cell.delegate = self
 		if node.parent?.representedObject is Folder {
@@ -489,11 +489,11 @@ class MasterViewController: ProgressTableViewController, UndoableCommandRunner {
 		
 	}
 	
-	func configureUnreadCount(_ cell: MasterTableViewCell, _ node: Node) {
+	func configureUnreadCount(_ cell: MasterFeedTableViewCell, _ node: Node) {
 		cell.unreadCount = unreadCountFor(node)
 	}
 	
-	func configureFavicon(_ cell: MasterTableViewCell, _ node: Node) {
+	func configureFavicon(_ cell: MasterFeedTableViewCell, _ node: Node) {
 		cell.faviconImage = imageFor(node)
 	}
 
@@ -581,7 +581,7 @@ class MasterViewController: ProgressTableViewController, UndoableCommandRunner {
 
 // MARK: OPML Document Picker
 
-extension MasterViewController: UIDocumentPickerDelegate {
+extension MasterFeedViewController: UIDocumentPickerDelegate {
 	
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 		
@@ -599,9 +599,9 @@ extension MasterViewController: UIDocumentPickerDelegate {
 
 // MARK: MasterTableViewCellDelegate
 
-extension MasterViewController: MasterTableViewCellDelegate {
+extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 	
-	func disclosureSelected(_ sender: MasterTableViewCell, expanding: Bool) {
+	func disclosureSelected(_ sender: MasterFeedTableViewCell, expanding: Bool) {
 		if expanding {
 			expand(sender)
 		} else {
@@ -613,7 +613,7 @@ extension MasterViewController: MasterTableViewCellDelegate {
 
 // MARK: Private
 
-private extension MasterViewController {
+private extension MasterFeedViewController {
 	
 	@objc private func refreshAccounts(_ sender: Any) {
 		AccountManager.shared.refreshAll()
@@ -633,7 +633,7 @@ private extension MasterViewController {
 		applyToCellsForRepresentedObject(representedObject, configureUnreadCount)
 	}
 	
-	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (MasterTableViewCell, Node) -> Void) {
+	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (MasterFeedTableViewCell, Node) -> Void) {
 		applyToAvailableCells { (cell, node) in
 			if node.representedObject === representedObject {
 				callback(cell, node)
@@ -641,12 +641,12 @@ private extension MasterViewController {
 		}
 	}
 	
-	func applyToAvailableCells(_ callback: (MasterTableViewCell, Node) -> Void) {
+	func applyToAvailableCells(_ callback: (MasterFeedTableViewCell, Node) -> Void) {
 		tableView.visibleCells.forEach { cell in
 			guard let indexPath = tableView.indexPath(for: cell), let node = navState.nodeFor(indexPath) else {
 				return
 			}
-			callback(cell as! MasterTableViewCell, node)
+			callback(cell as! MasterFeedTableViewCell, node)
 		}
 	}
 
@@ -663,7 +663,7 @@ private extension MasterViewController {
 		return nil
 	}
 
-	func expand(_ cell: MasterTableViewCell) {
+	func expand(_ cell: MasterFeedTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell)  else {
 			return
 		}
@@ -674,7 +674,7 @@ private extension MasterViewController {
 		}
 	}
 
-	func collapse(_ cell: MasterTableViewCell) {
+	func collapse(_ cell: MasterFeedTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell) else {
 			return
 		}

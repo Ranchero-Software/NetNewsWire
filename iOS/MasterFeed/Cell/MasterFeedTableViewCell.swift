@@ -11,13 +11,13 @@ import RSCore
 import Account
 import RSTree
 
-protocol MasterTableViewCellDelegate: class {
-	func disclosureSelected(_ sender: MasterTableViewCell, expanding: Bool)
+protocol MasterFeedTableViewCellDelegate: class {
+	func disclosureSelected(_ sender: MasterFeedTableViewCell, expanding: Bool)
 }
 
-class MasterTableViewCell : UITableViewCell {
+class MasterFeedTableViewCell : UITableViewCell {
 
-	weak var delegate: MasterTableViewCellDelegate?
+	weak var delegate: MasterFeedTableViewCellDelegate?
 	var allowDisclosureSelection = false
 
 	override var accessibilityLabel: String? {
@@ -96,7 +96,7 @@ class MasterTableViewCell : UITableViewCell {
 		return UIImageView(image: AppAssets.feedImage)
 	}()
 
-	private let unreadCountView = MasterUnreadCountView(frame: CGRect.zero)
+	private let unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
 	private var showingEditControl = false
 	private var disclosureButton: UIButton?
 	
@@ -113,7 +113,7 @@ class MasterTableViewCell : UITableViewCell {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		let shouldShowDisclosure = !(showingEditControl && showsReorderControl)
-		let layout = MasterTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: shouldShowDisclosure)
+		let layout = MasterFeedTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: shouldShowDisclosure)
 		layoutWith(layout)
 	}
 	
@@ -126,7 +126,7 @@ class MasterTableViewCell : UITableViewCell {
 	
 }
 
-private extension MasterTableViewCell {
+private extension MasterFeedTableViewCell {
 
 	func commonInit() {
 		theme()
@@ -166,7 +166,7 @@ private extension MasterTableViewCell {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 
-	func layoutWith(_ layout: MasterTableViewCellLayout) {
+	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
 		faviconImageView.setFrameIfNotEqual(layout.faviconRect)
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)

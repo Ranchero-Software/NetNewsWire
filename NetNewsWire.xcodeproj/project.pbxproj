@@ -14,7 +14,7 @@
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
 		512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
 		512E08E72268801200BDCFDD /* FeedTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */; };
-		512E09012268907400BDCFDD /* MasterTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E08F722688F7C00BDCFDD /* MasterTableViewSectionHeader.swift */; };
+		512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */; };
 		512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */; };
 		512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteCommand.swift */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
@@ -50,10 +50,10 @@
 		51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */; };
 		51C4525B226508DA00C03939 /* UIImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4524F226506F400C03939 /* UIImage-Extensions.swift */; };
 		51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45250226506F400C03939 /* String-Extensions.swift */; };
-		51C45268226508F600C03939 /* MasterUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45261226508F600C03939 /* MasterUnreadCountView.swift */; };
-		51C45269226508F600C03939 /* MasterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45262226508F600C03939 /* MasterTableViewCell.swift */; };
-		51C4526A226508F600C03939 /* MasterTableViewCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45263226508F600C03939 /* MasterTableViewCellLayout.swift */; };
-		51C4526B226508F600C03939 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45264226508F600C03939 /* MasterViewController.swift */; };
+		51C45268226508F600C03939 /* MasterFeedUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45261226508F600C03939 /* MasterFeedUnreadCountView.swift */; };
+		51C45269226508F600C03939 /* MasterFeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45262226508F600C03939 /* MasterFeedTableViewCell.swift */; };
+		51C4526A226508F600C03939 /* MasterFeedTableViewCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45263226508F600C03939 /* MasterFeedTableViewCellLayout.swift */; };
+		51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45264226508F600C03939 /* MasterFeedViewController.swift */; };
 		51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4526E2265091600C03939 /* MasterTimelineViewController.swift */; };
 		51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452702265091600C03939 /* MultilineUILabelSizer.swift */; };
 		51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452712265091600C03939 /* MasterTimelineCellData.swift */; };
@@ -610,7 +610,7 @@
 		5126EE96226CB48A00C22AFC /* NavigationStateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStateController.swift; sourceTree = "<group>"; };
 		5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailKeyboardDelegate.swift; sourceTree = "<group>"; };
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
-		512E08F722688F7C00BDCFDD /* MasterTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTableViewSectionHeader.swift; sourceTree = "<group>"; };
+		512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeader.swift; sourceTree = "<group>"; };
 		512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISplitViewController-Extensions.swift"; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
@@ -623,10 +623,10 @@
 		51C45250226506F400C03939 /* String-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String-Extensions.swift"; sourceTree = "<group>"; };
 		51C45254226507D200C03939 /* AppAssets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppAssets.swift; sourceTree = "<group>"; };
 		51C45255226507D200C03939 /* AppDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
-		51C45261226508F600C03939 /* MasterUnreadCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterUnreadCountView.swift; sourceTree = "<group>"; };
-		51C45262226508F600C03939 /* MasterTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTableViewCell.swift; sourceTree = "<group>"; };
-		51C45263226508F600C03939 /* MasterTableViewCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTableViewCellLayout.swift; sourceTree = "<group>"; };
-		51C45264226508F600C03939 /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
+		51C45261226508F600C03939 /* MasterFeedUnreadCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterFeedUnreadCountView.swift; sourceTree = "<group>"; };
+		51C45262226508F600C03939 /* MasterFeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewCell.swift; sourceTree = "<group>"; };
+		51C45263226508F600C03939 /* MasterFeedTableViewCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewCellLayout.swift; sourceTree = "<group>"; };
+		51C45264226508F600C03939 /* MasterFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterFeedViewController.swift; sourceTree = "<group>"; };
 		51C4526E2265091600C03939 /* MasterTimelineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineViewController.swift; sourceTree = "<group>"; };
 		51C452702265091600C03939 /* MultilineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultilineUILabelSizer.swift; sourceTree = "<group>"; };
 		51C452712265091600C03939 /* MasterTimelineCellData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineCellData.swift; sourceTree = "<group>"; };
@@ -932,33 +932,33 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		51C4525D226508F600C03939 /* Master */ = {
+		51C4525D226508F600C03939 /* MasterFeed */ = {
 			isa = PBXGroup;
 			children = (
-				51C45264226508F600C03939 /* MasterViewController.swift */,
+				51C45264226508F600C03939 /* MasterFeedViewController.swift */,
 				51C45260226508F600C03939 /* Cell */,
 			);
-			path = Master;
+			path = MasterFeed;
 			sourceTree = "<group>";
 		};
 		51C45260226508F600C03939 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				512E08F722688F7C00BDCFDD /* MasterTableViewSectionHeader.swift */,
-				51C45262226508F600C03939 /* MasterTableViewCell.swift */,
-				51C45263226508F600C03939 /* MasterTableViewCellLayout.swift */,
-				51C45261226508F600C03939 /* MasterUnreadCountView.swift */,
+				512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */,
+				51C45262226508F600C03939 /* MasterFeedTableViewCell.swift */,
+				51C45263226508F600C03939 /* MasterFeedTableViewCellLayout.swift */,
+				51C45261226508F600C03939 /* MasterFeedUnreadCountView.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
 		};
-		51C4526D2265091600C03939 /* Timeline */ = {
+		51C4526D2265091600C03939 /* MasterTimeline */ = {
 			isa = PBXGroup;
 			children = (
 				51C4526E2265091600C03939 /* MasterTimelineViewController.swift */,
 				51C4526F2265091600C03939 /* Cell */,
 			);
-			path = Timeline;
+			path = MasterTimeline;
 			sourceTree = "<group>";
 		};
 		51C4526F2265091600C03939 /* Cell */ = {
@@ -1534,8 +1534,8 @@
 				51C45254226507D200C03939 /* AppAssets.swift */,
 				51C45255226507D200C03939 /* AppDefaults.swift */,
 				5126EE96226CB48A00C22AFC /* NavigationStateController.swift */,
-				51C4525D226508F600C03939 /* Master */,
-				51C4526D2265091600C03939 /* Timeline */,
+				51C4525D226508F600C03939 /* MasterFeed */,
+				51C4526D2265091600C03939 /* MasterTimeline */,
 				51C4527D2265092C00C03939 /* Detail */,
 				51C452802265093600C03939 /* Add */,
 				5183CCDB226F1EEB0010922C /* Progress */,
@@ -2160,7 +2160,7 @@
 				84F3EE1720DEC97E003FADEB /* FeedFinder.swift in Sources */,
 				51C45291226509C800C03939 /* SmartFeed.swift in Sources */,
 				51C452A722650A3D00C03939 /* RSImage-Extensions.swift in Sources */,
-				51C45269226508F600C03939 /* MasterTableViewCell.swift in Sources */,
+				51C45269226508F600C03939 /* MasterFeedTableViewCell.swift in Sources */,
 				51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */,
 				5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */,
 				51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */,
@@ -2170,7 +2170,7 @@
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
 				51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */,
-				51C4526B226508F600C03939 /* MasterViewController.swift in Sources */,
+				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* NavigationStateController.swift in Sources */,
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
@@ -2187,7 +2187,7 @@
 				51C4527C2265091600C03939 /* MasterTimelineCellLayout.swift in Sources */,
 				51C4529A22650A0400C03939 /* ArticleStyle.swift in Sources */,
 				51C4527F2265092C00C03939 /* DetailViewController.swift in Sources */,
-				51C4526A226508F600C03939 /* MasterTableViewCellLayout.swift in Sources */,
+				51C4526A226508F600C03939 /* MasterFeedTableViewCellLayout.swift in Sources */,
 				51C452AE2265104D00C03939 /* TimelineStringFormatter.swift in Sources */,
 				512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */,
 				51C4529922650A0000C03939 /* ArticleStylesManager.swift in Sources */,
@@ -2206,8 +2206,8 @@
 				51C4527A2265091600C03939 /* SingleLineUILabelSizer.swift in Sources */,
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
 				5183CCE3226F314C0010922C /* ProgressTableViewController.swift in Sources */,
-				512E09012268907400BDCFDD /* MasterTableViewSectionHeader.swift in Sources */,
-				51C45268226508F600C03939 /* MasterUnreadCountView.swift in Sources */,
+				512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */,
+				51C45268226508F600C03939 /* MasterFeedUnreadCountView.swift in Sources */,
 				5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */,
 				51C452B1226510E600C03939 /* InitialFeedDownloader.swift in Sources */,
 				51C4529F22650A1900C03939 /* AuthorAvatarDownloader.swift in Sources */,
