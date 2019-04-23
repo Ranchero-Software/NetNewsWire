@@ -26,14 +26,18 @@ class DetailViewController: UIViewController {
 	weak var navState: NavigationStateController?
 	
 	override func viewDidLoad() {
+		
 		super.viewDidLoad()
-		self.navigationController?.navigationItem.largeTitleDisplayMode = .never
 		webView.navigationDelegate = self
+		
 		markAsRead()
-		reloadUI()
+		updateUI()
 		reloadHTML()
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: navState)
+		
 	}
 
 	func markAsRead() {
@@ -42,7 +46,7 @@ class DetailViewController: UIViewController {
 		}
 	}
 	
-	func reloadUI() {
+	func updateUI() {
 		
 		guard let article = navState?.currentArticle else {
 			nextUnreadBarButtonItem.isEnabled = false
@@ -55,7 +59,7 @@ class DetailViewController: UIViewController {
 			return
 		}
 		
-		nextUnreadBarButtonItem.isEnabled = navState?.isNextUnreadAvailable ?? false
+		nextUnreadBarButtonItem.isEnabled = navState?.isAnyUnreadAvailable ?? false
 		prevArticleBarButtonItem.isEnabled = navState?.isPrevArticleAvailable ?? false
 		nextArticleBarButtonItem.isEnabled = navState?.isNextArticleAvailable ?? false
 
@@ -83,18 +87,24 @@ class DetailViewController: UIViewController {
 		
 	}
 	
+	// MARK: Notifications
+	
+	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
+		updateUI()
+	}
+	
 	@objc func statusesDidChange(_ note: Notification) {
 		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
 			return
 		}
 		if articles.count == 1 && articles.first?.articleID == navState?.currentArticle?.articleID {
-			reloadUI()
+			updateUI()
 		}
 	}
 
 	@objc func articleSelectionDidChange(_ note: Notification) {
 		markAsRead()
-		reloadUI()
+		updateUI()
 		reloadHTML()
 	}
 	

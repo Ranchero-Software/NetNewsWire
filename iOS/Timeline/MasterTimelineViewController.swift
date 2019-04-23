@@ -20,7 +20,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		return navState?.showFeedNames ?? false ? rowHeightWithFeedName : rowHeightWithoutFeedName
 	}
 
-	@IBOutlet weak var nextUnreadButton: UIBarButtonItem!
+	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
+	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
 	
 	weak var navState: NavigationStateController?
 	var undoableCommands = [UndoableCommand]()
@@ -34,6 +35,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		super.viewDidLoad()
 		updateRowHeights()
 		
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
@@ -48,11 +50,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		
-		if let splitViewController = splitViewController {
-			splitViewController.delegate = self
-			changeToDisplayMode(splitViewController.displayMode)
-		}
 		
 		resetUI()
 		
@@ -107,8 +104,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 	}
 	
-	@IBAction func nextUnread(_ sender: Any) {
-		navState?.selectNextUnread()
+	@IBAction func firstUnread(_ sender: Any) {
+		if let indexPath = navState?.firstUnreadArticleIndexPath {
+			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+		}
 	}
 	
 	// MARK: - Table view
@@ -193,6 +192,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 	}
 
+	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
+		updateUI()
+	}
+	
 	@objc func statusesDidChange(_ note: Notification) {
 		
 		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
@@ -276,7 +279,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			}
 		}
 		
-		reloadUI()
+		updateUI()
 		
 	}
 
@@ -341,14 +344,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 }
 
-extension MasterTimelineViewController: UISplitViewControllerDelegate {
-	
-	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-		changeToDisplayMode(displayMode)
-	}
-	
-}
-
 // MARK: Private
 
 private extension MasterTimelineViewController {
@@ -357,20 +352,6 @@ private extension MasterTimelineViewController {
 		AccountManager.shared.refreshAll()
 	}
 
-	func changeToDisplayMode(_ displayMode: UISplitViewController.DisplayMode) {
-		
-		if UIDevice.current.userInterfaceIdiom == .pad && displayMode == .allVisible {
-			nextUnreadButton.isEnabled = false
-			nextUnreadButton.title = ""
-		} else {
-			nextUnreadButton.isEnabled = false
-			nextUnreadButton.title = NSLocalizedString("First Unread", comment: "First Unread")
-		}
-		
-		reloadUI()
-		
-	}
-	
 	func resetUI() {
 		
 		updateTableViewRowHeight()
@@ -380,15 +361,13 @@ private extension MasterTimelineViewController {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
 		
-		reloadUI()
+		updateUI()
 		
 	}
 	
-	func reloadUI() {
-		// Since there is no hidden property on a bar button item, we just hide its title
-		if !(nextUnreadButton.title?.isEmpty ?? true) {
-			nextUnreadButton.isEnabled = navState?.isNextUnreadAvailable ?? false
-		}
+	func updateUI() {
+		markAllAsReadButton.isEnabled = navState?.isTimelineUnreadAvailable ?? false
+		firstUnreadButton.isEnabled = navState?.isTimelineUnreadAvailable ?? false
 	}
 	
 	func configureTimelineCell(_ cell: MasterTimelineTableViewCell, article: Article) {

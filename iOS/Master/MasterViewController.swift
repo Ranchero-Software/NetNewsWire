@@ -14,6 +14,8 @@ import RSTree
 
 class MasterViewController: UITableViewController, UndoableCommandRunner {
 
+	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
+	
 	var undoableCommands = [UndoableCommand]()
 	
 	let navState = NavigationStateController()
@@ -29,17 +31,19 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		
 		tableView.register(MasterTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
+		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: navState)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
+		updateUI()
 		
 	}
 
@@ -89,6 +93,7 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		configureUnreadCountForCellsForRepresentedObject(representedObject as AnyObject)
+		updateUI()
 		
 	}
 
@@ -138,13 +143,11 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func masterSelectionDidChange(_ note: Notification) {
-		
 		if let indexPath = navState.currentMasterIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
 			}
 		}
-		
 	}
 	
 	// MARK: Table View
@@ -625,6 +628,10 @@ private extension MasterViewController {
 		AccountManager.shared.refreshAll()
 	}
 	
+	func updateUI() {
+		markAllAsReadButton.isEnabled = navState.isAnyUnreadAvailable
+	}
+
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
 		
 		applyToCellsForRepresentedObject(representedObject, configure)

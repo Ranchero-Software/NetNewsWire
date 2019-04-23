@@ -99,7 +99,7 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" id="mOI-FS-AaM"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="mOI-FS-AaM"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="actionBarButtonItem" destination="9Ut-5B-JKP" id="9bO-kz-cTz"/>
@@ -149,16 +149,17 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="93y-8j-WBh"/>
-                        <barButtonItem enabled="NO" title="First Unread" id="2v2-jD-C9k">
+                        <barButtonItem title="First Unread" id="2v2-jD-C9k">
                             <connections>
-                                <action selector="nextUnread:" destination="Kyk-vK-QRX" id="lwt-VU-zdW"/>
+                                <action selector="firstUnread:" destination="Kyk-vK-QRX" id="d5y-x5-Qht"/>
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Timeline" largeTitleDisplayMode="never" id="wcC-1L-ug4"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="nextUnreadButton" destination="2v2-jD-C9k" id="9rf-5I-18f"/>
+                        <outlet property="firstUnreadButton" destination="2v2-jD-C9k" id="8NP-Uc-3Fn"/>
+                        <outlet property="markAllAsReadButton" destination="fTv-eX-72r" id="12S-lN-Sxa"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nzm-Gf-Xce" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -244,6 +245,9 @@
                         </barButtonItem>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="markAllAsReadButton" destination="ddj-Ya-Wol" id="jjr-OK-4zl"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rux-fX-hf1" sceneMemberID="firstResponder"/>
             </objects>

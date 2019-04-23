@@ -114,6 +114,15 @@ class NavigationStateController {
 		return IndexPath(row: indexPath.row + 1, section: indexPath.section)
 	}
 	
+	var firstUnreadArticleIndexPath: IndexPath? {
+		for (row, article) in articles.enumerated() {
+			if !article.status.read {
+				return IndexPath(row: row, section: 0)
+			}
+		}
+		return nil
+	}
+	
 	var currentArticle: Article? {
 		if let indexPath = currentArticleIndexPath {
 			return articles[indexPath.row]
@@ -145,7 +154,14 @@ class NavigationStateController {
 		}
 	}
 	
-	var isNextUnreadAvailable: Bool {
+	var isTimelineUnreadAvailable: Bool {
+		if let unreadProvider = timelineFetcher as? UnreadCountProvider {
+			return unreadProvider.unreadCount > 0
+		}
+		return false
+	}
+	
+	var isAnyUnreadAvailable: Bool {
 		return appDelegate.unreadCount > 0
 	}
 	
