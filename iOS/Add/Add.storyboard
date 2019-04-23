@@ -172,11 +172,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="1Ce-E7-rG2">
-                                <rect key="frame" x="90.666666666666686" y="108" width="194" height="29"/>
+                                <rect key="frame" x="112.66666666666669" y="108" width="150" height="29"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="150" id="IEO-pf-4PB"/>
+                                </constraints>
                                 <segments>
                                     <segment title="Feed"/>
                                     <segment title="Folder"/>
-                                    <segment title="Account"/>
                                 </segments>
                                 <connections>
                                     <action selector="typeSelectorChanged:" destination="G8j-dh-7Ji" eventType="valueChanged" id="evz-dY-V8G"/>
@@ -340,51 +342,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yp4-mF-DZV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-954.39999999999998" y="89.408866995073893"/>
-        </scene>
-        <!--Add Account View Controller-->
-        <scene sceneID="Wy0-Z6-lrg">
-            <objects>
-                <tableViewController storyboardIdentifier="AddAccountViewController" id="L9h-bF-xeh" customClass="AddAccountViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="1" sectionFooterHeight="5" id="YtA-U7-Ox4">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <sections>
-                            <tableViewSection id="D3p-uk-AI8">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="jst-2Y-7Br">
-                                        <rect key="frame" x="0.0" y="35" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jst-2Y-7Br" id="j6d-MU-b7V">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Coming soon..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6AT-sI-3DG">
-                                                    <rect key="frame" x="130" y="11" width="115" height="22"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="6AT-sI-3DG" firstAttribute="top" secondItem="j6d-MU-b7V" secondAttribute="topMargin" id="AyG-c8-kOT"/>
-                                                <constraint firstItem="6AT-sI-3DG" firstAttribute="centerX" secondItem="j6d-MU-b7V" secondAttribute="centerX" id="Klf-co-7i2"/>
-                                                <constraint firstItem="6AT-sI-3DG" firstAttribute="bottom" secondItem="j6d-MU-b7V" secondAttribute="bottomMargin" id="UOG-ny-eea"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                        </sections>
-                        <connections>
-                            <outlet property="dataSource" destination="L9h-bF-xeh" id="9j2-Wv-4xJ"/>
-                            <outlet property="delegate" destination="L9h-bF-xeh" id="6fV-zk-qu3"/>
-                        </connections>
-                    </tableView>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="aqp-ki-yLv" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-210" y="87"/>
         </scene>
     </scenes>
 </document>

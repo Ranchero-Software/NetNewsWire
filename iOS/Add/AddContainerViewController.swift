@@ -45,10 +45,8 @@ class AddContainerViewController: UIViewController {
 		switch sender.selectedSegmentIndex {
 		case 0:
 			switchToFeed()
-		case 1:
-			switchToFolder()
 		default:
-			switchToAccount()
+			switchToFolder()
 		}
 		
 	}
@@ -108,15 +106,6 @@ private extension AddContainerViewController {
 		resetUI()
 		hideCurrentController()
 		displayContentController(UIStoryboard.add.instantiateController(ofType: AddFolderViewController.self))
-	}
-	
-	func switchToAccount() {
-		guard !(currentViewController is AddAccountViewController) else {
-			return
-		}
-		resetUI()
-		hideCurrentController()
-		displayContentController(UIStoryboard.add.instantiateController(ofType: AddAccountViewController.self))
 	}
 	
 	func resetUI() {
