@@ -23,13 +23,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var feedIconDownloader: FeedIconDownloader!
 	var appName: String!
-	var refreshTimer: Timer?
-	var lastTimedRefresh: Date?
-	let launchTime = Date()
+	var refreshTimer: RefreshTimer?
 	var shuttingDown = false {
 		didSet {
 			if shuttingDown {
-				invalidateRefreshTimer()
+				refreshTimer?.shuttingDown = shuttingDown
+				refreshTimer?.invalidate()
 			}
 		}
 	}
@@ -159,8 +158,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		#endif
 
+		refreshTimer = RefreshTimer(delegate: self)
+		
 		#if DEBUG
-			updateRefreshTimer()
+			refreshTimer!.update()
 		#endif
 
 		#if !MAC_APP_STORE
@@ -187,13 +188,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	func applicationDidBecomeActive(_ notification: Notification) {
 		// It’s possible there’s a refresh timer set to go off in the past.
 		// In that case, refresh now and update the timer.
-		if let timer = refreshTimer {
-			if timer.fireDate < Date() {
-				if AppDefaults.refreshInterval != .manually {
-					timedRefresh(nil)
-				}
-			}
-		}
+		refreshTimer?.fireOldTimer()
 	}
 	
 	func applicationDidResignActive(_ notification: Notification) {
@@ -237,7 +232,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		updateSortMenuItems()
-		updateRefreshTimer()
+		refreshTimer?.update()
 	}
 
 	// MARK: Main Window
@@ -279,54 +274,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return !isDisplayingSheet
 		}
 		return true
-	}
-
-	// MARK: Timed Refresh
-
-	@objc func timedRefresh(_ sender: Timer?) {
-		guard !shuttingDown else {
-			return
-		}
-		lastTimedRefresh = Date()
-		updateRefreshTimer()
-		refreshAll(self)
-	}
-
-	private func invalidateRefreshTimer() {
-		guard let timer = refreshTimer else {
-			return
-		}
-		if timer.isValid {
-			timer.invalidate()
-		}
-		refreshTimer = nil
-	}
-
-	private func updateRefreshTimer() {
-		guard !shuttingDown else {
-			return
-		}
-
-		let refreshInterval = AppDefaults.refreshInterval
-		if refreshInterval == .manually {
-			invalidateRefreshTimer()
-			return
-		}
-		let lastRefreshDate = lastTimedRefresh ?? launchTime
-		let secondsToAdd = refreshInterval.inSeconds()
-		var nextRefreshTime = lastRefreshDate.addingTimeInterval(secondsToAdd)
-		if nextRefreshTime < Date() {
-			nextRefreshTime = Date().addingTimeInterval(secondsToAdd)
-		}
-		if let currentNextFireDate = refreshTimer?.fireDate, currentNextFireDate == nextRefreshTime {
-			return
-		}
-
-		invalidateRefreshTimer()
-		let timer = Timer(fireAt: nextRefreshTime, interval: 0, target: self, selector: #selector(timedRefresh(_:)), userInfo: nil, repeats: false)
-		RunLoop.main.add(timer, forMode: .common)
-		refreshTimer = timer
-		print("Next refresh date: \(nextRefreshTime)")
 	}
 
 	// MARK: Add Feed
@@ -614,3 +561,10 @@ extension AppDelegate : ScriptingAppDelegate {
     }
 }
 
+extension AppDelegate: RefreshTimerDelegate {
+	
+	func refresh() {
+		AccountManager.shared.refreshAll()
+	}
+	
+}

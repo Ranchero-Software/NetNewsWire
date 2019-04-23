@@ -24,6 +24,8 @@
 		5183CCE3226F314C0010922C /* ProgressTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE2226F314C0010922C /* ProgressTableViewController.swift */; };
 		5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		5183CCE6226F4E110010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
+		5183CCE8226F68D90010922C /* RefreshTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE7226F68D90010922C /* RefreshTimer.swift */; };
+		5183CCE9226F68D90010922C /* RefreshTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE7226F68D90010922C /* RefreshTimer.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
 		51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -620,6 +622,7 @@
 		5183CCDE226F1FCC0010922C /* UINavigationController+Progress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Progress.swift"; sourceTree = "<group>"; };
 		5183CCE2226F314C0010922C /* ProgressTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressTableViewController.swift; sourceTree = "<group>"; };
 		5183CCE4226F4DFA0010922C /* RefreshInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshInterval.swift; sourceTree = "<group>"; };
+		5183CCE7226F68D90010922C /* RefreshTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshTimer.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard-Extensions.swift"; sourceTree = "<group>"; };
 		51C4524F226506F400C03939 /* UIImage-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage-Extensions.swift"; sourceTree = "<group>"; };
@@ -922,6 +925,15 @@
 			path = Progress;
 			sourceTree = "<group>";
 		};
+		5183CCEA226F70350010922C /* Refresh */ = {
+			isa = PBXGroup;
+			children = (
+				5183CCE4226F4DFA0010922C /* RefreshInterval.swift */,
+				5183CCE7226F68D90010922C /* RefreshTimer.swift */,
+			);
+			path = Refresh;
+			sourceTree = "<group>";
+		};
 		51C45245226506C800C03939 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1220,7 +1232,6 @@
 			isa = PBXGroup;
 			children = (
 				849A97581ED9EB0D007D329B /* ArticleUtilities.swift */,
-				5183CCE4226F4DFA0010922C /* RefreshInterval.swift */,
 				84411E701FE5FBFA004B527F /* SmallIconProvider.swift */,
 			);
 			path = Data;
@@ -1451,6 +1462,7 @@
 				845213211FCA5B10003B6E93 /* Images */,
 				8426119C1FCB6ED40086A189 /* HTMLMetadata */,
 				84F3EE0420DEC97E003FADEB /* FeedFinder */,
+				5183CCEA226F70350010922C /* Refresh */,
 				849A97561ED9EB0D007D329B /* Data */,
 				512E08DD22687FA000BDCFDD /* Tree */,
 				849A97961ED9EFAA007D329B /* Extensions */,
@@ -2207,6 +2219,7 @@
 				512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */,
 				51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
+				5183CCE9226F68D90010922C /* RefreshTimer.swift in Sources */,
 				51C452882265093600C03939 /* AddFeedViewController.swift in Sources */,
 				51C4527A2265091600C03939 /* SingleLineUILabelSizer.swift in Sources */,
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
@@ -2306,6 +2319,7 @@
 				849A97981ED9EFAA007D329B /* Node-Extensions.swift in Sources */,
 				849EE70F203919360082A1EA /* AppImages.swift in Sources */,
 				849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */,
+				5183CCE8226F68D90010922C /* RefreshTimer.swift in Sources */,
 				849A97831ED9EC63007D329B /* SidebarStatusBarView.swift in Sources */,
 				84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */,
 				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
