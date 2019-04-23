@@ -510,6 +510,10 @@ private extension NavigationStateController {
 					return true
 				}
 				
+				if expandedNodes.contains(node) {
+					continue
+				}
+				
 				if unreadCountProvider.unreadCount > 0 {
 					currentMasterIndexPath = nextIndexPath
 					return true
