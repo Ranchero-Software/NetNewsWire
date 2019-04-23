@@ -87,6 +87,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 	}
 
+	private var showAvatars = false
 	private var rowHeightWithFeedName: CGFloat = 0.0
 	private var rowHeightWithoutFeedName: CGFloat = 0.0
 

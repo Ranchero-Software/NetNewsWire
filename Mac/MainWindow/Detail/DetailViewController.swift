@@ -14,8 +14,6 @@ import RSWeb
 
 enum DetailState: Equatable {
 	case noSelection
-	@IBOutlet weak var nextUnreadButtonItem: UIBarButtonItem!
-	@IBOutlet weak var nextUnreadButtonItem: UIBarButtonItem!
 	case multipleSelection
 	case article(Article)
 }
