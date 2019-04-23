@@ -9,6 +9,7 @@
 import UIKit
 import RSCore
 import Account
+import UserNotifications
 
 var appDelegate: AppDelegate!
 
@@ -28,6 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		didSet {
 			if unreadCount != oldValue {
 				postUnreadCountDidChangeNotification()
+				UIApplication.shared.applicationIconBadgeNumber = unreadCount
 			}
 		}
 	}
@@ -76,6 +78,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
+		}
+		
+		UNUserNotificationCenter.current().requestAuthorization(options:[.badge]) { (granted, error) in
+			if granted {
+				DispatchQueue.main.async {
+					UIApplication.shared.registerForRemoteNotifications()
+				}
+			}
 		}
 		
 		return true
