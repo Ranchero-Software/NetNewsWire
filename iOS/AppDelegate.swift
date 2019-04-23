@@ -24,6 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	var feedIconDownloader: FeedIconDownloader!
 
 	private let log = Log()
+	private var didDownloadArticles = false
 
 	var unreadCount = 0 {
 		didSet {
@@ -87,7 +88,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 				}
 			}
 		}
-		
+
+		// TODO: Remove this testing code...
+//		AppDefaults.refreshInterval = RefreshInterval.every10Minutes
+		UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
+
+		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+
 		return true
 		
 	}
@@ -133,6 +141,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 	}
 
+	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+		
+		AccountManager.shared.refreshAll()
+		while (!AccountManager.shared.combinedRefreshProgress.isComplete) {
+			sleep(1)
+		}
+		
+		if didDownloadArticles {
+			completionHandler(.newData)
+		} else {
+			completionHandler(.noData)
+		}
+		
+	}
+	
 	// MARK: - Split view
 
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
@@ -152,7 +175,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 			unreadCount = AccountManager.shared.unreadCount
 		}
 	}
+	
+	@objc func userDefaultsDidChange(_ note: Notification) {
+		UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
+	}
 
+	@objc func accountDidDownloadArticles(_ note: Notification) {
+		didDownloadArticles = true
+	}
+	
 	// MARK: - API
 	
 	func logMessage(_ message: String, type: LogItem.ItemType) {
