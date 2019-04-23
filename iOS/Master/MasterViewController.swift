@@ -12,7 +12,7 @@ import Articles
 import RSCore
 import RSTree
 
-class MasterViewController: UITableViewController, UndoableCommandRunner {
+class MasterViewController: ProgressTableViewController, UndoableCommandRunner {
 
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	
@@ -35,7 +35,6 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: navState)
@@ -68,14 +67,6 @@ class MasterViewController: UITableViewController, UndoableCommandRunner {
 		tableView.reloadData()
 	}
 	
-	@objc dynamic func progressDidChange(_ notification: Notification) {
-		if AccountManager.shared.combinedRefreshProgress.isComplete {
-			refreshControl?.endRefreshing()
-		} else {
-			refreshControl?.beginRefreshing()
-		}
-	}
-
 	@objc func unreadCountDidChange(_ note: Notification) {
 		
 		guard let representedObject = note.object else {
@@ -626,6 +617,7 @@ private extension MasterViewController {
 	
 	@objc private func refreshAccounts(_ sender: Any) {
 		AccountManager.shared.refreshAll()
+		refreshControl?.endRefreshing()
 	}
 	
 	func updateUI() {

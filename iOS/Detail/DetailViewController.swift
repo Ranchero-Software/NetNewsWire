@@ -37,9 +37,15 @@ class DetailViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: navState)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+
 	}
 
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		updateProgressIndicatorIfNeeded()
+	}
+	
 	func markAsRead() {
 		if let article = navState?.currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: true)
@@ -106,6 +112,10 @@ class DetailViewController: UIViewController {
 		markAsRead()
 		updateUI()
 		reloadHTML()
+	}
+
+	@objc func progressDidChange(_ note: Notification) {
+		updateProgressIndicatorIfNeeded()
 	}
 	
 	// MARK: Actions
@@ -201,6 +211,16 @@ extension DetailViewController: WKNavigationDelegate {
 			
 		}
 		
+	}
+	
+}
+
+private extension DetailViewController {
+	
+	func updateProgressIndicatorIfNeeded() {
+		if !(UIDevice.current.userInterfaceIdiom == .pad) {
+			navigationController?.updateAccountRefreshProgressIndicator()
+		}
 	}
 	
 }

@@ -11,7 +11,7 @@ import RSCore
 import Account
 import Articles
 
-class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
+class MasterTimelineViewController: ProgressTableViewController, UndoableCommandRunner {
 
 	private var rowHeightWithFeedName: CGFloat = 0.0
 	private var rowHeightWithoutFeedName: CGFloat = 0.0
@@ -41,7 +41,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: navState)
@@ -183,14 +182,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	// MARK: Notifications
-
-	@objc dynamic func progressDidChange(_ notification: Notification) {
-		if AccountManager.shared.combinedRefreshProgress.isComplete {
-			refreshControl?.endRefreshing()
-		} else {
-			refreshControl?.beginRefreshing()
-		}
-	}
 
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
 		updateUI()
@@ -350,6 +341,7 @@ private extension MasterTimelineViewController {
 
 	@objc private func refreshAccounts(_ sender: Any) {
 		AccountManager.shared.refreshAll()
+		refreshControl?.endRefreshing()
 	}
 
 	func resetUI() {

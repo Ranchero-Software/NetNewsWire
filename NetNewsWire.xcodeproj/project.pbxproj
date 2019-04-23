@@ -19,6 +19,9 @@
 		512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteCommand.swift */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
+		5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */; };
+		5183CCDF226F1FCC0010922C /* UINavigationController+Progress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDE226F1FCC0010922C /* UINavigationController+Progress.swift */; };
+		5183CCE3226F314C0010922C /* ProgressTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE2226F314C0010922C /* ProgressTableViewController.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
 		51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -611,6 +614,9 @@
 		512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISplitViewController-Extensions.swift"; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
+		5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProgressView.swift; sourceTree = "<group>"; };
+		5183CCDE226F1FCC0010922C /* UINavigationController+Progress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Progress.swift"; sourceTree = "<group>"; };
+		5183CCE2226F314C0010922C /* ProgressTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressTableViewController.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard-Extensions.swift"; sourceTree = "<group>"; };
 		51C4524F226506F400C03939 /* UIImage-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage-Extensions.swift"; sourceTree = "<group>"; };
@@ -901,6 +907,16 @@
 				849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */,
 			);
 			path = Tree;
+			sourceTree = "<group>";
+		};
+		5183CCDB226F1EEB0010922C /* Progress */ = {
+			isa = PBXGroup;
+			children = (
+				5183CCE2226F314C0010922C /* ProgressTableViewController.swift */,
+				5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */,
+				5183CCDE226F1FCC0010922C /* UINavigationController+Progress.swift */,
+			);
+			path = Progress;
 			sourceTree = "<group>";
 		};
 		51C45245226506C800C03939 /* Extensions */ = {
@@ -1522,6 +1538,7 @@
 				51C4526D2265091600C03939 /* Timeline */,
 				51C4527D2265092C00C03939 /* Detail */,
 				51C452802265093600C03939 /* Add */,
+				5183CCDB226F1EEB0010922C /* Progress */,
 				51C45245226506C800C03939 /* Extensions */,
 				84C9FC9A2262A1A900D921D6 /* Resources */,
 			);
@@ -2145,6 +2162,7 @@
 				51C452A722650A3D00C03939 /* RSImage-Extensions.swift in Sources */,
 				51C45269226508F600C03939 /* MasterTableViewCell.swift in Sources */,
 				51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */,
+				5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */,
 				51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */,
 				51C452A522650A2D00C03939 /* SmallIconProvider.swift in Sources */,
 				51C452A122650A1900C03939 /* FeaturedImageDownloader.swift in Sources */,
@@ -2156,6 +2174,7 @@
 				5126EE97226CB48A00C22AFC /* NavigationStateController.swift in Sources */,
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
+				5183CCDF226F1FCC0010922C /* UINavigationController+Progress.swift in Sources */,
 				51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */,
 				512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
@@ -2186,6 +2205,7 @@
 				51C452882265093600C03939 /* AddFeedViewController.swift in Sources */,
 				51C4527A2265091600C03939 /* SingleLineUILabelSizer.swift in Sources */,
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
+				5183CCE3226F314C0010922C /* ProgressTableViewController.swift in Sources */,
 				512E09012268907400BDCFDD /* MasterTableViewSectionHeader.swift in Sources */,
 				51C45268226508F600C03939 /* MasterUnreadCountView.swift in Sources */,
 				5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */,
