@@ -105,23 +105,6 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		return true		
 	}
 
-	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse response: URLResponse, representedObject: AnyObject) {
-
-//		guard let feed = representedObject as? Feed else {
-//			return
-//		}
-//
-//		print("Unexpected response \(response) for \(feed.url).")
-	}
-
-	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
-
-//		guard let feed = representedObject as? Feed else {
-//			return
-//		}
-//
-//		print("Not modified response for \(feed.url).")
-	}
 }
 
 // MARK: - Utility

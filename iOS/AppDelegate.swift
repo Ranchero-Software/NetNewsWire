@@ -8,6 +8,7 @@
 
 import UIKit
 import RSCore
+import RSWeb
 import Account
 import UserNotifications
 
@@ -16,6 +17,9 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate, UnreadCountProvider {
 
+	private static var urlSessionId = "com.ranchero.NetNewsWire-Evergreen"
+	private var backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+	
 	var window: UIWindow?
 
 	var faviconDownloader: FaviconDownloader!
@@ -24,7 +28,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	var feedIconDownloader: FeedIconDownloader!
 
 	private let log = Log()
-	private var didDownloadArticles = false
 
 	var unreadCount = 0 {
 		didSet {
@@ -41,7 +44,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		appDelegate = self
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
+		DownloadSession.sessionConfig = URLSessionConfiguration.background(withIdentifier: AppDelegate.urlSessionId)
+		DownloadSession.sessionConfig?.sessionSendsLaunchEvents = true
+		DownloadSession.sessionConfig?.shouldUseExtendedBackgroundIdleMode = true
+		
 		// Initialize the AccountManager as soon as possible or it will cause problems
 		// if the application is restoring preserved state.
 		_ = AccountManager.shared
@@ -89,10 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 			}
 		}
 
-//		UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
-
-		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
-//		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
 
 		return true
 		
@@ -139,20 +144,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 	}
 
-//	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-//
-//		AccountManager.shared.refreshAll()
-//		while (!AccountManager.shared.combinedRefreshProgress.isComplete) {
-//			sleep(1)
-//		}
-//
-//		if didDownloadArticles {
-//			completionHandler(.newData)
-//		} else {
-//			completionHandler(.noData)
-//		}
-//
-//	}
+	func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
+
+		DownloadSession.completionHandler = completionHandler
+		
+		backgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
+			DispatchQueue.global(qos: .background).async {
+				while (!AccountManager.shared.combinedRefreshProgress.isComplete) {
+					sleep(1)
+				}
+				UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
+				self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+			}
+		}
+		
+	}
+	
+	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+		AccountManager.shared.refreshAll()
+		completionHandler(.newData)
+	}
 	
 	// MARK: - Split view
 
@@ -174,14 +185,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		}
 	}
 	
-//	@objc func userDefaultsDidChange(_ note: Notification) {
-//		UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
-//	}
-
-	@objc func accountDidDownloadArticles(_ note: Notification) {
-		didDownloadArticles = true
+	@objc func userDefaultsDidChange(_ note: Notification) {
+		UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
 	}
-	
+
 	// MARK: - API
 	
 	func logMessage(_ message: String, type: LogItem.ItemType) {
