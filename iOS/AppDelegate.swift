@@ -146,18 +146,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
 	func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
 
-		DownloadSession.completionHandler = completionHandler
+		// We won't know when the last feed is inserted into the database or when the last unread count
+		// change event will come, but we do know when the url session has completed sending
+		var urlSessionDone = false
+		DownloadSession.completionHandler = {
+			urlSessionDone = true
+			completionHandler()
+		}
 		
-		backgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
-			DispatchQueue.global(qos: .background).async {
-				while (!AccountManager.shared.combinedRefreshProgress.isComplete) {
-					sleep(1)
-				}
+		DispatchQueue.global(qos: .background).async {
+			
+			// Set up a background task to let iOS know not to kill us
+			self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
 				UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
 				self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 			}
+			
+			// Wait until 5 seconds after the url session has stopped sending
+			// This should give us plenty of time to insert database rows and update unread counts
+			var lastBusy = Date()
+			var checking = true
+			while (checking) {
+				if !urlSessionDone {
+					lastBusy = Date()
+				}
+				if lastBusy.addingTimeInterval(5) < Date() {
+					checking = false
+				} else {
+					sleep(1)
+				}
+			}
+
+			UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
+			self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+			
 		}
-		
+
 	}
 	
 	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
