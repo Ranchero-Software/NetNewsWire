@@ -151,15 +151,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			self.toggleInspectorWindow(self)
 		}
 
+		refreshTimer = RefreshTimer(delegate: self)
+		
 		#if RELEASE
 			debugMenuItem.menu?.removeItem(debugMenuItem)
 			DispatchQueue.main.async {
-				self.timedRefresh(nil)
+				self.refreshTimer!.timedRefresh(nil)
 			}
 		#endif
 
-		refreshTimer = RefreshTimer(delegate: self)
-		
 		#if DEBUG
 			refreshTimer!.update()
 		#endif
