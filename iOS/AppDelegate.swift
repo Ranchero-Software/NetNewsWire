@@ -154,7 +154,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 			completionHandler()
 		}
 		
-		DispatchQueue.global(qos: .background).async {
+		logDebugMessage("Handle background URL Session.")
+
+		DispatchQueue.global(qos: .background).async { [unowned self] in
 			
 			// Set up a background task to let iOS know not to kill us
 			self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
@@ -177,6 +179,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 				}
 			}
 
+			self.logDebugMessage("Completed processing background URL Session.")
+			
 			UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
 			self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 			
@@ -185,6 +189,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	}
 	
 	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+		logDebugMessage("Woken to fetch articles.")
 		AccountManager.shared.refreshAll()
 		completionHandler(.newData)
 	}
