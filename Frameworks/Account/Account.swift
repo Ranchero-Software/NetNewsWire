@@ -209,9 +209,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	// MARK: - API
 
-	public func refreshAll() {
+	public func restore() {
+		delegate.restore()
+	}
+	
+	public func refreshAll(refreshMode: AccountRefreshMode) {
 
-		delegate.refreshAll(for: self)
+		delegate.refreshAll(for: self, refreshMode: refreshMode)
 	}
 
 	public func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
@@ -356,7 +360,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		structureDidChange()
 
 		DispatchQueue.main.async {
-			self.refreshAll()
+			self.refreshAll(refreshMode: .forground)
 		}
 	}
 

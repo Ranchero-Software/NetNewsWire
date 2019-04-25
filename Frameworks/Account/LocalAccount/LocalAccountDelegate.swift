@@ -18,9 +18,13 @@ final class LocalAccountDelegate: AccountDelegate {
 		return refresher.progress
 	}
 	
-	func refreshAll(for account: Account) {
+	func restore() {
+		refresher.restore()
+	}
+	
+	func refreshAll(for account: Account, refreshMode: AccountRefreshMode) {
 
-		refresher.refreshFeeds(account.flattenedFeeds())
+		refresher.refreshFeeds(account.flattenedFeeds(), refreshMode: refreshMode)
 	}
 
 	func accountDidInitialize(_ account: Account) {

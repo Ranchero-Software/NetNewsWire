@@ -14,18 +14,29 @@ import Articles
 
 final class LocalAccountRefresher {
 	
-	private lazy var downloadSession: DownloadSession = {
-		return DefaultDownloadSession(delegate: self)
+	var progress = DownloadProgress(numberOfTasks: 0)
+	
+	private lazy var backgroundDownloadSession: DownloadSession = {
+		return BackgroundDownloadSession(delegate: self, progress: DownloadProgress(numberOfTasks: 0))
+	}()
+	
+	private lazy var defaultDownloadSession: DownloadSession = {
+		return DefaultDownloadSession(delegate: self, progress: progress)
 	}()
 
-	var progress: DownloadProgress {
-		return downloadSession.progress
+	public func restore() {
+		_ = backgroundDownloadSession
+		_ = defaultDownloadSession
 	}
-
-	public func refreshFeeds(_ feeds: Set<Feed>) {
-
-		downloadSession.downloadObjects(feeds as NSSet)
+	
+	public func refreshFeeds(_ feeds: Set<Feed>, refreshMode: AccountRefreshMode) {
+		if refreshMode == .forground {
+			defaultDownloadSession.downloadObjects(feeds as NSSet)
+		} else {
+			backgroundDownloadSession.downloadObjects(feeds as NSSet)
+		}
 	}
+	
 }
 
 // MARK: - DownloadSessionDelegate

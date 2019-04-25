@@ -16,7 +16,9 @@ public protocol AccountDelegate {
 	
 	var refreshProgress: DownloadProgress { get }
 
-	func refreshAll(for: Account)
+	func restore()
+	
+	func refreshAll(for: Account, refreshMode: AccountRefreshMode)
 
 	// Called at the end of account’s init method.
 

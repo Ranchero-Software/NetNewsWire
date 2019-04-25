@@ -84,9 +84,13 @@ public final class AccountManager: UnreadCountProvider {
 		return accountsDictionary[accountID]
 	}
 	
-	public func refreshAll() {
+	public func restore() {
+		accounts.forEach { $0.restore() }
+	}
+	
+	public func refreshAll(refreshMode: AccountRefreshMode = .forground) {
 
-		accounts.forEach { $0.refreshAll() }
+		accounts.forEach { $0.refreshAll(refreshMode: refreshMode) }
 	}
 
 	public func anyAccountHasAtLeastOneFeed() -> Bool {

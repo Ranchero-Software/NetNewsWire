@@ -45,9 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		
-		// Initialize the AccountManager as soon as possible or it will cause problems
-		// if the application is restoring preserved state.
-		_ = AccountManager.shared
+		AccountManager.shared.restore()
 		
 	}
 
@@ -185,7 +183,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	
 	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		logDebugMessage("Woken to fetch articles.")
-		AccountManager.shared.refreshAll()
+		AccountManager.shared.refreshAll(refreshMode: .background)
 		completionHandler(.newData)
 	}
 	
