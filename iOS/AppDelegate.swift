@@ -17,7 +17,6 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate, UnreadCountProvider {
 
-	private static var urlSessionId = "com.ranchero.NetNewsWire-Evergreen"
 	private var backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	
 	var window: UIWindow?
@@ -45,10 +44,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-
-		DownloadSession.sessionConfig = URLSessionConfiguration.background(withIdentifier: AppDelegate.urlSessionId)
-		DownloadSession.sessionConfig?.sessionSendsLaunchEvents = true
-		DownloadSession.sessionConfig?.shouldUseExtendedBackgroundIdleMode = true
 		
 		// Initialize the AccountManager as soon as possible or it will cause problems
 		// if the application is restoring preserved state.
@@ -149,7 +144,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		// We won't know when the last feed is inserted into the database or when the last unread count
 		// change event will come, but we do know when the url session has completed sending
 		var urlSessionDone = false
-		DownloadSession.completionHandler = {
+		BackgroundDownloadSession.completionHandler = {
 			urlSessionDone = true
 			completionHandler()
 		}

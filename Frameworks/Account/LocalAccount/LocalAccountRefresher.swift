@@ -15,7 +15,7 @@ import Articles
 final class LocalAccountRefresher {
 	
 	private lazy var downloadSession: DownloadSession = {
-		return DownloadSession(delegate: self)
+		return DefaultDownloadSession(delegate: self)
 	}()
 
 	var progress: DownloadProgress {
@@ -103,6 +103,14 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		}
 		
 		return true		
+	}
+
+	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse: URLResponse, representedObject: AnyObject) {
+
+	}
+	
+	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
+
 	}
 
 }
