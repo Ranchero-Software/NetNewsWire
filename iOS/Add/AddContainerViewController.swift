@@ -31,6 +31,9 @@ class AddContainerViewController: UIViewController {
 	
 	private var currentViewController: AddContainerViewControllerChild?
 	
+	var initialFeed: String?
+	var initialFeedName: String?
+	
 	override func viewDidLoad() {
 		
         super.viewDidLoad()
@@ -91,21 +94,32 @@ extension AddContainerViewController: AddContainerViewControllerChildDelegate {
 private extension AddContainerViewController {
 	
 	func switchToFeed() {
+		
 		guard !(currentViewController is AddFeedViewController) else {
 			return
 		}
+		
 		resetUI()
 		hideCurrentController()
-		displayContentController(UIStoryboard.add.instantiateController(ofType: AddFeedViewController.self))
+		
+		let addFeedController = UIStoryboard.add.instantiateController(ofType: AddFeedViewController.self)
+		addFeedController.initialFeed = initialFeed
+		addFeedController.initialFeedName = initialFeedName
+
+		displayContentController(addFeedController)
+		
 	}
 	
 	func switchToFolder() {
+		
 		guard !(currentViewController is AddFolderViewController) else {
 			return
 		}
+		
 		resetUI()
 		hideCurrentController()
 		displayContentController(UIStoryboard.add.instantiateController(ofType: AddFolderViewController.self))
+		
 	}
 	
 	func resetUI() {

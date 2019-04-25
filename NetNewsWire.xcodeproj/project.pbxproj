@@ -107,6 +107,13 @@
 		51C452B82265178500C03939 /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 51C452B72265178500C03939 /* styleSheet.css */; };
 		51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
+		51F85BE5227217D000C787DC /* RefreshIntervalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */; };
+		51F85BE7227245FC00C787DC /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BE6227245FC00C787DC /* AboutViewController.swift */; };
+		51F85BEB22724CB600C787DC /* About.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEA22724CB600C787DC /* About.rtf */; };
+		51F85BED227251DF00C787DC /* Acknowledgments.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEC227251DF00C787DC /* Acknowledgments.rtf */; };
+		51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEE2272520B00C787DC /* Thanks.rtf */; };
+		51F85BF12272524100C787DC /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BF02272524100C787DC /* Credits.rtf */; };
+		51F85BF32272531500C787DC /* Dedication.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BF22272531500C787DC /* Dedication.rtf */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
@@ -652,6 +659,13 @@
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C452B72265178500C03939 /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
 		51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderTreeMenu.swift; path = AddFeed/FolderTreeMenu.swift; sourceTree = "<group>"; };
+		51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshIntervalViewController.swift; sourceTree = "<group>"; };
+		51F85BE6227245FC00C787DC /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
+		51F85BEA22724CB600C787DC /* About.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = About.rtf; sourceTree = "<group>"; };
+		51F85BEC227251DF00C787DC /* Acknowledgments.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Acknowledgments.rtf; sourceTree = "<group>"; };
+		51F85BEE2272520B00C787DC /* Thanks.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Thanks.rtf; sourceTree = "<group>"; };
+		51F85BF02272524100C787DC /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		51F85BF22272531500C787DC /* Dedication.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Dedication.rtf; sourceTree = "<group>"; };
 		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6581C73420CED60100F4AD34 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionHandler.swift; sourceTree = "<group>"; };
@@ -943,6 +957,8 @@
 			children = (
 				5183CCEC22711DCE0010922C /* Settings.storyboard */,
 				5183CCEE227125970010922C /* SettingsViewController.swift */,
+				51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */,
+				51F85BE6227245FC00C787DC /* AboutViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1578,6 +1594,11 @@
 		84C9FC9A2262A1A900D921D6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				51F85BEA22724CB600C787DC /* About.rtf */,
+				51F85BF02272524100C787DC /* Credits.rtf */,
+				51F85BEC227251DF00C787DC /* Acknowledgments.rtf */,
+				51F85BEE2272520B00C787DC /* Thanks.rtf */,
+				51F85BF22272531500C787DC /* Dedication.rtf */,
 				51C452B72265178500C03939 /* styleSheet.css */,
 				84C9FC9B2262A1A900D921D6 /* Assets.xcassets */,
 				84C9FC9C2262A1A900D921D6 /* Info.plist */,
@@ -2084,10 +2105,15 @@
 			files = (
 				51C452862265093600C03939 /* Add.storyboard in Resources */,
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
+				51F85BF32272531500C787DC /* Dedication.rtf in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreen.storyboard in Resources */,
+				51F85BEB22724CB600C787DC /* About.rtf in Resources */,
 				5183CCED22711DCE0010922C /* Settings.storyboard in Resources */,
+				51F85BED227251DF00C787DC /* Acknowledgments.rtf in Resources */,
 				51C452AB22650DC600C03939 /* template.html in Resources */,
+				51F85BF12272524100C787DC /* Credits.rtf in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
+				51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
 				51C452B82265178500C03939 /* styleSheet.css in Resources */,
 			);
@@ -2210,11 +2236,13 @@
 				5126EE97226CB48A00C22AFC /* NavigationStateController.swift in Sources */,
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
 				5183CCEF227125970010922C /* SettingsViewController.swift in Sources */,
+				51F85BE5227217D000C787DC /* RefreshIntervalViewController.swift in Sources */,
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
 				5183CCDF226F1FCC0010922C /* UINavigationController+Progress.swift in Sources */,
 				51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */,
 				512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
+				51F85BE7227245FC00C787DC /* AboutViewController.swift in Sources */,
 				51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */,
 				51C45292226509C800C03939 /* TodayFeedDelegate.swift in Sources */,
 				84F3EE1B20DEC97E003FADEB /* HTMLFeedFinder.swift in Sources */,

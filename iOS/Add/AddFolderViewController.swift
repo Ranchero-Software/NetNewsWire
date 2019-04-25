@@ -18,7 +18,7 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 	
 	private var accounts: [Account]!
 	
-	var delegate: AddContainerViewControllerChildDelegate?
+	weak var delegate: AddContainerViewControllerChildDelegate?
 	
 	override func viewDidLoad() {
 

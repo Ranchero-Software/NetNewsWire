@@ -32,14 +32,23 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 
 	private var userCancelled = false
 
-	var delegate: AddContainerViewControllerChildDelegate?
-	
+	weak var delegate: AddContainerViewControllerChildDelegate?
+	var initialFeed: String?
+	var initialFeedName: String?
+
 	override func viewDidLoad() {
 		
         super.viewDidLoad()
 		
 		urlTextField.autocorrectionType = .no
 		urlTextField.autocapitalizationType = .none
+		urlTextField.text = initialFeed
+		
+		if initialFeed != nil {
+			delegate?.readyToAdd(state: true)
+		}
+		
+		nameTextField.text = initialFeedName
 		
 		pickerData = AddFeedFolderPickerData()
 		folderPickerView.dataSource = self

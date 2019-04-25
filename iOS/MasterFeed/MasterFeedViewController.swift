@@ -353,55 +353,13 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		
-		let settingsViewController = UIStoryboard.settings.instantiateInitialViewController()!
-		settingsViewController.modalPresentationStyle = .formSheet
-		self.present(settingsViewController, animated: true)
+		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
+		settingsNavViewController.modalPresentationStyle = .formSheet
 		
-//		let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-//
-//		// Settings Button
-//		let settingsTitle = NSLocalizedString("Settings", comment: "Settings")
-//		let setting  = UIAlertAction(title: settingsTitle, style: .default) { alertAction in
-//
-//		}
-//		optionMenu.addAction(setting)
-//
-//		// Import Button
-//		let importOPMLTitle = NSLocalizedString("Import OPML", comment: "Import OPML")
-//		let importOPML = UIAlertAction(title: importOPMLTitle, style: .default) { [unowned self] alertAction in
-//			let docPicker = UIDocumentPickerViewController(documentTypes: ["public.xml", "org.opml.opml"], in: .import)
-//			docPicker.delegate = self
-//			docPicker.modalPresentationStyle = .formSheet
-//			self.present(docPicker, animated: true)
-//		}
-//		optionMenu.addAction(importOPML)
-//
-//		// Export Button
-//		let exportOPMLTitle = NSLocalizedString("Export OPML", comment: "Export OPML")
-//		let exportOPML = UIAlertAction(title: exportOPMLTitle, style: .default) { [unowned self] alertAction in
-//
-//			let filename = "MySubscriptions.opml"
-//			let tempFile = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
-//			let opmlString = OPMLExporter.OPMLString(with: AccountManager.shared.localAccount, title: filename)
-//			do {
-//				try opmlString.write(to: tempFile, atomically: true, encoding: String.Encoding.utf8)
-//			} catch {
-//				self.presentError(title: "OPML Export Error", message: error.localizedDescription)
-//			}
-//
-//			let docPicker = UIDocumentPickerViewController(url: tempFile, in: .exportToService)
-//			docPicker.modalPresentationStyle = .formSheet
-//			self.present(docPicker, animated: true)
-//
-//		}
-//		optionMenu.addAction(exportOPML)
-//		optionMenu.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-//
-//		if let popoverController = optionMenu.popoverPresentationController {
-//			popoverController.barButtonItem = sender
-//		}
-//
-//		self.present(optionMenu, animated: true)
+		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
+		settingsViewController.presentingParentController = self
+		
+		self.present(settingsNavViewController, animated: true)
 		
 	}
 
@@ -577,24 +535,6 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		
 		self.present(alertController, animated: true) {
 			
-		}
-		
-	}
-	
-}
-
-// MARK: OPML Document Picker
-
-extension MasterFeedViewController: UIDocumentPickerDelegate {
-	
-	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-		
-		for url in urls {
-			do {
-				try OPMLImporter.parseAndImport(fileURL: url, account: AccountManager.shared.localAccount)
-			} catch {
-				presentError(title: "OPML Import Error", message: error.localizedDescription)
-			}
 		}
 		
 	}
