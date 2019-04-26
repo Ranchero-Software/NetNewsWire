@@ -137,54 +137,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 	}
 
-	func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
-
-		// We won't know when the last feed is inserted into the database or when the last unread count
-		// change event will come, but we do know when the url session has completed sending
-		var urlSessionDone = false
-		BackgroundDownloadSession.completionHandler = {
-			urlSessionDone = true
-			completionHandler()
-		}
+	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		
-		os_log("Handle background URL Session.", log: log, type: .info)
+		os_log("Woken to perform account refresh.", log: log, type: .info)
+		
+		AccountManager.shared.refreshAll()
+		
+		os_log("Accounts requested to begin refresh.", log: self.log, type: .debug)
 
 		DispatchQueue.global(qos: .background).async { [unowned self] in
 			
-			// Set up a background task to let iOS know not to kill us
 			self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
 				UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
 				self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+				completionHandler(.newData)
 			}
 			
-			// Wait until 5 seconds after the url session has stopped sending
-			// This should give us plenty of time to insert database rows and update unread counts
-			var lastBusy = Date()
-			var checking = true
-			while (checking) {
-				if !urlSessionDone {
-					lastBusy = Date()
-				}
-				if lastBusy.addingTimeInterval(5) < Date() {
-					checking = false
-				} else {
-					sleep(1)
-				}
+			sleep(1)
+			while(!AccountManager.shared.combinedRefreshProgress.isComplete) {
+				os_log("Waiting for account refresh processing to complete...", log: self.log, type: .debug)
+				sleep(1)
 			}
-
-			os_log("Completed processing background URL Session.", log: self.log, type: .info)
+			
+			os_log("Accounts completed refresh processing.", log: self.log, type: .info)
 			
 			UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
 			self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-			
-		}
+			completionHandler(.newData)
 
-	}
-	
-	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-		os_log("Worken to perform fetch activity.", log: log, type: .info)
-		AccountManager.shared.refreshAll(refreshMode: .background)
+		}
+		
 		completionHandler(.newData)
+		
 	}
 	
 	// MARK: - Split view
