@@ -5,6 +5,11 @@ body {
 	margin-right: 20px;
 	font-family: -apple-system-body;
 	font-size: 18px;
+
+	word-wrap: break-word;
+	word-break: break-word;
+	-webkit-hyphens: auto;
+	
 }
 
 a {
