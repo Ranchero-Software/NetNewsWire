@@ -11,6 +11,7 @@ import RSCore
 import RSWeb
 import Account
 import UserNotifications
+import os.log
 
 var appDelegate: AppDelegate!
 
@@ -19,14 +20,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
 	private var backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	
+	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "application")
 	var window: UIWindow?
 
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var feedIconDownloader: FeedIconDownloader!
-
-	private let log = Log()
 
 	var unreadCount = 0 {
 		didSet {
@@ -60,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		AppDefaults.registerDefaults()
 		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
-			logDebugMessage("Is first run.")
+			os_log("Is first run.", log: log, type: .info)
 		}
 		
 		let localAccount = AccountManager.shared.localAccount
@@ -147,7 +147,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 			completionHandler()
 		}
 		
-		logDebugMessage("Handle background URL Session.")
+		os_log("Handle background URL Session.", log: log, type: .info)
 
 		DispatchQueue.global(qos: .background).async { [unowned self] in
 			
@@ -172,7 +172,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 				}
 			}
 
-			self.logDebugMessage("Completed processing background URL Session.")
+			os_log("Completed processing background URL Session.", log: self.log, type: .info)
 			
 			UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
 			self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
@@ -182,7 +182,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	}
 	
 	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-		logDebugMessage("Woken to fetch articles.")
+		os_log("Worken to perform fetch activity.", log: log, type: .info)
 		AccountManager.shared.refreshAll(refreshMode: .background)
 		completionHandler(.newData)
 	}
@@ -214,15 +214,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	// MARK: - API
 	
 	func logMessage(_ message: String, type: LogItem.ItemType) {
-		
-		#if DEBUG
-		if type == .debug {
-			print("logMessage: \(message) - \(type)")
-		}
-		#endif
-		
-		let logItem = LogItem(type: type, message: message)
-		log.add(logItem)
+		print("logMessage: \(message) - \(type)")
 		
 	}
 	
