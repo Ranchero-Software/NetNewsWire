@@ -14,6 +14,7 @@ struct AppDefaults {
 		static let firstRunDate = "firstRunDate"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let refreshInterval = "refreshInterval"
+		static let lastRefresh = "lastRefresh"
 	}
 
 	static let isFirstRun: Bool = {
@@ -43,6 +44,15 @@ struct AppDefaults {
 		}
 	}
 
+	static var lastRefresh: Date? {
+		get {
+			return date(for: Key.lastRefresh)
+		}
+		set {
+			setDate(for: Key.lastRefresh, newValue)
+		}
+	}
+	
 	static func registerDefaults() {
 		let defaults: [String : Any] = [Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, Key.refreshInterval: RefreshInterval.everyHour.rawValue]
 		UserDefaults.standard.register(defaults: defaults)

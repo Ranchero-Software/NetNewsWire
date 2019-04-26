@@ -43,6 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		appDelegate = self
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		
 		// Reinitialize the shared state as early as possible
@@ -131,7 +132,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	}
 
 	func applicationDidBecomeActive(_ application: UIApplication) {
-		// Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+		
+		// If we haven't refreshed the database for 15 minutes, run a refresh automatically
+		if let lastRefresh = AppDefaults.lastRefresh {
+			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
+				AccountManager.shared.refreshAll()
+			}
+		} else {
+			AccountManager.shared.refreshAll()
+		}
+
 	}
 
 	func applicationWillTerminate(_ application: UIApplication) {
@@ -204,6 +214,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
 	}
 
+	@objc func accountRefreshDidFinish(_ note: Notification) {
+		AppDefaults.lastRefresh = Date()
+	}
+	
 	// MARK: - API
 	
 	func logMessage(_ message: String, type: LogItem.ItemType) {
