@@ -14,29 +14,18 @@ import Articles
 
 final class LocalAccountRefresher {
 	
-	var progress = DownloadProgress(numberOfTasks: 0)
-	
-	private lazy var backgroundDownloadSession: DownloadSession = {
-		return BackgroundDownloadSession(delegate: self, progress: DownloadProgress(numberOfTasks: 0))
-	}()
-	
-	private lazy var defaultDownloadSession: DownloadSession = {
-		return DefaultDownloadSession(delegate: self, progress: progress)
+	private lazy var downloadSession: DownloadSession = {
+		return DownloadSession(delegate: self)
 	}()
 
-	public func restore() {
-		_ = backgroundDownloadSession
-		_ = defaultDownloadSession
+	var progress: DownloadProgress {
+		return downloadSession.progress
 	}
-	
-	public func refreshFeeds(_ feeds: Set<Feed>, refreshMode: AccountRefreshMode) {
-		if refreshMode == .forground {
-			defaultDownloadSession.downloadObjects(feeds as NSSet)
-		} else {
-			backgroundDownloadSession.downloadObjects(feeds as NSSet)
-		}
+
+	public func refreshFeeds(_ feeds: Set<Feed>) {
+
+		downloadSession.downloadObjects(feeds as NSSet)
 	}
-	
 }
 
 // MARK: - DownloadSessionDelegate
@@ -116,14 +105,23 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		return true		
 	}
 
-	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse: URLResponse, representedObject: AnyObject) {
+	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse response: URLResponse, representedObject: AnyObject) {
 
+//		guard let feed = representedObject as? Feed else {
+//			return
+//		}
+//
+//		print("Unexpected response \(response) for \(feed.url).")
 	}
-	
+
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
 
+//		guard let feed = representedObject as? Feed else {
+//			return
+//		}
+//
+//		print("Not modified response for \(feed.url).")
 	}
-
 }
 
 // MARK: - Utility

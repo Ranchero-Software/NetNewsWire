@@ -45,7 +45,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		
-		AccountManager.shared.restore()
+		// Reinitialize the shared state as early as possible
+		_ = AccountManager.shared
 		
 	}
 
