@@ -25,7 +25,7 @@ class MasterTimelineTableViewCell: UITableViewCell {
 	}()
 	
 	private lazy var starView = {
-		return UIImageView(image: AppAssets.timelineStarImage)
+		return NonIntrinsicImageView(image: AppAssets.timelineStarImage)
 	}()
 	
 	private lazy var textFields = {
