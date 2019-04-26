@@ -142,12 +142,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		os_log("Woken to perform account refresh.", log: log, type: .info)
 		
 		let startingUnreadCount = unreadCount
-		let updateCompletionHandler = { [unowned self] in
+		
+		let completeProcessing = { [unowned self] in
+			
+			UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
+			self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+			
 			if startingUnreadCount != self.unreadCount {
 				completionHandler(.newData)
 			} else {
 				completionHandler(.noData)
 			}
+			
 		}
 		
 		AccountManager.shared.refreshAll()
@@ -157,9 +163,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		DispatchQueue.global(qos: .background).async { [unowned self] in
 			
 			self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
-				UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
-				self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-				updateCompletionHandler()
+				completeProcessing()
 			}
 			
 			sleep(1)
@@ -168,11 +172,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 				sleep(1)
 			}
 			
+			completeProcessing()
 			os_log("Accounts completed refresh processing.", log: self.log, type: .info)
-			
-			UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
-			self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-			updateCompletionHandler()
 			
 		}
 		
