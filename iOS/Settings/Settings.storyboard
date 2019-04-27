@@ -185,35 +185,28 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="DATABASE" id="hAC-uA-RbS">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="z1J-VF-St0">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="qur-cL-wrM" detailTextLabel="qIl-N6-6wQ" style="IBUITableViewCellStyleValue1" id="z1J-VF-St0">
                                         <rect key="frame" x="0.0" y="571" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="z1J-VF-St0" id="Y8U-Ka-GeZ">
                                             <rect key="frame" x="0.0" y="0.0" width="376" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Refresh Interval" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k0l-hD-9Xe">
-                                                    <rect key="frame" x="20" y="11" width="119.5" height="22"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Refresh Interval" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="qur-cL-wrM">
+                                                    <rect key="frame" x="20" y="12" width="119.5" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 Hour" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EYM-CI-6Os">
-                                                    <rect key="frame" x="326.5" y="0.0" width="49.5" height="43.5"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="qIl-N6-6wQ">
+                                                    <rect key="frame" x="332" y="12" width="44" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstItem="EYM-CI-6Os" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="k0l-hD-9Xe" secondAttribute="trailing" constant="8" id="1dx-8l-hbc"/>
-                                                <constraint firstAttribute="bottom" secondItem="EYM-CI-6Os" secondAttribute="bottom" id="5Yb-kV-l80"/>
-                                                <constraint firstItem="k0l-hD-9Xe" firstAttribute="top" secondItem="Y8U-Ka-GeZ" secondAttribute="topMargin" id="LeQ-Nl-Io0"/>
-                                                <constraint firstItem="k0l-hD-9Xe" firstAttribute="leading" secondItem="Y8U-Ka-GeZ" secondAttribute="leadingMargin" id="MoT-tX-apk"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="k0l-hD-9Xe" secondAttribute="bottom" id="SU0-J5-y99"/>
-                                                <constraint firstItem="EYM-CI-6Os" firstAttribute="top" secondItem="Y8U-Ka-GeZ" secondAttribute="top" id="sdM-TT-NNz"/>
-                                                <constraint firstAttribute="trailing" secondItem="EYM-CI-6Os" secondAttribute="trailing" id="yqy-DH-EMO"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="dXN-Mw-yf2" style="IBUITableViewCellStyleDefault" id="F0L-Ut-reX">
@@ -283,7 +276,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="refreshIntervalLabel" destination="EYM-CI-6Os" id="a09-JG-chE"/>
+                        <outlet property="refreshIntervalLabel" destination="qIl-N6-6wQ" id="2gQ-Yn-FP8"/>
                         <outlet property="timelineSortOrderSwitch" destination="Keq-Np-l9O" id="Zm7-HG-r5h"/>
                     </connections>
                 </tableViewController>
