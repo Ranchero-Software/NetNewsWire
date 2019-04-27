@@ -86,9 +86,11 @@ class MasterFeedTableViewCell : UITableViewCell {
 
 	private let titleView: UILabel = {
 		let label = NonIntrinsicLabel()
-		label.numberOfLines = 1
+		label.numberOfLines = 0
 		label.lineBreakMode = .byTruncatingTail
 		label.allowsDefaultTighteningForTruncation = false
+		label.adjustsFontForContentSizeCategory = true
+		label.font = .preferredFont(forTextStyle: .body)
 		return label
 	}()
 

@@ -55,11 +55,12 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	}
 	
 	private let titleView: UILabel = {
-		let label = UILabel()
-		label.font = UIFont.boldSystemFont(ofSize: 17.0)
-		label.numberOfLines = 1
+		let label = NonIntrinsicLabel()
+		label.numberOfLines = 0
 		label.lineBreakMode = .byTruncatingTail
 		label.allowsDefaultTighteningForTruncation = false
+		label.adjustsFontForContentSizeCategory = true
+		label.font = .preferredFont(forTextStyle: .body)
 		return label
 	}()
 	

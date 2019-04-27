@@ -8,16 +8,16 @@
 
 import UIKit
 
-private let padding = UIEdgeInsets(top: 1.0, left: 7.0, bottom: 1.0, right: 7.0)
-private let cornerRadius = 8.0
-private let bgColor = UIColor.darkGray
-private let textColor = UIColor.white
-private let textFont = UIFont.systemFont(ofSize: 11.0, weight: UIFont.Weight.semibold)
-private var textAttributes: [NSAttributedString.Key: AnyObject] = [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
-private var textSizeCache = [Int: CGSize]()
-
 class MasterFeedUnreadCountView : UIView {
 	
+	private let padding = UIEdgeInsets(top: 1.0, left: 7.0, bottom: 1.0, right: 7.0)
+	private let cornerRadius = 8.0
+	private let bgColor = UIColor.darkGray
+	private let textColor = UIColor.white
+	private let textFont = UIFont.preferredFont(forTextStyle: .caption1)
+	private lazy var textAttributes: [NSAttributedString.Key: AnyObject] = [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
+	private var textSizeCache = [Int: CGSize]()
+
 	var unreadCount = 0 {
 		didSet {
 			invalidateIntrinsicContentSize()
