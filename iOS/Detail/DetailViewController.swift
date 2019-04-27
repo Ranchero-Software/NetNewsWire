@@ -38,7 +38,7 @@ class DetailViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -123,6 +123,10 @@ class DetailViewController: UIViewController {
 
 	@objc func progressDidChange(_ note: Notification) {
 		updateProgressIndicatorIfNeeded()
+	}
+	
+	@objc func contentSizeCategoryDidChange(_ note: Notification) {
+		reloadHTML()
 	}
 	
 	// MARK: Actions
