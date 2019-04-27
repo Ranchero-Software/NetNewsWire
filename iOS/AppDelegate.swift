@@ -175,7 +175,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 				os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
 			}
 			
-			while(!AccountManager.shared.unreadCountsInitialized) {
+			while(!AccountManager.shared.isUnreadCountsInitialized) {
 				os_log("Waiting for unread counts to be initialized...", log: self.log, type: .debug)
 				sleep(1)
 			}

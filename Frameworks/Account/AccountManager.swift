@@ -22,9 +22,9 @@ public final class AccountManager: UnreadCountProvider {
 	private let accountsFolder = RSDataSubfolder(nil, "Accounts")!
     private var accountsDictionary = [String: Account]()
 
-	public var unreadCountsInitialized: Bool {
+	public var isUnreadCountsInitialized: Bool {
 		for account in accounts {
-			if !account.unreadCountsInitialized {
+			if !account.isUnreadCountsInitialized {
 				return false
 			}
 		}
