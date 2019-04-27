@@ -57,7 +57,7 @@
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
                     </view>
                     <toolbarItems>
-                        <barButtonItem enabled="NO" image="nextUnreadImage" id="2w5-e9-C2V">
+                        <barButtonItem enabled="NO" title="Next Unread" image="nextUnreadImage" id="2w5-e9-C2V">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Next Unread"/>
@@ -67,7 +67,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="vAq-iW-Yyo"/>
-                        <barButtonItem image="prevArticleImage" style="plain" id="v4j-fq-23N">
+                        <barButtonItem title="Previous Article" image="prevArticleImage" style="plain" id="v4j-fq-23N">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Previous Article"/>
@@ -77,7 +77,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="G92-nw-kXs"/>
-                        <barButtonItem image="nextArticleImage" id="2qz-M5-Yhk">
+                        <barButtonItem title="Next Article" image="nextArticleImage" id="2qz-M5-Yhk">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Next Article"/>
@@ -87,18 +87,18 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="Myj-ux-Zc5"/>
-                        <barButtonItem image="circleOpenImage" id="hy0-LS-MzE">
+                        <barButtonItem title="Toggle Read" image="circleOpenImage" id="hy0-LS-MzE">
                             <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Toggle Mark as Read"/>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Toggle Read"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="toggleRead:" destination="JEX-9P-axG" id="A8V-r1-o9u"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="n8Q-7d-yb4"/>
-                        <barButtonItem image="starOpenImage" id="wU4-eH-wC9">
+                        <barButtonItem title="Toggle Starred" image="starOpenImage" id="wU4-eH-wC9">
                             <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Toggle Mark as Starred"/>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Toggle Starred"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="toggleStar:" destination="JEX-9P-axG" id="4Mp-Ir-N5v"/>
@@ -108,17 +108,17 @@
                         <barButtonItem systemItem="action" id="9Ut-5B-JKP">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Share"/>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Action"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="showActivityDialog:" destination="JEX-9P-axG" id="t7U-uT-fs5"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="KUq-GZ-WY9"/>
-                        <barButtonItem image="browserImage" id="DMh-3X-ebd">
+                        <barButtonItem title="Safari" image="browserImage" id="DMh-3X-ebd">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Open In Safari"/>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Safari"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="openBrowser:" destination="JEX-9P-axG" id="R0r-fI-NI7"/>
@@ -267,7 +267,7 @@
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8">
-                        <barButtonItem key="leftBarButtonItem" image="settingsImage" id="2lM-3y-hKs">
+                        <barButtonItem key="leftBarButtonItem" title="Settings" image="settingsImage" id="2lM-3y-hKs">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Settings"/>
@@ -308,11 +308,11 @@
         </scene>
     </scenes>
     <resources>
-        <image name="browserImage" width="22" height="22"/>
+        <image name="browserImage" width="24" height="24"/>
         <image name="circleOpenImage" width="22" height="22"/>
-        <image name="nextArticleImage" width="18" height="25"/>
+        <image name="nextArticleImage" width="17" height="23"/>
         <image name="nextUnreadImage" width="23" height="23"/>
-        <image name="prevArticleImage" width="18" height="25"/>
+        <image name="prevArticleImage" width="16" height="23"/>
         <image name="settingsImage" width="24" height="24"/>
         <image name="starOpenImage" width="26" height="24"/>
     </resources>
