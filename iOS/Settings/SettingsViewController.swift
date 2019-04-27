@@ -16,6 +16,12 @@ class SettingsViewController: UITableViewController {
 	
 	weak var presentingParentController: UIViewController?
 	
+	override func viewDidLoad() {
+		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
+		NotificationCenter.default.removeObserver(tableView!, name: UIContentSizeCategory.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
+	}
+	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
@@ -86,6 +92,10 @@ class SettingsViewController: UITableViewController {
 		} else {
 			AppDefaults.timelineSortDirection = .orderedDescending
 		}
+	}
+	
+	@objc func contentSizeCategoryDidChange() {
+		tableView.reloadData()
 	}
 	
 }
