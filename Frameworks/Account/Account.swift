@@ -83,6 +83,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	private var fetchingAllUnreadCounts = false
+	var unreadCountsInitialized = false
 
 	let dataFolder: String
 	let database: ArticlesDatabase
@@ -886,6 +887,7 @@ private extension Account {
 			if unreadCountDictionary.isEmpty {
 				self.fetchingAllUnreadCounts = false
 				self.updateUnreadCount()
+				self.unreadCountsInitialized = true
 				return
 			}
 
@@ -902,6 +904,7 @@ private extension Account {
 			}
 			self.fetchingAllUnreadCounts = false
 			self.updateUnreadCount()
+			self.unreadCountsInitialized = true
 		}
 	}
 }

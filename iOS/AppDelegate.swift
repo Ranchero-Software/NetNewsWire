@@ -84,7 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
 		
-		UNUserNotificationCenter.current().requestAuthorization(options:[.badge]) { (granted, error) in
+		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
 			if granted {
 				DispatchQueue.main.async {
 					UIApplication.shared.registerForRemoteNotifications()
@@ -152,14 +152,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		
 		os_log("Woken to perform account refresh.", log: log, type: .info)
 		
-		let startingUnreadCount = unreadCount
+		var startingUnreadCount = 0
 		
 		let completeProcessing = { [unowned self] in
 			
 			UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
 			self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 			
-			if startingUnreadCount != self.unreadCount {
+			if startingUnreadCount < self.unreadCount {
+				self.sendReceivedArticlesUserNotification(newArticleCount: self.unreadCount - startingUnreadCount)
 				completionHandler(.newData)
 			} else {
 				completionHandler(.noData)
@@ -167,15 +168,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 			
 		}
 		
-		AccountManager.shared.refreshAll()
-		
-		os_log("Accounts requested to begin refresh.", log: self.log, type: .debug)
-
 		DispatchQueue.global(qos: .background).async { [unowned self] in
 			
 			self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
 				completeProcessing()
 			}
+			
+			while(!AccountManager.shared.unreadCountsInitialized) {
+				os_log("Waiting for unread counts to be initialized...", log: self.log, type: .debug)
+				sleep(1)
+			}
+			
+			startingUnreadCount = self.unreadCount
+			
+			DispatchQueue.main.async {
+				AccountManager.shared.refreshAll()
+			}
+			
+			os_log("Accounts requested to begin refresh.", log: self.log, type: .debug)
 			
 			sleep(1)
 			while(!AccountManager.shared.combinedRefreshProgress.isComplete) {
@@ -231,3 +241,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	
 }
 
+private extension AppDelegate {
+	
+	func sendReceivedArticlesUserNotification(newArticleCount: Int) {
+
+		let content = UNMutableNotificationContent()
+		content.title = NSLocalizedString("Article Download", comment: "New Articles")
+		
+		let body: String = {
+			if newArticleCount == 1 {
+				return NSLocalizedString("You have downloaded 1 new article.", comment: "Article Downloaded")
+			} else {
+				let formatString = NSLocalizedString("You have downloaded %d new articles.", comment: "Articles Downloaded")
+				return NSString.localizedStringWithFormat(formatString as NSString, newArticleCount) as String
+			}
+		}()
+		
+		content.body = body
+		content.sound = UNNotificationSound.default
+		
+		let request = UNNotificationRequest.init(identifier: "NewArticlesReceived", content: content, trigger: nil)
+		UNUserNotificationCenter.current().add(request)
+		
+	}
+	
+}
