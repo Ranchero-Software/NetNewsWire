@@ -30,6 +30,7 @@ class AboutViewController: UITableViewController {
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
 		buildLabel.textColor = UIColor.gray
 		buildLabel.text = NSLocalizedString("Copyright © 2002-2019 Ranchero Software", comment: "Copyright")
+		buildLabel.numberOfLines = 0
 		buildLabel.sizeToFit()
 		buildLabel.translatesAutoresizingMaskIntoConstraints = false
 		tableView.tableFooterView = buildLabel
@@ -48,6 +49,8 @@ private extension AboutViewController {
 		let url = Bundle.main.url(forResource: file, withExtension: "rtf")!
 		let string = try! NSAttributedString(url: url, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)
 		textView.attributedText = string
+		textView.adjustsFontForContentSizeCategory = true
+		textView.font = .preferredFont(forTextStyle: .body)
 	}
 	
 }

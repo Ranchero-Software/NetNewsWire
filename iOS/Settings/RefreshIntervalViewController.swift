@@ -22,6 +22,7 @@ class RefreshIntervalViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+		cell.textLabel?.adjustsFontForContentSizeCategory = true
 		let userRefreshInterval = AppDefaults.refreshInterval
 		
 		switch indexPath.row {
