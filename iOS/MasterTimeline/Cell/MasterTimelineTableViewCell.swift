@@ -19,9 +19,7 @@ class MasterTimelineTableViewCell: UITableViewCell {
 	private let feedNameView = MasterTimelineTableViewCell.singleLineUILabel()
 	
 	private lazy var avatarImageView: UIImageView = {
-		let imageView = NonIntrinsicImageView(image: AppAssets.feedImage)
-		imageView.contentMode = .scaleAspectFit
-		return imageView
+		return NonIntrinsicImageView(image: AppAssets.feedImage)
 	}()
 	
 	private lazy var starView = {
