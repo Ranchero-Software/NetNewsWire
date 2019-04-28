@@ -177,6 +177,7 @@ private extension MasterFeedTableViewCell {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton?.setFrameIfNotEqual(layout.disclosureButtonRect)
+		separatorInset = layout.separatorInsets
 	}
 	
 }

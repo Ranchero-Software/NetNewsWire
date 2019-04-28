@@ -26,6 +26,7 @@ struct MasterFeedTableViewCellLayout {
 	let titleRect: CGRect
 	let unreadCountRect: CGRect
 	let disclosureButtonRect: CGRect
+	let separatorInsets: UIEdgeInsets
 	
 	let height: CGFloat
 	
@@ -47,6 +48,9 @@ struct MasterFeedTableViewCellLayout {
 			rFavicon = CGRect(x: bounds.origin.x, y: 0.0, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
 		}
 
+		//  Separator Insets
+		separatorInsets = UIEdgeInsets(top: 0, left: rFavicon.maxX + MasterFeedTableViewCellLayout.imageMarginRight, bottom: 0, right: 0)
+		
 		// Unread Count
 		let unreadCountSize = unreadCountView.intrinsicContentSize
 		let unreadCountIsHidden = unreadCountView.unreadCount < 1
