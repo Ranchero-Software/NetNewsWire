@@ -51,17 +51,19 @@ class MasterTimelineTableViewCell: UITableViewCell {
 		
 		super.layoutSubviews()
 		
-		let layoutRects = updatedLayoutRects()
+		let layout = updatedLayout()
 		
-		setFrame(for: titleView, rect: layoutRects.titleRect)
-		setFrame(for: summaryView, rect: layoutRects.summaryRect)
-		setFrame(for: textView, rect: layoutRects.textRect)
+		setFrame(for: titleView, rect: layout.titleRect)
+		setFrame(for: summaryView, rect: layout.summaryRect)
+		setFrame(for: textView, rect: layout.textRect)
 		
-		dateView.setFrameIfNotEqual(layoutRects.dateRect)
-		unreadIndicatorView.setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
-		feedNameView.setFrameIfNotEqual(layoutRects.feedNameRect)
-		avatarImageView.setFrameIfNotEqual(layoutRects.avatarImageRect)
-		starView.setFrameIfNotEqual(layoutRects.starRect)
+		dateView.setFrameIfNotEqual(layout.dateRect)
+		unreadIndicatorView.setFrameIfNotEqual(layout.unreadIndicatorRect)
+		feedNameView.setFrameIfNotEqual(layout.feedNameRect)
+		avatarImageView.setFrameIfNotEqual(layout.avatarImageRect)
+		starView.setFrameIfNotEqual(layout.starRect)
+		
+		separatorInset = layout.separatorInsets
 		
 	}
 	
@@ -128,7 +130,7 @@ private extension MasterTimelineTableViewCell {
 		accessoryView = UIImageView(image: AppAssets.chevronRightImage)
 	}
 
-	func updatedLayoutRects() -> MasterTimelineCellLayout {
+	func updatedLayout() -> MasterTimelineCellLayout {
 		
 		return MasterTimelineCellLayout(width: bounds.width, height: bounds.height, cellData: cellData, hasAvatar: avatarImageView.image != nil)
 	}

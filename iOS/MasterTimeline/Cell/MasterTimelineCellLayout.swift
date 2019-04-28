@@ -53,8 +53,9 @@ struct MasterTimelineCellLayout {
 	let starRect: CGRect
 	let avatarImageRect: CGRect
 	let paddingBottom: CGFloat
+	let separatorInsets: UIEdgeInsets
 	
-	init(width: CGFloat, height: CGFloat, feedNameRect: CGRect, dateRect: CGRect, titleRect: CGRect, numberOfLinesForTitle: Int, summaryRect: CGRect, textRect: CGRect, unreadIndicatorRect: CGRect, starRect: CGRect, avatarImageRect: CGRect, paddingBottom: CGFloat) {
+	init(width: CGFloat, height: CGFloat, feedNameRect: CGRect, dateRect: CGRect, titleRect: CGRect, numberOfLinesForTitle: Int, summaryRect: CGRect, textRect: CGRect, unreadIndicatorRect: CGRect, starRect: CGRect, avatarImageRect: CGRect, paddingBottom: CGFloat, separatorInsets: UIEdgeInsets) {
 		
 		self.width = width - MasterTimelineCellLayout.chevronWidth
 		self.feedNameRect = feedNameRect
@@ -67,6 +68,7 @@ struct MasterTimelineCellLayout {
 		self.starRect = starRect
 		self.avatarImageRect = avatarImageRect
 		self.paddingBottom = paddingBottom
+		self.separatorInsets = separatorInsets
 
 		if height > 0.1 {
 			self.height = height
@@ -108,7 +110,9 @@ struct MasterTimelineCellLayout {
 
 		let paddingBottom = MasterTimelineCellLayout.cellPadding.bottom
 
-		self.init(width: width, height: height, feedNameRect: feedNameRect, dateRect: dateRect, titleRect: titleRect, numberOfLinesForTitle: numberOfLinesForTitle, summaryRect: summaryRect, textRect: textRect, unreadIndicatorRect: unreadIndicatorRect, starRect: starRect, avatarImageRect: avatarImageRect, paddingBottom: paddingBottom)
+		let separatorInsets = UIEdgeInsets(top: 0, left: unreadIndicatorRect.maxX + MasterTimelineCellLayout.unreadCircleMarginRight, bottom: 0, right: 0)
+		
+		self.init(width: width, height: height, feedNameRect: feedNameRect, dateRect: dateRect, titleRect: titleRect, numberOfLinesForTitle: numberOfLinesForTitle, summaryRect: summaryRect, textRect: textRect, unreadIndicatorRect: unreadIndicatorRect, starRect: starRect, avatarImageRect: avatarImageRect, paddingBottom: paddingBottom, separatorInsets: separatorInsets)
 		
 	}
 
