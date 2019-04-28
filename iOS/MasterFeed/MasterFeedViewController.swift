@@ -70,6 +70,8 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
 		
+		updateUI()
+
 		guard let representedObject = note.object else {
 			return
 		}
@@ -84,9 +86,13 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 			return
 		}
 		
-		configureUnreadCountForCellsForRepresentedObject(representedObject as AnyObject)
-		updateUI()
-		
+		guard let node = navState.rootNode.childNodeRepresentingObject(representedObject as AnyObject),
+			let indexPath = navState.indexPathFor(node) else {
+				return
+		}
+
+		tableView.reloadRows(at: [indexPath], with: .automatic)
+
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -164,16 +170,6 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		
 		let headerView = MasterFeedTableViewSectionHeader()
 		headerView.name = nameProvider.nameForDisplay
-		
-		guard let sectionNode = navState.rootNode.childAtIndex(section) else {
-			return 44
-		}
-		
-		if let account = sectionNode.representedObject as? Account {
-			headerView.unreadCount = account.unreadCount
-		} else {
-			headerView.unreadCount = 0
-		}
 
 		let size = headerView.sizeThatFits(CGSize(width: tableView.bounds.width, height: 0.0))
 		return size.height
@@ -470,14 +466,10 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		cell.allowDisclosureSelection = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
-		configureUnreadCount(cell, node)
+		cell.unreadCount = unreadCountFor(node)
 		configureFavicon(cell, node)
 		cell.shouldShowImage = node.representedObject is SmallIconProvider
 		
-	}
-	
-	func configureUnreadCount(_ cell: MasterFeedTableViewCell, _ node: Node) {
-		cell.unreadCount = unreadCountFor(node)
 	}
 	
 	func configureFavicon(_ cell: MasterFeedTableViewCell, _ node: Node) {
@@ -598,10 +590,6 @@ private extension MasterFeedViewController {
 		applyToCellsForRepresentedObject(representedObject, configure)
 	}
 
-	func configureUnreadCountForCellsForRepresentedObject(_ representedObject: AnyObject) {
-		applyToCellsForRepresentedObject(representedObject, configureUnreadCount)
-	}
-	
 	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (MasterFeedTableViewCell, Node) -> Void) {
 		applyToAvailableCells { (cell, node) in
 			if node.representedObject === representedObject {
