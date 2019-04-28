@@ -109,9 +109,6 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 private extension MasterFeedTableViewSectionHeader {
 	
 	func commonInit() {
-		let view = UIView()
-		view.backgroundColor = AppAssets.tableSectionHeaderColor
-		backgroundView = view
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(titleView)
 		updateDisclosureImage()

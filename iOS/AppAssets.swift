@@ -74,10 +74,6 @@ struct AppAssets {
 		return RSImage(named: "starOpenImage")!
 	}()
 	
-	static var tableSectionHeaderColor: UIColor = {
-		return UIColor(named: "tableSectionHeaderColor")!
-	}()
-	
 	static var timelineStarImage: RSImage = {
 		let image = RSImage(named: "starClosedImage")!
 		return image.maskWithColor(color: AppAssets.starColor)!
