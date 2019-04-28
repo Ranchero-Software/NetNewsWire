@@ -19,7 +19,6 @@ class MasterFeedTableViewCell : UITableViewCell {
 
 	weak var delegate: MasterFeedTableViewCellDelegate?
 	var allowDisclosureSelection = false
-	private var layout: MasterFeedTableViewCellLayout?
 	
 	override var accessibilityLabel: String? {
 		set {}
@@ -53,7 +52,6 @@ class MasterFeedTableViewCell : UITableViewCell {
 	var shouldShowImage = false {
 		didSet {
 			if shouldShowImage != oldValue {
-				layout = nil
 				setNeedsLayout()
 			}
 			faviconImageView.image = shouldShowImage ? faviconImage : nil
@@ -68,7 +66,6 @@ class MasterFeedTableViewCell : UITableViewCell {
 			if unreadCountView.unreadCount != newValue {
 				unreadCountView.unreadCount = newValue
 				unreadCountView.isHidden = (newValue < 1)
-				layout = nil
 				setNeedsLayout()
 			}
 		}
@@ -81,7 +78,6 @@ class MasterFeedTableViewCell : UITableViewCell {
 		set {
 			if titleView.text != newValue {
 				titleView.text = newValue
-				layout = nil
 				setNeedsLayout()
 			}
 		}
@@ -109,30 +105,22 @@ class MasterFeedTableViewCell : UITableViewCell {
 		commonInit()
 	}
 
-	override func prepareForReuse() {
-		layout = nil
-		unreadCountView.setNeedsLayout()
-		unreadCountView.setNeedsDisplay()
-	}
-	
 	override func willTransition(to state: UITableViewCell.StateMask) {
 		super.willTransition(to: state)
 		showingEditControl = state.contains(.showingEditControl)
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		if layout == nil {
-			resetLayout()
-		}
-		return CGSize(width: bounds.width, height: layout!.height)
+		let shouldShowDisclosure = !(showingEditControl && showsReorderControl)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: shouldShowDisclosure)
+		return CGSize(width: bounds.width, height: layout.height)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		if layout == nil {
-			resetLayout()
-		}
-		layoutWith(layout!)
+		let shouldShowDisclosure = !(showingEditControl && showsReorderControl)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: shouldShowDisclosure)
+		layoutWith(layout)
 	}
 	
 	@objc func buttonPressed(_ sender: UIButton) {
@@ -184,11 +172,6 @@ private extension MasterFeedTableViewCell {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 
-	func resetLayout() {
-		let shouldShowDisclosure = !(showingEditControl && showsReorderControl)
-		layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: shouldShowDisclosure)
-	}
-	
 	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
 		faviconImageView.setFrameIfNotEqual(layout.faviconRect)
 		titleView.setFrameIfNotEqual(layout.titleRect)

@@ -19,6 +19,8 @@ struct MasterFeedTableViewCellLayout {
 	private static let unreadCountMarginLeft = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginRight = CGFloat(integerLiteral: 0)
 	private static let disclosureButtonSize = CGSize(width: 44, height: 44)
+
+	private static let minRowHeight = CGFloat(integerLiteral: 44)
 	
 	let faviconRect: CGRect
 	let titleRect: CGRect
@@ -64,8 +66,12 @@ struct MasterFeedTableViewCellLayout {
 		}
 
 		// Title
-		let labelWidth = bounds.width - (rFavicon.width + MasterFeedTableViewCellLayout.imageMarginRight + MasterFeedTableViewCellLayout.unreadCountMarginLeft + rUnread.width + MasterFeedTableViewCellLayout.unreadCountMarginRight + rDisclosure.width)
+		let labelWidth = bounds.width - (rFavicon.width + MasterFeedTableViewCellLayout.imageMarginRight + MasterFeedTableViewCellLayout.unreadCountMarginLeft + rUnread.width + MasterFeedTableViewCellLayout.unreadCountMarginRight + MasterFeedTableViewCellLayout.disclosureButtonSize.width)
 		let labelSizeInfo = MultilineUILabelSizer.size(for: label.text ?? "", font: label.font, numberOfLines: 0, width: Int(floor(labelWidth)))
+		
+		if label.text == "inessential" {
+			print("Number of lines: \(labelSizeInfo.numberOfLinesUsed) height: \(labelSizeInfo.size.height)")
+		}
 		
 		var rLabel = CGRect(x: 0.0, y: 0.0, width: labelSizeInfo.size.width, height: labelSizeInfo.size.height)
 		if shouldShowImage {
@@ -75,8 +81,11 @@ struct MasterFeedTableViewCellLayout {
 		}
 		
 		// Determine cell height
-		let cellHeight = [rFavicon, rLabel, rUnread, rDisclosure].maxY()
-
+		var cellHeight = [rFavicon, rLabel, rUnread, rDisclosure].maxY()
+		if cellHeight < MasterFeedTableViewCellLayout.minRowHeight {
+			cellHeight = MasterFeedTableViewCellLayout.minRowHeight
+		}
+		
 		// Center in Cell
 		let newBounds = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.width, height: cellHeight)
 
