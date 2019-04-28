@@ -14,8 +14,10 @@ class MasterFeedUnreadCountView : UIView {
 	private let cornerRadius = 8.0
 	private let bgColor = UIColor.darkGray
 	private let textColor = UIColor.white
-	private let textFont = UIFont.preferredFont(forTextStyle: .caption1)
-	private lazy var textAttributes: [NSAttributedString.Key: AnyObject] = [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
+	private var textAttributes: [NSAttributedString.Key: AnyObject] {
+		let textFont = UIFont.preferredFont(forTextStyle: .caption1)
+		return [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
+	}
 	private var textSizeCache = [Int: CGSize]()
 
 	var unreadCount = 0 {
@@ -40,6 +42,12 @@ class MasterFeedUnreadCountView : UIView {
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		self.isOpaque = false
+	}
+	
+	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+		textSizeCache = [Int: CGSize]()
+		invalidateIntrinsicContentSize()
+		setNeedsDisplay()
 	}
 	
 	override var intrinsicContentSize: CGSize {
