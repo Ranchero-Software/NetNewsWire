@@ -86,7 +86,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 			return
 		}
 		
-		guard let node = navState.rootNode.childNodeRepresentingObject(representedObject as AnyObject),
+		guard let node = navState.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject),
 			let indexPath = navState.indexPathFor(node) else {
 				return
 		}
