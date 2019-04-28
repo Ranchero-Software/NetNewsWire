@@ -32,12 +32,13 @@ struct AppAssets {
 		return image.maskWithColor(color: AppAssets.chevronDisclosureColor)!
 	}()
 	
-	static var feedImage: RSImage = {
-		return RSImage(named: "rssImage")!
+	static var feedColor: UIColor = {
+		return UIColor(named: "feedColor")!
 	}()
-	
-	static var folderImage: RSImage = {
-		return RSImage(named: "folderImage")!
+
+	static var feedImage: RSImage = {
+		let image = RSImage(named: "feedImage")!
+		return image.maskWithColor(color: AppAssets.feedColor)!
 	}()
 	
 	static var masterFolderColor: UIColor = {

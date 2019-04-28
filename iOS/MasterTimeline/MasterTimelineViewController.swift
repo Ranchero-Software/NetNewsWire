@@ -348,6 +348,7 @@ private extension MasterTimelineViewController {
 		
 		updateTableViewRowHeight()
 		title = navState?.timelineName
+		navigationController?.title = navState?.timelineName
 		
 		if navState?.articles.count ?? 0 > 0 {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
