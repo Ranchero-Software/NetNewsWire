@@ -207,7 +207,7 @@ class NavigationStateController {
 			return
 		}
 		
-		let shouldFetchAndMergeArticles = representedObjectsContainsAnyFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
+		let shouldFetchAndMergeArticles = timelineFetcherContainsAnyFeed(feeds) || timelineFetcherContainsAnyPseudoFeed()
 		if shouldFetchAndMergeArticles {
 			queueFetchAndMergeArticles()
 		}
@@ -603,14 +603,14 @@ private extension NavigationStateController {
 		
 	}
 	
-	func representedObjectsContainsAnyPseudoFeed() -> Bool {
+	func timelineFetcherContainsAnyPseudoFeed() -> Bool {
 		if timelineFetcher is PseudoFeed {
 			return true
 		}
 		return false
 	}
 	
-	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
+	func timelineFetcherContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
 		
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
 		
