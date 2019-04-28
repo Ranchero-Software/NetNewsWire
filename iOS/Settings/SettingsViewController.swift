@@ -54,8 +54,6 @@ class SettingsViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
 		switch indexPath.section {
-		case 0:
-			print("Accounts isn't ready yet")
 		case 1:
 			switch indexPath.row {
 			case 0:
@@ -72,7 +70,7 @@ class SettingsViewController: UITableViewController {
 			}
 		case 2:
 			UIApplication.shared.open(URL(string: "https://appcamp4girls.com/contribute/")!, options: [:])
-		default:
+		case 4:
 			switch indexPath.row {
 			case 0:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
@@ -86,7 +84,11 @@ class SettingsViewController: UITableViewController {
 			default:
 				print("export")
 			}
+		default:
+			break
 		}
+		
+		tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 		
 	}
 
