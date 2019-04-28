@@ -45,7 +45,8 @@ struct MasterFeedTableViewCellLayout {
 		// Favicon
 		var rFavicon = CGRect.zero
 		if shouldShowImage {
-			rFavicon = CGRect(x: bounds.origin.x, y: 0.0, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
+			let y = UIFontMetrics.default.scaledValue(for: CGFloat(integerLiteral: 4))
+			rFavicon = CGRect(x: bounds.origin.x, y: y, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
 		}
 
 		//  Separator Insets
@@ -89,7 +90,7 @@ struct MasterFeedTableViewCellLayout {
 		// Center in Cell
 		let newBounds = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.width, height: cellHeight)
 
-		if shouldShowImage {
+		if shouldShowImage && labelSizeInfo.numberOfLinesUsed == 1 {
 			rFavicon = MasterFeedTableViewCellLayout.centerVertically(rFavicon, newBounds)
 		}
 		
