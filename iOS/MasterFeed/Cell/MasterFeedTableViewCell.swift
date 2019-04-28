@@ -53,7 +53,7 @@ class MasterFeedTableViewCell : UITableViewCell {
 	var shouldShowImage = false {
 		didSet {
 			if shouldShowImage != oldValue {
-				resetLayout()
+				layout = nil
 				setNeedsLayout()
 			}
 			faviconImageView.image = shouldShowImage ? faviconImage : nil
@@ -68,7 +68,7 @@ class MasterFeedTableViewCell : UITableViewCell {
 			if unreadCountView.unreadCount != newValue {
 				unreadCountView.unreadCount = newValue
 				unreadCountView.isHidden = (newValue < 1)
-				resetLayout()
+				layout = nil
 				setNeedsLayout()
 			}
 		}
@@ -81,8 +81,7 @@ class MasterFeedTableViewCell : UITableViewCell {
 		set {
 			if titleView.text != newValue {
 				titleView.text = newValue
-				resetLayout()
-				setNeedsDisplay()
+				layout = nil
 				setNeedsLayout()
 			}
 		}
@@ -187,7 +186,7 @@ private extension MasterFeedTableViewCell {
 
 	func resetLayout() {
 		let shouldShowDisclosure = !(showingEditControl && showsReorderControl)
-		layout = MasterFeedTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: shouldShowDisclosure)
+		layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: shouldShowDisclosure)
 	}
 	
 	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {

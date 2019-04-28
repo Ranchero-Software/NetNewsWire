@@ -10,8 +10,6 @@ import UIKit
 
 class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
-	private var layout: MasterFeedTableViewCellLayout?
-
 	override var accessibilityLabel: String? {
 		set {}
 		get {
@@ -83,18 +81,27 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		if layout == nil {
-			resetLayout()
-		}
-		return CGSize(width: bounds.width, height: layout!.height)
+		
+		let unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
+
+		// Since we can't reload Section Headers to reset the height after we get the
+		// unread count did change, we always assume a large unread count
+		//
+		// This means that sometimes on the second to largest font size will have extra
+		// space under the account name.  This is better than having it overflow into the
+		// cell below.
+		unreadCountView.unreadCount = 888
+		
+		let layout = MasterFeedTableViewCellLayout(cellWidth: size.width, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: true)
+		
+		return CGSize(width: bounds.width, height: layout.height)
+		
 	}
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		if layout == nil {
-			resetLayout()
-		}
-		layoutWith(layout!)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: true)
+		layoutWith(layout)
 	}
 
 }
@@ -124,10 +131,6 @@ private extension MasterFeedTableViewSectionHeader {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
-	func resetLayout() {
-		layout = MasterFeedTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: true)
-	}
-
 	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)

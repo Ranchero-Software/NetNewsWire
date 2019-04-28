@@ -175,7 +175,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 			headerView.unreadCount = 0
 		}
 
-		let size = headerView.sizeThatFits(CGSize.zero)
+		let size = headerView.sizeThatFits(CGSize(width: tableView.bounds.width, height: 0.0))
 		return size.height
 		
 	}

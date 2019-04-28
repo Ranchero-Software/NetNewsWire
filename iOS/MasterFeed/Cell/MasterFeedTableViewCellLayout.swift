@@ -27,7 +27,7 @@ struct MasterFeedTableViewCellLayout {
 	
 	let height: CGFloat
 	
-	init(cellSize: CGSize, insets: UIEdgeInsets, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterFeedUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
+	init(cellWidth: CGFloat, insets: UIEdgeInsets, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterFeedUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
 
 		var initialIndent = MasterFeedTableViewCellLayout.marginLeft + insets.left
 		if indent {
@@ -37,7 +37,7 @@ struct MasterFeedTableViewCellLayout {
 			initialIndent += MasterFeedTableViewCellLayout.editingControlIndent
 		}
 		
-		let bounds = CGRect(x: initialIndent, y: 0.0, width: floor(cellSize.width - initialIndent - insets.right), height: floor(cellSize.height))
+		let bounds = CGRect(x: initialIndent, y: 0.0, width: floor(cellWidth - initialIndent - insets.right), height: 0.0)
 		
 		// Favicon
 		var rFavicon = CGRect.zero
