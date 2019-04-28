@@ -64,7 +64,6 @@
 		51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452702265091600C03939 /* MultilineUILabelSizer.swift */; };
 		51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452712265091600C03939 /* MasterTimelineCellData.swift */; };
 		51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452722265091600C03939 /* MasterTimelineTableViewCell.swift */; };
-		51C4527A2265091600C03939 /* SingleLineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452732265091600C03939 /* SingleLineUILabelSizer.swift */; };
 		51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */; };
 		51C4527C2265091600C03939 /* MasterTimelineCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452752265091600C03939 /* MasterTimelineCellLayout.swift */; };
 		51C4527F2265092C00C03939 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4527E2265092C00C03939 /* DetailViewController.swift */; };
@@ -117,6 +116,8 @@
 		51F85BF52273625800C787DC /* Bundle-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF42273625800C787DC /* Bundle-Extensions.swift */; };
 		51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF622749FA100C787DC /* UIFont-Extensions.swift */; };
 		51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */; };
+		51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFA2275D85000C787DC /* Array-Extensions.swift */; };
+		51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
@@ -651,7 +652,6 @@
 		51C452702265091600C03939 /* MultilineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultilineUILabelSizer.swift; sourceTree = "<group>"; };
 		51C452712265091600C03939 /* MasterTimelineCellData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineCellData.swift; sourceTree = "<group>"; };
 		51C452722265091600C03939 /* MasterTimelineTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineTableViewCell.swift; sourceTree = "<group>"; };
-		51C452732265091600C03939 /* SingleLineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLineUILabelSizer.swift; sourceTree = "<group>"; };
 		51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterUnreadIndicatorView.swift; sourceTree = "<group>"; };
 		51C452752265091600C03939 /* MasterTimelineCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineCellLayout.swift; sourceTree = "<group>"; };
 		51C4527E2265092C00C03939 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
@@ -672,6 +672,8 @@
 		51F85BF42273625800C787DC /* Bundle-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BF622749FA100C787DC /* UIFont-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem-Extensions.swift"; sourceTree = "<group>"; };
+		51F85BFA2275D85000C787DC /* Array-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array-Extensions.swift"; sourceTree = "<group>"; };
+		51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLineUILabelSizer.swift; sourceTree = "<group>"; };
 		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6581C73420CED60100F4AD34 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionHandler.swift; sourceTree = "<group>"; };
@@ -972,6 +974,7 @@
 		51C45245226506C800C03939 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				51F85BFA2275D85000C787DC /* Array-Extensions.swift */,
 				51F85BF42273625800C787DC /* Bundle-Extensions.swift */,
 				5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */,
 				5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */,
@@ -1021,7 +1024,7 @@
 				51C452712265091600C03939 /* MasterTimelineCellData.swift */,
 				51C452752265091600C03939 /* MasterTimelineCellLayout.swift */,
 				51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */,
-				51C452732265091600C03939 /* SingleLineUILabelSizer.swift */,
+				51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */,
 				51C452702265091600C03939 /* MultilineUILabelSizer.swift */,
 			);
 			path = Cell;
@@ -2233,6 +2236,7 @@
 				51C45291226509C800C03939 /* SmartFeed.swift in Sources */,
 				51C452A722650A3D00C03939 /* RSImage-Extensions.swift in Sources */,
 				51C45269226508F600C03939 /* MasterFeedTableViewCell.swift in Sources */,
+				51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */,
 				51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */,
 				5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */,
 				51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */,
@@ -2278,11 +2282,11 @@
 				5115CAF42266301400B21BCE /* AddContainerViewController.swift in Sources */,
 				51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */,
 				512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */,
+				51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */,
 				51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
 				5183CCE9226F68D90010922C /* RefreshTimer.swift in Sources */,
 				51C452882265093600C03939 /* AddFeedViewController.swift in Sources */,
-				51C4527A2265091600C03939 /* SingleLineUILabelSizer.swift in Sources */,
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
 				5183CCE3226F314C0010922C /* ProgressTableViewController.swift in Sources */,
 				512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */,

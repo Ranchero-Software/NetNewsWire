@@ -25,6 +25,8 @@ struct MasterFeedTableViewCellLayout {
 	let unreadCountRect: CGRect
 	let disclosureButtonRect: CGRect
 	
+	let height: CGFloat
+	
 	init(cellSize: CGSize, insets: UIEdgeInsets, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterFeedUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
 
 		var initialIndent = MasterFeedTableViewCellLayout.marginLeft + insets.left
@@ -41,21 +43,7 @@ struct MasterFeedTableViewCellLayout {
 		var rFavicon = CGRect.zero
 		if shouldShowImage {
 			rFavicon = CGRect(x: bounds.origin.x, y: 0.0, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
-			rFavicon = MasterFeedTableViewCellLayout.centerVertically(rFavicon, bounds)
 		}
-		self.faviconRect = rFavicon
-
-		// Title
-		let labelSize = SingleLineUILabelSizer.size(for: label.text ?? "", font: label.font!)
-
-		var rLabel = CGRect(x: 0.0, y: 0.0, width: labelSize.width, height: labelSize.height)
-		if shouldShowImage {
-			rLabel.origin.x = rFavicon.maxX + MasterFeedTableViewCellLayout.imageMarginRight
-		} else {
-			rLabel.origin.x = bounds.minX
-		}
-		
-		rLabel = MasterFeedTableViewCellLayout.centerVertically(rLabel, bounds)
 
 		// Unread Count
 		let unreadCountSize = unreadCountView.intrinsicContentSize
@@ -63,44 +51,54 @@ struct MasterFeedTableViewCellLayout {
 
 		var rUnread = CGRect.zero
 		if !unreadCountIsHidden {
-			
 			rUnread.size = unreadCountSize
 			rUnread.origin.x = bounds.maxX -
 				(unreadCountSize.width + MasterFeedTableViewCellLayout.unreadCountMarginRight + MasterFeedTableViewCellLayout.disclosureButtonSize.width)
-			rUnread = MasterFeedTableViewCellLayout.centerVertically(rUnread, bounds)
-			
-			// Cap the Title width based on the unread indicator button
-			let labelMaxX = rUnread.minX - MasterFeedTableViewCellLayout.unreadCountMarginLeft
-			if rLabel.maxX > labelMaxX {
-				rLabel.size.width = labelMaxX - rLabel.minX
-			}
-			
 		}
-		self.unreadCountRect = rUnread
 		
 		// Disclosure Button
 		var rDisclosure = CGRect.zero
 		if shouldShowDisclosure {
-			
 			rDisclosure.size = MasterFeedTableViewCellLayout.disclosureButtonSize
 			rDisclosure.origin.x = bounds.maxX - MasterFeedTableViewCellLayout.disclosureButtonSize.width
-			rDisclosure = MasterFeedTableViewCellLayout.centerVertically(rDisclosure, bounds)
-			
-			// Cap the Title width based on the disclosure button
-			let labelMaxX = rDisclosure.minX
-			if rLabel.maxX > labelMaxX {
-				rLabel.size.width = labelMaxX - rLabel.minX
-			}
-		
 		}
-		self.disclosureButtonRect = rDisclosure
 
+		// Title
+		let labelWidth = bounds.width - (rFavicon.width + MasterFeedTableViewCellLayout.imageMarginRight + MasterFeedTableViewCellLayout.unreadCountMarginLeft + rUnread.width + MasterFeedTableViewCellLayout.unreadCountMarginRight + rDisclosure.width)
+		let labelSizeInfo = MultilineUILabelSizer.size(for: label.text ?? "", font: label.font, numberOfLines: 0, width: Int(floor(labelWidth)))
 		
-		// Cap the Title width based on total width
-		if rLabel.maxX > bounds.maxX {
-			rLabel.size.width = bounds.maxX - rLabel.minX
+		var rLabel = CGRect(x: 0.0, y: 0.0, width: labelSizeInfo.size.width, height: labelSizeInfo.size.height)
+		if shouldShowImage {
+			rLabel.origin.x = rFavicon.maxX + MasterFeedTableViewCellLayout.imageMarginRight
+		} else {
+			rLabel.origin.x = bounds.minX
 		}
 		
+		// Determine cell height
+		let cellHeight = [rFavicon, rLabel, rUnread, rDisclosure].maxY()
+
+		// Center in Cell
+		let newBounds = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.width, height: cellHeight)
+
+		if shouldShowImage {
+			rFavicon = MasterFeedTableViewCellLayout.centerVertically(rFavicon, newBounds)
+		}
+		
+		if !unreadCountIsHidden {
+			rUnread = MasterFeedTableViewCellLayout.centerVertically(rUnread, newBounds)
+		}
+
+		if shouldShowDisclosure {
+			rDisclosure = MasterFeedTableViewCellLayout.centerVertically(rDisclosure, newBounds)
+		}
+
+		rLabel = MasterFeedTableViewCellLayout.centerVertically(rLabel, newBounds)
+
+		//  Assign the properties
+		self.height = cellHeight
+		self.faviconRect = rFavicon
+		self.unreadCountRect = rUnread
+		self.disclosureButtonRect = rDisclosure
 		self.titleRect = rLabel
 		
 	}

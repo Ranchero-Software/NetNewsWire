@@ -98,9 +98,12 @@ private extension MultilineUILabelSizer {
 		}
 
 		var height = MultilineUILabelSizer.calculateHeight(string, width, font)
-		let maxHeight = singleLineHeightEstimate * numberOfLines
-		if height > maxHeight {
-			height = maxHeight
+		
+		if numberOfLines != 0 {
+			let maxHeight = singleLineHeightEstimate * numberOfLines
+			if height > maxHeight {
+				height = maxHeight
+			}
 		}
 		
 		cache[string]![width] = height

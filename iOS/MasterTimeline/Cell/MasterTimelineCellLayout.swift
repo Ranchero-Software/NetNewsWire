@@ -243,14 +243,3 @@ private extension MasterTimelineCellLayout {
 		return r
 	}
 }
-
-private extension Array where Element == CGRect {
-
-	func maxY() -> CGFloat {
-
-		var y: CGFloat = 0.0
-		self.forEach { y = Swift.max(y, $0.maxY) }
-		return y
-	}
-}
-

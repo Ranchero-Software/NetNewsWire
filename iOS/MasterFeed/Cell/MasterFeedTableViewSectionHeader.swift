@@ -10,6 +10,8 @@ import UIKit
 
 class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
+	private var layout: MasterFeedTableViewCellLayout?
+
 	override var accessibilityLabel: String? {
 		set {}
 		get {
@@ -57,7 +59,6 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	private let titleView: UILabel = {
 		let label = NonIntrinsicLabel()
 		label.numberOfLines = 0
-		label.lineBreakMode = .byTruncatingTail
 		label.allowsDefaultTighteningForTruncation = false
 		label.adjustsFontForContentSizeCategory = true
 		label.font = .preferredFont(forTextStyle: .body)
@@ -81,12 +82,20 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		commonInit()
 	}
 	
+	override func sizeThatFits(_ size: CGSize) -> CGSize {
+		if layout == nil {
+			resetLayout()
+		}
+		return CGSize(width: bounds.width, height: layout!.height)
+	}
+
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: true)
-		layoutWith(layout)
+		if layout == nil {
+			resetLayout()
+		}
+		layoutWith(layout!)
 	}
-	
 
 }
 
@@ -115,6 +124,10 @@ private extension MasterFeedTableViewSectionHeader {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
+	func resetLayout() {
+		layout = MasterFeedTableViewCellLayout(cellSize: bounds.size, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: true)
+	}
+
 	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)

@@ -38,6 +38,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 
 		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -141,6 +142,10 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		}
 	}
 	
+	@objc func contentSizeCategoryDidChange(_ note: Notification) {
+		tableView.reloadData()
+	}
+	
 	// MARK: Table View
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -152,7 +157,27 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		return CGFloat(integerLiteral: 44)
+
+		guard let nameProvider = navState.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
+			return 44
+		}
+		
+		let headerView = MasterFeedTableViewSectionHeader()
+		headerView.name = nameProvider.nameForDisplay
+		
+		guard let sectionNode = navState.rootNode.childAtIndex(section) else {
+			return 44
+		}
+		
+		if let account = sectionNode.representedObject as? Account {
+			headerView.unreadCount = account.unreadCount
+		} else {
+			headerView.unreadCount = 0
+		}
+
+		let size = headerView.sizeThatFits(CGSize.zero)
+		return size.height
+		
 	}
 	
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
