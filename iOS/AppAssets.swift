@@ -32,10 +32,6 @@ struct AppAssets {
 		return image.maskWithColor(color: AppAssets.chevronDisclosureColor)!
 	}()
 	
-	static var cogImage: RSImage = {
-		return RSImage(named: "cogImage")!
-	}()
-	
 	static var feedImage: RSImage = {
 		return RSImage(named: "rssImage")!
 	}()
@@ -55,6 +51,15 @@ struct AppAssets {
 	
 	static var selectionBackgroundColor: UIColor = {
 		return UIColor(named: "selectionBackgroundColor")!
+	}()
+	
+	static var smartFeedColor: UIColor = {
+		return UIColor(named: "smartFeedColor")!
+	}()
+	
+	static var smartFeedImage: RSImage = {
+		let image = RSImage(named: "smartFeedImage")!
+		return image.maskWithColor(color: AppAssets.smartFeedColor)!
 	}()
 	
 	static var starColor: UIColor = {

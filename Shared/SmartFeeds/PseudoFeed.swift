@@ -40,7 +40,7 @@ protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconP
 }
 
 private var smartFeedIcon: UIImage = {
-	return AppAssets.cogImage
+	return AppAssets.smartFeedImage
 }()
 
 extension PseudoFeed {
