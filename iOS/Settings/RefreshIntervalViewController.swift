@@ -22,7 +22,13 @@ class RefreshIntervalViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+		
 		cell.textLabel?.adjustsFontForContentSizeCategory = true
+		
+		let bgView = UIView()
+		bgView.backgroundColor = AppAssets.selectionBackgroundColor
+		cell.selectedBackgroundView = bgView
+
 		let userRefreshInterval = AppDefaults.refreshInterval
 		
 		switch indexPath.row {
@@ -76,6 +82,7 @@ class RefreshIntervalViewController: UITableViewController {
 				cell.accessoryType = .none
 			}
 		}
+		
         return cell
 		
     }

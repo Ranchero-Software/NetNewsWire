@@ -42,6 +42,14 @@ class SettingsViewController: UITableViewController {
 		tableView.tableFooterView = buildLabel
 
 	}
+	
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = super.tableView(tableView, cellForRowAt: indexPath)
+		let bgView = UIView()
+		bgView.backgroundColor = AppAssets.selectionBackgroundColor
+		cell.selectedBackgroundView = bgView
+		return cell
+	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
