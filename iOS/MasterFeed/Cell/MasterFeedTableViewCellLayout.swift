@@ -13,7 +13,7 @@ struct MasterFeedTableViewCellLayout {
 
 	private static let indent = CGFloat(integerLiteral: 14)
 	private static let editingControlIndent = CGFloat(integerLiteral: 40)
-	private static let imageSize = CGSize(width: 16, height: 16)
+	private static let imageSize = CGSize(width: 20, height: 20)
 	private static let marginLeft = CGFloat(integerLiteral: 8)
 	private static let imageMarginRight = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginLeft = CGFloat(integerLiteral: 8)
