@@ -26,7 +26,7 @@ Similarly: always work at the highest level possible, but not higher and certain
 
 ### Language
 
-Write new code in Swift 4.2.
+Write new code in Swift 5.
 
 The one exception to this is when dealing with C APIs, which are often much easier to deal with in Objective-C than in Swift. Still, though, this is rare, and is much more likely to be needed in a lower-level framework such as RSParser — it shouldn’t happen at the app level.
 
