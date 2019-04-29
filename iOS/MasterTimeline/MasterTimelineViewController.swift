@@ -40,6 +40,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(articlesDidChange(_:)), name: .ArticlesDidChange, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -268,6 +269,10 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		
 	}
 
+	@objc func contentSizeCategoryDidChange(_ note: Notification) {
+		tableView.reloadData()
+	}
+	
 	// MARK: Reloading
 	
 	@objc func reloadAllVisibleCells() {

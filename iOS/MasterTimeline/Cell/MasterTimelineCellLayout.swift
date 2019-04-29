@@ -25,20 +25,27 @@ struct MasterTimelineCellLayout {
 	static let avatarCornerRadius = CGFloat(integerLiteral: 4)
 
 	static let titleColor = AppAssets.timelineTextPrimaryColor
-	static let titleFont = UIFont.preferredFont(forTextStyle: .headline)
+	static var titleFont: UIFont {
+		return UIFont.preferredFont(forTextStyle: .headline)
+	}
 	static let titleBottomMargin = CGFloat(integerLiteral: 1)
-	
 
 	static let feedColor = AppAssets.timelineTextSecondaryColor
-	static let feedNameFont = UIFont.preferredFont(forTextStyle: .footnote)
+	static var feedNameFont: UIFont {
+		return UIFont.preferredFont(forTextStyle: .footnote)
+	}
 	static let feedRightMargin = CGFloat(integerLiteral: 8)
 	
 	static let dateColor = AppAssets.timelineTextSecondaryColor
-	static let dateFont = UIFont.preferredFont(forTextStyle: .footnote)
+	static var dateFont: UIFont {
+		return UIFont.preferredFont(forTextStyle: .footnote)
+	}
 	static let dateMarginBottom = CGFloat(integerLiteral: 1)
 
 	static let summaryColor = AppAssets.timelineTextPrimaryColor
-	static let summaryFont = UIFont.preferredFont(forTextStyle: .body)
+	static var summaryFont: UIFont {
+		return UIFont.preferredFont(forTextStyle: .body)
+	}
 
 	static let chevronWidth = CGFloat(integerLiteral: 28)
 
