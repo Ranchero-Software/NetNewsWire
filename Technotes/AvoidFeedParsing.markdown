@@ -30,7 +30,7 @@ NetNewsWire also looks at the content of the feed. If it’s definitely an image
 
 Yes, this kind of thing happens in the real world: I’ve seen it. (Once I even saw a feed URL return a movie file.)
 
-We could more here, but it’s not often an issue, so it’s not a high priority. Just a good-to-have.
+We could do more here, but it’s not often an issue, so it’s not a high priority. Just a good-to-have.
 
 ## Thing It Never Does
 
