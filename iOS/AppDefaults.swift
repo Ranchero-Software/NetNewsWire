@@ -15,6 +15,7 @@ struct AppDefaults {
 		static let timelineSortDirection = "timelineSortDirection"
 		static let refreshInterval = "refreshInterval"
 		static let lastRefresh = "lastRefresh"
+		static let timelineNumberOfLines = "timelineNumberOfLines"
 	}
 
 	static let isFirstRun: Bool = {
@@ -53,8 +54,17 @@ struct AppDefaults {
 		}
 	}
 	
+	static var timelineNumberOfLines: Int {
+		get {
+			return int(for: Key.timelineNumberOfLines)
+		}
+		set {
+			setInt(for: Key.timelineNumberOfLines, newValue)
+		}
+	}
+	
 	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, Key.refreshInterval: RefreshInterval.everyHour.rawValue]
+		let defaults: [String : Any] = [Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, Key.refreshInterval: RefreshInterval.everyHour.rawValue, Key.timelineNumberOfLines: 2]
 		UserDefaults.standard.register(defaults: defaults)
 	}
 

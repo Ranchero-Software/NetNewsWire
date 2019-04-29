@@ -11,7 +11,6 @@ import RSCore
 
 struct MasterTimelineCellLayout {
 
-	static let maxNumberOfLines = 2
 	static let cellPadding = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
 	
 	static let unreadCircleMarginLeft = CGFloat(integerLiteral: 8)
@@ -154,7 +153,7 @@ private extension MasterTimelineCellLayout {
 		
 		r.origin = point
 		
-		let sizeInfo = MultilineUILabelSizer.size(for: cellData.title, font: MasterTimelineCellLayout.titleFont, numberOfLines: MasterTimelineCellLayout.maxNumberOfLines, width: Int(textAreaWidth))
+		let sizeInfo = MultilineUILabelSizer.size(for: cellData.title, font: MasterTimelineCellLayout.titleFont, numberOfLines: cellData.numberOfLines, width: Int(textAreaWidth))
 		
 		r.size.width = textAreaWidth
 		r.size.height = sizeInfo.size.height
@@ -168,7 +167,7 @@ private extension MasterTimelineCellLayout {
 
 	static func rectForSummary(_ cellData: MasterTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat, _ linesUsed: Int) -> CGRect {
 		
-		let linesLeft = MasterTimelineCellLayout.maxNumberOfLines - linesUsed
+		let linesLeft = cellData.numberOfLines - linesUsed
 		
 		var r = CGRect.zero
 		if cellData.summary.isEmpty || linesLeft < 1 {

@@ -14,6 +14,7 @@ import Articles
 class MasterTimelineViewController: ProgressTableViewController, UndoableCommandRunner {
 
 	private static var minAvatarDimension: CGFloat = 20.0
+	private var numberOfTextLines = 0
 	
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
@@ -35,6 +36,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: navState)
@@ -44,6 +46,8 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
+		numberOfTextLines = AppDefaults.timelineNumberOfLines
 		
 		resetUI()
 		
@@ -243,6 +247,13 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		}
 	}
 
+	@objc func userDefaultsDidChange(_ note: Notification) {
+		if numberOfTextLines != AppDefaults.timelineNumberOfLines {
+			numberOfTextLines = AppDefaults.timelineNumberOfLines
+			tableView.reloadData()
+		}
+	}
+	
 	@objc func articlesReinitialized(_ note: Notification) {
 		resetUI()
 	}
@@ -346,7 +357,7 @@ private extension MasterTimelineViewController {
 		
 		let showFeedNames = navState?.showFeedNames ?? false
 		let showAvatar = navState?.showAvatars ?? false && avatar != nil
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatar, featuredImage: featuredImage)
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatar, featuredImage: featuredImage, numberOfLines: numberOfTextLines)
 		
 	}
 	

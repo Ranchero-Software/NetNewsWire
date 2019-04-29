@@ -21,8 +21,9 @@ struct MasterTimelineCellData {
 	let featuredImage: UIImage? // image from within the article
 	let read: Bool
 	let starred: Bool
+	let numberOfLines: Int
 
-	init(article: Article, showFeedName: Bool, feedName: String?, avatar: UIImage?, showAvatar: Bool, featuredImage: UIImage?) {
+	init(article: Article, showFeedName: Bool, feedName: String?, avatar: UIImage?, showAvatar: Bool, featuredImage: UIImage?, numberOfLines: Int) {
 
 		self.title = TimelineStringFormatter.truncatedTitle(article)
 		self.summary = TimelineStringFormatter.truncatedSummary(article)
@@ -44,6 +45,8 @@ struct MasterTimelineCellData {
 		
 		self.read = article.status.read
 		self.starred = article.status.starred
+		self.numberOfLines = numberOfLines
+		
 	}
 
 	init() { //Empty
@@ -57,6 +60,7 @@ struct MasterTimelineCellData {
 		self.featuredImage = nil
 		self.read = true
 		self.starred = false
+		self.numberOfLines = 0
 	}
 	
 }

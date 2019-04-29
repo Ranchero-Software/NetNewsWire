@@ -13,6 +13,7 @@ class SettingsViewController: UITableViewController {
 
 	@IBOutlet weak var refreshIntervalLabel: UILabel!
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
+	@IBOutlet weak var timelineNumberOfLinesLabel: UILabel!
 	
 	weak var presentingParentController: UIViewController?
 	
@@ -32,6 +33,9 @@ class SettingsViewController: UITableViewController {
 		}
 
 		refreshIntervalLabel.text = AppDefaults.refreshInterval.description()
+		
+		let numberOfLinesText = NSLocalizedString(" lines", comment: "Lines")
+		timelineNumberOfLinesLabel.text = "\(AppDefaults.timelineNumberOfLines)" + numberOfLinesText
 		
 		let buildLabel = UILabel(frame: CGRect(x: 20.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -70,6 +74,11 @@ class SettingsViewController: UITableViewController {
 			}
 		case 2:
 			UIApplication.shared.open(URL(string: "https://appcamp4girls.com/contribute/")!, options: [:])
+		case 3:
+			if indexPath.row == 1 {
+				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineNumberOfLinesViewController.self)
+				self.navigationController?.pushViewController(timeline, animated: true)
+			}
 		case 4:
 			switch indexPath.row {
 			case 0:

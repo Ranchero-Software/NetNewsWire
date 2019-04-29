@@ -109,6 +109,7 @@
 		51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		51EF0F79227716380050506E /* ColorHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F78227716380050506E /* ColorHash.swift */; };
 		51EF0F7A22771B890050506E /* ColorHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F78227716380050506E /* ColorHash.swift */; };
+		51EF0F7C2277919E0050506E /* TimelineNumberOfLinesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F7B2277919E0050506E /* TimelineNumberOfLinesViewController.swift */; };
 		51F85BE5227217D000C787DC /* RefreshIntervalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */; };
 		51F85BE7227245FC00C787DC /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BE6227245FC00C787DC /* AboutViewController.swift */; };
 		51F85BEB22724CB600C787DC /* About.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEA22724CB600C787DC /* About.rtf */; };
@@ -667,6 +668,7 @@
 		51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderTreeMenu.swift; path = AddFeed/FolderTreeMenu.swift; sourceTree = "<group>"; };
 		51EF0F76227716200050506E /* FaviconGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconGenerator.swift; sourceTree = "<group>"; };
 		51EF0F78227716380050506E /* ColorHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHash.swift; sourceTree = "<group>"; };
+		51EF0F7B2277919E0050506E /* TimelineNumberOfLinesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineNumberOfLinesViewController.swift; sourceTree = "<group>"; };
 		51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshIntervalViewController.swift; sourceTree = "<group>"; };
 		51F85BE6227245FC00C787DC /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		51F85BEA22724CB600C787DC /* About.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = About.rtf; sourceTree = "<group>"; };
@@ -970,8 +972,9 @@
 			children = (
 				5183CCEC22711DCE0010922C /* Settings.storyboard */,
 				5183CCEE227125970010922C /* SettingsViewController.swift */,
-				51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */,
 				51F85BE6227245FC00C787DC /* AboutViewController.swift */,
+				51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */,
+				51EF0F7B2277919E0050506E /* TimelineNumberOfLinesViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2272,6 +2275,7 @@
 				84F3EE1B20DEC97E003FADEB /* HTMLFeedFinder.swift in Sources */,
 				51C452A222650A1900C03939 /* RSHTMLMetadata+Extension.swift in Sources */,
 				5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */,
+				51EF0F7C2277919E0050506E /* TimelineNumberOfLinesViewController.swift in Sources */,
 				51C4529D22650A1000C03939 /* FaviconURLFinder.swift in Sources */,
 				51C45258226508CF00C03939 /* AppAssets.swift in Sources */,
 				51C4527C2265091600C03939 /* MasterTimelineCellLayout.swift in Sources */,
