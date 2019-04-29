@@ -309,10 +309,10 @@
             </objects>
             <point key="canvasLocation" x="465" y="152"/>
         </scene>
-        <!--TImeline Text Lines-->
+        <!--Timeline Text-->
         <scene sceneID="07z-Vb-4Fm">
             <objects>
-                <tableViewController storyboardIdentifier="TimelineNumberOfLinesViewController" title="TImeline Text Lines" id="1uv-PS-Xco" customClass="TimelineNumberOfLinesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="TimelineNumberOfLinesViewController" title="Timeline Text" id="1uv-PS-Xco" customClass="TimelineNumberOfLinesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="SJH-ze-loA">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
