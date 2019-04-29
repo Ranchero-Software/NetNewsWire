@@ -13,6 +13,7 @@ import Articles
 
 class MasterTimelineViewController: ProgressTableViewController, UndoableCommandRunner {
 
+	private static var minAvatarDimension: CGFloat = 20.0
 	private var rowHeightWithFeedName: CGFloat = 0.0
 	private var rowHeightWithoutFeedName: CGFloat = 0.0
 	
@@ -365,15 +366,12 @@ private extension MasterTimelineViewController {
 	
 	func configureTimelineCell(_ cell: MasterTimelineTableViewCell, article: Article) {
 		
-		var avatar = avatarFor(article)
-		if avatar == nil, let feed = article.feed {
-			avatar = appDelegate.faviconDownloader.favicon(for: feed)
-		}
+		let avatar = avatarFor(article)
 		let featuredImage = featuredImageFor(article)
 		
 		let showFeedNames = navState?.showFeedNames ?? false
-		let showAvatars = navState?.showAvatars ?? false
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatars, featuredImage: featuredImage)
+		let showAvatar = navState?.showAvatars ?? false && avatar != nil
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatar, featuredImage: featuredImage)
 		
 	}
 	
@@ -385,7 +383,7 @@ private extension MasterTimelineViewController {
 		
 		if let authors = article.authors {
 			for author in authors {
-				if let image = avatarForAuthor(author) {
+				if let image = avatarForAuthor(author), imagePassesQualityAssurance(image) {
 					return image
 				}
 			}
@@ -395,8 +393,27 @@ private extension MasterTimelineViewController {
 			return nil
 		}
 		
-		return appDelegate.feedIconDownloader.icon(for: feed)
+		let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)
+		if imagePassesQualityAssurance(feedIconImage) {
+			return feedIconImage
+		}
 		
+		if let feed = article.feed, let faviconImage = appDelegate.faviconDownloader.favicon(for: feed) {
+			if imagePassesQualityAssurance(faviconImage) {
+				return faviconImage
+			}
+		}
+		
+		return nil
+		
+	}
+	
+	func imagePassesQualityAssurance(_ image: UIImage?) -> Bool {
+		let minDimension = MasterTimelineViewController.minAvatarDimension * RSScreen.mainScreenScale
+		if let image = image, image.size.height >= minDimension, image.size.width >= minDimension {
+			return true
+		}
+		return false
 	}
 	
 	func avatarForAuthor(_ author: Author) -> UIImage? {

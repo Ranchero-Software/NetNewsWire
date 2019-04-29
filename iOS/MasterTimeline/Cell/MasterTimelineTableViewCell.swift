@@ -191,9 +191,7 @@ private extension MasterTimelineTableViewCell {
 	
 	func updateAvatar() {
 		
-		// The avatar should be bigger than a favicon. They’re too small; they look weird.
-		let minDimension = 22.0 * RSScreen.mainScreenScale
-		guard let image = cellData.avatar, cellData.showAvatar, image.size.height >= minDimension, image.size.width >= minDimension else {
+		guard let image = cellData.avatar, cellData.showAvatar else {
 			makeAvatarEmpty()
 			return
 		}
@@ -202,7 +200,7 @@ private extension MasterTimelineTableViewCell {
 		avatarImageView.layer.cornerRadius = MasterTimelineCellLayout.avatarCornerRadius
 		avatarImageView.clipsToBounds = true
 		
-		if avatarImageView.image !== image {
+		if avatarImageView.image !== cellData.avatar {
 			avatarImageView.image = image
 			setNeedsLayout()
 		}
