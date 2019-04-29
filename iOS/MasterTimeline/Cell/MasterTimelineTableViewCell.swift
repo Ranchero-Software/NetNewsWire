@@ -17,6 +17,8 @@ class MasterTimelineTableViewCell: UITableViewCell {
 	private let dateView = MasterTimelineTableViewCell.singleLineUILabel()
 	private let feedNameView = MasterTimelineTableViewCell.singleLineUILabel()
 	
+	private var layout: MasterTimelineCellLayout?
+	
 	private lazy var avatarImageView: UIImageView = {
 		let imageView = NonIntrinsicImageView(image: AppAssets.feedImage)
 		imageView.contentMode = .scaleAspectFit
@@ -45,25 +47,29 @@ class MasterTimelineTableViewCell: UITableViewCell {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let layout = updatedLayout()
-		return CGSize(width: bounds.width, height: layout.height)
+		if layout == nil {
+			layout = updatedLayout()
+		}
+		return CGSize(width: bounds.width, height: layout!.height)
 	}
 
 	override func layoutSubviews() {
 		
 		super.layoutSubviews()
 		
-		let layout = updatedLayout()
-		
-		unreadIndicatorView.setFrameIfNotEqual(layout.unreadIndicatorRect)
-		starView.setFrameIfNotEqual(layout.starRect)
-		avatarImageView.setFrameIfNotEqual(layout.avatarImageRect)
-		setFrame(for: titleView, rect: layout.titleRect)
-		setFrame(for: summaryView, rect: layout.summaryRect)
-		feedNameView.setFrameIfNotEqual(layout.feedNameRect)
-		dateView.setFrameIfNotEqual(layout.dateRect)
+		if layout == nil {
+			layout = updatedLayout()
+		}
 
-		separatorInset = layout.separatorInsets
+		unreadIndicatorView.setFrameIfNotEqual(layout!.unreadIndicatorRect)
+		starView.setFrameIfNotEqual(layout!.starRect)
+		avatarImageView.setFrameIfNotEqual(layout!.avatarImageRect)
+		setFrame(for: titleView, rect: layout!.titleRect)
+		setFrame(for: summaryView, rect: layout!.summaryRect)
+		feedNameView.setFrameIfNotEqual(layout!.feedNameRect)
+		dateView.setFrameIfNotEqual(layout!.dateRect)
+
+		separatorInset = layout!.separatorInsets
 		
 	}
 	
@@ -228,6 +234,7 @@ private extension MasterTimelineTableViewCell {
 	}
 	
 	func updateSubviews() {
+		layout = nil
 		updateTitleView()
 		updateSummaryView()
 		updateDateView()
