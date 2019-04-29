@@ -1,4 +1,4 @@
-# Possible Gotchas To Be Aware When Working on Syncing
+# Possible Gotchas To Be Aware Of When Working on Syncing
 
 ## Accounts and the local account
 
