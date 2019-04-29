@@ -25,7 +25,7 @@ extension Feed: SmallIconProvider {
 		#if os(macOS)
 		return AppImages.genericFeedImage
 		#else
-		return AppAssets.feedImage
+		return FaviconGenerator.favicon(self)
 		#endif
 	}
 }
@@ -39,4 +39,5 @@ extension Folder: SmallIconProvider {
 		return AppAssets.masterFolderImage
 		#endif
 	}
+	
 }

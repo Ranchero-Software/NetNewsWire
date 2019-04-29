@@ -404,7 +404,7 @@ private extension MasterTimelineViewController {
 			}
 		}
 		
-		return nil
+		return FaviconGenerator.favicon(feed)
 		
 	}
 	

@@ -32,6 +32,10 @@ struct AppAssets {
 		return image.maskWithColor(color: AppAssets.chevronDisclosureColor)!
 	}()
 	
+	static var faviconTemplateImage: RSImage = {
+		return RSImage(named: "faviconTemplateImage")!
+	}()
+	
 	static var feedColor: UIColor = {
 		return UIColor(named: "feedColor")!
 	}()
