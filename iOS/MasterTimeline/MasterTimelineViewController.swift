@@ -126,23 +126,6 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 			return nil
 		}
 		
-		// Set up the star action
-		let starTitle = article.status.starred ?
-			NSLocalizedString("Unstar", comment: "Unstar") :
-			NSLocalizedString("Star", comment: "Star")
-		
-		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (action, view, completionHandler) in
-			guard let undoManager = self?.undoManager,
-				let markReadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
-					return
-			}
-			self?.runCommand(markReadCommand)
-			completionHandler(true)
-		}
-		
-		starAction.image = AppAssets.starClosedImage
-		starAction.backgroundColor = AppAssets.starColor
-		
 		// Set up the read action
 		let readTitle = article.status.read ?
 			NSLocalizedString("Unread", comment: "Unread") :
@@ -160,7 +143,24 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		readAction.image = AppAssets.circleClosedImage
 		readAction.backgroundColor = AppAssets.timelineUnreadCircleColor
 		
-		let configuration = UISwipeActionsConfiguration(actions: [starAction, readAction])
+		// Set up the star action
+		let starTitle = article.status.starred ?
+			NSLocalizedString("Unstar", comment: "Unstar") :
+			NSLocalizedString("Star", comment: "Star")
+		
+		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (action, view, completionHandler) in
+			guard let undoManager = self?.undoManager,
+				let markReadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
+					return
+			}
+			self?.runCommand(markReadCommand)
+			completionHandler(true)
+		}
+		
+		starAction.image = AppAssets.starClosedImage
+		starAction.backgroundColor = AppAssets.starColor
+		
+		let configuration = UISwipeActionsConfiguration(actions: [readAction, starAction])
 		return configuration
 		
 	}
