@@ -21,7 +21,7 @@ class MasterUnreadIndicatorView: UIView {
 	}
 	
 	static let bezierPath: UIBezierPath = {
-		let r = CGRect(x: 0.0, y: 0.0, width: MasterTimelineCellLayout.unreadCircleDimension, height: MasterTimelineCellLayout.unreadCircleDimension)
+		let r = CGRect(x: 0.0, y: 0.0, width: MasterTimelineDefaultCellLayout.unreadCircleDimension, height: MasterTimelineDefaultCellLayout.unreadCircleDimension)
 		return UIBezierPath(ovalIn: r)
 	}()
 	

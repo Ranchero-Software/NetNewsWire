@@ -334,9 +334,14 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 		
 		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", avatar: nil, showAvatar: false, featuredImage: nil, numberOfLines: numberOfTextLines)
-		let layout = MasterTimelineCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData, showAvatar: false)
 		
-		tableView.estimatedRowHeight = layout.height
+		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
+			let layout = MasterTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			tableView.estimatedRowHeight = layout.height
+		} else {
+			let layout = MasterTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			tableView.estimatedRowHeight = layout.height
+		}
 		
 	}
 	

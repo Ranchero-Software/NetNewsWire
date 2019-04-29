@@ -132,24 +132,28 @@ private extension MasterTimelineTableViewCell {
 	}
 
 	func updatedLayout() -> MasterTimelineCellLayout {
-		return MasterTimelineCellLayout(width: bounds.width, insets: safeAreaInsets, cellData: cellData, showAvatar: avatarImageView.image != nil)
+		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
+			return MasterTimelineAccessibilityCellLayout(width: bounds.width, insets: safeAreaInsets, cellData: cellData)
+		} else {
+			return MasterTimelineDefaultCellLayout(width: bounds.width, insets: safeAreaInsets, cellData: cellData)
+		}
 	}
 	
 	func updateTitleView() {
-		titleView.font = MasterTimelineCellLayout.titleFont
-		titleView.textColor = MasterTimelineCellLayout.titleColor
+		titleView.font = MasterTimelineDefaultCellLayout.titleFont
+		titleView.textColor = MasterTimelineDefaultCellLayout.titleColor
 		updateTextFieldText(titleView, cellData?.title)
 	}
 	
 	func updateSummaryView() {
-		summaryView.font = MasterTimelineCellLayout.summaryFont
-		summaryView.textColor = MasterTimelineCellLayout.summaryColor
+		summaryView.font = MasterTimelineDefaultCellLayout.summaryFont
+		summaryView.textColor = MasterTimelineDefaultCellLayout.summaryColor
 		updateTextFieldText(summaryView, cellData?.summary)
 	}
 	
 	func updateDateView() {
-		dateView.font = MasterTimelineCellLayout.dateFont
-		dateView.textColor = MasterTimelineCellLayout.dateColor
+		dateView.font = MasterTimelineDefaultCellLayout.dateFont
+		dateView.textColor = MasterTimelineDefaultCellLayout.dateColor
 		updateTextFieldText(dateView, cellData.dateString)
 	}
 	
@@ -165,8 +169,8 @@ private extension MasterTimelineTableViewCell {
 		
 		if cellData.showFeedName {
 			showView(feedNameView)
-			feedNameView.font = MasterTimelineCellLayout.feedNameFont
-			feedNameView.textColor = MasterTimelineCellLayout.feedColor
+			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
+			feedNameView.textColor = MasterTimelineDefaultCellLayout.feedColor
 			updateTextFieldText(feedNameView, cellData.feedName)
 		} else {
 			hideView(feedNameView)
@@ -189,7 +193,7 @@ private extension MasterTimelineTableViewCell {
 		}
 
 		showView(avatarImageView)
-		avatarImageView.layer.cornerRadius = MasterTimelineCellLayout.avatarCornerRadius
+		avatarImageView.layer.cornerRadius = MasterTimelineDefaultCellLayout.avatarCornerRadius
 		avatarImageView.clipsToBounds = true
 		
 		if avatarImageView.image !== cellData.avatar {
