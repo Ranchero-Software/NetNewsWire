@@ -12,8 +12,7 @@ import RSCore
 class MasterTimelineTableViewCell: UITableViewCell {
 	
 	private let titleView = MasterTimelineTableViewCell.multiLineUILabel()
-	private let summaryView = MasterTimelineTableViewCell.singleLineUILabel()
-	private let textView = MasterTimelineTableViewCell.multiLineUILabel()
+	private let summaryView = MasterTimelineTableViewCell.multiLineUILabel()
 	private let unreadIndicatorView = MasterUnreadIndicatorView(frame: CGRect.zero)
 	private let dateView = MasterTimelineTableViewCell.singleLineUILabel()
 	private let feedNameView = MasterTimelineTableViewCell.singleLineUILabel()
@@ -26,10 +25,6 @@ class MasterTimelineTableViewCell: UITableViewCell {
 	
 	private lazy var starView = {
 		return NonIntrinsicImageView(image: AppAssets.timelineStarImage)
-	}()
-	
-	private lazy var textFields = {
-		return [self.dateView, self.feedNameView, self.titleView, self.summaryView, self.textView]
 	}()
 	
 	var cellData: MasterTimelineCellData! {
@@ -49,22 +44,25 @@ class MasterTimelineTableViewCell: UITableViewCell {
 		}
 	}
 	
+	override func sizeThatFits(_ size: CGSize) -> CGSize {
+		let layout = updatedLayout()
+		return CGSize(width: bounds.width, height: layout.height)
+	}
+
 	override func layoutSubviews() {
 		
 		super.layoutSubviews()
 		
 		let layout = updatedLayout()
 		
+		unreadIndicatorView.setFrameIfNotEqual(layout.unreadIndicatorRect)
+		starView.setFrameIfNotEqual(layout.starRect)
+		avatarImageView.setFrameIfNotEqual(layout.avatarImageRect)
 		setFrame(for: titleView, rect: layout.titleRect)
 		setFrame(for: summaryView, rect: layout.summaryRect)
-		setFrame(for: textView, rect: layout.textRect)
-		
-		dateView.setFrameIfNotEqual(layout.dateRect)
-		unreadIndicatorView.setFrameIfNotEqual(layout.unreadIndicatorRect)
 		feedNameView.setFrameIfNotEqual(layout.feedNameRect)
-		avatarImageView.setFrameIfNotEqual(layout.avatarImageRect)
-		starView.setFrameIfNotEqual(layout.starRect)
-		
+		dateView.setFrameIfNotEqual(layout.dateRect)
+
 		separatorInset = layout.separatorInsets
 		
 	}
@@ -79,6 +77,7 @@ private extension MasterTimelineTableViewCell {
 		let label = NonIntrinsicLabel()
 		label.lineBreakMode = .byTruncatingTail
 		label.allowsDefaultTighteningForTruncation = false
+		label.adjustsFontForContentSizeCategory = true
 		return label
 	}
 	
@@ -87,6 +86,7 @@ private extension MasterTimelineTableViewCell {
 		label.numberOfLines = 0
 		label.lineBreakMode = .byWordWrapping
 		label.allowsDefaultTighteningForTruncation = false
+		label.adjustsFontForContentSizeCategory = true
 		return label
 	}
 	
@@ -113,7 +113,6 @@ private extension MasterTimelineTableViewCell {
 		addAccessoryView()
 		addSubviewAtInit(titleView, hidden: false)
 		addSubviewAtInit(summaryView, hidden: true)
-		addSubviewAtInit(textView, hidden: true)
 		addSubviewAtInit(unreadIndicatorView, hidden: true)
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
@@ -133,8 +132,7 @@ private extension MasterTimelineTableViewCell {
 	}
 
 	func updatedLayout() -> MasterTimelineCellLayout {
-		
-		return MasterTimelineCellLayout(width: bounds.width, height: bounds.height, cellData: cellData, hasAvatar: avatarImageView.image != nil)
+		return MasterTimelineCellLayout(width: bounds.width, insets: safeAreaInsets, cellData: cellData, showAvatar: avatarImageView.image != nil)
 	}
 	
 	func updateTitleView() {
@@ -144,15 +142,9 @@ private extension MasterTimelineTableViewCell {
 	}
 	
 	func updateSummaryView() {
-		summaryView.font = MasterTimelineCellLayout.textFont
-		summaryView.textColor = MasterTimelineCellLayout.textColor
-		updateTextFieldText(summaryView, cellData?.text)
-	}
-	
-	func updateTextView() {
-		textView.font = MasterTimelineCellLayout.textFont
-		textView.textColor = MasterTimelineCellLayout.textColor
-		updateTextFieldText(textView, cellData?.text)
+		summaryView.font = MasterTimelineCellLayout.summaryFont
+		summaryView.textColor = MasterTimelineCellLayout.summaryColor
+		updateTextFieldText(summaryView, cellData?.summary)
 	}
 	
 	func updateDateView() {
@@ -234,7 +226,6 @@ private extension MasterTimelineTableViewCell {
 	func updateSubviews() {
 		updateTitleView()
 		updateSummaryView()
-		updateTextView()
 		updateDateView()
 		updateFeedNameView()
 		updateUnreadIndicator()

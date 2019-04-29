@@ -12,7 +12,7 @@ import Articles
 struct MasterTimelineCellData {
 	
 	let title: String
-	let text: String
+	let summary: String
 	let dateString: String
 	let feedName: String
 	let showFeedName: Bool
@@ -25,7 +25,7 @@ struct MasterTimelineCellData {
 	init(article: Article, showFeedName: Bool, feedName: String?, avatar: UIImage?, showAvatar: Bool, featuredImage: UIImage?) {
 
 		self.title = TimelineStringFormatter.truncatedTitle(article)
-		self.text = TimelineStringFormatter.truncatedSummary(article)
+		self.summary = TimelineStringFormatter.truncatedSummary(article)
 
 		self.dateString = TimelineStringFormatter.dateString(article.logicalDatePublished)
 
@@ -48,7 +48,7 @@ struct MasterTimelineCellData {
 
 	init() { //Empty
 		self.title = ""
-		self.text = ""
+		self.summary = ""
 		self.dateString = ""
 		self.feedName = ""
 		self.showFeedName = false
