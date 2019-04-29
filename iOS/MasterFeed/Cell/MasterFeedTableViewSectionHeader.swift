@@ -92,7 +92,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		// cell below.
 		unreadCountView.unreadCount = 888
 		
-		let layout = MasterFeedTableViewCellLayout(cellWidth: size.width, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: true)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: size.width, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: true)
 		
 		return CGSize(width: bounds.width, height: layout.height)
 		
@@ -100,7 +100,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: true, shouldShowDisclosure: true)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, shouldShowImage: false, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: true)
 		layoutWith(layout)
 	}
 

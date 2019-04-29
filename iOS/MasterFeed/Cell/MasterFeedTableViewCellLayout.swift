@@ -11,7 +11,6 @@ import RSCore
 
 struct MasterFeedTableViewCellLayout {
 
-	private static let indent = CGFloat(integerLiteral: 14)
 	private static let editingControlIndent = CGFloat(integerLiteral: 40)
 	private static let imageSize = CGSize(width: 20, height: 20)
 	private static let marginLeft = CGFloat(integerLiteral: 8)
@@ -34,7 +33,7 @@ struct MasterFeedTableViewCellLayout {
 
 		var initialIndent = MasterFeedTableViewCellLayout.marginLeft + insets.left
 		if indent {
-			initialIndent += MasterFeedTableViewCellLayout.indent
+			initialIndent += MasterFeedTableViewCellLayout.imageSize.width + MasterFeedTableViewCellLayout.imageMarginRight
 		}
 		if showingEditingControl {
 			initialIndent += MasterFeedTableViewCellLayout.editingControlIndent
