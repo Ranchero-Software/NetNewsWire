@@ -92,7 +92,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 			}
 		}
 
-		UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
+		updateBackgroundRefreshInterval()
 
 		return true
 		
@@ -222,7 +222,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	}
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
+		updateBackgroundRefreshInterval()
 	}
 
 	@objc func accountRefreshDidFinish(_ note: Notification) {
@@ -243,6 +243,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 }
 
 private extension AppDelegate {
+	
+	func updateBackgroundRefreshInterval() {
+		let refreshInterval = AppDefaults.refreshInterval
+		if refreshInterval == .manually {
+			UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
+		} else {
+			UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
+		}
+	}
 	
 	func sendReceivedArticlesUserNotification(newArticleCount: Int) {
 
