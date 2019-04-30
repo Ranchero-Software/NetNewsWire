@@ -8,3 +8,4 @@ This document will collect notes relevant to syncing.
 
 [Possible Gotchas To Be Aware Of When Working on Syncing](SyncGotchas.markdown)
 
+[Syncing Implementation Roadmap](SyncingImplementationRoadmap.markdown)
