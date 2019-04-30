@@ -75,6 +75,10 @@ Adding a feed should call Feedbin’s API — I think Feedbin has its own feed 
 
 If I’m wrong, we should find the feed and then call Feedbin to add the feed using the URL we found.
 
+The same is true of importing OPML: if Feedbin has an import-OPML endpoint, then we should call that.
+
+Otherwise we have to parse the OPML, then add each feed/folder to Feedbin, then download the subscriptions list from Feedbin.
+
 ## Downloading articles
 
 This should be done periodically, as per prefs on refresh interval.
