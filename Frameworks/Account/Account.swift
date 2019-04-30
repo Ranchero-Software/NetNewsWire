@@ -63,6 +63,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			let currentNameForDisplay = nameForDisplay
 			if newValue != settings.name {
 				settings.name = newValue
+				settingsDirty = true
 				if currentNameForDisplay != nameForDisplay {
 					postDisplayNameDidChangeNotification()
 				}

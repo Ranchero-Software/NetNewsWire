@@ -9,8 +9,11 @@
 import AppKit
 import Account
 
-final class LocalAccountPreferencesViewController: NSViewController {
+final class LocalAccountPreferencesViewController: NSViewController, NSTextFieldDelegate {
 
+	@IBOutlet weak var typeLabel: NSTextField!
+	@IBOutlet weak var nameTextField: NSTextField!
+	
 	private weak var account: Account?
 
 	init(account: Account) {
@@ -21,4 +24,20 @@ final class LocalAccountPreferencesViewController: NSViewController {
 	public required init?(coder: NSCoder) {
 		super.init(coder: coder)
 	}
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		nameTextField.delegate = self
+		typeLabel.stringValue = account?.defaultName ?? ""
+		nameTextField.stringValue = account?.name ?? ""
+	}
+	
+	func controlTextDidEndEditing(_ obj: Notification) {
+		if !nameTextField.stringValue.isEmpty {
+			account?.name = nameTextField.stringValue
+		} else {
+			account?.name = nil
+		}
+	}
+	
 }

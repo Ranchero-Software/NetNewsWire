@@ -240,7 +240,6 @@
 		84C9FC7C22629E1200D921D6 /* AccountsPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */; };
 		84C9FC7D22629E1200D921D6 /* LocalAccount.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC7422629E1200D921D6 /* LocalAccount.xib */; };
 		84C9FC7E22629E1200D921D6 /* LocalAccountPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC7522629E1200D921D6 /* LocalAccountPreferencesViewController.swift */; };
-		84C9FC7F22629E1200D921D6 /* AccountsTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC7622629E1200D921D6 /* AccountsTableCellView.swift */; };
 		84C9FC8222629E4800D921D6 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8022629E4800D921D6 /* Preferences.storyboard */; };
 		84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8722629E8F00D921D6 /* KeyboardShortcuts.html */; };
 		84C9FC8D22629E8F00D921D6 /* EvergreenLarge.png in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8822629E8F00D921D6 /* EvergreenLarge.png */; };
@@ -808,7 +807,6 @@
 		84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesViewController.swift; sourceTree = "<group>"; };
 		84C9FC7422629E1200D921D6 /* LocalAccount.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LocalAccount.xib; sourceTree = "<group>"; };
 		84C9FC7522629E1200D921D6 /* LocalAccountPreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalAccountPreferencesViewController.swift; sourceTree = "<group>"; };
-		84C9FC7622629E1200D921D6 /* AccountsTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsTableCellView.swift; sourceTree = "<group>"; };
 		84C9FC8122629E4800D921D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Mac/Base.lproj/Preferences.storyboard; sourceTree = SOURCE_ROOT; };
 		84C9FC8722629E8F00D921D6 /* KeyboardShortcuts.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = KeyboardShortcuts.html; sourceTree = "<group>"; };
 		84C9FC8822629E8F00D921D6 /* EvergreenLarge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = EvergreenLarge.png; sourceTree = "<group>"; };
@@ -1562,7 +1560,6 @@
 				84C9FC7122629E1200D921D6 /* AccountsControlsBackgroundView.swift */,
 				84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */,
 				84C9FC7322629E1200D921D6 /* Local */,
-				84C9FC7622629E1200D921D6 /* AccountsTableCellView.swift */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -2396,7 +2393,6 @@
 				84AD1EAA2031617300BC20B7 /* FolderPasteboardWriter.swift in Sources */,
 				84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */,
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
-				84C9FC7F22629E1200D921D6 /* AccountsTableCellView.swift in Sources */,
 				84F3EE1620DEC97E003FADEB /* FeedFinder.swift in Sources */,
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
 				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,
