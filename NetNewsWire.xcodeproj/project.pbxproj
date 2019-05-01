@@ -17,7 +17,7 @@
 		512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */; };
 		512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */; };
 		512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteCommand.swift */; };
-		5144EA2F2279FAB600D19003 /* AccountDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA2E2279FAB600D19003 /* AccountDetailViewController.swift */; };
+		5144EA2F2279FAB600D19003 /* AccountsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */; };
@@ -637,7 +637,7 @@
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeader.swift; sourceTree = "<group>"; };
 		512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISplitViewController-Extensions.swift"; sourceTree = "<group>"; };
-		5144EA2E2279FAB600D19003 /* AccountDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountDetailViewController.swift; sourceTree = "<group>"; };
+		5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsDetailViewController.swift; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProgressView.swift; sourceTree = "<group>"; };
@@ -1569,7 +1569,7 @@
 				51EF0F8F2279C9500050506E /* AccountsAddViewController.swift */,
 				51EF0F912279CA620050506E /* AccountsAddTableCellView.swift */,
 				84C9FC7422629E1200D921D6 /* AccountsDetail.xib */,
-				5144EA2E2279FAB600D19003 /* AccountDetailViewController.swift */,
+				5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -2414,7 +2414,7 @@
 				8405DDA522168C62008CE1BF /* TimelineContainerViewController.swift in Sources */,
 				844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */,
 				848D578E21543519005FFAD5 /* PasteboardFeed.swift in Sources */,
-				5144EA2F2279FAB600D19003 /* AccountDetailViewController.swift in Sources */,
+				5144EA2F2279FAB600D19003 /* AccountsDetailViewController.swift in Sources */,
 				849A97801ED9EC42007D329B /* DetailViewController.swift in Sources */,
 				84C9FC6722629B9000D921D6 /* AppDelegate.swift in Sources */,
 				84C9FC7A22629E1200D921D6 /* AccountsTableViewBackgroundView.swift in Sources */,
