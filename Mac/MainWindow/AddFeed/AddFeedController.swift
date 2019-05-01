@@ -43,10 +43,7 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 	func showAddFeedSheet(_ urlString: String?, _ name: String?, _ folder: Folder?) {
 
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
-
-		let rootNode = Node(representedObject: AccountManager.shared.defaultAccount, parent: nil)
-		rootNode.canHaveChildNodes = true
-		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate, rootNode: rootNode)
+		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
 		addFeedWindowController = AddFeedWindowController(urlString: urlString ?? urlStringFromPasteboard, name: name, folder: folder, folderTreeController: folderTreeController, delegate: self)
 		addFeedWindowController!.runSheetOnWindow(hostWindow)

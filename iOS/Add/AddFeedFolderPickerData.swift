@@ -20,10 +20,7 @@ struct AddFeedFolderPickerData {
 	init() {
 
 		let treeControllerDelegate = FolderTreeControllerDelegate()
-		
-		let rootNode = Node(representedObject: AccountManager.shared.defaultAccount, parent: nil)
-		rootNode.canHaveChildNodes = true
-		let treeController = TreeController(delegate: treeControllerDelegate, rootNode: rootNode)
+		let treeController = TreeController(delegate: treeControllerDelegate)
 
 		treeController.rootNode.childNodes.forEach { node in
 			
