@@ -24,6 +24,8 @@
 		5144EA3D227A37AF00D19003 /* ExportOPMLSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA3C227A37AF00D19003 /* ExportOPMLSheet.xib */; };
 		5144EA40227A37EC00D19003 /* ImportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA3E227A37EC00D19003 /* ImportOPMLWindowController.swift */; };
 		5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */; };
+		5144EA46227A5A8700D19003 /* AccountsDeleteWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA44227A5A8700D19003 /* AccountsDeleteWindowController.swift */; };
+		5144EA47227A5A8700D19003 /* AccountsDelete.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA45227A5A8700D19003 /* AccountsDelete.xib */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */; };
@@ -650,6 +652,8 @@
 		5144EA3C227A37AF00D19003 /* ExportOPMLSheet.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExportOPMLSheet.xib; sourceTree = "<group>"; };
 		5144EA3E227A37EC00D19003 /* ImportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportOPMLWindowController.swift; sourceTree = "<group>"; };
 		5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOPMLWindowController.swift; sourceTree = "<group>"; };
+		5144EA44227A5A8700D19003 /* AccountsDeleteWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsDeleteWindowController.swift; sourceTree = "<group>"; };
+		5144EA45227A5A8700D19003 /* AccountsDelete.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsDelete.xib; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProgressView.swift; sourceTree = "<group>"; };
@@ -1596,6 +1600,8 @@
 				5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */,
 				5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */,
 				5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */,
+				5144EA45227A5A8700D19003 /* AccountsDelete.xib */,
+				5144EA44227A5A8700D19003 /* AccountsDeleteWindowController.swift */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -2189,6 +2195,7 @@
 				848362FF2262A30E00DA1D35 /* template.html in Resources */,
 				848363082262A3DD00DA1D35 /* Main.storyboard in Resources */,
 				51EF0F8E2279C9260050506E /* AccountsAdd.xib in Resources */,
+				5144EA47227A5A8700D19003 /* AccountsDelete.xib in Resources */,
 				84C9FC8F22629E8F00D921D6 /* NetNewsWire.sdef in Resources */,
 				84C9FC7D22629E1200D921D6 /* AccountsDetail.xib in Resources */,
 				5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */,
@@ -2412,6 +2419,7 @@
 				84B7178C201E66580091657D /* SidebarViewController+ContextualMenus.swift in Sources */,
 				5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */,
 				842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */,
+				5144EA46227A5A8700D19003 /* AccountsDeleteWindowController.swift in Sources */,
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,

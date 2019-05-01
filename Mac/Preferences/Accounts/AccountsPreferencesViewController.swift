@@ -13,7 +13,9 @@ final class AccountsPreferencesViewController: NSViewController {
 
 	@IBOutlet weak var tableView: NSTableView!
 	@IBOutlet weak var detailView: NSView!
+	@IBOutlet weak var deleteButton: NSButton!
 	
+	private var deleteController: AccountsDeleteWindowController?
 	private var sortedAccounts = [Account]()
 
 	override func viewDidLoad() {
@@ -36,6 +38,12 @@ final class AccountsPreferencesViewController: NSViewController {
 	}
 	
 	@IBAction func removeAccount(_ sender: Any) {
+		guard tableView.selectedRow != -1 else {
+			return
+		}
+		let account = sortedAccounts[tableView.selectedRow]
+		deleteController = AccountsDeleteWindowController(account: account)
+		deleteController!.runSheetOnWindow(view.window!)
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
@@ -89,11 +97,17 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 	func tableViewSelectionDidChange(_ notification: Notification) {
 		
 		let selectedRow = tableView.selectedRow
-		guard selectedRow != -1 else {
+		if tableView.selectedRow == -1 {
+			deleteButton.isEnabled = false
 			return
+		} else {
+			deleteButton.isEnabled = true
 		}
-		
+
 		let account = sortedAccounts[selectedRow]
+		if AccountManager.shared.defaultAccount == account {
+			deleteButton.isEnabled = false
+		}
 		
 		let controller = AccountsDetailViewController(account: account)
 		showController(controller)

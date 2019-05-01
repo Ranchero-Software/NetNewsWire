@@ -351,7 +351,7 @@
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9qe-g9-RR3">
                                 <rect key="frame" x="51" y="19" width="32" height="26"/>
-                                <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Dvx-B8-wQy">
+                                <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" enabled="NO" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Dvx-B8-wQy">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -387,6 +387,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="deleteButton" destination="9qe-g9-RR3" id="4qe-36-5d4"/>
                         <outlet property="detailView" destination="Y7D-xQ-wep" id="7U0-LY-Xom"/>
                         <outlet property="tableView" destination="aTp-KR-y6b" id="jTu-6a-Jno"/>
                     </connections>
