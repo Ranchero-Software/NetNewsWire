@@ -19,13 +19,13 @@
             <rect key="contentRect" x="196" y="240" width="388" height="241"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="399" height="140"/>
+                <rect key="frame" x="0.0" y="0.0" width="399" height="130"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Fce-kc-b0h">
-                        <rect key="frame" x="18" y="81" width="215" height="39"/>
+                        <rect key="frame" x="18" y="81" width="163" height="29"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Delete Account" id="Avt-GJ-nM5">
-                            <font key="font" metaFont="system" size="32"/>
+                            <font key="font" metaFont="system" size="24"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
