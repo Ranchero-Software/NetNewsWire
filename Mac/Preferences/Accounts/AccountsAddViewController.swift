@@ -1,5 +1,5 @@
 //
-//  AccountAddViewController.swift
+//  AccountsAddViewController.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 5/1/19.
@@ -8,12 +8,12 @@
 
 import Cocoa
 
-class AccountAddViewController: NSViewController {
+class AccountsAddViewController: NSViewController {
 	
 	@IBOutlet weak var tableView: NSTableView!
 	
 	init() {
-		super.init(nibName: "AccountAdd", bundle: nil)
+		super.init(nibName: "AccountsAdd", bundle: nil)
 	}
 	
 	public required init?(coder: NSCoder) {
@@ -30,7 +30,7 @@ class AccountAddViewController: NSViewController {
 
 // MARK: - NSTableViewDataSource
 
-extension AccountAddViewController: NSTableViewDataSource {
+extension AccountsAddViewController: NSTableViewDataSource {
 	
 	func numberOfRows(in tableView: NSTableView) -> Int {
 		return 2
@@ -43,13 +43,13 @@ extension AccountAddViewController: NSTableViewDataSource {
 
 // MARK: - NSTableViewDelegate
 
-extension AccountAddViewController: NSTableViewDelegate {
+extension AccountsAddViewController: NSTableViewDelegate {
 	
 	private static let cellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "AccountCell")
 	
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		
-		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? AccountAddTableCellView {
+		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? AccountsAddTableCellView {
 			switch row {
 			case 0:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Local", comment: "Local")

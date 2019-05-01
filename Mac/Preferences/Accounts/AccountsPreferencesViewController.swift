@@ -24,12 +24,13 @@ final class AccountsPreferencesViewController: NSViewController {
 		tableView.dataSource = self
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
-		showController(AccountAddViewController())
+		showController(AccountsAddViewController())
 
 	}
 	
 	@IBAction func addAccount(_ sender: Any) {
-		showController(AccountAddViewController())
+		tableView.selectRowIndexes([], byExtendingSelection: false)
+		showController(AccountsAddViewController())
 	}
 	
 	@IBAction func removeAccount(_ sender: Any) {
@@ -87,7 +88,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 		
 		let account = sortedAccounts[selectedRow]
 		
-		let controller = AccountDetailViewController(account: account)
+		let controller = AccountsDetailViewController(account: account)
 		showController(controller)
 		
 	}

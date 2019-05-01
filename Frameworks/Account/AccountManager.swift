@@ -10,7 +10,9 @@ import Foundation
 import RSCore
 import Articles
 
-let AccountsDidChangeNotification = "AccountsDidChangeNotification"
+public extension Notification.Name {
+	static let AccountsDidChangeNotification = Notification.Name(rawValue: "AccountsDidChangeNotification")
+}
 
 private let defaultAccountFolderName = "OnMyMac"
 private let defaultAccountIdentifier = "OnMyMac"
@@ -87,6 +89,24 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	// MARK: API
+	
+	public func createAccount(type: AccountType, username: String? = nil, password: String? = nil) -> Account {
+		
+		let accountID = UUID().uuidString
+		let accountFolder = (accountsFolder as NSString).appendingPathComponent(accountID)
+
+		do {
+			try FileManager.default.createDirectory(atPath: accountFolder, withIntermediateDirectories: true, attributes: nil)
+		} catch {
+			assertionFailure("Could not create folder for \(accountID) account.")
+			abort()
+		}
+		
+		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)!
+		accountsDictionary[accountID] = account
+		return account
+		
+	}
 	
 	public func existingAccount(with accountID: String) -> Account? {
 		

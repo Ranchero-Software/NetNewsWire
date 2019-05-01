@@ -5,7 +5,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="AccountAddViewController" customModule="NetNewsWire" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="AccountsAddViewController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
                 <outlet property="tableView" destination="YWY-HH-lRy" id="BaW-PN-aD4"/>
                 <outlet property="view" destination="c22-O7-iKe" id="wFV-1Z-hFh"/>
@@ -44,7 +44,7 @@
                                         </textFieldCell>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
-                                            <tableCellView identifier="Cell" id="wVK-qI-WAx" customClass="AccountAddTableCellView" customModule="NetNewsWire" customModuleProvider="target">
+                                            <tableCellView identifier="Cell" id="wVK-qI-WAx" customClass="AccountsAddTableCellView" customModule="NetNewsWire" customModuleProvider="target">
                                                 <rect key="frame" x="1" y="1" width="475" height="40"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>

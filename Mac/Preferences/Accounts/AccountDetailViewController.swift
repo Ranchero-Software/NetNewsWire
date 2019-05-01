@@ -1,5 +1,5 @@
 //
-//  LocalAccountPreferencesViewController.swift
+//  AccountsDetailViewController.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 3/20/19.
@@ -9,7 +9,7 @@
 import AppKit
 import Account
 
-final class AccountDetailViewController: NSViewController, NSTextFieldDelegate {
+final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate {
 
 	@IBOutlet weak var typeLabel: NSTextField!
 	@IBOutlet weak var nameTextField: NSTextField!
@@ -17,7 +17,7 @@ final class AccountDetailViewController: NSViewController, NSTextFieldDelegate {
 	private weak var account: Account?
 
 	init(account: Account) {
-		super.init(nibName: "AccountDetail", bundle: nil)
+		super.init(nibName: "AccountsDetail", bundle: nil)
 		self.account = account
 	}
 
