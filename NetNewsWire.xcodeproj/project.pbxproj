@@ -20,6 +20,10 @@
 		5144EA2F2279FAB600D19003 /* AccountsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */; };
 		5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */; };
 		5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */; };
+		5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA3A227A379E00D19003 /* ImportOPMLSheet.xib */; };
+		5144EA3D227A37AF00D19003 /* ExportOPMLSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA3C227A37AF00D19003 /* ExportOPMLSheet.xib */; };
+		5144EA40227A37EC00D19003 /* ImportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA3E227A37EC00D19003 /* ImportOPMLWindowController.swift */; };
+		5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */; };
@@ -642,6 +646,10 @@
 		5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsDetailViewController.swift; sourceTree = "<group>"; };
 		5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsAddLocal.xib; sourceTree = "<group>"; };
 		5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddLocalWindowController.swift; sourceTree = "<group>"; };
+		5144EA3A227A379E00D19003 /* ImportOPMLSheet.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImportOPMLSheet.xib; sourceTree = "<group>"; };
+		5144EA3C227A37AF00D19003 /* ExportOPMLSheet.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExportOPMLSheet.xib; sourceTree = "<group>"; };
+		5144EA3E227A37EC00D19003 /* ImportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportOPMLWindowController.swift; sourceTree = "<group>"; };
+		5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOPMLWindowController.swift; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProgressView.swift; sourceTree = "<group>"; };
@@ -960,6 +968,17 @@
 			path = Tree;
 			sourceTree = "<group>";
 		};
+		5144EA39227A377700D19003 /* OPML */ = {
+			isa = PBXGroup;
+			children = (
+				5144EA3A227A379E00D19003 /* ImportOPMLSheet.xib */,
+				5144EA3E227A37EC00D19003 /* ImportOPMLWindowController.swift */,
+				5144EA3C227A37AF00D19003 /* ExportOPMLSheet.xib */,
+				5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */,
+			);
+			path = OPML;
+			sourceTree = "<group>";
+		};
 		5183CCDB226F1EEB0010922C /* Progress */ = {
 			isa = PBXGroup;
 			children = (
@@ -1177,6 +1196,7 @@
 				849A977C1ED9EC42007D329B /* Detail */,
 				849A97551ED9EAC3007D329B /* Add Feed */,
 				849A97411ED9EAA9007D329B /* Add Folder */,
+				5144EA39227A377700D19003 /* OPML */,
 			);
 			path = MainWindow;
 			sourceTree = "<group>";
@@ -2173,9 +2193,11 @@
 				84C9FC7D22629E1200D921D6 /* AccountsDetail.xib in Resources */,
 				5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */,
 				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
+				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				84A3EE5F223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				84C9FC8222629E4800D921D6 /* Preferences.storyboard in Resources */,
+				5144EA3D227A37AF00D19003 /* ExportOPMLSheet.xib in Resources */,
 				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
 				848362FD2262A30800DA1D35 /* styleSheet.css in Resources */,
 				8483630B2262A3F000DA1D35 /* RenameSheet.xib in Resources */,
@@ -2388,6 +2410,7 @@
 				849A97891ED9ECEF007D329B /* ArticleStyle.swift in Sources */,
 				84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */,
 				84B7178C201E66580091657D /* SidebarViewController+ContextualMenus.swift in Sources */,
+				5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */,
 				842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */,
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
@@ -2442,6 +2465,7 @@
 				849A977B1ED9EC04007D329B /* UnreadIndicatorView.swift in Sources */,
 				84B99C9D1FAE83C600ECDEDB /* DeleteCommand.swift in Sources */,
 				849A97541ED9EAC0007D329B /* AddFeedWindowController.swift in Sources */,
+				5144EA40227A37EC00D19003 /* ImportOPMLWindowController.swift in Sources */,
 				849A976D1ED9EBC8007D329B /* TimelineTableView.swift in Sources */,
 				84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */,
 				D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */,

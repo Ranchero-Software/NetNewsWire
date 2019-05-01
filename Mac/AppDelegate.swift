@@ -51,6 +51,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var mainWindowController: MainWindowController?
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
+	private var importOPMLController: ImportOPMLWindowController?
+	private var exportOPMLController: ExportOPMLWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
@@ -362,54 +364,26 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func importOPMLFromFile(_ sender: Any?) {
 
-		let panel = NSOpenPanel()
-		panel.canDownloadUbiquitousContents = true
-		panel.canResolveUbiquitousConflicts = true
-		panel.canChooseFiles = true
-		panel.allowsMultipleSelection = false
-		panel.canChooseDirectories = false
-		panel.resolvesAliases = true
-		panel.allowedFileTypes = ["opml", "xml"]
-		panel.allowsOtherFileTypes = false
-
-		let result = panel.runModal()
-		if result == NSApplication.ModalResponse.OK, let url = panel.url {
-			DispatchQueue.main.async {
-				do {
-					try OPMLImporter.parseAndImport(fileURL: url, account: AccountManager.shared.defaultAccount)
-				}
-				catch let error as NSError {
-					NSApplication.shared.presentError(error)
-				}
-			}
+		createAndShowMainWindow()
+		if mainWindowController!.isDisplayingSheet {
+			return
 		}
+		
+		importOPMLController = ImportOPMLWindowController()
+		importOPMLController?.runSheetOnWindow(mainWindowController!.window!)
+		
 	}
 	
 	@IBAction func exportOPML(_ sender: Any?) {
 
-		let panel = NSSavePanel()
-		panel.allowedFileTypes = ["opml"]
-		panel.allowsOtherFileTypes = false
-		panel.prompt = NSLocalizedString("Export OPML", comment: "Export OPML")
-		panel.title = NSLocalizedString("Export OPML", comment: "Export OPML")
-		panel.nameFieldLabel = NSLocalizedString("Export to:", comment: "Export OPML")
-		panel.message = NSLocalizedString("Choose a location for the exported OPML file.", comment: "Export OPML")
-		panel.isExtensionHidden = false
-		panel.nameFieldStringValue = "MySubscriptions.opml"
-
-		let result = panel.runModal()
-		if result == NSApplication.ModalResponse.OK, let url = panel.url {
-			DispatchQueue.main.async {
-				let filename = url.lastPathComponent
-				let opmlString = OPMLExporter.OPMLString(with: AccountManager.shared.defaultAccount, title: filename)
-				do {
-					try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
-				}
-				catch let error as NSError {
-					NSApplication.shared.presentError(error)
-				}
-			}
+		createAndShowMainWindow()
+		if mainWindowController!.isDisplayingSheet {
+			return
 		}
+		
+		exportOPMLController = ExportOPMLWindowController()
+		exportOPMLController?.runSheetOnWindow(mainWindowController!.window!)
+		
 	}
 	
 	@IBAction func addAppNews(_ sender: Any?) {
