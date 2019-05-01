@@ -32,4 +32,10 @@ struct AppImages {
 		return image
 	}()
 
+	static var accountFeedbin: RSImage! = {
+		let image = RSImage(named: "accountFeedbin")
+		image?.isTemplate = true
+		return image
+	}()
+	
 }

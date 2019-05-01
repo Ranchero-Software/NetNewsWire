@@ -18,20 +18,25 @@ final class AccountsPreferencesViewController: NSViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
-	}
-	
-	override func viewWillAppear() {
+
 		updateSortedAccounts()
-		tableView.reloadData()
+		tableView.delegate = self
+		tableView.dataSource = self
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		showController(AccountAddViewController())
+
 	}
 	
-	override func viewWillDisappear() {
-		super.viewWillDisappear()
-		resetContainerView()
+	@IBAction func addAccount(_ sender: Any) {
+		showController(AccountAddViewController())
+	}
+	
+	@IBAction func removeAccount(_ sender: Any) {
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
+		updateSortedAccounts()
 		tableView.reloadData()
 	}
 	
@@ -83,11 +88,8 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 		let account = sortedAccounts[selectedRow]
 		
 		let controller = AccountDetailViewController(account: account)
-		addChild(controller)
-		controller.view.translatesAutoresizingMaskIntoConstraints = false
-		detailView.addSubview(controller.view)
-		detailView.rs_addFullSizeConstraints(forSubview: controller.view)
-
+		showController(controller)
+		
 	}
 	
 }
@@ -100,11 +102,18 @@ private extension AccountsPreferencesViewController {
 		sortedAccounts = AccountManager.shared.sortedAccounts
 	}
 	
-	func resetContainerView() {
+	func showController(_ controller: NSViewController) {
+		
 		if let controller = children.first {
 			children.removeAll()
 			controller.view.removeFromSuperview()
 		}
+		
+		addChild(controller)
+		controller.view.translatesAutoresizingMaskIntoConstraints = false
+		detailView.addSubview(controller.view)
+		detailView.rs_addFullSizeConstraints(forSubview: controller.view)
+		
 	}
 	
 }

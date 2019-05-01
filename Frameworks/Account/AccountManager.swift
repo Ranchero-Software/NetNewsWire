@@ -12,8 +12,8 @@ import Articles
 
 let AccountsDidChangeNotification = "AccountsDidChangeNotification"
 
-private let localAccountFolderName = "OnMyMac"
-private let localAccountIdentifier = "OnMyMac"
+private let defaultAccountFolderName = "OnMyMac"
+private let defaultAccountIdentifier = "OnMyMac"
 
 public final class AccountManager: UnreadCountProvider {
 
@@ -74,7 +74,7 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 
-		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: localAccountIdentifier)!
+		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)!
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readNonLocalAccountsFromDisk()
@@ -164,7 +164,7 @@ public final class AccountManager: UnreadCountProvider {
 
 		filenames?.forEach { (oneFilename) in
 
-			guard oneFilename != localAccountFolderName else {
+			guard oneFilename != defaultAccountFolderName else {
 				return
 			}
 			if let oneAccount = createAccount(oneFilename) {

@@ -113,6 +113,9 @@
 		51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F7D2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift */; };
 		51EF0F802277A8330050506E /* MasterTimelineCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F7F2277A8330050506E /* MasterTimelineCellLayout.swift */; };
 		51EF0F8C2279BEEB0050506E /* AccountDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F8B2279BEEB0050506E /* AccountDetailViewController.swift */; };
+		51EF0F8E2279C9260050506E /* AccountAdd.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51EF0F8D2279C9260050506E /* AccountAdd.xib */; };
+		51EF0F902279C9500050506E /* AccountAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F8F2279C9500050506E /* AccountAddViewController.swift */; };
+		51EF0F922279CA620050506E /* AccountAddTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F912279CA620050506E /* AccountAddTableCellView.swift */; };
 		51F85BE5227217D000C787DC /* RefreshIntervalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */; };
 		51F85BE7227245FC00C787DC /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BE6227245FC00C787DC /* AboutViewController.swift */; };
 		51F85BEB22724CB600C787DC /* About.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEA22724CB600C787DC /* About.rtf */; };
@@ -673,6 +676,9 @@
 		51EF0F7D2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineAccessibilityCellLayout.swift; sourceTree = "<group>"; };
 		51EF0F7F2277A8330050506E /* MasterTimelineCellLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineCellLayout.swift; sourceTree = "<group>"; };
 		51EF0F8B2279BEEB0050506E /* AccountDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountDetailViewController.swift; sourceTree = "<group>"; };
+		51EF0F8D2279C9260050506E /* AccountAdd.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountAdd.xib; sourceTree = "<group>"; };
+		51EF0F8F2279C9500050506E /* AccountAddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountAddViewController.swift; sourceTree = "<group>"; };
+		51EF0F912279CA620050506E /* AccountAddTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountAddTableCellView.swift; sourceTree = "<group>"; };
 		51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshIntervalViewController.swift; sourceTree = "<group>"; };
 		51F85BE6227245FC00C787DC /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		51F85BEA22724CB600C787DC /* About.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = About.rtf; sourceTree = "<group>"; };
@@ -1559,6 +1565,9 @@
 				84C9FC7022629E1200D921D6 /* AccountsTableViewBackgroundView.swift */,
 				84C9FC7122629E1200D921D6 /* AccountsControlsBackgroundView.swift */,
 				84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */,
+				51EF0F8D2279C9260050506E /* AccountAdd.xib */,
+				51EF0F8F2279C9500050506E /* AccountAddViewController.swift */,
+				51EF0F912279CA620050506E /* AccountAddTableCellView.swift */,
 				84C9FC7422629E1200D921D6 /* AccountDetail.xib */,
 				51EF0F8B2279BEEB0050506E /* AccountDetailViewController.swift */,
 			);
@@ -2153,6 +2162,7 @@
 				845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */,
 				848362FF2262A30E00DA1D35 /* template.html in Resources */,
 				848363082262A3DD00DA1D35 /* Main.storyboard in Resources */,
+				51EF0F8E2279C9260050506E /* AccountAdd.xib in Resources */,
 				84C9FC8F22629E8F00D921D6 /* NetNewsWire.sdef in Resources */,
 				84C9FC7D22629E1200D921D6 /* AccountDetail.xib in Resources */,
 				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
@@ -2348,6 +2358,7 @@
 				8405DD9922153B6B008CE1BF /* TimelineContainerView.swift in Sources */,
 				D5A2678C20130ECF00A8D3C0 /* Author+Scriptability.swift in Sources */,
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
+				51EF0F902279C9500050506E /* AccountAddViewController.swift in Sources */,
 				D57BE6E0204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift in Sources */,
 				D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
@@ -2399,6 +2410,7 @@
 				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
 				845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */,
 				51EF0F8C2279BEEB0050506E /* AccountDetailViewController.swift in Sources */,
+				51EF0F922279CA620050506E /* AccountAddTableCellView.swift in Sources */,
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
 				8405DDA522168C62008CE1BF /* TimelineContainerViewController.swift in Sources */,
 				844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */,

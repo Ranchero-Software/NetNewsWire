@@ -345,6 +345,9 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="addAccount:" target="z5c-Js-Up9" id="owK-WR-Xd7"/>
+                                </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9qe-g9-RR3">
                                 <rect key="frame" x="51" y="19" width="32" height="26"/>
@@ -352,6 +355,9 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="removeAccount:" target="z5c-Js-Up9" id="APC-9C-TC7"/>
+                                </connections>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="1gP-iQ-hAV" customClass="AccountsControlsBackgroundView" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="83" y="20" width="67" height="24"/>
