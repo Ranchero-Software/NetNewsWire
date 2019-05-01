@@ -94,10 +94,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
-	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, folder: Folder?) {
+	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
 
 		addFeedController = AddFeedController(hostWindow: window)
-		addFeedController?.showAddFeedSheet(urlString, name, folder)
+		addFeedController?.showAddFeedSheet(urlString, name, account, folder)
 	}
 	
 	// MARK: - NSApplicationDelegate
@@ -280,14 +280,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	// MARK: Add Feed
 
-	func addFeed(_ urlString: String?, name: String? = nil, folder: Folder? = nil) {
+	func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
 
 		createAndShowMainWindow()
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
 
-		showAddFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, folder: folder)
+		showAddFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, account: account, folder: folder)
 	}
 
 	// MARK: - Dock Badge

@@ -40,12 +40,12 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 		self.hostWindow = hostWindow
 	}
 
-	func showAddFeedSheet(_ urlString: String?, _ name: String?, _ folder: Folder?) {
+	func showAddFeedSheet(_ urlString: String?, _ name: String?, _ account: Account?, _ folder: Folder?) {
 
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
-		addFeedWindowController = AddFeedWindowController(urlString: urlString ?? urlStringFromPasteboard, name: name, folder: folder, folderTreeController: folderTreeController, delegate: self)
+		addFeedWindowController = AddFeedWindowController(urlString: urlString ?? urlStringFromPasteboard, name: name, account: account, folder: folder, folderTreeController: folderTreeController, delegate: self)
 		addFeedWindowController!.runSheetOnWindow(hostWindow)
 	}
 

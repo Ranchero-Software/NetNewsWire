@@ -32,16 +32,20 @@ class FolderTreeMenu {
 			
 		}
 		
-		
-		
 		return menu
 	}
 
-	static func select(_ folder: Folder, in popupButton: NSPopUpButton) {
+	static func select(account: Account, folder: Folder?, in popupButton: NSPopUpButton) {
 		for menuItem in popupButton.itemArray {
-			if let oneFolder = menuItem.representedObject as? Folder, oneFolder == folder {
+			if let oneAccount = menuItem.representedObject as? Account, oneAccount == account && folder == nil {
 				popupButton.select(menuItem)
 				return
+			}
+			if let oneFolder = menuItem.representedObject as? Folder, oneFolder == folder {
+				if oneFolder.account == account {
+					popupButton.select(menuItem)
+					return
+				}
 			}
 		}
 	}
