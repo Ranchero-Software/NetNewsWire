@@ -79,7 +79,7 @@ public final class AccountManager: UnreadCountProvider {
 		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)!
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
-		readNonLocalAccountsFromDisk()
+		readAccountsFromDisk()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		
@@ -93,7 +93,7 @@ public final class AccountManager: UnreadCountProvider {
 	public func createAccount(type: AccountType, username: String? = nil, password: String? = nil) -> Account {
 		
 		let accountID = UUID().uuidString
-		let accountFolder = (accountsFolder as NSString).appendingPathComponent(accountID)
+		let accountFolder = (accountsFolder as NSString).appendingPathComponent("\(type.rawValue)_\(accountID)")
 
 		do {
 			try FileManager.default.createDirectory(atPath: accountFolder, withIntermediateDirectories: true, attributes: nil)
@@ -158,21 +158,20 @@ public final class AccountManager: UnreadCountProvider {
 	
 	// MARK: Private
 
-	private func createAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
-
-		return nil
+	private func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
+		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
 	}
 
-	private func createAccount(_ filename: String) -> Account? {
+	private func loadAccount(_ filename: String) -> Account? {
 
 		let folderPath = (accountsFolder as NSString).appendingPathComponent(filename)
 		if let accountSpecifier = AccountSpecifier(folderPath: folderPath) {
-			return createAccount(accountSpecifier)
+			return loadAccount(accountSpecifier)
 		}
 		return nil
 	}
 
-	private func readNonLocalAccountsFromDisk() {
+	private func readAccountsFromDisk() {
 
 		var filenames: [String]?
 
@@ -189,7 +188,7 @@ public final class AccountManager: UnreadCountProvider {
 			guard oneFilename != defaultAccountFolderName else {
 				return
 			}
-			if let oneAccount = createAccount(oneFilename) {
+			if let oneAccount = loadAccount(oneFilename) {
 				accountsDictionary[oneAccount.accountID] = oneAccount
 			}
 		}
@@ -221,7 +220,7 @@ private func accountFilePathWithFolder(_ folderPath: String) -> String {
 
 private struct AccountSpecifier {
 
-	let type: String
+	let type: AccountType
 	let identifier: String
 	let folderPath: String
 	let folderName: String
@@ -232,21 +231,25 @@ private struct AccountSpecifier {
 		if !FileManager.default.rs_fileIsFolder(folderPath) {
 			return nil
 		}
+		
 		let name = NSString(string: folderPath).lastPathComponent
 		if name.hasPrefix(".") {
 			return nil
 		}
-		let nameComponents = name.components(separatedBy: "-")
-		if nameComponents.count != 2 {
+		
+		let nameComponents = name.components(separatedBy: "_")
+		
+		guard nameComponents.count == 2, let rawType = Int(nameComponents[0]), let acctType = AccountType(rawValue: rawType) else {
 			return nil
 		}
 
 		self.folderPath = folderPath
 		self.folderName = name
-		self.type = nameComponents[0]
+		self.type = acctType
 		self.identifier = nameComponents[1]
 
 		self.dataFilePath = accountFilePathWithFolder(self.folderPath)
+		
 	}
 }
 
