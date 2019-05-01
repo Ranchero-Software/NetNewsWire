@@ -58,7 +58,16 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? NSTableCellView {
-			cell.textField?.stringValue = sortedAccounts[row].nameForDisplay
+			let account = sortedAccounts[row]
+			cell.textField?.stringValue = account.nameForDisplay
+			switch account.type {
+			case .onMyMac:
+				cell.imageView?.image = AppImages.accountLocal
+			case .feedbin:
+				cell.imageView?.image = NSImage(named: "accountFeedbin")
+			default:
+				break
+			}
 			return cell
 		}
 		return nil
@@ -73,7 +82,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 		
 		let account = sortedAccounts[selectedRow]
 		
-		let controller = LocalAccountPreferencesViewController(account: account)
+		let controller = AccountDetailViewController(account: account)
 		addChild(controller)
 		controller.view.translatesAutoresizingMaskIntoConstraints = false
 		detailView.addSubview(controller.view)

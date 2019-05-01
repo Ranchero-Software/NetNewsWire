@@ -25,4 +25,11 @@ struct AppImages {
 	static var timelineStar: RSImage! = {
 		return RSImage(named: .timelineStar)
 	}()
+
+	static var accountLocal: RSImage! = {
+		let image = RSImage(named: "accountLocal")
+		image?.isTemplate = true
+		return image
+	}()
+
 }

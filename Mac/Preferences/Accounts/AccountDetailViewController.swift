@@ -9,7 +9,7 @@
 import AppKit
 import Account
 
-final class LocalAccountPreferencesViewController: NSViewController, NSTextFieldDelegate {
+final class AccountDetailViewController: NSViewController, NSTextFieldDelegate {
 
 	@IBOutlet weak var typeLabel: NSTextField!
 	@IBOutlet weak var nameTextField: NSTextField!
@@ -17,7 +17,7 @@ final class LocalAccountPreferencesViewController: NSViewController, NSTextField
 	private weak var account: Account?
 
 	init(account: Account) {
-		super.init(nibName: "LocalAccount", bundle: nil)
+		super.init(nibName: "AccountDetail", bundle: nil)
 		self.account = account
 	}
 
