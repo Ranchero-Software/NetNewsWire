@@ -24,6 +24,8 @@ final class AccountsPreferencesViewController: NSViewController {
 		tableView.dataSource = self
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChangeNotification(_:)), name: .AccountsDidChangeNotification, object: nil)
+		
 		showController(AccountsAddViewController())
 
 	}
@@ -37,6 +39,11 @@ final class AccountsPreferencesViewController: NSViewController {
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
+		updateSortedAccounts()
+		tableView.reloadData()
+	}
+	
+	@objc func accountsDidChangeNotification(_ note: Notification) {
 		updateSortedAccounts()
 		tableView.reloadData()
 	}

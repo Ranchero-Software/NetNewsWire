@@ -6,11 +6,13 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 
 class AccountsAddViewController: NSViewController {
 	
 	@IBOutlet weak var tableView: NSTableView!
+	
+	private var accountsAddWindowController: NSWindowController?
 	
 	init() {
 		super.init(nibName: "AccountsAdd", bundle: nil)
@@ -21,11 +23,14 @@ class AccountsAddViewController: NSViewController {
 	}
 	
 	override func viewDidLoad() {
+
 		super.viewDidLoad()
+
 		tableView.dataSource = self
 		tableView.delegate = self
-	}
 
+	}
+	
 }
 
 // MARK: - NSTableViewDataSource
@@ -52,7 +57,7 @@ extension AccountsAddViewController: NSTableViewDelegate {
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? AccountsAddTableCellView {
 			switch row {
 			case 0:
-				cell.accountNameLabel?.stringValue = NSLocalizedString("Local", comment: "Local")
+				cell.accountNameLabel?.stringValue = NSLocalizedString("On My Mac", comment: "Local")
 				cell.accountImageView?.image = AppImages.accountLocal
 			case 1:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedbin", comment: "Feedbin")
@@ -67,18 +72,21 @@ extension AccountsAddViewController: NSTableViewDelegate {
 	
 	func tableViewSelectionDidChange(_ notification: Notification) {
 		
-//		let selectedRow = tableView.selectedRow
-//		guard selectedRow != -1 else {
-//			return
-//		}
-//		
-//		let account = sortedAccounts[selectedRow]
-//		
-//		let controller = AccountDetailViewController(account: account)
-//		addChild(controller)
-//		controller.view.translatesAutoresizingMaskIntoConstraints = false
-//		detailView.addSubview(controller.view)
-//		detailView.rs_addFullSizeConstraints(forSubview: controller.view)
+		let selectedRow = tableView.selectedRow
+		guard selectedRow != -1 else {
+			return
+		}
+
+		switch selectedRow {
+		case 0:
+			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
+			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsAddLocalWindowController
+		default:
+			break
+		}
+		
+		tableView.selectRowIndexes([], byExtendingSelection: false)
 		
 	}
 	

@@ -104,8 +104,10 @@ public final class AccountManager: UnreadCountProvider {
 		
 		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)!
 		accountsDictionary[accountID] = account
-		return account
 		
+		NotificationCenter.default.post(name: .AccountsDidChangeNotification, object: self)
+		
+		return account
 	}
 	
 	public func existingAccount(with accountID: String) -> Account? {

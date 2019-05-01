@@ -27,15 +27,11 @@ struct AppImages {
 	}()
 
 	static var accountLocal: RSImage! = {
-		let image = RSImage(named: "accountLocal")
-		image?.isTemplate = true
-		return image
+		return RSImage(named: "accountLocal")
 	}()
 
 	static var accountFeedbin: RSImage! = {
-		let image = RSImage(named: "accountFeedbin")
-		image?.isTemplate = true
-		return image
+		return RSImage(named: "accountFeedbin")
 	}()
 	
 }
