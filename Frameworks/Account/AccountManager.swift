@@ -18,7 +18,7 @@ private let localAccountIdentifier = "OnMyMac"
 public final class AccountManager: UnreadCountProvider {
 
 	public static let shared = AccountManager()
-	public let localAccount: Account
+	public let defaultAccount: Account
 	private let accountsFolder = RSDataSubfolder(nil, "Accounts")!
     private var accountsDictionary = [String: Account]()
 
@@ -74,8 +74,8 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 
-		localAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: localAccountIdentifier)!
-        accountsDictionary[localAccount.accountID] = localAccount
+		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: localAccountIdentifier)!
+        accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readNonLocalAccountsFromDisk()
 
@@ -179,10 +179,10 @@ public final class AccountManager: UnreadCountProvider {
 		
 		return accounts.sorted { (account1, account2) -> Bool in
 
-			if account1 === localAccount {
+			if account1 === defaultAccount {
 				return true
 			}
-			if account2 === localAccount {
+			if account2 === defaultAccount {
 				return false
 			}
 			return (account1.nameForDisplay as NSString).localizedStandardCompare(account2.nameForDisplay) == .orderedAscending

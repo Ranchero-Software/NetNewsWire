@@ -65,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 			os_log("Is first run.", log: log, type: .info)
 		}
 		
-		let localAccount = AccountManager.shared.localAccount
+		let localAccount = AccountManager.shared.defaultAccount
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 		
 		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!

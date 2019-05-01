@@ -28,7 +28,7 @@ extension NSScriptCommand {
 
     func accountAndFolderForNewChild() -> (Account, Folder?) {
         let appleEvent = self.appleEvent
-        var account = AccountManager.shared.localAccount
+        var account = AccountManager.shared.defaultAccount
         var folder:Folder? = nil
         if let appleEvent = appleEvent {
             var descriptorToConsider:NSAppleEventDescriptor?

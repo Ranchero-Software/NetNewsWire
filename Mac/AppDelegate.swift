@@ -117,7 +117,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if isFirstRun {
 			logDebugMessage("Is first run.")
 		}
-		let localAccount = AccountManager.shared.localAccount
+		let localAccount = AccountManager.shared.defaultAccount
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 
 		let tempDirectory = NSTemporaryDirectory()
@@ -376,7 +376,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if result == NSApplication.ModalResponse.OK, let url = panel.url {
 			DispatchQueue.main.async {
 				do {
-					try OPMLImporter.parseAndImport(fileURL: url, account: AccountManager.shared.localAccount)
+					try OPMLImporter.parseAndImport(fileURL: url, account: AccountManager.shared.defaultAccount)
 				}
 				catch let error as NSError {
 					NSApplication.shared.presentError(error)
@@ -401,7 +401,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if result == NSApplication.ModalResponse.OK, let url = panel.url {
 			DispatchQueue.main.async {
 				let filename = url.lastPathComponent
-				let opmlString = OPMLExporter.OPMLString(with: AccountManager.shared.localAccount, title: filename)
+				let opmlString = OPMLExporter.OPMLString(with: AccountManager.shared.defaultAccount, title: filename)
 				do {
 					try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
 				}
@@ -506,7 +506,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 extension AppDelegate {
 
 	@IBAction func debugSearch(_ sender: Any?) {
-		AccountManager.shared.localAccount.debugRunSearch()
+		AccountManager.shared.defaultAccount.debugRunSearch()
 	}
 }
 

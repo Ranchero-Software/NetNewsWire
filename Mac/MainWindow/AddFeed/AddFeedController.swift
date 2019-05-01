@@ -44,7 +44,7 @@ class AddFeedController: AddFeedWindowControllerDelegate, FeedFinderDelegate {
 
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 
-		let rootNode = Node(representedObject: AccountManager.shared.localAccount, parent: nil)
+		let rootNode = Node(representedObject: AccountManager.shared.defaultAccount, parent: nil)
 		rootNode.canHaveChildNodes = true
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate, rootNode: rootNode)
 

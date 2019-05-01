@@ -127,7 +127,7 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 		
 		for url in urls {
 			do {
-				try OPMLImporter.parseAndImport(fileURL: url, account: AccountManager.shared.localAccount)
+				try OPMLImporter.parseAndImport(fileURL: url, account: AccountManager.shared.defaultAccount)
 			} catch {
 				presentError(title: "OPML Import Error", message: error.localizedDescription)
 			}
@@ -174,7 +174,7 @@ private extension SettingsViewController {
 		
 		let filename = "MySubscriptions.opml"
 		let tempFile = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
-		let opmlString = OPMLExporter.OPMLString(with: AccountManager.shared.localAccount, title: filename)
+		let opmlString = OPMLExporter.OPMLString(with: AccountManager.shared.defaultAccount, title: filename)
 		do {
 			try opmlString.write(to: tempFile, atomically: true, encoding: String.Encoding.utf8)
 		} catch {

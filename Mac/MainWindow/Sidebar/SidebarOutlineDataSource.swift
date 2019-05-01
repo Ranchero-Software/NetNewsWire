@@ -281,7 +281,7 @@ private extension SidebarOutlineDataSource {
 			return node
 		}
 		guard let parentNode = node.parent else {
-			if let onMyMacAccountNode = treeController.nodeInTreeRepresentingObject(AccountManager.shared.localAccount) {
+			if let onMyMacAccountNode = treeController.nodeInTreeRepresentingObject(AccountManager.shared.defaultAccount) {
 				return onMyMacAccountNode
 			}
 			return nil
