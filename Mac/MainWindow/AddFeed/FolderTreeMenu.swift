@@ -17,12 +17,22 @@ class FolderTreeMenu {
 		
 		let menu = NSMenu(title: "Folders")
 		
-		let menuItem = NSMenuItem(title: NSLocalizedString("Top Level", comment: "Add Feed Sheet"), action: nil, keyEquivalent: "")
-		menuItem.representedObject = rootNode.representedObject
-		menu.addItem(menuItem)
+		for childNode in rootNode.childNodes {
+			
+			guard let nameProvider = childNode.representedObject as? DisplayNameProvider else {
+				continue
+			}
+			
+			let menuItem = NSMenuItem(title: nameProvider.nameForDisplay, action: nil, keyEquivalent: "")
+			menuItem.representedObject = childNode.representedObject
+			menu.addItem(menuItem)
+
+			let childNodes = childNode.childNodes
+			addFolderItemsToMenuWithNodes(menu: menu, nodes: childNodes, indentationLevel: 1)
+			
+		}
 		
-		let childNodes = rootNode.childNodes
-		addFolderItemsToMenuWithNodes(menu: menu, nodes: childNodes, indentationLevel: 1)
+		
 		
 		return menu
 	}

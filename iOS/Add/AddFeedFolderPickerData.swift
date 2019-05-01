@@ -25,21 +25,27 @@ struct AddFeedFolderPickerData {
 		rootNode.canHaveChildNodes = true
 		let treeController = TreeController(delegate: treeControllerDelegate, rootNode: rootNode)
 
-		guard let rootNameProvider = treeController.rootNode.representedObject as? DisplayNameProvider else {
-			return
-		}
-		
-		let rootName = rootNameProvider.nameForDisplay
-		containerNames.append(rootName)
-		containers.append(treeController.rootNode.representedObject as! Container)
-		
 		treeController.rootNode.childNodes.forEach { node in
-			guard let childContainer = node.representedObject as? Container else {
+			
+			guard let acctNameProvider = node.representedObject as? DisplayNameProvider else {
 				return
 			}
-			let childName = (childContainer as! DisplayNameProvider).nameForDisplay
-			containerNames.append("\(rootName) / \(childName)")
-			containers.append(childContainer)
+			
+			let acctName = acctNameProvider.nameForDisplay
+			containerNames.append(acctName)
+			containers.append(node.representedObject as! Container)
+
+			for child in node.childNodes {
+				
+				guard let childContainer = child.representedObject as? Container else {
+					return
+				}
+				let childName = (childContainer as! DisplayNameProvider).nameForDisplay
+				containerNames.append("\(acctName) / \(childName)")
+				containers.append(childContainer)
+				
+			}
+			
 		}
 		
 	}

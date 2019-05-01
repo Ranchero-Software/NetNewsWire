@@ -16,7 +16,7 @@ final class FolderTreeControllerDelegate: TreeControllerDelegate {
 	
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 
-		return node.isRoot ? childNodesForRootNode(node) : nil
+		return node.isRoot ? childNodesForRootNode(node) : childNodes(node)
 	}
 }
 
@@ -24,20 +24,30 @@ private extension FolderTreeControllerDelegate {
 	
 	func childNodesForRootNode(_ node: Node) -> [Node]? {
 		
-		// Root node is “Top Level” and children are folders. Folders can’t have subfolders.
-		// This will have to be revised later.
-
-		guard let folders = AccountManager.shared.defaultAccount.folders else {
+		let accountNodes: [Node] = AccountManager.shared.accounts.map { account in
+			let accountNode = Node(representedObject: account, parent: node)
+			accountNode.canHaveChildNodes = true
+			return accountNode
+		}
+		return accountNodes.sortedAlphabetically()
+		
+	}
+	
+	func childNodes(_ node: Node) -> [Node]? {
+		
+		guard let account = node.representedObject as? Account, let folders = account.folders else {
 			return nil
 		}
-		let folderNodes = folders.map { createNode($0, parent: node) }
+		
+		let folderNodes: [Node] = folders.map { createNode($0, parent: node) }
 		return folderNodes.sortedAlphabetically()
+		
 	}
 
 	func createNode(_ folder: Folder, parent: Node) -> Node {
-		
 		let node = Node(representedObject: folder, parent: parent)
 		node.canHaveChildNodes = false
 		return node
 	}
+	
 }
