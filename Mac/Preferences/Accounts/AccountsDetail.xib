@@ -56,27 +56,15 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xob-U2-rU3">
-                                <rect key="frame" x="18" y="73" width="244" height="34"/>
-                                <textFieldCell key="cell" selectable="YES" allowsUndo="NO" title="This account stores all of its data on your Mac. It does not sync." id="g7W-if-wP4">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="XYX-iz-hnq" firstAttribute="firstBaseline" secondItem="jiQ-KJ-SS0" secondAttribute="firstBaseline" id="8ew-wx-9n3"/>
                             <constraint firstItem="XYX-iz-hnq" firstAttribute="leading" secondItem="jiQ-KJ-SS0" secondAttribute="trailing" constant="8" symbolic="YES" id="NsF-th-Tqq"/>
                             <constraint firstItem="TT0-Kf-YTC" firstAttribute="leading" secondItem="XYX-iz-hnq" secondAttribute="leading" id="Xqo-JT-9KG"/>
-                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Xob-U2-rU3" secondAttribute="bottom" constant="20" symbolic="YES" id="ZOg-eA-ai2"/>
                             <constraint firstItem="Ted-jN-oYR" firstAttribute="trailing" secondItem="jiQ-KJ-SS0" secondAttribute="trailing" id="aHJ-FN-pUY"/>
                             <constraint firstItem="jiQ-KJ-SS0" firstAttribute="top" secondItem="ft2-Mb-5LD" secondAttribute="top" constant="20" symbolic="YES" id="huT-H6-v8q"/>
-                            <constraint firstItem="Xob-U2-rU3" firstAttribute="top" secondItem="TT0-Kf-YTC" secondAttribute="bottom" constant="40" id="hup-vw-QPu"/>
                             <constraint firstItem="Ted-jN-oYR" firstAttribute="leading" secondItem="ft2-Mb-5LD" secondAttribute="leading" constant="20" symbolic="YES" id="oPV-Fn-pvh"/>
                             <constraint firstItem="TT0-Kf-YTC" firstAttribute="top" secondItem="XYX-iz-hnq" secondAttribute="bottom" constant="8" symbolic="YES" id="qSX-zc-QU7"/>
-                            <constraint firstAttribute="trailing" secondItem="Xob-U2-rU3" secondAttribute="trailing" constant="20" symbolic="YES" id="sbf-Cp-s14"/>
-                            <constraint firstItem="Xob-U2-rU3" firstAttribute="leading" secondItem="ft2-Mb-5LD" secondAttribute="leading" constant="20" symbolic="YES" id="uUD-68-qjD"/>
                             <constraint firstAttribute="trailing" secondItem="TT0-Kf-YTC" secondAttribute="trailing" constant="20" symbolic="YES" id="vY4-kF-Q7P"/>
                             <constraint firstItem="TT0-Kf-YTC" firstAttribute="firstBaseline" secondItem="Ted-jN-oYR" secondAttribute="firstBaseline" id="x1e-Qe-Q1g"/>
                         </constraints>
