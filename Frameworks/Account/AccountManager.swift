@@ -90,7 +90,8 @@ public final class AccountManager: UnreadCountProvider {
 		readAccountsFromDisk()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
+
 		DispatchQueue.main.async {
 			self.updateUnreadCount()
 		}
@@ -134,6 +135,7 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 		
+		updateUnreadCount()
 		NotificationCenter.default.post(name: .AccountsDidChangeNotification, object: self)
 		
 	}
@@ -181,6 +183,10 @@ public final class AccountManager: UnreadCountProvider {
 		guard let _ = notification.object as? Account else {
 			return
 		}
+		updateUnreadCount()
+	}
+	
+	@objc func accountStateDidChange(_ notification: Notification) {
 		updateUnreadCount()
 	}
 	
