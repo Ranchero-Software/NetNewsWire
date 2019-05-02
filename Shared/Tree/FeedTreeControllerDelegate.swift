@@ -113,13 +113,13 @@ private extension FeedTreeControllerDelegate {
 
 	func sortedAccountNodes(_ parent: Node) -> [Node] {
 
-		let nodes = AccountManager.shared.accounts.map { (account) -> Node in
+		let nodes = AccountManager.shared.sortedAccounts.map { (account) -> Node in
 			let accountNode = parent.existingOrNewChildNode(with: account)
 			accountNode.canHaveChildNodes = true
 			accountNode.isGroupItem = true
 			return accountNode
 		}
-		return nodes.sortedAlphabetically()
+		return nodes
 	}
 
 	func nodeInArrayRepresentingObject(_ nodes: [Node], _ representedObject: AnyObject) -> Node? {
