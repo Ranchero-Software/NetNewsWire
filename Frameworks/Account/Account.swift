@@ -22,7 +22,7 @@ public extension Notification.Name {
 	static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
 	static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
-	
+	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
 }
 
@@ -71,6 +71,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 	public let defaultName: String
+	
+	public var isActive: Bool {
+		get {
+			return settings.isActive
+		}
+		set {
+			if newValue != settings.isActive {
+				settings.isActive = newValue
+				settingsDirty = true
+				NotificationCenter.default.post(name: .AccountStateDidChange, object: self, userInfo: nil)
+			}
+		}
+	}
 
 	public var topLevelFeeds = Set<Feed>()
 	public var folders: Set<Folder>? = Set<Folder>()

@@ -13,6 +13,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 
 	@IBOutlet weak var typeLabel: NSTextField!
 	@IBOutlet weak var nameTextField: NSTextField!
+	@IBOutlet weak var activeButton: NSButtonCell!
 	
 	private weak var account: Account?
 
@@ -30,6 +31,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		nameTextField.delegate = self
 		typeLabel.stringValue = account?.defaultName ?? ""
 		nameTextField.stringValue = account?.name ?? ""
+		activeButton.state = account?.isActive ?? false ? .on : .off
 	}
 	
 	func controlTextDidEndEditing(_ obj: Notification) {
@@ -38,6 +40,10 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		} else {
 			account?.name = nil
 		}
+	}
+	
+	@IBAction func active(_ sender: NSButtonCell) {
+		account?.isActive = sender.state == .on ? true : false
 	}
 	
 }

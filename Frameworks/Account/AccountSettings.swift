@@ -11,4 +11,6 @@ import Foundation
 final class AccountSettings: Codable {
 
 	var name: String?
+	var isActive: Bool = true
+	
 }

@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="AccountsDetailViewController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
+                <outlet property="activeButton" destination="wxB-dX-nGt" id="ALS-GI-sb5"/>
                 <outlet property="nameTextField" destination="TT0-Kf-YTC" id="oMG-jn-Qn0"/>
                 <outlet property="typeLabel" destination="XYX-iz-hnq" id="SKM-et-3h3"/>
                 <outlet property="view" destination="3ki-rg-6yb" id="ttM-4E-OLN"/>
@@ -56,8 +57,20 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mgt-uY-fuq">
+                                <rect key="frame" x="66" y="123" width="60" height="18"/>
+                                <buttonCell key="cell" type="check" title="Active" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="wxB-dX-nGt">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <connections>
+                                        <action selector="active:" target="-2" id="XgX-JM-UyU"/>
+                                    </connections>
+                                </buttonCell>
+                            </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="mgt-uY-fuq" firstAttribute="leading" secondItem="TT0-Kf-YTC" secondAttribute="leading" id="04V-YD-UZ5"/>
+                            <constraint firstItem="mgt-uY-fuq" firstAttribute="top" secondItem="TT0-Kf-YTC" secondAttribute="bottom" constant="8" symbolic="YES" id="5Kn-79-8tn"/>
                             <constraint firstItem="XYX-iz-hnq" firstAttribute="firstBaseline" secondItem="jiQ-KJ-SS0" secondAttribute="firstBaseline" id="8ew-wx-9n3"/>
                             <constraint firstItem="XYX-iz-hnq" firstAttribute="leading" secondItem="jiQ-KJ-SS0" secondAttribute="trailing" constant="8" symbolic="YES" id="NsF-th-Tqq"/>
                             <constraint firstItem="TT0-Kf-YTC" firstAttribute="leading" secondItem="XYX-iz-hnq" secondAttribute="leading" id="Xqo-JT-9KG"/>
