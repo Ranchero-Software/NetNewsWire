@@ -345,9 +345,21 @@ protocol SidebarDelegate: class {
 	// MARK: - API
 
 	func rebuildTreeAndRestoreSelection() {
+		
+		let savedAccounts = treeController.rootNode.childNodes.compactMap { $0.representedObject as? Account }
+		
 		let savedSelection = selectedNodes
 		rebuildTreeAndReloadDataIfNeeded()
 		restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
+		
+		// Automatically expand any new or newly active accounts
+		AccountManager.shared.activeAccounts.forEach { account in
+			if !savedAccounts.contains(account) {
+				let accountNode = treeController.nodeInTreeRepresentingObject(account)
+				outlineView.expandItem(accountNode)
+			}
+		}
+		
 	}
 }
 
