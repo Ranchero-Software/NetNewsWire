@@ -39,8 +39,11 @@ class AccountsDeleteWindowController: NSWindowController {
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
 	}
 	
-	@IBAction func create(_ sender: Any) {
-
+	@IBAction func delete(_ sender: Any) {
+		guard let account = account else {
+			return
+		}
+		AccountManager.shared.deleteAccount(account)
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 	}
     

@@ -53,7 +53,7 @@ Aw
 </string>
                         </buttonCell>
                         <connections>
-                            <action selector="create:" target="-2" id="Kjr-mt-Yp3"/>
+                            <action selector="delete:" target="-2" id="5zX-jC-oWO"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="v9D-u4-Ucr">

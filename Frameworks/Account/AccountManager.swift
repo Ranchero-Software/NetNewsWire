@@ -110,6 +110,22 @@ public final class AccountManager: UnreadCountProvider {
 		return account
 	}
 	
+	public func deleteAccount(_ account: Account) {
+		
+		accountsDictionary.removeValue(forKey: account.accountID)
+		
+		do {
+			try FileManager.default.removeItem(atPath: account.dataFolder)
+		}
+		catch {
+			assertionFailure("Could not create folder for OnMyMac account.")
+			abort()
+		}
+		
+		NotificationCenter.default.post(name: .AccountsDidChangeNotification, object: self)
+		
+	}
+	
 	public func existingAccount(with accountID: String) -> Account? {
 		
 		return accountsDictionary[accountID]
