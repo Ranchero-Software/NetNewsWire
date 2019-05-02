@@ -120,6 +120,10 @@ public final class AccountManager: UnreadCountProvider {
 	
 	public func deleteAccount(_ account: Account) {
 		
+		guard !account.refreshInProgress else {
+			return
+		}
+		
 		accountsDictionary.removeValue(forKey: account.accountID)
 		
 		do {
