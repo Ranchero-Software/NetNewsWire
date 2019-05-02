@@ -34,7 +34,7 @@ extension SearchFeedDelegate: ArticleFetcher {
 
 	func fetchArticles() -> Set<Article> {
 		var articles = Set<Article>()
-		for account in AccountManager.shared.accounts {
+		for account in AccountManager.shared.activeAccounts {
 			articles.formUnion(account.fetchArticlesMatching(searchString))
 		}
 		return articles

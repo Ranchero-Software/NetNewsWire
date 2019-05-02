@@ -54,6 +54,7 @@ protocol SidebarDelegate: class {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChangeNotification(_:)), name: .AccountsDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChangeNotification(_:)), name: .AccountStateDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
@@ -115,6 +116,10 @@ protocol SidebarDelegate: class {
 		rebuildTreeAndRestoreSelection()
 	}
 	
+	@objc func accountStateDidChangeNotification(_ notification: Notification) {
+		rebuildTreeAndRestoreSelection()
+	}
+
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
 		rebuildTreeAndRestoreSelection()
 	}

@@ -51,7 +51,7 @@ final class SmartFeed: PseudoFeed {
 	}
 
 	@objc func fetchUnreadCounts() {
-		AccountManager.shared.accounts.forEach { self.fetchUnreadCount(for: $0) }
+		AccountManager.shared.activeAccounts.forEach { self.fetchUnreadCount(for: $0) }
 	}
 }
 
@@ -80,7 +80,7 @@ private extension SmartFeed {
 	}
 
 	func updateUnreadCount() {
-		unreadCount = AccountManager.shared.accounts.reduce(0) { (result, account) -> Int in
+		unreadCount = AccountManager.shared.activeAccounts.reduce(0) { (result, account) -> Int in
 			if let oneUnreadCount = unreadCounts[account] {
 				return result + oneUnreadCount
 			}

@@ -24,7 +24,7 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 
 		super.viewDidLoad()
 		
-		accounts = AccountManager.shared.sortedAccounts
+		accounts = AccountManager.shared.sortedActiveAccounts
 		accountLabel.text = (accounts[0] as DisplayNameProvider).nameForDisplay
 		
 		accountPickerView.dataSource = self

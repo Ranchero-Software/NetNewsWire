@@ -57,7 +57,7 @@ extension UnreadFeed: ArticleFetcher {
 	func fetchUnreadArticles() -> Set<Article> {
 
 		var articles = Set<Article>()
-		for account in AccountManager.shared.accounts {
+		for account in AccountManager.shared.activeAccounts {
 			articles.formUnion(account.fetchUnreadArticles())
 		}
 		return articles

@@ -24,7 +24,7 @@ private extension FolderTreeControllerDelegate {
 	
 	func childNodesForRootNode(_ node: Node) -> [Node]? {
 		
-		let accountNodes: [Node] = AccountManager.shared.accounts.map { account in
+		let accountNodes: [Node] = AccountManager.shared.activeAccounts.map { account in
 			let accountNode = Node(representedObject: account, parent: node)
 			accountNode.canHaveChildNodes = true
 			return accountNode

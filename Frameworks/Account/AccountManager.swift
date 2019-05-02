@@ -25,7 +25,7 @@ public final class AccountManager: UnreadCountProvider {
     private var accountsDictionary = [String: Account]()
 
 	public var isUnreadCountsInitialized: Bool {
-		for account in accounts {
+		for account in activeAccounts {
 			if !account.isUnreadCountsInitialized {
 				return false
 			}
@@ -46,11 +46,19 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public var sortedAccounts: [Account] {
-		return accountsSortedByName()
+		return sortByName(accounts)
+	}
+
+	public var activeAccounts: [Account] {
+		return Array(accountsDictionary.values.filter { $0.isActive })
+	}
+
+	public var sortedActiveAccounts: [Account] {
+		return sortByName(activeAccounts)
 	}
 
 	public var refreshInProgress: Bool {
-		for account in accounts {
+		for account in activeAccounts {
 			if account.refreshInProgress {
 				return true
 			}
@@ -59,7 +67,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 	
 	public var combinedRefreshProgress: CombinedRefreshProgress {
-		let downloadProgressArray = accounts.map { $0.refreshProgress }
+		let downloadProgressArray = activeAccounts.map { $0.refreshProgress }
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
 	
@@ -133,12 +141,12 @@ public final class AccountManager: UnreadCountProvider {
 	
 	public func refreshAll() {
 
-		accounts.forEach { $0.refreshAll() }
+		activeAccounts.forEach { $0.refreshAll() }
 	}
 
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
 
-		for account in accounts {
+		for account in activeAccounts {
 			if account.hasAtLeastOneFeed() {
 				return true
 			}
@@ -149,7 +157,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		
-		for account in accounts {
+		for account in activeAccounts {
 			if let _ = account.existingFeed(withURL: urlString) {
 				return true
 			}
@@ -159,7 +167,7 @@ public final class AccountManager: UnreadCountProvider {
 	
 	func updateUnreadCount() {
 
-		unreadCount = calculateUnreadCount(accounts)
+		unreadCount = calculateUnreadCount(activeAccounts)
 	}
 	
 	// MARK: Notifications
@@ -210,7 +218,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	private func accountsSortedByName() -> [Account] {
+	private func sortByName(_ accounts: [Account]) -> [Account] {
 		
 		// LocalAccount is first.
 		

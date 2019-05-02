@@ -398,7 +398,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
 			
-			let accounts = AccountManager.shared.accounts
+			let accounts = AccountManager.shared.activeAccounts
 			var articles = Set<Article>()
 			accounts.forEach { account in
 				articles.formUnion(account.fetchUnreadArticles())

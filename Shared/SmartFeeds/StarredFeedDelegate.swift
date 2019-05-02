@@ -25,7 +25,7 @@ struct StarredFeedDelegate: SmartFeedDelegate {
 	func fetchArticles() -> Set<Article> {
 
 		var articles = Set<Article>()
-		for account in AccountManager.shared.accounts {
+		for account in AccountManager.shared.activeAccounts {
 			articles.formUnion(account.fetchStarredArticles())
 		}
 		return articles

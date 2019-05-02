@@ -429,7 +429,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
 		#if DEBUG
-			AccountManager.shared.accounts.forEach{ $0.debugDropConditionalGetInfo() }
+			AccountManager.shared.activeAccounts.forEach{ $0.debugDropConditionalGetInfo() }
 		#endif
 	}
 

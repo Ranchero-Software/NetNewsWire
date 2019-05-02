@@ -22,7 +22,7 @@ class ExportOPMLWindowController: NSWindowController {
 		
 		accountPopUpButton.removeAllItems()
 		let menu = NSMenu()
-		for oneAccount in AccountManager.shared.sortedAccounts {
+		for oneAccount in AccountManager.shared.sortedActiveAccounts {
 			let oneMenuItem = NSMenuItem()
 			oneMenuItem.title = oneAccount.nameForDisplay
 			oneMenuItem.representedObject = oneAccount
