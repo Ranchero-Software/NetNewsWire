@@ -28,9 +28,9 @@ class AccountsDeleteWindowController: NSWindowController {
 	
 	// MARK: API
 	
-	func runSheetOnWindow(_ hostWindow: NSWindow) {
+	func runSheetOnWindow(_ hostWindow: NSWindow, completionHandler handler: ((NSApplication.ModalResponse) -> Void)? = nil) {
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!)
+		hostWindow.beginSheet(window!, completionHandler: handler)
 	}
 	
 	// MARK: Actions

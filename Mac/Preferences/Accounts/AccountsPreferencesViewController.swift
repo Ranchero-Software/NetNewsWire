@@ -38,12 +38,19 @@ final class AccountsPreferencesViewController: NSViewController {
 	}
 	
 	@IBAction func removeAccount(_ sender: Any) {
+		
 		guard tableView.selectedRow != -1 else {
 			return
 		}
+		
 		let account = sortedAccounts[tableView.selectedRow]
 		deleteController = AccountsDeleteWindowController(account: account)
-		deleteController!.runSheetOnWindow(view.window!)
+		deleteController!.runSheetOnWindow(view.window!) { [weak self] result in
+			if result == NSApplication.ModalResponse.OK {
+				self?.showController(AccountsAddViewController())
+			}
+		}
+		
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
