@@ -96,13 +96,24 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return _idToFeedDictionary
 	}
 
+	var username: String? {
+		get {
+			return settings.username
+		}
+		set {
+			if newValue != settings.username {
+				settings.username = newValue
+				settingsDirty = true
+			}
+		}
+	}
+	
 	private var fetchingAllUnreadCounts = false
 	var isUnreadCountsInitialized = false
 
 	let dataFolder: String
 	let database: ArticlesDatabase
 	let delegate: AccountDelegate
-	var username: String?
 	static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
 
 	private var unreadCounts = [String: Int]() // [feedID: Int]
@@ -168,9 +179,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	init?(dataFolder: String, type: AccountType, accountID: String) {
 		
-		// TODO: support various syncing systems.
-		precondition(type == .onMyMac)
-		self.delegate = LocalAccountDelegate()
+		switch type {
+		case .onMyMac:
+			self.delegate = LocalAccountDelegate()
+		case .feedbin:
+			self.delegate = FeedbinAccountDelegate()
+		default:
+			fatalError("Only Local and Feedbin accounts are supported")
+		}
 
 		self.accountID = accountID
 		self.type = type
@@ -220,9 +236,26 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		self.delegate.accountDidInitialize(self)
 		startingUp = false
+		
 	}
 	
 	// MARK: - API
+	
+	public func storeCredentials(username: String, password: String) {
+		self.username = username
+//		self.password = password
+	}
+	
+	public static func validateCredentials(type: AccountType, username: String, password: String, completionHandler handler: @escaping ((Bool) -> ())) {
+		switch type {
+		case .onMyMac:
+			LocalAccountDelegate.validateCredentials(username: username, password: password, completionHandler: handler)
+		case .feedbin:
+			FeedbinAccountDelegate.validateCredentials(username: username, password: password, completionHandler: handler)
+		default:
+			break
+		}
+	}
 
 	public func refreshAll() {
 

@@ -16,6 +16,8 @@ public protocol AccountDelegate {
 	
 	var refreshProgress: DownloadProgress { get }
 
+	static func validateCredentials(username: String, password: String, completionHandler handler: @escaping ((Bool) -> ()))
+	
 	func refreshAll(for: Account)
 
 	// Called at the end of account’s init method.

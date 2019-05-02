@@ -26,6 +26,8 @@
 		5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */; };
 		5144EA46227A5A8700D19003 /* AccountsDeleteWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA44227A5A8700D19003 /* AccountsDeleteWindowController.swift */; };
 		5144EA47227A5A8700D19003 /* AccountsDelete.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA45227A5A8700D19003 /* AccountsDelete.xib */; };
+		5144EA51227B8E4500D19003 /* AccountsAddFeedbinWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA4F227B8E4500D19003 /* AccountsAddFeedbinWindowController.swift */; };
+		5144EA52227B8E4500D19003 /* AccountsAddFeedbin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA50227B8E4500D19003 /* AccountsAddFeedbin.xib */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */; };
@@ -654,6 +656,8 @@
 		5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOPMLWindowController.swift; sourceTree = "<group>"; };
 		5144EA44227A5A8700D19003 /* AccountsDeleteWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsDeleteWindowController.swift; sourceTree = "<group>"; };
 		5144EA45227A5A8700D19003 /* AccountsDelete.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsDelete.xib; sourceTree = "<group>"; };
+		5144EA4F227B8E4500D19003 /* AccountsAddFeedbinWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddFeedbinWindowController.swift; sourceTree = "<group>"; };
+		5144EA50227B8E4500D19003 /* AccountsAddFeedbin.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsAddFeedbin.xib; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProgressView.swift; sourceTree = "<group>"; };
@@ -1598,6 +1602,8 @@
 				51EF0F912279CA620050506E /* AccountsAddTableCellView.swift */,
 				84C9FC7422629E1200D921D6 /* AccountsDetail.xib */,
 				5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */,
+				5144EA50227B8E4500D19003 /* AccountsAddFeedbin.xib */,
+				5144EA4F227B8E4500D19003 /* AccountsAddFeedbinWindowController.swift */,
 				5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */,
 				5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */,
 				5144EA45227A5A8700D19003 /* AccountsDelete.xib */,
@@ -2209,6 +2215,7 @@
 				848362FD2262A30800DA1D35 /* styleSheet.css in Resources */,
 				8483630B2262A3F000DA1D35 /* RenameSheet.xib in Resources */,
 				848363052262A3CC00DA1D35 /* AddFolderSheet.xib in Resources */,
+				5144EA52227B8E4500D19003 /* AccountsAddFeedbin.xib in Resources */,
 				8405DDA222168920008CE1BF /* TimelineTableView.xib in Resources */,
 				8483630E2262A3FE00DA1D35 /* MainWindow.storyboard in Resources */,
 				84BAE64921CEDAF20046DB56 /* CrashReporterWindow.xib in Resources */,
@@ -2432,6 +2439,7 @@
 				8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */,
 				5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* FolderPasteboardWriter.swift in Sources */,
+				5144EA51227B8E4500D19003 /* AccountsAddFeedbinWindowController.swift in Sources */,
 				84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */,
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
 				84F3EE1620DEC97E003FADEB /* FeedFinder.swift in Sources */,

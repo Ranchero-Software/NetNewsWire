@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5144EA49227B497600D19003 /* FeedbinAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA48227B497600D19003 /* FeedbinAPICaller.swift */; };
+		5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA4D227B829A00D19003 /* FeedbinAccountDelegate.swift */; };
 		841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973EF1F6DD19E006346C4 /* RSCore.framework */; };
 		841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973FA1F6DD1AC006346C4 /* RSParser.framework */; };
 		841974011F6DD1EC006346C4 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974001F6DD1EC006346C4 /* Folder.swift */; };
@@ -83,6 +85,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5144EA48227B497600D19003 /* FeedbinAPICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAPICaller.swift; sourceTree = "<group>"; };
+		5144EA4D227B829A00D19003 /* FeedbinAccountDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAccountDelegate.swift; sourceTree = "<group>"; };
 		841973E81F6DD19E006346C4 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		841973F41F6DD1AC006346C4 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		841974001F6DD1EC006346C4 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
@@ -177,6 +181,8 @@
 		84245C7D1FDDD2580074AFBB /* Feedbin */ = {
 			isa = PBXGroup;
 			children = (
+				5144EA4D227B829A00D19003 /* FeedbinAccountDelegate.swift */,
+				5144EA48227B497600D19003 /* FeedbinAPICaller.swift */,
 				84245C841FDDD8CB0074AFBB /* FeedbinFeed.swift */,
 				84CAD7151FDF2E22000F0755 /* FeedbinArticle.swift */,
 				84D096202174169100D77525 /* FeedbinArticleIDArray.swift */,
@@ -418,12 +424,14 @@
 				84C3654A1F899F3B001EC85C /* CombinedRefreshProgress.swift in Sources */,
 				8469F81C1F6DD15E0084783E /* Account.swift in Sources */,
 				84D096212174169100D77525 /* FeedbinArticleIDArray.swift in Sources */,
+				5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */,
 				846E77451F6EF9B900A165E2 /* Container.swift in Sources */,
 				84F73CF1202788D90000BCEF /* ArticleFetcher.swift in Sources */,
 				841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */,
 				846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */,
 				844B297D2106C7EC004020B3 /* Feed.swift in Sources */,
 				84B2D4D02238CD8A00498ADA /* FeedMetadata.swift in Sources */,
+				5144EA49227B497600D19003 /* FeedbinAPICaller.swift in Sources */,
 				84B99C9F1FAE8D3200ECDEDB /* ContainerPath.swift in Sources */,
 				846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */,
 				84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */,

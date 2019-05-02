@@ -18,6 +18,10 @@ final class LocalAccountDelegate: AccountDelegate {
 		return refresher.progress
 	}
 	
+	static func validateCredentials(username: String, password: String, completionHandler handler: ((Bool) -> ())) {
+		return handler(false)
+	}
+
 	func refreshAll(for account: Account) {
 
 		refresher.refreshFeeds(account.flattenedFeeds())
@@ -29,12 +33,9 @@ final class LocalAccountDelegate: AccountDelegate {
 	// MARK: Disk
 	
 	func update(account: Account, withUserInfo: NSDictionary?) {
-
-
 	}
 
 	func userInfo(for: Account) -> NSDictionary? {
-
 		return nil
 	}
 }

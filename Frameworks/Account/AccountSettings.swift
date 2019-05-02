@@ -12,5 +12,6 @@ final class AccountSettings: Codable {
 
 	var name: String?
 	var isActive: Bool = true
+	var username: String?
 	
 }
