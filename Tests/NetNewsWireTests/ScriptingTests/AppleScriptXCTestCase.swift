@@ -31,7 +31,7 @@ class AppleScriptXCTestCase: XCTestCase {
     func doIndividualScript(filename:String) -> NSAppleEventDescriptor? {
         var errorDict: NSDictionary? = nil
         let testBundle = Bundle(for: type(of: self))
-        let url = testBundle.url(forResource:filename, withExtension:"applescript", subdirectory:"TestScripts")
+        let url = testBundle.url(forResource:filename, withExtension:"scpt")
         guard let testScriptUrl = url  else {
             XCTFail("Failed Getting script URL")
             return nil

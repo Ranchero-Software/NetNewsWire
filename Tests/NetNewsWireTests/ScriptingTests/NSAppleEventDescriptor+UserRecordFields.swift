@@ -22,7 +22,7 @@ extension NSAppleEventDescriptor {
             print ("error: usrfDictionary() expected input to be a record")
             return [:]
         }
-        guard let usrfList = self.forKeyword("usrf".FourCharCode()) else {
+		guard let usrfList = self.forKeyword("usrf".fourCharCode()) else {
             print ("error: usrfDictionary() couldn't find usrf")
             return [:]
         }

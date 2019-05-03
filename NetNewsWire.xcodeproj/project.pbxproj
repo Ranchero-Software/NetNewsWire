@@ -2998,7 +2998,6 @@
 			baseConfigurationReference = D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */;
 			buildSettings = {
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
 			};
 			name = Debug;
 		};
@@ -3007,7 +3006,6 @@
 			baseConfigurationReference = D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */;
 			buildSettings = {
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
 			};
 			name = Release;
 		};
@@ -3045,6 +3043,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = NetNewsWireTests;
 			};
 			name = Debug;
