@@ -241,9 +241,100 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	// MARK: - API
 	
-	public func storeCredentials(_ credentials: Credentials) {
-		self.username = credentials.username
-//		self.password = password
+	public func storeCredentials(_ credentials: Credentials) throws {
+		
+		guard let username = credentials.username, let password = credentials.password, let server = delegate.server else {
+			throw CredentialsError.incompleteCredentials
+		}
+		
+		self.username = username
+		
+		let passwordData = password.data(using: String.Encoding.utf8)!
+		
+		let updateQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+									   kSecAttrAccount as String: username,
+									   kSecAttrServer as String: server]
+		let attributes: [String: Any] = [kSecValueData as String: passwordData]
+		let status = SecItemUpdate(updateQuery as CFDictionary, attributes as CFDictionary)
+
+		switch status {
+		case errSecSuccess:
+			return
+		case errSecItemNotFound:
+			break
+		default:
+			throw CredentialsError.unhandledError(status: status)
+		}
+
+		guard status == errSecItemNotFound else {
+			return
+		}
+		
+		let addQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+									kSecAttrAccount as String: username,
+									kSecAttrServer as String: server,
+									kSecValueData as String: passwordData]
+		let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
+		if addStatus != errSecSuccess {
+			throw CredentialsError.unhandledError(status: status)
+		}
+		
+	}
+	
+	public func retrieveCredentials() throws -> Credentials? {
+		
+		guard let username = self.username, let server = delegate.server else {
+			return nil
+		}
+		
+		let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+									kSecAttrAccount as String: username,
+									kSecAttrServer as String: server,
+									kSecMatchLimit as String: kSecMatchLimitOne,
+									kSecReturnAttributes as String: true,
+									kSecReturnData as String: true]
+		
+		var item: CFTypeRef?
+		let status = SecItemCopyMatching(query as CFDictionary, &item)
+		
+		guard status != errSecItemNotFound else {
+			return nil
+		}
+		
+		guard status == errSecSuccess else {
+			throw CredentialsError.unhandledError(status: status)
+		}
+		
+		guard let existingItem = item as? [String : Any],
+			let passwordData = existingItem[kSecValueData as String] as? Data,
+			let password = String(data: passwordData, encoding: String.Encoding.utf8) else {
+				return nil
+		}
+		
+		return BasicCredentials(username: username, password: password)
+		
+	}
+	
+	public func removeCredentials() throws {
+		
+		guard let username = self.username, let server = delegate.server else {
+			return
+		}
+		
+		let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+									kSecAttrAccount as String: username,
+									kSecAttrServer as String: server,
+									kSecMatchLimit as String: kSecMatchLimitOne,
+									kSecReturnAttributes as String: true,
+									kSecReturnData as String: true]
+
+		let status = SecItemDelete(query as CFDictionary)
+		guard status == errSecSuccess || status == errSecItemNotFound else {
+			throw CredentialsError.unhandledError(status: status)
+		}
+
+		self.username = nil
+		
 	}
 	
 	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, completionHandler handler: @escaping (Result<Bool, Error>) -> Void) {

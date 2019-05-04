@@ -67,9 +67,13 @@ class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegat
 				
 				if authenticated {
 					let account = AccountManager.shared.createAccount(type: .feedbin)
-					account.storeCredentials(credentials)
+					do {
+						try account.storeCredentials(credentials)
+						self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+					} catch {
+						self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+					}
 					
-					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} else {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
 				}

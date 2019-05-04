@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import RSWeb
 @testable import Account
 
 class AccountCredentialsTest: XCTestCase {
@@ -21,8 +22,67 @@ class AccountCredentialsTest: XCTestCase {
 		TestAccountManager.shared.deleteAccount(account)
     }
 
-    func testExample() {
+    func testCreateRetrieveDelete() {
 		
+		// Make sure any left over from failed tests are gone
+		do {
+			try account.removeCredentials()
+		} catch {
+			XCTFail(error.localizedDescription)
+		}
+
+		var credentials: Credentials? = BasicCredentials(username: "maurice", password: "hardpasswd")
+		
+		// Store the credentials
+		do {
+			try account.storeCredentials(credentials!)
+		} catch {
+			XCTFail(error.localizedDescription)
+		}
+		
+		// Retrieve them
+		credentials = nil
+		do {
+			credentials = try account.retrieveCredentials()
+		} catch {
+			XCTFail(error.localizedDescription)
+		}
+		XCTAssertEqual("maurice", credentials!.username)
+		XCTAssertEqual("hardpasswd", credentials!.password)
+		
+		// Update them
+		credentials?.password = "easypasswd"
+		do {
+			try account.storeCredentials(credentials!)
+		} catch {
+			XCTFail(error.localizedDescription)
+		}
+		
+		// Retrieve them again
+		credentials = nil
+		do {
+			credentials = try account.retrieveCredentials()
+		} catch {
+			XCTFail(error.localizedDescription)
+		}
+		XCTAssertEqual("maurice", credentials!.username)
+		XCTAssertEqual("easypasswd", credentials!.password)
+		
+		// Delete them
+		do {
+			try account.removeCredentials()
+		} catch {
+			XCTFail(error.localizedDescription)
+		}
+
+		// Make sure they are gone
+		do {
+			try credentials = account.retrieveCredentials()
+		} catch {
+			XCTFail(error.localizedDescription)
+		}
+		
+		XCTAssertNil(credentials)
     }
 
 }
