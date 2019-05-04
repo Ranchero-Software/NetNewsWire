@@ -5,9 +5,9 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="AccountsAddFeedbinWindowController" customModule="NetNewsWire" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="AccountsFeedbinWindowController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
-                <outlet property="createButton" destination="9mz-D9-krh" id="p7i-JM-G69"/>
+                <outlet property="actionButton" destination="9mz-D9-krh" id="ozu-6Q-9Lb"/>
                 <outlet property="errorMessageLabel" destination="byK-Sd-r7F" id="8zt-9d-dWQ"/>
                 <outlet property="passwordTextField" destination="JSa-LY-zNQ" id="5cF-bM-CJE"/>
                 <outlet property="progressIndicator" destination="B0W-bh-Evv" id="Tiq-gx-s3F"/>
@@ -24,7 +24,7 @@
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="433" height="249"/>
-                <autoresizingMask key="autoresizingMask"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <stackView distribution="fill" orientation="horizontal" alignment="bottom" spacing="19" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Ht-Fn-0Ya">
                         <rect key="frame" x="134" y="190" width="166" height="39"/>
@@ -88,9 +88,6 @@
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
-                                    <connections>
-                                        <outlet property="delegate" destination="-2" id="7Z4-KY-ChP"/>
-                                    </connections>
                                 </textField>
                             </gridCell>
                             <gridCell row="eW8-uH-txq" column="fCQ-jY-Mts" id="Hqa-3w-cQv">
@@ -117,9 +114,6 @@
                                             <string>NSAllRomanInputSourcesLocaleIdentifier</string>
                                         </allowedInputSourceLocales>
                                     </secureTextFieldCell>
-                                    <connections>
-                                        <outlet property="delegate" destination="-2" id="jAp-eC-dOn"/>
-                                    </connections>
                                 </secureTextField>
                             </gridCell>
                             <gridCell row="DbI-7g-Xme" column="fCQ-jY-Mts" headOfMergedCell="xX0-vn-AId" xPlacement="leading" id="xX0-vn-AId">
@@ -136,8 +130,8 @@
                         </gridCells>
                     </gridView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9mz-D9-krh">
-                        <rect key="frame" x="338" y="13" width="81" height="32"/>
-                        <buttonCell key="cell" type="push" title="Create" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IMO-YT-k9Z">
+                        <rect key="frame" x="340" y="13" width="79" height="32"/>
+                        <buttonCell key="cell" type="push" title="Action" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IMO-YT-k9Z">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
@@ -145,11 +139,11 @@ DQ
 </string>
                         </buttonCell>
                         <connections>
-                            <action selector="create:" target="-2" id="jfu-Va-dnt"/>
+                            <action selector="action:" target="-2" id="Kix-5a-5Og"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XAM-Hb-0Hw">
-                        <rect key="frame" x="256" y="13" width="82" height="32"/>
+                        <rect key="frame" x="258" y="13" width="82" height="32"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ufs-ar-BAY">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>

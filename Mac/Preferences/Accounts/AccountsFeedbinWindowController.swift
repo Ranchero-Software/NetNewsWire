@@ -10,18 +10,30 @@ import AppKit
 import Account
 import RSWeb
 
-class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegate {
+class AccountsFeedbinWindowController: NSWindowController {
 
 	@IBOutlet weak var progressIndicator: NSProgressIndicator!
 	@IBOutlet weak var usernameTextField: NSTextField!
 	@IBOutlet weak var passwordTextField: NSSecureTextField!
 	@IBOutlet weak var errorMessageLabel: NSTextField!
-	@IBOutlet weak var createButton: NSButton!
+	@IBOutlet weak var actionButton: NSButton!
+	
+	var account: Account?
 	
 	private weak var hostWindow: NSWindow?
 	
 	convenience init() {
-		self.init(windowNibName: NSNib.Name("AccountsAddFeedbin"))
+		self.init(windowNibName: NSNib.Name("AccountsFeedbin"))
+	}
+	
+	override func windowDidLoad() {
+		if let account = account, let credentials = try? account.retrieveCredentials() {
+			usernameTextField.stringValue = credentials.username ?? ""
+			passwordTextField.stringValue = credentials.password ?? ""
+			actionButton.title = NSLocalizedString("Update", comment: "Update")
+		} else {
+			actionButton.title = NSLocalizedString("Create", comment: "Create")
+		}
 	}
 	
 	// MARK: API
@@ -30,16 +42,6 @@ class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegat
 		self.hostWindow = hostWindow
 		hostWindow.beginSheet(window!, completionHandler: handler)
 	}
-	
-	// MARK: NSTextFieldDelegate
-	
-	func controlTextDidEndEditing(_ obj: Notification) {
-		if !usernameTextField.stringValue.isEmpty {
-			createButton.isEnabled = true
-		} else {
-			createButton.isEnabled = false
-		}
-	}
 
 	// MARK: Actions
 	
@@ -47,9 +49,16 @@ class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegat
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
 	}
 	
-	@IBAction func create(_ sender: Any) {
+	@IBAction func action(_ sender: Any) {
 		
-		createButton.isEnabled = false
+		self.errorMessageLabel.stringValue = ""
+		
+		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
+			self.errorMessageLabel.stringValue = NSLocalizedString("Username & password required.", comment: "Credentials Error")
+			return
+		}
+		
+		actionButton.isEnabled = false
 		progressIndicator.isHidden = false
 		progressIndicator.startAnimation(self)
 		
@@ -58,7 +67,7 @@ class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegat
 			
 			guard let self = self else { return }
 			
-			self.createButton.isEnabled = true
+			self.actionButton.isEnabled = true
 			self.progressIndicator.isHidden = true
 			self.progressIndicator.stopAnimation(self)
 			
@@ -66,9 +75,14 @@ class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegat
 			case .success(let authenticated):
 				
 				if authenticated {
-					let account = AccountManager.shared.createAccount(type: .feedbin)
+					
+					if self.account == nil {
+						self.account = AccountManager.shared.createAccount(type: .feedbin)
+					}
+					
 					do {
-						try account.storeCredentials(credentials)
+						try self.account?.removeCredentials()
+						try self.account?.storeCredentials(credentials)
 						self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 					} catch {
 						self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")

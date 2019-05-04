@@ -83,9 +83,9 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsAddLocalWindowController
 		case 1:
-			let accountsAddLocalWindowController = AccountsAddFeedbinWindowController()
-			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
-			accountsAddWindowController = accountsAddLocalWindowController
+			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
+			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsFeedbinWindowController
 		default:
 			break
 		}

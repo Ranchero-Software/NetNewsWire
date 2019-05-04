@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="AccountsDetailViewController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
                 <outlet property="activeButton" destination="wxB-dX-nGt" id="ALS-GI-sb5"/>
+                <outlet property="credentialsButton" destination="gLh-gl-ZGQ" id="ee9-t8-lUg"/>
                 <outlet property="nameTextField" destination="TT0-Kf-YTC" id="oMG-jn-Qn0"/>
                 <outlet property="typeLabel" destination="XYX-iz-hnq" id="SKM-et-3h3"/>
                 <outlet property="view" destination="3ki-rg-6yb" id="ttM-4E-OLN"/>
@@ -92,10 +93,22 @@
                                     </gridCell>
                                 </gridCells>
                             </gridView>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gLh-gl-ZGQ">
+                                <rect key="frame" x="109" y="115" width="109" height="32"/>
+                                <buttonCell key="cell" type="push" title="Credentials" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vYg-ZC-o4W">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <connections>
+                                        <action selector="credentials:" target="-2" id="KS2-fM-QKK"/>
+                                    </connections>
+                                </buttonCell>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="nVy-H3-bFO" firstAttribute="leading" secondItem="ft2-Mb-5LD" secondAttribute="leading" constant="20" symbolic="YES" id="SQe-pg-1hl"/>
                             <constraint firstAttribute="trailing" secondItem="nVy-H3-bFO" secondAttribute="trailing" constant="20" symbolic="YES" id="Wsq-ar-poP"/>
+                            <constraint firstItem="gLh-gl-ZGQ" firstAttribute="top" secondItem="nVy-H3-bFO" secondAttribute="bottom" constant="20" symbolic="YES" id="a0S-2S-3dR"/>
+                            <constraint firstItem="gLh-gl-ZGQ" firstAttribute="centerX" secondItem="ft2-Mb-5LD" secondAttribute="centerX" id="cW8-YT-BEn"/>
                             <constraint firstItem="nVy-H3-bFO" firstAttribute="top" secondItem="ft2-Mb-5LD" secondAttribute="top" constant="20" symbolic="YES" id="sy2-s4-iEW"/>
                         </constraints>
                     </view>
