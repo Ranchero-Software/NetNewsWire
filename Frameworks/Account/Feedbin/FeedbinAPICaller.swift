@@ -28,8 +28,17 @@ final class FeedbinAPICaller: NSObject {
 			switch result {
 			case .success:
 				handler(.success(true))
-			case .failure:
-				handler(.success(false))
+			case .failure(let error):
+				switch error {
+				case TransportError.httpError(let status):
+					if status == 401 {
+						handler(.success(false))
+					} else {
+						handler(.failure(error))
+					}
+				default:
+					handler(.failure(error))
+				}
 			}
 		}
 		

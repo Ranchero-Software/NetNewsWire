@@ -69,12 +69,12 @@ class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegat
 					
 					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} else {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Unable to verify credentials.", comment: "Credentials Error")
+					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
 				}
 
 			case .failure:
 				
-				self.errorMessageLabel.stringValue = NSLocalizedString("Unable to verify credentials due to networking error.", comment: "Credentials Error")
+				self.errorMessageLabel.stringValue = NSLocalizedString("Network error.  Try again later.", comment: "Credentials Error")
 				
 			}
 			
