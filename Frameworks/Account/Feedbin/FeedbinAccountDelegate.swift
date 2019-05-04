@@ -13,21 +13,19 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	let supportsSubFolders = false
 	
-	private let caller = FeedbinAPICaller()
+	private let caller: FeedbinAPICaller
 	
-	var refreshProgress: DownloadProgress {
-		return DownloadProgress(numberOfTasks: 0)
+	init(transport: Transport) {
+		caller = FeedbinAPICaller(transport:  transport)
 	}
 	
-	static func validateCredentials(username: String, password: String, completionHandler handler: @escaping ((Bool) -> ())) {
+	var refreshProgress = DownloadProgress(numberOfTasks: 0)
+	
+	static func validateCredentials(transport: Transport, username: String, password: String, completionHandler handler: @escaping (Result<Bool, Error>) -> Void) {
 		
-		let caller = FeedbinAPICaller()
+		let caller = FeedbinAPICaller(transport:  transport)
 		caller.validateCredentials(username: username, password: password) { result in
-			if result.statusCode == 200 {
-				handler(true)
-			} else {
-				handler(false)
-			}
+			handler(result)
 		}
 		
 	}

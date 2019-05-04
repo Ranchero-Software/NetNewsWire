@@ -18,8 +18,8 @@ final class LocalAccountDelegate: AccountDelegate {
 		return refresher.progress
 	}
 	
-	static func validateCredentials(username: String, password: String, completionHandler handler: ((Bool) -> ())) {
-		return handler(false)
+	static func validateCredentials(transport: Transport, username: String, password: String, completionHandler handler: (Result<Bool, Error>) -> Void) {
+		return handler(.success(false))
 	}
 
 	func refreshAll(for account: Account) {

@@ -60,16 +60,21 @@ class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegat
 			self.progressIndicator.isHidden = true
 			self.progressIndicator.stopAnimation(self)
 			
-			if result {
+			switch result {
+			case .success(let authenticated):
 				
-				let account = AccountManager.shared.createAccount(type: .feedbin)
-				account.storeCredentials(username: self.usernameTextField.stringValue, password: self.passwordTextField.stringValue)
+				if authenticated {
+					let account = AccountManager.shared.createAccount(type: .feedbin)
+					account.storeCredentials(username: self.usernameTextField.stringValue, password: self.passwordTextField.stringValue)
+					
+					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+				} else {
+					self.errorMessageLabel.stringValue = NSLocalizedString("Unable to verify credentials.", comment: "Credentials Error")
+				}
+
+			case .failure:
 				
-				self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
-				
-			} else {
-				
-				self.errorMessageLabel.stringValue = NSLocalizedString("Unable to verify credentials", comment: "Credentials Error")
+				self.errorMessageLabel.stringValue = NSLocalizedString("Unable to verify credentials due to networking error.", comment: "Credentials Error")
 				
 			}
 			

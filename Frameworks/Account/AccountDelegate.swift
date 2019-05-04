@@ -16,7 +16,7 @@ public protocol AccountDelegate {
 	
 	var refreshProgress: DownloadProgress { get }
 
-	static func validateCredentials(username: String, password: String, completionHandler handler: @escaping ((Bool) -> ()))
+	static func validateCredentials(transport: Transport, username: String, password: String, completionHandler handler: @escaping (Result<Bool, Error>) -> Void)
 	
 	func refreshAll(for: Account)
 

@@ -177,13 +177,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.supportsSubFolders
 	}
 	
-	init?(dataFolder: String, type: AccountType, accountID: String) {
+	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport = URLSession.webserviceTransport()) {
 		
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
 		case .feedbin:
-			self.delegate = FeedbinAccountDelegate()
+			self.delegate = FeedbinAccountDelegate(transport: transport)
 		default:
 			fatalError("Only Local and Feedbin accounts are supported")
 		}
@@ -246,12 +246,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 //		self.password = password
 	}
 	
-	public static func validateCredentials(type: AccountType, username: String, password: String, completionHandler handler: @escaping ((Bool) -> ())) {
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, username: String, password: String, completionHandler handler: @escaping (Result<Bool, Error>) -> Void) {
 		switch type {
 		case .onMyMac:
-			LocalAccountDelegate.validateCredentials(username: username, password: password, completionHandler: handler)
+			LocalAccountDelegate.validateCredentials(transport: transport, username: username, password: password, completionHandler: handler)
 		case .feedbin:
-			FeedbinAccountDelegate.validateCredentials(username: username, password: password, completionHandler: handler)
+			FeedbinAccountDelegate.validateCredentials(transport: transport, username: username, password: password, completionHandler: handler)
 		default:
 			break
 		}

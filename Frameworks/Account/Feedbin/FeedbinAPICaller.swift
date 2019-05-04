@@ -11,45 +11,27 @@ import RSWeb
 
 final class FeedbinAPICaller: NSObject {
 	
-	private static let feedbinBaseURL = "https://api.feedbin.com/v2/"
-	private var session: URLSession!
+	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
+	private var transport: Transport!
 
-	override init() {
-		
+	init(transport: Transport) {
 		super.init()
+		self.transport = transport
+	}
+	
+	func validateCredentials(username: String, password: String, completionHandler handler: @escaping  (Result<Bool, Error>) -> Void) {
 		
-		let sessionConfiguration = URLSessionConfiguration.default
-		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
-		sessionConfiguration.timeoutIntervalForRequest = 60.0
-		sessionConfiguration.httpShouldSetCookies = false
-		sessionConfiguration.httpCookieAcceptPolicy = .never
-		sessionConfiguration.httpMaximumConnectionsPerHost = 2
-		sessionConfiguration.httpCookieStorage = nil
-		sessionConfiguration.urlCache = nil
+		let callURL = feedbinBaseURL.appendingPathComponent("authentication.json")
+		let request = URLRequest(url: callURL, username: username, password: password)
 		
-		if let userAgentHeaders = UserAgent.headers() {
-			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
+		transport.send(request: request) { result in
+			switch result {
+			case .success:
+				handler(.success(true))
+			case .failure:
+				handler(.success(false))
+			}
 		}
 		
-		session = URLSession(configuration: sessionConfiguration)
-		
 	}
-	
-	func validateCredentials(username: String, password: String, completionHandler handler: @escaping APIResultBlock) {
-		let request = URLRequest(url: urlFromRelativePath("authentication.json"), username: username, password: password)
-		let call = APICall(session: session, request: request)
-		call.execute(completionHandler: handler)
-	}
-	
-}
-
-// MARK: Private
-
-private extension FeedbinAPICaller {
-	
-	func urlFromRelativePath(_ path: String) -> URL {
-		let fullPath = "\(FeedbinAPICaller.feedbinBaseURL)\(path)"
-		return URL(string: fullPath)!
-	}
-	
 }
