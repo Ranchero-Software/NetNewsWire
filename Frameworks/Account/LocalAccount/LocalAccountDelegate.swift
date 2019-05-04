@@ -12,13 +12,15 @@ import RSWeb
 final class LocalAccountDelegate: AccountDelegate {
 
 	let supportsSubFolders = false
+	let server: String? = nil
+	
 	private let refresher = LocalAccountRefresher()
 
 	var refreshProgress: DownloadProgress {
 		return refresher.progress
 	}
 	
-	static func validateCredentials(transport: Transport, username: String, password: String, completionHandler handler: (Result<Bool, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler handler: (Result<Bool, Error>) -> Void) {
 		return handler(.success(false))
 	}
 

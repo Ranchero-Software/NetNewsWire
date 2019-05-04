@@ -13,11 +13,12 @@ public protocol AccountDelegate {
 
 	// Local account does not; some synced accounts might.
 	var supportsSubFolders: Bool { get }
+	var server: String? { get }
+	
+	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler handler: @escaping (Result<Bool, Error>) -> Void)
 	
 	var refreshProgress: DownloadProgress { get }
 
-	static func validateCredentials(transport: Transport, username: String, password: String, completionHandler handler: @escaping (Result<Bool, Error>) -> Void)
-	
 	func refreshAll(for: Account)
 
 	// Called at the end of account’s init method.

@@ -12,6 +12,7 @@ import RSWeb
 final class FeedbinAccountDelegate: AccountDelegate {
 	
 	let supportsSubFolders = false
+	let server: String? = "api.feedbin.com"
 	
 	private let caller: FeedbinAPICaller
 	
@@ -21,10 +22,10 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	static func validateCredentials(transport: Transport, username: String, password: String, completionHandler handler: @escaping (Result<Bool, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler handler: @escaping (Result<Bool, Error>) -> Void) {
 		
 		let caller = FeedbinAPICaller(transport:  transport)
-		caller.validateCredentials(username: username, password: password) { result in
+		caller.validateCredentials(credentials: credentials) { result in
 			handler(result)
 		}
 		

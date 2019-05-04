@@ -241,17 +241,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	// MARK: - API
 	
-	public func storeCredentials(username: String, password: String) {
-		self.username = username
+	public func storeCredentials(_ credentials: Credentials) {
+		self.username = credentials.username
 //		self.password = password
 	}
 	
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, username: String, password: String, completionHandler handler: @escaping (Result<Bool, Error>) -> Void) {
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, completionHandler handler: @escaping (Result<Bool, Error>) -> Void) {
 		switch type {
 		case .onMyMac:
-			LocalAccountDelegate.validateCredentials(transport: transport, username: username, password: password, completionHandler: handler)
+			LocalAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completionHandler: handler)
 		case .feedbin:
-			FeedbinAccountDelegate.validateCredentials(transport: transport, username: username, password: password, completionHandler: handler)
+			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completionHandler: handler)
 		default:
 			break
 		}

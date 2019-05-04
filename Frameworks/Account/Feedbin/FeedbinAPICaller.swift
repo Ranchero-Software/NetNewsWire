@@ -19,10 +19,10 @@ final class FeedbinAPICaller: NSObject {
 		self.transport = transport
 	}
 	
-	func validateCredentials(username: String, password: String, completionHandler handler: @escaping  (Result<Bool, Error>) -> Void) {
+	func validateCredentials(credentials: Credentials, completionHandler handler: @escaping  (Result<Bool, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("authentication.json")
-		let request = URLRequest(url: callURL, username: username, password: password)
+		let request = URLRequest(url: callURL, credentials: credentials)
 		
 		transport.send(request: request) { result in
 			switch result {

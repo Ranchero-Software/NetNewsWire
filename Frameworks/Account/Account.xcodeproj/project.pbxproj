@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5107A099227DE42E00C7C3C5 /* AccountCredentialsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A098227DE42E00C7C3C5 /* AccountCredentialsTest.swift */; };
+		5107A09B227DE49500C7C3C5 /* TestAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */; };
+		5107A09D227DE77700C7C3C5 /* NilTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09C227DE77700C7C3C5 /* NilTransport.swift */; };
 		5144EA49227B497600D19003 /* FeedbinAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA48227B497600D19003 /* FeedbinAPICaller.swift */; };
 		5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA4D227B829A00D19003 /* FeedbinAccountDelegate.swift */; };
 		841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973EF1F6DD19E006346C4 /* RSCore.framework */; };
@@ -85,6 +88,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5107A098227DE42E00C7C3C5 /* AccountCredentialsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCredentialsTest.swift; sourceTree = "<group>"; };
+		5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAccountManager.swift; sourceTree = "<group>"; };
+		5107A09C227DE77700C7C3C5 /* NilTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NilTransport.swift; sourceTree = "<group>"; };
 		5144EA48227B497600D19003 /* FeedbinAPICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAPICaller.swift; sourceTree = "<group>"; };
 		5144EA4D227B829A00D19003 /* FeedbinAccountDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAccountDelegate.swift; sourceTree = "<group>"; };
 		841973E81F6DD19E006346C4 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
@@ -244,8 +250,11 @@
 		848935031F62484F00CEBD24 /* AccountTests */ = {
 			isa = PBXGroup;
 			children = (
+				5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */,
 				848935041F62485000CEBD24 /* AccountTests.swift */,
+				5107A098227DE42E00C7C3C5 /* AccountCredentialsTest.swift */,
 				848935061F62485000CEBD24 /* Info.plist */,
+				5107A09C227DE77700C7C3C5 /* NilTransport.swift */,
 			);
 			path = AccountTests;
 			sourceTree = "<group>";
@@ -449,6 +458,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5107A09B227DE49500C7C3C5 /* TestAccountManager.swift in Sources */,
+				5107A09D227DE77700C7C3C5 /* NilTransport.swift in Sources */,
+				5107A099227DE42E00C7C3C5 /* AccountCredentialsTest.swift in Sources */,
 				848935051F62485000CEBD24 /* AccountTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

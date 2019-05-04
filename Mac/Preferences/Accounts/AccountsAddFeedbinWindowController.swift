@@ -8,6 +8,7 @@
 
 import AppKit
 import Account
+import RSWeb
 
 class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegate {
 
@@ -52,7 +53,8 @@ class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegat
 		progressIndicator.isHidden = false
 		progressIndicator.startAnimation(self)
 		
-		Account.validateCredentials(type: .feedbin, username: usernameTextField.stringValue, password: passwordTextField.stringValue) { [weak self] result in
+		let credentials = BasicCredentials(username: usernameTextField.stringValue, password: passwordTextField.stringValue)
+		Account.validateCredentials(type: .feedbin, credentials: credentials) { [weak self] result in
 			
 			guard let self = self else { return }
 			
@@ -65,7 +67,7 @@ class AccountsAddFeedbinWindowController: NSWindowController, NSTextFieldDelegat
 				
 				if authenticated {
 					let account = AccountManager.shared.createAccount(type: .feedbin)
-					account.storeCredentials(username: self.usernameTextField.stringValue, password: self.passwordTextField.stringValue)
+					account.storeCredentials(credentials)
 					
 					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} else {
