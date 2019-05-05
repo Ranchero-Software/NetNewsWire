@@ -19,7 +19,7 @@ protocol AccountDelegate {
 	
 	var refreshProgress: DownloadProgress { get }
 
-	func refreshAll(for: Account)
+	func refreshAll(for: Account, completionHandler completion: (() -> Void)?)
 
 	// Called at the end of account’s init method.
 

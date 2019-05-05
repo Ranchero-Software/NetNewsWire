@@ -17,6 +17,8 @@ final class AccountMetadata: Codable {
 
 	struct ConditionalGetKeys {
 		static let subscriptions = "subscriptions"
+		static let tags = "tags"
+		static let taggings = "taggings"
 	}
 	
 	enum CodingKeys: String, CodingKey {

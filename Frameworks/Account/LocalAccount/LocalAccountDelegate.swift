@@ -26,9 +26,10 @@ final class LocalAccountDelegate: AccountDelegate {
 		return handler(.success(false))
 	}
 
-	func refreshAll(for account: Account) {
-
+	// LocalAccountDelegate doesn't wait for completion before calling the completion block
+	func refreshAll(for account: Account, completionHandler completion: (() -> Void)? = nil) {
 		refresher.refreshFeeds(account.flattenedFeeds())
+		completion?()
 	}
 
 	func accountDidInitialize(_ account: Account) {

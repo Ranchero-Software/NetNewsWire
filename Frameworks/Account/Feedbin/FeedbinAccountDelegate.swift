@@ -6,7 +6,12 @@
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
-import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+import RSCore
+#endif
 import RSWeb
 
 final class FeedbinAccountDelegate: AccountDelegate {
@@ -33,22 +38,100 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler handler: @escaping (Result<Bool, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler completion: @escaping (Result<Bool, Error>) -> Void) {
 		
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials
 		caller.validateCredentials() { result in
-			handler(result)
+			completion(result)
 		}
 		
 	}
 	
-	func refreshAll(for account: Account) {
-		
+	func refreshAll(for account: Account, completionHandler completion: (() -> Void)? = nil) {
+		refreshAll(account) { result in
+			switch result {
+			case .success():
+				completion?()
+			case .failure(let error):
+				// TODO: We should do a better job of error handling here.
+				// We need to prompt for credentials and provide user friendly
+				// errors.
+				#if os(macOS)
+					NSApplication.shared.presentError(error)
+				#else
+					UIApplication.shared.presentError(error)
+				#endif
+			}
+		}
 	}
 	
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveBasicCredentials()
+	}
+	
+}
+
+// MARK: Private
+
+private extension FeedbinAccountDelegate {
+	
+	func refreshAll(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		caller.retrieveTags { [weak self] result in
+			switch result {
+			case .success(let tags):
+				self?.syncFolders(account, tags)
+				completion(.success(()))
+			case .failure(let error):
+				self?.checkErrorOrNotModified(error, completion: completion)
+			}
+		}
+		
+	}
+	
+	func syncFolders(_ account: Account, _ tags: [FeedbinTag]) {
+		
+		let tagNames = tags.map { $0.name }
+
+		// Delete any folders not at Feedbin
+		if let folders = account.folders {
+			folders.forEach { folder in
+				if !tagNames.contains(folder.name ?? "") {
+					account.deleteFolder(folder)
+				}
+			}
+		}
+		
+		let folderNames: [String] =  {
+			if let folders = account.folders {
+				return folders.map { $0.name ?? "" }
+			} else {
+				return [String]()
+			}
+		}()
+
+		// Make any folders Feedbin has, but we don't
+		tagNames.forEach { tagName in
+			if !folderNames.contains(tagName) {
+				account.ensureFolder(with: tagName)
+			}
+		}
+		
+	}
+	
+	func checkErrorOrNotModified(_ error: Error, completion: @escaping (Result<Void, Error>) -> Void) {
+		switch error {
+		case TransportError.httpError(let status):
+			if status == HTTPResponseCode.notModified {
+				completion(.success(()))
+			} else {
+				completion(.failure(error))
+			}
+		default:
+			completion(.failure(error))
+		}
+
 	}
 	
 }

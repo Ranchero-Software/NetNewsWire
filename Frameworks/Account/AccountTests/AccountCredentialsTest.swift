@@ -15,7 +15,7 @@ class AccountCredentialsTest: XCTestCase {
 	private var account: Account!
 	
     override func setUp() {
-		account = TestAccountManager.shared.createAccount(type: .feedbin, transport: NilTransport())
+		account = TestAccountManager.shared.createAccount(type: .feedbin, transport: TestTransport())
     }
 
     override func tearDown() {

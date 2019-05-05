@@ -47,6 +47,47 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
+	func retrieveTags(completionHandler completion: @escaping  (Result<[FeedbinTag], Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
+		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.tags]
+		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		
+		transport.send(request: request, resultType: [FeedbinTag].self) { [weak self] result in
+			switch result {
+			case .success(let (headers, tags)):
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.tags, headers: headers)
+				completion(.success(tags))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
+	func retrieveTaggings(completionHandler completion: @escaping  (Result<[FeedbinTagging], Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
+		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.taggings]
+		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		
+		transport.send(request: request, resultType: [FeedbinTagging].self) { [weak self] result in
+			switch result {
+			case .success(let (headers, taggings)):
+				
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.taggings, headers: headers)
+				
+				// TODO: Add paging code
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
 	func retrieveSubscriptions(completionHandler completion: @escaping  (Result<[FeedbinFeed], Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")

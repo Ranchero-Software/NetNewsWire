@@ -281,9 +281,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public func refreshAll() {
-
-		delegate.refreshAll(for: self)
+	public func refreshAll(completionHandler completion: (() -> Void)? = nil) {
+		delegate.refreshAll(for: self, completionHandler: completion)
 	}
 
 	public func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping RSVoidCompletionBlock) {
