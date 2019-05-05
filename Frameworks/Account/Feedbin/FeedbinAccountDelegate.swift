@@ -68,6 +68,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveBasicCredentials()
+		accountMetadata = account.metadata
 	}
 	
 }

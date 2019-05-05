@@ -120,7 +120,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	private var flattenedFeedsNeedUpdate = true
 
 	private let metadataPath: String
-	private var metadata = AccountMetadata()
+	var metadata = AccountMetadata()
 	private var metadataDirty = false {
 		didSet {
 			queueSaveAccountMetadatafNeeded()
