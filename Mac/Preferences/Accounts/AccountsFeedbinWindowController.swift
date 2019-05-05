@@ -27,9 +27,11 @@ class AccountsFeedbinWindowController: NSWindowController {
 	}
 	
 	override func windowDidLoad() {
-		if let account = account, let credentials = try? account.retrieveCredentials() {
-			usernameTextField.stringValue = credentials.username ?? ""
-			passwordTextField.stringValue = credentials.password ?? ""
+		if let account = account, let credentials = try? account.retrieveBasicCredentials() {
+			if case .basic(let username, let password) = credentials {
+				usernameTextField.stringValue = username
+				passwordTextField.stringValue = password
+			}
 			actionButton.title = NSLocalizedString("Update", comment: "Update")
 		} else {
 			actionButton.title = NSLocalizedString("Create", comment: "Create")
@@ -62,7 +64,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 		progressIndicator.isHidden = false
 		progressIndicator.startAnimation(self)
 		
-		let credentials = BasicCredentials(username: usernameTextField.stringValue, password: passwordTextField.stringValue)
+		let credentials = Credentials.basic(username: usernameTextField.stringValue, password: passwordTextField.stringValue)
 		Account.validateCredentials(type: .feedbin, credentials: credentials) { [weak self] result in
 			
 			guard let self = self else { return }
@@ -81,7 +83,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 					}
 					
 					do {
-						try self.account?.removeCredentials()
+						try self.account?.removeBasicCredentials()
 						try self.account?.storeCredentials(credentials)
 						self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 					} catch {

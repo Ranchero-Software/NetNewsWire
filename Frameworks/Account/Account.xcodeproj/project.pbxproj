@@ -214,26 +214,26 @@
 		848934EC1F62484F00CEBD24 = {
 			isa = PBXGroup;
 			children = (
-				846E77531F6F00E300A165E2 /* AccountManager.swift */,
 				848935101F62486800CEBD24 /* Account.swift */,
-				84AF4EA3222CFDD100F6A800 /* AccountSettings.swift */,
 				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
-				841974001F6DD1EC006346C4 /* Folder.swift */,
+				846E77531F6F00E300A165E2 /* AccountManager.swift */,
+				84AF4EA3222CFDD100F6A800 /* AccountSettings.swift */,
+				84F73CF0202788D80000BCEF /* ArticleFetcher.swift */,
+				84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */,
+				8419740D1F6DD25F006346C4 /* Container.swift */,
+				84B99C9E1FAE8D3200ECDEDB /* ContainerPath.swift */,
+				84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */,
 				844B297C2106C7EC004020B3 /* Feed.swift */,
 				84B2D4CE2238C13D00498ADA /* FeedMetadata.swift */,
+				841974001F6DD1EC006346C4 /* Folder.swift */,
 				844B297E210CE37E004020B3 /* UnreadCountProvider.swift */,
-				84B99C9E1FAE8D3200ECDEDB /* ContainerPath.swift */,
-				84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */,
-				84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */,
-				84F73CF0202788D80000BCEF /* ArticleFetcher.swift */,
-				8419740D1F6DD25F006346C4 /* Container.swift */,
-				8419742B1F6DDE84006346C4 /* LocalAccount */,
+				848935031F62484F00CEBD24 /* AccountTests */,
 				84245C7D1FDDD2580074AFBB /* Feedbin */,
 				8469F80F1F6DC3C10084783E /* Frameworks */,
-				848934FA1F62484F00CEBD24 /* Info.plist */,
-				848935031F62484F00CEBD24 /* AccountTests */,
+				8419742B1F6DDE84006346C4 /* LocalAccount */,
 				848934F71F62484F00CEBD24 /* Products */,
 				D511EEB4202422BB00712EC3 /* xcconfig */,
+				848934FA1F62484F00CEBD24 /* Info.plist */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;

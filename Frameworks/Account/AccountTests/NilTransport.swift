@@ -11,8 +11,11 @@ import RSWeb
 
 struct NilTransport: Transport {
 	
-	func send(request: URLRequest, completion: @escaping (Result<Data, Error>) -> Void) {
-		completion(.success(Data()))
+	func send<T>(request: URLRequest, resultType: T.Type, completion: @escaping (Result<(HTTPHeaders, T), Error>) -> Void) where T : Decodable, T : Encodable {
+	}
+	
+	
+	func send(request: URLRequest, completion: @escaping (Result<(HTTPHeaders, Data), Error>) -> Void) {
 	}
 
 }

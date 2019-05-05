@@ -14,8 +14,7 @@ public protocol AccountDelegate {
 	// Local account does not; some synced accounts might.
 	var supportsSubFolders: Bool { get }
 	var server: String? { get }
-	
-	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler handler: @escaping (Result<Bool, Error>) -> Void)
+	var credentials: Credentials? { get set }
 	
 	var refreshProgress: DownloadProgress { get }
 
@@ -34,4 +33,7 @@ public protocol AccountDelegate {
 	// Saved to disk with other Account data. Could be called at any time.
 	// And called many times.
 	func userInfo(for: Account) -> NSDictionary?
+
+	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler handler: @escaping (Result<Bool, Error>) -> Void)
+	
 }

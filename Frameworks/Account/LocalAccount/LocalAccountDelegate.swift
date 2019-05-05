@@ -13,6 +13,7 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	let supportsSubFolders = false
 	let server: String? = nil
+	var credentials: Credentials?
 	
 	private let refresher = LocalAccountRefresher()
 

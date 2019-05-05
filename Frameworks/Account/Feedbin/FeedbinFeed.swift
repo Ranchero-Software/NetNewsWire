@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSParser
 
-struct FeedbinFeed {
+struct FeedbinFeed: Codable {
 
 	// https://github.com/feedbin/feedbin-api/blob/master/content/feeds.md
 	//
@@ -28,45 +28,13 @@ struct FeedbinFeed {
 	let url: String
 	let homePageURL: String?
 
-	struct Key {
-		static let subscriptionID = "id"
-		static let feedID = "feed_id"
-		static let creationDate = "created_at"
-		static let name = "title"
-		static let url = "feed_url"
-		static let homePageURL = "site_url"
+	enum CodingKeys: String, CodingKey {
+		case subscriptionID = "id"
+		case feedID = "feed_id"
+		case creationDate = "created_at"
+		case name = "title"
+		case url = "feed_url"
+		case homePageURL = "site_url"
 	}
 
-	init?(dictionary: JSONDictionary) {
-
-		guard let subscriptionID = dictionary[Key.subscriptionID] as? Int else {
-			return nil
-		}
-		guard let feedID = dictionary[Key.feedID] as? Int else {
-			return nil
-		}
-		guard let url = dictionary[Key.url] as? String else {
-			return nil
-		}
-
-		self.subscriptionID = subscriptionID
-		self.feedID = feedID
-		self.url = url
-
-		if let creationDateString = dictionary[Key.creationDate] as? String {
-			self.creationDate = RSDateWithString(creationDateString)
-		}
-		else {
-			self.creationDate = nil
-		}
-
-		self.name = dictionary[Key.name] as? String
-		self.homePageURL = dictionary[Key.homePageURL] as? String
-	}
-
-	static func feeds(with array: JSONArray) -> [FeedbinFeed]? {
-
-		let subs = array.compactMap { FeedbinFeed(dictionary: $0) }
-		return subs.isEmpty ? nil : subs
-	}
 }

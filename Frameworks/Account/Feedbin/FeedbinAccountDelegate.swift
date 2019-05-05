@@ -15,17 +15,23 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	let server: String? = "api.feedbin.com"
 	
 	private let caller: FeedbinAPICaller
+	var credentials: Credentials? {
+		didSet {
+			caller.credentials = credentials
+		}
+	}
 	
 	init(transport: Transport) {
-		caller = FeedbinAPICaller(transport:  transport)
+		caller = FeedbinAPICaller(transport: transport)
 	}
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler handler: @escaping (Result<Bool, Error>) -> Void) {
 		
-		let caller = FeedbinAPICaller(transport:  transport)
-		caller.validateCredentials(credentials: credentials) { result in
+		let caller = FeedbinAPICaller(transport: transport)
+		caller.credentials = credentials
+		caller.validateCredentials() { result in
 			handler(result)
 		}
 		
