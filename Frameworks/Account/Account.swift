@@ -255,6 +255,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		try CredentialsManager.storeCredentials(credentials, server: server)
 		
+		delegate.credentials = credentials
+		
 	}
 	
 	public func retrieveBasicCredentials() throws -> Credentials? {
