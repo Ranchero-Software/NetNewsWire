@@ -21,9 +21,12 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	var settings: AccountSettings?
+	var accountMetadata: AccountMetadata? {
+		didSet {
+			caller.accountMetadata = accountMetadata
+		}
+	}
 
-	
 	init(transport: Transport) {
 		caller = FeedbinAPICaller(transport: transport)
 	}

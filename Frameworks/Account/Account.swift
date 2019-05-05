@@ -57,12 +57,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public var name: String? {
 		get {
-			return settings.name
+			return metadata.name
 		}
 		set {
 			let currentNameForDisplay = nameForDisplay
-			if newValue != settings.name {
-				settings.name = newValue
+			if newValue != metadata.name {
+				metadata.name = newValue
 				if currentNameForDisplay != nameForDisplay {
 					postDisplayNameDidChangeNotification()
 				}
@@ -73,11 +73,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	public var isActive: Bool {
 		get {
-			return settings.isActive
+			return metadata.isActive
 		}
 		set {
-			if newValue != settings.isActive {
-				settings.isActive = newValue
+			if newValue != metadata.isActive {
+				metadata.isActive = newValue
 				NotificationCenter.default.post(name: .AccountStateDidChange, object: self, userInfo: nil)
 			}
 		}
@@ -96,11 +96,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	var username: String? {
 		get {
-			return settings.username
+			return metadata.username
 		}
 		set {
-			if newValue != settings.username {
-				settings.username = newValue
+			if newValue != metadata.username {
+				metadata.username = newValue
 			}
 		}
 	}
@@ -119,11 +119,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	private var _flattenedFeeds = Set<Feed>()
 	private var flattenedFeedsNeedUpdate = true
 
-	private let settingsPath: String
-	private var settings = AccountSettings()
-	private var settingsDirty = false {
+	private let metadataPath: String
+	private var metadata = AccountMetadata()
+	private var metadataDirty = false {
 		didSet {
-			queueSaveSettingsIfNeeded()
+			queueSaveAccountMetadatafNeeded()
 		}
 	}
 
@@ -132,7 +132,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	private var feedMetadata = FeedMetadataDictionary()
 	private var feedMetadataDirty = false {
 		didSet {
-			queueSaveMetadataIfNeeded()
+			queueSaveFeedMetadataIfNeeded()
 		}
 	}
 
@@ -195,7 +195,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID)
 
 		self.feedMetadataPath = (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist")
-		self.settingsPath = (dataFolder as NSString).appendingPathComponent("Settings.plist")
+		self.metadataPath = (dataFolder as NSString).appendingPathComponent("Settings.plist")
 
 		switch type {
 		case .onMyMac:
@@ -388,8 +388,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		// For syncing, this may need to be an async method with a callback,
 		// since it will likely need to call the server.
 
-		let feedMetadata = metadata(feedID: url)
-		let feed = Feed(account: self, url: url, feedID: url, metadata: feedMetadata)
+		let metadata = feedMetadata(feedID: url)
+		let feed = Feed(account: self, url: url, feedID: url, metadata: metadata)
 		if let name = name, feed.name == nil {
 			feed.name = name
 		}
@@ -671,15 +671,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	@objc func saveMetadataIfNeeded() {
+	@objc func saveFeedMetadataIfNeeded() {
 		if feedMetadataDirty {
 			saveFeedMetadata()
 		}
 	}
 
-	@objc func saveSettingsIfNeeded() {
-		if settingsDirty {
-			saveSettings()
+	@objc func saveAccountMetadataIfNeeded() {
+		if metadataDirty {
+			saveAccountMetadata()
 		}
 	}
 
@@ -697,11 +697,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 }
 
-// MARK: - AccountSettingsDelegate
+// MARK: - AccountMetadataDelegate
 
-extension Account: AccountSettingsDelegate {
-	func valueDidChange(_ accountSettings: AccountSettings, key: AccountSettings.CodingKeys) {
-		settingsDirty = true
+extension Account: AccountMetadataDelegate {
+	func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys) {
+		metadataDirty = true
 	}
 }
 
@@ -727,20 +727,20 @@ private extension Account {
 	}
 
 	func pullObjectsFromDisk() {
-		importSettings()
+		importAccountMetadata()
 		importFeedMetadata()
 		importOPMLFile(path: opmlFilePath)
 	}
 
-	func importSettings() {
-		let url = URL(fileURLWithPath: settingsPath)
+	func importAccountMetadata() {
+		let url = URL(fileURLWithPath: metadataPath)
 		guard let data = try? Data(contentsOf: url) else {
-			settings.delegate = self
+			metadata.delegate = self
 			return
 		}
 		let decoder = PropertyListDecoder()
-		settings = (try? decoder.decode(AccountSettings.self, from: data)) ?? AccountSettings()
-		settings.delegate = self
+		metadata = (try? decoder.decode(AccountMetadata.self, from: data)) ?? AccountMetadata()
+		metadata.delegate = self
 	}
 
 	func importFeedMetadata() {
@@ -808,8 +808,8 @@ private extension Account {
 		}
 	}
 
-	func queueSaveMetadataIfNeeded() {
-		Account.saveQueue.add(self, #selector(saveMetadataIfNeeded))
+	func queueSaveFeedMetadataIfNeeded() {
+		Account.saveQueue.add(self, #selector(saveFeedMetadataIfNeeded))
 	}
 
 	private func metadataForOnlySubscribedToFeeds() -> FeedMetadataDictionary {
@@ -835,18 +835,18 @@ private extension Account {
 		}
 	}
 
-	func queueSaveSettingsIfNeeded() {
-		Account.saveQueue.add(self, #selector(saveSettingsIfNeeded))
+	func queueSaveAccountMetadatafNeeded() {
+		Account.saveQueue.add(self, #selector(saveAccountMetadataIfNeeded))
 	}
 
-	func saveSettings() {
-		settingsDirty = false
+	func saveAccountMetadata() {
+		metadataDirty = false
 
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: settingsPath)
+		let url = URL(fileURLWithPath: metadataPath)
 		do {
-			let data = try encoder.encode(settings)
+			let data = try encoder.encode(metadata)
 			try data.write(to: url)
 		}
 		catch {
@@ -859,7 +859,7 @@ private extension Account {
 
 private extension Account {
 
-	func metadata(feedID: String) -> FeedMetadata {
+	func feedMetadata(feedID: String) -> FeedMetadata {
 		if let d = feedMetadata[feedID] {
 			assert(d.delegate === self)
 			return d
@@ -894,8 +894,8 @@ private extension Account {
 
 	func createFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 		let feedID = opmlFeedSpecifier.feedURL
-		let feedMetadata = metadata(feedID: feedID)
-		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, feedID: feedID, metadata: feedMetadata)
+		let metadata = feedMetadata(feedID: feedID)
+		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, feedID: feedID, metadata: metadata)
 		if let feedTitle = opmlFeedSpecifier.title {
 			if feed.name == nil {
 				feed.name = feedTitle

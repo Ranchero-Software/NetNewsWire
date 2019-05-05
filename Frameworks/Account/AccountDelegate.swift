@@ -15,7 +15,7 @@ protocol AccountDelegate {
 	var supportsSubFolders: Bool { get }
 	var server: String? { get }
 	var credentials: Credentials? { get set }
-	var settings: AccountSettings? { get set }
+	var accountMetadata: AccountMetadata? { get set }
 	
 	var refreshProgress: DownloadProgress { get }
 

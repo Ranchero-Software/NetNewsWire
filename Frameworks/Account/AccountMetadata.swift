@@ -1,5 +1,5 @@
 //
-//  AccountSettings.swift
+//  AccountMetadata.swift
 //  Account
 //
 //  Created by Brent Simmons on 3/3/19.
@@ -8,11 +8,11 @@
 
 import Foundation
 
-protocol AccountSettingsDelegate: class {
-	func valueDidChange(_ accountSettings: AccountSettings, key: AccountSettings.CodingKeys)
+protocol AccountMetadataDelegate: class {
+	func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys)
 }
 
-final class AccountSettings: Codable {
+final class AccountMetadata: Codable {
 
 	enum CodingKeys: String, CodingKey {
 		case name
@@ -44,7 +44,7 @@ final class AccountSettings: Codable {
 		}
 	}
 
-	weak var delegate: AccountSettingsDelegate?
+	weak var delegate: AccountMetadataDelegate?
 	
 	func valueDidChange(_ key: CodingKeys) {
 		delegate?.valueDidChange(self, key: key)

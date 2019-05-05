@@ -14,7 +14,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	let supportsSubFolders = false
 	let server: String? = nil
 	var credentials: Credentials?
-	var settings: AccountSettings?
+	var accountMetadata: AccountMetadata?
 
 	private let refresher = LocalAccountRefresher()
 

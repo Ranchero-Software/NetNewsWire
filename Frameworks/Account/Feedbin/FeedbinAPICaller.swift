@@ -13,7 +13,9 @@ final class FeedbinAPICaller: NSObject {
 	
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
 	private var transport: Transport!
+	
 	var credentials: Credentials?
+	var accountMetadata: AccountMetadata?
 
 	init(transport: Transport) {
 		super.init()
