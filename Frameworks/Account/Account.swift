@@ -63,7 +63,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			let currentNameForDisplay = nameForDisplay
 			if newValue != settings.name {
 				settings.name = newValue
-				settingsDirty = true
 				if currentNameForDisplay != nameForDisplay {
 					postDisplayNameDidChangeNotification()
 				}
@@ -79,7 +78,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		set {
 			if newValue != settings.isActive {
 				settings.isActive = newValue
-				settingsDirty = true
 				NotificationCenter.default.post(name: .AccountStateDidChange, object: self, userInfo: nil)
 			}
 		}
@@ -103,7 +101,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		set {
 			if newValue != settings.username {
 				settings.username = newValue
-				settingsDirty = true
 			}
 		}
 	}
@@ -228,7 +225,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
-		delegate.credentials = try? retrieveBasicCredentials()
 		
 		pullObjectsFromDisk()
 		
@@ -701,6 +697,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 }
 
+// MARK: - AccountSettingsDelegate
+
+extension Account: AccountSettingsDelegate {
+	func valueDidChange(_ accountSettings: AccountSettings, key: AccountSettings.CodingKeys) {
+		settingsDirty = true
+	}
+}
 
 // MARK: - FeedMetadataDelegate
 
@@ -732,10 +735,12 @@ private extension Account {
 	func importSettings() {
 		let url = URL(fileURLWithPath: settingsPath)
 		guard let data = try? Data(contentsOf: url) else {
+			settings.delegate = self
 			return
 		}
 		let decoder = PropertyListDecoder()
 		settings = (try? decoder.decode(AccountSettings.self, from: data)) ?? AccountSettings()
+		settings.delegate = self
 	}
 
 	func importFeedMetadata() {

@@ -8,10 +8,46 @@
 
 import Foundation
 
+protocol AccountSettingsDelegate: class {
+	func valueDidChange(_ accountSettings: AccountSettings, key: AccountSettings.CodingKeys)
+}
+
 final class AccountSettings: Codable {
 
-	var name: String?
-	var isActive: Bool = true
-	var username: String?
+	enum CodingKeys: String, CodingKey {
+		case name
+		case isActive
+		case username
+	}
+
+	var name: String? {
+		didSet {
+			if name != oldValue {
+				valueDidChange(.name)
+			}
+		}
+	}
+	
+	var isActive: Bool = true {
+		didSet {
+			if isActive != oldValue {
+				valueDidChange(.isActive)
+			}
+		}
+	}
+	
+	var username: String? {
+		didSet {
+			if username != oldValue {
+				valueDidChange(.username)
+			}
+		}
+	}
+
+	weak var delegate: AccountSettingsDelegate?
+	
+	func valueDidChange(_ key: CodingKeys) {
+		delegate?.valueDidChange(self, key: key)
+	}
 	
 }

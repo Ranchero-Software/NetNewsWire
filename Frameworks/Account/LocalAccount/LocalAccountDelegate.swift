@@ -10,11 +10,12 @@ import Foundation
 import RSWeb
 
 final class LocalAccountDelegate: AccountDelegate {
-
+	
 	let supportsSubFolders = false
 	let server: String? = nil
 	var credentials: Credentials?
-	
+	var settings: AccountSettings?
+
 	private let refresher = LocalAccountRefresher()
 
 	var refreshProgress: DownloadProgress {
@@ -33,12 +34,4 @@ final class LocalAccountDelegate: AccountDelegate {
 	func accountDidInitialize(_ account: Account) {
 	}
 
-	// MARK: Disk
-	
-	func update(account: Account, withUserInfo: NSDictionary?) {
-	}
-
-	func userInfo(for: Account) -> NSDictionary? {
-		return nil
-	}
 }

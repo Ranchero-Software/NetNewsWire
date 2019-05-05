@@ -21,6 +21,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 	
+	var settings: AccountSettings?
+
+	
 	init(transport: Transport) {
 		caller = FeedbinAPICaller(transport: transport)
 	}
@@ -42,18 +45,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func accountDidInitialize(_ account: Account) {
-	}
-	
-	// MARK: Disk
-	
-	func update(account: Account, withUserInfo: NSDictionary?) {
-		
-		
-	}
-	
-	func userInfo(for: Account) -> NSDictionary? {
-		
-		return nil
+		credentials = try? account.retrieveBasicCredentials()
 	}
 	
 }
