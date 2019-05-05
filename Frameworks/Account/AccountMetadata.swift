@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSWeb
 
 protocol AccountMetadataDelegate: class {
 	func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys)
@@ -14,10 +15,15 @@ protocol AccountMetadataDelegate: class {
 
 final class AccountMetadata: Codable {
 
+	struct ConditionalGetKeys {
+		static let subscriptions = "subscriptions"
+	}
+	
 	enum CodingKeys: String, CodingKey {
 		case name
 		case isActive
 		case username
+		case conditionalGetInfo
 	}
 
 	var name: String? {
@@ -40,6 +46,14 @@ final class AccountMetadata: Codable {
 		didSet {
 			if username != oldValue {
 				valueDidChange(.username)
+			}
+		}
+	}
+	
+	var conditionalGetInfo = [String: HTTPConditionalGetInfo]() {
+		didSet {
+			if conditionalGetInfo != oldValue {
+				valueDidChange(.conditionalGetInfo)
 			}
 		}
 	}
