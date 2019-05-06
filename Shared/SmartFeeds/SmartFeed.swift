@@ -45,7 +45,7 @@ final class SmartFeed: PseudoFeed {
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
-		if note.object is Account {
+		if note.object is AppDelegate {
 			queueFetchUnreadCounts()
 		}
 	}
