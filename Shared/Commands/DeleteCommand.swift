@@ -142,7 +142,18 @@ private struct SidebarItemSpecifier {
 			container.deleteFeed(feed)
 		}
 		else if let folder = folder {
-			container.deleteFolder(folder)
+			container.deleteFolder(folder) { result in
+				switch result {
+				case .success():
+					break
+				case .failure(let error):
+					#if os(macOS)
+					NSApplication.shared.presentError(error)
+					#else
+					UIApplication.shared.presentError(error)
+					#endif
+				}
+			}
 		}
 	}
 

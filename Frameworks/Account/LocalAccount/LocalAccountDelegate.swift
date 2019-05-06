@@ -28,8 +28,13 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion?()
 	}
 
-	func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		folder.name = name
+		completion(.success(()))
+	}
+	
+	func deleteFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		account.deleteFolder(folder)
 		completion(.success(()))
 	}
 	

@@ -52,8 +52,9 @@ final class FeedbinAPICaller: NSObject {
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.tags]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		
-		transport.getJSON(request: request, resultType: [FeedbinTag].self) { [weak self] result in
+
+		transport.send(request: request, resultType: [FeedbinTag].self) { [weak self] result in
+			
 			switch result {
 			case .success(let (headers, tags)):
 				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.tags, headers: headers)
@@ -70,7 +71,26 @@ final class FeedbinAPICaller: NSObject {
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinRenameTag(oldName: oldName, newName: newName)
-		transport.postJSON(request: request, payload: payload, completion: completion)
+		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+	}
+	
+	func deleteTag(name: String, completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
+		let request = URLRequest(url: callURL, credentials: credentials)
+		let payload = FeedbinDeleteTag(name: name)
+		
+		transport.send(request: request, method: HTTPMethod.delete, payload: payload, resultType: [FeedbinTagging].self) { result in
+
+			switch result {
+			case .success(let (_, taggings)):
+				completion(.success(taggings))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+
+		}
+		
 	}
 	
 }

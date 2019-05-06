@@ -100,8 +100,8 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 		postChildrenDidChangeNotification()
 	}
 
-	public func deleteFolder(_ folder: Folder) {
-		// Nothing to do
+	public func deleteFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		completion(.success(()))
 	}
 
 	// MARK: - Hashable

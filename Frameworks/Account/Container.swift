@@ -28,7 +28,7 @@ public protocol Container: class {
 	func childFolder(with: String) -> Folder?
 
     func deleteFeed(_ feed: Feed)
-    func deleteFolder(_ folder: Folder)
+    func deleteFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
 
 	func addFeed(_ feed: Feed)
 	func addFeeds(_ feeds: Set<Feed>)

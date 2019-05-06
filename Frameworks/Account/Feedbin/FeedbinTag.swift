@@ -19,3 +19,25 @@ struct FeedbinTag: Codable, Equatable, Hashable {
 	}
 	
 }
+
+struct FeedbinRenameTag: Codable {
+	
+	let oldName: String
+	let newName: String
+	
+	enum CodingKeys: String, CodingKey {
+		case oldName = "old_name"
+		case newName = "new_name"
+	}
+	
+}
+
+struct FeedbinDeleteTag: Codable {
+	
+	let name: String
+	
+	enum CodingKeys: String, CodingKey {
+		case name
+	}
+	
+}

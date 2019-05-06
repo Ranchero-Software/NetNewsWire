@@ -21,8 +21,9 @@ protocol AccountDelegate {
 
 	func refreshAll(for: Account, completion: (() -> Void)?)
 
-	func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
-	
+	func renameFolder(for: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
+	func deleteFolder(for: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
+
 	// Called at the end of account’s init method.
 	func accountDidInitialize(_ account: Account)
 

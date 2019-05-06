@@ -49,12 +49,34 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
 			switch result {
 			case .success:
 				folder.name = name
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+		
+	}
+
+	func deleteFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
+		guard folder.hasAtLeastOneFeed() else {
+			account.deleteFolder(folder)
+			return
+		}
+		
+		caller.deleteTag(name: folder.name ?? "") { result in
+			switch result {
+			case .success:
+				account.deleteFolder(folder)
+				// TODO: Take the serialized taggings and reestablish the folder to feed relationships.  Deleting
+				// a tag on Feedbin doesn't any feeds.
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))

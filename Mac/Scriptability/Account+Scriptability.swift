@@ -47,17 +47,18 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         return self.classDescription as! NSScriptClassDescription
     }
     
-    func deleteElement(_ element:ScriptingObject) {
-       if let scriptableFolder = element as? ScriptableFolder {
-           BatchUpdate.shared.perform {
-               account.deleteFolder(scriptableFolder.folder)
-           }
-       } else if let scriptableFeed = element as? ScriptableFeed {
-           BatchUpdate.shared.perform {
-               account.deleteFeed(scriptableFeed.feed)
-           }
-       }
-    }
+	func deleteElement(_ element:ScriptingObject) {
+		if let scriptableFolder = element as? ScriptableFolder {
+			BatchUpdate.shared.perform {
+				account.deleteFolder(scriptableFolder.folder) { result in
+				}
+			}
+		} else if let scriptableFeed = element as? ScriptableFeed {
+			BatchUpdate.shared.perform {
+				account.deleteFeed(scriptableFeed.feed)
+			}
+		}
+	}
 
     @objc(isLocationRequiredToCreateForKey:)
     func isLocationRequiredToCreate(forKey key:String) -> Bool {

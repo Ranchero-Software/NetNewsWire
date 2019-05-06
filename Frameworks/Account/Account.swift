@@ -419,7 +419,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.renameFolder(folder, to: name, completion: completion)
+		delegate.renameFolder(for: self, with: folder, to: name, completion: completion)
 	}
 
  	public func importOPML(_ opmlDocument: RSOPMLDocument) {
@@ -597,12 +597,16 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		postChildrenDidChangeNotification()
 	}
 
-	public func deleteFolder(_ folder: Folder) {
+	public func deleteFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.deleteFolder(for: self, with: folder, completion: completion)
+	}
+
+	func deleteFolder(_ folder: Folder) {
 		folders?.remove(folder)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
-
+	
 	// MARK: - Debug
 
 	public func debugDropConditionalGetInfo() {

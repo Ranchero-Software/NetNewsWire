@@ -31,7 +31,7 @@ final class TestTransport: Transport {
 		
 	}
 
-	func send(request: URLRequest, data: Data, completion: @escaping (Result<(HTTPHeaders, Data?), Error>) -> Void) {
+	func send(request: URLRequest, payload: Data, completion: @escaping (Result<(HTTPHeaders, Data?), Error>) -> Void) {
 		
 	}
 	
