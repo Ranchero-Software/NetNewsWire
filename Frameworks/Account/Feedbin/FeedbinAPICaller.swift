@@ -47,7 +47,7 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func retrieveTags(completionHandler completion: @escaping  (Result<[FeedbinTag], Error>) -> Void) {
+	func retrieveTags(completionHandler completion: @escaping  (Result<[FeedbinTag]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.tags]

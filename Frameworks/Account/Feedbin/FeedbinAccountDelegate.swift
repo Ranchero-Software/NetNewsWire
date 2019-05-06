@@ -85,13 +85,15 @@ private extension FeedbinAccountDelegate {
 				self?.syncFolders(account, tags)
 				completion(.success(()))
 			case .failure(let error):
-				self?.checkErrorOrNotModified(error, completion: completion)
+				completion(.failure(error))
 			}
 		}
 		
 	}
 	
-	func syncFolders(_ account: Account, _ tags: [FeedbinTag]) {
+	func syncFolders(_ account: Account, _ tags: [FeedbinTag]?) {
+		
+		guard let tags = tags else { return }
 		
 		let tagNames = tags.map { $0.name }
 
@@ -119,20 +121,6 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 		
-	}
-	
-	func checkErrorOrNotModified(_ error: Error, completion: @escaping (Result<Void, Error>) -> Void) {
-		switch error {
-		case TransportError.httpError(let status):
-			if status == HTTPResponseCode.notModified {
-				completion(.success(()))
-			} else {
-				completion(.failure(error))
-			}
-		default:
-			completion(.failure(error))
-		}
-
 	}
 	
 }
