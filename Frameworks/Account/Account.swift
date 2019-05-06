@@ -270,19 +270,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.username = nil
 	}
 	
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, completionHandler handler: @escaping (Result<Bool, Error>) -> Void) {
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, completion: @escaping (Result<Bool, Error>) -> Void) {
 		switch type {
 		case .onMyMac:
-			LocalAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completionHandler: handler)
+			LocalAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .feedbin:
-			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completionHandler: handler)
+			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		default:
 			break
 		}
 	}
 
 	public func refreshAll(completionHandler completion: (() -> Void)? = nil) {
-		delegate.refreshAll(for: self, completionHandler: completion)
+		delegate.refreshAll(for: self, completion: completion)
 	}
 
 	public func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping (() -> Void)) {
@@ -416,6 +416,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		postChildrenDidChangeNotification()
 		structureDidChange()
 		return true
+	}
+	
+	public func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.renameFolder(folder, to: name, completion: completion)
 	}
 
  	public func importOPML(_ opmlDocument: RSOPMLDocument) {

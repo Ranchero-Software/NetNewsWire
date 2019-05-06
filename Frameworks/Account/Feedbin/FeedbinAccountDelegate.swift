@@ -38,7 +38,37 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler completion: @escaping (Result<Bool, Error>) -> Void) {
+	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
+		refreshAll(account) { [weak self] result in
+			switch result {
+			case .success():
+				completion?()
+			case .failure(let error):
+				self?.handleError(error)
+			}
+		}
+	}
+
+	func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
+			switch result {
+			case .success:
+				folder.name = name
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+		
+	}
+	
+	func accountDidInitialize(_ account: Account) {
+		credentials = try? account.retrieveBasicCredentials()
+		accountMetadata = account.metadata
+	}
+	
+	static func validateCredentials(transport: Transport, credentials: Credentials, completion: @escaping (Result<Bool, Error>) -> Void) {
 		
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials
@@ -48,34 +78,22 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func refreshAll(for account: Account, completionHandler completion: (() -> Void)? = nil) {
-		refreshAll(account) { result in
-			switch result {
-			case .success():
-				completion?()
-			case .failure(let error):
-				// TODO: We should do a better job of error handling here.
-				// We need to prompt for credentials and provide user friendly
-				// errors.
-				#if os(macOS)
-					NSApplication.shared.presentError(error)
-				#else
-					UIApplication.shared.presentError(error)
-				#endif
-			}
-		}
-	}
-	
-	func accountDidInitialize(_ account: Account) {
-		credentials = try? account.retrieveBasicCredentials()
-		accountMetadata = account.metadata
-	}
-	
 }
 
 // MARK: Private
 
 private extension FeedbinAccountDelegate {
+	
+	func handleError(_ error: Error) {
+		// TODO: We should do a better job of error handling here.
+		// We need to prompt for credentials and provide user friendly
+		// errors.
+		#if os(macOS)
+		NSApplication.shared.presentError(error)
+		#else
+		UIApplication.shared.presentError(error)
+		#endif
+	}
 	
 	func refreshAll(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		

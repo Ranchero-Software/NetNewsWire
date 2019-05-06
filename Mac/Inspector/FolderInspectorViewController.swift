@@ -61,12 +61,19 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 
 extension FolderInspectorViewController: NSTextFieldDelegate {
 
-	func controlTextDidChange(_ note: Notification) {
+	func controlTextDidEndEditing(_ obj: Notification) {
 
 		guard let folder = folder, let nameTextField = nameTextField else {
 			return
 		}
-		folder.name = nameTextField.stringValue
+		folder.rename(to: nameTextField.stringValue) { result in
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				NSApplication.shared.presentError(error)
+			}
+		}
 	}
 }
 

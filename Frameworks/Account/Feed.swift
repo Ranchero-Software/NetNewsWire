@@ -132,8 +132,9 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	// MARK: - Renamable
 
-	public func rename(to newName: String) {
+	public func rename(to newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		editedName = newName
+		completion(.success(()))
 	}
 
 	// MARK: - UnreadCountProvider

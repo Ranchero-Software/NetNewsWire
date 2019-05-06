@@ -44,8 +44,9 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 
 	// MARK: - Renamable
 
-	public func rename(to newName: String) {
-		name = newName
+	public func rename(to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let account = account else { return }
+		account.renameFolder(self, to: name, completion: completion)
 	}
 	
 	// MARK: - Init

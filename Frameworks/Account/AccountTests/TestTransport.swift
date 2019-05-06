@@ -17,7 +17,7 @@ final class TestTransport: Transport {
 	
 	var testFiles = [String: String]()
 	
-	func send(request: URLRequest, completion: @escaping (Result<(HTTPHeaders, Data), Error>) -> Void) {
+	func send(request: URLRequest, completion: @escaping (Result<(HTTPHeaders, Data?), Error>) -> Void) {
 		
 		guard let urlString = request.url?.absoluteString else {
 			completion(.failure(TestTransportError.invalidState))
@@ -31,4 +31,8 @@ final class TestTransport: Transport {
 		
 	}
 
+	func send(request: URLRequest, data: Data, completion: @escaping (Result<(HTTPHeaders, Data?), Error>) -> Void) {
+		
+	}
+	
 }

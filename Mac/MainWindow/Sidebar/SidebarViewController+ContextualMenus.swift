@@ -103,7 +103,14 @@ extension SidebarViewController: RenameWindowControllerDelegate {
 			feed.editedName = name
 		}
 		else if let folder = object as? Folder {
-			folder.name = name
+			folder.rename(to: name) { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
 		}
 	}
 }

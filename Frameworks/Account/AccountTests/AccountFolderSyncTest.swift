@@ -17,7 +17,7 @@ class AccountFolderSyncTest: XCTestCase {
     override func tearDown() {
     }
 
-    func testFolderSync() {
+    func testDownloadSync() {
 
 		let testTransport = TestTransport()
 		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "tags_initial.json"

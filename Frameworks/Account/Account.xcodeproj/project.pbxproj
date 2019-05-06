@@ -17,6 +17,7 @@
 		51D5875B227F630B00900287 /* tags_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58758227F630B00900287 /* tags_add.json */; };
 		51D5875C227F630B00900287 /* tags_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58759227F630B00900287 /* tags_initial.json */; };
 		51D5875E227F643C00900287 /* AccountFolderSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D5875D227F643C00900287 /* AccountFolderSyncTest.swift */; };
+		51D587642280594700900287 /* FeedbinRenameTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D5875F22804FD200900287 /* FeedbinRenameTag.swift */; };
 		841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973EF1F6DD19E006346C4 /* RSCore.framework */; };
 		841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973FA1F6DD1AC006346C4 /* RSParser.framework */; };
 		841974011F6DD1EC006346C4 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974001F6DD1EC006346C4 /* Folder.swift */; };
@@ -102,6 +103,7 @@
 		51D58758227F630B00900287 /* tags_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_add.json; sourceTree = "<group>"; };
 		51D58759227F630B00900287 /* tags_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_initial.json; sourceTree = "<group>"; };
 		51D5875D227F643C00900287 /* AccountFolderSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFolderSyncTest.swift; sourceTree = "<group>"; };
+		51D5875F22804FD200900287 /* FeedbinRenameTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinRenameTag.swift; sourceTree = "<group>"; };
 		841973E81F6DD19E006346C4 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		841973F41F6DD1AC006346C4 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		841974001F6DD1EC006346C4 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
@@ -212,6 +214,7 @@
 				84245C841FDDD8CB0074AFBB /* FeedbinFeed.swift */,
 				84D0962421741B8500D77525 /* FeedbinSavedSearch.swift */,
 				51D58754227F53BE00900287 /* FeedbinTag.swift */,
+				51D5875F22804FD200900287 /* FeedbinRenameTag.swift */,
 				84D09622217418DC00D77525 /* FeedbinTagging.swift */,
 			);
 			path = Feedbin;
@@ -246,11 +249,11 @@
 				84B2D4CE2238C13D00498ADA /* FeedMetadata.swift */,
 				841974001F6DD1EC006346C4 /* Folder.swift */,
 				844B297E210CE37E004020B3 /* UnreadCountProvider.swift */,
-				848935031F62484F00CEBD24 /* AccountTests */,
-				84245C7D1FDDD2580074AFBB /* Feedbin */,
-				8469F80F1F6DC3C10084783E /* Frameworks */,
 				8419742B1F6DDE84006346C4 /* LocalAccount */,
+				84245C7D1FDDD2580074AFBB /* Feedbin */,
+				848935031F62484F00CEBD24 /* AccountTests */,
 				848934F71F62484F00CEBD24 /* Products */,
+				8469F80F1F6DC3C10084783E /* Frameworks */,
 				D511EEB4202422BB00712EC3 /* xcconfig */,
 				848934FA1F62484F00CEBD24 /* Info.plist */,
 			);
@@ -454,6 +457,7 @@
 			files = (
 				84C8B3F41F89DE430053CCA6 /* DataExtensions.swift in Sources */,
 				84C3654A1F899F3B001EC85C /* CombinedRefreshProgress.swift in Sources */,
+				51D587642280594700900287 /* FeedbinRenameTag.swift in Sources */,
 				8469F81C1F6DD15E0084783E /* Account.swift in Sources */,
 				84D096212174169100D77525 /* FeedbinArticleIDArray.swift in Sources */,
 				5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */,

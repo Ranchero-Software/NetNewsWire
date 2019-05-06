@@ -22,17 +22,22 @@ final class LocalAccountDelegate: AccountDelegate {
 		return refresher.progress
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler handler: (Result<Bool, Error>) -> Void) {
-		return handler(.success(false))
-	}
-
 	// LocalAccountDelegate doesn't wait for completion before calling the completion block
-	func refreshAll(for account: Account, completionHandler completion: (() -> Void)? = nil) {
+	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
 		refresher.refreshFeeds(account.flattenedFeeds())
 		completion?()
 	}
 
+	func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		folder.name = name
+		completion(.success(()))
+	}
+	
 	func accountDidInitialize(_ account: Account) {
 	}
 
+	static func validateCredentials(transport: Transport, credentials: Credentials, completion: (Result<Bool, Error>) -> Void) {
+		return completion(.success(false))
+	}
+	
 }

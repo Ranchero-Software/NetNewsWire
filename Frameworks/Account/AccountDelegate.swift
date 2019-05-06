@@ -19,12 +19,13 @@ protocol AccountDelegate {
 	
 	var refreshProgress: DownloadProgress { get }
 
-	func refreshAll(for: Account, completionHandler completion: (() -> Void)?)
+	func refreshAll(for: Account, completion: (() -> Void)?)
 
+	func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
+	
 	// Called at the end of account’s init method.
-
 	func accountDidInitialize(_ account: Account)
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, completionHandler handler: @escaping (Result<Bool, Error>) -> Void)
+	static func validateCredentials(transport: Transport, credentials: Credentials, completion: @escaping (Result<Bool, Error>) -> Void)
 	
 }
