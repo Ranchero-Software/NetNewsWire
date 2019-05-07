@@ -220,10 +220,7 @@ private extension AddFeedViewController {
 			return
 		}
 		
-		guard let feed = account.createFeed(with: titleFromFeed, editedName: userEnteredTitle, url: feedURLString) else {
-			delegate?.processingDidEnd()
-			return
-		}
+		let feed = account.createFeed(with: titleFromFeed, editedName: userEnteredTitle, url: feedURLString)
 		
 		if let parsedFeed = parsedFeed {
 			account.update(feed, with: parsedFeed, {})

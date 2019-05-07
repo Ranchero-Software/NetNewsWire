@@ -39,12 +39,17 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
 	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
-		refreshAll(account) { [weak self] result in
+		refreshFolders(account) { [weak self] result in
 			switch result {
 			case .success():
-				completion?()
+				DispatchQueue.main.async {
+					completion?()
+				}
 			case .failure(let error):
-				self?.handleError(error)
+				DispatchQueue.main.async {
+					completion?()
+//					self?.handleError(error)
+				}
 			}
 		}
 	}
@@ -54,10 +59,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
 			switch result {
 			case .success:
-				folder.name = name
-				completion(.success(()))
+				DispatchQueue.main.async {
+					folder.name = name
+					completion(.success(()))
+				}
 			case .failure(let error):
-				completion(.failure(error))
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
 			}
 		}
 		
@@ -74,12 +83,17 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		caller.deleteTag(name: folder.name ?? "") { result in
 			switch result {
 			case .success:
-				account.deleteFolder(folder)
-				// TODO: Take the serialized taggings and reestablish the folder to feed relationships.  Deleting
-				// a tag on Feedbin doesn't any feeds.
-				completion(.success(()))
+				DispatchQueue.main.async {
+
+					account.deleteFolder(folder)
+					// TODO: Take the serialized taggings and reestablish the folder to feed relationships.  Deleting
+					// a tag on Feedbin doesn't any feeds.
+					completion(.success(()))
+				}
 			case .failure(let error):
-				completion(.failure(error))
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
 			}
 		}
 		
@@ -95,7 +109,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials
 		caller.validateCredentials() { result in
-			completion(result)
+			DispatchQueue.main.async {
+				completion(result)
+			}
 		}
 		
 	}
@@ -108,8 +124,7 @@ private extension FeedbinAccountDelegate {
 	
 	func handleError(_ error: Error) {
 		// TODO: We should do a better job of error handling here.
-		// We need to prompt for credentials and provide user friendly
-		// errors.
+		// We need to prompt for credentials if they are expired.
 		#if os(macOS)
 		NSApplication.shared.presentError(error)
 		#else
@@ -117,13 +132,13 @@ private extension FeedbinAccountDelegate {
 		#endif
 	}
 	
-	func refreshAll(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshFolders(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		caller.retrieveTags { [weak self] result in
 			switch result {
 			case .success(let tags):
 				self?.syncFolders(account, tags)
-				completion(.success(()))
+				self?.refreshFeeds(account, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -141,7 +156,9 @@ private extension FeedbinAccountDelegate {
 		if let folders = account.folders {
 			folders.forEach { folder in
 				if !tagNames.contains(folder.name ?? "") {
-					account.deleteFolder(folder)
+					DispatchQueue.main.sync {
+						account.deleteFolder(folder)
+					}
 				}
 			}
 		}
@@ -157,10 +174,81 @@ private extension FeedbinAccountDelegate {
 		// Make any folders Feedbin has, but we don't
 		tagNames.forEach { tagName in
 			if !folderNames.contains(tagName) {
-				account.ensureFolder(with: tagName)
+				DispatchQueue.main.sync {
+					_ = account.ensureFolder(with: tagName)
+				}
 			}
 		}
 		
+	}
+	
+	func refreshFeeds(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		caller.retrieveSubscriptions { [weak self] result in
+			switch result {
+			case .success(let subscriptions):
+				self?.syncFeeds(account, subscriptions)
+				self?.refreshFavicons(account, completion: completion)
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+		
+	}
+
+	func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
+		guard let subscriptions = subscriptions else { return }
+		subscriptions.forEach { subscription in
+			syncFeed(account, subscription)
+		}
+	}
+
+	func syncFeed(_ account: Account, _ subscription: FeedbinSubscription) {
+		
+		let subFeedId = String(subscription.feedID)
+		
+		DispatchQueue.main.sync {
+			if let feed = account.idToFeedDictionary[subFeedId] {
+				feed.name = subscription.name
+				feed.homePageURL = subscription.homePageURL
+			} else {
+				let feed = account.createFeed(with: subscription.name, editedName: nil, url: subscription.url, feedId: subFeedId, homePageURL: subscription.homePageURL)
+				account.addFeed(feed, to: nil)
+			}
+		}
+
+	}
+	
+	func refreshFavicons(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		caller.retrieveIcons { [weak self] result in
+			switch result {
+			case .success(let icons):
+				self?.syncIcons(account, icons)
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+		
+	}
+	
+	func syncIcons(_ account: Account, _ icons: [FeedbinIcon]?) {
+		
+		guard let icons = icons else { return }
+		
+		let iconDict = Dictionary(uniqueKeysWithValues: icons.map { ($0.host, $0.url) } )
+		
+		for feed in account.flattenedFeeds() {
+			for (key, value) in iconDict {
+				if feed.homePageURL?.contains(key) ?? false {
+					DispatchQueue.main.sync {
+						feed.faviconURL = value
+					}
+					break
+				}
+			}
+		}
+
 	}
 	
 }

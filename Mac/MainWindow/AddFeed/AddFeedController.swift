@@ -170,9 +170,7 @@ private extension AddFeedController {
 			return
 		}
 
-		guard let feed = account.createFeed(with: titleFromFeed, editedName: userEnteredTitle, url: feedURLString) else {
-			return
-		}
+		let feed = account.createFeed(with: titleFromFeed, editedName: userEnteredTitle, url: feedURLString)
 
 		if let parsedFeed = parsedFeed {
 			account.update(feed, with: parsedFeed, {})

@@ -93,6 +93,46 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
+	func retrieveSubscriptions(completionHandler completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
+		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.subscriptions]
+		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		
+		transport.send(request: request, resultType: [FeedbinSubscription].self) { [weak self] result in
+			
+			switch result {
+			case .success(let (headers, subscriptions)):
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.subscriptions, headers: headers)
+				completion(.success(subscriptions))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
+	func retrieveIcons(completionHandler completion: @escaping (Result<[FeedbinIcon]?, Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("icons.json")
+		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.icons]
+		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		
+		transport.send(request: request, resultType: [FeedbinIcon].self) { [weak self] result in
+			
+			switch result {
+			case .success(let (headers, icons)):
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.icons, headers: headers)
+				completion(.success(icons))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
 }
 
 // MARK: Private

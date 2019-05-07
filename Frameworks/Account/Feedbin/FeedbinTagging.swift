@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedbinTagging: Codable, Equatable, Hashable {
+struct FeedbinTagging: Codable {
 
 	let taggingID: Int
 	let feedID: Int

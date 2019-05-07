@@ -24,10 +24,17 @@ final class TestTransport: Transport {
 			return
 		}
 		
-		let testFileName = testFiles[urlString]!
-		let testFileURL = Bundle(for: TestTransport.self).resourceURL!.appendingPathComponent(testFileName)
-		let data = try! Data(contentsOf: testFileURL)
-		completion(.success((HTTPHeaders(), data)))
+		if let testFileName = testFiles[urlString] {
+			let testFileURL = Bundle(for: TestTransport.self).resourceURL!.appendingPathComponent(testFileName)
+			let data = try! Data(contentsOf: testFileURL)
+			DispatchQueue.global(qos: .background).async {
+				completion(.success((HTTPHeaders(), data)))
+			}
+		} else {
+			DispatchQueue.global(qos: .background).async {
+				completion(.success((HTTPHeaders(), nil)))
+			}
+		}
 		
 	}
 

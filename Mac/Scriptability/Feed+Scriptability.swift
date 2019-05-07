@@ -114,10 +114,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
             if let parsedFeed = parsedFeedOptional {
                 let titleFromFeed = parsedFeed.title
                 
-                guard let feed = account.createFeed(with: titleFromFeed, editedName: titleFromArgs, url: url) else {
-                    command.resumeExecution(withResult:nil)
-                    return
-                }
+                let feed = account.createFeed(with: titleFromFeed, editedName: titleFromArgs, url: url)
                 account.update(feed, with:parsedFeed, {})
                 
                 // add the feed, putting it in a folder if needed
