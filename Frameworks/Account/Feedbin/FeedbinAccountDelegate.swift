@@ -91,6 +91,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 					BatchUpdate.shared.perform {
 						for feed in folder.topLevelFeeds {
 							account.addFeed(feed, to: nil)
+							self?.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 						}
 						account.deleteFolder(folder)
 					}
@@ -168,6 +169,7 @@ private extension FeedbinAccountDelegate {
 					DispatchQueue.main.sync {
 						for feed in folder.topLevelFeeds {
 							account.addFeed(feed, to: nil)
+							clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 						}
 						account.deleteFolder(folder)
 					}
@@ -295,27 +297,30 @@ private extension FeedbinAccountDelegate {
 			}
 		}()
 
-		let taggingsDict = taggings.reduce([String: [String]]()) { (dict, tagging) in
+		let taggingsDict = taggings.reduce([String: [FeedbinTagging]]()) { (dict, tagging) in
 			var taggedFeeds = dict
 			if var taggedFeed = taggedFeeds[tagging.name] {
-				taggedFeed.append(String(tagging.feedID))
+				taggedFeed.append(tagging)
 				taggedFeeds[tagging.name] = taggedFeed
 			} else {
-				taggedFeeds[tagging.name] = [String(tagging.feedID)]
+				taggedFeeds[tagging.name] = [tagging]
 			}
 			return taggedFeeds
 		}
 
 		// Sync the folders
-		for (folderName, feedIDs) in taggingsDict {
+		for (folderName, groupedTaggings) in taggingsDict {
 			
 			guard let folder = folderDict[folderName] else { return }
-				
+			
+			let taggingFeedIDs = groupedTaggings.map { String($0.feedID) }
+			
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
-				if !feedIDs.contains(feed.feedID) {
+				if !taggingFeedIDs.contains(feed.feedID) {
 					DispatchQueue.main.sync {
 						folder.deleteFeed(feed)
+						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 						account.addFeed(feed, to: nil)
 					}
 				}
@@ -325,11 +330,13 @@ private extension FeedbinAccountDelegate {
 			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
 			
 			var feedsToAdd = Set<Feed>()
-			for feedId in feedIDs {
-				if !folderFeedIds.contains(feedId) {
-					guard let feed = account.idToFeedDictionary[feedId] else {
+			for tagging in groupedTaggings {
+				let taggingFeedID = String(tagging.feedID)
+				if !folderFeedIds.contains(taggingFeedID) {
+					guard let feed = account.idToFeedDictionary[taggingFeedID] else {
 						continue
 					}
+					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(tagging.taggingID))
 					feedsToAdd.insert(feed)
 				}
 			}
@@ -340,12 +347,12 @@ private extension FeedbinAccountDelegate {
 			
 		}
 		
-		let taggedFeedIds = Set(taggings.map { String($0.feedID) })
+		let taggedFeedIDs = Set(taggings.map { String($0.feedID) })
 		
 		// Delete all the feeds without a tag
 		var feedsToDelete = Set<Feed>()
 		for feed in account.topLevelFeeds {
-			if taggedFeedIds.contains(feed.feedID) {
+			if taggedFeedIDs.contains(feed.feedID) {
 				feedsToDelete.insert(feed)
 			}
 		}
@@ -373,6 +380,22 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 
+	}
+	
+	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
+		if var folderRelationship = feed.folderRelationship {
+			folderRelationship[folderName] = nil
+			feed.folderRelationship = folderRelationship
+		}
+	}
+	
+	func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
+		if var folderRelationship = feed.folderRelationship {
+			folderRelationship[folderName] = id
+			feed.folderRelationship = folderRelationship
+		} else {
+			feed.folderRelationship = [folderName: id]
+		}
 	}
 	
 }

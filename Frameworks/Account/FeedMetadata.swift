@@ -28,6 +28,7 @@ final class FeedMetadata: Codable {
 		case authors
 		case contentHash
 		case conditionalGetInfo
+		case folderRelationship
 	}
 
 	var homePageURL: String? {
@@ -93,6 +94,14 @@ final class FeedMetadata: Codable {
 			}
 		}
 	}
+	
+	var folderRelationship: [String: String]? {
+		didSet {
+			if folderRelationship != oldValue {
+				valueDidChange(.folderRelationship)
+			}
+		}
+	}
 
 	weak var delegate: FeedMetadataDelegate?
 
@@ -103,4 +112,5 @@ final class FeedMetadata: Codable {
 	func valueDidChange(_ key: CodingKeys) {
 		delegate?.valueDidChange(self, key: key)
 	}
+	
 }

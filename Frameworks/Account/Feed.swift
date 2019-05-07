@@ -118,6 +118,16 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
+	// Folder Name: Sync Service Relationship ID
+	public var folderRelationship: [String: String]? {
+		get {
+			return metadata.folderRelationship
+		}
+		set {
+			metadata.folderRelationship = newValue
+		}
+	}
+	
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {
