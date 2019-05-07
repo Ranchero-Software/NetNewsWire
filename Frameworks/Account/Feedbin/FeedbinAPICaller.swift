@@ -113,6 +113,26 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
+	func retrieveTaggings(completionHandler completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
+		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.taggings]
+		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		
+		transport.send(request: request, resultType: [FeedbinTagging].self) { [weak self] result in
+			
+			switch result {
+			case .success(let (headers, taggings)):
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.taggings, headers: headers)
+				completion(.success(taggings))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
 	func retrieveIcons(completionHandler completion: @escaping (Result<[FeedbinIcon]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("icons.json")

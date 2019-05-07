@@ -594,6 +594,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return _flattenedFeeds
 	}
 
+	func deleteFeeds(_ feeds: Set<Feed>) {
+		topLevelFeeds.subtract(feeds)
+		structureDidChange()
+		postChildrenDidChangeNotification()
+	}
+	
 	public func deleteFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		structureDidChange()

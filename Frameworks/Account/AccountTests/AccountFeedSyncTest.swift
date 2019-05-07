@@ -43,7 +43,6 @@ class AccountFeedSyncTest: XCTestCase {
 		// Test Adding a Feed
 		testTransport.testFiles["https://api.feedbin.com/v2/subscriptions.json"] = "subscriptions_add.json"
 		
-		// Test initial folders
 		let addExpection = self.expectation(description: "Add feeds")
 		account.refreshAll() {
 			addExpection.fulfill()

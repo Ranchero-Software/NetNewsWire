@@ -81,16 +81,22 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		caller.deleteTag(name: folder.name ?? "") { result in
+		// After we successfully delete at Feedbin, we add all the feeds to the account to save them.  We then
+		// delete the folder.  We then sync the taggings we received on the delete to remove any feeds from
+		// the account that might be in another folder.
+		caller.deleteTag(name: folder.name ?? "") { [weak self] result in
 			switch result {
-			case .success:
-				DispatchQueue.main.async {
-
-					account.deleteFolder(folder)
-					// TODO: Take the serialized taggings and reestablish the folder to feed relationships.  Deleting
-					// a tag on Feedbin doesn't any feeds.
+			case .success(let taggings):
+				DispatchQueue.main.sync {
+					BatchUpdate.shared.perform {
+						for feed in folder.topLevelFeeds {
+							account.addFeed(feed, to: nil)
+						}
+						account.deleteFolder(folder)
+					}
 					completion(.success(()))
 				}
+				self?.syncTaggings(account, taggings)
 			case .failure(let error):
 				DispatchQueue.main.async {
 					completion(.failure(error))
@@ -160,6 +166,9 @@ private extension FeedbinAccountDelegate {
 			folders.forEach { folder in
 				if !tagNames.contains(folder.name ?? "") {
 					DispatchQueue.main.sync {
+						for feed in folder.topLevelFeeds {
+							account.addFeed(feed, to: nil)
+						}
 						account.deleteFolder(folder)
 					}
 				}
@@ -186,58 +195,168 @@ private extension FeedbinAccountDelegate {
 	}
 	
 	func refreshFeeds(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		
 		caller.retrieveSubscriptions { [weak self] result in
 			switch result {
 			case .success(let subscriptions):
-				self?.syncFeeds(account, subscriptions)
-				self?.refreshFavicons(account, completion: completion)
+				
+				self?.caller.retrieveTaggings { [weak self] result in
+					switch result {
+					case .success(let taggings):
+						
+						self?.caller.retrieveIcons { [weak self] result in
+							switch result {
+							case .success(let icons):
+
+								BatchUpdate.shared.perform {
+									self?.syncFeeds(account, subscriptions)
+									self?.syncTaggings(account, taggings)
+									self?.syncFavicons(account, icons)
+								}
+
+								completion(.success(()))
+								
+							case .failure(let error):
+								completion(.failure(error))
+							}
+							
+						}
+						
+					case .failure(let error):
+						completion(.failure(error))
+					}
+					
+				}
+				
 			case .failure(let error):
 				completion(.failure(error))
 			}
+			
 		}
 		
 	}
 
 	func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
+		
 		guard let subscriptions = subscriptions else { return }
-		BatchUpdate.shared.perform {
-			subscriptions.forEach { subscription in
-				syncFeed(account, subscription)
+		
+		let subFeedIds = subscriptions.map { String($0.feedID) }
+		
+		// Remove any feeds that are no longer in the subscriptions
+		if let folders = account.folders {
+			for folder in folders {
+				for feed in folder.topLevelFeeds {
+					if !subFeedIds.contains(feed.feedID) {
+						DispatchQueue.main.sync {
+							folder.deleteFeed(feed)
+						}
+					}
+				}
 			}
 		}
+		
+		for feed in account.topLevelFeeds {
+			if !subFeedIds.contains(feed.feedID) {
+				DispatchQueue.main.sync {
+					account.deleteFeed(feed)
+				}
+			}
+		}
+		
+		// Add any feeds we don't have and update any we do
+		subscriptions.forEach { subscription in
+			
+			let subFeedId = String(subscription.feedID)
+			
+			DispatchQueue.main.sync {
+				if let feed = account.idToFeedDictionary[subFeedId] {
+					feed.name = subscription.name
+					feed.homePageURL = subscription.homePageURL
+				} else {
+					let feed = account.createFeed(with: subscription.name, editedName: nil, url: subscription.url, feedId: subFeedId, homePageURL: subscription.homePageURL)
+					account.addFeed(feed, to: nil)
+				}
+			}
+			
+		}
+		
 	}
 
-	func syncFeed(_ account: Account, _ subscription: FeedbinSubscription) {
+	func syncTaggings(_ account: Account, _ taggings: [FeedbinTagging]?) {
 		
-		let subFeedId = String(subscription.feedID)
+		guard let taggings = taggings else { return }
+
+		// Set up some structures to make syncing easier
+		let folderDict: [String: Folder] = {
+			if let folders = account.folders {
+				return Dictionary(uniqueKeysWithValues: folders.map { ($0.name ?? "", $0) } )
+			} else {
+				return [String: Folder]()
+			}
+		}()
+
+		let taggingsDict = taggings.reduce([String: [String]]()) { (dict, tagging) in
+			var taggedFeeds = dict
+			if var taggedFeed = taggedFeeds[tagging.name] {
+				taggedFeed.append(String(tagging.feedID))
+				taggedFeeds[tagging.name] = taggedFeed
+			} else {
+				taggedFeeds[tagging.name] = [String(tagging.feedID)]
+			}
+			return taggedFeeds
+		}
+
+		// Sync the folders
+		for (folderName, feedIDs) in taggingsDict {
+			
+			guard let folder = folderDict[folderName] else { return }
+				
+			// Move any feeds not in the folder to the account
+			for feed in folder.topLevelFeeds {
+				if !feedIDs.contains(feed.feedID) {
+					DispatchQueue.main.sync {
+						folder.deleteFeed(feed)
+						account.addFeed(feed, to: nil)
+					}
+				}
+			}
+			
+			// Add any feeds not in the folder
+			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
+			
+			var feedsToAdd = Set<Feed>()
+			for feedId in feedIDs {
+				if !folderFeedIds.contains(feedId) {
+					guard let feed = account.idToFeedDictionary[feedId] else {
+						continue
+					}
+					feedsToAdd.insert(feed)
+				}
+			}
+			
+			DispatchQueue.main.sync {
+				folder.addFeeds(feedsToAdd)
+			}
+			
+		}
+		
+		let taggedFeedIds = Set(taggings.map { String($0.feedID) })
+		
+		// Delete all the feeds without a tag
+		var feedsToDelete = Set<Feed>()
+		for feed in account.topLevelFeeds {
+			if taggedFeedIds.contains(feed.feedID) {
+				feedsToDelete.insert(feed)
+			}
+		}
 		
 		DispatchQueue.main.sync {
-			if let feed = account.idToFeedDictionary[subFeedId] {
-				feed.name = subscription.name
-				feed.homePageURL = subscription.homePageURL
-			} else {
-				let feed = account.createFeed(with: subscription.name, editedName: nil, url: subscription.url, feedId: subFeedId, homePageURL: subscription.homePageURL)
-				account.addFeed(feed, to: nil)
-			}
-		}
-
-	}
-	
-	func refreshFavicons(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		caller.retrieveIcons { [weak self] result in
-			switch result {
-			case .success(let icons):
-				self?.syncIcons(account, icons)
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
+			account.deleteFeeds(feedsToDelete)
 		}
 		
 	}
 	
-	func syncIcons(_ account: Account, _ icons: [FeedbinIcon]?) {
+	func syncFavicons(_ account: Account, _ icons: [FeedbinIcon]?) {
 		
 		guard let icons = icons else { return }
 		
