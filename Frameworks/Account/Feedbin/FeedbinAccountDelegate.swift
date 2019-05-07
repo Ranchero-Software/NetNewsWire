@@ -12,6 +12,7 @@ import AppKit
 import UIKit
 import RSCore
 #endif
+import RSCore
 import RSWeb
 
 final class FeedbinAccountDelegate: AccountDelegate {
@@ -48,7 +49,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .failure(let error):
 				DispatchQueue.main.async {
 					completion?()
-//					self?.handleError(error)
+					self?.handleError(error)
 				}
 			}
 		}
@@ -137,7 +138,9 @@ private extension FeedbinAccountDelegate {
 		caller.retrieveTags { [weak self] result in
 			switch result {
 			case .success(let tags):
-				self?.syncFolders(account, tags)
+				BatchUpdate.shared.perform {
+					self?.syncFolders(account, tags)
+				}
 				self?.refreshFeeds(account, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))
@@ -197,8 +200,10 @@ private extension FeedbinAccountDelegate {
 
 	func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
 		guard let subscriptions = subscriptions else { return }
-		subscriptions.forEach { subscription in
-			syncFeed(account, subscription)
+		BatchUpdate.shared.perform {
+			subscriptions.forEach { subscription in
+				syncFeed(account, subscription)
+			}
 		}
 	}
 
