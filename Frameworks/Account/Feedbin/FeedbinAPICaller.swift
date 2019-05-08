@@ -9,6 +9,13 @@
 import Foundation
 import RSWeb
 
+enum CreateSubscriptionResult {
+	case created(String?)
+	case multipleChoice([FeedbinSubscription]?)
+	case alreadySubscribed
+	case notFound
+}
+
 final class FeedbinAPICaller: NSObject {
 	
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
@@ -56,8 +63,8 @@ final class FeedbinAPICaller: NSObject {
 		transport.send(request: request, resultType: [FeedbinTag].self) { [weak self] result in
 			
 			switch result {
-			case .success(let (headers, tags)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.tags, headers: headers)
+			case .success(let (response, tags)):
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.tags, headers: response.allHeaderFields)
 				completion(.success(tags))
 			case .failure(let error):
 				completion(.failure(error))
@@ -102,11 +109,57 @@ final class FeedbinAPICaller: NSObject {
 		transport.send(request: request, resultType: [FeedbinSubscription].self) { [weak self] result in
 			
 			switch result {
-			case .success(let (headers, subscriptions)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.subscriptions, headers: headers)
+			case .success(let (response, subscriptions)):
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
 				completion(.success(subscriptions))
 			case .failure(let error):
 				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
+	func createSubscription(url: String, completionHandler completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
+		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.subscriptions]
+		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		let payload = FeedbinCreateSubscription(feedURL: url)
+		
+		
+		transport.send(request: request, method: HTTPMethod.post, payload: payload, resultType: [FeedbinSubscription].self) { [weak self] result in
+			
+			switch result {
+			case .success(let (response, subscriptions)):
+				
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
+				
+				switch response.forcedStatusCode {
+				case 201:
+					let location = response.valueForHTTPHeaderField(HTTPResponseHeader.location)
+					completion(.success(.created(location)))
+				case 300:
+					completion(.success(.multipleChoice(subscriptions)))
+				case 302:
+					completion(.success(.alreadySubscribed))
+				default:
+					completion(.failure(TransportError.httpError(status: response.forcedStatusCode)))
+				}
+				
+			case .failure(let error):
+				
+				switch error {
+				case TransportError.httpError(let status):
+					if status == 404 {
+						completion(.success(.notFound))
+					} else {
+						completion(.failure(error))
+					}
+				default:
+					completion(.failure(error))
+				}
+				
 			}
 			
 		}
@@ -122,8 +175,8 @@ final class FeedbinAPICaller: NSObject {
 		transport.send(request: request, resultType: [FeedbinTagging].self) { [weak self] result in
 			
 			switch result {
-			case .success(let (headers, taggings)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.taggings, headers: headers)
+			case .success(let (response, taggings)):
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.taggings, headers: response.allHeaderFields)
 				completion(.success(taggings))
 			case .failure(let error):
 				completion(.failure(error))
@@ -142,8 +195,8 @@ final class FeedbinAPICaller: NSObject {
 		transport.send(request: request, resultType: [FeedbinIcon].self) { [weak self] result in
 			
 			switch result {
-			case .success(let (headers, icons)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.icons, headers: headers)
+			case .success(let (response, icons)):
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.icons, headers: response.allHeaderFields)
 				completion(.success(icons))
 			case .failure(let error):
 				completion(.failure(error))
@@ -159,7 +212,7 @@ final class FeedbinAPICaller: NSObject {
 
 extension FeedbinAPICaller {
 	
-	func storeConditionalGet(metadata: AccountMetadata?, key: String, headers: HTTPHeaders) {
+	func storeConditionalGet(metadata: AccountMetadata?, key: String, headers: [AnyHashable : Any]) {
 		if var conditionalGet = accountMetadata?.conditionalGetInfo {
 			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
 			accountMetadata?.conditionalGetInfo = conditionalGet
