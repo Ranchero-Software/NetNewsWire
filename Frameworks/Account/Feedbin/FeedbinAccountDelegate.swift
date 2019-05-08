@@ -16,6 +16,10 @@ import RSCore
 import RSWeb
 import os.log
 
+public enum FeedbinAccountDelegateError: String, Error {
+	case invalidParameter = "There was an invalid parameter passed."
+}
+
 final class FeedbinAccountDelegate: AccountDelegate {
 
 	private let caller: FeedbinAPICaller
@@ -119,6 +123,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				case .created(let sub):
 					DispatchQueue.main.async {
 						let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
+						feed.subscriptionID = String(sub.subscriptionID)
 						completion(.success(.created(feed)))
 					}
 				case .multipleChoice(let subs):
@@ -147,7 +152,13 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		caller.renameFeed(feedID: feed.feedID, newName: name) { result in
+		// This error should never happen
+		guard let subscriptionID = feed.subscriptionID else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			return
+		}
+		
+		caller.renameFeed(subscriptionID: subscriptionID, newName: name) { result in
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
@@ -336,6 +347,7 @@ private extension FeedbinAccountDelegate {
 					feed.homePageURL = subscription.homePageURL
 				} else {
 					let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
+					feed.subscriptionID = String(subscription.subscriptionID)
 					account.addFeed(feed, to: nil)
 				}
 			}

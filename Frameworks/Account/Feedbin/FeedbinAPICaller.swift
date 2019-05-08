@@ -188,11 +188,11 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func renameFeed(feedID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(feedID).json")
+	func renameFeed(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID)/update.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUpdateSubscription(title: newName)
-		transport.send(request: request, method: HTTPMethod.patch, payload: payload, completion: completion)
+		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
 	}
 	
 	func retrieveTaggings(completionHandler completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {

@@ -126,6 +126,15 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
+	public var subscriptionID: String? {
+		get {
+			return metadata.subscriptionID
+		}
+		set {
+			metadata.subscriptionID = newValue
+		}
+	}
+
 	// Folder Name: Sync Service Relationship ID
 	public var folderRelationship: [String: String]? {
 		get {

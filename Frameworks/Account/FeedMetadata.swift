@@ -26,6 +26,7 @@ final class FeedMetadata: Codable {
 		case authors
 		case contentHash
 		case conditionalGetInfo
+		case subscriptionID
 		case folderRelationship
 	}
 
@@ -97,6 +98,14 @@ final class FeedMetadata: Codable {
 		didSet {
 			if conditionalGetInfo != oldValue {
 				valueDidChange(.conditionalGetInfo)
+			}
+		}
+	}
+	
+	var subscriptionID: String? {
+		didSet {
+			if subscriptionID != oldValue {
+				valueDidChange(.subscriptionID)
 			}
 		}
 	}
