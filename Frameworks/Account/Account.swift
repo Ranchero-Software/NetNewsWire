@@ -386,14 +386,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		// For syncing, this may need to be an async method with a callback,
 		// since it will likely need to call the server.
-		return createFeed(with: name, editedName: editedName, url: url, feedId: url, homePageURL: nil)
+		return createFeed(with: name, editedName: editedName, url: url, feedID: url, homePageURL: nil)
 		
 	}
 	
-	func createFeed(with name: String?, editedName: String?, url: String, feedId: String, homePageURL: String?) -> Feed {
+	func createFeed(with name: String?, editedName: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
 		
-		let metadata = feedMetadata(feedID: feedId)
-		let feed = Feed(account: self, url: url, feedID: feedId, metadata: metadata)
+		let metadata = feedMetadata(feedURL: url, feedID: feedID)
+		let feed = Feed(account: self, url: url, metadata: metadata)
 		feed.name = name
 		feed.editedName = editedName
 		feed.homePageURL = homePageURL
@@ -804,6 +804,7 @@ private extension Account {
 		BatchUpdate.shared.perform {
 			importOPMLItems(children, parentFolder: nil)
 		}
+
 	}
 
 	func saveToDisk() {
@@ -831,7 +832,7 @@ private extension Account {
 	private func metadataForOnlySubscribedToFeeds() -> FeedMetadataDictionary {
 		let feedIDs = idToFeedDictionary.keys
 		return feedMetadata.filter { (feedID: String, metadata: FeedMetadata) -> Bool in
-			return feedIDs.contains(feedID)
+			return feedIDs.contains(metadata.feedID)
 		}
 	}
 
@@ -875,14 +876,14 @@ private extension Account {
 
 private extension Account {
 
-	func feedMetadata(feedID: String) -> FeedMetadata {
-		if let d = feedMetadata[feedID] {
+	func feedMetadata(feedURL: String, feedID: String) -> FeedMetadata {
+		if let d = feedMetadata[feedURL] {
 			assert(d.delegate === self)
 			return d
 		}
 		let d = FeedMetadata(feedID: feedID)
 		d.delegate = self
-		feedMetadata[feedID] = d
+		feedMetadata[feedURL] = d
 		return d
 	}
 
@@ -909,9 +910,9 @@ private extension Account {
 	}
 
 	func createFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
-		let feedID = opmlFeedSpecifier.feedURL
-		let metadata = feedMetadata(feedID: feedID)
-		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, feedID: feedID, metadata: metadata)
+		let feedURL = opmlFeedSpecifier.feedURL
+		let metadata = feedMetadata(feedURL: feedURL, feedID: feedURL)
+		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, metadata: metadata)
 		if let feedTitle = opmlFeedSpecifier.title {
 			if feed.name == nil {
 				feed.name = feedTitle

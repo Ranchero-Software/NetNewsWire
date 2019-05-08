@@ -15,7 +15,15 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	public weak var account: Account?
 	public let url: String
-	public let feedID: String
+
+	public var feedID: String {
+		get {
+			return metadata.feedID
+		}
+		set {
+			metadata.feedID = newValue
+		}
+	}
 
 	public var homePageURL: String? {
 		get {
@@ -169,11 +177,10 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	// MARK: - Init
 
-	init(account: Account, url: String, feedID: String, metadata: FeedMetadata) {
+	init(account: Account, url: String, metadata: FeedMetadata) {
 		self.account = account
 		self.accountID = account.accountID
 		self.url = url
-		self.feedID = feedID
 		self.metadata = metadata
 	}
 

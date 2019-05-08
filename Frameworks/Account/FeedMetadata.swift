@@ -16,8 +16,6 @@ protocol FeedMetadataDelegate: class {
 
 final class FeedMetadata: Codable {
 
-	let feedID: String
-
 	enum CodingKeys: String, CodingKey {
 		case feedID
 		case homePageURL
@@ -31,6 +29,14 @@ final class FeedMetadata: Codable {
 		case folderRelationship
 	}
 
+	var feedID: String {
+		didSet {
+			if feedID != oldValue {
+				valueDidChange(.feedID)
+			}
+		}
+	}
+	
 	var homePageURL: String? {
 		didSet {
 			if homePageURL != oldValue {
@@ -95,6 +101,7 @@ final class FeedMetadata: Codable {
 		}
 	}
 	
+	// Folder Name: Sync Service Relationship ID
 	var folderRelationship: [String: String]? {
 		didSet {
 			if folderRelationship != oldValue {

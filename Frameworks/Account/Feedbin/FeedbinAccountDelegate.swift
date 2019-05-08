@@ -282,7 +282,7 @@ private extension FeedbinAccountDelegate {
 					feed.name = subscription.name
 					feed.homePageURL = subscription.homePageURL
 				} else {
-					let feed = account.createFeed(with: subscription.name, editedName: nil, url: subscription.url, feedId: subFeedId, homePageURL: subscription.homePageURL)
+					let feed = account.createFeed(with: subscription.name, editedName: nil, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
 					account.addFeed(feed, to: nil)
 				}
 			}
