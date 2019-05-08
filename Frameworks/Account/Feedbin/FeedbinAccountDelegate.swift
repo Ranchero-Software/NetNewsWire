@@ -14,13 +14,16 @@ import RSCore
 #endif
 import RSCore
 import RSWeb
+import os.log
 
 final class FeedbinAccountDelegate: AccountDelegate {
-	
+
+	private let caller: FeedbinAPICaller
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedbin")
+
 	let supportsSubFolders = false
 	let server: String? = "api.feedbin.com"
 	
-	private let caller: FeedbinAPICaller
 	var credentials: Credentials? {
 		didSet {
 			caller.credentials = credentials
@@ -159,7 +162,9 @@ private extension FeedbinAccountDelegate {
 	func syncFolders(_ account: Account, _ tags: [FeedbinTag]?) {
 		
 		guard let tags = tags else { return }
-		
+
+		os_log(.debug, log: log, "Syncing folders with %ld tags.", tags.count)
+
 		let tagNames = tags.map { $0.name }
 
 		// Delete any folders not at Feedbin
@@ -242,6 +247,8 @@ private extension FeedbinAccountDelegate {
 		
 		guard let subscriptions = subscriptions else { return }
 		
+		os_log(.debug, log: log, "Syncing feeds with %ld subscriptions.", subscriptions.count)
+		
 		let subFeedIds = subscriptions.map { String($0.feedID) }
 		
 		// Remove any feeds that are no longer in the subscriptions
@@ -288,6 +295,8 @@ private extension FeedbinAccountDelegate {
 		
 		guard let taggings = taggings else { return }
 
+		os_log(.debug, log: log, "Syncing taggings with %ld taggings.", taggings.count)
+		
 		// Set up some structures to make syncing easier
 		let folderDict: [String: Folder] = {
 			if let folders = account.folders {
@@ -349,7 +358,7 @@ private extension FeedbinAccountDelegate {
 		
 		let taggedFeedIDs = Set(taggings.map { String($0.feedID) })
 		
-		// Delete all the feeds without a tag
+		// Remove all feeds from the account container that have a tag
 		var feedsToDelete = Set<Feed>()
 		for feed in account.topLevelFeeds {
 			if taggedFeedIDs.contains(feed.feedID) {
@@ -366,6 +375,8 @@ private extension FeedbinAccountDelegate {
 	func syncFavicons(_ account: Account, _ icons: [FeedbinIcon]?) {
 		
 		guard let icons = icons else { return }
+		
+		os_log(.debug, log: log, "Syncing favicons with %ld icons.", icons.count)
 		
 		let iconDict = Dictionary(uniqueKeysWithValues: icons.map { ($0.host, $0.url) } )
 		
