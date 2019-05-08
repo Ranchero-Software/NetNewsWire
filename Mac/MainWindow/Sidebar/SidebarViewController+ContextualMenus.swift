@@ -100,9 +100,15 @@ extension SidebarViewController: RenameWindowControllerDelegate {
 	func renameWindowController(_ windowController: RenameWindowController, didRenameObject object: Any, withNewName name: String) {
 
 		if let feed = object as? Feed {
-			feed.editedName = name
-		}
-		else if let folder = object as? Folder {
+			feed.rename(to: name) { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
+		} else if let folder = object as? Folder {
 			folder.rename(to: name) { result in
 				switch result {
 				case .success:
