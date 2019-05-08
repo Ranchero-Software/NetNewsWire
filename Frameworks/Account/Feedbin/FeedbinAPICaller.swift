@@ -10,8 +10,8 @@ import Foundation
 import RSWeb
 
 enum CreateSubscriptionResult {
-	case created(String?)
-	case multipleChoice([FeedbinSubscription]?)
+	case created(FeedbinSubscription)
+	case multipleChoice([FeedbinSubscription])
 	case alreadySubscribed
 	case notFound
 }
@@ -123,24 +123,46 @@ final class FeedbinAPICaller: NSObject {
 	func createSubscription(url: String, completionHandler completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.subscriptions]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		let payload = FeedbinCreateSubscription(feedURL: url)
+		var request = URLRequest(url: callURL, credentials: credentials)
+		request.httpMethod = HTTPMethod.post
+		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		
+		let payload: Data
+		do {
+			payload = try JSONEncoder().encode(FeedbinCreateSubscription(feedURL: url))
+		} catch {
+			completion(.failure(error))
+			return
+		}
 		
-		transport.send(request: request, method: HTTPMethod.post, payload: payload, resultType: [FeedbinSubscription].self) { [weak self] result in
+		transport.send(request: request, payload: payload) { result in
 			
 			switch result {
-			case .success(let (response, subscriptions)):
-				
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
+			case .success(let (response, data)):
 				
 				switch response.forcedStatusCode {
 				case 201:
-					let location = response.valueForHTTPHeaderField(HTTPResponseHeader.location)
-					completion(.success(.created(location)))
+					guard let subData = data else {
+						completion(.failure(TransportError.noData))
+						break
+					}
+					do {
+						let subscription = try JSONDecoder().decode(FeedbinSubscription.self, from: subData)
+						completion(.success(.created(subscription)))
+					} catch {
+						completion(.failure(error))
+					}
 				case 300:
-					completion(.success(.multipleChoice(subscriptions)))
+					guard let subData = data else {
+						completion(.failure(TransportError.noData))
+						break
+					}
+					do {
+						let subscriptions = try JSONDecoder().decode([FeedbinSubscription].self, from: subData)
+						completion(.success(.multipleChoice(subscriptions)))
+					} catch {
+						completion(.failure(error))
+					}
 				case 302:
 					completion(.success(.alreadySubscribed))
 				default:
@@ -164,6 +186,13 @@ final class FeedbinAPICaller: NSObject {
 			
 		}
 		
+	}
+	
+	func renameFeed(feedID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(feedID).json")
+		let request = URLRequest(url: callURL, credentials: credentials)
+		let payload = FeedbinUpdateSubscription(title: newName)
+		transport.send(request: request, method: HTTPMethod.patch, payload: payload, completion: completion)
 	}
 	
 	func retrieveTaggings(completionHandler completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {

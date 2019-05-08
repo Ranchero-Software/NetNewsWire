@@ -29,11 +29,15 @@ struct FeedbinSubscription: Codable {
 }
 
 struct FeedbinCreateSubscription: Codable {
-	
 	let feedURL: String
-
 	enum CodingKeys: String, CodingKey {
 		case feedURL = "feed_url"
 	}
+}
 
+struct FeedbinUpdateSubscription: Codable {
+	let title: String
+	enum CodingKeys: String, CodingKey {
+		case title
+	}
 }

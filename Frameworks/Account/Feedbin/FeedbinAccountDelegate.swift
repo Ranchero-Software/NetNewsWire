@@ -110,6 +110,59 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
+	func createFeed(for account: Account, with name: String?, url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
+		
+		caller.createSubscription(url: url) { result in
+			switch result {
+			case .success(let subResult):
+				switch subResult {
+				case .created(let sub):
+					DispatchQueue.main.async {
+						let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
+						completion(.success(.created(feed)))
+					}
+				case .multipleChoice(let subs):
+					let resultSubs = subs.map { sub in return AccountCreateFeedChoice(name: sub.name ?? "", url: sub.url) }
+					DispatchQueue.main.async {
+						completion(.success(.multipleChoice(resultSubs)))
+					}
+				case .alreadySubscribed:
+					DispatchQueue.main.async {
+						completion(.success(.alreadySubscribed))
+					}
+				case .notFound:
+					DispatchQueue.main.async {
+						completion(.success(.notFound))
+					}
+				}
+			case .failure(let error):
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
+
+		}
+		
+	}
+
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		caller.renameFeed(feedID: feed.feedID, newName: name) { result in
+			switch result {
+			case .success:
+				DispatchQueue.main.async {
+					feed.editedName = name
+					completion(.success(()))
+				}
+			case .failure(let error):
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
+		}
+		
+	}
+
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveBasicCredentials()
 		accountMetadata = account.metadata
@@ -282,7 +335,7 @@ private extension FeedbinAccountDelegate {
 					feed.name = subscription.name
 					feed.homePageURL = subscription.homePageURL
 				} else {
-					let feed = account.createFeed(with: subscription.name, editedName: nil, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
+					let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
 					account.addFeed(feed, to: nil)
 				}
 			}

@@ -19,11 +19,14 @@ protocol AccountDelegate {
 	
 	var refreshProgress: DownloadProgress { get }
 
-	func refreshAll(for: Account, completion: (() -> Void)?)
+	func refreshAll(for account: Account, completion: (() -> Void)?)
 
-	func renameFolder(for: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
-	func deleteFolder(for: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
+	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
+	func deleteFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
 
+	func createFeed(for account: Account, with name: String?, url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void)
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
+	
 	// Called at the end of account’s init method.
 	func accountDidInitialize(_ account: Account)
 

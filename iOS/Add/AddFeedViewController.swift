@@ -21,15 +21,6 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 	
 	private var pickerData: AddFeedFolderPickerData!
 	
-	private var feedFinder: FeedFinder?
-	private var userEnteredURL: URL?
-	private var userEnteredFolder: Folder?
-	private var userEnteredTitle: String?
-	private var userEnteredAccount: Account?
-	private var foundFeedURLString: String?
-	private var bestFeedSpecifier: FeedSpecifier?
-	private var titleFromFeed: String?
-
 	private var userCancelled = false
 
 	weak var delegate: AddContainerViewControllerChildDelegate?
@@ -78,31 +69,50 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 			return
 		}
 		
-		userEnteredURL = url
-		userEnteredTitle = nameTextField.text
-
 		let container = pickerData.containers[folderPickerView.selectedRow(inComponent: 0)]
-		if let account = container as? Account {
-			userEnteredAccount = account
+		
+		var account: Account?
+		var folder: Folder?
+		if let containerAccount = container as? Account {
+			account = containerAccount
 		}
-		if let folder = container as? Folder, let account = folder.account {
-			userEnteredAccount = account
-			userEnteredFolder = folder
+		if let containerFolder = container as? Folder, let containerAccount = containerFolder.account {
+			account = containerAccount
+			folder = containerFolder
 		}
 		
-		guard let userEnteredAccount = userEnteredAccount else {
-			assertionFailure()
-			return
-		}
-		
-		if userEnteredAccount.hasFeed(withURL: url.absoluteString) {
+		if account!.hasFeed(withURL: url.absoluteString) {
 			showAlreadySubscribedError()
  			return
 		}
 		
+		let title = nameTextField.text
+		
 		delegate?.processingDidBegin()
 
-		feedFinder = FeedFinder(url: url, delegate: self)
+		account!.createFeed(with: nil, url: url.absoluteString) { [weak self] result in
+			
+			switch result {
+			case .success(let createFeedResult):
+				switch createFeedResult {
+				case .created(let feed):
+					self?.processFeed(feed, account: account!, folder: folder, url: url, title: title)
+				case .multipleChoice(let feedChoices):
+					print()
+					self?.delegate?.processingDidCancel()
+				case .alreadySubscribed:
+					self?.showAlreadySubscribedError()
+					self?.delegate?.processingDidCancel()
+				case .notFound:
+					self?.showNoFeedsErrorMessage()
+					self?.delegate?.processingDidCancel()
+				}
+			case .failure(let error):
+				self?.presentError(error)
+				self?.delegate?.processingDidCancel()
+			}
+			
+		}
 
 	}
 	
@@ -132,49 +142,6 @@ extension AddFeedViewController: UIPickerViewDataSource, UIPickerViewDelegate {
 	
 }
 
-extension AddFeedViewController: FeedFinderDelegate {
-	
-	public func feedFinder(_ feedFinder: FeedFinder, didFindFeeds feedSpecifiers: Set<FeedSpecifier>) {
-		
-		if userCancelled {
-			return
-		}
-		
-		if let error = feedFinder.initialDownloadError {
-			if feedFinder.initialDownloadStatusCode == 404 {
-				showNoFeedsErrorMessage()
-				delegate?.processingDidCancel()
-			} else {
-				showInitialDownloadError(error)
-				delegate?.processingDidCancel()
-			}
-			return
-		}
-		
-		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers) else {
-			showNoFeedsErrorMessage()
-			delegate?.processingDidCancel()
-			return
-		}
-		
-		self.bestFeedSpecifier = bestFeedSpecifier
-		self.foundFeedURLString = bestFeedSpecifier.urlString
-		
-		if let url = URL(string: bestFeedSpecifier.urlString) {
-			InitialFeedDownloader.download(url) { (parsedFeed) in
-				self.titleFromFeed = parsedFeed?.title
-				self.addFeedIfPossible(parsedFeed)
-			}
-		} else {
-			// Shouldn't happen.
-			showNoFeedsErrorMessage()
-			delegate?.processingDidCancel()
-		}
-		
-	}
-	
-}
-
 private extension AddFeedViewController {
 	
 	private func showAlreadySubscribedError() {
@@ -196,41 +163,27 @@ private extension AddFeedViewController {
 		presentError(title: title, message: message as String)
 	}
 	
-	func addFeedIfPossible(_ parsedFeed: ParsedFeed?) {
+	func processFeed(_ feed: Feed, account: Account, folder: Folder?, url: URL, title: String?) {
 		
-		if userCancelled {
-			return
-		}
-
-		guard let account = userEnteredAccount else {
-			assertionFailure("Expected account.")
-			delegate?.processingDidCancel()
-			return
-		}
-		
-		guard let feedURLString = foundFeedURLString else {
-			assertionFailure("Expected feedURLString.")
-			delegate?.processingDidCancel()
-			return
+		if let title = title {
+			account.renameFeed(feed, to: title) { [weak self] result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					self?.presentError(error)
+				}
+			}
 		}
 		
-		if account.hasFeed(withURL: feedURLString) {
-			showAlreadySubscribedError()
-			delegate?.processingDidCancel()
-			return
-		}
+		// TODO: make this async and add to above code
+		account.addFeed(feed, to: folder)
 		
-		let feed = account.createFeed(with: titleFromFeed, editedName: userEnteredTitle, url: feedURLString)
-		
-		if let parsedFeed = parsedFeed {
-			account.update(feed, with: parsedFeed, {})
-		}
-		
-		account.addFeed(feed, to: userEnteredFolder)
+		// Move this into the mess above
 		NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 		
 		delegate?.processingDidEnd()
-
+		
 	}
 	
 }

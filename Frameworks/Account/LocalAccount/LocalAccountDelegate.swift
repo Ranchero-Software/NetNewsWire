@@ -9,6 +9,10 @@
 import Foundation
 import RSWeb
 
+public enum LocalAccountDelegateError: String, Error {
+	case invalidParameter = "An invalid parameter was used."
+}
+
 final class LocalAccountDelegate: AccountDelegate {
 	
 	let supportsSubFolders = false
@@ -16,6 +20,10 @@ final class LocalAccountDelegate: AccountDelegate {
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
+	private weak var account: Account?
+	private var feedFinder: FeedFinder?
+	private var createFeedCompletion: ((Result<AccountCreateFeedResult, Error>) -> Void)?
+	
 	private let refresher = LocalAccountRefresher()
 
 	var refreshProgress: DownloadProgress {
@@ -38,6 +46,25 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
+	func createFeed(for account: Account, with name: String?, url urlString: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
+		
+		guard let url = URL(string: urlString) else {
+			completion(.failure(LocalAccountDelegateError.invalidParameter))
+			return
+		}
+	
+		self.account = account
+		createFeedCompletion = completion
+		
+		feedFinder = FeedFinder(url: url, delegate: self)
+		
+	}
+
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		feed.editedName = name
+		completion(.success(()))
+	}
+	
 	func accountDidInitialize(_ account: Account) {
 	}
 
@@ -45,4 +72,38 @@ final class LocalAccountDelegate: AccountDelegate {
 		return completion(.success(false))
 	}
 	
+}
+
+extension LocalAccountDelegate: FeedFinderDelegate {
+	
+	// MARK: FeedFinderDelegate
+	
+	public func feedFinder(_ feedFinder: FeedFinder, didFindFeeds feedSpecifiers: Set<FeedSpecifier>) {
+		
+		if let error = feedFinder.initialDownloadError {
+			if feedFinder.initialDownloadStatusCode == 404 {
+				createFeedCompletion!(.success(.notFound))
+			} else {
+				createFeedCompletion!(.failure(error))
+			}
+			return
+		}
+		
+		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
+			let url = URL(string: bestFeedSpecifier.urlString),
+			let account = account else {
+			createFeedCompletion!(.success(.notFound))
+			return
+		}
+
+		let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
+		InitialFeedDownloader.download(url) { [weak self] parsedFeed in
+			if let parsedFeed = parsedFeed {
+				account.update(feed, with: parsedFeed, {})
+			}
+			self?.createFeedCompletion!(.success(.created(feed)))
+		}
+
+	}
+
 }

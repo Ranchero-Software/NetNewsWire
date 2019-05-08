@@ -59,16 +59,6 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
 
     // MARK: --- handle NSCreateCommand ---
 
-    class func parsedFeedForURL(_ urlString:String, _ completionHandler: @escaping (_ parsedFeed: ParsedFeed?) -> Void) {
-        guard let url = URL(string: urlString) else {
-            completionHandler(nil)
-            return
-        }
-        InitialFeedDownloader.download(url) { (parsedFeed) in
-            completionHandler(parsedFeed)
-        }
-    }
-    
     class func urlForNewFeed(arguments:[String:Any]) -> String?  {
         var url:String?
         if let withDataParam = arguments["ObjectData"] {
@@ -110,23 +100,36 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         // suspendExecution().  When we get the callback, we can supply the event result and call resumeExecution()
         command.suspendExecution()
         
-        self.parsedFeedForURL(url, { (parsedFeedOptional) in
-            if let parsedFeed = parsedFeedOptional {
-                let titleFromFeed = parsedFeed.title
-                
-                let feed = account.createFeed(with: titleFromFeed, editedName: titleFromArgs, url: url)
-                account.update(feed, with:parsedFeed, {})
-                
-                // add the feed, putting it in a folder if needed
-                account.addFeed(feed, to:folder)
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+		account.createFeed(with: nil, url: url) { result in
+			switch result {
+			case .success(let createFeedResult):
 
-                let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
-                command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
-            } else {
-                command.resumeExecution(withResult:nil)
-            }
-        })
+				switch createFeedResult {
+				case .created(let feed):
+					
+					if let editedName = titleFromArgs {
+						account.renameFeed(feed, to: editedName) { result in
+						}
+					}
+					
+					// add the feed, putting it in a folder if needed
+					account.addFeed(feed, to:folder)
+					
+					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+					
+					let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
+					command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
+
+				default:
+					command.resumeExecution(withResult:nil)
+				}
+
+			case .failure:
+				command.resumeExecution(withResult:nil)
+			}
+
+		}
+		
         return nil
     }
 

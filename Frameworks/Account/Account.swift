@@ -382,24 +382,23 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public func createFeed(with name: String?, editedName: String?, url: String) -> Feed {
-		
-		// For syncing, this may need to be an async method with a callback,
-		// since it will likely need to call the server.
-		return createFeed(with: name, editedName: editedName, url: url, feedID: url, homePageURL: nil)
-		
+	public func createFeed(with name: String?, url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
+		delegate.createFeed(for: self, with: name, url: url, completion: completion)
 	}
 	
-	func createFeed(with name: String?, editedName: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
+	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
 		
 		let metadata = feedMetadata(feedURL: url, feedID: feedID)
 		let feed = Feed(account: self, url: url, metadata: metadata)
 		feed.name = name
-		feed.editedName = editedName
 		feed.homePageURL = homePageURL
 		
 		return feed
 		
+	}
+	
+	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.renameFeed(for: self, with: feed, to: name, completion: completion)
 	}
 	
 	public func canAddFolder(_ folder: Folder, to containingFolder: Folder?) -> Bool {
