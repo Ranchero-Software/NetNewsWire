@@ -285,69 +285,27 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	private func processRestoredFeed(for account: Account, feed: Feed, editedName: String?, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		if let folder = folder {
-			
-			addFeed(for: account, to: folder, with: feed) { [weak self] result in
-				
-				switch result {
-				case .success:
-					
-					if editedName != nil {
-						DispatchQueue.main.async {
-							folder.addFeed(feed)
-						}
-						self?.processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
-					} else {
-						DispatchQueue.main.async {
-							folder.addFeed(feed)
-							completion(.success(()))
-						}
-					}
-					
-				case .failure(let error):
-					DispatchQueue.main.async {
-						completion(.failure(error))
-					}
-				}
-				
-			}
-			
-		} else {
-			
-			DispatchQueue.main.async {
-				account.addFeed(feed)
-			}
-			
-			processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
-
-		}
-		
-	}
-	
-	private func processRestoredFeedName(for account: Account, feed: Feed, editedName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		renameFeed(for: account, with: feed, to: editedName) { result in
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					feed.editedName = editedName
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					completion(.failure(error))
-				}
-			}
-			
-		}
-		
-	}
-	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		
 		account.addFolder(folder)
-		completion(.success(()))
+		let group = DispatchGroup()
+		
+		for feed in folder.topLevelFeeds {
+			
+			group.enter()
+			addFeed(for: account, to: folder, with: feed) { result in
+				if account.topLevelFeeds.contains(feed) {
+					account.removeFeed(feed)
+				}
+				group.leave()
+			}
+			
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			completion(.success(()))
+		}
+		
 	}
 	
 	func accountDidInitialize(_ account: Account) {
@@ -626,6 +584,66 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 
+	}
+	
+	func processRestoredFeed(for account: Account, feed: Feed, editedName: String?, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		if let folder = folder {
+			
+			addFeed(for: account, to: folder, with: feed) { [weak self] result in
+				
+				switch result {
+				case .success:
+					
+					if editedName != nil {
+						DispatchQueue.main.async {
+							folder.addFeed(feed)
+						}
+						self?.processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
+					} else {
+						DispatchQueue.main.async {
+							folder.addFeed(feed)
+							completion(.success(()))
+						}
+					}
+					
+				case .failure(let error):
+					DispatchQueue.main.async {
+						completion(.failure(error))
+					}
+				}
+				
+			}
+			
+		} else {
+			
+			DispatchQueue.main.async {
+				account.addFeed(feed)
+			}
+			
+			processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
+			
+		}
+		
+	}
+	
+	func processRestoredFeedName(for account: Account, feed: Feed, editedName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		renameFeed(for: account, with: feed, to: editedName) { result in
+			switch result {
+			case .success:
+				DispatchQueue.main.async {
+					feed.editedName = editedName
+					completion(.success(()))
+				}
+			case .failure(let error):
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
+			
+		}
+		
 	}
 	
 	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
