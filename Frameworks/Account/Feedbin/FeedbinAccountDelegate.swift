@@ -209,8 +209,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			caller.createTagging(feedID: feedID, name: folder.name ?? "") { [weak self] result in
 				switch result {
 				case .success(let taggingID):
-					self?.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
 					DispatchQueue.main.async {
+						self?.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
 						folder.addFeed(feed)
 						completion(.success(()))
 					}
@@ -491,8 +491,8 @@ private extension FeedbinAccountDelegate {
 					guard let feed = account.idToFeedDictionary[taggingFeedID] else {
 						continue
 					}
-					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(tagging.taggingID))
 					DispatchQueue.main.sync {
+						saveFolderRelationship(for: feed, withFolderName: folderName, id: String(tagging.taggingID))
 						folder.addFeed(feed)
 					}
 				}
@@ -535,22 +535,18 @@ private extension FeedbinAccountDelegate {
 	}
 	
 	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
-		DispatchQueue.main.sync {
-			if var folderRelationship = feed.folderRelationship {
-				folderRelationship[folderName] = nil
-				feed.folderRelationship = folderRelationship
-			}
+		if var folderRelationship = feed.folderRelationship {
+			folderRelationship[folderName] = nil
+			feed.folderRelationship = folderRelationship
 		}
 	}
 	
 	func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
-		DispatchQueue.main.sync {
-			if var folderRelationship = feed.folderRelationship {
-				folderRelationship[folderName] = id
-				feed.folderRelationship = folderRelationship
-			} else {
-				feed.folderRelationship = [folderName: id]
-			}
+		if var folderRelationship = feed.folderRelationship {
+			folderRelationship[folderName] = id
+			feed.folderRelationship = folderRelationship
+		} else {
+			feed.folderRelationship = [folderName: id]
 		}
 	}
 	
