@@ -365,7 +365,14 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		let account = accountForNode(destNode)
 		let sourceContainer = sourceNode.parent?.representedObject as? Container
 		let destinationFolder = destParentNode?.representedObject as? Folder
-		sourceContainer?.deleteFeed(feed)
+		sourceContainer?.deleteFeed(feed) { [weak self] result in
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				self?.presentError(error)
+			}
+		}
 		account?.addFeed(feed, to: destinationFolder)
 		account?.structureDidChange()
 
