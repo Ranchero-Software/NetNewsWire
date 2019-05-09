@@ -244,8 +244,14 @@ private extension SidebarOutlineDataSource {
 		}
 		let sourceContainer = node.parent?.representedObject as? Container
 		let destinationFolder = parentNode.representedObject as? Folder
-		sourceContainer?.deleteFeed(feed)
-		account.addFeed(feed, to: destinationFolder)
+		sourceContainer?.deleteFeed(feed) { result in
+			switch result {
+			case .success:
+				account.addFeed(feed, to: destinationFolder)
+			case .failure(let error):
+				NSApplication.shared.presentError(error)
+			}
+		}
 	}
 
 	func acceptLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> Bool {

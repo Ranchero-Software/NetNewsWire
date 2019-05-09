@@ -593,14 +593,22 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return _flattenedFeeds
 	}
 
-	func deleteFeeds(_ feeds: Set<Feed>) {
-		topLevelFeeds.subtract(feeds)
+	public func deleteFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.deleteFeed(for: self, container: self, feed: feed, completion: completion)
+	}
+
+	func deleteFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.deleteFeed(for: self, container: container, feed: feed, completion: completion)
+	}
+	
+	func deleteFeed(_ feed: Feed) {
+		topLevelFeeds.remove(feed)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
 	
-	public func deleteFeed(_ feed: Feed) {
-		topLevelFeeds.remove(feed)
+	func deleteFeeds(_ feeds: Set<Feed>) {
+		topLevelFeeds.subtract(feeds)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}

@@ -158,7 +158,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		caller.renameFeed(subscriptionID: subscriptionID, newName: name) { result in
+		caller.renameSubscription(subscriptionID: subscriptionID, newName: name) { result in
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
@@ -174,6 +174,35 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
+	func deleteFeed(for account: Account, container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		// This error should never happen
+		guard let subscriptionID = feed.subscriptionID else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			return
+		}
+		
+		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+			switch result {
+			case .success:
+				DispatchQueue.main.async {
+					if let account = container as? Account {
+						account.deleteFeed(feed)
+					}
+					if let folder = container as? Folder {
+						folder.deleteFeed(feed)
+					}
+					completion(.success(()))
+				}
+			case .failure(let error):
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
+		}
+		
+	}
+	
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveBasicCredentials()
 		accountMetadata = account.metadata

@@ -64,7 +64,20 @@ final class LocalAccountDelegate: AccountDelegate {
 		feed.editedName = name
 		completion(.success(()))
 	}
+
+	func deleteFeed(for account: Account, container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		if let account = container as? Account {
+			account.deleteFeed(feed)
+		}
+		if let folder = container as? Folder {
+			folder.deleteFeed(feed)
+		}
+		completion(.success(()))
+		
+	}
 	
+
 	func accountDidInitialize(_ account: Account) {
 	}
 

@@ -124,7 +124,6 @@ final class FeedbinAPICaller: NSObject {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
 		var request = URLRequest(url: callURL, credentials: credentials)
-		request.httpMethod = HTTPMethod.post
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		
 		let payload: Data
@@ -135,7 +134,7 @@ final class FeedbinAPICaller: NSObject {
 			return
 		}
 		
-		transport.send(request: request, payload: payload) { result in
+		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
 			
 			switch result {
 			case .success(let (response, data)):
@@ -188,11 +187,17 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func renameFeed(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameSubscription(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID)/update.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUpdateSubscription(title: newName)
 		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+	}
+	
+	func deleteSubscription(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID).json")
+		let request = URLRequest(url: callURL, credentials: credentials)
+		transport.send(request: request, method: HTTPMethod.delete, completion: completion)
 	}
 	
 	func retrieveTaggings(completionHandler completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {

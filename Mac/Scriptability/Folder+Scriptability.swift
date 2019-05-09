@@ -57,7 +57,7 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
             }
         } else if let scriptableFeed = element as? ScriptableFeed {
             BatchUpdate.shared.perform {
-                folder.deleteFeed(scriptableFeed.feed)
+				folder.deleteFeed(scriptableFeed.feed) { result in }
             }
         }
     }

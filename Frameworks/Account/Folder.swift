@@ -95,7 +95,11 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 		return topLevelFeeds.contains(feed)
 	}
 
-	public func deleteFeed(_ feed: Feed) {
+	public func deleteFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		// TODO: Something here...
+	}
+	
+	func deleteFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		postChildrenDidChangeNotification()
 	}
