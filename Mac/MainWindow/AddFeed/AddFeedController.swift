@@ -59,7 +59,7 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 			return
 		}
 
-		account.createFeed(with: nil, url: url.absoluteString) { [weak self] result in
+		account.createFeed(url: url.absoluteString) { [weak self] result in
 			
 			self?.endShowingProgress()
 			

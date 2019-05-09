@@ -100,7 +100,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         // suspendExecution().  When we get the callback, we can supply the event result and call resumeExecution()
         command.suspendExecution()
         
-		account.createFeed(with: nil, url: url) { result in
+		account.createFeed(url: url) { result in
 			switch result {
 			case .success(let createFeedResult):
 

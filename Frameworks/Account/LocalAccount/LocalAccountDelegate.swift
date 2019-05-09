@@ -46,7 +46,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
-	func createFeed(for account: Account, with name: String?, url urlString: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
+	func createFeed(for account: Account, url urlString: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
 		
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
@@ -107,6 +107,20 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
+	func restoreFeed(for account: Account, feed: Feed, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
+		if let folder = folder {
+			folder.addFeed(feed)
+		} else {
+			account.addFeed(feed)
+		}
+		completion(.success(()))
+	}
+	
+	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		account.addFolder(folder)
+		completion(.success(()))
+	}
+
 	func accountDidInitialize(_ account: Account) {
 	}
 

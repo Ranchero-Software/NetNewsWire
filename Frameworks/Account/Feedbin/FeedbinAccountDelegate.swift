@@ -18,6 +18,7 @@ import os.log
 
 public enum FeedbinAccountDelegateError: String, Error {
 	case invalidParameter = "There was an invalid parameter passed."
+	case invalidResponse = "An invalid response was received from the service."
 }
 
 final class FeedbinAccountDelegate: AccountDelegate {
@@ -114,7 +115,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func createFeed(for account: Account, with name: String?, url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
+	func createFeed(for account: Account, url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
 		
 		caller.createSubscription(url: url) { result in
 			switch result {
@@ -255,7 +256,100 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 		
 	}
+	
+	func restoreFeed(for account: Account, feed: Feed, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		let editedName = feed.editedName
+		
+		createFeed(for: account, url: feed.url) { [weak self] result in
+			
+			switch result {
+			case .success(let createResult):
+				
+				switch createResult {
+				case .created(let feed):
+					self?.processRestoredFeed(for: account, feed: feed, editedName: editedName, folder: folder, completion: completion)
+				default:
+					DispatchQueue.main.async {
+						completion(.failure(FeedbinAccountDelegateError.invalidResponse))
+					}
+				}
+				
+			case .failure(let error):
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
+			
+		}
+		
+	}
+	
+	private func processRestoredFeed(for account: Account, feed: Feed, editedName: String?, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		if let folder = folder {
+			
+			addFeed(for: account, to: folder, with: feed) { [weak self] result in
+				
+				switch result {
+				case .success:
+					
+					if editedName != nil {
+						DispatchQueue.main.async {
+							folder.addFeed(feed)
+						}
+						self?.processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
+					} else {
+						DispatchQueue.main.async {
+							folder.addFeed(feed)
+							completion(.success(()))
+						}
+					}
+					
+				case .failure(let error):
+					DispatchQueue.main.async {
+						completion(.failure(error))
+					}
+				}
+				
+			}
+			
+		} else {
+			
+			DispatchQueue.main.async {
+				account.addFeed(feed)
+			}
+			
+			processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
 
+		}
+		
+	}
+	
+	private func processRestoredFeedName(for account: Account, feed: Feed, editedName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		renameFeed(for: account, with: feed, to: editedName) { result in
+			switch result {
+			case .success:
+				DispatchQueue.main.async {
+					feed.editedName = editedName
+					completion(.success(()))
+				}
+			case .failure(let error):
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
+			
+		}
+		
+	}
+	
+	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		account.addFolder(folder)
+		completion(.success(()))
+	}
+	
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveBasicCredentials()
 		accountMetadata = account.metadata

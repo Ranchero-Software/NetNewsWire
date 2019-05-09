@@ -354,30 +354,16 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return ensureFolder(with: folderName)
 	}
 
-	public func canAddFeed(_ feed: Feed, to folder: Folder?) -> Bool {
-
-		// If folder is nil, then it should go at the top level.
-		// The same feed in multiple folders is allowed.
-		// But the same feed can’t appear twice in the same folder
-		// (or at the top level).
-
-		return true // TODO
-	}
-
-	public func removeFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.removeFeed(for: self, from: self, with: feed, completion: completion)
-	}
-	
-	public func addFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.addFeed(for: self, to: self, with: feed, completion: completion)
-	}
-	
 	func addFeed(container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.addFeed(for: self, to: container, with: feed, completion: completion)
 	}
 
-	public func createFeed(with name: String?, url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
-		delegate.createFeed(for: self, with: name, url: url, completion: completion)
+	func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.removeFeed(for: self, from: container, with: feed, completion: completion)
+	}
+	
+	public func createFeed(url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
+		delegate.createFeed(for: self, url: url, completion: completion)
 	}
 	
 	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
@@ -391,29 +377,38 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 	}
 	
+	public func deleteFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		feedMetadata[feed.url] = nil
+		delegate.deleteFeed(for: self, with: feed, completion: completion)
+	}
+	
 	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.renameFeed(for: self, with: feed, to: name, completion: completion)
 	}
 	
-	@discardableResult
-	public func addFolder(_ folder: Folder, to parentFolder: Folder?) -> Bool {
-
-		// TODO: support subfolders, maybe, some day, if one of the sync systems
-		// supports subfolders. But, for now, parentFolder is ignored.
-		if folders!.contains(folder) {
-			return true
-		}
-		folders!.insert(folder)
-		postChildrenDidChangeNotification()
-		structureDidChange()
-		return true
+	public func restoreFeed(_ feed: Feed, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.restoreFeed(for: self, feed: feed, folder: folder, completion: completion)
+	}
+	
+	public func deleteFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.deleteFolder(for: self, with: folder, completion: completion)
 	}
 	
 	public func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.renameFolder(for: self, with: folder, to: name, completion: completion)
 	}
 
- 	public func importOPML(_ opmlDocument: RSOPMLDocument) {
+	public func restoreFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.restoreFolder(for: self, folder: folder, completion: completion)
+	}
+	
+	func addFolder(_ folder: Folder) {
+		folders!.insert(folder)
+		postChildrenDidChangeNotification()
+		structureDidChange()
+	}
+	
+	public func importOPML(_ opmlDocument: RSOPMLDocument) {
 
 		guard let children = opmlDocument.children else {
 			return
@@ -582,12 +577,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return _flattenedFeeds
 	}
 
-	public func deleteFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.deleteFeed(for: self, with: feed, completion: completion)
+	public func removeFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.removeFeed(for: self, from: self, with: feed, completion: completion)
 	}
-
-	func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.removeFeed(for: self, from: container, with: feed, completion: completion)
+	
+	public func addFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.addFeed(for: self, to: self, with: feed, completion: completion)
 	}
 	
 	func removeFeed(_ feed: Feed) {
@@ -600,10 +595,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		topLevelFeeds.insert(feed)
 		structureDidChange()
 		postChildrenDidChangeNotification()
-	}
-
-	public func deleteFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.deleteFolder(for: self, with: folder, completion: completion)
 	}
 
 	func deleteFolder(_ folder: Folder) {

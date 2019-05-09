@@ -136,29 +136,11 @@ private struct SidebarItemSpecifier {
 
 		if let feed = feed {
 			account?.deleteFeed(feed) { result in
-				switch result {
-				case .success():
-					break
-				case .failure(let error):
-					#if os(macOS)
-					NSApplication.shared.presentError(error)
-					#else
-					UIApplication.shared.presentError(error)
-					#endif
-				}
+				self.checkResult(result)
 			}
 		} else if let folder = folder {
 			account?.deleteFolder(folder) { result in
-				switch result {
-				case .success():
-					break
-				case .failure(let error):
-					#if os(macOS)
-					NSApplication.shared.presentError(error)
-					#else
-					UIApplication.shared.presentError(error)
-					#endif
-				}
+				self.checkResult(result)
 			}
 		}
 	}
@@ -178,7 +160,11 @@ private struct SidebarItemSpecifier {
 		guard let account = account, let feed = feed else {
 			return
 		}
-//		account.addFeed(feed, to: resolvedFolder())
+		
+		account.restoreFeed(feed, folder: resolvedFolder()) { result in
+			self.checkResult(result)
+		}
+		
 	}
 
 	private func restoreFolder() {
@@ -186,17 +172,36 @@ private struct SidebarItemSpecifier {
 		guard let account = account, let folder = folder else {
 			return
 		}
-		account.addFolder(folder, to: nil)
+		
+		account.restoreFolder(folder) { result in
+			self.checkResult(result)
+		}
+		
 	}
 
 	private func resolvedFolder() -> Folder? {
-
 		return path.resolveContainer() as? Folder
 	}
+	
+	private func checkResult(_ result: Result<Void, Error>) {
+		
+		switch result {
+		case .success:
+			break
+		case .failure(let error):
+			#if os(macOS)
+			NSApplication.shared.presentError(error)
+			#else
+			UIApplication.shared.presentError(error)
+			#endif
+		}
+
+	}
+	
 }
 
 private extension Node {
-
+	
 	func parentFolder() -> Folder? {
 
 		guard let parentNode = self.parent else {
