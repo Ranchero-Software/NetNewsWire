@@ -90,7 +90,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		
 		delegate?.processingDidBegin()
 
-		account!.createFeed(with: nil, url: url.absoluteString) { [weak self] result in
+		account!.createFeed(url: url.absoluteString) { [weak self] result in
 			
 			switch result {
 			case .success(let createFeedResult):
@@ -176,13 +176,29 @@ private extension AddFeedViewController {
 			}
 		}
 		
-		// TODO: make this async and add to above code
-		account.addFeed(feed, to: folder)
-		
-		// Move this into the mess above
-		NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-		
-		delegate?.processingDidEnd()
+		if let folder = folder {
+			folder.addFeed(feed) { [weak self] result in
+				switch result {
+				case .success:
+					self?.delegate?.processingDidEnd()
+					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+				case .failure(let error):
+					self?.delegate?.processingDidEnd()
+					self?.presentError(error)
+				}
+			}
+		} else {
+			account.addFeed(feed) { [weak self] result in
+				switch result {
+				case .success:
+					self?.delegate?.processingDidEnd()
+					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+				case .failure(let error):
+					self?.delegate?.processingDidEnd()
+					self?.presentError(error)
+				}
+			}
+		}
 		
 	}
 	
