@@ -137,11 +137,25 @@ private extension AddFeedController {
 			}
 		}
 		
-		// TODO: make this async and add to above code
-		account.addFeed(feed, to: folder)
-		
-		// Move this into the mess above
-		NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+		if let folder = folder {
+			folder.addFeed(feed) { result in
+				switch result {
+				case .success:
+					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
+		} else {
+			account.addFeed(feed) { result in
+				switch result {
+				case .success:
+					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
+		}
 		
 	}
 	

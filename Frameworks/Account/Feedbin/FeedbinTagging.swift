@@ -21,3 +21,15 @@ struct FeedbinTagging: Codable {
 	}
 
 }
+
+struct FeedbinCreateTagging: Codable {
+	
+	let feedID: Int
+	let name: String
+	
+	enum CodingKeys: String, CodingKey {
+		case feedID = "feed_id"
+		case name = "name"
+	}
+	
+}

@@ -134,12 +134,8 @@ private struct SidebarItemSpecifier {
 
 	func delete() {
 
-		guard let container = container else {
-			return
-		}
-
 		if let feed = feed {
-			container.deleteFeed(feed) { result in
+			account?.deleteFeed(feed) { result in
 				switch result {
 				case .success():
 					break
@@ -152,7 +148,7 @@ private struct SidebarItemSpecifier {
 				}
 			}
 		} else if let folder = folder {
-			container.deleteFolder(folder) { result in
+			account?.deleteFolder(folder) { result in
 				switch result {
 				case .success():
 					break
@@ -182,7 +178,7 @@ private struct SidebarItemSpecifier {
 		guard let account = account, let feed = feed else {
 			return
 		}
-		account.addFeed(feed, to: resolvedFolder())
+//		account.addFeed(feed, to: resolvedFolder())
 	}
 
 	private func restoreFolder() {

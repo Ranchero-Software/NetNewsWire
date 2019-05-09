@@ -242,12 +242,19 @@ private extension SidebarOutlineDataSource {
 		guard let feed = node.representedObject as? Feed else {
 			return
 		}
-		let sourceContainer = node.parent?.representedObject as? Container
-		let destinationFolder = parentNode.representedObject as? Folder
-		sourceContainer?.deleteFeed(feed) { result in
+		let source = node.parent?.representedObject as? Container
+		let destination = parentNode.representedObject as? Container
+		source?.removeFeed(feed) { result in
 			switch result {
 			case .success:
-				account.addFeed(feed, to: destinationFolder)
+				destination?.addFeed(feed) { result in
+					switch result {
+					case .success:
+						break
+					case .failure(let error):
+						NSApplication.shared.presentError(error)
+					}
+				}
 			case .failure(let error):
 				NSApplication.shared.presentError(error)
 			}

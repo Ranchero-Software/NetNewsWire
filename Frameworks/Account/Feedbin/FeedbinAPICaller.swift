@@ -220,6 +220,47 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
+	func createTagging(feedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
+		var request = URLRequest(url: callURL, credentials: credentials)
+		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
+
+		let payload: Data
+		do {
+			payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: feedID, name: name))
+		} catch {
+			completion(.failure(error))
+			return
+		}
+		
+		transport.send(request: request, method: HTTPMethod.post, payload:payload) { result in
+			
+			switch result {
+			case .success(let (response, _)):
+				if let taggingLocation = response.valueForHTTPHeaderField(HTTPResponseHeader.location),
+					let lowerBound = taggingLocation.range(of: "v2/taggings/")?.upperBound,
+					let upperBound = taggingLocation.range(of: ".json")?.lowerBound,
+					let taggingID = Int(taggingLocation[lowerBound..<upperBound]) {
+						completion(.success(taggingID))
+				} else {
+					completion(.failure(TransportError.noData))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+
+	func deleteTagging(taggingID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		let callURL = feedbinBaseURL.appendingPathComponent("taggings/\(taggingID).json")
+		var request = URLRequest(url: callURL, credentials: credentials)
+		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
+		transport.send(request: request, method: HTTPMethod.delete, completion: completion)
+	}
+	
 	func retrieveIcons(completionHandler completion: @escaping (Result<[FeedbinIcon]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("icons.json")

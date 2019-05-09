@@ -65,19 +65,48 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func deleteFeed(for account: Account, container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteFeed(for account: Account, from container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let account = container as? Account {
-			account.deleteFeed(feed)
+			account.removeFeed(feed)
 		}
 		if let folder = container as? Folder {
-			folder.deleteFeed(feed)
+			folder.removeFeed(feed)
 		}
 		completion(.success(()))
 		
 	}
-	
 
+	func deleteFeed(for account: Account, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		account.removeFeed(feed)
+		if let folders = account.folders {
+			for folder in folders {
+				folder.removeFeed(feed)
+			}
+		}
+		completion(.success(()))
+	}
+	
+	func addFeed(for account: Account, to container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		if let account = container as? Account {
+			account.addFeed(feed)
+		}
+		if let folder = container as? Folder {
+			folder.addFeed(feed)
+		}
+		completion(.success(()))
+	}
+	
+	func removeFeed(for account: Account, from container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		if let account = container as? Account {
+			account.removeFeed(feed)
+		}
+		if let folder = container as? Folder {
+			folder.removeFeed(feed)
+		}
+		completion(.success(()))
+	}
+	
 	func accountDidInitialize(_ account: Account) {
 	}
 

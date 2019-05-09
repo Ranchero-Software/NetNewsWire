@@ -364,22 +364,16 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return true // TODO
 	}
 
-	public func addFeed(_ feed: Feed, to folder: Folder?) {
-		if let folder = folder {
-			folder.addFeed(feed)
-		}
-		else {
-			addFeed(feed)
-		}
+	public func removeFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.removeFeed(for: self, from: self, with: feed, completion: completion)
 	}
-
-	public func addFeeds(_ feeds: Set<Feed>, to folder: Folder?) {
-		if let folder = folder {
-			folder.addFeeds(feeds)
-		}
-		else {
-			addFeeds(feeds)
-		}
+	
+	public func addFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.addFeed(for: self, to: self, with: feed, completion: completion)
+	}
+	
+	func addFeed(container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.addFeed(for: self, to: container, with: feed, completion: completion)
 	}
 
 	public func createFeed(with name: String?, url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
@@ -401,11 +395,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.renameFeed(for: self, with: feed, to: name, completion: completion)
 	}
 	
-	public func canAddFolder(_ folder: Folder, to containingFolder: Folder?) -> Bool {
-
-		return false // TODO
-	}
-
 	@discardableResult
 	public func addFolder(_ folder: Folder, to parentFolder: Folder?) -> Bool {
 
@@ -594,21 +583,21 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func deleteFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.deleteFeed(for: self, container: self, feed: feed, completion: completion)
+		delegate.deleteFeed(for: self, with: feed, completion: completion)
 	}
 
-	func deleteFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.deleteFeed(for: self, container: container, feed: feed, completion: completion)
+	func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.removeFeed(for: self, from: container, with: feed, completion: completion)
 	}
 	
-	func deleteFeed(_ feed: Feed) {
+	func removeFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
 	
-	func deleteFeeds(_ feeds: Set<Feed>) {
-		topLevelFeeds.subtract(feeds)
+	func addFeed(_ feed: Feed) {
+		topLevelFeeds.insert(feed)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
@@ -955,9 +944,16 @@ private extension Account {
 			}
 		}
 
-		if !feedsToAdd.isEmpty {
-			addFeeds(feedsToAdd, to: parentFolder)
+		if let parentFolder = parentFolder {
+			for feed in feedsToAdd {
+				parentFolder.addFeed(feed)
+			}
+		} else {
+			for feed in feedsToAdd {
+				addFeed(feed)
+			}
 		}
+		
 	}
     
     func updateUnreadCount() {
