@@ -64,19 +64,17 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 			self?.endShowingProgress()
 			
 			switch result {
-			case .success(let createFeedResult):
-				switch createFeedResult {
-				case .created(let feed):
-					self?.processFeed(feed, account: account, folder: folder, url: url, title: title)
-				case .multipleChoice(let feedChoices):
-					print()
-				case .alreadySubscribed:
-					self?.showAlreadySubscribedError(url.absoluteString)
-				case .notFound:
-					self?.showNoFeedsErrorMessage()
-				}
+			case .success(let feed):
+				self?.processFeed(feed, account: account, folder: folder, url: url, title: title)
 			case .failure(let error):
-				NSApplication.shared.presentError(error)
+				switch error {
+				case AccountError.createErrorAlreadySubscribed:
+					self?.showAlreadySubscribedError(url.absoluteString)
+				case AccountError.createErrorNotFound:
+					self?.showNoFeedsErrorMessage()
+				default:
+					NSApplication.shared.presentError(error)
+				}
 			}
 			
 		}

@@ -18,7 +18,6 @@ import os.log
 
 public enum FeedbinAccountDelegateError: String, Error {
 	case invalidParameter = "There was an invalid parameter passed."
-	case invalidResponse = "An invalid response was received from the service."
 }
 
 final class FeedbinAccountDelegate: AccountDelegate {
@@ -115,30 +114,23 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func createFeed(for account: Account, url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
+	func createFeed(for account: Account, url: String, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
-		caller.createSubscription(url: url) { result in
+		caller.createSubscription(url: url) { [weak self] result in
 			switch result {
 			case .success(let subResult):
 				switch subResult {
-				case .created(let sub):
-					DispatchQueue.main.async {
-						let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
-						feed.subscriptionID = String(sub.subscriptionID)
-						completion(.success(.created(feed)))
-					}
-				case .multipleChoice(let subs):
-					let resultSubs = subs.map { sub in return AccountCreateFeedChoice(name: sub.name ?? "", url: sub.url) }
-					DispatchQueue.main.async {
-						completion(.success(.multipleChoice(resultSubs)))
-					}
+				case .created(let subscription):
+					self?.createFeed(account: account, subscription: subscription, completion: completion)
+				case .multipleChoice(let choices):
+					self?.decideBestFeedChoice(account: account, url: url, choices: choices, completion: completion)
 				case .alreadySubscribed:
 					DispatchQueue.main.async {
-						completion(.success(.alreadySubscribed))
+						completion(.failure(AccountError.createErrorAlreadySubscribed))
 					}
 				case .notFound:
 					DispatchQueue.main.async {
-						completion(.success(.notFound))
+						completion(.failure(AccountError.createErrorNotFound))
 					}
 				}
 			case .failure(let error):
@@ -262,25 +254,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		let editedName = feed.editedName
 		
 		createFeed(for: account, url: feed.url) { [weak self] result in
-			
 			switch result {
-			case .success(let createResult):
-				
-				switch createResult {
-				case .created(let feed):
-					self?.processRestoredFeed(for: account, feed: feed, editedName: editedName, folder: folder, completion: completion)
-				default:
-					DispatchQueue.main.async {
-						completion(.failure(FeedbinAccountDelegateError.invalidResponse))
-					}
-				}
-				
+			case .success(let feed):
+				self?.processRestoredFeed(for: account, feed: feed, editedName: editedName, folder: folder, completion: completion)
 			case .failure(let error):
 				DispatchQueue.main.async {
 					completion(.failure(error))
 				}
 			}
-			
 		}
 		
 	}
@@ -659,6 +640,38 @@ private extension FeedbinAccountDelegate {
 			feed.folderRelationship = folderRelationship
 		} else {
 			feed.folderRelationship = [folderName: id]
+		}
+	}
+
+	func decideBestFeedChoice(account: Account, url: String, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
+		
+		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
+			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
+			let specifier = FeedSpecifier(title: choice.name, urlString: choice.url, source: source)
+			return specifier
+		}
+
+		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
+			if let bestSubscription = choices.filter({ bestSpecifier.urlString == $0.url }).first {
+				createFeed(for: account, url: bestSubscription.url, completion: completion)
+			} else {
+				DispatchQueue.main.async {
+					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+				}
+			}
+		} else {
+			DispatchQueue.main.async {
+				completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			}
+		}
+		
+	}
+	
+	func createFeed( account: Account, subscription sub: FeedbinSubscription, completion: @escaping (Result<Feed, Error>) -> Void) {
+		DispatchQueue.main.async {
+			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
+			feed.subscriptionID = String(sub.subscriptionID)
+			completion(.success(feed))
 		}
 	}
 	

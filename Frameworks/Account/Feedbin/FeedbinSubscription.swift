@@ -41,3 +41,15 @@ struct FeedbinUpdateSubscription: Codable {
 		case title
 	}
 }
+
+struct FeedbinSubscriptionChoice: Codable {
+	
+	let name: String?
+	let url: String
+	
+	enum CodingKeys: String, CodingKey {
+		case name = "title"
+		case url = "feed_url"
+	}
+	
+}

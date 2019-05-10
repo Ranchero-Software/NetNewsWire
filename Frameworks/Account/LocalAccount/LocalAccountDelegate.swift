@@ -22,7 +22,7 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	private weak var account: Account?
 	private var feedFinder: FeedFinder?
-	private var createFeedCompletion: ((Result<AccountCreateFeedResult, Error>) -> Void)?
+	private var createFeedCompletion: ((Result<Feed, Error>) -> Void)?
 	
 	private let refresher = LocalAccountRefresher()
 
@@ -46,7 +46,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
-	func createFeed(for account: Account, url urlString: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
+	func createFeed(for account: Account, url urlString: String, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
@@ -138,7 +138,7 @@ extension LocalAccountDelegate: FeedFinderDelegate {
 		
 		if let error = feedFinder.initialDownloadError {
 			if feedFinder.initialDownloadStatusCode == 404 {
-				createFeedCompletion!(.success(.notFound))
+				createFeedCompletion!(.failure(AccountError.createErrorNotFound))
 			} else {
 				createFeedCompletion!(.failure(error))
 			}
@@ -148,7 +148,7 @@ extension LocalAccountDelegate: FeedFinderDelegate {
 		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
 			let url = URL(string: bestFeedSpecifier.urlString),
 			let account = account else {
-			createFeedCompletion!(.success(.notFound))
+			createFeedCompletion!(.failure(AccountError.createErrorNotFound))
 			return
 		}
 
@@ -157,7 +157,7 @@ extension LocalAccountDelegate: FeedFinderDelegate {
 			if let parsedFeed = parsedFeed {
 				account.update(feed, with: parsedFeed, {})
 			}
-			self?.createFeedCompletion!(.success(.created(feed)))
+			self?.createFeedCompletion!(.success(feed))
 		}
 
 	}

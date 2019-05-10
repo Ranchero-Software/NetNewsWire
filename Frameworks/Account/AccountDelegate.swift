@@ -24,7 +24,7 @@ protocol AccountDelegate {
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
 	func deleteFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
 
-	func createFeed(for account: Account, url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void)
+	func createFeed(for account: Account, url: String, completion: @escaping (Result<Feed, Error>) -> Void)
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
 	func deleteFeed(for account: Account, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void)
 	

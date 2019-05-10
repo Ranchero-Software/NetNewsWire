@@ -11,7 +11,7 @@ import RSWeb
 
 enum CreateSubscriptionResult {
 	case created(FeedbinSubscription)
-	case multipleChoice([FeedbinSubscription])
+	case multipleChoice([FeedbinSubscriptionChoice])
 	case alreadySubscribed
 	case notFound
 }
@@ -157,7 +157,7 @@ final class FeedbinAPICaller: NSObject {
 						break
 					}
 					do {
-						let subscriptions = try JSONDecoder().decode([FeedbinSubscription].self, from: subData)
+						let subscriptions = try JSONDecoder().decode([FeedbinSubscriptionChoice].self, from: subData)
 						completion(.success(.multipleChoice(subscriptions)))
 					} catch {
 						completion(.failure(error))

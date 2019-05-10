@@ -36,6 +36,11 @@ public enum AccountType: Int {
 	// TODO: more
 }
 
+public enum AccountError: Error {
+	case createErrorNotFound
+	case createErrorAlreadySubscribed
+}
+
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
     public struct UserInfoKey {
@@ -362,7 +367,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.removeFeed(for: self, from: container, with: feed, completion: completion)
 	}
 	
-	public func createFeed(url: String, completion: @escaping (Result<AccountCreateFeedResult, Error>) -> Void) {
+	public func createFeed(url: String, completion: @escaping (Result<Feed, Error>) -> Void) {
 		delegate.createFeed(for: self, url: url, completion: completion)
 	}
 	

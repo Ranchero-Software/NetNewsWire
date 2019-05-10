@@ -102,32 +102,25 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         
 		account.createFeed(url: url) { result in
 			switch result {
-			case .success(let createFeedResult):
+			case .success(let feed):
 
-				switch createFeedResult {
-				case .created(let feed):
-					
-					if let editedName = titleFromArgs {
-						account.renameFeed(feed, to: editedName) { result in
-						}
+				if let editedName = titleFromArgs {
+					account.renameFeed(feed, to: editedName) { result in
 					}
-					
-					// add the feed, putting it in a folder if needed
-					account.addFeed(feed) { result in
-						switch result {
-						case .success:
-							NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-							let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
-							command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
-						case .failure:
-							command.resumeExecution(withResult:nil)
-						}
-					}
-					
-				default:
-					command.resumeExecution(withResult:nil)
 				}
-
+				
+				// add the feed, putting it in a folder if needed
+				account.addFeed(feed) { result in
+					switch result {
+					case .success:
+						NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+						let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
+						command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
+					case .failure:
+						command.resumeExecution(withResult:nil)
+					}
+				}
+					
 			case .failure:
 				command.resumeExecution(withResult:nil)
 			}
