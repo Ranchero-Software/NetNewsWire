@@ -15,7 +15,6 @@ final class AccountsPreferencesViewController: NSViewController {
 	@IBOutlet weak var detailView: NSView!
 	@IBOutlet weak var deleteButton: NSButton!
 	
-	private var deleteController: AccountsDeleteWindowController?
 	private var sortedAccounts = [Account]()
 
 	override func viewDidLoad() {
@@ -43,11 +42,21 @@ final class AccountsPreferencesViewController: NSViewController {
 			return
 		}
 		
-		let account = sortedAccounts[tableView.selectedRow]
-		deleteController = AccountsDeleteWindowController(account: account)
-		deleteController!.runSheetOnWindow(view.window!) { [weak self] result in
-			if result == NSApplication.ModalResponse.OK {
-				self?.showController(AccountsAddViewController())
+		let acctName = sortedAccounts[tableView.selectedRow].nameForDisplay
+		
+		let alert = NSAlert()
+		alert.alertStyle = .warning
+		let deletePrompt = NSLocalizedString("Delete", comment: "Delete")
+		alert.messageText = "\(deletePrompt) \"\(acctName)\"?"
+		alert.informativeText = NSLocalizedString("Are you sure you want to delete the account \"\(acctName)\"?  This can not be undone.", comment: "Delete text")
+		
+		alert.addButton(withTitle: NSLocalizedString("Delete", comment: "Delete Account"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Delete Account"))
+			
+		alert.beginSheetModal(for: view.window!) { [weak self] result in
+			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
+				guard let self = self else { return }
+				AccountManager.shared.deleteAccount(self.sortedAccounts[self.tableView.selectedRow])
 			}
 		}
 		
