@@ -172,9 +172,14 @@ final class FeedbinAPICaller: NSObject {
 				
 				switch error {
 				case TransportError.httpError(let status):
-					if status == 404 {
+					switch status {
+					case 401:
+						// I don't know why we get 401's here.  This looks like a Feedbin bug, but it only happens
+						// when you are already subscribed to the feed.
+						completion(.success(.alreadySubscribed))
+					case 404:
 						completion(.success(.notFound))
-					} else {
+					default:
 						completion(.failure(error))
 					}
 				default:
