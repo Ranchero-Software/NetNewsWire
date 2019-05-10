@@ -152,6 +152,11 @@ extension LocalAccountDelegate: FeedFinderDelegate {
 			return
 		}
 
+		if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
+			createFeedCompletion!(.failure(AccountError.createErrorAlreadySubscribed))
+			return
+		}
+		
 		let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
 		InitialFeedDownloader.download(url) { [weak self] parsedFeed in
 			if let parsedFeed = parsedFeed {

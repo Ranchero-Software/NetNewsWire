@@ -93,25 +93,22 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		account!.createFeed(url: url.absoluteString) { [weak self] result in
 			
 			switch result {
-			case .success(let createFeedResult):
-				switch createFeedResult {
-				case .created(let feed):
-					self?.processFeed(feed, account: account!, folder: folder, url: url, title: title)
-				case .multipleChoice(let feedChoices):
-					print()
-					self?.delegate?.processingDidCancel()
-				case .alreadySubscribed:
+			case .success(let feed):
+				self?.processFeed(feed, account: account!, folder: folder, url: url, title: title)
+			case .failure(let error):
+				switch error {
+				case AccountError.createErrorAlreadySubscribed:
 					self?.showAlreadySubscribedError()
 					self?.delegate?.processingDidCancel()
-				case .notFound:
+				case AccountError.createErrorNotFound:
 					self?.showNoFeedsErrorMessage()
 					self?.delegate?.processingDidCancel()
+				default:
+					self?.presentError(error)
+					self?.delegate?.processingDidCancel()
 				}
-			case .failure(let error):
-				self?.presentError(error)
-				self?.delegate?.processingDidCancel()
 			}
-			
+
 		}
 
 	}
