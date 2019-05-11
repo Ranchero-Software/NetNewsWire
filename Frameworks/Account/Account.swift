@@ -290,28 +290,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.refreshAll(for: self, completion: completion)
 	}
 
-	public func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping (() -> Void)) {
-
-		feed.takeSettings(from: parsedFeed)
-
-		database.update(feedID: feed.feedID, parsedFeed: parsedFeed) { (newArticles, updatedArticles) in
-
-			var userInfo = [String: Any]()
-			if let newArticles = newArticles, !newArticles.isEmpty {
-				self.updateUnreadCounts(for: Set([feed]))
-				userInfo[UserInfoKey.newArticles] = newArticles
-			}
-			if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
-				userInfo[UserInfoKey.updatedArticles] = updatedArticles
-			}
-			userInfo[UserInfoKey.feeds] = Set([feed])
-
-			completion()
-
-			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
-		}
+	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.importOPML(for: self, opmlFile: opmlFile, completion: 	completion)
 	}
-
+	
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
 
 		// Returns set of Articles whose statuses did change.
@@ -413,12 +395,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		structureDidChange()
 	}
 	
-	public func importOPML(_ opmlDocument: RSOPMLDocument) {
+	func loadOPML(_ opmlDocument: RSOPMLDocument) {
 
 		guard let children = opmlDocument.children else {
 			return
 		}
-		importOPMLItems(children, parentFolder: nil)
+		loadOPMLItems(children, parentFolder: nil)
 		structureDidChange()
 
 		DispatchQueue.main.async {
@@ -573,6 +555,28 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		feedDictionaryNeedsUpdate = true
 	}
 
+	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping (() -> Void)) {
+		
+		feed.takeSettings(from: parsedFeed)
+		
+		database.update(feedID: feed.feedID, parsedFeed: parsedFeed) { (newArticles, updatedArticles) in
+			
+			var userInfo = [String: Any]()
+			if let newArticles = newArticles, !newArticles.isEmpty {
+				self.updateUnreadCounts(for: Set([feed]))
+				userInfo[UserInfoKey.newArticles] = newArticles
+			}
+			if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
+				userInfo[UserInfoKey.updatedArticles] = updatedArticles
+			}
+			userInfo[UserInfoKey.feeds] = Set([feed])
+			
+			completion()
+			
+			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
+		}
+	}
+	
 	// MARK: - Container
 
 	public func flattenedFeeds() -> Set<Feed> {
@@ -735,12 +739,12 @@ private extension Account {
 	}
 
 	func pullObjectsFromDisk() {
-		importAccountMetadata()
-		importFeedMetadata()
-		importOPMLFile(path: opmlFilePath)
+		loadAccountMetadata()
+		loadFeedMetadata()
+		loadOPMLFile(path: opmlFilePath)
 	}
 
-	func importAccountMetadata() {
+	func loadAccountMetadata() {
 		let url = URL(fileURLWithPath: metadataPath)
 		guard let data = try? Data(contentsOf: url) else {
 			metadata.delegate = self
@@ -751,7 +755,7 @@ private extension Account {
 		metadata.delegate = self
 	}
 
-	func importFeedMetadata() {
+	func loadFeedMetadata() {
 		let url = URL(fileURLWithPath: feedMetadataPath)
 		guard let data = try? Data(contentsOf: url) else {
 			return
@@ -761,7 +765,7 @@ private extension Account {
 		feedMetadata.values.forEach { $0.delegate = self }
 	}
 
-	func importOPMLFile(path: String) {
+	func loadOPMLFile(path: String) {
 		let opmlFileURL = URL(fileURLWithPath: path)
 		var fileData: Data?
 		do {
@@ -794,7 +798,7 @@ private extension Account {
 		}
 
 		BatchUpdate.shared.perform {
-			importOPMLItems(children, parentFolder: nil)
+			loadOPMLItems(children, parentFolder: nil)
 		}
 
 	}
@@ -901,7 +905,7 @@ private extension Account {
 		feedDictionaryNeedsUpdate = false
 	}
 
-	func createFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
+	func ensureFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let metadata = feedMetadata(feedURL: feedURL, feedID: feedURL)
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, metadata: metadata)
@@ -913,14 +917,14 @@ private extension Account {
 		return feed
 	}
 
-	func importOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
+	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
 
 		var feedsToAdd = Set<Feed>()
 
 		items.forEach { (item) in
 
 			if let feedSpecifier = item.feedSpecifier {
-				let feed = createFeed(with: feedSpecifier)
+				let feed = ensureFeed(with: feedSpecifier)
 				feedsToAdd.insert(feed)
 				return
 			}
@@ -928,14 +932,14 @@ private extension Account {
 			guard let folderName = item.titleFromAttributes else {
 				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
 				if let itemChildren = item.children {
-					importOPMLItems(itemChildren, parentFolder: parentFolder)
+					loadOPMLItems(itemChildren, parentFolder: parentFolder)
 				}
 				return
 			}
 
 			if let folder = ensureFolder(with: folderName) {
 				if let itemChildren = item.children {
-					importOPMLItems(itemChildren, parentFolder: folder)
+					loadOPMLItems(itemChildren, parentFolder: folder)
 				}
 			}
 		}

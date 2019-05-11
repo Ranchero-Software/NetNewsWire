@@ -62,6 +62,10 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
+	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+	}
+
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in

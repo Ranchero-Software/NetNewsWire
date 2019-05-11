@@ -19,7 +19,7 @@ struct DefaultFeedsImporter {
 
 		appDelegate.logDebugMessage("Importing default feeds.")
 		let defaultFeedsURL = Bundle.main.url(forResource: "DefaultFeeds", withExtension: "opml")!
-		try! OPMLImporter.parseAndImport(fileURL: defaultFeedsURL, account: AccountManager.shared.defaultAccount)
+		AccountManager.shared.defaultAccount.importOPML(defaultFeedsURL) { result in }
 	}
 
 	private static func shouldImportDefaultFeeds(_ isFirstRun: Bool) -> Bool {

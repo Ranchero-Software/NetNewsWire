@@ -20,7 +20,8 @@ protocol AccountDelegate {
 	var refreshProgress: DownloadProgress { get }
 
 	func refreshAll(for account: Account, completion: (() -> Void)?)
-
+	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void)
+	
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
 	func deleteFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
 

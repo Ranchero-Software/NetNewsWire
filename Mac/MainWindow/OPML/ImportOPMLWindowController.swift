@@ -64,13 +64,13 @@ class ImportOPMLWindowController: NSWindowController {
 		panel.allowedFileTypes = ["opml", "xml"]
 		panel.allowsOtherFileTypes = false
 		
-		panel.beginSheetModal(for: hostWindow!) { result in
-			if result == NSApplication.ModalResponse.OK, let url = panel.url {
-				DispatchQueue.main.async {
-					do {
-						try OPMLImporter.parseAndImport(fileURL: url, account: account)
-					}
-					catch let error as NSError {
+		panel.beginSheetModal(for: hostWindow!) { modalResult in
+			if modalResult == NSApplication.ModalResponse.OK, let url = panel.url {
+				account.importOPML(url) { result in
+					switch result {
+					case .success:
+						break
+					case .failure(let error):
 						NSApplication.shared.presentError(error)
 					}
 				}

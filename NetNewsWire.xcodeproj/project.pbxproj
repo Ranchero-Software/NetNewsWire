@@ -89,7 +89,6 @@
 		51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */; };
 		51C45296226509D300C03939 /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
 		51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */; };
-		51C45298226509E600C03939 /* OPMLImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */; };
 		51C4529922650A0000C03939 /* ArticleStylesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97881ED9ECEF007D329B /* ArticleStylesManager.swift */; };
 		51C4529A22650A0400C03939 /* ArticleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97871ED9ECEF007D329B /* ArticleStyle.swift */; };
 		51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
@@ -259,7 +258,6 @@
 		84C9FCA42262A1B800D921D6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FCA22262A1B800D921D6 /* LaunchScreen.storyboard */; };
 		84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
 		84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */; };
-		84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */; };
 		84E185B3203B74E500F69BFA /* SingleLineTextFieldSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */; };
 		84E185C3203BB12600F69BFA /* MultilineTextFieldSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */; };
 		84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
@@ -834,7 +832,6 @@
 		84CBDDAE1FD3674C005A61AA /* Technotes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Technotes; sourceTree = "<group>"; };
 		84CC88171FE59CBF00644329 /* SmartFeedsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeedsController.swift; sourceTree = "<group>"; };
 		84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailStatusBarView.swift; sourceTree = "<group>"; };
-		84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLImporter.swift; sourceTree = "<group>"; };
 		84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleLineTextFieldSizer.swift; sourceTree = "<group>"; };
 		84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextFieldSizer.swift; sourceTree = "<group>"; };
 		84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
@@ -1654,7 +1651,6 @@
 		84DAEE201F86CAE00058304B /* Importers */ = {
 			isa = PBXGroup;
 			children = (
-				84DAEE2F1F86CAFE0058304B /* OPMLImporter.swift */,
 				849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */,
 				84A3EE52223B667F00557320 /* DefaultFeeds.opml */,
 			);
@@ -2319,7 +2315,6 @@
 				51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */,
 				51C45259226508D300C03939 /* AppDefaults.swift in Sources */,
 				51C45293226509C800C03939 /* StarredFeedDelegate.swift in Sources */,
-				51C45298226509E600C03939 /* OPMLImporter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2374,7 +2369,6 @@
 				84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */,
 				84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */,
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,
-				84DAEE301F86CAFE0058304B /* OPMLImporter.swift in Sources */,
 				849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */,
 				84A37CB5201ECD610087C5AF /* RenameWindowController.swift in Sources */,
 				84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */,

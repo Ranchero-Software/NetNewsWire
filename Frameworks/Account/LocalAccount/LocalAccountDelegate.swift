@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSParser
 import RSWeb
 
 public enum LocalAccountDelegateError: String, Error {
@@ -34,6 +35,44 @@ final class LocalAccountDelegate: AccountDelegate {
 	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
 		refresher.refreshFeeds(account.flattenedFeeds())
 		completion?()
+	}
+	
+	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+
+		var fileData: Data?
+		
+		do {
+			fileData = try Data(contentsOf: opmlFile)
+		} catch {
+			completion(.failure(error))
+			return
+		}
+		
+		guard let opmlData = fileData else {
+			completion(.success(()))
+			return
+		}
+		
+		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
+		var opmlDocument: RSOPMLDocument?
+		
+		do {
+			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+		} catch {
+			completion(.failure(error))
+			return
+		}
+		
+		guard let loadDocument = opmlDocument else {
+			completion(.success(()))
+			return
+		}
+
+		// We use the same mechanism to load local accounts as we do to load the subscription
+		// OPML all accounts.
+		account.loadOPML(loadDocument)
+		completion(.success(()))
+
 	}
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
