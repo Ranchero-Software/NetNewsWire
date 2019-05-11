@@ -341,6 +341,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return ensureFolder(with: folderName)
 	}
 
+	func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
+		let feedURL = opmlFeedSpecifier.feedURL
+		let metadata = feedMetadata(feedURL: feedURL, feedID: feedURL)
+		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, metadata: metadata)
+		if let feedTitle = opmlFeedSpecifier.title {
+			if feed.name == nil {
+				feed.name = feedTitle
+			}
+		}
+		return feed
+	}
+
 	func addFeed(container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.addFeed(for: self, to: container, with: feed, completion: completion)
 	}
@@ -905,18 +917,6 @@ private extension Account {
 		feedDictionaryNeedsUpdate = false
 	}
 
-	func ensureFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
-		let feedURL = opmlFeedSpecifier.feedURL
-		let metadata = feedMetadata(feedURL: feedURL, feedID: feedURL)
-		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, metadata: metadata)
-		if let feedTitle = opmlFeedSpecifier.title {
-			if feed.name == nil {
-				feed.name = feedTitle
-			}
-		}
-		return feed
-	}
-
 	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
 
 		var feedsToAdd = Set<Feed>()
@@ -924,7 +924,7 @@ private extension Account {
 		items.forEach { (item) in
 
 			if let feedSpecifier = item.feedSpecifier {
-				let feed = ensureFeed(with: feedSpecifier)
+				let feed = newFeed(with: feedSpecifier)
 				feedsToAdd.insert(feed)
 				return
 			}
