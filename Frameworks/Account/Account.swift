@@ -179,7 +179,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.supportsSubFolders
 	}
 	
-	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport = URLSession.webserviceTransport()) {
+	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
 		
 		switch type {
 		case .onMyMac:

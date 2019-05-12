@@ -6,6 +6,10 @@
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
+// Feedbin currently has a maximum of 250 requests per second.  If you begin to receive
+// HTTP Response Codes of 403, you have exceeded this limit.  Wait 5 minutes and your
+// IP address will become unblocked and you can use the service again.
+
 import Foundation
 import RSWeb
 

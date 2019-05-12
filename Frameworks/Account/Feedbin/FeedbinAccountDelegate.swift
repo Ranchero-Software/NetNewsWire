@@ -41,8 +41,31 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	init(transport: Transport) {
-		caller = FeedbinAPICaller(transport: transport)
+	init(transport: Transport?) {
+		
+		if transport != nil {
+			
+			caller = FeedbinAPICaller(transport: transport!)
+			
+		} else {
+			
+			let sessionConfiguration = URLSessionConfiguration.default
+			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
+			sessionConfiguration.timeoutIntervalForRequest = 60.0
+			sessionConfiguration.httpShouldSetCookies = false
+			sessionConfiguration.httpCookieAcceptPolicy = .never
+			sessionConfiguration.httpMaximumConnectionsPerHost = 1
+			sessionConfiguration.httpCookieStorage = nil
+			sessionConfiguration.urlCache = nil
+			
+			if let userAgentHeaders = UserAgent.headers() {
+				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
+			}
+			
+			caller = FeedbinAPICaller(transport: URLSession(configuration: sessionConfiguration))
+			
+		}
+		
 	}
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
