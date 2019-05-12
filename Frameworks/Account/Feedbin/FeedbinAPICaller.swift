@@ -22,6 +22,14 @@ enum CreateSubscriptionResult {
 
 final class FeedbinAPICaller: NSObject {
 	
+	struct ConditionalGetKeys {
+		static let subscriptions = "subscriptions"
+		static let tags = "tags"
+		static let taggings = "taggings"
+		static let icons = "icons"
+	}
+
+	
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
 	private var transport: Transport!
 	
@@ -61,14 +69,14 @@ final class FeedbinAPICaller: NSObject {
 	func retrieveTags(completionHandler completion: @escaping (Result<[FeedbinTag]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.tags]
+		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		transport.send(request: request, resultType: [FeedbinTag].self) { [weak self] result in
 			
 			switch result {
 			case .success(let (response, tags)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.tags, headers: response.allHeaderFields)
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
 				completion(.success(tags))
 			case .failure(let error):
 				completion(.failure(error))
@@ -107,14 +115,14 @@ final class FeedbinAPICaller: NSObject {
 	func retrieveSubscriptions(completionHandler completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.subscriptions]
+		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [FeedbinSubscription].self) { [weak self] result in
 			
 			switch result {
 			case .success(let (response, subscriptions)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
 				completion(.success(subscriptions))
 			case .failure(let error):
 				completion(.failure(error))
@@ -212,14 +220,14 @@ final class FeedbinAPICaller: NSObject {
 	func retrieveTaggings(completionHandler completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.taggings]
+		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.taggings]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [FeedbinTagging].self) { [weak self] result in
 			
 			switch result {
 			case .success(let (response, taggings)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.taggings, headers: response.allHeaderFields)
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
 				completion(.success(taggings))
 			case .failure(let error):
 				completion(.failure(error))
@@ -273,14 +281,14 @@ final class FeedbinAPICaller: NSObject {
 	func retrieveIcons(completionHandler completion: @escaping (Result<[FeedbinIcon]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("icons.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[AccountMetadata.ConditionalGetKeys.icons]
+		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.icons]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [FeedbinIcon].self) { [weak self] result in
 			
 			switch result {
 			case .success(let (response, icons)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: AccountMetadata.ConditionalGetKeys.icons, headers: response.allHeaderFields)
+				self?.storeConditionalGet(metadata: self?.accountMetadata, key: ConditionalGetKeys.icons, headers: response.allHeaderFields)
 				completion(.success(icons))
 			case .failure(let error):
 				completion(.failure(error))

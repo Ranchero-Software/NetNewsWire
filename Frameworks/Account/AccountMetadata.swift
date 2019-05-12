@@ -15,13 +15,6 @@ protocol AccountMetadataDelegate: class {
 
 final class AccountMetadata: Codable {
 
-	struct ConditionalGetKeys {
-		static let subscriptions = "subscriptions"
-		static let tags = "tags"
-		static let taggings = "taggings"
-		static let icons = "icons"
-	}
-	
 	enum CodingKeys: String, CodingKey {
 		case name
 		case isActive
