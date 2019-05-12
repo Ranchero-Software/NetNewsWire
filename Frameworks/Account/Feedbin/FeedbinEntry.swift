@@ -18,10 +18,9 @@ struct FeedbinEntry: Codable {
 	let url: String?
 	let authorName: String?
 	let contentHTML: String?
-	let contentDiffHTML: String?
 	let summary: String?
-	let datePublished: Date?
-	let dateArrived: Date?
+	let datePublished: String?
+	let dateArrived: String?
 
 	enum CodingKeys: String, CodingKey {
 		case articleID = "id"
@@ -30,10 +29,21 @@ struct FeedbinEntry: Codable {
 		case url = "url"
 		case authorName = "author"
 		case contentHTML = "content"
-		case contentDiffHTML = "content_diff"
 		case summary = "summary"
 		case datePublished = "published"
 		case dateArrived = "created_at"
 	}
 
+	// Feedbin dates can't be decoded by the JSONDecoding 8601 decoding strategy.  Feedbin
+	// requires a very specific date formatter to work and even then it fails occasionally.
+	// Rather than loose all the entries we only lose the one date by decoding as a string
+	// and letting the one date fail when parsed.
+	func parseDatePublished() -> Date? {
+		if datePublished != nil  {
+			return FeedbinDate.formatter.date(from: datePublished!)
+		} else {
+			return nil
+		}
+	}
+	
 }

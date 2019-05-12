@@ -28,7 +28,6 @@ final class FeedbinAPICaller: NSObject {
 		static let taggings = "taggings"
 		static let icons = "icons"
 	}
-
 	
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
 	private var transport: Transport!
@@ -298,6 +297,62 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
+	func retrieveEntries(_ feedID: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
+		
+		let since: Date = {
+			if let lastArticleFetch = accountMetadata?.lastArticleFetch {
+				return lastArticleFetch
+			} else {
+				return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
+			}
+		}()
+		
+		let sinceString = FeedbinDate.formatter.string(from: since)
+		var callURL = URLComponents(url: feedbinBaseURL.appendingPathComponent("feeds/\(feedID)/entries.json"), resolvingAgainstBaseURL: false)!
+		callURL.queryItems = [URLQueryItem(name: "since", value: sinceString)]
+		let request = URLRequest(url: callURL.url!, credentials: credentials)
+		
+		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
+			
+			switch result {
+			case .success(let (response, entries)):
+				
+				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
+				completion(.success((entries, pagingInfo.nextPage)))
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
+	func retrieveEntries(page: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
+		
+		guard let callURL = URL(string: page) else {
+			completion(.success((nil, nil)))
+			return
+		}
+		
+		let request = URLRequest(url: callURL, credentials: credentials)
+
+		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
+			
+			switch result {
+			case .success(let (response, entries)):
+				
+				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
+				completion(.success((entries, pagingInfo.nextPage)))
+
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+
 }
 
 // MARK: Private

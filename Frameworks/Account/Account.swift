@@ -568,10 +568,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping (() -> Void)) {
-		
 		feed.takeSettings(from: parsedFeed)
+		update(feed, parsedItems: parsedFeed.items, completion)
+	}
+	
+	func update(_ feed: Feed, parsedItems: Set<ParsedItem>, _ completion: @escaping (() -> Void)) {
 		
-		database.update(feedID: feed.feedID, parsedFeed: parsedFeed) { (newArticles, updatedArticles) in
+		database.update(feedID: feed.feedID, parsedItems: parsedItems) { (newArticles, updatedArticles) in
 			
 			var userInfo = [String: Any]()
 			if let newArticles = newArticles, !newArticles.isEmpty {
@@ -587,8 +590,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			
 			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
 		}
+		
 	}
-	
+
 	// MARK: - Container
 
 	public func flattenedFeeds() -> Set<Feed> {

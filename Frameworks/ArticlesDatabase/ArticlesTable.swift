@@ -119,9 +119,9 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: Updating
 	
-	func update(_ feedID: String, _ parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
+	func update(_ feedID: String, _ parsedItems: Set<ParsedItem>, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
 
-		if parsedFeed.items.isEmpty {
+		if parsedItems.isEmpty {
 			completion(nil, nil)
 			return
 		}
@@ -135,14 +135,14 @@ final class ArticlesTable: DatabaseTable {
 		// 7. Call back with new and updated Articles.
 		// 8. Update search index.
 
-		let articleIDs = Set(parsedFeed.items.map { $0.articleID })
+		let articleIDs = Set(parsedItems.map { $0.articleID })
 		
 		self.queue.update { (database) in
 			
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, database) //1
 			assert(statusesDictionary.count == articleIDs.count)
 			
-			let allIncomingArticles = Article.articlesWithParsedItems(parsedFeed.items, self.accountID, feedID, statusesDictionary) //2
+			let allIncomingArticles = Article.articlesWithParsedItems(parsedItems, self.accountID, feedID, statusesDictionary) //2
 			if allIncomingArticles.isEmpty {
 				self.callUpdateArticlesCompletionBlock(nil, nil, completion)
 				return

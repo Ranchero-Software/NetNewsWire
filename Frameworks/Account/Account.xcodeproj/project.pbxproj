@@ -30,6 +30,7 @@
 		51D5875B227F630B00900287 /* tags_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58758227F630B00900287 /* tags_add.json */; };
 		51D5875C227F630B00900287 /* tags_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58759227F630B00900287 /* tags_initial.json */; };
 		51D5875E227F643C00900287 /* AccountFolderSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D5875D227F643C00900287 /* AccountFolderSyncTest.swift */; };
+		51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E490352288C37100C791F0 /* FeedbinDate.swift */; };
 		841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973EF1F6DD19E006346C4 /* RSCore.framework */; };
 		841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973FA1F6DD1AC006346C4 /* RSParser.framework */; };
 		841974011F6DD1EC006346C4 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974001F6DD1EC006346C4 /* Folder.swift */; };
@@ -126,6 +127,7 @@
 		51D58758227F630B00900287 /* tags_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_add.json; sourceTree = "<group>"; };
 		51D58759227F630B00900287 /* tags_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_initial.json; sourceTree = "<group>"; };
 		51D5875D227F643C00900287 /* AccountFolderSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFolderSyncTest.swift; sourceTree = "<group>"; };
+		51E490352288C37100C791F0 /* FeedbinDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinDate.swift; sourceTree = "<group>"; };
 		841973E81F6DD19E006346C4 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		841973F41F6DD1AC006346C4 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		841974001F6DD1EC006346C4 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 			children = (
 				5144EA4D227B829A00D19003 /* FeedbinAccountDelegate.swift */,
 				5144EA48227B497600D19003 /* FeedbinAPICaller.swift */,
+				51E490352288C37100C791F0 /* FeedbinDate.swift */,
 				84CAD7151FDF2E22000F0755 /* FeedbinEntry.swift */,
 				5133230F22810E5700C30F19 /* FeedbinIcon.swift */,
 				84245C841FDDD8CB0074AFBB /* FeedbinSubscription.swift */,
@@ -508,6 +511,7 @@
 				841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */,
 				5165D73122837F3400D9D53D /* InitialFeedDownloader.swift in Sources */,
 				846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */,
+				51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */,
 				5165D72922835F7A00D9D53D /* FeedSpecifier.swift in Sources */,
 				844B297D2106C7EC004020B3 /* Feed.swift in Sources */,
 				84B2D4D02238CD8A00498ADA /* FeedMetadata.swift in Sources */,

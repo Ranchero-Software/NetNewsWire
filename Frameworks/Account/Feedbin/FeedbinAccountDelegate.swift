@@ -71,19 +71,34 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
 	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
-		refreshFolders(account) { [weak self] result in
+		
+		refreshAccount(account) { [weak self] result in
 			switch result {
 			case .success():
-				DispatchQueue.main.async {
-					completion?()
+				
+				self?.refreshArticles(account) { result in
+					switch result {
+					case .success():
+						DispatchQueue.main.async {
+							completion?()
+						}
+					case .failure(let error):
+						DispatchQueue.main.async {
+							completion?()
+							self?.handleError(error)
+						}
+					}
 				}
+				
 			case .failure(let error):
 				DispatchQueue.main.async {
 					completion?()
 					self?.handleError(error)
 				}
 			}
+			
 		}
+		
 	}
 
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -383,7 +398,7 @@ private extension FeedbinAccountDelegate {
 		#endif
 	}
 	
-	func refreshFolders(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		caller.retrieveTags { [weak self] result in
 			switch result {
@@ -395,109 +410,6 @@ private extension FeedbinAccountDelegate {
 			case .failure(let error):
 				completion(.failure(error))
 			}
-		}
-		
-	}
-	
-	func importOPMLItems(_ account: Account, items: [RSOPMLItem], parentFolder: Folder?) {
-		
-		items.forEach { (item) in
-			
-			if let feedSpecifier = item.feedSpecifier {
-				importFeedSpecifier(account, feedSpecifier: feedSpecifier, parentFolder: parentFolder)
-				return
-			}
-			
-			guard let folderName = item.titleFromAttributes else {
-				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
-				if let itemChildren = item.children {
-					importOPMLItems(account, items: itemChildren, parentFolder: parentFolder)
-				}
-				return
-			}
-			
-			if let folder = account.ensureFolder(with: folderName) {
-				if let itemChildren = item.children {
-					importOPMLItems(account, items: itemChildren, parentFolder: folder)
-				}
-			}
-			
-		}
-		
-	}
-
-	func importFeedSpecifier(_ account: Account, feedSpecifier: RSOPMLFeedSpecifier, parentFolder: Folder?) {
-		
-		caller.createSubscription(url: feedSpecifier.feedURL) { [weak self] result in
-			
-			switch result {
-			case .success(let subResult):
-				switch subResult {
-				case .created(let sub):
-					
-					DispatchQueue.main.async {
-						
-						let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
-						feed.subscriptionID = String(sub.subscriptionID)
-						
-						self?.importFeedSpecifierPostProcess(account: account, sub: sub, feedSpecifier: feedSpecifier, feed: feed, parentFolder: parentFolder)
-						
-					}
-					
-				default:
-					break
-				}
-				
-			case .failure(let error):
-				guard let self = self else { return }
-				os_log(.error, log: self.log, "Create feed on OPML import failed: %@.", error.localizedDescription)
-			}
-			
-		}
-
-	}
-	
-	func importFeedSpecifierPostProcess(account: Account, sub: FeedbinSubscription, feedSpecifier: RSOPMLFeedSpecifier, feed: Feed, parentFolder: Folder?) {
-		
-		// Rename the feed if its name in the OPML file doesn't match the found name
-		if sub.name != feedSpecifier.title, let newName = feedSpecifier.title {
-			
-			self.caller.renameSubscription(subscriptionID: String(sub.subscriptionID), newName: newName) { [weak self] result in
-				switch result {
-				case .success:
-					DispatchQueue.main.async {
-						feed.editedName = newName
-					}
-				case .failure(let error):
-					guard let self = self else { return }
-					os_log(.error, log: self.log, "Rename feed on OPML import failed: %@.", error.localizedDescription)
-				}
-			}
-			
-		}
-		
-		// Move the new feed if it is in a folder
-		if let folder = parentFolder, let feedID = Int(feed.feedID) {
-			
-			self.caller.createTagging(feedID: feedID, name: folder.name ?? "") { [weak self] result in
-				switch result {
-				case .success(let taggingID):
-					DispatchQueue.main.async {
-						self?.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
-						folder.addFeed(feed)
-					}
-				case .failure(let error):
-					guard let self = self else { return }
-					os_log(.error, log: self.log, "Move feed to folder on OPML import failed: %@.", error.localizedDescription)
-				}
-			}
-			
-		} else {
-			
-			DispatchQueue.main.async {
-				account.addFeed(feed)
-			}
-			
 		}
 		
 	}
@@ -731,6 +643,109 @@ private extension FeedbinAccountDelegate {
 
 	}
 	
+	func importOPMLItems(_ account: Account, items: [RSOPMLItem], parentFolder: Folder?) {
+		
+		items.forEach { (item) in
+			
+			if let feedSpecifier = item.feedSpecifier {
+				importFeedSpecifier(account, feedSpecifier: feedSpecifier, parentFolder: parentFolder)
+				return
+			}
+			
+			guard let folderName = item.titleFromAttributes else {
+				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
+				if let itemChildren = item.children {
+					importOPMLItems(account, items: itemChildren, parentFolder: parentFolder)
+				}
+				return
+			}
+			
+			if let folder = account.ensureFolder(with: folderName) {
+				if let itemChildren = item.children {
+					importOPMLItems(account, items: itemChildren, parentFolder: folder)
+				}
+			}
+			
+		}
+		
+	}
+	
+	func importFeedSpecifier(_ account: Account, feedSpecifier: RSOPMLFeedSpecifier, parentFolder: Folder?) {
+		
+		caller.createSubscription(url: feedSpecifier.feedURL) { [weak self] result in
+			
+			switch result {
+			case .success(let subResult):
+				switch subResult {
+				case .created(let sub):
+					
+					DispatchQueue.main.async {
+						
+						let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
+						feed.subscriptionID = String(sub.subscriptionID)
+						
+						self?.importFeedSpecifierPostProcess(account: account, sub: sub, feedSpecifier: feedSpecifier, feed: feed, parentFolder: parentFolder)
+						
+					}
+					
+				default:
+					break
+				}
+				
+			case .failure(let error):
+				guard let self = self else { return }
+				os_log(.error, log: self.log, "Create feed on OPML import failed: %@.", error.localizedDescription)
+			}
+			
+		}
+		
+	}
+	
+	func importFeedSpecifierPostProcess(account: Account, sub: FeedbinSubscription, feedSpecifier: RSOPMLFeedSpecifier, feed: Feed, parentFolder: Folder?) {
+		
+		// Rename the feed if its name in the OPML file doesn't match the found name
+		if sub.name != feedSpecifier.title, let newName = feedSpecifier.title {
+			
+			self.caller.renameSubscription(subscriptionID: String(sub.subscriptionID), newName: newName) { [weak self] result in
+				switch result {
+				case .success:
+					DispatchQueue.main.async {
+						feed.editedName = newName
+					}
+				case .failure(let error):
+					guard let self = self else { return }
+					os_log(.error, log: self.log, "Rename feed on OPML import failed: %@.", error.localizedDescription)
+				}
+			}
+			
+		}
+		
+		// Move the new feed if it is in a folder
+		if let folder = parentFolder, let feedID = Int(feed.feedID) {
+			
+			self.caller.createTagging(feedID: feedID, name: folder.name ?? "") { [weak self] result in
+				switch result {
+				case .success(let taggingID):
+					DispatchQueue.main.async {
+						self?.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
+						folder.addFeed(feed)
+					}
+				case .failure(let error):
+					guard let self = self else { return }
+					os_log(.error, log: self.log, "Move feed to folder on OPML import failed: %@.", error.localizedDescription)
+				}
+			}
+			
+		} else {
+			
+			DispatchQueue.main.async {
+				account.addFeed(feed)
+			}
+			
+		}
+		
+	}
+	
 	func processRestoredFeed(for account: Account, feed: Feed, editedName: String?, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = folder {
@@ -839,6 +854,87 @@ private extension FeedbinAccountDelegate {
 			feed.subscriptionID = String(sub.subscriptionID)
 			completion(.success(feed))
 		}
+	}
+
+	func refreshArticles(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+
+		os_log(.debug, log: log, "Refreshing articles...")
+		
+		for feed in account.flattenedFeeds() {
+		
+			caller.retrieveEntries(feed.feedID) { [weak self] result in
+				
+				switch result {
+				case .success(let (entries, page)):
+					
+					self?.processEntries(account: account, entries: entries, completion: completion)
+					self?.refreshArticles(account, page: page)
+
+				case .failure(let error):
+					guard let self = self else { return }
+					os_log(.error, log: self.log, "Refresh articles failed: %@.", error.localizedDescription)
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+	func refreshArticles(_ account: Account, page: String?) {
+		
+		guard let page = page else {
+			return
+		}
+		
+		caller.retrieveEntries(page: page) { [weak self] result in
+			
+			switch result {
+			case .success(let (entries, nextPage)):
+				
+				self?.processEntries(account: account, entries: entries, completion: nil)
+				self?.refreshArticles(account, page: nextPage)
+				
+			case .failure(let error):
+				guard let self = self else { return }
+				os_log(.error, log: self.log, "Refresh articles for additional pages failed: %@.", error.localizedDescription)
+			}
+			
+		}
+		
+	}
+	
+
+	func processEntries(account: Account, entries: [FeedbinEntry]?, completion: ((Result<Void, Error>) -> Void)?) {
+		
+		let parsedItems = mapEntriesToParsedItems(entries: entries)
+		let parsedMap = Dictionary(grouping: parsedItems, by: { item in item.feedURL } )
+		
+		for (feedID, mapItems) in parsedMap {
+			if let feed = account.idToFeedDictionary[feedID] {
+				DispatchQueue.main.async {
+					account.update(feed, parsedItems: Set(mapItems)) {
+						completion?(.success(()))
+					}
+				}
+			}
+		}
+
+	}
+	
+	func mapEntriesToParsedItems(entries: [FeedbinEntry]?) -> Set<ParsedItem> {
+		
+		guard let entries = entries else {
+			return Set<ParsedItem>()
+		}
+		
+		let parsedItems: [ParsedItem] = entries.map { entry in
+			let authors = Set([ParsedAuthor(name: entry.authorName, url: nil, avatarURL: nil, emailAddress: nil)])
+			return ParsedItem(syncServiceID: String(entry.articleID), uniqueID: String(entry.articleID), feedURL: String(entry.feedID), url: nil, externalURL: entry.url, title: entry.title, contentHTML: entry.contentHTML, contentText: nil, summary: entry.summary, imageURL: nil, bannerImageURL: nil, datePublished: entry.parseDatePublished(), dateModified: nil, authors: authors, tags: nil, attachments: nil)
+		}
+		
+		return Set(parsedItems)
+		
 	}
 	
 }
