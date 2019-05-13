@@ -27,6 +27,8 @@ final class FeedbinAPICaller: NSObject {
 		static let tags = "tags"
 		static let taggings = "taggings"
 		static let icons = "icons"
+		static let unreadEntries = "unreadEntries"
+		static let starredEntries = "starredEntries"
 	}
 	
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
@@ -75,7 +77,7 @@ final class FeedbinAPICaller: NSObject {
 			
 			switch result {
 			case .success(let (response, tags)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
+				self?.storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
 				completion(.success(tags))
 			case .failure(let error):
 				completion(.failure(error))
@@ -121,7 +123,7 @@ final class FeedbinAPICaller: NSObject {
 			
 			switch result {
 			case .success(let (response, subscriptions)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
+				self?.storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
 				completion(.success(subscriptions))
 			case .failure(let error):
 				completion(.failure(error))
@@ -226,7 +228,7 @@ final class FeedbinAPICaller: NSObject {
 			
 			switch result {
 			case .success(let (response, taggings)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
+				self?.storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
 				completion(.success(taggings))
 			case .failure(let error):
 				completion(.failure(error))
@@ -287,7 +289,7 @@ final class FeedbinAPICaller: NSObject {
 			
 			switch result {
 			case .success(let (response, icons)):
-				self?.storeConditionalGet(metadata: self?.accountMetadata, key: ConditionalGetKeys.icons, headers: response.allHeaderFields)
+				self?.storeConditionalGet(key: ConditionalGetKeys.icons, headers: response.allHeaderFields)
 				completion(.success(icons))
 			case .failure(let error):
 				completion(.failure(error))
@@ -356,13 +358,53 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 
+	func retrieveUnreadEntries(completionHandler completion: @escaping (Result<[Int]?, Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
+		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
+		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		
+		transport.send(request: request, resultType: [Int].self) { [weak self] result in
+			
+			switch result {
+			case .success(let (response, unreadEntries)):
+				self?.storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
+				completion(.success(unreadEntries))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
+	func retrieveStarredEntries(completionHandler completion: @escaping (Result<[Int]?, Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
+		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.starredEntries]
+		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		
+		transport.send(request: request, resultType: [Int].self) { [weak self] result in
+			
+			switch result {
+			case .success(let (response, starredEntries)):
+				self?.storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
+				completion(.success(starredEntries))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
 }
 
 // MARK: Private
 
 extension FeedbinAPICaller {
 	
-	func storeConditionalGet(metadata: AccountMetadata?, key: String, headers: [AnyHashable : Any]) {
+	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
 		if var conditionalGet = accountMetadata?.conditionalGetInfo {
 			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
 			accountMetadata?.conditionalGetInfo = conditionalGet
