@@ -299,7 +299,7 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func retrieveEntries(_ feedID: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
+	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
 		
 		let since: Date = {
 			if let lastArticleFetch = accountMetadata?.lastArticleFetch {
@@ -310,8 +310,8 @@ final class FeedbinAPICaller: NSObject {
 		}()
 		
 		let sinceString = FeedbinDate.formatter.string(from: since)
-		var callURL = URLComponents(url: feedbinBaseURL.appendingPathComponent("feeds/\(feedID)/entries.json"), resolvingAgainstBaseURL: false)!
-		callURL.queryItems = [URLQueryItem(name: "since", value: sinceString)]
+		var callURL = URLComponents(url: feedbinBaseURL.appendingPathComponent("entries.json"), resolvingAgainstBaseURL: false)!
+		callURL.queryItems = [URLQueryItem(name: "since", value: sinceString), URLQueryItem(name: "per_page", value: "100")]
 		let request = URLRequest(url: callURL.url!, credentials: credentials)
 		
 		transport.send(request: request, resultType: [FeedbinEntry].self) { [weak self] result in

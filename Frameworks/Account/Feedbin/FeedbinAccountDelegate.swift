@@ -850,36 +850,25 @@ private extension FeedbinAccountDelegate {
 
 		os_log(.debug, log: log, "Refreshing articles...")
 		
-		let group = DispatchGroup()
-		
-		for feed in account.flattenedFeeds() {
-		
-			group.enter()
+		caller.retrieveEntries() { [weak self] result in
 			
-			caller.retrieveEntries(feed.feedID) { [weak self] result in
+			switch result {
+			case .success(let (entries, page)):
 				
-				switch result {
-				case .success(let (entries, page)):
-					
-					self?.processEntries(account: account, entries: entries) {
-						self?.refreshArticles(account, page: page) {
-							group.leave()
-						}
+				self?.processEntries(account: account, entries: entries) {
+					self?.refreshArticles(account, page: page) {
+						guard let self = self else { return }
+						os_log(.debug, log: self.log, "Done refreshing articles.")
+						completion()
 					}
-
-				case .failure(let error):
-					guard let self = self else { return }
-					os_log(.error, log: self.log, "Refresh articles failed: %@.", error.localizedDescription)
 				}
-				
+
+			case .failure(let error):
+				guard let self = self else { return }
+				os_log(.error, log: self.log, "Refresh articles failed: %@.", error.localizedDescription)
 			}
 			
 		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion()
-		}
-		
 		
 	}
 	
@@ -908,20 +897,29 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
-
 	func processEntries(account: Account, entries: [FeedbinEntry]?, completion: @escaping (() -> Void)) {
 		
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
 		let parsedMap = Dictionary(grouping: parsedItems, by: { item in item.feedURL } )
 		
+		let group = DispatchGroup()
+		
 		for (feedID, mapItems) in parsedMap {
+			
+			group.enter()
+			
 			if let feed = account.idToFeedDictionary[feedID] {
 				DispatchQueue.main.async {
 					account.update(feed, parsedItems: Set(mapItems), defaultRead: true) {
-						completion()
+						group.leave()
 					}
 				}
 			}
+			
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			completion()
 		}
 
 	}
