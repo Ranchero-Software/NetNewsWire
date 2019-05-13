@@ -99,7 +99,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	// MARK: API
 	
-	public func createAccount(type: AccountType, username: String? = nil, password: String? = nil) -> Account {
+	public func createAccount(type: AccountType) -> Account {
 		
 		let accountID = UUID().uuidString
 		let accountFolder = (accountsFolder as NSString).appendingPathComponent("\(type.rawValue)_\(accountID)")
