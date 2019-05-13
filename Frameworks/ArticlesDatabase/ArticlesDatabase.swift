@@ -90,8 +90,8 @@ public final class ArticlesDatabase {
 
 	// MARK: - Saving and Updating Articles
 
-	public func update(feedID: String, parsedItems: Set<ParsedItem>, completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
-		return articlesTable.update(feedID, parsedItems, completion)
+	public func update(feedID: String, parsedItems: Set<ParsedItem>, defaultRead: Bool, completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
+		return articlesTable.update(feedID, parsedItems, defaultRead, completion)
 	}
 	
 	// MARK: - Status

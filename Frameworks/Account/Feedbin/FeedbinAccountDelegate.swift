@@ -917,7 +917,7 @@ private extension FeedbinAccountDelegate {
 		for (feedID, mapItems) in parsedMap {
 			if let feed = account.idToFeedDictionary[feedID] {
 				DispatchQueue.main.async {
-					account.update(feed, parsedItems: Set(mapItems)) {
+					account.update(feed, parsedItems: Set(mapItems), defaultRead: true) {
 						completion()
 					}
 				}

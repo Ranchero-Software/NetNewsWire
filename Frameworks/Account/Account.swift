@@ -582,9 +582,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		update(feed, parsedItems: parsedFeed.items, completion)
 	}
 	
-	func update(_ feed: Feed, parsedItems: Set<ParsedItem>, _ completion: @escaping (() -> Void)) {
+	func update(_ feed: Feed, parsedItems: Set<ParsedItem>, defaultRead: Bool = false, _ completion: @escaping (() -> Void)) {
 		
-		database.update(feedID: feed.feedID, parsedItems: parsedItems) { (newArticles, updatedArticles) in
+		database.update(feedID: feed.feedID, parsedItems: parsedItems, defaultRead: defaultRead) { (newArticles, updatedArticles) in
 			
 			var userInfo = [String: Any]()
 			if let newArticles = newArticles, !newArticles.isEmpty {

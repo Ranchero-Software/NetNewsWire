@@ -38,9 +38,9 @@ public final class ArticleStatus: Hashable {
 		self.dateArrived = dateArrived
 	}
 
-	public convenience init(articleID: String, dateArrived: Date) {
+	public convenience init(articleID: String, read: Bool, dateArrived: Date) {
 
-		self.init(articleID: articleID, read: false, starred: false, userDeleted: false, dateArrived: dateArrived)
+		self.init(articleID: articleID, read: read, starred: false, userDeleted: false, dateArrived: dateArrived)
 	}
 
 	public func boolStatus(forKey key: ArticleStatus.Key) -> Bool {

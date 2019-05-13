@@ -28,7 +28,7 @@ final class StatusesTable: DatabaseTable {
 
 	// MARK: Creating/Updating
 
-	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> [String: ArticleStatus] {
+	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ read: Bool, _ database: FMDatabase) -> [String: ArticleStatus] {
 		
 		// Check cache.
 		let articleIDsMissingCachedStatus = articleIDsWithNoCachedStatus(articleIDs)
@@ -42,7 +42,7 @@ final class StatusesTable: DatabaseTable {
 		let articleIDsNeedingStatus = self.articleIDsWithNoCachedStatus(articleIDs)
 		if !articleIDsNeedingStatus.isEmpty {
 			// Create new statuses.
-			self.createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus, database)
+			self.createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus, read, database)
 		}
 			
 		return statusesDictionary(articleIDs)
@@ -130,10 +130,10 @@ private extension StatusesTable {
 		self.insertRows(statusArray, insertType: .orIgnore, in: database)
 	}
 
-	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
+	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>, _ read: Bool, _ database: FMDatabase) {
 
 		let now = Date()
-		let statuses = Set(articleIDs.map { ArticleStatus(articleID: $0, dateArrived: now) })
+		let statuses = Set(articleIDs.map { ArticleStatus(articleID: $0, read: read, dateArrived: now) })
 		cache.addIfNotCached(statuses)
 		
 		saveStatuses(statuses, database)

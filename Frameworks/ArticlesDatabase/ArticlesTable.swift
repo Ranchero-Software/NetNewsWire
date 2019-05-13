@@ -119,7 +119,7 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: Updating
 	
-	func update(_ feedID: String, _ parsedItems: Set<ParsedItem>, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
+	func update(_ feedID: String, _ parsedItems: Set<ParsedItem>, _ read: Bool, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
 
 		if parsedItems.isEmpty {
 			completion(nil, nil)
@@ -139,7 +139,7 @@ final class ArticlesTable: DatabaseTable {
 		
 		self.queue.update { (database) in
 			
-			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, database) //1
+			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
 			assert(statusesDictionary.count == articleIDs.count)
 			
 			let allIncomingArticles = Article.articlesWithParsedItems(parsedItems, self.accountID, feedID, statusesDictionary) //2
