@@ -57,6 +57,7 @@ final class AccountsPreferencesViewController: NSViewController {
 			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 				guard let self = self else { return }
 				AccountManager.shared.deleteAccount(self.sortedAccounts[self.tableView.selectedRow])
+				self.showController(AccountsAddViewController())
 			}
 		}
 		
