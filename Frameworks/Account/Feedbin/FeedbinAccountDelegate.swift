@@ -76,18 +76,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			switch result {
 			case .success():
 				
-				self?.refreshArticles(account) { result in
-					switch result {
-					case .success():
-						DispatchQueue.main.async {
-							completion?()
-						}
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion?()
-							self?.handleError(error)
-						}
-					}
+				self?.refreshArticles(account) {
+					completion?()
 				}
 				
 			case .failure(let error):
@@ -856,19 +846,26 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func refreshArticles(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshArticles(_ account: Account, completion: @escaping (() -> Void)) {
 
 		os_log(.debug, log: log, "Refreshing articles...")
 		
+		let group = DispatchGroup()
+		
 		for feed in account.flattenedFeeds() {
 		
+			group.enter()
+			
 			caller.retrieveEntries(feed.feedID) { [weak self] result in
 				
 				switch result {
 				case .success(let (entries, page)):
 					
-					self?.processEntries(account: account, entries: entries, completion: completion)
-					self?.refreshArticles(account, page: page)
+					self?.processEntries(account: account, entries: entries) {
+						self?.refreshArticles(account, page: page) {
+							group.leave()
+						}
+					}
 
 				case .failure(let error):
 					guard let self = self else { return }
@@ -879,11 +876,17 @@ private extension FeedbinAccountDelegate {
 			
 		}
 		
+		group.notify(queue: DispatchQueue.main) {
+			completion()
+		}
+		
+		
 	}
 	
-	func refreshArticles(_ account: Account, page: String?) {
+	func refreshArticles(_ account: Account, page: String?, completion: @escaping (() -> Void)) {
 		
 		guard let page = page else {
+			completion()
 			return
 		}
 		
@@ -892,8 +895,9 @@ private extension FeedbinAccountDelegate {
 			switch result {
 			case .success(let (entries, nextPage)):
 				
-				self?.processEntries(account: account, entries: entries, completion: nil)
-				self?.refreshArticles(account, page: nextPage)
+				self?.processEntries(account: account, entries: entries) {
+					self?.refreshArticles(account, page: nextPage, completion: completion)
+				}
 				
 			case .failure(let error):
 				guard let self = self else { return }
@@ -905,7 +909,7 @@ private extension FeedbinAccountDelegate {
 	}
 	
 
-	func processEntries(account: Account, entries: [FeedbinEntry]?, completion: ((Result<Void, Error>) -> Void)?) {
+	func processEntries(account: Account, entries: [FeedbinEntry]?, completion: @escaping (() -> Void)) {
 		
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
 		let parsedMap = Dictionary(grouping: parsedItems, by: { item in item.feedURL } )
@@ -914,7 +918,7 @@ private extension FeedbinAccountDelegate {
 			if let feed = account.idToFeedDictionary[feedID] {
 				DispatchQueue.main.async {
 					account.update(feed, parsedItems: Set(mapItems)) {
-						completion?(.success(()))
+						completion()
 					}
 				}
 			}
