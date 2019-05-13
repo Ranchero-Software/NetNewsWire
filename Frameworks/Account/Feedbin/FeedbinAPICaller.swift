@@ -312,11 +312,14 @@ final class FeedbinAPICaller: NSObject {
 		callURL.queryItems = [URLQueryItem(name: "since", value: sinceString)]
 		let request = URLRequest(url: callURL.url!, credentials: credentials)
 		
-		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
+		transport.send(request: request, resultType: [FeedbinEntry].self) { [weak self] result in
 			
 			switch result {
 			case .success(let (response, entries)):
 				
+				let dateInfo = HTTPDateInfo(urlResponse: response)
+				self?.accountMetadata?.lastArticleFetch = dateInfo?.date
+
 				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
 				completion(.success((entries, pagingInfo.nextPage)))
 				
