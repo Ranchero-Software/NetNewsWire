@@ -291,7 +291,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.importOPML(for: self, opmlFile: opmlFile, completion: 	completion)
+		delegate.importOPML(for: self, opmlFile: opmlFile) { [weak self] result in
+			switch result {
+			case .success:
+				guard let self = self else { return }
+				self.delegate.refreshAll(for: self) {
+					completion(.success(()))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
