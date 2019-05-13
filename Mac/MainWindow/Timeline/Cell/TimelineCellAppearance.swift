@@ -37,6 +37,7 @@ struct TimelineCellAppearance: Equatable {
 
 	let avatarSize = NSSize(width: 48, height: 48)
 	let avatarMarginLeft: CGFloat = 8.0
+	let avatarMarginRight: CGFloat = 8.0
 	let avatarAdjustmentTop: CGFloat = 4.0
 	let avatarCornerRadius: CGFloat = 4.0
 

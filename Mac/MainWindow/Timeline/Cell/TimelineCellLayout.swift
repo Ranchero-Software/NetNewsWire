@@ -50,7 +50,7 @@ struct TimelineCellLayout {
 
 		// If height == 0.0, then height is calculated.
 
-		let showAvatar = hasAvatar && cellData.showAvatar
+		let showAvatar = cellData.showAvatar
 		var textBoxRect = TimelineCellLayout.rectForTextBox(appearance, cellData, showAvatar, width)
 
 		let (titleRect, numberOfLinesForTitle) = TimelineCellLayout.rectForTitle(textBoxRect, appearance, cellData)
@@ -94,8 +94,9 @@ private extension TimelineCellLayout {
 
 		// Returned height is a placeholder. Not needed when this is calculated.
 
-		let textBoxOriginX = appearance.cellPadding.left + appearance.unreadCircleDimension + appearance.unreadCircleMarginRight
-		let textBoxMaxX = floor((width - appearance.cellPadding.right) - (showAvatar ? appearance.avatarSize.width + appearance.avatarMarginLeft : 0.0))
+		let avatarSpace = showAvatar ? appearance.avatarSize.width + appearance.avatarMarginRight : 0.0
+		let textBoxOriginX = appearance.cellPadding.left + appearance.unreadCircleDimension + appearance.unreadCircleMarginRight + avatarSpace
+		let textBoxMaxX = floor(width - appearance.cellPadding.right)
 		let textBoxWidth = floor(textBoxMaxX - textBoxOriginX)
 		let textBoxRect = NSRect(x: textBoxOriginX, y: appearance.cellPadding.top, width: textBoxWidth, height: 1000000)
 
@@ -204,16 +205,8 @@ private extension TimelineCellLayout {
 			return r
 		}
 		r.size = appearance.avatarSize
-		r.origin.x = (width - appearance.cellPadding.right) - r.size.width
-		r.origin.y = textBoxRect.origin.y + 4.0
-//		r = RSRectCenteredVerticallyInRect(r, textBoxRect)
-//		if height > 0.1 {
-//			let bounds = NSRect(x: 0.0, y: 0.0, width: width, height: height)
-//			r = RSRectCenteredVerticallyInRect(r, bounds)
-//		}
-//		else {
-//			r = RSRectCenteredVerticallyInRect(r, textBoxRect)
-//		}
+		r.origin.x = appearance.cellPadding.left + appearance.unreadCircleDimension + appearance.unreadCircleMarginRight
+		r.origin.y = textBoxRect.origin.y + appearance.avatarAdjustmentTop
 
 		return r
 	}
