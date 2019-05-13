@@ -77,7 +77,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .success():
 				
 				self?.refreshArticles(account) {
-					completion?()
+					self?.refreshArticleStatus(for: account) {
+						completion?()
+					}
 				}
 				
 			case .failure(let error):
@@ -91,6 +93,48 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
+	func refreshArticleStatus(for account: Account, completion: (() -> Void)? = nil) {
+
+		os_log(.debug, log: log, "Refreshing article statuses...")
+		
+		let group = DispatchGroup()
+		
+		group.enter()
+		caller.retrieveUnreadEntries() { [weak self] result in
+			switch result {
+			case .success(let articleIDs):
+				self?.syncArticleReadState(account: account, articleIDs: articleIDs) {
+					group.leave()
+				}
+			case .failure(let error):
+				guard let self = self else { return }
+				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
+			}
+			
+		}
+		
+		group.enter()
+		caller.retrieveStarredEntries() { [weak self] result in
+			switch result {
+			case .success(let articleIDs):
+				self?.syncArticleStarredState(account: account, articleIDs: articleIDs) {
+					group.leave()
+				}
+			case .failure(let error):
+				guard let self = self else { return }
+				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
+			}
+			
+		}
+		
+		group.notify(queue: DispatchQueue.main) { [weak self] in
+			guard let self = self else { return }
+			os_log(.debug, log: self.log, "Done refreshing article statuses.")
+			completion?()
+		}
+		
+	}
+	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		var fileData: Data?
@@ -966,6 +1010,32 @@ private extension FeedbinAccountDelegate {
 		}
 		
 		return Set(parsedItems)
+		
+	}
+	
+	func syncArticleReadState(account: Account, articleIDs: [Int]?, completion: (() -> Void)) {
+		
+		guard let articleIDs = articleIDs, !articleIDs.isEmpty else {
+			completion()
+			return
+		}
+
+		let ids = Set(articleIDs.map { String($0) } )
+		
+		completion()
+		
+	}
+	
+	func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: (() -> Void)) {
+		
+		guard let articleIDs = articleIDs, !articleIDs.isEmpty else {
+			completion()
+			return
+		}
+
+		let ids = Set(articleIDs.map { String($0) } )
+		
+		completion()
 		
 	}
 	
