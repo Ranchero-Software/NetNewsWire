@@ -299,6 +299,31 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
+	func retrieveEntries(feedID: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
+		
+		let since = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
+		let sinceString = FeedbinDate.formatter.string(from: since)
+		
+		var callURL = URLComponents(url: feedbinBaseURL.appendingPathComponent("/feeds/\(feedID)/entries.json"), resolvingAgainstBaseURL: false)!
+		callURL.queryItems = [URLQueryItem(name: "since", value: sinceString), URLQueryItem(name: "per_page", value: "100")]
+		let request = URLRequest(url: callURL.url!, credentials: credentials)
+		
+		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
+			
+			switch result {
+			case .success(let (response, entries)):
+				
+				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
+				completion(.success((entries, pagingInfo.nextPage)))
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+
 	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
 		
 		let since: Date = {

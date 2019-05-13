@@ -382,6 +382,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		feed.name = name
 		feed.homePageURL = homePageURL
 		
+		addFeed(feed)
+		
 		return feed
 		
 	}

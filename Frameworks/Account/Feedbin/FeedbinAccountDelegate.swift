@@ -839,11 +839,38 @@ private extension FeedbinAccountDelegate {
 	}
 	
 	func createFeed( account: Account, subscription sub: FeedbinSubscription, completion: @escaping (Result<Feed, Error>) -> Void) {
-		DispatchQueue.main.async {
+		
+		DispatchQueue.main.async { [weak self] in
+			
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.subscriptionID = String(sub.subscriptionID)
-			completion(.success(feed))
+		
+			// Download the initial articles
+			self?.caller.retrieveEntries(feedID: feed.feedID) { [weak self] result in
+				
+				switch result {
+				case .success(let (entries, page)):
+					
+					self?.processEntries(account: account, entries: entries) {
+						self?.refreshArticles(account, page: page) {
+							DispatchQueue.main.async {
+								completion(.success(feed))
+							}
+						}
+					}
+					
+				case .failure(let error):
+					guard let self = self else { return }
+					os_log(.error, log: self.log, "Initial articles download failed: %@.", error.localizedDescription)
+					DispatchQueue.main.async {
+						completion(.success(feed))
+					}
+				}
+				
+			}
+
 		}
+		
 	}
 
 	func refreshArticles(_ account: Account, completion: @escaping (() -> Void)) {
@@ -866,6 +893,7 @@ private extension FeedbinAccountDelegate {
 			case .failure(let error):
 				guard let self = self else { return }
 				os_log(.error, log: self.log, "Refresh articles failed: %@.", error.localizedDescription)
+				completion()
 			}
 			
 		}
@@ -914,6 +942,8 @@ private extension FeedbinAccountDelegate {
 						group.leave()
 					}
 				}
+			} else {
+				group.leave()
 			}
 			
 		}
