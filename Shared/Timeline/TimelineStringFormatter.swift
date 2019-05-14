@@ -85,7 +85,8 @@ struct TimelineStringFormatter {
 			return ""
 		}
 
-		if let cachedBody = summaryCache[body] {
+		let key = article.articleID + article.accountID
+		if let cachedBody = summaryCache[key] {
 			return cachedBody
 		}
 		var s = body.rsparser_stringByDecodingHTMLEntities()
@@ -95,7 +96,7 @@ struct TimelineStringFormatter {
 		if s == "Comments" { // Hacker News.
 			s = ""
 		}
-		summaryCache[body] = s
+		summaryCache[key] = s
 		return s
 	}
 
