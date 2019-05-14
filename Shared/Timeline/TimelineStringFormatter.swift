@@ -89,7 +89,7 @@ struct TimelineStringFormatter {
 			return cachedBody
 		}
 		var s = body.rsparser_stringByDecodingHTMLEntities()
-		s = s.rs_string(byStrippingHTML: 300)
+		s = s.rs_string(byStrippingHTML: 150)
 		s = s.rs_stringByTrimmingWhitespace()
 		s = s.rs_stringWithCollapsedWhitespace()
 		if s == "Comments" { // Hacker News.
