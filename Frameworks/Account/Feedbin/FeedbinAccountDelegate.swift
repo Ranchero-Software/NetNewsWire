@@ -12,6 +12,7 @@ import AppKit
 import UIKit
 import RSCore
 #endif
+import Articles
 import RSCore
 import RSParser
 import RSWeb
@@ -398,6 +399,10 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			completion(.success(()))
 		}
 		
+	}
+	
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
+		return account.update(articles, statusKey: statusKey, flag: flag)
 	}
 	
 	func accountDidInitialize(_ account: Account) {

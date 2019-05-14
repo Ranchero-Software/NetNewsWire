@@ -305,18 +305,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-
-		// Returns set of Articles whose statuses did change.
-
-		guard let updatedStatuses = database.mark(articles, statusKey: statusKey, flag: flag) else {
-			return nil
-		}
-		
-		let updatedArticleIDs = updatedStatuses.articleIDs()
-		let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
-        
-        noteStatusesForArticlesDidChange(updatedArticles)
-		return updatedArticles
+		return delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag)
 	}
 
 	@discardableResult
@@ -614,6 +603,22 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			
 			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
 		}
+		
+	}
+
+	func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
+		
+		// Returns set of Articles whose statuses did change.
+		
+		guard let updatedStatuses = database.mark(articles, statusKey: statusKey, flag: flag) else {
+			return nil
+		}
+		
+		let updatedArticleIDs = updatedStatuses.articleIDs()
+		let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
+		
+		noteStatusesForArticlesDidChange(updatedArticles)
+		return updatedArticles
 		
 	}
 
