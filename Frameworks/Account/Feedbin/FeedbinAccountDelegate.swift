@@ -81,6 +81,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				
 				self?.refreshArticles(account) {
 					self?.refreshArticleStatus(for: account) {
+						self?.refreshProgress.clear()
 						completion?()
 					}
 				}
