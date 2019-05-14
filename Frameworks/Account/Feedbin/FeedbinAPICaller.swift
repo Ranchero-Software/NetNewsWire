@@ -324,7 +324,7 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 
-	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
+	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?, Int?), Error>) -> Void) {
 		
 		let since: Date = {
 			if let lastArticleFetch = accountMetadata?.lastArticleFetch {
@@ -348,13 +348,33 @@ final class FeedbinAPICaller: NSObject {
 				self?.accountMetadata?.lastArticleFetch = dateInfo?.date
 
 				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
-				completion(.success((entries, pagingInfo.nextPage)))
+				let lastPageNumber = self?.extractPageNumber(link: pagingInfo.lastPage)
+				completion(.success((entries, pagingInfo.nextPage, lastPageNumber)))
 				
 			case .failure(let error):
 				completion(.failure(error))
 			}
 			
 		}
+		
+	}
+	
+	func extractPageNumber(link: String?) -> Int? {
+		
+		guard let link = link else {
+			return nil
+		}
+		
+		if let lowerBound = link.range(of: "page=")?.upperBound {
+			if let upperBound = link.range(of: "&")?.lowerBound {
+				return Int(link[lowerBound..<upperBound])
+			}
+			if let upperBound = link.range(of: ">")?.lowerBound {
+				return Int(link[lowerBound..<upperBound])
+			}
+		}
+		
+		return nil
 		
 	}
 	

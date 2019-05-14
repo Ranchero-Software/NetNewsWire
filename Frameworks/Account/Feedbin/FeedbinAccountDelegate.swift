@@ -72,6 +72,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
 		
+		refreshProgress.addToNumberOfTasksAndRemaining(5)
+		
 		refreshAccount(account) { [weak self] result in
 			switch result {
 			case .success():
@@ -85,6 +87,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .failure(let error):
 				DispatchQueue.main.async {
 					completion?()
+					self?.refreshProgress.clear()
 					self?.handleError(error)
 				}
 			}
@@ -438,6 +441,7 @@ private extension FeedbinAccountDelegate {
 				BatchUpdate.shared.perform {
 					self?.syncFolders(account, tags)
 				}
+				self?.refreshProgress.completeTask()
 				self?.refreshFeeds(account, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))
@@ -494,10 +498,12 @@ private extension FeedbinAccountDelegate {
 			switch result {
 			case .success(let subscriptions):
 				
+				self?.refreshProgress.completeTask()
 				self?.caller.retrieveTaggings { [weak self] result in
 					switch result {
 					case .success(let taggings):
 						
+						self?.refreshProgress.completeTask()
 						self?.caller.retrieveIcons { [weak self] result in
 							switch result {
 							case .success(let icons):
@@ -508,6 +514,7 @@ private extension FeedbinAccountDelegate {
 									self?.syncFavicons(account, icons)
 								}
 
+								self?.refreshProgress.completeTask()
 								completion(.success(()))
 								
 							case .failure(let error):
@@ -922,14 +929,21 @@ private extension FeedbinAccountDelegate {
 		caller.retrieveEntries() { [weak self] result in
 			
 			switch result {
-			case .success(let (entries, page)):
+			case .success(let (entries, page, lastPageNumber)):
+				
+				if let last = lastPageNumber {
+					self?.refreshProgress.addToNumberOfTasksAndRemaining(last - 1)
+				}
 				
 				self?.processEntries(account: account, entries: entries) {
+					
+					self?.refreshProgress.completeTask()
 					self?.refreshArticles(account, page: page) {
 						guard let self = self else { return }
 						os_log(.debug, log: self.log, "Done refreshing articles.")
 						completion()
 					}
+					
 				}
 
 			case .failure(let error):
@@ -955,6 +969,7 @@ private extension FeedbinAccountDelegate {
 			case .success(let (entries, nextPage)):
 				
 				self?.processEntries(account: account, entries: entries) {
+					self?.refreshProgress.completeTask()
 					self?.refreshArticles(account, page: nextPage, completion: completion)
 				}
 				
