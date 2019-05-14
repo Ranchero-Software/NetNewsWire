@@ -98,6 +98,10 @@ public final class ArticlesDatabase {
 		return articlesTable.update(feedID, parsedItems, defaultRead, completion)
 	}
 	
+	public func ensureStatuses(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
+		articlesTable.ensureStatuses(articleIDs, statusKey, flag)
+	}
+	
 	// MARK: - Status
 	
 	public func fetchUnreadArticleIDs() -> Set<String> {

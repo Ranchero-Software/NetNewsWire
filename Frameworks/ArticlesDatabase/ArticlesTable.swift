@@ -185,6 +185,16 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	func ensureStatuses(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
+		
+		self.queue.update { (database) in
+			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database)
+			let statuses = Set(statusesDictionary.values)
+			_ = self.statusesTable.mark(statuses, statusKey, flag)
+		}
+		
+	}
+	
 	// MARK: Unread Counts
 	
 	func fetchUnreadCounts(_ feedIDs: Set<String>, _ completion: @escaping UnreadCountCompletionBlock) {

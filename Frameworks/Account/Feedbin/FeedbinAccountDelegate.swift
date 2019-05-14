@@ -1020,16 +1020,27 @@ private extension FeedbinAccountDelegate {
 		let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
 		let currentUnreadArticleIDs = account.fetchUnreadArticleIDs()
 		
+		// Mark articles as unread
 		let deltaUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
 		let markUnreadArticles = account.fetchArticles(forArticleIDs: deltaUnreadArticleIDs)
 		DispatchQueue.main.async {
 			_ = account.markArticles(markUnreadArticles, statusKey: .read, flag: false)
 		}
 	
+		// Mark articles as read
 		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
 		let markReadArticles = account.fetchArticles(forArticleIDs: deltaReadArticleIDs)
 		DispatchQueue.main.async {
 			_ = account.markArticles(markReadArticles, statusKey: .read, flag: true)
+		}
+	
+		// Save any unread statuses for articles we haven't yet received
+		let markUnreadArticleIDs = Set(markUnreadArticles.map { $0.articleID })
+		let missingUnreadArticleIDs = deltaUnreadArticleIDs.subtracting(markUnreadArticleIDs)
+		if !missingUnreadArticleIDs.isEmpty {
+			DispatchQueue.main.async {
+				account.ensureStatuses(missingUnreadArticleIDs, .read, false)
+			}
 		}
 		
 	}
@@ -1043,16 +1054,27 @@ private extension FeedbinAccountDelegate {
 		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
 		let currentStarredArticleIDs = account.fetchStarredArticleIDs()
 		
+		// Mark articles as starred
 		let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
 		let markStarredArticles = account.fetchArticles(forArticleIDs: deltaStarredArticleIDs)
 		DispatchQueue.main.async {
 			_ = account.markArticles(markStarredArticles, statusKey: .starred, flag: true)
 		}
 		
+		// Mark articles as unstarred
 		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
 		let markUnstarredArticles = account.fetchArticles(forArticleIDs: deltaUnstarredArticleIDs)
 		DispatchQueue.main.async {
 			_ = account.markArticles(markUnstarredArticles, statusKey: .starred, flag: false)
+		}
+		
+		// Save any starred statuses for articles we haven't yet received
+		let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
+		let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
+		if !missingStarredArticleIDs.isEmpty {
+			DispatchQueue.main.async {
+				account.ensureStatuses(missingStarredArticleIDs, .starred, true)
+			}
 		}
 		
 	}
