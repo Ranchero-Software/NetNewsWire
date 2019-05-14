@@ -49,6 +49,10 @@ public final class ArticlesDatabase {
 	public func fetchArticles(for feedID: String) -> Set<Article> {
 		return articlesTable.fetchArticles(feedID)
 	}
+	
+	public func fetchArticles(forArticleIDs articleIDs: Set<String>) -> Set<Article> {
+		return articlesTable.fetchArticles(forArticleIDs: articleIDs)
+	}
 
 	public func fetchArticlesAsync(for feedID: String, _ resultBlock: @escaping ArticleResultBlock) {
 		articlesTable.fetchArticlesAsync(feedID, withLimits: true, resultBlock)
@@ -95,6 +99,14 @@ public final class ArticlesDatabase {
 	}
 	
 	// MARK: - Status
+	
+	public func fetchUnreadArticleIDs() -> Set<String> {
+		return articlesTable.fetchUnreadArticleIDs()
+	}
+	
+	public func fetchStarredArticleIDs() -> Set<String> {
+		return articlesTable.fetchStarredArticleIDs()
+	}
 	
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {
 		return articlesTable.mark(articles, statusKey, flag)

@@ -103,9 +103,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		caller.retrieveUnreadEntries() { [weak self] result in
 			switch result {
 			case .success(let articleIDs):
-				self?.syncArticleReadState(account: account, articleIDs: articleIDs) {
-					group.leave()
-				}
+				self?.syncArticleReadState(account: account, articleIDs: articleIDs)
+				group.leave()
 			case .failure(let error):
 				guard let self = self else { return }
 				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
@@ -117,9 +116,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		caller.retrieveStarredEntries() { [weak self] result in
 			switch result {
 			case .success(let articleIDs):
-				self?.syncArticleStarredState(account: account, articleIDs: articleIDs) {
-					group.leave()
-				}
+				self?.syncArticleStarredState(account: account, articleIDs: articleIDs)
+				group.leave()
 			case .failure(let error):
 				guard let self = self else { return }
 				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
@@ -1013,29 +1011,49 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
-	func syncArticleReadState(account: Account, articleIDs: [Int]?, completion: (() -> Void)) {
+	func syncArticleReadState(account: Account, articleIDs: [Int]?) {
 		
 		guard let articleIDs = articleIDs, !articleIDs.isEmpty else {
-			completion()
 			return
 		}
 
-		let ids = Set(articleIDs.map { String($0) } )
+		let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
+		let currentUnreadArticleIDs = account.fetchUnreadArticleIDs()
 		
-		completion()
+		let deltaUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+		let markUnreadArticles = account.fetchArticles(forArticleIDs: deltaUnreadArticleIDs)
+		DispatchQueue.main.async {
+			_ = account.markArticles(markUnreadArticles, statusKey: .read, flag: false)
+		}
+	
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
+		let markReadArticles = account.fetchArticles(forArticleIDs: deltaReadArticleIDs)
+		DispatchQueue.main.async {
+			_ = account.markArticles(markReadArticles, statusKey: .read, flag: true)
+		}
 		
 	}
 	
-	func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: (() -> Void)) {
+	func syncArticleStarredState(account: Account, articleIDs: [Int]?) {
 		
 		guard let articleIDs = articleIDs, !articleIDs.isEmpty else {
-			completion()
 			return
 		}
 
-		let ids = Set(articleIDs.map { String($0) } )
+		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
+		let currentStarredArticleIDs = account.fetchStarredArticleIDs()
 		
-		completion()
+		let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
+		let markStarredArticles = account.fetchArticles(forArticleIDs: deltaStarredArticleIDs)
+		DispatchQueue.main.async {
+			_ = account.markArticles(markStarredArticles, statusKey: .starred, flag: true)
+		}
+		
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
+		let markUnstarredArticles = account.fetchArticles(forArticleIDs: deltaUnstarredArticleIDs)
+		DispatchQueue.main.async {
+			_ = account.markArticles(markUnstarredArticles, statusKey: .starred, flag: false)
+		}
 		
 	}
 	

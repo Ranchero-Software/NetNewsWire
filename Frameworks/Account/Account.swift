@@ -448,6 +448,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
+	public func fetchArticles(forArticleIDs articleIDs: Set<String>) -> Set<Article> {
+		return database.fetchArticles(forArticleIDs: articleIDs)
+	}
+	
 	public func fetchArticles(for feed: Feed) -> Set<Article> {
 
 		let articles = database.fetchArticles(for: feed.feedID)
@@ -535,6 +539,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.fetchStarredAndUnreadCount(for: flattenedFeeds().feedIDs(), callback: callback)
 	}
 
+	public func fetchUnreadArticleIDs() -> Set<String> {
+		return database.fetchUnreadArticleIDs()
+	}
+	
+	public func fetchStarredArticleIDs() -> Set<String> {
+		return database.fetchStarredArticleIDs()
+	}
+	
 	public func opmlDocument() -> String {
 		let escapedTitle = nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
 		let openingText =

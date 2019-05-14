@@ -78,6 +78,33 @@ final class StatusesTable: DatabaseTable {
 
 	// MARK: Fetching
 
+	func fetchUnreadArticleIDs() -> Set<String> {
+		return fetchArticleIDs("select articleID from statuses where read=0 and userDeleted=0;")
+	}
+
+	func fetchStarredArticleIDs() -> Set<String> {
+		return fetchArticleIDs("select articleID from statuses where starred=1 and userDeleted=0;")
+	}
+	
+	func fetchArticleIDs(_ sql: String) -> Set<String> {
+		
+		var statuses: Set<String>? = nil
+		
+		queue.fetchSync { (database) in
+			if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
+				statuses = resultSet.mapToSet(self.articleIDWithRow)
+			}
+			
+		}
+		
+		return statuses != nil ? statuses! : Set<String>()
+		
+	}
+	
+	func articleIDWithRow(_ row: FMResultSet) -> String? {
+		return row.string(forColumn: DatabaseKey.articleID)
+	}
+	
 	func statusWithRow(_ row: FMResultSet) -> ArticleStatus? {
 
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {

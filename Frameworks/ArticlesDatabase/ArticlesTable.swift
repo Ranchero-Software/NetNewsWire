@@ -56,6 +56,11 @@ final class ArticlesTable: DatabaseTable {
 		return articles
 	}
 
+	public func fetchArticles(forArticleIDs articleIDs: Set<String>) -> Set<Article> {
+		
+		return fetchArticlesForIDs(articleIDs)
+	}
+	
 	func fetchArticlesAsync(_ feedID: String, withLimits: Bool, _ resultBlock: @escaping ArticleResultBlock) {
 
 		queue.fetch { (database) in
@@ -284,6 +289,14 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: Status
 	
+	func fetchUnreadArticleIDs() -> Set<String> {
+		return statusesTable.fetchUnreadArticleIDs()
+	}
+	
+	func fetchStarredArticleIDs() -> Set<String> {
+		return statusesTable.fetchStarredArticleIDs()
+	}
+	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
 
 		return statusesTable.mark(articles.statuses(), statusKey, flag)
@@ -428,6 +441,25 @@ private extension ArticlesTable {
 		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject], withLimits: withLimits)
 	}
 
+	func fetchArticlesForIDs(_ articleIDs: Set<String>) -> Set<Article> {
+
+		if articleIDs.isEmpty {
+			return Set<Article>()
+		}
+		
+		var articles = Set<Article>()
+		
+		queue.fetchSync { (database) in
+			
+			let parameters = articleIDs.map { $0 as AnyObject }
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+			let whereClause = "articleID in \(placeholders)"
+			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
+		}
+		
+		return articles
+	}
+	
 	func fetchUnreadArticles(_ feedIDs: Set<String>) -> Set<Article> {
 
 		if feedIDs.isEmpty {
