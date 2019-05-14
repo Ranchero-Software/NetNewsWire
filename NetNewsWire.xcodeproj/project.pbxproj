@@ -26,6 +26,10 @@
 		5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */; };
 		5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */; };
 		5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */; };
+		51554C24228B71910055115A /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
+		51554C25228B71910055115A /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51554C30228B71A10055115A /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
+		51554C31228B71A10055115A /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */; };
@@ -305,6 +309,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		51554C00228B6EB50055115A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 51554BEB228B6E8F0055115A;
+			remoteInfo = SyncDatabase;
+		};
+		51554C26228B71910055115A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 51554BEA228B6E8F0055115A;
+			remoteInfo = SyncDatabase;
+		};
+		51554C32228B71A10055115A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 51554BEA228B6E8F0055115A;
+			remoteInfo = SyncDatabase;
+		};
 		51C451AB226377C300C03939 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */;
@@ -579,6 +604,7 @@
 				51C451F12264C83100C03939 /* ArticlesDatabase.framework in Embed Frameworks */,
 				51C451F52264C83900C03939 /* Articles.framework in Embed Frameworks */,
 				51C451E92264C81000C03939 /* RSDatabase.framework in Embed Frameworks */,
+				51554C31228B71A10055115A /* SyncDatabase.framework in Embed Frameworks */,
 				51C451ED2264C81B00C03939 /* RSCore.framework in Embed Frameworks */,
 				51C451E52264C80600C03939 /* RSParser.framework in Embed Frameworks */,
 			);
@@ -610,6 +636,7 @@
 				51C451BE226377D000C03939 /* Account.framework in Embed Frameworks */,
 				51C451BA226377C900C03939 /* Articles.framework in Embed Frameworks */,
 				84C37FB620DD8DBB00CA8CF5 /* RSParser.framework in Embed Frameworks */,
+				51554C25228B71910055115A /* SyncDatabase.framework in Embed Frameworks */,
 				84C37FA620DD8D8400CA8CF5 /* RSCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -644,6 +671,7 @@
 		5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOPMLWindowController.swift; sourceTree = "<group>"; };
 		5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsFeedbinWindowController.swift; sourceTree = "<group>"; };
 		5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsFeedbin.xib; sourceTree = "<group>"; };
+		51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SyncDatabase.xcodeproj; path = Frameworks/SyncDatabase/SyncDatabase.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProgressView.swift; sourceTree = "<group>"; };
@@ -902,6 +930,7 @@
 				51C451F42264C83900C03939 /* Articles.framework in Frameworks */,
 				51C451E82264C81000C03939 /* RSDatabase.framework in Frameworks */,
 				51C451EC2264C81B00C03939 /* RSCore.framework in Frameworks */,
+				51554C30228B71A10055115A /* SyncDatabase.framework in Frameworks */,
 				51C451E42264C80600C03939 /* RSParser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -925,6 +954,7 @@
 				51C451BD226377D000C03939 /* Account.framework in Frameworks */,
 				51C451B9226377C900C03939 /* Articles.framework in Frameworks */,
 				84C37FA520DD8D8400CA8CF5 /* RSCore.framework in Frameworks */,
+				51554C24228B71910055115A /* SyncDatabase.framework in Frameworks */,
 				84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -966,6 +996,14 @@
 				5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */,
 			);
 			path = OPML;
+			sourceTree = "<group>";
+		};
+		51554BFD228B6EB50055115A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				51554C01228B6EB50055115A /* SyncDatabase.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		5183CCDB226F1EEB0010922C /* Progress */ = {
@@ -1515,6 +1553,7 @@
 				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
 				841D4D542106B3D500DD04E6 /* Articles.xcodeproj */,
 				841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */,
+				51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */,
 				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
 				51C452AD2265102800C03939 /* Timeline */,
 				84702AB31FA27AE8006B8943 /* Commands */,
@@ -1797,6 +1836,7 @@
 				51C451F32264C83100C03939 /* PBXTargetDependency */,
 				51C451F72264C83900C03939 /* PBXTargetDependency */,
 				51C451FB2264C83E00C03939 /* PBXTargetDependency */,
+				51554C33228B71A10055115A /* PBXTargetDependency */,
 			);
 			name = "NetNewsWire-iOS";
 			productName = "NetNewsWire-iOS";
@@ -1844,6 +1884,7 @@
 				51C451AC226377C300C03939 /* PBXTargetDependency */,
 				51C451BC226377C900C03939 /* PBXTargetDependency */,
 				51C451C0226377D000C03939 /* PBXTargetDependency */,
+				51554C27228B71910055115A /* PBXTargetDependency */,
 			);
 			name = NetNewsWire;
 			productName = NetNewsWire;
@@ -1962,6 +2003,10 @@
 					ProductGroup = 84C37F9920DD8D0400CA8CF5 /* Products */;
 					ProjectRef = 84C37F9820DD8D0400CA8CF5 /* RSWeb.xcodeproj */;
 				},
+				{
+					ProductGroup = 51554BFD228B6EB50055115A /* Products */;
+					ProjectRef = 51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1975,6 +2020,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		51554C01228B6EB50055115A /* SyncDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SyncDatabase.framework;
+			remoteRef = 51554C00228B6EB50055115A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		8407166A2262A60D00344432 /* Account.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -2479,6 +2531,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		51554C27228B71910055115A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SyncDatabase;
+			targetProxy = 51554C26228B71910055115A /* PBXContainerItemProxy */;
+		};
+		51554C33228B71A10055115A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SyncDatabase;
+			targetProxy = 51554C32228B71A10055115A /* PBXContainerItemProxy */;
+		};
 		51C451AC226377C300C03939 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = ArticlesDatabase;

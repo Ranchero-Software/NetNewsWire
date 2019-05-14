@@ -185,7 +185,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
 		case .feedbin:
-			self.delegate = FeedbinAccountDelegate(transport: transport)
+			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
 		default:
 			fatalError("Only Local and Feedbin accounts are supported")
 		}

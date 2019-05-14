@@ -16,6 +16,7 @@ import Articles
 import RSCore
 import RSParser
 import RSWeb
+import SyncDatabase
 import os.log
 
 public enum FeedbinAccountDelegateError: String, Error {
@@ -24,6 +25,8 @@ public enum FeedbinAccountDelegateError: String, Error {
 
 final class FeedbinAccountDelegate: AccountDelegate {
 
+	private let database: SyncDatabase
+	
 	private let caller: FeedbinAPICaller
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedbin")
 
@@ -42,7 +45,10 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	init(transport: Transport?) {
+	init(dataFolder: String, transport: Transport?) {
+		
+		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
+		database = SyncDatabase(databaseFilePath: databaseFilePath)
 		
 		if transport != nil {
 			
@@ -403,7 +409,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
+		
+		let syncStatuses = articles.map { article in
+			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
+		}
+		database.insertStatuses(syncStatuses)
+		
 		return account.update(articles, statusKey: statusKey, flag: flag)
+		
 	}
 	
 	func accountDidInitialize(_ account: Account) {
