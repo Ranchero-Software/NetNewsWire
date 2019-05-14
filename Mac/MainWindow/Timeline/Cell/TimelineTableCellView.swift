@@ -19,7 +19,7 @@ class TimelineTableCellView: NSTableCellView {
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
 	private lazy var avatarImageView: NSImageView = {
-		let imageView = TimelineTableCellView.imageView(with: AppImages.genericFeedImage, scaling: .scaleProportionallyDown)
+		let imageView = TimelineTableCellView.imageView(with: AppImages.genericFeedImage, scaling: .scaleNone)
 		imageView.wantsLayer = true
 		return imageView
 	}()

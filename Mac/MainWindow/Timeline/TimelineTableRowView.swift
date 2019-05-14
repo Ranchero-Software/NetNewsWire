@@ -10,6 +10,10 @@ import AppKit
 
 class TimelineTableRowView : NSTableRowView {
 
+	override var isOpaque: Bool {
+		return true
+	}
+
 	init() {
 		super.init(frame: NSRect.zero)
 	}
