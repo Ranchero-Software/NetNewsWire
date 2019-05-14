@@ -126,11 +126,7 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 		
 		for url in urls {
-			do {
-				try OPMLImporter.parseAndImport(fileURL: url, account: AccountManager.shared.defaultAccount)
-			} catch {
-				presentError(title: "OPML Import Error", message: error.localizedDescription)
-			}
+			AccountManager.shared.defaultAccount.importOPML(url) { result in}
 		}
 		
 	}
