@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import RSDatabase
 
-public struct SyncStatus {
+public struct SyncStatus: Hashable, Equatable {
 	
 	public let articleID: String
 	public let key: ArticleStatus.Key
@@ -24,7 +24,7 @@ public struct SyncStatus {
 		self.selected = selected
 	}
 	
-	public func databaseDictionary() -> DatabaseDictionary? {
+	public func databaseDictionary() -> DatabaseDictionary {
 		return [DatabaseKey.articleID: articleID, DatabaseKey.key: key.rawValue, DatabaseKey.flag: flag, DatabaseKey.selected: selected]
 	}
 	

@@ -37,6 +37,14 @@ final class LocalAccountDelegate: AccountDelegate {
 		refresher.refreshFeeds(account.flattenedFeeds())
 		completion?()
 	}
+
+	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+		completion()
+	}
+	
+	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+		completion()
+	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 

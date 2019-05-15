@@ -104,8 +104,48 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
-	func refreshArticleStatus(for account: Account, completion: (() -> Void)? = nil) {
+	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
 
+		os_log(.debug, log: log, "Sending article statuses...")
+		
+		let syncStatuses = database.selectForProcessing()
+		let createUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == false }
+		let deleteUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == true }
+		let createStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == true }
+		let deleteStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == false }
+
+		let group = DispatchGroup()
+		
+		group.enter()
+		sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries) {
+			group.leave()
+		}
+		
+		group.enter()
+		sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries) {
+			group.leave()
+		}
+		
+		group.enter()
+		sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries) {
+			group.leave()
+		}
+		
+		group.enter()
+		sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries) {
+			group.leave()
+		}
+		
+		group.notify(queue: DispatchQueue.main) { [weak self] in
+			guard let self = self else { return }
+			os_log(.debug, log: self.log, "Done sending article statuses.")
+			completion()
+		}
+		
+	}
+	
+	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+		
 		os_log(.debug, log: log, "Refreshing article statuses...")
 		
 		let group = DispatchGroup()
@@ -139,7 +179,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		group.notify(queue: DispatchQueue.main) { [weak self] in
 			guard let self = self else { return }
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
-			completion?()
+			completion()
 		}
 		
 	}
@@ -701,6 +741,36 @@ private extension FeedbinAccountDelegate {
 
 	}
 	
+	
+	func sendArticleStatuses(_ statuses: [SyncStatus],
+							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
+							 completion: @escaping (() -> Void)) {
+		
+		guard !statuses.isEmpty else {
+			completion()
+			return
+		}
+		
+		let articleIDs = statuses.compactMap { Int($0.articleID) }
+		let articleIDGroups = articleIDs.chunked(into: 1000)
+		for articleIDGroup in articleIDGroups {
+			
+			apiCall(articleIDGroup) { [weak self] result in
+				switch result {
+				case .success:
+					self?.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
+					completion()
+				case .failure(let error):
+					guard let self = self else { return }
+					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
+					self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
+					completion()
+				}
+			}
+			
+		}
+	}
+
 	func importOPMLItems(_ account: Account, items: [RSOPMLItem], parentFolder: Folder?) {
 		
 		items.forEach { (item) in
@@ -1058,14 +1128,14 @@ private extension FeedbinAccountDelegate {
 		let deltaUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
 		let markUnreadArticles = account.fetchArticles(forArticleIDs: deltaUnreadArticleIDs)
 		DispatchQueue.main.async {
-			_ = account.markArticles(markUnreadArticles, statusKey: .read, flag: false)
+			_ = account.update(markUnreadArticles, statusKey: .read, flag: false)
 		}
 	
 		// Mark articles as read
 		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
 		let markReadArticles = account.fetchArticles(forArticleIDs: deltaReadArticleIDs)
 		DispatchQueue.main.async {
-			_ = account.markArticles(markReadArticles, statusKey: .read, flag: true)
+			_ = account.update(markReadArticles, statusKey: .read, flag: true)
 		}
 	
 		// Save any unread statuses for articles we haven't yet received
@@ -1092,14 +1162,14 @@ private extension FeedbinAccountDelegate {
 		let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
 		let markStarredArticles = account.fetchArticles(forArticleIDs: deltaStarredArticleIDs)
 		DispatchQueue.main.async {
-			_ = account.markArticles(markStarredArticles, statusKey: .starred, flag: true)
+			_ = account.update(markStarredArticles, statusKey: .starred, flag: true)
 		}
 		
 		// Mark articles as unstarred
 		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
 		let markUnstarredArticles = account.fetchArticles(forArticleIDs: deltaUnstarredArticleIDs)
 		DispatchQueue.main.async {
-			_ = account.markArticles(markUnstarredArticles, statusKey: .starred, flag: false)
+			_ = account.update(markUnstarredArticles, statusKey: .starred, flag: false)
 		}
 		
 		// Save any starred statuses for articles we haven't yet received

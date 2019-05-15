@@ -27,6 +27,18 @@ public final class SyncDatabase {
 		syncStatusTable.insertStatuses(statuses)
 	}
 	
+	public func selectForProcessing() -> [SyncStatus] {
+		return syncStatusTable.selectForProcessing()
+	}
+	
+	public func resetSelectedForProcessing(_ articleIDs: [String]) {
+		syncStatusTable.resetSelectedForProcessing(articleIDs)
+	}
+	
+	public func deleteSelectedForProcessing(_ articleIDs: [String]) {
+		syncStatusTable.deleteSelectedForProcessing(articleIDs)
+	}
+	
 }
 
 // MARK: - Private

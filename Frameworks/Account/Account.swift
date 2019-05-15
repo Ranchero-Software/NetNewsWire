@@ -286,10 +286,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public func refreshAll(completionHandler completion: (() -> Void)? = nil) {
-		delegate.refreshAll(for: self, completion: completion)
+	public func refreshAll(completion: (() -> Void)? = nil) {
+		self.delegate.refreshAll(for: self, completion: completion)
 	}
 
+	public func syncArticleStatus(completion: (() -> Void)? = nil) {
+		delegate.sendArticleStatus(for: self) { [unowned self] in
+			self.delegate.refreshArticleStatus(for: self) {
+				completion?()
+			}
+		}
+	}
+	
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.importOPML(for: self, opmlFile: opmlFile) { [weak self] result in
 			switch result {

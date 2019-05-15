@@ -42,7 +42,7 @@ final class FeedbinAPICaller: NSObject {
 		self.transport = transport
 	}
 	
-	func validateCredentials(completionHandler completion: @escaping (Result<Bool, Error>) -> Void) {
+	func validateCredentials(completion: @escaping (Result<Bool, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("authentication.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
@@ -67,7 +67,7 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func retrieveTags(completionHandler completion: @escaping (Result<[FeedbinTag]?, Error>) -> Void) {
+	func retrieveTags(completion: @escaping (Result<[FeedbinTag]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
@@ -113,7 +113,7 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func retrieveSubscriptions(completionHandler completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
+	func retrieveSubscriptions(completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
@@ -133,7 +133,7 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func createSubscription(url: String, completionHandler completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
+	func createSubscription(url: String, completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
 		var request = URLRequest(url: callURL, credentials: credentials)
@@ -218,7 +218,7 @@ final class FeedbinAPICaller: NSObject {
 		transport.send(request: request, method: HTTPMethod.delete, completion: completion)
 	}
 	
-	func retrieveTaggings(completionHandler completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
+	func retrieveTaggings(completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.taggings]
@@ -279,7 +279,7 @@ final class FeedbinAPICaller: NSObject {
 		transport.send(request: request, method: HTTPMethod.delete, completion: completion)
 	}
 	
-	func retrieveIcons(completionHandler completion: @escaping (Result<[FeedbinIcon]?, Error>) -> Void) {
+	func retrieveIcons(completion: @escaping (Result<[FeedbinIcon]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("icons.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.icons]
@@ -403,7 +403,7 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 
-	func retrieveUnreadEntries(completionHandler completion: @escaping (Result<[Int]?, Error>) -> Void) {
+	func retrieveUnreadEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
@@ -423,7 +423,21 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func retrieveStarredEntries(completionHandler completion: @escaping (Result<[Int]?, Error>) -> Void) {
+	func createUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
+		let request = URLRequest(url: callURL, credentials: credentials)
+		let payload = FeedbinUnreadEntry(unreadEntries: entries)
+		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+	}
+	
+	func deleteUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
+		let request = URLRequest(url: callURL, credentials: credentials)
+		let payload = FeedbinUnreadEntry(unreadEntries: entries)
+		transport.send(request: request, method: HTTPMethod.delete, payload: payload, completion: completion)
+	}
+	
+	func retrieveStarredEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.starredEntries]
@@ -441,6 +455,20 @@ final class FeedbinAPICaller: NSObject {
 			
 		}
 		
+	}
+	
+	func createStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
+		let request = URLRequest(url: callURL, credentials: credentials)
+		let payload = FeedbinStarredEntry(starredEntries: entries)
+		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+	}
+	
+	func deleteStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
+		let request = URLRequest(url: callURL, credentials: credentials)
+		let payload = FeedbinStarredEntry(starredEntries: entries)
+		transport.send(request: request, method: HTTPMethod.delete, payload: payload, completion: completion)
 	}
 	
 }
