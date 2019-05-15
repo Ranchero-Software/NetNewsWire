@@ -38,18 +38,26 @@ public final class FeedIconDownloader {
 		}
 		
 		if let iconURL = feed.iconURL {
-			if let image = icon(forURL: iconURL) {
-				postFeedIconDidBecomeAvailableNotification(feed)
-				cache[feed] = image
-				return image
+			icon(forURL: iconURL) { (image) in
+				if let image = image {
+					self.postFeedIconDidBecomeAvailableNotification(feed)
+					self.cache[feed] = image
+				}
+				else {
+					checkHomePageURL()
+				}
 			}
 		}
 
-		if let homePageURL = feed.homePageURL {
-			if let image = icon(forHomePageURL: homePageURL) {
-				postFeedIconDidBecomeAvailableNotification(feed)
-				cache[feed] = image
-				return image
+		func checkHomePageURL() {
+			guard let homePageURL = feed.homePageURL else {
+				return
+			}
+			icon(forHomePageURL: homePageURL) { (image) in
+				if let image = image {
+					self.postFeedIconDidBecomeAvailableNotification(feed)
+					self.cache[feed] = image
+				}
 			}
 		}
 
@@ -59,25 +67,27 @@ public final class FeedIconDownloader {
 
 private extension FeedIconDownloader {
 
-	func icon(forHomePageURL homePageURL: String) -> RSImage? {
+	func icon(forHomePageURL homePageURL: String, _ imageResultBlock: @escaping (RSImage?) -> Void) {
 
 		if homePagesWithNoIconURL.contains(homePageURL) {
-			return nil
+			imageResultBlock(nil)
+			return
 		}
 
 		if let iconURL = cachedIconURL(for: homePageURL) {
-			return icon(forURL: iconURL)
+			icon(forURL: iconURL, imageResultBlock)
+			return
 		}
 
 		findIconURLForHomePageURL(homePageURL)
-		return nil
 	}
 
-	func icon(forURL url: String) -> RSImage? {
-		if let imageData = imageDownloader.image(for: url), let image = RSImage.scaledForAvatar(imageData) {
-			return image
+	func icon(forURL url: String, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+		guard let imageData = imageDownloader.image(for: url) else {
+			imageResultBlock(nil)
+			return
 		}
-		return nil
+		RSImage.scaledForAvatar(imageData, imageResultBlock: imageResultBlock)
 	}
 
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
@@ -120,7 +130,8 @@ private extension FeedIconDownloader {
 
 		if let url = metadata.bestWebsiteIconURL() {
 			cacheIconURL(for: homePageURL, url)
-			let _ = icon(forURL: url)
+			icon(forURL: url) { (image) in
+			}
 			return
 		}
 

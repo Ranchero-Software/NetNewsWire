@@ -21,9 +21,11 @@ extension RSImage {
 			}
 		}
 	}
-	
+}
+
+private extension RSImage {
+
 	static func scaledForAvatar(_ data: Data) -> RSImage? {
-		
 		let scaledMaxPixelSize = Int(ceil(CGFloat(RSImage.avatarSize) * RSScreen.mainScreenScale))
 		guard let cgImage = RSImage.scaleImage(data, maxPixelSize: scaledMaxPixelSize) else {
 			return nil

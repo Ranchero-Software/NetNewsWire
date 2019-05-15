@@ -38,11 +38,9 @@ final class AuthorAvatarDownloader {
 		}
 		
 		if let imageData = imageDownloader.image(for: avatarURL) {
-			if let image = RSImage.scaledForAvatar(imageData) {
-				handleImageDidBecomeAvailable(avatarURL, image)
-				return image
-			}
-		} else {
+			scaleAndCacheImageData(imageData, avatarURL)
+		}
+		else {
 			waitingForAvatarURLs.insert(avatarURL)
 		}
 
@@ -50,29 +48,30 @@ final class AuthorAvatarDownloader {
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-
 		guard let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
-		
 		guard waitingForAvatarURLs.contains(avatarURL) else {
 			return
 		}
-		
-		guard let imageData = imageDownloader.image(for: avatarURL),
-			let image = RSImage.scaledForAvatar(imageData) else {
+		guard let imageData = imageDownloader.image(for: avatarURL) else {
 			return
 		}
-
-		handleImageDidBecomeAvailable(avatarURL, image)
-		
+		scaleAndCacheImageData(imageData, avatarURL)
 	}
 }
 
 private extension AuthorAvatarDownloader {
 
-	func handleImageDidBecomeAvailable(_ avatarURL: String, _ image: RSImage) {
+	func scaleAndCacheImageData(_ imageData: Data, _ avatarURL: String) {
+		RSImage.scaledForAvatar(imageData) { (image) in
+			if let image = image {
+				self.handleImageDidBecomeAvailable(avatarURL, image)
+			}
+		}
+	}
 
+	func handleImageDidBecomeAvailable(_ avatarURL: String, _ image: RSImage) {
 		if cache[avatarURL] == nil {
 			cache[avatarURL] = image
 		}
@@ -83,7 +82,6 @@ private extension AuthorAvatarDownloader {
 	}
 
 	func postAvatarDidBecomeAvailableNotification(_ avatarURL: String) {
-
 		DispatchQueue.main.async {
  			NotificationCenter.default.post(name: .AvatarDidBecomeAvailable, object: self, userInfo: [UserInfoKey.url: avatarURL])
 		}
