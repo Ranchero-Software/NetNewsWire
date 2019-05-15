@@ -35,8 +35,16 @@ class ExportOPMLWindowController: NSWindowController {
 	// MARK: API
 	
 	func runSheetOnWindow(_ hostWindow: NSWindow) {
+		
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!)
+		
+		if AccountManager.shared.activeAccounts.count == 1 {
+			let account = AccountManager.shared.activeAccounts.first!
+			exportOPML(account: account)
+		} else {
+			hostWindow.beginSheet(window!)
+		}
+		
 	}
 	
 	// MARK: Actions
@@ -50,9 +58,14 @@ class ExportOPMLWindowController: NSWindowController {
 		guard let menuItem = accountPopUpButton.selectedItem else {
 			return
 		}
+
 		let account = menuItem.representedObject as! Account
-		
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
+		exportOPML(account: account)
+		
+	}
+	
+	func exportOPML(account: Account) {
 		
 		let panel = NSSavePanel()
 		panel.allowedFileTypes = ["opml"]
@@ -79,7 +92,6 @@ class ExportOPMLWindowController: NSWindowController {
 			}
 		}
 		
-
-
 	}
+	
 }

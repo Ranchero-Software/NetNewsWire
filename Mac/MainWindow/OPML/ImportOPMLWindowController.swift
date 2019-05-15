@@ -35,8 +35,16 @@ class ImportOPMLWindowController: NSWindowController {
 	// MARK: API
 	
 	func runSheetOnWindow(_ hostWindow: NSWindow) {
+		
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!)
+		
+		if AccountManager.shared.activeAccounts.count == 1 {
+			let account = AccountManager.shared.activeAccounts.first!
+			importOPML(account: account)
+		} else {
+			hostWindow.beginSheet(window!)
+		}
+		
 	}
 	
 	// MARK: Actions
@@ -50,9 +58,14 @@ class ImportOPMLWindowController: NSWindowController {
 		guard let menuItem = accountPopUpButton.selectedItem else {
 			return
 		}
+		
 		let account = menuItem.representedObject as! Account
-
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
+		importOPML(account: account)
+		
+	}
+	
+	func importOPML(account: Account) {
 		
 		let panel = NSOpenPanel()
 		panel.canDownloadUbiquitousContents = true
