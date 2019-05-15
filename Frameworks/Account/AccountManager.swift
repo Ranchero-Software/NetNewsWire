@@ -150,6 +150,11 @@ public final class AccountManager: UnreadCountProvider {
 		activeAccounts.forEach { $0.refreshAll() }
 	}
 
+	public func syncArticleStatusAll() {
+	
+		activeAccounts.forEach { $0.syncArticleStatus() }
+	}
+	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
 
 		for account in activeAccounts {

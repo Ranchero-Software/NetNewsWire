@@ -23,12 +23,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var feedIconDownloader: FeedIconDownloader!
 	var appName: String!
-	var refreshTimer: RefreshTimer?
+	
+	var refreshTimer: AccountRefreshTimer?
+	var syncTimer: ArticleStatusSyncTimer?
+	
 	var shuttingDown = false {
 		didSet {
 			if shuttingDown {
 				refreshTimer?.shuttingDown = shuttingDown
 				refreshTimer?.invalidate()
+				syncTimer?.shuttingDown = shuttingDown
+				syncTimer?.invalidate()
 			}
 		}
 	}
@@ -153,17 +158,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			self.toggleInspectorWindow(self)
 		}
 
-		refreshTimer = RefreshTimer(delegate: self)
+		refreshTimer = AccountRefreshTimer()
+		syncTimer = ArticleStatusSyncTimer()
 		
 		#if RELEASE
 			debugMenuItem.menu?.removeItem(debugMenuItem)
 			DispatchQueue.main.async {
 				self.refreshTimer!.timedRefresh(nil)
+				self.syncTimer!.timedRefresh(nil)
 			}
 		#endif
 
 		#if DEBUG
 			refreshTimer!.update()
+			syncTimer!.update()
 		#endif
 
 		#if !MAC_APP_STORE
@@ -191,6 +199,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		// It’s possible there’s a refresh timer set to go off in the past.
 		// In that case, refresh now and update the timer.
 		refreshTimer?.fireOldTimer()
+		syncTimer?.fireOldTimer()
 	}
 	
 	func applicationDidResignActive(_ notification: Notification) {
@@ -533,12 +542,4 @@ extension AppDelegate : ScriptingAppDelegate {
     internal var  scriptingSelectedArticles: [Article] {
         return self.scriptingMainWindowController?.scriptingSelectedArticles ?? []
     }
-}
-
-extension AppDelegate: RefreshTimerDelegate {
-	
-	func refresh() {
-		AccountManager.shared.refreshAll()
-	}
-	
 }
