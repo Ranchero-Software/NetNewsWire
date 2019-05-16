@@ -93,6 +93,14 @@ class SettingsViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
 		switch indexPath.section {
+		case 0:
+			let sortedAccounts = AccountManager.shared.sortedAccounts
+			if indexPath.row == sortedAccounts.count {
+				let timeline = UIStoryboard.settings.instantiateController(ofType: AddAccountViewController.self)
+				self.navigationController?.pushViewController(timeline, animated: true)
+			} else {
+				// TODO
+			}
 		case 1:
 			switch indexPath.row {
 			case 0:
