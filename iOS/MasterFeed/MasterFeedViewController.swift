@@ -372,6 +372,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 					case .success:
 						break
 					case .failure(let error):
+						source?.addFeed(feed) { result in }
 						self?.presentError(error)
 					}
 				}
