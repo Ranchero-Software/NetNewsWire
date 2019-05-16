@@ -252,6 +252,8 @@ private extension SidebarOutlineDataSource {
 					case .success:
 						break
 					case .failure(let error):
+						// If the second part of the move failed, try to put the feed back
+						source?.addFeed(feed) { result in}
 						NSApplication.shared.presentError(error)
 					}
 				}
