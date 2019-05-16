@@ -483,8 +483,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 private extension FeedbinAccountDelegate {
 	
 	func handleError(_ error: Error) {
-		// TODO: We should do a better job of error handling here.
-		// We need to prompt for credentials if they are expired.
 		#if os(macOS)
 		NSApplication.shared.presentError(error)
 		#else
