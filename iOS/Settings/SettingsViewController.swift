@@ -21,6 +21,9 @@ class SettingsViewController: UITableViewController {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
 		NotificationCenter.default.removeObserver(tableView!, name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
+		
+		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
+		
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -37,7 +40,7 @@ class SettingsViewController: UITableViewController {
 		let numberOfLinesText = NSLocalizedString(" lines", comment: "Lines")
 		timelineNumberOfLinesLabel.text = "\(AppDefaults.timelineNumberOfLines)" + numberOfLinesText
 		
-		let buildLabel = UILabel(frame: CGRect(x: 20.0, y: 0.0, width: 0.0, height: 0.0))
+		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 20.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
 		buildLabel.textColor = UIColor.gray
 		buildLabel.text = "\(Bundle.main.appName) v \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
@@ -47,12 +50,44 @@ class SettingsViewController: UITableViewController {
 
 	}
 	
+	// MARK: UITableView
+	
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		switch section {
+		case 0:
+			return AccountManager.shared.accounts.count + 1
+		default:
+			return super.tableView(tableView, numberOfRowsInSection: section)
+		}
+	}
+	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = super.tableView(tableView, cellForRowAt: indexPath)
+
+		let cell: UITableViewCell
+		switch indexPath.section {
+		case 0:
+			
+			cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
+			cell.textLabel?.adjustsFontForContentSizeCategory = true
+			
+			let sortedAccounts = AccountManager.shared.sortedAccounts
+			if indexPath.row == sortedAccounts.count {
+				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Accounts")
+			} else {
+				cell.textLabel?.text = sortedAccounts[indexPath.row].nameForDisplay
+			}
+			
+		default:
+			
+			cell = super.tableView(tableView, cellForRowAt: indexPath)
+			
+		}
+		
 		let bgView = UIView()
 		bgView.backgroundColor = AppAssets.selectionBackgroundColor
 		cell.selectedBackgroundView = bgView
 		return cell
+		
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -100,7 +135,37 @@ class SettingsViewController: UITableViewController {
 		tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 		
 	}
+	
+	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+		return false
+	}
+	
+	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+		return false
+	}
 
+	override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+		return .none
+	}
+	
+	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+		if indexPath.section == 0 {
+			return super.tableView(tableView, heightForRowAt: IndexPath(row: 0, section: 0))
+		} else {
+			return super.tableView(tableView, heightForRowAt: indexPath)
+		}
+	}
+	
+	override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
+		if indexPath.section == 0 {
+			return super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: 0))
+		} else {
+			return super.tableView(tableView, indentationLevelForRowAt: indexPath)
+		}
+	}
+	
+	// MARK: Actions
+	
 	@IBAction func done(_ sender: Any) {
 		dismiss(animated: true)
 	}

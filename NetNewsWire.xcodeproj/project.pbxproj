@@ -117,6 +117,7 @@
 		51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
 		51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
+		51E595AB228DF94C00FCC42B /* SettingsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51E595AA228DF94C00FCC42B /* SettingsTableViewCell.xib */; };
 		51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
 		51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		51EF0F79227716380050506E /* ColorHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F78227716380050506E /* ColorHash.swift */; };
@@ -705,6 +706,7 @@
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C452B72265178500C03939 /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
 		51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleStatusSyncTimer.swift; sourceTree = "<group>"; };
+		51E595AA228DF94C00FCC42B /* SettingsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsTableViewCell.xib; sourceTree = "<group>"; };
 		51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderTreeMenu.swift; path = AddFeed/FolderTreeMenu.swift; sourceTree = "<group>"; };
 		51EF0F76227716200050506E /* FaviconGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconGenerator.swift; sourceTree = "<group>"; };
 		51EF0F78227716380050506E /* ColorHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHash.swift; sourceTree = "<group>"; };
@@ -1031,6 +1033,7 @@
 			isa = PBXGroup;
 			children = (
 				5183CCEC22711DCE0010922C /* Settings.storyboard */,
+				51E595AA228DF94C00FCC42B /* SettingsTableViewCell.xib */,
 				5183CCEE227125970010922C /* SettingsViewController.swift */,
 				51F85BE6227245FC00C787DC /* AboutViewController.swift */,
 				51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */,
@@ -2189,6 +2192,7 @@
 				51C452AB22650DC600C03939 /* template.html in Resources */,
 				51F85BF12272524100C787DC /* Credits.rtf in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
+				51E595AB228DF94C00FCC42B /* SettingsTableViewCell.xib in Resources */,
 				51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
 				51C452B82265178500C03939 /* styleSheet.css in Resources */,
