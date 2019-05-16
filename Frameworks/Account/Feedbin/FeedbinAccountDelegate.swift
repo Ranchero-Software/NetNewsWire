@@ -885,12 +885,18 @@ private extension FeedbinAccountDelegate {
 					
 					if editedName != nil {
 						DispatchQueue.main.async {
-							folder.addFeed(feed)
+							BatchUpdate.shared.perform {
+								account.removeFeed(feed)
+								folder.addFeed(feed)
+							}
 						}
 						self?.processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
 					} else {
 						DispatchQueue.main.async {
-							folder.addFeed(feed)
+							BatchUpdate.shared.perform {
+								account.removeFeed(feed)
+								folder.addFeed(feed)
+							}
 							completion(.success(()))
 						}
 					}
