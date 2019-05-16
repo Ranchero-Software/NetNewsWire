@@ -1117,7 +1117,7 @@ private extension FeedbinAccountDelegate {
 	
 	func syncArticleReadState(account: Account, articleIDs: [Int]?) {
 		
-		guard let articleIDs = articleIDs, !articleIDs.isEmpty else {
+		guard let articleIDs = articleIDs else {
 			return
 		}
 
@@ -1151,7 +1151,7 @@ private extension FeedbinAccountDelegate {
 	
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?) {
 		
-		guard let articleIDs = articleIDs, !articleIDs.isEmpty else {
+		guard let articleIDs = articleIDs else {
 			return
 		}
 
