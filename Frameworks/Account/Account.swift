@@ -720,6 +720,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		if let account = object as? Account, account === self {
 			structureDidChange()
+			updateUnreadCount()
 		}
 		if let folder = object as? Folder, folder.account === self {
 			structureDidChange()
