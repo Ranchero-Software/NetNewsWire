@@ -67,6 +67,54 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
+	func importOPML(opmlData: Data, completion: @escaping (Result<FeedbinImportResult, Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("imports.json")
+		let request = URLRequest(url: callURL, credentials: credentials)
+		
+		transport.send(request: request, method: HTTPMethod.post, payload: opmlData) { result in
+			
+			switch result {
+			case .success(let (_, data)):
+				
+				guard let resultData = data else {
+					completion(.failure(TransportError.noData))
+					break
+				}
+				
+				do {
+					let result = try JSONDecoder().decode(FeedbinImportResult.self, from: resultData)
+					completion(.success(result))
+				} catch {
+					completion(.failure(error))
+				}
+
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
+	func retrieveOPMLImportResult(importID: Int, completion: @escaping (Result<FeedbinImportResult?, Error>) -> Void) {
+		
+		let callURL = feedbinBaseURL.appendingPathComponent("imports/\(importID).json")
+		let request = URLRequest(url: callURL, credentials: credentials)
+		
+		transport.send(request: request, resultType: FeedbinImportResult.self) { result in
+			
+			switch result {
+			case .success(let (_, importResult)):
+				completion(.success(importResult))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+	
 	func retrieveTags(completion: @escaping (Result<[FeedbinTag]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")

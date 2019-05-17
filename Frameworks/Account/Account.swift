@@ -303,6 +303,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			switch result {
 			case .success:
 				guard let self = self else { return }
+				// Reset the last fetch date to get the article history for the added feeds.
+				self.metadata.lastArticleFetch = nil
 				self.delegate.refreshAll(for: self) {
 					completion(.success(()))
 				}

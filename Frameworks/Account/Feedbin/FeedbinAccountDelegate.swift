@@ -185,7 +185,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+				
 		var fileData: Data?
 		
 		do {
@@ -200,25 +200,64 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
-		
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
-		guard let loadDocument = opmlDocument, let children = loadDocument.children else {
-			completion(.success(()))
-			return
-		}
-		
-		importOPMLItems(account, items: children, parentFolder: nil)
+		os_log(.debug, log: log, "Begin importing OPML...")
 
-		completion(.success(()))
+		caller.importOPML(opmlData: opmlData) { [weak self] result in
+			switch result {
+			case .success(let importResult):
+				if importResult.complete {
+					guard let self = self else { return }
+					os_log(.debug, log: self.log, "Import OPML done.")
+					DispatchQueue.main.async {
+						completion(.success(()))
+					}
+				} else {
+					self?.checkImportResult(opmlImportResultID: importResult.importResultID, completion: completion)
+				}
+			case .failure(let error):
+				guard let self = self else { return }
+				os_log(.debug, log: self.log, "Import OPML failed.")
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
+		}
 		
+	}
+	
+	private func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		DispatchQueue.main.async {
+			
+			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] timer in
+				
+				guard let self = self else { return }
+				
+				os_log(.debug, log: self.log, "Checking status of OPML import...")
+				
+				self.caller.retrieveOPMLImportResult(importID: opmlImportResultID) { result in
+					switch result {
+					case .success(let importResult):
+						if let result = importResult, result.complete {
+							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
+							timer.invalidate()
+							DispatchQueue.main.async {
+								completion(.success(()))
+							}
+						}
+					case .failure(let error):
+						os_log(.debug, log: self.log, "Import OPML check failed.")
+						timer.invalidate()
+						DispatchQueue.main.async {
+							completion(.failure(error))
+						}
+					}
+				}
+				
+			}
+			
+		}
+
 	}
 	
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -767,109 +806,6 @@ private extension FeedbinAccountDelegate {
 			}
 			
 		}
-	}
-
-	func importOPMLItems(_ account: Account, items: [RSOPMLItem], parentFolder: Folder?) {
-		
-		items.forEach { (item) in
-			
-			if let feedSpecifier = item.feedSpecifier {
-				importFeedSpecifier(account, feedSpecifier: feedSpecifier, parentFolder: parentFolder)
-				return
-			}
-			
-			guard let folderName = item.titleFromAttributes else {
-				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
-				if let itemChildren = item.children {
-					importOPMLItems(account, items: itemChildren, parentFolder: parentFolder)
-				}
-				return
-			}
-			
-			if let folder = account.ensureFolder(with: folderName) {
-				if let itemChildren = item.children {
-					importOPMLItems(account, items: itemChildren, parentFolder: folder)
-				}
-			}
-			
-		}
-		
-	}
-	
-	func importFeedSpecifier(_ account: Account, feedSpecifier: RSOPMLFeedSpecifier, parentFolder: Folder?) {
-		
-		caller.createSubscription(url: feedSpecifier.feedURL) { [weak self] result in
-			
-			switch result {
-			case .success(let subResult):
-				switch subResult {
-				case .created(let sub):
-					
-					DispatchQueue.main.async {
-						
-						let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
-						feed.subscriptionID = String(sub.subscriptionID)
-						
-						self?.importFeedSpecifierPostProcess(account: account, sub: sub, feedSpecifier: feedSpecifier, feed: feed, parentFolder: parentFolder)
-						
-					}
-					
-				default:
-					break
-				}
-				
-			case .failure(let error):
-				guard let self = self else { return }
-				os_log(.error, log: self.log, "Create feed on OPML import failed: %@.", error.localizedDescription)
-			}
-			
-		}
-		
-	}
-	
-	func importFeedSpecifierPostProcess(account: Account, sub: FeedbinSubscription, feedSpecifier: RSOPMLFeedSpecifier, feed: Feed, parentFolder: Folder?) {
-		
-		// Rename the feed if its name in the OPML file doesn't match the found name
-		if sub.name != feedSpecifier.title, let newName = feedSpecifier.title {
-			
-			self.caller.renameSubscription(subscriptionID: String(sub.subscriptionID), newName: newName) { [weak self] result in
-				switch result {
-				case .success:
-					DispatchQueue.main.async {
-						feed.editedName = newName
-					}
-				case .failure(let error):
-					guard let self = self else { return }
-					os_log(.error, log: self.log, "Rename feed on OPML import failed: %@.", error.localizedDescription)
-				}
-			}
-			
-		}
-		
-		// Move the new feed if it is in a folder
-		if let folder = parentFolder, let feedID = Int(feed.feedID) {
-			
-			self.caller.createTagging(feedID: feedID, name: folder.name ?? "") { [weak self] result in
-				switch result {
-				case .success(let taggingID):
-					DispatchQueue.main.async {
-						self?.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
-						folder.addFeed(feed)
-					}
-				case .failure(let error):
-					guard let self = self else { return }
-					os_log(.error, log: self.log, "Move feed to folder on OPML import failed: %@.", error.localizedDescription)
-				}
-			}
-			
-		} else {
-			
-			DispatchQueue.main.async {
-				account.addFeed(feed)
-			}
-			
-		}
-		
 	}
 	
 	func processRestoredFeed(for account: Account, feed: Feed, editedName: String?, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
