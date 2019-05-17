@@ -48,6 +48,8 @@ class SettingsViewController: UITableViewController {
 		buildLabel.translatesAutoresizingMaskIntoConstraints = false
 		tableView.tableFooterView = buildLabel
 
+		tableView.reloadData()
+		
 	}
 	
 	// MARK: UITableView
@@ -96,10 +98,12 @@ class SettingsViewController: UITableViewController {
 		case 0:
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
-				let timeline = UIStoryboard.settings.instantiateController(ofType: AddAccountViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
+				let controller = UIStoryboard.settings.instantiateController(ofType: AddAccountViewController.self)
+				self.navigationController?.pushViewController(controller, animated: true)
 			} else {
-				// TODO
+				let controller = UIStoryboard.settings.instantiateController(ofType: DetailAccountViewController.self)
+				controller.account = sortedAccounts[indexPath.row]
+				self.navigationController?.pushViewController(controller, animated: true)
 			}
 		case 1:
 			switch indexPath.row {

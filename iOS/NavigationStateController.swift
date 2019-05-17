@@ -177,7 +177,8 @@ class NavigationStateController {
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		
@@ -197,6 +198,10 @@ class NavigationStateController {
 		rebuildBackingStores()
 	}
 
+	@objc func accountStateDidChange(_ note: Notification) {
+		rebuildBackingStores()
+	}
+	
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		self.sortDirection = AppDefaults.timelineSortDirection
 	}
@@ -230,6 +235,8 @@ class NavigationStateController {
 	
 	func rebuildShadowTable() {
 		
+		shadowTable = [[Node]]()
+
 		for i in 0..<treeController.rootNode.numberOfChildNodes {
 			
 			var result = [Node]()
@@ -245,7 +252,7 @@ class NavigationStateController {
 				}
 			}
 			
-			shadowTable[i] = result
+			shadowTable.append(result)
 			
 		}
 		
