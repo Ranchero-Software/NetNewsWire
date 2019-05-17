@@ -569,6 +569,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return database.fetchStarredArticleIDs()
 	}
 	
+	public func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
+		return database.fetchArticleIDsForStatusesWithoutArticles()
+	}
+
 	public func opmlDocument() -> String {
 		let escapedTitle = nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
 		let openingText =

@@ -347,6 +347,33 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
+	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([FeedbinEntry]?), Error>) -> Void) {
+		
+		guard !articleIDs.isEmpty else {
+			completion(.success(([FeedbinEntry]())))
+			return
+		}
+		
+		let concatIDs = articleIDs.reduce("") { param, articleID in return param + ",\(articleID)" }
+		let paramIDs = String(concatIDs.dropFirst())
+		
+		var callURL = URLComponents(url: feedbinBaseURL.appendingPathComponent("entries.json"), resolvingAgainstBaseURL: false)!
+		callURL.queryItems = [URLQueryItem(name: "ids", value: paramIDs)]
+		let request = URLRequest(url: callURL.url!, credentials: credentials)
+		
+		transport.send(request: request, resultType: [FeedbinEntry].self) { [weak self] result in
+			
+			switch result {
+			case .success(let (_, entries)):
+				completion(.success((entries)))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+		
+	}
+
 	func retrieveEntries(feedID: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
 		
 		let since = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
@@ -404,25 +431,6 @@ final class FeedbinAPICaller: NSObject {
 			}
 			
 		}
-		
-	}
-	
-	func extractPageNumber(link: String?) -> Int? {
-		
-		guard let link = link else {
-			return nil
-		}
-		
-		if let lowerBound = link.range(of: "page=")?.upperBound {
-			if let upperBound = link.range(of: "&")?.lowerBound {
-				return Int(link[lowerBound..<upperBound])
-			}
-			if let upperBound = link.range(of: ">")?.lowerBound {
-				return Int(link[lowerBound..<upperBound])
-			}
-		}
-		
-		return nil
 		
 	}
 	
@@ -530,6 +538,25 @@ extension FeedbinAPICaller {
 			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
 			accountMetadata?.conditionalGetInfo = conditionalGet
 		}
+	}
+	
+	func extractPageNumber(link: String?) -> Int? {
+		
+		guard let link = link else {
+			return nil
+		}
+		
+		if let lowerBound = link.range(of: "page=")?.upperBound {
+			if let upperBound = link.range(of: "&")?.lowerBound {
+				return Int(link[lowerBound..<upperBound])
+			}
+			if let upperBound = link.range(of: ">")?.lowerBound {
+				return Int(link[lowerBound..<upperBound])
+			}
+		}
+		
+		return nil
+		
 	}
 	
 }

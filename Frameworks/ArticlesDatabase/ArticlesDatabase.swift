@@ -112,6 +112,10 @@ public final class ArticlesDatabase {
 		return articlesTable.fetchStarredArticleIDs()
 	}
 	
+	public func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
+		return articlesTable.fetchArticleIDsForStatusesWithoutArticles()
+	}
+	
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {
 		return articlesTable.mark(articles, statusKey, flag)
 	}

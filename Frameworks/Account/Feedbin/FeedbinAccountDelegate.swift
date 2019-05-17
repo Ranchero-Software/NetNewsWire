@@ -80,7 +80,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(5)
+		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
 		refreshAccount(account) { [weak self] result in
 			switch result {
@@ -88,8 +88,12 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				
 				self?.refreshArticles(account) {
 					self?.refreshArticleStatus(for: account) {
-						self?.refreshProgress.clear()
-						completion?()
+						self?.refreshMissingArticles(account) {
+							self?.refreshProgress.clear()
+							DispatchQueue.main.async {
+								completion?()
+							}
+						}
 					}
 				}
 				
@@ -794,24 +798,32 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 		
+		let group = DispatchGroup()
+		
 		let articleIDs = statuses.compactMap { Int($0.articleID) }
 		let articleIDGroups = articleIDs.chunked(into: 1000)
 		for articleIDGroup in articleIDGroups {
 			
+			group.enter()
 			apiCall(articleIDGroup) { [weak self] result in
 				switch result {
 				case .success:
 					self?.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
-					completion()
+					group.leave()
 				case .failure(let error):
 					guard let self = self else { return }
 					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
 					self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
-					completion()
+					group.leave()
 				}
 			}
 			
 		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			completion()
+		}
+		
 	}
 	
 	func processRestoredFeed(for account: Account, feed: Feed, editedName: String?, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -991,6 +1003,46 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
+	func refreshMissingArticles(_ account: Account, completion: @escaping (() -> Void)) {
+		
+		os_log(.debug, log: log, "Refreshing missing articles...")
+		let articleIDs = Array(account.fetchArticleIDsForStatusesWithoutArticles())
+		
+		let group = DispatchGroup()
+		
+		let chunkedArticleIDs = articleIDs.chunked(into: 100)
+		refreshProgress.addToNumberOfTasks(chunkedArticleIDs.count - 1)
+		
+		for chunk in chunkedArticleIDs {
+			
+			group.enter()
+			caller.retrieveEntries(articleIDs: chunk) { [weak self] result in
+				
+				switch result {
+				case .success(let entries):
+				
+					self?.processEntries(account: account, entries: entries) {
+						self?.refreshProgress.completeTask()
+						group.leave()
+					}
+					
+				case .failure(let error):
+					guard let self = self else { return }
+					os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
+					group.leave()
+				}
+				
+			}
+
+		}
+
+		group.notify(queue: DispatchQueue.main) {
+			os_log(.debug, log: self.log, "Done refreshing missing articles.")
+			completion()
+		}
+		
+	}
+
 	func refreshArticles(_ account: Account, page: String?, completion: @escaping (() -> Void)) {
 		
 		guard let page = page else {
