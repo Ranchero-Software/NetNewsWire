@@ -36,9 +36,25 @@ public enum AccountType: Int {
 	// TODO: more
 }
 
-public enum AccountError: Error {
+public enum AccountError: LocalizedError {
+	
 	case createErrorNotFound
 	case createErrorAlreadySubscribed
+	case opmlImportInProgress
+	
+	public var errorDescription: String? {
+		switch self {
+		case .opmlImportInProgress:
+			return NSLocalizedString("An OPML import for this account is already running.", comment: "Import running")
+		default:
+			return NSLocalizedString("An unknown error occurred.", comment: "Unknown error")
+		}
+	}
+	
+	public var recoverySuggestion: String? {
+		return NSLocalizedString("Please try again later.", comment: "Try later")
+	}
+	
 }
 
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
@@ -299,6 +315,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		guard !delegate.opmlImportInProgress else {
+			completion(.failure(AccountError.opmlImportInProgress))
+			return
+		}
+		
 		delegate.importOPML(for: self, opmlFile: opmlFile) { [weak self] result in
 			switch result {
 			case .success:
@@ -312,6 +334,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				completion(.failure(error))
 			}
 		}
+		
 	}
 	
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {

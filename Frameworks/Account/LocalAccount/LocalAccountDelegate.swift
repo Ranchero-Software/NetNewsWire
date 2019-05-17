@@ -18,6 +18,8 @@ public enum LocalAccountDelegateError: String, Error {
 final class LocalAccountDelegate: AccountDelegate {
 	
 	let supportsSubFolders = false
+	let opmlImportInProgress = false
+	
 	let server: String? = nil
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?

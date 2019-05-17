@@ -32,6 +32,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	let supportsSubFolders = false
 	let server: String? = "api.feedbin.com"
+	var opmlImportInProgress = false
 	
 	var credentials: Credentials? {
 		didSet {
@@ -185,7 +186,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-				
+		
 		var fileData: Data?
 		
 		do {
@@ -201,13 +202,15 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 		
 		os_log(.debug, log: log, "Begin importing OPML...")
-
+		opmlImportInProgress = true
+		
 		caller.importOPML(opmlData: opmlData) { [weak self] result in
 			switch result {
 			case .success(let importResult):
 				if importResult.complete {
 					guard let self = self else { return }
 					os_log(.debug, log: self.log, "Import OPML done.")
+					self.opmlImportInProgress = false
 					DispatchQueue.main.async {
 						completion(.success(()))
 					}
@@ -217,47 +220,13 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .failure(let error):
 				guard let self = self else { return }
 				os_log(.debug, log: self.log, "Import OPML failed.")
+				self.opmlImportInProgress = false
 				DispatchQueue.main.async {
 					completion(.failure(error))
 				}
 			}
 		}
 		
-	}
-	
-	private func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		DispatchQueue.main.async {
-			
-			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] timer in
-				
-				guard let self = self else { return }
-				
-				os_log(.debug, log: self.log, "Checking status of OPML import...")
-				
-				self.caller.retrieveOPMLImportResult(importID: opmlImportResultID) { result in
-					switch result {
-					case .success(let importResult):
-						if let result = importResult, result.complete {
-							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
-							timer.invalidate()
-							DispatchQueue.main.async {
-								completion(.success(()))
-							}
-						}
-					case .failure(let error):
-						os_log(.debug, log: self.log, "Import OPML check failed.")
-						timer.invalidate()
-						DispatchQueue.main.async {
-							completion(.failure(error))
-						}
-					}
-				}
-				
-			}
-			
-		}
-
 	}
 	
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -542,6 +511,43 @@ private extension FeedbinAccountDelegate {
 			case .failure(let error):
 				completion(.failure(error))
 			}
+		}
+		
+	}
+	
+	func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		DispatchQueue.main.async {
+			
+			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] timer in
+				
+				guard let self = self else { return }
+				
+				os_log(.debug, log: self.log, "Checking status of OPML import...")
+				
+				self.caller.retrieveOPMLImportResult(importID: opmlImportResultID) { result in
+					switch result {
+					case .success(let importResult):
+						if let result = importResult, result.complete {
+							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
+							timer.invalidate()
+							self.opmlImportInProgress = false
+							DispatchQueue.main.async {
+								completion(.success(()))
+							}
+						}
+					case .failure(let error):
+						os_log(.debug, log: self.log, "Import OPML check failed.")
+						timer.invalidate()
+						self.opmlImportInProgress = false
+						DispatchQueue.main.async {
+							completion(.failure(error))
+						}
+					}
+				}
+				
+			}
+			
 		}
 		
 	}
