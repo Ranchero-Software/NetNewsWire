@@ -15,7 +15,7 @@ How to go through your articles (take special note of the space bar and the n ke
 
 Sharing to other apps, including MarsEdit and Micro.blog
 
-How to delete feeds
+How to delete feeds and folders (note that undo is available)
 
 How to add a syncing account
 
