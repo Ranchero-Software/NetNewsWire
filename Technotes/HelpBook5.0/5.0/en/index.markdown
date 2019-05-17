@@ -20,3 +20,7 @@ How to delete feeds
 How to add a syncing account
 
 Other ideas? Add them here.
+
+---
+
+Credits: The Help book was written [Brent Simmons](https://inessential.com/), your name here, etc.
