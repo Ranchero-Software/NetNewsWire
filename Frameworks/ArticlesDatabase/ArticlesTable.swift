@@ -307,6 +307,10 @@ final class ArticlesTable: DatabaseTable {
 		return statusesTable.fetchStarredArticleIDs()
 	}
 	
+	func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
+		return statusesTable.fetchArticleIDsForStatusesWithoutArticles()
+	}
+	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
 
 		return statusesTable.mark(articles.statuses(), statusKey, flag)

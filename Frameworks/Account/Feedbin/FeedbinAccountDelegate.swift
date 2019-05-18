@@ -32,6 +32,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	let supportsSubFolders = false
 	let server: String? = "api.feedbin.com"
+	var opmlImportInProgress = false
 	
 	var credentials: Credentials? {
 		didSet {
@@ -79,7 +80,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(5)
+		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
 		refreshAccount(account) { [weak self] result in
 			switch result {
@@ -87,8 +88,12 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				
 				self?.refreshArticles(account) {
 					self?.refreshArticleStatus(for: account) {
-						self?.refreshProgress.clear()
-						completion?()
+						self?.refreshMissingArticles(account) {
+							self?.refreshProgress.clear()
+							DispatchQueue.main.async {
+								completion?()
+							}
+						}
 					}
 				}
 				
@@ -200,24 +205,31 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
+		os_log(.debug, log: log, "Begin importing OPML...")
+		opmlImportInProgress = true
 		
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			completion(.failure(error))
-			return
+		caller.importOPML(opmlData: opmlData) { [weak self] result in
+			switch result {
+			case .success(let importResult):
+				if importResult.complete {
+					guard let self = self else { return }
+					os_log(.debug, log: self.log, "Import OPML done.")
+					self.opmlImportInProgress = false
+					DispatchQueue.main.async {
+						completion(.success(()))
+					}
+				} else {
+					self?.checkImportResult(opmlImportResultID: importResult.importResultID, completion: completion)
+				}
+			case .failure(let error):
+				guard let self = self else { return }
+				os_log(.debug, log: self.log, "Import OPML failed.")
+				self.opmlImportInProgress = false
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
 		}
-		
-		guard let loadDocument = opmlDocument, let children = loadDocument.children else {
-			completion(.success(()))
-			return
-		}
-		
-		importOPMLItems(account, items: children, parentFolder: nil)
-
-		completion(.success(()))
 		
 	}
 	
@@ -507,6 +519,43 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
+	func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		DispatchQueue.main.async {
+			
+			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] timer in
+				
+				guard let self = self else { return }
+				
+				os_log(.debug, log: self.log, "Checking status of OPML import...")
+				
+				self.caller.retrieveOPMLImportResult(importID: opmlImportResultID) { result in
+					switch result {
+					case .success(let importResult):
+						if let result = importResult, result.complete {
+							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
+							timer.invalidate()
+							self.opmlImportInProgress = false
+							DispatchQueue.main.async {
+								completion(.success(()))
+							}
+						}
+					case .failure(let error):
+						os_log(.debug, log: self.log, "Import OPML check failed.")
+						timer.invalidate()
+						self.opmlImportInProgress = false
+						DispatchQueue.main.async {
+							completion(.failure(error))
+						}
+					}
+				}
+				
+			}
+			
+		}
+		
+	}
+	
 	func syncFolders(_ account: Account, _ tags: [FeedbinTag]?) {
 		
 		guard let tags = tags else { return }
@@ -749,125 +798,30 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 		
+		let group = DispatchGroup()
+		
 		let articleIDs = statuses.compactMap { Int($0.articleID) }
 		let articleIDGroups = articleIDs.chunked(into: 1000)
 		for articleIDGroup in articleIDGroups {
 			
+			group.enter()
 			apiCall(articleIDGroup) { [weak self] result in
 				switch result {
 				case .success:
 					self?.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
-					completion()
+					group.leave()
 				case .failure(let error):
 					guard let self = self else { return }
 					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
 					self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
-					completion()
-				}
-			}
-			
-		}
-	}
-
-	func importOPMLItems(_ account: Account, items: [RSOPMLItem], parentFolder: Folder?) {
-		
-		items.forEach { (item) in
-			
-			if let feedSpecifier = item.feedSpecifier {
-				importFeedSpecifier(account, feedSpecifier: feedSpecifier, parentFolder: parentFolder)
-				return
-			}
-			
-			guard let folderName = item.titleFromAttributes else {
-				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
-				if let itemChildren = item.children {
-					importOPMLItems(account, items: itemChildren, parentFolder: parentFolder)
-				}
-				return
-			}
-			
-			if let folder = account.ensureFolder(with: folderName) {
-				if let itemChildren = item.children {
-					importOPMLItems(account, items: itemChildren, parentFolder: folder)
+					group.leave()
 				}
 			}
 			
 		}
 		
-	}
-	
-	func importFeedSpecifier(_ account: Account, feedSpecifier: RSOPMLFeedSpecifier, parentFolder: Folder?) {
-		
-		caller.createSubscription(url: feedSpecifier.feedURL) { [weak self] result in
-			
-			switch result {
-			case .success(let subResult):
-				switch subResult {
-				case .created(let sub):
-					
-					DispatchQueue.main.async {
-						
-						let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
-						feed.subscriptionID = String(sub.subscriptionID)
-						
-						self?.importFeedSpecifierPostProcess(account: account, sub: sub, feedSpecifier: feedSpecifier, feed: feed, parentFolder: parentFolder)
-						
-					}
-					
-				default:
-					break
-				}
-				
-			case .failure(let error):
-				guard let self = self else { return }
-				os_log(.error, log: self.log, "Create feed on OPML import failed: %@.", error.localizedDescription)
-			}
-			
-		}
-		
-	}
-	
-	func importFeedSpecifierPostProcess(account: Account, sub: FeedbinSubscription, feedSpecifier: RSOPMLFeedSpecifier, feed: Feed, parentFolder: Folder?) {
-		
-		// Rename the feed if its name in the OPML file doesn't match the found name
-		if sub.name != feedSpecifier.title, let newName = feedSpecifier.title {
-			
-			self.caller.renameSubscription(subscriptionID: String(sub.subscriptionID), newName: newName) { [weak self] result in
-				switch result {
-				case .success:
-					DispatchQueue.main.async {
-						feed.editedName = newName
-					}
-				case .failure(let error):
-					guard let self = self else { return }
-					os_log(.error, log: self.log, "Rename feed on OPML import failed: %@.", error.localizedDescription)
-				}
-			}
-			
-		}
-		
-		// Move the new feed if it is in a folder
-		if let folder = parentFolder, let feedID = Int(feed.feedID) {
-			
-			self.caller.createTagging(feedID: feedID, name: folder.name ?? "") { [weak self] result in
-				switch result {
-				case .success(let taggingID):
-					DispatchQueue.main.async {
-						self?.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
-						folder.addFeed(feed)
-					}
-				case .failure(let error):
-					guard let self = self else { return }
-					os_log(.error, log: self.log, "Move feed to folder on OPML import failed: %@.", error.localizedDescription)
-				}
-			}
-			
-		} else {
-			
-			DispatchQueue.main.async {
-				account.addFeed(feed)
-			}
-			
+		group.notify(queue: DispatchQueue.main) {
+			completion()
 		}
 		
 	}
@@ -1049,6 +1003,46 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
+	func refreshMissingArticles(_ account: Account, completion: @escaping (() -> Void)) {
+		
+		os_log(.debug, log: log, "Refreshing missing articles...")
+		let articleIDs = Array(account.fetchArticleIDsForStatusesWithoutArticles())
+		
+		let group = DispatchGroup()
+		
+		let chunkedArticleIDs = articleIDs.chunked(into: 100)
+		refreshProgress.addToNumberOfTasks(chunkedArticleIDs.count - 1)
+		
+		for chunk in chunkedArticleIDs {
+			
+			group.enter()
+			caller.retrieveEntries(articleIDs: chunk) { [weak self] result in
+				
+				switch result {
+				case .success(let entries):
+				
+					self?.processEntries(account: account, entries: entries) {
+						self?.refreshProgress.completeTask()
+						group.leave()
+					}
+					
+				case .failure(let error):
+					guard let self = self else { return }
+					os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
+					group.leave()
+				}
+				
+			}
+
+		}
+
+		group.notify(queue: DispatchQueue.main) {
+			os_log(.debug, log: self.log, "Done refreshing missing articles.")
+			completion()
+		}
+		
+	}
+
 	func refreshArticles(_ account: Account, page: String?, completion: @escaping (() -> Void)) {
 		
 		guard let page = page else {
