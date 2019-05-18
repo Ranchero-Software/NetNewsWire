@@ -37,18 +37,6 @@ public final class FeedIconDownloader {
 			return cachedImage
 		}
 		
-		if let iconURL = feed.iconURL {
-			icon(forURL: iconURL) { (image) in
-				if let image = image {
-					self.postFeedIconDidBecomeAvailableNotification(feed)
-					self.cache[feed] = image
-				}
-				else {
-					checkHomePageURL()
-				}
-			}
-		}
-
 		func checkHomePageURL() {
 			guard let homePageURL = feed.homePageURL else {
 				return
@@ -60,6 +48,22 @@ public final class FeedIconDownloader {
 				}
 			}
 		}
+
+		if let iconURL = feed.iconURL {
+			icon(forURL: iconURL) { (image) in
+				if let image = image {
+					self.postFeedIconDidBecomeAvailableNotification(feed)
+					self.cache[feed] = image
+				}
+				else {
+					checkHomePageURL()
+				}
+			}
+		}
+		else {
+			checkHomePageURL()
+		}
+
 
 		return nil
 	}
