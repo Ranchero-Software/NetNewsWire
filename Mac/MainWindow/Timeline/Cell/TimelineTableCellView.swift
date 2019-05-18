@@ -21,6 +21,7 @@ class TimelineTableCellView: NSTableCellView {
 	private lazy var avatarImageView: NSImageView = {
 		let imageView = TimelineTableCellView.imageView(with: AppImages.genericFeedImage, scaling: .scaleNone)
 		imageView.imageAlignment = .alignTop
+		imageView.imageScaling = .scaleProportionallyDown
 		imageView.wantsLayer = true
 		return imageView
 	}()
