@@ -282,7 +282,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return mainWindowController?.isOpen ?? false
 		}
 		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
-			return !isDisplayingSheet
+			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		return true
 	}
