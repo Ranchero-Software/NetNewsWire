@@ -31,7 +31,7 @@
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="URL" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="eRp-AP-WFq">
                                                     <rect key="frame" x="20" y="4" width="335" height="35.666666666666664"/>
                                                     <nil key="textColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="URL"/>
                                                 </textField>
                                             </subviews>
@@ -53,7 +53,7 @@
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Title (Optional)" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="u7n-VL-Ho9">
                                                     <rect key="frame" x="20" y="4" width="335" height="35.666666666666664"/>
                                                     <nil key="textColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
                                             </subviews>
@@ -77,26 +77,25 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Folder" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="grZ-g6-qfm">
-                                                    <rect key="frame" x="23.999999999999996" y="15" width="48.666666666666657" height="14"/>
+                                                    <rect key="frame" x="19.999999999999996" y="4" width="48.666666666666657" height="35.666666666666664"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vaV-kY-CaE">
-                                                    <rect key="frame" x="325" y="15" width="42" height="14"/>
+                                                    <rect key="frame" x="313" y="11.666666666666666" width="42" height="20.333333333333336"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="vaV-kY-CaE" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="grZ-g6-qfm" secondAttribute="trailing" constant="8" id="1Dk-MH-7Hw"/>
-                                                <constraint firstItem="grZ-g6-qfm" firstAttribute="top" secondItem="sZh-wI-IW4" secondAttribute="topMargin" constant="4" id="9dF-Uj-lPA"/>
-                                                <constraint firstItem="grZ-g6-qfm" firstAttribute="leading" secondItem="sZh-wI-IW4" secondAttribute="leadingMargin" constant="8" id="NKz-GB-i4E"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="vaV-kY-CaE" secondAttribute="bottom" constant="4" id="Yfx-6j-UqX"/>
-                                                <constraint firstItem="vaV-kY-CaE" firstAttribute="trailing" secondItem="sZh-wI-IW4" secondAttribute="trailingMargin" constant="8" id="eCs-ob-UXo"/>
-                                                <constraint firstItem="vaV-kY-CaE" firstAttribute="top" secondItem="sZh-wI-IW4" secondAttribute="topMargin" constant="4" id="hUO-Ln-i29"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="grZ-g6-qfm" secondAttribute="bottom" constant="4" id="tu3-aF-XD6"/>
+                                                <constraint firstItem="vaV-kY-CaE" firstAttribute="centerY" secondItem="grZ-g6-qfm" secondAttribute="centerY" id="4I1-oT-KFl"/>
+                                                <constraint firstItem="grZ-g6-qfm" firstAttribute="leading" secondItem="sZh-wI-IW4" secondAttribute="leading" constant="20" symbolic="YES" id="5tF-au-Zv8"/>
+                                                <constraint firstAttribute="trailing" secondItem="vaV-kY-CaE" secondAttribute="trailing" constant="20" symbolic="YES" id="96f-HQ-Y0z"/>
+                                                <constraint firstItem="vaV-kY-CaE" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="grZ-g6-qfm" secondAttribute="trailing" constant="8" id="Hzx-N0-6NB"/>
+                                                <constraint firstItem="grZ-g6-qfm" firstAttribute="top" secondItem="sZh-wI-IW4" secondAttribute="top" constant="4" id="PSY-sG-VGF"/>
+                                                <constraint firstAttribute="bottom" secondItem="grZ-g6-qfm" secondAttribute="bottom" constant="4" id="SwU-Ai-DiZ"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
