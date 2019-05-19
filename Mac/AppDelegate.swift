@@ -273,10 +273,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
 
 		if item.action == #selector(refreshAll(_:)) {
-			return !AccountManager.shared.refreshInProgress
+			return !AccountManager.shared.refreshInProgress && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		if item.action == #selector(addAppNews(_:)) {
-			return !isDisplayingSheet && !AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString)
+			return !isDisplayingSheet && !AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
 			return mainWindowController?.isOpen ?? false
