@@ -34,12 +34,14 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		urlTextField.autocorrectionType = .no
 		urlTextField.autocapitalizationType = .none
 		urlTextField.text = initialFeed
+		urlTextField.delegate = self
 		
 		if initialFeed != nil {
 			delegate?.readyToAdd(state: true)
 		}
 		
 		nameTextField.text = initialFeedName
+		nameTextField.delegate = self
 		
 		pickerData = AddFeedFolderPickerData()
 		folderPickerView.dataSource = self
@@ -197,6 +199,15 @@ private extension AddFeedViewController {
 			}
 		}
 		
+	}
+	
+}
+
+extension AddFeedViewController: UITextFieldDelegate {
+	
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		textField.resignFirstResponder()
+		return true
 	}
 	
 }
