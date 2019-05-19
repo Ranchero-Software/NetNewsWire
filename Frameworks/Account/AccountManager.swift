@@ -11,7 +11,7 @@ import RSCore
 import Articles
 
 public extension Notification.Name {
-	static let AccountsDidChangeNotification = Notification.Name(rawValue: "AccountsDidChangeNotification")
+	static let AccountsDidChange = Notification.Name(rawValue: "AccountsDidChange")
 }
 
 private let defaultAccountFolderName = "OnMyMac"
@@ -114,7 +114,7 @@ public final class AccountManager: UnreadCountProvider {
 		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)!
 		accountsDictionary[accountID] = account
 		
-		NotificationCenter.default.post(name: .AccountsDidChangeNotification, object: self)
+		NotificationCenter.default.post(name: .AccountsDidChange, object: self)
 		
 		return account
 	}
@@ -136,7 +136,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		
 		updateUnreadCount()
-		NotificationCenter.default.post(name: .AccountsDidChangeNotification, object: self)
+		NotificationCenter.default.post(name: .AccountsDidChange, object: self)
 		
 	}
 	
