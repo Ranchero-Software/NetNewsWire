@@ -21,6 +21,7 @@ class DetailAccountViewController: UITableViewController {
 		
 		guard let account = account else { return }
 		nameTextField.text = account.name
+		nameTextField.delegate = self
 		activeSwitch.isOn = account.isActive
 		
     }
@@ -29,5 +30,14 @@ class DetailAccountViewController: UITableViewController {
 		account?.name = nameTextField.text
 		account?.isActive = activeSwitch.isOn
 	}
+	
+}
 
+extension DetailAccountViewController: UITextFieldDelegate {
+		
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		nameTextField.resignFirstResponder()
+		return true
+	}
+	
 }
