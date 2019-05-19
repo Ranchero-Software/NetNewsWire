@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -495,6 +496,88 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kmn-Q7-rga" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1826" y="139"/>
+        </scene>
+        <!--Add Local Account View Controller-->
+        <scene sceneID="3at-5H-MrI">
+            <objects>
+                <viewController storyboardIdentifier="AddLocalAccountViewController" id="lkT-rF-XV3" customClass="AddLocalAccountViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="9rb-pV-gvI">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="7zF-66-uRq">
+                                <rect key="frame" x="90.5" y="108" width="233" height="36"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="74E-kl-vU9">
+                                        <rect key="frame" x="0.0" y="2" width="32" height="32"/>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="32" id="E7T-ps-KgX"/>
+                                            <constraint firstAttribute="height" constant="32" id="hew-64-pi8"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="On My iPhone" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tdm-Ge-uc6">
+                                        <rect key="frame" x="52" y="0.0" width="181" height="36"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2dx-hK-hxL">
+                                <rect key="frame" x="107" y="160" width="200" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="uYr-DR-Oil"/>
+                                </constraints>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="7zF-66-uRq" firstAttribute="top" secondItem="Z5L-XF-ZSa" secondAttribute="top" constant="20" id="Meu-uI-vga"/>
+                            <constraint firstItem="2dx-hK-hxL" firstAttribute="centerX" secondItem="9rb-pV-gvI" secondAttribute="centerX" id="SCu-FD-r1u"/>
+                            <constraint firstItem="7zF-66-uRq" firstAttribute="centerX" secondItem="9rb-pV-gvI" secondAttribute="centerX" id="u9U-ks-gUh"/>
+                            <constraint firstItem="2dx-hK-hxL" firstAttribute="top" secondItem="Tdm-Ge-uc6" secondAttribute="bottom" constant="16" id="wLk-OA-sWO"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="Z5L-XF-ZSa"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Otv-KQ-fsd">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="e3g-mF-CWh">
+                            <connections>
+                                <action selector="cancel:" destination="lkT-rF-XV3" id="mzJ-wI-Paz"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="GP9-IT-RNj">
+                            <connections>
+                                <action selector="done:" destination="lkT-rF-XV3" id="TE0-YB-g6L"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="nameTextField" destination="2dx-hK-hxL" id="t5V-3x-3vu"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oPp-xq-kz9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3214" y="145"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="ncU-rc-RwA">
+            <objects>
+                <navigationController storyboardIdentifier="AddLocalAccountNavigationViewController" id="GGt-T1-ndB" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="xT7-am-AeJ">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="lkT-rF-XV3" kind="relationship" relationship="rootViewController" id="Bkq-7x-eht"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="otA-e3-gdk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2497" y="145"/>
         </scene>
         <!--Timeline Text-->
         <scene sceneID="07z-Vb-4Fm">

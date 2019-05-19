@@ -178,6 +178,7 @@ class NavigationStateController {
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChangeNotification, object: nil)
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
@@ -202,6 +203,10 @@ class NavigationStateController {
 		rebuildBackingStores()
 	}
 	
+	@objc func accountsDidChange(_ note: Notification) {
+		rebuildBackingStores()
+	}
+
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		self.sortDirection = AppDefaults.timelineSortDirection
 	}
