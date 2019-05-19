@@ -259,7 +259,7 @@
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lZK-wx-jbo">
                                                     <rect key="frame" x="20" y="4" width="335" height="35.666666666666664"/>
                                                     <nil key="textColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
                                             </subviews>
@@ -289,7 +289,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mxj-Bw-Jfx">
-                                                    <rect key="frame" x="325" y="15" width="42" height="14"/>
+                                                    <rect key="frame" x="313" y="11.666666666666666" width="42" height="20.333333333333336"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -297,10 +297,9 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="YRf-I7-nkL" firstAttribute="top" secondItem="y2g-dW-fPZ" secondAttribute="top" constant="4" id="7ey-y0-Aef"/>
-                                                <constraint firstItem="mxj-Bw-Jfx" firstAttribute="trailing" secondItem="y2g-dW-fPZ" secondAttribute="trailingMargin" constant="8" id="Aip-HI-gf6"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="mxj-Bw-Jfx" secondAttribute="bottom" constant="4" id="KY1-7G-Jh8"/>
+                                                <constraint firstItem="mxj-Bw-Jfx" firstAttribute="centerY" secondItem="YRf-I7-nkL" secondAttribute="centerY" id="FDk-71-7yD"/>
+                                                <constraint firstAttribute="trailing" secondItem="mxj-Bw-Jfx" secondAttribute="trailing" constant="20" symbolic="YES" id="fIA-Rb-SEi"/>
                                                 <constraint firstAttribute="bottom" secondItem="YRf-I7-nkL" secondAttribute="bottom" constant="4" id="fcs-rL-KrO"/>
-                                                <constraint firstItem="mxj-Bw-Jfx" firstAttribute="top" secondItem="y2g-dW-fPZ" secondAttribute="topMargin" constant="4" id="pHr-Ke-jZ0"/>
                                                 <constraint firstItem="YRf-I7-nkL" firstAttribute="leading" secondItem="y2g-dW-fPZ" secondAttribute="leading" constant="20" symbolic="YES" id="xBK-tz-P2j"/>
                                             </constraints>
                                         </tableViewCellContentView>
