@@ -49,7 +49,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
-		clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
+		clearsSelectionOnViewWillAppear = true
 		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
 		super.viewWillAppear(animated)
 	}
