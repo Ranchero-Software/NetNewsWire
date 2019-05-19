@@ -361,7 +361,7 @@ final class FeedbinAPICaller: NSObject {
 		callURL.queryItems = [URLQueryItem(name: "ids", value: paramIDs)]
 		let request = URLRequest(url: callURL.url!, credentials: credentials)
 		
-		transport.send(request: request, resultType: [FeedbinEntry].self) { [weak self] result in
+		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
 			switch result {
 			case .success(let (_, entries)):
