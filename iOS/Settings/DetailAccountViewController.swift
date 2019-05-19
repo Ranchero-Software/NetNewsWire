@@ -36,7 +36,7 @@ class DetailAccountViewController: UITableViewController {
 extension DetailAccountViewController: UITextFieldDelegate {
 		
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		nameTextField.resignFirstResponder()
+		textField.resignFirstResponder()
 		return true
 	}
 	
