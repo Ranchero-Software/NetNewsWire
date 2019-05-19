@@ -345,10 +345,9 @@ protocol SidebarDelegate: class {
 	// MARK: - API
 
 	func rebuildTreeAndRestoreSelection() {
-		
-		let savedAccounts = treeController.rootNode.childNodes.compactMap { $0.representedObject as? Account }
-		
+		let savedAccounts = accountNodes
 		let savedSelection = selectedNodes
+		
 		rebuildTreeAndReloadDataIfNeeded()
 		restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
 		
@@ -361,6 +360,15 @@ protocol SidebarDelegate: class {
 		}
 		
 	}
+	
+	func canAddNewFeed() -> Bool {
+		return !accountNodes.isEmpty
+	}
+	
+	func canAddNewFolder() -> Bool {
+		return !accountNodes.isEmpty
+	}
+	
 }
 
 // MARK: - NSUserInterfaceValidations
@@ -379,6 +387,10 @@ extension SidebarViewController: NSUserInterfaceValidations {
 //MARK: - Private
 
 private extension SidebarViewController {
+	
+	var accountNodes: [Account] {
+		return treeController.rootNode.childNodes.compactMap { $0.representedObject as? Account }
+	}
 	
 	var selectedNodes: [Node] {
 		if let nodes = outlineView.selectedItems as? [Node] {
