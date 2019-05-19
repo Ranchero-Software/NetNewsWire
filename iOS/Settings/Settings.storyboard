@@ -337,7 +337,7 @@
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8Xs-17-Ubp">
+                                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="right" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8Xs-17-Ubp">
                                                             <rect key="frame" x="64" y="0.0" width="310" height="21"/>
                                                             <nil key="textColor"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -376,14 +376,6 @@
                                                 <constraint firstItem="J5R-kl-pYE" firstAttribute="centerY" secondItem="h3v-g9-biw" secondAttribute="centerY" id="Qrx-J1-99r"/>
                                                 <constraint firstItem="pvF-Ge-m4M" firstAttribute="centerY" secondItem="h3v-g9-biw" secondAttribute="centerY" id="Rq1-zD-1X7"/>
                                             </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="VzJ-7V-Jfa">
-                                        <rect key="frame" x="0.0" y="123" width="414" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="VzJ-7V-Jfa" id="GyY-75-Dmv">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
@@ -425,7 +417,7 @@
                                                     <rect key="frame" x="90.5" y="4" width="233" height="46.5"/>
                                                     <subviews>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="tb2-dO-AhR">
-                                                            <rect key="frame" x="0.0" y="7.5" width="32" height="32.000000000000028"/>
+                                                            <rect key="frame" x="0.0" y="7.5" width="32" height="32"/>
                                                             <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="32" id="0GF-vU-aEc"/>
@@ -509,7 +501,7 @@
                                 <rect key="frame" x="90.5" y="108" width="233" height="36"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="74E-kl-vU9">
-                                        <rect key="frame" x="0.0" y="2" width="32" height="32.000000000000028"/>
+                                        <rect key="frame" x="0.0" y="2" width="32" height="32"/>
                                         <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="32" id="E7T-ps-KgX"/>
