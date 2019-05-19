@@ -299,6 +299,7 @@
                                                 <constraint firstItem="mxj-Bw-Jfx" firstAttribute="centerY" secondItem="YRf-I7-nkL" secondAttribute="centerY" id="FDk-71-7yD"/>
                                                 <constraint firstAttribute="trailing" secondItem="mxj-Bw-Jfx" secondAttribute="trailing" constant="20" symbolic="YES" id="fIA-Rb-SEi"/>
                                                 <constraint firstAttribute="bottom" secondItem="YRf-I7-nkL" secondAttribute="bottom" constant="4" id="fcs-rL-KrO"/>
+                                                <constraint firstItem="mxj-Bw-Jfx" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="YRf-I7-nkL" secondAttribute="trailing" constant="8" id="rQ8-3l-2gz"/>
                                                 <constraint firstItem="YRf-I7-nkL" firstAttribute="leading" secondItem="y2g-dW-fPZ" secondAttribute="leading" constant="20" symbolic="YES" id="xBK-tz-P2j"/>
                                             </constraints>
                                         </tableViewCellContentView>
