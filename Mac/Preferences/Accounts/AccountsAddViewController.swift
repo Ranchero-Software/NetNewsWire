@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import Account
 
 class AccountsAddViewController: NSViewController {
 	
@@ -57,7 +58,7 @@ extension AccountsAddViewController: NSTableViewDelegate {
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? AccountsAddTableCellView {
 			switch row {
 			case 0:
-				cell.accountNameLabel?.stringValue = NSLocalizedString("On My Mac", comment: "Local")
+				cell.accountNameLabel?.stringValue = Account.defaultLocalAccountName
 				cell.accountImageView?.image = AppImages.accountLocal
 			case 1:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedbin", comment: "Feedbin")

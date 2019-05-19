@@ -11,8 +11,16 @@ import Account
 
 class AddLocalAccountViewController: UIViewController {
 
+	@IBOutlet private weak var localAccountNameLabel: UILabel!
 	@IBOutlet weak var nameTextField: UITextField!
-
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		localAccountNameLabel.text = Account.defaultLocalAccountName
+		nameTextField.delegate = self
+	}
+	
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true)
 	}
@@ -21,6 +29,15 @@ class AddLocalAccountViewController: UIViewController {
 		let account = AccountManager.shared.createAccount(type: .onMyMac)
 		account.name = nameTextField.text
 		dismiss(animated: true)
+	}
+	
+}
+
+extension AddLocalAccountViewController: UITextFieldDelegate {
+	
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		textField.resignFirstResponder()
+		return true
 	}
 	
 }

@@ -67,6 +67,21 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		public static let feeds = "feeds" // AccountDidDownloadArticles, StatusesDidChange
 	}
 
+	public static let defaultLocalAccountName: String = {
+		let defaultName: String
+		#if os(macOS)
+		defaultName = NSLocalizedString("On My Mac", comment: "Account name")
+		#else
+		if UIDevice.current.userInterfaceIdiom == .pad {
+			defaultName = NSLocalizedString("On My iPad", comment: "Account name")
+		} else {
+			defaultName = NSLocalizedString("On My iPhone", comment: "Account name")
+		}
+		#endif
+		
+		return defaultName
+	}()
+	
 	public let accountID: String
 	public let type: AccountType
 	public var nameForDisplay: String {
@@ -220,15 +235,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		switch type {
 		case .onMyMac:
-			#if os(macOS)
-			defaultName = NSLocalizedString("On My Mac", comment: "Account name")
-			#else
-			if UIDevice.current.userInterfaceIdiom == .pad {
-				defaultName = NSLocalizedString("On My iPad", comment: "Account name")
-			} else {
-				defaultName = NSLocalizedString("On My iPhone", comment: "Account name")
-			}
-			#endif
+			defaultName = Account.defaultLocalAccountName
 		case .feedly:
 			defaultName = "Feedly"
 		case .feedbin:

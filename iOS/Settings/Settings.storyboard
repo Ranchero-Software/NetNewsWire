@@ -484,6 +484,9 @@
                             <outlet property="delegate" destination="b00-4A-bV6" id="FKM-rN-deu"/>
                         </connections>
                     </tableView>
+                    <connections>
+                        <outlet property="localAccountNameLabel" destination="116-rt-msI" id="h6M-5V-392"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kmn-Q7-rga" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -548,6 +551,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="localAccountNameLabel" destination="Tdm-Ge-uc6" id="48O-IT-xXw"/>
                         <outlet property="nameTextField" destination="2dx-hK-hxL" id="t5V-3x-3vu"/>
                     </connections>
                 </viewController>
