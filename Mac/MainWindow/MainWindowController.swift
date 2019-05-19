@@ -227,6 +227,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 			return true
 		}
+		
+		if item.action == #selector(showAddFeedWindow(_:)) {
+			return canAddNewFeed()
+		}
 
 		return true
 	}
@@ -590,6 +594,10 @@ private extension MainWindowController {
 	func canMarkAllAsRead() -> Bool {
 		
 		return currentTimelineViewController?.canMarkAllAsRead() ?? false
+	}
+	
+	func canAddNewFeed() -> Bool {
+		return sidebarViewController?.canAddNewFeed() ?? false
 	}
 
 	func validateToggleRead(_ item: NSValidatedUserInterfaceItem) -> Bool {
