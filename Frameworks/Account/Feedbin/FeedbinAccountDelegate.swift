@@ -949,8 +949,12 @@ private extension FeedbinAccountDelegate {
 					
 					self?.processEntries(account: account, entries: entries) {
 						self?.refreshArticles(account, page: page) {
-							DispatchQueue.main.async {
-								completion(.success(feed))
+							self?.refreshArticleStatus(for: account) {
+								self?.refreshMissingArticles(account) {
+									DispatchQueue.main.async {
+										completion(.success(feed))
+									}
+								}
 							}
 						}
 					}
