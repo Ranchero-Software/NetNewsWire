@@ -14,7 +14,8 @@ import RSTree
 
 class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunner {
 
-	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
+	@IBOutlet private weak var markAllAsReadButton: UIBarButtonItem!
+	@IBOutlet private weak var addNewItemButton: UIBarButtonItem!
 	
 	var undoableCommands = [UndoableCommand]()
 	
@@ -596,6 +597,7 @@ private extension MasterFeedViewController {
 	
 	func updateUI() {
 		markAllAsReadButton.isEnabled = navState.isAnyUnreadAvailable
+		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}
 
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
