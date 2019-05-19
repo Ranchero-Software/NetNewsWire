@@ -13,7 +13,6 @@ import Articles
 
 class MasterTimelineViewController: ProgressTableViewController, UndoableCommandRunner {
 
-	private static var minAvatarDimension: CGFloat = 20.0
 	private var numberOfTextLines = 0
 	
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
@@ -393,7 +392,7 @@ private extension MasterTimelineViewController {
 		
 		if let authors = article.authors {
 			for author in authors {
-				if let image = avatarForAuthor(author), imagePassesQualityAssurance(image) {
+				if let image = avatarForAuthor(author) {
 					return image
 				}
 			}
@@ -404,26 +403,16 @@ private extension MasterTimelineViewController {
 		}
 		
 		let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)
-		if imagePassesQualityAssurance(feedIconImage) {
+		if feedIconImage != nil {
 			return feedIconImage
 		}
 		
 		if let feed = article.feed, let faviconImage = appDelegate.faviconDownloader.favicon(for: feed) {
-			if imagePassesQualityAssurance(faviconImage) {
-				return faviconImage
-			}
+			return faviconImage
 		}
 		
 		return FaviconGenerator.favicon(feed)
 		
-	}
-	
-	func imagePassesQualityAssurance(_ image: UIImage?) -> Bool {
-		let minDimension = MasterTimelineViewController.minAvatarDimension * RSScreen.mainScreenScale
-		if let image = image, image.size.height >= minDimension, image.size.width >= minDimension {
-			return true
-		}
-		return false
 	}
 	
 	func avatarForAuthor(_ author: Author) -> UIImage? {
