@@ -23,7 +23,7 @@ protocol AddContainerViewControllerChildDelegate: UIViewController {
 
 class AddContainerViewController: UIViewController {
 
-	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 360.0, height: 400.0)
+	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 	
 	@IBOutlet weak var cancelButton: UIBarButtonItem!
 	@IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
