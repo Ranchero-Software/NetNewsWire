@@ -434,8 +434,10 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
 		let addViewController = UIStoryboard.add.instantiateInitialViewController()!
-		addViewController.modalPresentationStyle = .popover
+		addViewController.modalPresentationStyle = .formSheet
+		addViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
 		addViewController.popoverPresentationController?.barButtonItem = sender
+		
 		self.present(addViewController, animated: true)
 	}
 	

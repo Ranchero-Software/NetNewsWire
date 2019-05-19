@@ -227,6 +227,7 @@ private extension SettingsViewController {
 		let addNavViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
 		let addViewController = addNavViewController.topViewController as! AddContainerViewController
 		addNavViewController.modalPresentationStyle = .formSheet
+		addNavViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
 		addViewController.initialFeed = appNewsURLString
 		addViewController.initialFeedName = "NetNewsWire News"
 		
