@@ -28,6 +28,7 @@
 		5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */; };
 		51543685228F6753005E1CDF /* DetailAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51543684228F6753005E1CDF /* DetailAccountViewController.swift */; };
 		515436882291D75D005E1CDF /* AddLocalAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515436872291D75D005E1CDF /* AddLocalAccountViewController.swift */; };
+		5154368A2291FED9005E1CDF /* FeedbinAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515436892291FED9005E1CDF /* FeedbinAccountViewController.swift */; };
 		51554C24228B71910055115A /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
 		51554C25228B71910055115A /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51554C30228B71A10055115A /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
@@ -677,6 +678,7 @@
 		5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsFeedbin.xib; sourceTree = "<group>"; };
 		51543684228F6753005E1CDF /* DetailAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailAccountViewController.swift; sourceTree = "<group>"; };
 		515436872291D75D005E1CDF /* AddLocalAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocalAccountViewController.swift; sourceTree = "<group>"; };
+		515436892291FED9005E1CDF /* FeedbinAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAccountViewController.swift; sourceTree = "<group>"; };
 		51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SyncDatabase.xcodeproj; path = Frameworks/SyncDatabase/SyncDatabase.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
@@ -1042,6 +1044,7 @@
 				51E595AA228DF94C00FCC42B /* SettingsTableViewCell.xib */,
 				5183CCEE227125970010922C /* SettingsViewController.swift */,
 				51E595AC228E1C2100FCC42B /* AddAccountViewController.swift */,
+				515436892291FED9005E1CDF /* FeedbinAccountViewController.swift */,
 				515436872291D75D005E1CDF /* AddLocalAccountViewController.swift */,
 				51F85BE6227245FC00C787DC /* AboutViewController.swift */,
 				51543684228F6753005E1CDF /* DetailAccountViewController.swift */,
@@ -2340,6 +2343,7 @@
 				512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
 				51F85BE7227245FC00C787DC /* AboutViewController.swift in Sources */,
+				5154368A2291FED9005E1CDF /* FeedbinAccountViewController.swift in Sources */,
 				51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */,
 				51C45292226509C800C03939 /* TodayFeedDelegate.swift in Sources */,
 				51C452A222650A1900C03939 /* RSHTMLMetadata+Extension.swift in Sources */,
