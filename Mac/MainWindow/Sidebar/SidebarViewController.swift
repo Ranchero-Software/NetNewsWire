@@ -365,6 +365,10 @@ protocol SidebarDelegate: class {
 		return !accountNodes.isEmpty
 	}
 	
+	func canAddNewFolder() -> Bool {
+		return !accountNodes.isEmpty
+	}
+	
 }
 
 // MARK: - NSUserInterfaceValidations

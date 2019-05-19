@@ -231,6 +231,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		if item.action == #selector(showAddFeedWindow(_:)) {
 			return canAddNewFeed()
 		}
+		
+		if item.action == #selector(showAddFolderWindow(_:)) {
+			return canAddNewFolder()
+		}
 
 		return true
 	}
@@ -598,6 +602,10 @@ private extension MainWindowController {
 	
 	func canAddNewFeed() -> Bool {
 		return sidebarViewController?.canAddNewFeed() ?? false
+	}
+	
+	func canAddNewFolder() -> Bool {
+		return sidebarViewController?.canAddNewFolder() ?? false
 	}
 
 	func validateToggleRead(_ item: NSValidatedUserInterfaceItem) -> Bool {
