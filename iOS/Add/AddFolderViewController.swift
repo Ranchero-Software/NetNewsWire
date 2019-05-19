@@ -12,9 +12,13 @@ import RSCore
 
 class AddFolderViewController: UITableViewController, AddContainerViewControllerChild {
 
-	@IBOutlet weak var nameTextField: UITextField!
-	@IBOutlet weak var accountLabel: UILabel!
-	@IBOutlet weak var accountPickerView: UIPickerView!
+	@IBOutlet private weak var nameTextField: UITextField!
+	@IBOutlet private weak var accountLabel: UILabel!
+	@IBOutlet private weak var accountPickerView: UIPickerView!
+	
+	private var shouldDisplayPicker: Bool {
+		return accounts.count > 1
+	}
 	
 	private var accounts: [Account]!
 	
@@ -25,10 +29,16 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 		super.viewDidLoad()
 		
 		accounts = AccountManager.shared.sortedActiveAccounts
+		
+		nameTextField.delegate = self
 		accountLabel.text = (accounts[0] as DisplayNameProvider).nameForDisplay
 		
-		accountPickerView.dataSource = self
-		accountPickerView.delegate = self
+		if shouldDisplayPicker {
+			accountPickerView.dataSource = self
+			accountPickerView.delegate = self
+		} else {
+			accountPickerView.isHidden = true
+		}
 		
 		// I couldn't figure out the gap at the top of the UITableView, so I took a hammer to it.
 		tableView.contentInset = UIEdgeInsets(top: -28, left: 0, bottom: 0, right: 0)
@@ -53,6 +63,13 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 		delegate?.readyToAdd(state: !(nameTextField.text?.isEmpty ?? false))
 	}
 	
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		if section == 1 && !shouldDisplayPicker {
+			return 1
+		}
+		
+		return super.tableView(tableView, numberOfRowsInSection: section)
+	}
 }
 
 extension AddFolderViewController: UIPickerViewDataSource, UIPickerViewDelegate {
@@ -71,6 +88,15 @@ extension AddFolderViewController: UIPickerViewDataSource, UIPickerViewDelegate 
 	
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
 		accountLabel.text = (accounts[row] as DisplayNameProvider).nameForDisplay
+	}
+	
+}
+
+extension AddFolderViewController: UITextFieldDelegate {
+	
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		textField.resignFirstResponder()
+		return true
 	}
 	
 }

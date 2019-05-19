@@ -14,12 +14,15 @@ import RSParser
 
 class AddFeedViewController: UITableViewController, AddContainerViewControllerChild {
 	
-	@IBOutlet weak var urlTextField: UITextField!
-	@IBOutlet weak var nameTextField: UITextField!
-	@IBOutlet weak var folderPickerView: UIPickerView!
-	@IBOutlet weak var folderLabel: UILabel!
+	@IBOutlet private weak var urlTextField: UITextField!
+	@IBOutlet private weak var nameTextField: UITextField!
+	@IBOutlet private weak var folderPickerView: UIPickerView!
+	@IBOutlet private weak var folderLabel: UILabel!
 	
-	private var pickerData: AddFeedFolderPickerData!
+	private lazy var pickerData: AddFeedFolderPickerData = AddFeedFolderPickerData()
+	private var shouldDisplayPicker: Bool {
+		return pickerData.containerNames.count > 1
+	}
 	
 	private var userCancelled = false
 
@@ -42,13 +45,16 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		
 		nameTextField.text = initialFeedName
 		nameTextField.delegate = self
+		folderLabel.text = pickerData.containerNames.first
 		
-		pickerData = AddFeedFolderPickerData()
-		folderPickerView.dataSource = self
-		folderPickerView.delegate = self
-		folderPickerView.showsSelectionIndicator = true
-		folderLabel.text = pickerData.containerNames[0]
-
+		if shouldDisplayPicker {
+			folderPickerView.dataSource = self
+			folderPickerView.delegate = self
+			folderPickerView.showsSelectionIndicator = true
+		} else {
+			folderPickerView.isHidden = true
+		}
+		
 		// I couldn't figure out the gap at the top of the UITableView, so I took a hammer to it.
 		tableView.contentInset = UIEdgeInsets(top: -28, left: 0, bottom: 0, right: 0)
 		
@@ -118,6 +124,15 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 	@objc func textDidChange(_ note: Notification) {
 		delegate?.readyToAdd(state: urlTextField.text?.rs_stringMayBeURL() ?? false)
 	}
+	
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		if section == 1 {
+			return shouldDisplayPicker ? 2 : 1
+		}
+		
+		return super.tableView(tableView, numberOfRowsInSection: section)
+	}
+	
 	
 }
 
