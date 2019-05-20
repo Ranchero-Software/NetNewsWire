@@ -36,7 +36,9 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
@@ -141,7 +143,15 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		}
 
 	}
-
+	
+	@objc func accountsDidChange(_ notification: Notification) {
+		updateUI()
+	}
+	
+	@objc func accountStateDidChange(_ notification: Notification) {
+		updateUI()
+	}
+	
 	@objc func masterSelectionDidChange(_ note: Notification) {
 		if let indexPath = navState.currentMasterIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
