@@ -70,8 +70,9 @@ final class FeedbinAPICaller: NSObject {
 	func importOPML(opmlData: Data, completion: @escaping (Result<FeedbinImportResult, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("imports.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
-		
+		var request = URLRequest(url: callURL, credentials: credentials)
+		request.addValue("text/xml; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
+
 		transport.send(request: request, method: HTTPMethod.post, payload: opmlData) { result in
 			
 			switch result {
