@@ -837,18 +837,14 @@ private extension FeedbinAccountDelegate {
 					
 					if editedName != nil {
 						DispatchQueue.main.async {
-							BatchUpdate.shared.perform {
-								account.removeFeed(feed)
-								folder.addFeed(feed)
-							}
+							account.removeFeed(feed)
+							folder.addFeed(feed)
 						}
 						self?.processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
 					} else {
 						DispatchQueue.main.async {
-							BatchUpdate.shared.perform {
-								account.removeFeed(feed)
-								folder.addFeed(feed)
-							}
+							account.removeFeed(feed)
+							folder.addFeed(feed)
 							completion(.success(()))
 						}
 					}
@@ -869,6 +865,10 @@ private extension FeedbinAccountDelegate {
 			
 			if editedName != nil {
 				processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
+			} else {
+				DispatchQueue.main.async {
+					completion(.success(()))
+				}
 			}
 			
 		}

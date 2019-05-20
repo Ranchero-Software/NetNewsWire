@@ -135,11 +135,15 @@ private struct SidebarItemSpecifier {
 	func delete() {
 
 		if let feed = feed {
+			BatchUpdate.shared.start()
 			account?.deleteFeed(feed) { result in
+				BatchUpdate.shared.end()
 				self.checkResult(result)
 			}
 		} else if let folder = folder {
+			BatchUpdate.shared.start()
 			account?.deleteFolder(folder) { result in
+				BatchUpdate.shared.end()
 				self.checkResult(result)
 			}
 		}
@@ -161,7 +165,9 @@ private struct SidebarItemSpecifier {
 			return
 		}
 		
+		BatchUpdate.shared.start()
 		account.restoreFeed(feed, folder: resolvedFolder()) { result in
+			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
 		
@@ -173,7 +179,9 @@ private struct SidebarItemSpecifier {
 			return
 		}
 		
+		BatchUpdate.shared.start()
 		account.restoreFolder(folder) { result in
+			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
 		
