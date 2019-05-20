@@ -58,6 +58,13 @@ class SettingsViewController: UITableViewController {
 		switch section {
 		case 0:
 			return AccountManager.shared.accounts.count + 1
+		case 1:
+			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
+			if AccountManager.shared.activeAccounts.isEmpty {
+				// Hide the add NetNewsWire feed row if they don't have any active accounts
+				return defaultNumberOfRows - 1
+			}
+			return defaultNumberOfRows
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -116,8 +123,12 @@ class SettingsViewController: UITableViewController {
 				UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire")!, options: [:])
 			case 3:
 				UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!, options: [:])
-			default:
+			case 4:
 				UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!, options: [:])
+			case 5:
+				addFeed()
+			default:
+				UIApplication.shared.open(URL(string: "https://ranchero.com/netnewswire/")!, options: [:])
 			}
 		case 2:
 			UIApplication.shared.open(URL(string: "https://appcamp4girls.com/contribute/")!, options: [:])
@@ -132,10 +143,8 @@ class SettingsViewController: UITableViewController {
 				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			case 1:
-				addFeed()
-			case 2:
 				importOPML()
-			case 3:
+			case 2:
 				exportOPML()
 			default:
 				print("export")
@@ -227,6 +236,7 @@ private extension SettingsViewController {
 		let addNavViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
 		let addViewController = addNavViewController.topViewController as! AddContainerViewController
 		addNavViewController.modalPresentationStyle = .formSheet
+		addNavViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
 		addViewController.initialFeed = appNewsURLString
 		addViewController.initialFeedName = "NetNewsWire News"
 		

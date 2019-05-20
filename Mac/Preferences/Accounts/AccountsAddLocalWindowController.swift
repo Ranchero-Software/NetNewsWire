@@ -11,12 +11,19 @@ import Account
 
 class AccountsAddLocalWindowController: NSWindowController {
 
-	@IBOutlet weak var nameTextField: NSTextField!
-
+	@IBOutlet private weak var nameTextField: NSTextField!
+	@IBOutlet private weak var localAccountNameTextField: NSTextField!
+	
 	private weak var hostWindow: NSWindow?
 
 	convenience init() {
 		self.init(windowNibName: NSNib.Name("AccountsAddLocal"))
+	}
+	
+	override func windowDidLoad() {
+		super.windowDidLoad()
+		
+		localAccountNameTextField.stringValue = Account.defaultLocalAccountName
 	}
 	
 	// MARK: API

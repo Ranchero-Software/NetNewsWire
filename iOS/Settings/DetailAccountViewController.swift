@@ -21,6 +21,7 @@ class DetailAccountViewController: UITableViewController {
 		
 		guard let account = account else { return }
 		nameTextField.text = account.name
+		nameTextField.delegate = self
 		activeSwitch.isOn = account.isActive
     }
 
@@ -28,6 +29,10 @@ class DetailAccountViewController: UITableViewController {
 		account?.name = nameTextField.text
 		account?.isActive = activeSwitch.isOn
 	}
+	
+}
+
+extension DetailAccountViewController {
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		if account == AccountManager.shared.defaultAccount {
@@ -46,6 +51,14 @@ class DetailAccountViewController: UITableViewController {
 		return cell
 	}
 
+	override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+		if indexPath.section == 1 {
+			return true
+		}
+		
+		return false
+	}
+	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if indexPath.section == 1 {
 			deleteAccount()
@@ -78,4 +91,13 @@ private extension DetailAccountViewController {
 		present(alertController, animated: true)
 	}
 	
+}
+
+extension DetailAccountViewController: UITextFieldDelegate {
+	
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		textField.resignFirstResponder()
+		return true
+	}
+
 }

@@ -14,7 +14,8 @@ import RSTree
 
 class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunner {
 
-	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
+	@IBOutlet private weak var markAllAsReadButton: UIBarButtonItem!
+	@IBOutlet private weak var addNewItemButton: UIBarButtonItem!
 	
 	var undoableCommands = [UndoableCommand]()
 	
@@ -35,7 +36,9 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: navState)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
@@ -48,7 +51,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
-		clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
+		clearsSelectionOnViewWillAppear = true
 		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
 		super.viewWillAppear(animated)
 	}
@@ -140,7 +143,15 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		}
 
 	}
-
+	
+	@objc func accountsDidChange(_ notification: Notification) {
+		updateUI()
+	}
+	
+	@objc func accountStateDidChange(_ notification: Notification) {
+		updateUI()
+	}
+	
 	@objc func masterSelectionDidChange(_ note: Notification) {
 		if let indexPath = navState.currentMasterIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
@@ -433,8 +444,10 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
 		let addViewController = UIStoryboard.add.instantiateInitialViewController()!
-		addViewController.modalPresentationStyle = .popover
+		addViewController.modalPresentationStyle = .formSheet
+		addViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
 		addViewController.popoverPresentationController?.barButtonItem = sender
+		
 		self.present(addViewController, animated: true)
 	}
 	
@@ -596,6 +609,7 @@ private extension MasterFeedViewController {
 	
 	func updateUI() {
 		markAllAsReadButton.isEnabled = navState.isAnyUnreadAvailable
+		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}
 
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
