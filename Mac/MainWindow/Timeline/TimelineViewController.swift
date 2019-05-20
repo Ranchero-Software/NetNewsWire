@@ -943,15 +943,7 @@ private extension TimelineViewController {
 	}
 
 	func representedObjectsContainsAnyPseudoFeed() -> Bool {
-		guard let representedObjects = representedObjects else {
-			return false
-		}
-		for representedObject in representedObjects {
-			if representedObject is PseudoFeed {
-				return true
-			}
-		}
-		return false
+		return representedObjects?.contains(where: { $0 is PseudoFeed}) ?? false
 	}
 
 	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
