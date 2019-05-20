@@ -96,7 +96,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	private var didRegisterForNotifications = false
-	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
+	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 2.0, maxInterval: 5.0)
 
 	private var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
