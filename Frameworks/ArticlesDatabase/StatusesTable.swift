@@ -70,7 +70,7 @@ final class StatusesTable: DatabaseTable {
 		}
 		let articleIDs = updatedStatuses.articleIDs()
 		
-		queue.update { (database) in
+		queue.updateSync { (database) in
 			self.markArticleIDs(articleIDs, statusKey, flag, database)
 		}
 		return updatedStatuses
