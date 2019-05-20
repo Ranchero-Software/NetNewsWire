@@ -64,11 +64,12 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 		if section == 1 && !shouldDisplayPicker {
-			return 1
+			return defaultNumberOfRows - 1
 		}
 		
-		return super.tableView(tableView, numberOfRowsInSection: section)
+		return defaultNumberOfRows	
 	}
 }
 
