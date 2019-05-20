@@ -87,7 +87,7 @@ final class StatusesTable: DatabaseTable {
 	}
 	
 	func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses s where userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);")
+		return fetchArticleIDs("select articleID from statuses s where (read=0 or starred=1) and userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);")
 	}
 	
 	func fetchArticleIDs(_ sql: String) -> Set<String> {
