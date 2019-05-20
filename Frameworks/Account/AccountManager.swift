@@ -150,9 +150,19 @@ public final class AccountManager: UnreadCountProvider {
 		activeAccounts.forEach { $0.refreshAll() }
 	}
 
-	public func syncArticleStatusAll() {
-	
-		activeAccounts.forEach { $0.syncArticleStatus() }
+	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
+		let group = DispatchGroup()
+		
+		activeAccounts.forEach {
+			group.enter()
+			$0.syncArticleStatus() {
+				group.leave()
+			}
+		}
+
+		group.notify(queue: DispatchQueue.main) {
+			completion?()
+		}
 	}
 	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
