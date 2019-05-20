@@ -51,6 +51,14 @@ extension DetailAccountViewController {
 		return cell
 	}
 
+	override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+		if indexPath.section == 1 {
+			return true
+		}
+		
+		return false
+	}
+	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if indexPath.section == 1 {
 			deleteAccount()
