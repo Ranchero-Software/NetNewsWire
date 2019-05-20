@@ -18,8 +18,20 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate, UnreadCountProvider {
 
-	private var backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+	private var refreshBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+
+	var syncTimer: ArticleStatusSyncTimer?
 	
+	var shuttingDown = false {
+		didSet {
+			if shuttingDown {
+				syncTimer?.shuttingDown = shuttingDown
+				syncTimer?.invalidate()
+			}
+		}
+	}
+
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "application")
 	var window: UIWindow?
 
@@ -93,7 +105,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		}
 
 		updateBackgroundRefreshInterval()
+		
+		syncTimer = ArticleStatusSyncTimer()
 
+		#if DEBUG
+			syncTimer!.update()
+		#endif
+		
 		return true
 		
 	}
@@ -123,12 +141,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	}
 
 	func applicationDidEnterBackground(_ application: UIApplication) {
-		// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-		// If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+		syncTimer?.invalidate()
+		
+		let completeProcessing = { [unowned self] in
+			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
+			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+		}
+		
+		DispatchQueue.global(qos: .background).async { [unowned self] in
+			
+			self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
+				completeProcessing()
+				os_log("Accounts sync processing terminated for running too long.", log: self.log, type: .info)
+			}
+			
+			DispatchQueue.main.async {
+				AccountManager.shared.syncArticleStatusAll() {
+					completeProcessing()
+				}
+				
+			}
+			
+		}
 	}
 
 	func applicationWillEnterForeground(_ application: UIApplication) {
-		// Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+		AccountManager.shared.syncArticleStatusAll()
+		syncTimer?.update()
 	}
 
 	func applicationDidBecomeActive(_ application: UIApplication) {
@@ -145,7 +184,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	}
 
 	func applicationWillTerminate(_ application: UIApplication) {
-		// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+		shuttingDown = true
 	}
 
 	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
@@ -156,8 +195,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		
 		let completeProcessing = { [unowned self] in
 			
-			UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
-			self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+			UIApplication.shared.endBackgroundTask(self.refreshBackgroundUpdateTask)
+			self.refreshBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 			
 			if startingUnreadCount < self.unreadCount {
 				self.sendReceivedArticlesUserNotification(newArticleCount: self.unreadCount - startingUnreadCount)
@@ -170,7 +209,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		
 		DispatchQueue.global(qos: .background).async { [unowned self] in
 			
-			self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
+			self.refreshBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
 				completeProcessing()
 				os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
 			}

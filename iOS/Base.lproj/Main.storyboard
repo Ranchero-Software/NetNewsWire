@@ -259,6 +259,7 @@
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="addNewItemButton" destination="yo6-w4-SfI" id="NbL-RH-N4J"/>
                         <outlet property="markAllAsReadButton" destination="ddj-Ya-Wol" id="jjr-OK-4zl"/>
                     </connections>
                 </tableViewController>

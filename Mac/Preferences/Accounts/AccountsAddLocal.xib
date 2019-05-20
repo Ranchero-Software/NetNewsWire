@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="AccountsAddLocalWindowController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
+                <outlet property="localAccountNameTextField" destination="80D-3X-rL2" id="B6t-AS-hDh"/>
                 <outlet property="nameTextField" destination="f9b-FM-i8Q" id="TJl-Uc-PNg"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="ENN-6Q-J5m"/>
             </connections>
@@ -17,13 +18,13 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="398" height="205"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1129"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="398" height="205"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <stackView distribution="fill" orientation="horizontal" alignment="bottom" spacing="19" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uDK-ji-zlT">
-                        <rect key="frame" x="93" y="150" width="213" height="39"/>
+                        <rect key="frame" x="95" y="150" width="209" height="39"/>
                         <subviews>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ySx-qg-WbT">
                                 <rect key="frame" x="0.0" y="0.0" width="36" height="36"/>
@@ -34,7 +35,7 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="accountLocal" id="9RZ-J3-ioX"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="80D-3X-rL2">
-                                <rect key="frame" x="53" y="0.0" width="162" height="39"/>
+                                <rect key="frame" x="53" y="0.0" width="158" height="39"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="On My Mac" id="1d2-Mx-TKe">
                                     <font key="font" metaFont="system" size="32"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
