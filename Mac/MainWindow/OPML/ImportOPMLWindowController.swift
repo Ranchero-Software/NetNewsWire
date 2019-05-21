@@ -19,17 +19,23 @@ class ImportOPMLWindowController: NSWindowController {
 	}
 	
 	override func windowDidLoad() {
-		
 		accountPopUpButton.removeAllItems()
+		
 		let menu = NSMenu()
+		accountPopUpButton.menu = menu
+
 		for oneAccount in AccountManager.shared.sortedActiveAccounts {
+			
 			let oneMenuItem = NSMenuItem()
 			oneMenuItem.title = oneAccount.nameForDisplay
 			oneMenuItem.representedObject = oneAccount
 			menu.addItem(oneMenuItem)
+			
+			if oneAccount.accountID == AppDefaults.importOPMLAccountID {
+				accountPopUpButton.select(oneMenuItem)
+			}
+			
 		}
-		accountPopUpButton.menu = menu
-		
 	}
 	
 	// MARK: API
@@ -60,6 +66,7 @@ class ImportOPMLWindowController: NSWindowController {
 		}
 		
 		let account = menuItem.representedObject as! Account
+		AppDefaults.importOPMLAccountID = account.accountID
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 		importOPML(account: account)
 		

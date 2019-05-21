@@ -28,6 +28,7 @@ struct AppDefaults {
 		static let refreshInterval = "refreshInterval"
 		static let addFeedAccountID = "addFeedAccountID"
 		static let addFolderAccountID = "addFolderAccountID"
+		static let importOPMLAccountID = "importOPMLAccountID"
 
 		// Hidden prefs
 		static let showTitleOnMainWindow = "KafasisTitleMode"
@@ -96,6 +97,15 @@ struct AppDefaults {
 		}
 		set {
 			setString(for: Key.addFolderAccountID, newValue)
+		}
+	}
+	
+	static var importOPMLAccountID: String? {
+		get {
+			return string(for: Key.importOPMLAccountID)
+		}
+		set {
+			setString(for: Key.importOPMLAccountID, newValue)
 		}
 	}
 	
