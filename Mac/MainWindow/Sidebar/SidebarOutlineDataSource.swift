@@ -244,16 +244,19 @@ private extension SidebarOutlineDataSource {
 		}
 		let source = node.parent?.representedObject as? Container
 		let destination = parentNode.representedObject as? Container
+		BatchUpdate.shared.start()
 		source?.removeFeed(feed) { result in
 			switch result {
 			case .success:
 				destination?.addFeed(feed) { result in
 					switch result {
 					case .success:
+						BatchUpdate.shared.end()
 						break
 					case .failure(let error):
 						// If the second part of the move failed, try to put the feed back
 						source?.addFeed(feed) { result in}
+						BatchUpdate.shared.end()
 						NSApplication.shared.presentError(error)
 					}
 				}
