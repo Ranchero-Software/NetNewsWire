@@ -35,7 +35,7 @@ final class FeedbinAPICaller: NSObject {
 	private var transport: Transport!
 	
 	var credentials: Credentials?
-	var accountMetadata: AccountMetadata?
+	weak var accountMetadata: AccountMetadata?
 
 	init(transport: Transport) {
 		super.init()

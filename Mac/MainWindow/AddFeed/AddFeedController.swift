@@ -59,6 +59,8 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 			return
 		}
 
+		BatchUpdate.shared.start()
+		
 		account.createFeed(url: url.absoluteString) { [weak self] result in
 			
 			self?.endShowingProgress()
@@ -67,6 +69,7 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 			case .success(let feed):
 				self?.processFeed(feed, account: account, folder: folder, url: url, title: title)
 			case .failure(let error):
+				BatchUpdate.shared.end()
 				switch error {
 				case AccountError.createErrorAlreadySubscribed:
 					self?.showAlreadySubscribedError(url.absoluteString)
@@ -139,8 +142,10 @@ private extension AddFeedController {
 			folder.addFeed(feed) { result in
 				switch result {
 				case .success:
+					BatchUpdate.shared.end()
 					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 				case .failure(let error):
+					BatchUpdate.shared.end()
 					NSApplication.shared.presentError(error)
 				}
 			}
@@ -148,8 +153,10 @@ private extension AddFeedController {
 			account.addFeed(feed) { result in
 				switch result {
 				case .success:
+					BatchUpdate.shared.end()
 					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 				case .failure(let error):
+					BatchUpdate.shared.end()
 					NSApplication.shared.presentError(error)
 				}
 			}
