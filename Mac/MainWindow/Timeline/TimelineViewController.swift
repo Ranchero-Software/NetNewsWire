@@ -144,6 +144,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
 				didRegisterForNotifications = true
@@ -492,6 +493,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 	}
 
+	@objc func accountStateDidChange(_ note: Notification) {
+		if representedObjectsContainsAnyPseudoFeed() {
+			fetchArticles()
+		}
+	}
+	
 	@objc func userDefaultsDidChange(_ note: Notification) {
 
 		self.fontSize = AppDefaults.timelineFontSize
