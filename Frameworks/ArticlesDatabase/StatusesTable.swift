@@ -50,7 +50,7 @@ final class StatusesTable: DatabaseTable {
 
 	// MARK: Marking
 
-	func mark(_ statuses: Set<ArticleStatus>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
+	func mark(_ statuses: Set<ArticleStatus>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) -> Set<ArticleStatus>? {
 
 		// Sets flag in both memory and in database.
 
@@ -70,9 +70,8 @@ final class StatusesTable: DatabaseTable {
 		}
 		let articleIDs = updatedStatuses.articleIDs()
 		
-		queue.updateSync { (database) in
-			self.markArticleIDs(articleIDs, statusKey, flag, database)
-		}
+		self.markArticleIDs(articleIDs, statusKey, flag, database)
+		
 		return updatedStatuses
 	}
 

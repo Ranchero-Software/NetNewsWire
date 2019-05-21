@@ -187,10 +187,10 @@ final class ArticlesTable: DatabaseTable {
 
 	func ensureStatuses(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
 		
-		self.queue.update { (database) in
+		self.queue.updateSync { (database) in
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database)
 			let statuses = Set(statusesDictionary.values)
-			_ = self.statusesTable.mark(statuses, statusKey, flag)
+			_ = self.statusesTable.mark(statuses, statusKey, flag, database)
 		}
 		
 	}
@@ -312,8 +312,11 @@ final class ArticlesTable: DatabaseTable {
 	}
 	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
-
-		return statusesTable.mark(articles.statuses(), statusKey, flag)
+		var statuses: Set<ArticleStatus>?
+		self.queue.updateSync { (database) in
+			statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
+		}
+		return statuses
 	}
 
 	// MARK: Indexing
