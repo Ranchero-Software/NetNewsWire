@@ -19,14 +19,14 @@ class TimelineTableCellView: NSTableCellView {
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
 	private lazy var avatarImageView: NSImageView = {
-		let imageView = TimelineTableCellView.imageView(with: AppImages.genericFeedImage, scaling: .scaleNone)
+		let imageView = TimelineTableCellView.imageView(with: AppAssets.genericFeedImage, scaling: .scaleNone)
 		imageView.imageAlignment = .alignTop
 		imageView.imageScaling = .scaleProportionallyDown
 		imageView.wantsLayer = true
 		return imageView
 	}()
 
-	private let starView = TimelineTableCellView.imageView(with: AppImages.timelineStar, scaling: .scaleNone)
+	private let starView = TimelineTableCellView.imageView(with: AppAssets.timelineStar, scaling: .scaleNone)
 
 	private lazy var textFields = {
 		return [self.dateView, self.feedNameView, self.titleView, self.summaryView, self.textView]

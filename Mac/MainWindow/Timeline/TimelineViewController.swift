@@ -702,10 +702,7 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
 
-		var avatar = avatarFor(article)
-		if avatar == nil, let feed = article.feed {
-			avatar = appDelegate.faviconDownloader.favicon(for: feed)
-		}
+		let avatar = avatarFor(article)
 		let featuredImage = featuredImageFor(article)
 
 		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatars, featuredImage: featuredImage)
@@ -715,6 +712,7 @@ extension TimelineViewController: NSTableViewDelegate {
 		if !showAvatars {
 			return nil
 		}
+		
 		if let authors = article.authors {
 			for author in authors {
 				if let image = avatarForAuthor(author) {
@@ -727,7 +725,15 @@ extension TimelineViewController: NSTableViewDelegate {
 			return nil
 		}
 
-		return appDelegate.feedIconDownloader.icon(for: feed)
+		if let feedIcon = appDelegate.feedIconDownloader.icon(for: feed) {
+			return feedIcon
+		}
+
+		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
+			return favicon
+		}
+		
+		return FaviconGenerator.favicon(feed)
 	}
 
 	private func avatarForAuthor(_ author: Author) -> NSImage? {

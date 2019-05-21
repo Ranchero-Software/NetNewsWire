@@ -23,7 +23,7 @@ extension Feed: SmallIconProvider {
 			return image
 		}
 		#if os(macOS)
-		return AppImages.genericFeedImage
+		return AppAssets.genericFeedImage
 		#else
 		return FaviconGenerator.favicon(self)
 		#endif

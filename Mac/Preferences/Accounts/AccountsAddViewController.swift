@@ -59,10 +59,10 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			switch row {
 			case 0:
 				cell.accountNameLabel?.stringValue = Account.defaultLocalAccountName
-				cell.accountImageView?.image = AppImages.accountLocal
+				cell.accountImageView?.image = AppAssets.accountLocal
 			case 1:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedbin", comment: "Feedbin")
-				cell.accountImageView?.image = AppImages.accountFeedbin
+				cell.accountImageView?.image = AppAssets.accountFeedbin
 			default:
 				break
 			}

@@ -1,5 +1,5 @@
 //
-//  AppImages.swift
+//  AppAssets.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 2/17/18.
@@ -14,7 +14,7 @@ extension NSImage.Name {
 	static let timelineStar = NSImage.Name("timelineStar")
 }
 
-struct AppImages {
+struct AppAssets {
 
 	static var genericFeedImage: RSImage? = {
 		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/BookmarkIcon.icns"
@@ -32,6 +32,10 @@ struct AppImages {
 
 	static var accountFeedbin: RSImage! = {
 		return RSImage(named: "accountFeedbin")
+	}()
+	
+	static var faviconTemplateImage: RSImage = {
+		return RSImage(named: "faviconTemplateImage")!
 	}()
 	
 }

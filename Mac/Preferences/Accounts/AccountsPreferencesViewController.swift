@@ -100,7 +100,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 			cell.textField?.stringValue = account.nameForDisplay
 			switch account.type {
 			case .onMyMac:
-				cell.imageView?.image = AppImages.accountLocal
+				cell.imageView?.image = AppAssets.accountLocal
 			case .feedbin:
 				cell.imageView?.image = NSImage(named: "accountFeedbin")
 			default:

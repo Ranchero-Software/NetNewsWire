@@ -21,7 +21,7 @@ final class FaviconGenerator {
 		}
 		
 		let colorHash = ColorHash(feed.url)
-		if let favicon = AppAssets.faviconTemplateImage.maskWithColor(color: colorHash.color) {
+		if let favicon = AppAssets.faviconTemplateImage.maskWithColor(color: colorHash.color.cgColor) {
 			FaviconGenerator.faviconGeneratorCache[feed.url] = favicon
 			return favicon
 		} else {

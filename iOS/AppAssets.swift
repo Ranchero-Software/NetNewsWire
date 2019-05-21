@@ -24,12 +24,12 @@ struct AppAssets {
 	
 	static var chevronDownImage: RSImage = {
 		let image = RSImage(named: "chevronDownImage")!
-		return image.maskWithColor(color: AppAssets.chevronDisclosureColor)!
+		return image.maskWithColor(color: AppAssets.chevronDisclosureColor.cgColor)!
 	}()
 	
 	static var chevronRightImage: RSImage = {
 		let image = RSImage(named: "chevronRightImage")!
-		return image.maskWithColor(color: AppAssets.chevronDisclosureColor)!
+		return image.maskWithColor(color: AppAssets.chevronDisclosureColor.cgColor)!
 	}()
 	
 	static var faviconTemplateImage: RSImage = {
@@ -42,7 +42,7 @@ struct AppAssets {
 
 	static var feedImage: RSImage = {
 		let image = RSImage(named: "feedImage")!
-		return image.maskWithColor(color: AppAssets.feedColor)!
+		return image.maskWithColor(color: AppAssets.feedColor.cgColor)!
 	}()
 	
 	static var masterFolderColor: UIColor = {
@@ -51,7 +51,7 @@ struct AppAssets {
 	
 	static var masterFolderImage: RSImage = {
 		let image = RSImage(named: "folderImage")!
-		return image.maskWithColor(color: AppAssets.masterFolderColor)!
+		return image.maskWithColor(color: AppAssets.masterFolderColor.cgColor)!
 	}()
 	
 	static var selectionBackgroundColor: UIColor = {
@@ -64,7 +64,7 @@ struct AppAssets {
 	
 	static var smartFeedImage: RSImage = {
 		let image = RSImage(named: "smartFeedImage")!
-		return image.maskWithColor(color: AppAssets.smartFeedColor)!
+		return image.maskWithColor(color: AppAssets.smartFeedColor.cgColor)!
 	}()
 	
 	static var starColor: UIColor = {
@@ -81,7 +81,7 @@ struct AppAssets {
 	
 	static var timelineStarImage: RSImage = {
 		let image = RSImage(named: "starClosedImage")!
-		return image.maskWithColor(color: AppAssets.starColor)!
+		return image.maskWithColor(color: AppAssets.starColor.cgColor)!
 	}()
 
 	static var timelineTextPrimaryColor: UIColor = {
