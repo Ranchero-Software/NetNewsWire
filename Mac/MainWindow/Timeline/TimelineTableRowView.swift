@@ -14,6 +14,18 @@ class TimelineTableRowView : NSTableRowView {
 		return true
 	}
 
+	override var isEmphasized: Bool {
+		didSet {
+			cellView?.isEmphasized = isEmphasized
+		}
+	}
+	
+	override var isSelected: Bool {
+		didSet {
+			cellView?.isSelected = isSelected
+		}
+	}
+	
 	init() {
 		super.init(frame: NSRect.zero)
 	}

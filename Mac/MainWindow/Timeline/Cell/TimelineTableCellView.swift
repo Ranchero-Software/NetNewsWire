@@ -48,6 +48,18 @@ class TimelineTableCellView: NSTableCellView {
 		}
 	}
 	
+	var isEmphasized: Bool = false {
+		didSet {
+			unreadIndicatorView.isEmphasized = isEmphasized
+		}
+	}
+
+	var isSelected: Bool = false {
+		didSet {
+			unreadIndicatorView.isSelected = isSelected
+		}
+	}
+	
 	override var isFlipped: Bool {
 		return true
 	}
