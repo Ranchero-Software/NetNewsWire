@@ -212,6 +212,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	func applicationWillTerminate(_ notification: Notification) {
 		shuttingDown = true
 		saveState()
+		
+		let group = DispatchGroup()
+		
+		group.enter()
+		AccountManager.shared.syncArticleStatusAll() {
+			group.leave()
+		}
+		
+		let timeout = DispatchTime.now() + .seconds(1)
+		_ = group.wait(timeout: timeout)
 	}
 
 	// MARK: Notifications
