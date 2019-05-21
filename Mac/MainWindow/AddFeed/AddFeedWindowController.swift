@@ -71,6 +71,10 @@ class AddFeedWindowController : NSWindowController {
 		folderPopupButton.menu = FolderTreeMenu.createFolderPopupMenu(with: folderTreeController.rootNode)
 		if let account = initialAccount {
 			FolderTreeMenu.select(account: account, folder: initialFolder, in: folderPopupButton)
+		} else if let accountID = AppDefaults.addFeedAccountID {
+			if let account = AccountManager.shared.existingAccount(with: accountID) {
+				FolderTreeMenu.select(account: account, folder: nil, in: folderPopupButton)
+			}
 		}
 		
 		updateUI()
@@ -94,8 +98,16 @@ class AddFeedWindowController : NSWindowController {
 			cancelSheet()
 			return
 		}
+		
+		let container = selectedContainer()!
+		if let selectedAccount = container as? Account {
+			AppDefaults.addFeedAccountID = selectedAccount.accountID
+		} else if let selectedFolder = container as? Folder, let selectedAccount = selectedFolder.account {
+			AppDefaults.addFeedAccountID = selectedAccount.accountID
+		}
 
-		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: selectedContainer()!)
+		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: container)
+		
     }
 
 	@IBAction func localShowFeedList(_ sender: Any?) {

@@ -26,6 +26,8 @@ struct AppDefaults {
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 		static let mainWindowWidths = "mainWindowWidths"
 		static let refreshInterval = "refreshInterval"
+		static let addFeedAccountID = "addFeedAccountID"
+		static let addFolderAccountID = "addFolderAccountID"
 
 		// Hidden prefs
 		static let showTitleOnMainWindow = "KafasisTitleMode"
@@ -79,6 +81,24 @@ struct AppDefaults {
 		}
 	}
 
+	static var addFeedAccountID: String? {
+		get {
+			return string(for: Key.addFeedAccountID)
+		}
+		set {
+			setString(for: Key.addFeedAccountID, newValue)
+		}
+	}
+	
+	static var addFolderAccountID: String? {
+		get {
+			return string(for: Key.addFolderAccountID)
+		}
+		set {
+			setString(for: Key.addFolderAccountID, newValue)
+		}
+	}
+	
 	static var showTitleOnMainWindow: Bool {
 		return bool(for: Key.showTitleOnMainWindow)
 	}
@@ -176,6 +196,14 @@ private extension AppDefaults {
 	
 	static func setFontSize(for key: String, _ fontSize: FontSize) {
 		setInt(for: key, fontSize.rawValue)
+	}
+	
+	static func string(for key: String) -> String? {
+		return UserDefaults.standard.string(forKey: key)
+	}
+	
+	static func setString(for key: String, _ value: String?) {
+		UserDefaults.standard.set(value, forKey: key)
 	}
 	
 	static func bool(for key: String) -> Bool {
