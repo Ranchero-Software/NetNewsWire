@@ -1015,7 +1015,6 @@ private extension FeedbinAccountDelegate {
 		let group = DispatchGroup()
 		
 		let chunkedArticleIDs = articleIDs.chunked(into: 100)
-		refreshProgress.addToNumberOfTasks(chunkedArticleIDs.count - 1)
 		
 		for chunk in chunkedArticleIDs {
 			
@@ -1026,7 +1025,6 @@ private extension FeedbinAccountDelegate {
 				case .success(let entries):
 				
 					self?.processEntries(account: account, entries: entries) {
-						self?.refreshProgress.completeTask()
 						group.leave()
 					}
 					
@@ -1040,7 +1038,9 @@ private extension FeedbinAccountDelegate {
 
 		}
 
-		group.notify(queue: DispatchQueue.main) {
+		group.notify(queue: DispatchQueue.main) { [weak self] in
+			guard let self = self else { return }
+			self.refreshProgress.completeTask()
 			os_log(.debug, log: self.log, "Done refreshing missing articles.")
 			completion()
 		}
