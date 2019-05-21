@@ -19,17 +19,23 @@ class ExportOPMLWindowController: NSWindowController {
 	}
 	
 	override func windowDidLoad() {
-		
 		accountPopUpButton.removeAllItems()
+
 		let menu = NSMenu()
-		for oneAccount in AccountManager.shared.sortedActiveAccounts {
+		accountPopUpButton.menu = menu
+		
+		for oneAccount in AccountManager.shared.sortedAccounts {
+			
 			let oneMenuItem = NSMenuItem()
 			oneMenuItem.title = oneAccount.nameForDisplay
 			oneMenuItem.representedObject = oneAccount
 			menu.addItem(oneMenuItem)
+			
+			if oneAccount.accountID == AppDefaults.exportOPMLAccountID {
+				accountPopUpButton.select(oneMenuItem)
+			}
+
 		}
-		accountPopUpButton.menu = menu
-		
 	}
 
 	// MARK: API
@@ -38,8 +44,8 @@ class ExportOPMLWindowController: NSWindowController {
 		
 		self.hostWindow = hostWindow
 		
-		if AccountManager.shared.activeAccounts.count == 1 {
-			let account = AccountManager.shared.activeAccounts.first!
+		if AccountManager.shared.accounts.count == 1 {
+			let account = AccountManager.shared.accounts.first!
 			exportOPML(account: account)
 		} else {
 			hostWindow.beginSheet(window!)
@@ -60,6 +66,7 @@ class ExportOPMLWindowController: NSWindowController {
 		}
 
 		let account = menuItem.representedObject as! Account
+		AppDefaults.exportOPMLAccountID = account.accountID
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 		exportOPML(account: account)
 		
@@ -75,7 +82,9 @@ class ExportOPMLWindowController: NSWindowController {
 		panel.nameFieldLabel = NSLocalizedString("Export to:", comment: "Export OPML")
 		panel.message = NSLocalizedString("Choose a location for the exported OPML file.", comment: "Export OPML")
 		panel.isExtensionHidden = false
-		panel.nameFieldStringValue = "MySubscriptions.opml"
+		
+		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
+		panel.nameFieldStringValue = "\(accountName).opml"
 		
 		panel.beginSheetModal(for: hostWindow!) { result in
 			if result == NSApplication.ModalResponse.OK, let url = panel.url {
