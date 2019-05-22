@@ -164,6 +164,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .failure(let error):
 				guard let self = self else { return }
 				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
+				group.leave()
 			}
 			
 		}
@@ -177,6 +178,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .failure(let error):
 				guard let self = self else { return }
 				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
+				group.leave()
 			}
 			
 		}
@@ -1068,6 +1070,7 @@ private extension FeedbinAccountDelegate {
 			case .failure(let error):
 				guard let self = self else { return }
 				os_log(.error, log: self.log, "Refresh articles for additional pages failed: %@.", error.localizedDescription)
+				completion()
 			}
 			
 		}

@@ -428,6 +428,7 @@ final class FeedbinAPICaller: NSObject {
 				completion(.success((entries, pagingInfo.nextPage, lastPageNumber)))
 				
 			case .failure(let error):
+				self?.accountMetadata?.lastArticleFetch = nil
 				completion(.failure(error))
 			}
 			
@@ -444,7 +445,7 @@ final class FeedbinAPICaller: NSObject {
 		
 		let request = URLRequest(url: callURL, credentials: credentials)
 
-		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
+		transport.send(request: request, resultType: [FeedbinEntry].self) { [weak self] result in
 			
 			switch result {
 			case .success(let (response, entries)):
@@ -453,6 +454,7 @@ final class FeedbinAPICaller: NSObject {
 				completion(.success((entries, pagingInfo.nextPage)))
 
 			case .failure(let error):
+				self?.accountMetadata?.lastArticleFetch = nil
 				completion(.failure(error))
 			}
 			
