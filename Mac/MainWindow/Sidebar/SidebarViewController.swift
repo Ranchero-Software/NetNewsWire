@@ -581,9 +581,8 @@ private extension SidebarViewController {
 	}
 
 	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (SidebarCell, Node) -> Void) {
-
 		applyToAvailableCells { (cell, node) in
-			if node.representedObject === representedObject {
+			if node.representsSidebarObject(representedObject) {
 				callback(cell, node)
 			}
 		}
@@ -607,3 +606,15 @@ private extension SidebarViewController {
 }
 
 
+private extension Node {
+
+	func representsSidebarObject(_ object: AnyObject) -> Bool {
+		if representedObject === object {
+			return true
+		}
+		if let feed1 = object as? Feed, let feed2 = representedObject as? Feed {
+			return feed1 == feed2
+		}
+		return false
+	}
+}
