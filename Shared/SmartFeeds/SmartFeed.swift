@@ -36,7 +36,7 @@ final class SmartFeed: PseudoFeed {
 	#endif
 
 	private let delegate: SmartFeedDelegate
-	private var unreadCounts = [Account: Int]()
+	private var unreadCounts = [String: Int]()
 
 	init(delegate: SmartFeedDelegate) {
 		self.delegate = delegate
@@ -74,14 +74,14 @@ private extension SmartFeed {
 
 	func fetchUnreadCount(for account: Account) {
 		delegate.fetchUnreadCount(for: account) { (accountUnreadCount) in
-			self.unreadCounts[account] = accountUnreadCount
+			self.unreadCounts[account.accountID] = accountUnreadCount
 			self.updateUnreadCount()
 		}
 	}
 
 	func updateUnreadCount() {
 		unreadCount = AccountManager.shared.activeAccounts.reduce(0) { (result, account) -> Int in
-			if let oneUnreadCount = unreadCounts[account] {
+			if let oneUnreadCount = unreadCounts[account.accountID] {
 				return result + oneUnreadCount
 			}
 			return result
