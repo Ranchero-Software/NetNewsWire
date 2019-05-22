@@ -40,7 +40,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	var accountMetadata: AccountMetadata? {
+	weak var accountMetadata: AccountMetadata? {
 		didSet {
 			caller.accountMetadata = accountMetadata
 		}
@@ -82,14 +82,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
-		refreshAccount(account) { [weak self] result in
+		refreshAccount(account) { result in
 			switch result {
 			case .success():
 				
-				self?.refreshArticles(account) {
-					self?.refreshArticleStatus(for: account) {
-						self?.refreshMissingArticles(account) {
-							self?.refreshProgress.clear()
+				self.refreshArticles(account) {
+					self.refreshArticleStatus(for: account) {
+						self.refreshMissingArticles(account) {
+							self.refreshProgress.clear()
 							DispatchQueue.main.async {
 								completion?()
 							}
@@ -100,8 +100,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .failure(let error):
 				DispatchQueue.main.async {
 					completion?()
-					self?.refreshProgress.clear()
-					self?.handleError(error)
+					self.refreshProgress.clear()
+					self.handleError(error)
 				}
 			}
 			
@@ -141,8 +141,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			group.leave()
 		}
 		
-		group.notify(queue: DispatchQueue.main) { [weak self] in
-			guard let self = self else { return }
+		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done sending article statuses.")
 			completion()
 		}
@@ -156,13 +155,12 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		let group = DispatchGroup()
 		
 		group.enter()
-		caller.retrieveUnreadEntries() { [weak self] result in
+		caller.retrieveUnreadEntries() { result in
 			switch result {
 			case .success(let articleIDs):
-				self?.syncArticleReadState(account: account, articleIDs: articleIDs)
+				self.syncArticleReadState(account: account, articleIDs: articleIDs)
 				group.leave()
 			case .failure(let error):
-				guard let self = self else { return }
 				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
 				group.leave()
 			}
@@ -170,21 +168,19 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 		
 		group.enter()
-		caller.retrieveStarredEntries() { [weak self] result in
+		caller.retrieveStarredEntries() { result in
 			switch result {
 			case .success(let articleIDs):
-				self?.syncArticleStarredState(account: account, articleIDs: articleIDs)
+				self.syncArticleStarredState(account: account, articleIDs: articleIDs)
 				group.leave()
 			case .failure(let error):
-				guard let self = self else { return }
 				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
 				group.leave()
 			}
 			
 		}
 		
-		group.notify(queue: DispatchQueue.main) { [weak self] in
-			guard let self = self else { return }
+		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
 			completion()
 		}
@@ -210,21 +206,19 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		os_log(.debug, log: log, "Begin importing OPML...")
 		opmlImportInProgress = true
 		
-		caller.importOPML(opmlData: opmlData) { [weak self] result in
+		caller.importOPML(opmlData: opmlData) { result in
 			switch result {
 			case .success(let importResult):
 				if importResult.complete {
-					guard let self = self else { return }
 					os_log(.debug, log: self.log, "Import OPML done.")
 					self.opmlImportInProgress = false
 					DispatchQueue.main.async {
 						completion(.success(()))
 					}
 				} else {
-					self?.checkImportResult(opmlImportResultID: importResult.importResultID, completion: completion)
+					self.checkImportResult(opmlImportResultID: importResult.importResultID, completion: completion)
 				}
 			case .failure(let error):
-				guard let self = self else { return }
 				os_log(.debug, log: self.log, "Import OPML failed.")
 				self.opmlImportInProgress = false
 				DispatchQueue.main.async {
@@ -264,20 +258,20 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		// After we successfully delete at Feedbin, we add all the feeds to the account to save them.  We then
 		// delete the folder.  We then sync the taggings we received on the delete to remove any feeds from
 		// the account that might be in another folder.
-		caller.deleteTag(name: folder.name ?? "") { [weak self] result in
+		caller.deleteTag(name: folder.name ?? "") { result in
 			switch result {
 			case .success(let taggings):
 				DispatchQueue.main.sync {
 					BatchUpdate.shared.perform {
 						for feed in folder.topLevelFeeds {
 							account.addFeed(feed)
-							self?.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+							self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 						}
 						account.deleteFolder(folder)
 					}
 					completion(.success(()))
 				}
-				self?.syncTaggings(account, taggings)
+				self.syncTaggings(account, taggings)
 			case .failure(let error):
 				DispatchQueue.main.async {
 					completion(.failure(error))
@@ -289,14 +283,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func createFeed(for account: Account, url: String, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
-		caller.createSubscription(url: url) { [weak self] result in
+		caller.createSubscription(url: url) { result in
 			switch result {
 			case .success(let subResult):
 				switch subResult {
 				case .created(let subscription):
-					self?.createFeed(account: account, subscription: subscription, completion: completion)
+					self.createFeed(account: account, subscription: subscription, completion: completion)
 				case .multipleChoice(let choices):
-					self?.decideBestFeedChoice(account: account, url: url, choices: choices, completion: completion)
+					self.decideBestFeedChoice(account: account, url: url, choices: choices, completion: completion)
 				case .alreadySubscribed:
 					DispatchQueue.main.async {
 						completion(.failure(AccountError.createErrorAlreadySubscribed))
@@ -372,11 +366,11 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	func addFeed(for account: Account, to container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
-			caller.createTagging(feedID: feedID, name: folder.name ?? "") { [weak self] result in
+			caller.createTagging(feedID: feedID, name: folder.name ?? "") { result in
 				switch result {
 				case .success(let taggingID):
 					DispatchQueue.main.async {
-						self?.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
+						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
 						account.removeFeed(feed)
 						folder.addFeed(feed)
 						completion(.success(()))
@@ -427,10 +421,10 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 		let editedName = feed.editedName
 		
-		createFeed(for: account, url: feed.url) { [weak self] result in
+		createFeed(for: account, url: feed.url) { result in
 			switch result {
 			case .success(let feed):
-				self?.processRestoredFeed(for: account, feed: feed, editedName: editedName, folder: folder, completion: completion)
+				self.processRestoredFeed(for: account, feed: feed, editedName: editedName, folder: folder, completion: completion)
 			case .failure(let error):
 				DispatchQueue.main.async {
 					completion(.failure(error))
@@ -507,14 +501,14 @@ private extension FeedbinAccountDelegate {
 	
 	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		caller.retrieveTags { [weak self] result in
+		caller.retrieveTags { result in
 			switch result {
 			case .success(let tags):
 				BatchUpdate.shared.perform {
-					self?.syncFolders(account, tags)
+					self.syncFolders(account, tags)
 				}
-				self?.refreshProgress.completeTask()
-				self?.refreshFeeds(account, completion: completion)
+				self.refreshProgress.completeTask()
+				self.refreshFeeds(account, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -526,9 +520,7 @@ private extension FeedbinAccountDelegate {
 		
 		DispatchQueue.main.async {
 			
-			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] timer in
-				
-				guard let self = self else { return }
+			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { timer in
 				
 				os_log(.debug, log: self.log, "Checking status of OPML import...")
 				
@@ -603,27 +595,27 @@ private extension FeedbinAccountDelegate {
 	
 	func refreshFeeds(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		caller.retrieveSubscriptions { [weak self] result in
+		caller.retrieveSubscriptions { result in
 			switch result {
 			case .success(let subscriptions):
 				
-				self?.refreshProgress.completeTask()
-				self?.caller.retrieveTaggings { [weak self] result in
+				self.refreshProgress.completeTask()
+				self.caller.retrieveTaggings { result in
 					switch result {
 					case .success(let taggings):
 						
-						self?.refreshProgress.completeTask()
-						self?.caller.retrieveIcons { [weak self] result in
+						self.refreshProgress.completeTask()
+						self.caller.retrieveIcons { result in
 							switch result {
 							case .success(let icons):
 
 								BatchUpdate.shared.perform {
-									self?.syncFeeds(account, subscriptions)
-									self?.syncTaggings(account, taggings)
-									self?.syncFavicons(account, icons)
+									self.syncFeeds(account, subscriptions)
+									self.syncTaggings(account, taggings)
+									self.syncFavicons(account, icons)
 								}
 
-								self?.refreshProgress.completeTask()
+								self.refreshProgress.completeTask()
 								completion(.success(()))
 								
 							case .failure(let error):
@@ -808,13 +800,12 @@ private extension FeedbinAccountDelegate {
 		for articleIDGroup in articleIDGroups {
 			
 			group.enter()
-			apiCall(articleIDGroup) { [weak self] result in
+			apiCall(articleIDGroup) { result in
 				switch result {
 				case .success:
-					self?.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
+					self.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
 					group.leave()
 				case .failure(let error):
-					guard let self = self else { return }
 					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
 					self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
 					group.leave()
@@ -833,7 +824,7 @@ private extension FeedbinAccountDelegate {
 		
 		if let folder = folder {
 			
-			addFeed(for: account, to: folder, with: feed) { [weak self] result in
+			addFeed(for: account, to: folder, with: feed) { result in
 				
 				switch result {
 				case .success:
@@ -843,7 +834,7 @@ private extension FeedbinAccountDelegate {
 							account.removeFeed(feed)
 							folder.addFeed(feed)
 						}
-						self?.processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
+						self.processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
 					} else {
 						DispatchQueue.main.async {
 							account.removeFeed(feed)
@@ -939,21 +930,21 @@ private extension FeedbinAccountDelegate {
 	
 	func createFeed( account: Account, subscription sub: FeedbinSubscription, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
-		DispatchQueue.main.async { [weak self] in
+		DispatchQueue.main.async {
 			
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.subscriptionID = String(sub.subscriptionID)
 		
 			// Download the initial articles
-			self?.caller.retrieveEntries(feedID: feed.feedID) { [weak self] result in
+			self.caller.retrieveEntries(feedID: feed.feedID) { result in
 				
 				switch result {
 				case .success(let (entries, page)):
 					
-					self?.processEntries(account: account, entries: entries) {
-						self?.refreshArticles(account, page: page) {
-							self?.refreshArticleStatus(for: account) {
-								self?.refreshMissingArticles(account) {
+					self.processEntries(account: account, entries: entries) {
+						self.refreshArticles(account, page: page) {
+							self.refreshArticleStatus(for: account) {
+								self.refreshMissingArticles(account) {
 									DispatchQueue.main.async {
 										completion(.success(feed))
 									}
@@ -963,7 +954,6 @@ private extension FeedbinAccountDelegate {
 					}
 					
 				case .failure(let error):
-					guard let self = self else { return }
 					os_log(.error, log: self.log, "Initial articles download failed: %@.", error.localizedDescription)
 					DispatchQueue.main.async {
 						completion(.success(feed))
@@ -980,20 +970,19 @@ private extension FeedbinAccountDelegate {
 
 		os_log(.debug, log: log, "Refreshing articles...")
 		
-		caller.retrieveEntries() { [weak self] result in
+		caller.retrieveEntries() { result in
 			
 			switch result {
 			case .success(let (entries, page, lastPageNumber)):
 				
 				if let last = lastPageNumber {
-					self?.refreshProgress.addToNumberOfTasksAndRemaining(last - 1)
+					self.refreshProgress.addToNumberOfTasksAndRemaining(last - 1)
 				}
 				
-				self?.processEntries(account: account, entries: entries) {
+				self.processEntries(account: account, entries: entries) {
 					
-					self?.refreshProgress.completeTask()
-					self?.refreshArticles(account, page: page) {
-						guard let self = self else { return }
+					self.refreshProgress.completeTask()
+					self.refreshArticles(account, page: page) {
 						os_log(.debug, log: self.log, "Done refreshing articles.")
 						completion()
 					}
@@ -1001,7 +990,6 @@ private extension FeedbinAccountDelegate {
 				}
 
 			case .failure(let error):
-				guard let self = self else { return }
 				os_log(.error, log: self.log, "Refresh articles failed: %@.", error.localizedDescription)
 				completion()
 			}
@@ -1022,17 +1010,16 @@ private extension FeedbinAccountDelegate {
 		for chunk in chunkedArticleIDs {
 			
 			group.enter()
-			caller.retrieveEntries(articleIDs: chunk) { [weak self] result in
+			caller.retrieveEntries(articleIDs: chunk) { result in
 				
 				switch result {
 				case .success(let entries):
 				
-					self?.processEntries(account: account, entries: entries) {
+					self.processEntries(account: account, entries: entries) {
 						group.leave()
 					}
 					
 				case .failure(let error):
-					guard let self = self else { return }
 					os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
 					group.leave()
 				}
@@ -1041,8 +1028,7 @@ private extension FeedbinAccountDelegate {
 
 		}
 
-		group.notify(queue: DispatchQueue.main) { [weak self] in
-			guard let self = self else { return }
+		group.notify(queue: DispatchQueue.main) {
 			self.refreshProgress.completeTask()
 			os_log(.debug, log: self.log, "Done refreshing missing articles.")
 			completion()
@@ -1057,18 +1043,17 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 		
-		caller.retrieveEntries(page: page) { [weak self] result in
+		caller.retrieveEntries(page: page) { result in
 			
 			switch result {
 			case .success(let (entries, nextPage)):
 				
-				self?.processEntries(account: account, entries: entries) {
-					self?.refreshProgress.completeTask()
-					self?.refreshArticles(account, page: nextPage, completion: completion)
+				self.processEntries(account: account, entries: entries) {
+					self.refreshProgress.completeTask()
+					self.refreshArticles(account, page: nextPage, completion: completion)
 				}
 				
 			case .failure(let error):
-				guard let self = self else { return }
 				os_log(.error, log: self.log, "Refresh articles for additional pages failed: %@.", error.localizedDescription)
 				completion()
 			}

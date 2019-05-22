@@ -122,11 +122,11 @@ final class FeedbinAPICaller: NSObject {
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
-		transport.send(request: request, resultType: [FeedbinTag].self) { [weak self] result in
+		transport.send(request: request, resultType: [FeedbinTag].self) { result in
 			
 			switch result {
 			case .success(let (response, tags)):
-				self?.storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
+				self.storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
 				completion(.success(tags))
 			case .failure(let error):
 				completion(.failure(error))
@@ -168,11 +168,11 @@ final class FeedbinAPICaller: NSObject {
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
-		transport.send(request: request, resultType: [FeedbinSubscription].self) { [weak self] result in
+		transport.send(request: request, resultType: [FeedbinSubscription].self) { result in
 			
 			switch result {
 			case .success(let (response, subscriptions)):
-				self?.storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
+				self.storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
 				completion(.success(subscriptions))
 			case .failure(let error):
 				completion(.failure(error))
@@ -273,11 +273,11 @@ final class FeedbinAPICaller: NSObject {
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.taggings]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
-		transport.send(request: request, resultType: [FeedbinTagging].self) { [weak self] result in
+		transport.send(request: request, resultType: [FeedbinTagging].self) { result in
 			
 			switch result {
 			case .success(let (response, taggings)):
-				self?.storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
+				self.storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
 				completion(.success(taggings))
 			case .failure(let error):
 				completion(.failure(error))
@@ -334,11 +334,11 @@ final class FeedbinAPICaller: NSObject {
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.icons]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
-		transport.send(request: request, resultType: [FeedbinIcon].self) { [weak self] result in
+		transport.send(request: request, resultType: [FeedbinIcon].self) { result in
 			
 			switch result {
 			case .success(let (response, icons)):
-				self?.storeConditionalGet(key: ConditionalGetKeys.icons, headers: response.allHeaderFields)
+				self.storeConditionalGet(key: ConditionalGetKeys.icons, headers: response.allHeaderFields)
 				completion(.success(icons))
 			case .failure(let error):
 				completion(.failure(error))
@@ -415,20 +415,20 @@ final class FeedbinAPICaller: NSObject {
 		callURL.queryItems = [URLQueryItem(name: "since", value: sinceString), URLQueryItem(name: "per_page", value: "100")]
 		let request = URLRequest(url: callURL.url!, credentials: credentials)
 		
-		transport.send(request: request, resultType: [FeedbinEntry].self) { [weak self] result in
+		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
 			switch result {
 			case .success(let (response, entries)):
 				
 				let dateInfo = HTTPDateInfo(urlResponse: response)
-				self?.accountMetadata?.lastArticleFetch = dateInfo?.date
+				self.accountMetadata?.lastArticleFetch = dateInfo?.date
 
 				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
-				let lastPageNumber = self?.extractPageNumber(link: pagingInfo.lastPage)
+				let lastPageNumber = self.extractPageNumber(link: pagingInfo.lastPage)
 				completion(.success((entries, pagingInfo.nextPage, lastPageNumber)))
 				
 			case .failure(let error):
-				self?.accountMetadata?.lastArticleFetch = nil
+				self.accountMetadata?.lastArticleFetch = nil
 				completion(.failure(error))
 			}
 			
@@ -445,7 +445,7 @@ final class FeedbinAPICaller: NSObject {
 		
 		let request = URLRequest(url: callURL, credentials: credentials)
 
-		transport.send(request: request, resultType: [FeedbinEntry].self) { [weak self] result in
+		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
 			switch result {
 			case .success(let (response, entries)):
@@ -454,7 +454,7 @@ final class FeedbinAPICaller: NSObject {
 				completion(.success((entries, pagingInfo.nextPage)))
 
 			case .failure(let error):
-				self?.accountMetadata?.lastArticleFetch = nil
+				self.accountMetadata?.lastArticleFetch = nil
 				completion(.failure(error))
 			}
 			
@@ -468,11 +468,11 @@ final class FeedbinAPICaller: NSObject {
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
-		transport.send(request: request, resultType: [Int].self) { [weak self] result in
+		transport.send(request: request, resultType: [Int].self) { result in
 			
 			switch result {
 			case .success(let (response, unreadEntries)):
-				self?.storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
+				self.storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
 				completion(.success(unreadEntries))
 			case .failure(let error):
 				completion(.failure(error))
@@ -502,11 +502,11 @@ final class FeedbinAPICaller: NSObject {
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.starredEntries]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
-		transport.send(request: request, resultType: [Int].self) { [weak self] result in
+		transport.send(request: request, resultType: [Int].self) { result in
 			
 			switch result {
 			case .success(let (response, starredEntries)):
-				self?.storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
+				self.storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
 				completion(.success(starredEntries))
 			case .failure(let error):
 				completion(.failure(error))
