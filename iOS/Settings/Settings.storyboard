@@ -437,30 +437,26 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="54.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="hD4-MK-NWZ">
-                                                    <rect key="frame" x="90.5" y="4" width="233" height="46.5"/>
-                                                    <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="tb2-dO-AhR">
-                                                            <rect key="frame" x="0.0" y="7.5" width="32" height="32.000000000000028"/>
-                                                            <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="height" constant="32" id="0GF-vU-aEc"/>
-                                                                <constraint firstAttribute="width" constant="32" id="xDy-t7-26A"/>
-                                                            </constraints>
-                                                        </imageView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="On My iPhone" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="116-rt-msI">
-                                                            <rect key="frame" x="52" y="5.5" width="181" height="36"/>
-                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
-                                                            <nil key="textColor"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                    </subviews>
-                                                </stackView>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="tb2-dO-AhR">
+                                                    <rect key="frame" x="20" y="11.5" width="32" height="32.000000000000028"/>
+                                                    <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="32" id="0GF-vU-aEc"/>
+                                                        <constraint firstAttribute="width" constant="32" id="xDy-t7-26A"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="On My iPhone" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="116-rt-msI">
+                                                    <rect key="frame" x="68" y="11.5" width="157.5" height="31.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="hD4-MK-NWZ" firstAttribute="top" secondItem="99i-Ge-guB" secondAttribute="top" constant="4" id="6dt-CA-uPu"/>
-                                                <constraint firstItem="hD4-MK-NWZ" firstAttribute="centerX" secondItem="99i-Ge-guB" secondAttribute="centerX" id="MPN-GC-PVs"/>
-                                                <constraint firstAttribute="bottom" secondItem="hD4-MK-NWZ" secondAttribute="bottom" constant="4" id="vvU-3R-rgs"/>
+                                                <constraint firstItem="tb2-dO-AhR" firstAttribute="leading" secondItem="99i-Ge-guB" secondAttribute="leading" constant="20" symbolic="YES" id="8fv-hh-t9i"/>
+                                                <constraint firstItem="116-rt-msI" firstAttribute="leading" secondItem="tb2-dO-AhR" secondAttribute="trailing" constant="16" id="Frt-3l-XxP"/>
+                                                <constraint firstItem="tb2-dO-AhR" firstAttribute="centerY" secondItem="99i-Ge-guB" secondAttribute="centerY" id="Kvq-D1-FAa"/>
+                                                <constraint firstItem="116-rt-msI" firstAttribute="centerY" secondItem="tb2-dO-AhR" secondAttribute="centerY" id="Sfh-wA-Db0"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="40" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -472,30 +468,26 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="55.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="gQ5-ls-UhE">
-                                                    <rect key="frame" x="129" y="4" width="156" height="47.5"/>
-                                                    <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountFeedbin" translatesAutoresizingMaskIntoConstraints="NO" id="wyu-mZ-3zz">
-                                                            <rect key="frame" x="0.0" y="8" width="32" height="32"/>
-                                                            <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="height" constant="32" id="LEr-1Z-N99"/>
-                                                                <constraint firstAttribute="width" constant="32" id="fZN-HH-heN"/>
-                                                            </constraints>
-                                                        </imageView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Feedbin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uiN-cA-Nc5">
-                                                            <rect key="frame" x="52" y="6" width="104" height="36"/>
-                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
-                                                            <nil key="textColor"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                    </subviews>
-                                                </stackView>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountFeedbin" translatesAutoresizingMaskIntoConstraints="NO" id="wyu-mZ-3zz">
+                                                    <rect key="frame" x="20" y="12" width="32" height="32"/>
+                                                    <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="32" id="LEr-1Z-N99"/>
+                                                        <constraint firstAttribute="width" constant="32" id="fZN-HH-heN"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Feedbin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uiN-cA-Nc5">
+                                                    <rect key="frame" x="68" y="12" width="90.5" height="31.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="gQ5-ls-UhE" secondAttribute="bottom" constant="4" id="4AG-Ro-8b5"/>
-                                                <constraint firstItem="gQ5-ls-UhE" firstAttribute="centerX" secondItem="DgY-u7-DRO" secondAttribute="centerX" id="l9o-tj-LgR"/>
-                                                <constraint firstItem="gQ5-ls-UhE" firstAttribute="top" secondItem="DgY-u7-DRO" secondAttribute="top" constant="4" id="vHj-SW-dhL"/>
+                                                <constraint firstItem="wyu-mZ-3zz" firstAttribute="centerY" secondItem="DgY-u7-DRO" secondAttribute="centerY" id="Bs4-T3-rb4"/>
+                                                <constraint firstItem="uiN-cA-Nc5" firstAttribute="leading" secondItem="wyu-mZ-3zz" secondAttribute="trailing" constant="16" id="Nlj-7T-lEX"/>
+                                                <constraint firstItem="uiN-cA-Nc5" firstAttribute="centerY" secondItem="wyu-mZ-3zz" secondAttribute="centerY" id="jn9-8X-QOA"/>
+                                                <constraint firstItem="wyu-mZ-3zz" firstAttribute="leading" secondItem="DgY-u7-DRO" secondAttribute="leading" constant="20" id="kBn-8H-bNV"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="40" minY="0.0" maxX="0.0" maxY="0.0"/>
