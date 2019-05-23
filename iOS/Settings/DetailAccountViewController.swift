@@ -20,6 +20,8 @@ class DetailAccountViewController: UITableViewController {
         super.viewDidLoad()
 		
 		guard let account = account else { return }
+		
+		nameTextField.placeholder = account.defaultName
 		nameTextField.text = account.name
 		nameTextField.delegate = self
 		activeSwitch.isOn = account.isActive
