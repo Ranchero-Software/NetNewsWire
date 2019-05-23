@@ -347,9 +347,9 @@
                                                 </stackView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="XJG-0j-coE" firstAttribute="leading" secondItem="edh-bL-MIR" secondAttribute="leading" constant="20" id="2lj-H8-Iux"/>
+                                                <constraint firstItem="XJG-0j-coE" firstAttribute="leading" secondItem="edh-bL-MIR" secondAttribute="leading" constant="20" symbolic="YES" id="2lj-H8-Iux"/>
                                                 <constraint firstItem="XJG-0j-coE" firstAttribute="centerY" secondItem="edh-bL-MIR" secondAttribute="centerY" id="ZDw-ch-uB6"/>
-                                                <constraint firstAttribute="trailing" secondItem="XJG-0j-coE" secondAttribute="trailing" constant="20" id="jih-VV-fBp"/>
+                                                <constraint firstAttribute="trailing" secondItem="XJG-0j-coE" secondAttribute="trailing" constant="20" symbolic="YES" id="jih-VV-fBp"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -360,9 +360,9 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Active" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pvF-Ge-m4M">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Active" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pvF-Ge-m4M">
                                                     <rect key="frame" x="20" y="11.5" width="48" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -372,7 +372,7 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="J5R-kl-pYE" secondAttribute="trailing" constant="20" id="0P4-Vq-dZp"/>
-                                                <constraint firstItem="pvF-Ge-m4M" firstAttribute="leading" secondItem="h3v-g9-biw" secondAttribute="leadingMargin" id="CIb-cr-t6V"/>
+                                                <constraint firstItem="pvF-Ge-m4M" firstAttribute="leading" secondItem="h3v-g9-biw" secondAttribute="leading" constant="20" symbolic="YES" id="CIb-cr-t6V"/>
                                                 <constraint firstItem="J5R-kl-pYE" firstAttribute="centerY" secondItem="h3v-g9-biw" secondAttribute="centerY" id="Qrx-J1-99r"/>
                                                 <constraint firstItem="pvF-Ge-m4M" firstAttribute="centerY" secondItem="h3v-g9-biw" secondAttribute="centerY" id="Rq1-zD-1X7"/>
                                             </constraints>
