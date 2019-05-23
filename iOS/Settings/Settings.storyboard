@@ -438,7 +438,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="tb2-dO-AhR">
-                                                    <rect key="frame" x="20" y="11.5" width="32" height="32.000000000000028"/>
+                                                    <rect key="frame" x="20" y="11.5" width="32" height="32"/>
                                                     <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="32" id="0GF-vU-aEc"/>
@@ -517,10 +517,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="7zF-66-uRq">
-                                <rect key="frame" x="90.5" y="128" width="233" height="36"/>
+                                <rect key="frame" x="90.5" y="84" width="233" height="36"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="74E-kl-vU9">
-                                        <rect key="frame" x="0.0" y="2" width="32" height="32.000000000000028"/>
+                                        <rect key="frame" x="0.0" y="2" width="32" height="32"/>
                                         <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="32" id="E7T-ps-KgX"/>
@@ -536,7 +536,7 @@
                                 </subviews>
                             </stackView>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name (Optional)" textAlignment="center" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2dx-hK-hxL">
-                                <rect key="frame" x="0.0" y="184" width="414" height="48"/>
+                                <rect key="frame" x="0.0" y="140" width="414" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="Z7w-B0-LuW"/>
                                 </constraints>
@@ -545,7 +545,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5AS-Zb-zHP">
-                                <rect key="frame" x="0.0" y="252" width="414" height="48"/>
+                                <rect key="frame" x="0.0" y="208" width="414" height="48"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="IFC-SI-vcP"/>
@@ -580,7 +580,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oPp-xq-kz9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3214" y="145"/>
+            <point key="canvasLocation" x="2564" y="144"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="qOt-Py-TKw">
@@ -702,22 +702,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="l5n-Op-NE2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4642" y="144"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="ncU-rc-RwA">
-            <objects>
-                <navigationController storyboardIdentifier="AddLocalAccountNavigationViewController" id="GGt-T1-ndB" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="xT7-am-AeJ">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="lkT-rF-XV3" kind="relationship" relationship="rootViewController" id="Bkq-7x-eht"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="otA-e3-gdk" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2497" y="145"/>
         </scene>
         <!--Timeline Text-->
         <scene sceneID="07z-Vb-4Fm">
