@@ -24,24 +24,23 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		let storyboard = UIStoryboard.settings
 		switch indexPath.row {
 		case 0:
-			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "AddLocalAccountNavigationViewController") as! UINavigationController
-			let addViewController = navController.topViewController as! AddLocalAccountViewController
+			let addViewController = storyboard.instantiateViewController(withIdentifier: "AddLocalAccountViewController") as! AddLocalAccountViewController
 			addViewController.delegate = self
-			present(navController, animated: true)
+			navigationController?.pushViewController(addViewController, animated: true)
 		case 1:
-			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
-			let addViewController = navController.topViewController as! FeedbinAccountViewController
+			let addViewController = storyboard.instantiateViewController(withIdentifier: "FeedbinAccountViewController") as! FeedbinAccountViewController
 			addViewController.delegate = self
-			present(navController, animated: true)
+			navigationController?.pushViewController(addViewController, animated: true)
 		default:
 			break
 		}
 	}
 	
 	func dismiss() {
-		navigationController?.popViewController(animated: false)
+		navigationController?.popToRootViewController(animated: true)
 	}
 	
 }

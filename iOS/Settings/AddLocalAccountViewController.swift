@@ -23,14 +23,9 @@ class AddLocalAccountViewController: UIViewController {
 		nameTextField.delegate = self
 	}
 
-	@IBAction func cancel(_ sender: Any) {
-		dismiss(animated: true)
-	}
-	
-	@IBAction func done(_ sender: Any) {
+	@IBAction func addAccountTapped(_ sender: Any) {
 		let account = AccountManager.shared.createAccount(type: .onMyMac)
 		account.name = nameTextField.text
-		dismiss(animated: true)
 		delegate?.dismiss()
 	}
 	
