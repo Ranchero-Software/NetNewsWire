@@ -29,19 +29,19 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "AddLocalAccountNavigationViewController") as! UINavigationController
 			let addViewController = navController.topViewController as! AddLocalAccountViewController
 			addViewController.delegate = self
-			present(navController, animated: true)
+			navigationController?.pushViewController(addViewController, animated: true)
 		case 1:
 			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
 			let addViewController = navController.topViewController as! FeedbinAccountViewController
 			addViewController.delegate = self
-			present(navController, animated: true)
+			navigationController?.pushViewController(addViewController, animated: true)
 		default:
 			break
 		}
 	}
 	
 	func dismiss() {
-		navigationController?.popViewController(animated: false)
+		navigationController?.popToRootViewController(animated: true)
 	}
 	
 }

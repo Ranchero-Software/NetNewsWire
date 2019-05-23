@@ -337,7 +337,7 @@
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="right" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8Xs-17-Ubp">
+                                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="(Optional)" textAlignment="right" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8Xs-17-Ubp">
                                                             <rect key="frame" x="64" y="0.0" width="310" height="21"/>
                                                             <nil key="textColor"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -517,7 +517,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="7zF-66-uRq">
-                                <rect key="frame" x="90.5" y="108" width="233" height="36"/>
+                                <rect key="frame" x="90.5" y="128" width="233" height="36"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="74E-kl-vU9">
                                         <rect key="frame" x="0.0" y="2" width="32" height="32.000000000000028"/>
@@ -535,37 +535,44 @@
                                     </label>
                                 </subviews>
                             </stackView>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2dx-hK-hxL">
-                                <rect key="frame" x="107" y="160" width="200" height="30"/>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name (Optional)" textAlignment="center" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2dx-hK-hxL">
+                                <rect key="frame" x="0.0" y="184" width="414" height="48"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="uYr-DR-Oil"/>
+                                    <constraint firstAttribute="height" constant="48" id="Z7w-B0-LuW"/>
                                 </constraints>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5AS-Zb-zHP">
+                                <rect key="frame" x="0.0" y="252" width="414" height="48"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="IFC-SI-vcP"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <state key="normal" title="Add Account"/>
+                                <connections>
+                                    <action selector="addAccountTapped:" destination="lkT-rF-XV3" eventType="touchUpInside" id="bmf-nA-fJU"/>
+                                </connections>
+                            </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.93735349178314209" green="0.93682962656021118" blue="0.95681577920913696" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
-                            <constraint firstItem="7zF-66-uRq" firstAttribute="top" secondItem="Z5L-XF-ZSa" secondAttribute="top" constant="20" id="Meu-uI-vga"/>
+                            <constraint firstItem="5AS-Zb-zHP" firstAttribute="leading" secondItem="Z5L-XF-ZSa" secondAttribute="leading" id="3Ov-dx-JBu"/>
+                            <constraint firstItem="5AS-Zb-zHP" firstAttribute="top" secondItem="2dx-hK-hxL" secondAttribute="bottom" constant="20" id="CZD-h0-H7B"/>
+                            <constraint firstItem="5AS-Zb-zHP" firstAttribute="centerX" secondItem="2dx-hK-hxL" secondAttribute="centerX" id="Duk-ML-7hE"/>
+                            <constraint firstItem="7zF-66-uRq" firstAttribute="top" secondItem="Z5L-XF-ZSa" secondAttribute="top" constant="40" id="Meu-uI-vga"/>
+                            <constraint firstItem="2dx-hK-hxL" firstAttribute="leading" secondItem="Z5L-XF-ZSa" secondAttribute="leading" id="N9Z-mx-C4J"/>
                             <constraint firstItem="2dx-hK-hxL" firstAttribute="centerX" secondItem="9rb-pV-gvI" secondAttribute="centerX" id="SCu-FD-r1u"/>
+                            <constraint firstItem="Z5L-XF-ZSa" firstAttribute="trailing" secondItem="2dx-hK-hxL" secondAttribute="trailing" id="SS2-gJ-f5W"/>
+                            <constraint firstItem="Z5L-XF-ZSa" firstAttribute="trailing" secondItem="5AS-Zb-zHP" secondAttribute="trailing" id="gVj-9g-QQL"/>
                             <constraint firstItem="7zF-66-uRq" firstAttribute="centerX" secondItem="9rb-pV-gvI" secondAttribute="centerX" id="u9U-ks-gUh"/>
-                            <constraint firstItem="2dx-hK-hxL" firstAttribute="top" secondItem="Tdm-Ge-uc6" secondAttribute="bottom" constant="16" id="wLk-OA-sWO"/>
+                            <constraint firstItem="2dx-hK-hxL" firstAttribute="top" secondItem="Tdm-Ge-uc6" secondAttribute="bottom" constant="20" id="wLk-OA-sWO"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Z5L-XF-ZSa"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Otv-KQ-fsd">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="e3g-mF-CWh">
-                            <connections>
-                                <action selector="cancel:" destination="lkT-rF-XV3" id="mzJ-wI-Paz"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="GP9-IT-RNj">
-                            <connections>
-                                <action selector="done:" destination="lkT-rF-XV3" id="TE0-YB-g6L"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="Otv-KQ-fsd"/>
                     <connections>
                         <outlet property="localAccountNameLabel" destination="Tdm-Ge-uc6" id="48O-IT-xXw"/>
                         <outlet property="nameTextField" destination="2dx-hK-hxL" id="t5V-3x-3vu"/>
