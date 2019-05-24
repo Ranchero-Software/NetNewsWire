@@ -508,6 +508,38 @@
             </objects>
             <point key="canvasLocation" x="1826" y="139"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="rAh-JY-gTt">
+            <objects>
+                <navigationController storyboardIdentifier="AddLocalAccountNavigationViewController" id="y7s-fb-OXN" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="9L3-nz-RGL">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="lkT-rF-XV3" kind="relationship" relationship="rootViewController" id="LrS-Q9-xHZ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="QPl-ba-rnZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2506" y="-528"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="JLw-Se-53j">
+            <objects>
+                <navigationController storyboardIdentifier="FeedbinAccountNavigationViewController" id="w7R-N5-W1t" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="9BS-8s-0E8">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="byh-sg-6p5" kind="relationship" relationship="rootViewController" id="UOK-JY-Ded"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="huK-n1-D82" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3177" y="-528"/>
+        </scene>
         <!--Add Local Account View Controller-->
         <scene sceneID="3at-5H-MrI">
             <objects>
@@ -517,10 +549,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="7zF-66-uRq">
-                                <rect key="frame" x="90.5" y="84" width="233" height="36"/>
+                                <rect key="frame" x="90.5" y="128" width="233" height="36"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="74E-kl-vU9">
-                                        <rect key="frame" x="0.0" y="2" width="32" height="32.000000000000028"/>
+                                        <rect key="frame" x="0.0" y="2" width="32" height="32"/>
                                         <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="32" id="E7T-ps-KgX"/>
@@ -536,7 +568,7 @@
                                 </subviews>
                             </stackView>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name (Optional)" textAlignment="center" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2dx-hK-hxL">
-                                <rect key="frame" x="0.0" y="140" width="414" height="48"/>
+                                <rect key="frame" x="0.0" y="184" width="414" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="Z7w-B0-LuW"/>
                                 </constraints>
@@ -545,7 +577,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5AS-Zb-zHP">
-                                <rect key="frame" x="0.0" y="208" width="414" height="48"/>
+                                <rect key="frame" x="0.0" y="252" width="414" height="48"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="IFC-SI-vcP"/>
@@ -572,15 +604,22 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Z5L-XF-ZSa"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Otv-KQ-fsd"/>
+                    <navigationItem key="navigationItem" id="Otv-KQ-fsd">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="IRo-a7-Blk">
+                            <connections>
+                                <action selector="cancel:" destination="lkT-rF-XV3" id="eiE-bJ-sJF"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="cancelBarButtonItem" destination="IRo-a7-Blk" id="1oI-Uk-nfz"/>
                         <outlet property="localAccountNameLabel" destination="Tdm-Ge-uc6" id="48O-IT-xXw"/>
                         <outlet property="nameTextField" destination="2dx-hK-hxL" id="t5V-3x-3vu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oPp-xq-kz9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2510" y="139"/>
+            <point key="canvasLocation" x="2507" y="139"/>
         </scene>
         <!--Feedbin Account View Controller-->
         <scene sceneID="sCm-Gd-byr">
@@ -591,7 +630,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="vFL-2i-eRz">
-                                <rect key="frame" x="129" y="84" width="156" height="36"/>
+                                <rect key="frame" x="129" y="128" width="156" height="36"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountFeedbin" translatesAutoresizingMaskIntoConstraints="NO" id="9ht-ce-lQp">
                                         <rect key="frame" x="0.0" y="2" width="32" height="32"/>
@@ -610,7 +649,7 @@
                                 </subviews>
                             </stackView>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="center" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UiV-th-dQb">
-                                <rect key="frame" x="0.0" y="140" width="414" height="48"/>
+                                <rect key="frame" x="0.0" y="184" width="414" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="UjW-Pq-uNU"/>
                                 </constraints>
@@ -619,7 +658,7 @@
                                 <textInputTraits key="textInputTraits" keyboardType="emailAddress" textContentType="email"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="center" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lDh-Kk-Kem">
-                                <rect key="frame" x="0.0" y="196" width="414" height="48"/>
+                                <rect key="frame" x="0.0" y="240" width="414" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="pKQ-Mm-Oc8"/>
                                 </constraints>
@@ -628,7 +667,7 @@
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pv5-O6-P6Z">
-                                <rect key="frame" x="0.0" y="264" width="414" height="48"/>
+                                <rect key="frame" x="0.0" y="308" width="414" height="48"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="8Vt-l1-eL1"/>
@@ -641,7 +680,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9QD-Wz-fqW">
-                                <rect key="frame" x="207" y="332" width="0.0" height="0.0"/>
+                                <rect key="frame" x="207" y="376" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                 <nil key="highlightedColor"/>
@@ -668,9 +707,14 @@
                         <viewLayoutGuide key="safeArea" id="4Rm-PZ-VHc"/>
                     </view>
                     <navigationItem key="navigationItem" id="BFN-hJ-pWd">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="xVt-VC-XFV">
+                            <connections>
+                                <action selector="cancel:" destination="byh-sg-6p5" id="WrS-lL-eth"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" style="plain" id="L90-ti-E7I">
                             <view key="customView" contentMode="scaleToFill" id="xpt-lr-f2h">
-                                <rect key="frame" x="325.5" y="12" width="20" height="20"/>
+                                <rect key="frame" x="374" y="12" width="20" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Pl1-lc-sIl">
@@ -685,6 +729,7 @@
                     <connections>
                         <outlet property="activityIndicator" destination="Pl1-lc-sIl" id="hqg-mX-Yns"/>
                         <outlet property="addAccountButton" destination="pv5-O6-P6Z" id="DEh-oq-rnD"/>
+                        <outlet property="cancelBarButtonItem" destination="xVt-VC-XFV" id="yBm-px-sgt"/>
                         <outlet property="emailTextField" destination="UiV-th-dQb" id="fCb-hg-AXa"/>
                         <outlet property="errorMessageLabel" destination="9QD-Wz-fqW" id="Kjo-73-Pgh"/>
                         <outlet property="passwordTextField" destination="lDh-Kk-Kem" id="ew7-Ej-UpK"/>
@@ -692,7 +737,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="l5n-Op-NE2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3203" y="139"/>
+            <point key="canvasLocation" x="3178" y="139"/>
         </scene>
         <!--Timeline Text-->
         <scene sceneID="07z-Vb-4Fm">
