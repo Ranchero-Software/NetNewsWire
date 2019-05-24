@@ -168,6 +168,8 @@ class DetailViewController: UIViewController {
 		}
 		let itemSource = ArticleActivityItemSource(url: url, subject: navState?.currentArticle?.title)
 		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
+		activityViewController.popoverPresentationController?.barButtonItem = self.actionBarButtonItem
+		
 		present(activityViewController, animated: true)
 	}
 	
