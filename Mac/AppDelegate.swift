@@ -428,6 +428,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		Browser.open("https://github.com/brentsimmons/NetNewsWire/issues", inBackground: false)
 	}
 
+	@IBAction func openSlackGroup(_ sender: Any?) {
+		Browser.open("https://join.slack.com/t/netnewswire/shared_invite/enQtNjM4MDA1MjQzMDkzLTNlNjBhOWVhYzdhYjA4ZWFhMzQ1MTUxYjU0NTE5ZGY0YzYwZWJhNjYwNTNmNTg2NjIwYWY4YzhlYzk5NmU3ZTc", inBackground: false)
+	}
+
 	@IBAction func openTechnotes(_ sender: Any?) {
 
 		Browser.open("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes", inBackground: false)
