@@ -7,6 +7,27 @@
         <language>en</language>
 
 <item>
+          <title>NetNewsWire 5.0d17</title>
+            <description><![CDATA[
+							<p>NetNewsWire 5.0 is now feature-complete. It has bugs, though, so we can’t call it alpha just yet. Getting close!</p>            
+            	<p>NetNewsWire now requires macOS 10.14.4 or greater. It no longer includes the Swift libraries, which makes for a much smaller download, which means it takes up less space on disk.</p>
+            	<p>You can now sync using FeedBin. See Preferences > Accounts to add a FeedBin account. Note: the initial import from FeedBin is likely to take a while, but keeping up should be quite fast.</p>
+            	<p>You can create additional “On My Mac” accounts, via Preferences > Accounts.</p>
+            	<p>Accounts can be made inactive.</p>
+            	<p>Sidebar: fixed a bug updating unread counts in the sidebar when you have duplicates of a feed.</p>
+            	<p>Timeline: scrolling has been made faster.</p>
+            	<p>Timeline: avatars are now on the left instead of on the right. There’s a default globe avatar for when no feed icon or favicon can be found. The default avatar is tinted. Each feed gets its own tint.</p>
+            	<p>Detail view: worked around a new WebKit bug that affected the detail view. It would flash empty between articles sometimes. Now it won’t.</p>
+            	<p>Help menu: a new command takes you to the signup page for the Slack Group.</p>
+            	<p>Help menu: removed command to donate to App Camp for Girls, since the donation page has been removed. Once we know how we can continue to support their mission, we’ll do so.</p>
+            	<p>OPML Export: asks for the account first.</p>
+ 	   					]]></description>
+            <pubDate>Sat, 25 May 2019 11:00:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d17.zip" sparkle:version="2114" sparkle:shortVersionString="5.0d17" length="4043861" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
           <title>NetNewsWire 5.0d16</title>
             <description><![CDATA[
             	<p>Searching now works.</p>
