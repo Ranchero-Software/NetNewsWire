@@ -13,7 +13,7 @@ import RSWeb
 class FeedbinAccountViewController: UIViewController {
 
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-	
+	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var emailTextField: UITextField!
 	@IBOutlet weak var passwordTextField: UITextField!
 	@IBOutlet weak var addAccountButton: UIButton!
@@ -36,6 +36,10 @@ class FeedbinAccountViewController: UIViewController {
 				passwordTextField.text = password
 			}
 		}
+	}
+	
+	@IBAction func cancel(_ sender: Any) {
+		delegate?.dismiss(self)
 	}
 	
 	@IBAction func addAccountTapped(_ sender: Any) {
@@ -74,7 +78,7 @@ class FeedbinAccountViewController: UIViewController {
 							self.account?.refreshAll()
 						}
 						
-						self.delegate?.dismiss()
+						self.delegate?.dismiss(self)
 					} catch {
 						self.errorMessageLabel.text = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 					}
@@ -89,13 +93,12 @@ class FeedbinAccountViewController: UIViewController {
 	}
 	
 	private func enableNavigation() {
-		self.navigationItem.backBarButtonItem?.isEnabled = true
+		self.cancelBarButtonItem.isEnabled = true
 		self.addAccountButton.isEnabled = true
-		self.activityIndicator.isHidden = true
 	}
 	
 	private func disableNavigation() {
-		navigationItem.backBarButtonItem?.isEnabled = false
+		cancelBarButtonItem.isEnabled = false
 		addAccountButton.isEnabled = false
 	}
 	
@@ -108,7 +111,7 @@ class FeedbinAccountViewController: UIViewController {
 		self.activityIndicator.isHidden = true
 		self.activityIndicator.stopAnimating()
 	}
-	
+		
 }
 
 extension FeedbinAccountViewController: UITextFieldDelegate {

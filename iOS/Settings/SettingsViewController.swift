@@ -131,13 +131,11 @@ class SettingsViewController: UITableViewController {
 				UIApplication.shared.open(URL(string: "https://ranchero.com/netnewswire/")!, options: [:])
 			}
 		case 2:
-			UIApplication.shared.open(URL(string: "https://appcamp4girls.com/contribute/")!, options: [:])
-		case 3:
 			if indexPath.row == 1 {
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineNumberOfLinesViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			}
-		case 4:
+		case 3:
 			switch indexPath.row {
 			case 0:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)

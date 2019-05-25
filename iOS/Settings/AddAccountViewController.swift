@@ -10,7 +10,7 @@ import Account
 import UIKit
 
 protocol AddAccountDismissDelegate: UIViewController {
-	func dismiss()
+	func dismiss(_ viewController: UIViewController)
 }
 
 class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
@@ -24,23 +24,24 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		let storyboard = UIStoryboard.settings
 		switch indexPath.row {
 		case 0:
-			let addViewController = storyboard.instantiateViewController(withIdentifier: "AddLocalAccountViewController") as! AddLocalAccountViewController
+			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "AddLocalAccountNavigationViewController") as! UINavigationController
+			let addViewController = navController.topViewController as! AddLocalAccountViewController
 			addViewController.delegate = self
-			navigationController?.pushViewController(addViewController, animated: true)
+			present(navController, animated: true)
 		case 1:
-			let addViewController = storyboard.instantiateViewController(withIdentifier: "FeedbinAccountViewController") as! FeedbinAccountViewController
+			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
+			let addViewController = navController.topViewController as! FeedbinAccountViewController
 			addViewController.delegate = self
-			navigationController?.pushViewController(addViewController, animated: true)
+			present(navController, animated: true)
 		default:
 			break
 		}
 	}
 	
-	func dismiss() {
-		navigationController?.popToRootViewController(animated: true)
+	func dismiss(_ viewController: UIViewController) {
+		viewController.dismiss(animated: true, completion: nil)
 	}
 	
 }

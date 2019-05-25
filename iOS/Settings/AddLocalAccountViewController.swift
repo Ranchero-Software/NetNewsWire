@@ -11,6 +11,7 @@ import Account
 
 class AddLocalAccountViewController: UIViewController {
 
+	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var localAccountNameLabel: UILabel!
 	@IBOutlet weak var nameTextField: UITextField!
 	
@@ -23,10 +24,14 @@ class AddLocalAccountViewController: UIViewController {
 		nameTextField.delegate = self
 	}
 
+	@IBAction func cancel(_ sender: Any) {
+		delegate?.dismiss(self)
+	}
+	
 	@IBAction func addAccountTapped(_ sender: Any) {
 		let account = AccountManager.shared.createAccount(type: .onMyMac)
 		account.name = nameTextField.text
-		delegate?.dismiss()
+		delegate?.dismiss(self)
 	}
 	
 }
