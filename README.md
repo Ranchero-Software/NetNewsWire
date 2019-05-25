@@ -25,3 +25,38 @@ That said, we will seriously consider any pull requests we do get. Just note tha
 It’s probably a good idea to let us know first what you’d like to do. The best place for that is definitely the [Slack group](https://join.slack.com/t/netnewswire/shared_invite/enQtNjM4MDA1MjQzMDkzLTNlNjBhOWVhYzdhYjA4ZWFhMzQ1MTUxYjU0NTE5ZGY0YzYwZWJhNjYwNTNmNTg2NjIwYWY4YzhlYzk5NmU3ZTc).
 
 We do plan to add more and more contributors over time. Totally. But we’re taking it slow as we learn how to manage an open source project.
+
+#### Building
+
+```bash
+git clone https://github.com/brentsimmons/NetNewsWire.git
+cd NetNewsWire
+git submodule update --init
+```
+
+You can locally override the Xcode settings for code signing
+by creating a `DeveloperSettings.xcconfig` file locally at the appropriate path.
+This allows for a pristine project with code signing set up with the appropriate
+developer ID and certificates, and for dev to be able to have local settings
+without needing to check in anything into source control.
+
+As an example, make a `../../SharedXcodeSettings/DeveloperSettings.xcconfig` file and
+give it the contents
+
+```
+CODE_SIGN_IDENTITY = Mac Developer
+DEVELOPMENT_TEAM = <Your Team ID>
+CODE_SIGN_STYLE = Automatic
+PROVISIONING_PROFILE_SPECIFIER =
+```
+
+Now you should be able to build without code signing errors and without modifying
+the NetNewsWire Xcode project.
+
+Example:
+
+If your NetNewsWire Xcode project file is at:
+`/Users/Shared/git/NetNewsWire/NetNewsWire.xcodeproj`
+
+Create your `DeveloperSettings.xcconfig` file at
+`/Users/Shared/git/SharedXcodeSettings/DeveloperSettings.xcconfig`
