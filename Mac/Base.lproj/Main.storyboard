@@ -561,13 +561,6 @@
                                                 <action selector="openSlackGroup:" target="Ady-hI-5gd" id="YX2-gA-pgV"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="sHh-z2-8AO"/>
-                                        <menuItem title="Donate to App Camp for Girls" id="Vrr-S1-18B">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="donateToAppCampForGirls:" target="Ady-hI-5gd" id="aYY-R7-b1U"/>
-                                            </connections>
-                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
