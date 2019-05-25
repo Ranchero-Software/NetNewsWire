@@ -430,67 +430,73 @@
                         <sections>
                             <tableViewSection id="m3P-em-PgI">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" rowHeight="55" id="UFl-6I-ucw">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="55" id="UFl-6I-ucw">
                                         <rect key="frame" x="0.0" y="35" width="414" height="55"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="UFl-6I-ucw" id="99i-Ge-guB">
-                                            <rect key="frame" x="0.0" y="0.0" width="376" height="54.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="54.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="tb2-dO-AhR">
-                                                    <rect key="frame" x="20" y="11.5" width="32" height="32.000000000000028"/>
-                                                    <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="32" id="0GF-vU-aEc"/>
-                                                        <constraint firstAttribute="width" constant="32" id="xDy-t7-26A"/>
-                                                    </constraints>
-                                                </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="On My iPhone" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="116-rt-msI">
-                                                    <rect key="frame" x="68" y="11.5" width="157.5" height="31.5"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="iTt-HT-Ane">
+                                                    <rect key="frame" x="104.5" y="11.5" width="205.5" height="32"/>
+                                                    <subviews>
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="tb2-dO-AhR">
+                                                            <rect key="frame" x="0.0" y="0.0" width="32" height="32.000000000000028"/>
+                                                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="32" id="0GF-vU-aEc"/>
+                                                                <constraint firstAttribute="width" constant="32" id="xDy-t7-26A"/>
+                                                            </constraints>
+                                                        </imageView>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="On My iPhone" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="116-rt-msI">
+                                                            <rect key="frame" x="48" y="0.0" width="157.5" height="32"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="tb2-dO-AhR" firstAttribute="leading" secondItem="99i-Ge-guB" secondAttribute="leading" constant="20" symbolic="YES" id="8fv-hh-t9i"/>
-                                                <constraint firstItem="116-rt-msI" firstAttribute="leading" secondItem="tb2-dO-AhR" secondAttribute="trailing" constant="16" id="Frt-3l-XxP"/>
-                                                <constraint firstItem="tb2-dO-AhR" firstAttribute="centerY" secondItem="99i-Ge-guB" secondAttribute="centerY" id="Kvq-D1-FAa"/>
-                                                <constraint firstItem="116-rt-msI" firstAttribute="centerY" secondItem="tb2-dO-AhR" secondAttribute="centerY" id="Sfh-wA-Db0"/>
+                                                <constraint firstItem="iTt-HT-Ane" firstAttribute="centerY" secondItem="99i-Ge-guB" secondAttribute="centerY" id="UaS-Yf-Q1x"/>
+                                                <constraint firstItem="iTt-HT-Ane" firstAttribute="centerX" secondItem="99i-Ge-guB" secondAttribute="centerX" id="hDQ-wH-Myx"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <inset key="separatorInset" minX="40" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <inset key="separatorInset" minX="50" minY="0.0" maxX="0.0" maxY="0.0"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" rowHeight="56" id="te1-L9-osf">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="56" id="te1-L9-osf">
                                         <rect key="frame" x="0.0" y="90" width="414" height="56"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="te1-L9-osf" id="DgY-u7-DRO">
-                                            <rect key="frame" x="0.0" y="0.0" width="376" height="55.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="55.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountFeedbin" translatesAutoresizingMaskIntoConstraints="NO" id="wyu-mZ-3zz">
-                                                    <rect key="frame" x="20" y="12" width="32" height="32"/>
-                                                    <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="32" id="LEr-1Z-N99"/>
-                                                        <constraint firstAttribute="width" constant="32" id="fZN-HH-heN"/>
-                                                    </constraints>
-                                                </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Feedbin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uiN-cA-Nc5">
-                                                    <rect key="frame" x="68" y="12" width="90.5" height="31.5"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="7dy-NH-2zV">
+                                                    <rect key="frame" x="138" y="12" width="138.5" height="32"/>
+                                                    <subviews>
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountFeedbin" translatesAutoresizingMaskIntoConstraints="NO" id="wyu-mZ-3zz">
+                                                            <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="32" id="LEr-1Z-N99"/>
+                                                                <constraint firstAttribute="width" constant="32" id="fZN-HH-heN"/>
+                                                            </constraints>
+                                                        </imageView>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Feedbin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uiN-cA-Nc5">
+                                                            <rect key="frame" x="48" y="0.0" width="90.5" height="32"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="wyu-mZ-3zz" firstAttribute="centerY" secondItem="DgY-u7-DRO" secondAttribute="centerY" id="Bs4-T3-rb4"/>
-                                                <constraint firstItem="uiN-cA-Nc5" firstAttribute="leading" secondItem="wyu-mZ-3zz" secondAttribute="trailing" constant="16" id="Nlj-7T-lEX"/>
-                                                <constraint firstItem="uiN-cA-Nc5" firstAttribute="centerY" secondItem="wyu-mZ-3zz" secondAttribute="centerY" id="jn9-8X-QOA"/>
-                                                <constraint firstItem="wyu-mZ-3zz" firstAttribute="leading" secondItem="DgY-u7-DRO" secondAttribute="leading" constant="20" id="kBn-8H-bNV"/>
+                                                <constraint firstItem="7dy-NH-2zV" firstAttribute="centerY" secondItem="DgY-u7-DRO" secondAttribute="centerY" id="Flf-2s-zWu"/>
+                                                <constraint firstItem="7dy-NH-2zV" firstAttribute="centerX" secondItem="DgY-u7-DRO" secondAttribute="centerX" id="OBr-8l-3dF"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <inset key="separatorInset" minX="40" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <inset key="separatorInset" minX="50" minY="0.0" maxX="0.0" maxY="0.0"/>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -552,7 +558,7 @@
                                 <rect key="frame" x="90.5" y="128" width="233" height="36"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="74E-kl-vU9">
-                                        <rect key="frame" x="0.0" y="2" width="32" height="32"/>
+                                        <rect key="frame" x="0.0" y="2" width="32" height="32.000000000000028"/>
                                         <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="32" id="E7T-ps-KgX"/>
