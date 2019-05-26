@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import RSParser
 import Articles
 import RSWeb
@@ -81,7 +82,9 @@ final class LocalAccountDelegate: AccountDelegate {
 
 		// We use the same mechanism to load local accounts as we do to load the subscription
 		// OPML all accounts.
-		account.loadOPML(loadDocument)
+		BatchUpdate.shared.perform {
+			account.loadOPML(loadDocument)
+		}
 		completion(.success(()))
 
 	}
