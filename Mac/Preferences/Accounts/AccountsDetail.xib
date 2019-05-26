@@ -27,11 +27,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <gridView xPlacement="fill" yPlacement="center" rowAlignment="none" rowSpacing="9" columnSpacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="nVy-H3-bFO">
-                                <rect key="frame" x="20" y="163" width="286" height="71"/>
+                                <rect key="frame" x="20" y="86" width="286" height="148"/>
                                 <rows>
                                     <gridRow id="yLs-SL-a1b"/>
                                     <gridRow yPlacement="top" id="etw-2m-nWZ"/>
                                     <gridRow id="3IT-3r-gEK"/>
+                                    <gridRow id="Y4C-5M-ySp"/>
                                 </rows>
                                 <columns>
                                     <gridColumn id="sMM-Ds-SKX"/>
@@ -40,7 +41,7 @@
                                 <gridCells>
                                     <gridCell row="yLs-SL-a1b" column="sMM-Ds-SKX" id="3ea-DE-T3i">
                                         <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jiQ-KJ-SS0">
-                                            <rect key="frame" x="-2" y="54" width="44" height="17"/>
+                                            <rect key="frame" x="-2" y="131" width="44" height="17"/>
                                             <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Type:" id="tC5-Vt-gBc">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -50,7 +51,7 @@
                                     </gridCell>
                                     <gridCell row="yLs-SL-a1b" column="Fhf-h9-g0O" id="baI-Kp-tKF">
                                         <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XYX-iz-hnq">
-                                            <rect key="frame" x="53" y="54" width="73" height="17"/>
+                                            <rect key="frame" x="53" y="131" width="73" height="17"/>
                                             <textFieldCell key="cell" lineBreakMode="clipping" title="On My Mac" id="6yI-bV-1Sh">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -61,7 +62,7 @@
                                     <gridCell row="etw-2m-nWZ" column="sMM-Ds-SKX" id="htf-Ca-Hpv"/>
                                     <gridCell row="etw-2m-nWZ" column="Fhf-h9-g0O" id="NrD-vV-1Y1">
                                         <button key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mgt-uY-fuq">
-                                            <rect key="frame" x="53" y="29" width="60" height="18"/>
+                                            <rect key="frame" x="53" y="106" width="60" height="18"/>
                                             <buttonCell key="cell" type="check" title="Active" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="wxB-dX-nGt">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -73,7 +74,7 @@
                                     </gridCell>
                                     <gridCell row="3IT-3r-gEK" column="sMM-Ds-SKX" id="2yP-oZ-A6S">
                                         <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ted-jN-oYR">
-                                            <rect key="frame" x="-2" y="3" width="44" height="17"/>
+                                            <rect key="frame" x="-2" y="80" width="44" height="17"/>
                                             <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Name:" id="uyQ-Zi-QCr">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -83,7 +84,7 @@
                                     </gridCell>
                                     <gridCell row="3IT-3r-gEK" column="Fhf-h9-g0O" id="nCq-02-YVv">
                                         <textField key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TT0-Kf-YTC">
-                                            <rect key="frame" x="55" y="0.0" width="100" height="22"/>
+                                            <rect key="frame" x="55" y="77" width="100" height="22"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="7Vp-Hq-j6n">
                                                 <font key="font" usesAppearanceFont="YES"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -91,10 +92,24 @@
                                             </textFieldCell>
                                         </textField>
                                     </gridCell>
+                                    <gridCell row="Y4C-5M-ySp" column="sMM-Ds-SKX" id="dON-E7-yd2"/>
+                                    <gridCell row="Y4C-5M-ySp" column="Fhf-h9-g0O" id="i7Y-4k-5TF">
+                                        <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="xp5-wk-PKc">
+                                            <rect key="frame" x="53" y="0.0" width="235" height="68"/>
+                                            <textFieldCell key="cell" selectable="YES" id="MW0-mH-Gaa">
+                                                <font key="font" usesAppearanceFont="YES"/>
+                                                <string key="title">The name will appear in the sidebar. It can be anything you want.
+
+You can even use emoji. 🎸</string>
+                                                <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </gridCell>
                                 </gridCells>
                             </gridView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gLh-gl-ZGQ">
-                                <rect key="frame" x="109" y="115" width="109" height="32"/>
+                                <rect key="frame" x="109" y="38" width="109" height="32"/>
                                 <buttonCell key="cell" type="push" title="Credentials" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vYg-ZC-o4W">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
