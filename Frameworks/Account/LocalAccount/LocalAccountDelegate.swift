@@ -138,11 +138,10 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func addFeed(for account: Account, to container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let account = container as? Account {
-			account.addFeed(feed)
-		}
 		if let folder = container as? Folder {
 			folder.addFeed(feed)
+		} else if let account = container as? Account {
+			account.addFeed(feed)
 		}
 		completion(.success(()))
 	}

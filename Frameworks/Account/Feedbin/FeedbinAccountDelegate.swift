@@ -377,7 +377,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				case .success(let taggingID):
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
-						account.removeFeed(feed)
 						folder.addFeed(feed)
 						completion(.success(()))
 					}
