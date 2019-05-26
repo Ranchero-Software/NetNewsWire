@@ -31,6 +31,7 @@
 		51D5875B227F630B00900287 /* tags_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58758227F630B00900287 /* tags_add.json */; };
 		51D5875C227F630B00900287 /* tags_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58759227F630B00900287 /* tags_initial.json */; };
 		51D5875E227F643C00900287 /* AccountFolderSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D5875D227F643C00900287 /* AccountFolderSyncTest.swift */; };
+		51E3EB41229AF61B00645299 /* AccountError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB40229AF61B00645299 /* AccountError.swift */; };
 		51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E490352288C37100C791F0 /* FeedbinDate.swift */; };
 		51E59599228C77BC00FCC42B /* FeedbinUnreadEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E59598228C77BC00FCC42B /* FeedbinUnreadEntry.swift */; };
 		51E5959B228C781500FCC42B /* FeedbinStarredEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E5959A228C781500FCC42B /* FeedbinStarredEntry.swift */; };
@@ -131,6 +132,7 @@
 		51D58758227F630B00900287 /* tags_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_add.json; sourceTree = "<group>"; };
 		51D58759227F630B00900287 /* tags_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_initial.json; sourceTree = "<group>"; };
 		51D5875D227F643C00900287 /* AccountFolderSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFolderSyncTest.swift; sourceTree = "<group>"; };
+		51E3EB40229AF61B00645299 /* AccountError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountError.swift; sourceTree = "<group>"; };
 		51E490352288C37100C791F0 /* FeedbinDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinDate.swift; sourceTree = "<group>"; };
 		51E59598228C77BC00FCC42B /* FeedbinUnreadEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinUnreadEntry.swift; sourceTree = "<group>"; };
 		51E5959A228C781500FCC42B /* FeedbinStarredEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinStarredEntry.swift; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 			children = (
 				848935101F62486800CEBD24 /* Account.swift */,
 				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
+				51E3EB40229AF61B00645299 /* AccountError.swift */,
 				846E77531F6F00E300A165E2 /* AccountManager.swift */,
 				84AF4EA3222CFDD100F6A800 /* AccountMetadata.swift */,
 				84F73CF0202788D80000BCEF /* ArticleFetcher.swift */,
@@ -530,6 +533,7 @@
 				84B99C9F1FAE8D3200ECDEDB /* ContainerPath.swift in Sources */,
 				5133231122810EB200C30F19 /* FeedbinIcon.swift in Sources */,
 				846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */,
+				51E3EB41229AF61B00645299 /* AccountError.swift in Sources */,
 				51E59599228C77BC00FCC42B /* FeedbinUnreadEntry.swift in Sources */,
 				5165D72822835F7800D9D53D /* FeedFinder.swift in Sources */,
 				51D58755227F53BE00900287 /* FeedbinTag.swift in Sources */,

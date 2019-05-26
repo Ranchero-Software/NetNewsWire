@@ -35,9 +35,9 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	// LocalAccountDelegate doesn't wait for completion before calling the completion block
-	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
+	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		refresher.refreshFeeds(account.flattenedFeeds())
-		completion?()
+		completion(.success(()))
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {

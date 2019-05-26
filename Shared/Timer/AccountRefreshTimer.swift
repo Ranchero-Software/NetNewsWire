@@ -73,7 +73,7 @@ class AccountRefreshTimer {
 		lastTimedRefresh = Date()
 		update()
 		
-		AccountManager.shared.refreshAll()
+		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 		
 	}
 	

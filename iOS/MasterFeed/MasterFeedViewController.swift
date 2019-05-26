@@ -603,7 +603,7 @@ extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 private extension MasterFeedViewController {
 	
 	@objc private func refreshAccounts(_ sender: Any) {
-		AccountManager.shared.refreshAll()
+		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 		refreshControl?.endRefreshing()
 	}
 	

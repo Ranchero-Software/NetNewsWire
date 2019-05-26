@@ -78,7 +78,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
+	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
@@ -91,7 +91,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 						self.refreshMissingArticles(account) {
 							self.refreshProgress.clear()
 							DispatchQueue.main.async {
-								completion?()
+								completion(.success(()))
 							}
 						}
 					}
@@ -99,9 +99,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion?()
 					self.refreshProgress.clear()
-					self.handleError(error)
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 			
@@ -222,7 +222,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				os_log(.debug, log: self.log, "Import OPML failed.")
 				self.opmlImportInProgress = false
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 		}
@@ -240,7 +241,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 		}
@@ -274,7 +276,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				self.syncTaggings(account, taggings)
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 		}
@@ -302,7 +305,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 
@@ -327,7 +331,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 		}
@@ -356,7 +361,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 		}
@@ -377,7 +383,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 					}
 				case .failure(let error):
 					DispatchQueue.main.async {
-						completion(.failure(error))
+						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						completion(.failure(wrappedError))
 					}
 				}
 			}
@@ -404,7 +411,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 					}
 				case .failure(let error):
 					DispatchQueue.main.async {
-						completion(.failure(error))
+						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						completion(.failure(wrappedError))
 					}
 				}
 			}
@@ -427,7 +435,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				self.processRestoredFeed(for: account, feed: feed, editedName: editedName, folder: folder, completion: completion)
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 		}
@@ -490,14 +499,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 // MARK: Private
 
 private extension FeedbinAccountDelegate {
-	
-	func handleError(_ error: Error) {
-		#if os(macOS)
-		NSApplication.shared.presentError(error)
-		#else
-		UIApplication.shared.presentError(error)
-		#endif
-	}
 	
 	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		

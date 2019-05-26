@@ -21,6 +21,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	public static let shared = AccountManager()
 	public let defaultAccount: Account
+
 	private let accountsFolder = RSDataSubfolder(nil, "Accounts")!
     private var accountsDictionary = [String: Account]()
 
@@ -145,9 +146,19 @@ public final class AccountManager: UnreadCountProvider {
 		return accountsDictionary[accountID]
 	}
 	
-	public func refreshAll() {
+	public func refreshAll(errorHandler: @escaping (Error) -> Void) {
 
-		activeAccounts.forEach { $0.refreshAll() }
+		activeAccounts.forEach { account in
+			account.refreshAll() { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					errorHandler(error)
+				}
+			}
+		}
+		
 	}
 
 	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {

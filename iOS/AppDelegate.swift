@@ -175,10 +175,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		// If we haven't refreshed the database for 15 minutes, run a refresh automatically
 		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
-				AccountManager.shared.refreshAll()
+				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 			}
 		} else {
-			AccountManager.shared.refreshAll()
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 		}
 
 	}
@@ -222,7 +222,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 			startingUnreadCount = self.unreadCount
 			
 			DispatchQueue.main.async {
-				AccountManager.shared.refreshAll()
+				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 			}
 			
 			os_log("Accounts requested to begin refresh.", log: self.log, type: .debug)

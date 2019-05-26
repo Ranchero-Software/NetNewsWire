@@ -72,10 +72,19 @@ class FeedbinAccountViewController: UIViewController {
 					}
 					
 					do {
+						
 						try self.account?.removeBasicCredentials()
 						try self.account?.storeCredentials(credentials)
+						
 						if newAccount {
-							self.account?.refreshAll()
+							self.account?.refreshAll() { result in
+								switch result {
+								case .success:
+									break
+								case .failure(let error):
+									UIApplication.shared.presentError(error)
+								}
+							}
 						}
 						
 						self.delegate?.dismiss(self)

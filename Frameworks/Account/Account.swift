@@ -36,27 +36,6 @@ public enum AccountType: Int {
 	// TODO: more
 }
 
-public enum AccountError: LocalizedError {
-	
-	case createErrorNotFound
-	case createErrorAlreadySubscribed
-	case opmlImportInProgress
-	
-	public var errorDescription: String? {
-		switch self {
-		case .opmlImportInProgress:
-			return NSLocalizedString("An OPML import for this account is already running.", comment: "Import running")
-		default:
-			return NSLocalizedString("An unknown error occurred.", comment: "Unknown error")
-		}
-	}
-	
-	public var recoverySuggestion: String? {
-		return NSLocalizedString("Please try again later.", comment: "Try later")
-	}
-	
-}
-
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
     public struct UserInfoKey {
@@ -309,7 +288,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public func refreshAll(completion: (() -> Void)? = nil) {
+	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
 		self.delegate.refreshAll(for: self, completion: completion)
 	}
 
@@ -334,9 +313,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				guard let self = self else { return }
 				// Reset the last fetch date to get the article history for the added feeds.
 				self.metadata.lastArticleFetch = nil
-				self.delegate.refreshAll(for: self) {
-					completion(.success(()))
-				}
+				self.delegate.refreshAll(for: self, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -457,8 +434,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		structureDidChange()
 
 		DispatchQueue.main.async {
-			self.refreshAll()
+			self.refreshAll() { result in }
 		}
+		
 	}
 
 	public func updateUnreadCounts(for feeds: Set<Feed>) {

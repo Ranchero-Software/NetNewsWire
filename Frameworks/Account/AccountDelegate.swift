@@ -22,7 +22,7 @@ protocol AccountDelegate {
 	
 	var refreshProgress: DownloadProgress { get }
 
-	func refreshAll(for account: Account, completion: (() -> Void)?)
+	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void)
 	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void))
 	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void))
 	
