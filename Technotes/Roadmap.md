@@ -9,7 +9,7 @@ This roadmap reflects thinking at the time of the last update. Anything can chan
 Features:
 
 * Standalone feed reading (unsynced)
-* Syncing via FeedBin
+* Syncing via Feedbin
 * Built-in smart feeds (today, starred, all unread)
 * Searching
 * Starring
