@@ -472,6 +472,10 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 		database.insertStatuses(syncStatuses)
 		
+		if database.selectPendingCount() > 100 {
+			sendArticleStatus(for: account) {}
+		}
+		
 		return account.update(articles, statusKey: statusKey, flag: flag)
 		
 	}
