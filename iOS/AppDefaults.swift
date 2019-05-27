@@ -64,7 +64,7 @@ struct AppDefaults {
 	}
 	
 	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, Key.refreshInterval: RefreshInterval.everyHour.rawValue, Key.timelineNumberOfLines: 2]
+		let defaults: [String : Any] = [Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, Key.refreshInterval: RefreshInterval.everyHour.rawValue, Key.timelineNumberOfLines: 3]
 		UserDefaults.standard.register(defaults: defaults)
 	}
 
