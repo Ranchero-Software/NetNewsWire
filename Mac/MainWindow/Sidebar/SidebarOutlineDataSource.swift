@@ -179,14 +179,15 @@ private extension SidebarOutlineDataSource {
 		if nodeHasChildRepresentingDraggedFeed(dropTargetNode, draggedFeed) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
+		let dragOperation: NSDragOperation = localFeedsDropOperation(dropTargetNode, Set([draggedFeed]))
 		if parentNode == dropTargetNode && index == NSOutlineViewDropOnItemIndex {
-			return .move
+			return dragOperation
 		}
 		let updatedIndex = indexWhereDraggedFeedWouldAppear(dropTargetNode, draggedFeed)
 		if parentNode !== dropTargetNode || index != updatedIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: updatedIndex)
 		}
-		return .move
+		return dragOperation
 	}
 
 	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
@@ -203,7 +204,18 @@ private extension SidebarOutlineDataSource {
 		if parentNode !== dropTargetNode || index != NSOutlineViewDropOnItemIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
 		}
-		return .move
+		return localFeedsDropOperation(dropTargetNode, draggedFeeds)
+	}
+	
+	func localFeedsDropOperation(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> NSDragOperation {
+		if allParticipantsAreSameAccount(dropTargetNode, draggedFeeds) {
+			return .move
+		}
+		if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+			return .copy
+		} else {
+			return .move
+		}
 	}
 
 	private func accountForNode(_ node: Node) -> Account? {
@@ -231,12 +243,34 @@ private extension SidebarOutlineDataSource {
 		return accounts
 	}
 
+	private func copy(node: Node, to parentNode: Node) {
+		guard let feed = node.representedObject as? Feed else {
+			return
+		}
+
+		let destination = parentNode.representedObject as? Container
+
+		BatchUpdate.shared.start()
+		destination?.addFeed(feed) { result in
+			switch result {
+			case .success:
+				BatchUpdate.shared.end()
+				break
+			case .failure(let error):
+				BatchUpdate.shared.end()
+				NSApplication.shared.presentError(error)
+			}
+		}
+	}
+
 	private func move(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed else {
 			return
 		}
+
 		let source = node.parent?.representedObject as? Container
 		let destination = parentNode.representedObject as? Container
+
 		BatchUpdate.shared.start()
 		source?.removeFeed(feed) { result in
 			switch result {
@@ -256,6 +290,7 @@ private extension SidebarOutlineDataSource {
 			case .failure(let error):
 				NSApplication.shared.presentError(error)
 			}
+			
 		}
 	}
 
@@ -265,9 +300,19 @@ private extension SidebarOutlineDataSource {
 		}
 
 		BatchUpdate.shared.perform {
-			draggedNodes.forEach { move(node: $0, to: parentNode) }
+			
+			draggedNodes.forEach { node in
+				if sameAccount(node, parentNode) {
+					move(node: node, to: parentNode)
+				} else if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+					copy(node: node, to: parentNode)
+				} else {
+					move(node: node, to: parentNode)
+				}
+			}
+			
 		}
-
+		
 		let allReferencedNodes = draggedNodes.union(Set([parentNode]))
 		let accounts = commonAccountsFor(allReferencedNodes)
 		accounts.forEach { $0.structureDidChange() }
@@ -364,6 +409,41 @@ private extension SidebarOutlineDataSource {
 		
 	}
 
+	func allParticipantsAreSameAccount(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
+		guard let parentAccountID = nodeAccountID(parentNode) else {
+			return false
+		}
+		
+		for draggedFeed in draggedFeeds {
+			if draggedFeed.accountID != parentAccountID {
+				return false
+			}
+		}
+		
+		return true
+	}
+	
+	func sameAccount(_ node: Node, _ parentNode: Node) -> Bool {
+		if let accountID = nodeAccountID(node), let parentAccountID = nodeAccountID(parentNode) {
+			if accountID == parentAccountID {
+				return true
+			}
+		}
+		return false
+	}
+	
+	func nodeAccountID(_ node: Node) -> String? {
+		if let account = node.representedObject as? Account {
+			return account.accountID
+		} else if let folder = node.representedObject as? Folder {
+			return folder.account?.accountID
+		} else if let feed = node.representedObject as? Feed {
+			return feed.account?.accountID
+		} else {
+			return nil
+		}
+	}
+	
 	func nodeHasChildRepresentingAnyDraggedFeed(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		for node in parentNode.childNodes {
 			if nodeRepresentsAnyDraggedFeed(node, draggedFeeds) {

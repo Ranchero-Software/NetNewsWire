@@ -47,8 +47,7 @@ protocol SidebarDelegate: class {
 		sidebarCellAppearance = SidebarCellAppearance(fontSize: AppDefaults.sidebarFontSize)
 
 		outlineView.dataSource = dataSource
-		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)
-		outlineView.setDraggingSourceOperationMask(.copy, forLocal: false)
+		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
 		outlineView.registerForDraggedTypes([FeedPasteboardWriter.feedUTIInternalType, FeedPasteboardWriter.feedUTIType, .URL, .string])
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
