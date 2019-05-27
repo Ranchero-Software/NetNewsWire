@@ -1122,13 +1122,6 @@ private extension FeedbinAccountDelegate {
 			_ = account.update(markUnreadArticles, statusKey: .read, flag: false)
 		}
 	
-		// Mark articles as read
-		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
-		let markReadArticles = account.fetchArticles(forArticleIDs: deltaReadArticleIDs)
-		DispatchQueue.main.async {
-			_ = account.update(markReadArticles, statusKey: .read, flag: true)
-		}
-	
 		// Save any unread statuses for articles we haven't yet received
 		let markUnreadArticleIDs = Set(markUnreadArticles.map { $0.articleID })
 		let missingUnreadArticleIDs = deltaUnreadArticleIDs.subtracting(markUnreadArticleIDs)
@@ -1138,6 +1131,22 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 		
+		// Mark articles as read
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
+		let markReadArticles = account.fetchArticles(forArticleIDs: deltaReadArticleIDs)
+		DispatchQueue.main.async {
+			_ = account.update(markReadArticles, statusKey: .read, flag: true)
+		}
+	
+		// Save any read statuses for articles we haven't yet received
+		let markReadArticleIDs = Set(markReadArticles.map { $0.articleID })
+		let missingReadArticleIDs = deltaReadArticleIDs.subtracting(markReadArticleIDs)
+		if !missingReadArticleIDs.isEmpty {
+			DispatchQueue.main.async {
+				account.ensureStatuses(missingReadArticleIDs, .read, true)
+			}
+		}
+	
 	}
 	
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?) {
@@ -1156,6 +1165,15 @@ private extension FeedbinAccountDelegate {
 			_ = account.update(markStarredArticles, statusKey: .starred, flag: true)
 		}
 		
+		// Save any starred statuses for articles we haven't yet received
+		let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
+		let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
+		if !missingStarredArticleIDs.isEmpty {
+			DispatchQueue.main.async {
+				account.ensureStatuses(missingStarredArticleIDs, .starred, true)
+			}
+		}
+		
 		// Mark articles as unstarred
 		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
 		let markUnstarredArticles = account.fetchArticles(forArticleIDs: deltaUnstarredArticleIDs)
@@ -1163,12 +1181,12 @@ private extension FeedbinAccountDelegate {
 			_ = account.update(markUnstarredArticles, statusKey: .starred, flag: false)
 		}
 		
-		// Save any starred statuses for articles we haven't yet received
-		let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
-		let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
-		if !missingStarredArticleIDs.isEmpty {
+		// Save any unstarred statuses for articles we haven't yet received
+		let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
+		let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
+		if !missingUnstarredArticleIDs.isEmpty {
 			DispatchQueue.main.async {
-				account.ensureStatuses(missingStarredArticleIDs, .starred, true)
+				account.ensureStatuses(missingUnstarredArticleIDs, .starred, false)
 			}
 		}
 		
