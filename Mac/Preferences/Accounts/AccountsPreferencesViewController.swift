@@ -29,6 +29,10 @@ final class AccountsPreferencesViewController: NSViewController {
 		
 		showController(AccountsAddViewController())
 
+		// Fix tableView frame — for some reason IB wants it 1pt wider than the clip view. This leads to unwanted horizontal scrolling.
+		var rTable = tableView.frame
+		rTable.size.width = tableView.superview!.frame.size.width
+		tableView.frame = rTable
 	}
 	
 	@IBAction func addAccount(_ sender: Any) {
