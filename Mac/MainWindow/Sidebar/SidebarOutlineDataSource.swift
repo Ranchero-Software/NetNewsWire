@@ -173,7 +173,7 @@ private extension SidebarOutlineDataSource {
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
-		if nodeAndDraggedFeedsDoNotShareAccount(dropTargetNode, Set([draggedFeed])) {
+		if !allParticipantsAreLocalAccounts(dropTargetNode, Set([draggedFeed])) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if nodeHasChildRepresentingDraggedFeed(dropTargetNode, draggedFeed) {
@@ -194,7 +194,7 @@ private extension SidebarOutlineDataSource {
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
-		if nodeAndDraggedFeedsDoNotShareAccount(dropTargetNode, draggedFeeds) {
+		if !allParticipantsAreLocalAccounts(dropTargetNode, draggedFeeds) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if nodeHasChildRepresentingAnyDraggedFeed(dropTargetNode, draggedFeeds) {
@@ -219,26 +219,19 @@ private extension SidebarOutlineDataSource {
 		return nil
 	}
 
-	private func commonAccountFor(_ nodes: Set<Node>) -> Account? {
-		// Return the Account if every node has an Account and they’re all the same.
-		var account: Account? = nil
+	private func commonAccountsFor(_ nodes: Set<Node>) -> Set<Account> {
+
+		var accounts = Set<Account>()
 		for node in nodes {
 			guard let oneAccount = accountForNode(node) else {
-				return nil
+				continue
 			}
-			if account == nil {
-				account = oneAccount
-			}
-			else {
-				if account != oneAccount {
-					return nil
-				}
-			}
+			accounts.insert(oneAccount)
 		}
-		return account
+		return accounts
 	}
 
-	private func move(node: Node, to parentNode: Node, account: Account) {
+	private func move(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed else {
 			return
 		}
@@ -270,14 +263,15 @@ private extension SidebarOutlineDataSource {
 		guard let draggedNodes = draggedNodes else {
 			return false
 		}
-		let allReferencedNodes = draggedNodes.union(Set([parentNode]))
-		guard let account = commonAccountFor(allReferencedNodes) else {
-			return false
-		}
+
 		BatchUpdate.shared.perform {
-			draggedNodes.forEach { move(node: $0, to: parentNode, account: account) }
+			draggedNodes.forEach { move(node: $0, to: parentNode) }
 		}
-		account.structureDidChange()
+
+		let allReferencedNodes = draggedNodes.union(Set([parentNode]))
+		let accounts = commonAccountsFor(allReferencedNodes)
+		accounts.forEach { $0.structureDidChange() }
+
 		return true
 	}
 
@@ -346,24 +340,27 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 	
-	func nodeAndDraggedFeedsDoNotShareAccount(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
+	func allParticipantsAreLocalAccounts(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		
-		let parentAccountId: String?
 		if let account = parentNode.representedObject as? Account {
-			parentAccountId = account.accountID
+			if account.type != .onMyMac {
+				return false
+			}
 		} else if let folder = parentNode.representedObject as? Folder {
-			parentAccountId = folder.account?.accountID
+			if folder.account?.type != .onMyMac {
+				return false
+			}
 		} else {
-			return true
+			return false
 		}
 		
 		for draggedFeed in draggedFeeds {
-			if draggedFeed.accountID != parentAccountId {
-				return true
+			if draggedFeed.accountType != .onMyMac {
+				return false
 			}
 		}
 		
-		return false
+		return true
 		
 	}
 
