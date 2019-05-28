@@ -28,7 +28,7 @@ extension MasterTimelineCellLayout {
 		var r = CGRect.zero
 		r.size = CGSize(width: MasterTimelineDefaultCellLayout.unreadCircleDimension, height: MasterTimelineDefaultCellLayout.unreadCircleDimension)
 		r.origin.x = point.x
-		r.origin.y = point.y + 9
+		r.origin.y = point.y + 8
 		return r
 	}
 	
