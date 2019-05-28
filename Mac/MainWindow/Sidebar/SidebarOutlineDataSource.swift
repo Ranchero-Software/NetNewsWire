@@ -283,12 +283,23 @@ private extension SidebarOutlineDataSource {
 			return
 		}
 		
-		destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
-			switch result {
-			case .success:
-				break
-			case .failure(let error):
-				NSApplication.shared.presentError(error)
+		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
+			destinationContainer.addFeed(existingFeed) { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
+		} else {
+			destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
 			}
 		}
 	}
@@ -301,20 +312,42 @@ private extension SidebarOutlineDataSource {
 				return
 		}
 		
-		destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
-			switch result {
-			case .success:
-				sourceAccount.deleteFeed(feed) { result in
-					switch result {
-					case .success:
-						break
-					case .failure(let error):
-						NSApplication.shared.presentError(error)
+		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
+			
+			destinationContainer.addFeed(existingFeed) { result in
+				switch result {
+				case .success:
+					sourceAccount.deleteFeed(feed) { result in
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							NSApplication.shared.presentError(error)
+						}
 					}
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
 				}
-			case .failure(let error):
-				NSApplication.shared.presentError(error)
 			}
+			
+		} else {
+			
+			destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+				switch result {
+				case .success:
+					sourceAccount.deleteFeed(feed) { result in
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							NSApplication.shared.presentError(error)
+						}
+					}
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
+			
 		}
 	}
 
