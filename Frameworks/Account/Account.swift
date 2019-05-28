@@ -675,6 +675,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		postChildrenDidChangeNotification()
 	}
 
+	func addFeedIfNotInAnyFolder(_ feed: Feed) {
+		if !flattenedFeeds().contains(feed) {
+			addFeed(feed)
+		}
+	}
+	
 	func deleteFolder(_ folder: Folder) {
 		folders?.remove(folder)
 		structureDidChange()

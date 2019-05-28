@@ -377,6 +377,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				case .success(let taggingID):
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
+						account.removeFeed(feed)
 						folder.addFeed(feed)
 						completion(.success(()))
 					}
@@ -389,7 +390,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			}
 		} else {
 			if let account = container as? Account {
-				account.addFeed(feed)
+				account.addFeedIfNotInAnyFolder(feed)
 			}
 			DispatchQueue.main.async {
 				completion(.success(()))
@@ -406,6 +407,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				case .success:
 					DispatchQueue.main.async {
 						folder.removeFeed(feed)
+						account.addFeedIfNotInAnyFolder(feed)
 						completion(.success(()))
 					}
 				case .failure(let error):
