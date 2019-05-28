@@ -173,9 +173,6 @@ private extension SidebarOutlineDataSource {
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
-		if !allParticipantsAreLocalAccounts(dropTargetNode, Set([draggedFeed])) {
-			return SidebarOutlineDataSource.dragOperationNone
-		}
 		if nodeHasChildRepresentingDraggedFeed(dropTargetNode, draggedFeed) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
@@ -193,9 +190,6 @@ private extension SidebarOutlineDataSource {
 	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		// Local feeds should always drag on to an Account or Folder node, and index should be NSOutlineViewDropOnItemIndex since we can’t provide multiple indexes.
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
-			return SidebarOutlineDataSource.dragOperationNone
-		}
-		if !allParticipantsAreLocalAccounts(dropTargetNode, draggedFeeds) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if nodeHasChildRepresentingAnyDraggedFeed(dropTargetNode, draggedFeeds) {
@@ -411,30 +405,6 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 	
-	func allParticipantsAreLocalAccounts(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
-		
-		if let account = parentNode.representedObject as? Account {
-			if account.type != .onMyMac {
-				return false
-			}
-		} else if let folder = parentNode.representedObject as? Folder {
-			if folder.account?.type != .onMyMac {
-				return false
-			}
-		} else {
-			return false
-		}
-		
-		for draggedFeed in draggedFeeds {
-			if draggedFeed.accountType != .onMyMac {
-				return false
-			}
-		}
-		
-		return true
-		
-	}
-
 	func allParticipantsAreSameAccount(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		guard let parentAccountID = nodeAccountID(parentNode) else {
 			return false
