@@ -202,9 +202,6 @@ private extension SidebarOutlineDataSource {
 	}
 	
 	func localFeedsDropOperation(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> NSDragOperation {
-		if allParticipantsAreSameAccount(dropTargetNode, draggedFeeds) {
-			return .move
-		}
 		if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
 			return .copy
 		} else {
@@ -237,6 +234,23 @@ private extension SidebarOutlineDataSource {
 		return accounts
 	}
 
+	private func copyInAccount(node: Node, to parentNode: Node) {
+		guard let feed = node.representedObject as? Feed else {
+			return
+		}
+		
+		let destination = parentNode.representedObject as? Container
+		
+		destination?.addFeed(feed) { result in
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				NSApplication.shared.presentError(error)
+			}
+		}
+	}
+
 	private func moveInAccount(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed else {
 			return
@@ -245,25 +259,20 @@ private extension SidebarOutlineDataSource {
 		let source = node.parent?.representedObject as? Container
 		let destination = parentNode.representedObject as? Container
 
-		BatchUpdate.shared.start()
 		source?.removeFeed(feed) { result in
 			switch result {
 			case .success:
 				destination?.addFeed(feed) { result in
 					switch result {
 					case .success:
-						BatchUpdate.shared.end()
+						break
 					case .failure(let error):
-						// If the second part of the move failed, try to put the feed back
-						source?.addFeed(feed) { result in}
-						BatchUpdate.shared.end()
 						NSApplication.shared.presentError(error)
 					}
 				}
 			case .failure(let error):
 				NSApplication.shared.presentError(error)
 			}
-			
 		}
 	}
 
@@ -274,13 +283,11 @@ private extension SidebarOutlineDataSource {
 			return
 		}
 		
-		BatchUpdate.shared.start()
 		destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
 			switch result {
 			case .success:
-				BatchUpdate.shared.end()
+				break
 			case .failure(let error):
-				BatchUpdate.shared.end()
 				NSApplication.shared.presentError(error)
 			}
 		}
@@ -294,21 +301,18 @@ private extension SidebarOutlineDataSource {
 				return
 		}
 		
-		BatchUpdate.shared.start()
 		destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
 			switch result {
 			case .success:
 				sourceAccount.deleteFeed(feed) { result in
 					switch result {
 					case .success:
-						BatchUpdate.shared.end()
+						break
 					case .failure(let error):
-						BatchUpdate.shared.end()
 						NSApplication.shared.presentError(error)
 					}
 				}
 			case .failure(let error):
-				BatchUpdate.shared.end()
 				NSApplication.shared.presentError(error)
 			}
 		}
@@ -323,11 +327,17 @@ private extension SidebarOutlineDataSource {
 			
 			draggedNodes.forEach { node in
 				if sameAccount(node, parentNode) {
-					moveInAccount(node: node, to: parentNode)
-				} else if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copyBetweenAccounts(node: node, to: parentNode)
+					if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+						copyInAccount(node: node, to: parentNode)
+					} else {
+						moveInAccount(node: node, to: parentNode)
+					}
 				} else {
-					moveBetweenAccounts(node: node, to: parentNode)
+					if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+						copyBetweenAccounts(node: node, to: parentNode)
+					} else {
+						moveBetweenAccounts(node: node, to: parentNode)
+					}
 				}
 			}
 			
@@ -403,20 +413,6 @@ private extension SidebarOutlineDataSource {
 			}
 		}
 		return false
-	}
-	
-	func allParticipantsAreSameAccount(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
-		guard let parentAccountID = nodeAccountID(parentNode) else {
-			return false
-		}
-		
-		for draggedFeed in draggedFeeds {
-			if draggedFeed.accountID != parentAccountID {
-				return false
-			}
-		}
-		
-		return true
 	}
 	
 	func sameAccount(_ node: Node, _ parentNode: Node) -> Bool {
