@@ -243,27 +243,7 @@ private extension SidebarOutlineDataSource {
 		return accounts
 	}
 
-	private func copy(node: Node, to parentNode: Node) {
-		guard let feed = node.representedObject as? Feed else {
-			return
-		}
-
-		let destination = parentNode.representedObject as? Container
-
-		BatchUpdate.shared.start()
-		destination?.addFeed(feed) { result in
-			switch result {
-			case .success:
-				BatchUpdate.shared.end()
-				break
-			case .failure(let error):
-				BatchUpdate.shared.end()
-				NSApplication.shared.presentError(error)
-			}
-		}
-	}
-
-	private func move(node: Node, to parentNode: Node) {
+	private func moveInAccount(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed else {
 			return
 		}
@@ -279,7 +259,6 @@ private extension SidebarOutlineDataSource {
 					switch result {
 					case .success:
 						BatchUpdate.shared.end()
-						break
 					case .failure(let error):
 						// If the second part of the move failed, try to put the feed back
 						source?.addFeed(feed) { result in}
@@ -294,6 +273,53 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
+	private func copyBetweenAccounts(node: Node, to parentNode: Node) {
+		guard let feed = node.representedObject as? Feed,
+			let destinationAccount = nodeAccount(parentNode),
+			let destinationContainer = parentNode.representedObject as? Container else {
+			return
+		}
+		
+		BatchUpdate.shared.start()
+		destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+			switch result {
+			case .success:
+				BatchUpdate.shared.end()
+			case .failure(let error):
+				BatchUpdate.shared.end()
+				NSApplication.shared.presentError(error)
+			}
+		}
+	}
+
+	private func moveBetweenAccounts(node: Node, to parentNode: Node) {
+		guard let feed = node.representedObject as? Feed,
+			let sourceAccount = nodeAccount(node),
+			let destinationAccount = nodeAccount(parentNode),
+			let destinationContainer = parentNode.representedObject as? Container else {
+				return
+		}
+		
+		BatchUpdate.shared.start()
+		destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+			switch result {
+			case .success:
+				sourceAccount.deleteFeed(feed) { result in
+					switch result {
+					case .success:
+						BatchUpdate.shared.end()
+					case .failure(let error):
+						BatchUpdate.shared.end()
+						NSApplication.shared.presentError(error)
+					}
+				}
+			case .failure(let error):
+				BatchUpdate.shared.end()
+				NSApplication.shared.presentError(error)
+			}
+		}
+	}
+
 	func acceptLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> Bool {
 		guard let draggedNodes = draggedNodes else {
 			return false
@@ -303,11 +329,11 @@ private extension SidebarOutlineDataSource {
 			
 			draggedNodes.forEach { node in
 				if sameAccount(node, parentNode) {
-					move(node: node, to: parentNode)
+					moveInAccount(node: node, to: parentNode)
 				} else if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copy(node: node, to: parentNode)
+					copyBetweenAccounts(node: node, to: parentNode)
 				} else {
-					move(node: node, to: parentNode)
+					moveBetweenAccounts(node: node, to: parentNode)
 				}
 			}
 			
@@ -432,16 +458,21 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 	
-	func nodeAccountID(_ node: Node) -> String? {
+	func nodeAccount(_ node: Node) -> Account? {
 		if let account = node.representedObject as? Account {
-			return account.accountID
+			return account
 		} else if let folder = node.representedObject as? Folder {
-			return folder.account?.accountID
+			return folder.account
 		} else if let feed = node.representedObject as? Feed {
-			return feed.account?.accountID
+			return feed.account
 		} else {
 			return nil
 		}
+
+	}
+	
+	func nodeAccountID(_ node: Node) -> String? {
+		return nodeAccount(node)?.accountID
 	}
 	
 	func nodeHasChildRepresentingAnyDraggedFeed(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
