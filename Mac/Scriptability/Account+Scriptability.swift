@@ -138,6 +138,8 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
                 osType = "FWrg"
         case .newsBlur:
                 osType = "NBlr"
+		case .googleReaderCompatible:
+				osType = "Grdr"
         }
         return osType.fourCharCode()
     }
