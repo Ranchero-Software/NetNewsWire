@@ -91,7 +91,9 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         if let existingFeed = account.existingFeed(withURL:url) {
             return self.scriptableFeed(existingFeed, account:account, folder:folder)
         }
-    
+		
+		let container: Container = folder != nil ? folder! : account
+		
         // at this point, we need to download the feed and parse it.
         // RS Parser does the callback for the download on the main thread (which it probably shouldn't?)
         // because we can't wait here (on the main thread, maybe) for the callback, we have to return from this function
@@ -100,27 +102,12 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         // suspendExecution().  When we get the callback, we can supply the event result and call resumeExecution()
         command.suspendExecution()
         
-		account.createFeed(url: url) { result in
+		account.createFeed(url: url, name: titleFromArgs, container: container) { result in
 			switch result {
 			case .success(let feed):
-
-				if let editedName = titleFromArgs {
-					account.renameFeed(feed, to: editedName) { result in
-					}
-				}
-				
-				// add the feed, putting it in a folder if needed
-				account.addFeed(feed) { result in
-					switch result {
-					case .success:
-						NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-						let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
-						command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
-					case .failure:
-						command.resumeExecution(withResult:nil)
-					}
-				}
-					
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+				let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
+				command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
 			case .failure:
 				command.resumeExecution(withResult:nil)
 			}

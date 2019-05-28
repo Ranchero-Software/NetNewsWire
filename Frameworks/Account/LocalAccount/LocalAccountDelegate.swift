@@ -27,6 +27,8 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	private weak var account: Account?
 	private var feedFinder: FeedFinder?
+	private var createFeedName: String?
+	private var createFeedContainer: Container?
 	private var createFeedCompletion: ((Result<Feed, Error>) -> Void)?
 	
 	private let refresher = LocalAccountRefresher()
@@ -99,7 +101,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
-	func createFeed(for account: Account, url urlString: String, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
@@ -107,8 +109,9 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 	
 		self.account = account
+		createFeedName = name
+		createFeedContainer =  container
 		createFeedCompletion = completion
-		
 		feedFinder = FeedFinder(url: url, delegate: self)
 		
 	}
@@ -143,10 +146,8 @@ final class LocalAccountDelegate: AccountDelegate {
 	func addFeed(for account: Account, to container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
 		if let folder = container as? Folder {
 			folder.addFeed(feed)
-			feed.account = folder.account
 		} else if let account = container as? Account {
 			account.addFeed(feed)
-			feed.account = account
 		}
 		completion(.success(()))
 	}
@@ -161,13 +162,8 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
-	func restoreFeed(for account: Account, feed: Feed, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let folder = folder {
-			folder.addFeed(feed)
-		} else {
-			account.addFeed(feed)
-		}
-		completion(.success(()))
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.addFeed(feed, completion: completion)
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -216,11 +212,24 @@ extension LocalAccountDelegate: FeedFinderDelegate {
 		}
 		
 		let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
-		InitialFeedDownloader.download(url) { [weak self] parsedFeed in
+		
+		InitialFeedDownloader.download(url) { parsedFeed in
+			
 			if let parsedFeed = parsedFeed {
 				account.update(feed, with: parsedFeed, {})
 			}
-			self?.createFeedCompletion!(.success(feed))
+			
+			feed.editedName = self.createFeedName
+			
+			self.createFeedContainer?.addFeed(feed) { result in
+				switch result {
+				case .success:
+					self.createFeedCompletion?(.success(feed))
+				case .failure(let error):
+					self.createFeedCompletion?(.failure(error))
+				}
+			}
+			
 		}
 
 	}

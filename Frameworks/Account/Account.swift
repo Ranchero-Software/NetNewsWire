@@ -377,8 +377,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.removeFeed(for: self, from: container, with: feed, completion: completion)
 	}
 	
-	public func createFeed(url: String, completion: @escaping (Result<Feed, Error>) -> Void) {
-		delegate.createFeed(for: self, url: url, completion: completion)
+	public func createFeed(url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+		delegate.createFeed(for: self, url: url, name: name, container: container, completion: completion)
 	}
 	
 	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
@@ -401,8 +401,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.renameFeed(for: self, with: feed, to: name, completion: completion)
 	}
 	
-	public func restoreFeed(_ feed: Feed, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.restoreFeed(for: self, feed: feed, folder: folder, completion: completion)
+	public func restoreFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
 	}
 	
 	public func deleteFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

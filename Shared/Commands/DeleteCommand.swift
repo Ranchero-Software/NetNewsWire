@@ -161,12 +161,12 @@ private struct SidebarItemSpecifier {
 
 	private func restoreFeed() {
 
-		guard let account = account, let feed = feed else {
+		guard let account = account, let feed = feed, let container = path.resolveContainer() else {
 			return
 		}
 		
 		BatchUpdate.shared.start()
-		account.restoreFeed(feed, folder: resolvedFolder()) { result in
+		account.restoreFeed(feed, container: container) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
@@ -187,10 +187,6 @@ private struct SidebarItemSpecifier {
 		
 	}
 
-	private func resolvedFolder() -> Folder? {
-		return path.resolveContainer() as? Folder
-	}
-	
 	private func checkResult(_ result: Result<Void, Error>) {
 		
 		switch result {

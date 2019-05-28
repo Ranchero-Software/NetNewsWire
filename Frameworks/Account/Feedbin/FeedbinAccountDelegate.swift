@@ -284,16 +284,16 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func createFeed(for account: Account, url: String, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		caller.createSubscription(url: url) { result in
 			switch result {
 			case .success(let subResult):
 				switch subResult {
 				case .created(let subscription):
-					self.createFeed(account: account, subscription: subscription, completion: completion)
+					self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
 				case .multipleChoice(let choices):
-					self.decideBestFeedChoice(account: account, url: url, choices: choices, completion: completion)
+					self.decideBestFeedChoice(account: account, url: url, name: name, container: container, choices: choices, completion: completion)
 				case .alreadySubscribed:
 					DispatchQueue.main.async {
 						completion(.failure(AccountError.createErrorAlreadySubscribed))
@@ -424,19 +424,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func restoreFeed(for account: Account, feed: Feed, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		let editedName = feed.editedName
-		
-		createFeed(for: account, url: feed.url) { result in
+		createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
 			switch result {
-			case .success(let feed):
-				self.processRestoredFeed(for: account, feed: feed, editedName: editedName, folder: folder, completion: completion)
+			case .success:
+				completion(.success(()))
 			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
+				completion(.failure(error))
 			}
 		}
 		
@@ -824,74 +819,6 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
-	func processRestoredFeed(for account: Account, feed: Feed, editedName: String?, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		if let folder = folder {
-			
-			addFeed(for: account, to: folder, with: feed) { result in
-				
-				switch result {
-				case .success:
-					
-					if editedName != nil {
-						DispatchQueue.main.async {
-							account.removeFeed(feed)
-							folder.addFeed(feed)
-						}
-						self.processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
-					} else {
-						DispatchQueue.main.async {
-							account.removeFeed(feed)
-							folder.addFeed(feed)
-							completion(.success(()))
-						}
-					}
-					
-				case .failure(let error):
-					DispatchQueue.main.async {
-						completion(.failure(error))
-					}
-				}
-				
-			}
-			
-		} else {
-			
-			DispatchQueue.main.async {
-				account.addFeed(feed)
-			}
-			
-			if editedName != nil {
-				processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
-			} else {
-				DispatchQueue.main.async {
-					completion(.success(()))
-				}
-			}
-			
-		}
-		
-	}
-	
-	func processRestoredFeedName(for account: Account, feed: Feed, editedName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		renameFeed(for: account, with: feed, to: editedName) { result in
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					feed.editedName = editedName
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					completion(.failure(error))
-				}
-			}
-			
-		}
-		
-	}
-	
 	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = nil
@@ -908,7 +835,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func decideBestFeedChoice(account: Account, url: String, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
+	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
 			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
@@ -918,7 +845,7 @@ private extension FeedbinAccountDelegate {
 
 		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
 			if let bestSubscription = choices.filter({ bestSpecifier.urlString == $0.url }).first {
-				createFeed(for: account, url: bestSubscription.url, completion: completion)
+				createFeed(for: account, url: bestSubscription.url, name: name, container: container, completion: completion)
 			} else {
 				DispatchQueue.main.async {
 					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
@@ -932,44 +859,67 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
-	func createFeed( account: Account, subscription sub: FeedbinSubscription, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
+
 		DispatchQueue.main.async {
 			
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.subscriptionID = String(sub.subscriptionID)
 		
-			// Download the initial articles
-			self.caller.retrieveEntries(feedID: feed.feedID) { result in
-				
+			container.addFeed(feed) { result in
 				switch result {
-				case .success(let (entries, page)):
-					
-					self.processEntries(account: account, entries: entries) {
-						self.refreshArticles(account, page: page) {
-							self.refreshArticleStatus(for: account) {
-								self.refreshMissingArticles(account) {
-									DispatchQueue.main.async {
-										completion(.success(feed))
-									}
-								}
+				case .success:
+					if let name = name {
+						account.renameFeed(feed, to: name) { result in
+							switch result {
+							case .success:
+								self.initialFeedDownload(account: account, feed: feed, completion: completion)
+							case .failure(let error):
+								completion(.failure(error))
 							}
 						}
+					} else {
+						self.initialFeedDownload(account: account, feed: feed, completion: completion)
 					}
-					
 				case .failure(let error):
-					os_log(.error, log: self.log, "Initial articles download failed: %@.", error.localizedDescription)
-					DispatchQueue.main.async {
-						completion(.success(feed))
-					}
+					completion(.failure(error))
 				}
-				
 			}
-
+			
 		}
 		
 	}
 
+	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
+		
+		// Download the initial articles
+		self.caller.retrieveEntries(feedID: feed.feedID) { result in
+			
+			switch result {
+			case .success(let (entries, page)):
+				
+				self.processEntries(account: account, entries: entries) {
+					self.refreshArticles(account, page: page) {
+						self.refreshArticleStatus(for: account) {
+							self.refreshMissingArticles(account) {
+								DispatchQueue.main.async {
+									completion(.success(feed))
+								}
+							}
+						}
+					}
+				}
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+
+		
+	}
+	
 	func refreshArticles(_ account: Account, completion: @escaping (() -> Void)) {
 
 		os_log(.debug, log: log, "Refreshing articles...")
