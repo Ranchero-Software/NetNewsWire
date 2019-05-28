@@ -31,6 +31,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedbin")
 
 	let supportsSubFolders = false
+	let usesTags = true
 	let server: String? = "api.feedbin.com"
 	var opmlImportInProgress = false
 	

@@ -14,6 +14,7 @@ protocol AccountDelegate {
 
 	// Local account does not; some synced accounts might.
 	var supportsSubFolders: Bool { get }
+	var usesTags: Bool { get }
 	var opmlImportInProgress: Bool { get }
 	
 	var server: String? { get }

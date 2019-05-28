@@ -176,6 +176,9 @@ private extension SidebarOutlineDataSource {
 		if nodeHasChildRepresentingDraggedFeed(dropTargetNode, draggedFeed) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
+		if violatesTagSpecificBehavior(dropTargetNode, draggedFeed) {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
 		let dragOperation: NSDragOperation = localFeedsDropOperation(dropTargetNode, Set([draggedFeed]))
 		if parentNode == dropTargetNode && index == NSOutlineViewDropOnItemIndex {
 			return dragOperation
@@ -193,6 +196,9 @@ private extension SidebarOutlineDataSource {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if nodeHasChildRepresentingAnyDraggedFeed(dropTargetNode, draggedFeeds) {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		if violatesTagSpecificBehavior(dropTargetNode, draggedFeeds) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if parentNode !== dropTargetNode || index != NSOutlineViewDropOnItemIndex {
@@ -483,6 +489,29 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 
+	func violatesTagSpecificBehavior(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Bool {
+		return violatesTagSpecificBehavior(parentNode, Set([draggedFeed]))
+	}
+	
+	func violatesTagSpecificBehavior(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
+		guard let parentAccount = nodeAccount(parentNode), parentAccount.usesTags else {
+			return false
+		}
+		
+		for draggedFeed in draggedFeeds {
+			if parentAccount.accountID != draggedFeed.accountID {
+				return false
+			}
+		}
+		
+		// Can't copy to the account when using tags
+		if parentNode.representedObject is Account && (NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false) {
+			return true
+		}
+		
+		return false
+	}
+	
 	func indexWhereDraggedFeedWouldAppear(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Int {
 		let draggedFeedWrapper = PasteboardFeedObjectWrapper(pasteboardFeed: draggedFeed)
 		let draggedFeedNode = Node(representedObject: draggedFeedWrapper, parent: nil)

@@ -167,6 +167,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
         }
     }
     
+	public var usesTags: Bool {
+		return delegate.usesTags
+	}
+	
 	var refreshInProgress = false {
 		didSet {
 			if refreshInProgress != oldValue {
