@@ -209,7 +209,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	private func accountForNode(_ node: Node) -> Account? {
+	func accountForNode(_ node: Node) -> Account? {
 		if let account = node.representedObject as? Account {
 			return account
 		}
@@ -222,7 +222,7 @@ private extension SidebarOutlineDataSource {
 		return nil
 	}
 
-	private func commonAccountsFor(_ nodes: Set<Node>) -> Set<Account> {
+	func commonAccountsFor(_ nodes: Set<Node>) -> Set<Account> {
 
 		var accounts = Set<Account>()
 		for node in nodes {
@@ -234,7 +234,7 @@ private extension SidebarOutlineDataSource {
 		return accounts
 	}
 
-	private func copyInAccount(node: Node, to parentNode: Node) {
+	func copyInAccount(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed else {
 			return
 		}
@@ -251,7 +251,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	private func moveInAccount(node: Node, to parentNode: Node) {
+	func moveInAccount(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed else {
 			return
 		}
@@ -276,7 +276,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	private func copyBetweenAccounts(node: Node, to parentNode: Node) {
+	func copyBetweenAccounts(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed,
 			let destinationAccount = nodeAccount(parentNode),
 			let destinationContainer = parentNode.representedObject as? Container else {
@@ -293,7 +293,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	private func moveBetweenAccounts(node: Node, to parentNode: Node) {
+	func moveBetweenAccounts(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed,
 			let sourceAccount = nodeAccount(node),
 			let destinationAccount = nodeAccount(parentNode),
