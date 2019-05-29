@@ -428,10 +428,6 @@ private extension SidebarOutlineDataSource {
 			}
 		}
 		
-		let allReferencedNodes = draggedNodes.union(Set([parentNode]))
-		let accounts = commonAccountsFor(allReferencedNodes)
-		accounts.forEach { $0.structureDidChange() }
-
 		return true
 	}
 
