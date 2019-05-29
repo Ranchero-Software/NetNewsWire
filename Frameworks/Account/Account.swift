@@ -121,6 +121,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 	
+	public var endpointURL: URL? {
+		get {
+			return metadata.endpointURL
+		}
+		set {
+			if newValue != metadata.endpointURL {
+				metadata.endpointURL = newValue
+			}
+		}
+	}
+	
 	private var fetchingAllUnreadCounts = false
 	var isUnreadCountsInitialized = false
 
@@ -262,9 +273,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		switch credentials {
 		case .basic(let username, _):
 			self.username = username
-		case .googleBasicLogin(let username, _, _):
+		case .googleBasicLogin(let username, _):
 			self.username = username
-		case .googleAuthLogin(let username, _, _):
+		case .googleAuthLogin(let username, _):
 			self.username = username
 		}
 		
@@ -289,14 +300,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.username = nil
 	}
 	
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		switch type {
 		case .onMyMac:
 			LocalAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .feedbin:
 			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .googleReaderCompatible:
-			GoogleReaderCompatibleAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
+			GoogleReaderCompatibleAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
 		default:
 			break
 		}

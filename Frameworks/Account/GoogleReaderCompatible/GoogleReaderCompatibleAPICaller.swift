@@ -39,18 +39,17 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 
 	var server: String? {
 		get {
-			guard let localCredentials = credentials else {
+			return APIBaseURL?.host
+		}
+	}
+	
+	private var APIBaseURL: URL? {
+		get {
+			guard let accountMetadata = accountMetadata else {
 				return nil
 			}
-			
-			switch localCredentials {
-			case .googleBasicLogin(_, _, let apiUrl):
-				return apiUrl.host
-			case .googleAuthLogin(_, _, let apiUrl):
-				return apiUrl.host
-			default:
-				return nil
-			}
+	
+			return accountMetadata.endpointURL
 		}
 	}
 	
@@ -60,18 +59,18 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		self.transport = transport
 	}
 	
-	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	func validateCredentials(endpoint: URL, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		guard let credentials = credentials else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
 		
-		guard case .googleBasicLogin(let username, _, let apiUrl) = credentials else {
+		guard case .googleBasicLogin(let username, _) = credentials else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
 		
-		let request = URLRequest(url: apiUrl.appendingPathComponent("/accounts/ClientLogin"), credentials: credentials)
+		let request = URLRequest(url: endpoint.appendingPathComponent("/accounts/ClientLogin"), credentials: credentials)
 
 		transport.send(request: request) { result in
 			switch result {
@@ -99,7 +98,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 				}
 				
 				// Save Auth Token for later use
-				self.credentials = .googleAuthLogin(username: username, apiKey: authString, url: apiUrl)
+				self.credentials = .googleAuthLogin(username: username, apiKey: authString)
 				
 				completion(.success(self.credentials))
 			case .failure(let error):
@@ -159,10 +158,14 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	}
 	
 	func retrieveTags(completion: @escaping (Result<[GoogleReaderCompatibleTag]?, Error>) -> Void) {
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
 		
-		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("tags.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		let callURL = baseURL.appendingPathComponent("/reader/api/0/tag/list?output=json")
+		//let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
+		let request = URLRequest(url: callURL, credentials: credentials)
 
 		transport.send(request: request, resultType: [GoogleReaderCompatibleTag].self) { result in
 			

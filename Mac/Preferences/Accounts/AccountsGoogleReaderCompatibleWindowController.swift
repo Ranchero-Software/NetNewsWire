@@ -70,8 +70,8 @@ class AccountsGoogleReaderCompatibleWindowController: NSWindowController {
 			return
 		}
 		
-		let credentials = Credentials.googleBasicLogin(username: usernameTextField.stringValue, password: passwordTextField.stringValue, url: apiURL)
-		Account.validateCredentials(type: .googleReaderCompatible, credentials: credentials) { [weak self] result in
+		let credentials = Credentials.googleBasicLogin(username: usernameTextField.stringValue, password: passwordTextField.stringValue)
+		Account.validateCredentials(type: .googleReaderCompatible, credentials: credentials, endpoint: apiURL) { [weak self] result in
 			
 			guard let self = self else { return }
 			
@@ -94,8 +94,12 @@ class AccountsGoogleReaderCompatibleWindowController: NSWindowController {
 				}
 				
 				do {
+					self.account?.endpointURL = apiURL
+
 					try self.account?.removeBasicCredentials()
 					try self.account?.storeCredentials(validatedCredentials)
+					
+					
 					if newAccount {
 						self.account?.refreshAll() { result in
 							switch result {

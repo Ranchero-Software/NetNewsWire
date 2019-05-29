@@ -485,7 +485,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		accountMetadata = account.metadata
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials

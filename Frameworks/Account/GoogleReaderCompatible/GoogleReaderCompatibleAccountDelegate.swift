@@ -490,11 +490,15 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		accountMetadata = account.metadata
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+		guard let endpoint = endpoint else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
 		
 		let caller = GoogleReaderCompatibleAPICaller(transport: transport)
 		caller.credentials = credentials
-		caller.validateCredentials() { result in
+		caller.validateCredentials(endpoint: endpoint) { result in
 			DispatchQueue.main.async {
 				completion(result)
 			}
