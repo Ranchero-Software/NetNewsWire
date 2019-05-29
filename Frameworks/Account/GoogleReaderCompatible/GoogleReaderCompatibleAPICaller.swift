@@ -35,41 +35,43 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	private var transport: Transport!
 	
 	var credentials: Credentials?
-	var apiAuthToken: String?
 	weak var accountMetadata: AccountMetadata?
 
+	var server: String? {
+		get {
+			guard let localCredentials = credentials else {
+				return nil
+			}
+			
+			switch localCredentials {
+			case .googleBasicLogin(_, _, let apiUrl):
+				return apiUrl.host
+			case .googleAuthLogin(_, _, let apiUrl):
+				return apiUrl.host
+			default:
+				return nil
+			}
+		}
+	}
+	
+	
 	init(transport: Transport) {
 		super.init()
 		self.transport = transport
 	}
 	
-	func validateCredentials(completion: @escaping (Result<Bool, Error>) -> Void) {
+	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		guard let credentials = credentials else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
 		
-		guard case .googleLogin(let username, let password, let apiUrl, _) = credentials else {
+		guard case .googleBasicLogin(let username, _, let apiUrl) = credentials else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
 		
-		guard var loginURL = URLComponents(url: apiUrl.appendingPathComponent("/accounts/ClientLogin"), resolvingAgainstBaseURL: false) else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
-		}
-		
-		loginURL.queryItems = [
-			URLQueryItem(name: "Email", value: username),
-			URLQueryItem(name: "Passwd", value: password)
-		]
-		
-		guard let callURL = loginURL.url else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
-		}
-
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = URLRequest(url: apiUrl.appendingPathComponent("/accounts/ClientLogin"), credentials: credentials)
 
 		transport.send(request: request) { result in
 			switch result {
@@ -97,20 +99,11 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 				}
 				
 				// Save Auth Token for later use
-				self.apiAuthToken = authString
+				self.credentials = .googleAuthLogin(username: username, apiKey: authString, url: apiUrl)
 				
-				completion(.success(true))
+				completion(.success(self.credentials))
 			case .failure(let error):
-				switch error {
-				case TransportError.httpError(let status):
-					if status == 401 {
-						completion(.success(false))
-					} else {
-						completion(.failure(error))
-					}
-				default:
-					completion(.failure(error))
-				}
+				completion(.failure(error))
 			}
 		}
 		

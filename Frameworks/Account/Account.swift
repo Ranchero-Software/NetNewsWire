@@ -252,6 +252,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - API
 	
 	public func storeCredentials(_ credentials: Credentials) throws {
+		// The delegate may need the credentials to determine the server
+		delegate.credentials = credentials
+		
 		guard let server = delegate.server else {
 			throw CredentialsError.incompleteCredentials
 		}
@@ -259,7 +262,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		switch credentials {
 		case .basic(let username, _):
 			self.username = username
-		case .googleLogin(let username, _, _, _):
+		case .googleBasicLogin(let username, _, _):
+			self.username = username
+		case .googleAuthLogin(let username, _, _):
 			self.username = username
 		}
 		
@@ -284,7 +289,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.username = nil
 	}
 	
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, completion: @escaping (Result<Bool, Error>) -> Void) {
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		switch type {
 		case .onMyMac:
 			LocalAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)

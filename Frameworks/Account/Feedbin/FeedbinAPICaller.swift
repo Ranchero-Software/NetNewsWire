@@ -42,7 +42,7 @@ final class FeedbinAPICaller: NSObject {
 		self.transport = transport
 	}
 	
-	func validateCredentials(completion: @escaping (Result<Bool, Error>) -> Void) {
+	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("authentication.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
@@ -50,12 +50,12 @@ final class FeedbinAPICaller: NSObject {
 		transport.send(request: request) { result in
 			switch result {
 			case .success:
-				completion(.success(true))
+				completion(.success(self.credentials))
 			case .failure(let error):
 				switch error {
 				case TransportError.httpError(let status):
 					if status == 401 {
-						completion(.success(false))
+						completion(.success(self.credentials))
 					} else {
 						completion(.failure(error))
 					}

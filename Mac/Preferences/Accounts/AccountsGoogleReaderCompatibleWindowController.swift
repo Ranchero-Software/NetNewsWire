@@ -70,7 +70,7 @@ class AccountsGoogleReaderCompatibleWindowController: NSWindowController {
 			return
 		}
 		
-		let credentials = Credentials.googleLogin(username: usernameTextField.stringValue, password: passwordTextField.stringValue, apiUrl: apiURL, apiKey: nil)
+		let credentials = Credentials.googleBasicLogin(username: usernameTextField.stringValue, password: passwordTextField.stringValue, url: apiURL)
 		Account.validateCredentials(type: .googleReaderCompatible, credentials: credentials) { [weak self] result in
 			
 			guard let self = self else { return }
@@ -80,42 +80,39 @@ class AccountsGoogleReaderCompatibleWindowController: NSWindowController {
 			self.progressIndicator.stopAnimation(self)
 			
 			switch result {
-			case .success(let authenticated):
+			case .success(let validatedCredentials):
+				guard let validatedCredentials = validatedCredentials else {
+					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+					return
+				}
 				
-				if authenticated {
-					
-					var newAccount = false
-					if self.account == nil {
-						self.account = AccountManager.shared.createAccount(type: .googleReaderCompatible)
-						newAccount = true
-					}
-					
-					do {
-						try self.account?.removeBasicCredentials()
-						try self.account?.storeCredentials(credentials)
-						if newAccount {
-							self.account?.refreshAll() { result in
-								switch result {
-								case .success:
-									break
-								case .failure(let error):
-									NSApplication.shared.presentError(error)
-								}
+				
+				var newAccount = false
+				if self.account == nil {
+					self.account = AccountManager.shared.createAccount(type: .googleReaderCompatible)
+					newAccount = true
+				}
+				
+				do {
+					try self.account?.removeBasicCredentials()
+					try self.account?.storeCredentials(validatedCredentials)
+					if newAccount {
+						self.account?.refreshAll() { result in
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								NSApplication.shared.presentError(error)
 							}
 						}
-						self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
-					} catch {
-						self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 					}
-					
-				} else {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+				} catch {
+					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 				}
-
+				
 			case .failure:
-				
 				self.errorMessageLabel.stringValue = NSLocalizedString("Network error.  Try again later.", comment: "Credentials Error")
-				
 			}
 			
 		}

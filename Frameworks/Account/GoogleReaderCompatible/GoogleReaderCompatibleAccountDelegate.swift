@@ -31,7 +31,12 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "GoogleReaderCompatible")
 
 	let supportsSubFolders = false
-	let server: String? = "api.GoogleReaderCompatible.com"
+	var server: String? {
+		get {
+			return caller.server
+		}
+	}
+	
 	var opmlImportInProgress = false
 	
 	var credentials: Credentials? {
@@ -485,7 +490,7 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		accountMetadata = account.metadata
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, completion: @escaping (Result<Bool, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		
 		let caller = GoogleReaderCompatibleAPICaller(transport: transport)
 		caller.credentials = credentials
