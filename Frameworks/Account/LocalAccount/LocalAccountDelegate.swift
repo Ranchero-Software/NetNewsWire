@@ -122,24 +122,12 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func deleteFeed(for account: Account, from container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	func deleteFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		if let account = container as? Account {
 			account.removeFeed(feed)
 		}
 		if let folder = container as? Folder {
 			folder.removeFeed(feed)
-		}
-		completion(.success(()))
-		
-	}
-
-	func deleteFeed(for account: Account, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.removeFeed(feed)
-		if let folders = account.folders {
-			for folder in folders {
-				folder.removeFeed(feed)
-			}
 		}
 		completion(.success(()))
 	}

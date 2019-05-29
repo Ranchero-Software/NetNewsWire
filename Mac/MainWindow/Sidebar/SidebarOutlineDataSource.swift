@@ -359,6 +359,7 @@ private extension SidebarOutlineDataSource {
 	func moveBetweenAccounts(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed,
 			let sourceAccount = nodeAccount(node),
+			let sourceContainer = node.parent?.representedObject as? Container,
 			let destinationAccount = nodeAccount(parentNode),
 			let destinationContainer = parentNode.representedObject as? Container else {
 				return
@@ -370,7 +371,7 @@ private extension SidebarOutlineDataSource {
 			destinationContainer.addFeed(existingFeed) { result in
 				switch result {
 				case .success:
-					sourceAccount.deleteFeed(feed) { result in
+					sourceAccount.deleteFeed(feed, from: sourceContainer) { result in
 						BatchUpdate.shared.end()
 						switch result {
 						case .success:
@@ -390,7 +391,7 @@ private extension SidebarOutlineDataSource {
 			destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
 				switch result {
 				case .success:
-					sourceAccount.deleteFeed(feed) { result in
+					sourceAccount.deleteFeed(feed, from: sourceContainer) { result in
 						BatchUpdate.shared.end()
 						switch result {
 						case .success:

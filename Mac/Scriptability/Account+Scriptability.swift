@@ -55,7 +55,11 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 			}
 		} else if let scriptableFeed = element as? ScriptableFeed {
 			BatchUpdate.shared.perform {
-				account.deleteFeed(scriptableFeed.feed) { result in
+				var container: Container? = nil
+				if let scriptableFolder = scriptableFeed.container as? ScriptableFolder {
+					container = scriptableFolder.folder
+				}
+				account.deleteFeed(scriptableFeed.feed, from: container) { result in
 				}
 			}
 		}
