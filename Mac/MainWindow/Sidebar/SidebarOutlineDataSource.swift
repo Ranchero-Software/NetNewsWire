@@ -309,10 +309,12 @@ private extension SidebarOutlineDataSource {
 		let source = node.parent?.representedObject as? Container
 		let destination = parentNode.representedObject as? Container
 
+		BatchUpdate.shared.start()
 		source?.removeFeed(feed) { result in
 			switch result {
 			case .success:
 				destination?.addFeed(feed) { result in
+					BatchUpdate.shared.end()
 					switch result {
 					case .success:
 						break
@@ -364,10 +366,12 @@ private extension SidebarOutlineDataSource {
 		
 		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 			
+			BatchUpdate.shared.start()
 			destinationContainer.addFeed(existingFeed) { result in
 				switch result {
 				case .success:
 					sourceAccount.deleteFeed(feed) { result in
+						BatchUpdate.shared.end()
 						switch result {
 						case .success:
 							break
@@ -382,10 +386,12 @@ private extension SidebarOutlineDataSource {
 			
 		} else {
 			
+			BatchUpdate.shared.start()
 			destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
 				switch result {
 				case .success:
 					sourceAccount.deleteFeed(feed) { result in
+						BatchUpdate.shared.end()
 						switch result {
 						case .success:
 							break
@@ -406,24 +412,20 @@ private extension SidebarOutlineDataSource {
 			return false
 		}
 
-		BatchUpdate.shared.perform {
-			
-			draggedNodes.forEach { node in
-				if sameAccount(node, parentNode) {
-					if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-						copyInAccount(node: node, to: parentNode)
-					} else {
-						moveInAccount(node: node, to: parentNode)
-					}
+		draggedNodes.forEach { node in
+			if sameAccount(node, parentNode) {
+				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+					copyInAccount(node: node, to: parentNode)
 				} else {
-					if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-						copyBetweenAccounts(node: node, to: parentNode)
-					} else {
-						moveBetweenAccounts(node: node, to: parentNode)
-					}
+					moveInAccount(node: node, to: parentNode)
+				}
+			} else {
+				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+					copyBetweenAccounts(node: node, to: parentNode)
+				} else {
+					moveBetweenAccounts(node: node, to: parentNode)
 				}
 			}
-			
 		}
 		
 		let allReferencedNodes = draggedNodes.union(Set([parentNode]))
