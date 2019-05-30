@@ -91,16 +91,6 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 
 	}
-
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		folder.name = name
-		completion(.success(()))
-	}
-	
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.removeFolder(folder)
-		completion(.success(()))
-	}
 	
 	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
@@ -140,6 +130,24 @@ final class LocalAccountDelegate: AccountDelegate {
 	
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		container.addFeed(feed)
+		completion(.success(()))
+	}
+	
+	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+		if let folder = account.ensureFolder(with: name) {
+			completion(.success(folder))
+		} else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+		}
+	}
+	
+	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		folder.name = name
+		completion(.success(()))
+	}
+	
+	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		account.removeFolder(folder)
 		completion(.success(()))
 	}
 	

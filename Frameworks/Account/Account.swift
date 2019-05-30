@@ -411,6 +411,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
 	}
 	
+	public func addFolder(_ name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+		delegate.addFolder(for: self, name: name, completion: completion)
+	}
+	
 	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.removeFolder(for: self, with: folder, completion: completion)
 	}

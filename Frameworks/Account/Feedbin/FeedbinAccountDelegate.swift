@@ -231,6 +231,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
+	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+		if let folder = account.ensureFolder(with: name) {
+			completion(.success(folder))
+		} else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+		}
+	}
+
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
@@ -258,29 +266,24 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		// After we successfully delete at Feedbin, we add all the feeds to the account to save them.  We then
-		// delete the folder.  We then sync the taggings we received on the delete to remove any feeds from
-		// the account that might be in another folder.
-		caller.deleteTag(name: folder.name ?? "") { result in
-			switch result {
-			case .success(let taggings):
-				DispatchQueue.main.sync {
-					BatchUpdate.shared.perform {
-						for feed in folder.topLevelFeeds {
-							account.addFeed(feed)
-							self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-						}
-						account.removeFolder(folder)
-					}
-					completion(.success(()))
-				}
-				self.syncTaggings(account, taggings)
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
+		let group = DispatchGroup()
+		
+		for feed in folder.topLevelFeeds {
+			group.enter()
+			removeFeed(for: account, with: feed, from: folder) { result in
+				group.leave()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
 				}
 			}
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			account.removeFolder(folder)
+			completion(.success(()))
 		}
 		
 	}
@@ -885,8 +888,7 @@ private extension FeedbinAccountDelegate {
 			}
 			
 		}
-
-		
+ 
 	}
 	
 	func refreshArticles(_ account: Account, completion: @escaping (() -> Void)) {
@@ -1122,7 +1124,7 @@ private extension FeedbinAccountDelegate {
 				switch result {
 				case .success:
 					DispatchQueue.main.async {
-						feed.folderRelationship?.removeValue(forKey: folder.name ?? "")
+						self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 						folder.removeFeed(feed)
 						account.addFeedIfNotInAnyFolder(feed)
 						completion(.success(()))

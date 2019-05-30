@@ -143,25 +143,6 @@ final class FeedbinAPICaller: NSObject {
 		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
 	}
 	
-	func deleteTag(name: String, completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
-		
-		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
-		let payload = FeedbinDeleteTag(name: name)
-		
-		transport.send(request: request, method: HTTPMethod.delete, payload: payload, resultType: [FeedbinTagging].self) { result in
-
-			switch result {
-			case .success(let (_, taggings)):
-				completion(.success(taggings))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-		
-	}
-	
 	func retrieveSubscriptions(completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")

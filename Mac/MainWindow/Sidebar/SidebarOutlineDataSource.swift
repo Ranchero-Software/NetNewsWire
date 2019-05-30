@@ -97,6 +97,10 @@ import Account
 		}
 		let parentNode = nodeForItem(item)
 
+		if let draggedFolders = draggedFolders {
+			return acceptLocalFoldersDrop(outlineView, draggedFolders, parentNode, index)
+		}
+		
 		if let draggedFeeds = draggedFeeds {
 			let contentsType = draggedFeedContentsType(draggedFeeds)
 
@@ -284,7 +288,7 @@ private extension SidebarOutlineDataSource {
 		return localDragOperation()
 	}
 	
-	func copyInAccount(node: Node, to parentNode: Node) {
+	func copyFeedInAccount(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed, let destination = parentNode.representedObject as? Container else {
 			return
 		}
@@ -299,7 +303,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	func moveInAccount(node: Node, to parentNode: Node) {
+	func moveFeedInAccount(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed,
 			let source = node.parent?.representedObject as? Container,
 			let destination = parentNode.representedObject as? Container else {
@@ -317,7 +321,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	func copyBetweenAccounts(node: Node, to parentNode: Node) {
+	func copyFeedBetweenAccounts(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed,
 			let destinationAccount = nodeAccount(parentNode),
 			let destinationContainer = parentNode.representedObject as? Container else {
@@ -345,7 +349,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	func moveBetweenAccounts(node: Node, to parentNode: Node) {
+	func moveFeedBetweenAccounts(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed,
 			let sourceAccount = nodeAccount(node),
 			let sourceContainer = node.parent?.representedObject as? Container,
@@ -405,15 +409,15 @@ private extension SidebarOutlineDataSource {
 		draggedNodes.forEach { node in
 			if sameAccount(node, parentNode) {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copyInAccount(node: node, to: parentNode)
+					copyFeedInAccount(node: node, to: parentNode)
 				} else {
-					moveInAccount(node: node, to: parentNode)
+					moveFeedInAccount(node: node, to: parentNode)
 				}
 			} else {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copyBetweenAccounts(node: node, to: parentNode)
+					copyFeedBetweenAccounts(node: node, to: parentNode)
 				} else {
-					moveBetweenAccounts(node: node, to: parentNode)
+					moveFeedBetweenAccounts(node: node, to: parentNode)
 				}
 			}
 		}
@@ -451,6 +455,80 @@ private extension SidebarOutlineDataSource {
 			return nil
 		}
 		return ancestorThatCanAcceptNonLocalFeed(parentNode)
+	}
+
+	func copyFolderBetweenAccounts(node: Node, to parentNode: Node) {
+		guard let sourceFolder = node.representedObject as? Folder,
+			let destinationAccount = nodeAccount(parentNode) else {
+				return
+		}
+		replicateFolder(sourceFolder, destinationAccount: destinationAccount, completion: {})
+	}
+	
+	func moveFolderBetweenAccounts(node: Node, to parentNode: Node) {
+		guard let sourceFolder = node.representedObject as? Folder,
+			let sourceAccount = nodeAccount(node),
+			let destinationAccount = nodeAccount(parentNode) else {
+				return
+		}
+		
+		BatchUpdate.shared.start()
+		replicateFolder(sourceFolder, destinationAccount: destinationAccount) {
+			sourceAccount.removeFolder(sourceFolder) { result in
+				BatchUpdate.shared.end()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
+		}
+	}
+	
+	func replicateFolder(_ folder: Folder, destinationAccount: Account, completion: @escaping () -> Void) {
+		destinationAccount.addFolder(folder.name ?? "") { result in
+			switch result {
+			case .success(let destinationFolder):
+				let group = DispatchGroup()
+				for feed in folder.topLevelFeeds {
+					group.enter()
+					destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationFolder) { result in
+						group.leave()
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							NSApplication.shared.presentError(error)
+						}
+					}
+				}
+				group.notify(queue: DispatchQueue.main) {
+					completion()
+				}
+			case .failure(let error):
+				NSApplication.shared.presentError(error)
+			}
+		}
+
+	}
+
+	func acceptLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> Bool {
+		guard let draggedNodes = draggedNodes else {
+			return false
+		}
+		
+		draggedNodes.forEach { node in
+			if !sameAccount(node, parentNode) {
+				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+					copyFolderBetweenAccounts(node: node, to: parentNode)
+				} else {
+					moveFolderBetweenAccounts(node: node, to: parentNode)
+				}
+			}
+		}
+		
+		return true
 	}
 
 	func acceptSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> Bool {
