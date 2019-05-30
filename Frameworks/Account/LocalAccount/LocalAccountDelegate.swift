@@ -26,12 +26,6 @@ final class LocalAccountDelegate: AccountDelegate {
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
-	private weak var account: Account?
-	private var feedFinder: FeedFinder?
-	private var createFeedName: String?
-	private var createFeedContainer: Container?
-	private var createFeedCompletion: ((Result<Feed, Error>) -> Void)?
-	
 	private let refresher = LocalAccountRefresher()
 
 	var refreshProgress: DownloadProgress {
@@ -99,11 +93,42 @@ final class LocalAccountDelegate: AccountDelegate {
 			return
 		}
 	
-		self.account = account
-		createFeedName = name
-		createFeedContainer =  container
-		createFeedCompletion = completion
-		feedFinder = FeedFinder(url: url, delegate: self)
+		FeedFinder.find(url: url) { result in
+			
+			switch result {
+			case .success(let feedSpecifiers):
+				
+				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
+					let url = URL(string: bestFeedSpecifier.urlString) else {
+						completion(.failure(AccountError.createErrorNotFound))
+						return
+				}
+				
+				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
+					completion(.failure(AccountError.createErrorAlreadySubscribed))
+					return
+				}
+				
+				let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
+				
+				InitialFeedDownloader.download(url) { parsedFeed in
+					
+					if let parsedFeed = parsedFeed {
+						account.update(feed, with: parsedFeed, {})
+					}
+					
+					feed.editedName = name
+					
+					container.addFeed(feed)
+					completion(.success(feed))
+					
+				}
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
 		
 	}
 
@@ -167,50 +192,4 @@ final class LocalAccountDelegate: AccountDelegate {
 		return completion(.success(false))
 	}
 	
-}
-
-extension LocalAccountDelegate: FeedFinderDelegate {
-	
-	// MARK: FeedFinderDelegate
-	
-	public func feedFinder(_ feedFinder: FeedFinder, didFindFeeds feedSpecifiers: Set<FeedSpecifier>) {
-		
-		if let error = feedFinder.initialDownloadError {
-			if feedFinder.initialDownloadStatusCode == 404 {
-				createFeedCompletion!(.failure(AccountError.createErrorNotFound))
-			} else {
-				createFeedCompletion!(.failure(error))
-			}
-			return
-		}
-		
-		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
-			let url = URL(string: bestFeedSpecifier.urlString),
-			let account = account else {
-			createFeedCompletion!(.failure(AccountError.createErrorNotFound))
-			return
-		}
-
-		if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
-			createFeedCompletion!(.failure(AccountError.createErrorAlreadySubscribed))
-			return
-		}
-		
-		let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
-		
-		InitialFeedDownloader.download(url) { parsedFeed in
-			
-			if let parsedFeed = parsedFeed {
-				account.update(feed, with: parsedFeed, {})
-			}
-			
-			feed.editedName = self.createFeedName
-			
-			self.createFeedContainer?.addFeed(feed)
-			self.createFeedCompletion?(.success(feed))
-			
-		}
-
-	}
-
 }
