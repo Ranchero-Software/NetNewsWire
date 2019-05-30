@@ -492,14 +492,27 @@ private extension SidebarOutlineDataSource {
 			case .success(let destinationFolder):
 				let group = DispatchGroup()
 				for feed in folder.topLevelFeeds {
-					group.enter()
-					destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationFolder) { result in
-						group.leave()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							NSApplication.shared.presentError(error)
+					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
+						group.enter()
+						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in
+							group.leave()
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								NSApplication.shared.presentError(error)
+							}
+						}
+					} else {
+						group.enter()
+						destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationFolder) { result in
+							group.leave()
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								NSApplication.shared.presentError(error)
+							}
 						}
 					}
 				}
@@ -508,6 +521,7 @@ private extension SidebarOutlineDataSource {
 				}
 			case .failure(let error):
 				NSApplication.shared.presentError(error)
+				completion()
 			}
 		}
 
