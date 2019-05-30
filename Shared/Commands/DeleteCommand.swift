@@ -142,7 +142,7 @@ private struct SidebarItemSpecifier {
 			}
 		} else if let folder = folder {
 			BatchUpdate.shared.start()
-			account?.deleteFolder(folder) { result in
+			account?.removeFolder(folder) { result in
 				BatchUpdate.shared.end()
 				self.checkResult(result)
 			}

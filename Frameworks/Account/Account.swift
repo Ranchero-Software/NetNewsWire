@@ -412,8 +412,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
 	}
 	
-	public func deleteFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.deleteFolder(for: self, with: folder, completion: completion)
+	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.removeFolder(for: self, with: folder, completion: completion)
 	}
 	
 	public func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -680,7 +680,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 	
-	func deleteFolder(_ folder: Folder) {
+	func removeFolder(_ folder: Folder) {
 		folders?.remove(folder)
 		structureDidChange()
 		postChildrenDidChangeNotification()

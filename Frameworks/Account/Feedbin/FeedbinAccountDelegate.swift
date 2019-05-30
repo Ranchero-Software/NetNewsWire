@@ -250,11 +250,11 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
-	func deleteFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {
-			account.deleteFolder(folder)
+			account.removeFolder(folder)
 			return
 		}
 		
@@ -270,7 +270,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 							account.addFeed(feed)
 							self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 						}
-						account.deleteFolder(folder)
+						account.removeFolder(folder)
 					}
 					completion(.success(()))
 				}
@@ -570,7 +570,7 @@ private extension FeedbinAccountDelegate {
 							account.addFeed(feed)
 							clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 						}
-						account.deleteFolder(folder)
+						account.removeFolder(folder)
 					}
 				}
 			}
