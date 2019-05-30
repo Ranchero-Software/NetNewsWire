@@ -285,13 +285,11 @@ private extension SidebarOutlineDataSource {
 	}
 	
 	func copyInAccount(node: Node, to parentNode: Node) {
-		guard let feed = node.representedObject as? Feed else {
+		guard let feed = node.representedObject as? Feed, let destination = parentNode.representedObject as? Container else {
 			return
 		}
 		
-		let destination = parentNode.representedObject as? Container
-		
-		destination?.addFeed(feed) { result in
+		destination.account?.addFeed(feed, to: destination) { result in
 			switch result {
 			case .success:
 				break
@@ -302,18 +300,17 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func moveInAccount(node: Node, to parentNode: Node) {
-		guard let feed = node.representedObject as? Feed else {
+		guard let feed = node.representedObject as? Feed,
+			let source = node.parent?.representedObject as? Container,
+			let destination = parentNode.representedObject as? Container else {
 			return
 		}
 
-		let source = node.parent?.representedObject as? Container
-		let destination = parentNode.representedObject as? Container
-
 		BatchUpdate.shared.start()
-		source?.removeFeed(feed) { result in
+		source.account?.removeFeed(feed, from: source) { result in
 			switch result {
 			case .success:
-				destination?.addFeed(feed) { result in
+				destination.account?.addFeed(feed, to: destination) { result in
 					BatchUpdate.shared.end()
 					switch result {
 					case .success:
@@ -336,7 +333,7 @@ private extension SidebarOutlineDataSource {
 		}
 		
 		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
-			destinationContainer.addFeed(existingFeed) { result in
+			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
 					break
@@ -368,7 +365,7 @@ private extension SidebarOutlineDataSource {
 		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 			
 			BatchUpdate.shared.start()
-			destinationContainer.addFeed(existingFeed) { result in
+			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
 					sourceAccount.deleteFeed(feed, from: sourceContainer) { result in

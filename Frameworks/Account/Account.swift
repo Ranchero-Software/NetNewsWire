@@ -61,6 +61,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return defaultName
 	}()
 	
+	public var account: Account? {
+		return self
+	}
 	public let accountID: String
 	public let type: AccountType
 	public var nameForDisplay: String {
@@ -373,11 +376,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return feed
 	}
 
-	func addFeed(container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func addFeed(_ feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.addFeed(for: self, to: container, with: feed, completion: completion)
 	}
 
-	func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.removeFeed(for: self, from: container, with: feed, completion: completion)
 	}
 	
@@ -659,21 +662,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return _flattenedFeeds
 	}
 
-	public func removeFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.removeFeed(for: self, from: self, with: feed, completion: completion)
-	}
-	
-	public func addFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.addFeed(for: self, to: self, with: feed, completion: completion)
-	}
-	
-	func removeFeed(_ feed: Feed) {
+	public func removeFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
 	
-	func addFeed(_ feed: Feed) {
+	public func addFeed(_ feed: Feed) {
 		topLevelFeeds.insert(feed)
 		structureDidChange()
 		postChildrenDidChangeNotification()

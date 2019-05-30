@@ -123,36 +123,26 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	func deleteFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let account = container as? Account {
-			account.removeFeed(feed)
-		}
-		if let folder = container as? Folder {
-			folder.removeFeed(feed)
-		}
+		container?.removeFeed(feed)
 		completion(.success(()))
 	}
 	
 	func addFeed(for account: Account, to container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.addFeed(feed)
+		completion(.success(()))
+	}
+	
+	func removeFeed(for account: Account, from container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.removeFeed(feed)
+		completion(.success(()))
+	}
+	
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if let folder = container as? Folder {
 			folder.addFeed(feed)
 		} else if let account = container as? Account {
 			account.addFeed(feed)
 		}
-		completion(.success(()))
-	}
-	
-	func removeFeed(for account: Account, from container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let account = container as? Account {
-			account.removeFeed(feed)
-		}
-		if let folder = container as? Folder {
-			folder.removeFeed(feed)
-		}
-		completion(.success(()))
-	}
-	
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.addFeed(feed, completion: completion)
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -210,14 +200,8 @@ extension LocalAccountDelegate: FeedFinderDelegate {
 			
 			feed.editedName = self.createFeedName
 			
-			self.createFeedContainer?.addFeed(feed) { result in
-				switch result {
-				case .success:
-					self.createFeedCompletion?(.success(feed))
-				case .failure(let error):
-					self.createFeedCompletion?(.failure(error))
-				}
-			}
+			self.createFeedContainer?.addFeed(feed)
+			self.createFeedCompletion?(.success(feed))
 			
 		}
 

@@ -870,7 +870,7 @@ private extension FeedbinAccountDelegate {
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.subscriptionID = String(sub.subscriptionID)
 		
-			container.addFeed(feed) { result in
+			account.addFeed(feed, to: container) { result in
 				switch result {
 				case .success:
 					if let name = name {
