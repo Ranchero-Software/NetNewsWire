@@ -368,7 +368,7 @@ private extension SidebarOutlineDataSource {
 			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
-					sourceAccount.deleteFeed(feed, from: sourceContainer) { result in
+					sourceAccount.removeFeed(feed, from: sourceContainer) { result in
 						BatchUpdate.shared.end()
 						switch result {
 						case .success:
@@ -388,7 +388,7 @@ private extension SidebarOutlineDataSource {
 			destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
 				switch result {
 				case .success:
-					sourceAccount.deleteFeed(feed, from: sourceContainer) { result in
+					sourceAccount.removeFeed(feed, from: sourceContainer) { result in
 						BatchUpdate.shared.end()
 						switch result {
 						case .success:

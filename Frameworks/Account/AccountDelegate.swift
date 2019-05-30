@@ -34,10 +34,9 @@ protocol AccountDelegate {
 
 	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void)
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
-	func deleteFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void)
+	func addFeed(for account: Account, with: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void)
+	func removeFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void)
 	
-	func addFeed(for account: Account, to container: Container, with: Feed, completion: @escaping (Result<Void, Error>) -> Void)
-	func removeFeed(for account: Account, from container: Container, with: Feed, completion: @escaping (Result<Void, Error>) -> Void)
 
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void)
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)

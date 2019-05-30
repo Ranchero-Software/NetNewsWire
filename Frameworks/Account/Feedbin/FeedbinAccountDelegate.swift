@@ -340,7 +340,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
-	func deleteFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		// This error should never happen
 		guard let subscriptionID = feed.subscriptionID else {
@@ -370,7 +370,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func addFeed(for account: Account, to container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 			caller.createTagging(feedID: feedID, name: folder.name ?? "") { result in
@@ -448,7 +448,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		for feed in folder.topLevelFeeds {
 			
 			group.enter()
-			addFeed(for: account, to: folder, with: feed) { result in
+			addFeed(for: account, with: feed, to: folder) { result in
 				if account.topLevelFeeds.contains(feed) {
 					account.removeFeed(feed)
 				}

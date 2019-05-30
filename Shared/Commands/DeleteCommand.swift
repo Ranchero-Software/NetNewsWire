@@ -136,7 +136,7 @@ private struct SidebarItemSpecifier {
 
 		if let feed = feed {
 			BatchUpdate.shared.start()
-			account?.deleteFeed(feed, from: path.resolveContainer()) { result in
+			account?.removeFeed(feed, from: path.resolveContainer()) { result in
 				BatchUpdate.shared.end()
 				self.checkResult(result)
 			}
