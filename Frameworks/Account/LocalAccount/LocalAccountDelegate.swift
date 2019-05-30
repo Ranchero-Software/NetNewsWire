@@ -133,11 +133,8 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let folder = container as? Folder {
-			folder.addFeed(feed)
-		} else if let account = container as? Account {
-			account.addFeed(feed)
-		}
+		container.addFeed(feed)
+		completion(.success(()))
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
