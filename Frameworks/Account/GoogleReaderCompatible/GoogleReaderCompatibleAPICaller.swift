@@ -163,7 +163,21 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			return
 		}
 		
-		let callURL = baseURL.appendingPathComponent("/reader/api/0/tag/list?output=json")
+		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
+		guard var components = URLComponents(url: baseURL.appendingPathComponent("/reader/api/0/tag/list"), resolvingAgainstBaseURL: false) else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		
+		components.queryItems = [
+			URLQueryItem(name: "output", value: "json")
+		]
+
+		guard let callURL = components.url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+
 		//let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
 		let request = URLRequest(url: callURL, credentials: credentials)
 

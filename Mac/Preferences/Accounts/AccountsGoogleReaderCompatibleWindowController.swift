@@ -96,9 +96,8 @@ class AccountsGoogleReaderCompatibleWindowController: NSWindowController {
 				do {
 					self.account?.endpointURL = apiURL
 
-					try self.account?.removeBasicCredentials()
+					try self.account?.removeGoogleAuthCredentials()
 					try self.account?.storeCredentials(validatedCredentials)
-					
 					
 					if newAccount {
 						self.account?.refreshAll() { result in

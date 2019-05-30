@@ -90,18 +90,22 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		refreshAccount(account) { result in
 			switch result {
 			case .success():
-				
-				self.refreshArticles(account) {
-					self.refreshArticleStatus(for: account) {
-						self.refreshMissingArticles(account) {
-							self.refreshProgress.clear()
-							DispatchQueue.main.async {
-								completion(.success(()))
-							}
-						}
-					}
+				DispatchQueue.main.async {
+					completion(.success(()))
 				}
 				
+				
+//				self.refreshArticles(account) {
+//					self.refreshArticleStatus(for: account) {
+//						self.refreshMissingArticles(account) {
+//							self.refreshProgress.clear()
+//							DispatchQueue.main.async {
+//								completion(.success(()))
+//							}
+//						}
+//					}
+//				}
+//
 			case .failure(let error):
 				DispatchQueue.main.async {
 					self.refreshProgress.clear()
@@ -486,8 +490,8 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 	}
 	
 	func accountDidInitialize(_ account: Account) {
-		credentials = try? account.retrieveBasicCredentials()
 		accountMetadata = account.metadata
+		credentials = try? account.retrieveGoogleAuthCredentials()
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
@@ -570,7 +574,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 
 		os_log(.debug, log: log, "Syncing folders with %ld tags.", tags.count)
 
-		let tagNames = tags.map { $0.name }
+		let tagNames = tags.map { $0.tagID }
 
 		// Delete any folders not at GoogleReaderCompatible
 		if let folders = account.folders {

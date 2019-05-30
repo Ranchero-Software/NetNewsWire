@@ -263,9 +263,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - API
 	
 	public func storeCredentials(_ credentials: Credentials) throws {
-		// The delegate may need the credentials to determine the server
-		delegate.credentials = credentials
-		
 		guard let server = delegate.server else {
 			throw CredentialsError.incompleteCredentials
 		}
@@ -297,6 +294,21 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return
 		}
 		try CredentialsManager.removeBasicCredentials(server: server, username: username)
+		self.username = nil
+	}
+	
+	public func retrieveGoogleAuthCredentials() throws -> Credentials? {
+		guard let username = self.username, let server = delegate.server else {
+			return nil
+		}
+		return try CredentialsManager.retrieveGoogleAuthCredentials(server: server, username: username)
+	}
+	
+	public func removeGoogleAuthCredentials() throws {
+		guard let username = self.username, let server = delegate.server else {
+			return
+		}
+		try CredentialsManager.removeGoogleAuthCredentials(server: server, username: username)
 		self.username = nil
 	}
 	
