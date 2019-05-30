@@ -262,8 +262,20 @@ private extension SidebarOutlineDataSource {
 		return accounts
 	}
 
+	func accountHasFolderRepresentingAnyDraggedFolders(_ account: Account, _ draggedFolders: Set<PasteboardFolder>) -> Bool {
+		for draggedFolder in draggedFolders {
+			if account.existingFolder(with: draggedFolder.name) != nil {
+				return true
+			}
+		}
+		return false
+	}
+	
 	func validateLocalFolderDrop(_ outlineView: NSOutlineView, _ draggedFolder: PasteboardFolder, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		guard let dropAccount = parentNode.representedObject as? Account, dropAccount.accountID != draggedFolder.accountID else {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		if accountHasFolderRepresentingAnyDraggedFolders(dropAccount, Set([draggedFolder])) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		let updatedIndex = indexWhereDraggedFolderWouldAppear(parentNode, draggedFolder)
@@ -275,6 +287,9 @@ private extension SidebarOutlineDataSource {
 	
 	func validateLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		guard let dropAccount = parentNode.representedObject as? Account else {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		if accountHasFolderRepresentingAnyDraggedFolders(dropAccount, draggedFolders) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		for draggedFolder in draggedFolders {
