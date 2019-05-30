@@ -574,6 +574,8 @@ private extension GoogleReaderCompatibleAccountDelegate {
 
 		os_log(.debug, log: log, "Syncing folders with %ld tags.", tags.count)
 
+		// TODO: filter on folder tag type
+		// TODO: filter names to get rid of prefixes
 		let tagNames = tags.map { $0.tagID }
 
 		// Delete any folders not at GoogleReaderCompatible

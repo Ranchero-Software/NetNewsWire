@@ -181,12 +181,12 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		//let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
 		let request = URLRequest(url: callURL, credentials: credentials)
 
-		transport.send(request: request, resultType: [GoogleReaderCompatibleTag].self) { result in
+		transport.send(request: request, resultType: GoogleReaderCompatibleTagWrapper.self) { result in
 			
 			switch result {
-			case .success(let (response, tags)):
+			case .success(let (response, wrapper)):
 				self.storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
-				completion(.success(tags))
+				completion(.success(wrapper?.tags))
 			case .failure(let error):
 				completion(.failure(error))
 			}

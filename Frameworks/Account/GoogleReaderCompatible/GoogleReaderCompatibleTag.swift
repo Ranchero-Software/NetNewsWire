@@ -8,14 +8,22 @@
 
 import Foundation
 
+struct GoogleReaderCompatibleTagWrapper: Codable {
+	let tags: [GoogleReaderCompatibleTag]
+	
+	enum CodingKeys: String, CodingKey {
+		case tags = "tags"
+	}
+}
+
 struct GoogleReaderCompatibleTag: Codable {
 	
-	let tagID: Int
-	let name: String
+	let tagID: String
+	let type: String?
 	
 	enum CodingKeys: String, CodingKey {
 		case tagID = "id"
-		case name = "name"
+		case type = "type"
 	}
 	
 }
