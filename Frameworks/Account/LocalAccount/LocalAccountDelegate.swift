@@ -127,6 +127,12 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		from.removeFeed(feed)
+		to.addFeed(feed)
+		completion(.success(()))
+	}
+	
 	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		container.addFeed(feed)
 		completion(.success(()))

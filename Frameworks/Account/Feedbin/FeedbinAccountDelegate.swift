@@ -341,35 +341,28 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func removeFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		// This error should never happen
-		guard let subscriptionID = feed.subscriptionID else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
-			return
+		if feed.folderRelationship?.count ?? 0 > 1 {
+			deleteTagging(for: account, with: feed, from: container, completion: completion)
+		} else {
+			deleteSubscription(for: account, with: feed, from: container, completion: completion)
 		}
-		
-		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					account.removeFeed(feed)
-					if let folders = account.folders {
-						for folder in folders {
-							folder.removeFeed(feed)
-						}
-					}
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
+	}
+	
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		if from is Account {
+			addFeed(for: account, with: feed, to: to, completion: completion)
+		} else {
+			deleteTagging(for: account, with: feed, from: from) { result in
+				switch result {
+				case .success:
+					self.addFeed(for: account, with: feed, to: to, completion: completion)
+				case .failure(let error):
+					completion(.failure(error))
 				}
 			}
 		}
-		
 	}
-	
+
 	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
@@ -390,39 +383,12 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			}
 		} else {
-			if let account = container as? Account {
-				account.addFeedIfNotInAnyFolder(feed)
-			}
 			DispatchQueue.main.async {
+				if let account = container as? Account {
+					account.addFeedIfNotInAnyFolder(feed)
+				}
 				completion(.success(()))
 			}
-		}
-		
-	}
-	
-	func removeFeed(for account: Account, from container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
-			caller.deleteTagging(taggingID: feedTaggingID) { result in
-				switch result {
-				case .success:
-					DispatchQueue.main.async {
-						folder.removeFeed(feed)
-						account.addFeedIfNotInAnyFolder(feed)
-						completion(.success(()))
-					}
-				case .failure(let error):
-					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
-						completion(.failure(wrappedError))
-					}
-				}
-			}
-		} else {
-			if let account = container as? Account {
-				account.removeFeed(feed)
-			}
-			completion(.success(()))
 		}
 		
 	}
@@ -1144,6 +1110,64 @@ private extension FeedbinAccountDelegate {
 		if !missingUnstarredArticleIDs.isEmpty {
 			DispatchQueue.main.async {
 				account.ensureStatuses(missingUnstarredArticleIDs, .starred, false)
+			}
+		}
+		
+	}
+
+	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
+			caller.deleteTagging(taggingID: feedTaggingID) { result in
+				switch result {
+				case .success:
+					DispatchQueue.main.async {
+						feed.folderRelationship?.removeValue(forKey: folder.name ?? "")
+						folder.removeFeed(feed)
+						account.addFeedIfNotInAnyFolder(feed)
+						completion(.success(()))
+					}
+				case .failure(let error):
+					DispatchQueue.main.async {
+						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						completion(.failure(wrappedError))
+					}
+				}
+			}
+		} else {
+			if let account = container as? Account {
+				account.removeFeed(feed)
+			}
+			completion(.success(()))
+		}
+		
+	}
+
+	func deleteSubscription(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		// This error should never happen
+		guard let subscriptionID = feed.subscriptionID else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			return
+		}
+		
+		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+			switch result {
+			case .success:
+				DispatchQueue.main.async {
+					account.removeFeed(feed)
+					if let folders = account.folders {
+						for folder in folders {
+							folder.removeFeed(feed)
+						}
+					}
+					completion(.success(()))
+				}
+			case .failure(let error):
+				DispatchQueue.main.async {
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
+				}
 			}
 		}
 		

@@ -396,8 +396,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func removeFeed(_ feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
-		feedMetadata[feed.url] = nil
 		delegate.removeFeed(for: self, with: feed, from: container, completion: completion)
+	}
+	
+	public func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.moveFeed(for: self, with: feed, from: from, to: to, completion: completion)
 	}
 	
 	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {

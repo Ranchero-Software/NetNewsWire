@@ -307,18 +307,10 @@ private extension SidebarOutlineDataSource {
 		}
 
 		BatchUpdate.shared.start()
-		source.account?.removeFeed(feed, from: source) { result in
+		source.account?.moveFeed(feed, from: source, to: destination) { result in
 			switch result {
 			case .success:
-				destination.account?.addFeed(feed, to: destination) { result in
-					BatchUpdate.shared.end()
-					switch result {
-					case .success:
-						break
-					case .failure(let error):
-						NSApplication.shared.presentError(error)
-					}
-				}
+				BatchUpdate.shared.end()
 			case .failure(let error):
 				NSApplication.shared.presentError(error)
 			}
