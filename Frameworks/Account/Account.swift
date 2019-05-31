@@ -61,6 +61,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return defaultName
 	}()
 	
+	public var isDeleted = false
+	
 	public var account: Account? {
 		return self
 	}
@@ -760,19 +762,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	@objc func saveToDiskIfNeeded() {
 
-		if dirty {
+		if dirty && !isDeleted {
 			saveToDisk()
 		}
 	}
 
 	@objc func saveFeedMetadataIfNeeded() {
-		if feedMetadataDirty {
+		if feedMetadataDirty && !isDeleted {
 			saveFeedMetadata()
 		}
 	}
 
 	@objc func saveAccountMetadataIfNeeded() {
-		if metadataDirty {
+		if metadataDirty && !isDeleted {
 			saveAccountMetadata()
 		}
 	}

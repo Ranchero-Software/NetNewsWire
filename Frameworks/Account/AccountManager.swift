@@ -127,6 +127,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		
 		accountsDictionary.removeValue(forKey: account.accountID)
+		account.isDeleted = true
 		
 		do {
 			try FileManager.default.removeItem(atPath: account.dataFolder)
