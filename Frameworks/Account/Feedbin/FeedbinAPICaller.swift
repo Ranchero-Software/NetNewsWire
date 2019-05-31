@@ -419,13 +419,12 @@ final class FeedbinAPICaller: NSObject {
 	
 	func retrieveEntries(page: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
 		
-		guard let url = URL(string: page), var callComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+		guard let url = URL(string: page) else {
 			completion(.success((nil, nil)))
 			return
 		}
 		
-		callComponents.queryItems?.append(URLQueryItem(name: "mode", value: "extended"))
-		let request = URLRequest(url: callComponents.url!, credentials: credentials)
+		let request = URLRequest(url: url, credentials: credentials)
 
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
