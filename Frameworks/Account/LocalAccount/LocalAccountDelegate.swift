@@ -19,16 +19,13 @@ public enum LocalAccountDelegateError: String, Error {
 final class LocalAccountDelegate: AccountDelegate {
 	
 	let supportsSubFolders = false
+	let usesTags = false
 	let opmlImportInProgress = false
 	
 	let server: String? = nil
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
-	private weak var account: Account?
-	private var feedFinder: FeedFinder?
-	private var createFeedCompletion: ((Result<Feed, Error>) -> Void)?
-	
 	private let refresher = LocalAccountRefresher()
 
 	var refreshProgress: DownloadProgress {
@@ -88,28 +85,50 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 
 	}
-
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		folder.name = name
-		completion(.success(()))
-	}
 	
-	func deleteFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.deleteFolder(folder)
-		completion(.success(()))
-	}
-	
-	func createFeed(for account: Account, url urlString: String, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
 		}
 	
-		self.account = account
-		createFeedCompletion = completion
-		
-		feedFinder = FeedFinder(url: url, delegate: self)
+		FeedFinder.find(url: url) { result in
+			
+			switch result {
+			case .success(let feedSpecifiers):
+				
+				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
+					let url = URL(string: bestFeedSpecifier.urlString) else {
+						completion(.failure(AccountError.createErrorNotFound))
+						return
+				}
+				
+				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
+					completion(.failure(AccountError.createErrorAlreadySubscribed))
+					return
+				}
+				
+				let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
+				
+				InitialFeedDownloader.download(url) { parsedFeed in
+					
+					if let parsedFeed = parsedFeed {
+						account.update(feed, with: parsedFeed, {})
+					}
+					
+					feed.editedName = name
+					
+					container.addFeed(feed)
+					completion(.success(feed))
+					
+				}
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
 		
 	}
 
@@ -118,55 +137,42 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func deleteFeed(for account: Account, from container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		if let account = container as? Account {
-			account.removeFeed(feed)
-		}
-		if let folder = container as? Folder {
-			folder.removeFeed(feed)
-		}
-		completion(.success(()))
-		
-	}
-
-	func deleteFeed(for account: Account, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.removeFeed(feed)
-		if let folders = account.folders {
-			for folder in folders {
-				folder.removeFeed(feed)
-			}
-		}
+	func removeFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		container?.removeFeed(feed)
 		completion(.success(()))
 	}
 	
-	func addFeed(for account: Account, to container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let folder = container as? Folder {
-			folder.addFeed(feed)
-			feed.account = folder.account
-		} else if let account = container as? Account {
-			account.addFeed(feed)
-			feed.account = account
-		}
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		from.removeFeed(feed)
+		to.addFeed(feed)
 		completion(.success(()))
 	}
 	
-	func removeFeed(for account: Account, from container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let account = container as? Account {
-			account.removeFeed(feed)
-		}
-		if let folder = container as? Folder {
-			folder.removeFeed(feed)
-		}
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.addFeed(feed)
 		completion(.success(()))
 	}
 	
-	func restoreFeed(for account: Account, feed: Feed, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let folder = folder {
-			folder.addFeed(feed)
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.addFeed(feed)
+		completion(.success(()))
+	}
+	
+	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+		if let folder = account.ensureFolder(with: name) {
+			completion(.success(folder))
 		} else {
-			account.addFeed(feed)
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
 		}
+	}
+	
+	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		folder.name = name
+		completion(.success(()))
+	}
+	
+	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		account.removeFolder(folder)
 		completion(.success(()))
 	}
 	
@@ -186,43 +192,4 @@ final class LocalAccountDelegate: AccountDelegate {
 		return completion(.success(nil))
 	}
 	
-}
-
-extension LocalAccountDelegate: FeedFinderDelegate {
-	
-	// MARK: FeedFinderDelegate
-	
-	public func feedFinder(_ feedFinder: FeedFinder, didFindFeeds feedSpecifiers: Set<FeedSpecifier>) {
-		
-		if let error = feedFinder.initialDownloadError {
-			if feedFinder.initialDownloadStatusCode == 404 {
-				createFeedCompletion!(.failure(AccountError.createErrorNotFound))
-			} else {
-				createFeedCompletion!(.failure(error))
-			}
-			return
-		}
-		
-		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
-			let url = URL(string: bestFeedSpecifier.urlString),
-			let account = account else {
-			createFeedCompletion!(.failure(AccountError.createErrorNotFound))
-			return
-		}
-
-		if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
-			createFeedCompletion!(.failure(AccountError.createErrorAlreadySubscribed))
-			return
-		}
-		
-		let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
-		InitialFeedDownloader.download(url) { [weak self] parsedFeed in
-			if let parsedFeed = parsedFeed {
-				account.update(feed, with: parsedFeed, {})
-			}
-			self?.createFeedCompletion!(.success(feed))
-		}
-
-	}
-
 }

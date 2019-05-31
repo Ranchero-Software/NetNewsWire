@@ -373,22 +373,17 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		}()
 		
 		// Move the Feed
-		let source = sourceNode.parent?.representedObject as? Container
-		let destination = destParentNode?.representedObject as? Container
-		source?.removeFeed(feed) { [weak self] result in
+		guard let source = sourceNode.parent?.representedObject as? Container, let destination = destParentNode?.representedObject as? Container else {
+			return
+		}
+		
+		BatchUpdate.shared.start()
+		source.account?.moveFeed(feed, from: source, to: destination) { result in
 			switch result {
 			case .success:
-				destination?.addFeed(feed) { result in
-					switch result {
-					case .success:
-						break
-					case .failure(let error):
-						source?.addFeed(feed) { result in }
-						self?.presentError(error)
-					}
-				}
+				BatchUpdate.shared.end()
 			case .failure(let error):
-				self?.presentError(error)
+				self.presentError(error)
 			}
 		}
 

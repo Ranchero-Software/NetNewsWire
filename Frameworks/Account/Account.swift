@@ -62,6 +62,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return defaultName
 	}()
 	
+	public var isDeleted = false
+	
+	public var account: Account? {
+		return self
+	}
 	public let accountID: String
 	public let type: AccountType
 	public var nameForDisplay: String {
@@ -179,6 +184,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
         }
     }
     
+	public var usesTags: Bool {
+		return delegate.usesTags
+	}
+	
 	var refreshInProgress = false {
 		didSet {
 			if refreshInProgress != oldValue {
@@ -406,16 +415,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return feed
 	}
 
-	func addFeed(container: Container, feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.addFeed(for: self, to: container, with: feed, completion: completion)
+	public func addFeed(_ feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.addFeed(for: self, with: feed, to: container, completion: completion)
 	}
 
-	func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.removeFeed(for: self, from: container, with: feed, completion: completion)
-	}
-	
-	public func createFeed(url: String, completion: @escaping (Result<Feed, Error>) -> Void) {
-		delegate.createFeed(for: self, url: url, completion: completion)
+	public func createFeed(url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+		delegate.createFeed(for: self, url: url, name: name, container: container, completion: completion)
 	}
 	
 	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
@@ -429,21 +434,28 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 	}
 	
-	public func deleteFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		feedMetadata[feed.url] = nil
-		delegate.deleteFeed(for: self, with: feed, completion: completion)
+	public func removeFeed(_ feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.removeFeed(for: self, with: feed, from: container, completion: completion)
+	}
+	
+	public func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.moveFeed(for: self, with: feed, from: from, to: to, completion: completion)
 	}
 	
 	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.renameFeed(for: self, with: feed, to: name, completion: completion)
 	}
 	
-	public func restoreFeed(_ feed: Feed, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.restoreFeed(for: self, feed: feed, folder: folder, completion: completion)
+	public func restoreFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
 	}
 	
-	public func deleteFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.deleteFolder(for: self, with: folder, completion: completion)
+	public func addFolder(_ name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+		delegate.addFolder(for: self, name: name, completion: completion)
+	}
+	
+	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.removeFolder(for: self, with: folder, completion: completion)
 	}
 	
 	public func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -452,6 +464,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func restoreFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.restoreFolder(for: self, folder: folder, completion: completion)
+	}
+	
+	func clearFeedMetadata(_ feed: Feed) {
+		feedMetadata[feed.url] = nil
 	}
 	
 	func addFolder(_ folder: Folder) {
@@ -692,27 +708,25 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return _flattenedFeeds
 	}
 
-	public func removeFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.removeFeed(for: self, from: self, with: feed, completion: completion)
-	}
-	
-	public func addFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.addFeed(for: self, to: self, with: feed, completion: completion)
-	}
-	
-	func removeFeed(_ feed: Feed) {
+	public func removeFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
 	
-	func addFeed(_ feed: Feed) {
+	public func addFeed(_ feed: Feed) {
 		topLevelFeeds.insert(feed)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
 
-	func deleteFolder(_ folder: Folder) {
+	func addFeedIfNotInAnyFolder(_ feed: Feed) {
+		if !flattenedFeeds().contains(feed) {
+			addFeed(feed)
+		}
+	}
+	
+	func removeFolder(_ folder: Folder) {
 		folders?.remove(folder)
 		structureDidChange()
 		postChildrenDidChangeNotification()
@@ -785,19 +799,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	@objc func saveToDiskIfNeeded() {
 
-		if dirty {
+		if dirty && !isDeleted {
 			saveToDisk()
 		}
 	}
 
 	@objc func saveFeedMetadataIfNeeded() {
-		if feedMetadataDirty {
+		if feedMetadataDirty && !isDeleted {
 			saveFeedMetadata()
 		}
 	}
 
 	@objc func saveAccountMetadataIfNeeded() {
-		if metadataDirty {
+		if metadataDirty && !isDeleted {
 			saveAccountMetadata()
 		}
 	}

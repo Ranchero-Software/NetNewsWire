@@ -54,46 +54,70 @@ import Account
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
-		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard), !draggedFeeds.isEmpty else {
+		let draggedFolders = PasteboardFolder.pasteboardFolders(with: info.draggingPasteboard)
+		let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard)
+		if (draggedFolders == nil && draggedFeeds == nil) || (draggedFolders != nil && draggedFeeds != nil)  {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
-
 		let parentNode = nodeForItem(item)
-		let contentsType = draggedFeedContentsType(draggedFeeds)
 
-		switch contentsType {
-		case .singleNonLocal:
-			let draggedNonLocalFeed = singleNonLocalFeed(from: draggedFeeds)!
-			return validateSingleNonLocalFeedDrop(outlineView, draggedNonLocalFeed, parentNode, index)
-		case .singleLocal:
-			let draggedFeed = draggedFeeds.first!
-			return validateSingleLocalFeedDrop(outlineView, draggedFeed, parentNode, index)
-		case .multipleLocal:
-			return validateLocalFeedsDrop(outlineView, draggedFeeds, parentNode, index)
-		case .multipleNonLocal, .mixed, .empty:
-			return SidebarOutlineDataSource.dragOperationNone
+		if let draggedFolders = draggedFolders {
+			if draggedFolders.count == 1 {
+				return validateLocalFolderDrop(outlineView, draggedFolders.first!, parentNode, index)
+			} else {
+				return validateLocalFoldersDrop(outlineView, draggedFolders, parentNode, index)
+			}
 		}
+		
+		if let draggedFeeds = draggedFeeds {
+			let contentsType = draggedFeedContentsType(draggedFeeds)
+
+			switch contentsType {
+			case .singleNonLocal:
+				let draggedNonLocalFeed = singleNonLocalFeed(from: draggedFeeds)!
+				return validateSingleNonLocalFeedDrop(outlineView, draggedNonLocalFeed, parentNode, index)
+			case .singleLocal:
+				let draggedFeed = draggedFeeds.first!
+				return validateSingleLocalFeedDrop(outlineView, draggedFeed, parentNode, index)
+			case .multipleLocal:
+				return validateLocalFeedsDrop(outlineView, draggedFeeds, parentNode, index)
+			case .multipleNonLocal, .mixed, .empty:
+				return SidebarOutlineDataSource.dragOperationNone
+			}
+		}
+
+		return SidebarOutlineDataSource.dragOperationNone
 	}
 	
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
-		guard let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard), !draggedFeeds.isEmpty else {
+		let draggedFolders = PasteboardFolder.pasteboardFolders(with: info.draggingPasteboard)
+		let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard)
+		if (draggedFolders == nil && draggedFeeds == nil) || (draggedFolders != nil && draggedFeeds != nil)  {
 			return false
 		}
-
 		let parentNode = nodeForItem(item)
-		let contentsType = draggedFeedContentsType(draggedFeeds)
 
-		switch contentsType {
-		case .singleNonLocal:
-			let draggedNonLocalFeed = singleNonLocalFeed(from: draggedFeeds)!
-			return acceptSingleNonLocalFeedDrop(outlineView, draggedNonLocalFeed, parentNode, index)
-		case .singleLocal:
-			return acceptLocalFeedsDrop(outlineView, draggedFeeds, parentNode, index)
-		case .multipleLocal:
-			return acceptLocalFeedsDrop(outlineView, draggedFeeds, parentNode, index)
-		case .multipleNonLocal, .mixed, .empty:
-			return false
+		if let draggedFolders = draggedFolders {
+			return acceptLocalFoldersDrop(outlineView, draggedFolders, parentNode, index)
 		}
+		
+		if let draggedFeeds = draggedFeeds {
+			let contentsType = draggedFeedContentsType(draggedFeeds)
+
+			switch contentsType {
+			case .singleNonLocal:
+				let draggedNonLocalFeed = singleNonLocalFeed(from: draggedFeeds)!
+				return acceptSingleNonLocalFeedDrop(outlineView, draggedNonLocalFeed, parentNode, index)
+			case .singleLocal:
+				return acceptLocalFeedsDrop(outlineView, draggedFeeds, parentNode, index)
+			case .multipleLocal:
+				return acceptLocalFeedsDrop(outlineView, draggedFeeds, parentNode, index)
+			case .multipleNonLocal, .mixed, .empty:
+				return false
+			}
+		}
+		
+		return false
 	}
 }
 
@@ -109,11 +133,10 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func nodeRepresentsDraggableItem(_ node: Node) -> Bool {
-		// Don’t allow PseudoFeed or Folder to be dragged.
+		// Don’t allow PseudoFeed to be dragged.
 		// This will have to be revisited later. For instance,
 		// user-created smart feeds should be draggable, maybe.
-		// And we might allow dragging folders between accounts.
-		return node.representedObject is Feed
+		return node.representedObject is Folder || node.representedObject is Feed
 	}
 
 	// MARK: - Drag and Drop
@@ -173,21 +196,20 @@ private extension SidebarOutlineDataSource {
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
-		if !allParticipantsAreLocalAccounts(dropTargetNode, Set([draggedFeed])) {
-			return SidebarOutlineDataSource.dragOperationNone
-		}
 		if nodeHasChildRepresentingDraggedFeed(dropTargetNode, draggedFeed) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
-		let dragOperation: NSDragOperation = localFeedsDropOperation(dropTargetNode, Set([draggedFeed]))
+		if violatesTagSpecificBehavior(dropTargetNode, draggedFeed) {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
 		if parentNode == dropTargetNode && index == NSOutlineViewDropOnItemIndex {
-			return dragOperation
+			return localDragOperation()
 		}
 		let updatedIndex = indexWhereDraggedFeedWouldAppear(dropTargetNode, draggedFeed)
 		if parentNode !== dropTargetNode || index != updatedIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: updatedIndex)
 		}
-		return dragOperation
+		return localDragOperation()
 	}
 
 	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
@@ -195,22 +217,19 @@ private extension SidebarOutlineDataSource {
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
-		if !allParticipantsAreLocalAccounts(dropTargetNode, draggedFeeds) {
+		if nodeHasChildRepresentingAnyDraggedFeed(dropTargetNode, draggedFeeds) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
-		if nodeHasChildRepresentingAnyDraggedFeed(dropTargetNode, draggedFeeds) {
+		if violatesTagSpecificBehavior(dropTargetNode, draggedFeeds) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if parentNode !== dropTargetNode || index != NSOutlineViewDropOnItemIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
 		}
-		return localFeedsDropOperation(dropTargetNode, draggedFeeds)
+		return localDragOperation()
 	}
 	
-	func localFeedsDropOperation(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> NSDragOperation {
-		if allParticipantsAreSameAccount(dropTargetNode, draggedFeeds) {
-			return .move
-		}
+	func localDragOperation() -> NSDragOperation {
 		if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
 			return .copy
 		} else {
@@ -218,7 +237,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	private func accountForNode(_ node: Node) -> Account? {
+	func accountForNode(_ node: Node) -> Account? {
 		if let account = node.representedObject as? Account {
 			return account
 		}
@@ -231,7 +250,7 @@ private extension SidebarOutlineDataSource {
 		return nil
 	}
 
-	private func commonAccountsFor(_ nodes: Set<Node>) -> Set<Account> {
+	func commonAccountsFor(_ nodes: Set<Node>) -> Set<Account> {
 
 		var accounts = Set<Account>()
 		for node in nodes {
@@ -243,52 +262,155 @@ private extension SidebarOutlineDataSource {
 		return accounts
 	}
 
-	private func copy(node: Node, to parentNode: Node) {
-		guard let feed = node.representedObject as? Feed else {
+	func accountHasFolderRepresentingAnyDraggedFolders(_ account: Account, _ draggedFolders: Set<PasteboardFolder>) -> Bool {
+		for draggedFolder in draggedFolders {
+			if account.existingFolder(with: draggedFolder.name) != nil {
+				return true
+			}
+		}
+		return false
+	}
+	
+	func validateLocalFolderDrop(_ outlineView: NSOutlineView, _ draggedFolder: PasteboardFolder, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+		guard let dropAccount = parentNode.representedObject as? Account, dropAccount.accountID != draggedFolder.accountID else {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		if accountHasFolderRepresentingAnyDraggedFolders(dropAccount, Set([draggedFolder])) {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		let updatedIndex = indexWhereDraggedFolderWouldAppear(parentNode, draggedFolder)
+		if index != updatedIndex {
+			outlineView.setDropItem(parentNode, dropChildIndex: updatedIndex)
+		}
+		return localDragOperation()
+	}
+	
+	func validateLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+		guard let dropAccount = parentNode.representedObject as? Account else {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		if accountHasFolderRepresentingAnyDraggedFolders(dropAccount, draggedFolders) {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		for draggedFolder in draggedFolders {
+			if dropAccount.accountID == draggedFolder.accountID {
+				return SidebarOutlineDataSource.dragOperationNone
+			}
+		}
+		if index != NSOutlineViewDropOnItemIndex {
+			outlineView.setDropItem(parentNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
+		}
+		return localDragOperation()
+	}
+	
+	func copyFeedInAccount(node: Node, to parentNode: Node) {
+		guard let feed = node.representedObject as? Feed, let destination = parentNode.representedObject as? Container else {
 			return
 		}
-
-		let destination = parentNode.representedObject as? Container
-
-		BatchUpdate.shared.start()
-		destination?.addFeed(feed) { result in
+		
+		destination.account?.addFeed(feed, to: destination) { result in
 			switch result {
 			case .success:
-				BatchUpdate.shared.end()
 				break
 			case .failure(let error):
-				BatchUpdate.shared.end()
 				NSApplication.shared.presentError(error)
 			}
 		}
 	}
 
-	private func move(node: Node, to parentNode: Node) {
-		guard let feed = node.representedObject as? Feed else {
+	func moveFeedInAccount(node: Node, to parentNode: Node) {
+		guard let feed = node.representedObject as? Feed,
+			let source = node.parent?.representedObject as? Container,
+			let destination = parentNode.representedObject as? Container else {
 			return
 		}
 
-		let source = node.parent?.representedObject as? Container
-		let destination = parentNode.representedObject as? Container
-
 		BatchUpdate.shared.start()
-		source?.removeFeed(feed) { result in
+		source.account?.moveFeed(feed, from: source, to: destination) { result in
 			switch result {
 			case .success:
-				destination?.addFeed(feed) { result in
-					switch result {
-					case .success:
-						BatchUpdate.shared.end()
-						break
-					case .failure(let error):
-						// If the second part of the move failed, try to put the feed back
-						source?.addFeed(feed) { result in}
-						BatchUpdate.shared.end()
-						NSApplication.shared.presentError(error)
-					}
-				}
+				BatchUpdate.shared.end()
 			case .failure(let error):
 				NSApplication.shared.presentError(error)
+			}
+		}
+	}
+
+	func copyFeedBetweenAccounts(node: Node, to parentNode: Node) {
+		guard let feed = node.representedObject as? Feed,
+			let destinationAccount = nodeAccount(parentNode),
+			let destinationContainer = parentNode.representedObject as? Container else {
+			return
+		}
+		
+		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
+			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
+		} else {
+			destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
+		}
+	}
+
+	func moveFeedBetweenAccounts(node: Node, to parentNode: Node) {
+		guard let feed = node.representedObject as? Feed,
+			let sourceAccount = nodeAccount(node),
+			let sourceContainer = node.parent?.representedObject as? Container,
+			let destinationAccount = nodeAccount(parentNode),
+			let destinationContainer = parentNode.representedObject as? Container else {
+				return
+		}
+		
+		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
+			
+			BatchUpdate.shared.start()
+			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
+				switch result {
+				case .success:
+					sourceAccount.removeFeed(feed, from: sourceContainer) { result in
+						BatchUpdate.shared.end()
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							NSApplication.shared.presentError(error)
+						}
+					}
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
+			
+		} else {
+			
+			BatchUpdate.shared.start()
+			destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+				switch result {
+				case .success:
+					sourceAccount.removeFeed(feed, from: sourceContainer) { result in
+						BatchUpdate.shared.end()
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							NSApplication.shared.presentError(error)
+						}
+					}
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
 			}
 			
 		}
@@ -299,24 +421,22 @@ private extension SidebarOutlineDataSource {
 			return false
 		}
 
-		BatchUpdate.shared.perform {
-			
-			draggedNodes.forEach { node in
-				if sameAccount(node, parentNode) {
-					move(node: node, to: parentNode)
-				} else if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copy(node: node, to: parentNode)
+		draggedNodes.forEach { node in
+			if sameAccount(node, parentNode) {
+				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+					copyFeedInAccount(node: node, to: parentNode)
 				} else {
-					move(node: node, to: parentNode)
+					moveFeedInAccount(node: node, to: parentNode)
+				}
+			} else {
+				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+					copyFeedBetweenAccounts(node: node, to: parentNode)
+				} else {
+					moveFeedBetweenAccounts(node: node, to: parentNode)
 				}
 			}
-			
 		}
 		
-		let allReferencedNodes = draggedNodes.union(Set([parentNode]))
-		let accounts = commonAccountsFor(allReferencedNodes)
-		accounts.forEach { $0.structureDidChange() }
-
 		return true
 	}
 
@@ -352,6 +472,94 @@ private extension SidebarOutlineDataSource {
 		return ancestorThatCanAcceptNonLocalFeed(parentNode)
 	}
 
+	func copyFolderBetweenAccounts(node: Node, to parentNode: Node) {
+		guard let sourceFolder = node.representedObject as? Folder,
+			let destinationAccount = nodeAccount(parentNode) else {
+				return
+		}
+		replicateFolder(sourceFolder, destinationAccount: destinationAccount, completion: {})
+	}
+	
+	func moveFolderBetweenAccounts(node: Node, to parentNode: Node) {
+		guard let sourceFolder = node.representedObject as? Folder,
+			let sourceAccount = nodeAccount(node),
+			let destinationAccount = nodeAccount(parentNode) else {
+				return
+		}
+		
+		BatchUpdate.shared.start()
+		replicateFolder(sourceFolder, destinationAccount: destinationAccount) {
+			sourceAccount.removeFolder(sourceFolder) { result in
+				BatchUpdate.shared.end()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					NSApplication.shared.presentError(error)
+				}
+			}
+		}
+	}
+	
+	func replicateFolder(_ folder: Folder, destinationAccount: Account, completion: @escaping () -> Void) {
+		destinationAccount.addFolder(folder.name ?? "") { result in
+			switch result {
+			case .success(let destinationFolder):
+				let group = DispatchGroup()
+				for feed in folder.topLevelFeeds {
+					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
+						group.enter()
+						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in
+							group.leave()
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								NSApplication.shared.presentError(error)
+							}
+						}
+					} else {
+						group.enter()
+						destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationFolder) { result in
+							group.leave()
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								NSApplication.shared.presentError(error)
+							}
+						}
+					}
+				}
+				group.notify(queue: DispatchQueue.main) {
+					completion()
+				}
+			case .failure(let error):
+				NSApplication.shared.presentError(error)
+				completion()
+			}
+		}
+
+	}
+
+	func acceptLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> Bool {
+		guard let draggedNodes = draggedNodes else {
+			return false
+		}
+		
+		draggedNodes.forEach { node in
+			if !sameAccount(node, parentNode) {
+				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+					copyFolderBetweenAccounts(node: node, to: parentNode)
+				} else {
+					moveFolderBetweenAccounts(node: node, to: parentNode)
+				}
+			}
+		}
+		
+		return true
+	}
+
 	func acceptSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> Bool {
 		guard nodeIsDropTarget(parentNode), index == NSOutlineViewDropOnItemIndex else {
 			return false
@@ -385,44 +593,6 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 	
-	func allParticipantsAreLocalAccounts(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
-		
-		if let account = parentNode.representedObject as? Account {
-			if account.type != .onMyMac {
-				return false
-			}
-		} else if let folder = parentNode.representedObject as? Folder {
-			if folder.account?.type != .onMyMac {
-				return false
-			}
-		} else {
-			return false
-		}
-		
-		for draggedFeed in draggedFeeds {
-			if draggedFeed.accountType != .onMyMac {
-				return false
-			}
-		}
-		
-		return true
-		
-	}
-
-	func allParticipantsAreSameAccount(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
-		guard let parentAccountID = nodeAccountID(parentNode) else {
-			return false
-		}
-		
-		for draggedFeed in draggedFeeds {
-			if draggedFeed.accountID != parentAccountID {
-				return false
-			}
-		}
-		
-		return true
-	}
-	
 	func sameAccount(_ node: Node, _ parentNode: Node) -> Bool {
 		if let accountID = nodeAccountID(node), let parentAccountID = nodeAccountID(parentNode) {
 			if accountID == parentAccountID {
@@ -432,16 +602,21 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 	
-	func nodeAccountID(_ node: Node) -> String? {
+	func nodeAccount(_ node: Node) -> Account? {
 		if let account = node.representedObject as? Account {
-			return account.accountID
+			return account
 		} else if let folder = node.representedObject as? Folder {
-			return folder.account?.accountID
+			return folder.account
 		} else if let feed = node.representedObject as? Feed {
-			return feed.account?.accountID
+			return feed.account
 		} else {
 			return nil
 		}
+
+	}
+	
+	func nodeAccountID(_ node: Node) -> String? {
+		return nodeAccount(node)?.accountID
 	}
 	
 	func nodeHasChildRepresentingAnyDraggedFeed(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
@@ -453,6 +628,29 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 
+	func violatesTagSpecificBehavior(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Bool {
+		return violatesTagSpecificBehavior(parentNode, Set([draggedFeed]))
+	}
+	
+	func violatesTagSpecificBehavior(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
+		guard let parentAccount = nodeAccount(parentNode), parentAccount.usesTags else {
+			return false
+		}
+		
+		for draggedFeed in draggedFeeds {
+			if parentAccount.accountID != draggedFeed.accountID {
+				return false
+			}
+		}
+		
+		// Can't copy to the account when using tags
+		if parentNode.representedObject is Account && (NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false) {
+			return true
+		}
+		
+		return false
+	}
+	
 	func indexWhereDraggedFeedWouldAppear(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Int {
 		let draggedFeedWrapper = PasteboardFeedObjectWrapper(pasteboardFeed: draggedFeed)
 		let draggedFeedNode = Node(representedObject: draggedFeedWrapper, parent: nil)
@@ -461,6 +659,18 @@ private extension SidebarOutlineDataSource {
 		// Revisit if the tree controller can ever be sorted in some other way.
 		let sortedNodes = nodes.sortedAlphabeticallyWithFoldersAtEnd()
 		let index = sortedNodes.firstIndex(of: draggedFeedNode)!
+		return index
+	}
+
+	func indexWhereDraggedFolderWouldAppear(_ parentNode: Node, _ draggedFolder: PasteboardFolder) -> Int {
+		let draggedFolderWrapper = PasteboardFolderObjectWrapper(pasteboardFolder: draggedFolder)
+		let draggedFolderNode = Node(representedObject: draggedFolderWrapper, parent: nil)
+		draggedFolderNode.canHaveChildNodes = true
+		let nodes = parentNode.childNodes + [draggedFolderNode]
+		
+		// Revisit if the tree controller can ever be sorted in some other way.
+		let sortedNodes = nodes.sortedAlphabeticallyWithFoldersAtEnd()
+		let index = sortedNodes.firstIndex(of: draggedFolderNode)!
 		return index
 	}
 }
@@ -474,5 +684,17 @@ final class PasteboardFeedObjectWrapper: DisplayNameProvider {
 
 	init(pasteboardFeed: PasteboardFeed) {
 		self.pasteboardFeed = pasteboardFeed
+	}
+}
+
+final class PasteboardFolderObjectWrapper: DisplayNameProvider {
+	
+	var nameForDisplay: String {
+		return pasteboardFolder.name
+	}
+	let pasteboardFolder: PasteboardFolder
+	
+	init(pasteboardFolder: PasteboardFolder) {
+		self.pasteboardFolder = pasteboardFolder
 	}
 }

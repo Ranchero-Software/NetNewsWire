@@ -60,6 +60,7 @@ protocol SidebarDelegate: class {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidRequestSidebarSelection(_:)), name: .UserDidRequestSidebarSelection, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(calendarDayChanged(_:)), name: .NSCalendarDayChanged, object: nil)
 
 		outlineView.reloadData()
 
@@ -163,6 +164,12 @@ protocol SidebarDelegate: class {
 			return
 		}
 		revealAndSelectRepresentedObject(feed as AnyObject)
+	}
+	
+	@objc func calendarDayChanged(_ note: Notification) {
+		DispatchQueue.main.async {
+			SmartFeedsController.shared.todayFeed.fetchUnreadCounts()
+		}
 	}
 	
 	// MARK: - Actions
