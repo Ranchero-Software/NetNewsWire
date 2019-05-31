@@ -29,7 +29,7 @@ class AddFeedWindowController : NSWindowController {
 
 	private var urlString: String?
 	private var initialName: String?
-	private var initialAccount: Account?
+	private weak var initialAccount: Account?
 	private var initialFolder: Folder?
 	private weak var delegate: AddFeedWindowControllerDelegate?
 	private var folderTreeController: TreeController!

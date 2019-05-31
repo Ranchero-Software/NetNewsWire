@@ -52,7 +52,6 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 			return
 		}
 		let account = accountAndFolderSpecifier.account
-		let folder = accountAndFolderSpecifier.folder
 
 		if account.hasFeed(withURL: url.absoluteString) {
 			showAlreadySubscribedError(url.absoluteString)
@@ -61,20 +60,20 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 
 		BatchUpdate.shared.start()
 		
-		account.createFeed(url: url.absoluteString) { [weak self] result in
+		account.createFeed(url: url.absoluteString, name: title, container: container) { result in
 			
-			self?.endShowingProgress()
-			
+			self.endShowingProgress()
+			BatchUpdate.shared.end()
+
 			switch result {
 			case .success(let feed):
-				self?.processFeed(feed, account: account, folder: folder, url: url, title: title)
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 			case .failure(let error):
-				BatchUpdate.shared.end()
 				switch error {
 				case AccountError.createErrorAlreadySubscribed:
-					self?.showAlreadySubscribedError(url.absoluteString)
+					self.showAlreadySubscribedError(url.absoluteString)
 				case AccountError.createErrorNotFound:
-					self?.showNoFeedsErrorMessage()
+					self.showNoFeedsErrorMessage()
 				default:
 					NSApplication.shared.presentError(error)
 				}
@@ -125,45 +124,6 @@ private extension AddFeedController {
 		}
 	}
 
-	func processFeed(_ feed: Feed, account: Account, folder: Folder?, url: URL, title: String?) {
-		
-		if let title = title {
-			account.renameFeed(feed, to: title) { result in
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					NSApplication.shared.presentError(error)
-				}
-			}
-		}
-		
-		if let folder = folder {
-			folder.addFeed(feed) { result in
-				switch result {
-				case .success:
-					BatchUpdate.shared.end()
-					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-				case .failure(let error):
-					BatchUpdate.shared.end()
-					NSApplication.shared.presentError(error)
-				}
-			}
-		} else {
-			account.addFeed(feed) { result in
-				switch result {
-				case .success:
-					BatchUpdate.shared.end()
-					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-				case .failure(let error):
-					BatchUpdate.shared.end()
-					NSApplication.shared.presentError(error)
-				}
-			}
-		}
-		
-	}
-	
 	// MARK: Errors
 
 	func showAlreadySubscribedError(_ urlString: String) {

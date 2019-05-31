@@ -53,7 +53,7 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
     func deleteElement(_ element:ScriptingObject) {
        if let scriptableFeed = element as? ScriptableFeed {
             BatchUpdate.shared.perform {
-				folder.account?.deleteFeed(scriptableFeed.feed) { result in }
+				folder.account?.removeFeed(scriptableFeed.feed, from: folder) { result in }
             }
         }
     }

@@ -95,20 +95,12 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 		return topLevelFeeds.contains(feed)
 	}
 
-	public func addFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		account?.addFeed(container: self, feed: feed, completion: completion)
-	}
-	
-	public func removeFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		account?.removeFeed(feed, from: self, completion: completion)
-	}
-	
-	func addFeed(_ feed: Feed) {
+	public func addFeed(_ feed: Feed) {
 		topLevelFeeds.insert(feed)
 		postChildrenDidChangeNotification()
 	}
 	
-	func removeFeed(_ feed: Feed) {
+	public func removeFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		postChildrenDidChangeNotification()
 	}

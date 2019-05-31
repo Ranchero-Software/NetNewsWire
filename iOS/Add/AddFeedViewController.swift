@@ -80,13 +80,10 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		let container = pickerData.containers[folderPickerView.selectedRow(inComponent: 0)]
 		
 		var account: Account?
-		var folder: Folder?
 		if let containerAccount = container as? Account {
 			account = containerAccount
-		}
-		if let containerFolder = container as? Folder, let containerAccount = containerFolder.account {
+		} else if let containerFolder = container as? Folder, let containerAccount = containerFolder.account {
 			account = containerAccount
-			folder = containerFolder
 		}
 		
 		if account!.hasFeed(withURL: url.absoluteString) {
@@ -94,26 +91,28 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
  			return
 		}
 		
-		let title = nameTextField.text
-		
 		delegate?.processingDidBegin()
+		BatchUpdate.shared.start()
+		
+		account!.createFeed(url: url.absoluteString, name: nameTextField.text, container: container) { result in
 
-		account!.createFeed(url: url.absoluteString) { [weak self] result in
+			BatchUpdate.shared.end()
 			
 			switch result {
 			case .success(let feed):
-				self?.processFeed(feed, account: account!, folder: folder, url: url, title: title)
+				self.delegate?.processingDidEnd()
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 			case .failure(let error):
 				switch error {
 				case AccountError.createErrorAlreadySubscribed:
-					self?.showAlreadySubscribedError()
-					self?.delegate?.processingDidCancel()
+					self.showAlreadySubscribedError()
+					self.delegate?.processingDidCancel()
 				case AccountError.createErrorNotFound:
-					self?.showNoFeedsErrorMessage()
-					self?.delegate?.processingDidCancel()
+					self.showNoFeedsErrorMessage()
+					self.delegate?.processingDidCancel()
 				default:
-					self?.presentError(error)
-					self?.delegate?.processingDidCancel()
+					self.presentError(error)
+					self.delegate?.processingDidCancel()
 				}
 			}
 
@@ -176,45 +175,6 @@ private extension AddFeedViewController {
 		let formatString = NSLocalizedString("Can’t add this feed because of a download error: “%@”", comment: "Feed finder")
 		let message = NSString.localizedStringWithFormat(formatString as NSString, error.localizedDescription)
 		presentError(title: title, message: message as String)
-	}
-	
-	func processFeed(_ feed: Feed, account: Account, folder: Folder?, url: URL, title: String?) {
-		
-		if let title = title {
-			account.renameFeed(feed, to: title) { [weak self] result in
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					self?.presentError(error)
-				}
-			}
-		}
-		
-		if let folder = folder {
-			folder.addFeed(feed) { [weak self] result in
-				switch result {
-				case .success:
-					self?.delegate?.processingDidEnd()
-					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-				case .failure(let error):
-					self?.delegate?.processingDidEnd()
-					self?.presentError(error)
-				}
-			}
-		} else {
-			account.addFeed(feed) { [weak self] result in
-				switch result {
-				case .success:
-					self?.delegate?.processingDidEnd()
-					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-				case .failure(let error):
-					self?.delegate?.processingDidEnd()
-					self?.presentError(error)
-				}
-			}
-		}
-		
 	}
 	
 }
