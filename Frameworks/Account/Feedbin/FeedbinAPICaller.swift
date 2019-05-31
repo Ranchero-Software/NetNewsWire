@@ -532,10 +532,11 @@ extension FeedbinAPICaller {
 		}
 		
 		if let lowerBound = link.range(of: "page=")?.upperBound {
-			if let upperBound = link.range(of: "&")?.lowerBound {
+			let partialLink = link[lowerBound..<link.endIndex]
+			if let upperBound = partialLink.range(of: "&")?.lowerBound {
 				return Int(link[lowerBound..<upperBound])
 			}
-			if let upperBound = link.range(of: ">")?.lowerBound {
+			if let upperBound = partialLink.range(of: ">")?.lowerBound {
 				return Int(link[lowerBound..<upperBound])
 			}
 		}
