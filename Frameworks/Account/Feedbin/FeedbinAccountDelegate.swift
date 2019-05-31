@@ -347,6 +347,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		if feed.folderRelationship?.count ?? 0 > 1 {
 			deleteTagging(for: account, with: feed, from: container, completion: completion)
 		} else {
+			account.clearFeedMetadata(feed)
 			deleteSubscription(for: account, with: feed, from: container, completion: completion)
 		}
 	}

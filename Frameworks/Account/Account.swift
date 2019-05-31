@@ -427,6 +427,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.restoreFolder(for: self, folder: folder, completion: completion)
 	}
 	
+	func clearFeedMetadata(_ feed: Feed) {
+		feedMetadata[feed.url] = nil
+	}
+	
 	func addFolder(_ folder: Folder) {
 		folders!.insert(folder)
 		postChildrenDidChangeNotification()
