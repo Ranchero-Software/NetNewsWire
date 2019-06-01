@@ -7,6 +7,27 @@
         <language>en</language>
 
 <item>
+          <title>NetNewsWire 5.0a1</title>
+            <description><![CDATA[
+							<p>NetNewsWire 5.0 has reached alpha stage! This means it has no known bugs. It surely <i>does</i> have bugs, though. Now it’s time for testing. (And writing the Help book. And making the website better.)</p>            
+							<p>Fixed a crashing bug with parsing a response from Feedbin. (Totally our fault, not Feedbin’s fault.)</p>
+							<p>Show avatars from Micro.blog feeds with multiple authors (such as your personal timeline feed).</p>
+							<p>Made OPML import to the On My Mac account way faster.</p>
+							<p>The Today smart feed now updates when the day changes.</p>
+							<p>You can now drag and drop in the sidebar between accounts.</p>
+							<p>Made the default file name for OPML exports “Subscriptions-[accountName].opml”</p>
+							<p>Add explanation text to Account preferences for the Name field. (It’s just a display name and doesn’t affect authentication.)</p>
+							<p>Fixed several bugs with Feedbin syncing — it’s now more reliable. (We know of no remaining sync bugs, though of course there might be some.)</p>
+							<p>Added a placeholder web page for the Help book.</p>
+							<p>New app icon! But it might take a while for your Mac to notice and put in the Dock. (I wish we could speed that up, but it’s ou of our control.)</p>
+ 	   					]]></description>
+            <pubDate>Fri, 31 May 2019 20:30:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0a1.zip" sparkle:version="2185" sparkle:shortVersionString="5.0a1" length="4686634" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+
+<item>
           <title>NetNewsWire 5.0d17</title>
             <description><![CDATA[
 							<p>NetNewsWire 5.0 is now feature-complete. It has bugs, though, so we can’t call it alpha just yet. Getting close!</p>            
