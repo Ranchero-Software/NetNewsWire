@@ -19,7 +19,7 @@
 							<p>Add explanation text to Account preferences for the Name field. (It’s just a display name and doesn’t affect authentication.)</p>
 							<p>Fixed several bugs with Feedbin syncing — it’s now more reliable. (We know of no remaining sync bugs, though of course there might be some.)</p>
 							<p>Added a placeholder web page for the Help book.</p>
-							<p>New app icon! But it might take a while for your Mac to notice and put in the Dock. (I wish we could speed that up, but it’s ou of our control.)</p>
+							<p>New app icon! But it might take a while for your Mac to notice and put in the Dock. (I wish we could speed that up, but it’s out of our control.)</p>
  	   					]]></description>
             <pubDate>Fri, 31 May 2019 20:30:00 -0700</pubDate>
             <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0a1.zip" sparkle:version="2185" sparkle:shortVersionString="5.0a1" length="4686634" type="application/zip" />
