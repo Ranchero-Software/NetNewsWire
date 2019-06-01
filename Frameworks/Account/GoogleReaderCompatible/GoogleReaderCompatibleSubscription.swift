@@ -10,22 +10,58 @@ import Foundation
 import RSCore
 import RSParser
 
+struct GoogleReaderCompatibleSubscriptionContainer: Codable {
+	let subscriptions: [GoogleReaderCompatibleSubscription]
+	
+	enum CodingKeys: String, CodingKey {
+		case subscriptions = "subscriptions"
+	}
+}
+
+/*
+{
+	"id": "feed/1",
+	"title": "Questionable Content",
+	"categories": [
+	{
+		"id": "user/-/label/Comics",
+		"label": "Comics"
+	}
+	],
+	"url": "http://www.questionablecontent.net/QCRSS.xml",
+	"htmlUrl": "http://www.questionablecontent.net",
+	"iconUrl": "https://rss.confusticate.com/f.php?24decabc"
+}
+
+*/
 struct GoogleReaderCompatibleSubscription: Codable {
 
-	let subscriptionID: Int
-	let feedID: Int
+	let feedID: String
 	let name: String?
+	let categories: [GoogleReaderCompatibleCategory]
 	let url: String
 	let homePageURL: String?
+	let iconURL: String?
 
 	enum CodingKeys: String, CodingKey {
-		case subscriptionID = "id"
-		case feedID = "feed_id"
+		case feedID = "id"
 		case name = "title"
-		case url = "feed_url"
-		case homePageURL = "site_url"
+		case categories = "categories"
+		case url = "url"
+		case homePageURL = "htmlUrl"
+		case iconURL = "iconUrl"
 	}
 
+}
+
+struct GoogleReaderCompatibleCategory: Codable {
+	let categoryId: String
+	let categoryLabel: String
+	
+	enum CodingKeys: String, CodingKey {
+		case categoryId = "id"
+		case categoryLabel = "label"
+	}
 }
 
 struct GoogleReaderCompatibleCreateSubscription: Codable {

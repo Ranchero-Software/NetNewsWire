@@ -178,10 +178,10 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			return
 		}
 
-		//let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
-		let request = URLRequest(url: callURL, credentials: credentials)
-
-		transport.send(request: request, resultType: GoogleReaderCompatibleTagWrapper.self) { result in
+		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
+		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		
+		transport.send(request: request, resultType: GoogleReaderCompatibleTagContainer.self) { result in
 			
 			switch result {
 			case .success(let (response, wrapper)):
@@ -222,17 +222,35 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	}
 	
 	func retrieveSubscriptions(completion: @escaping (Result<[GoogleReaderCompatibleSubscription]?, Error>) -> Void) {
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
 		
-		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("subscriptions.json")
+		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
+		guard var components = URLComponents(url: baseURL.appendingPathComponent("/reader/api/0/subscription/list"), resolvingAgainstBaseURL: false) else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		
+		components.queryItems = [
+			URLQueryItem(name: "output", value: "json")
+		]
+		
+		guard let callURL = components.url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
-		transport.send(request: request, resultType: [GoogleReaderCompatibleSubscription].self) { result in
+		transport.send(request: request, resultType: GoogleReaderCompatibleSubscriptionContainer.self) { result in
 			
 			switch result {
-			case .success(let (response, subscriptions)):
+			case .success(let (response, container)):
 				self.storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
-				completion(.success(subscriptions))
+				completion(.success(container?.subscriptions))
 			case .failure(let error):
 				completion(.failure(error))
 			}

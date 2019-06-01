@@ -542,9 +542,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 
 		os_log(.debug, log: log, "Syncing folders with %ld tags.", tags.count)
 
-		// TODO: filter on folder tag type
-		// TODO: filter names to get rid of prefixes
-		let tagNames = tags.map { $0.tagID }
+		let tagNames = tags.filter { $0.type == "folder" }.map { $0.tagID.replacingOccurrences(of: "user/-/label/", with: "") }
 
 		// Delete any folders not at GoogleReaderCompatible
 		if let folders = account.folders {
@@ -665,7 +663,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 					feed.homePageURL = subscription.homePageURL
 				} else {
 					let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
-					feed.subscriptionID = String(subscription.subscriptionID)
+					feed.subscriptionID = String(subscription.feedID)
 					account.addFeed(feed)
 				}
 			}
@@ -854,7 +852,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		DispatchQueue.main.async {
 			
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
-			feed.subscriptionID = String(sub.subscriptionID)
+			feed.subscriptionID = String(sub.feedID)
 			
 			account.addFeed(feed, to: container) { result in
 				switch result {

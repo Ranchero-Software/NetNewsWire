@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct GoogleReaderCompatibleTagWrapper: Codable {
+struct GoogleReaderCompatibleTagContainer: Codable {
 	let tags: [GoogleReaderCompatibleTag]
 	
 	enum CodingKeys: String, CodingKey {
