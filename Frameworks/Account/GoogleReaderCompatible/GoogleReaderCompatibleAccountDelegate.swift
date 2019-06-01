@@ -31,6 +31,8 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "GoogleReaderCompatible")
 
 	let supportsSubFolders = false
+	let usesTags = true
+
 	var server: String? {
 		get {
 			return caller.server
@@ -239,6 +241,14 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		
 	}
 	
+	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+		if let folder = account.ensureFolder(with: name) {
+			completion(.success(folder))
+		} else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+		}
+	}
+	
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
@@ -258,51 +268,46 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		
 	}
 
-	func deleteFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		// GoogleReaderCompatible uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
+		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {
-			account.deleteFolder(folder)
+			account.removeFolder(folder)
 			return
 		}
 		
-		// After we successfully delete at GoogleReaderCompatible, we add all the feeds to the account to save them.  We then
-		// delete the folder.  We then sync the taggings we received on the delete to remove any feeds from
-		// the account that might be in another folder.
-		caller.deleteTag(name: folder.name ?? "") { result in
-			switch result {
-			case .success(let taggings):
-				DispatchQueue.main.sync {
-					BatchUpdate.shared.perform {
-						for feed in folder.topLevelFeeds {
-							account.addFeed(feed)
-							self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-						}
-						account.deleteFolder(folder)
-					}
-					completion(.success(()))
-				}
-				self.syncTaggings(account, taggings)
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
+		let group = DispatchGroup()
+		
+		for feed in folder.topLevelFeeds {
+			group.enter()
+			removeFeed(for: account, with: feed, from: folder) { result in
+				group.leave()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
 				}
 			}
 		}
 		
+		group.notify(queue: DispatchQueue.main) {
+			account.removeFolder(folder)
+			completion(.success(()))
+		}
+		
 	}
 	
-	func createFeed(for account: Account, url: String, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		caller.createSubscription(url: url) { result in
 			switch result {
 			case .success(let subResult):
 				switch subResult {
 				case .created(let subscription):
-					self.createFeed(account: account, subscription: subscription, completion: completion)
+					self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
 				case .multipleChoice(let choices):
-					self.decideBestFeedChoice(account: account, url: url, choices: choices, completion: completion)
+					self.decideBestFeedChoice(account: account, url: url, name: name, container: container, choices: choices, completion: completion)
 				case .alreadySubscribed:
 					DispatchQueue.main.async {
 						completion(.failure(AccountError.createErrorAlreadySubscribed))
@@ -318,16 +323,16 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 					completion(.failure(wrappedError))
 				}
 			}
-
+			
 		}
 		
 	}
-
+	
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		// This error should never happen
 		guard let subscriptionID = feed.subscriptionID else {
-			completion(.failure(GoogleReaderCompatibleAccountDelegateError.invalidParameter))
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
 			return
 		}
 		
@@ -347,38 +352,32 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		}
 		
 	}
-
-	func deleteFeed(for account: Account, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		// This error should never happen
-		guard let subscriptionID = feed.subscriptionID else {
-			completion(.failure(GoogleReaderCompatibleAccountDelegateError.invalidParameter))
-			return
+	
+	func removeFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		if feed.folderRelationship?.count ?? 0 > 1 {
+			deleteTagging(for: account, with: feed, from: container, completion: completion)
+		} else {
+			account.clearFeedMetadata(feed)
+			deleteSubscription(for: account, with: feed, from: container, completion: completion)
 		}
-		
-		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					account.removeFeed(feed)
-					if let folders = account.folders {
-						for folder in folders {
-							folder.removeFeed(feed)
-						}
-					}
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
+	}
+	
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		if from is Account {
+			addFeed(for: account, with: feed, to: to, completion: completion)
+		} else {
+			deleteTagging(for: account, with: feed, from: from) { result in
+				switch result {
+				case .success:
+					self.addFeed(for: account, with: feed, to: to, completion: completion)
+				case .failure(let error):
+					completion(.failure(error))
 				}
 			}
 		}
-		
 	}
 	
-	func addFeed(for account: Account, to container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 			caller.createTagging(feedID: feedID, name: folder.name ?? "") { result in
@@ -386,6 +385,7 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 				case .success(let taggingID):
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
+						account.removeFeed(feed)
 						folder.addFeed(feed)
 						completion(.success(()))
 					}
@@ -397,55 +397,24 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 				}
 			}
 		} else {
-			if let account = container as? Account {
-				account.addFeed(feed)
-			}
 			DispatchQueue.main.async {
+				if let account = container as? Account {
+					account.addFeedIfNotInAnyFolder(feed)
+				}
 				completion(.success(()))
 			}
 		}
 		
 	}
 	
-	func removeFeed(for account: Account, from container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
-			caller.deleteTagging(taggingID: feedTaggingID) { result in
-				switch result {
-				case .success:
-					DispatchQueue.main.async {
-						folder.removeFeed(feed)
-						completion(.success(()))
-					}
-				case .failure(let error):
-					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
-						completion(.failure(wrappedError))
-					}
-				}
-			}
-		} else {
-			if let account = container as? Account {
-				account.removeFeed(feed)
-			}
-			completion(.success(()))
-		}
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-	}
-	
-	func restoreFeed(for account: Account, feed: Feed, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		let editedName = feed.editedName
-		
-		createFeed(for: account, url: feed.url) { result in
+		createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
 			switch result {
-			case .success(let feed):
-				self.processRestoredFeed(for: account, feed: feed, editedName: editedName, folder: folder, completion: completion)
+			case .success:
+				completion(.success(()))
 			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
+				completion(.failure(error))
 			}
 		}
 		
@@ -459,7 +428,7 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		for feed in folder.topLevelFeeds {
 			
 			group.enter()
-			addFeed(for: account, to: folder, with: feed) { result in
+			addFeed(for: account, with: feed, to: folder) { result in
 				if account.topLevelFeeds.contains(feed) {
 					account.removeFeed(feed)
 				}
@@ -488,7 +457,6 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		return account.update(articles, statusKey: statusKey, flag: flag)
 		
 	}
-	
 	func accountDidInitialize(_ account: Account) {
 		accountMetadata = account.metadata
 		credentials = try? account.retrieveGoogleAuthCredentials()
@@ -587,7 +555,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 							account.addFeed(feed)
 							clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 						}
-						account.deleteFolder(folder)
+						account.removeFolder(folder)
 					}
 				}
 			}
@@ -839,73 +807,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		
 	}
 	
-	func processRestoredFeed(for account: Account, feed: Feed, editedName: String?, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		if let folder = folder {
-			
-			addFeed(for: account, to: folder, with: feed) { result in
-				
-				switch result {
-				case .success:
-					
-					if editedName != nil {
-						DispatchQueue.main.async {
-							account.removeFeed(feed)
-							folder.addFeed(feed)
-						}
-						self.processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
-					} else {
-						DispatchQueue.main.async {
-							account.removeFeed(feed)
-							folder.addFeed(feed)
-							completion(.success(()))
-						}
-					}
-					
-				case .failure(let error):
-					DispatchQueue.main.async {
-						completion(.failure(error))
-					}
-				}
-				
-			}
-			
-		} else {
-			
-			DispatchQueue.main.async {
-				account.addFeed(feed)
-			}
-			
-			if editedName != nil {
-				processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
-			} else {
-				DispatchQueue.main.async {
-					completion(.success(()))
-				}
-			}
-			
-		}
-		
-	}
 	
-	func processRestoredFeedName(for account: Account, feed: Feed, editedName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		renameFeed(for: account, with: feed, to: editedName) { result in
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					feed.editedName = editedName
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					completion(.failure(error))
-				}
-			}
-			
-		}
-		
-	}
 	
 	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
@@ -923,7 +825,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		}
 	}
 
-	func decideBestFeedChoice(account: Account, url: String, choices: [GoogleReaderCompatibleSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
+	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [GoogleReaderCompatibleSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
 			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
@@ -933,7 +835,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 
 		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
 			if let bestSubscription = choices.filter({ bestSpecifier.urlString == $0.url }).first {
-				createFeed(for: account, url: bestSubscription.url, completion: completion)
+				createFeed(for: account, url: bestSubscription.url, name: name, container: container, completion: completion)
 			} else {
 				DispatchQueue.main.async {
 					completion(.failure(GoogleReaderCompatibleAccountDelegateError.invalidParameter))
@@ -947,44 +849,65 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		
 	}
 	
-	func createFeed( account: Account, subscription sub: GoogleReaderCompatibleSubscription, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed( account: Account, subscription sub: GoogleReaderCompatibleSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		DispatchQueue.main.async {
 			
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.subscriptionID = String(sub.subscriptionID)
-		
-			// Download the initial articles
-			self.caller.retrieveEntries(feedID: feed.feedID) { result in
-				
+			
+			account.addFeed(feed, to: container) { result in
 				switch result {
-				case .success(let (entries, page)):
-					
-					self.processEntries(account: account, entries: entries) {
-						self.refreshArticles(account, page: page) {
-							self.refreshArticleStatus(for: account) {
-								self.refreshMissingArticles(account) {
-									DispatchQueue.main.async {
-										completion(.success(feed))
-									}
-								}
+				case .success:
+					if let name = name {
+						account.renameFeed(feed, to: name) { result in
+							switch result {
+							case .success:
+								self.initialFeedDownload(account: account, feed: feed, completion: completion)
+							case .failure(let error):
+								completion(.failure(error))
 							}
 						}
+					} else {
+						self.initialFeedDownload(account: account, feed: feed, completion: completion)
 					}
-					
 				case .failure(let error):
-					os_log(.error, log: self.log, "Initial articles download failed: %@.", error.localizedDescription)
-					DispatchQueue.main.async {
-						completion(.success(feed))
-					}
+					completion(.failure(error))
 				}
-				
 			}
-
+			
 		}
 		
 	}
 
+	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
+		
+		// Download the initial articles
+		self.caller.retrieveEntries(feedID: feed.feedID) { result in
+			
+			switch result {
+			case .success(let (entries, page)):
+				
+				self.processEntries(account: account, entries: entries) {
+					self.refreshArticles(account, page: page) {
+						self.refreshArticleStatus(for: account) {
+							self.refreshMissingArticles(account) {
+								DispatchQueue.main.async {
+									completion(.success(feed))
+								}
+							}
+						}
+					}
+				}
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+ 
+	}
+	
 	func refreshArticles(_ account: Account, completion: @escaping (() -> Void)) {
 
 		os_log(.debug, log: log, "Refreshing articles...")
@@ -1206,6 +1129,64 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		if !missingUnstarredArticleIDs.isEmpty {
 			DispatchQueue.main.async {
 				account.ensureStatuses(missingUnstarredArticleIDs, .starred, false)
+			}
+		}
+		
+	}
+
+	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
+			caller.deleteTagging(taggingID: feedTaggingID) { result in
+				switch result {
+				case .success:
+					DispatchQueue.main.async {
+						self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+						folder.removeFeed(feed)
+						account.addFeedIfNotInAnyFolder(feed)
+						completion(.success(()))
+					}
+				case .failure(let error):
+					DispatchQueue.main.async {
+						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						completion(.failure(wrappedError))
+					}
+				}
+			}
+		} else {
+			if let account = container as? Account {
+				account.removeFeed(feed)
+			}
+			completion(.success(()))
+		}
+		
+	}
+
+	func deleteSubscription(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		// This error should never happen
+		guard let subscriptionID = feed.subscriptionID else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			return
+		}
+		
+		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+			switch result {
+			case .success:
+				DispatchQueue.main.async {
+					account.removeFeed(feed)
+					if let folders = account.folders {
+						for folder in folders {
+							folder.removeFeed(feed)
+						}
+					}
+					completion(.success(()))
+				}
+			case .failure(let error):
+				DispatchQueue.main.async {
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
+				}
 			}
 		}
 		
