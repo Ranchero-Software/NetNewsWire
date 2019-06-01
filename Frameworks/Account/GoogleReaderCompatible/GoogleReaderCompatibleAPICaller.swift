@@ -344,26 +344,6 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		transport.send(request: request, method: HTTPMethod.delete, completion: completion)
 	}
 	
-	func retrieveTaggings(completion: @escaping (Result<[GoogleReaderCompatibleTagging]?, Error>) -> Void) {
-		
-		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("taggings.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.taggings]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		
-		transport.send(request: request, resultType: [GoogleReaderCompatibleTagging].self) { result in
-			
-			switch result {
-			case .success(let (response, taggings)):
-				self.storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
-				completion(.success(taggings))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
-		
-	}
-	
 	func createTagging(feedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
 		
 		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("taggings.json")

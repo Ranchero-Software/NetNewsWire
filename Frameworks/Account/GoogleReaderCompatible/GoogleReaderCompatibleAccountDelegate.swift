@@ -97,17 +97,17 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 				}
 				
 				
-//				self.refreshArticles(account) {
+				self.refreshArticles(account) {
 //					self.refreshArticleStatus(for: account) {
 //						self.refreshMissingArticles(account) {
-//							self.refreshProgress.clear()
-//							DispatchQueue.main.async {
-//								completion(.success(()))
-//							}
+							self.refreshProgress.clear()
+							DispatchQueue.main.async {
+								completion(.success(()))
+							}
 //						}
 //					}
-//				}
-//
+				}
+
 			case .failure(let error):
 				DispatchQueue.main.async {
 					self.refreshProgress.clear()
@@ -585,35 +585,15 @@ private extension GoogleReaderCompatibleAccountDelegate {
 			case .success(let subscriptions):
 				
 				self.refreshProgress.completeTask()
-				self.caller.retrieveTaggings { result in
-					switch result {
-					case .success(let taggings):
-						
-						self.refreshProgress.completeTask()
-						self.caller.retrieveIcons { result in
-							switch result {
-							case .success(let icons):
 
-								BatchUpdate.shared.perform {
-									self.syncFeeds(account, subscriptions)
-									self.syncTaggings(account, taggings)
-									self.syncFavicons(account, icons)
-								}
-
-								self.refreshProgress.completeTask()
-								completion(.success(()))
-								
-							case .failure(let error):
-								completion(.failure(error))
-							}
-							
-						}
-						
-					case .failure(let error):
-						completion(.failure(error))
-					}
-					
+				BatchUpdate.shared.perform {
+					self.syncFeeds(account, subscriptions)
+					self.syncTaggings(account, subscriptions)
 				}
+
+				self.refreshProgress.completeTask()
+				completion(.success(()))
+		
 				
 			case .failure(let error):
 				completion(.failure(error))
@@ -663,6 +643,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 					feed.homePageURL = subscription.homePageURL
 				} else {
 					let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
+					feed.iconURL = subscription.iconURL
 					feed.subscriptionID = String(subscription.feedID)
 					account.addFeed(feed)
 				}
@@ -672,11 +653,11 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		
 	}
 
-	func syncTaggings(_ account: Account, _ taggings: [GoogleReaderCompatibleTagging]?) {
+	func syncTaggings(_ account: Account, _ subscriptions: [GoogleReaderCompatibleSubscription]?) {
 		
-		guard let taggings = taggings else { return }
+		guard let subscriptions = subscriptions else { return }
 
-		os_log(.debug, log: log, "Syncing taggings with %ld taggings.", taggings.count)
+		os_log(.debug, log: log, "Syncing taggings with %ld subscriptions.", subscriptions.count)
 		
 		// Set up some structures to make syncing easier
 		let folderDict: [String: Folder] = {
@@ -687,14 +668,21 @@ private extension GoogleReaderCompatibleAccountDelegate {
 			}
 		}()
 
-		let taggingsDict = taggings.reduce([String: [GoogleReaderCompatibleTagging]]()) { (dict, tagging) in
+		let taggingsDict = subscriptions.reduce([String: [GoogleReaderCompatibleSubscription]]()) { (dict, subscription) in
 			var taggedFeeds = dict
-			if var taggedFeed = taggedFeeds[tagging.name] {
-				taggedFeed.append(tagging)
-				taggedFeeds[tagging.name] = taggedFeed
-			} else {
-				taggedFeeds[tagging.name] = [tagging]
-			}
+			
+			// For each category that this feed belongs to, add the feed to that name in the dict
+			subscription.categories.forEach({ (category) in
+				let categoryName = category.categoryLabel.replacingOccurrences(of: "user/-/label/", with: "")
+				
+				if var taggedFeed = taggedFeeds[categoryName] {
+					taggedFeed.append(subscription)
+					taggedFeeds[categoryName] = taggedFeed
+				} else {
+					taggedFeeds[categoryName] = [subscription]
+				}
+			})
+			
 			return taggedFeeds
 		}
 
@@ -719,14 +707,14 @@ private extension GoogleReaderCompatibleAccountDelegate {
 			// Add any feeds not in the folder
 			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
 			
-			for tagging in groupedTaggings {
-				let taggingFeedID = String(tagging.feedID)
+			for subscription in groupedTaggings {
+				let taggingFeedID = String(subscription.feedID)
 				if !folderFeedIds.contains(taggingFeedID) {
 					guard let feed = account.idToFeedDictionary[taggingFeedID] else {
 						continue
 					}
 					DispatchQueue.main.sync {
-						saveFolderRelationship(for: feed, withFolderName: folderName, id: String(tagging.taggingID))
+						saveFolderRelationship(for: feed, withFolderName: folderName, id: String(subscription.feedID))
 						folder.addFeed(feed)
 					}
 				}
@@ -734,7 +722,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 			
 		}
 		
-		let taggedFeedIDs = Set(taggings.map { String($0.feedID) })
+		let taggedFeedIDs = Set(subscriptions.map { String($0.feedID) })
 		
 		// Remove all feeds from the account container that have a tag
 		DispatchQueue.main.sync {
@@ -746,28 +734,6 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		}
 
 	}
-	
-	func syncFavicons(_ account: Account, _ icons: [GoogleReaderCompatibleIcon]?) {
-		
-		guard let icons = icons else { return }
-		
-		os_log(.debug, log: log, "Syncing favicons with %ld icons.", icons.count)
-		
-		let iconDict = Dictionary(uniqueKeysWithValues: icons.map { ($0.host, $0.url) } )
-		
-		for feed in account.flattenedFeeds() {
-			for (key, value) in iconDict {
-				if feed.homePageURL?.contains(key) ?? false {
-					DispatchQueue.main.sync {
-						feed.faviconURL = value
-					}
-					break
-				}
-			}
-		}
-
-	}
-	
 	
 	func sendArticleStatuses(_ statuses: [SyncStatus],
 							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
