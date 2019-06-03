@@ -42,6 +42,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 	
 	func dismiss(_ viewController: UIViewController) {
 		viewController.dismiss(animated: true, completion: nil)
+		navigationController?.popViewController(animated: false)
 	}
 	
 }
