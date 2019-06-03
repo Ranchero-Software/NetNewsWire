@@ -612,7 +612,7 @@ private extension FeedbinAccountDelegate {
 
 	func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
 		
-		guard let subscriptions = subscriptions else { return }
+		let subscriptions = subscriptions ?? []
 		
 		os_log(.debug, log: log, "Syncing feeds with %ld subscriptions.", subscriptions.count)
 		
