@@ -27,11 +27,13 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		switch indexPath.row {
 		case 0:
 			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "AddLocalAccountNavigationViewController") as! UINavigationController
+			navController.modalPresentationStyle = .currentContext
 			let addViewController = navController.topViewController as! AddLocalAccountViewController
 			addViewController.delegate = self
 			present(navController, animated: true)
 		case 1:
 			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
+			navController.modalPresentationStyle = .currentContext
 			let addViewController = navController.topViewController as! FeedbinAccountViewController
 			addViewController.delegate = self
 			present(navController, animated: true)
