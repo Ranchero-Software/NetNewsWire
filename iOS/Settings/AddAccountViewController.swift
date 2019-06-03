@@ -10,7 +10,7 @@ import Account
 import UIKit
 
 protocol AddAccountDismissDelegate: UIViewController {
-	func dismiss(_ viewController: UIViewController)
+	func dismiss()
 }
 
 class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
@@ -40,8 +40,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		}
 	}
 	
-	func dismiss(_ viewController: UIViewController) {
-		viewController.dismiss(animated: true, completion: nil)
+	func dismiss() {
 		navigationController?.popViewController(animated: false)
 	}
 	
