@@ -60,13 +60,8 @@ extension Attachment: DatabaseObject {
 		return attachmentID
 	}
 
-	public func databaseDictionary() -> NSDictionary? {
-
-		let d = NSMutableDictionary()
-
-		d[DatabaseKey.attachmentID] = attachmentID
-		d[DatabaseKey.url] = url
-
+	public func databaseDictionary() -> DatabaseDictionary? {
+		var d: DatabaseDictionary = [DatabaseKey.attachmentID: attachmentID, DatabaseKey.url: url]
 		if let mimeType = mimeType {
 			d[DatabaseKey.mimeType] = mimeType
 		}
@@ -79,15 +74,14 @@ extension Attachment: DatabaseObject {
 		if let durationInSeconds = durationInSeconds {
 			d[DatabaseKey.durationInSeconds] = NSNumber(value: durationInSeconds)
 		}
-
-		return (d.copy() as! NSDictionary)
+		return d
 	}
 
 }
 
 extension Set where Element == Attachment {
 
-	func databaseDictionaries() -> [NSDictionary] {
+	func databaseDictionaries() -> [DatabaseDictionary] {
 
 		return self.compactMap { $0.databaseDictionary() }
 	}

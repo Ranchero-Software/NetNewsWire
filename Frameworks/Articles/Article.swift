@@ -56,20 +56,23 @@ public struct Article: Hashable {
 	}
 
 	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {
-		
 		return databaseIDWithString("\(feedID) \(uniqueID)")
+	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(articleID)
 	}
 }
 
 public extension Set where Element == Article {
 	
-	public func articleIDs() -> Set<String> {
-		
+	func articleIDs() -> Set<String> {
 		return Set<String>(map { $0.articleID })
 	}
 
-	public func unreadArticles() -> Set<Article> {
-
+	func unreadArticles() -> Set<Article> {
 		let articles = self.filter { !$0.status.read }
 		return Set(articles)
 	}
@@ -77,8 +80,7 @@ public extension Set where Element == Article {
 
 public extension Array where Element == Article {
 	
-	public func articleIDs() -> [String] {
-		
+	func articleIDs() -> [String] {
 		return map { $0.articleID }
 	}
 }

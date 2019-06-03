@@ -11,56 +11,48 @@ import Articles
 import RSParser
 
 public extension Notification.Name {
-
-	public static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
+	static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
 }
 
 public extension Feed {
 
-	public var account: Account? {
-		return AccountManager.shared.existingAccount(with: accountID)
+	static let FeedSettingUserInfoKey = "feedSetting"
+
+	struct FeedSettingKey {
+		public static let homePageURL = "homePageURL"
+		public static let iconURL = "iconURL"
+		public static let faviconURL = "faviconURL"
+		public static let name = "name"
+		public static let editedName = "editedName"
+		public static let authors = "authors"
+		public static let contentHash = "contentHash"
+		public static let conditionalGetInfo = "conditionalGetInfo"
 	}
-	
-	public func takeSettings(from parsedFeed: ParsedFeed) {
+}
 
-		var didChangeAtLeastOneSetting = false
+extension Feed {
 
-		if iconURL != parsedFeed.iconURL {
-			iconURL = parsedFeed.iconURL
-			didChangeAtLeastOneSetting = true
-		}
-		if faviconURL != parsedFeed.faviconURL {
-			faviconURL = parsedFeed.faviconURL
-			didChangeAtLeastOneSetting = true
-		}
-		if homePageURL != parsedFeed.homePageURL {
-			homePageURL = parsedFeed.homePageURL
-			didChangeAtLeastOneSetting = true
-		}
-		if name != parsedFeed.title {
-			name = parsedFeed.title
-			didChangeAtLeastOneSetting = true
-		}
+	func takeSettings(from parsedFeed: ParsedFeed) {
+		iconURL = parsedFeed.iconURL
+		faviconURL = parsedFeed.faviconURL
+		homePageURL = parsedFeed.homePageURL
+		name = parsedFeed.title
+		authors = Author.authorsWithParsedAuthors(parsedFeed.authors)
+	}
 
-		let updatedAuthors = Author.authorsWithParsedAuthors(parsedFeed.authors)
-		if authors != updatedAuthors {
-			authors = updatedAuthors
-			didChangeAtLeastOneSetting = true
-		}
-
-		if didChangeAtLeastOneSetting {
-			NotificationCenter.default.post(name: .FeedSettingDidChange, object: self)
-		}
+	func postFeedSettingDidChangeNotification(_ codingKey: FeedMetadata.CodingKeys) {
+		let userInfo = [Feed.FeedSettingUserInfoKey: codingKey.stringValue]
+		NotificationCenter.default.post(name: .FeedSettingDidChange, object: self, userInfo: userInfo)
 	}
 }
 
 public extension Article {
 
-	public var account: Account? {
+	var account: Account? {
 		return AccountManager.shared.existingAccount(with: accountID)
 	}
 	
-	public var feed: Feed? {
+	var feed: Feed? {
 		return account?.existingFeed(with: feedID)
 	}
 }

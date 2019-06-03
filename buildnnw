@@ -9,7 +9,7 @@ buildProductBundleName = "%s.app" % (buildProductName,)
 
 # WARNING: This will be deleted and replaced during build. It must
 # correspond to a directory you are willing to see deleted often.
-buildDir = os.path.expanduser("~/.build2")
+buildDir = os.path.expanduser("~/.build")
 
 # Remove previous build folder and re-create it 
 print("Removing existing build dir: %s" % buildDir)
@@ -44,7 +44,9 @@ if os.path.exists(currentVersionZipPath):
 print("Copying build product from \"%s\" to \"%s\"" % (currentVersionBuiltAppPath, currentVersionStagedAppPath))
 subprocess.call(["ditto", currentVersionBuiltAppPath,  currentVersionStagedAppPath])
 print("Zipping to \"%s\"" % currentVersionZipName)
-subprocess.call(["zip", "--symlinks", "-r", currentVersionZipPath, currentVersionBuiltAppPath])
+
+# Documented in "man ditto" as creating an archive "similarly to the Finder's Compress functionality"
+subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", "--keepParent", currentVersionBuiltAppPath, currentVersionZipPath])
 
 # Archive a permanent copy 
 archiveDir = os.path.expanduser("~/Archive/Releases")

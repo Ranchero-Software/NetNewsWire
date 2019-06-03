@@ -17,3 +17,7 @@ To update all submodules to their latest commits:
 
 	git submodule foreach git pull origin master
 
+If you messed around with those projects and want to reset them to where the current project thinks
+they should be, you can use the command:
+
+	git submodule foreach --recursive git reset --hard

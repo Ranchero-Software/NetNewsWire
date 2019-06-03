@@ -10,11 +10,12 @@ import Foundation
 import Articles
 import RSCore
 
-public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, Hashable {    
+public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCountProvider, Hashable {
 
 	public weak var account: Account?
-	public var children = [AnyObject]()
-
+	public var topLevelFeeds: Set<Feed> = Set<Feed>()
+	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
+	
 	public var name: String? {
 		didSet {
 			postDisplayNameDidChangeNotification()
@@ -41,6 +42,13 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		}
 	}
 
+	// MARK: - Renamable
+
+	public func rename(to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let account = account else { return }
+		account.renameFolder(self, to: name, completion: completion)
+	}
+	
 	// MARK: - Init
 
 	init(account: Account, name: String?) {
@@ -56,74 +64,6 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: self)
 	}
 
-	// MARK: - Disk Dictionary
-
-	private struct Key {
-		static let name = "name"
-		static let unreadCount = "unreadCount"
-		static let children = "children"
-	}
-
-	convenience init?(account: Account, dictionary: [String: Any]) {
-
-		let name = dictionary[Key.name] as? String
-		self.init(account: account, name: name)
-
-		if let childrenArray = dictionary[Key.children] as? [[String: Any]] {
-			self.children = Folder.objects(with: childrenArray, account: account)
-		}
-
-		if let savedUnreadCount = dictionary[Key.unreadCount] as? Int {
-			self.unreadCount = savedUnreadCount
-		}
-	}
-
-	var dictionary: [String: Any] {
-		
-		var d = [String: Any]()
-		guard let account = account else {
-			return d
-		}
-		
-		if let name = name {
-			d[Key.name] = name
-		}
-		if unreadCount > 0 {
-			d[Key.unreadCount] = unreadCount
-		}
-		
-		let childObjects = children.compactMap { (child) -> [String: Any]? in
-			
-			if let feed = child as? Feed {
-				return feed.dictionary
-			}
-			if let folder = child as? Folder, account.supportsSubFolders {
-				return folder.dictionary
-			}
-			assertionFailure("Expected a feed or a folder.");
-			return nil
-		}
-		
-		if !childObjects.isEmpty {
-			d[Key.children] = childObjects
-		}
-		
-		return d
-	}
-	
-	// MARK: Feeds
-	
-	func addFeed(_ feed: Feed) -> Bool {
-		
-		// Return true in the case where the feed is already a child.
-		
-		if !childrenContain(feed) {
-			children += [feed]
-			postChildrenDidChangeNotification()
-		}
-		return true
-	}
-    
 	// MARK: - Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -140,6 +80,31 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 		updateUnreadCount()
 	}
 
+	// MARK: Container
+
+	public func flattenedFeeds() -> Set<Feed> {
+		// Since sub-folders are not supported, it’s always the top-level feeds.
+		return topLevelFeeds
+	}
+
+	public func objectIsChild(_ object: AnyObject) -> Bool {
+		// Folders contain Feed objects only, at least for now.
+		guard let feed = object as? Feed else {
+			return false
+		}
+		return topLevelFeeds.contains(feed)
+	}
+
+	public func addFeed(_ feed: Feed) {
+		topLevelFeeds.insert(feed)
+		postChildrenDidChangeNotification()
+	}
+	
+	public func removeFeed(_ feed: Feed) {
+		topLevelFeeds.remove(feed)
+		postChildrenDidChangeNotification()
+	}
+	
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {
@@ -159,68 +124,19 @@ public final class Folder: DisplayNameProvider, Container, UnreadCountProvider, 
 private extension Folder {
 
 	func updateUnreadCount() {
-		
-		unreadCount = calculateUnreadCount(children)
+		var updatedUnreadCount = 0
+		for feed in topLevelFeeds {
+			updatedUnreadCount += feed.unreadCount
+		}
+		unreadCount = updatedUnreadCount
 	}
 
 	func childrenContain(_ feed: Feed) -> Bool {
-		
-		return children.contains(where: { (object) -> Bool in
-			if object === feed {
-				return true
-			}
-			if let oneFeed = object as? Feed {
-				if oneFeed.feedID == feed.feedID {
-					assertionFailure("Expected feeds to match by pointer equality rather than by feedID.")
-					return true
-				}
-			}
-			return false
-		})
+		return topLevelFeeds.contains(feed)
 	}
 }
 
-// MARK: - Disk
-
-private extension Folder {
-
-	static func objects(with diskObjects: [[String: Any]], account: Account) -> [AnyObject] {
-
-		if account.supportsSubFolders {
-			return account.objects(with: diskObjects)
-		}
-		else {
-			let flattenedFeeds = feedsOnly(with: diskObjects, account: account)
-			return Array(flattenedFeeds) as [AnyObject]
-		}
-	}
-
-	static func feedsOnly(with diskObjects: [[String: Any]], account: Account) -> Set<Feed> {
-
-		// This Folder doesn’t support subfolders, but they might exist on disk.
-		// (For instance: a user might manually edit the plist to add subfolders.)
-		// Create a flattened version of the feeds.
-
-		var feeds = Set<Feed>()
-
-		for diskObject in diskObjects {
-
-			if Feed.isFeedDictionary(diskObject) {
-				if let feed = Feed(accountID: account.accountID, dictionary: diskObject) {
-					feeds.insert(feed)
-				}
-			}
-			else { // Folder
-				if let subFolderChildren = diskObject[Key.children] as? [[String: Any]] {
-					let subFolderFeeds = feedsOnly(with: subFolderChildren, account: account)
-					feeds.formUnion(subFolderFeeds)
-				}
-			}
-		}
-
-		return feeds
-	}
-}
+// MARK: - OPMLRepresentable
 
 extension Folder: OPMLRepresentable {
 
@@ -232,11 +148,9 @@ extension Folder: OPMLRepresentable {
 
 		var hasAtLeastOneChild = false
 
-		for child in children  {
-			if let opmlObject = child as? OPMLRepresentable {
-				s += opmlObject.OPMLString(indentLevel: indentLevel + 1)
-				hasAtLeastOneChild = true
-			}
+		for feed in topLevelFeeds  {
+			s += feed.OPMLString(indentLevel: indentLevel + 1)
+			hasAtLeastOneChild = true
 		}
 
 		if !hasAtLeastOneChild {

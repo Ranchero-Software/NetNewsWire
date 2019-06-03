@@ -104,6 +104,7 @@
 				D511EEE520242DFB00712EC3 /* xcconfig */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		844BEE5C1F0AB3C8004AB7CD /* Products */ = {
 			isa = PBXGroup;
@@ -232,6 +233,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 844BEE511F0AB3C8004AB7CD;
@@ -328,7 +330,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				SWIFT_VERSION = 4.2;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -336,7 +339,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				SWIFT_VERSION = 4.2;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -348,6 +352,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Articles;
 				PRODUCT_NAME = Articles;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -359,6 +364,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Articles;
 				PRODUCT_NAME = Articles;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};

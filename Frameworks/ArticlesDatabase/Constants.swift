@@ -40,6 +40,7 @@ struct DatabaseKey {
 	static let dateModified = "dateModified"
 	static let authors = "authors"
 	static let attachments = "attachments"
+	static let searchRowID = "searchRowID"
 	
 	// ArticleStatus
 	static let read = "read"
@@ -61,6 +62,10 @@ struct DatabaseKey {
 	static let name = "name"
 	static let avatarURL = "avatarURL"
 	static let emailAddress = "emailAddress"
+
+	// Search
+	static let body = "body"
+	static let rowID = "rowid"
 }
 
 struct RelationshipName {

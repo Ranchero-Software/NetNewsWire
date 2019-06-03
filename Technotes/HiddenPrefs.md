@@ -14,3 +14,7 @@ The main window doesn’t display its title, partly because it looks cooler that
 The downside to this is that title-less windows do not allow the toolbar to show button names. (This is an AppKit thing.)
 
 To turn window titles on, set `KafasisTitleMode` to true.
+
+#### Hiding unread count in Dock
+
+Set `JustinMillerHideDockUnreadCount` to true.

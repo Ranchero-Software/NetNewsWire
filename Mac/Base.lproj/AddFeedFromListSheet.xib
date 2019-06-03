@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="AddFeedFromListWindowController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="addButton" destination="dtI-Hu-rFb" id="D11-zR-dWH"/>
+                <outlet property="addFeedTextField" destination="7If-aT-UTD" id="HMp-AC-iuV"/>
+                <outlet property="folderPopupButton" destination="6vt-DL-mVR" id="rm7-y9-tBF"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="7rH-S2-LF4"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Add Feed" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="480" height="217"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <view key="contentView" misplaced="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="217"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dNV-oD-vzR">
+                        <rect key="frame" x="18" y="63" width="50" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Folder:" id="Kwx-7B-CIu">
+                            <font key="font" metaFont="systemBold"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6vt-DL-mVR" userLabel="Folder Popup">
+                        <rect key="frame" x="72" y="58" width="391" height="25"/>
+                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tLJ-zY-CcZ" id="0cM-5q-Snl">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="OpL-Uf-woJ">
+                                <items>
+                                    <menuItem title="Item 1" state="on" id="tLJ-zY-CcZ"/>
+                                    <menuItem title="Item 2" id="APc-af-7Um"/>
+                                    <menuItem title="Item 3" id="j09-9b-bGs"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hXq-IS-19x">
+                        <rect key="frame" x="302" y="13" width="82" height="32"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Dop-HC-6Q9">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancel:" target="-2" id="tcT-tt-t99"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dtI-Hu-rFb">
+                        <rect key="frame" x="384" y="13" width="82" height="32"/>
+                        <buttonCell key="cell" type="push" title="Add" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6NK-Ql-drk">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="addFeed:" target="-2" id="Ilv-Un-eDp"/>
+                        </connections>
+                    </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7If-aT-UTD">
+                        <rect key="frame" x="18" y="98" width="82" height="17"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Add feed(s)?" id="CRI-fB-GoB">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="dNV-oD-vzR" firstAttribute="baseline" secondItem="6vt-DL-mVR" secondAttribute="baseline" id="14b-jN-4Y6"/>
+                    <constraint firstItem="hXq-IS-19x" firstAttribute="centerY" secondItem="dtI-Hu-rFb" secondAttribute="centerY" id="6FR-Hu-qkL"/>
+                    <constraint firstAttribute="bottom" secondItem="dtI-Hu-rFb" secondAttribute="bottom" constant="20" symbolic="YES" id="6ac-2K-RnD"/>
+                    <constraint firstItem="7If-aT-UTD" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="89w-ob-4GI"/>
+                    <constraint firstItem="dtI-Hu-rFb" firstAttribute="leading" secondItem="hXq-IS-19x" secondAttribute="trailing" constant="12" symbolic="YES" id="Djw-dV-x3S"/>
+                    <constraint firstItem="6vt-DL-mVR" firstAttribute="leading" secondItem="dNV-oD-vzR" secondAttribute="trailing" constant="8" symbolic="YES" id="E9B-wf-c92"/>
+                    <constraint firstItem="dtI-Hu-rFb" firstAttribute="width" secondItem="hXq-IS-19x" secondAttribute="width" id="J80-aG-OjE"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="7If-aT-UTD" secondAttribute="trailing" constant="20" symbolic="YES" id="Lhg-Q2-wh5"/>
+                    <constraint firstItem="dtI-Hu-rFb" firstAttribute="top" secondItem="6vt-DL-mVR" secondAttribute="bottom" constant="20" symbolic="YES" id="YTA-Ca-UMg"/>
+                    <constraint firstItem="dtI-Hu-rFb" firstAttribute="leading" secondItem="hXq-IS-19x" secondAttribute="trailing" constant="12" symbolic="YES" id="ahD-oU-iFu"/>
+                    <constraint firstItem="hXq-IS-19x" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="dIj-8p-5kK"/>
+                    <constraint firstAttribute="trailing" secondItem="dtI-Hu-rFb" secondAttribute="trailing" constant="20" symbolic="YES" id="kEo-af-SUe"/>
+                    <constraint firstAttribute="trailing" secondItem="6vt-DL-mVR" secondAttribute="trailing" constant="20" symbolic="YES" id="suO-dd-E0b"/>
+                    <constraint firstItem="7If-aT-UTD" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="uWY-iC-9nq"/>
+                    <constraint firstItem="dNV-oD-vzR" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="vee-7b-pH8"/>
+                    <constraint firstItem="6vt-DL-mVR" firstAttribute="top" secondItem="7If-aT-UTD" secondAttribute="bottom" constant="16" id="y91-8q-6dz"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="189" y="-767.5"/>
+        </window>
+    </objects>
+</document>

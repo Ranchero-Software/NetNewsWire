@@ -10,7 +10,7 @@ import Foundation
 
 public extension Notification.Name {
 
-	public static let UnreadCountDidChange = Notification.Name(rawValue: "UnreadCountDidChange")
+	static let UnreadCountDidChange = Notification.Name(rawValue: "UnreadCountDidChange")
 }
 
 public protocol UnreadCountProvider {
@@ -24,12 +24,12 @@ public protocol UnreadCountProvider {
 
 public extension UnreadCountProvider {
 	
-	public func postUnreadCountDidChangeNotification() {
+	func postUnreadCountDidChangeNotification() {
 		
 		NotificationCenter.default.post(name: .UnreadCountDidChange, object: self, userInfo: nil)
 	}
 
-	public func calculateUnreadCount<T: Collection>(_ children: T) -> Int {
+	func calculateUnreadCount<T: Collection>(_ children: T) -> Int {
 
 		let updatedUnreadCount = children.reduce(0) { (result, oneChild) -> Int in
 			if let oneUnreadCountProvider = oneChild as? UnreadCountProvider {

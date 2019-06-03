@@ -29,17 +29,8 @@ extension ArticleStatus: DatabaseObject {
 		return articleID
 	}
 
-	public func databaseDictionary() -> NSDictionary? {
-
-		let d = NSMutableDictionary()
-
-		d[DatabaseKey.articleID] = articleID
-		d[DatabaseKey.read] = read
-		d[DatabaseKey.starred] = starred
-		d[DatabaseKey.userDeleted] = userDeleted
-		d[DatabaseKey.dateArrived] = dateArrived
-
-		return (d.copy() as! NSDictionary)
+	public func databaseDictionary() -> DatabaseDictionary? {
+		return [DatabaseKey.articleID: articleID, DatabaseKey.read: read, DatabaseKey.starred: starred, DatabaseKey.userDeleted: userDeleted, DatabaseKey.dateArrived: dateArrived]
 	}
 }
 

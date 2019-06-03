@@ -10,18 +10,30 @@ import Foundation
 import RSCore
 import Articles
 
-let AccountsDidChangeNotification = "AccountsDidChangeNotification"
+public extension Notification.Name {
+	static let AccountsDidChange = Notification.Name(rawValue: "AccountsDidChange")
+}
 
-private let localAccountFolderName = "OnMyMac"
-private let localAccountIdentifier = "OnMyMac"
+private let defaultAccountFolderName = "OnMyMac"
+private let defaultAccountIdentifier = "OnMyMac"
 
 public final class AccountManager: UnreadCountProvider {
 
 	public static let shared = AccountManager()
-	public let localAccount: Account
+	public let defaultAccount: Account
+
 	private let accountsFolder = RSDataSubfolder(nil, "Accounts")!
     private var accountsDictionary = [String: Account]()
 
+	public var isUnreadCountsInitialized: Bool {
+		for account in activeAccounts {
+			if !account.isUnreadCountsInitialized {
+				return false
+			}
+		}
+		return true
+	}
+	
 	public var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -35,11 +47,19 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public var sortedAccounts: [Account] {
-		return accountsSortedByName()
+		return sortByName(accounts)
+	}
+
+	public var activeAccounts: [Account] {
+		return Array(accountsDictionary.values.filter { $0.isActive })
+	}
+
+	public var sortedActiveAccounts: [Account] {
+		return sortByName(activeAccounts)
 	}
 
 	public var refreshInProgress: Bool {
-		for account in accounts {
+		for account in activeAccounts {
 			if account.refreshInProgress {
 				return true
 			}
@@ -48,7 +68,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 	
 	public var combinedRefreshProgress: CombinedRefreshProgress {
-		let downloadProgressArray = accounts.map { $0.refreshProgress }
+		let downloadProgressArray = activeAccounts.map { $0.refreshProgress }
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
 	
@@ -65,14 +85,14 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 
-		let localAccountSettingsFile = accountFilePathWithFolder(localAccountFolder)
-		localAccount = Account(dataFolder: localAccountFolder, settingsFile: localAccountSettingsFile, type: .onMyMac, accountID: localAccountIdentifier)!
-        accountsDictionary[localAccount.accountID] = localAccount
+		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)!
+        accountsDictionary[defaultAccount.accountID] = defaultAccount
 
-		readNonLocalAccountsFromDisk()
+		readAccountsFromDisk()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
+
 		DispatchQueue.main.async {
 			self.updateUnreadCount()
 		}
@@ -80,19 +100,86 @@ public final class AccountManager: UnreadCountProvider {
 
 	// MARK: API
 	
+	public func createAccount(type: AccountType) -> Account {
+		
+		let accountID = UUID().uuidString
+		let accountFolder = (accountsFolder as NSString).appendingPathComponent("\(type.rawValue)_\(accountID)")
+
+		do {
+			try FileManager.default.createDirectory(atPath: accountFolder, withIntermediateDirectories: true, attributes: nil)
+		} catch {
+			assertionFailure("Could not create folder for \(accountID) account.")
+			abort()
+		}
+		
+		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)!
+		accountsDictionary[accountID] = account
+		
+		NotificationCenter.default.post(name: .AccountsDidChange, object: self)
+		
+		return account
+	}
+	
+	public func deleteAccount(_ account: Account) {
+		
+		guard !account.refreshInProgress else {
+			return
+		}
+		
+		accountsDictionary.removeValue(forKey: account.accountID)
+		account.isDeleted = true
+		
+		do {
+			try FileManager.default.removeItem(atPath: account.dataFolder)
+		}
+		catch {
+			assertionFailure("Could not create folder for OnMyMac account.")
+			abort()
+		}
+		
+		updateUnreadCount()
+		NotificationCenter.default.post(name: .AccountsDidChange, object: self)
+		
+	}
+	
 	public func existingAccount(with accountID: String) -> Account? {
 		
 		return accountsDictionary[accountID]
 	}
 	
-	public func refreshAll() {
+	public func refreshAll(errorHandler: @escaping (Error) -> Void) {
 
-		accounts.forEach { $0.refreshAll() }
+		activeAccounts.forEach { account in
+			account.refreshAll() { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					errorHandler(error)
+				}
+			}
+		}
+		
 	}
 
+	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
+		let group = DispatchGroup()
+		
+		activeAccounts.forEach {
+			group.enter()
+			$0.syncArticleStatus() {
+				group.leave()
+			}
+		}
+
+		group.notify(queue: DispatchQueue.main) {
+			completion?()
+		}
+	}
+	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
 
-		for account in accounts {
+		for account in activeAccounts {
 			if account.hasAtLeastOneFeed() {
 				return true
 			}
@@ -103,7 +190,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		
-		for account in accounts {
+		for account in activeAccounts {
 			if let _ = account.existingFeed(withURL: urlString) {
 				return true
 			}
@@ -113,7 +200,7 @@ public final class AccountManager: UnreadCountProvider {
 	
 	func updateUnreadCount() {
 
-		unreadCount = calculateUnreadCount(accounts)
+		unreadCount = calculateUnreadCount(activeAccounts)
 	}
 	
 	// MARK: Notifications
@@ -126,23 +213,26 @@ public final class AccountManager: UnreadCountProvider {
 		updateUnreadCount()
 	}
 	
+	@objc func accountStateDidChange(_ notification: Notification) {
+		updateUnreadCount()
+	}
+	
 	// MARK: Private
 
-	private func createAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
-
-		return nil
+	private func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
+		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
 	}
 
-	private func createAccount(_ filename: String) -> Account? {
+	private func loadAccount(_ filename: String) -> Account? {
 
 		let folderPath = (accountsFolder as NSString).appendingPathComponent(filename)
 		if let accountSpecifier = AccountSpecifier(folderPath: folderPath) {
-			return createAccount(accountSpecifier)
+			return loadAccount(accountSpecifier)
 		}
 		return nil
 	}
 
-	private func readNonLocalAccountsFromDisk() {
+	private func readAccountsFromDisk() {
 
 		var filenames: [String]?
 
@@ -156,25 +246,25 @@ public final class AccountManager: UnreadCountProvider {
 
 		filenames?.forEach { (oneFilename) in
 
-			guard oneFilename != localAccountFolderName else {
+			guard oneFilename != defaultAccountFolderName else {
 				return
 			}
-			if let oneAccount = createAccount(oneFilename) {
+			if let oneAccount = loadAccount(oneFilename) {
 				accountsDictionary[oneAccount.accountID] = oneAccount
 			}
 		}
 	}
 
-	private func accountsSortedByName() -> [Account] {
+	private func sortByName(_ accounts: [Account]) -> [Account] {
 		
 		// LocalAccount is first.
 		
 		return accounts.sorted { (account1, account2) -> Bool in
 
-			if account1 === localAccount {
+			if account1 === defaultAccount {
 				return true
 			}
-			if account2 === localAccount {
+			if account2 === defaultAccount {
 				return false
 			}
 			return (account1.nameForDisplay as NSString).localizedStandardCompare(account2.nameForDisplay) == .orderedAscending
@@ -191,7 +281,7 @@ private func accountFilePathWithFolder(_ folderPath: String) -> String {
 
 private struct AccountSpecifier {
 
-	let type: String
+	let type: AccountType
 	let identifier: String
 	let folderPath: String
 	let folderName: String
@@ -202,21 +292,25 @@ private struct AccountSpecifier {
 		if !FileManager.default.rs_fileIsFolder(folderPath) {
 			return nil
 		}
+		
 		let name = NSString(string: folderPath).lastPathComponent
 		if name.hasPrefix(".") {
 			return nil
 		}
-		let nameComponents = name.components(separatedBy: "-")
-		if nameComponents.count != 2 {
+		
+		let nameComponents = name.components(separatedBy: "_")
+		
+		guard nameComponents.count == 2, let rawType = Int(nameComponents[0]), let acctType = AccountType(rawValue: rawType) else {
 			return nil
 		}
 
 		self.folderPath = folderPath
 		self.folderName = name
-		self.type = nameComponents[0]
+		self.type = acctType
 		self.identifier = nameComponents[1]
 
 		self.dataFilePath = accountFilePathWithFolder(self.folderPath)
+		
 	}
 }
 

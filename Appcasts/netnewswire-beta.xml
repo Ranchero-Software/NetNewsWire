@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>NetNewsWire Betas</title>
+        <link>https://ranchero.com/downloads/netnewswire-beta.xml</link>
+        <description>Most recent NetNewsWire changes with links to updates.</description>
+        <language>en</language>
+
+<item>
+          <title>NetNewsWire 5.0a1</title>
+            <description><![CDATA[
+							<p>NetNewsWire 5.0 has reached alpha stage! This means it has no known bugs. It surely <i>does</i> have bugs, though. Now it’s time for testing. (And writing the Help book. And making the website better.)</p>            
+							<p>Fixed a crashing bug with parsing a response from Feedbin. (Totally our fault, not Feedbin’s fault.)</p>
+							<p>Show avatars from Micro.blog feeds with multiple authors (such as your personal timeline feed).</p>
+							<p>Made OPML import to the On My Mac account way faster.</p>
+							<p>The Today smart feed now updates when the day changes.</p>
+							<p>You can now drag and drop in the sidebar between accounts.</p>
+							<p>Made the default file name for OPML exports “Subscriptions-[accountName].opml”</p>
+							<p>Add explanation text to Account preferences for the Name field. (It’s just a display name and doesn’t affect authentication.)</p>
+							<p>Fixed several bugs with Feedbin syncing — it’s now more reliable. (We know of no remaining sync bugs, though of course there might be some.)</p>
+							<p>Added a placeholder web page for the Help book.</p>
+							<p>New app icon! But it might take a while for your Mac to notice and put in the Dock. (I wish we could speed that up, but it’s out of our control.)</p>
+ 	   					]]></description>
+            <pubDate>Fri, 31 May 2019 20:30:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0a1.zip" sparkle:version="2185" sparkle:shortVersionString="5.0a1" length="4686634" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+
+<item>
+          <title>NetNewsWire 5.0d17</title>
+            <description><![CDATA[
+							<p>NetNewsWire 5.0 is now feature-complete. It has bugs, though, so we can’t call it alpha just yet. Getting close!</p>            
+            	<p>NetNewsWire now requires macOS 10.14.4 or greater. It no longer includes the Swift libraries, which makes for a much smaller download, which means it takes up less space on disk.</p>
+            	<p>You can now sync using FeedBin. See Preferences > Accounts to add a FeedBin account. Note: the initial import from FeedBin is likely to take a while, but keeping up should be quite fast.</p>
+            	<p>You can create additional “On My Mac” accounts, via Preferences > Accounts.</p>
+            	<p>Accounts can be made inactive.</p>
+            	<p>Sidebar: fixed a bug updating unread counts in the sidebar when you have duplicates of a feed.</p>
+            	<p>Timeline: scrolling has been made faster.</p>
+            	<p>Timeline: avatars are now on the left instead of on the right. There’s a default globe avatar for when no feed icon or favicon can be found. The default avatar is tinted. Each feed gets its own tint.</p>
+            	<p>Detail view: worked around a new WebKit bug that affected the detail view. It would flash empty between articles sometimes. Now it won’t.</p>
+            	<p>Help menu: a new command takes you to the signup page for the Slack Group.</p>
+            	<p>Help menu: removed command to donate to App Camp for Girls, since the donation page has been removed. Once we know how we can continue to support their mission, we’ll do so.</p>
+            	<p>OPML Export: asks for the account first.</p>
+ 	   					]]></description>
+            <pubDate>Sat, 25 May 2019 11:00:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d17.zip" sparkle:version="2114" sparkle:shortVersionString="5.0d17" length="4043861" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
+          <title>NetNewsWire 5.0d16</title>
+            <description><![CDATA[
+            	<p>Searching now works.</p>
+ 	   					]]></description>
+            <pubDate>Mon, 25 Feb 2019 21:50:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d16.zip" sparkle:version="1592" sparkle:shortVersionString="5.0d16" length="7236690" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
+          <title>NetNewsWire 5.0d15</title>
+            <description><![CDATA[
+            	<p>Sidebar: the drag images are no longer terrible. They’re good — they’re what you expect.</p>
+ 	   					]]></description>
+            <pubDate>Sat, 09 Feb 2019 21:25:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d15.zip" sparkle:version="1517" sparkle:shortVersionString="5.0d15" length="7208509" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
+          <title>NetNewsWire 5.0d14</title>
+            <description><![CDATA[
+            	<p>Bogus future dates are now discarded when updating the database.</p>
+							<p>Fixed a bug where updating changed dates in articles didn’t work.</p>
+							<p>Fixed bug fetching unread count for the Today feed — it was skipping items without a pubDate but that were logically part of Today because they arrived today.</p>
+							<p>Timeline: do ever-so-slightly less work in the cells, which should result in an imperceptible performance increase with scrolling.</p>
+							<p>Sidebar: make rows a little taller. Adds a little breathing room.</p>
+ 	   					]]></description>
+            <pubDate>Fri, 08 Feb 2019 22:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d14.zip" sparkle:version="1514" sparkle:shortVersionString="5.0d14" length="7209999" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
+          <title>NetNewsWire 5.0d13</title>
+            <description><![CDATA[
+            	<p>Sidebar: you can now drag feeds into and out of folders. It’s rough still — the drag images are a mess, and spring-loaded folders don’t close. (Those bugs have been filed and will get fixed.)</p>
+							<p>Fixed a bug where a feed’s title could get set to “Untitled” in the database — it should just be nil or empty.</p>
+ 	   					]]></description>
+            <pubDate>Wed, 06 Feb 2019 22:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d13.zip" sparkle:version="1501" sparkle:shortVersionString="5.0d13" length="7212955" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
+          <title>NetNewsWire 5.0d12</title>
+            <description><![CDATA[
+            	<p>Timeline: refresh smart feeds when new articles are downloaded.</p>
+            	<p>Sidebar: re-sort after renaming a feed or folder.</p>
+           	  <p>Fixed a bug importing OPML where the OPML file doesn’t have title attributes.</p>
+             	<p>Simplified user-agent to “NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)”.</p>
+ 	   						]]></description>
+            <pubDate>Sun, 03 Feb 2019 12:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d12.zip" sparkle:version="1489" sparkle:shortVersionString="5.0d12" length="7207751" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
+          <title>NetNewsWire 5.0d11</title>
+            <description><![CDATA[
+            	<p>Probably fixed a crashing bug (with three reports) that could happen when using a single-letter keyboard shortcut.</p>
+            	<p>Sidebar: removed gear menu — the trend these days is a clean look at the bottom of the window. (See Mail and other apps.)</p>
+            	<p>Sidebar: during refresh, animate in the refresh-status view. Animate out when done. (A la Mail.)</p>
+            	<p>Fixed bug where the ATP feed would have empty articles. The fix was for the parser to ignore empty content:encoded elements. (This bug won’t automatically fix any already-downloaded articles in that feed. You’ll see the fix in action the next time the feed updates.)</p>
+ 	   						]]></description>
+            <pubDate>Fri, 01 Feb 2019 22:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d11.zip" sparkle:version="1478" sparkle:shortVersionString="5.0d11" length="7206003" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
+          <title>NetNewsWire 5.0d10</title>
+            <description><![CDATA[
+            	<p>Restored 10.13 compatibility. (Figured out how to get it building for 10.13 again.)</p>
+            	<p>Timeline: tightened it up. Increased information density. Uses small margins, smaller avatar, and smaller title font size.</p>
+            	<p>Notarized the app, as Apple wants us to do.</p>
+	   						]]></description>
+            <pubDate>Wed, 30 Jan 2019 22:05:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d10.zip" sparkle:version="1474" sparkle:shortVersionString="5.0d10" length="7205444" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
+          <title>NetNewsWire 5.0d9</title>
+            <description><![CDATA[
+            	<p>Refresh automatically based on your settings in the General preferences pane.</p>
+            	<p>Crashing bug: possible fix for the <a href="https://github.com/brentsimmons/NetNewsWire/issues/522">SidebarViewController.viewDidLoad() crash</a>. (I couldn’t reproduce it. We’ll just have to watch and see if the crashes stop.)</p>
+							<p>Add feed window: fixed bug where Add button would be disabled sometimes.</p>
+							<p>Sidebar: fixed bug where empty folders would be lost between runs.</p>
+							<p>Crash reporter: close the window after sending the crash log.</p>
+    						]]></description>
+            <pubDate>Mon, 28 Jan 2019 20:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d9.zip" sparkle:version="1464" sparkle:shortVersionString="5.0d9" length="7764853" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
+          <title>NetNewsWire 5.0d8</title>
+            <description><![CDATA[
+							<p><b>Important compatibility note!</b> NetNewsWire now requires macOS 10.14 (Mojave). Don’t update if you’re running an older macOS.</p>
+							<p>Sidebar: you can drag a feed from an external app to subscribe to that feed.</p>
+							<p>Crash log catcher opens a window on next launch after a crash. It offers to send the crash log to us. (Crash logs are kept confidential.)</p>
+							<p>Wrote a privacy policy because it was needed for crash log collection. <a href="https://ranchero.com/netnewswire/privacypolicy">ranchero.com/netnewswire/privacypolicy</a></p>
+							<p>Removed the Feed Directory. The current plan is to have it return some time after 5.0 ships.</p>
+							<p>Preferences: you can set the default aggregator now.</p>
+							<p>Preferences: added Advanced pane. Right now it has just one pref — you can have crash logs sent automatically.</p>
+							<p>Added credits to About window.</p>
+							<p>Fixed bug where contextual menu for article might not have Share menu filled in properly.</p>
+							<p>Fixed bug where text in the sidebar was too gray most of the time.</p>
+							<p>Made the Star toolbar button static, because any other solution was confusing. (Show the current state? Or show the state it would have if you clicked? Both answers are good, and they’re mutually exclusive.)</p>
+							<p>Disabled inline editing in the sidebar. You can still edit feed and folder names, just not by clicking in the sidebar in just the right way. (It’s a relatively rare thing to want to do, so having text sometimes appear as editable was more confusing than useful.)</p>
+							<p>Default feeds: added Xcoders.org feed.</p>
+							<p>Enabled the hardened runtime.</p>
+    						]]></description>
+            <pubDate>Sun, 27 Jan 2019 10:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d8.zip" sparkle:version="1453" sparkle:shortVersionString="5.0d8" length="7759445" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
+          <title>NetNewsWire 5.0d7</title>
+            <description><![CDATA[
+            
+            <p>Multiple significant performance improvements that will be especially noticeable with high feed counts.</p>
+            <p>Sidebar: Delete command now in contextual menu and in gear menu.</p>
+            <p>Sidebar: scrolls to show feed or folder, when needed, when going to the next unread article.</p>
+            <p>Timeline: contextual menu command to select feed in sidebar.</p>
+            <p>Detail view: fixed — at least mostly — an issue where the detail view’s web view might flash white while in dark mode.</p>
+            <p>Detail view: give URL status bar a dark background color when in Dark Mode.</p>
+            <p>Sharing: sort articles by publication date on sharing.<p>
+            <p>Sharing: set email subject when sharing to Mail.</p>
+            <p>Window title now reflects sidebar selection. (Which will only be noticeable in the Window menu, but will be meaningful  when we add support for tabs.)</p>
+            <p>Dock icon menu now includes Refresh command.</p>
+            <p>Subscriptions are now stored as an OPML file instead of a plist, which means you don’t even have to export to OPML to get an OPML version of your feeds. Feed metadata is now stored in Settings.odb.</p>
+            <p>Toolbar: Mark As Read toggles back and forth between states.</p>
+            <p>Feed Directory: Add to Feeds button now works, though we want to revisit the UI.</p>
+    						]]></description>
+            <pubDate>Wed, 26 Sep 2018 22:10:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d7.zip" sparkle:version="1357" sparkle:shortVersionString="5.0d7" length="7799513" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
+          <title>NetNewsWire 5.0d6</title>
+            <description><![CDATA[
+            
+            <p>Supports Mojave dark mode in the detail view, which should complete dark mode support.</p>
+            <p>Sidebar: feed and folder names can be edited inline.</p>
+
+    						]]></description>
+            <pubDate>Mon, 10 Sep 2018 13:15:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d6.zip" sparkle:version="1272" sparkle:shortVersionString="5.0d6" length="7805208" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
+          <title>NetNewsWire 5.0d5</title>
+            <description><![CDATA[
+            
+            <p>Major bandwidth-use bug fixed — sometimes it would request the home page of a site multiple times all at once. Now it just does one request.</p>
+            <p>Sharing: lightboxed the share sheet.</p>
+            <p>Sharing: added subject to Mail message.</p>
+
+    						]]></description>
+            <pubDate>Sun, 09 Sep 2018 12:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d5.zip" sparkle:version="1267" sparkle:shortVersionString="5.0d5" length="7742716" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
+          <title>NetNewsWire 5.0d3</title>
+            <description><![CDATA[
+            
+            <p>Fixed appearance of timeline cell when highlighted (in High Sierra) — text now turns white, as expected.</p>
+            <p>Reduced size of download by several MB by not including Swift libraries in Safari extension.</p>
+            <p>Made the Safari extension preserve https scheme, for better security.</p>
+            <p>Added Share submenu to timeline contextual menu.</p>
+            <p>Detail view doesn’t make date a link when it would be to the same URL as the title link.</p>
+            
+    						]]></description>
+            <pubDate>Tue, 04 Sep 2018 21:00:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d3.zip" sparkle:version="1241" sparkle:shortVersionString="5.0d3" length="7730920" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
+          <title>NetNewsWire 5.0d2</title>
+            <description><![CDATA[
+            
+            <p>Fixed a performance issue when fetching articles — it’s much faster now. You’ll especially notice when you select something with hundreds of articles.</p>
+            <p>Handle bad home page URLs in a feed. (AppleInsider, for instance.)</p>
+            <p>Allow .xml as an extension when importing an OPML file.</p>
+            <p>Hide cursor when paging via the space bar.</p>
+    						]]></description>
+            <pubDate>Sun, 02 Sep 2018 12:30:00 -0800</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0d2.zip" sparkle:version="1225" sparkle:shortVersionString="5.0d2" length="11322264" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.13</sparkle:minimumSystemVersion>
+        </item>
+
+	
+
+    </channel>
+</rss>

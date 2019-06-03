@@ -48,12 +48,9 @@ extension Author: DatabaseObject {
 		return authorID
 	}
 
-	public func databaseDictionary() -> NSDictionary? {
+	public func databaseDictionary() -> DatabaseDictionary? {
 
-		let d = NSMutableDictionary()
-
-		d[DatabaseKey.authorID] = authorID
-
+		var d: DatabaseDictionary = [DatabaseKey.authorID: authorID]
 		if let name = name {
 			d[DatabaseKey.name] = name
 		}
@@ -66,8 +63,7 @@ extension Author: DatabaseObject {
 		if let emailAddress = emailAddress {
 			d[DatabaseKey.emailAddress] = emailAddress
 		}
-
-		return (d.copy() as! NSDictionary)
+		return d
 	}
 }
 

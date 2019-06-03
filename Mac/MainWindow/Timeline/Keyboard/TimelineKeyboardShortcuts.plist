@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>key</key>
+		<string>[uparrow]</string>
+		<key>action</key>
+		<string>selectNextUp:</string>
+	</dict>
+	<dict>
+		<key>key</key>
+		<string>[downarrow]</string>
+		<key>action</key>
+		<string>selectNextDown:</string>
+	</dict>
+	<dict>
+		<key>key</key>
+		<string>[leftarrow]</string>
+		<key>action</key>
+		<string>navigateToSidebar:</string>
+	</dict>
+	<dict>
+		<key>key</key>
+		<string>[rightarrow]</string>
+		<key>action</key>
+		<string>navigateToDetail:</string>
+	</dict>
+</array>
+</plist>
