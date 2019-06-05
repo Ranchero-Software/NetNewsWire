@@ -298,7 +298,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
-		self.delegate.refreshAll(for: self, completion: completion)
+		delegate.sendArticleStatus(for: self) { [unowned self] in
+			self.delegate.refreshAll(for: self, completion: completion)
+		}
 	}
 
 	public func syncArticleStatus(completion: (() -> Void)? = nil) {
