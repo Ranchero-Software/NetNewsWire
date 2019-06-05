@@ -647,6 +647,8 @@ private extension FeedbinAccountDelegate {
 			DispatchQueue.main.sync {
 				if let feed = account.idToFeedDictionary[subFeedId] {
 					feed.name = subscription.name
+					// If the name has been changed on the server remove the locally edited name
+					feed.editedName = nil
 					feed.homePageURL = subscription.homePageURL
 					feed.subscriptionID = String(subscription.subscriptionID)
 				} else {
