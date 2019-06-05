@@ -526,14 +526,23 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 				else {
 					return
 		}
-		
-		navState.beginUpdates()
 
-		runCommand(deleteCommand)
-		navState.rebuildShadowTable()
-		tableView.deleteRows(at: [indexPath], with: .automatic)
+		var deleteIndexPaths = [indexPath]
+		if navState.isExpanded(deleteNode) {
+			for i in 0..<deleteNode.numberOfChildNodes {
+				deleteIndexPaths.append(IndexPath(row: indexPath.row + 1 + i, section: indexPath.section))
+			}
+		}
 		
-		navState.endUpdates()
+		pushUndoableCommand(deleteCommand)
+
+		navState.beginUpdates()
+		deleteCommand.perform {
+			self.navState.treeController.rebuild()
+			self.navState.rebuildShadowTable()
+			self.tableView.deleteRows(at: deleteIndexPaths, with: .automatic)
+			self.navState.endUpdates()
+		}
 		
 	}
 	
