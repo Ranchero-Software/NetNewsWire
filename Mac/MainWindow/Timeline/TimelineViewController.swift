@@ -151,6 +151,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 				didRegisterForNotifications = true
 		}
+		
+		
 	}
 	
 	override func viewDidAppear() {
@@ -209,6 +211,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 		return selectedArticles.canMarkAllAsRead()
 	}
 
+	func updateToggleReadMenuItem(_ menuItem: NSMenuItem) {
+		if canMarkSelectedArticlesAsRead() {
+			menuItem.title = "Mark As Read"
+		} else {
+			menuItem.title = "Mark As Unread"
+		}
+	}
+	
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {

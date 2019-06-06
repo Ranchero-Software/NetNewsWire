@@ -16,7 +16,7 @@ import RSCore
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UnreadCountProvider {
+class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSUserInterfaceValidations, UnreadCountProvider {
 
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
@@ -42,7 +42,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
-	
+	@IBOutlet var toggleReadMenuItem: NSMenuItem!
+	@IBOutlet var articleMenu: NSMenu!
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -150,6 +152,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
+		articleMenu.delegate = self
+		
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
@@ -272,6 +276,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		mainWindowController!.showWindow(self)
 	}
+
+	// MARK: NSMenuDelegate
+	
+	func menuNeedsUpdate(_ menu: NSMenu) {
+		mainWindowController?.updateToggleReadMenuItem(toggleReadMenuItem)
+	}
+	
 
 	// MARK: NSUserInterfaceValidations
 

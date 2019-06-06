@@ -137,6 +137,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Paste and Match Style" keyEquivalent="v" id="WeT-3V-zwk">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
                                             <connections>
                                                 <action selector="pasteAsPlainText:" target="Ady-hI-5gd" id="cEh-KX-wJQ"/>
                                             </connections>
@@ -413,7 +414,7 @@
                                     <items>
                                         <menuItem title="Mark as Read" keyEquivalent="U" id="Fc9-c7-2AY">
                                             <connections>
-                                                <action selector="markRead:" target="Ady-hI-5gd" id="RQv-jl-2Nv"/>
+                                                <action selector="toggleRead:" target="Ady-hI-5gd" id="pgK-wp-EDV"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Mark All as Read" keyEquivalent="k" id="HdN-Ks-cwh">
@@ -499,7 +500,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
-                                        <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
+                                        <menuItem title="Bring All to Front" keyEquivalent="" id="LE2-aR-0XJ">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="arrangeInFront:" target="Ady-hI-5gd" id="DRN-fu-gQh"/>
@@ -573,10 +574,12 @@
                 </application>
                 <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="NetNewsWire" customModuleProvider="target">
                     <connections>
+                        <outlet property="ArticleMenu" destination="57V-gv-vEw" id="jAS-Lg-zPY"/>
                         <outlet property="checkForUpdatesMenuItem" destination="1nF-7O-aKU" id="JmT-jc-DJ8"/>
                         <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
                         <outlet property="sortByNewestArticleOnTopMenuItem" destination="TNS-TV-n0U" id="gix-Nd-9k4"/>
                         <outlet property="sortByOldestArticleOnTopMenuItem" destination="iii-kP-qoF" id="fTe-Tf-EWG"/>
+                        <outlet property="toggleReadMenuItem" destination="Fc9-c7-2AY" id="7fz-iQ-31n"/>
                     </connections>
                 </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

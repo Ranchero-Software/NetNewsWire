@@ -109,6 +109,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		return sidebarViewController?.selectedObjects
 	}
+	
+	func updateToggleReadMenuItem(_ menuItem: NSMenuItem) {
+		currentTimelineViewController?.updateToggleReadMenuItem(menuItem)
+	}
+
 
 	// MARK: - Notifications
 
