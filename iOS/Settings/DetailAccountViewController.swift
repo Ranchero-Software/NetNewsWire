@@ -37,15 +37,26 @@ class DetailAccountViewController: UITableViewController {
 extension DetailAccountViewController {
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
+		
+		guard let account = account else { return 0 }
+		
 		if account == AccountManager.shared.defaultAccount {
 			return 1
+		} else if account.type == .onMyMac {
+			return 2
 		} else {
 			return super.numberOfSections(in: tableView)
 		}
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = super.tableView(tableView, cellForRowAt: indexPath)
+		
+		let cell: UITableViewCell
+		if indexPath.section == 1, let account = account, account.type == .onMyMac {
+			cell = super.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 2))
+		} else {
+			cell = super.tableView(tableView, cellForRowAt: indexPath)
+		}
 		
 		let bgView = UIView()
 		bgView.backgroundColor = AppAssets.selectionBackgroundColor
@@ -54,7 +65,7 @@ extension DetailAccountViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-		if indexPath.section == 1 {
+		if indexPath.section > 0 {
 			return true
 		}
 		
@@ -62,8 +73,19 @@ extension DetailAccountViewController {
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		if indexPath.section == 1 {
-			deleteAccount()
+		if let account = account, account.type == .onMyMac {
+			if indexPath.section == 1 {
+				deleteAccount()
+			}
+		} else {
+			switch indexPath.section {
+			case 1:
+				credentials()
+			case 2:
+				deleteAccount()
+			default:
+				break
+			}
 		}
 		
 		tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
@@ -72,6 +94,19 @@ extension DetailAccountViewController {
 }
 
 private extension DetailAccountViewController {
+	
+	func credentials() {
+		guard let account = account else { return }
+		switch account.type {
+		case .feedbin:
+			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
+			let addViewController = navController.topViewController as! FeedbinAccountViewController
+			addViewController.account = account
+			present(navController, animated: true)
+		default:
+			break
+		}
+	}
 	
 	func deleteAccount() {
 		let title = NSLocalizedString("Delete Account", comment: "Delete Account")
