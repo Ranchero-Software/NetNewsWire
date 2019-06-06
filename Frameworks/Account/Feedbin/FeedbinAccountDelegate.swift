@@ -269,16 +269,44 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelFeeds {
-			group.enter()
-			removeFeed(for: account, with: feed, from: folder) { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+			
+			if feed.folderRelationship?.count ?? 0 > 1 {
+				
+				if let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
+					group.enter()
+					caller.deleteTagging(taggingID: feedTaggingID) { result in
+						group.leave()
+						switch result {
+						case .success:
+							DispatchQueue.main.async {
+								self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+							}
+						case .failure(let error):
+							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+						}
+					}
 				}
+				
+			} else {
+				
+				if let subscriptionID = feed.subscriptionID {
+					group.enter()
+					caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+						group.leave()
+						switch result {
+						case .success:
+							DispatchQueue.main.async {
+								account.clearFeedMetadata(feed)
+							}
+						case .failure(let error):
+							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+						}
+					}
+					
+				}
+				
 			}
+			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
@@ -347,7 +375,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		if feed.folderRelationship?.count ?? 0 > 1 {
 			deleteTagging(for: account, with: feed, from: container, completion: completion)
 		} else {
-			account.clearFeedMetadata(feed)
 			deleteSubscription(for: account, with: feed, from: container, completion: completion)
 		}
 	}
@@ -399,12 +426,23 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
+			account.addFeed(existingFeed, to: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		} else {
+			createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
 			}
 		}
 		
@@ -412,22 +450,27 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		account.addFolder(folder)
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelFeeds {
 			
+			folder.topLevelFeeds.remove(feed)
+			
 			group.enter()
-			addFeed(for: account, with: feed, to: folder) { result in
-				if account.topLevelFeeds.contains(feed) {
-					account.removeFeed(feed)
-				}
+			restoreFeed(for: account, feed: feed, container: folder) { result in
 				group.leave()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+				}
 			}
 			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
+			account.addFolder(folder)
 			completion(.success(()))
 		}
 		
@@ -1158,6 +1201,7 @@ private extension FeedbinAccountDelegate {
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
+					account.clearFeedMetadata(feed)
 					account.removeFeed(feed)
 					if let folders = account.folders {
 						for folder in folders {
