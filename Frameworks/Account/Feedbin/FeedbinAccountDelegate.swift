@@ -88,11 +88,13 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .success():
 				
 				self.refreshArticles(account) {
-					self.refreshArticleStatus(for: account) {
-						self.refreshMissingArticles(account) {
-							self.refreshProgress.clear()
-							DispatchQueue.main.async {
-								completion(.success(()))
+					self.sendArticleStatus(for: account) {
+						self.refreshArticleStatus(for: account) {
+							self.refreshMissingArticles(account) {
+								self.refreshProgress.clear()
+								DispatchQueue.main.async {
+									completion(.success(()))
+								}
 							}
 						}
 					}
@@ -690,7 +692,10 @@ private extension FeedbinAccountDelegate {
 			DispatchQueue.main.sync {
 				if let feed = account.idToFeedDictionary[subFeedId] {
 					feed.name = subscription.name
+					// If the name has been changed on the server remove the locally edited name
+					feed.editedName = nil
 					feed.homePageURL = subscription.homePageURL
+					feed.subscriptionID = String(subscription.subscriptionID)
 				} else {
 					let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
 					feed.subscriptionID = String(subscription.subscriptionID)
