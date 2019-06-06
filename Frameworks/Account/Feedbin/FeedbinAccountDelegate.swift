@@ -88,11 +88,13 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .success():
 				
 				self.refreshArticles(account) {
-					self.refreshArticleStatus(for: account) {
-						self.refreshMissingArticles(account) {
-							self.refreshProgress.clear()
-							DispatchQueue.main.async {
-								completion(.success(()))
+					self.sendArticleStatus(for: account) {
+						self.refreshArticleStatus(for: account) {
+							self.refreshMissingArticles(account) {
+								self.refreshProgress.clear()
+								DispatchQueue.main.async {
+									completion(.success(()))
+								}
 							}
 						}
 					}
