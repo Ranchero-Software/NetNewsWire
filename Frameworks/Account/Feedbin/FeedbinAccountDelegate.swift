@@ -648,6 +648,7 @@ private extension FeedbinAccountDelegate {
 				if let feed = account.idToFeedDictionary[subFeedId] {
 					feed.name = subscription.name
 					feed.homePageURL = subscription.homePageURL
+					feed.subscriptionID = String(subscription.subscriptionID)
 				} else {
 					let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
 					feed.subscriptionID = String(subscription.subscriptionID)
