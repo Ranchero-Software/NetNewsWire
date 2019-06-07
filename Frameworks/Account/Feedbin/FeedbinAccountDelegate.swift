@@ -243,10 +243,16 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
+		guard folder.hasAtLeastOneFeed() else {
+			folder.name = name
+			return
+		}
+		
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
+					self.renameFolderRelationship(for: account, fromName: folder.name ?? "", toName: name)
 					folder.name = name
 					completion(.success(()))
 				}
@@ -838,6 +844,17 @@ private extension FeedbinAccountDelegate {
 			completion()
 		}
 		
+	}
+	
+	func renameFolderRelationship(for account: Account, fromName: String, toName: String) {
+		for feed in account.flattenedFeeds() {
+			if var folderRelationship = feed.folderRelationship {
+				let relationship = folderRelationship[fromName]
+				folderRelationship[fromName] = nil
+				folderRelationship[toName] = relationship
+				feed.folderRelationship = folderRelationship
+			}
+		}
 	}
 	
 	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
