@@ -7,6 +7,22 @@
         <language>en</language>
 
 <item>
+          <title>NetNewsWire 5.0a2</title>
+            <description><![CDATA[
+							<p>Escape HTML in the title in the article view — if there’s HTML in the title, the tags should actually be displayed.</p>
+							<p>The Mark as Read command in the Article menu now turns into Mark as Unread at the appropriate times.</p>
+							<p>Feedbin syncing: send locally changed statuses before downloading statuses from the server.</p>
+						  <p>Feedbin syncing: fix bug renaming a folder that has no feeds.</p>
+							<p>Feedbin syncing: fixed a bunch of accuracy and reliability issues, and a crashing bug.</p>
+							<p>Fixed issue where local account feed finder could lock UI in the case of an error.</p>
+	 	   					]]></description>
+            <pubDate>Sat, 08 Jun 2019 16:00:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0a2.zip" sparkle:version="2209" sparkle:shortVersionString="5.0a2" length="4691481" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+
+<item>
           <title>NetNewsWire 5.0a1</title>
             <description><![CDATA[
 							<p>NetNewsWire 5.0 has reached alpha stage! This means it has no known bugs. It surely <i>does</i> have bugs, though. Now it’s time for testing. (And writing the Help book. And making the website better.)</p>            
