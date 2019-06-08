@@ -25,13 +25,15 @@ class AddLocalAccountViewController: UIViewController {
 	}
 
 	@IBAction func cancel(_ sender: Any) {
-		delegate?.dismiss(self)
+		dismiss(animated: true, completion: nil)
+		delegate?.dismiss()
 	}
 	
 	@IBAction func addAccountTapped(_ sender: Any) {
 		let account = AccountManager.shared.createAccount(type: .onMyMac)
 		account.name = nameTextField.text
-		delegate?.dismiss(self)
+		dismiss(animated: true, completion: nil)
+		delegate?.dismiss()
 	}
 	
 }

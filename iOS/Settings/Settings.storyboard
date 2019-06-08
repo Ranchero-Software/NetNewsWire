@@ -368,7 +368,31 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Delete Account" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OKd-Ps-a1K">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Credentials" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OKd-Ps-a1K">
+                                                    <rect key="frame" x="163.5" y="11.5" width="87" height="21"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="OKd-Ps-a1K" firstAttribute="centerY" secondItem="mV2-iL-ltS" secondAttribute="centerY" id="ix2-SF-I7U"/>
+                                                <constraint firstItem="OKd-Ps-a1K" firstAttribute="centerX" secondItem="mV2-iL-ltS" secondAttribute="centerX" id="nZf-Eh-VXu"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection id="sVG-jo-N8H">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="5r9-pq-th4">
+                                        <rect key="frame" x="0.0" y="239" width="414" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5r9-pq-th4" id="Z5N-KD-L3U">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Delete Account" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a8v-SL-W9q">
                                                     <rect key="frame" x="148" y="11.5" width="118" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -376,8 +400,8 @@
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="OKd-Ps-a1K" firstAttribute="centerY" secondItem="mV2-iL-ltS" secondAttribute="centerY" id="ix2-SF-I7U"/>
-                                                <constraint firstItem="OKd-Ps-a1K" firstAttribute="centerX" secondItem="mV2-iL-ltS" secondAttribute="centerX" id="nZf-Eh-VXu"/>
+                                                <constraint firstItem="a8v-SL-W9q" firstAttribute="centerX" secondItem="Z5N-KD-L3U" secondAttribute="centerX" id="F0E-Pt-dt3"/>
+                                                <constraint firstItem="a8v-SL-W9q" firstAttribute="centerY" secondItem="Z5N-KD-L3U" secondAttribute="centerY" id="TIC-BM-f0j"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -658,10 +682,9 @@
                                     <constraint firstAttribute="height" constant="48" id="8Vt-l1-eL1"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                <state key="normal" title="Add Account"/>
+                                <state key="normal" title="Action"/>
                                 <connections>
-                                    <action selector="addAccountTapped:" destination="byh-sg-6p5" eventType="touchUpInside" id="BFR-MI-1qW"/>
-                                    <action selector="addAccountTapped:" destination="lkT-rF-XV3" eventType="touchUpInside" id="YKl-dE-pVK"/>
+                                    <action selector="action:" destination="byh-sg-6p5" eventType="touchUpInside" id="ZQy-9g-TeU"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9QD-Wz-fqW">
@@ -712,8 +735,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="actionButton" destination="pv5-O6-P6Z" id="6Fm-3l-zj1"/>
                         <outlet property="activityIndicator" destination="Pl1-lc-sIl" id="hqg-mX-Yns"/>
-                        <outlet property="addAccountButton" destination="pv5-O6-P6Z" id="DEh-oq-rnD"/>
                         <outlet property="cancelBarButtonItem" destination="xVt-VC-XFV" id="yBm-px-sgt"/>
                         <outlet property="emailTextField" destination="UiV-th-dQb" id="fCb-hg-AXa"/>
                         <outlet property="errorMessageLabel" destination="9QD-Wz-fqW" id="Kjo-73-Pgh"/>
@@ -823,7 +846,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="61.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5fQ-qz-qbW">
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5fQ-qz-qbW">
                                                     <rect key="frame" x="16" y="0.0" width="382" height="61.5"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <attributedString key="attributedText"/>

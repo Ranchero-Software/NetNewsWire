@@ -46,7 +46,7 @@ struct FeedSpecifier: Hashable {
 			return feedSpecifiers.anyObject()
 		}
 		
-		var currentHighScore = 0
+		var currentHighScore = Int.min
 		var currentBestFeed: FeedSpecifier? = nil
 		
 		for oneFeedSpecifier in feedSpecifiers {

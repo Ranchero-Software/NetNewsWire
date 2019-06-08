@@ -93,41 +93,53 @@ final class LocalAccountDelegate: AccountDelegate {
 			return
 		}
 	
-		FeedFinder.find(url: url) { result in
+		DispatchQueue.global(qos: .userInitiated).async {
 			
-			switch result {
-			case .success(let feedSpecifiers):
+			FeedFinder.find(url: url) { result in
 				
-				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
-					let url = URL(string: bestFeedSpecifier.urlString) else {
-						completion(.failure(AccountError.createErrorNotFound))
-						return
-				}
-				
-				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
-					completion(.failure(AccountError.createErrorAlreadySubscribed))
-					return
-				}
-				
-				let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
-				
-				InitialFeedDownloader.download(url) { parsedFeed in
+				switch result {
+				case .success(let feedSpecifiers):
 					
-					if let parsedFeed = parsedFeed {
-						account.update(feed, with: parsedFeed, {})
+					guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
+						let url = URL(string: bestFeedSpecifier.urlString) else {
+							DispatchQueue.main.async {
+								completion(.failure(AccountError.createErrorNotFound))
+							}
+							return
 					}
 					
-					feed.editedName = name
+					if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
+						DispatchQueue.main.async {
+							completion(.failure(AccountError.createErrorAlreadySubscribed))
+						}
+						return
+					}
 					
-					container.addFeed(feed)
-					completion(.success(feed))
+					let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
 					
+					InitialFeedDownloader.download(url) { parsedFeed in
+						
+						if let parsedFeed = parsedFeed {
+							account.update(feed, with: parsedFeed, {})
+						}
+						
+						feed.editedName = name
+						
+						container.addFeed(feed)
+						DispatchQueue.main.async {
+							completion(.success(feed))
+						}
+						
+					}
+					
+				case .failure:
+					DispatchQueue.main.async {
+						completion(.failure(AccountError.createErrorNotFound))
+					}
 				}
 				
-			case .failure(let error):
-				completion(.failure(error))
 			}
-			
+
 		}
 		
 	}
