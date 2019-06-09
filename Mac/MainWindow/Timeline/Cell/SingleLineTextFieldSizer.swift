@@ -18,15 +18,18 @@ final class SingleLineTextFieldSizer {
 	private let textField: NSTextField
 	private var cache = [String: NSSize]()
 
-	init(font: NSFont) {
+	/// Get the NSTextField size for text, given a font.
+	static func size(for text: String, font: NSFont) -> NSSize {
+		return sizer(for: font).size(for: text)
+	}
 
+	init(font: NSFont) {
 		self.textField = NSTextField(labelWithString: "")
 		self.textField.font = font
 		self.font = font
 	}
 
 	func size(for text: String) -> NSSize {
-
 		if let cachedSize = cache[text] {
 			return cachedSize
 		}
@@ -40,29 +43,23 @@ final class SingleLineTextFieldSizer {
 		return calculatedSize
 	}
 
-	static private var sizers = [NSFont: SingleLineTextFieldSizer]()
+	static private var sizers = [SingleLineTextFieldSizer]()
 
-	static func sizer(for font: NSFont) -> SingleLineTextFieldSizer {
-
-		if let cachedSizer = sizers[font] {
+	static private func sizer(for font: NSFont) -> SingleLineTextFieldSizer {
+		// We used to use an [NSFont: SingleLineTextFieldSizer] dictionary —
+		// until, in 10.14.5, we started getting crashes with the message:
+		//    Fatal error: Duplicate keys of type 'NSFont' were found in a Dictionary.
+		//    This usually means either that the type violates Hashable's requirements, or
+		//    that members of such a dictionary were mutated after insertion.
+		// We use just an array of sizers now — which is totally fine,
+		// because there’s only going to be like three of them.
+		if let cachedSizer = sizers.firstElementPassingTest({ $0.font == font }) {
 			return cachedSizer
 		}
 
 		let newSizer = SingleLineTextFieldSizer(font: font)
-		sizers[font] = newSizer
+		sizers.append(newSizer)
 
 		return newSizer
-	}
-
-	// Use this call. It’s easiest.
-
-	static func size(for text: String, font: NSFont) -> NSSize {
-
-		return sizer(for: font).size(for: text)
-	}
-
-	static func emptyCache() {
-
-		sizers = [NSFont: SingleLineTextFieldSizer]()
 	}
 }
