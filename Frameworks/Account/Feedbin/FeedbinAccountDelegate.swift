@@ -208,12 +208,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 		os_log(.debug, log: log, "Begin importing OPML...")
 		opmlImportInProgress = true
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		
 		caller.importOPML(opmlData: opmlData) { result in
 			switch result {
 			case .success(let importResult):
 				if importResult.complete {
 					os_log(.debug, log: self.log, "Import OPML done.")
+					self.refreshProgress.completeTask()
 					self.opmlImportInProgress = false
 					DispatchQueue.main.async {
 						completion(.success(()))
@@ -223,6 +225,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				os_log(.debug, log: self.log, "Import OPML failed.")
+				self.refreshProgress.completeTask()
 				self.opmlImportInProgress = false
 				DispatchQueue.main.async {
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
@@ -553,6 +556,7 @@ private extension FeedbinAccountDelegate {
 						if let result = importResult, result.complete {
 							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
 							timer.invalidate()
+							self.refreshProgress.completeTask()
 							self.opmlImportInProgress = false
 							DispatchQueue.main.async {
 								completion(.success(()))
@@ -561,6 +565,7 @@ private extension FeedbinAccountDelegate {
 					case .failure(let error):
 						os_log(.debug, log: self.log, "Import OPML check failed.")
 						timer.invalidate()
+						self.refreshProgress.completeTask()
 						self.opmlImportInProgress = false
 						DispatchQueue.main.async {
 							completion(.failure(error))
