@@ -108,6 +108,36 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		
 	}
 	
+	func requestAuthorizationToken(endpoint: URL, completion: @escaping (Result<String, Error>) -> Void) {
+		guard let credentials = credentials else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
+		
+		let request = URLRequest(url: endpoint.appendingPathComponent("/reader/api/0/token"), credentials: credentials)
+		
+		transport.send(request: request) { result in
+			switch result {
+			case .success(let (_, data)):
+				guard let resultData = data else {
+					completion(.failure(TransportError.noData))
+					break
+				}
+				
+				// Convert the return data to UTF8 and then parse out the Auth token
+				guard let rawData = String(data: resultData, encoding: .utf8) else {
+					completion(.failure(TransportError.noData))
+					break
+				}
+				
+				
+				completion(.success(rawData))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
 	func importOPML(opmlData: Data, completion: @escaping (Result<GoogleReaderCompatibleImportResult, Error>) -> Void) {
 		
 		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("imports.json")
@@ -412,24 +442,51 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			return
 		}
 		
-		let concatIDs = articleIDs.reduce("") { param, articleID in return param + ",\(articleID)" }
-		let paramIDs = String(concatIDs.dropFirst())
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
 		
-		var callComponents = URLComponents(url: GoogleReaderCompatibleBaseURL.appendingPathComponent("entries.json"), resolvingAgainstBaseURL: false)!
-		callComponents.queryItems = [URLQueryItem(name: "ids", value: paramIDs), URLQueryItem(name: "mode", value: "extended")]
-		let request = URLRequest(url: callComponents.url!, credentials: credentials)
-		
-		transport.send(request: request, resultType: [GoogleReaderCompatibleEntry].self) { result in
-			
+		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
 			switch result {
-			case .success(let (_, entries)):
-				completion(.success((entries)))
+			case .success(let token):
+				// Do POST asking for data about all the new articles
+				var request = URLRequest(url: baseURL.appendingPathComponent("/reader/api/0/stream/items/contents"), credentials: self.credentials)
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpMethod = "POST"
+				
+				// Get ids from above into hex representation of value
+				let idsToFetch = articleIDs.map({ (reference) -> String in
+					return "i=\(reference)"
+				}).joined(separator:"&")
+				
+				let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
+				//let postData = "T=\(token)&output=json&i=1349530380539369".data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: GoogleReaderCompatibleEntryWrapper.self, completion: { (result) in
+					switch result {
+					case .success(let (response, entryWrapper)):
+						guard let entryWrapper = entryWrapper else {
+							completion(.failure(GoogleReaderCompatibleAccountDelegateError.invalidResponse))
+							return
+						}
+						
+						let dateInfo = HTTPDateInfo(urlResponse: response)
+						self.accountMetadata?.lastArticleFetch = dateInfo?.date
+						
+						
+						completion(.success((entryWrapper.entries)))
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				})
+				
+				
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
 		}
-		
+
 	}
 
 	func retrieveEntries(feedID: String, completion: @escaping (Result<([GoogleReaderCompatibleEntry]?, String?), Error>) -> Void) {
@@ -459,30 +516,96 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 
 	func retrieveEntries(completion: @escaping (Result<([GoogleReaderCompatibleEntry]?, String?, Int?), Error>) -> Void) {
 		
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
+		
 		let since: Date = {
-			if let lastArticleFetch = accountMetadata?.lastArticleFetch {
+			if let lastArticleFetch = self.accountMetadata?.lastArticleFetch {
 				return lastArticleFetch
 			} else {
 				return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
 			}
 		}()
 		
-		let sinceString = GoogleReaderCompatibleDate.formatter.string(from: since)
-		var callComponents = URLComponents(url: GoogleReaderCompatibleBaseURL.appendingPathComponent("entries.json"), resolvingAgainstBaseURL: false)!
-		callComponents.queryItems = [URLQueryItem(name: "since", value: sinceString), URLQueryItem(name: "per_page", value: "100"), URLQueryItem(name: "mode", value: "extended")]
-		let request = URLRequest(url: callComponents.url!, credentials: credentials)
+		let sinceString = since.timeIntervalSince1970
 		
-		transport.send(request: request, resultType: [GoogleReaderCompatibleEntry].self) { result in
+		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
+		guard var components = URLComponents(url: baseURL.appendingPathComponent("/reader/api/0/stream/items/ids"), resolvingAgainstBaseURL: false) else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		
+		components.queryItems = [
+			URLQueryItem(name: "o", value: String(sinceString)),
+			URLQueryItem(name: "n", value: "10000"),
+			URLQueryItem(name: "output", value: "json"),
+			URLQueryItem(name: "xt", value: "user/-/state/com.google/read"),
+			URLQueryItem(name: "s", value: "user/-/state/com.google/reading-list")
+		]
+		
+		guard let callURL = components.url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		
+		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
+		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		
+		self.transport.send(request: request, resultType: GoogleReaderCompatibleReferenceWrapper.self) { result in
 			
 			switch result {
-			case .success(let (response, entries)):
+			case .success(let (_, entries)):
 				
-				let dateInfo = HTTPDateInfo(urlResponse: response)
-				self.accountMetadata?.lastArticleFetch = dateInfo?.date
+				guard let entries = entries else {
+					completion(.failure(GoogleReaderCompatibleAccountDelegateError.invalidResponse))
+					return
+				}
+				
+				self.requestAuthorizationToken(endpoint: baseURL) { (result) in
+					switch result {
+					case .success(let token):
+						// Do POST asking for data about all the new articles
+						var request = URLRequest(url: baseURL.appendingPathComponent("/reader/api/0/stream/items/contents"), credentials: self.credentials)
+						request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+						request.httpMethod = "POST"
+						
+						// Get ids from above into hex representation of value
+						let idsToFetch = entries.itemRefs.map({ (reference) -> String in
+							let idValue = Int(reference.itemId)!
+							let idHexString = String(idValue, radix: 16, uppercase: false)
+							return "i=\(idHexString)"
+						}).joined(separator:"&")
+						
+						let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
+						//let postData = "T=\(token)&output=json&i=1349530380539369".data(using: String.Encoding.utf8)
 
-				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
-				let lastPageNumber = self.extractPageNumber(link: pagingInfo.lastPage)
-				completion(.success((entries, pagingInfo.nextPage, lastPageNumber)))
+						self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: GoogleReaderCompatibleEntryWrapper.self, completion: { (result) in
+							switch result {
+							case .success(let (response, entryWrapper)):
+								guard let entryWrapper = entryWrapper else {
+									completion(.failure(GoogleReaderCompatibleAccountDelegateError.invalidResponse))
+									return
+								}
+								
+								let dateInfo = HTTPDateInfo(urlResponse: response)
+								self.accountMetadata?.lastArticleFetch = dateInfo?.date
+								
+								
+								completion(.success((entryWrapper.entries, nil, nil)))
+							case .failure(let error):
+								completion(.failure(error))
+							}
+						})
+						
+						
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
+				
+				//completion(.success((entries, pagingInfo.nextPage, lastPageNumber)))
 				
 			case .failure(let error):
 				self.accountMetadata?.lastArticleFetch = nil
@@ -490,6 +613,13 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			}
 			
 		}
+		
+
+		
+		
+		
+		
+		
 		
 	}
 	
@@ -522,16 +652,46 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 
 	func retrieveUnreadEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
 		
-		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("unread_entries.json")
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
+		
+		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
+		guard var components = URLComponents(url: baseURL.appendingPathComponent("/reader/api/0/stream/items/ids"), resolvingAgainstBaseURL: false) else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		
+		components.queryItems = [
+			URLQueryItem(name: "s", value: "user/-/state/com.google/reading-list"),
+			URLQueryItem(name: "n", value: "10000"),
+			URLQueryItem(name: "xt", value: "user/-/state/com.google/read"),
+			URLQueryItem(name: "output", value: "json")
+		]
+		
+		guard let callURL = components.url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
-		transport.send(request: request, resultType: [Int].self) { result in
+		transport.send(request: request, resultType: GoogleReaderCompatibleReferenceWrapper.self) { result in
 			
 			switch result {
 			case .success(let (response, unreadEntries)):
+				
+				guard let itemRefs = unreadEntries?.itemRefs else {
+					completion(.success([]))
+					return
+				}
+				
+				let itemIds = itemRefs.map{ Int($0.itemId)! }
+				
 				self.storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
-				completion(.success(unreadEntries))
+				completion(.success(itemIds))
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -541,17 +701,17 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	}
 	
 	func createUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
-		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("unread_entries.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
-		let payload = GoogleReaderCompatibleUnreadEntry(unreadEntries: entries)
-		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("unread_entries.json")
+//		let request = URLRequest(url: callURL, credentials: credentials)
+//		let payload = GoogleReaderCompatibleUnreadEntry(unreadEntries: entries)
+//		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
 	}
 	
 	func deleteUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
-		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("unread_entries.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
-		let payload = GoogleReaderCompatibleUnreadEntry(unreadEntries: entries)
-		transport.send(request: request, method: HTTPMethod.delete, payload: payload, completion: completion)
+//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("unread_entries.json")
+//		let request = URLRequest(url: callURL, credentials: credentials)
+//		let payload = GoogleReaderCompatibleUnreadEntry(unreadEntries: entries)
+//		transport.send(request: request, method: HTTPMethod.delete, payload: payload, completion: completion)
 	}
 	
 	func retrieveStarredEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {

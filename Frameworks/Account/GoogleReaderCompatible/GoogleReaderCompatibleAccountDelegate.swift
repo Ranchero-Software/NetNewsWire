@@ -21,6 +21,7 @@ import os.log
 
 public enum GoogleReaderCompatibleAccountDelegateError: String, Error {
 	case invalidParameter = "There was an invalid parameter passed."
+	case invalidResponse = "There was an invalid response from the server."
 }
 
 final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
@@ -98,14 +99,14 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 				
 				
 				self.refreshArticles(account) {
-//					self.refreshArticleStatus(for: account) {
-//						self.refreshMissingArticles(account) {
+					self.refreshArticleStatus(for: account) {
+						self.refreshMissingArticles(account) {
 							self.refreshProgress.clear()
 							DispatchQueue.main.async {
 								completion(.success(()))
 							}
-//						}
-//					}
+						}
+					}
 				}
 
 			case .failure(let error):
@@ -178,18 +179,18 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 			
 		}
 		
-		group.enter()
-		caller.retrieveStarredEntries() { result in
-			switch result {
-			case .success(let articleIDs):
-				self.syncArticleStarredState(account: account, articleIDs: articleIDs)
-				group.leave()
-			case .failure(let error):
-				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
-				group.leave()
-			}
-			
-		}
+//		group.enter()
+//		caller.retrieveStarredEntries() { result in
+//			switch result {
+//			case .success(let articleIDs):
+//				self.syncArticleStarredState(account: account, articleIDs: articleIDs)
+//				group.leave()
+//			case .failure(let error):
+//				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
+//				group.leave()
+//			}
+//
+//		}
 		
 		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
@@ -970,7 +971,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 	
 	func processEntries(account: Account, entries: [GoogleReaderCompatibleEntry]?, completion: @escaping (() -> Void)) {
 		
-		let parsedItems = mapEntriesToParsedItems(entries: entries)
+		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
 		let parsedMap = Dictionary(grouping: parsedItems, by: { item in item.feedURL } )
 		
 		let group = DispatchGroup()
@@ -997,15 +998,17 @@ private extension GoogleReaderCompatibleAccountDelegate {
 
 	}
 	
-	func mapEntriesToParsedItems(entries: [GoogleReaderCompatibleEntry]?) -> Set<ParsedItem> {
+	func mapEntriesToParsedItems(account: Account, entries: [GoogleReaderCompatibleEntry]?) -> Set<ParsedItem> {
 		
 		guard let entries = entries else {
 			return Set<ParsedItem>()
 		}
 		
 		let parsedItems: [ParsedItem] = entries.map { entry in
-			let authors = Set([ParsedAuthor(name: entry.authorName, url: entry.jsonFeed?.jsonFeedAuthor?.url, avatarURL: entry.jsonFeed?.jsonFeedAuthor?.avatarURL, emailAddress: nil)])
-			return ParsedItem(syncServiceID: String(entry.articleID), uniqueID: String(entry.articleID), feedURL: String(entry.feedID), url: nil, externalURL: entry.url, title: entry.title, contentHTML: entry.contentHTML, contentText: nil, summary: entry.summary, imageURL: nil, bannerImageURL: nil, datePublished: entry.parseDatePublished(), dateModified: nil, authors: authors, tags: nil, attachments: nil)
+			// let authors = Set([ParsedAuthor(name: entry.authorName, url: entry.jsonFeed?.jsonFeedAuthor?.url, avatarURL: entry.jsonFeed?.jsonFeedAuthor?.avatarURL, emailAddress: nil)])
+			// let feed = account.idToFeedDictionary[entry.origin.streamId!]! // TODO clean this up
+			
+			return ParsedItem(syncServiceID: String(entry.articleID), uniqueID: String(entry.articleID), feedURL: entry.origin.streamId!, url: nil, externalURL: entry.alternates.first?.url, title: entry.title, contentHTML: entry.summary.content, contentText: nil, summary: entry.summary.content, imageURL: nil, bannerImageURL: nil, datePublished: entry.parseDatePublished(), dateModified: nil, authors: nil, tags: nil, attachments: nil)
 		}
 		
 		return Set(parsedItems)

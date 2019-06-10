@@ -10,58 +10,103 @@ import Foundation
 import RSParser
 import RSCore
 
+struct GoogleReaderCompatibleEntryWrapper: Codable {
+	let id: String
+	let updated: Int
+	let entries: [GoogleReaderCompatibleEntry]
+	
+	
+	enum CodingKeys: String, CodingKey {
+		case id = "id"
+		case updated = "updated"
+		case entries = "items"
+	}
+}
+
+/* {
+"id": "tag:google.com,2005:reader/item/00058a3b5197197b",
+"crawlTimeMsec": "1559362260113",
+"timestampUsec": "1559362260113787",
+"published": 1554845280,
+"title": "",
+"summary": {
+"content": "\n<p>Found an old screenshot of NetNewsWire 1.0 for iPhone!</p>\n\n<p><img src=\"https://nnw.ranchero.com/uploads/2019/c07c0574b1.jpg\" alt=\"Netnewswire 1.0 for iPhone screenshot showing the list of feeds.\" title=\"NewsGator got renamed to Sitrion, years later, and then renamed again as Limeade.\" border=\"0\" width=\"260\" height=\"320\"></p>\n"
+},
+"alternate": [
+{
+"href": "https://nnw.ranchero.com/2019/04/09/found-an-old.html"
+}
+],
+"categories": [
+"user/-/state/com.google/reading-list",
+"user/-/label/Uncategorized"
+],
+"origin": {
+"streamId": "feed/130",
+"title": "NetNewsWire"
+}
+}
+*/
 struct GoogleReaderCompatibleEntry: Codable {
 
-	let articleID: Int
-	let feedID: Int
+	let articleID: String
 	let title: String?
-	let url: String?
-	let authorName: String?
-	let contentHTML: String?
-	let summary: String?
-	let datePublished: String?
-	let dateArrived: String?
-	let jsonFeed: GoogleReaderCompatibleEntryJSONFeed?
+
+	let publishedTimestamp: Double?
+	let crawledTimestamp: String?
+	let timestampUsec: String?
+	
+	let summary: GoogleReaderCompatibleArticleSummary
+	let alternates: [GoogleReaderCompatibleAlternateLocation]
+	let categories: [String]
+	let origin: GoogleReaderCompatibleEntryOrigin
 
 	enum CodingKeys: String, CodingKey {
 		case articleID = "id"
-		case feedID = "feed_id"
 		case title = "title"
-		case url = "url"
-		case authorName = "author"
-		case contentHTML = "content"
 		case summary = "summary"
-		case datePublished = "published"
-		case dateArrived = "created_at"
-		case jsonFeed = "json_feed"
-	}
-
-	// GoogleReaderCompatible dates can't be decoded by the JSONDecoding 8601 decoding strategy.  GoogleReaderCompatible
-	// requires a very specific date formatter to work and even then it fails occasionally.
-	// Rather than loose all the entries we only lose the one date by decoding as a string
-	// and letting the one date fail when parsed.
-	func parseDatePublished() -> Date? {
-		if datePublished != nil  {
-			return GoogleReaderCompatibleDate.formatter.date(from: datePublished!)
-		} else {
-			return nil
-		}
+		case alternates = "alternate"
+		case categories = "categories"
+		case publishedTimestamp = "published"
+		case crawledTimestamp = "crawlTimeMsec"
+		case origin = "origin"
+		case timestampUsec = "timestampUsec"
 	}
 	
-}
-
-struct GoogleReaderCompatibleEntryJSONFeed: Codable {
-	let jsonFeedAuthor: GoogleReaderCompatibleEntryJSONFeedAuthor?
-	enum CodingKeys: String, CodingKey {
-		case jsonFeedAuthor = "author"
+	func parseDatePublished() -> Date? {
+		
+		guard let unixTime = publishedTimestamp else {
+			return nil
+		}
+		
+		return Date(timeIntervalSince1970: unixTime)
 	}
 }
 
-struct GoogleReaderCompatibleEntryJSONFeedAuthor: Codable {
+struct GoogleReaderCompatibleArticleSummary: Codable {
+	let content: String?
+	
+	enum CodingKeys: String, CodingKey {
+		case content = "content"
+	}
+}
+
+struct GoogleReaderCompatibleAlternateLocation: Codable {
 	let url: String?
-	let avatarURL: String?
+	
 	enum CodingKeys: String, CodingKey {
-		case url = "url"
-		case avatarURL = "avatar"
+		case url = "href"
 	}
 }
+
+
+struct GoogleReaderCompatibleEntryOrigin: Codable {
+	let streamId: String?
+	let title: String?
+
+	enum CodingKeys: String, CodingKey {
+		case streamId = "streamId"
+		case title = "title"
+	}
+}
+

@@ -8,12 +8,20 @@
 
 import Foundation
 
-struct GoogleReaderCompatibleUnreadEntry: Codable {
-	
-	let unreadEntries: [Int]
+struct GoogleReaderCompatibleReferenceWrapper: Codable {
+	let itemRefs: [GoogleReaderCompatibleReference]
 	
 	enum CodingKeys: String, CodingKey {
-		case unreadEntries = "unread_entries"
+		case itemRefs = "itemRefs"
+	}
+}
+
+struct GoogleReaderCompatibleReference: Codable {
+	
+	let itemId: String
+	
+	enum CodingKeys: String, CodingKey {
+		case itemId = "id"
 	}
 	
 }
