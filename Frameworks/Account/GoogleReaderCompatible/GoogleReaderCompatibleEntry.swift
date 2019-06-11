@@ -81,6 +81,22 @@ struct GoogleReaderCompatibleEntry: Codable {
 		
 		return Date(timeIntervalSince1970: unixTime)
 	}
+	
+	func uniqueID() -> String {
+		// Should look something like "tag:google.com,2005:reader/item/00058b10ce338909"
+		// REGEX feels heavy, I should be able to just split on / and take the last element
+		
+		guard let idPart =  articleID.components(separatedBy: "/").last else {
+			return articleID
+		}
+		
+		// Convert hex representation back to integer and then a string representation
+		guard let idNumber = Int(idPart, radix: 16) else {
+			return articleID
+		}
+		
+		return String(idNumber, radix: 10, uppercase: false)
+	}
 }
 
 struct GoogleReaderCompatibleArticleSummary: Codable {

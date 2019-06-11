@@ -579,7 +579,6 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 						}).joined(separator:"&")
 						
 						let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
-						//let postData = "T=\(token)&output=json&i=1349530380539369".data(using: String.Encoding.utf8)
 
 						self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: GoogleReaderCompatibleEntryWrapper.self, completion: { (result) in
 							switch result {
@@ -613,14 +612,6 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			}
 			
 		}
-		
-
-		
-		
-		
-		
-		
-		
 	}
 	
 	func retrieveEntries(page: String, completion: @escaping (Result<([GoogleReaderCompatibleEntry]?, String?), Error>) -> Void) {
@@ -715,17 +706,45 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	}
 	
 	func retrieveStarredEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
 		
-		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("starred_entries.json")
+		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
+		guard var components = URLComponents(url: baseURL.appendingPathComponent("/reader/api/0/stream/items/ids"), resolvingAgainstBaseURL: false) else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		
+		components.queryItems = [
+			URLQueryItem(name: "s", value: "user/-/state/com.google/starred"),
+			URLQueryItem(name: "n", value: "10000"),
+			URLQueryItem(name: "output", value: "json")
+		]
+		
+		guard let callURL = components.url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.starredEntries]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
-		transport.send(request: request, resultType: [Int].self) { result in
+		transport.send(request: request, resultType: GoogleReaderCompatibleReferenceWrapper.self) { result in
 			
 			switch result {
-			case .success(let (response, starredEntries)):
+			case .success(let (response, unreadEntries)):
+				
+				guard let itemRefs = unreadEntries?.itemRefs else {
+					completion(.success([]))
+					return
+				}
+				
+				let itemIds = itemRefs.map{ Int($0.itemId)! }
+				
 				self.storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
-				completion(.success(starredEntries))
+				completion(.success(itemIds))
 			case .failure(let error):
 				completion(.failure(error))
 			}
