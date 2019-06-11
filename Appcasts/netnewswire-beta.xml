@@ -7,6 +7,21 @@
         <language>en</language>
 
 <item>
+          <title>NetNewsWire 5.0a3</title>
+            <description><![CDATA[
+							<p>Fixed crash happening only on macOS 10.15 beta. We owe Apple a bug report for this one.</p>
+							<p>Fixed a crash that could happen when finding a feed.</p>
+							<p>Skip showing error dialogs on automatic refreshes.</p>
+							<p>Immediately show the refresh progress bar when an OPML import to Feedbin starts.</p>
+							<p>Add ellipsis to Import from OPML and Export to OPML buttons.</p>
+							]]></description>
+            <pubDate>Mon, 10 Jun 2019 21:45:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0a3.zip" sparkle:version="2223" sparkle:shortVersionString="5.0a3" length="4689888" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+
+<item>
           <title>NetNewsWire 5.0a2</title>
             <description><![CDATA[
 							<p>Escape HTML in the title in the article view — if there’s HTML in the title, the tags should actually be displayed.</p>
