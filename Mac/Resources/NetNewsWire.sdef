@@ -202,10 +202,10 @@
             <property name="modified date" code="MDat" type="date" access="r" description="date the article was last modified">
                 <cocoa key="dateModified"/>
             </property>
-            <property name="read" code="Read" type="boolean" access="r" description="has the article been read">
+            <property name="read" code="Read" type="boolean" access="rw" description="has the article been read">
                 <cocoa key="read"/>
             </property>
-            <property name="starred" code="Star" type="boolean" access="r" description="has the article been marked with a star">
+            <property name="starred" code="Star" type="boolean" access="rw" description="has the article been marked with a star">
                 <cocoa key="starred"/>
             </property>
             <property name="deleted" code="Delt" type="boolean" access="r" description="has the article been deleted by the user">

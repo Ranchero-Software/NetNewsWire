@@ -107,12 +107,22 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     @objc(read)
     var read:Bool  {
-        return article.status.boolStatus(forKey:.read)
+		get {
+			return article.status.boolStatus(forKey:.read)
+		}
+		set {
+			markArticles([self.article], statusKey: .read, flag: newValue)
+		}
     }
 
     @objc(starred)
     var starred:Bool  {
-        return article.status.boolStatus(forKey:.starred)
+		get {
+			return article.status.boolStatus(forKey:.starred)
+		}
+		set {
+			markArticles([self.article], statusKey: .starred, flag: newValue)
+		}
     }
 
     @objc(deleted)
