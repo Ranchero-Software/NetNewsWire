@@ -453,6 +453,7 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		return account.update(articles, statusKey: statusKey, flag: flag)
 		
 	}
+	
 	func accountDidInitialize(_ account: Account) {
 		accountMetadata = account.metadata
 		credentials = try? account.retrieveGoogleAuthCredentials()

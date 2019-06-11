@@ -692,17 +692,80 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	}
 	
 	func createUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
-//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("unread_entries.json")
-//		let request = URLRequest(url: callURL, credentials: credentials)
-//		let payload = GoogleReaderCompatibleUnreadEntry(unreadEntries: entries)
-//		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
+		
+		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
+			switch result {
+			case .success(let token):
+				// Do POST asking for data about all the new articles
+				var request = URLRequest(url: baseURL.appendingPathComponent("/reader/api/0/edit-tag"), credentials: self.credentials)
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpMethod = "POST"
+				
+				// Get ids from above into hex representation of value
+				let idsToFetch = entries.map({ (idValue) -> String in
+					let idHexString = String(format: "%.16x", idValue)
+					return "i=\(idHexString)"
+				}).joined(separator:"&")
+				
+				let postData = "T=\(token)&\(idsToFetch)&a=user/-/state/com.google/read".data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+					switch result {
+					case .success:
+						completion(.success(()))
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				})
+				
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+
 	}
 	
 	func deleteUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
-//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("unread_entries.json")
-//		let request = URLRequest(url: callURL, credentials: credentials)
-//		let payload = GoogleReaderCompatibleUnreadEntry(unreadEntries: entries)
-//		transport.send(request: request, method: HTTPMethod.delete, payload: payload, completion: completion)
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
+		
+		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
+			switch result {
+			case .success(let token):
+				// Do POST asking for data about all the new articles
+				var request = URLRequest(url: baseURL.appendingPathComponent("/reader/api/0/edit-tag"), credentials: self.credentials)
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpMethod = "POST"
+				
+				// Get ids from above into hex representation of value
+				let idsToFetch = entries.map({ (idValue) -> String in
+					let idHexString = String(format: "%.16x", idValue)
+					return "i=\(idHexString)"
+				}).joined(separator:"&")
+				
+				let postData = "T=\(token)&\(idsToFetch)&r=user/-/state/com.google/read".data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+					switch result {
+					case .success:
+						completion(.success(()))
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				})
+				
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func retrieveStarredEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
