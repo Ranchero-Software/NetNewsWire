@@ -11,6 +11,7 @@ import Account
 import Articles
 import RSCore
 import RSTree
+import SwiftUI
 
 class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunner {
 
@@ -393,13 +394,8 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		
-		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		settingsNavViewController.modalPresentationStyle = .formSheet
-		
-		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
-		settingsViewController.presentingParentController = self
-		
-		self.present(settingsNavViewController, animated: true)
+		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsViewModel()))
+		self.present(settings, animated: true)
 		
 	}
 
