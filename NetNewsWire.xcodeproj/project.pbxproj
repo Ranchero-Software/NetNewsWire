@@ -876,6 +876,7 @@
 		84C9FCA32262A1B800D921D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		84CBDDAE1FD3674C005A61AA /* Technotes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Technotes; sourceTree = "<group>"; };
 		84CC88171FE59CBF00644329 /* SmartFeedsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeedsController.swift; sourceTree = "<group>"; };
+		84D2200922B0BC4B0019E085 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 		84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailStatusBarView.swift; sourceTree = "<group>"; };
 		84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleLineTextFieldSizer.swift; sourceTree = "<group>"; };
 		84E185C2203BB12600F69BFA /* MultilineTextFieldSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextFieldSizer.swift; sourceTree = "<group>"; };
@@ -1457,6 +1458,7 @@
 			isa = PBXGroup;
 			children = (
 				845B14A51FC2299E0013CF92 /* README.md */,
+				84D2200922B0BC4B0019E085 /* CONTRIBUTING.md */,
 				84CBDDAE1FD3674C005A61AA /* Technotes */,
 				84C9FC6522629B3900D921D6 /* Mac */,
 				84C9FC922262A0E600D921D6 /* iOS */,
@@ -1933,12 +1935,12 @@
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Manual;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1948,7 +1950,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -1958,7 +1960,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = 9C84TZ7Q6Z;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
