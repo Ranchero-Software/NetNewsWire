@@ -16,7 +16,7 @@ Note: NetNewsWire’s Help menu has a bunch of these links, so you don’t have 
 
 [Join the Slack group](https://join.slack.com/t/netnewswire/shared_invite/enQtNjM4MDA1MjQzMDkzLTNlNjBhOWVhYzdhYjA4ZWFhMzQ1MTUxYjU0NTE5ZGY0YzYwZWJhNjYwNTNmNTg2NjIwYWY4YzhlYzk5NmU3ZTc) to talk with other NetNewsWire users — and to help out, if you’d like to, by testing, coding, writing, providing feedback, or just helping us think things through. Everybody is welcome and encouraged to join.
 
-Every community is expected to abide by the code of conduct which is included in the [Contributing](Contributing.md) page.
+Every community member is expected to abide by the code of conduct which is included in the [Contributing](Contributing.md) page.
 
 #### Pull Requests
 
