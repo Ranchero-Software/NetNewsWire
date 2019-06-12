@@ -11,7 +11,8 @@ import Account
 
 struct SettingsLocalAccountView : View {
 	@State var name: String
-	
+	@Environment(\.isPresented) private var isPresented
+
     var body: some View {
 		NavigationView {
 			List {
@@ -36,13 +37,20 @@ struct SettingsLocalAccountView : View {
 			}
 			.listStyle(.grouped)
 			.navigationBarTitle(Text(""), displayMode: .inline)
+			.navigationBarItems(trailing: Button(action: { self.dismiss() }) { Text("Cancel") } )
 		}
 	}
 	
-	func addAccount() {
+	private func addAccount() {
 		let account = AccountManager.shared.createAccount(type: .onMyMac)
 		account.name = name
+		dismiss()
 	}
+	
+	private func dismiss() {
+		isPresented?.value = false
+	}
+	
 }
 
 #if DEBUG
