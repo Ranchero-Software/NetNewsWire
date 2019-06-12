@@ -12,7 +12,7 @@ If you’d like to contribute:
 
 It’s important that the pull request merge cleanly with master.
 
-You should have read the [coding guidelines](CodingGuidelines.md) first. If your code doesn’t follow the guidelines, we will likely suggest revising it.
+You should have read the [coding guidelines](Technotes/CodingGuidelines.md) first. If your code doesn’t follow the guidelines, we will likely suggest revising it.
 
 Patience may be required at times. Brent has a day job, and sometimes everything happens at once. :)
 
