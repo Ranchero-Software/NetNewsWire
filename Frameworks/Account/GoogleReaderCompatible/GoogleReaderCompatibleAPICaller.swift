@@ -707,11 +707,11 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 				
 				// Get ids from above into hex representation of value
 				let idsToFetch = entries.map({ (idValue) -> String in
-					let idHexString = String(format: "%.16x", idValue)
+					let idHexString = String(format: "%.16llx", idValue)
 					return "i=\(idHexString)"
 				}).joined(separator:"&")
 				
-				let postData = "T=\(token)&\(idsToFetch)&a=user/-/state/com.google/read".data(using: String.Encoding.utf8)
+				let postData = "T=\(token)&\(idsToFetch)&r=user/-/state/com.google/read".data(using: String.Encoding.utf8)
 				
 				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
 					switch result {
@@ -746,11 +746,11 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 				
 				// Get ids from above into hex representation of value
 				let idsToFetch = entries.map({ (idValue) -> String in
-					let idHexString = String(format: "%.16x", idValue)
+					let idHexString = String(format: "%.16llx", idValue)
 					return "i=\(idHexString)"
 				}).joined(separator:"&")
 				
-				let postData = "T=\(token)&\(idsToFetch)&r=user/-/state/com.google/read".data(using: String.Encoding.utf8)
+				let postData = "T=\(token)&\(idsToFetch)&a=user/-/state/com.google/read".data(using: String.Encoding.utf8)
 				
 				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
 					switch result {
