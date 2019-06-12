@@ -10,8 +10,8 @@ import SwiftUI
 import Account
 
 struct SettingsLocalAccountView : View {
-	@State var name: String
 	@Environment(\.isPresented) private var isPresented
+	@State var name: String
 
     var body: some View {
 		NavigationView {
@@ -37,7 +37,7 @@ struct SettingsLocalAccountView : View {
 			}
 			.listStyle(.grouped)
 			.navigationBarTitle(Text(""), displayMode: .inline)
-			.navigationBarItems(trailing: Button(action: { self.dismiss() }) { Text("Cancel") } )
+			.navigationBarItems(leading: Button(action: { self.dismiss() }) { Text("Cancel") } )
 		}
 	}
 	

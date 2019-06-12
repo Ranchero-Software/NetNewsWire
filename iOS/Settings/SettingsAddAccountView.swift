@@ -14,7 +14,7 @@ struct SettingsAddAccountView : View {
 			PresentationButton(SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: "On My Device"),
 							   destination: SettingsLocalAccountView(name: ""))
 			PresentationButton(SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin"),
-							   destination: SettingsFeedbinAccountView(email: "", password: ""))
+							   destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel()))
 		}
 		.listStyle(.grouped)
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)
