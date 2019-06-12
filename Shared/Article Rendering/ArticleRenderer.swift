@@ -86,11 +86,10 @@ private extension ArticleRenderer {
 	}
 
 	func titleOrTitleLink() -> String {
-		let escapedTitle = title.escapeHTML()
 		if let link = article?.preferredLink {
-			return escapedTitle.htmlByAddingLink(link)
+			return title.htmlByAddingLink(link)
 		}
-		return escapedTitle
+		return title
 	}
 
 	func substitutions() -> [String: String] {
