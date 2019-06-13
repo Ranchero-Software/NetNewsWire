@@ -1,4 +1,4 @@
-# NetNewsWire
+# ![Icon](Technotes/Images/icon.png) NetNewsWire
 
 It’s a free and open source feed reader for macOS.
 

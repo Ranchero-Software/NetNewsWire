@@ -7,13 +7,13 @@ The main repository for NetNewsWire utilizes a [Trunk Based Development](https:/
 
 Three-Flow uses 3 branches to facilitate development, stabilize a release, and manage production hotfixes.  Development happens on Master and moves to a branch called Candidate when it is ready to be stabilized.  New feature development continues on Master and bug fixes to the release candidate happen on Candidate.  When the product is released, it is pushed to the Release branch. Hotfixes can happen on the Release branch.  Candidate is now free to be reused to stabilize the next release.  All bugs found and fixed are back merged to Candidate and then Master respectively.
 
-![Branching](Branching.png)
+![Branching](Images/Branching.png)
 
 All arrows going up are promotions (pushes) to the next environment.  All arrows going down are back ports of bugfixes.
 
 That is Three-Flow applied to NetNewsWire.  It would be that simple, but we have two products we are going to deliver from the same repository.  The iOS and the macOS variants of NetNewsWire.  To stabilize and manage both variants, each will need to be given their own Candidate and Release branches.
 
-![Branching Full](Branching-Full.png)
+![Branching Full](Images/Branching-Full.png)
 
 Today (6/12/2019) we have 2 branches, master and macOS Candidate, in the main repository which will eventually grow to be 5 branches.
 
