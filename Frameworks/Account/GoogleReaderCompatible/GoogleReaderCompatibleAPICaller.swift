@@ -36,6 +36,16 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		case starred = "user/-/state/com.google/starred"
 	}
 	
+	enum GoogleReaderEndpoints: String {
+		case login = "/accounts/ClientLogin"
+		case token = "/reader/api/0/token"
+		case tagList = "/reader/api/0/tag/list"
+		case subscriptionList = "/reader/api/0/subscription/list"
+		case contents = "/reader/api/0/stream/items/contents"
+		case itemIds = "/reader/api/0/stream/items/ids"
+		case editTag = "/reader/api/0/edit-tag"
+	}
+	
 	private let GoogleReaderCompatibleBaseURL = URL(string: "https://api.GoogleReaderCompatible.com/v2/")!
 	private var transport: Transport!
 	
@@ -75,7 +85,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			return
 		}
 		
-		let request = URLRequest(url: endpoint.appendingPathComponent("/accounts/ClientLogin"), credentials: credentials)
+		let request = URLRequest(url: endpoint.appendingPathComponent(GoogleReaderEndpoints.login.rawValue), credentials: credentials)
 
 		transport.send(request: request) { result in
 			switch result {
@@ -119,7 +129,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			return
 		}
 		
-		let request = URLRequest(url: endpoint.appendingPathComponent("/reader/api/0/token"), credentials: credentials)
+		let request = URLRequest(url: endpoint.appendingPathComponent(GoogleReaderEndpoints.token.rawValue), credentials: credentials)
 		
 		transport.send(request: request) { result in
 			switch result {
@@ -199,7 +209,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		}
 		
 		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
-		guard var components = URLComponents(url: baseURL.appendingPathComponent("/reader/api/0/tag/list"), resolvingAgainstBaseURL: false) else {
+		guard var components = URLComponents(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.tagList.rawValue), resolvingAgainstBaseURL: false) else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
@@ -263,7 +273,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		}
 		
 		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
-		guard var components = URLComponents(url: baseURL.appendingPathComponent("/reader/api/0/subscription/list"), resolvingAgainstBaseURL: false) else {
+		guard var components = URLComponents(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.subscriptionList.rawValue), resolvingAgainstBaseURL: false) else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
@@ -456,7 +466,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				// Do POST asking for data about all the new articles
-				var request = URLRequest(url: baseURL.appendingPathComponent("/reader/api/0/stream/items/contents"), credentials: self.credentials)
+				var request = URLRequest(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.contents.rawValue), credentials: self.credentials)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -537,7 +547,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		let sinceString = since.timeIntervalSince1970
 		
 		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
-		guard var components = URLComponents(url: baseURL.appendingPathComponent("/reader/api/0/stream/items/ids"), resolvingAgainstBaseURL: false) else {
+		guard var components = URLComponents(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.itemIds.rawValue), resolvingAgainstBaseURL: false) else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
@@ -572,7 +582,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 					switch result {
 					case .success(let token):
 						// Do POST asking for data about all the new articles
-						var request = URLRequest(url: baseURL.appendingPathComponent("/reader/api/0/stream/items/contents"), credentials: self.credentials)
+						var request = URLRequest(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.contents.rawValue), credentials: self.credentials)
 						request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 						request.httpMethod = "POST"
 						
@@ -652,7 +662,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		}
 		
 		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
-		guard var components = URLComponents(url: baseURL.appendingPathComponent("/reader/api/0/stream/items/ids"), resolvingAgainstBaseURL: false) else {
+		guard var components = URLComponents(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.itemIds.rawValue), resolvingAgainstBaseURL: false) else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
@@ -704,7 +714,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				// Do POST asking for data about all the new articles
-				var request = URLRequest(url: baseURL.appendingPathComponent("/reader/api/0/edit-tag"), credentials: self.credentials)
+				var request = URLRequest(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.editTag.rawValue), credentials: self.credentials)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -758,8 +768,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			return
 		}
 		
-		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
-		guard var components = URLComponents(url: baseURL.appendingPathComponent("/reader/api/0/stream/items/ids"), resolvingAgainstBaseURL: false) else {
+		guard var components = URLComponents(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.itemIds.rawValue), resolvingAgainstBaseURL: false) else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
