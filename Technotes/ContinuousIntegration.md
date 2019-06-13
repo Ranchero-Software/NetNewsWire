@@ -21,10 +21,10 @@ project repository for the current and complete list of submodules, but for quic
 
 - [RSCore](https://github.com/brentsimmons/RSCore) [![CircleCI](https://circleci.com/gh/brentsimmons/RSCore.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSCore)
 
-- [RSCore](https://github.com/brentsimmons/RSWeb) [![CircleCI](https://circleci.com/gh/brentsimmons/RSWeb.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSWeb)
+- [RSWeb](https://github.com/brentsimmons/RSWeb) [![CircleCI](https://circleci.com/gh/brentsimmons/RSWeb.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSWeb)
 
-- [RSCore](https://github.com/brentsimmons/RSParser) [![CircleCI](https://circleci.com/gh/brentsimmons/RSParser.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSParser)
+- [RSParser](https://github.com/brentsimmons/RSParser) [![CircleCI](https://circleci.com/gh/brentsimmons/RSParser.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSParser)
 
-- [RSCore](https://github.com/brentsimmons/RSTree) [![CircleCI](https://circleci.com/gh/brentsimmons/RSTree.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSTree)
+- [RSTree](https://github.com/brentsimmons/RSTree) [![CircleCI](https://circleci.com/gh/brentsimmons/RSTree.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSTree)
 
-- [RSCore](https://github.com/brentsimmons/RSDatabase) [![CircleCI](https://circleci.com/gh/brentsimmons/RSDatabase.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSDatabase)
+- [RSDatabase](https://github.com/brentsimmons/RSDatabase) [![CircleCI](https://circleci.com/gh/brentsimmons/RSDatabase.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSDatabase)
