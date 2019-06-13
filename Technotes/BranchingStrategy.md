@@ -17,7 +17,7 @@ That is Three-Flow applied to NetNewsWire.  It would be that simple, but we have
 
 Today (6/12/2019) we have 2 branches, master and macOS Candidate, in the main repository which will eventually grow to be 5 branches.
 
-There will also be a number of repository forks that NetNewWire developers will create to do bug fixes and implement new features (not shown here).  Typically contributers will fork the Master branch to thier own repository.  They would then create a feature/bugfix branch on their repository.  Once work on their forked branch is complete, they will submit a pull request to be merged back into the main repository master.
+There will also be a number of repository forks that NetNewWire developers will create to do bug fixes and implement new features (not shown here).  Typically contributers will fork the Master branch to thier own repository.  They would then create a feature/bugfix branch on their repository.  Once work on thier forked branch is complete, they will submit a pull request to be merged back into the main repository master.
 
 ## Tagging
 
