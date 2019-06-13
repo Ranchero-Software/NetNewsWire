@@ -7,11 +7,12 @@
 //
 
 import SwiftUI
+import Account
 
 struct SettingsAddAccountView : View {
     var body: some View {
 		List {
-			PresentationButton(SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: "On My Device"),
+			PresentationButton(SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName),
 							   destination: SettingsLocalAccountView(name: "")).padding(.all, 4)
 			PresentationButton(SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin"),
 							   destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())).padding(.all, 4)

@@ -17,7 +17,7 @@ struct SettingsLocalAccountView : View {
 		NavigationView {
 			List {
 				Section(header:
-					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: "On My Device").padding()
+					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName).padding()
 				)  {
 					HStack {
 						Spacer()

@@ -7,10 +7,11 @@
 //
 
 import SwiftUI
+import Combine
 import Account
 
 struct SettingsView : View {
-	@ObjectBinding var viewModel: SettingsViewModel
+	@ObjectBinding var viewModel: ViewModel
 	
     var body: some View {
 		NavigationView {
@@ -18,7 +19,9 @@ struct SettingsView : View {
 				
 				Section(header: Text("ACCOUNTS")) {
 					ForEach(viewModel.accounts.identified(by: \.self)) { account in
-						Text(verbatim: account.nameForDisplay)
+						NavigationButton(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(account)), isDetail: false) {
+							Text(verbatim: account.nameForDisplay)
+						}
 					}
 					NavigationButton(destination: SettingsAddAccountView(), isDetail: false) {
 						Text("Add Account")
@@ -83,12 +86,74 @@ struct SettingsView : View {
 
 		}
     }
+	
+	class ViewModel: BindableObject {
+		
+		let didChange = PassthroughSubject<ViewModel, Never>()
+		
+		init() {
+			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		}
+		
+		var accounts: [Account] {
+			get {
+				return AccountManager.shared.sortedAccounts
+			}
+			set {
+			}
+		}
+		
+		var sortOldestToNewest: Bool {
+			get {
+				return AppDefaults.timelineSortDirection == .orderedDescending
+			}
+			set {
+				if newValue == true {
+					AppDefaults.timelineSortDirection = .orderedDescending
+				} else {
+					AppDefaults.timelineSortDirection = .orderedAscending
+				}
+				didChange.send(self)
+			}
+		}
+		
+		var timelineNumberOfLines: Int {
+			get {
+				return AppDefaults.timelineNumberOfLines
+			}
+			set {
+				AppDefaults.timelineNumberOfLines = newValue
+				didChange.send(self)
+			}
+		}
+		
+		var refreshInterval: RefreshInterval {
+			get {
+				return AppDefaults.refreshInterval
+			}
+			set {
+				AppDefaults.refreshInterval = newValue
+				didChange.send(self)
+			}
+		}
+		
+		@objc func accountsDidChange(_ notification: Notification) {
+			didChange.send(self)
+		}
+		
+		@objc func displayNameDidChange(_ notification: Notification) {
+			didChange.send(self)
+		}
+		
+	}
+
 }
 
 #if DEBUG
 struct SettingsView_Previews : PreviewProvider {
     static var previews: some View {
-        SettingsView(viewModel: SettingsViewModel())
+        SettingsView(viewModel: SettingsView.ViewModel())
     }
 }
 #endif
