@@ -19,22 +19,12 @@ those libraries can grow and change, getting CI verification, indepdent of NetNe
 The submodule CI are typically set to run a build and any available tests. Refer to the
 project repository for the current and complete list of submodules, but for quick reference:
 
-- [RSCore](https://github.com/brentsimmons/RSCore)
+- [RSCore](https://github.com/brentsimmons/RSCore) [![CircleCI](https://circleci.com/gh/brentsimmons/RSCore.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSCore)
 
-[![CircleCI](https://circleci.com/gh/brentsimmons/RSCore.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSCore)
+- [RSCore](https://github.com/brentsimmons/RSWeb) [![CircleCI](https://circleci.com/gh/brentsimmons/RSWeb.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSWeb)
 
-- [RSCore](https://github.com/brentsimmons/RSWeb)
+- [RSCore](https://github.com/brentsimmons/RSParser) [![CircleCI](https://circleci.com/gh/brentsimmons/RSParser.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSParser)
 
-[![CircleCI](https://circleci.com/gh/brentsimmons/RSWeb.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSWeb)
+- [RSCore](https://github.com/brentsimmons/RSTree) [![CircleCI](https://circleci.com/gh/brentsimmons/RSTree.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSTree)
 
-- [RSCore](https://github.com/brentsimmons/RSParser)
-
-[![CircleCI](https://circleci.com/gh/brentsimmons/RSParser.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSParser)
-
-- [RSCore](https://github.com/brentsimmons/RSTree)
-
-[![CircleCI](https://circleci.com/gh/brentsimmons/RSTree.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSTree)
-
-- [RSCore](https://github.com/brentsimmons/RSDatabase)
-
-[![CircleCI](https://circleci.com/gh/brentsimmons/RSDatabase.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSDatabase)
+- [RSCore](https://github.com/brentsimmons/RSDatabase) [![CircleCI](https://circleci.com/gh/brentsimmons/RSDatabase.svg?style=svg)](https://circleci.com/gh/brentsimmons/RSDatabase)
