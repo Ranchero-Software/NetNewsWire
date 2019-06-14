@@ -10,13 +10,14 @@ import SwiftUI
 import Account
 
 struct SettingsLocalAccountView : View {
+	@Environment(\.isPresented) private var isPresented
 	@State var name: String
-	
+
     var body: some View {
 		NavigationView {
 			List {
 				Section(header:
-					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: "On My Device").padding()
+					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName).padding()
 				)  {
 					HStack {
 						Spacer()
@@ -36,13 +37,20 @@ struct SettingsLocalAccountView : View {
 			}
 			.listStyle(.grouped)
 			.navigationBarTitle(Text(""), displayMode: .inline)
+			.navigationBarItems(leading: Button(action: { self.dismiss() }) { Text("Cancel") } )
 		}
 	}
 	
-	func addAccount() {
+	private func addAccount() {
 		let account = AccountManager.shared.createAccount(type: .onMyMac)
 		account.name = name
+		dismiss()
 	}
+	
+	private func dismiss() {
+		isPresented?.value = false
+	}
+	
 }
 
 #if DEBUG

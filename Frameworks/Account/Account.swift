@@ -263,6 +263,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		switch credentials {
 		case .basic(let username, _):
 			self.username = username
+		default:
+			return
 		}
 		
 		try CredentialsManager.storeCredentials(credentials, server: server)

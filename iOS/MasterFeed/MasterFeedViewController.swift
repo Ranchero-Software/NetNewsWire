@@ -394,7 +394,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		
-		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsViewModel()))
+		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
 		self.present(settings, animated: true)
 		
 	}

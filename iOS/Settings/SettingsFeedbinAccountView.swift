@@ -7,11 +7,17 @@
 //
 
 import SwiftUI
+import Combine
+import Account
+import RSWeb
 
 struct SettingsFeedbinAccountView : View {
-	@State var email: String
-	@State var password: String
-
+	@Environment(\.isPresented) private var isPresented
+	@ObjectBinding var viewModel: ViewModel
+	@State var busy: Bool = false
+	@State var error: Text = Text("")
+	var account: Account? = nil
+	
 	var body: some View {
 		NavigationView {
 			List {
@@ -20,27 +26,116 @@ struct SettingsFeedbinAccountView : View {
 				)  {
 					HStack {
 						Spacer()
-						TextField($email, placeholder: Text("Email"))
+						TextField($viewModel.email, placeholder: Text("Email"))
+							.textContentType(.username)
 						Spacer()
 					}
 					HStack {
 						Spacer()
-						SecureField($password, placeholder: Text("Password"))
+						SecureField($viewModel.password, placeholder: Text("Password"))
 						Spacer()
 					}
 				}
-				Section {
+				Section(footer:
 					HStack {
 						Spacer()
-						Button(action: {}) {
+						error.color(.red)
+						Spacer()
+					}
+					) {
+					HStack {
+						Spacer()
+						Button(action: { self.addAccount() }) {
 							Text("Add Account")
 						}
+						.disabled(!viewModel.isValid)
 						Spacer()
 					}
 				}
 			}
+			.disabled(busy)
 			.listStyle(.grouped)
 			.navigationBarTitle(Text(""), displayMode: .inline)
+			.navigationBarItems(leading:
+				Button(action: { self.dismiss() }) { Text("Cancel") }
+			)
+		}
+	}
+	
+	private func addAccount() {
+		
+		busy = true
+
+		let emailAddress = viewModel.email.trimmingCharacters(in: .whitespaces)
+		let credentials = Credentials.basic(username: emailAddress, password: viewModel.password)
+
+		Account.validateCredentials(type: .feedbin, credentials: credentials) { result in
+			
+			self.busy = false
+			
+			switch result {
+			case .success(let authenticated):
+				
+				if authenticated {
+					
+					var newAccount = false
+					let workAccount: Account
+					if self.account == nil {
+						workAccount = AccountManager.shared.createAccount(type: .feedbin)
+						newAccount = true
+					} else {
+						workAccount = self.account!
+					}
+					
+					do {
+						
+						do {
+							try workAccount.removeBasicCredentials()
+						} catch {}
+						try workAccount.storeCredentials(credentials)
+						
+						if newAccount {
+							workAccount.refreshAll() { result in }
+						}
+						
+						self.dismiss()
+						
+					} catch {
+						self.error = Text("Keychain error while storing credentials.")
+					}
+					
+				} else {
+					self.error = Text("Invalid email/password combination.")
+				}
+				
+			case .failure:
+				self.error = Text("Network error. Try again later.")
+			}
+			
+		}
+		
+	}
+	
+	private func dismiss() {
+		isPresented?.value = false
+	}
+	
+	class ViewModel: BindableObject {
+		let didChange = PassthroughSubject<ViewModel, Never>()
+
+		var email: String = "" {
+			didSet {
+				didChange.send(self)
+			}
+		}
+		var password: String = "" {
+			didSet {
+				didChange.send(self)
+			}
+		}
+		
+		var isValid: Bool {
+			return !email.isEmpty && !password.isEmpty
 		}
 	}
 	
@@ -49,7 +144,7 @@ struct SettingsFeedbinAccountView : View {
 #if DEBUG
 struct SettingsFeedbinAccountView_Previews : PreviewProvider {
     static var previews: some View {
-        SettingsFeedbinAccountView(email: "", password: "")
+        SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())
     }
 }
 #endif

@@ -139,7 +139,7 @@
 		51EF0F902279C9500050506E /* AccountsAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F8F2279C9500050506E /* AccountsAddViewController.swift */; };
 		51EF0F922279CA620050506E /* AccountsAddTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F912279CA620050506E /* AccountsAddTableCellView.swift */; };
 		51F35D0922AFD4760003CE1B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F35D0822AFD4760003CE1B /* SettingsView.swift */; };
-		51F35D1B22B001010003CE1B /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F35D1A22B001010003CE1B /* SettingsViewModel.swift */; };
+		51F772F622B279570087D9D1 /* SettingsDetailAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F772EC22B2789B0087D9D1 /* SettingsDetailAccountView.swift */; };
 		51F85BE5227217D000C787DC /* RefreshIntervalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */; };
 		51F85BE7227245FC00C787DC /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BE6227245FC00C787DC /* AboutViewController.swift */; };
 		51F85BEB22724CB600C787DC /* About.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEA22724CB600C787DC /* About.rtf */; };
@@ -730,7 +730,7 @@
 		51EF0F8F2279C9500050506E /* AccountsAddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddViewController.swift; sourceTree = "<group>"; };
 		51EF0F912279CA620050506E /* AccountsAddTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddTableCellView.swift; sourceTree = "<group>"; };
 		51F35D0822AFD4760003CE1B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		51F35D1A22B001010003CE1B /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		51F772EC22B2789B0087D9D1 /* SettingsDetailAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailAccountView.swift; sourceTree = "<group>"; };
 		51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshIntervalViewController.swift; sourceTree = "<group>"; };
 		51F85BE6227245FC00C787DC /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		51F85BEA22724CB600C787DC /* About.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = About.rtf; sourceTree = "<group>"; };
@@ -1040,13 +1040,13 @@
 		5183CCEB227117C70010922C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				51F35CFD22AFD0350003CE1B /* UIKit */,
-				51F35D0822AFD4760003CE1B /* SettingsView.swift */,
-				51F35D1A22B001010003CE1B /* SettingsViewModel.swift */,
 				510D708122B041CC004E8F65 /* SettingsAccountLabelView.swift */,
 				510D707322B028E1004E8F65 /* SettingsAddAccountView.swift */,
-				510D707D22B02A4B004E8F65 /* SettingsLocalAccountView.swift */,
+				51F772EC22B2789B0087D9D1 /* SettingsDetailAccountView.swift */,
 				510D707F22B02A5F004E8F65 /* SettingsFeedbinAccountView.swift */,
+				510D707D22B02A4B004E8F65 /* SettingsLocalAccountView.swift */,
+				51F35D0822AFD4760003CE1B /* SettingsView.swift */,
+				51F35CFD22AFD0350003CE1B /* UIKit */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1935,12 +1935,12 @@
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Manual;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1950,7 +1950,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -1960,7 +1960,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -2324,6 +2324,7 @@
 				510D707422B028E1004E8F65 /* SettingsAddAccountView.swift in Sources */,
 				51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */,
 				512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */,
+				51F772F622B279570087D9D1 /* SettingsDetailAccountView.swift in Sources */,
 				510D707E22B02A4B004E8F65 /* SettingsLocalAccountView.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
 				51F85BE7227245FC00C787DC /* AboutViewController.swift in Sources */,
@@ -2348,7 +2349,6 @@
 				51C4529922650A0000C03939 /* ArticleStylesManager.swift in Sources */,
 				51EF0F802277A8330050506E /* MasterTimelineCellLayout.swift in Sources */,
 				51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */,
-				51F35D1B22B001010003CE1B /* SettingsViewModel.swift in Sources */,
 				515436882291D75D005E1CDF /* AddLocalAccountViewController.swift in Sources */,
 				51C452AF2265108300C03939 /* ArticleArray.swift in Sources */,
 				51C4528E2265099C00C03939 /* SmartFeedsController.swift in Sources */,
