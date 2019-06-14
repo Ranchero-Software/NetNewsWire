@@ -2282,7 +2282,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# See https://github.com/Watson1978/kotori/commit/ffe320f2e058828f0af294b65ed88dfd7baaabff\n\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n    codesign --verbose --force --deep -o runtime --sign \"Developer ID Application: Vincode, Inc\" \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\nfi\n";
+			shellScript = "# See https://github.com/Watson1978/kotori/commit/ffe320f2e058828f0af294b65ed88dfd7baaabff\n\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n    codesign --verbose --force --deep -o runtime --sign \"Developer ID Application: Brent Simmons\" \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\nfi\n";
 		};
 		84C987A52000AC9E0066B150 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
