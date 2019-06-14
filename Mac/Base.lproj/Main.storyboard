@@ -537,6 +537,12 @@
                                                 <action selector="openWebsite:" target="Ady-hI-5gd" id="rmL-lt-p8g"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="How To Support NetNewsWire" id="kfC-NQ-g3E">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openHowToSupport:" target="Ady-hI-5gd" id="SIw-Ug-A4D"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="GitHub Repository" id="QfD-Xw-sdF">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
