@@ -24,6 +24,7 @@ final class FaviconDownloader {
 	private var homePageToFaviconURLCache = [String: String]() //homePageURL: faviconURL
 	private var homePageURLsWithNoFaviconURL = Set<String>()
 	private let queue: DispatchQueue
+	private var cache = [Feed: RSImage]() // faviconURL: RSImage
 
 	struct UserInfoKey {
 		static let faviconURL = "faviconURL"
@@ -40,6 +41,10 @@ final class FaviconDownloader {
 
 	// MARK: - API
 
+	func resetCache() {
+		cache = [Feed: RSImage]()
+	}
+	
 	func favicon(for feed: Feed) -> RSImage? {
 
 		assert(Thread.isMainThread)
@@ -59,6 +64,22 @@ final class FaviconDownloader {
 			return favicon(withHomePageURL: homePageURL)
 		}
 
+		return nil
+	}
+	
+	func faviconAsAvatar(for feed: Feed) -> RSImage? {
+		
+		if let image = cache[feed] {
+			return image
+		}
+		
+		if let image = favicon(for: feed), let imageData = image.dataRepresentation() {
+			if let scaledImage = RSImage.scaledForAvatar(imageData) {
+				cache[feed] = scaledImage
+				return scaledImage
+			}
+		}
+		
 		return nil
 	}
 

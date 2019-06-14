@@ -10,6 +10,14 @@ import RSCore
 
 struct AppAssets {
 
+	static var avatarDarkBackgroundColor: UIColor {
+		return UIColor(named: "avatarDarkBackgroundColor")!
+	}
+
+	static var avatarLightBackgroundColor: UIColor {
+		return UIColor(named: "avatarLightBackgroundColor")!
+	}
+	
 	static var circleClosedImage: RSImage = {
 		return RSImage(named: "circleClosedImage")!
 	}()

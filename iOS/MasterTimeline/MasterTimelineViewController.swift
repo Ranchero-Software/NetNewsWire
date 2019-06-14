@@ -407,7 +407,7 @@ private extension MasterTimelineViewController {
 			return feedIconImage
 		}
 		
-		if let feed = article.feed, let faviconImage = appDelegate.faviconDownloader.favicon(for: feed) {
+		if let feed = article.feed, let faviconImage = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
 			return faviconImage
 		}
 		

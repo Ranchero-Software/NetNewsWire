@@ -210,11 +210,7 @@ private extension ArticleRenderer {
 	}
 
 	func base64String(forImage image: RSImage) -> String? {
-		#if os(macOS)
-		return image.tiffRepresentation?.base64EncodedString()
-		#else
-		return image.pngData()?.base64EncodedString()
-		#endif
+		return image.dataRepresentation()?.base64EncodedString()
 	}
 
 	func singleArticleSpecifiedAuthor() -> Author? {
