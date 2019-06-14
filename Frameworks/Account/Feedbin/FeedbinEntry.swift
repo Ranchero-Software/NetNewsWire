@@ -21,6 +21,7 @@ struct FeedbinEntry: Codable {
 	let summary: String?
 	let datePublished: String?
 	let dateArrived: String?
+	let jsonFeed: FeedbinEntryJSONFeed?
 
 	enum CodingKeys: String, CodingKey {
 		case articleID = "id"
@@ -32,6 +33,7 @@ struct FeedbinEntry: Codable {
 		case summary = "summary"
 		case datePublished = "published"
 		case dateArrived = "created_at"
+		case jsonFeed = "json_feed"
 	}
 
 	// Feedbin dates can't be decoded by the JSONDecoding 8601 decoding strategy.  Feedbin
@@ -46,4 +48,20 @@ struct FeedbinEntry: Codable {
 		}
 	}
 	
+}
+
+struct FeedbinEntryJSONFeed: Codable {
+	let jsonFeedAuthor: FeedbinEntryJSONFeedAuthor?
+	enum CodingKeys: String, CodingKey {
+		case jsonFeedAuthor = "author"
+	}
+}
+
+struct FeedbinEntryJSONFeedAuthor: Codable {
+	let url: String?
+	let avatarURL: String?
+	enum CodingKeys: String, CodingKey {
+		case url = "url"
+		case avatarURL = "avatar"
+	}
 }

@@ -11,13 +11,13 @@ import RSCore
 
 struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 
-	static let cellPadding = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+	static let cellPadding = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 16)
 	
-	static let unreadCircleMarginLeft = CGFloat(integerLiteral: 8)
-	static let unreadCircleDimension = CGFloat(integerLiteral: 8)
+	static let unreadCircleMarginLeft = CGFloat(integerLiteral: 0)
+	static let unreadCircleDimension = CGFloat(integerLiteral: 12)
 	static let unreadCircleMarginRight = CGFloat(integerLiteral: 8)
 
-	static let starDimension = CGFloat(integerLiteral: 13)
+	static let starDimension = CGFloat(integerLiteral: 16)
 
 	static let avatarSize = CGSize(width: 48.0, height: 48.0)
 	static let avatarMarginRight = CGFloat(integerLiteral: 8)

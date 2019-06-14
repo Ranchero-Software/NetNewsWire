@@ -31,6 +31,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedbin")
 
 	let supportsSubFolders = false
+	let usesTags = true
 	let server: String? = "api.feedbin.com"
 	var opmlImportInProgress = false
 	
@@ -78,7 +79,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	func refreshAll(for account: Account, completion: (() -> Void)? = nil) {
+	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
@@ -87,11 +88,13 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .success():
 				
 				self.refreshArticles(account) {
-					self.refreshArticleStatus(for: account) {
-						self.refreshMissingArticles(account) {
-							self.refreshProgress.clear()
-							DispatchQueue.main.async {
-								completion?()
+					self.sendArticleStatus(for: account) {
+						self.refreshArticleStatus(for: account) {
+							self.refreshMissingArticles(account) {
+								self.refreshProgress.clear()
+								DispatchQueue.main.async {
+									completion(.success(()))
+								}
 							}
 						}
 					}
@@ -99,9 +102,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion?()
 					self.refreshProgress.clear()
-					self.handleError(error)
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 			
@@ -205,12 +208,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 		os_log(.debug, log: log, "Begin importing OPML...")
 		opmlImportInProgress = true
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		
 		caller.importOPML(opmlData: opmlData) { result in
 			switch result {
 			case .success(let importResult):
 				if importResult.complete {
 					os_log(.debug, log: self.log, "Import OPML done.")
+					self.refreshProgress.completeTask()
 					self.opmlImportInProgress = false
 					DispatchQueue.main.async {
 						completion(.success(()))
@@ -220,77 +225,118 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				os_log(.debug, log: self.log, "Import OPML failed.")
+				self.refreshProgress.completeTask()
 				self.opmlImportInProgress = false
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 		}
 		
 	}
 	
+	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+		if let folder = account.ensureFolder(with: name) {
+			completion(.success(folder))
+		} else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+		}
+	}
+
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		guard folder.hasAtLeastOneFeed() else {
+			folder.name = name
+			return
+		}
 		
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
+					self.renameFolderRelationship(for: account, fromName: folder.name ?? "", toName: name)
 					folder.name = name
 					completion(.success(()))
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 		}
 		
 	}
 
-	func deleteFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {
-			account.deleteFolder(folder)
+			account.removeFolder(folder)
 			return
 		}
 		
-		// After we successfully delete at Feedbin, we add all the feeds to the account to save them.  We then
-		// delete the folder.  We then sync the taggings we received on the delete to remove any feeds from
-		// the account that might be in another folder.
-		caller.deleteTag(name: folder.name ?? "") { result in
-			switch result {
-			case .success(let taggings):
-				DispatchQueue.main.sync {
-					BatchUpdate.shared.perform {
-						for feed in folder.topLevelFeeds {
-							account.addFeed(feed)
-							self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+		let group = DispatchGroup()
+		
+		for feed in folder.topLevelFeeds {
+			
+			if feed.folderRelationship?.count ?? 0 > 1 {
+				
+				if let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
+					group.enter()
+					caller.deleteTagging(taggingID: feedTaggingID) { result in
+						group.leave()
+						switch result {
+						case .success:
+							DispatchQueue.main.async {
+								self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+							}
+						case .failure(let error):
+							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
 						}
-						account.deleteFolder(folder)
 					}
-					completion(.success(()))
 				}
-				self.syncTaggings(account, taggings)
-			case .failure(let error):
-				DispatchQueue.main.async {
-					completion(.failure(error))
+				
+			} else {
+				
+				if let subscriptionID = feed.subscriptionID {
+					group.enter()
+					caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+						group.leave()
+						switch result {
+						case .success:
+							DispatchQueue.main.async {
+								account.clearFeedMetadata(feed)
+							}
+						case .failure(let error):
+							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+						}
+					}
+					
 				}
+				
 			}
+			
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			account.removeFolder(folder)
+			completion(.success(()))
 		}
 		
 	}
 	
-	func createFeed(for account: Account, url: String, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		caller.createSubscription(url: url) { result in
 			switch result {
 			case .success(let subResult):
 				switch subResult {
 				case .created(let subscription):
-					self.createFeed(account: account, subscription: subscription, completion: completion)
+					self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
 				case .multipleChoice(let choices):
-					self.decideBestFeedChoice(account: account, url: url, choices: choices, completion: completion)
+					self.decideBestFeedChoice(account: account, url: url, name: name, container: container, choices: choices, completion: completion)
 				case .alreadySubscribed:
 					DispatchQueue.main.async {
 						completion(.failure(AccountError.createErrorAlreadySubscribed))
@@ -302,7 +348,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 
@@ -327,43 +374,38 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 		}
 		
 	}
 
-	func deleteFeed(for account: Account, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		// This error should never happen
-		guard let subscriptionID = feed.subscriptionID else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
-			return
+	func removeFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		if feed.folderRelationship?.count ?? 0 > 1 {
+			deleteTagging(for: account, with: feed, from: container, completion: completion)
+		} else {
+			deleteSubscription(for: account, with: feed, from: container, completion: completion)
 		}
-		
-		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					account.removeFeed(feed)
-					if let folders = account.folders {
-						for folder in folders {
-							folder.removeFeed(feed)
-						}
-					}
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
+	}
+	
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		if from is Account {
+			addFeed(for: account, with: feed, to: to, completion: completion)
+		} else {
+			deleteTagging(for: account, with: feed, from: from) { result in
+				switch result {
+				case .success:
+					self.addFeed(for: account, with: feed, to: to, completion: completion)
+				case .failure(let error):
 					completion(.failure(error))
 				}
 			}
 		}
-		
 	}
-	
-	func addFeed(for account: Account, to container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
+
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 			caller.createTagging(feedID: feedID, name: folder.name ?? "") { result in
@@ -377,56 +419,39 @@ final class FeedbinAccountDelegate: AccountDelegate {
 					}
 				case .failure(let error):
 					DispatchQueue.main.async {
-						completion(.failure(error))
+						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						completion(.failure(wrappedError))
 					}
 				}
 			}
 		} else {
-			if let account = container as? Account {
-				account.addFeed(feed)
-			}
 			DispatchQueue.main.async {
+				if let account = container as? Account {
+					account.addFeedIfNotInAnyFolder(feed)
+				}
 				completion(.success(()))
 			}
 		}
 		
 	}
 	
-	func removeFeed(for account: Account, from container: Container, with feed: Feed, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
-			caller.deleteTagging(taggingID: feedTaggingID) { result in
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
+			account.addFeed(existingFeed, to: container) { result in
 				switch result {
 				case .success:
-					DispatchQueue.main.async {
-						folder.removeFeed(feed)
-						completion(.success(()))
-					}
+					completion(.success(()))
 				case .failure(let error):
-					DispatchQueue.main.async {
-						completion(.failure(error))
-					}
+					completion(.failure(error))
 				}
 			}
 		} else {
-			if let account = container as? Account {
-				account.removeFeed(feed)
-			}
-			completion(.success(()))
-		}
-		
-	}
-	
-	func restoreFeed(for account: Account, feed: Feed, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		let editedName = feed.editedName
-		
-		createFeed(for: account, url: feed.url) { result in
-			switch result {
-			case .success(let feed):
-				self.processRestoredFeed(for: account, feed: feed, editedName: editedName, folder: folder, completion: completion)
-			case .failure(let error):
-				DispatchQueue.main.async {
+			createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
 					completion(.failure(error))
 				}
 			}
@@ -436,22 +461,27 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		account.addFolder(folder)
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelFeeds {
 			
+			folder.topLevelFeeds.remove(feed)
+			
 			group.enter()
-			addFeed(for: account, to: folder, with: feed) { result in
-				if account.topLevelFeeds.contains(feed) {
-					account.removeFeed(feed)
-				}
+			restoreFeed(for: account, feed: feed, container: folder) { result in
 				group.leave()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+				}
 			}
 			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
+			account.addFolder(folder)
 			completion(.success(()))
 		}
 		
@@ -463,6 +493,10 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
 		}
 		database.insertStatuses(syncStatuses)
+		
+		if database.selectPendingCount() > 100 {
+			sendArticleStatus(for: account) {}
+		}
 		
 		return account.update(articles, statusKey: statusKey, flag: flag)
 		
@@ -490,14 +524,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 // MARK: Private
 
 private extension FeedbinAccountDelegate {
-	
-	func handleError(_ error: Error) {
-		#if os(macOS)
-		NSApplication.shared.presentError(error)
-		#else
-		UIApplication.shared.presentError(error)
-		#endif
-	}
 	
 	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
@@ -530,6 +556,7 @@ private extension FeedbinAccountDelegate {
 						if let result = importResult, result.complete {
 							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
 							timer.invalidate()
+							self.refreshProgress.completeTask()
 							self.opmlImportInProgress = false
 							DispatchQueue.main.async {
 								completion(.success(()))
@@ -538,6 +565,7 @@ private extension FeedbinAccountDelegate {
 					case .failure(let error):
 						os_log(.debug, log: self.log, "Import OPML check failed.")
 						timer.invalidate()
+						self.refreshProgress.completeTask()
 						self.opmlImportInProgress = false
 						DispatchQueue.main.async {
 							completion(.failure(error))
@@ -568,7 +596,7 @@ private extension FeedbinAccountDelegate {
 							account.addFeed(feed)
 							clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 						}
-						account.deleteFolder(folder)
+						account.removeFolder(folder)
 					}
 				}
 			}
@@ -675,7 +703,10 @@ private extension FeedbinAccountDelegate {
 			DispatchQueue.main.sync {
 				if let feed = account.idToFeedDictionary[subFeedId] {
 					feed.name = subscription.name
+					// If the name has been changed on the server remove the locally edited name
+					feed.editedName = nil
 					feed.homePageURL = subscription.homePageURL
+					feed.subscriptionID = String(subscription.subscriptionID)
 				} else {
 					let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
 					feed.subscriptionID = String(subscription.subscriptionID)
@@ -820,72 +851,15 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
-	func processRestoredFeed(for account: Account, feed: Feed, editedName: String?, folder: Folder?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		if let folder = folder {
-			
-			addFeed(for: account, to: folder, with: feed) { result in
-				
-				switch result {
-				case .success:
-					
-					if editedName != nil {
-						DispatchQueue.main.async {
-							account.removeFeed(feed)
-							folder.addFeed(feed)
-						}
-						self.processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
-					} else {
-						DispatchQueue.main.async {
-							account.removeFeed(feed)
-							folder.addFeed(feed)
-							completion(.success(()))
-						}
-					}
-					
-				case .failure(let error):
-					DispatchQueue.main.async {
-						completion(.failure(error))
-					}
-				}
-				
+	func renameFolderRelationship(for account: Account, fromName: String, toName: String) {
+		for feed in account.flattenedFeeds() {
+			if var folderRelationship = feed.folderRelationship {
+				let relationship = folderRelationship[fromName]
+				folderRelationship[fromName] = nil
+				folderRelationship[toName] = relationship
+				feed.folderRelationship = folderRelationship
 			}
-			
-		} else {
-			
-			DispatchQueue.main.async {
-				account.addFeed(feed)
-			}
-			
-			if editedName != nil {
-				processRestoredFeedName(for: account, feed: feed, editedName: editedName!, completion: completion)
-			} else {
-				DispatchQueue.main.async {
-					completion(.success(()))
-				}
-			}
-			
 		}
-		
-	}
-	
-	func processRestoredFeedName(for account: Account, feed: Feed, editedName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		renameFeed(for: account, with: feed, to: editedName) { result in
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					feed.editedName = editedName
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					completion(.failure(error))
-				}
-			}
-			
-		}
-		
 	}
 	
 	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
@@ -904,7 +878,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func decideBestFeedChoice(account: Account, url: String, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
+	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
 			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
@@ -914,7 +888,7 @@ private extension FeedbinAccountDelegate {
 
 		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
 			if let bestSubscription = choices.filter({ bestSpecifier.urlString == $0.url }).first {
-				createFeed(for: account, url: bestSubscription.url, completion: completion)
+				createFeed(for: account, url: bestSubscription.url, name: name, container: container, completion: completion)
 			} else {
 				DispatchQueue.main.async {
 					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
@@ -928,44 +902,66 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
-	func createFeed( account: Account, subscription sub: FeedbinSubscription, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
+
 		DispatchQueue.main.async {
 			
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.subscriptionID = String(sub.subscriptionID)
 		
-			// Download the initial articles
-			self.caller.retrieveEntries(feedID: feed.feedID) { result in
-				
+			account.addFeed(feed, to: container) { result in
 				switch result {
-				case .success(let (entries, page)):
-					
-					self.processEntries(account: account, entries: entries) {
-						self.refreshArticles(account, page: page) {
-							self.refreshArticleStatus(for: account) {
-								self.refreshMissingArticles(account) {
-									DispatchQueue.main.async {
-										completion(.success(feed))
-									}
-								}
+				case .success:
+					if let name = name {
+						account.renameFeed(feed, to: name) { result in
+							switch result {
+							case .success:
+								self.initialFeedDownload(account: account, feed: feed, completion: completion)
+							case .failure(let error):
+								completion(.failure(error))
 							}
 						}
+					} else {
+						self.initialFeedDownload(account: account, feed: feed, completion: completion)
 					}
-					
 				case .failure(let error):
-					os_log(.error, log: self.log, "Initial articles download failed: %@.", error.localizedDescription)
-					DispatchQueue.main.async {
-						completion(.success(feed))
-					}
+					completion(.failure(error))
 				}
-				
 			}
-
+			
 		}
 		
 	}
 
+	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
+		
+		// Download the initial articles
+		self.caller.retrieveEntries(feedID: feed.feedID) { result in
+			
+			switch result {
+			case .success(let (entries, page)):
+				
+				self.processEntries(account: account, entries: entries) {
+					self.refreshArticles(account, page: page) {
+						self.refreshArticleStatus(for: account) {
+							self.refreshMissingArticles(account) {
+								DispatchQueue.main.async {
+									completion(.success(feed))
+								}
+							}
+						}
+					}
+				}
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+ 
+	}
+	
 	func refreshArticles(_ account: Account, completion: @escaping (() -> Void)) {
 
 		os_log(.debug, log: log, "Refreshing articles...")
@@ -1098,7 +1094,7 @@ private extension FeedbinAccountDelegate {
 		}
 		
 		let parsedItems: [ParsedItem] = entries.map { entry in
-			let authors = Set([ParsedAuthor(name: entry.authorName, url: nil, avatarURL: nil, emailAddress: nil)])
+			let authors = Set([ParsedAuthor(name: entry.authorName, url: entry.jsonFeed?.jsonFeedAuthor?.url, avatarURL: entry.jsonFeed?.jsonFeedAuthor?.avatarURL, emailAddress: nil)])
 			return ParsedItem(syncServiceID: String(entry.articleID), uniqueID: String(entry.articleID), feedURL: String(entry.feedID), url: nil, externalURL: entry.url, title: entry.title, contentHTML: entry.contentHTML, contentText: nil, summary: entry.summary, imageURL: nil, bannerImageURL: nil, datePublished: entry.parseDatePublished(), dateModified: nil, authors: authors, tags: nil, attachments: nil)
 		}
 		
@@ -1122,13 +1118,6 @@ private extension FeedbinAccountDelegate {
 			_ = account.update(markUnreadArticles, statusKey: .read, flag: false)
 		}
 	
-		// Mark articles as read
-		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
-		let markReadArticles = account.fetchArticles(forArticleIDs: deltaReadArticleIDs)
-		DispatchQueue.main.async {
-			_ = account.update(markReadArticles, statusKey: .read, flag: true)
-		}
-	
 		// Save any unread statuses for articles we haven't yet received
 		let markUnreadArticleIDs = Set(markUnreadArticles.map { $0.articleID })
 		let missingUnreadArticleIDs = deltaUnreadArticleIDs.subtracting(markUnreadArticleIDs)
@@ -1138,6 +1127,22 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 		
+		// Mark articles as read
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
+		let markReadArticles = account.fetchArticles(forArticleIDs: deltaReadArticleIDs)
+		DispatchQueue.main.async {
+			_ = account.update(markReadArticles, statusKey: .read, flag: true)
+		}
+	
+		// Save any read statuses for articles we haven't yet received
+		let markReadArticleIDs = Set(markReadArticles.map { $0.articleID })
+		let missingReadArticleIDs = deltaReadArticleIDs.subtracting(markReadArticleIDs)
+		if !missingReadArticleIDs.isEmpty {
+			DispatchQueue.main.async {
+				account.ensureStatuses(missingReadArticleIDs, .read, true)
+			}
+		}
+	
 	}
 	
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?) {
@@ -1156,6 +1161,15 @@ private extension FeedbinAccountDelegate {
 			_ = account.update(markStarredArticles, statusKey: .starred, flag: true)
 		}
 		
+		// Save any starred statuses for articles we haven't yet received
+		let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
+		let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
+		if !missingStarredArticleIDs.isEmpty {
+			DispatchQueue.main.async {
+				account.ensureStatuses(missingStarredArticleIDs, .starred, true)
+			}
+		}
+		
 		// Mark articles as unstarred
 		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
 		let markUnstarredArticles = account.fetchArticles(forArticleIDs: deltaUnstarredArticleIDs)
@@ -1163,12 +1177,71 @@ private extension FeedbinAccountDelegate {
 			_ = account.update(markUnstarredArticles, statusKey: .starred, flag: false)
 		}
 		
-		// Save any starred statuses for articles we haven't yet received
-		let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
-		let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
-		if !missingStarredArticleIDs.isEmpty {
+		// Save any unstarred statuses for articles we haven't yet received
+		let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
+		let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
+		if !missingUnstarredArticleIDs.isEmpty {
 			DispatchQueue.main.async {
-				account.ensureStatuses(missingStarredArticleIDs, .starred, true)
+				account.ensureStatuses(missingUnstarredArticleIDs, .starred, false)
+			}
+		}
+		
+	}
+
+	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
+			caller.deleteTagging(taggingID: feedTaggingID) { result in
+				switch result {
+				case .success:
+					DispatchQueue.main.async {
+						self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+						folder.removeFeed(feed)
+						account.addFeedIfNotInAnyFolder(feed)
+						completion(.success(()))
+					}
+				case .failure(let error):
+					DispatchQueue.main.async {
+						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						completion(.failure(wrappedError))
+					}
+				}
+			}
+		} else {
+			if let account = container as? Account {
+				account.removeFeed(feed)
+			}
+			completion(.success(()))
+		}
+		
+	}
+
+	func deleteSubscription(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		// This error should never happen
+		guard let subscriptionID = feed.subscriptionID else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			return
+		}
+		
+		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+			switch result {
+			case .success:
+				DispatchQueue.main.async {
+					account.clearFeedMetadata(feed)
+					account.removeFeed(feed)
+					if let folders = account.folders {
+						for folder in folders {
+							folder.removeFeed(feed)
+						}
+					}
+					completion(.success(()))
+				}
+			case .failure(let error):
+				DispatchQueue.main.async {
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
+				}
 			}
 		}
 		

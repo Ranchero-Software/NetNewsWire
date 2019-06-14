@@ -11,6 +11,7 @@ import Account
 import Articles
 import RSCore
 import RSTree
+import SwiftUI
 
 class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunner {
 
@@ -373,22 +374,17 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		}()
 		
 		// Move the Feed
-		let source = sourceNode.parent?.representedObject as? Container
-		let destination = destParentNode?.representedObject as? Container
-		source?.removeFeed(feed) { [weak self] result in
+		guard let source = sourceNode.parent?.representedObject as? Container, let destination = destParentNode?.representedObject as? Container else {
+			return
+		}
+		
+		BatchUpdate.shared.start()
+		source.account?.moveFeed(feed, from: source, to: destination) { result in
 			switch result {
 			case .success:
-				destination?.addFeed(feed) { result in
-					switch result {
-					case .success:
-						break
-					case .failure(let error):
-						source?.addFeed(feed) { result in }
-						self?.presentError(error)
-					}
-				}
+				BatchUpdate.shared.end()
 			case .failure(let error):
-				self?.presentError(error)
+				self.presentError(error)
 			}
 		}
 
@@ -398,13 +394,8 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		
-		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		settingsNavViewController.modalPresentationStyle = .formSheet
-		
-		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
-		settingsViewController.presentingParentController = self
-		
-		self.present(settingsNavViewController, animated: true)
+		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
+		self.present(settings, animated: true)
 		
 	}
 
@@ -531,14 +522,23 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 				else {
 					return
 		}
-		
-		navState.beginUpdates()
 
-		runCommand(deleteCommand)
-		navState.rebuildShadowTable()
-		tableView.deleteRows(at: [indexPath], with: .automatic)
+		var deleteIndexPaths = [indexPath]
+		if navState.isExpanded(deleteNode) {
+			for i in 0..<deleteNode.numberOfChildNodes {
+				deleteIndexPaths.append(IndexPath(row: indexPath.row + 1 + i, section: indexPath.section))
+			}
+		}
 		
-		navState.endUpdates()
+		pushUndoableCommand(deleteCommand)
+
+		navState.beginUpdates()
+		deleteCommand.perform {
+			self.navState.treeController.rebuild()
+			self.navState.rebuildShadowTable()
+			self.tableView.deleteRows(at: deleteIndexPaths, with: .automatic)
+			self.navState.endUpdates()
+		}
 		
 	}
 	
@@ -603,7 +603,7 @@ extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 private extension MasterFeedViewController {
 	
 	@objc private func refreshAccounts(_ sender: Any) {
-		AccountManager.shared.refreshAll()
+		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 		refreshControl?.endRefreshing()
 	}
 	

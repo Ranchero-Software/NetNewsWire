@@ -334,7 +334,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func refreshAll(_ sender: Any?) {
 
-		AccountManager.shared.refreshAll()
+		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 	}
 
 	@IBAction func showAddFeedWindow(_ sender: Any?) {

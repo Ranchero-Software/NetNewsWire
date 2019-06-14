@@ -18,6 +18,7 @@ extension Notification.Name {
 
 public protocol Container: class {
 
+	var account: Account? { get }
 	var topLevelFeeds: Set<Feed> { get set }
 	var folders: Set<Folder>? { get set }
 
@@ -27,8 +28,8 @@ public protocol Container: class {
 	func hasChildFolder(with: String) -> Bool
 	func childFolder(with: String) -> Folder?
 
-    func removeFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void)
-	func addFeed(_ feed: Feed, completion: @escaping (Result<Void, Error>) -> Void)
+    func removeFeed(_ feed: Feed)
+	func addFeed(_ feed: Feed)
 
 	//Recursive — checks subfolders
 	func flattenedFeeds() -> Set<Feed>

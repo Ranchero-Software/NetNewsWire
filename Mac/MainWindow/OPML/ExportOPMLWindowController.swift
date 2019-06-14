@@ -84,7 +84,7 @@ class ExportOPMLWindowController: NSWindowController {
 		panel.isExtensionHidden = false
 		
 		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
-		panel.nameFieldStringValue = "\(accountName).opml"
+		panel.nameFieldStringValue = "Subscriptions-\(accountName).opml"
 		
 		panel.beginSheetModal(for: hostWindow!) { result in
 			if result == NSApplication.ModalResponse.OK, let url = panel.url {

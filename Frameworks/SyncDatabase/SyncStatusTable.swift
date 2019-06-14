@@ -39,6 +39,23 @@ final class SyncStatusTable: DatabaseTable {
 		
 	}
 	
+	func selectPendingCount() -> Int {
+		
+		var count: Int = 0
+		
+		self.queue.fetchSync { (database) in
+			let sql = "select count(*) from syncStatus"
+			if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
+				resultSet.next()
+				count = Int(resultSet.int(forColumnIndex: 0))
+			}
+			
+		}
+		
+		return count
+		
+	}
+	
 	func resetSelectedForProcessing(_ articleIDs: [String]) {
 		self.queue.update { database in
 			let parameters = articleIDs.map { $0 as AnyObject }

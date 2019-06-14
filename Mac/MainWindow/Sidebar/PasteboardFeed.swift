@@ -22,6 +22,7 @@ struct PasteboardFeed: Hashable {
 
 		// Internal
 		static let accountID = "accountID"
+		static let accountType = "accountType"
 		static let feedID = "feedID"
 		static let editedName = "editedName"
 	}
@@ -32,15 +33,17 @@ struct PasteboardFeed: Hashable {
 	let name: String?
 	let editedName: String?
 	let accountID: String?
+	let accountType: AccountType?
 	let isLocalFeed: Bool
 
-	init(url: String, feedID: String?, homePageURL: String?, name: String?, editedName: String?, accountID: String?) {
+	init(url: String, feedID: String?, homePageURL: String?, name: String?, editedName: String?, accountID: String?, accountType: AccountType?) {
 		self.url = url.rs_normalizedURL()
 		self.feedID = feedID
 		self.homePageURL = homePageURL?.rs_normalizedURL()
 		self.name = name
 		self.editedName = editedName
 		self.accountID = accountID
+		self.accountType = accountType
 		self.isLocalFeed = accountID != nil
 	}
 
@@ -57,7 +60,12 @@ struct PasteboardFeed: Hashable {
 		let feedID = dictionary[Key.feedID]
 		let editedName = dictionary[Key.editedName]
 
-		self.init(url: url, feedID: feedID, homePageURL: homePageURL, name: name, editedName: editedName, accountID: accountID)
+		var accountType: AccountType? = nil
+		if let accountTypeString = dictionary[Key.accountType], let accountTypeInt = Int(accountTypeString) {
+			accountType = AccountType(rawValue: accountTypeInt)
+		}
+		
+		self.init(url: url, feedID: feedID, homePageURL: homePageURL, name: name, editedName: editedName, accountID: accountID, accountType: accountType)
 	}
 
 	init?(pasteboardItem: NSPasteboardItem) {
@@ -86,7 +94,7 @@ struct PasteboardFeed: Hashable {
 		if let foundType = pasteboardType {
 			if let possibleURLString = pasteboardItem.string(forType: foundType) {
 				if possibleURLString.rs_stringMayBeURL() {
-					self.init(url: possibleURLString, feedID: nil, homePageURL: nil, name: nil, editedName: nil, accountID: nil)
+					self.init(url: possibleURLString, feedID: nil, homePageURL: nil, name: nil, editedName: nil, accountID: nil, accountType: nil)
 					return
 				}
 			}
@@ -130,6 +138,9 @@ struct PasteboardFeed: Hashable {
 		}
 		if let accountID = accountID {
 			d[PasteboardFeed.Key.accountID] = accountID
+		}
+		if let accountType = accountType {
+			d[PasteboardFeed.Key.accountType] = String(accountType.rawValue)
 		}
 		return d
 	}
@@ -186,7 +197,7 @@ extension Feed: PasteboardWriterOwner {
 private extension FeedPasteboardWriter {
 
 	var pasteboardFeed: PasteboardFeed {
-		return PasteboardFeed(url: feed.url, feedID: feed.feedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID)
+		return PasteboardFeed(url: feed.url, feedID: feed.feedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID, accountType: feed.account?.type)
 	}
 
 	var exportDictionary: PasteboardFeedDictionary {

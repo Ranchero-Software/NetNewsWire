@@ -28,7 +28,7 @@ extension MasterTimelineCellLayout {
 		var r = CGRect.zero
 		r.size = CGSize(width: MasterTimelineDefaultCellLayout.unreadCircleDimension, height: MasterTimelineDefaultCellLayout.unreadCircleDimension)
 		r.origin.x = point.x
-		r.origin.y = point.y + 9
+		r.origin.y = point.y + 4
 		return r
 	}
 	
@@ -38,14 +38,15 @@ extension MasterTimelineCellLayout {
 		r.size.width = MasterTimelineDefaultCellLayout.starDimension
 		r.size.height = MasterTimelineDefaultCellLayout.starDimension
 		r.origin.x = floor(point.x - ((MasterTimelineDefaultCellLayout.starDimension - MasterTimelineDefaultCellLayout.unreadCircleDimension) / 2.0))
-		r.origin.y = point.y + 5
+		r.origin.y = point.y + 2
 		return r
 	}
 	
 	static func rectForAvatar(_ point: CGPoint) -> CGRect {
 		var r = CGRect.zero
 		r.size = MasterTimelineDefaultCellLayout.avatarSize
-		r.origin = point
+		r.origin.x = point.x
+		r.origin.y = point.y + 4
 		return r
 	}
 	

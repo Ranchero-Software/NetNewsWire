@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum RefreshInterval: Int {
+enum RefreshInterval: Int, CaseIterable {
 	case manually = 1
 	case every10Minutes = 2
 	case every30Minutes = 3

@@ -85,20 +85,20 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="aJh-i4-bef"/>
-                                        <menuItem title="Import OPML…" id="rSl-F4-qo7">
+                                        <menuItem title="Import Subscriptions…" id="rSl-F4-qo7">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="importOPMLFromFile:" target="Ady-hI-5gd" id="eGY-fm-uvK"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Export OPML…" keyEquivalent="e" id="Xy2-v8-Lj8">
+                                        <menuItem title="Export Subscriptions…" keyEquivalent="e" id="Xy2-v8-Lj8">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <action selector="exportOPML:" target="Ady-hI-5gd" id="5Zy-m4-cE9"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="FYN-zt-6dI"/>
-                                        <menuItem title="Close" keyEquivalent="w" id="DVo-aG-piG">
+                                        <menuItem title="Close Window" keyEquivalent="w" id="DVo-aG-piG">
                                             <connections>
                                                 <action selector="performClose:" target="Ady-hI-5gd" id="HmO-Ls-i7Q"/>
                                             </connections>
@@ -413,7 +413,7 @@
                                     <items>
                                         <menuItem title="Mark as Read" keyEquivalent="U" id="Fc9-c7-2AY">
                                             <connections>
-                                                <action selector="markRead:" target="Ady-hI-5gd" id="RQv-jl-2Nv"/>
+                                                <action selector="toggleRead:" target="Ady-hI-5gd" id="jLQ-ZF-xye"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Mark All as Read" keyEquivalent="k" id="HdN-Ks-cwh">

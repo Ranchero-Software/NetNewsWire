@@ -143,25 +143,6 @@ final class FeedbinAPICaller: NSObject {
 		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
 	}
 	
-	func deleteTag(name: String, completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
-		
-		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
-		let payload = FeedbinDeleteTag(name: name)
-		
-		transport.send(request: request, method: HTTPMethod.delete, payload: payload, resultType: [FeedbinTagging].self) { result in
-
-			switch result {
-			case .success(let (_, taggings)):
-				completion(.success(taggings))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-		
-	}
-	
 	func retrieveSubscriptions(completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
@@ -358,9 +339,9 @@ final class FeedbinAPICaller: NSObject {
 		let concatIDs = articleIDs.reduce("") { param, articleID in return param + ",\(articleID)" }
 		let paramIDs = String(concatIDs.dropFirst())
 		
-		var callURL = URLComponents(url: feedbinBaseURL.appendingPathComponent("entries.json"), resolvingAgainstBaseURL: false)!
-		callURL.queryItems = [URLQueryItem(name: "ids", value: paramIDs)]
-		let request = URLRequest(url: callURL.url!, credentials: credentials)
+		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("entries.json"), resolvingAgainstBaseURL: false)!
+		callComponents.queryItems = [URLQueryItem(name: "ids", value: paramIDs), URLQueryItem(name: "mode", value: "extended")]
+		let request = URLRequest(url: callComponents.url!, credentials: credentials)
 		
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
@@ -380,9 +361,9 @@ final class FeedbinAPICaller: NSObject {
 		let since = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
 		let sinceString = FeedbinDate.formatter.string(from: since)
 		
-		var callURL = URLComponents(url: feedbinBaseURL.appendingPathComponent("/feeds/\(feedID)/entries.json"), resolvingAgainstBaseURL: false)!
-		callURL.queryItems = [URLQueryItem(name: "since", value: sinceString), URLQueryItem(name: "per_page", value: "100")]
-		let request = URLRequest(url: callURL.url!, credentials: credentials)
+		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("feeds/\(feedID)/entries.json"), resolvingAgainstBaseURL: false)!
+		callComponents.queryItems = [URLQueryItem(name: "since", value: sinceString), URLQueryItem(name: "per_page", value: "100"), URLQueryItem(name: "mode", value: "extended")]
+		let request = URLRequest(url: callComponents.url!, credentials: credentials)
 		
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
@@ -411,9 +392,9 @@ final class FeedbinAPICaller: NSObject {
 		}()
 		
 		let sinceString = FeedbinDate.formatter.string(from: since)
-		var callURL = URLComponents(url: feedbinBaseURL.appendingPathComponent("entries.json"), resolvingAgainstBaseURL: false)!
-		callURL.queryItems = [URLQueryItem(name: "since", value: sinceString), URLQueryItem(name: "per_page", value: "100")]
-		let request = URLRequest(url: callURL.url!, credentials: credentials)
+		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("entries.json"), resolvingAgainstBaseURL: false)!
+		callComponents.queryItems = [URLQueryItem(name: "since", value: sinceString), URLQueryItem(name: "per_page", value: "100"), URLQueryItem(name: "mode", value: "extended")]
+		let request = URLRequest(url: callComponents.url!, credentials: credentials)
 		
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
@@ -438,12 +419,12 @@ final class FeedbinAPICaller: NSObject {
 	
 	func retrieveEntries(page: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
 		
-		guard let callURL = URL(string: page) else {
+		guard let url = URL(string: page) else {
 			completion(.success((nil, nil)))
 			return
 		}
 		
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = URLRequest(url: url, credentials: credentials)
 
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
@@ -550,11 +531,12 @@ extension FeedbinAPICaller {
 		}
 		
 		if let lowerBound = link.range(of: "page=")?.upperBound {
-			if let upperBound = link.range(of: "&")?.lowerBound {
-				return Int(link[lowerBound..<upperBound])
+			let partialLink = link[lowerBound..<link.endIndex]
+			if let upperBound = partialLink.firstIndex(of: "&") {
+				return Int(partialLink[partialLink.startIndex..<upperBound])
 			}
-			if let upperBound = link.range(of: ">")?.lowerBound {
-				return Int(link[lowerBound..<upperBound])
+			if let upperBound = partialLink.firstIndex(of: ">") {
+				return Int(partialLink[partialLink.startIndex..<upperBound])
 			}
 		}
 		

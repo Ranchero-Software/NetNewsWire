@@ -16,7 +16,7 @@ class FeedbinAccountViewController: UIViewController {
 	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var emailTextField: UITextField!
 	@IBOutlet weak var passwordTextField: UITextField!
-	@IBOutlet weak var addAccountButton: UIButton!
+	@IBOutlet weak var actionButton: UIButton!
 	
 	@IBOutlet weak var errorMessageLabel: UILabel!
 	
@@ -31,18 +31,22 @@ class FeedbinAccountViewController: UIViewController {
 		passwordTextField.delegate = self
 		
 		if let account = account, let credentials = try? account.retrieveBasicCredentials() {
+			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
 			if case .basic(let username, let password) = credentials {
 				emailTextField.text = username
 				passwordTextField.text = password
 			}
+		} else {
+			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Update Credentials"), for: .normal)
 		}
 	}
 	
 	@IBAction func cancel(_ sender: Any) {
-		delegate?.dismiss(self)
+		dismiss(animated: true, completion: nil)
+		delegate?.dismiss()
 	}
 	
-	@IBAction func addAccountTapped(_ sender: Any) {
+	@IBAction func action(_ sender: Any) {
 		self.errorMessageLabel.text = nil
 		
 		guard emailTextField.text != nil && passwordTextField.text != nil else {
@@ -56,8 +60,7 @@ class FeedbinAccountViewController: UIViewController {
 		// When you fill in the email address via auto-complete it adds extra whitespace
 		let emailAddress = emailTextField.text?.trimmingCharacters(in: .whitespaces)
 		let credentials = Credentials.basic(username: emailAddress ?? "", password: passwordTextField.text ?? "")
-		Account.validateCredentials(type: .feedbin, credentials: credentials) { [weak self] result in
-			guard let self = self else { return }
+		Account.validateCredentials(type: .feedbin, credentials: credentials) { result in
 			
 			self.stopAnimtatingActivityIndicator()
 			self.enableNavigation()
@@ -72,13 +75,25 @@ class FeedbinAccountViewController: UIViewController {
 					}
 					
 					do {
-						try self.account?.removeBasicCredentials()
+						
+						do {
+							try self.account?.removeBasicCredentials()
+						} catch {}
 						try self.account?.storeCredentials(credentials)
+						
 						if newAccount {
-							self.account?.refreshAll()
+							self.account?.refreshAll() { result in
+								switch result {
+								case .success:
+									break
+								case .failure(let error):
+									UIApplication.shared.presentError(error)
+								}
+							}
 						}
 						
-						self.delegate?.dismiss(self)
+						self.dismiss(animated: true, completion: nil)
+						self.delegate?.dismiss()
 					} catch {
 						self.errorMessageLabel.text = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 					}
@@ -94,12 +109,12 @@ class FeedbinAccountViewController: UIViewController {
 	
 	private func enableNavigation() {
 		self.cancelBarButtonItem.isEnabled = true
-		self.addAccountButton.isEnabled = true
+		self.actionButton.isEnabled = true
 	}
 	
 	private func disableNavigation() {
 		cancelBarButtonItem.isEnabled = false
-		addAccountButton.isEnabled = false
+		actionButton.isEnabled = false
 	}
 	
 	private func startAnimatingActivityIndicator() {

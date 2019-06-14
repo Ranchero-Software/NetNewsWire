@@ -88,7 +88,14 @@ class AccountsFeedbinWindowController: NSWindowController {
 						try self.account?.removeBasicCredentials()
 						try self.account?.storeCredentials(credentials)
 						if newAccount {
-							self.account?.refreshAll()
+							self.account?.refreshAll() { result in
+								switch result {
+								case .success:
+									break
+								case .failure(let error):
+									NSApplication.shared.presentError(error)
+								}
+							}
 						}
 						self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 					} catch {

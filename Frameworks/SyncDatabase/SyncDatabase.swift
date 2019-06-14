@@ -31,6 +31,10 @@ public final class SyncDatabase {
 		return syncStatusTable.selectForProcessing()
 	}
 	
+	public func selectPendingCount() -> Int {
+		return syncStatusTable.selectPendingCount()
+	}
+	
 	public func resetSelectedForProcessing(_ articleIDs: [String]) {
 		syncStatusTable.resetSelectedForProcessing(articleIDs)
 	}

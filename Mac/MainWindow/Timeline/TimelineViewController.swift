@@ -147,6 +147,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 			NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(calendarDayChanged(_:)), name: .NSCalendarDayChanged, object: nil)
 
 				didRegisterForNotifications = true
 		}
@@ -510,6 +511,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 		self.fontSize = AppDefaults.timelineFontSize
 		self.sortDirection = AppDefaults.timelineSortDirection
+	}
+	
+	@objc func calendarDayChanged(_ note: Notification) {
+		if representedObjectsContainsTodayFeed() {
+			DispatchQueue.main.async { [weak self] in
+				self?.fetchArticles()
+			}
+		}
 	}
 
 	// MARK: - Reloading Data
@@ -966,6 +975,10 @@ private extension TimelineViewController {
 		return representedObjects?.contains(where: { $0 is PseudoFeed}) ?? false
 	}
 
+	func representedObjectsContainsTodayFeed() -> Bool {
+		return representedObjects?.contains(where: { $0 === SmartFeedsController.shared.todayFeed }) ?? false
+	}
+	
 	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
 
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds

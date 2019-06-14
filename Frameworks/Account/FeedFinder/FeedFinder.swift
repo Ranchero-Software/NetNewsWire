@@ -11,38 +11,54 @@ import RSParser
 import RSWeb
 import RSCore
 
-protocol FeedFinderDelegate: class {
-
-	func feedFinder(_: FeedFinder, didFindFeeds: Set<FeedSpecifier>)
-}
-
 class FeedFinder {
+	
+	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 
-	private weak var delegate: FeedFinderDelegate?
-	private var feedSpecifiers = [String: FeedSpecifier]()
-	private var didNotifyDelegate = false
-
-	var initialDownloadError: Error?
-	var initialDownloadStatusCode = -1
-
-	init(url: URL, delegate: FeedFinderDelegate) {
-
-		self.delegate = delegate
-
-		DispatchQueue.main.async() { () -> Void in
-
-			self.findFeeds(url)
+		downloadUsingCache(url) { (data, response, error) in
+			
+			if response?.forcedStatusCode == 404 {
+				completion(.failure(AccountError.createErrorNotFound))
+				return
+			}
+			
+			if let error = error {
+				completion(.failure(error))
+				return
+			}
+			
+			guard let data = data, let response = response else {
+				completion(.failure(AccountError.createErrorNotFound))
+				return
+			}
+			
+			if !response.statusIsOK || data.isEmpty {
+				completion(.failure(AccountError.createErrorNotFound))
+				return
+			}
+			
+			if FeedFinder.isFeed(data, url.absoluteString) {
+				let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered)
+				completion(.success(Set([feedSpecifier])))
+				return
+			}
+			
+			if !FeedFinder.isHTML(data) {
+				completion(.failure(AccountError.createErrorNotFound))
+				return
+			}
+			
+			FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString, completion: completion)
+			
 		}
+
 	}
 
-	deinit {
-		notifyDelegateIfNeeded()
-	}
 }
 
 private extension FeedFinder {
 
-	func addFeedSpecifier(_ feedSpecifier: FeedSpecifier) {
+	static func addFeedSpecifier(_ feedSpecifier: FeedSpecifier, feedSpecifiers: inout [String: FeedSpecifier]) {
 
 		// If there’s an existing feed specifier, merge the two so that we have the best data. If one has a title and one doesn’t, use that non-nil title. Use the better source.
 
@@ -55,7 +71,7 @@ private extension FeedFinder {
 		}
 	}
 
-	func findFeedsInHTMLPage(htmlData: Data, urlString: String) {
+	static func findFeedsInHTMLPage(htmlData: Data, urlString: String, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 
 		// Feeds in the <head> section we automatically assume are feeds.
 		// If there are none from the <head> section,
@@ -63,31 +79,35 @@ private extension FeedFinder {
 		// and added once we determine they are feeds.
 
 		let possibleFeedSpecifiers = possibleFeedsInHTMLPage(htmlData: htmlData, urlString: urlString)
+		var feedSpecifiers = [String: FeedSpecifier]()
 		var feedSpecifiersToDownload = Set<FeedSpecifier>()
 
 		var didFindFeedInHTMLHead = false
 
 		for oneFeedSpecifier in possibleFeedSpecifiers {
 			if oneFeedSpecifier.source == .HTMLHead {
-				addFeedSpecifier(oneFeedSpecifier)
+				addFeedSpecifier(oneFeedSpecifier, feedSpecifiers: &feedSpecifiers)
 				didFindFeedInHTMLHead = true
 			}
 			else {
-				if !feedSpecifiersContainsURLString(oneFeedSpecifier.urlString) {
+				if feedSpecifiers[oneFeedSpecifier.urlString] == nil {
 					feedSpecifiersToDownload.insert(oneFeedSpecifier)
 				}
 			}
 		}
 
-		if didFindFeedInHTMLHead || feedSpecifiersToDownload.isEmpty {
-			stopFinding()
-		}
-		else {
-			downloadFeedSpecifiers(feedSpecifiersToDownload)
+		if didFindFeedInHTMLHead {
+			completion(.success(Set(feedSpecifiers.values)))
+			return
+		} else if feedSpecifiersToDownload.isEmpty {
+			completion(.failure(AccountError.createErrorNotFound))
+			return
+		} else {
+			downloadFeedSpecifiers(feedSpecifiersToDownload, feedSpecifiers: feedSpecifiers, completion: completion)
 		}
 	}
 
-	func possibleFeedsInHTMLPage(htmlData: Data, urlString: String) -> Set<FeedSpecifier> {
+	static func possibleFeedsInHTMLPage(htmlData: Data, urlString: String) -> Set<FeedSpecifier> {
 
 		let parserData = ParserData(url: urlString, data: htmlData)
 		var feedSpecifiers = HTMLFeedFinder(parserData: parserData).feedSpecifiers
@@ -109,105 +129,42 @@ private extension FeedFinder {
 		return feedSpecifiers
 	}
 
-	func feedSpecifiersContainsURLString(_ urlString: String) -> Bool {
-
-		if let _ = feedSpecifiers[urlString] {
-			return true
-		}
-		return false
-	}
-
-	func isHTML(_ data: Data) -> Bool {
-
+	static func isHTML(_ data: Data) -> Bool {
 		return (data as NSData).rs_dataIsProbablyHTML()
 	}
 
-	func findFeeds(_ initialURL: URL) {
+	static func downloadFeedSpecifiers(_ downloadFeedSpecifiers: Set<FeedSpecifier>, feedSpecifiers: [String: FeedSpecifier], completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 
-		downloadInitialFeed(initialURL)
-	}
+		var resultFeedSpecifiers = feedSpecifiers
+		let group = DispatchGroup()
+		
+		for downloadFeedSpecifier in downloadFeedSpecifiers {
 
-	func downloadInitialFeed(_ initialURL: URL) {
-
-		downloadUsingCache(initialURL) { (data, response, error) in
-
-			self.initialDownloadStatusCode = response?.forcedStatusCode ?? -1
-
-			if let error = error {
-				self.initialDownloadError = error
-				self.stopFinding()
-				return
-			}
-			guard let data = data, let response = response else {
-				self.stopFinding()
-				return
-			}
-
-			if !response.statusIsOK || data.isEmpty {
-				self.stopFinding()
-				return
-			}
-
-			if self.isFeed(data, initialURL.absoluteString) {
-				let feedSpecifier = FeedSpecifier(title: nil, urlString: initialURL.absoluteString, source: .UserEntered)
-				self.addFeedSpecifier(feedSpecifier)
-				self.stopFinding()
-				return
-			}
-
-			if !self.isHTML(data) {
-				self.stopFinding()
-				return
-			}
-
-			self.findFeedsInHTMLPage(htmlData: data, urlString: initialURL.absoluteString)
-		}
-	}
-
-	func downloadFeedSpecifiers(_ feedSpecifiers: Set<FeedSpecifier>) {
-
-		var pendingDownloads = feedSpecifiers
-
-		for oneFeedSpecifier in feedSpecifiers {
-
-			guard let url = URL(string: oneFeedSpecifier.urlString) else {
-				pendingDownloads.remove(oneFeedSpecifier)
+			guard let url = URL(string: downloadFeedSpecifier.urlString) else {
 				continue
 			}
-
+			
+			group.enter()
 			downloadUsingCache(url) { (data, response, error) in
-
-				pendingDownloads.remove(oneFeedSpecifier)
-
 				if let data = data, let response = response, response.statusIsOK, error == nil {
-					if self.isFeed(data, oneFeedSpecifier.urlString) {
-						self.addFeedSpecifier(oneFeedSpecifier)
+					if self.isFeed(data, downloadFeedSpecifier.urlString) {
+						addFeedSpecifier(downloadFeedSpecifier, feedSpecifiers: &resultFeedSpecifiers)
 					}
 				}
-
-				if pendingDownloads.isEmpty {
-					self.stopFinding()
-				}
+				group.leave()
 			}
+			
 		}
-	}
 
-	func stopFinding() {
-
-		notifyDelegateIfNeeded()
-	}
-
-	func notifyDelegateIfNeeded() {
-
-		if !didNotifyDelegate {
-			delegate?.feedFinder(self, didFindFeeds: Set(feedSpecifiers.values))
-			didNotifyDelegate = true
+		group.notify(queue: DispatchQueue.main) {
+			completion(.success(Set(resultFeedSpecifiers.values)))
 		}
+		
 	}
 
-	func isFeed(_ data: Data, _ urlString: String) -> Bool {
-
+	static func isFeed(_ data: Data, _ urlString: String) -> Bool {
 		let parserData = ParserData(url: urlString, data: data)
 		return FeedParser.canParse(parserData)
 	}
+	
 }

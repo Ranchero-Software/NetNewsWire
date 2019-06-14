@@ -351,7 +351,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 private extension MasterTimelineViewController {
 
 	@objc private func refreshAccounts(_ sender: Any) {
-		AccountManager.shared.refreshAll()
+		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 		refreshControl?.endRefreshing()
 	}
 

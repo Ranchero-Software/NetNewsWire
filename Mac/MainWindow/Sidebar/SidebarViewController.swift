@@ -47,8 +47,7 @@ protocol SidebarDelegate: class {
 		sidebarCellAppearance = SidebarCellAppearance(fontSize: AppDefaults.sidebarFontSize)
 
 		outlineView.dataSource = dataSource
-		outlineView.setDraggingSourceOperationMask(.move, forLocal: true)
-		outlineView.setDraggingSourceOperationMask(.copy, forLocal: false)
+		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
 		outlineView.registerForDraggedTypes([FeedPasteboardWriter.feedUTIInternalType, FeedPasteboardWriter.feedUTIType, .URL, .string])
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -61,6 +60,7 @@ protocol SidebarDelegate: class {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidRequestSidebarSelection(_:)), name: .UserDidRequestSidebarSelection, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(calendarDayChanged(_:)), name: .NSCalendarDayChanged, object: nil)
 
 		outlineView.reloadData()
 
@@ -164,6 +164,12 @@ protocol SidebarDelegate: class {
 			return
 		}
 		revealAndSelectRepresentedObject(feed as AnyObject)
+	}
+	
+	@objc func calendarDayChanged(_ note: Notification) {
+		DispatchQueue.main.async {
+			SmartFeedsController.shared.todayFeed.fetchUnreadCounts()
+		}
 	}
 	
 	// MARK: - Actions
