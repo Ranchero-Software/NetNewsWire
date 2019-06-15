@@ -726,7 +726,7 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 				
 				let actionIndicator = add ? "a" : "r"
 				
-				let postData = "T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state)".data(using: String.Encoding.utf8)
+				let postData = "T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".data(using: String.Encoding.utf8)
 				
 				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
 					switch result {
