@@ -46,12 +46,30 @@ final class DeleteCommand: UndoableCommand {
 	func perform() {
 
 		BatchUpdate.shared.perform {
-			itemSpecifiers.forEach { $0.delete() }
+			itemSpecifiers.forEach { $0.delete() {} }
 			treeController.rebuild()
 		}
 		registerUndo()
 	}
 
+	func perform(completion: @escaping () -> Void) {
+		
+		let group = DispatchGroup()
+		group.enter()
+		itemSpecifiers.forEach {
+			$0.delete() {
+				group.leave()
+			}
+		}
+		treeController.rebuild()
+	
+		group.notify(queue: DispatchQueue.main) {
+			self.registerUndo()
+			completion()
+		}
+		
+	}
+	
 	func undo() {
 
 		BatchUpdate.shared.perform {
@@ -132,18 +150,20 @@ private struct SidebarItemSpecifier {
 		self.path = ContainerPath(account: account!, folders: node.containingFolders())
 	}
 
-	func delete() {
+	func delete(completion: @escaping () -> Void) {
 
 		if let feed = feed {
 			BatchUpdate.shared.start()
 			account?.removeFeed(feed, from: path.resolveContainer()) { result in
 				BatchUpdate.shared.end()
+				completion()
 				self.checkResult(result)
 			}
 		} else if let folder = folder {
 			BatchUpdate.shared.start()
 			account?.removeFolder(folder) { result in
 				BatchUpdate.shared.end()
+				completion()
 				self.checkResult(result)
 			}
 		}

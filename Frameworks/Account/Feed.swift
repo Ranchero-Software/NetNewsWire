@@ -64,7 +64,7 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		set {
 			let oldNameForDisplay = nameForDisplay
 			metadata.name = newValue
-			if oldNameForDisplay != nameForDisplay {
+			if oldNameForDisplay != newValue {
 				postDisplayNameDidChangeNotification()
 			}
 		}

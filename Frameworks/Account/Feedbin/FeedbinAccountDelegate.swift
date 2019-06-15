@@ -88,11 +88,13 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .success():
 				
 				self.refreshArticles(account) {
-					self.refreshArticleStatus(for: account) {
-						self.refreshMissingArticles(account) {
-							self.refreshProgress.clear()
-							DispatchQueue.main.async {
-								completion(.success(()))
+					self.sendArticleStatus(for: account) {
+						self.refreshArticleStatus(for: account) {
+							self.refreshMissingArticles(account) {
+								self.refreshProgress.clear()
+								DispatchQueue.main.async {
+									completion(.success(()))
+								}
 							}
 						}
 					}
@@ -206,12 +208,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 		os_log(.debug, log: log, "Begin importing OPML...")
 		opmlImportInProgress = true
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		
 		caller.importOPML(opmlData: opmlData) { result in
 			switch result {
 			case .success(let importResult):
 				if importResult.complete {
 					os_log(.debug, log: self.log, "Import OPML done.")
+					self.refreshProgress.completeTask()
 					self.opmlImportInProgress = false
 					DispatchQueue.main.async {
 						completion(.success(()))
@@ -221,6 +225,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				os_log(.debug, log: self.log, "Import OPML failed.")
+				self.refreshProgress.completeTask()
 				self.opmlImportInProgress = false
 				DispatchQueue.main.async {
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
@@ -241,10 +246,16 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
+		guard folder.hasAtLeastOneFeed() else {
+			folder.name = name
+			return
+		}
+		
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
+					self.renameFolderRelationship(for: account, fromName: folder.name ?? "", toName: name)
 					folder.name = name
 					completion(.success(()))
 				}
@@ -269,16 +280,44 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelFeeds {
-			group.enter()
-			removeFeed(for: account, with: feed, from: folder) { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+			
+			if feed.folderRelationship?.count ?? 0 > 1 {
+				
+				if let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
+					group.enter()
+					caller.deleteTagging(taggingID: feedTaggingID) { result in
+						group.leave()
+						switch result {
+						case .success:
+							DispatchQueue.main.async {
+								self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+							}
+						case .failure(let error):
+							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+						}
+					}
 				}
+				
+			} else {
+				
+				if let subscriptionID = feed.subscriptionID {
+					group.enter()
+					caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+						group.leave()
+						switch result {
+						case .success:
+							DispatchQueue.main.async {
+								account.clearFeedMetadata(feed)
+							}
+						case .failure(let error):
+							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+						}
+					}
+					
+				}
+				
 			}
+			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
@@ -347,7 +386,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		if feed.folderRelationship?.count ?? 0 > 1 {
 			deleteTagging(for: account, with: feed, from: container, completion: completion)
 		} else {
-			account.clearFeedMetadata(feed)
 			deleteSubscription(for: account, with: feed, from: container, completion: completion)
 		}
 	}
@@ -399,12 +437,23 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
+			account.addFeed(existingFeed, to: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		} else {
+			createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
 			}
 		}
 		
@@ -412,22 +461,27 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		account.addFolder(folder)
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelFeeds {
 			
+			folder.topLevelFeeds.remove(feed)
+			
 			group.enter()
-			addFeed(for: account, with: feed, to: folder) { result in
-				if account.topLevelFeeds.contains(feed) {
-					account.removeFeed(feed)
-				}
+			restoreFeed(for: account, feed: feed, container: folder) { result in
 				group.leave()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+				}
 			}
 			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
+			account.addFolder(folder)
 			completion(.success(()))
 		}
 		
@@ -502,6 +556,7 @@ private extension FeedbinAccountDelegate {
 						if let result = importResult, result.complete {
 							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
 							timer.invalidate()
+							self.refreshProgress.completeTask()
 							self.opmlImportInProgress = false
 							DispatchQueue.main.async {
 								completion(.success(()))
@@ -510,6 +565,7 @@ private extension FeedbinAccountDelegate {
 					case .failure(let error):
 						os_log(.debug, log: self.log, "Import OPML check failed.")
 						timer.invalidate()
+						self.refreshProgress.completeTask()
 						self.opmlImportInProgress = false
 						DispatchQueue.main.async {
 							completion(.failure(error))
@@ -647,7 +703,10 @@ private extension FeedbinAccountDelegate {
 			DispatchQueue.main.sync {
 				if let feed = account.idToFeedDictionary[subFeedId] {
 					feed.name = subscription.name
+					// If the name has been changed on the server remove the locally edited name
+					feed.editedName = nil
 					feed.homePageURL = subscription.homePageURL
+					feed.subscriptionID = String(subscription.subscriptionID)
 				} else {
 					let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
 					feed.subscriptionID = String(subscription.subscriptionID)
@@ -790,6 +849,17 @@ private extension FeedbinAccountDelegate {
 			completion()
 		}
 		
+	}
+	
+	func renameFolderRelationship(for account: Account, fromName: String, toName: String) {
+		for feed in account.flattenedFeeds() {
+			if var folderRelationship = feed.folderRelationship {
+				let relationship = folderRelationship[fromName]
+				folderRelationship[fromName] = nil
+				folderRelationship[toName] = relationship
+				feed.folderRelationship = folderRelationship
+			}
+		}
 	}
 	
 	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
@@ -1158,6 +1228,7 @@ private extension FeedbinAccountDelegate {
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
+					account.clearFeedMetadata(feed)
 					account.removeFeed(feed)
 					if let folders = account.folders {
 						for folder in folders {

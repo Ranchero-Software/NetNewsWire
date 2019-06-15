@@ -18,12 +18,12 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="355" height="180"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
-            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="371" height="171"/>
+            <view key="contentView" wantsLayer="YES" misplaced="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="391" height="171"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mvx-54-DH0">
-                        <rect key="frame" x="18" y="100" width="335" height="51"/>
+                        <rect key="frame" x="18" y="100" width="355" height="51"/>
                         <textFieldCell key="cell" selectable="YES" id="7Ap-KG-Lc7">
                             <font key="font" metaFont="system"/>
                             <string key="title">Choose the account with the subscriptions you’d like to export. Subscriptions are exported in the standard OPML format, which most RSS readers can import.</string>
@@ -40,7 +40,7 @@
                         </textFieldCell>
                     </textField>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bbC-2g-e3k" userLabel="Account Popup">
-                        <rect key="frame" x="85" y="58" width="269" height="25"/>
+                        <rect key="frame" x="85" y="58" width="289" height="25"/>
                         <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="MJb-Bf-UJG" id="xZd-AP-nuM">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
@@ -54,8 +54,8 @@
                         </popUpButtonCell>
                     </popUpButton>
                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eZ4-Ej-Hks">
-                        <rect key="frame" x="219" y="13" width="138" height="32"/>
-                        <buttonCell key="cell" type="push" title="Export as OPML" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bRz-cx-bmm">
+                        <rect key="frame" x="229" y="13" width="148" height="32"/>
+                        <buttonCell key="cell" type="push" title="Export as OPML…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bRz-cx-bmm">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
@@ -67,7 +67,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PPB-R8-A9a">
-                        <rect key="frame" x="81" y="13" width="138" height="32"/>
+                        <rect key="frame" x="81" y="13" width="148" height="32"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6lK-bV-Vwd">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
