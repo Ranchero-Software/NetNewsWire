@@ -10,8 +10,11 @@ import SwiftUI
 import Combine
 import Account
 
+
+
 struct SettingsView : View {
 	@ObjectBinding var viewModel: ViewModel
+	
 	
     var body: some View {
 		NavigationView {
@@ -31,30 +34,16 @@ struct SettingsView : View {
 				Section(header: Text("ABOUT")) {
 					
 					Text("About NetNewsWire")
-
-					Button(action: {
-						UIApplication.shared.open(URL(string: "https://ranchero.com/netnewswire/")!, options: [:])
-					}) {
-						Text("Website")
-					}
 					
-					Button(action: {
-						UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire")!, options: [:])
-					}) {
-						Text("Github Repository")
-					}
-
-					Button(action: {
-						UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!, options: [:])
-					}) {
-						Text("Bug Tracker")
-					}
-
-					Button(action: {
-						UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!, options: [:])
-					}) {
-						Text("Technotes")
-					}
+					PresentationButton(Text("Website"), destination: SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!))
+					
+					PresentationButton(Text("Github Repository"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!))
+					
+					PresentationButton(Text("Bug Tracker"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!))
+					
+					PresentationButton(Text("Technotes"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!))
+			
+					PresentationButton(Text("How to Support NetNewsWire"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!))
 
 					Text("Add NetNewsWire News Feed")
 					
