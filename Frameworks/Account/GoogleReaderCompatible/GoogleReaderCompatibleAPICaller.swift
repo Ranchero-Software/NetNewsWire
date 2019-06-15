@@ -15,7 +15,7 @@ import RSWeb
 
 enum CreateGoogleReaderSubscriptionResult {
 	case created(GoogleReaderCompatibleSubscription)
-	case multipleChoice([GoogleReaderCompatibleSubscriptionChoice])
+	//case multipleChoice([GoogleReaderCompatibleSubscriptionChoice])
 	case alreadySubscribed
 	case notFound
 }
@@ -41,6 +41,8 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		case token = "/reader/api/0/token"
 		case tagList = "/reader/api/0/tag/list"
 		case subscriptionList = "/reader/api/0/subscription/list"
+		case subscriptionEdit = "/reader/api/0/subscription/edit"
+		case subscriptionAdd = "/reader/api/0/subscription/quickadd"
 		case contents = "/reader/api/0/stream/items/contents"
 		case itemIds = "/reader/api/0/stream/items/ids"
 		case editTag = "/reader/api/0/edit-tag"
@@ -305,75 +307,84 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	}
 	
 	func createSubscription(url: String, completion: @escaping (Result<CreateGoogleReaderSubscriptionResult, Error>) -> Void) {
-		
-		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("subscriptions.json")
-		var request = URLRequest(url: callURL, credentials: credentials)
-		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		
-		let payload: Data
-		do {
-			payload = try JSONEncoder().encode(GoogleReaderCompatibleCreateSubscription(feedURL: url))
-		} catch {
-			completion(.failure(error))
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
 		
-		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
-			
+		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
 			switch result {
-			case .success(let (response, data)):
-				
-				switch response.forcedStatusCode {
-				case 201:
-					guard let subData = data else {
-						completion(.failure(TransportError.noData))
-						break
-					}
-					do {
-						let subscription = try JSONDecoder().decode(GoogleReaderCompatibleSubscription.self, from: subData)
-						completion(.success(.created(subscription)))
-					} catch {
-						completion(.failure(error))
-					}
-				case 300:
-					guard let subData = data else {
-						completion(.failure(TransportError.noData))
-						break
-					}
-					do {
-						let subscriptions = try JSONDecoder().decode([GoogleReaderCompatibleSubscriptionChoice].self, from: subData)
-						completion(.success(.multipleChoice(subscriptions)))
-					} catch {
-						completion(.failure(error))
-					}
-				case 302:
-					completion(.success(.alreadySubscribed))
-				default:
-					completion(.failure(TransportError.httpError(status: response.forcedStatusCode)))
+			case .success(let token):
+				guard var components = URLComponents(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.subscriptionAdd.rawValue), resolvingAgainstBaseURL: false) else {
+					completion(.failure(TransportError.noURL))
+					return
 				}
+				
+				components.queryItems = [
+					URLQueryItem(name: "quickadd", value: url)
+				]
+				
+				guard let callURL = components.url else {
+					completion(.failure(TransportError.noURL))
+					return
+				}
+				
+				var request = URLRequest(url: callURL, credentials: self.credentials)
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpMethod = "POST"
+				
+				let postData = "T=\(token)".data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: GoogleReaderCompatibleQuickAddResult.self, completion: { (result) in
+					switch result {
+					case .success(let (_, subResult)):
+						
+						switch subResult?.numResults {
+						case 0:
+							completion(.success(.alreadySubscribed))
+						default:
+							// We have a feed ID but need to get feed information
+							guard let streamId = subResult?.streamId else {
+								completion(.failure(AccountError.createErrorNotFound))
+								return
+							}
+							
+							// There is no call to get a single subscription entry, so we get them all,
+							// look up the one we just subscribed to and return that
+							self.retrieveSubscriptions(completion: { (result) in
+								switch result {
+								case .success(let subscriptions):
+									guard let subscriptions = subscriptions else {
+										completion(.failure(AccountError.createErrorNotFound))
+										return
+									}
+									
+									let newStreamId = "feed/\(streamId)"
+									
+									guard let subscription = subscriptions.first(where: { (sub) -> Bool in
+										sub.feedID == newStreamId
+									}) else {
+										completion(.failure(AccountError.createErrorNotFound))
+										return
+									}
+									
+									completion(.success(.created(subscription)))
+									
+								case .failure(let error):
+									completion(.failure(error))
+								}
+							})
+							}
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				})
+				
 				
 			case .failure(let error):
-				
-				switch error {
-				case TransportError.httpError(let status):
-					switch status {
-					case 401:
-						// I don't know why we get 401's here.  This looks like a GoogleReaderCompatible bug, but it only happens
-						// when you are already subscribed to the feed.
-						completion(.success(.alreadySubscribed))
-					case 404:
-						completion(.success(.notFound))
-					default:
-						completion(.failure(error))
-					}
-				default:
-					completion(.failure(error))
-				}
-				
+				completion(.failure(error))
 			}
-			
 		}
-		
 	}
 	
 	func renameSubscription(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {

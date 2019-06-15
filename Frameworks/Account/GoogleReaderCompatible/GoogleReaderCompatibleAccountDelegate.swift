@@ -302,8 +302,6 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 				switch subResult {
 				case .created(let subscription):
 					self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
-				case .multipleChoice(let choices):
-					self.decideBestFeedChoice(account: account, url: url, name: name, container: container, choices: choices, completion: completion)
 				case .alreadySubscribed:
 					DispatchQueue.main.async {
 						completion(.failure(AccountError.createErrorAlreadySubscribed))

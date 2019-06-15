@@ -10,6 +10,27 @@ import Foundation
 import RSCore
 import RSParser
 
+/*
+
+	{
+		"numResults":0,
+		"error": "Already subscribed! https://inessential.com/xml/rss.xml
+	}
+
+*/
+
+struct GoogleReaderCompatibleQuickAddResult: Codable {
+	let numResults: Int
+	let error: String?
+	let streamId: String?
+	
+	enum CodingKeys: String, CodingKey {
+		case numResults = "numResults"
+		case error = "error"
+		case streamId = "streamId"
+	}
+}
+
 struct GoogleReaderCompatibleSubscriptionContainer: Codable {
 	let subscriptions: [GoogleReaderCompatibleSubscription]
 	
@@ -35,7 +56,6 @@ struct GoogleReaderCompatibleSubscriptionContainer: Codable {
 
 */
 struct GoogleReaderCompatibleSubscription: Codable {
-
 	let feedID: String
 	let name: String?
 	let categories: [GoogleReaderCompatibleCategory]
