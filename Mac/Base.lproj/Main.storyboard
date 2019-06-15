@@ -413,7 +413,7 @@
                                     <items>
                                         <menuItem title="Mark as Read" keyEquivalent="U" id="Fc9-c7-2AY">
                                             <connections>
-                                                <action selector="markRead:" target="Ady-hI-5gd" id="RQv-jl-2Nv"/>
+                                                <action selector="toggleRead:" target="Ady-hI-5gd" id="jLQ-ZF-xye"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Mark All as Read" keyEquivalent="k" id="HdN-Ks-cwh">

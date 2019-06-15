@@ -124,12 +124,12 @@ final class LocalAccountDelegate: AccountDelegate {
 					
 				}
 				
-			case .failure(let error):
-				completion(.failure(error))
+			case .failure:
+				completion(.failure(AccountError.createErrorNotFound))
 			}
 			
 		}
-		
+
 	}
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {

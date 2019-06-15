@@ -18,6 +18,10 @@ public enum AccountError: LocalizedError {
 	
 	public var errorDescription: String? {
 		switch self {
+		case .createErrorNotFound:
+			return NSLocalizedString("The feed couldn't be found and can't be added.", comment: "Not found")
+		case .createErrorAlreadySubscribed:
+			return NSLocalizedString("You are already subscribed to this feed and can't add it again.", comment: "Already subscribed")
 		case .opmlImportInProgress:
 			return NSLocalizedString("An OPML import for this account is already running.", comment: "Import running")
 		case .wrappedError(let error, let account):
@@ -32,13 +36,15 @@ public enum AccountError: LocalizedError {
 			default:
 				return unknownError(error, account)
 			}
-		default:
-			return NSLocalizedString("An unknown error occurred.", comment: "Unknown error")
 		}
 	}
 	
 	public var recoverySuggestion: String? {
 		switch self {
+		case .createErrorNotFound:
+			return nil
+		case .createErrorAlreadySubscribed:
+			return nil
 		case .wrappedError(let error, _):
 			switch error {
 			case TransportError.httpError(let status):

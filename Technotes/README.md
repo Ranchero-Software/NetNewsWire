@@ -16,4 +16,8 @@
 
 ## Contributing
 
+[Contributing](../CONTRIBUTING.md)
+
 [Coding Guidelines](CodingGuidelines.md)
+
+[Branching Strategy](BranchingStrategy.md)

@@ -278,6 +278,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		switch credentials {
 		case .basic(let username, _):
+		default:
 			self.username = username
 		case .googleBasicLogin(let username, _):
 			self.username = username

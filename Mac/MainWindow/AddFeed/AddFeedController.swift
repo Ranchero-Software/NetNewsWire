@@ -62,7 +62,10 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 		
 		account.createFeed(url: url.absoluteString, name: title, container: container) { result in
 			
-			self.endShowingProgress()
+			DispatchQueue.main.async {
+				self.endShowingProgress()
+			}
+			
 			BatchUpdate.shared.end()
 
 			switch result {
