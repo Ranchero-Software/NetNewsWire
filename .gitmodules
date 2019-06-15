@@ -3,8 +3,7 @@
 	url = https://github.com/brentsimmons/RSCore
 [submodule "submodules/RSWeb"]
 	path = submodules/RSWeb
-	url = https://github.com/jbeker/RSWeb
-	branch = google_reader_compatible_syncing
+	url = https://github.com/brentsimmons/RSWeb
 [submodule "submodules/RSParser"]
 	path = submodules/RSParser
 	url = https://github.com/brentsimmons/RSParser
