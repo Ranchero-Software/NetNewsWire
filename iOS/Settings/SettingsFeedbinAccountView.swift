@@ -16,8 +16,7 @@ struct SettingsFeedbinAccountView : View {
 	@ObjectBinding var viewModel: ViewModel
 	@State var busy: Bool = false
 	@State var error: Text = Text("")
-	var account: Account? = nil
-	
+
 	var body: some View {
 		NavigationView {
 			List {
@@ -25,15 +24,15 @@ struct SettingsFeedbinAccountView : View {
 					SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin").padding()
 				)  {
 					HStack {
-						Spacer()
-						TextField($viewModel.email, placeholder: Text("Email"))
-							.textContentType(.username)
-						Spacer()
+						Text("Email:")
+						Divider()
+						TextField($viewModel.email)
+						.textContentType(.username)
 					}
 					HStack {
-						Spacer()
-						SecureField($viewModel.password, placeholder: Text("Password"))
-						Spacer()
+						Text("Password:")
+						Divider()
+						SecureField($viewModel.password)
 					}
 				}
 				Section(footer:
@@ -46,7 +45,11 @@ struct SettingsFeedbinAccountView : View {
 					HStack {
 						Spacer()
 						Button(action: { self.addAccount() }) {
-							Text("Add Account")
+							if viewModel.isUpdate {
+								Text("Update Account")
+							} else {
+								Text("Add Account")
+							}
 						}
 						.disabled(!viewModel.isValid)
 						Spacer()
@@ -65,7 +68,8 @@ struct SettingsFeedbinAccountView : View {
 	private func addAccount() {
 		
 		busy = true
-
+		error = Text("")
+		
 		let emailAddress = viewModel.email.trimmingCharacters(in: .whitespaces)
 		let credentials = Credentials.basic(username: emailAddress, password: viewModel.password)
 
@@ -80,11 +84,11 @@ struct SettingsFeedbinAccountView : View {
 					
 					var newAccount = false
 					let workAccount: Account
-					if self.account == nil {
+					if self.viewModel.account == nil {
 						workAccount = AccountManager.shared.createAccount(type: .feedbin)
 						newAccount = true
 					} else {
-						workAccount = self.account!
+						workAccount = self.viewModel.account!
 					}
 					
 					do {
@@ -122,6 +126,18 @@ struct SettingsFeedbinAccountView : View {
 	
 	class ViewModel: BindableObject {
 		let didChange = PassthroughSubject<ViewModel, Never>()
+		var account: Account? = nil
+		
+		init() {
+		}
+		
+		init(account: Account) {
+			self.account = account
+			if case .basic(let username, let password) = try? account.retrieveBasicCredentials() {
+				self.email = username
+				self.password = password
+			}
+		}
 
 		var email: String = "" {
 			didSet {
@@ -134,6 +150,10 @@ struct SettingsFeedbinAccountView : View {
 			}
 		}
 		
+		var isUpdate: Bool {
+			return account != nil
+		}
+		
 		var isValid: Bool {
 			return !email.isEmpty && !password.isEmpty
 		}
@@ -144,7 +164,7 @@ struct SettingsFeedbinAccountView : View {
 #if DEBUG
 struct SettingsFeedbinAccountView_Previews : PreviewProvider {
     static var previews: some View {
-        SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())
+		SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())
     }
 }
 #endif
