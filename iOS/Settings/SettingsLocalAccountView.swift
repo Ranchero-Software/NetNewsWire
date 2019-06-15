@@ -20,9 +20,9 @@ struct SettingsLocalAccountView : View {
 					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName).padding()
 				)  {
 					HStack {
-						Spacer()
-						TextField($name, placeholder: Text("Name (Optional)"))
-						Spacer()
+						Text("Name")
+						Divider()
+						TextField($name, placeholder: Text("(Optional)"))
 					}
 				}
 				Section {

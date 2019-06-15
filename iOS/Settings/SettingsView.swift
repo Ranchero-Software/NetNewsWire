@@ -12,7 +12,9 @@ import Account
 
 struct SettingsView : View {
 	@ObjectBinding var viewModel: ViewModel
-	
+	@State var showImportSubscriptions = false
+	@State var showExportSubscriptions = false
+
     var body: some View {
 		NavigationView {
 			List {
@@ -76,16 +78,53 @@ struct SettingsView : View {
 							Text(interval.description()).tag(interval)
 						}
 					}
-					Text("Import Subscriptions...")
-					Text("Export Subscriptions...")
+					Button(action: {
+						self.showImportSubscriptions = true
+					}) {
+						Text("Import Subscriptions...")
+					}
+					.presentation(showImportSubscriptions ? importSubscriptionsActionSheet : nil)
+					Button(action: {
+						self.showExportSubscriptions = true
+					}) {
+						Text("Export Subscriptions...")
+					}
+					.presentation(showExportSubscriptions ? exportSubscriptionsActionSheet : nil)
 				}
-				
+				.foregroundColor(.primary)
+
 			}
 			.listStyle(.grouped)
 			.navigationBarTitle(Text("Settings"), displayMode: .inline)
 
 		}
     }
+	
+	var importSubscriptionsActionSheet: ActionSheet {
+		var buttons = [ActionSheet.Button]()
+		for account in viewModel.accounts {
+			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
+				self.showImportSubscriptions = false
+				// Call doc picker here...
+			}
+			buttons.append(button)
+		}
+		buttons.append(.cancel { self.showImportSubscriptions = false })
+		return ActionSheet(title: Text("Import Subscriptions..."), message: Text("Select the account to import your OPML file into."), buttons: buttons)
+	}
+	
+	var exportSubscriptionsActionSheet: ActionSheet {
+		var buttons = [ActionSheet.Button]()
+		for account in viewModel.accounts {
+			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
+				self.showExportSubscriptions = false
+				// Call doc picker here...
+			}
+			buttons.append(button)
+		}
+		buttons.append(.cancel { self.showImportSubscriptions = false })
+		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
+	}
 	
 	class ViewModel: BindableObject {
 		
