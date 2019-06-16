@@ -265,13 +265,6 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
-		guard folder.hasAtLeastOneFeed() else {
-			account.removeFolder(folder)
-			return
-		}
-		
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelFeeds {
@@ -288,8 +281,17 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			account.removeFolder(folder)
-			completion(.success(()))
+			self.caller.deleteTag(name: folder.name!) { (result) in
+				switch result {
+				case .success:
+					account.removeFolder(folder)
+					completion(.success(()))
+				case .failure(let error):
+					os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+				}
+				
+			}
+			
 		}
 		
 	}
@@ -373,12 +375,12 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 	
 	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
-			caller.createTagging(feedID: feedID, name: folder.name ?? "") { result in
+		if let folder = container as? Folder, let feedName = feed.subscriptionID {
+			caller.createTagging(subscriptionID: feedName, tagName: folder.name ?? "") { result in
 				switch result {
-				case .success(let taggingID):
+				case .success:
 					DispatchQueue.main.async {
-						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
+						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: feed.subscriptionID!)
 						account.removeFeed(feed)
 						folder.addFeed(feed)
 						completion(.success(()))
@@ -705,7 +707,8 @@ private extension GoogleReaderCompatibleAccountDelegate {
 			for subscription in groupedTaggings {
 				let taggingFeedID = String(subscription.feedID)
 				if !folderFeedIds.contains(taggingFeedID) {
-					guard let feed = account.idToFeedDictionary[taggingFeedID] else {
+					let idDictionary = account.idToFeedDictionary
+					guard let feed = idDictionary[taggingFeedID] else {
 						continue
 					}
 					DispatchQueue.main.sync {
@@ -1097,8 +1100,8 @@ private extension GoogleReaderCompatibleAccountDelegate {
 
 	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
-			caller.deleteTagging(taggingID: feedTaggingID) { result in
+		if let folder = container as? Folder, let feedName = feed.subscriptionID {
+			caller.deleteTagging(subscriptionID: feedName, tagName: folder.name ?? "") { result in
 				switch result {
 				case .success:
 					DispatchQueue.main.async {

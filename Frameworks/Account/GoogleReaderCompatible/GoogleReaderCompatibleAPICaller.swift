@@ -15,7 +15,6 @@ import RSWeb
 
 enum CreateGoogleReaderSubscriptionResult {
 	case created(GoogleReaderCompatibleSubscription)
-	//case multipleChoice([GoogleReaderCompatibleSubscriptionChoice])
 	case alreadySubscribed
 	case notFound
 }
@@ -39,6 +38,8 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	enum GoogleReaderEndpoints: String {
 		case login = "/accounts/ClientLogin"
 		case token = "/reader/api/0/token"
+		case disableTag = "/reader/api/0/disable-tag"
+		case renameTag = "/reader/api/0/rename-tag"
 		case tagList = "/reader/api/0/tag/list"
 		case subscriptionList = "/reader/api/0/subscription/list"
 		case subscriptionEdit = "/reader/api/0/subscription/edit"
@@ -243,28 +244,76 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	}
 
 	func renameTag(oldName: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("tags.json")
-//		let request = URLRequest(url: callURL, credentials: credentials)
-//		let payload = GoogleReaderCompatibleRenameTag(oldName: oldName, newName: newName)
-//		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
+		
+		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
+			switch result {
+			case .success(let token):
+				var request = URLRequest(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.renameTag.rawValue), credentials: self.credentials)
+				
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpMethod = "POST"
+				
+				let oldTagName = "user/-/label/\(oldName)"
+				let newTagName = "user/-/label/\(newName)"
+				let postData = "T=\(token)&s=\(oldTagName)&dest=\(newTagName)".data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+					switch result {
+					case .success:
+						completion(.success(()))
+						break
+					case .failure(let error):
+						completion(.failure(error))
+						break
+					}
+				})
+				
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
-	func deleteTag(name: String, completion: @escaping (Result<[GoogleReaderCompatibleTagging]?, Error>) -> Void) {
+	func deleteTag(name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("tags.json")
-//		let request = URLRequest(url: callURL, credentials: credentials)
-//		let payload = GoogleReaderCompatibleDeleteTag(name: name)
-//
-//		transport.send(request: request, method: HTTPMethod.delete, payload: payload, resultType: [GoogleReaderCompatibleTagging].self) { result in
-//
-//			switch result {
-//			case .success(let (_, taggings)):
-//				completion(.success(taggings))
-//			case .failure(let error):
-//				completion(.failure(error))
-//			}
-//
-//		}
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
+		
+		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
+			switch result {
+			case .success(let token):
+				var request = URLRequest(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.disableTag.rawValue), credentials: self.credentials)
+				
+				
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpMethod = "POST"
+				
+				let tagName = "user/-/label/\(name)"
+				let postData = "T=\(token)&s=\(tagName)".data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+					switch result {
+					case .success:
+						completion(.success(()))
+						break
+					case .failure(let error):
+						completion(.failure(error))
+						break
+					}
+				})
+				
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 		
 	}
 	
@@ -457,65 +506,78 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		}
 	}
 	
-	func createTagging(feedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
+	func createTagging(subscriptionID: String, tagName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("taggings.json")
-//		var request = URLRequest(url: callURL, credentials: credentials)
-//		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
-//
-//		let payload: Data
-//		do {
-//			payload = try JSONEncoder().encode(GoogleReaderCompatibleCreateTagging(feedID: feedID, name: name))
-//		} catch {
-//			completion(.failure(error))
-//			return
-//		}
-//
-//		transport.send(request: request, method: HTTPMethod.post, payload:payload) { result in
-//
-//			switch result {
-//			case .success(let (response, _)):
-//				if let taggingLocation = response.valueForHTTPHeaderField(HTTPResponseHeader.location),
-//					let lowerBound = taggingLocation.range(of: "v2/taggings/")?.upperBound,
-//					let upperBound = taggingLocation.range(of: ".json")?.lowerBound,
-//					let taggingID = Int(taggingLocation[lowerBound..<upperBound]) {
-//						completion(.success(taggingID))
-//				} else {
-//					completion(.failure(TransportError.noData))
-//				}
-//			case .failure(let error):
-//				completion(.failure(error))
-//			}
-//
-//		}
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
+		
+		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
+			switch result {
+			case .success(let token):
+				var request = URLRequest(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
+				
+				
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpMethod = "POST"
+				
+				let tagName = "user/-/label/\(tagName)"
+				let postData = "T=\(token)&s=\(subscriptionID)&ac=edit&a=\(tagName)".data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+					switch result {
+					case .success:
+						completion(.success(()))
+						break
+					case .failure(let error):
+						completion(.failure(error))
+						break
+					}
+				})
+				
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 		
 	}
 
-	func deleteTagging(taggingID: String, completion: @escaping (Result<Void, Error>) -> Void) {
-//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("taggings/\(taggingID).json")
-//		var request = URLRequest(url: callURL, credentials: credentials)
-//		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
-//		transport.send(request: request, method: HTTPMethod.delete, completion: completion)
-	}
-	
-	func retrieveIcons(completion: @escaping (Result<[GoogleReaderCompatibleIcon]?, Error>) -> Void) {
+	func deleteTagging(subscriptionID: String, tagName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let baseURL = APIBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
 		
-//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("icons.json")
-//		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.icons]
-//		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-//
-//		transport.send(request: request, resultType: [GoogleReaderCompatibleIcon].self) { result in
-//
-//			switch result {
-//			case .success(let (response, icons)):
-//				self.storeConditionalGet(key: ConditionalGetKeys.icons, headers: response.allHeaderFields)
-//				completion(.success(icons))
-//			case .failure(let error):
-//				completion(.failure(error))
-//			}
-//
-//		}
-//
+		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
+			switch result {
+			case .success(let token):
+				var request = URLRequest(url: baseURL.appendingPathComponent(GoogleReaderEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
+				
+				
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpMethod = "POST"
+				
+				let tagName = "user/-/label/\(tagName)"
+				let postData = "T=\(token)&s=\(subscriptionID)&ac=edit&r=\(tagName)".data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+					switch result {
+					case .success:
+						completion(.success(()))
+						break
+					case .failure(let error):
+						completion(.failure(error))
+						break
+					}
+				})
+				
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([GoogleReaderCompatibleEntry]?), Error>) -> Void) {
@@ -544,7 +606,6 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 				}).joined(separator:"&")
 				
 				let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
-				//let postData = "T=\(token)&output=json&i=1349530380539369".data(using: String.Encoding.utf8)
 				
 				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: GoogleReaderCompatibleEntryWrapper.self, completion: { (result) in
 					switch result {
