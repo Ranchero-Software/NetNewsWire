@@ -49,10 +49,11 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		case editTag = "/reader/api/0/edit-tag"
 	}
 	
-	// private let GoogleReaderCompatibleBaseURL = URL(string: "https://api.GoogleReaderCompatible.com/v2/")!
 	private var transport: Transport!
 	
 	var credentials: Credentials?
+	private var accessToken: String?
+	
 	weak var accountMetadata: AccountMetadata?
 
 	var server: String? {
@@ -127,6 +128,13 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	}
 	
 	func requestAuthorizationToken(endpoint: URL, completion: @escaping (Result<String, Error>) -> Void) {
+		// If we have a token already, use it
+		if let accessToken = accessToken {
+			completion(.success(accessToken))
+			return
+		}
+		
+		// Otherwise request one.
 		guard let credentials = credentials else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
@@ -143,67 +151,19 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 				}
 				
 				// Convert the return data to UTF8 and then parse out the Auth token
-				guard let rawData = String(data: resultData, encoding: .utf8) else {
+				guard let accessToken = String(data: resultData, encoding: .utf8) else {
 					completion(.failure(TransportError.noData))
 					break
 				}
 				
-				
-				completion(.success(rawData))
+				self.accessToken = accessToken
+				completion(.success(accessToken))
 			case .failure(let error):
 				completion(.failure(error))
 			}
 		}
 	}
 	
-	func importOPML(opmlData: Data, completion: @escaping (Result<GoogleReaderCompatibleImportResult, Error>) -> Void) {
-		
-//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("imports.json")
-//		var request = URLRequest(url: callURL, credentials: credentials)
-//		request.addValue("text/xml; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
-//
-//		transport.send(request: request, method: HTTPMethod.post, payload: opmlData) { result in
-//
-//			switch result {
-//			case .success(let (_, data)):
-//
-//				guard let resultData = data else {
-//					completion(.failure(TransportError.noData))
-//					break
-//				}
-//
-//				do {
-//					let result = try JSONDecoder().decode(GoogleReaderCompatibleImportResult.self, from: resultData)
-//					completion(.success(result))
-//				} catch {
-//					completion(.failure(error))
-//				}
-//
-//			case .failure(let error):
-//				completion(.failure(error))
-//			}
-//
-//		}
-		
-	}
-	
-	func retrieveOPMLImportResult(importID: Int, completion: @escaping (Result<GoogleReaderCompatibleImportResult?, Error>) -> Void) {
-		
-//		let callURL = GoogleReaderCompatibleBaseURL.appendingPathComponent("imports/\(importID).json")
-//		let request = URLRequest(url: callURL, credentials: credentials)
-//		
-//		transport.send(request: request, resultType: GoogleReaderCompatibleImportResult.self) { result in
-//			
-//			switch result {
-//			case .success(let (_, importResult)):
-//				completion(.success(importResult))
-//			case .failure(let error):
-//				completion(.failure(error))
-//			}
-//			
-//		}
-		
-	}
 	
 	func retrieveTags(completion: @escaping (Result<[GoogleReaderCompatibleTag]?, Error>) -> Void) {
 		guard let baseURL = APIBaseURL else {

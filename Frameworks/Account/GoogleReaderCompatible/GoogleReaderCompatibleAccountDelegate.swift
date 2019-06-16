@@ -210,31 +210,113 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		os_log(.debug, log: log, "Begin importing OPML...")
-		opmlImportInProgress = true
+		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
+		var opmlDocument: RSOPMLDocument?
 		
-		caller.importOPML(opmlData: opmlData) { result in
-			switch result {
-			case .success(let importResult):
-				if importResult.complete {
-					os_log(.debug, log: self.log, "Import OPML done.")
-					self.opmlImportInProgress = false
-					DispatchQueue.main.async {
-						completion(.success(()))
-					}
-				} else {
-					self.checkImportResult(opmlImportResultID: importResult.importResultID, completion: completion)
+		do {
+			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+		} catch {
+			completion(.failure(error))
+			return
+		}
+		
+		guard let loadDocument = opmlDocument else {
+			completion(.success(()))
+			return
+		}
+		
+		// We use the same mechanism to load local accounts as we do to load the subscription
+		// OPML all accounts.
+		BatchUpdate.shared.perform {
+			loadOPML(account: account, opmlDocument: loadDocument)
+		}
+		completion(.success(()))
+		
+	}
+	
+	func loadOPML(account: Account, opmlDocument: RSOPMLDocument) {
+		
+		guard let children = opmlDocument.children else {
+			return
+		}
+		loadOPMLItems(account: account, items: children, parentFolder: nil)
+	}
+	
+	func loadOPMLItems(account: Account, items: [RSOPMLItem], parentFolder: Folder?) {
+		
+		var feedsToAdd = Set<String>()
+		
+		items.forEach { (item) in
+			
+			if let feedSpecifier = item.feedSpecifier {
+				feedsToAdd.insert(feedSpecifier.feedURL)
+				return
+			}
+			
+			guard let folderName = item.titleFromAttributes else {
+				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
+				if let itemChildren = item.children {
+					loadOPMLItems(account: account, items: itemChildren, parentFolder: parentFolder)
 				}
-			case .failure(let error):
-				os_log(.debug, log: self.log, "Import OPML failed.")
-				self.opmlImportInProgress = false
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
+				return
+			}
+			
+			if let itemChildren = item.children, let folder = account.ensureFolder(with: folderName) {
+				loadOPMLItems(account: account, items: itemChildren, parentFolder: folder)
+			}
+		}
+		
+		let group = DispatchGroup()
+
+		if let parentFolder = parentFolder {
+			for url in feedsToAdd {
+				group.enter()
+				caller.createSubscription(url: url) { result in
+					group.leave()
+					switch result {
+					case .success(let subResult):
+						switch subResult {
+						case .created(let subscription):
+							let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
+							feed.subscriptionID = String(subscription.feedID)
+							account.addFeed(feed, to: parentFolder) { _ in }
+						default:
+							break
+						}
+					case .failure(_):
+						break
+					}
+					
+				}
+			}
+		} else {
+			for url in feedsToAdd {
+				group.enter()
+				caller.createSubscription(url: url) { result in
+					group.leave()
+					switch result {
+					case .success(let subResult):
+						switch subResult {
+						case .created(let subscription):
+							let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
+							feed.subscriptionID = String(subscription.feedID)
+							account.addFeed(feed)
+						default:
+							break
+						}
+					case .failure(_):
+						break
+					}
 				}
 			}
 		}
 		
+		group.notify(queue: DispatchQueue.main) {
+			
+			DispatchQueue.main.async {
+				self.refreshAll(for: account) { (_) in }
+			}
+		}
 	}
 	
 	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
@@ -494,41 +576,6 @@ private extension GoogleReaderCompatibleAccountDelegate {
 			case .failure(let error):
 				completion(.failure(error))
 			}
-		}
-		
-	}
-	
-	func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		DispatchQueue.main.async {
-			
-			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { timer in
-				
-				os_log(.debug, log: self.log, "Checking status of OPML import...")
-				
-				self.caller.retrieveOPMLImportResult(importID: opmlImportResultID) { result in
-					switch result {
-					case .success(let importResult):
-						if let result = importResult, result.complete {
-							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
-							timer.invalidate()
-							self.opmlImportInProgress = false
-							DispatchQueue.main.async {
-								completion(.success(()))
-							}
-						}
-					case .failure(let error):
-						os_log(.debug, log: self.log, "Import OPML check failed.")
-						timer.invalidate()
-						self.opmlImportInProgress = false
-						DispatchQueue.main.async {
-							completion(.failure(error))
-						}
-					}
-				}
-				
-			}
-			
 		}
 		
 	}
