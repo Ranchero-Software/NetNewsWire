@@ -66,7 +66,7 @@ class AccountsGoogleReaderCompatibleWindowController: NSWindowController {
 		progressIndicator.startAnimation(self)
 		
 		guard let apiURL = URL(string: apiURLTextField.stringValue) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Invalie API URL.", comment: "Credentials Error")
+			self.errorMessageLabel.stringValue = NSLocalizedString("Invalid API URL.", comment: "Credentials Error")
 			return
 		}
 		

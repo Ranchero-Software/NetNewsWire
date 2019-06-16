@@ -16,6 +16,9 @@ struct SettingsAddAccountView : View {
 							   destination: SettingsLocalAccountView(name: "")).padding(.all, 4)
 			PresentationButton(SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin"),
 							   destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())).padding(.all, 4)
+			PresentationButton(SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: "Google Reader Compatible"),
+							   destination: SettingsGoogleReaderCompatibleAccountView(viewModel: SettingsGoogleReaderCompatibleAccountView.ViewModel())).padding(.all, 4)
+
 		}
 		.listStyle(.grouped)
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)
