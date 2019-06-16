@@ -14,9 +14,10 @@ import Account
 
 struct SettingsView : View {
 	@ObjectBinding var viewModel: ViewModel
-	@State var importSubscriptionsAccounts: ActionSheet? = nil
-	@State var importSubscriptionsDocumentPicker: Modal? = nil
-	@State var showExportSubscriptions = false
+	@State var subscriptionsImportAccounts: ActionSheet? = nil
+	@State var subscriptionsImportDocumentPicker: Modal? = nil
+	@State var subscriptionsExportAccounts: ActionSheet? = nil
+	@State var subscriptionsExportDocumentPicker: Modal? = nil
 
     var body: some View {
 		NavigationView {
@@ -68,18 +69,19 @@ struct SettingsView : View {
 						}
 					}
 					Button(action: {
-						self.importSubscriptionsAccounts = self.createImportSubscriptionsAccounts
+						self.subscriptionsImportAccounts = self.createSubscriptionsImportAccounts
 					}) {
 						Text("Import Subscriptions...")
 					}
-					.presentation(importSubscriptionsAccounts)
-					.presentation(importSubscriptionsDocumentPicker)
+						.presentation(subscriptionsImportAccounts)
+						.presentation(subscriptionsImportDocumentPicker)
 					Button(action: {
-						self.showExportSubscriptions = true
+						self.subscriptionsExportAccounts = self.createSubscriptionsExportAccounts
 					}) {
 						Text("Export Subscriptions...")
 					}
-					.presentation(showExportSubscriptions ? exportSubscriptionsAccounts : nil)
+						.presentation(subscriptionsExportAccounts)
+						.presentation(subscriptionsExportDocumentPicker)
 				}
 				.foregroundColor(.primary)
 
@@ -90,29 +92,29 @@ struct SettingsView : View {
 		}
     }
 	
-	var createImportSubscriptionsAccounts: ActionSheet {
+	var createSubscriptionsImportAccounts: ActionSheet {
 		var buttons = [ActionSheet.Button]()
 		for account in viewModel.accounts {
 			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
-				self.importSubscriptionsAccounts = nil
-				self.importSubscriptionsDocumentPicker = Modal(SettingsImportSubscriptionsDocumentPickerView(account: account))
+				self.subscriptionsImportAccounts = nil
+				self.subscriptionsImportDocumentPicker = Modal(SettingsSubscriptionsImportDocumentPickerView(account: account))
 			}
 			buttons.append(button)
 		}
-		buttons.append(.cancel { self.importSubscriptionsAccounts = nil })
+		buttons.append(.cancel { self.subscriptionsImportAccounts = nil })
 		return ActionSheet(title: Text("Import Subscriptions..."), message: Text("Select the account to import your OPML file into."), buttons: buttons)
 	}
 	
-	var exportSubscriptionsAccounts: ActionSheet {
+	var createSubscriptionsExportAccounts: ActionSheet {
 		var buttons = [ActionSheet.Button]()
 		for account in viewModel.accounts {
 			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
-				self.showExportSubscriptions = false
-				// Call doc picker here...
+				self.subscriptionsExportAccounts = nil
+				self.subscriptionsExportDocumentPicker = Modal(SettingsSubscriptionsExportDocumentPickerView(account: account))
 			}
 			buttons.append(button)
 		}
-		buttons.append(.cancel { self.showExportSubscriptions = false })
+		buttons.append(.cancel { self.subscriptionsExportAccounts = nil })
 		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
 	}
 	
