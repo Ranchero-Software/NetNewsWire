@@ -14,7 +14,8 @@ import Account
 
 struct SettingsView : View {
 	@ObjectBinding var viewModel: ViewModel
-	@State var showImportSubscriptions = false
+	@State var importSubscriptionsAccounts: ActionSheet? = nil
+	@State var importSubscriptionsDocumentPicker: Modal? = nil
 	@State var showExportSubscriptions = false
 
     var body: some View {
@@ -67,17 +68,18 @@ struct SettingsView : View {
 						}
 					}
 					Button(action: {
-						self.showImportSubscriptions = true
+						self.importSubscriptionsAccounts = self.createImportSubscriptionsAccounts
 					}) {
 						Text("Import Subscriptions...")
 					}
-					.presentation(showImportSubscriptions ? importSubscriptionsActionSheet : nil)
+					.presentation(importSubscriptionsAccounts)
+					.presentation(importSubscriptionsDocumentPicker)
 					Button(action: {
 						self.showExportSubscriptions = true
 					}) {
 						Text("Export Subscriptions...")
 					}
-					.presentation(showExportSubscriptions ? exportSubscriptionsActionSheet : nil)
+					.presentation(showExportSubscriptions ? exportSubscriptionsAccounts : nil)
 				}
 				.foregroundColor(.primary)
 
@@ -88,20 +90,20 @@ struct SettingsView : View {
 		}
     }
 	
-	var importSubscriptionsActionSheet: ActionSheet {
+	var createImportSubscriptionsAccounts: ActionSheet {
 		var buttons = [ActionSheet.Button]()
 		for account in viewModel.accounts {
 			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
-				self.showImportSubscriptions = false
-				// Call doc picker here...
+				self.importSubscriptionsAccounts = nil
+				self.importSubscriptionsDocumentPicker = Modal(SettingsImportSubscriptionsDocumentPickerView(account: account))
 			}
 			buttons.append(button)
 		}
-		buttons.append(.cancel { self.showImportSubscriptions = false })
+		buttons.append(.cancel { self.importSubscriptionsAccounts = nil })
 		return ActionSheet(title: Text("Import Subscriptions..."), message: Text("Select the account to import your OPML file into."), buttons: buttons)
 	}
 	
-	var exportSubscriptionsActionSheet: ActionSheet {
+	var exportSubscriptionsAccounts: ActionSheet {
 		var buttons = [ActionSheet.Button]()
 		for account in viewModel.accounts {
 			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
@@ -110,7 +112,7 @@ struct SettingsView : View {
 			}
 			buttons.append(button)
 		}
-		buttons.append(.cancel { self.showImportSubscriptions = false })
+		buttons.append(.cancel { self.showExportSubscriptions = false })
 		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
 	}
 	
