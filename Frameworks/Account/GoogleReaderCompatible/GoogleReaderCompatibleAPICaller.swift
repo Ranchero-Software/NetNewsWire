@@ -984,24 +984,4 @@ extension GoogleReaderCompatibleAPICaller {
 			accountMetadata?.conditionalGetInfo = conditionalGet
 		}
 	}
-	
-	func extractPageNumber(link: String?) -> Int? {
-		
-		guard let link = link else {
-			return nil
-		}
-		
-		if let lowerBound = link.range(of: "page=")?.upperBound {
-			if let upperBound = link.range(of: "&")?.lowerBound {
-				return Int(link[lowerBound..<upperBound])
-			}
-			if let upperBound = link.range(of: ">")?.lowerBound {
-				return Int(link[lowerBound..<upperBound])
-			}
-		}
-		
-		return nil
-		
-	}
-	
 }
