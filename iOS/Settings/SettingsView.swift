@@ -10,9 +10,15 @@ import SwiftUI
 import Combine
 import Account
 
+
+
 struct SettingsView : View {
 	@ObjectBinding var viewModel: ViewModel
-	
+	@State var subscriptionsImportAccounts: ActionSheet? = nil
+	@State var subscriptionsImportDocumentPicker: Modal? = nil
+	@State var subscriptionsExportAccounts: ActionSheet? = nil
+	@State var subscriptionsExportDocumentPicker: Modal? = nil
+
     var body: some View {
 		NavigationView {
 			List {
@@ -31,30 +37,16 @@ struct SettingsView : View {
 				Section(header: Text("ABOUT")) {
 					
 					Text("About NetNewsWire")
-
-					Button(action: {
-						UIApplication.shared.open(URL(string: "https://ranchero.com/netnewswire/")!, options: [:])
-					}) {
-						Text("Website")
-					}
 					
-					Button(action: {
-						UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire")!, options: [:])
-					}) {
-						Text("Github Repository")
-					}
-
-					Button(action: {
-						UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!, options: [:])
-					}) {
-						Text("Bug Tracker")
-					}
-
-					Button(action: {
-						UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!, options: [:])
-					}) {
-						Text("Technotes")
-					}
+					PresentationButton(Text("Website"), destination: SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!))
+					
+					PresentationButton(Text("Github Repository"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!))
+					
+					PresentationButton(Text("Bug Tracker"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!))
+					
+					PresentationButton(Text("Technotes"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!))
+			
+					PresentationButton(Text("How to Support NetNewsWire"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!))
 
 					Text("Add NetNewsWire News Feed")
 					
@@ -76,16 +68,55 @@ struct SettingsView : View {
 							Text(interval.description()).tag(interval)
 						}
 					}
-					Text("Import Subscriptions...")
-					Text("Export Subscriptions...")
+					Button(action: {
+						self.subscriptionsImportAccounts = self.createSubscriptionsImportAccounts
+					}) {
+						Text("Import Subscriptions...")
+					}
+						.presentation(subscriptionsImportAccounts)
+						.presentation(subscriptionsImportDocumentPicker)
+					Button(action: {
+						self.subscriptionsExportAccounts = self.createSubscriptionsExportAccounts
+					}) {
+						Text("Export Subscriptions...")
+					}
+						.presentation(subscriptionsExportAccounts)
+						.presentation(subscriptionsExportDocumentPicker)
 				}
-				
+				.foregroundColor(.primary)
+
 			}
 			.listStyle(.grouped)
 			.navigationBarTitle(Text("Settings"), displayMode: .inline)
 
 		}
     }
+	
+	var createSubscriptionsImportAccounts: ActionSheet {
+		var buttons = [ActionSheet.Button]()
+		for account in viewModel.accounts {
+			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
+				self.subscriptionsImportAccounts = nil
+				self.subscriptionsImportDocumentPicker = Modal(SettingsSubscriptionsImportDocumentPickerView(account: account))
+			}
+			buttons.append(button)
+		}
+		buttons.append(.cancel { self.subscriptionsImportAccounts = nil })
+		return ActionSheet(title: Text("Import Subscriptions..."), message: Text("Select the account to import your OPML file into."), buttons: buttons)
+	}
+	
+	var createSubscriptionsExportAccounts: ActionSheet {
+		var buttons = [ActionSheet.Button]()
+		for account in viewModel.accounts {
+			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
+				self.subscriptionsExportAccounts = nil
+				self.subscriptionsExportDocumentPicker = Modal(SettingsSubscriptionsExportDocumentPickerView(account: account))
+			}
+			buttons.append(button)
+		}
+		buttons.append(.cancel { self.subscriptionsExportAccounts = nil })
+		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
+	}
 	
 	class ViewModel: BindableObject {
 		

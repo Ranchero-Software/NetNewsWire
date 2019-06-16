@@ -9,10 +9,12 @@
 import SwiftUI
 import Combine
 import Account
+import RSWeb
 
 struct SettingsDetailAccountView : View {
 	@ObjectBinding var viewModel: ViewModel
 	@State private var verifyDelete = false
+	@State private var showFeedbinCredentials = false
 	
     var body: some View {
 		List {
@@ -26,15 +28,19 @@ struct SettingsDetailAccountView : View {
 					Text("Active")
 				}
 			}
-			Section {
-				HStack {
-					Spacer()
-					Button(action: {
-						
-					}) {
-						Text("Credentials")
+			if viewModel.isCreditialsAvailable {
+				Section {
+					HStack {
+						Spacer()
+						Button(action: {
+							self.showFeedbinCredentials = true
+						}) {
+							Text("Credentials")
+						}
+						.presentation(showFeedbinCredentials ? feedbinCredentialsModal : nil)
+						.onDisappear() { self.showFeedbinCredentials = false }
+						Spacer()
 					}
-					Spacer()
 				}
 			}
 			if viewModel.isDeletable {
@@ -60,6 +66,11 @@ struct SettingsDetailAccountView : View {
 		.listStyle(.grouped)
 		.navigationBarTitle(Text(verbatim: viewModel.nameForDisplay), displayMode: .inline)
 
+	}
+	
+	var feedbinCredentialsModal: Modal {
+		let feedbinViewModel = SettingsFeedbinAccountView.ViewModel(account: viewModel.account)
+		return Modal(SettingsFeedbinAccountView(viewModel: feedbinViewModel))
 	}
 	
 	class ViewModel: BindableObject {
@@ -92,6 +103,10 @@ struct SettingsDetailAccountView : View {
 				account.isActive = newValue
 				didChange.send(self)
 			}
+		}
+		
+		var isCreditialsAvailable: Bool {
+			return account.type != .onMyMac
 		}
 		
 		var isDeletable: Bool {
