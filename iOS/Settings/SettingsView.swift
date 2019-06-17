@@ -10,8 +10,6 @@ import SwiftUI
 import Combine
 import Account
 
-
-
 struct SettingsView : View {
 	@ObjectBinding var viewModel: ViewModel
 	@State var subscriptionsImportAccounts: ActionSheet? = nil
@@ -35,21 +33,13 @@ struct SettingsView : View {
 				}
 				
 				Section(header: Text("ABOUT")) {
-					
 					Text("About NetNewsWire")
-					
 					PresentationButton(Text("Website"), destination: SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!))
-					
 					PresentationButton(Text("Github Repository"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!))
-					
 					PresentationButton(Text("Bug Tracker"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!))
-					
 					PresentationButton(Text("Technotes"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!))
-			
 					PresentationButton(Text("How to Support NetNewsWire"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!))
-
 					Text("Add NetNewsWire News Feed")
-					
 				}
 				.foregroundColor(.primary)
 				
@@ -117,6 +107,8 @@ struct SettingsView : View {
 		buttons.append(.cancel { self.subscriptionsExportAccounts = nil })
 		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
 	}
+	
+	// MARK: ViewModel
 	
 	class ViewModel: BindableObject {
 		
