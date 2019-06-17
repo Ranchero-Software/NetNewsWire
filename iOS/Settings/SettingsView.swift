@@ -34,11 +34,21 @@ struct SettingsView : View {
 				
 				Section(header: Text("ABOUT")) {
 					Text("About NetNewsWire")
-					PresentationButton(Text("Website"), destination: SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!))
-					PresentationButton(Text("Github Repository"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!))
-					PresentationButton(Text("Bug Tracker"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!))
-					PresentationButton(Text("Technotes"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!))
-					PresentationButton(Text("How to Support NetNewsWire"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!))
+					PresentationButton(destination: SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!)) {
+						Text("Website")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!)) {
+						Text("Github Repository")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!)) {
+						Text("Bug Tracker")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!)) {
+						Text("Technotes")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!)) {
+						Text("How to Support NetNewsWire")
+					}
 					Text("Add NetNewsWire News Feed")
 				}
 				.foregroundColor(.primary)
