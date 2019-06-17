@@ -94,7 +94,7 @@ struct SettingsView : View {
 	
 	var createSubscriptionsImportAccounts: ActionSheet {
 		var buttons = [ActionSheet.Button]()
-		for account in viewModel.accounts {
+		for account in viewModel.activeAccounts {
 			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
 				self.subscriptionsImportAccounts = nil
 				self.subscriptionsImportDocumentPicker = Modal(SettingsSubscriptionsImportDocumentPickerView(account: account))
@@ -132,6 +132,14 @@ struct SettingsView : View {
 		var accounts: [Account] {
 			get {
 				return AccountManager.shared.sortedAccounts
+			}
+			set {
+			}
+		}
+		
+		var activeAccounts: [Account] {
+			get {
+				return AccountManager.shared.sortedActiveAccounts
 			}
 			set {
 			}
