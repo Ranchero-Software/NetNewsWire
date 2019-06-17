@@ -50,7 +50,6 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		if shouldDisplayPicker {
 			folderPickerView.dataSource = self
 			folderPickerView.delegate = self
-			folderPickerView.showsSelectionIndicator = true
 		} else {
 			folderPickerView.isHidden = true
 		}
