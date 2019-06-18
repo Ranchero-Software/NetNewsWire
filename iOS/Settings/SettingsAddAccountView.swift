@@ -12,13 +12,14 @@ import Account
 struct SettingsAddAccountView : View {
     var body: some View {
 		List {
-			PresentationButton(SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName),
-							   destination: SettingsLocalAccountView(name: "")).padding(.all, 4)
-			PresentationButton(SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin"),
-							   destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())).padding(.all, 4)
-			PresentationButton(SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: "Google Reader Compatible"),
-							   destination: SettingsGoogleReaderCompatibleAccountView(viewModel: SettingsGoogleReaderCompatibleAccountView.ViewModel())).padding(.all, 4)
-
+			PresentationButton(destination: SettingsLocalAccountView(name: "")) {
+				SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName)
+			}
+			.padding(4)
+			PresentationButton(destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())) {
+				SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin")
+			}
+			.padding(4)
 		}
 		.listStyle(.grouped)
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)

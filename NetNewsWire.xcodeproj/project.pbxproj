@@ -11,6 +11,7 @@
 		510D707E22B02A4B004E8F65 /* SettingsLocalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D707D22B02A4B004E8F65 /* SettingsLocalAccountView.swift */; };
 		510D708022B02A5F004E8F65 /* SettingsFeedbinAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D707F22B02A5F004E8F65 /* SettingsFeedbinAccountView.swift */; };
 		510D708222B041CC004E8F65 /* SettingsAccountLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D708122B041CC004E8F65 /* SettingsAccountLabelView.swift */; };
+		5110AB7822B7BD6200A94F76 /* AddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5110AB7722B7BD6200A94F76 /* AddView.swift */; };
 		51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
 		5115CAF42266301400B21BCE /* AddContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */; };
 		5126EE97226CB48A00C22AFC /* NavigationStateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* NavigationStateController.swift */; };
@@ -669,6 +670,7 @@
 		510D707D22B02A4B004E8F65 /* SettingsLocalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLocalAccountView.swift; sourceTree = "<group>"; };
 		510D707F22B02A5F004E8F65 /* SettingsFeedbinAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFeedbinAccountView.swift; sourceTree = "<group>"; };
 		510D708122B041CC004E8F65 /* SettingsAccountLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountLabelView.swift; sourceTree = "<group>"; };
+		5110AB7722B7BD6200A94F76 /* AddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddView.swift; sourceTree = "<group>"; };
 		51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOS_target.xcconfig; sourceTree = "<group>"; };
 		51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContainerViewController.swift; sourceTree = "<group>"; };
 		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
@@ -992,6 +994,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5110AB6E22B7BD3C00A94F76 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				51C452822265093600C03939 /* Add.storyboard */,
+				51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */,
+				51C452842265093600C03939 /* AddFeedViewController.swift */,
+				51C452812265093600C03939 /* AddFeedFolderPickerData.swift */,
+				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
 		5127B235222B4849006D641D /* Keyboard */ = {
 			isa = PBXGroup;
 			children = (
@@ -1145,11 +1159,8 @@
 		51C452802265093600C03939 /* Add */ = {
 			isa = PBXGroup;
 			children = (
-				51C452822265093600C03939 /* Add.storyboard */,
-				51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */,
-				51C452842265093600C03939 /* AddFeedViewController.swift */,
-				51C452812265093600C03939 /* AddFeedFolderPickerData.swift */,
-				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
+				5110AB6E22B7BD3C00A94F76 /* UIKit */,
+				5110AB7722B7BD6200A94F76 /* AddView.swift */,
 			);
 			path = Add;
 			sourceTree = "<group>";
@@ -2321,6 +2332,7 @@
 			files = (
 				840D617F2029031C009BC708 /* AppDelegate.swift in Sources */,
 				512E08E72268801200BDCFDD /* FeedTreeControllerDelegate.swift in Sources */,
+				5110AB7822B7BD6200A94F76 /* AddView.swift in Sources */,
 				51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */,
 				51EF0F79227716380050506E /* ColorHash.swift in Sources */,
 				5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */,

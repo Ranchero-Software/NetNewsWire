@@ -10,8 +10,6 @@ import SwiftUI
 import Combine
 import Account
 
-
-
 struct SettingsView : View {
 	@ObjectBinding var viewModel: ViewModel
 	@State var subscriptionsImportAccounts: ActionSheet? = nil
@@ -35,21 +33,23 @@ struct SettingsView : View {
 				}
 				
 				Section(header: Text("ABOUT")) {
-					
 					Text("About NetNewsWire")
-					
-					PresentationButton(Text("Website"), destination: SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!))
-					
-					PresentationButton(Text("Github Repository"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!))
-					
-					PresentationButton(Text("Bug Tracker"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!))
-					
-					PresentationButton(Text("Technotes"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!))
-			
-					PresentationButton(Text("How to Support NetNewsWire"), destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!))
-
+					PresentationButton(destination: SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!)) {
+						Text("Website")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!)) {
+						Text("Github Repository")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!)) {
+						Text("Bug Tracker")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!)) {
+						Text("Technotes")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!)) {
+						Text("How to Support NetNewsWire")
+					}
 					Text("Add NetNewsWire News Feed")
-					
 				}
 				.foregroundColor(.primary)
 				
@@ -94,7 +94,7 @@ struct SettingsView : View {
 	
 	var createSubscriptionsImportAccounts: ActionSheet {
 		var buttons = [ActionSheet.Button]()
-		for account in viewModel.accounts {
+		for account in viewModel.activeAccounts {
 			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
 				self.subscriptionsImportAccounts = nil
 				self.subscriptionsImportDocumentPicker = Modal(SettingsSubscriptionsImportDocumentPickerView(account: account))
@@ -118,6 +118,8 @@ struct SettingsView : View {
 		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
 	}
 	
+	// MARK: ViewModel
+	
 	class ViewModel: BindableObject {
 		
 		let didChange = PassthroughSubject<ViewModel, Never>()
@@ -130,6 +132,14 @@ struct SettingsView : View {
 		var accounts: [Account] {
 			get {
 				return AccountManager.shared.sortedAccounts
+			}
+			set {
+			}
+		}
+		
+		var activeAccounts: [Account] {
+			get {
+				return AccountManager.shared.sortedActiveAccounts
 			}
 			set {
 			}
