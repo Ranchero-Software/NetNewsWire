@@ -77,7 +77,7 @@ struct SettingsGoogleReaderCompatibleAccountView : View {
 		error = Text("")
 		
 		let emailAddress = viewModel.email.trimmingCharacters(in: .whitespaces)
-		let credentials = Credentials.basic(username: emailAddress, password: viewModel.password)
+		let credentials = Credentials.googleBasicLogin(username: emailAddress, password: viewModel.password)
 		guard let apiURL = URL(string: viewModel.apiURL) else {
 			self.error = Text("Invalide API URL.")
 			return
