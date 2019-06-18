@@ -778,13 +778,17 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	private func featuredImageFor(_ article: Article) -> NSImage? {
-
-		if let url = article.imageURL {
-			if let imageData = appDelegate.imageDownloader.image(for: url) {
-				return NSImage(data: imageData)
-			}
-		}
+		// At this writing (17 June 2019) we’re not displaying featured images anywhere,
+		// so let’s skip downloading them even if we find them.
+		//
+		// We’ll revisit this later.
 		
+//		if let url = article.imageURL {
+//			if let imageData = appDelegate.imageDownloader.image(for: url) {
+//				return NSImage(data: imageData)
+//			}
+//		}
+
 		return nil
 		
 	}
