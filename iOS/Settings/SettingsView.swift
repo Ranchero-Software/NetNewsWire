@@ -19,7 +19,7 @@ struct SettingsView : View {
 
     var body: some View {
 		NavigationView {
-			List {
+			Form {
 				
 				Section(header: Text("ACCOUNTS")) {
 					ForEach(viewModel.accounts.identified(by: \.self)) { account in
@@ -86,7 +86,6 @@ struct SettingsView : View {
 				.foregroundColor(.primary)
 
 			}
-			.listStyle(.grouped)
 			.navigationBarTitle(Text("Settings"), displayMode: .inline)
 
 		}
