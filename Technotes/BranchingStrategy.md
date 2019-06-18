@@ -21,7 +21,7 @@ There will also be a number of repository forks that NetNewWire developers will 
 
 ## Tagging
 
-Each release should be tagged using [Semantic Versioning](https://semver.org/).  Candidates will continue to be tagged using the current convention which denotes the difference between developer, alpha and beta releases.  Additionally, we will need to use a convention to avoid tag name collisions between iOS and macOS products.  macOS will use even minor release numbers and iOS will use odd minor release numbers.  (See the above diagram for examples.)
+Each release should be tagged using [Semantic Versioning](https://semver.org/).  Candidates will continue to be tagged using the current convention which denotes the difference between developer, alpha and beta releases.  Additionally, we will need to use a convention to avoid tag name collisions between iOS and macOS products.  macOS releases will be suffixed with "mac-" and iOS releases will be suffixed with "ios-".  (See the above diagram for examples.)  
 
 ## Submodules
 

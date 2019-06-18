@@ -24,7 +24,7 @@ Every community member is expected to abide by the code of conduct which is incl
 
 #### Pull Requests
 
-See the [Contributing](Contributing.md) page for our process. It’s pretty straightforward.
+See the [Contributing](CONTRIBUTING.md) page for our process. It’s pretty straightforward.
 
 #### Building
 
