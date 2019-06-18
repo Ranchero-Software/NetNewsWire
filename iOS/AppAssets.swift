@@ -36,26 +36,21 @@ struct AppAssets {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
 	
-	static var feedColor: UIColor = {
-		return UIColor(named: "feedColor")!
-	}()
-
 	static var feedImage: RSImage = {
-		let image = RSImage(named: "feedImage")!
-		return image.maskWithColor(color: AppAssets.feedColor.cgColor)!
+		return RSImage(named: "feedImage")!
 	}()
 	
 	static var masterFolderColor: UIColor = {
 		return UIColor(named: "masterFolderColor")!
 	}()
-	
+
 	static var masterFolderImage: RSImage = {
 		let image = RSImage(named: "folderImage")!
 		return image.maskWithColor(color: AppAssets.masterFolderColor.cgColor)!
 	}()
 	
-	static var selectionBackgroundColor: UIColor = {
-		return UIColor(named: "selectionBackgroundColor")!
+	static var netNewsWireBlueColor: UIColor = {
+		return UIColor(named: "netNewsWireBlueColor")!
 	}()
 	
 	static var smartFeedColor: UIColor = {

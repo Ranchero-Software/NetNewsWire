@@ -139,7 +139,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		}
 		
 		readAction.image = AppAssets.circleClosedImage
-		readAction.backgroundColor = AppAssets.timelineUnreadCircleColor
+		readAction.backgroundColor = AppAssets.netNewsWireBlueColor
 		
 		// Set up the star action
 		let starTitle = article.status.starred ?

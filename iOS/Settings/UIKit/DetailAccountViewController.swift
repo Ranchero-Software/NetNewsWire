@@ -59,7 +59,7 @@ extension DetailAccountViewController {
 		}
 		
 		let bgView = UIView()
-		bgView.backgroundColor = AppAssets.selectionBackgroundColor
+		bgView.backgroundColor = AppAssets.netNewsWireBlueColor
 		cell.selectedBackgroundView = bgView
 		return cell
 	}
