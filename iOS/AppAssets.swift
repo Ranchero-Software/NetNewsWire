@@ -84,14 +84,6 @@ struct AppAssets {
 		return image.maskWithColor(color: AppAssets.starColor.cgColor)!
 	}()
 
-	static var timelineTextPrimaryColor: UIColor = {
-		return UIColor(named: "timelineTextPrimaryColor")!
-	}()
-
-	static var timelineTextSecondaryColor: UIColor = {
-		return UIColor(named: "timelineTextSecondaryColor")!
-	}()
-
 	static var timelineUnreadCircleColor: UIColor = {
 		return UIColor(named: "timelineUnreadCircleColor")!
 	}()
