@@ -636,7 +636,7 @@ private extension SidebarOutlineDataSource {
 	}
 	
 	func violatesTagSpecificBehavior(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
-		guard let parentAccount = nodeAccount(parentNode), parentAccount.usesTags else {
+		guard let parentAccount = nodeAccount(parentNode), parentAccount.isTagBasedSystem else {
 			return false
 		}
 		

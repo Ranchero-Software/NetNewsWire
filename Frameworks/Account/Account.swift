@@ -184,8 +184,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
         }
     }
     
-	public var usesTags: Bool {
-		return delegate.usesTags
+	public var isTagBasedSystem: Bool {
+		return delegate.isTagBasedSystem
+	}
+	
+	public var isOPMLImportSupported: Bool {
+		return delegate.isOPMLImportSupported
 	}
 	
 	var refreshInProgress = false {
@@ -206,8 +210,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.refreshProgress
 	}
 	
-	var supportsSubFolders: Bool {
-		return delegate.supportsSubFolders
+	var isSubfoldersSupported: Bool {
+		return delegate.isSubfoldersSupported
 	}
 	
 	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
@@ -348,7 +352,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		guard !delegate.opmlImportInProgress else {
+		guard !delegate.isOPMLImportInProgress else {
 			completion(.failure(AccountError.opmlImportInProgress))
 			return
 		}

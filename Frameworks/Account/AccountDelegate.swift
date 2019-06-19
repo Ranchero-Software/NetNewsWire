@@ -13,9 +13,10 @@ import RSWeb
 protocol AccountDelegate {
 
 	// Local account does not; some synced accounts might.
-	var supportsSubFolders: Bool { get }
-	var usesTags: Bool { get }
-	var opmlImportInProgress: Bool { get }
+	var isSubfoldersSupported: Bool { get }
+	var isTagBasedSystem: Bool { get }
+	var isOPMLImportSupported: Bool { get }
+	var isOPMLImportInProgress: Bool { get }
 	
 	var server: String? { get }
 	var credentials: Credentials? { get set }

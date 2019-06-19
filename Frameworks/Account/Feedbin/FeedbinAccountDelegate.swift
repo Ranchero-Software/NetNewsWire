@@ -6,12 +6,6 @@
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
-#if os(macOS)
-import AppKit
-#else
-import UIKit
-import RSCore
-#endif
 import Articles
 import RSCore
 import RSParser
@@ -30,10 +24,11 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	private let caller: FeedbinAPICaller
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedbin")
 
-	let supportsSubFolders = false
-	let usesTags = true
+	let isSubfoldersSupported = false
+	let isTagBasedSystem = true
+	let isOPMLImportSupported = true
 	let server: String? = "api.feedbin.com"
-	var opmlImportInProgress = false
+	var isOPMLImportInProgress = false
 	
 	var credentials: Credentials? {
 		didSet {
@@ -207,7 +202,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 		
 		os_log(.debug, log: log, "Begin importing OPML...")
-		opmlImportInProgress = true
+		isOPMLImportInProgress = true
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		
 		caller.importOPML(opmlData: opmlData) { result in
@@ -216,7 +211,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				if importResult.complete {
 					os_log(.debug, log: self.log, "Import OPML done.")
 					self.refreshProgress.completeTask()
-					self.opmlImportInProgress = false
+					self.isOPMLImportInProgress = false
 					DispatchQueue.main.async {
 						completion(.success(()))
 					}
@@ -226,7 +221,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .failure(let error):
 				os_log(.debug, log: self.log, "Import OPML failed.")
 				self.refreshProgress.completeTask()
-				self.opmlImportInProgress = false
+				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
 					completion(.failure(wrappedError))
@@ -569,7 +564,7 @@ private extension FeedbinAccountDelegate {
 							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
 							timer.invalidate()
 							self.refreshProgress.completeTask()
-							self.opmlImportInProgress = false
+							self.isOPMLImportInProgress = false
 							DispatchQueue.main.async {
 								completion(.success(()))
 							}
@@ -578,7 +573,7 @@ private extension FeedbinAccountDelegate {
 						os_log(.debug, log: self.log, "Import OPML check failed.")
 						timer.invalidate()
 						self.refreshProgress.completeTask()
-						self.opmlImportInProgress = false
+						self.isOPMLImportInProgress = false
 						DispatchQueue.main.async {
 							completion(.failure(error))
 						}

@@ -6,12 +6,6 @@
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
-#if os(macOS)
-import AppKit
-#else
-import UIKit
-import RSCore
-#endif
 import Articles
 import RSCore
 import RSParser
@@ -31,8 +25,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	private let caller: ReaderAPICaller
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
 
-	let supportsSubFolders = false
-	let usesTags = true
+	let isSubfoldersSupported = false
+	let isTagBasedSystem = true
 
 	var server: String? {
 		get {
@@ -40,7 +34,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	var opmlImportInProgress = false
+	let isOPMLImportSupported = false
+	var isOPMLImportInProgress = false
 	
 	var credentials: Credentials? {
 		didSet {
@@ -195,128 +190,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		var fileData: Data?
-		
-		do {
-			fileData = try Data(contentsOf: opmlFile)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
-		guard let opmlData = fileData else {
-			completion(.success(()))
-			return
-		}
-		
-		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
-		
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
-		guard let loadDocument = opmlDocument else {
-			completion(.success(()))
-			return
-		}
-		
-		// We use the same mechanism to load local accounts as we do to load the subscription
-		// OPML all accounts.
-		BatchUpdate.shared.perform {
-			loadOPML(account: account, opmlDocument: loadDocument)
-		}
-		completion(.success(()))
-		
-	}
-	
-	func loadOPML(account: Account, opmlDocument: RSOPMLDocument) {
-		
-		guard let children = opmlDocument.children else {
-			return
-		}
-		loadOPMLItems(account: account, items: children, parentFolder: nil)
-	}
-	
-	func loadOPMLItems(account: Account, items: [RSOPMLItem], parentFolder: Folder?) {
-		
-		var feedsToAdd = Set<String>()
-		
-		items.forEach { (item) in
-			
-			if let feedSpecifier = item.feedSpecifier {
-				feedsToAdd.insert(feedSpecifier.feedURL)
-				return
-			}
-			
-			guard let folderName = item.titleFromAttributes else {
-				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
-				if let itemChildren = item.children {
-					loadOPMLItems(account: account, items: itemChildren, parentFolder: parentFolder)
-				}
-				return
-			}
-			
-			if let itemChildren = item.children, let folder = account.ensureFolder(with: folderName) {
-				loadOPMLItems(account: account, items: itemChildren, parentFolder: folder)
-			}
-		}
-		
-		let group = DispatchGroup()
-
-		if let parentFolder = parentFolder {
-			for url in feedsToAdd {
-				group.enter()
-				caller.createSubscription(url: url) { result in
-					group.leave()
-					switch result {
-					case .success(let subResult):
-						switch subResult {
-						case .created(let subscription):
-							let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
-							feed.subscriptionID = String(subscription.feedID)
-							account.addFeed(feed, to: parentFolder) { _ in }
-						default:
-							break
-						}
-					case .failure(_):
-						break
-					}
-					
-				}
-			}
-		} else {
-			for url in feedsToAdd {
-				group.enter()
-				caller.createSubscription(url: url) { result in
-					group.leave()
-					switch result {
-					case .success(let subResult):
-						switch subResult {
-						case .created(let subscription):
-							let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
-							feed.subscriptionID = String(subscription.feedID)
-							account.addFeed(feed)
-						default:
-							break
-						}
-					case .failure(_):
-						break
-					}
-				}
-			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			
-			DispatchQueue.main.async {
-				self.refreshAll(for: account) { (_) in }
-			}
-		}
 	}
 	
 	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
