@@ -37,5 +37,12 @@ struct AppAssets {
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
-	
+
+	static var avatarLightBackgroundColor: NSColor = {
+		return NSColor(named: NSColor.Name("avatarLightBackgroundColor"))!
+	}()
+
+	static var avatarDarkBackgroundColor: NSColor = {
+		return NSColor(named: NSColor.Name("avatarDarkBackgroundColor"))!
+	}()
 }

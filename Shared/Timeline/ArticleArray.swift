@@ -53,6 +53,9 @@ extension Array where Element == Article {
 	func sortedByDate(_ sortDirection: ComparisonResult) -> ArticleArray {
 
 		let articles = sorted { (article1, article2) -> Bool in
+			if article1.logicalDatePublished == article2.logicalDatePublished {
+				return article1.articleID < article2.articleID
+			}
 			if sortDirection == .orderedDescending {
 				return article1.logicalDatePublished > article2.logicalDatePublished
 			}

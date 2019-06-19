@@ -99,7 +99,7 @@ private extension SingleFaviconDownloader {
 		queue.async {
 
 			if let data = self.diskCache[self.diskKey], !data.isEmpty {
-				RSImage.scaledForAvatar(data, imageResultBlock: callback)
+				RSImage.rs_image(with: data, imageResultBlock: callback)
 				return
 			}
 
@@ -134,7 +134,7 @@ private extension SingleFaviconDownloader {
 
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 				self.saveToDisk(data)
-				RSImage.scaledForAvatar(data, imageResultBlock: callback)
+				RSImage.rs_image(with: data, imageResultBlock: callback)
 				return
 			}
 
