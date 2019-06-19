@@ -40,8 +40,19 @@ This allows for a pristine project with code signing set up with the appropriate
 developer ID and certificates, and for dev to be able to have local settings
 without needing to check in anything into source control.
 
-As an example, make a `../../SharedXcodeSettings/DeveloperSettings.xcconfig` file and
-give it the contents
+As an example, make a directory SharedXcodeSettings next to where you have this repository.
+An example of the structure is:
+
+```
+aDirectory/
+  SharedXcodeSettings/
+    DeveloperSettings.xcconfig
+  NetNewsWire
+    NewNewsSire.xcworkspace
+```
+
+Then create a plain text file in it: `SharedXcodeSettings/DeveloperSettings.xcconfig` and
+give it the contents:
 
 ```
 CODE_SIGN_IDENTITY = Mac Developer

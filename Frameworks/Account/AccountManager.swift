@@ -172,7 +172,7 @@ public final class AccountManager: UnreadCountProvider {
 			}
 		}
 
-		group.notify(queue: DispatchQueue.main) {
+		group.notify(queue: DispatchQueue.global(qos: .background)) {
 			completion?()
 		}
 	}

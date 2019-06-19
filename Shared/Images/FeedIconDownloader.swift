@@ -31,6 +31,10 @@ public final class FeedIconDownloader {
 		self.imageDownloader = imageDownloader
 	}
 
+	func resetCache() {
+		cache = [Feed: RSImage]()
+	}
+
 	func icon(for feed: Feed) -> RSImage? {
 
 		if let cachedImage = cache[feed] {

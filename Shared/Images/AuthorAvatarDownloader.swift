@@ -27,6 +27,10 @@ final class AuthorAvatarDownloader {
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
 	}
 
+	func resetCache() {
+		cache = [String: RSImage]()
+	}
+	
 	func image(for author: Author) -> RSImage? {
 
 		guard let avatarURL = author.avatarURL else {
