@@ -23,25 +23,21 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 	static let avatarMarginRight = CGFloat(integerLiteral: 8)
 	static let avatarCornerRadius = CGFloat(integerLiteral: 4)
 
-	static let titleColor = AppAssets.timelineTextPrimaryColor
 	static var titleFont: UIFont {
 		return UIFont.preferredFont(forTextStyle: .headline)
 	}
 	static let titleBottomMargin = CGFloat(integerLiteral: 1)
 
-	static let feedColor = AppAssets.timelineTextSecondaryColor
 	static var feedNameFont: UIFont {
 		return UIFont.preferredFont(forTextStyle: .footnote)
 	}
 	static let feedRightMargin = CGFloat(integerLiteral: 8)
 	
-	static let dateColor = AppAssets.timelineTextSecondaryColor
 	static var dateFont: UIFont {
 		return UIFont.preferredFont(forTextStyle: .footnote)
 	}
 	static let dateMarginBottom = CGFloat(integerLiteral: 1)
 
-	static let summaryColor = AppAssets.timelineTextPrimaryColor
 	static var summaryFont: UIFont {
 		return UIFont.preferredFont(forTextStyle: .body)
 	}

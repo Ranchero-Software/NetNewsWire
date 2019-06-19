@@ -25,7 +25,7 @@ class RefreshIntervalViewController: UITableViewController {
 		cell.textLabel?.adjustsFontForContentSizeCategory = true
 		
 		let bgView = UIView()
-		bgView.backgroundColor = AppAssets.selectionBackgroundColor
+		bgView.backgroundColor = AppAssets.netNewsWireBlueColor
 		cell.selectedBackgroundView = bgView
 
 		let userRefreshInterval = AppDefaults.refreshInterval

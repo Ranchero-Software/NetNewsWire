@@ -11,7 +11,7 @@ import Account
 
 struct SettingsAddAccountView : View {
     var body: some View {
-		List {
+		Form {
 			PresentationButton(destination: SettingsLocalAccountView(name: "")) {
 				SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName)
 			}
@@ -21,7 +21,6 @@ struct SettingsAddAccountView : View {
 			}
 			.padding(4)
 		}
-		.listStyle(.grouped)
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)
 	}
 }

@@ -123,7 +123,7 @@ private extension MasterTimelineTableViewCell {
 	
 	func theme() {
 		let bgView = UIView()
-		bgView.backgroundColor = AppAssets.selectionBackgroundColor
+		bgView.backgroundColor = AppAssets.netNewsWireBlueColor
 		selectedBackgroundView = bgView
 	}
 
@@ -141,19 +141,19 @@ private extension MasterTimelineTableViewCell {
 	
 	func updateTitleView() {
 		titleView.font = MasterTimelineDefaultCellLayout.titleFont
-		titleView.textColor = MasterTimelineDefaultCellLayout.titleColor
+		titleView.textColor = .label
 		updateTextFieldText(titleView, cellData?.title)
 	}
 	
 	func updateSummaryView() {
 		summaryView.font = MasterTimelineDefaultCellLayout.summaryFont
-		summaryView.textColor = MasterTimelineDefaultCellLayout.summaryColor
+		summaryView.textColor = .label
 		updateTextFieldText(summaryView, cellData?.summary)
 	}
 	
 	func updateDateView() {
 		dateView.font = MasterTimelineDefaultCellLayout.dateFont
-		dateView.textColor = MasterTimelineDefaultCellLayout.dateColor
+		dateView.textColor = .secondaryLabel
 		updateTextFieldText(dateView, cellData.dateString)
 	}
 	
@@ -170,7 +170,7 @@ private extension MasterTimelineTableViewCell {
 		if cellData.showFeedName {
 			showView(feedNameView)
 			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
-			feedNameView.textColor = MasterTimelineDefaultCellLayout.feedColor
+			feedNameView.textColor = .secondaryLabel
 			updateTextFieldText(feedNameView, cellData.feedName)
 		} else {
 			hideView(feedNameView)
