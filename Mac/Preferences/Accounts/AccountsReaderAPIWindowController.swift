@@ -10,7 +10,7 @@ import AppKit
 import Account
 import RSWeb
 
-class AccountsGoogleReaderCompatibleWindowController: NSWindowController {
+class AccountsReaderAPIWindowController: NSWindowController {
 
 	@IBOutlet weak var progressIndicator: NSProgressIndicator!
 	@IBOutlet weak var usernameTextField: NSTextField!
@@ -24,7 +24,7 @@ class AccountsGoogleReaderCompatibleWindowController: NSWindowController {
 	private weak var hostWindow: NSWindow?
 	
 	convenience init() {
-		self.init(windowNibName: NSNib.Name("AccountsGoogleReaderCompatible"))
+		self.init(windowNibName: NSNib.Name("AccountsReaderAPI"))
 	}
 	
 	override func windowDidLoad() {
@@ -71,7 +71,7 @@ class AccountsGoogleReaderCompatibleWindowController: NSWindowController {
 		}
 		
 		let credentials = Credentials.googleBasicLogin(username: usernameTextField.stringValue, password: passwordTextField.stringValue)
-		Account.validateCredentials(type: .googleReaderCompatible, credentials: credentials, endpoint: apiURL) { [weak self] result in
+		Account.validateCredentials(type: .googleReaderAPI, credentials: credentials, endpoint: apiURL) { [weak self] result in
 			
 			guard let self = self else { return }
 			
@@ -89,7 +89,7 @@ class AccountsGoogleReaderCompatibleWindowController: NSWindowController {
 				
 				var newAccount = false
 				if self.account == nil {
-					self.account = AccountManager.shared.createAccount(type: .googleReaderCompatible)
+					self.account = AccountManager.shared.createAccount(type: .googleReaderAPI)
 					newAccount = true
 				}
 				

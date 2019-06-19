@@ -64,7 +64,7 @@ extension AccountsAddViewController: NSTableViewDelegate {
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedbin", comment: "Feedbin")
 				cell.accountImageView?.image = AppAssets.accountFeedbin
 			case 2:
-				cell.accountNameLabel?.stringValue = NSLocalizedString("Google Reader API", comment: "Google Reader API")
+				cell.accountNameLabel?.stringValue = NSLocalizedString("Reader", comment: "Reader")
 				cell.accountImageView?.image = AppAssets.accountLocal
 			default:
 				break
@@ -91,9 +91,9 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsFeedbinWindowController
 		case 2:
-			let accountsGoogleReaderCompatibleWindowController = AccountsGoogleReaderCompatibleWindowController()
-			accountsGoogleReaderCompatibleWindowController.runSheetOnWindow(self.view.window!)
-			accountsAddWindowController = accountsGoogleReaderCompatibleWindowController
+			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsReaderAPIWindowController
 		default:
 			break
 		}

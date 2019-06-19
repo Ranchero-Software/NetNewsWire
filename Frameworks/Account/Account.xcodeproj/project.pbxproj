@@ -35,13 +35,13 @@
 		51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E490352288C37100C791F0 /* FeedbinDate.swift */; };
 		51E59599228C77BC00FCC42B /* FeedbinUnreadEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E59598228C77BC00FCC42B /* FeedbinUnreadEntry.swift */; };
 		51E5959B228C781500FCC42B /* FeedbinStarredEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E5959A228C781500FCC42B /* FeedbinStarredEntry.swift */; };
-		552032F8229D5D5A009559E0 /* GoogleReaderCompatibleEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032ED229D5D5A009559E0 /* GoogleReaderCompatibleEntry.swift */; };
-		552032F9229D5D5A009559E0 /* GoogleReaderCompatibleSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032EE229D5D5A009559E0 /* GoogleReaderCompatibleSubscription.swift */; };
-		552032FB229D5D5A009559E0 /* GoogleReaderCompatibleTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F0229D5D5A009559E0 /* GoogleReaderCompatibleTag.swift */; };
-		552032FC229D5D5A009559E0 /* GoogleReaderCompatibleUnreadEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F1229D5D5A009559E0 /* GoogleReaderCompatibleUnreadEntry.swift */; };
-		552032FD229D5D5A009559E0 /* GoogleReaderCompatibleTagging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F2229D5D5A009559E0 /* GoogleReaderCompatibleTagging.swift */; };
-		552032FE229D5D5A009559E0 /* GoogleReaderCompatibleAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F3229D5D5A009559E0 /* GoogleReaderCompatibleAccountDelegate.swift */; };
-		55203300229D5D5A009559E0 /* GoogleReaderCompatibleAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F5229D5D5A009559E0 /* GoogleReaderCompatibleAPICaller.swift */; };
+		552032F8229D5D5A009559E0 /* ReaderAPIEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032ED229D5D5A009559E0 /* ReaderAPIEntry.swift */; };
+		552032F9229D5D5A009559E0 /* ReaderAPISubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032EE229D5D5A009559E0 /* ReaderAPISubscription.swift */; };
+		552032FB229D5D5A009559E0 /* ReaderAPITag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F0229D5D5A009559E0 /* ReaderAPITag.swift */; };
+		552032FC229D5D5A009559E0 /* ReaderAPIUnreadEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F1229D5D5A009559E0 /* ReaderAPIUnreadEntry.swift */; };
+		552032FD229D5D5A009559E0 /* ReaderAPITagging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F2229D5D5A009559E0 /* ReaderAPITagging.swift */; };
+		552032FE229D5D5A009559E0 /* ReaderAPIAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F3229D5D5A009559E0 /* ReaderAPIAccountDelegate.swift */; };
+		55203300229D5D5A009559E0 /* ReaderAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F5229D5D5A009559E0 /* ReaderAPICaller.swift */; };
 		841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973EF1F6DD19E006346C4 /* RSCore.framework */; };
 		841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973FA1F6DD1AC006346C4 /* RSParser.framework */; };
 		841974011F6DD1EC006346C4 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974001F6DD1EC006346C4 /* Folder.swift */; };
@@ -143,13 +143,13 @@
 		51E490352288C37100C791F0 /* FeedbinDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinDate.swift; sourceTree = "<group>"; };
 		51E59598228C77BC00FCC42B /* FeedbinUnreadEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinUnreadEntry.swift; sourceTree = "<group>"; };
 		51E5959A228C781500FCC42B /* FeedbinStarredEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinStarredEntry.swift; sourceTree = "<group>"; };
-		552032ED229D5D5A009559E0 /* GoogleReaderCompatibleEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleReaderCompatibleEntry.swift; sourceTree = "<group>"; };
-		552032EE229D5D5A009559E0 /* GoogleReaderCompatibleSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleReaderCompatibleSubscription.swift; sourceTree = "<group>"; };
-		552032F0229D5D5A009559E0 /* GoogleReaderCompatibleTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleReaderCompatibleTag.swift; sourceTree = "<group>"; };
-		552032F1229D5D5A009559E0 /* GoogleReaderCompatibleUnreadEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleReaderCompatibleUnreadEntry.swift; sourceTree = "<group>"; };
-		552032F2229D5D5A009559E0 /* GoogleReaderCompatibleTagging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleReaderCompatibleTagging.swift; sourceTree = "<group>"; };
-		552032F3229D5D5A009559E0 /* GoogleReaderCompatibleAccountDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleReaderCompatibleAccountDelegate.swift; sourceTree = "<group>"; };
-		552032F5229D5D5A009559E0 /* GoogleReaderCompatibleAPICaller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleReaderCompatibleAPICaller.swift; sourceTree = "<group>"; };
+		552032ED229D5D5A009559E0 /* ReaderAPIEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPIEntry.swift; sourceTree = "<group>"; };
+		552032EE229D5D5A009559E0 /* ReaderAPISubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPISubscription.swift; sourceTree = "<group>"; };
+		552032F0229D5D5A009559E0 /* ReaderAPITag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPITag.swift; sourceTree = "<group>"; };
+		552032F1229D5D5A009559E0 /* ReaderAPIUnreadEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPIUnreadEntry.swift; sourceTree = "<group>"; };
+		552032F2229D5D5A009559E0 /* ReaderAPITagging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPITagging.swift; sourceTree = "<group>"; };
+		552032F3229D5D5A009559E0 /* ReaderAPIAccountDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPIAccountDelegate.swift; sourceTree = "<group>"; };
+		552032F5229D5D5A009559E0 /* ReaderAPICaller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPICaller.swift; sourceTree = "<group>"; };
 		841973E81F6DD19E006346C4 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		841973F41F6DD1AC006346C4 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		841974001F6DD1EC006346C4 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
@@ -236,18 +236,18 @@
 			path = JSON;
 			sourceTree = "<group>";
 		};
-		552032EA229D5D5A009559E0 /* GoogleReaderCompatible */ = {
+		552032EA229D5D5A009559E0 /* ReaderAPI */ = {
 			isa = PBXGroup;
 			children = (
-				552032ED229D5D5A009559E0 /* GoogleReaderCompatibleEntry.swift */,
-				552032EE229D5D5A009559E0 /* GoogleReaderCompatibleSubscription.swift */,
-				552032F0229D5D5A009559E0 /* GoogleReaderCompatibleTag.swift */,
-				552032F1229D5D5A009559E0 /* GoogleReaderCompatibleUnreadEntry.swift */,
-				552032F2229D5D5A009559E0 /* GoogleReaderCompatibleTagging.swift */,
-				552032F3229D5D5A009559E0 /* GoogleReaderCompatibleAccountDelegate.swift */,
-				552032F5229D5D5A009559E0 /* GoogleReaderCompatibleAPICaller.swift */,
+				552032ED229D5D5A009559E0 /* ReaderAPIEntry.swift */,
+				552032EE229D5D5A009559E0 /* ReaderAPISubscription.swift */,
+				552032F0229D5D5A009559E0 /* ReaderAPITag.swift */,
+				552032F1229D5D5A009559E0 /* ReaderAPIUnreadEntry.swift */,
+				552032F2229D5D5A009559E0 /* ReaderAPITagging.swift */,
+				552032F3229D5D5A009559E0 /* ReaderAPIAccountDelegate.swift */,
+				552032F5229D5D5A009559E0 /* ReaderAPICaller.swift */,
 			);
-			path = GoogleReaderCompatible;
+			path = ReaderAPI;
 			sourceTree = "<group>";
 		};
 		841973E91F6DD19E006346C4 /* Products */ = {
@@ -330,7 +330,7 @@
 				5165D71F22835E9800D9D53D /* FeedFinder */,
 				8419742B1F6DDE84006346C4 /* LocalAccount */,
 				84245C7D1FDDD2580074AFBB /* Feedbin */,
-				552032EA229D5D5A009559E0 /* GoogleReaderCompatible */,
+				552032EA229D5D5A009559E0 /* ReaderAPI */,
 				848935031F62484F00CEBD24 /* AccountTests */,
 				848934F71F62484F00CEBD24 /* Products */,
 				8469F80F1F6DC3C10084783E /* Frameworks */,
@@ -544,13 +544,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C8B3F41F89DE430053CCA6 /* DataExtensions.swift in Sources */,
-				552032F9229D5D5A009559E0 /* GoogleReaderCompatibleSubscription.swift in Sources */,
+				552032F9229D5D5A009559E0 /* ReaderAPISubscription.swift in Sources */,
 				84C3654A1F899F3B001EC85C /* CombinedRefreshProgress.swift in Sources */,
 				8469F81C1F6DD15E0084783E /* Account.swift in Sources */,
 				5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */,
 				51E5959B228C781500FCC42B /* FeedbinStarredEntry.swift in Sources */,
 				846E77451F6EF9B900A165E2 /* Container.swift in Sources */,
-				552032FD229D5D5A009559E0 /* GoogleReaderCompatibleTagging.swift in Sources */,
+				552032FD229D5D5A009559E0 /* ReaderAPITagging.swift in Sources */,
 				84F73CF1202788D90000BCEF /* ArticleFetcher.swift in Sources */,
 				841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */,
 				5165D73122837F3400D9D53D /* InitialFeedDownloader.swift in Sources */,
@@ -564,15 +564,15 @@
 				84B99C9F1FAE8D3200ECDEDB /* ContainerPath.swift in Sources */,
 				5133231122810EB200C30F19 /* FeedbinIcon.swift in Sources */,
 				846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */,
-				55203300229D5D5A009559E0 /* GoogleReaderCompatibleAPICaller.swift in Sources */,
+				55203300229D5D5A009559E0 /* ReaderAPICaller.swift in Sources */,
 				51E3EB41229AF61B00645299 /* AccountError.swift in Sources */,
 				51E59599228C77BC00FCC42B /* FeedbinUnreadEntry.swift in Sources */,
-				552032F8229D5D5A009559E0 /* GoogleReaderCompatibleEntry.swift in Sources */,
-				552032FB229D5D5A009559E0 /* GoogleReaderCompatibleTag.swift in Sources */,
+				552032F8229D5D5A009559E0 /* ReaderAPIEntry.swift in Sources */,
+				552032FB229D5D5A009559E0 /* ReaderAPITag.swift in Sources */,
 				5165D72822835F7800D9D53D /* FeedFinder.swift in Sources */,
 				51D58755227F53BE00900287 /* FeedbinTag.swift in Sources */,
-				552032FE229D5D5A009559E0 /* GoogleReaderCompatibleAccountDelegate.swift in Sources */,
-				552032FC229D5D5A009559E0 /* GoogleReaderCompatibleUnreadEntry.swift in Sources */,
+				552032FE229D5D5A009559E0 /* ReaderAPIAccountDelegate.swift in Sources */,
+				552032FC229D5D5A009559E0 /* ReaderAPIUnreadEntry.swift in Sources */,
 				84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */,
 				84CAD7161FDF2E22000F0755 /* FeedbinEntry.swift in Sources */,
 				5165D72A22835F7D00D9D53D /* HTMLFeedFinder.swift in Sources */,

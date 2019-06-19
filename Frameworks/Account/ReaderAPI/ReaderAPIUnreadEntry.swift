@@ -1,5 +1,5 @@
 //
-//  GoogleReaderCompatibleUnreadEntry.swift
+//  ReaderAPIUnreadEntry.swift
 //  Account
 //
 //  Created by Jeremy Beker on 5/28/19.
@@ -8,15 +8,15 @@
 
 import Foundation
 
-struct GoogleReaderCompatibleReferenceWrapper: Codable {
-	let itemRefs: [GoogleReaderCompatibleReference]
+struct ReaderAPIReferenceWrapper: Codable {
+	let itemRefs: [ReaderAPIReference]
 	
 	enum CodingKeys: String, CodingKey {
 		case itemRefs = "itemRefs"
 	}
 }
 
-struct GoogleReaderCompatibleReference: Codable {
+struct ReaderAPIReference: Codable {
 	
 	let itemId: String
 	

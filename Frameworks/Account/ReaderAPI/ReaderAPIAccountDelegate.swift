@@ -1,5 +1,5 @@
 //
-//  GoogleReaderCompatibleAccountDelegate.swift
+//  ReaderAPIAccountDelegate.swift
 //  Account
 //
 //  Created by Jeremy Beker on 5/28/19.
@@ -19,17 +19,17 @@ import RSWeb
 import SyncDatabase
 import os.log
 
-public enum GoogleReaderCompatibleAccountDelegateError: String, Error {
+public enum ReaderAPIAccountDelegateError: String, Error {
 	case invalidParameter = "There was an invalid parameter passed."
 	case invalidResponse = "There was an invalid response from the server."
 }
 
-final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
+final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	private let database: SyncDatabase
 	
-	private let caller: GoogleReaderCompatibleAPICaller
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "GoogleReaderCompatible")
+	private let caller: ReaderAPICaller
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
 
 	let supportsSubFolders = false
 	let usesTags = true
@@ -61,7 +61,7 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 		
 		if transport != nil {
 			
-			caller = GoogleReaderCompatibleAPICaller(transport: transport!)
+			caller = ReaderAPICaller(transport: transport!)
 			
 		} else {
 			
@@ -78,7 +78,7 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 			}
 			
-			caller = GoogleReaderCompatibleAPICaller(transport: URLSession(configuration: sessionConfiguration))
+			caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration))
 			
 		}
 		
@@ -547,7 +547,7 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		let caller = GoogleReaderCompatibleAPICaller(transport: transport)
+		let caller = ReaderAPICaller(transport: transport)
 		caller.credentials = credentials
 		caller.validateCredentials(endpoint: endpoint) { result in
 			DispatchQueue.main.async {
@@ -561,7 +561,7 @@ final class GoogleReaderCompatibleAccountDelegate: AccountDelegate {
 
 // MARK: Private
 
-private extension GoogleReaderCompatibleAccountDelegate {
+private extension ReaderAPIAccountDelegate {
 	
 	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
@@ -580,7 +580,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		
 	}
 	
-	func syncFolders(_ account: Account, _ tags: [GoogleReaderCompatibleTag]?) {
+	func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
 		
 		guard let tags = tags else { return }
 
@@ -588,7 +588,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 
 		let tagNames = tags.filter { $0.type == "folder" }.map { $0.tagID.replacingOccurrences(of: "user/-/label/", with: "") }
 
-		// Delete any folders not at GoogleReaderCompatible
+		// Delete any folders not at Reader
 		if let folders = account.folders {
 			folders.forEach { folder in
 				if !tagNames.contains(folder.name ?? "") {
@@ -611,7 +611,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 			}
 		}()
 
-		// Make any folders GoogleReaderCompatible has, but we don't
+		// Make any folders Reader has, but we don't
 		tagNames.forEach { tagName in
 			if !folderNames.contains(tagName) {
 				DispatchQueue.main.sync {
@@ -647,7 +647,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		
 	}
 
-	func syncFeeds(_ account: Account, _ subscriptions: [GoogleReaderCompatibleSubscription]?) {
+	func syncFeeds(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 		
 		guard let subscriptions = subscriptions else { return }
 		
@@ -697,7 +697,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		
 	}
 
-	func syncTaggings(_ account: Account, _ subscriptions: [GoogleReaderCompatibleSubscription]?) {
+	func syncTaggings(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 		
 		guard let subscriptions = subscriptions else { return }
 
@@ -712,7 +712,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 			}
 		}()
 
-		let taggingsDict = subscriptions.reduce([String: [GoogleReaderCompatibleSubscription]]()) { (dict, subscription) in
+		let taggingsDict = subscriptions.reduce([String: [ReaderAPISubscription]]()) { (dict, subscription) in
 			var taggedFeeds = dict
 			
 			// For each category that this feed belongs to, add the feed to that name in the dict
@@ -834,7 +834,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		}
 	}
 
-	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [GoogleReaderCompatibleSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
+	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [ReaderAPISubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
 			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
@@ -847,18 +847,18 @@ private extension GoogleReaderCompatibleAccountDelegate {
 				createFeed(for: account, url: bestSubscription.url, name: name, container: container, completion: completion)
 			} else {
 				DispatchQueue.main.async {
-					completion(.failure(GoogleReaderCompatibleAccountDelegateError.invalidParameter))
+					completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 				}
 			}
 		} else {
 			DispatchQueue.main.async {
-				completion(.failure(GoogleReaderCompatibleAccountDelegateError.invalidParameter))
+				completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 			}
 		}
 		
 	}
 	
-	func createFeed( account: Account, subscription sub: GoogleReaderCompatibleSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed( account: Account, subscription sub: ReaderAPISubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		DispatchQueue.main.async {
 			
@@ -1013,7 +1013,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		
 	}
 	
-	func processEntries(account: Account, entries: [GoogleReaderCompatibleEntry]?, completion: @escaping (() -> Void)) {
+	func processEntries(account: Account, entries: [ReaderAPIEntry]?, completion: @escaping (() -> Void)) {
 		
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
 		let parsedMap = Dictionary(grouping: parsedItems, by: { item in item.feedURL } )
@@ -1042,7 +1042,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 
 	}
 	
-	func mapEntriesToParsedItems(account: Account, entries: [GoogleReaderCompatibleEntry]?) -> Set<ParsedItem> {
+	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {
 		
 		guard let entries = entries else {
 			return Set<ParsedItem>()
@@ -1065,11 +1065,11 @@ private extension GoogleReaderCompatibleAccountDelegate {
 			return
 		}
 
-		let GoogleReaderCompatibleUnreadArticleIDs = Set(articleIDs.map { String($0) } )
+		let unreadArticleIDs = Set(articleIDs.map { String($0) } )
 		let currentUnreadArticleIDs = account.fetchUnreadArticleIDs()
 		
 		// Mark articles as unread
-		let deltaUnreadArticleIDs = GoogleReaderCompatibleUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+		let deltaUnreadArticleIDs = unreadArticleIDs.subtracting(currentUnreadArticleIDs)
 		let markUnreadArticles = account.fetchArticles(forArticleIDs: deltaUnreadArticleIDs)
 		DispatchQueue.main.async {
 			_ = account.update(markUnreadArticles, statusKey: .read, flag: false)
@@ -1085,7 +1085,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		}
 		
 		// Mark articles as read
-		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(GoogleReaderCompatibleUnreadArticleIDs)
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(unreadArticleIDs)
 		let markReadArticles = account.fetchArticles(forArticleIDs: deltaReadArticleIDs)
 		DispatchQueue.main.async {
 			_ = account.update(markReadArticles, statusKey: .read, flag: true)
@@ -1108,11 +1108,11 @@ private extension GoogleReaderCompatibleAccountDelegate {
 			return
 		}
 
-		let GoogleReaderCompatibleStarredArticleIDs = Set(articleIDs.map { String($0) } )
+		let starredArticleIDs = Set(articleIDs.map { String($0) } )
 		let currentStarredArticleIDs = account.fetchStarredArticleIDs()
 		
 		// Mark articles as starred
-		let deltaStarredArticleIDs = GoogleReaderCompatibleStarredArticleIDs.subtracting(currentStarredArticleIDs)
+		let deltaStarredArticleIDs = starredArticleIDs.subtracting(currentStarredArticleIDs)
 		let markStarredArticles = account.fetchArticles(forArticleIDs: deltaStarredArticleIDs)
 		DispatchQueue.main.async {
 			_ = account.update(markStarredArticles, statusKey: .starred, flag: true)
@@ -1128,7 +1128,7 @@ private extension GoogleReaderCompatibleAccountDelegate {
 		}
 		
 		// Mark articles as unstarred
-		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(GoogleReaderCompatibleStarredArticleIDs)
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(starredArticleIDs)
 		let markUnstarredArticles = account.fetchArticles(forArticleIDs: deltaUnstarredArticleIDs)
 		DispatchQueue.main.async {
 			_ = account.update(markUnstarredArticles, statusKey: .starred, flag: false)

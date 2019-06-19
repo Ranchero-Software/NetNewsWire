@@ -155,9 +155,9 @@
 		51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */; };
 		51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFA2275D85000C787DC /* Array-Extensions.swift */; };
 		51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */; };
-		557EE1AE22B6F4E1004206FA /* SettingsGoogleReaderCompatibleAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557EE1A522B6F4E1004206FA /* SettingsGoogleReaderCompatibleAccountView.swift */; };
-		55E15BCB229D65A900D6602A /* AccountsGoogleReaderCompatible.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsGoogleReaderCompatible.xib */; };
-		55E15BCC229D65A900D6602A /* AccountsGoogleReaderCompatibleWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsGoogleReaderCompatibleWindowController.swift */; };
+		557EE1AE22B6F4E1004206FA /* SettingsReaderAPIAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557EE1A522B6F4E1004206FA /* SettingsReaderAPIAccountView.swift */; };
+		55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */; };
+		55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
@@ -753,9 +753,9 @@
 		51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BFA2275D85000C787DC /* Array-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLineUILabelSizer.swift; sourceTree = "<group>"; };
-		557EE1A522B6F4E1004206FA /* SettingsGoogleReaderCompatibleAccountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsGoogleReaderCompatibleAccountView.swift; sourceTree = "<group>"; };
-		55E15BC1229D65A900D6602A /* AccountsGoogleReaderCompatible.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsGoogleReaderCompatible.xib; sourceTree = "<group>"; };
-		55E15BCA229D65A900D6602A /* AccountsGoogleReaderCompatibleWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsGoogleReaderCompatibleWindowController.swift; sourceTree = "<group>"; };
+		557EE1A522B6F4E1004206FA /* SettingsReaderAPIAccountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsReaderAPIAccountView.swift; sourceTree = "<group>"; };
+		55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsReaderAPI.xib; sourceTree = "<group>"; };
+		55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsReaderAPIWindowController.swift; sourceTree = "<group>"; };
 		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6581C73420CED60100F4AD34 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionHandler.swift; sourceTree = "<group>"; };
@@ -1066,7 +1066,7 @@
 		5183CCEB227117C70010922C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				557EE1A522B6F4E1004206FA /* SettingsGoogleReaderCompatibleAccountView.swift */,
+				557EE1A522B6F4E1004206FA /* SettingsReaderAPIAccountView.swift */,
 				510D708122B041CC004E8F65 /* SettingsAccountLabelView.swift */,
 				510D707322B028E1004E8F65 /* SettingsAddAccountView.swift */,
 				51F772EC22B2789B0087D9D1 /* SettingsDetailAccountView.swift */,
@@ -1669,8 +1669,8 @@
 		84C9FC6F22629E1200D921D6 /* Accounts */ = {
 			isa = PBXGroup;
 			children = (
-				55E15BC1229D65A900D6602A /* AccountsGoogleReaderCompatible.xib */,
-				55E15BCA229D65A900D6602A /* AccountsGoogleReaderCompatibleWindowController.swift */,
+				55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */,
+				55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */,
 				84C9FC7022629E1200D921D6 /* AccountsTableViewBackgroundView.swift */,
 				84C9FC7122629E1200D921D6 /* AccountsControlsBackgroundView.swift */,
 				84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */,
@@ -2265,7 +2265,7 @@
 				5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */,
 				8405DDA222168920008CE1BF /* TimelineTableView.xib in Resources */,
 				8483630E2262A3FE00DA1D35 /* MainWindow.storyboard in Resources */,
-				55E15BCB229D65A900D6602A /* AccountsGoogleReaderCompatible.xib in Resources */,
+				55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */,
 				84BAE64921CEDAF20046DB56 /* CrashReporterWindow.xib in Resources */,
 				84C9FC8E22629E8F00D921D6 /* Credits.rtf in Resources */,
 				84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */,
@@ -2390,7 +2390,7 @@
 				51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */,
 				515436882291D75D005E1CDF /* AddLocalAccountViewController.swift in Sources */,
 				51C452AF2265108300C03939 /* ArticleArray.swift in Sources */,
-				557EE1AE22B6F4E1004206FA /* SettingsGoogleReaderCompatibleAccountView.swift in Sources */,
+				557EE1AE22B6F4E1004206FA /* SettingsReaderAPIAccountView.swift in Sources */,
 				51C4528E2265099C00C03939 /* SmartFeedsController.swift in Sources */,
 				51C4529C22650A1000C03939 /* SingleFaviconDownloader.swift in Sources */,
 				51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
@@ -2487,7 +2487,7 @@
 				8477ACBE22238E9500DF7F37 /* SearchFeedDelegate.swift in Sources */,
 				51E3EB33229AB02C00645299 /* ErrorHandler.swift in Sources */,
 				8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */,
-				55E15BCC229D65A900D6602A /* AccountsGoogleReaderCompatibleWindowController.swift in Sources */,
+				55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */,
 				5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* PasteboardFolder.swift in Sources */,
 				5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */,

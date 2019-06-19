@@ -107,7 +107,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 				cell.imageView?.image = AppAssets.accountLocal
 			case .feedbin:
 				cell.imageView?.image = NSImage(named: "accountFeedbin")
-			case .googleReaderCompatible:
+			case .googleReaderAPI:
 				cell.imageView?.image = AppAssets.accountLocal
 			default:
 				break

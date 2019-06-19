@@ -1,5 +1,5 @@
 //
-//  GoogleReaderCompatibleArticle.swift
+//  ReaderAPIArticle.swift
 //  Account
 //
 //  Created by Jeremy Beker on 5/28/19.
@@ -10,10 +10,10 @@ import Foundation
 import RSParser
 import RSCore
 
-struct GoogleReaderCompatibleEntryWrapper: Codable {
+struct ReaderAPIEntryWrapper: Codable {
 	let id: String
 	let updated: Int
-	let entries: [GoogleReaderCompatibleEntry]
+	let entries: [ReaderAPIEntry]
 	
 	
 	enum CodingKeys: String, CodingKey {
@@ -47,7 +47,7 @@ struct GoogleReaderCompatibleEntryWrapper: Codable {
 }
 }
 */
-struct GoogleReaderCompatibleEntry: Codable {
+struct ReaderAPIEntry: Codable {
 
 	let articleID: String
 	let title: String?
@@ -56,10 +56,10 @@ struct GoogleReaderCompatibleEntry: Codable {
 	let crawledTimestamp: String?
 	let timestampUsec: String?
 	
-	let summary: GoogleReaderCompatibleArticleSummary
-	let alternates: [GoogleReaderCompatibleAlternateLocation]
+	let summary: ReaderAPIArticleSummary
+	let alternates: [ReaderAPIAlternateLocation]
 	let categories: [String]
-	let origin: GoogleReaderCompatibleEntryOrigin
+	let origin: ReaderAPIEntryOrigin
 
 	enum CodingKeys: String, CodingKey {
 		case articleID = "id"
@@ -99,7 +99,7 @@ struct GoogleReaderCompatibleEntry: Codable {
 	}
 }
 
-struct GoogleReaderCompatibleArticleSummary: Codable {
+struct ReaderAPIArticleSummary: Codable {
 	let content: String?
 	
 	enum CodingKeys: String, CodingKey {
@@ -107,7 +107,7 @@ struct GoogleReaderCompatibleArticleSummary: Codable {
 	}
 }
 
-struct GoogleReaderCompatibleAlternateLocation: Codable {
+struct ReaderAPIAlternateLocation: Codable {
 	let url: String?
 	
 	enum CodingKeys: String, CodingKey {
@@ -116,7 +116,7 @@ struct GoogleReaderCompatibleAlternateLocation: Codable {
 }
 
 
-struct GoogleReaderCompatibleEntryOrigin: Codable {
+struct ReaderAPIEntryOrigin: Codable {
 	let streamId: String?
 	let title: String?
 

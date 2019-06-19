@@ -33,7 +33,7 @@ public enum AccountType: Int {
 	case feedbin = 17
 	case feedWrangler = 18
 	case newsBlur = 19
-	case googleReaderCompatible = 20
+	case googleReaderAPI = 20
 	// TODO: more
 }
 
@@ -217,8 +217,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = LocalAccountDelegate()
 		case .feedbin:
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
-		case .googleReaderCompatible:
-			self.delegate = GoogleReaderCompatibleAccountDelegate(dataFolder: dataFolder, transport: transport)
+		case .googleReaderAPI:
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport)
 		default:
 			fatalError("Only Local and Feedbin accounts are supported")
 		}
@@ -246,8 +246,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			defaultName = "FeedWrangler"
 		case .newsBlur:
 			defaultName = "NewsBlur"
-		case .googleReaderCompatible:
-			defaultName = "Google Reader Compatible"
+		case .googleReaderAPI:
+			defaultName = "Reader"
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
@@ -327,8 +327,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			LocalAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .feedbin:
 			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
-		case .googleReaderCompatible:
-			GoogleReaderCompatibleAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
+		case .googleReaderAPI:
+			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
 		default:
 			break
 		}

@@ -1,5 +1,5 @@
 //
-//  GoogleReaderCompatibleTag.swift
+//  ReaderAPICompatibleTag.swift
 //  Account
 //
 //  Created by Jeremy Beker on 5/28/19.
@@ -8,15 +8,15 @@
 
 import Foundation
 
-struct GoogleReaderCompatibleTagContainer: Codable {
-	let tags: [GoogleReaderCompatibleTag]
+struct ReaderAPITagContainer: Codable {
+	let tags: [ReaderAPITag]
 	
 	enum CodingKeys: String, CodingKey {
 		case tags = "tags"
 	}
 }
 
-struct GoogleReaderCompatibleTag: Codable {
+struct ReaderAPITag: Codable {
 	
 	let tagID: String
 	let type: String?

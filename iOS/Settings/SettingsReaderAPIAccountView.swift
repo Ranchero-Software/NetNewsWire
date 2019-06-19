@@ -1,8 +1,8 @@
 //
-//  SettingsGoogleReaderCompatibleAccountView.swift
+//  SettingsReaderAPIAccountView.swift
 //  NetNewsWire-iOS
 //
-//  Created by Maurice Parker on 6/11/19.
+//  Created by Jeremy Beker on 5/28/2019.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
@@ -11,7 +11,7 @@ import Combine
 import Account
 import RSWeb
 
-struct SettingsGoogleReaderCompatibleAccountView : View {
+struct SettingsReaderAPIAccountView : View {
 	@Environment(\.isPresented) private var isPresented
 	@ObjectBinding var viewModel: ViewModel
 	@State var busy: Bool = false
@@ -83,7 +83,7 @@ struct SettingsGoogleReaderCompatibleAccountView : View {
 			return
 		}
 
-		Account.validateCredentials(type: .googleReaderCompatible, credentials: credentials, endpoint: apiURL) { result in
+		Account.validateCredentials(type: .googleReaderAPI, credentials: credentials, endpoint: apiURL) { result in
 			
 			self.busy = false
 			
@@ -95,7 +95,7 @@ struct SettingsGoogleReaderCompatibleAccountView : View {
 					var newAccount = false
 					let workAccount: Account
 					if self.viewModel.account == nil {
-						workAccount = AccountManager.shared.createAccount(type: .googleReaderCompatible)
+						workAccount = AccountManager.shared.createAccount(type: .googleReaderAPI)
 						newAccount = true
 					} else {
 						workAccount = self.viewModel.account!
@@ -179,9 +179,9 @@ struct SettingsGoogleReaderCompatibleAccountView : View {
 }
 
 #if DEBUG
-struct SettingsGoogleReaderCompatibleAccountView_Previews : PreviewProvider {
+struct SettingsReaderAPIAccountView_Previews : PreviewProvider {
     static var previews: some View {
-		SettingsGoogleReaderCompatibleAccountView(viewModel: SettingsGoogleReaderCompatibleAccountView.ViewModel())
+		SettingsReaderAPIAccountView(viewModel: SettingsReaderAPIAccountView.ViewModel())
     }
 }
 #endif

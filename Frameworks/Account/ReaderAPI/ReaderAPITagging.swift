@@ -1,5 +1,5 @@
 //
-//  GoogleReaderCompatibleTagging.swift
+//  ReaderAPICompatibleTagging.swift
 //  Account
 //
 //  Created by Jeremy Beker on 5/28/19.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct GoogleReaderCompatibleTagging: Codable {
+struct ReaderAPITagging: Codable {
 
 	let taggingID: Int
 	let feedID: Int
@@ -22,7 +22,7 @@ struct GoogleReaderCompatibleTagging: Codable {
 
 }
 
-struct GoogleReaderCompatibleCreateTagging: Codable {
+struct ReaderAPICreateTagging: Codable {
 	
 	let feedID: Int
 	let name: String

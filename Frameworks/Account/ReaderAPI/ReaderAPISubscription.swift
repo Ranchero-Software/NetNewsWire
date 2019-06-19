@@ -1,5 +1,5 @@
 //
-//  GoogleReaderCompatibleFeed.swift
+//  ReaderAPIFeed.swift
 //  Account
 //
 //  Created by Jeremy Beker on 5/28/19.
@@ -19,7 +19,7 @@ import RSParser
 
 */
 
-struct GoogleReaderCompatibleQuickAddResult: Codable {
+struct ReaderAPIQuickAddResult: Codable {
 	let numResults: Int
 	let error: String?
 	let streamId: String?
@@ -31,8 +31,8 @@ struct GoogleReaderCompatibleQuickAddResult: Codable {
 	}
 }
 
-struct GoogleReaderCompatibleSubscriptionContainer: Codable {
-	let subscriptions: [GoogleReaderCompatibleSubscription]
+struct ReaderAPISubscriptionContainer: Codable {
+	let subscriptions: [ReaderAPISubscription]
 	
 	enum CodingKeys: String, CodingKey {
 		case subscriptions = "subscriptions"
@@ -55,10 +55,10 @@ struct GoogleReaderCompatibleSubscriptionContainer: Codable {
 }
 
 */
-struct GoogleReaderCompatibleSubscription: Codable {
+struct ReaderAPISubscription: Codable {
 	let feedID: String
 	let name: String?
-	let categories: [GoogleReaderCompatibleCategory]
+	let categories: [ReaderAPICategory]
 	let url: String
 	let homePageURL: String?
 	let iconURL: String?
@@ -74,7 +74,7 @@ struct GoogleReaderCompatibleSubscription: Codable {
 
 }
 
-struct GoogleReaderCompatibleCategory: Codable {
+struct ReaderAPICategory: Codable {
 	let categoryId: String
 	let categoryLabel: String
 	
@@ -84,21 +84,14 @@ struct GoogleReaderCompatibleCategory: Codable {
 	}
 }
 
-struct GoogleReaderCompatibleCreateSubscription: Codable {
+struct ReaderAPICreateSubscription: Codable {
 	let feedURL: String
 	enum CodingKeys: String, CodingKey {
 		case feedURL = "feed_url"
 	}
 }
 
-struct GoogleReaderCompatibleUpdateSubscription: Codable {
-	let title: String
-	enum CodingKeys: String, CodingKey {
-		case title
-	}
-}
-
-struct GoogleReaderCompatibleSubscriptionChoice: Codable {
+struct ReaderAPISubscriptionChoice: Codable {
 	
 	let name: String?
 	let url: String
