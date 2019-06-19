@@ -11,16 +11,14 @@ import RSCore
 import RSWeb
 import Account
 import UserNotifications
+import BackgroundTasks
 import os.log
 
 var appDelegate: AppDelegate!
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate, UnreadCountProvider {
-
-	private var refreshBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-
+	
 	var syncTimer: ArticleStatusSyncTimer?
 	
 	var shuttingDown = false {
@@ -31,15 +29,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 			}
 		}
 	}
-
+	
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "application")
 	var window: UIWindow?
-
+	
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var feedIconDownloader: FeedIconDownloader!
-
+	
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -62,8 +60,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		_ = AccountManager.shared
 		
 	}
-
+	
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		
+		registerBackgroundTasks()
 		
 		// Set up the split view
 		let splitViewController = window!.rootViewController as! UISplitViewController
@@ -88,10 +88,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		let imagesFolderURL = tempDir.appendingPathComponent("Images")
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
 		imageDownloader = ImageDownloader(folder: imagesFolderURL.absoluteString)
-
+		
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
 		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader)
-
+		
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
@@ -103,75 +103,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 				}
 			}
 		}
-
-		updateBackgroundRefreshInterval()
 		
 		syncTimer = ArticleStatusSyncTimer()
-
+		
 		#if DEBUG
-			syncTimer!.update()
+		syncTimer!.update()
 		#endif
 		
 		return true
 		
 	}
-
-//	func application(_ application: UIApplication, shouldSaveApplicationState coder: NSCoder) -> Bool {
-//
-//		let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-//		coder.encode(versionNumber, forKey: "VersionNumber")
-//
-//		return true
-//
-//	}
-//
-//	func application(_ application: UIApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
-//		if let storedVersionNumber = coder.decodeObject(forKey: "VersionNumber") as? String {
-//			let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-//			if versionNumber == storedVersionNumber {
-//				return true
-//			}
-//		}
-//		return false
-//	}
+	
+	//	func application(_ application: UIApplication, shouldSaveApplicationState coder: NSCoder) -> Bool {
+	//
+	//		let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+	//		coder.encode(versionNumber, forKey: "VersionNumber")
+	//
+	//		return true
+	//
+	//	}
+	//
+	//	func application(_ application: UIApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
+	//		if let storedVersionNumber = coder.decodeObject(forKey: "VersionNumber") as? String {
+	//			let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+	//			if versionNumber == storedVersionNumber {
+	//				return true
+	//			}
+	//		}
+	//		return false
+	//	}
 	
 	func applicationWillResignActive(_ application: UIApplication) {
 		// Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
 		// Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
 	}
-
+	
 	func applicationDidEnterBackground(_ application: UIApplication) {
 		syncTimer?.invalidate()
 		
-		let completeProcessing = { [unowned self] in
-			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
-			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-		}
-		
-		DispatchQueue.global(qos: .background).async { [unowned self] in
-			
-			self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
-				completeProcessing()
-				os_log("Accounts sync processing terminated for running too long.", log: self.log, type: .info)
-			}
-			
-			DispatchQueue.main.async {
-				AccountManager.shared.syncArticleStatusAll() {
-					completeProcessing()
-				}
-				
-			}
-			
-		}
+		// Schedule background app refresh
+		scheduleBackgroundFeedRefresh()
 	}
-
+	
 	func applicationWillEnterForeground(_ application: UIApplication) {
 		AccountManager.shared.syncArticleStatusAll()
 		syncTimer?.update()
 	}
-
+	
 	func applicationDidBecomeActive(_ application: UIApplication) {
-		
 		// If we haven't refreshed the database for 15 minutes, run a refresh automatically
 		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
@@ -180,78 +159,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		} else {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 		}
-
-	}
-
-	func applicationWillTerminate(_ application: UIApplication) {
-		shuttingDown = true
-	}
-
-	func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-		
-		os_log("Woken to perform account refresh.", log: log, type: .info)
-		
-		var startingUnreadCount = 0
-		
-		let completeProcessing = { [unowned self] in
-			
-			UIApplication.shared.endBackgroundTask(self.refreshBackgroundUpdateTask)
-			self.refreshBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-			
-			if startingUnreadCount < self.unreadCount {
-				self.sendReceivedArticlesUserNotification(newArticleCount: self.unreadCount - startingUnreadCount)
-				completionHandler(.newData)
-			} else {
-				completionHandler(.noData)
-			}
-			
-		}
-		
-		DispatchQueue.global(qos: .background).async { [unowned self] in
-			
-			self.refreshBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
-				completeProcessing()
-				os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
-			}
-			
-			while(!AccountManager.shared.isUnreadCountsInitialized) {
-				os_log("Waiting for unread counts to be initialized...", log: self.log, type: .debug)
-				sleep(1)
-			}
-			
-			startingUnreadCount = self.unreadCount
-			
-			DispatchQueue.main.async {
-				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
-			}
-			
-			os_log("Accounts requested to begin refresh.", log: self.log, type: .debug)
-			
-			sleep(1)
-			while(!AccountManager.shared.combinedRefreshProgress.isComplete) {
-				os_log("Waiting for account refresh processing to complete...", log: self.log, type: .debug)
-				sleep(1)
-			}
-			
-			completeProcessing()
-			os_log("Accounts completed refresh processing.", log: self.log, type: .info)
-			
-		}
 		
 	}
 	
-	// MARK: - Split view
-
-	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-	    guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
-	    guard let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController else { return false }
-	    if topAsDetailController.navState?.currentArticle == nil {
-	        // Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
-	        return true
-	    }
-	    return false
+	func applicationWillTerminate(_ application: UIApplication) {
+		shuttingDown = true
 	}
-
+	
+	// MARK: - Split view
+	
+	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
+		guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
+		guard let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController else { return false }
+		if topAsDetailController.navState?.currentArticle == nil {
+			// Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+			return true
+		}
+		return false
+	}
+	
 	// MARK: Notifications
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -261,9 +187,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	}
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		updateBackgroundRefreshInterval()
+		//updateBackgroundRefreshInterval()
+		scheduleBackgroundFeedRefresh()
 	}
-
+	
 	@objc func accountRefreshDidFinish(_ note: Notification) {
 		AppDefaults.lastRefresh = Date()
 	}
@@ -281,19 +208,93 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	
 }
 
+
+// MARK: - Background Tasks
 private extension AppDelegate {
 	
-	func updateBackgroundRefreshInterval() {
-		let refreshInterval = AppDefaults.refreshInterval
-		if refreshInterval == .manually {
-			UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
-		} else {
-			UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
+	/// Register all background tasks.
+	func registerBackgroundTasks() {
+		// Register background feed refresh.
+		BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.ranchero.NetNewsWire.FeedRefresh", using: nil) { (task) in
+			self.performBackgroundFeedRefresh(with: task as! BGAppRefreshTask)
 		}
 	}
 	
-	func sendReceivedArticlesUserNotification(newArticleCount: Int) {
+	/// Schedules a background app refresh based on `AppDefaults.refreshInterval`.
+	func scheduleBackgroundFeedRefresh() {
+		let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
+		request.earliestBeginDate = Date(timeIntervalSinceNow: AppDefaults.refreshInterval.inSeconds())
+		do {
+			try BGTaskScheduler.shared.submit(request)
+		} catch {
+			print("Could not schedule app refresh: \(error)")
+		}
+	}
+	
+	/// Performs background feed refresh.
+	/// - Parameter task: `BGAppRefreshTask`
+	/// - Warning: As of Xcode 11 beta 2, when triggered from the debugger this doesn't work.
+	func performBackgroundFeedRefresh(with task: BGAppRefreshTask) {
+		
+		scheduleBackgroundFeedRefresh() // schedule next refresh
+		
+		var startingUnreadCount = 0
+		
+		DispatchQueue.global(qos: .background).async { [unowned self] in
+			
+			os_log("Woken to perform account refresh.", log: self.log, type: .info)
+	
+			os_log("Getting unread count.", log: self.log, type: .info)
+			while(!AccountManager.shared.isUnreadCountsInitialized) {
+				os_log("Waiting for unread counts to be initialized...", log: self.log, type: .info)
+				sleep(1)
+			}
+			os_log(.info, log: self.log, "Got unread count: %i", self.unreadCount)
+			startingUnreadCount = self.unreadCount
+			
+			DispatchQueue.main.async {
+				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
+			}
+			os_log("Accounts requested to begin refresh.", log: self.log, type: .info)
+			
+			sleep(1)
+			while (!AccountManager.shared.combinedRefreshProgress.isComplete) {
+				os_log("Waiting for account refresh processing to complete...", log: self.log, type: .info)
+				sleep(1)
+			}
+			
+			if startingUnreadCount < self.unreadCount {
+				os_log("Updating unread count badge, posting notification.", log: self.log, type: .info)
+				self.sendReceivedArticlesUserNotification(newArticleCount: self.unreadCount - startingUnreadCount)
+				task.setTaskCompleted(success: true)
+			} else {
+				os_log("Account refresh operation completed.", log: self.log, type: .info)
+				task.setTaskCompleted(success: true)
+			}
+		}
+		
+		// set expiration handler
+		task.expirationHandler = {
+			os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
+			task.setTaskCompleted(success: false)
+		}
+	}
+	
+}
 
+private extension AppDelegate {
+	
+	//	func updateBackgroundRefreshInterval() {
+	//		let refreshInterval = AppDefaults.refreshInterval
+	//		if refreshInterval == .manually {
+	//			UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
+	//		} else {
+	//			UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
+	//		}
+	//	}
+	
+	func sendReceivedArticlesUserNotification(newArticleCount: Int) {
+		
 		let content = UNMutableNotificationContent()
 		content.title = NSLocalizedString("Article Download", comment: "New Articles")
 		
