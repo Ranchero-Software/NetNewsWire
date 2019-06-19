@@ -15,7 +15,7 @@ struct SettingsLocalAccountView : View {
 
     var body: some View {
 		NavigationView {
-			List {
+			Form {
 				Section(header:
 					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName).padding()
 				)  {
@@ -35,7 +35,6 @@ struct SettingsLocalAccountView : View {
 					}
 				}
 			}
-			.listStyle(.grouped)
 			.navigationBarTitle(Text(""), displayMode: .inline)
 			.navigationBarItems(leading: Button(action: { self.dismiss() }) { Text("Cancel") } )
 		}

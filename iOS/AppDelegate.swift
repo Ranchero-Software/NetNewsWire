@@ -71,6 +71,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
 		splitViewController.delegate = self
 		
+		window!.tintColor = AppAssets.netNewsWireBlueColor
+		
 		AppDefaults.registerDefaults()
 		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
