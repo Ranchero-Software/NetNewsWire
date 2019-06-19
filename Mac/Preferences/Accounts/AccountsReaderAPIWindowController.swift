@@ -10,10 +10,11 @@ import AppKit
 import Account
 import RSWeb
 
-class AccountsFeedbinWindowController: NSWindowController {
+class AccountsReaderAPIWindowController: NSWindowController {
 
 	@IBOutlet weak var progressIndicator: NSProgressIndicator!
 	@IBOutlet weak var usernameTextField: NSTextField!
+	@IBOutlet weak var apiURLTextField: NSTextField!
 	@IBOutlet weak var passwordTextField: NSSecureTextField!
 	@IBOutlet weak var errorMessageLabel: NSTextField!
 	@IBOutlet weak var actionButton: NSButton!
@@ -23,7 +24,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 	private weak var hostWindow: NSWindow?
 	
 	convenience init() {
-		self.init(windowNibName: NSNib.Name("AccountsFeedbin"))
+		self.init(windowNibName: NSNib.Name("AccountsReaderAPI"))
 	}
 	
 	override func windowDidLoad() {
@@ -55,8 +56,8 @@ class AccountsFeedbinWindowController: NSWindowController {
 		
 		self.errorMessageLabel.stringValue = ""
 		
-		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username & password required.", comment: "Credentials Error")
+		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty && !apiURLTextField.stringValue.isEmpty else {
+			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
 			return
 		}
 		
@@ -64,8 +65,13 @@ class AccountsFeedbinWindowController: NSWindowController {
 		progressIndicator.isHidden = false
 		progressIndicator.startAnimation(self)
 		
-		let credentials = Credentials.basic(username: usernameTextField.stringValue, password: passwordTextField.stringValue)
-		Account.validateCredentials(type: .feedbin, credentials: credentials) { [weak self] result in
+		guard let apiURL = URL(string: apiURLTextField.stringValue) else {
+			self.errorMessageLabel.stringValue = NSLocalizedString("Invalid API URL.", comment: "Credentials Error")
+			return
+		}
+		
+		let credentials = Credentials.googleBasicLogin(username: usernameTextField.stringValue, password: passwordTextField.stringValue)
+		Account.validateCredentials(type: .googleReaderAPI, credentials: credentials, endpoint: apiURL) { [weak self] result in
 			
 			guard let self = self else { return }
 			
@@ -75,20 +81,24 @@ class AccountsFeedbinWindowController: NSWindowController {
 			
 			switch result {
 			case .success(let validatedCredentials):
-			
 				guard let validatedCredentials = validatedCredentials else {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
 					return
 				}
+				
+				
 				var newAccount = false
 				if self.account == nil {
-					self.account = AccountManager.shared.createAccount(type: .feedbin)
+					self.account = AccountManager.shared.createAccount(type: .googleReaderAPI)
 					newAccount = true
 				}
-			
+				
 				do {
-					try self.account?.removeBasicCredentials()
+					self.account?.endpointURL = apiURL
+
+					try self.account?.removeGoogleAuthCredentials()
 					try self.account?.storeCredentials(validatedCredentials)
+					
 					if newAccount {
 						self.account?.refreshAll() { result in
 							switch result {
@@ -105,9 +115,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 				}
 				
 			case .failure:
-				
 				self.errorMessageLabel.stringValue = NSLocalizedString("Network error.  Try again later.", comment: "Credentials Error")
-				
 			}
 			
 		}

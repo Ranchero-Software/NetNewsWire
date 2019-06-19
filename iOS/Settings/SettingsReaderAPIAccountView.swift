@@ -1,8 +1,8 @@
 //
-//  SettingsFeedbinAccountView.swift
+//  SettingsReaderAPIAccountView.swift
 //  NetNewsWire-iOS
 //
-//  Created by Maurice Parker on 6/11/19.
+//  Created by Jeremy Beker on 5/28/2019.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
@@ -11,7 +11,7 @@ import Combine
 import Account
 import RSWeb
 
-struct SettingsFeedbinAccountView : View {
+struct SettingsReaderAPIAccountView : View {
 	@Environment(\.isPresented) private var isPresented
 	@ObjectBinding var viewModel: ViewModel
 	@State var busy: Bool = false
@@ -19,9 +19,9 @@ struct SettingsFeedbinAccountView : View {
 
 	var body: some View {
 		NavigationView {
-			Form {
+			List {
 				Section(header:
-					SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin").padding()
+					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: "Google Reader Compatible").padding()
 				)  {
 					HStack {
 						Text("Email:")
@@ -33,6 +33,12 @@ struct SettingsFeedbinAccountView : View {
 						Text("Password:")
 						Divider()
 						SecureField($viewModel.password)
+					}
+					HStack {
+						Text("API URL:")
+						Divider()
+						TextField($viewModel.apiURL)
+							.textContentType(.URL)
 					}
 				}
 				Section(footer:
@@ -57,6 +63,7 @@ struct SettingsFeedbinAccountView : View {
 				}
 			}
 			.disabled(busy)
+			.listStyle(.grouped)
 			.navigationBarTitle(Text(""), displayMode: .inline)
 			.navigationBarItems(leading:
 				Button(action: { self.dismiss() }) { Text("Cancel") }
@@ -70,9 +77,13 @@ struct SettingsFeedbinAccountView : View {
 		error = Text("")
 		
 		let emailAddress = viewModel.email.trimmingCharacters(in: .whitespaces)
-		let credentials = Credentials.basic(username: emailAddress, password: viewModel.password)
+		let credentials = Credentials.googleBasicLogin(username: emailAddress, password: viewModel.password)
+		guard let apiURL = URL(string: viewModel.apiURL) else {
+			self.error = Text("Invalide API URL.")
+			return
+		}
 
-		Account.validateCredentials(type: .feedbin, credentials: credentials) { result in
+		Account.validateCredentials(type: .googleReaderAPI, credentials: credentials, endpoint: apiURL) { result in
 			
 			self.busy = false
 			
@@ -84,7 +95,7 @@ struct SettingsFeedbinAccountView : View {
 					var newAccount = false
 					let workAccount: Account
 					if self.viewModel.account == nil {
-						workAccount = AccountManager.shared.createAccount(type: .feedbin)
+						workAccount = AccountManager.shared.createAccount(type: .googleReaderAPI)
 						newAccount = true
 					} else {
 						workAccount = self.viewModel.account!
@@ -95,6 +106,9 @@ struct SettingsFeedbinAccountView : View {
 						do {
 							try workAccount.removeBasicCredentials()
 						} catch {}
+						
+						workAccount.endpointURL = apiURL
+						
 						try workAccount.storeCredentials(credentials)
 						
 						if newAccount {
@@ -148,7 +162,11 @@ struct SettingsFeedbinAccountView : View {
 				didChange.send(self)
 			}
 		}
-		
+		var apiURL: String = "" {
+			didSet {
+				didChange.send(self)
+			}
+		}
 		var isUpdate: Bool {
 			return account != nil
 		}
@@ -161,9 +179,9 @@ struct SettingsFeedbinAccountView : View {
 }
 
 #if DEBUG
-struct SettingsFeedbinAccountView_Previews : PreviewProvider {
+struct SettingsReaderAPIAccountView_Previews : PreviewProvider {
     static var previews: some View {
-		SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())
+		SettingsReaderAPIAccountView(viewModel: SettingsReaderAPIAccountView.ViewModel())
     }
 }
 #endif
