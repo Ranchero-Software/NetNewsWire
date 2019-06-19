@@ -34,8 +34,19 @@ struct AppAssets {
 		return RSImage(named: "accountFeedbin")
 	}()
 	
+	static var accountReader: RSImage! = {
+		return RSImage(named: "accountReader")
+	}()
+	
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
-	
+
+	static var avatarLightBackgroundColor: NSColor = {
+		return NSColor(named: NSColor.Name("avatarLightBackgroundColor"))!
+	}()
+
+	static var avatarDarkBackgroundColor: NSColor = {
+		return NSColor(named: NSColor.Name("avatarDarkBackgroundColor"))!
+	}()
 }

@@ -13,9 +13,10 @@ import RSWeb
 protocol AccountDelegate {
 
 	// Local account does not; some synced accounts might.
-	var supportsSubFolders: Bool { get }
-	var usesTags: Bool { get }
-	var opmlImportInProgress: Bool { get }
+	var isSubfoldersSupported: Bool { get }
+	var isTagBasedSystem: Bool { get }
+	var isOPMLImportSupported: Bool { get }
+	var isOPMLImportInProgress: Bool { get }
 	
 	var server: String? { get }
 	var credentials: Credentials? { get set }
@@ -47,6 +48,6 @@ protocol AccountDelegate {
 	// Called at the end of account’s init method.
 	func accountDidInitialize(_ account: Account)
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, completion: @escaping (Result<Bool, Error>) -> Void)
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void)
 	
 }

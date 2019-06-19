@@ -7,6 +7,22 @@
         <language>en</language>
 
 <item>
+          <title>NetNewsWire 5.0a4</title>
+            <description><![CDATA[
+               <p>Sidebar: fixed a bug where a drag-and-drop that triggers an error could make the app unresponsive.</p>
+            	<p>Timeline: fixed sorting when two items have the same publication date. Added additional criteria so the sort is stable and predictable.</p>
+            	<p>Timeline: small avatars (16 x 16 favicons, for  instance) are now centered on a gray background. Looks a bit better.</p>
+            	<p>Added How to Support NetNewsWire help menu item.</p>
+	           <p>AppleScript: read/unread and starred status are now read/write via scripts.</p>
+						<p>Updated to the latest Sparkle — the thing that does these in-app version upgrades — which has better support Dark Mode. Also, it might fix a bug where Check for Updates… is sometimes not available when it should be. (Maybe.)</p>
+							<p><b>Status note:</b> At this point we have no known bugs to fix before 5.0 beta. No crashing bugs. All that remains is documentation. So, please keep looking for bugs! :)</p>
+							]]></description>
+            <pubDate>Sat, 15 Jun 2019 19:000:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0a4.zip" sparkle:version="2237" sparkle:shortVersionString="5.0a4" length="5147527" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+<item>
           <title>NetNewsWire 5.0a3</title>
             <description><![CDATA[
 							<p>Fixed crash happening only on macOS 10.15 beta. We owe Apple a bug report for this one.</p>

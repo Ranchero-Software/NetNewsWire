@@ -11,6 +11,10 @@ import RSCore
 import Articles
 import Account
 
+extension Notification.Name {
+	static let AppleInterfaceThemeChangedNotification = Notification.Name("AppleInterfaceThemeChangedNotification")
+}
+
 protocol TimelineDelegate: class  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
 }
@@ -148,6 +152,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(calendarDayChanged(_:)), name: .NSCalendarDayChanged, object: nil)
+			DistributedNotificationCenter.default.addObserver(self,	selector: #selector(appleInterfaceThemeChanged), name: .AppleInterfaceThemeChangedNotification, object: nil)
 
 				didRegisterForNotifications = true
 		}
@@ -521,6 +526,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 		}
 	}
 
+	@objc func appleInterfaceThemeChanged(_ note: Notification) {
+		appDelegate.authorAvatarDownloader.resetCache()
+		appDelegate.feedIconDownloader.resetCache()
+		appDelegate.faviconDownloader.resetCache()
+		performBlockAndRestoreSelection {
+			tableView.reloadData()
+		}
+	}
+
 	// MARK: - Reloading Data
 
 	private func cellForRowView(_ rowView: NSView) -> NSView? {
@@ -752,7 +766,7 @@ extension TimelineViewController: NSTableViewDelegate {
 			return feedIcon
 		}
 
-		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
+		if let favicon = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
 			return favicon
 		}
 		

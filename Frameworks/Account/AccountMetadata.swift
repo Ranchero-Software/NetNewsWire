@@ -21,6 +21,7 @@ final class AccountMetadata: Codable {
 		case username
 		case conditionalGetInfo
 		case lastArticleFetch
+		case endpointURL
 	}
 
 	var name: String? {
@@ -59,6 +60,14 @@ final class AccountMetadata: Codable {
 		didSet {
 			if lastArticleFetch != oldValue {
 				valueDidChange(.lastArticleFetch)
+			}
+		}
+	}
+	
+	var endpointURL: URL? {
+		didSet {
+			if endpointURL != oldValue {
+				valueDidChange(.endpointURL)
 			}
 		}
 	}

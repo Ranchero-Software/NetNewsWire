@@ -33,6 +33,7 @@ public enum AccountType: Int {
 	case feedbin = 17
 	case feedWrangler = 18
 	case newsBlur = 19
+	case readerAPI = 20
 	// TODO: more
 }
 
@@ -125,6 +126,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 	
+	public var endpointURL: URL? {
+		get {
+			return metadata.endpointURL
+		}
+		set {
+			if newValue != metadata.endpointURL {
+				metadata.endpointURL = newValue
+			}
+		}
+	}
+	
 	private var fetchingAllUnreadCounts = false
 	var isUnreadCountsInitialized = false
 
@@ -172,8 +184,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
         }
     }
     
-	public var usesTags: Bool {
-		return delegate.usesTags
+	public var isTagBasedSystem: Bool {
+		return delegate.isTagBasedSystem
+	}
+	
+	public var isOPMLImportSupported: Bool {
+		return delegate.isOPMLImportSupported
 	}
 	
 	var refreshInProgress = false {
@@ -194,8 +210,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.refreshProgress
 	}
 	
-	var supportsSubFolders: Bool {
-		return delegate.supportsSubFolders
+	var isSubfoldersSupported: Bool {
+		return delegate.isSubfoldersSupported
 	}
 	
 	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
@@ -205,6 +221,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = LocalAccountDelegate()
 		case .feedbin:
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
+		case .readerAPI:
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport)
 		default:
 			fatalError("Only Local and Feedbin accounts are supported")
 		}
@@ -232,6 +250,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			defaultName = "FeedWrangler"
 		case .newsBlur:
 			defaultName = "NewsBlur"
+		case .readerAPI:
+			defaultName = "Reader API"
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
@@ -263,8 +283,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		switch credentials {
 		case .basic(let username, _):
 			self.username = username
-		default:
-			return
+		case .readerAPIBasicLogin(let username, _):
+			self.username = username
+		case .readerAPIAuthLogin(let username, _):
+			self.username = username
 		}
 		
 		try CredentialsManager.storeCredentials(credentials, server: server)
@@ -288,12 +310,29 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.username = nil
 	}
 	
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, completion: @escaping (Result<Bool, Error>) -> Void) {
+	public func retrieveReaderAPIAuthCredentials() throws -> Credentials? {
+		guard let username = self.username, let server = delegate.server else {
+			return nil
+		}
+		return try CredentialsManager.retrieveReaderAPIAuthCredentials(server: server, username: username)
+	}
+	
+	public func removeReaderAPIAuthCredentials() throws {
+		guard let username = self.username, let server = delegate.server else {
+			return
+		}
+		try CredentialsManager.removeReaderAPIAuthCredentials(server: server, username: username)
+		self.username = nil
+	}
+	
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		switch type {
 		case .onMyMac:
 			LocalAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .feedbin:
 			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
+		case .readerAPI:
+			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
 		default:
 			break
 		}
@@ -313,7 +352,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		guard !delegate.opmlImportInProgress else {
+		guard !delegate.isOPMLImportInProgress else {
 			completion(.failure(AccountError.opmlImportInProgress))
 			return
 		}

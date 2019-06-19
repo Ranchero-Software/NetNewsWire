@@ -67,7 +67,7 @@ class FeedbinAccountViewController: UIViewController {
 			
 			switch result {
 			case .success(let authenticated):
-				if authenticated {
+				if (authenticated != nil) {
 					var newAccount = false
 					if self.account == nil {
 						self.account = AccountManager.shared.createAccount(type: .feedbin)

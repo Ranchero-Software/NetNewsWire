@@ -327,9 +327,10 @@ private extension SidebarOutlineDataSource {
 
 		BatchUpdate.shared.start()
 		source.account?.moveFeed(feed, from: source, to: destination) { result in
+			BatchUpdate.shared.end()
 			switch result {
 			case .success:
-				BatchUpdate.shared.end()
+				break
 			case .failure(let error):
 				NSApplication.shared.presentError(error)
 			}
@@ -389,6 +390,7 @@ private extension SidebarOutlineDataSource {
 						}
 					}
 				case .failure(let error):
+					BatchUpdate.shared.end()
 					NSApplication.shared.presentError(error)
 				}
 			}
@@ -409,6 +411,7 @@ private extension SidebarOutlineDataSource {
 						}
 					}
 				case .failure(let error):
+					BatchUpdate.shared.end()
 					NSApplication.shared.presentError(error)
 				}
 			}
@@ -633,7 +636,7 @@ private extension SidebarOutlineDataSource {
 	}
 	
 	func violatesTagSpecificBehavior(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
-		guard let parentAccount = nodeAccount(parentNode), parentAccount.usesTags else {
+		guard let parentAccount = nodeAccount(parentNode), parentAccount.isTagBasedSystem else {
 			return false
 		}
 		

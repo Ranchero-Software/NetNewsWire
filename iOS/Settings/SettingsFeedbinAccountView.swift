@@ -79,7 +79,7 @@ struct SettingsFeedbinAccountView : View {
 			switch result {
 			case .success(let authenticated):
 				
-				if authenticated {
+				if (authenticated != nil) {
 					
 					var newAccount = false
 					let workAccount: Account

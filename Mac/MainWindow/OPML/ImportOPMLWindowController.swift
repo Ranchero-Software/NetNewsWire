@@ -26,6 +26,10 @@ class ImportOPMLWindowController: NSWindowController {
 
 		for oneAccount in AccountManager.shared.sortedActiveAccounts {
 			
+			if !oneAccount.isOPMLImportSupported {
+				continue
+			}
+			
 			let oneMenuItem = NSMenuItem()
 			oneMenuItem.title = oneAccount.nameForDisplay
 			oneMenuItem.representedObject = oneAccount

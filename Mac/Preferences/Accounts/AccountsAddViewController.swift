@@ -39,7 +39,7 @@ class AccountsAddViewController: NSViewController {
 extension AccountsAddViewController: NSTableViewDataSource {
 	
 	func numberOfRows(in tableView: NSTableView) -> Int {
-		return 2
+		return 3
 	}
 	
 	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
@@ -63,6 +63,9 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			case 1:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedbin", comment: "Feedbin")
 				cell.accountImageView?.image = AppAssets.accountFeedbin
+			case 2:
+				cell.accountNameLabel?.stringValue = NSLocalizedString("Reader API", comment: "Reader API")
+				cell.accountImageView?.image = AppAssets.accountReader
 			default:
 				break
 			}
@@ -87,6 +90,10 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsFeedbinWindowController
+		case 2:
+			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsReaderAPIWindowController
 		default:
 			break
 		}

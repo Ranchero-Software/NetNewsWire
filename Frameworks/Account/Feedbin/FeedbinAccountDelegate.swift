@@ -6,12 +6,6 @@
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
-#if os(macOS)
-import AppKit
-#else
-import UIKit
-import RSCore
-#endif
 import Articles
 import RSCore
 import RSParser
@@ -30,10 +24,11 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	private let caller: FeedbinAPICaller
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedbin")
 
-	let supportsSubFolders = false
-	let usesTags = true
+	let isSubfoldersSupported = false
+	let isTagBasedSystem = true
+	let isOPMLImportSupported = true
 	let server: String? = "api.feedbin.com"
-	var opmlImportInProgress = false
+	var isOPMLImportInProgress = false
 	
 	var credentials: Credentials? {
 		didSet {
@@ -207,7 +202,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 		
 		os_log(.debug, log: log, "Begin importing OPML...")
-		opmlImportInProgress = true
+		isOPMLImportInProgress = true
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		
 		caller.importOPML(opmlData: opmlData) { result in
@@ -216,7 +211,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				if importResult.complete {
 					os_log(.debug, log: self.log, "Import OPML done.")
 					self.refreshProgress.completeTask()
-					self.opmlImportInProgress = false
+					self.isOPMLImportInProgress = false
 					DispatchQueue.main.async {
 						completion(.success(()))
 					}
@@ -226,7 +221,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			case .failure(let error):
 				os_log(.debug, log: self.log, "Import OPML failed.")
 				self.refreshProgress.completeTask()
-				self.opmlImportInProgress = false
+				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
 					completion(.failure(wrappedError))
@@ -251,7 +246,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return
 		}
 		
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
@@ -285,7 +282,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				
 				if let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
 					group.enter()
+					refreshProgress.addToNumberOfTasksAndRemaining(1)
 					caller.deleteTagging(taggingID: feedTaggingID) { result in
+						self.refreshProgress.completeTask()
 						group.leave()
 						switch result {
 						case .success:
@@ -302,7 +301,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				
 				if let subscriptionID = feed.subscriptionID {
 					group.enter()
+					refreshProgress.addToNumberOfTasksAndRemaining(1)
 					caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+						self.refreshProgress.completeTask()
 						group.leave()
 						switch result {
 						case .success:
@@ -329,7 +330,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.createSubscription(url: url) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let subResult):
 				switch subResult {
@@ -365,7 +368,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return
 		}
 		
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.renameSubscription(subscriptionID: subscriptionID, newName: name) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
@@ -408,7 +413,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
+			refreshProgress.addToNumberOfTasksAndRemaining(1)
 			caller.createTagging(feedID: feedID, name: folder.name ?? "") { result in
+				self.refreshProgress.completeTask()
 				switch result {
 				case .success(let taggingID):
 					DispatchQueue.main.async {
@@ -507,7 +514,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		accountMetadata = account.metadata
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, completion: @escaping (Result<Bool, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials
@@ -557,7 +564,7 @@ private extension FeedbinAccountDelegate {
 							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
 							timer.invalidate()
 							self.refreshProgress.completeTask()
-							self.opmlImportInProgress = false
+							self.isOPMLImportInProgress = false
 							DispatchQueue.main.async {
 								completion(.success(()))
 							}
@@ -566,7 +573,7 @@ private extension FeedbinAccountDelegate {
 						os_log(.debug, log: self.log, "Import OPML check failed.")
 						timer.invalidate()
 						self.refreshProgress.completeTask()
-						self.opmlImportInProgress = false
+						self.isOPMLImportInProgress = false
 						DispatchQueue.main.async {
 							completion(.failure(error))
 						}
@@ -935,9 +942,13 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
-		
+
+		// refreshArticles is being reused and will clear one of the tasks for us
+		refreshProgress.addToNumberOfTasksAndRemaining(4)
+
 		// Download the initial articles
 		self.caller.retrieveEntries(feedID: feed.feedID) { result in
+			self.refreshProgress.completeTask()
 			
 			switch result {
 			case .success(let (entries, page)):
@@ -945,7 +956,9 @@ private extension FeedbinAccountDelegate {
 				self.processEntries(account: account, entries: entries) {
 					self.refreshArticles(account, page: page) {
 						self.refreshArticleStatus(for: account) {
+							self.refreshProgress.completeTask()
 							self.refreshMissingArticles(account) {
+								self.refreshProgress.completeTask()
 								DispatchQueue.main.async {
 									completion(.success(feed))
 								}
@@ -1191,7 +1204,9 @@ private extension FeedbinAccountDelegate {
 	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
+			refreshProgress.addToNumberOfTasksAndRemaining(1)
 			caller.deleteTagging(taggingID: feedTaggingID) { result in
+				self.refreshProgress.completeTask()
 				switch result {
 				case .success:
 					DispatchQueue.main.async {
@@ -1224,7 +1239,9 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 		
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
