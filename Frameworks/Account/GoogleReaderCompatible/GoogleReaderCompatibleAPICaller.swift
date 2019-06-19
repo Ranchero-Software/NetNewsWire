@@ -2,13 +2,9 @@
 //  GoogleReaderCompatibleAPICaller.swift
 //  Account
 //
-//  Created by Maurice Parker on 5/2/19.
+//  Created by Jeremy Beker on 5/28/19.
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
-
-// GoogleReaderCompatible currently has a maximum of 250 requests per second.  If you begin to receive
-// HTTP Response Codes of 403, you have exceeded this limit.  Wait 5 minutes and your
-// IP address will become unblocked and you can use the service again.
 
 import Foundation
 import RSWeb
@@ -33,6 +29,10 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 	enum GoogleReaderState: String {
 		case read = "user/-/state/com.google/read"
 		case starred = "user/-/state/com.google/starred"
+	}
+	
+	enum GoogleReaderStreams: String {
+		case readingList = "user/-/state/com.google/reading-list"
 	}
 	
 	enum GoogleReaderEndpoints: String {
@@ -677,8 +677,8 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 			URLQueryItem(name: "o", value: String(sinceString)),
 			URLQueryItem(name: "n", value: "10000"),
 			URLQueryItem(name: "output", value: "json"),
-			URLQueryItem(name: "xt", value: "user/-/state/com.google/read"),
-			URLQueryItem(name: "s", value: "user/-/state/com.google/reading-list")
+			URLQueryItem(name: "xt", value: GoogleReaderState.read.rawValue),
+			URLQueryItem(name: "s", value: GoogleReaderStreams.readingList.rawValue)
 		]
 		
 		guard let callURL = components.url else {
@@ -789,9 +789,9 @@ final class GoogleReaderCompatibleAPICaller: NSObject {
 		}
 		
 		components.queryItems = [
-			URLQueryItem(name: "s", value: "user/-/state/com.google/reading-list"),
+			URLQueryItem(name: "s", value: GoogleReaderStreams.readingList.rawValue),
 			URLQueryItem(name: "n", value: "10000"),
-			URLQueryItem(name: "xt", value: "user/-/state/com.google/read"),
+			URLQueryItem(name: "xt", value: GoogleReaderState.read.rawValue),
 			URLQueryItem(name: "output", value: "json")
 		]
 		

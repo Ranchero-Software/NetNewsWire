@@ -2,7 +2,7 @@
 //  GoogleReaderCompatibleTagging.swift
 //  Account
 //
-//  Created by Brent Simmons on 10/14/18.
+//  Created by Jeremy Beker on 5/28/19.
 //  Copyright © 2018 Ranchero Software, LLC. All rights reserved.
 //
 

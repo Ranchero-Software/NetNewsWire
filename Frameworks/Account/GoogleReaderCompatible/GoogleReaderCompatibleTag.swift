@@ -2,7 +2,7 @@
 //  GoogleReaderCompatibleTag.swift
 //  Account
 //
-//  Created by Maurice Parker on 5/5/19.
+//  Created by Jeremy Beker on 5/28/19.
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
@@ -24,28 +24,6 @@ struct GoogleReaderCompatibleTag: Codable {
 	enum CodingKeys: String, CodingKey {
 		case tagID = "id"
 		case type = "type"
-	}
-	
-}
-
-struct GoogleReaderCompatibleRenameTag: Codable {
-	
-	let oldName: String
-	let newName: String
-	
-	enum CodingKeys: String, CodingKey {
-		case oldName = "old_name"
-		case newName = "new_name"
-	}
-	
-}
-
-struct GoogleReaderCompatibleDeleteTag: Codable {
-	
-	let name: String
-	
-	enum CodingKeys: String, CodingKey {
-		case name
 	}
 	
 }

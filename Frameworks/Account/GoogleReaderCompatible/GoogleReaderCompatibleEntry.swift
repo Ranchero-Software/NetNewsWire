@@ -2,7 +2,7 @@
 //  GoogleReaderCompatibleArticle.swift
 //  Account
 //
-//  Created by Brent Simmons on 12/11/17.
+//  Created by Jeremy Beker on 5/28/19.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
