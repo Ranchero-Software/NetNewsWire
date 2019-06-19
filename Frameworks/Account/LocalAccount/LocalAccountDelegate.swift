@@ -92,19 +92,23 @@ final class LocalAccountDelegate: AccountDelegate {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
 		}
-	
+		
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		FeedFinder.find(url: url) { result in
 			
 			switch result {
 			case .success(let feedSpecifiers):
 				
+
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
 					let url = URL(string: bestFeedSpecifier.urlString) else {
+						self.refreshProgress.completeTask()
 						completion(.failure(AccountError.createErrorNotFound))
 						return
 				}
 				
 				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
+					self.refreshProgress.completeTask()
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
 				}
@@ -113,6 +117,8 @@ final class LocalAccountDelegate: AccountDelegate {
 				
 				InitialFeedDownloader.download(url) { parsedFeed in
 					
+					self.refreshProgress.completeTask()
+
 					if let parsedFeed = parsedFeed {
 						account.update(feed, with: parsedFeed, {})
 					}
@@ -125,6 +131,7 @@ final class LocalAccountDelegate: AccountDelegate {
 				}
 				
 			case .failure:
+				self.refreshProgress.completeTask()
 				completion(.failure(AccountError.createErrorNotFound))
 			}
 			
