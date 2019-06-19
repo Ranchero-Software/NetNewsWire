@@ -595,7 +595,6 @@
 			baseConfigurationReference = D511EEB6202422BB00712EC3 /* Account_target.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = VGR7X4HYA5;
 			};
 			name = Debug;
 		};
@@ -604,7 +603,6 @@
 			baseConfigurationReference = D511EEB6202422BB00712EC3 /* Account_target.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = VGR7X4HYA5;
 			};
 			name = Release;
 		};
