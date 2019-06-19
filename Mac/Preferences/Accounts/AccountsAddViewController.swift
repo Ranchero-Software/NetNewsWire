@@ -64,8 +64,8 @@ extension AccountsAddViewController: NSTableViewDelegate {
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedbin", comment: "Feedbin")
 				cell.accountImageView?.image = AppAssets.accountFeedbin
 			case 2:
-				cell.accountNameLabel?.stringValue = NSLocalizedString("Reader", comment: "Reader")
-				cell.accountImageView?.image = AppAssets.accountLocal
+				cell.accountNameLabel?.stringValue = NSLocalizedString("Reader API", comment: "Reader API")
+				cell.accountImageView?.image = AppAssets.accountReader
 			default:
 				break
 			}

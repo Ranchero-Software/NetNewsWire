@@ -33,7 +33,7 @@ public enum AccountType: Int {
 	case feedbin = 17
 	case feedWrangler = 18
 	case newsBlur = 19
-	case googleReaderAPI = 20
+	case readerAPI = 20
 	// TODO: more
 }
 
@@ -217,7 +217,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = LocalAccountDelegate()
 		case .feedbin:
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
-		case .googleReaderAPI:
+		case .readerAPI:
 			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport)
 		default:
 			fatalError("Only Local and Feedbin accounts are supported")
@@ -246,8 +246,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			defaultName = "FeedWrangler"
 		case .newsBlur:
 			defaultName = "NewsBlur"
-		case .googleReaderAPI:
-			defaultName = "Reader"
+		case .readerAPI:
+			defaultName = "Reader API"
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
@@ -279,9 +279,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		switch credentials {
 		case .basic(let username, _):
 			self.username = username
-		case .googleBasicLogin(let username, _):
+		case .readerAPIBasicLogin(let username, _):
 			self.username = username
-		case .googleAuthLogin(let username, _):
+		case .readerAPIAuthLogin(let username, _):
 			self.username = username
 		}
 		
@@ -306,18 +306,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.username = nil
 	}
 	
-	public func retrieveGoogleAuthCredentials() throws -> Credentials? {
+	public func retrieveReaderAPIAuthCredentials() throws -> Credentials? {
 		guard let username = self.username, let server = delegate.server else {
 			return nil
 		}
-		return try CredentialsManager.retrieveGoogleAuthCredentials(server: server, username: username)
+		return try CredentialsManager.retrieveReaderAPIAuthCredentials(server: server, username: username)
 	}
 	
-	public func removeGoogleAuthCredentials() throws {
+	public func removeReaderAPIAuthCredentials() throws {
 		guard let username = self.username, let server = delegate.server else {
 			return
 		}
-		try CredentialsManager.removeGoogleAuthCredentials(server: server, username: username)
+		try CredentialsManager.removeReaderAPIAuthCredentials(server: server, username: username)
 		self.username = nil
 	}
 	
@@ -327,7 +327,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			LocalAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .feedbin:
 			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
-		case .googleReaderAPI:
+		case .readerAPI:
 			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
 		default:
 			break

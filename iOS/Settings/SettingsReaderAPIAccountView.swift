@@ -77,13 +77,13 @@ struct SettingsReaderAPIAccountView : View {
 		error = Text("")
 		
 		let emailAddress = viewModel.email.trimmingCharacters(in: .whitespaces)
-		let credentials = Credentials.googleBasicLogin(username: emailAddress, password: viewModel.password)
+		let credentials = Credentials.readerAPIBasicLogin(username: emailAddress, password: viewModel.password)
 		guard let apiURL = URL(string: viewModel.apiURL) else {
 			self.error = Text("Invalide API URL.")
 			return
 		}
 
-		Account.validateCredentials(type: .googleReaderAPI, credentials: credentials, endpoint: apiURL) { result in
+		Account.validateCredentials(type: .readerAPI, credentials: credentials, endpoint: apiURL) { result in
 			
 			self.busy = false
 			
@@ -95,7 +95,7 @@ struct SettingsReaderAPIAccountView : View {
 					var newAccount = false
 					let workAccount: Account
 					if self.viewModel.account == nil {
-						workAccount = AccountManager.shared.createAccount(type: .googleReaderAPI)
+						workAccount = AccountManager.shared.createAccount(type: .readerAPI)
 						newAccount = true
 					} else {
 						workAccount = self.viewModel.account!

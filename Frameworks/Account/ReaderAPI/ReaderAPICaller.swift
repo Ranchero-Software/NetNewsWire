@@ -84,7 +84,7 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		guard case .googleBasicLogin(let username, _) = credentials else {
+		guard case .readerAPIBasicLogin(let username, _) = credentials else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -117,7 +117,7 @@ final class ReaderAPICaller: NSObject {
 				}
 				
 				// Save Auth Token for later use
-				self.credentials = .googleAuthLogin(username: username, apiKey: authString)
+				self.credentials = .readerAPIAuthLogin(username: username, apiKey: authString)
 				
 				completion(.success(self.credentials))
 			case .failure(let error):

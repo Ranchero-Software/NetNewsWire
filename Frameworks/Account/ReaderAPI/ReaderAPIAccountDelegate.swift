@@ -538,7 +538,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	func accountDidInitialize(_ account: Account) {
 		accountMetadata = account.metadata
-		credentials = try? account.retrieveGoogleAuthCredentials()
+		credentials = try? account.retrieveReaderAPIAuthCredentials()
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
