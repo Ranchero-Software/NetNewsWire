@@ -19,6 +19,8 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate, UnreadCountProvider {
 	
+	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+	
 	var syncTimer: ArticleStatusSyncTimer?
 	
 	var shuttingDown = false {
@@ -145,6 +147,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		
 		// Schedule background app refresh
 		scheduleBackgroundFeedRefresh()
+		
+		// Sync article status
+		let completeProcessing = { [unowned self] in
+			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
+			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+		}
+		
+		DispatchQueue.global(qos: .background).async {
+			self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
+				completeProcessing()
+				os_log("Accounts sync processing terminated for running too long.", log: self.log, type: .info)
+			}
+			
+			DispatchQueue.main.async {
+				AccountManager.shared.syncArticleStatusAll() {
+					completeProcessing()
+				}
+			}
+		}
 	}
 	
 	func applicationWillEnterForeground(_ application: UIApplication) {
@@ -189,7 +210,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	}
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		//updateBackgroundRefreshInterval()
 		scheduleBackgroundFeedRefresh()
 	}
 	
@@ -229,7 +249,7 @@ private extension AppDelegate {
 		do {
 			try BGTaskScheduler.shared.submit(request)
 		} catch {
-			print("Could not schedule app refresh: \(error)")
+			os_log(.error, log: self.log, "Could not schedule app refresh: %@", error.localizedDescription)
 		}
 	}
 	
@@ -286,14 +306,6 @@ private extension AppDelegate {
 
 private extension AppDelegate {
 	
-	//	func updateBackgroundRefreshInterval() {
-	//		let refreshInterval = AppDefaults.refreshInterval
-	//		if refreshInterval == .manually {
-	//			UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
-	//		} else {
-	//			UIApplication.shared.setMinimumBackgroundFetchInterval(AppDefaults.refreshInterval.inSeconds())
-	//		}
-	//	}
 	
 	func sendReceivedArticlesUserNotification(newArticleCount: Int) {
 		
