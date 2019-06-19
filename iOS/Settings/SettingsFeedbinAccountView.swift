@@ -19,7 +19,7 @@ struct SettingsFeedbinAccountView : View {
 
 	var body: some View {
 		NavigationView {
-			List {
+			Form {
 				Section(header:
 					SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin").padding()
 				)  {
@@ -57,7 +57,6 @@ struct SettingsFeedbinAccountView : View {
 				}
 			}
 			.disabled(busy)
-			.listStyle(.grouped)
 			.navigationBarTitle(Text(""), displayMode: .inline)
 			.navigationBarItems(leading:
 				Button(action: { self.dismiss() }) { Text("Cancel") }

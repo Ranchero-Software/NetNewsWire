@@ -19,7 +19,7 @@ struct SettingsView : View {
 
     var body: some View {
 		NavigationView {
-			List {
+			Form {
 				
 				Section(header: Text("ACCOUNTS")) {
 					ForEach(viewModel.accounts.identified(by: \.self)) { account in
@@ -31,27 +31,6 @@ struct SettingsView : View {
 						Text("Add Account")
 					}
 				}
-				
-				Section(header: Text("ABOUT")) {
-					Text("About NetNewsWire")
-					PresentationButton(destination: SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!)) {
-						Text("Website")
-					}
-					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!)) {
-						Text("Github Repository")
-					}
-					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!)) {
-						Text("Bug Tracker")
-					}
-					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!)) {
-						Text("Technotes")
-					}
-					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!)) {
-						Text("How to Support NetNewsWire")
-					}
-					Text("Add NetNewsWire News Feed")
-				}
-				.foregroundColor(.primary)
 				
 				Section(header: Text("TIMELINE")) {
 					Toggle(isOn: $viewModel.sortOldestToNewest) {
@@ -85,8 +64,28 @@ struct SettingsView : View {
 				}
 				.foregroundColor(.primary)
 
+				Section(header: Text("ABOUT"), footer: buildFooter) {
+					Text("About NetNewsWire")
+					PresentationButton(destination: SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!)) {
+						Text("Website")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!)) {
+						Text("Github Repository")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!)) {
+						Text("Bug Tracker")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!)) {
+						Text("Technotes")
+					}
+					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!)) {
+						Text("How to Support NetNewsWire")
+					}
+					Text("Add NetNewsWire News Feed")
+					}
+					.foregroundColor(.primary)
+				
 			}
-			.listStyle(.grouped)
 			.navigationBarTitle(Text("Settings"), displayMode: .inline)
 
 		}
@@ -116,6 +115,12 @@ struct SettingsView : View {
 		}
 		buttons.append(.cancel { self.subscriptionsExportAccounts = nil })
 		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
+	}
+	
+	var buildFooter: some View {
+		return Text(verbatim: "\(Bundle.main.appName) v \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))")
+			.font(.footnote)
+			.foregroundColor(.secondary)
 	}
 	
 	// MARK: ViewModel

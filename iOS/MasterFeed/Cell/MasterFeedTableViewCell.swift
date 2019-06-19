@@ -144,7 +144,7 @@ private extension MasterFeedTableViewCell {
 
 	func theme() {
 		let bgView = UIView()
-		bgView.backgroundColor = AppAssets.selectionBackgroundColor
+		bgView.backgroundColor = AppAssets.netNewsWireBlueColor
 		selectedBackgroundView = bgView
 	}
 

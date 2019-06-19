@@ -25,7 +25,7 @@ class TimelineNumberOfLinesViewController: UITableViewController {
 		cell.textLabel?.adjustsFontForContentSizeCategory = true
 		
 		let bgView = UIView()
-		bgView.backgroundColor = AppAssets.selectionBackgroundColor
+		bgView.backgroundColor = AppAssets.netNewsWireBlueColor
 		cell.selectedBackgroundView = bgView
 		
 		cell.textLabel?.text = "\(2 + indexPath.row)" + NSLocalizedString(" lines", comment: "Lines")

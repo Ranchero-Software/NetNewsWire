@@ -17,7 +17,7 @@ struct SettingsDetailAccountView : View {
 	@State private var showFeedbinCredentials = false
 	
     var body: some View {
-		List {
+		Form {
 			Section {
 				HStack {
 					Text("Name")
@@ -63,7 +63,6 @@ struct SettingsDetailAccountView : View {
 				}
 			}
 		}
-		.listStyle(.grouped)
 		.navigationBarTitle(Text(verbatim: viewModel.nameForDisplay), displayMode: .inline)
 
 	}
