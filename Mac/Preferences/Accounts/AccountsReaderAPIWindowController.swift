@@ -42,10 +42,9 @@ class AccountsReaderAPIWindowController: NSWindowController {
 			}
 		}
 		
-		if let account = account, let credentials = try? account.retrieveBasicCredentials() {
-			if case .basic(let username, let password) = credentials {
+		if let account = account, let credentials = try? account.retrieveCredentials() {
+			if case .basic(let username, _) = credentials {
 				usernameTextField.stringValue = username
-				passwordTextField.stringValue = password
 			}
 			actionButton.title = NSLocalizedString("Update", comment: "Update")
 		} else {
@@ -110,7 +109,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 				do {
 					self.account?.endpointURL = apiURL
 
-					try self.account?.removeReaderAPIAuthCredentials()
+					try self.account?.removeCredentials()
 					try self.account?.storeCredentials(validatedCredentials)
 					
 					if newAccount {

@@ -295,34 +295,40 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 	}
 	
-	public func retrieveBasicCredentials() throws -> Credentials? {
-		guard let username = self.username, let server = delegate.server else {
+	public func retrieveCredentials() throws -> Credentials? {
+		switch type {
+		case .feedbin:
+			guard let username = self.username, let server = delegate.server else {
+				return nil
+			}
+			return try CredentialsManager.retrieveBasicCredentials(server: server, username: username)
+		case .freshRSS:
+			guard let username = self.username, let server = delegate.server else {
+				return nil
+			}
+			return try CredentialsManager.retrieveReaderAPIAuthCredentials(server: server, username: username)
+		default:
 			return nil
 		}
-		return try CredentialsManager.retrieveBasicCredentials(server: server, username: username)
 	}
 	
-	public func removeBasicCredentials() throws {
-		guard let username = self.username, let server = delegate.server else {
-			return
+	public func removeCredentials() throws {
+		switch type {
+		case .feedbin:
+			guard let username = self.username, let server = delegate.server else {
+				return
+			}
+			try CredentialsManager.removeBasicCredentials(server: server, username: username)
+			self.username = nil
+		case .freshRSS:
+			guard let username = self.username, let server = delegate.server else {
+				return
+			}
+			try CredentialsManager.removeReaderAPIAuthCredentials(server: server, username: username)
+			self.username = nil
+		default:
+			break
 		}
-		try CredentialsManager.removeBasicCredentials(server: server, username: username)
-		self.username = nil
-	}
-	
-	public func retrieveReaderAPIAuthCredentials() throws -> Credentials? {
-		guard let username = self.username, let server = delegate.server else {
-			return nil
-		}
-		return try CredentialsManager.retrieveReaderAPIAuthCredentials(server: server, username: username)
-	}
-	
-	public func removeReaderAPIAuthCredentials() throws {
-		guard let username = self.username, let server = delegate.server else {
-			return
-		}
-		try CredentialsManager.removeReaderAPIAuthCredentials(server: server, username: username)
-		self.username = nil
 	}
 	
 	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
