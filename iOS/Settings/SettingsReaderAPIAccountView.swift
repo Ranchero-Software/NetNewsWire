@@ -21,7 +21,7 @@ struct SettingsReaderAPIAccountView : View {
 		NavigationView {
 			List {
 				Section(header:
-					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: "Google Reader Compatible").padding()
+					SettingsAccountLabelView(accountImage: "accountFreshRSS", accountLabel: "FreshRSS").padding()
 				)  {
 					HStack {
 						Text("Email:")
@@ -83,7 +83,7 @@ struct SettingsReaderAPIAccountView : View {
 			return
 		}
 
-		Account.validateCredentials(type: .readerAPI, credentials: credentials, endpoint: apiURL) { result in
+		Account.validateCredentials(type: viewModel.accountType, credentials: credentials, endpoint: apiURL) { result in
 			
 			self.busy = false
 			
@@ -95,7 +95,7 @@ struct SettingsReaderAPIAccountView : View {
 					var newAccount = false
 					let workAccount: Account
 					if self.viewModel.account == nil {
-						workAccount = AccountManager.shared.createAccount(type: .readerAPI)
+						workAccount = AccountManager.shared.createAccount(type: self.viewModel.accountType)
 						newAccount = true
 					} else {
 						workAccount = self.viewModel.account!
@@ -139,13 +139,16 @@ struct SettingsReaderAPIAccountView : View {
 	
 	class ViewModel: BindableObject {
 		let didChange = PassthroughSubject<ViewModel, Never>()
+		var accountType: AccountType
 		var account: Account? = nil
 		
-		init() {
+		init(accountType: AccountType) {
+			self.accountType = accountType
 		}
 		
-		init(account: Account) {
+		init(accountType: AccountType, account: Account) {
 			self.account = account
+			self.accountType = accountType
 			if case .basic(let username, let password) = try? account.retrieveBasicCredentials() {
 				self.email = username
 				self.password = password
@@ -181,7 +184,7 @@ struct SettingsReaderAPIAccountView : View {
 #if DEBUG
 struct SettingsReaderAPIAccountView_Previews : PreviewProvider {
     static var previews: some View {
-		SettingsReaderAPIAccountView(viewModel: SettingsReaderAPIAccountView.ViewModel())
+		SettingsReaderAPIAccountView(viewModel: SettingsReaderAPIAccountView.ViewModel(accountType: .freshRSS))
     }
 }
 #endif
