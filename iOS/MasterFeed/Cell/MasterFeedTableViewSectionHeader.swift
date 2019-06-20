@@ -113,6 +113,7 @@ private extension MasterFeedTableViewSectionHeader {
 		addSubviewAtInit(titleView)
 		updateDisclosureImage()
 		addSubviewAtInit(disclosureView)
+		addBackgroundView()
 	}
 	
 	func updateDisclosureImage() {
@@ -132,6 +133,11 @@ private extension MasterFeedTableViewSectionHeader {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureView.setFrameIfNotEqual(layout.disclosureButtonRect)
+	}
+	
+	func addBackgroundView() {
+		self.backgroundView = UIView(frame: self.bounds)
+		self.backgroundView?.backgroundColor = UIColor.systemGroupedBackground
 	}
 	
 }
