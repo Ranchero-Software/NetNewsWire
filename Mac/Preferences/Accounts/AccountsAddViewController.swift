@@ -64,8 +64,8 @@ extension AccountsAddViewController: NSTableViewDelegate {
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedbin", comment: "Feedbin")
 				cell.accountImageView?.image = AppAssets.accountFeedbin
 			case 2:
-				cell.accountNameLabel?.stringValue = NSLocalizedString("Reader API", comment: "Reader API")
-				cell.accountImageView?.image = AppAssets.accountReader
+				cell.accountNameLabel?.stringValue = NSLocalizedString("FreshRSS", comment: "FreshRSS")
+				cell.accountImageView?.image = AppAssets.accountFreshRSS
 			default:
 				break
 			}
@@ -92,6 +92,7 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			accountsAddWindowController = accountsFeedbinWindowController
 		case 2:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsReaderAPIWindowController.accountType = .freshRSS
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsReaderAPIWindowController
 		default:
