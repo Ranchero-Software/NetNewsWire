@@ -104,7 +104,7 @@ struct SettingsReaderAPIAccountView : View {
 					do {
 						
 						do {
-							try workAccount.removeBasicCredentials()
+							try workAccount.removeCredentials()
 						} catch {}
 						
 						workAccount.endpointURL = apiURL
@@ -149,7 +149,7 @@ struct SettingsReaderAPIAccountView : View {
 		init(accountType: AccountType, account: Account) {
 			self.account = account
 			self.accountType = accountType
-			if case .basic(let username, let password) = try? account.retrieveBasicCredentials() {
+			if case .basic(let username, let password) = try? account.retrieveCredentials() {
 				self.email = username
 				self.password = password
 			}
