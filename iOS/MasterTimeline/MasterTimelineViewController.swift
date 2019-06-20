@@ -73,6 +73,19 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		}
 	}
 	
+	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+		super.traitCollectionDidChange(previousTraitCollection)
+		
+		if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
+			appDelegate.authorAvatarDownloader.resetCache()
+			appDelegate.feedIconDownloader.resetCache()
+			appDelegate.faviconDownloader.resetCache()
+			performBlockAndRestoreSelection {
+				tableView.reloadData()
+			}
+		}
+	}
+	
 	// MARK Actions
 
 	@IBAction func markAllAsRead(_ sender: Any) {
