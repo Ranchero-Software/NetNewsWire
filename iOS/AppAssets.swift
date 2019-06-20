@@ -53,7 +53,7 @@ struct AppAssets {
 	}()
 
 	static var masterFolderImage: RSImage = {
-		let image = RSImage(named: "folderImage")!
+		let image = RSImage(systemName: "tag")!
 		return image.maskWithColor(color: AppAssets.masterFolderColor.cgColor)!
 	}()
 	
