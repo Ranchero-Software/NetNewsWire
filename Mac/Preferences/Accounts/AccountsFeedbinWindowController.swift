@@ -27,10 +27,9 @@ class AccountsFeedbinWindowController: NSWindowController {
 	}
 	
 	override func windowDidLoad() {
-		if let account = account, let credentials = try? account.retrieveBasicCredentials() {
-			if case .basic(let username, let password) = credentials {
+		if let account = account, let credentials = try? account.retrieveCredentials() {
+			if case .basic(let username, _) = credentials {
 				usernameTextField.stringValue = username
-				passwordTextField.stringValue = password
 			}
 			actionButton.title = NSLocalizedString("Update", comment: "Update")
 		} else {
@@ -87,7 +86,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 				}
 			
 				do {
-					try self.account?.removeBasicCredentials()
+					try self.account?.removeCredentials()
 					try self.account?.storeCredentials(validatedCredentials)
 					if newAccount {
 						self.account?.refreshAll() { result in

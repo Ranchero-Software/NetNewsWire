@@ -51,7 +51,7 @@ private extension RSImage {
 		let rect = CGRect(x: 0, y: 0, width: avatarSize, height: avatarSize)
 		UIGraphicsBeginImageContext(rect.size)
 		if let context = UIGraphicsGetCurrentContext() {
-			context.setFillColor(AppAssets.avatarLightBackgroundColor.cgColor)
+			context.setFillColor(AppAssets.avatarBackgroundColor.cgColor)
 			context.fill(rect)
 			context.translateBy(x: 0.0, y: CGFloat(integerLiteral: avatarSize));
 			context.scaleBy(x: 1.0, y: -1.0)

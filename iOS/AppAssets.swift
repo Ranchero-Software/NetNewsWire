@@ -10,34 +10,30 @@ import RSCore
 
 struct AppAssets {
 
-	static var avatarDarkBackgroundColor: UIColor {
-		return UIColor(named: "avatarDarkBackgroundColor")!
-	}
+	static var avatarBackgroundColor: UIColor = {
+		return UIColor(named: "avatarBackgroundColor")!
+	}()
 
-	static var avatarLightBackgroundColor: UIColor {
-		return UIColor(named: "avatarLightBackgroundColor")!
-	}
-	
-	static var circleClosedImage: UIImage = {
-		return UIImage(systemName: "circle.fill")!
+	static var circleClosedImage: RSImage = {
+		return RSImage(named: "circleClosedImage")!
 	}()
 	
-	static var circleOpenImage: UIImage = {
-		return UIImage(systemName: "circle")!
+	static var circleOpenImage: RSImage = {
+		return RSImage(named: "circleOpenImage")!
 	}()
 	
 	static var chevronDisclosureColor: UIColor = {
 		return UIColor(named: "chevronDisclosureColor")!
 	}()
 	
-	static var chevronDownImage: UIImage = {
-		let image = UIImage(systemName: "chevron.down")!
-		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
+	static var chevronDownImage: RSImage = {
+		let image = RSImage(named: "chevronDownImage")!
+		return image.maskWithColor(color: AppAssets.chevronDisclosureColor.cgColor)!
 	}()
 	
-	static var chevronRightImage: UIImage = {
-		let image = UIImage(systemName: "chevron.right")!
-		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
+	static var chevronRightImage: RSImage = {
+		let image = RSImage(named: "chevronRightImage")!
+		return image.maskWithColor(color: AppAssets.chevronDisclosureColor.cgColor)!
 	}()
 	
 	static var faviconTemplateImage: RSImage = {
@@ -52,9 +48,9 @@ struct AppAssets {
 		return UIColor(named: "masterFolderColor")!
 	}()
 
-	static var masterFolderImage: UIImage = {
-		let image = UIImage(systemName: "folder.fill")!
-		return image.withTintColor(AppAssets.masterFolderColor, renderingMode: .alwaysOriginal)
+	static var masterFolderImage: RSImage = {
+		let image = RSImage(systemName: "folder.fill")!
+		return image.maskWithColor(color: AppAssets.masterFolderColor.cgColor)!
 	}()
 	
 	static var netNewsWireBlueColor: UIColor = {
@@ -65,26 +61,26 @@ struct AppAssets {
 		return UIColor(named: "smartFeedColor")!
 	}()
 	
-	static var smartFeedImage: UIImage = {
-		let image = UIImage(systemName: "gear")!
-		return image.withTintColor(AppAssets.smartFeedColor, renderingMode: .alwaysOriginal)
+	static var smartFeedImage: RSImage = {
+		let image = RSImage(named: "smartFeedImage")!
+		return image.maskWithColor(color: AppAssets.smartFeedColor.cgColor)!
 	}()
 	
 	static var starColor: UIColor = {
 		return UIColor(named: "starColor")!
 	}()
 	
-	static var starClosedImage: UIImage = {
-		return UIImage(systemName: "star.fill")!
+	static var starClosedImage: RSImage = {
+		return RSImage(named: "starClosedImage")!
 	}()
 	
-	static var starOpenImage: UIImage = {
-		return UIImage(systemName: "star")!
+	static var starOpenImage: RSImage = {
+		return RSImage(named: "starOpenImage")!
 	}()
 	
-	static var timelineStarImage: UIImage = {
-		let image = UIImage(systemName: "star.fill")!
-		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
+	static var timelineStarImage: RSImage = {
+		let image = RSImage(named: "starClosedImage")!
+		return image.maskWithColor(color: AppAssets.starColor.cgColor)!
 	}()
 
 	static var timelineUnreadCircleColor: UIColor = {

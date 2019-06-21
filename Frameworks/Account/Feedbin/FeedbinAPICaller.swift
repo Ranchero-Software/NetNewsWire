@@ -55,7 +55,7 @@ final class FeedbinAPICaller: NSObject {
 				switch error {
 				case TransportError.httpError(let status):
 					if status == 401 {
-						completion(.success(self.credentials))
+						completion(.success(nil))
 					} else {
 						completion(.failure(error))
 					}

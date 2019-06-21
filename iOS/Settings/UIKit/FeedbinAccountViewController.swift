@@ -30,7 +30,7 @@ class FeedbinAccountViewController: UIViewController {
 		emailTextField.delegate = self
 		passwordTextField.delegate = self
 		
-		if let account = account, let credentials = try? account.retrieveBasicCredentials() {
+		if let account = account, let credentials = try? account.retrieveCredentials() {
 			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
 			if case .basic(let username, let password) = credentials {
 				emailTextField.text = username
@@ -77,7 +77,7 @@ class FeedbinAccountViewController: UIViewController {
 					do {
 						
 						do {
-							try self.account?.removeBasicCredentials()
+							try self.account?.removeCredentials()
 						} catch {}
 						try self.account?.storeCredentials(credentials)
 						

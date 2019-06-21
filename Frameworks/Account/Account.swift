@@ -33,7 +33,7 @@ public enum AccountType: Int {
 	case feedbin = 17
 	case feedWrangler = 18
 	case newsBlur = 19
-	case readerAPI = 20
+	case freshRSS = 20
 	// TODO: more
 }
 
@@ -221,7 +221,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = LocalAccountDelegate()
 		case .feedbin:
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
-		case .readerAPI:
+		case .freshRSS:
 			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport)
 		default:
 			fatalError("Only Local and Feedbin accounts are supported")
@@ -250,8 +250,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			defaultName = "FeedWrangler"
 		case .newsBlur:
 			defaultName = "NewsBlur"
-		case .readerAPI:
-			defaultName = "Reader API"
+		case .freshRSS:
+			defaultName = "FreshRSS"
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
@@ -295,34 +295,40 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 	}
 	
-	public func retrieveBasicCredentials() throws -> Credentials? {
-		guard let username = self.username, let server = delegate.server else {
+	public func retrieveCredentials() throws -> Credentials? {
+		switch type {
+		case .feedbin:
+			guard let username = self.username, let server = delegate.server else {
+				return nil
+			}
+			return try CredentialsManager.retrieveBasicCredentials(server: server, username: username)
+		case .freshRSS:
+			guard let username = self.username, let server = delegate.server else {
+				return nil
+			}
+			return try CredentialsManager.retrieveReaderAPIAuthCredentials(server: server, username: username)
+		default:
 			return nil
 		}
-		return try CredentialsManager.retrieveBasicCredentials(server: server, username: username)
 	}
 	
-	public func removeBasicCredentials() throws {
-		guard let username = self.username, let server = delegate.server else {
-			return
+	public func removeCredentials() throws {
+		switch type {
+		case .feedbin:
+			guard let username = self.username, let server = delegate.server else {
+				return
+			}
+			try CredentialsManager.removeBasicCredentials(server: server, username: username)
+			self.username = nil
+		case .freshRSS:
+			guard let username = self.username, let server = delegate.server else {
+				return
+			}
+			try CredentialsManager.removeReaderAPIAuthCredentials(server: server, username: username)
+			self.username = nil
+		default:
+			break
 		}
-		try CredentialsManager.removeBasicCredentials(server: server, username: username)
-		self.username = nil
-	}
-	
-	public func retrieveReaderAPIAuthCredentials() throws -> Credentials? {
-		guard let username = self.username, let server = delegate.server else {
-			return nil
-		}
-		return try CredentialsManager.retrieveReaderAPIAuthCredentials(server: server, username: username)
-	}
-	
-	public func removeReaderAPIAuthCredentials() throws {
-		guard let username = self.username, let server = delegate.server else {
-			return
-		}
-		try CredentialsManager.removeReaderAPIAuthCredentials(server: server, username: username)
-		self.username = nil
 	}
 	
 	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
@@ -331,7 +337,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			LocalAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .feedbin:
 			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
-		case .readerAPI:
+		case .freshRSS:
 			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
 		default:
 			break

@@ -13,6 +13,8 @@
                 <outlet property="errorMessageLabel" destination="byK-Sd-r7F" id="8zt-9d-dWQ"/>
                 <outlet property="passwordTextField" destination="JSa-LY-zNQ" id="E9W-0F-69m"/>
                 <outlet property="progressIndicator" destination="B0W-bh-Evv" id="Tiq-gx-s3F"/>
+                <outlet property="titleImageView" destination="Ssh-Dh-xbg" id="8Iy-jf-EYR"/>
+                <outlet property="titleLabel" destination="lti-yM-8LV" id="AP0-ds-6tS"/>
                 <outlet property="usernameTextField" destination="78p-Cf-f55" id="RWd-0q-oAL"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -37,7 +39,7 @@
                                     <constraint firstAttribute="height" constant="36" id="Ern-Kk-8LX"/>
                                     <constraint firstAttribute="width" constant="36" id="PLS-68-NMc"/>
                                 </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="accountReader" id="y38-YL-woC"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="y38-YL-woC"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lti-yM-8LV">
                                 <rect key="frame" x="53" y="0.0" width="156" height="38"/>
@@ -205,7 +207,4 @@ Gw
             <point key="canvasLocation" x="116.5" y="136.5"/>
         </window>
     </objects>
-    <resources>
-        <image name="accountReader" width="73" height="73"/>
-    </resources>
 </document>

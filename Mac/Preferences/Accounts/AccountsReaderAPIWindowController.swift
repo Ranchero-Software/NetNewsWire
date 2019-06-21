@@ -12,6 +12,9 @@ import RSWeb
 
 class AccountsReaderAPIWindowController: NSWindowController {
 
+	@IBOutlet weak var titleImageView: NSImageView!
+	@IBOutlet weak var titleLabel: NSTextField!
+	
 	@IBOutlet weak var progressIndicator: NSProgressIndicator!
 	@IBOutlet weak var usernameTextField: NSTextField!
 	@IBOutlet weak var apiURLTextField: NSTextField!
@@ -20,6 +23,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	@IBOutlet weak var actionButton: NSButton!
 	
 	var account: Account?
+	var accountType: AccountType?
 	
 	private weak var hostWindow: NSWindow?
 	
@@ -28,10 +32,19 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	}
 	
 	override func windowDidLoad() {
-		if let account = account, let credentials = try? account.retrieveBasicCredentials() {
-			if case .basic(let username, let password) = credentials {
+		if let accountType = accountType {
+			switch accountType {
+			case .freshRSS:
+				titleImageView.image = AppAssets.accountFreshRSS
+				titleLabel.stringValue = NSLocalizedString("FreshRSS", comment: "FreshRSS")
+			default:
+				break
+			}
+		}
+		
+		if let account = account, let credentials = try? account.retrieveCredentials() {
+			if case .basic(let username, _) = credentials {
 				usernameTextField.stringValue = username
-				passwordTextField.stringValue = password
 			}
 			actionButton.title = NSLocalizedString("Update", comment: "Update")
 		} else {
@@ -71,7 +84,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 		}
 		
 		let credentials = Credentials.readerAPIBasicLogin(username: usernameTextField.stringValue, password: passwordTextField.stringValue)
-		Account.validateCredentials(type: .readerAPI, credentials: credentials, endpoint: apiURL) { [weak self] result in
+		Account.validateCredentials(type: accountType!, credentials: credentials, endpoint: apiURL) { [weak self] result in
 			
 			guard let self = self else { return }
 			
@@ -89,14 +102,14 @@ class AccountsReaderAPIWindowController: NSWindowController {
 				
 				var newAccount = false
 				if self.account == nil {
-					self.account = AccountManager.shared.createAccount(type: .readerAPI)
+					self.account = AccountManager.shared.createAccount(type: self.accountType!)
 					newAccount = true
 				}
 				
 				do {
 					self.account?.endpointURL = apiURL
 
-					try self.account?.removeReaderAPIAuthCredentials()
+					try self.account?.removeCredentials()
 					try self.account?.storeCredentials(validatedCredentials)
 					
 					if newAccount {

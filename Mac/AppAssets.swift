@@ -34,8 +34,8 @@ struct AppAssets {
 		return RSImage(named: "accountFeedbin")
 	}()
 	
-	static var accountReader: RSImage! = {
-		return RSImage(named: "accountReader")
+	static var accountFreshRSS: RSImage! = {
+		return RSImage(named: "accountFreshRSS")
 	}()
 	
 	static var faviconTemplateImage: RSImage = {

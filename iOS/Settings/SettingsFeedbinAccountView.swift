@@ -93,7 +93,7 @@ struct SettingsFeedbinAccountView : View {
 					do {
 						
 						do {
-							try workAccount.removeBasicCredentials()
+							try workAccount.removeCredentials()
 						} catch {}
 						try workAccount.storeCredentials(credentials)
 						
@@ -132,7 +132,7 @@ struct SettingsFeedbinAccountView : View {
 		
 		init(account: Account) {
 			self.account = account
-			if case .basic(let username, let password) = try? account.retrieveBasicCredentials() {
+			if case .basic(let username, let password) = try? account.retrieveCredentials() {
 				self.email = username
 				self.password = password
 			}
