@@ -263,6 +263,7 @@ private extension AppDelegate {
 		// If the device is in low power mode, return early
 		if ProcessInfo.processInfo.isLowPowerModeEnabled {
 			os_log("Device is in low power mode. Background refresh terminated.", log: self.log, type: .info)
+			task.setTaskCompleted(success: false)
 			return
 		}
 		
