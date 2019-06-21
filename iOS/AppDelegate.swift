@@ -253,12 +253,18 @@ private extension AppDelegate {
 		}
 	}
 	
-	/// Performs background feed refresh.
+	/// Performs background feed refresh. If the device is in low power mode, it will not proceed with the refresh.
 	/// - Parameter task: `BGAppRefreshTask`
 	/// - Warning: As of Xcode 11 beta 2, when triggered from the debugger this doesn't work.
 	func performBackgroundFeedRefresh(with task: BGAppRefreshTask) {
 		
 		scheduleBackgroundFeedRefresh() // schedule next refresh
+		
+		// If the device is in low power mode, return early
+		if ProcessInfo.processInfo.isLowPowerModeEnabled {
+			os_log("Device is in low power mode. Background refresh terminated.", log: self.log, type: .info)
+			return
+		}
 		
 		var startingUnreadCount = 0
 		
