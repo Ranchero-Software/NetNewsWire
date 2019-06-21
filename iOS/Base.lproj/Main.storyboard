@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="H1p-Uh-vWS">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14810.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="H1p-Uh-vWS">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14766.15"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -57,7 +54,7 @@
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
                     </view>
                     <toolbarItems>
-                        <barButtonItem enabled="NO" title="Next Unread" image="nextUnreadImage" id="2w5-e9-C2V">
+                        <barButtonItem enabled="NO" title="Next Unread" image="arrow.down.circle" catalog="system" id="2w5-e9-C2V">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Next Unread"/>
@@ -67,7 +64,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="vAq-iW-Yyo"/>
-                        <barButtonItem title="Previous Article" image="prevArticleImage" style="plain" id="v4j-fq-23N">
+                        <barButtonItem title="Previous Article" image="arrow.up" catalog="system" style="plain" id="v4j-fq-23N">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Previous Article"/>
@@ -77,7 +74,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="G92-nw-kXs"/>
-                        <barButtonItem title="Next Article" image="nextArticleImage" id="2qz-M5-Yhk">
+                        <barButtonItem title="Next Article" image="arrow.down" catalog="system" id="2qz-M5-Yhk">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Next Article"/>
@@ -87,7 +84,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="Myj-ux-Zc5"/>
-                        <barButtonItem title="Toggle Read" image="circleOpenImage" id="hy0-LS-MzE">
+                        <barButtonItem title="Toggle Read" image="circle" catalog="system" id="hy0-LS-MzE">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Toggle Read"/>
                             </userDefinedRuntimeAttributes>
@@ -96,7 +93,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="n8Q-7d-yb4"/>
-                        <barButtonItem title="Toggle Starred" image="starOpenImage" id="wU4-eH-wC9">
+                        <barButtonItem title="Toggle Starred" image="star" catalog="system" id="wU4-eH-wC9">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Toggle Starred"/>
                             </userDefinedRuntimeAttributes>
@@ -105,7 +102,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="bf9-AH-def"/>
-                        <barButtonItem systemItem="action" id="9Ut-5B-JKP">
+                        <barButtonItem image="square.and.arrow.up" catalog="system" id="9Ut-5B-JKP">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Action"/>
@@ -115,7 +112,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="KUq-GZ-WY9"/>
-                        <barButtonItem title="Safari" image="browserImage" id="DMh-3X-ebd">
+                        <barButtonItem title="Safari" image="safari" catalog="system" id="DMh-3X-ebd">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Safari"/>
@@ -155,7 +152,7 @@
                                 <rect key="frame" x="0.0" y="28" width="414" height="208"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="T5d-L4-OKG" id="QKC-jN-XDy">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="207.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="208"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                                 <connections>
@@ -216,7 +213,7 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="zNG-5C-pQm" customClass="MasterFeedTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.5" width="414" height="44"/>
+                                <rect key="frame" x="0.0" y="55.5" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zNG-5C-pQm" id="5gB-Jr-qIo">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -289,13 +286,14 @@
         </scene>
     </scenes>
     <resources>
-        <image name="browserImage" width="24" height="24"/>
-        <image name="circleOpenImage" width="22" height="22"/>
-        <image name="nextArticleImage" width="17" height="23"/>
-        <image name="nextUnreadImage" width="23" height="23"/>
-        <image name="prevArticleImage" width="16" height="23"/>
+        <image name="arrow.down" catalog="system" width="58" height="64"/>
+        <image name="arrow.down.circle" catalog="system" width="64" height="62"/>
+        <image name="arrow.up" catalog="system" width="58" height="64"/>
+        <image name="circle" catalog="system" width="64" height="62"/>
+        <image name="safari" catalog="system" width="64" height="62"/>
         <image name="settingsImage" width="24" height="24"/>
-        <image name="starOpenImage" width="26" height="24"/>
+        <image name="square.and.arrow.up" catalog="system" width="56" height="64"/>
+        <image name="star" catalog="system" width="64" height="58"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="RT3-gH-cyN"/>
