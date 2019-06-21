@@ -41,7 +41,7 @@ struct SettingsView : View {
 					}
 				}
 				
-				Section(header: Text("DATABASE"), footer: Text("If your device is in Low Power mode feeds will not be refreshed.").lineLimit(3)) {
+				Section(header: Text("DATABASE")) {
 					Picker(selection: $viewModel.refreshInterval, label: Text("Refresh Interval")) {
 						ForEach(RefreshInterval.allCases.identified(by: \.self)) { interval in
 							Text(interval.description()).tag(interval)
