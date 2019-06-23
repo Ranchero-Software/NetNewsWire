@@ -394,8 +394,16 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		
-		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
-		self.present(settings, animated: true)
+		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
+		settingsNavViewController.modalPresentationStyle = .formSheet
+		
+		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
+		settingsViewController.presentingParentController = self
+		
+		self.present(settingsNavViewController, animated: true)
+
+//		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
+//		self.present(settings, animated: true)
 		
 	}
 
