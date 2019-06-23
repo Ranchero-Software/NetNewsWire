@@ -60,6 +60,12 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			accountsFeedbinWindowController.account = account
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsFeedbinWindowController
+		case .freshRSS:
+			let accountsFreshRSSWindowController = AccountsReaderAPIWindowController()
+			accountsFreshRSSWindowController.accountType = account.type
+			accountsFreshRSSWindowController.account = account
+			accountsFreshRSSWindowController.runSheetOnWindow(self.view.window!)
+			accountsWindowController = accountsFreshRSSWindowController
 		default:
 			break
 		}
