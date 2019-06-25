@@ -179,6 +179,7 @@ private extension MasterTimelineTableViewCell {
 	
 	func updateUnreadIndicator() {
 		showOrHideView(unreadIndicatorView, cellData.read || cellData.starred)
+		unreadIndicatorView.setNeedsDisplay()
 	}
 	
 	func updateStarView() {
