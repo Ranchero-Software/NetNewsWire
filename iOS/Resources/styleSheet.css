@@ -33,9 +33,7 @@ a:hover {
 }
 
 :root {
-	--body-color: #444;
-	--body-background-color: -apple-system-text-background;
-	--link-color: hsla(215, 99%, 43%, 1);
+	color-scheme: light dark;
 	--header-table-border-color: rgba(0, 0, 0, 0.1);
 	--header-color: rgba(0, 0, 0, 0.3);
 	--header-link-color: rgba(0, 0, 0, 0.3);
@@ -46,9 +44,6 @@ a:hover {
 
 @media(prefers-color-scheme: dark) {
 	:root {
-		--body-color: #d2d2d2;
-		--body-background-color: #2d2d2d;
-		--link-color: #4490e2;
 		--header-table-border-color: rgba(255, 255, 255, 0.1);
 		--header-color: #d2d2d2;
 		--header-link-color: #4490e2;
