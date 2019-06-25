@@ -108,7 +108,10 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 			}
 			self?.runCommand(markReadCommand)
 			
+			self?.navigationController?.popViewController(animated: true)
+			
 		}
+		
 		alertController.addAction(markAction)
 		
 		present(alertController, animated: true)
