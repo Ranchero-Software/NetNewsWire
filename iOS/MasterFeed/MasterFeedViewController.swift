@@ -571,9 +571,23 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 			}
 			
 			if let feed = node.representedObject as? Feed {
-				feed.editedName = name
+				feed.rename(to: name) { result in
+					switch result {
+					case .success:
+						break
+					case .failure(let error):
+						self?.presentError(error)
+					}
+				}
 			} else if let folder = node.representedObject as? Folder {
-				folder.name = name
+				folder.rename(to: name) { result in
+					switch result {
+					case .success:
+						break
+					case .failure(let error):
+						self?.presentError(error)
+					}
+				}
 			}
 			
 		}
