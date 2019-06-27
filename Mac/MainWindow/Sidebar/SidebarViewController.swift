@@ -330,7 +330,7 @@ protocol SidebarDelegate: class {
 		
 		let nodesToDelete = treeController.normalizedSelectedNodes(nodes)
 		
-		guard let undoManager = undoManager, let deleteCommand = DeleteCommand(nodesToDelete: nodesToDelete, treeController: treeController, undoManager: undoManager) else {
+		guard let undoManager = undoManager, let deleteCommand = DeleteCommand(nodesToDelete: nodesToDelete, treeController: treeController, undoManager: undoManager, errorHandler: ErrorHandler.present) else {
 			return
 		}
 		

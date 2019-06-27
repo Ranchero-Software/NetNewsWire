@@ -87,7 +87,7 @@ class FeedbinAccountViewController: UIViewController {
 								case .success:
 									break
 								case .failure(let error):
-									UIApplication.shared.presentError(error)
+									self.presentError(error)
 								}
 							}
 						}

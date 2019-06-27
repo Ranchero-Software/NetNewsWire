@@ -16,6 +16,7 @@ import Articles
 import RSParser
 import ArticlesDatabase
 import RSWeb
+import os.log
 
 public extension Notification.Name {
 	static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
@@ -62,6 +63,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return defaultName
 	}()
 	
+	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "account")
+
 	public var isDeleted = false
 	
 	public var account: Account? {
@@ -917,11 +920,7 @@ private extension Account {
 		do {
 			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
 		} catch {
-			#if os(macOS)
-			NSApplication.shared.presentError(error)
-			#else
-			UIApplication.shared.presentError(error)
-			#endif
+			os_log(.error, log: log, "OPML Import failed: %@.", error.localizedDescription)
 			return
 		}
 		guard let parsedOPML = opmlDocument, let children = parsedOPML.children else {
@@ -944,11 +943,7 @@ private extension Account {
 			try opmlDocumentString.write(to: url, atomically: true, encoding: .utf8)
 		}
 		catch let error as NSError {
-			#if os(macOS)
-			NSApplication.shared.presentError(error)
-			#else
-			UIApplication.shared.presentError(error)
-			#endif
+			os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
 		}
 	}
 

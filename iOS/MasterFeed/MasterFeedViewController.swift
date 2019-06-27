@@ -526,7 +526,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 
 		guard let undoManager = undoManager,
 			let deleteNode = navState.nodeFor(indexPath),
-			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: navState.treeController, undoManager: undoManager)
+			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: navState.treeController, undoManager: undoManager, errorHandler: ErrorHandler.present(self))
 				else {
 					return
 		}
@@ -625,7 +625,7 @@ extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 private extension MasterFeedViewController {
 	
 	@objc private func refreshAccounts(_ sender: Any) {
-		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
+		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
 		refreshControl?.endRefreshing()
 	}
 	

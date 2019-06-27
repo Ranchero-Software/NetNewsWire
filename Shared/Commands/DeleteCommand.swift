@@ -20,10 +20,11 @@ final class DeleteCommand: UndoableCommand {
 	var redoActionName: String {
 		return undoActionName
 	}
+	let errorHandler: (Error) -> ()
 
 	private let itemSpecifiers: [SidebarItemSpecifier]
 
-	init?(nodesToDelete: [Node], treeController: TreeController, undoManager: UndoManager) {
+	init?(nodesToDelete: [Node], treeController: TreeController, undoManager: UndoManager, errorHandler: @escaping (Error) -> ()) {
 
 		guard DeleteCommand.canDelete(nodesToDelete) else {
 			return nil
@@ -35,8 +36,9 @@ final class DeleteCommand: UndoableCommand {
 		self.treeController = treeController
 		self.undoActionName = actionName
 		self.undoManager = undoManager
+		self.errorHandler = errorHandler
 
-		let itemSpecifiers = nodesToDelete.compactMap{ SidebarItemSpecifier(node: $0) }
+		let itemSpecifiers = nodesToDelete.compactMap{ SidebarItemSpecifier(node: $0, errorHandler: errorHandler) }
 		guard !itemSpecifiers.isEmpty else {
 			return nil
 		}
@@ -112,6 +114,7 @@ private struct SidebarItemSpecifier {
 	private let folder: Folder?
 	private let feed: Feed?
 	private let path: ContainerPath
+	private let errorHandler: (Error) -> ()
 
 	private var container: Container? {
 		if let parentFolder = parentFolder {
@@ -123,7 +126,7 @@ private struct SidebarItemSpecifier {
 		return nil
 	}
 
-	init?(node: Node) {
+	init?(node: Node, errorHandler: @escaping (Error) -> ()) {
 
 		var account: Account?
 
@@ -148,6 +151,9 @@ private struct SidebarItemSpecifier {
 
 		self.account = account!
 		self.path = ContainerPath(account: account!, folders: node.containingFolders())
+		
+		self.errorHandler = errorHandler
+		
 	}
 
 	func delete(completion: @escaping () -> Void) {
@@ -213,11 +219,7 @@ private struct SidebarItemSpecifier {
 		case .success:
 			break
 		case .failure(let error):
-			#if os(macOS)
-			NSApplication.shared.presentError(error)
-			#else
-			UIApplication.shared.presentError(error)
-			#endif
+			errorHandler(error)
 		}
 
 	}

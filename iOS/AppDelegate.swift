@@ -187,10 +187,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		// If we haven't refreshed the database for 15 minutes, run a refresh automatically
 		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
-				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
+				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 			}
 		} else {
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 		}
 		
 	}
