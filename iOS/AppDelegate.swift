@@ -40,9 +40,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var feedIconDownloader: FeedIconDownloader!
 	
-	var navState: NavigationStateController!
-	var masterFeedViewController: MasterFeedViewController!
-	
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -70,14 +67,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		
 		registerBackgroundTasks()
 		
-		navState = NavigationStateController()
-		
 		// Set up the split view
 		let splitViewController = window!.rootViewController as! UISplitViewController
-		
-		let feedNavController = splitViewController.viewControllers[0] as! UINavigationController
-		masterFeedViewController = feedNavController.topViewController as? MasterFeedViewController
-		masterFeedViewController.navState = navState
 		
 		let detailNavController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
 		detailNavController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem

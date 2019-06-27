@@ -19,8 +19,8 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	@IBOutlet private weak var addNewItemButton: UIBarButtonItem!
 	
 	var undoableCommands = [UndoableCommand]()
-	var navState: NavigationStateController!
 	
+	let navState = NavigationStateController()
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
