@@ -28,12 +28,14 @@ struct AppAssets {
 	
 	static var chevronDownImage: UIImage = {
 		let image = UIImage(systemName: "chevron.down")!
-		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
+		return image
+//		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var chevronRightImage: UIImage = {
 		let image = UIImage(systemName: "chevron.right")!
-		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
+		return image
+//		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var faviconTemplateImage: RSImage = {
@@ -50,7 +52,8 @@ struct AppAssets {
 	
 	static var masterFolderImage: UIImage = {
 		let image = UIImage(systemName: "folder.fill")!
-		return image.withTintColor(AppAssets.masterFolderColor, renderingMode: .alwaysOriginal)
+		return image
+//		return image.withTintColor(AppAssets.masterFolderColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var netNewsWireBlueColor: UIColor = {
@@ -63,7 +66,8 @@ struct AppAssets {
 	
 	static var smartFeedImage: UIImage = {
 		let image = UIImage(systemName: "gear")!
-		return image.withTintColor(AppAssets.smartFeedColor, renderingMode: .alwaysOriginal)
+		return image
+//		return image.withTintColor(AppAssets.smartFeedColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var starColor: UIColor = {
@@ -80,7 +84,8 @@ struct AppAssets {
 	
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
-		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
+		return image
+//		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var timelineUnreadCircleColor: UIColor = {
