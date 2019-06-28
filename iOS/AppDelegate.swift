@@ -33,7 +33,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	}
 	
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "application")
-	var window: UIWindow?
 	
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
@@ -66,15 +65,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 		
 		registerBackgroundTasks()
-		
-		// Set up the split view
-		let splitViewController = window!.rootViewController as! UISplitViewController
-		
-		let detailNavController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
-		detailNavController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
-		splitViewController.delegate = self
-		
-		window!.tintColor = AppAssets.netNewsWireBlueColor
 		
 		AppDefaults.registerDefaults()
 		let isFirstRun = AppDefaults.isFirstRun
@@ -119,31 +109,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		
 	}
 	
-	//	func application(_ application: UIApplication, shouldSaveApplicationState coder: NSCoder) -> Bool {
-	//
-	//		let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-	//		coder.encode(versionNumber, forKey: "VersionNumber")
-	//
-	//		return true
-	//
-	//	}
-	//
-	//	func application(_ application: UIApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
-	//		if let storedVersionNumber = coder.decodeObject(forKey: "VersionNumber") as? String {
-	//			let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-	//			if versionNumber == storedVersionNumber {
-	//				return true
-	//			}
-	//		}
-	//		return false
-	//	}
-	
-	func applicationWillResignActive(_ application: UIApplication) {
-		// Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-		// Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+	func applicationWillTerminate(_ application: UIApplication) {
+		shuttingDown = true
 	}
 	
-	func applicationDidEnterBackground(_ application: UIApplication) {
+	// MARK: Notifications
+	
+	@objc func unreadCountDidChange(_ note: Notification) {
+		if note.object is AccountManager {
+			unreadCount = AccountManager.shared.unreadCount
+		}
+	}
+	
+	@objc func userDefaultsDidChange(_ note: Notification) {
+		scheduleBackgroundFeedRefresh()
+	}
+	
+	@objc func accountRefreshDidFinish(_ note: Notification) {
+		AppDefaults.lastRefresh = Date()
+	}
+	
+	// MARK: - API
+	
+	func prepareAccountsForBackground() {
 		syncTimer?.invalidate()
 		
 		// Schedule background app refresh
@@ -169,56 +157,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		}
 	}
 	
-	func applicationWillEnterForeground(_ application: UIApplication) {
-		AccountManager.shared.syncArticleStatusAll()
-		syncTimer?.update()
-	}
-	
-	func applicationDidBecomeActive(_ application: UIApplication) {
-		// If we haven't refreshed the database for 15 minutes, run a refresh automatically
+	func prepareAccountsForForeground() {
 		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
+			} else {
+				AccountManager.shared.syncArticleStatusAll()
+				syncTimer?.update()
 			}
 		} else {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 		}
-		
 	}
-	
-	func applicationWillTerminate(_ application: UIApplication) {
-		shuttingDown = true
-	}
-	
-	// MARK: - Split view
-	
-	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-		guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
-		guard let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController else { return false }
-		if topAsDetailController.navState?.currentArticle == nil {
-			// Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
-			return true
-		}
-		return false
-	}
-	
-	// MARK: Notifications
-	
-	@objc func unreadCountDidChange(_ note: Notification) {
-		if note.object is AccountManager {
-			unreadCount = AccountManager.shared.unreadCount
-		}
-	}
-	
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		scheduleBackgroundFeedRefresh()
-	}
-	
-	@objc func accountRefreshDidFinish(_ note: Notification) {
-		AppDefaults.lastRefresh = Date()
-	}
-	
-	// MARK: - API
 	
 	func logMessage(_ message: String, type: LogItem.ItemType) {
 		print("logMessage: \(message) - \(type)")
@@ -234,7 +184,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
 // MARK: - Background Tasks
 private extension AppDelegate {
-	
+
 	/// Register all background tasks.
 	func registerBackgroundTasks() {
 		// Register background feed refresh.
