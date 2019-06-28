@@ -18,8 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
 
 		window!.tintColor = AppAssets.netNewsWireBlueColor
 
-		let storyboard = UIStoryboard(name: "Main", bundle: .main)
-		let splitViewController = storyboard.instantiateInitialViewController() as! UISplitViewController
+		let splitViewController = UIStoryboard.main.instantiateInitialViewController() as! UISplitViewController
 		splitViewController.delegate = self
 		window!.rootViewController = splitViewController
 		
