@@ -243,17 +243,7 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8">
-                        <barButtonItem key="leftBarButtonItem" title="Settings" image="settingsImage" id="2lM-3y-hKs">
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Settings"/>
-                            </userDefinedRuntimeAttributes>
-                            <connections>
-                                <action selector="settings:" destination="7bK-jq-Zjz" id="keC-la-uyI"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="addNewItemButton" destination="yo6-w4-SfI" id="NbL-RH-N4J"/>
@@ -291,7 +281,6 @@
         <image name="arrow.up" catalog="system" width="58" height="64"/>
         <image name="circle" catalog="system" width="64" height="62"/>
         <image name="safari" catalog="system" width="64" height="62"/>
-        <image name="settingsImage" width="24" height="24"/>
         <image name="square.and.arrow.up" catalog="system" width="56" height="64"/>
         <image name="star" catalog="system" width="64" height="58"/>
     </resources>
