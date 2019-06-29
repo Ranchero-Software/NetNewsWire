@@ -20,7 +20,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	var undoableCommands = [UndoableCommand]()
 	
-	let navState = NavigationStateController()
+	weak var coordinator: AppCoordinator!
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -40,8 +40,8 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: navState)
-		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: coordinator)
+		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
 		refreshControl = UIRefreshControl()
@@ -82,8 +82,8 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		}
 		
 		if let account = representedObject as? Account {
-			if let node = navState.rootNode.childNodeRepresentingObject(account) {
-				let sectionIndex = navState.rootNode.indexOfChild(node)!
+			if let node = coordinator.rootNode.childNodeRepresentingObject(account) {
+				let sectionIndex = coordinator.rootNode.indexOfChild(node)!
 				if let headerView = tableView.headerView(forSection: sectionIndex) as? MasterFeedTableViewSectionHeader {
 					headerView.unreadCount = account.unreadCount
 				}
@@ -91,8 +91,8 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 			return
 		}
 		
-		guard let node = navState.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject),
-			let indexPath = navState.indexPathFor(node) else {
+		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject),
+			let indexPath = coordinator.indexPathFor(node) else {
 				return
 		}
 
@@ -119,27 +119,27 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	@objc func userDidAddFeed(_ notification: Notification) {
 		
 		guard let feed = notification.userInfo?[UserInfoKey.feed],
-			let node = navState.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
+			let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
 				return
 		}
 		
-		if let indexPath = navState.indexPathFor(node) {
+		if let indexPath = coordinator.indexPathFor(node) {
 			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
 			return
 		}
 	
 		// It wasn't already visable, so expand its folder and try again
-		guard let parent = node.parent, let indexPath = navState.indexPathFor(parent) else {
+		guard let parent = node.parent, let indexPath = coordinator.indexPathFor(parent) else {
 			return
 		}
 		
-		navState.expand(indexPath) { [weak self] indexPaths in
+		coordinator.expand(indexPath) { [weak self] indexPaths in
 			self?.tableView.beginUpdates()
 			self?.tableView.insertRows(at: indexPaths, with: .automatic)
 			self?.tableView.endUpdates()
 		}
 
-		if let indexPath = navState.indexPathFor(node) {
+		if let indexPath = coordinator.indexPathFor(node) {
 			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
 		}
 
@@ -154,7 +154,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	}
 	
 	@objc func masterSelectionDidChange(_ note: Notification) {
-		if let indexPath = navState.currentMasterIndexPath {
+		if let indexPath = coordinator.currentMasterIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
 			}
@@ -168,16 +168,16 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	// MARK: Table View
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
-		return navState.numberOfSections
+		return coordinator.numberOfSections
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return navState.rowsInSection(section)
+		return coordinator.rowsInSection(section)
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 
-		guard let nameProvider = navState.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
+		guard let nameProvider = coordinator.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
 			return 44
 		}
 		
@@ -191,14 +191,14 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		
-		guard let nameProvider = navState.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
+		guard let nameProvider = coordinator.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
 			return nil
 		}
 		
 		let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! MasterFeedTableViewSectionHeader
 		headerView.name = nameProvider.nameForDisplay
 		
-		guard let sectionNode = navState.rootNode.childAtIndex(section) else {
+		guard let sectionNode = coordinator.rootNode.childAtIndex(section) else {
 			return headerView
 		}
 		
@@ -209,7 +209,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		}
 		
 		headerView.tag = section
-		headerView.disclosureExpanded = navState.isExpanded(sectionNode)
+		headerView.disclosureExpanded = coordinator.isExpanded(sectionNode)
 
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
@@ -230,7 +230,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterFeedTableViewCell
 		
-		guard let node = navState.nodeFor(indexPath) else {
+		guard let node = coordinator.nodeFor(indexPath) else {
 			return cell
 		}
 		
@@ -240,7 +240,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	}
 	
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-		guard let node = navState.nodeFor(indexPath), !(node.representedObject is PseudoFeed) else {
+		guard let node = coordinator.nodeFor(indexPath), !(node.representedObject is PseudoFeed) else {
 			return false
 		}
 		return true
@@ -273,14 +273,14 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
 		let timeline = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-		timeline.navState = navState
-		navState.currentMasterIndexPath = indexPath
+		timeline.coordinator = coordinator
+		coordinator.currentMasterIndexPath = indexPath
 		self.navigationController?.pushViewController(timeline, animated: true)
 
 	}
 
 	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-		guard let node = navState.nodeFor(indexPath) else {
+		guard let node = coordinator.nodeFor(indexPath) else {
 			return false
 		}
 		return node.representedObject is Feed
@@ -296,13 +296,13 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 			return proposedDestinationIndexPath
 		}()
 		
-		guard let draggedNode = navState.nodeFor(sourceIndexPath), let destNode = navState.nodeFor(destIndexPath), let parentNode = destNode.parent else {
+		guard let draggedNode = coordinator.nodeFor(sourceIndexPath), let destNode = coordinator.nodeFor(destIndexPath), let parentNode = destNode.parent else {
 			assertionFailure("This should never happen")
 			return sourceIndexPath
 		}
 		
 		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
-		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !navState.isExpanded(destNode)) {
+		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !coordinator.isExpanded(destNode)) {
 			let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
 			return IndexPath(row: destIndexPath.row + movementAdjustment, section: destIndexPath.section)
 		}
@@ -323,7 +323,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 			if parentNode.representedObject is Account {
 				return IndexPath(row: 0, section: destIndexPath.section)
 			} else {
-				return navState.indexPathFor(parentNode)!
+				return coordinator.indexPathFor(parentNode)!
 			}
 			
 		} else {
@@ -333,10 +333,10 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 			let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
 			let adjustedIndex = index - movementAdjustment
 			if adjustedIndex >= sortedNodes.count {
-				let lastSortedIndexPath = navState.indexPathFor(sortedNodes[sortedNodes.count - 1])!
+				let lastSortedIndexPath = coordinator.indexPathFor(sortedNodes[sortedNodes.count - 1])!
 				return IndexPath(row: lastSortedIndexPath.row + 1, section: lastSortedIndexPath.section)
 			} else {
-				return navState.indexPathFor(sortedNodes[adjustedIndex])!
+				return coordinator.indexPathFor(sortedNodes[adjustedIndex])!
 			}
 			
 		}
@@ -345,18 +345,18 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
 
-		guard let sourceNode = navState.nodeFor(sourceIndexPath), let feed = sourceNode.representedObject as? Feed else {
+		guard let sourceNode = coordinator.nodeFor(sourceIndexPath), let feed = sourceNode.representedObject as? Feed else {
 			return
 		}
 
 		// Based on the drop we have to determine a node to start looking for a parent container.
 		let destNode: Node = {
 			if destinationIndexPath.row == 0 {
-				return navState.rootNode.childAtIndex(destinationIndexPath.section)!
+				return coordinator.rootNode.childAtIndex(destinationIndexPath.section)!
 			} else {
 				let movementAdjustment = sourceIndexPath > destinationIndexPath ? 1 : 0
 				let adjustedDestIndexPath = IndexPath(row: destinationIndexPath.row - movementAdjustment, section: destinationIndexPath.section)
-				return navState.nodeFor(adjustedDestIndexPath)!
+				return coordinator.nodeFor(adjustedDestIndexPath)!
 			}
 		}()
 
@@ -453,22 +453,22 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
 		
 		guard let sectionIndex = sender.view?.tag,
-			let sectionNode = navState.rootNode.childAtIndex(sectionIndex),
+			let sectionNode = coordinator.rootNode.childAtIndex(sectionIndex),
 			let headerView = sender.view as? MasterFeedTableViewSectionHeader
 				else {
 					return
 		}
 		
-		if navState.isExpanded(sectionNode) {
+		if coordinator.isExpanded(sectionNode) {
 			headerView.disclosureExpanded = false
-			navState.collapse(section: sectionIndex) { [weak self] indexPaths in
+			coordinator.collapse(section: sectionIndex) { [weak self] indexPaths in
 				self?.tableView.beginUpdates()
 				self?.tableView.deleteRows(at: indexPaths, with: .automatic)
 				self?.tableView.endUpdates()
 			}
 		} else {
 			headerView.disclosureExpanded = true
-			navState.expand(section: sectionIndex) { [weak self] indexPaths in
+			coordinator.expand(section: sectionIndex) { [weak self] indexPaths in
 				self?.tableView.beginUpdates()
 				self?.tableView.insertRows(at: indexPaths, with: .automatic)
 				self?.tableView.endUpdates()
@@ -487,7 +487,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		} else {
 			cell.indentationLevel = 0
 		}
-		cell.disclosureExpanded = navState.isExpanded(node)
+		cell.disclosureExpanded = coordinator.isExpanded(node)
 		cell.allowDisclosureSelection = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
@@ -525,14 +525,14 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	func delete(indexPath: IndexPath) {
 
 		guard let undoManager = undoManager,
-			let deleteNode = navState.nodeFor(indexPath),
-			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: navState.treeController, undoManager: undoManager, errorHandler: ErrorHandler.present(self))
+			let deleteNode = coordinator.nodeFor(indexPath),
+			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: coordinator.treeController, undoManager: undoManager, errorHandler: ErrorHandler.present(self))
 				else {
 					return
 		}
 
 		var deleteIndexPaths = [indexPath]
-		if navState.isExpanded(deleteNode) {
+		if coordinator.isExpanded(deleteNode) {
 			for i in 0..<deleteNode.numberOfChildNodes {
 				deleteIndexPaths.append(IndexPath(row: indexPath.row + 1 + i, section: indexPath.section))
 			}
@@ -540,19 +540,19 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		
 		pushUndoableCommand(deleteCommand)
 
-		navState.beginUpdates()
+		coordinator.beginUpdates()
 		deleteCommand.perform {
-			self.navState.treeController.rebuild()
-			self.navState.rebuildShadowTable()
+			self.coordinator.treeController.rebuild()
+			self.coordinator.rebuildShadowTable()
 			self.tableView.deleteRows(at: deleteIndexPaths, with: .automatic)
-			self.navState.endUpdates()
+			self.coordinator.endUpdates()
 		}
 		
 	}
 	
 	func rename(indexPath: IndexPath) {
 		
-		let name = (navState.nodeFor(indexPath)?.representedObject as? DisplayNameProvider)?.nameForDisplay ?? ""
+		let name = (coordinator.nodeFor(indexPath)?.representedObject as? DisplayNameProvider)?.nameForDisplay ?? ""
 		let formatString = NSLocalizedString("Rename “%@”", comment: "Feed finder")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, name) as String
 		
@@ -564,7 +564,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
 		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] action in
 			
-			guard let node = self?.navState.nodeFor(indexPath),
+			guard let node = self?.coordinator.nodeFor(indexPath),
 				let name = alertController.textFields?[0].text,
 				!name.isEmpty else {
 					return
@@ -630,7 +630,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func updateUI() {
-		markAllAsReadButton.isEnabled = navState.isAnyUnreadAvailable
+		markAllAsReadButton.isEnabled = coordinator.isAnyUnreadAvailable
 		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}
 
@@ -649,7 +649,7 @@ private extension MasterFeedViewController {
 	
 	func applyToAvailableCells(_ callback: (MasterFeedTableViewCell, Node) -> Void) {
 		tableView.visibleCells.forEach { cell in
-			guard let indexPath = tableView.indexPath(for: cell), let node = navState.nodeFor(indexPath) else {
+			guard let indexPath = tableView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
 				return
 			}
 			callback(cell as! MasterFeedTableViewCell, node)
@@ -673,7 +673,7 @@ private extension MasterFeedViewController {
 		guard let indexPath = tableView.indexPath(for: cell)  else {
 			return
 		}
-		navState.expand(indexPath) { [weak self] indexPaths in
+		coordinator.expand(indexPath) { [weak self] indexPaths in
 			self?.tableView.beginUpdates()
 			self?.tableView.insertRows(at: indexPaths, with: .automatic)
 			self?.tableView.endUpdates()
@@ -684,7 +684,7 @@ private extension MasterFeedViewController {
 		guard let indexPath = tableView.indexPath(for: cell) else {
 			return
 		}
-		navState.collapse(indexPath) { [weak self] indexPaths in
+		coordinator.collapse(indexPath) { [weak self] indexPaths in
 			self?.tableView.beginUpdates()
 			self?.tableView.deleteRows(at: indexPaths, with: .automatic)
 			self?.tableView.endUpdates()

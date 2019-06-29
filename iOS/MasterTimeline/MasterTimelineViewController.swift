@@ -18,7 +18,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
 	
-	weak var navState: NavigationStateController?
+	weak var coordinator: AppCoordinator!
 	var undoableCommands = [UndoableCommand]()
 	
 	override var canBecomeFirstResponder: Bool {
@@ -37,10 +37,10 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: navState)
-		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: navState)
-		NotificationCenter.default.addObserver(self, selector: #selector(articlesDidChange(_:)), name: .ArticlesDidChange, object: navState)
-		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: coordinator)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: coordinator)
+		NotificationCenter.default.addObserver(self, selector: #selector(articlesDidChange(_:)), name: .ArticlesDidChange, object: coordinator)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
 		refreshControl = UIRefreshControl()
@@ -66,7 +66,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "showDetail" {
 			let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-			controller.navState = navState
+			controller.coordinator = coordinator
 			controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
 			controller.navigationItem.leftItemsSupplementBackButton = true
 			splitViewController?.toggleMasterView()
@@ -101,7 +101,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
 
-			guard let articles = self?.navState?.articles,
+			guard let articles = self?.coordinator.articles,
 				let undoManager = self?.undoManager,
 				let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
 				return
@@ -119,7 +119,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	}
 	
 	@IBAction func firstUnread(_ sender: Any) {
-		if let indexPath = navState?.firstUnreadArticleIndexPath {
+		if let indexPath = coordinator.firstUnreadArticleIndexPath {
 			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
 		}
 	}
@@ -131,14 +131,12 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return navState?.articles.count ?? 0
+        return coordinator.articles.count
     }
 
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		
-		guard let article = navState?.articles[indexPath.row] else {
-			return nil
-		}
+		let article = coordinator.articles[indexPath.row]
 		
 		// Set up the read action
 		let readTitle = article.status.read ?
@@ -180,20 +178,14 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
-
-		guard let article = navState?.articles[indexPath.row] else {
-			return cell
-		}
-
+		let article = coordinator.articles[indexPath.row]
 		configureTimelineCell(cell, article: article)
-		
 		return cell
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		navState?.currentArticleIndexPath = indexPath
+		coordinator.currentArticleIndexPath = indexPath
 	}
 	
 	// MARK: Notifications
@@ -219,7 +211,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		performBlockAndRestoreSelection {
 			tableView.indexPathsForVisibleRows?.forEach { indexPath in
 				
-				guard let article = navState?.articles.articleAtRow(indexPath.row) else {
+				guard let article = coordinator.articles.articleAtRow(indexPath.row) else {
 					return
 				}
 				
@@ -235,14 +227,14 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 		
-		guard navState?.showAvatars ?? false, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+		guard coordinator.showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
 		
 		performBlockAndRestoreSelection {
 			tableView.indexPathsForVisibleRows?.forEach { indexPath in
 				
-				guard let article = navState?.articles.articleAtRow(indexPath.row), let authors = article.authors, !authors.isEmpty else {
+				guard let article = coordinator.articles.articleAtRow(indexPath.row), let authors = article.authors, !authors.isEmpty else {
 					return
 				}
 				
@@ -258,7 +250,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		if navState?.showAvatars ?? false {
+		if coordinator.showAvatars {
 			queueReloadVisableCells()
 		}
 	}
@@ -287,7 +279,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	
 	@objc func articleSelectionDidChange(_ note: Notification) {
 		
-		if let indexPath = navState?.currentArticleIndexPath {
+		if let indexPath = coordinator.currentArticleIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
 			}
@@ -323,9 +315,8 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		if articleIDs.isEmpty {
 			return
 		}
-		if let indexes = navState?.indexesForArticleIDs(articleIDs) {
-			reloadVisibleCells(for: indexes)
-		}
+		let indexes = coordinator.indexesForArticleIDs(articleIDs)
+		reloadVisibleCells(for: indexes)
 	}
 	
 	private func reloadVisibleCells(for indexes: IndexSet) {
@@ -373,10 +364,10 @@ private extension MasterTimelineViewController {
 
 	func resetUI() {
 		
-		title = navState?.timelineName
-		navigationController?.title = navState?.timelineName
+		title = coordinator.timelineName
+		navigationController?.title = coordinator.timelineName
 		
-		if navState?.articles.count ?? 0 > 0 {
+		if coordinator.articles.count > 0 {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
 		
@@ -385,8 +376,8 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateUI() {
-		markAllAsReadButton.isEnabled = navState?.isTimelineUnreadAvailable ?? false
-		firstUnreadButton.isEnabled = navState?.isTimelineUnreadAvailable ?? false
+		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
+		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 	}
 	
 	func configureTimelineCell(_ cell: MasterTimelineTableViewCell, article: Article) {
@@ -394,15 +385,15 @@ private extension MasterTimelineViewController {
 		let avatar = avatarFor(article)
 		let featuredImage = featuredImageFor(article)
 		
-		let showFeedNames = navState?.showFeedNames ?? false
-		let showAvatar = navState?.showAvatars ?? false && avatar != nil
+		let showFeedNames = coordinator.showFeedNames
+		let showAvatar = coordinator.showAvatars && avatar != nil
 		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatar, featuredImage: featuredImage, numberOfLines: numberOfTextLines)
 		
 	}
 	
 	func avatarFor(_ article: Article) -> UIImage? {
 		
-		if !(navState?.showAvatars ?? false) {
+		if !coordinator.showAvatars {
 			return nil
 		}
 		

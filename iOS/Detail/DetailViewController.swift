@@ -23,7 +23,7 @@ class DetailViewController: UIViewController {
 	@IBOutlet weak var browserBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var webView: WKWebView!
 	
-	weak var navState: NavigationStateController?
+	weak var coordinator: AppCoordinator?
 	
 	override func viewDidLoad() {
 		
@@ -36,7 +36,7 @@ class DetailViewController: UIViewController {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: navState)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 	}
@@ -47,14 +47,14 @@ class DetailViewController: UIViewController {
 	}
 	
 	func markAsRead() {
-		if let article = navState?.currentArticle {
+		if let article = coordinator?.currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: true)
 		}
 	}
 	
 	func updateUI() {
 		
-		guard let article = navState?.currentArticle else {
+		guard let article = coordinator?.currentArticle else {
 			nextUnreadBarButtonItem.isEnabled = false
 			prevArticleBarButtonItem.isEnabled = false
 			nextArticleBarButtonItem.isEnabled = false
@@ -65,9 +65,9 @@ class DetailViewController: UIViewController {
 			return
 		}
 		
-		nextUnreadBarButtonItem.isEnabled = navState?.isAnyUnreadAvailable ?? false
-		prevArticleBarButtonItem.isEnabled = navState?.isPrevArticleAvailable ?? false
-		nextArticleBarButtonItem.isEnabled = navState?.isNextArticleAvailable ?? false
+		nextUnreadBarButtonItem.isEnabled = coordinator?.isAnyUnreadAvailable ?? false
+		prevArticleBarButtonItem.isEnabled = coordinator?.isPrevArticleAvailable ?? false
+		nextArticleBarButtonItem.isEnabled = coordinator?.isNextArticleAvailable ?? false
 
 		readBarButtonItem.isEnabled = true
 		starBarButtonItem.isEnabled = true
@@ -80,7 +80,7 @@ class DetailViewController: UIViewController {
 		let starImage = article.status.starred ? AppAssets.starClosedImage : AppAssets.starOpenImage
 		starBarButtonItem.image = starImage
 		
-		if let timelineName = navState?.timelineName {
+		if let timelineName = coordinator?.timelineName {
 			if navigationController?.navigationItem.backBarButtonItem?.title != timelineName {
 				let backItem = UIBarButtonItem(title: timelineName, style: .plain, target: nil, action: nil)
 				navigationController?.navigationItem.backBarButtonItem = backItem
@@ -91,7 +91,7 @@ class DetailViewController: UIViewController {
 	
 	func reloadHTML() {
 		
-		guard let article = navState?.currentArticle, let webView = webView else {
+		guard let article = coordinator?.currentArticle, let webView = webView else {
 			return
 		}
 		let style = ArticleStylesManager.shared.currentStyle
@@ -110,7 +110,7 @@ class DetailViewController: UIViewController {
 		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
 			return
 		}
-		if articles.count == 1 && articles.first?.articleID == navState?.currentArticle?.articleID {
+		if articles.count == 1 && articles.first?.articleID == coordinator?.currentArticle?.articleID {
 			updateUI()
 		}
 	}
@@ -132,41 +132,41 @@ class DetailViewController: UIViewController {
 	// MARK: Actions
 	
 	@IBAction func nextUnread(_ sender: Any) {
-		navState?.selectNextUnread()
+		coordinator?.selectNextUnread()
 	}
 	
 	@IBAction func prevArticle(_ sender: Any) {
-		navState?.currentArticleIndexPath = navState?.prevArticleIndexPath
+		coordinator?.currentArticleIndexPath = coordinator?.prevArticleIndexPath
 	}
 	
 	@IBAction func nextArticle(_ sender: Any) {
-		navState?.currentArticleIndexPath = navState?.nextArticleIndexPath
+		coordinator?.currentArticleIndexPath = coordinator?.nextArticleIndexPath
 	}
 	
 	@IBAction func toggleRead(_ sender: Any) {
-		if let article = navState?.currentArticle {
+		if let article = coordinator?.currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: !article.status.read)
 		}
 	}
 	
 	@IBAction func toggleStar(_ sender: Any) {
-		if let article = navState?.currentArticle {
+		if let article = coordinator?.currentArticle {
 			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
 		}
 	}
 	
 	@IBAction func openBrowser(_ sender: Any) {
-		guard let preferredLink = navState?.currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
+		guard let preferredLink = coordinator?.currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}
 		UIApplication.shared.open(url, options: [:])
 	}
 	
 	@IBAction func showActivityDialog(_ sender: Any) {
-		guard let preferredLink = navState?.currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
+		guard let preferredLink = coordinator?.currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}
-		let itemSource = ArticleActivityItemSource(url: url, subject: navState?.currentArticle?.title)
+		let itemSource = ArticleActivityItemSource(url: url, subject: coordinator?.currentArticle?.title)
 		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
 		activityViewController.popoverPresentationController?.barButtonItem = self.actionBarButtonItem
 		

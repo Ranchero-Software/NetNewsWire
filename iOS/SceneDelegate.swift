@@ -8,8 +8,10 @@
 
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDelegate {
-    
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+	
+	var coordinator = AppCoordinator()
+	
     var window: UIWindow?
     
     // UIWindowScene delegate
@@ -19,9 +21,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
 		window!.tintColor = AppAssets.netNewsWireBlueColor
 
 		let splitViewController = UIStoryboard.main.instantiateInitialViewController() as! UISplitViewController
-		splitViewController.delegate = self
+		splitViewController.delegate = coordinator
 		window!.rootViewController = splitViewController
-		
+
+		let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
+		let masterFeedViewController = masterNavigationController.topViewController as! MasterFeedViewController
+		masterFeedViewController.coordinator = coordinator
+
 		let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
 		navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
 		
@@ -67,16 +73,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
 //        return false
 //     }
 
-	// MARK: UISplitViewControllerDelegate
-	
-	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-		guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
-		guard let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController else { return false }
-		if topAsDetailController.navState?.currentArticle == nil {
-			// Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
-			return true
-		}
-		return false
-	}
-	
 }
