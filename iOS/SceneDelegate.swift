@@ -19,19 +19,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
 		window!.tintColor = AppAssets.netNewsWireBlueColor
+		window!.rootViewController = coordinator.start()
 
-		let splitViewController = UIStoryboard.main.instantiateInitialViewController() as! UISplitViewController
-		splitViewController.delegate = coordinator
-		window!.rootViewController = splitViewController
-
-		let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
-		let masterFeedViewController = masterNavigationController.topViewController as! MasterFeedViewController
-		masterFeedViewController.coordinator = coordinator
-
-		let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
-		navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
-		
-		
 //        if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
 //            if !configure(window: window, with: userActivity) {
 //                print("Failed to restore from \(userActivity)")

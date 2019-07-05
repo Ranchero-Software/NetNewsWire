@@ -276,12 +276,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		
-		let timeline = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-		timeline.coordinator = coordinator
-		coordinator.currentMasterIndexPath = indexPath
-		self.navigationController?.pushViewController(timeline, animated: true)
-
+		coordinator.didSelectFeed(indexPath)
 	}
 
 	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {

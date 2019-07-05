@@ -23,7 +23,12 @@ public extension Notification.Name {
 
 class AppCoordinator {
 
-	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
+	private var rootSplitViewController: UISplitViewController!
+	private var masterNavigationController: UINavigationController!
+	private var masterFeedViewController: MasterFeedViewController!
+	private var masterTimelineViewController: MasterTimelineViewController?
+	
+	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	
@@ -185,6 +190,21 @@ class AppCoordinator {
 		
 	}
 	
+	func start() -> UIViewController {
+		rootSplitViewController = (UIStoryboard.main.instantiateInitialViewController() as! UISplitViewController)
+		rootSplitViewController.delegate = self
+		
+		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
+		masterFeedViewController = UIStoryboard.main.instantiateController(ofType: MasterFeedViewController.self)
+		masterFeedViewController.coordinator = self
+		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
+		
+//		let detailNavigationController = (rootSplitViewController.viewControllers.last as! UINavigationController)
+//		detailNavigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+		
+		return rootSplitViewController
+	}
+	
 	// MARK: Notifications
 	
 	@objc func containerChildrenDidChange(_ note: Notification) {
@@ -225,6 +245,24 @@ class AppCoordinator {
 	}
 
 	// MARK: API
+	
+	func didSelectFeed(_ indexPath: IndexPath) {
+		masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+		masterTimelineViewController!.coordinator = self
+		currentMasterIndexPath = indexPath
+		masterNavigationController.pushViewController(masterTimelineViewController!, animated: true)
+	}
+	
+	func didSelectArticle(_ indexPath: IndexPath) {
+		let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
+		detailViewController.coordinator = self
+		detailViewController.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
+		detailViewController.navigationItem.leftItemsSupplementBackButton = true
+		currentArticleIndexPath = indexPath
+//		rootSplitViewController.toggleMasterView()
+		rootSplitViewController.showDetailViewController(detailViewController, sender: self)
+
+	}
 	
 	func beginUpdates() {
 		animatingChanges = true
@@ -608,7 +646,7 @@ private extension AppCoordinator {
 	}
 	
 	func queueFetchAndMergeArticles() {
-		AppCoordinator.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
+		fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
 	}
 	
 	@objc func fetchAndMergeArticles() {

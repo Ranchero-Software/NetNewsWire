@@ -63,16 +63,6 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		resignFirstResponder()
 	}
 
-	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == "showDetail" {
-			let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-			controller.coordinator = coordinator
-			controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-			controller.navigationItem.leftItemsSupplementBackButton = true
-			splitViewController?.toggleMasterView()
-		}
-	}
-	
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
 		super.traitCollectionDidChange(previousTraitCollection)
 		
@@ -185,7 +175,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		coordinator.currentArticleIndexPath = indexPath
+		coordinator.didSelectArticle(indexPath)
 	}
 	
 	// MARK: Notifications
