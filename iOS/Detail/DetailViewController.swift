@@ -136,11 +136,11 @@ class DetailViewController: UIViewController {
 	}
 	
 	@IBAction func prevArticle(_ sender: Any) {
-		coordinator.currentArticleIndexPath = coordinator.prevArticleIndexPath
+		coordinator.selectPrevArticle()
 	}
 	
 	@IBAction func nextArticle(_ sender: Any) {
-		coordinator.currentArticleIndexPath = coordinator.nextArticleIndexPath
+		coordinator.selectNextArticle()
 	}
 	
 	@IBAction func toggleRead(_ sender: Any) {

@@ -276,7 +276,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		coordinator.didSelectFeed(indexPath)
+		coordinator.selectFeed(indexPath)
 	}
 
 	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {

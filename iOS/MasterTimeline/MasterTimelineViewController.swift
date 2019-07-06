@@ -175,7 +175,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		coordinator.didSelectArticle(indexPath)
+		coordinator.selectArticle(indexPath)
 	}
 	
 	// MARK: Notifications

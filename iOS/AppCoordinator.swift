@@ -45,7 +45,7 @@ class AppCoordinator {
 	}
 
 	private let treeControllerDelegate = FeedTreeControllerDelegate()
-	lazy var treeController: TreeController = {
+	private(set) lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
 	
@@ -57,7 +57,7 @@ class AppCoordinator {
 		return shadowTable.count
 	}
 
-	var currentMasterIndexPath: IndexPath? {
+	private(set) var currentMasterIndexPath: IndexPath? {
 		didSet {
 			guard let ip = currentMasterIndexPath, let node = nodeFor(ip) else {
 				assertionFailure()
@@ -88,8 +88,8 @@ class AppCoordinator {
 	}
 	
 	
-	var showFeedNames = false
-	var showAvatars = false
+	private(set) var showFeedNames = false
+	private(set) var showAvatars = false
 
 	var isPrevArticleAvailable: Bool {
 		guard let indexPath = currentArticleIndexPath else {
@@ -135,7 +135,7 @@ class AppCoordinator {
 		return nil
 	}
 	
-	var currentArticleIndexPath: IndexPath? {
+	private(set) var currentArticleIndexPath: IndexPath? {
 		didSet {
 			if currentArticleIndexPath != oldValue {
 				NotificationCenter.default.post(name: .ArticleSelectionDidChange, object: self, userInfo: nil)
@@ -143,7 +143,7 @@ class AppCoordinator {
 		}
 	}
 	
-	var articles = ArticleArray() {
+	private(set) var articles = ArticleArray() {
 		didSet {
 			if articles == oldValue {
 				return
@@ -245,24 +245,6 @@ class AppCoordinator {
 	}
 
 	// MARK: API
-	
-	func didSelectFeed(_ indexPath: IndexPath) {
-		masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-		masterTimelineViewController!.coordinator = self
-		currentMasterIndexPath = indexPath
-		masterNavigationController.pushViewController(masterTimelineViewController!, animated: true)
-	}
-	
-	func didSelectArticle(_ indexPath: IndexPath) {
-		let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
-		detailViewController.coordinator = self
-		detailViewController.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
-		detailViewController.navigationItem.leftItemsSupplementBackButton = true
-		currentArticleIndexPath = indexPath
-//		rootSplitViewController.toggleMasterView()
-		rootSplitViewController.showDetailViewController(detailViewController, sender: self)
-
-	}
 	
 	func beginUpdates() {
 		animatingChanges = true
@@ -443,6 +425,40 @@ class AppCoordinator {
 		}
 		
 		return indexes
+	}
+	
+	func selectFeed(_ indexPath: IndexPath) {
+		masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+		masterTimelineViewController!.coordinator = self
+		currentMasterIndexPath = indexPath
+		masterNavigationController.pushViewController(masterTimelineViewController!, animated: true)
+	}
+	
+	func selectArticle(_ indexPath: IndexPath) {
+		if let detailNavController = rootSplitViewController.viewControllers.last as? UINavigationController,
+			let _ = detailNavController.topViewController as? DetailViewController {
+			currentArticleIndexPath = indexPath
+		} else {
+			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
+			detailViewController.coordinator = self
+			detailViewController.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
+			detailViewController.navigationItem.leftItemsSupplementBackButton = true
+			currentArticleIndexPath = indexPath
+			//		rootSplitViewController.toggleMasterView()
+			rootSplitViewController.showDetailViewController(detailViewController, sender: self)
+		}
+	}
+	
+	func selectPrevArticle() {
+		if let indexPath = prevArticleIndexPath {
+			selectArticle(indexPath)
+		}
+	}
+	
+	func selectNextArticle() {
+		if let indexPath = nextArticleIndexPath {
+			selectArticle(indexPath)
+		}
 	}
 	
 	func selectNextUnread() {
