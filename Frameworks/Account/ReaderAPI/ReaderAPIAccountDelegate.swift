@@ -943,7 +943,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		// Mark articles as unread
 		let deltaUnreadArticleIDs = unreadArticleIDs.subtracting(currentUnreadArticleIDs)
-		let markUnreadArticles = account.fetchArticles(forArticleIDs: deltaUnreadArticleIDs)
+		let markUnreadArticles = account.fetchArticles(.articleIDs(deltaUnreadArticleIDs))
 		DispatchQueue.main.async {
 			_ = account.update(markUnreadArticles, statusKey: .read, flag: false)
 		}
@@ -959,7 +959,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		// Mark articles as read
 		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(unreadArticleIDs)
-		let markReadArticles = account.fetchArticles(forArticleIDs: deltaReadArticleIDs)
+		let markReadArticles = account.fetchArticles(.articleIDs(deltaReadArticleIDs))
 		DispatchQueue.main.async {
 			_ = account.update(markReadArticles, statusKey: .read, flag: true)
 		}
@@ -986,7 +986,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		// Mark articles as starred
 		let deltaStarredArticleIDs = starredArticleIDs.subtracting(currentStarredArticleIDs)
-		let markStarredArticles = account.fetchArticles(forArticleIDs: deltaStarredArticleIDs)
+		let markStarredArticles = account.fetchArticles(.articleIDs(deltaStarredArticleIDs))
 		DispatchQueue.main.async {
 			_ = account.update(markStarredArticles, statusKey: .starred, flag: true)
 		}
@@ -1002,7 +1002,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		// Mark articles as unstarred
 		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(starredArticleIDs)
-		let markUnstarredArticles = account.fetchArticles(forArticleIDs: deltaUnstarredArticleIDs)
+		let markUnstarredArticles = account.fetchArticles(.articleIDs(deltaUnstarredArticleIDs))
 		DispatchQueue.main.async {
 			_ = account.update(markUnstarredArticles, statusKey: .starred, flag: false)
 		}
