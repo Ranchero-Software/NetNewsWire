@@ -144,33 +144,19 @@ class DetailViewController: UIViewController {
 	}
 	
 	@IBAction func toggleRead(_ sender: Any) {
-		if let article = coordinator.currentArticle {
-			markArticles(Set([article]), statusKey: .read, flag: !article.status.read)
-		}
+		coordinator.toggleReadForCurrentArticle()
 	}
 	
 	@IBAction func toggleStar(_ sender: Any) {
-		if let article = coordinator.currentArticle {
-			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
-		}
+		coordinator.toggleStarForCurrentArticle()
 	}
 	
 	@IBAction func openBrowser(_ sender: Any) {
-		guard let preferredLink = coordinator.currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
-		UIApplication.shared.open(url, options: [:])
+		coordinator.showBrowserForCurrentArticle()
 	}
 	
 	@IBAction func showActivityDialog(_ sender: Any) {
-		guard let preferredLink = coordinator.currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
-		let itemSource = ArticleActivityItemSource(url: url, subject: coordinator.currentArticle?.title)
-		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
-		activityViewController.popoverPresentationController?.barButtonItem = self.actionBarButtonItem
-		
-		present(activityViewController, animated: true)
+		coordinator.showActivityDialogForCurrentArticle()
 	}
 	
 }

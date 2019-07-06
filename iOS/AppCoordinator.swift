@@ -28,6 +28,13 @@ class AppCoordinator {
 	private var masterFeedViewController: MasterFeedViewController!
 	private var masterTimelineViewController: MasterTimelineViewController?
 	
+	private var detailViewController: DetailViewController? {
+		if let detailNavController = rootSplitViewController.viewControllers.last as? UINavigationController {
+			return detailNavController.topViewController as? DetailViewController
+		}
+		return nil
+	}
+	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
@@ -478,6 +485,37 @@ class AppCoordinator {
 		
 	}
 	
+	func toggleReadForCurrentArticle() {
+		if let article = currentArticle {
+			markArticles(Set([article]), statusKey: .read, flag: !article.status.read)
+		}
+	}
+	
+	func toggleStarForCurrentArticle() {
+		if let article = currentArticle {
+			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
+		}
+	}
+	
+	func showBrowserForCurrentArticle() {
+		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
+			return
+		}
+		UIApplication.shared.open(url, options: [:])
+	}
+	
+	func showActivityDialogForCurrentArticle() {
+		guard let detailViewController = detailViewController else {
+			return
+		}
+		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
+			return
+		}
+		let itemSource = ArticleActivityItemSource(url: url, subject: currentArticle?.title)
+		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
+		
+		activityViewController.popoverPresentationController?.barButtonItem = detailViewController.actionBarButtonItem
+		detailViewController.present(activityViewController, animated: true)	}
 }
 
 // MARK: UISplitViewControllerDelegate
