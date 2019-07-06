@@ -13,7 +13,7 @@ import UIKit
 #elseif os(watchOS)
 import WatchKit
 #elseif os(OSX)
-import Cocoa
+import AppKit
 #endif
 
 public class ColorHash {

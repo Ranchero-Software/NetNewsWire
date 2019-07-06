@@ -934,8 +934,7 @@ private extension Account {
 		// Now we loop through articles exactly once. This makes a huge difference.
 
 		var unreadCountStorage = [String: Int]() // [FeedID: Int]
-		articles.forEach { (article) in
-			precondition(!article.status.read)
+		for article in articles where !article.status.read {
 			unreadCountStorage[article.feedID, default: 0] += 1
 		}
 		feeds.forEach { (feed) in
