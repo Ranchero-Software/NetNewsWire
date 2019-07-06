@@ -40,9 +40,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 				}
 
 				selectionDidChange(nil)
-				fetchArticles()
-				if articles.count > 0 {
-					tableView.scrollRowToVisible(0)
+				if showsSearchResults {
+					fetchAndReplaceArticlesAsync()
+				}
+				else {
+					fetchAndReplaceArticlesSync()
+					if articles.count > 0 {
+						tableView.scrollRowToVisible(0)
+					}
 				}
 			}
 		}
@@ -50,7 +55,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	private weak var delegate: TimelineDelegate?
 	var sharingServiceDelegate: NSSharingServiceDelegate?
-	
+
+	var showsSearchResults = false
 	var selectedArticles: [Article] {
 		return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
 	}
@@ -79,6 +85,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	var undoableCommands = [UndoableCommand]()
+	private var fetchSerialNumber = 0
+	private let fetchRequestQueue = FetchRequestQueue()
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	private var cellAppearance: TimelineCellAppearance!
 	private var cellAppearanceWithAvatar: TimelineCellAppearance!
@@ -100,7 +108,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	private var didRegisterForNotifications = false
-	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 2.0, maxInterval: 5.0)
+	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5, maxInterval: 2.0)
 
 	private var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
@@ -502,13 +510,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 
 	@objc func accountStateDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() {
-			fetchArticles()
+			fetchAndReplaceArticlesAsync()
 		}
 	}
 	
 	@objc func accountsDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() {
-			fetchArticles()
+			fetchAndReplaceArticlesAsync()
 		}
 	}
 
@@ -521,7 +529,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 	@objc func calendarDayChanged(_ note: Notification) {
 		if representedObjectsContainsTodayFeed() {
 			DispatchQueue.main.async { [weak self] in
-				self?.fetchArticles()
+				self?.fetchAndReplaceArticlesAsync()
 			}
 		}
 	}
@@ -606,24 +614,25 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 	}
 
 	@objc func fetchAndMergeArticles() {
-
 		guard let representedObjects = representedObjects else {
 			return
 		}
 
-		performBlockAndRestoreSelection {
-
-			var unsortedArticles = fetchUnsortedArticles(for: representedObjects)
-
+		fetchUnsortedArticlesAsync(for: representedObjects) { [weak self] (unsortedArticles) in
 			// Merge articles by articleID. For any unique articleID in current articles, add to unsortedArticles.
+			guard let strongSelf = self else {
+				return
+			}
 			let unsortedArticleIDs = unsortedArticles.articleIDs()
-			for article in articles {
+			var updatedArticles = unsortedArticles
+			for article in strongSelf.articles {
 				if !unsortedArticleIDs.contains(article.articleID) {
-					unsortedArticles.insert(article)
+					updatedArticles.insert(article)
 				}
 			}
-
-			updateArticles(with: unsortedArticles)
+			strongSelf.performBlockAndRestoreSelection {
+				strongSelf.replaceArticles(with: updatedArticles)
+			}
 		}
 	}
 }
@@ -842,7 +851,6 @@ private extension TimelineViewController {
 	}
 
 	func emptyTheTimeline() {
-
 		if !articles.isEmpty {
 			articles = [Article]()
 		}
@@ -852,7 +860,7 @@ private extension TimelineViewController {
 
 		performBlockAndRestoreSelection {
 			let unsortedArticles = Set(articles)
-			updateArticles(with: unsortedArticles)
+			replaceArticles(with: unsortedArticles)
 		}
 	}
 
@@ -919,18 +927,39 @@ private extension TimelineViewController {
 
 	// MARK: Fetching Articles
 
-	func fetchArticles() {
-
+	func fetchAndReplaceArticlesSync() {
+		// To be called when the user has made a change of selection in the sidebar.
+		// It blocks the main thread, so that there’s no async delay,
+		// so that the entire display refreshes at once.
+		// It’s a better user experience this way.
+		cancelPendingAsyncFetches()
 		guard let representedObjects = representedObjects else {
 			emptyTheTimeline()
 			return
 		}
-
-		let fetchedArticles = fetchUnsortedArticles(for: representedObjects)
-		updateArticles(with: fetchedArticles)
+		let fetchedArticles = fetchUnsortedArticlesSync(for: representedObjects)
+		replaceArticles(with: fetchedArticles)
 	}
 
-	func updateArticles(with unsortedArticles: Set<Article>) {
+	func fetchAndReplaceArticlesAsync() {
+		// To be called when we need to do an entire fetch, but an async delay is okay.
+		// Example: we have the Today feed selected, and the calendar day just changed.
+		cancelPendingAsyncFetches()
+		guard let representedObjects = representedObjects else {
+			emptyTheTimeline()
+			return
+		}
+		fetchUnsortedArticlesAsync(for: representedObjects) { [weak self] (articles) in
+			self?.replaceArticles(with: articles)
+		}
+	}
+
+	func cancelPendingAsyncFetches() {
+		fetchSerialNumber += 1
+		fetchRequestQueue.cancelAllRequests()
+	}
+
+	func replaceArticles(with unsortedArticles: Set<Article>) {
 
 		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
 		if articles != sortedArticles {
@@ -938,18 +967,33 @@ private extension TimelineViewController {
 		}
 	}
 
-	func fetchUnsortedArticles(for representedObjects: [Any]) -> Set<Article> {
-
-		var fetchedArticles = Set<Article>()
-
-		for object in representedObjects {
-
-			if let articleFetcher = object as? ArticleFetcher {
-				fetchedArticles.formUnion(articleFetcher.fetchArticles())
-			}
+	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
+		cancelPendingAsyncFetches()
+		let articleFetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
+		if articleFetchers.isEmpty {
+			return Set<Article>()
 		}
 
+		var fetchedArticles = Set<Article>()
+		for articleFetcher in articleFetchers {
+			fetchedArticles.formUnion(articleFetcher.fetchArticles())
+		}
 		return fetchedArticles
+	}
+
+	func fetchUnsortedArticlesAsync(for representedObjects: [Any], callback: @escaping ArticleSetBlock) {
+		// The callback will *not* be called if the fetch is no longer relevant — that is,
+		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
+		precondition(Thread.isMainThread)
+		cancelPendingAsyncFetches()
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, representedObjects: representedObjects) { [weak self] (articles, operation) in
+			precondition(Thread.isMainThread)
+			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
+				return
+			}
+			callback(articles)
+		}
+		fetchRequestQueue.add(fetchOperation)
 	}
 
 	func selectArticles(_ articleIDs: [String]) {

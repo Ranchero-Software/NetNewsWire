@@ -33,8 +33,10 @@ final class TimelineContainerViewController: NSViewController {
 	private lazy var regularTimelineViewController = {
 		return TimelineViewController(delegate: self)
 	}()
-	private lazy var searchTimelineViewController = {
-		return TimelineViewController(delegate: self)
+	private lazy var searchTimelineViewController: TimelineViewController = {
+		let viewController = TimelineViewController(delegate: self)
+		viewController.showsSearchResults = true
+		return viewController
 	}()
 
     override func viewDidLoad() {

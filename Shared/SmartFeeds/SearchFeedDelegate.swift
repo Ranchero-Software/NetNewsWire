@@ -18,9 +18,11 @@ struct SearchFeedDelegate: SmartFeedDelegate {
 
 	let nameForDisplayPrefix = NSLocalizedString("Search: ", comment: "Search smart feed title prefix")
 	let searchString: String
+	let fetchType: FetchType
 
 	init(searchString: String) {
 		self.searchString = searchString
+		self.fetchType = .search(searchString)
 	}
 
 	func fetchUnreadCount(for: Account, callback: @escaping (Int) -> Void) {
@@ -28,19 +30,3 @@ struct SearchFeedDelegate: SmartFeedDelegate {
 	}
 }
 
-// MARK: - ArticleFetcher
-
-extension SearchFeedDelegate: ArticleFetcher {
-
-	func fetchArticles() -> Set<Article> {
-		var articles = Set<Article>()
-		for account in AccountManager.shared.activeAccounts {
-			articles.formUnion(account.fetchArticlesMatching(searchString))
-		}
-		return articles
-	}
-
-	func fetchUnreadArticles() -> Set<Article> {
-		return fetchArticles().unreadArticles()
-	}
-}

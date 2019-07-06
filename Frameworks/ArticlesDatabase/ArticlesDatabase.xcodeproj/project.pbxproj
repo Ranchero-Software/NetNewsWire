@@ -23,7 +23,6 @@
 		8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */; };
 		8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */; };
 		8477ACBC2221E76F00DF7F37 /* SearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBB2221E76F00DF7F37 /* SearchTable.swift */; };
-		848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */; };
 		848E3EB920FBCFD20004B7ED /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EB820FBCFD20004B7ED /* RSCore.framework */; };
 		848E3EBD20FBCFDE0004B7ED /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EBC20FBCFDE0004B7ED /* RSDatabase.framework */; };
 		84E156EA1F0AB80500F8CC05 /* ArticlesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156E91F0AB80500F8CC05 /* ArticlesDatabase.swift */; };
@@ -131,7 +130,6 @@
 		8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Attachment+Database.swift"; path = "Extensions/Attachment+Database.swift"; sourceTree = "<group>"; };
 		8461461E1F0ABC7300870CB3 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		8477ACBB2221E76F00DF7F37 /* SearchTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTable.swift; sourceTree = "<group>"; };
-		848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCountDictionary.swift; sourceTree = "<group>"; };
 		848E3EB820FBCFD20004B7ED /* RSCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		848E3EBA20FBCFD80004B7ED /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		848E3EBC20FBCFDE0004B7ED /* RSDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -178,7 +176,6 @@
 			isa = PBXGroup;
 			children = (
 				84E156E91F0AB80500F8CC05 /* ArticlesDatabase.swift */,
-				848AD2951F58A91E004FB0EC /* UnreadCountDictionary.swift */,
 				845580661F0AEBCD003CCFA1 /* Constants.swift */,
 				84E156EB1F0AB80E00F8CC05 /* ArticlesTable.swift */,
 				8477ACBB2221E76F00DF7F37 /* SearchTable.swift */,
@@ -356,13 +353,13 @@
 				TargetAttributes = {
 					844BEE361F0AB3AA004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = 9C84TZ7Q6Z;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 					844BEE3F1F0AB3AB004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = 9C84TZ7Q6Z;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -501,7 +498,6 @@
 			files = (
 				845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */,
 				843CB9961F34174100EE6581 /* Author+Database.swift in Sources */,
-				848AD2961F58A91E004FB0EC /* UnreadCountDictionary.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
 				8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */,
 				8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */,
