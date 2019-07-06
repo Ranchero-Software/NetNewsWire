@@ -12,44 +12,59 @@ import Articles
 public protocol ArticleFetcher {
 
 	func fetchArticles() -> Set<Article>
+	func fetchArticlesAsync(_ callback: @escaping ArticleSetBlock)
 	func fetchUnreadArticles() -> Set<Article>
+	func fetchUnreadArticlesAsync(_ callback: @escaping ArticleSetBlock)
 }
 
 extension Feed: ArticleFetcher {
 
 	public func fetchArticles() -> Set<Article> {
+		return account?.fetchArticles(.feed(self)) ?? Set<Article>()
+	}
 
+	public func fetchArticlesAsync(_ callback: @escaping ArticleSetBlock) {
 		guard let account = account else {
 			assertionFailure("Expected feed.account, but got nil.")
-			return Set<Article>()
+			callback(Set<Article>())
+			return
 		}
-		return account.fetchArticles(for: self)
+		account.fetchArticlesAsync(.feed(self), callback)
 	}
 
 	public func fetchUnreadArticles() -> Set<Article> {
+		preconditionFailure("feed.fetchUnreadArticles is unused.")
+	}
 
-		guard let account = account else {
-			assertionFailure("Expected feed.account, but got nil.")
-			return Set<Article>()
-		}
-		return account.fetchUnreadArticles(for: self)
+	public func fetchUnreadArticlesAsync(_ callback: @escaping ArticleSetBlock) {
+		preconditionFailure("feed.fetchUnreadArticlesAsync is unused.")
 	}
 }
 
 extension Folder: ArticleFetcher {
 
 	public func fetchArticles() -> Set<Article> {
-
 		return fetchUnreadArticles()
 	}
 
-	public func fetchUnreadArticles() -> Set<Article> {
+	public func fetchArticlesAsync(_ callback: @escaping ArticleSetBlock) {
+		fetchUnreadArticlesAsync(callback)
+	}
 
+	public func fetchUnreadArticles() -> Set<Article> {
 		guard let account = account else {
 			assertionFailure("Expected folder.account, but got nil.")
 			return Set<Article>()
 		}
+		return account.fetchArticles(.unreadForFolder(self))
+	}
 
-		return account.fetchArticles(folder: self)
+	public func fetchUnreadArticlesAsync(_ callback: @escaping ArticleSetBlock) {
+		guard let account = account else {
+			assertionFailure("Expected folder.account, but got nil.")
+			callback(Set<Article>())
+			return
+		}
+		account.fetchArticlesAsync(.unreadForFolder(self), callback)
 	}
 }

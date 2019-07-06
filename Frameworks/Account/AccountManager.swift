@@ -202,7 +202,39 @@ public final class AccountManager: UnreadCountProvider {
 
 		unreadCount = calculateUnreadCount(activeAccounts)
 	}
-	
+
+	// MARK: - Fetching Articles
+
+	// These fetch articles from active accounts and return a merged Set<Article>.
+
+	public func fetchArticles(_ fetchType: FetchType) ->  Set<Article> {
+		precondition(Thread.isMainThread)
+
+		var articles = Set<Article>()
+		for account in activeAccounts {
+			articles.formUnion(account.fetchArticles(fetchType))
+		}
+		return articles
+	}
+
+	public func fetchArticlesAsync(_ fetchType: FetchType, _ callback: @escaping ArticleSetBlock) {
+		precondition(Thread.isMainThread)
+		
+		var allFetchedArticles = Set<Article>()
+		let numberOfAccounts = activeAccounts.count
+		var accountsReporting = 0
+
+		for account in activeAccounts {
+			account.fetchArticlesAsync(fetchType) { (articles) in
+				allFetchedArticles.formUnion(articles)
+				accountsReporting += 1
+				if accountsReporting == numberOfAccounts {
+					callback(allFetchedArticles)
+				}
+			}
+		}
+	}
+
 	// MARK: Notifications
 	
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {

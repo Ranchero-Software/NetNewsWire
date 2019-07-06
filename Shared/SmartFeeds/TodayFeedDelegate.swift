@@ -13,26 +13,10 @@ import Account
 struct TodayFeedDelegate: SmartFeedDelegate {
 
 	let nameForDisplay = NSLocalizedString("Today", comment: "Today pseudo-feed title")
+	let fetchType = FetchType.today
 
 	func fetchUnreadCount(for account: Account, callback: @escaping (Int) -> Void) {
-
 		account.fetchUnreadCountForToday(callback)
-	}
-
-	// MARK: ArticleFetcher
-
-	func fetchArticles() -> Set<Article> {
-
-		var articles = Set<Article>()
-		for account in AccountManager.shared.activeAccounts {
-			articles.formUnion(account.fetchTodayArticles())
-		}
-		return articles
-	}
-
-	func fetchUnreadArticles() -> Set<Article> {
-
-		return fetchArticles().unreadArticles()
 	}
 }
 

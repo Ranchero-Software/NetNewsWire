@@ -38,6 +38,16 @@ public enum AccountType: Int {
 	// TODO: more
 }
 
+public enum FetchType {
+	case starred
+	case unread
+	case today
+	case unreadForFolder(Folder)
+	case feed(Feed)
+	case articleIDs(Set<String>)
+	case search(String)
+}
+
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
     public struct UserInfoKey {
@@ -519,85 +529,44 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public func fetchArticles(forArticleIDs articleIDs: Set<String>) -> Set<Article> {
-		return database.fetchArticles(forArticleIDs: articleIDs)
-	}
-	
-	public func fetchArticles(for feed: Feed) -> Set<Article> {
-
-		let articles = database.fetchArticles(for: feed.feedID)
-		validateUnreadCount(feed, articles)
-		return articles
-	}
-
-	public func fetchUnreadArticles(for feed: Feed) -> Set<Article> {
-
-		let articles = database.fetchUnreadArticles(for: Set([feed.feedID]))
-		validateUnreadCount(feed, articles)
-		return articles
-	}
-
-	public func fetchUnreadArticles() -> Set<Article> {
-
-		return fetchUnreadArticles(forContainer: self)
-	}
-
-	public func fetchArticles(folder: Folder) -> Set<Article> {
-
-		return fetchUnreadArticles(forContainer: folder)
-	}
-
-	public func fetchUnreadArticles(forContainer container: Container) -> Set<Article> {
-
-		let feeds = container.flattenedFeeds()
-		let articles = database.fetchUnreadArticles(for: feeds.feedIDs())
-
-		// Validate unread counts. This was the site of a performance slowdown:
-		// it was calling going through the entire list of articles once per feed:
-		// feeds.forEach { validateUnreadCount($0, articles) }
-		// Now we loop through articles exactly once. This makes a huge difference.
-
-		var unreadCountStorage = [String: Int]() // [FeedID: Int]
-		articles.forEach { (article) in
-			precondition(!article.status.read)
-			unreadCountStorage[article.feedID, default: 0] += 1
+	public func fetchArticles(_ fetchType: FetchType) -> Set<Article> {
+		switch fetchType {
+		case .starred:
+			return fetchStarredArticles()
+		case .unread:
+			return fetchUnreadArticles()
+		case .today:
+			return fetchTodayArticles()
+		case .unreadForFolder(let folder):
+			return fetchArticles(folder: folder)
+		case .feed(let feed):
+			return fetchArticles(feed: feed)
+		case .articleIDs(let articleIDs):
+			return fetchArticles(articleIDs: articleIDs)
+		case .search(let searchString):
+			return fetchArticlesMatching(searchString)
 		}
-		feeds.forEach { (feed) in
-			let unreadCount = unreadCountStorage[feed.feedID, default: 0]
-			feed.unreadCount = unreadCount
+	}
+
+	public func fetchArticlesAsync(_ fetchType: FetchType, _ callback: @escaping ArticleSetBlock) {
+		switch fetchType {
+		case .starred:
+			fetchStarredArticlesAsync(callback)
+		case .unread:
+			fetchUnreadArticlesAsync(callback)
+		case .today:
+			fetchTodayArticlesAsync(callback)
+		case .unreadForFolder(let folder):
+			fetchArticlesAsync(folder: folder, callback)
+		case .feed(let feed):
+			fetchArticlesAsync(feed: feed, callback)
+		case .articleIDs(let articleIDs):
+			fetchArticlesAsync(articleIDs: articleIDs, callback)
+		case .search(let searchString):
+			fetchArticlesMatchingAsync(searchString, callback)
 		}
-
-		return articles
 	}
 
-	public func fetchTodayArticles() -> Set<Article> {
-
-		return database.fetchTodayArticles(for: flattenedFeeds().feedIDs())
-	}
-
-	public func fetchStarredArticles() -> Set<Article> {
-
-		return database.fetchStarredArticles(for: flattenedFeeds().feedIDs())
-	}
-
-	public func fetchArticlesMatching(_ searchString: String) -> Set<Article> {
-		return database.fetchArticlesMatching(searchString, for: flattenedFeeds().feedIDs())
-	}
-
-	private func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
-
-		// articles must contain all the unread articles for the feed.
-		// The unread number should match the feed’s unread count.
-
-		let feedUnreadCount = articles.reduce(0) { (result, article) -> Int in
-			if article.feed == feed && !article.status.read {
-				return result + 1
-			}
-			return result
-		}
-
-		feed.unreadCount = feedUnreadCount
-	}
 
 	public func fetchUnreadCountForToday(_ callback: @escaping (Int) -> Void) {
 
@@ -861,6 +830,133 @@ extension Account: FeedMetadataDelegate {
 			return
 		}
 		feed.postFeedSettingDidChangeNotification(key)
+	}
+}
+
+// MARK: - Fetching (Private)
+
+private extension Account {
+
+	func fetchStarredArticles() -> Set<Article> {
+		return database.fetchStarredArticles(flattenedFeeds().feedIDs())
+	}
+
+	func fetchStarredArticlesAsync(_ callback: @escaping ArticleSetBlock) {
+		database.fetchedStarredArticlesAsync(flattenedFeeds().feedIDs(), callback)
+	}
+
+	func fetchUnreadArticles() -> Set<Article> {
+		return fetchUnreadArticles(forContainer: self)
+	}
+
+	func fetchUnreadArticlesAsync(_ callback: @escaping ArticleSetBlock) {
+		fetchUnreadArticlesAsync(forContainer: self, callback)
+	}
+
+	func fetchTodayArticles() -> Set<Article> {
+		return database.fetchTodayArticles(flattenedFeeds().feedIDs())
+	}
+
+	func fetchTodayArticlesAsync(_ callback: @escaping ArticleSetBlock) {
+		database.fetchTodayArticlesAsync(flattenedFeeds().feedIDs(), callback)
+	}
+
+	func fetchArticles(folder: Folder) -> Set<Article> {
+		return fetchUnreadArticles(forContainer: folder)
+	}
+
+	func fetchArticlesAsync(folder: Folder, _ callback: @escaping ArticleSetBlock) {
+		fetchUnreadArticlesAsync(forContainer: folder, callback)
+	}
+
+	func fetchArticles(feed: Feed) -> Set<Article> {
+		let articles = database.fetchArticles(feed.feedID)
+		validateUnreadCount(feed, articles)
+		return articles
+	}
+
+	func fetchArticlesAsync(feed: Feed, _ callback: @escaping ArticleSetBlock) {
+		database.fetchArticlesAsync(feed.feedID) { [weak self] (articles) in
+			self?.validateUnreadCount(feed, articles)
+			callback(articles)
+		}
+	}
+
+	func fetchArticlesMatching(_ searchString: String) -> Set<Article> {
+		return database.fetchArticlesMatching(searchString, flattenedFeeds().feedIDs())
+	}
+
+	func fetchArticlesMatchingAsync(_ searchString: String, _ callback: @escaping ArticleSetBlock) {
+		database.fetchArticlesMatchingAsync(searchString, flattenedFeeds().feedIDs(), callback)
+	}
+
+	func fetchArticles(articleIDs: Set<String>) -> Set<Article> {
+		return database.fetchArticles(articleIDs: articleIDs)
+	}
+
+	func fetchArticlesAsync(articleIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
+		return database.fetchArticlesAsync(articleIDs: articleIDs, callback)
+	}
+
+	func fetchUnreadArticles(feed: Feed) -> Set<Article> {
+		let articles = database.fetchUnreadArticles(Set([feed.feedID]))
+		validateUnreadCount(feed, articles)
+		return articles
+	}
+
+	func fetchUnreadArticlesAsync(for feed: Feed, callback: @escaping (Set<Article>) -> Void) {
+		//		database.fetchUnreadArticlesAsync(for: Set([feed.feedID])) { [weak self] (articles) in
+		//			self?.validateUnreadCount(feed, articles)
+		//			callback(articles)
+		//		}
+	}
+
+
+	func fetchUnreadArticles(forContainer container: Container) -> Set<Article> {
+		let feeds = container.flattenedFeeds()
+		let articles = database.fetchUnreadArticles(feeds.feedIDs())
+		validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+		return articles
+	}
+
+	func fetchUnreadArticlesAsync(forContainer container: Container, _ callback: @escaping ArticleSetBlock) {
+		let feeds = container.flattenedFeeds()
+		database.fetchUnreadArticlesAsync(feeds.feedIDs()) { [weak self] (articles) in
+			self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+			callback(articles)
+		}
+	}
+
+	func validateUnreadCountsAfterFetchingUnreadArticles(_ feeds: Set<Feed>, _ articles: Set<Article>) {
+		// Validate unread counts. This was the site of a performance slowdown:
+		// it was calling going through the entire list of articles once per feed:
+		// feeds.forEach { validateUnreadCount($0, articles) }
+		// Now we loop through articles exactly once. This makes a huge difference.
+
+		var unreadCountStorage = [String: Int]() // [FeedID: Int]
+		articles.forEach { (article) in
+			precondition(!article.status.read)
+			unreadCountStorage[article.feedID, default: 0] += 1
+		}
+		feeds.forEach { (feed) in
+			let unreadCount = unreadCountStorage[feed.feedID, default: 0]
+			feed.unreadCount = unreadCount
+		}
+	}
+
+	func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
+
+		// articles must contain all the unread articles for the feed.
+		// The unread number should match the feed’s unread count.
+
+		let feedUnreadCount = articles.reduce(0) { (result, article) -> Int in
+			if article.feed == feed && !article.status.read {
+				return result + 1
+			}
+			return result
+		}
+
+		feed.unreadCount = feedUnreadCount
 	}
 }
 
