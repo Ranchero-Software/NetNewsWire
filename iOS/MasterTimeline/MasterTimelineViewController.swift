@@ -90,16 +90,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		
 		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-
-			guard let articles = self?.coordinator.articles,
-				let undoManager = self?.undoManager,
-				let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
-				return
-			}
-			self?.runCommand(markReadCommand)
-			
-			self?.navigationController?.popViewController(animated: true)
-			
+			self?.coordinator.markAllAsReadInTimeline()
 		}
 		
 		alertController.addAction(markAction)

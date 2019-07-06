@@ -505,6 +505,15 @@ class AppCoordinator: UndoableCommandRunner {
 		runCommand(markReadCommand)
 	}
 	
+	func markAllAsReadInTimeline() {
+		guard let undoManager = undoManager,
+			let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
+				return
+		}
+		runCommand(markReadCommand)
+		masterNavigationController.popViewController(animated: true)
+	}
+	
 	func toggleReadForCurrentArticle() {
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: !article.status.read)
