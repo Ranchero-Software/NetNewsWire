@@ -21,8 +21,13 @@ public extension Notification.Name {
 	static let ArticleSelectionDidChange = Notification.Name(rawValue: "ArticleSelectionDidChange")
 }
 
-class AppCoordinator {
-
+class AppCoordinator: UndoableCommandRunner {
+	
+	var undoableCommands = [UndoableCommand]()
+	var undoManager: UndoManager? {
+		return rootSplitViewController.undoManager
+	}
+	
 	private var rootSplitViewController: UISplitViewController!
 	private var masterNavigationController: UINavigationController!
 	private var masterFeedViewController: MasterFeedViewController!
@@ -485,6 +490,21 @@ class AppCoordinator {
 		
 	}
 	
+	func markAllAsRead() {
+		let accounts = AccountManager.shared.activeAccounts
+		var articles = Set<Article>()
+		accounts.forEach { account in
+			articles.formUnion(account.fetchUnreadArticles())
+		}
+		
+		guard let undoManager = undoManager,
+			let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
+				return
+		}
+		
+		runCommand(markReadCommand)
+	}
+	
 	func toggleReadForCurrentArticle() {
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: !article.status.read)
@@ -495,6 +515,24 @@ class AppCoordinator {
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
 		}
+	}
+	
+	func showSettings() {
+		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
+		settingsNavViewController.modalPresentationStyle = .formSheet
+		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
+		settingsViewController.presentingParentController = masterFeedViewController
+		masterFeedViewController.present(settingsNavViewController, animated: true)
+		
+		//		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
+		//		self.present(settings, animated: true)
+	}
+	
+	func showAdd() {
+		let addViewController = UIStoryboard.add.instantiateInitialViewController()!
+		addViewController.modalPresentationStyle = .formSheet
+		addViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
+		masterFeedViewController.present(addViewController, animated: true)
 	}
 	
 	func showBrowserForCurrentArticle() {
@@ -511,11 +549,14 @@ class AppCoordinator {
 		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}
+		
 		let itemSource = ArticleActivityItemSource(url: url, subject: currentArticle?.title)
 		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
 		
 		activityViewController.popoverPresentationController?.barButtonItem = detailViewController.actionBarButtonItem
-		detailViewController.present(activityViewController, animated: true)	}
+		detailViewController.present(activityViewController, animated: true)
+	}
+	
 }
 
 // MARK: UISplitViewControllerDelegate

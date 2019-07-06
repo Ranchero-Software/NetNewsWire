@@ -393,18 +393,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	// MARK: Actions
 	
 	@IBAction func settings(_ sender: UIBarButtonItem) {
-		
-		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		settingsNavViewController.modalPresentationStyle = .formSheet
-		
-		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
-		settingsViewController.presentingParentController = self
-		
-		self.present(settingsNavViewController, animated: true)
-
-//		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
-//		self.present(settings, animated: true)
-		
+		coordinator.showSettings()
 	}
 
 	@IBAction func markAllAsRead(_ sender: Any) {
@@ -419,20 +408,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		
 		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-			
-			let accounts = AccountManager.shared.activeAccounts
-			var articles = Set<Article>()
-			accounts.forEach { account in
-				articles.formUnion(account.fetchUnreadArticles())
-			}
-			
-			guard let undoManager = self?.undoManager,
-				let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
-					return
-			}
-			
-			self?.runCommand(markReadCommand)
-			
+			self?.coordinator.markAllAsRead()
 		}
 		
 		alertController.addAction(markAction)
@@ -442,12 +418,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
-		let addViewController = UIStoryboard.add.instantiateInitialViewController()!
-		addViewController.modalPresentationStyle = .formSheet
-		addViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
-		addViewController.popoverPresentationController?.barButtonItem = sender
-		
-		self.present(addViewController, animated: true)
+		coordinator.showAdd()
 	}
 	
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
