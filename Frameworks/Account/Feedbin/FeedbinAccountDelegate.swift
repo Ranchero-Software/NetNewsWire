@@ -592,8 +592,8 @@ private extension FeedbinAccountDelegate {
 	}
 	
 	func syncFolders(_ account: Account, _ tags: [FeedbinTag]?) {
-		
 		guard let tags = tags else { return }
+		assert(Thread.isMainThread)
 
 		os_log(.debug, log: log, "Syncing folders with %ld tags.", tags.count)
 
@@ -603,13 +603,11 @@ private extension FeedbinAccountDelegate {
 		if let folders = account.folders {
 			folders.forEach { folder in
 				if !tagNames.contains(folder.name ?? "") {
-					DispatchQueue.main.sync {
-						for feed in folder.topLevelFeeds {
-							account.addFeed(feed)
-							clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-						}
-						account.removeFolder(folder)
+					for feed in folder.topLevelFeeds {
+						account.addFeed(feed)
+						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					}
+					account.removeFolder(folder)
 				}
 			}
 		}
@@ -625,9 +623,7 @@ private extension FeedbinAccountDelegate {
 		// Make any folders Feedbin has, but we don't
 		tagNames.forEach { tagName in
 			if !folderNames.contains(tagName) {
-				DispatchQueue.main.sync {
-					_ = account.ensureFolder(with: tagName)
-				}
+				_ = account.ensureFolder(with: tagName)
 			}
 		}
 		
@@ -681,7 +677,8 @@ private extension FeedbinAccountDelegate {
 	func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
 		
 		guard let subscriptions = subscriptions else { return }
-		
+		assert(Thread.isMainThread)
+
 		os_log(.debug, log: log, "Syncing feeds with %ld subscriptions.", subscriptions.count)
 		
 		let subFeedIds = subscriptions.map { String($0.feedID) }
@@ -691,9 +688,7 @@ private extension FeedbinAccountDelegate {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
 					if !subFeedIds.contains(feed.feedID) {
-						DispatchQueue.main.sync {
-							folder.removeFeed(feed)
-						}
+						folder.removeFeed(feed)
 					}
 				}
 			}
@@ -701,9 +696,7 @@ private extension FeedbinAccountDelegate {
 		
 		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.feedID) {
-				DispatchQueue.main.sync {
-					account.removeFeed(feed)
-				}
+				account.removeFeed(feed)
 			}
 		}
 		
@@ -712,27 +705,24 @@ private extension FeedbinAccountDelegate {
 			
 			let subFeedId = String(subscription.feedID)
 			
-			DispatchQueue.main.sync {
-				if let feed = account.idToFeedDictionary[subFeedId] {
-					feed.name = subscription.name
-					// If the name has been changed on the server remove the locally edited name
-					feed.editedName = nil
-					feed.homePageURL = subscription.homePageURL
-					feed.subscriptionID = String(subscription.subscriptionID)
-				} else {
-					let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
-					feed.subscriptionID = String(subscription.subscriptionID)
-					account.addFeed(feed)
-				}
+			if let feed = account.idToFeedDictionary[subFeedId] {
+				feed.name = subscription.name
+				// If the name has been changed on the server remove the locally edited name
+				feed.editedName = nil
+				feed.homePageURL = subscription.homePageURL
+				feed.subscriptionID = String(subscription.subscriptionID)
+			} else {
+				let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
+				feed.subscriptionID = String(subscription.subscriptionID)
+				account.addFeed(feed)
 			}
-			
 		}
-		
 	}
 
 	func syncTaggings(_ account: Account, _ taggings: [FeedbinTagging]?) {
 		
 		guard let taggings = taggings else { return }
+		assert(Thread.isMainThread)
 
 		os_log(.debug, log: log, "Syncing taggings with %ld taggings.", taggings.count)
 		
@@ -766,11 +756,9 @@ private extension FeedbinAccountDelegate {
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
 				if !taggingFeedIDs.contains(feed.feedID) {
-					DispatchQueue.main.sync {
-						folder.removeFeed(feed)
-						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-						account.addFeed(feed)
-					}
+					folder.removeFeed(feed)
+					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+					account.addFeed(feed)
 				}
 			}
 			
@@ -783,10 +771,8 @@ private extension FeedbinAccountDelegate {
 					guard let feed = account.idToFeedDictionary[taggingFeedID] else {
 						continue
 					}
-					DispatchQueue.main.sync {
-						saveFolderRelationship(for: feed, withFolderName: folderName, id: String(tagging.taggingID))
-						folder.addFeed(feed)
-					}
+					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(tagging.taggingID))
+					folder.addFeed(feed)
 				}
 			}
 			
@@ -795,14 +781,11 @@ private extension FeedbinAccountDelegate {
 		let taggedFeedIDs = Set(taggings.map { String($0.feedID) })
 		
 		// Remove all feeds from the account container that have a tag
-		DispatchQueue.main.sync {
-			for feed in account.topLevelFeeds {
-				if taggedFeedIDs.contains(feed.feedID) {
-					account.removeFeed(feed)
-				}
+		for feed in account.topLevelFeeds {
+			if taggedFeedIDs.contains(feed.feedID) {
+				account.removeFeed(feed)
 			}
 		}
-
 	}
 	
 	func syncFavicons(_ account: Account, _ icons: [FeedbinIcon]?) {
@@ -821,7 +804,6 @@ private extension FeedbinAccountDelegate {
 				}
 			}
 		}
-
 	}
 	
 	
