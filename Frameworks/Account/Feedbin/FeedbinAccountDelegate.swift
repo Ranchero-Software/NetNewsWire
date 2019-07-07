@@ -816,9 +816,7 @@ private extension FeedbinAccountDelegate {
 		for feed in account.flattenedFeeds() {
 			for (key, value) in iconDict {
 				if feed.homePageURL?.contains(key) ?? false {
-					DispatchQueue.main.sync {
-						feed.faviconURL = value
-					}
+					feed.faviconURL = value
 					break
 				}
 			}
