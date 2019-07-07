@@ -533,16 +533,16 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.fetchStarredAndUnreadCount(for: flattenedFeeds().feedIDs(), callback: callback)
 	}
 
-	public func fetchUnreadArticleIDs() -> Set<String> {
-		return database.fetchUnreadArticleIDs()
+	public func fetchUnreadArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		database.fetchUnreadArticleIDs(callback)
+	}
+
+	public func fetchStarredArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		database.fetchStarredArticleIDs(callback)
 	}
 	
-	public func fetchStarredArticleIDs() -> Set<String> {
-		return database.fetchStarredArticleIDs()
-	}
-	
-	public func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return database.fetchArticleIDsForStatusesWithoutArticles()
+	public func fetchArticleIDsForStatusesWithoutArticles(_ callback: @escaping (Set<String>) -> Void) {
+		database.fetchArticleIDsForStatusesWithoutArticles(callback)
 	}
 
 	public func opmlDocument() -> String {
@@ -615,11 +615,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 	}
 
+	@discardableResult
 	func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		
 		// Returns set of Articles whose statuses did change.
-		
-		guard let updatedStatuses = database.mark(articles, statusKey: statusKey, flag: flag) else {
+		guard !articles.isEmpty, let updatedStatuses = database.mark(articles, statusKey: statusKey, flag: flag) else {
 			return nil
 		}
 		
@@ -632,7 +631,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	func ensureStatuses(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
-		database.ensureStatuses(articleIDs, statusKey, flag)
+		if !articleIDs.isEmpty {
+			database.ensureStatuses(articleIDs, statusKey, flag)
+		}
 	}
 	
 	// MARK: - Container

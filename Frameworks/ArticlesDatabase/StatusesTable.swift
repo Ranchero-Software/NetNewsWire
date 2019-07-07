@@ -77,31 +77,27 @@ final class StatusesTable: DatabaseTable {
 
 	// MARK: Fetching
 
-	func fetchUnreadArticleIDs() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses where read=0 and userDeleted=0;")
+	func fetchUnreadArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		fetchArticleIDs("select articleID from statuses where read=0 and userDeleted=0;", callback)
 	}
 
-	func fetchStarredArticleIDs() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses where starred=1 and userDeleted=0;")
+	func fetchStarredArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		fetchArticleIDs("select articleID from statuses where starred=1 and userDeleted=0;", callback)
 	}
 	
-	func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses s where (read=0 or starred=1) and userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);")
+	func fetchArticleIDsForStatusesWithoutArticles(_ callback: @escaping (Set<String>) -> Void) {
+		fetchArticleIDs("select articleID from statuses s where (read=0 or starred=1) and userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);", callback)
 	}
 	
-	func fetchArticleIDs(_ sql: String) -> Set<String> {
-		
-		var statuses: Set<String>? = nil
-		
-		queue.fetchSync { (database) in
-			if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
-				statuses = resultSet.mapToSet(self.articleIDWithRow)
+	func fetchArticleIDs(_ sql: String, _ callback: @escaping (Set<String>) -> Void) {
+		queue.fetch { (database) in
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
+				callback(Set<String>())
+				return
 			}
-			
+			let statuses = resultSet.mapToSet(self.articleIDWithRow)
+			callback(statuses)
 		}
-		
-		return statuses != nil ? statuses! : Set<String>()
-		
 	}
 	
 	func articleIDWithRow(_ row: FMResultSet) -> String? {
