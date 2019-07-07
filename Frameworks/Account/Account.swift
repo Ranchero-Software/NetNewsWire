@@ -18,6 +18,8 @@ import ArticlesDatabase
 import RSWeb
 import os.log
 
+// Main thread only.
+
 public extension Notification.Name {
 	static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
 	static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
@@ -684,6 +686,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - Container
 
 	public func flattenedFeeds() -> Set<Feed> {
+		assert(Thread.isMainThread)
 		if flattenedFeedsNeedUpdate {
 			updateFlattenedFeeds()
 		}

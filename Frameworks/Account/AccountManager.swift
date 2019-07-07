@@ -10,6 +10,8 @@ import Foundation
 import RSCore
 import Articles
 
+// Main thread only.
+
 public extension Notification.Name {
 	static let AccountsDidChange = Notification.Name(rawValue: "AccountsDidChange")
 }
@@ -51,6 +53,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public var activeAccounts: [Account] {
+		assert(Thread.isMainThread)
 		return Array(accountsDictionary.values.filter { $0.isActive })
 	}
 
