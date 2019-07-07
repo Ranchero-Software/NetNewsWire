@@ -384,16 +384,16 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: Status
 	
-	func fetchUnreadArticleIDs() -> Set<String> {
-		return statusesTable.fetchUnreadArticleIDs()
+	func fetchUnreadArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		statusesTable.fetchUnreadArticleIDs(callback)
 	}
 	
-	func fetchStarredArticleIDs() -> Set<String> {
-		return statusesTable.fetchStarredArticleIDs()
+	func fetchStarredArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		statusesTable.fetchStarredArticleIDs(callback)
 	}
 	
-	func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return statusesTable.fetchArticleIDsForStatusesWithoutArticles()
+	func fetchArticleIDsForStatusesWithoutArticles(_ callback: @escaping (Set<String>) -> Void) {
+		statusesTable.fetchArticleIDsForStatusesWithoutArticles(callback)
 	}
 	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {

@@ -128,16 +128,16 @@ public final class ArticlesDatabase {
 	
 	// MARK: - Status
 	
-	public func fetchUnreadArticleIDs() -> Set<String> {
-		return articlesTable.fetchUnreadArticleIDs()
+	public func fetchUnreadArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		articlesTable.fetchUnreadArticleIDs(callback)
 	}
 	
-	public func fetchStarredArticleIDs() -> Set<String> {
-		return articlesTable.fetchStarredArticleIDs()
+	public func fetchStarredArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		articlesTable.fetchStarredArticleIDs(callback)
 	}
 	
-	public func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return articlesTable.fetchArticleIDsForStatusesWithoutArticles()
+	public func fetchArticleIDsForStatusesWithoutArticles(_ callback: @escaping (Set<String>) -> Void) {
+		articlesTable.fetchArticleIDsForStatusesWithoutArticles(callback)
 	}
 	
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {
