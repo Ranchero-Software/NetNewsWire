@@ -825,31 +825,28 @@ private extension ReaderAPIAccountDelegate {
 	func refreshMissingArticles(_ account: Account, completion: @escaping (() -> Void)) {
 		
 		os_log(.debug, log: log, "Refreshing missing articles...")
-		let articleIDs = Array(account.fetchArticleIDsForStatusesWithoutArticles())
-		
 		let group = DispatchGroup()
-		
-		let chunkedArticleIDs = articleIDs.chunked(into: 100)
-		
-		for chunk in chunkedArticleIDs {
-			
-			group.enter()
-			caller.retrieveEntries(articleIDs: chunk) { result in
-				
-				switch result {
-				case .success(let entries):
-				
-					self.processEntries(account: account, entries: entries) {
+
+		account.fetchArticleIDsForStatusesWithoutArticles { (fetchedArticleIDs) in
+			let articleIDs = Array(fetchedArticleIDs)
+			let chunkedArticleIDs = articleIDs.chunked(into: 100)
+
+			for chunk in chunkedArticleIDs {
+				group.enter()
+				self.caller.retrieveEntries(articleIDs: chunk) { result in
+
+					switch result {
+					case .success(let entries):
+						self.processEntries(account: account, entries: entries) {
+							group.leave()
+						}
+
+					case .failure(let error):
+						os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
 						group.leave()
 					}
-					
-				case .failure(let error):
-					os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
-					group.leave()
 				}
-				
 			}
-
 		}
 
 		group.notify(queue: DispatchQueue.main) {
@@ -857,7 +854,6 @@ private extension ReaderAPIAccountDelegate {
 			os_log(.debug, log: self.log, "Done refreshing missing articles.")
 			completion()
 		}
-		
 	}
 
 	func refreshArticles(_ account: Account, page: String?, completion: @escaping (() -> Void)) {
@@ -933,46 +929,34 @@ private extension ReaderAPIAccountDelegate {
 	}
 	
 	func syncArticleReadState(account: Account, articleIDs: [Int]?) {
-		
 		guard let articleIDs = articleIDs else {
 			return
 		}
 
 		let unreadArticleIDs = Set(articleIDs.map { String($0) } )
-		let currentUnreadArticleIDs = account.fetchUnreadArticleIDs()
-		
-		// Mark articles as unread
-		let deltaUnreadArticleIDs = unreadArticleIDs.subtracting(currentUnreadArticleIDs)
-		let markUnreadArticles = account.fetchArticles(.articleIDs(deltaUnreadArticleIDs))
-		DispatchQueue.main.async {
-			_ = account.update(markUnreadArticles, statusKey: .read, flag: false)
-		}
-	
-		// Save any unread statuses for articles we haven't yet received
-		let markUnreadArticleIDs = Set(markUnreadArticles.map { $0.articleID })
-		let missingUnreadArticleIDs = deltaUnreadArticleIDs.subtracting(markUnreadArticleIDs)
-		if !missingUnreadArticleIDs.isEmpty {
-			DispatchQueue.main.async {
+		account.fetchUnreadArticleIDs { (currentUnreadArticleIDs) in
+			// Mark articles as unread
+			let deltaUnreadArticleIDs = unreadArticleIDs.subtracting(currentUnreadArticleIDs)
+			account.fetchArticlesAsync(.articleIDs(deltaUnreadArticleIDs)) { (markUnreadArticles) in
+				account.update(markUnreadArticles, statusKey: .read, flag: false)
+
+				// Save any unread statuses for articles we haven't yet received
+				let markUnreadArticleIDs = Set(markUnreadArticles.map { $0.articleID })
+				let missingUnreadArticleIDs = deltaUnreadArticleIDs.subtracting(markUnreadArticleIDs)
 				account.ensureStatuses(missingUnreadArticleIDs, .read, false)
 			}
-		}
-		
-		// Mark articles as read
-		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(unreadArticleIDs)
-		let markReadArticles = account.fetchArticles(.articleIDs(deltaReadArticleIDs))
-		DispatchQueue.main.async {
-			_ = account.update(markReadArticles, statusKey: .read, flag: true)
-		}
-	
-		// Save any read statuses for articles we haven't yet received
-		let markReadArticleIDs = Set(markReadArticles.map { $0.articleID })
-		let missingReadArticleIDs = deltaReadArticleIDs.subtracting(markReadArticleIDs)
-		if !missingReadArticleIDs.isEmpty {
-			DispatchQueue.main.async {
+
+			// Mark articles as read
+			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(unreadArticleIDs)
+			account.fetchArticlesAsync(.articleIDs(deltaReadArticleIDs)) { (markReadArticles) in
+				account.update(markReadArticles, statusKey: .read, flag: true)
+
+				// Save any read statuses for articles we haven't yet received
+				let markReadArticleIDs = Set(markReadArticles.map { $0.articleID })
+				let missingReadArticleIDs = deltaReadArticleIDs.subtracting(markReadArticleIDs)
 				account.ensureStatuses(missingReadArticleIDs, .read, true)
 			}
 		}
-	
 	}
 	
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?) {
@@ -982,40 +966,29 @@ private extension ReaderAPIAccountDelegate {
 		}
 
 		let starredArticleIDs = Set(articleIDs.map { String($0) } )
-		let currentStarredArticleIDs = account.fetchStarredArticleIDs()
-		
-		// Mark articles as starred
-		let deltaStarredArticleIDs = starredArticleIDs.subtracting(currentStarredArticleIDs)
-		let markStarredArticles = account.fetchArticles(.articleIDs(deltaStarredArticleIDs))
-		DispatchQueue.main.async {
-			_ = account.update(markStarredArticles, statusKey: .starred, flag: true)
-		}
-		
-		// Save any starred statuses for articles we haven't yet received
-		let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
-		let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
-		if !missingStarredArticleIDs.isEmpty {
-			DispatchQueue.main.async {
+		account.fetchStarredArticleIDs { (currentStarredArticleIDs) in
+			// Mark articles as starred
+			let deltaStarredArticleIDs = starredArticleIDs.subtracting(currentStarredArticleIDs)
+			account.fetchArticlesAsync(.articleIDs(deltaStarredArticleIDs)) { (markStarredArticles) in
+				account.update(markStarredArticles, statusKey: .starred, flag: true)
+
+				// Save any starred statuses for articles we haven't yet received
+				let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
+				let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
 				account.ensureStatuses(missingStarredArticleIDs, .starred, true)
 			}
-		}
-		
-		// Mark articles as unstarred
-		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(starredArticleIDs)
-		let markUnstarredArticles = account.fetchArticles(.articleIDs(deltaUnstarredArticleIDs))
-		DispatchQueue.main.async {
-			_ = account.update(markUnstarredArticles, statusKey: .starred, flag: false)
-		}
-		
-		// Save any unstarred statuses for articles we haven't yet received
-		let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
-		let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
-		if !missingUnstarredArticleIDs.isEmpty {
-			DispatchQueue.main.async {
+
+			// Mark articles as unstarred
+			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(starredArticleIDs)
+			account.fetchArticlesAsync(.articleIDs(deltaUnstarredArticleIDs)) { (markUnstarredArticles) in
+				account.update(markUnstarredArticles, statusKey: .starred, flag: false)
+
+				// Save any unstarred statuses for articles we haven't yet received
+				let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
+				let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
 				account.ensureStatuses(missingUnstarredArticleIDs, .starred, false)
 			}
 		}
-		
 	}
 
 	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
