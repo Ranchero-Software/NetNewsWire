@@ -1,6 +1,6 @@
 //
 //  FeedFinder.swift
-//  FeedFinder
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 8/2/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
@@ -14,9 +14,7 @@ import RSCore
 class FeedFinder {
 	
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
-
 		downloadUsingCache(url) { (data, response, error) in
-			
 			if response?.forcedStatusCode == 404 {
 				completion(.failure(AccountError.createErrorNotFound))
 				return
@@ -49,17 +47,13 @@ class FeedFinder {
 			}
 			
 			FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString, completion: completion)
-			
 		}
-
 	}
-
 }
 
 private extension FeedFinder {
 
 	static func addFeedSpecifier(_ feedSpecifier: FeedSpecifier, feedSpecifiers: inout [String: FeedSpecifier]) {
-
 		// If there’s an existing feed specifier, merge the two so that we have the best data. If one has a title and one doesn’t, use that non-nil title. Use the better source.
 
 		if let existingFeedSpecifier = feedSpecifiers[feedSpecifier.urlString] {
@@ -72,7 +66,6 @@ private extension FeedFinder {
 	}
 
 	static func findFeedsInHTMLPage(htmlData: Data, urlString: String, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
-
 		// Feeds in the <head> section we automatically assume are feeds.
 		// If there are none from the <head> section,
 		// then possible feeds in <body> section are downloaded individually
@@ -99,16 +92,17 @@ private extension FeedFinder {
 		if didFindFeedInHTMLHead {
 			completion(.success(Set(feedSpecifiers.values)))
 			return
-		} else if feedSpecifiersToDownload.isEmpty {
+		}
+		else if feedSpecifiersToDownload.isEmpty {
 			completion(.failure(AccountError.createErrorNotFound))
 			return
-		} else {
+		}
+		else {
 			downloadFeedSpecifiers(feedSpecifiersToDownload, feedSpecifiers: feedSpecifiers, completion: completion)
 		}
 	}
 
 	static func possibleFeedsInHTMLPage(htmlData: Data, urlString: String) -> Set<FeedSpecifier> {
-
 		let parserData = ParserData(url: urlString, data: htmlData)
 		var feedSpecifiers = HTMLFeedFinder(parserData: parserData).feedSpecifiers
 
@@ -139,7 +133,6 @@ private extension FeedFinder {
 		let group = DispatchGroup()
 		
 		for downloadFeedSpecifier in downloadFeedSpecifiers {
-
 			guard let url = URL(string: downloadFeedSpecifier.urlString) else {
 				continue
 			}
@@ -159,12 +152,10 @@ private extension FeedFinder {
 		group.notify(queue: DispatchQueue.main) {
 			completion(.success(Set(resultFeedSpecifiers.values)))
 		}
-		
 	}
 
 	static func isFeed(_ data: Data, _ urlString: String) -> Bool {
 		let parserData = ParserData(url: urlString, data: data)
 		return FeedParser.canParse(parserData)
 	}
-	
 }

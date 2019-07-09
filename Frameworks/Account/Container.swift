@@ -76,7 +76,6 @@ public extension Container {
 	}
 
 	func flattenedFeeds() -> Set<Feed> {
-
 		var feeds = Set<Feed>()
 		feeds.formUnion(topLevelFeeds)
 		if let folders = folders {

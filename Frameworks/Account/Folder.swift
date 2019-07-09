@@ -1,6 +1,6 @@
 //
 //  Folder.swift
-//  DataModel
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 7/1/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
@@ -52,7 +52,6 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 	// MARK: - Init
 
 	init(account: Account, name: String?) {
-		
 		self.account = account
 		self.name = name
 
@@ -67,7 +66,6 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 	// MARK: - Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {
-
 		if let object = note.object {
 			if objectIsChild(object as AnyObject) {
 				updateUnreadCount()
@@ -76,7 +74,6 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 	}
 
 	@objc func childrenDidChange(_ note: Notification) {
-
 		updateUnreadCount()
 	}
 
@@ -114,7 +111,6 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 	// MARK: - Equatable
 
 	static public func ==(lhs: Folder, rhs: Folder) -> Bool {
-
 		return lhs === rhs
 	}
 }
@@ -141,7 +137,6 @@ private extension Folder {
 extension Folder: OPMLRepresentable {
 
 	public func OPMLString(indentLevel: Int) -> String {
-
 		let escapedTitle = nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
 		var s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\">\n"
 		s = s.rs_string(byPrependingNumberOfTabs: indentLevel)

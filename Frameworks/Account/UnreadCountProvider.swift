@@ -25,12 +25,10 @@ public protocol UnreadCountProvider {
 public extension UnreadCountProvider {
 	
 	func postUnreadCountDidChangeNotification() {
-		
 		NotificationCenter.default.post(name: .UnreadCountDidChange, object: self, userInfo: nil)
 	}
 
 	func calculateUnreadCount<T: Collection>(_ children: T) -> Int {
-
 		let updatedUnreadCount = children.reduce(0) { (result, oneChild) -> Int in
 			if let oneUnreadCountProvider = oneChild as? UnreadCountProvider {
 				return result + oneUnreadCountProvider.unreadCount

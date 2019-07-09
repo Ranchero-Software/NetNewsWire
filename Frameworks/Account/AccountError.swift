@@ -1,6 +1,6 @@
 //
 //  AccountError.swift
-//  Account
+//  NetNewsWire
 //
 //  Created by Maurice Parker on 5/26/19.
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
@@ -65,5 +65,4 @@ public enum AccountError: LocalizedError {
 		let localizedText = NSLocalizedString("An error occurred while processing the \"%@\" account: %@", comment: "Unknown error")
 		return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay, error.localizedDescription) as String
 	}
-	
 }

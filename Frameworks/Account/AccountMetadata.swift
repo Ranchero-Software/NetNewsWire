@@ -68,5 +68,4 @@ final class AccountMetadata: Codable {
 	func valueDidChange(_ key: CodingKeys) {
 		delegate?.valueDidChange(self, key: key)
 	}
-	
 }
