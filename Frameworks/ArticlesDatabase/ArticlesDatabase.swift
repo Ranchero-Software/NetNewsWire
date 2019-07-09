@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import RSCore
 import RSDatabase
 import RSParser
 import Articles
@@ -23,12 +22,9 @@ public typealias UpdateArticlesWithFeedCompletionBlock = (Set<Article>?, Set<Art
 
 public final class ArticlesDatabase {
 
-	private let accountID: String
 	private let articlesTable: ArticlesTable
 
 	public init(databaseFilePath: String, accountID: String) {
-		self.accountID = accountID
-		
 		let queue = RSDatabaseQueue(filepath: databaseFilePath, excludeFromBackup: false)
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue)
 
