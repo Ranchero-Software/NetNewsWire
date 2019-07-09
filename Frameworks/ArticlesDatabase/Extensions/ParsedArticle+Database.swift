@@ -1,6 +1,6 @@
 //
 //  ParsedArticle+Database.swift
-//  Database
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 9/18/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
