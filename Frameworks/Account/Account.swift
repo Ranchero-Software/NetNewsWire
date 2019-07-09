@@ -1,6 +1,6 @@
 //
 //  Account.swift
-//  DataModel
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 7/1/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
@@ -211,7 +211,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
-		
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
@@ -248,12 +247,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-
         NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
-		
 		pullObjectsFromDisk()
 		
 		DispatchQueue.main.async {
@@ -262,7 +259,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		self.delegate.accountDidInitialize(self)
 		startingUp = false
-		
 	}
 	
 	// MARK: - API
@@ -282,7 +278,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		try CredentialsManager.storeCredentials(credentials, server: server)
 		
 		delegate.credentials = credentials
-		
 	}
 	
 	public func retrieveBasicCredentials() throws -> Credentials? {
@@ -324,7 +319,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-		
 		guard !delegate.opmlImportInProgress else {
 			completion(.failure(AccountError.opmlImportInProgress))
 			return
@@ -350,7 +344,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	@discardableResult
 	public func ensureFolder(with name: String) -> Folder? {
-
 		// TODO: support subfolders, maybe, some day
 
 		if name.isEmpty {
@@ -370,7 +363,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func ensureFolder(withFolderNames folderNames: [String]) -> Folder? {
-
 		// TODO: support subfolders, maybe, some day.
 		// Since we don’t, just take the last name and make sure there’s a Folder.
 
@@ -401,14 +393,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
-		
 		let metadata = feedMetadata(feedURL: url, feedID: feedID)
 		let feed = Feed(account: self, url: url, metadata: metadata)
 		feed.name = name
 		feed.homePageURL = homePageURL
 		
 		return feed
-		
 	}
 	
 	public func removeFeed(_ feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -454,7 +444,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	func loadOPML(_ opmlDocument: RSOPMLDocument) {
-
 		guard let children = opmlDocument.children else {
 			return
 		}
@@ -468,13 +457,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func updateUnreadCounts(for feeds: Set<Feed>) {
-
 		if feeds.isEmpty {
 			return
 		}
 		
 		database.fetchUnreadCounts(for: feeds.feedIDs()) { (unreadCountDictionary) in
-
 			for feed in feeds {
 				if let unreadCount = unreadCountDictionary[feed.feedID] {
 					feed.unreadCount = unreadCount
@@ -521,15 +508,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-
 	public func fetchUnreadCountForToday(_ callback: @escaping (Int) -> Void) {
-
 		let startOfToday = NSCalendar.startOfToday()
 		database.fetchUnreadCount(for: flattenedFeeds().feedIDs(), since: startOfToday, callback: callback)
 	}
 
 	public func fetchUnreadCountForStarredArticles(_ callback: @escaping (Int) -> Void) {
-
 		database.fetchStarredAndUnreadCount(for: flattenedFeeds().feedIDs(), callback: callback)
 	}
 
@@ -595,9 +579,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	func update(_ feed: Feed, parsedItems: Set<ParsedItem>, defaultRead: Bool = false, _ completion: @escaping (() -> Void)) {
-		
 		database.update(feedID: feed.feedID, parsedItems: parsedItems, defaultRead: defaultRead) { (newArticles, updatedArticles) in
-			
 			var userInfo = [String: Any]()
 			if let newArticles = newArticles, !newArticles.isEmpty {
 				self.updateUnreadCounts(for: Set([feed]))
@@ -612,7 +594,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			
 			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
 		}
-		
 	}
 
 	@discardableResult
@@ -627,7 +608,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		noteStatusesForArticlesDidChange(updatedArticles)
 		return updatedArticles
-		
 	}
 
 	func ensureStatuses(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
@@ -673,7 +653,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - Debug
 
 	public func debugDropConditionalGetInfo() {
-
 		#if DEBUG
 			flattenedFeeds().forEach{ $0.debugDropConditionalGetInfo() }
 		#endif
@@ -692,7 +671,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - Notifications
 
 	@objc func downloadProgressDidChange(_ note: Notification) {
-
 		guard let noteObject = note.object as? DownloadProgress, noteObject === refreshProgress else {
 			return
 		}
@@ -708,14 +686,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
     
     @objc func batchUpdateDidPerform(_ note: Notification) {
-
 		flattenedFeedsNeedUpdate = true
 		rebuildFeedDictionaries()
         updateUnreadCount()
     }
 
 	@objc func childrenDidChange(_ note: Notification) {
-
 		guard let object = note.object else {
 			return
 		}
@@ -729,14 +705,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
-
 		if let folder = note.object as? Folder, folder.account === self {
 			structureDidChange()
 		}
 	}
 
 	@objc func saveToDiskIfNeeded() {
-
 		if dirty && !isDeleted {
 			saveToDisk()
 		}
@@ -763,7 +737,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - Equatable
 
 	public class func ==(lhs: Account, rhs: Account) -> Bool {
-
 		return lhs === rhs
 	}
 }
@@ -900,7 +873,6 @@ private extension Account {
 	}
 
 	func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
-
 		// articles must contain all the unread articles for the feed.
 		// The unread number should match the feed’s unread count.
 
@@ -985,11 +957,9 @@ private extension Account {
 		BatchUpdate.shared.perform {
 			loadOPMLItems(children, parentFolder: nil)
 		}
-
 	}
 
 	func saveToDisk() {
-
 		dirty = false
 
 		let opmlDocumentString = opmlDocument()
@@ -1091,7 +1061,6 @@ private extension Account {
 	}
 
 	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
-
 		var feedsToAdd = Set<Feed>()
 
 		items.forEach { (item) in
@@ -1141,7 +1110,6 @@ private extension Account {
     }
     
     func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
-        
 		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
         
@@ -1153,10 +1121,9 @@ private extension Account {
     }
 
 	func fetchAllUnreadCounts() {
-
 		fetchingAllUnreadCounts = true
-		database.fetchAllNonZeroUnreadCounts { (unreadCountDictionary) in
 
+		database.fetchAllNonZeroUnreadCounts { (unreadCountDictionary) in
 			if unreadCountDictionary.isEmpty {
 				self.fetchingAllUnreadCounts = false
 				self.updateUnreadCount()
@@ -1165,7 +1132,6 @@ private extension Account {
 			}
 
 			self.flattenedFeeds().forEach{ (feed) in
-
 				// When the unread count is zero, it won’t appear in unreadCountDictionary.
 
 				if let unreadCount = unreadCountDictionary[feed.feedID] {
@@ -1187,10 +1153,8 @@ private extension Account {
 extension Account {
 
 	public func existingFeed(with feedID: String) -> Feed? {
-
 		return idToFeedDictionary[feedID]
 	}
-
 }
 
 // MARK: - OPMLRepresentable
@@ -1198,7 +1162,6 @@ extension Account {
 extension Account: OPMLRepresentable {
 
 	public func OPMLString(indentLevel: Int) -> String {
-
 		var s = ""
 		for feed in topLevelFeeds {
 			s += feed.OPMLString(indentLevel: indentLevel + 1)
