@@ -1,6 +1,6 @@
 //
 //  AttachmentsTable.swift
-//  Database
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 7/15/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -17,14 +17,12 @@ final class AttachmentsTable: DatabaseRelatedObjectsTable {
 	var cache = DatabaseObjectCache()
 
 	init(name: String) {
-
 		self.name = name
 	}
 	
-	// MARK: DatabaseRelatedObjectsTable
+	// MARK: - DatabaseRelatedObjectsTable
 
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
-
 		if let attachment = Attachment(row: row) {
 			return attachment as DatabaseObject
 		}
