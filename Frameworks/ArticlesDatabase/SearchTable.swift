@@ -1,6 +1,6 @@
 //
 //  SearchTable.swift
-//  ArticlesDatabase
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 2/23/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
@@ -109,10 +109,6 @@ private extension SearchTable {
 
 	func insert(_ article: ArticleSearchInfo, _ database: FMDatabase) -> Int {
 		let rowDictionary: DatabaseDictionary = [DatabaseKey.body: article.bodyForIndex, DatabaseKey.title: article.title ?? ""]
-//		rowDictionary[DatabaseKey.title] = article.title ?? ""
-//		rowDictionary[DatabaseKey.body] = article.bodyForIndex
-//		rowDictionary.setObject(article.title ?? "", forKey: DatabaseKey.title as NSString)
-//		rowDictionary.setObject(article.bodyForIndex, forKey: DatabaseKey.body as NSString)
 		insertRow(rowDictionary, insertType: .normal, in: database)
 		return Int(database.lastInsertRowId())
 	}

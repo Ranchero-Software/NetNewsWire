@@ -1,6 +1,6 @@
 //
 //  ArticleStatus+Database.swift
-//  Database
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 7/3/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -13,7 +13,6 @@ import Articles
 extension ArticleStatus {
 	
 	convenience init(articleID: String, dateArrived: Date, row: FMResultSet) {
-		
 		let read = row.bool(forColumn: DatabaseKey.read)
 		let starred = row.bool(forColumn: DatabaseKey.starred)
 		let userDeleted = row.bool(forColumn: DatabaseKey.userDeleted)
