@@ -45,7 +45,7 @@ final class ArticlesTable: DatabaseTable {
 		self.attachmentsLookupTable = DatabaseLookupTable(name: DatabaseTableName.attachmentsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.attachmentID, relatedTable: attachmentsTable, relationshipName: RelationshipName.attachments)
 	}
 
-	// MARK: - Fetch Articles for Feed
+	// MARK: - Fetching Articles for Feed
 	
 	func fetchArticles(_ feedID: String) -> Set<Article> {
 		return fetchArticles{ self.fetchArticlesForFeedID(feedID, withLimits: true, $0) }
@@ -59,7 +59,7 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject], withLimits: withLimits)
 	}
 
-	// MARK: - Fetch Articles by articleID
+	// MARK: - Fetching Articles by articleID
 
 	func fetchArticles(articleIDs: Set<String>) -> Set<Article> {
 		return fetchArticles{ self.fetchArticles(articleIDs: articleIDs, $0) }
@@ -79,7 +79,7 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
 	}
 
-	// MARK: - Fetch Unread Articles
+	// MARK: - Fetching Unread Articles
 
 	func fetchUnreadArticles(_ feedIDs: Set<String>) -> Set<Article> {
 		return fetchArticles{ self.fetchUnreadArticles(feedIDs, $0) }
@@ -100,7 +100,7 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
 	}
 
-	// MARK: - Fetch Today Articles
+	// MARK: - Fetching Today Articles
 
 	func fetchTodayArticles(_ feedIDs: Set<String>) -> Set<Article> {
 		return fetchArticles{ self.fetchTodayArticles(feedIDs, $0) }
@@ -124,7 +124,7 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
 	}
 
-	// MARK: - Fetch Starred Articles
+	// MARK: - Fetching Starred Articles
 
 	func fetchStarredArticles(_ feedIDs: Set<String>) -> Set<Article> {
 		return fetchArticles{ self.fetchStarredArticles(feedIDs, $0) }
@@ -145,7 +145,7 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
 		}
 
-	// MARK: - Fetch Search Articles
+	// MARK: - Fetching Search Articles
 
 	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) -> Set<Article> {
 		var articles: Set<Article> = Set<Article>()
@@ -180,7 +180,7 @@ final class ArticlesTable: DatabaseTable {
 		return articles.filter{ feedIDs.contains($0.feedID) }
 	}
 
-	// MARK: - Fetch Articles for Indexer
+	// MARK: - Fetching Articles for Indexer
 
 	func fetchArticleSearchInfos(_ articleIDs: Set<String>, in database: FMDatabase) -> Set<ArticleSearchInfo>? {
 		let parameters = articleIDs.map { $0 as AnyObject }
@@ -207,10 +207,9 @@ final class ArticlesTable: DatabaseTable {
 		return nil
 	}
 
-	// MARK: Updating
+	// MARK: - Updating
 	
 	func update(_ feedID: String, _ parsedItems: Set<ParsedItem>, _ read: Bool, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
-
 		if parsedItems.isEmpty {
 			completion(nil, nil)
 			return
@@ -228,7 +227,6 @@ final class ArticlesTable: DatabaseTable {
 		let articleIDs = Set(parsedItems.map { $0.articleID })
 		
 		self.queue.update { (database) in
-			
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
 			assert(statusesDictionary.count == articleIDs.count)
 			
@@ -264,7 +262,7 @@ final class ArticlesTable: DatabaseTable {
 			if articleIDs.isEmpty {
 				return
 			}
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				self.searchTable.ensureIndexedArticles(for: articleIDs)
 			}
 		}
@@ -278,10 +276,9 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 	
-	// MARK: Unread Counts
+	// MARK: - Unread Counts
 	
 	func fetchUnreadCounts(_ feedIDs: Set<String>, _ completion: @escaping UnreadCountCompletionBlock) {
-		
 		if feedIDs.isEmpty {
 			completion(UnreadCountDictionary())
 			return
@@ -290,19 +287,17 @@ final class ArticlesTable: DatabaseTable {
 		var unreadCountDictionary = UnreadCountDictionary()
 
 		queue.fetch { (database) in
-
 			for feedID in feedIDs {
 				unreadCountDictionary[feedID] = self.fetchUnreadCount(feedID, database)
 			}
 
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				completion(unreadCountDictionary)
 			}
 		}
 	}
 
 	func fetchUnreadCount(_ feedIDs: Set<String>, _ since: Date, _ callback: @escaping (Int) -> Void) {
-
 		// Get unread count for today, for instance.
 
 		if feedIDs.isEmpty {
@@ -311,7 +306,6 @@ final class ArticlesTable: DatabaseTable {
 		}
 		
 		queue.fetch { (database) in
-
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0 and userDeleted=0;"
 
@@ -322,24 +316,22 @@ final class ArticlesTable: DatabaseTable {
 
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				callback(unreadCount)
 			}
 		}
 	}
 
 	func fetchAllUnreadCounts(_ completion: @escaping UnreadCountCompletionBlock) {
-
 		// Returns only where unreadCount > 0.
 
 		let cutoffDate = articleCutoffDate
 
 		queue.fetch { (database) in
-
 			let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or dateArrived>?) group by feedID;"
 
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) else {
-				DispatchQueue.main.async() {
+				DispatchQueue.main.async {
 					completion(UnreadCountDictionary())
 				}
 				return
@@ -353,34 +345,32 @@ final class ArticlesTable: DatabaseTable {
 				}
 			}
 
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				completion(d)
 			}
 		}
 	}
 
 	func fetchStarredAndUnreadCount(_ feedIDs: Set<String>, _ callback: @escaping (Int) -> Void) {
-
 		if feedIDs.isEmpty {
 			callback(0)
 			return
 		}
 
 		queue.fetch { (database) in
-
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1 and userDeleted=0;"
 			let parameters = Array(feedIDs) as [Any]
 
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				callback(unreadCount)
 			}
 		}
 	}
 
-	// MARK: Status
+	// MARK: - Statuses
 	
 	func fetchUnreadArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
 		statusesTable.fetchUnreadArticleIDs(callback)
@@ -402,7 +392,7 @@ final class ArticlesTable: DatabaseTable {
 		return statuses
 	}
 
-	// MARK: Indexing
+	// MARK: - Indexing
 
 	func indexUnindexedArticles() {
 		queue.fetch { (database) in
@@ -427,7 +417,7 @@ final class ArticlesTable: DatabaseTable {
 
 private extension ArticlesTable {
 
-	// MARK: Fetching
+	// MARK: - Fetching
 
 	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) -> Set<Article> {
 		var articles = Set<Article>()
@@ -447,7 +437,6 @@ private extension ArticlesTable {
 	}
 
 	func articlesWithResultSet(_ resultSet: FMResultSet, _ database: FMDatabase) -> Set<Article> {
-
 		// 1. Create DatabaseArticles without related objects.
 		// 2. Then fetch the related objects, given the set of articleIDs.
 		// 3. Then create set of Articles with DatabaseArticles and related objects and return it.
@@ -485,7 +474,6 @@ private extension ArticlesTable {
 	}
 
 	func makeDatabaseArticles(with resultSet: FMResultSet) -> Set<DatabaseArticle> {
-
 		let articles = resultSet.mapToSet { (row) -> DatabaseArticle? in
 
 			// The resultSet is a result of a JOIN query with the statuses table,
@@ -527,7 +515,6 @@ private extension ArticlesTable {
 	}
 
 	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject], withLimits: Bool) -> Set<Article> {
-
 		// Don’t fetch articles that shouldn’t appear in the UI. The rules:
 		// * Must not be deleted.
 		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
@@ -543,7 +530,6 @@ private extension ArticlesTable {
 	}
 
 	func fetchUnreadCount(_ feedID: String, _ database: FMDatabase) -> Int {
-		
 		// Count only the articles that would appear in the UI.
 		// * Must be unread.
 		// * Must not be deleted.
@@ -587,33 +573,28 @@ private extension ArticlesTable {
 	}
 
 	func articlesWithSQL(_ sql: String, _ parameters: [AnyObject], _ database: FMDatabase) -> Set<Article> {
-
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
 			return Set<Article>()
 		}
 		return articlesWithResultSet(resultSet, database)
 	}
 
-	// MARK: Saving Parsed Items
-	
+	// MARK: - Saving Parsed Items
 	
 	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
-		
 		DispatchQueue.main.async {
 			completion(newArticles, updatedArticles)
 		}
 	}
 	
-	// MARK: Save New Articles
+	// MARK: - Saving New Articles
 
 	func findNewArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article]) -> Set<Article>? {
-		
 		let newArticles = Set(incomingArticles.filter { fetchedArticlesDictionary[$0.articleID] == nil })
 		return newArticles.isEmpty ? nil : newArticles
 	}
 	
 	func findAndSaveNewArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article], _ database: FMDatabase) -> Set<Article>? { //5
-		
 		guard let newArticles = findNewArticles(incomingArticles, fetchedArticlesDictionary) else {
 			return nil
 		}
@@ -622,7 +603,6 @@ private extension ArticlesTable {
 	}
 	
 	func saveNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-
 		saveRelatedObjectsForNewArticles(articles, database)
 
 		if let databaseDictionaries = articles.databaseDictionaries() {
@@ -631,17 +611,15 @@ private extension ArticlesTable {
 	}
 
 	func saveRelatedObjectsForNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-
 		let databaseObjects = articles.databaseObjects()
 
 		authorsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
 		attachmentsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
 	}
 
-	// MARK: Update Existing Articles
+	// MARK: - Updating Existing Articles
 
 	func articlesWithRelatedObjectChanges<T>(_ comparisonKeyPath: KeyPath<Article, Set<T>?>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
-
 		return updatedArticles.filter{ (updatedArticle) -> Bool in
 			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
 				return updatedArticle[keyPath: comparisonKeyPath] != fetchedArticle[keyPath: comparisonKeyPath]
@@ -652,7 +630,6 @@ private extension ArticlesTable {
 	}
 
 	func updateRelatedObjects<T>(_ comparisonKeyPath: KeyPath<Article, Set<T>?>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ lookupTable: DatabaseLookupTable, _ database: FMDatabase) {
-
 		let articlesWithChanges = articlesWithRelatedObjectChanges(comparisonKeyPath, updatedArticles, fetchedArticles)
 		if !articlesWithChanges.isEmpty {
 			lookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
@@ -660,13 +637,11 @@ private extension ArticlesTable {
 	}
 
 	func saveUpdatedRelatedObjects(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-
 		updateRelatedObjects(\Article.authors, updatedArticles, fetchedArticles, authorsLookupTable, database)
 		updateRelatedObjects(\Article.attachments, updatedArticles, fetchedArticles, attachmentsLookupTable, database)
 	}
 
 	func findUpdatedArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article]) -> Set<Article>? {
-		
 		let updatedArticles = incomingArticles.filter{ (incomingArticle) -> Bool in //6
 			if let existingArticle = fetchedArticlesDictionary[incomingArticle.articleID] {
 				if existingArticle != incomingArticle {
@@ -680,7 +655,6 @@ private extension ArticlesTable {
 	}
 	
 	func findAndSaveUpdatedArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article], _ database: FMDatabase) -> Set<Article>? { //6
-		
 		guard let updatedArticles = findUpdatedArticles(incomingArticles, fetchedArticlesDictionary) else {
 			return nil
 		}
@@ -690,7 +664,6 @@ private extension ArticlesTable {
 	
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-
 		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
 		
 		for updatedArticle in updatedArticles {
@@ -699,7 +672,6 @@ private extension ArticlesTable {
 	}
 
 	func saveUpdatedArticle(_ updatedArticle: Article, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-		
 		// Only update exactly what has changed in the Article (if anything).
 		// Untested theory: this gets us better performance and less database fragmentation.
 		
@@ -708,7 +680,6 @@ private extension ArticlesTable {
 			saveNewArticles(Set([updatedArticle]), database)
 			return
 		}
-		
 		guard let changesDictionary = updatedArticle.changesFrom(fetchedArticle), changesDictionary.count > 0 else {
 			// Not unexpected. There may be no changes.
 			return
@@ -718,9 +689,7 @@ private extension ArticlesTable {
 	}
 	
 	func statusIndicatesArticleIsIgnorable(_ status: ArticleStatus) -> Bool {
-
 		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).
-
 		if status.userDeleted {
 			return true
 		}
@@ -731,9 +700,7 @@ private extension ArticlesTable {
 	}
 
 	func filterIncomingArticles(_ articles: Set<Article>) -> Set<Article> {
-		
 		// Drop Articles that we can ignore.
-		
 		return Set(articles.filter{ !statusIndicatesArticleIsIgnorable($0.status) })
 	}
 }
