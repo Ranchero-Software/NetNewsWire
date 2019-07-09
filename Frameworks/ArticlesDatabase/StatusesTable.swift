@@ -50,6 +50,7 @@ final class StatusesTable: DatabaseTable {
 
 	// MARK: Marking
 
+	@discardableResult
 	func mark(_ statuses: Set<ArticleStatus>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) -> Set<ArticleStatus>? {
 
 		// Sets flag in both memory and in database.
