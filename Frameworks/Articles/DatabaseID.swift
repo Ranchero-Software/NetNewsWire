@@ -1,6 +1,6 @@
 //
 //  DatabaseID.swift
-//  Data
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 7/15/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -17,7 +17,6 @@ private var databaseIDCache = [String: String]()
 private var databaseIDCacheLock = os_unfair_lock_s()
 
 public func databaseIDWithString(_ s: String) -> String {
-
 	os_unfair_lock_lock(&databaseIDCacheLock)
 	defer {
 		os_unfair_lock_unlock(&databaseIDCacheLock)

@@ -1,6 +1,6 @@
 //
 //  ArticleFetcher.swift
-//  Account
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 2/4/18.
 //  Copyright © 2018 Ranchero Software, LLC. All rights reserved.

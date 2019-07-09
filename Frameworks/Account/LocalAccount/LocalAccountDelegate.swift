@@ -1,6 +1,6 @@
 //
 //  LocalAccountDelegate.swift
-//  Account
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 9/16/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
@@ -48,7 +48,6 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-
 		var fileData: Data?
 		
 		do {
@@ -88,7 +87,6 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
-		
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
@@ -99,8 +97,6 @@ final class LocalAccountDelegate: AccountDelegate {
 			
 			switch result {
 			case .success(let feedSpecifiers):
-				
-
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
 					let url = URL(string: bestFeedSpecifier.urlString) else {
 						self.refreshProgress.completeTask()
@@ -117,7 +113,6 @@ final class LocalAccountDelegate: AccountDelegate {
 				let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
 				
 				InitialFeedDownloader.download(url) { parsedFeed in
-					
 					self.refreshProgress.completeTask()
 
 					if let parsedFeed = parsedFeed {
@@ -199,5 +194,4 @@ final class LocalAccountDelegate: AccountDelegate {
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: (Result<Credentials?, Error>) -> Void) {
 		return completion(.success(nil))
 	}
-	
 }

@@ -13,11 +13,8 @@ import Articles
 // Main thread only.
 
 public extension Notification.Name {
-	static let AccountsDidChange = Notification.Name(rawValue: "AccountsDidChange")
+	static let AccountsDidChange = Notification.Name("AccountsDidChange")
 }
-
-private let defaultAccountFolderName = "OnMyMac"
-private let defaultAccountIdentifier = "OnMyMac"
 
 public final class AccountManager: UnreadCountProvider {
 
@@ -26,6 +23,9 @@ public final class AccountManager: UnreadCountProvider {
 
 	private let accountsFolder = RSDataSubfolder(nil, "Accounts")!
     private var accountsDictionary = [String: Account]()
+
+	private let defaultAccountFolderName = "OnMyMac"
+	private let defaultAccountIdentifier = "OnMyMac"
 
 	public var isUnreadCountsInitialized: Bool {
 		for account in activeAccounts {
@@ -76,9 +76,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 	
 	public init() {
-		
 		// The local "On My Mac" account must always exist, even if it's empty.
-
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
 		do {
 			try FileManager.default.createDirectory(atPath: localAccountFolder, withIntermediateDirectories: true, attributes: nil)
@@ -101,10 +99,9 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	// MARK: API
+	// MARK: - API
 	
 	public func createAccount(type: AccountType) -> Account {
-		
 		let accountID = UUID().uuidString
 		let accountFolder = (accountsFolder as NSString).appendingPathComponent("\(type.rawValue)_\(accountID)")
 
@@ -124,7 +121,6 @@ public final class AccountManager: UnreadCountProvider {
 	}
 	
 	public func deleteAccount(_ account: Account) {
-		
 		guard !account.refreshInProgress else {
 			return
 		}
@@ -142,16 +138,13 @@ public final class AccountManager: UnreadCountProvider {
 		
 		updateUnreadCount()
 		NotificationCenter.default.post(name: .AccountsDidChange, object: self)
-		
 	}
 	
 	public func existingAccount(with accountID: String) -> Account? {
-		
 		return accountsDictionary[accountID]
 	}
 	
 	public func refreshAll(errorHandler: @escaping (Error) -> Void) {
-
 		activeAccounts.forEach { account in
 			account.refreshAll() { result in
 				switch result {
@@ -162,7 +155,6 @@ public final class AccountManager: UnreadCountProvider {
 				}
 			}
 		}
-		
 	}
 
 	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
@@ -181,7 +173,6 @@ public final class AccountManager: UnreadCountProvider {
 	}
 	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
-
 		for account in activeAccounts {
 			if account.hasAtLeastOneFeed() {
 				return true
@@ -192,18 +183,12 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
-		
 		for account in activeAccounts {
 			if let _ = account.existingFeed(withURL: urlString) {
 				return true
 			}
 		}
 		return false
-	}
-	
-	func updateUnreadCount() {
-
-		unreadCount = calculateUnreadCount(activeAccounts)
 	}
 
 	// MARK: - Fetching Articles
@@ -238,10 +223,9 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	// MARK: Notifications
+	// MARK: - Notifications
 	
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
-		
 		guard let _ = notification.object as? Account else {
 			return
 		}
@@ -251,15 +235,21 @@ public final class AccountManager: UnreadCountProvider {
 	@objc func accountStateDidChange(_ notification: Notification) {
 		updateUnreadCount()
 	}
-	
-	// MARK: Private
+}
 
-	private func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
+// MARK: - Private
+
+private extension AccountManager {
+
+	func updateUnreadCount() {
+		unreadCount = calculateUnreadCount(activeAccounts)
+	}
+
+	func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
 		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
 	}
 
-	private func loadAccount(_ filename: String) -> Account? {
-
+	func loadAccount(_ filename: String) -> Account? {
 		let folderPath = (accountsFolder as NSString).appendingPathComponent(filename)
 		if let accountSpecifier = AccountSpecifier(folderPath: folderPath) {
 			return loadAccount(accountSpecifier)
@@ -267,8 +257,7 @@ public final class AccountManager: UnreadCountProvider {
 		return nil
 	}
 
-	private func readAccountsFromDisk() {
-
+	func readAccountsFromDisk() {
 		var filenames: [String]?
 
 		do {
@@ -280,7 +269,6 @@ public final class AccountManager: UnreadCountProvider {
 		}
 
 		filenames?.forEach { (oneFilename) in
-
 			guard oneFilename != defaultAccountFolderName else {
 				return
 			}
@@ -290,12 +278,10 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	private func sortByName(_ accounts: [Account]) -> [Account] {
-		
+	func sortByName(_ accounts: [Account]) -> [Account] {
 		// LocalAccount is first.
 		
 		return accounts.sorted { (account1, account2) -> Bool in
-
 			if account1 === defaultAccount {
 				return true
 			}
@@ -307,13 +293,6 @@ public final class AccountManager: UnreadCountProvider {
 	}
 }
 
-private let accountDataFileName = "AccountData.plist"
-
-private func accountFilePathWithFolder(_ folderPath: String) -> String {
-
-	return NSString(string: folderPath).appendingPathComponent(accountDataFileName)
-}
-
 private struct AccountSpecifier {
 
 	let type: AccountType
@@ -322,8 +301,8 @@ private struct AccountSpecifier {
 	let folderName: String
 	let dataFilePath: String
 
-	init?(folderPath: String) {
 
+	init?(folderPath: String) {
 		if !FileManager.default.rs_fileIsFolder(folderPath) {
 			return nil
 		}
@@ -335,18 +314,21 @@ private struct AccountSpecifier {
 		
 		let nameComponents = name.components(separatedBy: "_")
 		
-		guard nameComponents.count == 2, let rawType = Int(nameComponents[0]), let acctType = AccountType(rawValue: rawType) else {
+		guard nameComponents.count == 2, let rawType = Int(nameComponents[0]), let accountType = AccountType(rawValue: rawType) else {
 			return nil
 		}
 
 		self.folderPath = folderPath
 		self.folderName = name
-		self.type = acctType
+		self.type = accountType
 		self.identifier = nameComponents[1]
 
-		self.dataFilePath = accountFilePathWithFolder(self.folderPath)
-		
+		self.dataFilePath = AccountSpecifier.accountFilePathWithFolder(self.folderPath)
+	}
+
+	private static let accountDataFileName = "AccountData.plist"
+
+	private static func accountFilePathWithFolder(_ folderPath: String) -> String {
+		return NSString(string: folderPath).appendingPathComponent(accountDataFileName)
 	}
 }
-
-

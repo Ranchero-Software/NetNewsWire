@@ -1,6 +1,6 @@
 //
 //  CombinedRefreshProgress.swift
-//  Account
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 10/7/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
@@ -20,7 +20,6 @@ public struct CombinedRefreshProgress {
 	public let isComplete: Bool
 
 	init(numberOfTasks: Int, numberRemaining: Int, numberCompleted: Int) {
-
 		self.numberOfTasks = max(numberOfTasks, 0)
 		self.numberRemaining = max(numberRemaining, 0)
 		self.numberCompleted = max(numberCompleted, 0)
@@ -28,7 +27,6 @@ public struct CombinedRefreshProgress {
 	}
 
 	public init(downloadProgressArray: [DownloadProgress]) {
-
 		var numberOfTasks = 0
 		var numberRemaining = 0
 		var numberCompleted = 0

@@ -1,6 +1,6 @@
 //
 //  FeedMetadata.swift
-//  Account
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 3/12/19.
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
@@ -128,5 +128,4 @@ final class FeedMetadata: Codable {
 	func valueDidChange(_ key: CodingKeys) {
 		delegate?.valueDidChange(self, key: key)
 	}
-	
 }
