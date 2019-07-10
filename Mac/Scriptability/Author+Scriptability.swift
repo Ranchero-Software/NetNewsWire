@@ -27,6 +27,11 @@ class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
         return (scriptObjectSpecifier)
     }
 
+    @objc(scriptingSpecifierDescriptor)
+    func scriptingSpecifierDescriptor() -> NSScriptObjectSpecifier {
+        return (self.objectSpecifier ?? NSScriptObjectSpecifier() )
+    }
+
     // MARK: --- ScriptingObject protocol ---
 
     var scriptingKey: String {
@@ -34,9 +39,6 @@ class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
     }
 
     // MARK: --- UniqueIdScriptingObject protocol ---
-
-    // I am not sure if account should prefer to be specified by name or by ID
-    // but in either case it seems like the accountID would be used as the keydata, so I chose ID
 
     @objc(uniqueId)
     var scriptingUniqueId:Any {
