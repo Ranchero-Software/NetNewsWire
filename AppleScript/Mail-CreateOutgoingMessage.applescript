@@ -28,7 +28,6 @@ end getContentsOrHtml
 
 -- given a list of author names, generate a happily formatted list like "Jean MacDonald and James Dempsey"
 -- if the list is more than two names, use Oxford comma structure: "Brent Simmons, Jean MacDonald, and James Dempsey"
--- the returned string is padded by spaces on both sides
 
 to formatListOfNames(listOfNames)
 	set c to count listOfNames
@@ -45,17 +44,17 @@ to formatListOfNames(listOfNames)
 		set formattedList to t1 & ", and " & lastName
 		set AppleScript's text item delimiters to tid
 	end if
-	return " from " & formattedList & " "
+	return formattedList
 end formatListOfNames
 
 
 -- sometimes, an article has an author, sometimes it has more than one, sometimes there's no author
--- this function getAuthorStub() returns a string like " by Kaya Thomas "  that can be used in crafting a message
+-- this function getAuthorStub() returns a string like " from Jean MacDonald "  that can be used in crafting a message
 -- about the current article.  If there are no authors, it just returns a single space.
 to getAuthorStub(authorNames)
 	try
 		if ((count authorNames) is greater than 0) then
-			return formatListOfNames(authorNames)
+			return " from " & formatListOfNames(authorNames) & " "
 		end if
 	end try
 	return " "
