@@ -134,6 +134,7 @@
         </class>
 
         <class name="author" code="Athr" plural="authors" description="A feed author">
+            <cocoa class="ScriptableAuthor"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the author">
                 <cocoa key="name"/>
             </property>
