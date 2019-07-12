@@ -1,6 +1,6 @@
 //
 //  ContainerPath.swift
-//  Account
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 11/4/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
@@ -22,7 +22,6 @@ public struct ContainerPath {
 	// folders should be from top-level down, as in ["Cats", "Tabbies"]
 
 	public init(account: Account, folders: [Folder]) {
-
 		self.account = account
 		self.names = folders.map { $0.nameForDisplay }
 		self.isTopLevel = folders.isEmpty
@@ -31,7 +30,6 @@ public struct ContainerPath {
 	}
 
 	public func resolveContainer() -> Container? {
-
 		// The only time it should fail is if the account no longer exists.
 		// Otherwise the worst-case scenario is that it will create Folders if needed.
 

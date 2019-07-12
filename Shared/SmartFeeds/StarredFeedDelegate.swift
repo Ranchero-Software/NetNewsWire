@@ -10,30 +10,14 @@ import Foundation
 import Articles
 import Account
 
+// Main thread only.
 
 struct StarredFeedDelegate: SmartFeedDelegate {
 
 	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")
+	let fetchType: FetchType = .starred
 
 	func fetchUnreadCount(for account: Account, callback: @escaping (Int) -> Void) {
-
 		account.fetchUnreadCountForStarredArticles(callback)
 	}
-
-	// MARK: ArticleFetcher
-
-	func fetchArticles() -> Set<Article> {
-
-		var articles = Set<Article>()
-		for account in AccountManager.shared.activeAccounts {
-			articles.formUnion(account.fetchStarredArticles())
-		}
-		return articles
-	}
-
-	func fetchUnreadArticles() -> Set<Article> {
-
-		return fetchArticles().unreadArticles()
-	}
-
 }

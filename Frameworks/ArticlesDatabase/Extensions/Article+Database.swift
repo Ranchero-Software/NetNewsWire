@@ -1,6 +1,6 @@
 //
 //  Article+Database.swift
-//  Database
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 7/3/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -14,12 +14,10 @@ import RSParser
 extension Article {
 	
 	init(databaseArticle: DatabaseArticle, accountID: String, authors: Set<Author>?, attachments: Set<Attachment>?) {
-
 		self.init(accountID: accountID, articleID: databaseArticle.articleID, feedID: databaseArticle.feedID, uniqueID: databaseArticle.uniqueID, title: databaseArticle.title, contentHTML: databaseArticle.contentHTML, contentText: databaseArticle.contentText, url: databaseArticle.url, externalURL: databaseArticle.externalURL, summary: databaseArticle.summary, imageURL: databaseArticle.imageURL, bannerImageURL: databaseArticle.bannerImageURL, datePublished: databaseArticle.datePublished, dateModified: databaseArticle.dateModified, authors: authors, attachments: attachments, status: databaseArticle.status)
 	}
 
 	init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, feedID: String, status: ArticleStatus) {
-
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
 		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
 
@@ -135,7 +133,6 @@ extension Article: DatabaseObject {
 	}
 
 	public func relatedObjectsWithName(_ name: String) -> [DatabaseObject]? {
-
 		switch name {
 		case RelationshipName.authors:
 			return databaseObjectArray(with: authors)
@@ -147,7 +144,6 @@ extension Article: DatabaseObject {
 	}
 
 	private func databaseObjectArray<T: DatabaseObject>(with objects: Set<T>?) -> [DatabaseObject]? {
-
 		guard let objects = objects else {
 			return nil
 		}
@@ -158,12 +154,10 @@ extension Article: DatabaseObject {
 extension Set where Element == Article {
 
 	func statuses() -> Set<ArticleStatus> {
-
 		return Set<ArticleStatus>(map { $0.status })
 	}
 	
 	func dictionary() -> [String: Article] {
-
 		var d = [String: Article]()
 		for article in self {
 			d[article.articleID] = article
@@ -172,12 +166,10 @@ extension Set where Element == Article {
 	}
 
 	func databaseObjects() -> [DatabaseObject] {
-
 		return self.map{ $0 as DatabaseObject }
 	}
 
 	func databaseDictionaries() -> [DatabaseDictionary]? {
-
 		return self.compactMap { $0.databaseDictionary() }
 	}
 }

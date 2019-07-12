@@ -1,6 +1,6 @@
 //
 //  FeedSpecifier.swift
-//  FeedFinder
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 8/7/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
@@ -11,11 +11,9 @@ import Foundation
 struct FeedSpecifier: Hashable {
 
 	enum Source: Int {
-
 		case UserEntered = 0, HTMLHead, HTMLLink
 
 		func equalToOrBetterThan(_ otherSource: Source) -> Bool {
-
 			return self.rawValue <= otherSource.rawValue
 		}
 	}
@@ -28,7 +26,6 @@ struct FeedSpecifier: Hashable {
 	}
 	
 	func feedSpecifierByMerging(_ feedSpecifier: FeedSpecifier) -> FeedSpecifier {
-
 		// Take the best data (non-nil title, better source) to create a new feed specifier;
 
 		let mergedTitle = title ?? feedSpecifier.title
@@ -38,7 +35,6 @@ struct FeedSpecifier: Hashable {
 	}
 	
 	public static func bestFeed(in feedSpecifiers: Set<FeedSpecifier>) -> FeedSpecifier? {
-		
 		if feedSpecifiers.isEmpty {
 			return nil
 		}
@@ -64,7 +60,6 @@ struct FeedSpecifier: Hashable {
 private extension FeedSpecifier {
 	
 	func calculatedScore() -> Int {
-		
 		var score = 0
 		
 		if source == .UserEntered {

@@ -1,6 +1,6 @@
 //
 //  HTMLFeedFinder.swift
-//  FeedFinder
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 8/7/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
@@ -20,7 +20,6 @@ class HTMLFeedFinder {
 	private var feedSpecifiersDictionary = [String: FeedSpecifier]()
 	
 	init(parserData: ParserData) {
-		
 		let metadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
 
 		for oneFeedLink in metadata.feedLinks {
@@ -46,7 +45,6 @@ class HTMLFeedFinder {
 private extension HTMLFeedFinder {
 
 	func addFeedSpecifier(_ feedSpecifier: FeedSpecifier) {
-
 		// If there’s an existing feed specifier, merge the two so that we have the best data. If one has a title and one doesn’t, use that non-nil title. Use the better source.
 
 		if let existingFeedSpecifier = feedSpecifiersDictionary[feedSpecifier.urlString] {
@@ -59,7 +57,6 @@ private extension HTMLFeedFinder {
 	}
 
 	func urlStringMightBeFeed(_ urlString: String) -> Bool {
-
 		let massagedURLString = urlString.replacingOccurrences(of: "buzzfeed", with: "_")
 
 		for oneMatch in feedURLWordsToMatch {
@@ -73,7 +70,6 @@ private extension HTMLFeedFinder {
 	}
 
 	func linkMightBeFeed(_ link: RSHTMLLink) -> Bool {
-
 		if let linkURLString = link.urlString, urlStringMightBeFeed(linkURLString) {
 			return true
 		}

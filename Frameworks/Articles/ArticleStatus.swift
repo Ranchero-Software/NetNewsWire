@@ -1,6 +1,6 @@
 //
 //  ArticleStatus.swift
-//  DataModel
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 7/1/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
@@ -30,7 +30,6 @@ public final class ArticleStatus: Hashable {
 	public var userDeleted = false
 	
 	public init(articleID: String, read: Bool, starred: Bool, userDeleted: Bool, dateArrived: Date) {
-		
 		self.articleID = articleID
 		self.read = read
 		self.starred = starred
@@ -39,12 +38,10 @@ public final class ArticleStatus: Hashable {
 	}
 
 	public convenience init(articleID: String, read: Bool, dateArrived: Date) {
-
 		self.init(articleID: articleID, read: read, starred: false, userDeleted: false, dateArrived: dateArrived)
 	}
 
 	public func boolStatus(forKey key: ArticleStatus.Key) -> Bool {
-		
 		switch key {
 		case .read:
 			return read
@@ -56,7 +53,6 @@ public final class ArticleStatus: Hashable {
 	}
 	
 	public func setBoolStatus(_ status: Bool, forKey key: ArticleStatus.Key) {
-
 		switch key {
 		case .read:
 			read = status
@@ -76,7 +72,6 @@ public final class ArticleStatus: Hashable {
 	// MARK: - Equatable
 
 	public static func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
-
 		return lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred && lhs.userDeleted == rhs.userDeleted
 	}
 }
@@ -84,15 +79,13 @@ public final class ArticleStatus: Hashable {
 public extension Set where Element == ArticleStatus {
 	
 	func articleIDs() -> Set<String> {
-		
 		return Set<String>(map { $0.articleID })
 	}
 }
 
 public extension Array where Element == ArticleStatus {
 	
-	func articleIDs() -> [String] {
-		
+	func articleIDs() -> [String] {		
 		return map { $0.articleID }
 	}
 }

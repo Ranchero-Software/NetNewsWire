@@ -1,12 +1,14 @@
 //
 //  Article.swift
-//  Data
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 7/1/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
 import Foundation
+
+public typealias ArticleSetBlock = (Set<Article>) -> Void
 
 public struct Article: Hashable {
 

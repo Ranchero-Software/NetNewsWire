@@ -1,6 +1,6 @@
 //
 //  LocalAccountRefresher.swift
-//  LocalAccount
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 9/6/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
@@ -23,7 +23,6 @@ final class LocalAccountRefresher {
 	}
 
 	public func refreshFeeds(_ feeds: Set<Feed>) {
-
 		downloadSession.downloadObjects(feeds as NSSet)
 	}
 }
@@ -33,11 +32,9 @@ final class LocalAccountRefresher {
 extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject representedObject: AnyObject) -> URLRequest? {
-		
 		guard let feed = representedObject as? Feed else {
 			return nil
 		}
-		
 		guard let url = URL(string: feed.url) else {
 			return nil
 		}
@@ -51,7 +48,6 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?) {
-		
 		guard let feed = representedObject as? Feed, !data.isEmpty else {
 			return
 		}
@@ -63,18 +59,15 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 		let dataHash = (data as NSData).rs_md5HashString()
 		if dataHash == feed.contentHash {
-//			print("Hashed content of \(feed.url) has not changed.")
 			return
 		}
 
 		let parserData = ParserData(url: feed.url, data: data)
 		FeedParser.parse(parserData) { (parsedFeed, error) in
-			
 			guard let account = feed.account, let parsedFeed = parsedFeed, error == nil else {
 				return
 			}
 			account.update(feed, with: parsedFeed) {
-				
 				if let httpResponse = response as? HTTPURLResponse {
 					feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 				}
@@ -85,7 +78,6 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
-		
 		guard let feed = representedObject as? Feed else {
 			return false
 		}
@@ -106,21 +98,9 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse response: URLResponse, representedObject: AnyObject) {
-
-//		guard let feed = representedObject as? Feed else {
-//			return
-//		}
-//
-//		print("Unexpected response \(response) for \(feed.url).")
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
-
-//		guard let feed = representedObject as? Feed else {
-//			return
-//		}
-//
-//		print("Not modified response for \(feed.url).")
 	}
 }
 
@@ -129,7 +109,6 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 private extension Data {
 	
 	func isDefinitelyNotFeed() -> Bool {
-		
 		// We only detect a few image types for now. This should get fleshed-out at some later date.
 		return (self as NSData).rs_dataIsImage()
 	}

@@ -19,7 +19,8 @@ import Articles
 final class UnreadFeed: PseudoFeed {
 
 	let nameForDisplay = NSLocalizedString("All Unread", comment: "All Unread pseudo-feed title")
-
+	let fetchType = FetchType.unread
+	
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -50,16 +51,18 @@ final class UnreadFeed: PseudoFeed {
 extension UnreadFeed: ArticleFetcher {
 
 	func fetchArticles() -> Set<Article> {
-
 		return fetchUnreadArticles()
 	}
 
-	func fetchUnreadArticles() -> Set<Article> {
+	func fetchArticlesAsync(_ callback: @escaping ArticleSetBlock) {
+		fetchUnreadArticlesAsync(callback)
+	}
 
-		var articles = Set<Article>()
-		for account in AccountManager.shared.activeAccounts {
-			articles.formUnion(account.fetchUnreadArticles())
-		}
-		return articles
+	func fetchUnreadArticles() -> Set<Article> {
+		return AccountManager.shared.fetchArticles(fetchType)
+	}
+
+	func fetchUnreadArticlesAsync(_ callback: @escaping ArticleSetBlock) {
+		AccountManager.shared.fetchArticlesAsync(fetchType, callback)
 	}
 }

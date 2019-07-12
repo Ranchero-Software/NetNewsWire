@@ -1,6 +1,6 @@
 //
 //  AccountError.swift
-//  Account
+//  NetNewsWire
 //
 //  Created by Maurice Parker on 5/26/19.
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
@@ -19,9 +19,9 @@ public enum AccountError: LocalizedError {
 	public var errorDescription: String? {
 		switch self {
 		case .createErrorNotFound:
-			return NSLocalizedString("The feed couldn't be found and can't be added.", comment: "Not found")
+			return NSLocalizedString("The feed couldn’t be found and can’t be added.", comment: "Not found")
 		case .createErrorAlreadySubscribed:
-			return NSLocalizedString("You are already subscribed to this feed and can't add it again.", comment: "Already subscribed")
+			return NSLocalizedString("You are already subscribed to this feed and can’t add it again.", comment: "Already subscribed")
 		case .opmlImportInProgress:
 			return NSLocalizedString("An OPML import for this account is already running.", comment: "Import running")
 		case .wrappedError(let error, let account):
@@ -65,5 +65,4 @@ public enum AccountError: LocalizedError {
 		let localizedText = NSLocalizedString("An error occurred while processing the \"%@\" account: %@", comment: "Unknown error")
 		return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay, error.localizedDescription) as String
 	}
-	
 }

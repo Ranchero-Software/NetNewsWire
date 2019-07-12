@@ -29,6 +29,8 @@ final class ArticlesTable: DatabaseTable {
 	private var articleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
 	private var maximumArticleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 4 * 31)!
 
+	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
+
 	init(name: String, accountID: String, queue: RSDatabaseQueue) {
 
 		self.name = name
@@ -43,52 +45,109 @@ final class ArticlesTable: DatabaseTable {
 		self.attachmentsLookupTable = DatabaseLookupTable(name: DatabaseTableName.attachmentsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.attachmentID, relatedTable: attachmentsTable, relationshipName: RelationshipName.attachments)
 	}
 
-	// MARK: Fetching
+	// MARK: - Fetching Articles for Feed
 	
 	func fetchArticles(_ feedID: String) -> Set<Article> {
-		
-		var articles = Set<Article>()
+		return fetchArticles{ self.fetchArticlesForFeedID(feedID, withLimits: true, $0) }
+	}
 
-		queue.fetchSync { (database) in
-			articles = self.fetchArticlesForFeedID(feedID, withLimits: true, database: database)
+	func fetchArticlesAsync(_ feedID: String, _ callback: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchArticlesForFeedID(feedID, withLimits: true, $0) }, callback)
+	}
+
+	private func fetchArticlesForFeedID(_ feedID: String, withLimits: Bool, _ database: FMDatabase) -> Set<Article> {
+		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject], withLimits: withLimits)
+	}
+
+	// MARK: - Fetching Articles by articleID
+
+	func fetchArticles(articleIDs: Set<String>) -> Set<Article> {
+		return fetchArticles{ self.fetchArticles(articleIDs: articleIDs, $0) }
+	}
+
+	func fetchArticlesAsync(articleIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
+		return fetchArticlesAsync({ self.fetchArticles(articleIDs: articleIDs, $0) }, callback)
+	}
+
+	private func fetchArticles(articleIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+		if articleIDs.isEmpty {
+			return Set<Article>()
+		}
+		let parameters = articleIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+		let whereClause = "articleID in \(placeholders)"
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
+	}
+
+	// MARK: - Fetching Unread Articles
+
+	func fetchUnreadArticles(_ feedIDs: Set<String>) -> Set<Article> {
+		return fetchArticles{ self.fetchUnreadArticles(feedIDs, $0) }
+	}
+
+	func fetchUnreadArticlesAsync(_ feedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchUnreadArticles(feedIDs, $0) }, callback)
+	}
+
+	private func fetchUnreadArticles(_ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and read=0
+		if feedIDs.isEmpty {
+			return Set<Article>()
+		}
+		let parameters = feedIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+		let whereClause = "feedID in \(placeholders) and read=0"
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
+	}
+
+	// MARK: - Fetching Today Articles
+
+	func fetchTodayArticles(_ feedIDs: Set<String>) -> Set<Article> {
+		return fetchArticles{ self.fetchTodayArticles(feedIDs, $0) }
+	}
+
+	func fetchTodayArticlesAsync(_ feedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchTodayArticles(feedIDs, $0) }, callback)
+	}
+
+	private func fetchTodayArticles(_ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and (datePublished > ? || (datePublished is null and dateArrived > ?)
+		//
+		// datePublished may be nil, so we fall back to dateArrived.
+		if feedIDs.isEmpty {
+			return Set<Article>()
+		}
+		let startOfToday = NSCalendar.startOfToday()
+		let parameters = feedIDs.map { $0 as AnyObject } + [startOfToday as AnyObject, startOfToday as AnyObject]
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+		let whereClause = "feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and userDeleted = 0"
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
+	}
+
+	// MARK: - Fetching Starred Articles
+
+	func fetchStarredArticles(_ feedIDs: Set<String>) -> Set<Article> {
+		return fetchArticles{ self.fetchStarredArticles(feedIDs, $0) }
+	}
+
+	func fetchStarredArticlesAsync(_ feedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchStarredArticles(feedIDs, $0) }, callback)
+	}
+
+	private func fetchStarredArticles(_ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and starred = 1 and userDeleted = 0;
+		if feedIDs.isEmpty {
+			return Set<Article>()
+		}
+		let parameters = feedIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+		let whereClause = "feedID in \(placeholders) and starred = 1 and userDeleted = 0"
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
 		}
 
-		return articles
-	}
+	// MARK: - Fetching Search Articles
 
-	public func fetchArticles(forArticleIDs articleIDs: Set<String>) -> Set<Article> {
-		
-		return fetchArticlesForIDs(articleIDs)
-	}
-	
-	func fetchArticlesAsync(_ feedID: String, withLimits: Bool, _ resultBlock: @escaping ArticleResultBlock) {
-
-		queue.fetch { (database) in
-
-			let articles = self.fetchArticlesForFeedID(feedID, withLimits: withLimits, database: database)
-
-			DispatchQueue.main.async {
-				resultBlock(articles)
-			}
-		}
-	}
-	
-	func fetchUnreadArticles(for feedIDs: Set<String>) -> Set<Article> {
-
-		return fetchUnreadArticles(feedIDs)
-	}
-
-	public func fetchTodayArticles(for feedIDs: Set<String>) -> Set<Article> {
-
-		return fetchTodayArticles(feedIDs)
-	}
-
-	public func fetchStarredArticles(for feedIDs: Set<String>) -> Set<Article> {
-
-		return fetchStarredArticles(feedIDs)
-	}
-
-	func fetchArticlesMatching(_ searchString: String, for feedIDs: Set<String>) -> Set<Article> {
+	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) -> Set<Article> {
 		var articles: Set<Article> = Set<Article>()
 		queue.fetchSync { (database) in
 			articles = self.fetchArticlesMatching(searchString, database)
@@ -96,6 +155,32 @@ final class ArticlesTable: DatabaseTable {
 		articles = articles.filter{ feedIDs.contains($0.feedID) }
 		return articles
 	}
+
+	func fetchArticlesMatchingAsync(_ searchString: String, _ feedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchArticlesMatching(searchString, feedIDs, $0) }, callback)
+	}
+
+	private func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+		let sql = "select rowid from search where search match ?;"
+		let sqlSearchString = sqliteSearchString(with: searchString)
+		let searchStringParameters = [sqlSearchString]
+		guard let resultSet = database.executeQuery(sql, withArgumentsIn: searchStringParameters) else {
+			return Set<Article>()
+		}
+		let searchRowIDs = resultSet.mapToSet { $0.longLongInt(forColumnIndex: 0) }
+		if searchRowIDs.isEmpty {
+			return Set<Article>()
+		}
+
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))!
+		let whereClause = "searchRowID in \(placeholders)"
+		let parameters: [AnyObject] = Array(searchRowIDs) as [AnyObject]
+		let articles = fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
+		// TODO: include the feedIDs in the SQL rather than filtering here.
+		return articles.filter{ feedIDs.contains($0.feedID) }
+	}
+
+	// MARK: - Fetching Articles for Indexer
 
 	func fetchArticleSearchInfos(_ articleIDs: Set<String>, in database: FMDatabase) -> Set<ArticleSearchInfo>? {
 		let parameters = articleIDs.map { $0 as AnyObject }
@@ -122,10 +207,9 @@ final class ArticlesTable: DatabaseTable {
 		return nil
 	}
 
-	// MARK: Updating
+	// MARK: - Updating
 	
 	func update(_ feedID: String, _ parsedItems: Set<ParsedItem>, _ read: Bool, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
-
 		if parsedItems.isEmpty {
 			completion(nil, nil)
 			return
@@ -143,7 +227,6 @@ final class ArticlesTable: DatabaseTable {
 		let articleIDs = Set(parsedItems.map { $0.articleID })
 		
 		self.queue.update { (database) in
-			
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
 			assert(statusesDictionary.count == articleIDs.count)
 			
@@ -159,7 +242,7 @@ final class ArticlesTable: DatabaseTable {
 				return
 			}
 
-			let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database: database) //4
+			let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database) //4
 			let fetchedArticlesDictionary = fetchedArticles.dictionary()
 			
 			let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
@@ -179,26 +262,23 @@ final class ArticlesTable: DatabaseTable {
 			if articleIDs.isEmpty {
 				return
 			}
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				self.searchTable.ensureIndexedArticles(for: articleIDs)
 			}
 		}
 	}
 
 	func ensureStatuses(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
-		
-		self.queue.updateSync { (database) in
+		self.queue.update { (database) in
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database)
 			let statuses = Set(statusesDictionary.values)
-			_ = self.statusesTable.mark(statuses, statusKey, flag, database)
+			self.statusesTable.mark(statuses, statusKey, flag, database)
 		}
-		
 	}
 	
-	// MARK: Unread Counts
+	// MARK: - Unread Counts
 	
 	func fetchUnreadCounts(_ feedIDs: Set<String>, _ completion: @escaping UnreadCountCompletionBlock) {
-		
 		if feedIDs.isEmpty {
 			completion(UnreadCountDictionary())
 			return
@@ -207,19 +287,17 @@ final class ArticlesTable: DatabaseTable {
 		var unreadCountDictionary = UnreadCountDictionary()
 
 		queue.fetch { (database) in
-
 			for feedID in feedIDs {
 				unreadCountDictionary[feedID] = self.fetchUnreadCount(feedID, database)
 			}
 
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				completion(unreadCountDictionary)
 			}
 		}
 	}
 
 	func fetchUnreadCount(_ feedIDs: Set<String>, _ since: Date, _ callback: @escaping (Int) -> Void) {
-
 		// Get unread count for today, for instance.
 
 		if feedIDs.isEmpty {
@@ -228,7 +306,6 @@ final class ArticlesTable: DatabaseTable {
 		}
 		
 		queue.fetch { (database) in
-
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0 and userDeleted=0;"
 
@@ -239,24 +316,22 @@ final class ArticlesTable: DatabaseTable {
 
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				callback(unreadCount)
 			}
 		}
 	}
 
 	func fetchAllUnreadCounts(_ completion: @escaping UnreadCountCompletionBlock) {
-
 		// Returns only where unreadCount > 0.
 
 		let cutoffDate = articleCutoffDate
 
 		queue.fetch { (database) in
-
 			let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or dateArrived>?) group by feedID;"
 
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) else {
-				DispatchQueue.main.async() {
+				DispatchQueue.main.async {
 					completion(UnreadCountDictionary())
 				}
 				return
@@ -270,45 +345,43 @@ final class ArticlesTable: DatabaseTable {
 				}
 			}
 
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				completion(d)
 			}
 		}
 	}
 
 	func fetchStarredAndUnreadCount(_ feedIDs: Set<String>, _ callback: @escaping (Int) -> Void) {
-
 		if feedIDs.isEmpty {
 			callback(0)
 			return
 		}
 
 		queue.fetch { (database) in
-
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1 and userDeleted=0;"
 			let parameters = Array(feedIDs) as [Any]
 
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				callback(unreadCount)
 			}
 		}
 	}
 
-	// MARK: Status
+	// MARK: - Statuses
 	
-	func fetchUnreadArticleIDs() -> Set<String> {
-		return statusesTable.fetchUnreadArticleIDs()
+	func fetchUnreadArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		statusesTable.fetchUnreadArticleIDs(callback)
 	}
 	
-	func fetchStarredArticleIDs() -> Set<String> {
-		return statusesTable.fetchStarredArticleIDs()
+	func fetchStarredArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		statusesTable.fetchStarredArticleIDs(callback)
 	}
 	
-	func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return statusesTable.fetchArticleIDsForStatusesWithoutArticles()
+	func fetchArticleIDsForStatusesWithoutArticles(_ callback: @escaping (Set<String>) -> Void) {
+		statusesTable.fetchArticleIDsForStatusesWithoutArticles(callback)
 	}
 	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
@@ -319,7 +392,7 @@ final class ArticlesTable: DatabaseTable {
 		return statuses
 	}
 
-	// MARK: Indexing
+	// MARK: - Indexing
 
 	func indexUnindexedArticles() {
 		queue.fetch { (database) in
@@ -344,10 +417,26 @@ final class ArticlesTable: DatabaseTable {
 
 private extension ArticlesTable {
 
-	// MARK: Fetching
+	// MARK: - Fetching
+
+	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) -> Set<Article> {
+		var articles = Set<Article>()
+		queue.fetchSync { (database) in
+			articles = fetchMethod(database)
+		}
+		return articles
+	}
+
+	private func fetchArticlesAsync(_ fetchMethod: @escaping ArticlesFetchMethod, _ callback: @escaping ArticleSetBlock) {
+		queue.fetch { (database) in
+			let articles = fetchMethod(database)
+			DispatchQueue.main.async {
+				callback(articles)
+			}
+		}
+	}
 
 	func articlesWithResultSet(_ resultSet: FMResultSet, _ database: FMDatabase) -> Set<Article> {
-
 		// 1. Create DatabaseArticles without related objects.
 		// 2. Then fetch the related objects, given the set of articleIDs.
 		// 3. Then create set of Articles with DatabaseArticles and related objects and return it.
@@ -385,7 +474,6 @@ private extension ArticlesTable {
 	}
 
 	func makeDatabaseArticles(with resultSet: FMResultSet) -> Set<DatabaseArticle> {
-
 		let articles = resultSet.mapToSet { (row) -> DatabaseArticle? in
 
 			// The resultSet is a result of a JOIN query with the statuses table,
@@ -427,7 +515,6 @@ private extension ArticlesTable {
 	}
 
 	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject], withLimits: Bool) -> Set<Article> {
-
 		// Don’t fetch articles that shouldn’t appear in the UI. The rules:
 		// * Must not be deleted.
 		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
@@ -443,7 +530,6 @@ private extension ArticlesTable {
 	}
 
 	func fetchUnreadCount(_ feedID: String, _ database: FMDatabase) -> Int {
-		
 		// Count only the articles that would appear in the UI.
 		// * Must be unread.
 		// * Must not be deleted.
@@ -453,97 +539,6 @@ private extension ArticlesTable {
 		return numberWithSQLAndParameters(sql, [feedID, articleCutoffDate], in: database)
 	}
 	
-	func fetchArticlesForFeedID(_ feedID: String, withLimits: Bool, database: FMDatabase) -> Set<Article> {
-
-		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject], withLimits: withLimits)
-	}
-
-	func fetchArticlesForIDs(_ articleIDs: Set<String>) -> Set<Article> {
-
-		if articleIDs.isEmpty {
-			return Set<Article>()
-		}
-		
-		var articles = Set<Article>()
-		
-		queue.fetchSync { (database) in
-			
-			let parameters = articleIDs.map { $0 as AnyObject }
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
-			let whereClause = "articleID in \(placeholders)"
-			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
-		}
-		
-		return articles
-	}
-	
-	func fetchUnreadArticles(_ feedIDs: Set<String>) -> Set<Article> {
-
-		if feedIDs.isEmpty {
-			return Set<Article>()
-		}
-
-		var articles = Set<Article>()
-
-		queue.fetchSync { (database) in
-
-			// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and read=0
-
-			let parameters = feedIDs.map { $0 as AnyObject }
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-			let whereClause = "feedID in \(placeholders) and read=0"
-			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
-		}
-
-		return articles
-	}
-
-	func fetchTodayArticles(_ feedIDs: Set<String>) -> Set<Article> {
-
-		if feedIDs.isEmpty {
-			return Set<Article>()
-		}
-
-		var articles = Set<Article>()
-
-		queue.fetchSync { (database) in
-
-			// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and (datePublished > ? || (datePublished is null and dateArrived > ?)
-			//
-			// datePublished may be nil, so we fall back to dateArrived.
-
-			let startOfToday = NSCalendar.startOfToday()
-			let parameters = feedIDs.map { $0 as AnyObject } + [startOfToday as AnyObject, startOfToday as AnyObject]
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-			let whereClause = "feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and userDeleted = 0"
-//			let whereClause = "feedID in \(placeholders) and datePublished > ? and userDeleted = 0"
-			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
-		}
-
-		return articles
-	}
-
-	func fetchStarredArticles(_ feedIDs: Set<String>) -> Set<Article> {
-
-		if feedIDs.isEmpty {
-			return Set<Article>()
-		}
-
-		var articles = Set<Article>()
-
-		queue.fetchSync { (database) in
-
-			// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and starred = 1 and userDeleted = 0;
-
-			let parameters = feedIDs.map { $0 as AnyObject }
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-			let whereClause = "feedID in \(placeholders) and starred = 1 and userDeleted = 0"
-			articles = self.fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
-		}
-
-		return articles
-	}
-
 	func fetchArticlesMatching(_ searchString: String, _ database: FMDatabase) -> Set<Article> {
 		let sql = "select rowid from search where search match ?;"
 		let sqlSearchString = sqliteSearchString(with: searchString)
@@ -578,33 +573,28 @@ private extension ArticlesTable {
 	}
 
 	func articlesWithSQL(_ sql: String, _ parameters: [AnyObject], _ database: FMDatabase) -> Set<Article> {
-
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
 			return Set<Article>()
 		}
 		return articlesWithResultSet(resultSet, database)
 	}
 
-	// MARK: Saving Parsed Items
-	
+	// MARK: - Saving Parsed Items
 	
 	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
-		
 		DispatchQueue.main.async {
 			completion(newArticles, updatedArticles)
 		}
 	}
 	
-	// MARK: Save New Articles
+	// MARK: - Saving New Articles
 
 	func findNewArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article]) -> Set<Article>? {
-		
 		let newArticles = Set(incomingArticles.filter { fetchedArticlesDictionary[$0.articleID] == nil })
 		return newArticles.isEmpty ? nil : newArticles
 	}
 	
 	func findAndSaveNewArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article], _ database: FMDatabase) -> Set<Article>? { //5
-		
 		guard let newArticles = findNewArticles(incomingArticles, fetchedArticlesDictionary) else {
 			return nil
 		}
@@ -613,7 +603,6 @@ private extension ArticlesTable {
 	}
 	
 	func saveNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-
 		saveRelatedObjectsForNewArticles(articles, database)
 
 		if let databaseDictionaries = articles.databaseDictionaries() {
@@ -622,17 +611,15 @@ private extension ArticlesTable {
 	}
 
 	func saveRelatedObjectsForNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-
 		let databaseObjects = articles.databaseObjects()
 
 		authorsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
 		attachmentsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
 	}
 
-	// MARK: Update Existing Articles
+	// MARK: - Updating Existing Articles
 
 	func articlesWithRelatedObjectChanges<T>(_ comparisonKeyPath: KeyPath<Article, Set<T>?>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
-
 		return updatedArticles.filter{ (updatedArticle) -> Bool in
 			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
 				return updatedArticle[keyPath: comparisonKeyPath] != fetchedArticle[keyPath: comparisonKeyPath]
@@ -643,7 +630,6 @@ private extension ArticlesTable {
 	}
 
 	func updateRelatedObjects<T>(_ comparisonKeyPath: KeyPath<Article, Set<T>?>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ lookupTable: DatabaseLookupTable, _ database: FMDatabase) {
-
 		let articlesWithChanges = articlesWithRelatedObjectChanges(comparisonKeyPath, updatedArticles, fetchedArticles)
 		if !articlesWithChanges.isEmpty {
 			lookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
@@ -651,13 +637,11 @@ private extension ArticlesTable {
 	}
 
 	func saveUpdatedRelatedObjects(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-
 		updateRelatedObjects(\Article.authors, updatedArticles, fetchedArticles, authorsLookupTable, database)
 		updateRelatedObjects(\Article.attachments, updatedArticles, fetchedArticles, attachmentsLookupTable, database)
 	}
 
 	func findUpdatedArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article]) -> Set<Article>? {
-		
 		let updatedArticles = incomingArticles.filter{ (incomingArticle) -> Bool in //6
 			if let existingArticle = fetchedArticlesDictionary[incomingArticle.articleID] {
 				if existingArticle != incomingArticle {
@@ -671,7 +655,6 @@ private extension ArticlesTable {
 	}
 	
 	func findAndSaveUpdatedArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article], _ database: FMDatabase) -> Set<Article>? { //6
-		
 		guard let updatedArticles = findUpdatedArticles(incomingArticles, fetchedArticlesDictionary) else {
 			return nil
 		}
@@ -681,7 +664,6 @@ private extension ArticlesTable {
 	
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-
 		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
 		
 		for updatedArticle in updatedArticles {
@@ -690,7 +672,6 @@ private extension ArticlesTable {
 	}
 
 	func saveUpdatedArticle(_ updatedArticle: Article, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-		
 		// Only update exactly what has changed in the Article (if anything).
 		// Untested theory: this gets us better performance and less database fragmentation.
 		
@@ -699,7 +680,6 @@ private extension ArticlesTable {
 			saveNewArticles(Set([updatedArticle]), database)
 			return
 		}
-		
 		guard let changesDictionary = updatedArticle.changesFrom(fetchedArticle), changesDictionary.count > 0 else {
 			// Not unexpected. There may be no changes.
 			return
@@ -709,9 +689,7 @@ private extension ArticlesTable {
 	}
 	
 	func statusIndicatesArticleIsIgnorable(_ status: ArticleStatus) -> Bool {
-
 		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).
-
 		if status.userDeleted {
 			return true
 		}
@@ -722,9 +700,7 @@ private extension ArticlesTable {
 	}
 
 	func filterIncomingArticles(_ articles: Set<Article>) -> Set<Article> {
-		
 		// Drop Articles that we can ignore.
-		
 		return Set(articles.filter{ !statusIndicatesArticleIsIgnorable($0.status) })
 	}
 }

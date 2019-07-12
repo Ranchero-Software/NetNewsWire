@@ -1,6 +1,6 @@
 //
 //  AuthorsTable.swift
-//  Database
+//  NetNewsWire
 //
 //  Created by Brent Simmons on 7/13/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -24,14 +24,12 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 	var cache = DatabaseObjectCache()
 
 	init(name: String) {
-
 		self.name = name
 	}
 	
-	// MARK: DatabaseRelatedObjectsTable
+	// MARK: - DatabaseRelatedObjectsTable
 
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
-	
 		if let author = Author(row: row) {
 			return author as DatabaseObject
 		}
