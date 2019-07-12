@@ -494,7 +494,7 @@ class AppCoordinator: UndoableCommandRunner {
 		let accounts = AccountManager.shared.activeAccounts
 		var articles = Set<Article>()
 		accounts.forEach { account in
-			articles.formUnion(account.fetchUnreadArticles())
+			articles.formUnion(account.fetchArticles(.unread))
 		}
 		
 		guard let undoManager = undoManager,
