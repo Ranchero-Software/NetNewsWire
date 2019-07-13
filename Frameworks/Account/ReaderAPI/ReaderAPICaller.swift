@@ -321,79 +321,102 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
+		guard let url = URL(string: url) else {
+			completion(.failure(LocalAccountDelegateError.invalidParameter))
+			return
+		}
+		
+		FeedFinder.find(url: url) { result in
+			
 			switch result {
-			case .success(let token):
-				guard var components = URLComponents(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionAdd.rawValue), resolvingAgainstBaseURL: false) else {
-					completion(.failure(TransportError.noURL))
-					return
+			case .success(let feedSpecifiers):
+				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
+					let url = URL(string: bestFeedSpecifier.urlString) else {
+						completion(.failure(AccountError.createErrorNotFound))
+						return
 				}
-				
-				components.queryItems = [
-					URLQueryItem(name: "quickadd", value: url)
-				]
-				
-				guard let callURL = components.url else {
-					completion(.failure(TransportError.noURL))
-					return
-				}
-				
-				var request = URLRequest(url: callURL, credentials: self.credentials)
-				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-				request.httpMethod = "POST"
-				
-				let postData = "T=\(token)".data(using: String.Encoding.utf8)
-				
-				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIQuickAddResult.self, completion: { (result) in
+				self.requestAuthorizationToken(endpoint: baseURL) { (result) in
 					switch result {
-					case .success(let (_, subResult)):
-						
-						switch subResult?.numResults {
-						case 0:
-							completion(.success(.alreadySubscribed))
-						default:
-							// We have a feed ID but need to get feed information
-							guard let streamId = subResult?.streamId else {
-								completion(.failure(AccountError.createErrorNotFound))
-								return
-							}
-							
-							// There is no call to get a single subscription entry, so we get them all,
-							// look up the one we just subscribed to and return that
-							self.retrieveSubscriptions(completion: { (result) in
-								switch result {
-								case .success(let subscriptions):
-									guard let subscriptions = subscriptions else {
+					case .success(let token):
+						guard var components = URLComponents(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionAdd.rawValue), resolvingAgainstBaseURL: false) else {
+							completion(.failure(TransportError.noURL))
+							return
+						}
+		
+						components.queryItems = [
+							URLQueryItem(name: "quickadd", value: url.absoluteString)
+						]
+		
+						guard let callURL = components.url else {
+							completion(.failure(TransportError.noURL))
+							return
+						}
+		
+						var request = URLRequest(url: callURL, credentials: self.credentials)
+						request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+						request.httpMethod = "POST"
+		
+						let postData = "T=\(token)".data(using: String.Encoding.utf8)
+		
+						self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIQuickAddResult.self, completion: { (result) in
+							switch result {
+							case .success(let (_, subResult)):
+		
+								switch subResult?.numResults {
+								case 0:
+									completion(.success(.alreadySubscribed))
+								default:
+									// We have a feed ID but need to get feed information
+									guard let streamId = subResult?.streamId else {
 										completion(.failure(AccountError.createErrorNotFound))
 										return
 									}
-									
-									let newStreamId = "feed/\(streamId)"
-									
-									guard let subscription = subscriptions.first(where: { (sub) -> Bool in
-										sub.feedID == newStreamId
-									}) else {
-										completion(.failure(AccountError.createErrorNotFound))
-										return
+		
+									// There is no call to get a single subscription entry, so we get them all,
+									// look up the one we just subscribed to and return that
+									self.retrieveSubscriptions(completion: { (result) in
+										switch result {
+										case .success(let subscriptions):
+											guard let subscriptions = subscriptions else {
+												completion(.failure(AccountError.createErrorNotFound))
+												return
+											}
+		
+											let newStreamId = "feed/\(streamId)"
+		
+											guard let subscription = subscriptions.first(where: { (sub) -> Bool in
+												sub.feedID == newStreamId
+											}) else {
+												completion(.failure(AccountError.createErrorNotFound))
+												return
+											}
+		
+											completion(.success(.created(subscription)))
+		
+										case .failure(let error):
+											completion(.failure(error))
+										}
+									})
 									}
-									
-									completion(.success(.created(subscription)))
-									
-								case .failure(let error):
-									completion(.failure(error))
-								}
-							})
+							case .failure(let error):
+								completion(.failure(error))
 							}
+						})
+		
+		
 					case .failure(let error):
 						completion(.failure(error))
 					}
-				})
+				}
 				
 				
-			case .failure(let error):
-				completion(.failure(error))
+				
+			case .failure:
+				completion(.failure(AccountError.createErrorNotFound))
 			}
+			
 		}
+//
 	}
 	
 	func renameSubscription(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
