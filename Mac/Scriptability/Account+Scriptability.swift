@@ -58,8 +58,10 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 				var container: Container? = nil
 				if let scriptableFolder = scriptableFeed.container as? ScriptableFolder {
 					container = scriptableFolder.folder
+				} else {
+					container = account
 				}
-				account.removeFeed(scriptableFeed.feed, from: container) { result in
+				account.removeFeed(scriptableFeed.feed, from: container!) { result in
 				}
 			}
 		}
