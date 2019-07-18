@@ -35,6 +35,7 @@
 		51554C25228B71910055115A /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51554C30228B71A10055115A /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
 		51554C31228B71A10055115A /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		515ADE4022E11FAE006B2460 /* SystemMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */; };
@@ -690,6 +691,7 @@
 		515436872291D75D005E1CDF /* AddLocalAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocalAccountViewController.swift; sourceTree = "<group>"; };
 		515436892291FED9005E1CDF /* FeedbinAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAccountViewController.swift; sourceTree = "<group>"; };
 		51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SyncDatabase.xcodeproj; path = Frameworks/SyncDatabase/SyncDatabase.xcodeproj; sourceTree = SOURCE_ROOT; };
+		515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SystemMessageViewController.swift; path = SystemMessageViewController.swift; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProgressView.swift; sourceTree = "<group>"; };
@@ -1154,6 +1156,7 @@
 			isa = PBXGroup;
 			children = (
 				51C4527E2265092C00C03939 /* DetailViewController.swift */,
+				515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -1978,12 +1981,12 @@
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Manual;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1993,7 +1996,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -2003,7 +2006,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -2343,6 +2346,7 @@
 				51EF0F79227716380050506E /* ColorHash.swift in Sources */,
 				5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,
+				515ADE4022E11FAE006B2460 /* SystemMessageViewController.swift in Sources */,
 				51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */,
 				51C45296226509D300C03939 /* OPMLExporter.swift in Sources */,
 				51C45291226509C800C03939 /* SmartFeed.swift in Sources */,
@@ -2359,7 +2363,7 @@
 				51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */,
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* AppCoordinator.swift in Sources */,
-				5126EE97226CB48A00C22AFC /* NavigationStateController.swift in Sources */,
+				5126EE97226CB48A00C22AFC /* AppCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
