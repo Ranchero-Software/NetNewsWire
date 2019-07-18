@@ -210,8 +210,8 @@ class AppCoordinator: UndoableCommandRunner {
 		masterFeedViewController = (masterNavigationController.topViewController as! MasterFeedViewController)
 		masterFeedViewController.coordinator = self
 		
-//		let detailNavigationController = (rootSplitViewController.viewControllers.last as! UINavigationController)
-//		detailNavigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+		let detailNavigationController = (rootSplitViewController.viewControllers.last as! UINavigationController)
+		detailNavigationController.topViewController!.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 		
 		return rootSplitViewController
 	}
