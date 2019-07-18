@@ -401,7 +401,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return feed
 	}
 	
-	public func removeFeed(_ feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.removeFeed(for: self, with: feed, from: container, completion: completion)
 	}
 	
