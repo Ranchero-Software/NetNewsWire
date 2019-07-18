@@ -596,10 +596,14 @@ extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 private extension MasterFeedViewController {
 	
 	@objc private func refreshAccounts(_ sender: Any) {
-		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
 		refreshControl?.endRefreshing()
+		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
+		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
+		}
 	}
-	
+
 	func updateUI() {
 		markAllAsReadButton.isEnabled = coordinator.isAnyUnreadAvailable
 		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
