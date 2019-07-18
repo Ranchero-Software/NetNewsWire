@@ -11,7 +11,7 @@ import UIKit
 class SystemMessageViewController: UIViewController {
 
 	@IBOutlet weak var messageLabel: UILabel!
-	var message: String?
+	var message: String = NSLocalizedString("No Selection", comment: "No Selection")
 	
     override func viewDidLoad() {
         super.viewDidLoad()

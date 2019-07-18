@@ -207,9 +207,8 @@ class AppCoordinator: UndoableCommandRunner {
 		rootSplitViewController.delegate = self
 		
 		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
-		masterFeedViewController = UIStoryboard.main.instantiateController(ofType: MasterFeedViewController.self)
+		masterFeedViewController = (masterNavigationController.topViewController as! MasterFeedViewController)
 		masterFeedViewController.coordinator = self
-		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
 		
 //		let detailNavigationController = (rootSplitViewController.viewControllers.last as! UINavigationController)
 //		detailNavigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
@@ -447,17 +446,18 @@ class AppCoordinator: UndoableCommandRunner {
 	}
 	
 	func selectArticle(_ indexPath: IndexPath) {
-		if let detailNavController = rootSplitViewController.viewControllers.last as? UINavigationController,
-			let _ = detailNavController.topViewController as? DetailViewController {
+		if let detailNavigationController = rootSplitViewController.viewControllers.last as? UINavigationController,
+			let _ = detailNavigationController.topViewController as? DetailViewController {
 			currentArticleIndexPath = indexPath
 		} else {
-			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
+			let detailNavigationController = UIStoryboard.main.instantiateViewController(identifier: "DetailNavigationController") as! UINavigationController
+			let detailViewController = detailNavigationController.topViewController as! DetailViewController
 			detailViewController.coordinator = self
 			detailViewController.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 			detailViewController.navigationItem.leftItemsSupplementBackButton = true
 			currentArticleIndexPath = indexPath
 			//		rootSplitViewController.toggleMasterView()
-			rootSplitViewController.showDetailViewController(detailViewController, sender: self)
+			rootSplitViewController.showDetailViewController(detailNavigationController, sender: self)
 		}
 	}
 	

@@ -10,6 +10,13 @@ import UIKit
 
 extension UISplitViewController {
 	
+	static func template() -> UISplitViewController {
+		let splitViewController = UISplitViewController()
+		splitViewController.preferredDisplayMode = .allVisible
+		splitViewController.viewControllers = [UINavigationController()]
+		return splitViewController
+	}
+	
 	func toggleMasterView() {
 		let barButtonItem = self.displayModeButtonItem
 		if let action = barButtonItem.action {
