@@ -182,7 +182,7 @@ class AppCoordinator: UndoableCommandRunner {
 		return appDelegate.unreadCount > 0
 	}
 	
-	init() {
+	init(_ rootSplitViewController: UISplitViewController) {
 
 		for section in treeController.rootNode.childNodes {
 			expandedNodes.append(section)
@@ -200,10 +200,7 @@ class AppCoordinator: UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		
-	}
-	
-	func start() -> UIViewController {
-		rootSplitViewController = (UIStoryboard.main.instantiateInitialViewController() as! UISplitViewController)
+		self.rootSplitViewController = rootSplitViewController
 		rootSplitViewController.delegate = self
 		
 		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
@@ -213,7 +210,6 @@ class AppCoordinator: UndoableCommandRunner {
 		let detailNavigationController = (rootSplitViewController.viewControllers.last as! UINavigationController)
 		detailNavigationController.topViewController!.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 		
-		return rootSplitViewController
 	}
 	
 	// MARK: Notifications
