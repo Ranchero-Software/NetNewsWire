@@ -210,8 +210,8 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		masterFeedViewController = (masterNavigationController.topViewController as! MasterFeedViewController)
 		masterFeedViewController.coordinator = self
 		
-		let detailNavigationController = (rootSplitViewController.viewControllers.last as! UINavigationController)
-		detailNavigationController.topViewController!.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
+		let systemMessageNavController = (rootSplitViewController.viewControllers.last as! UINavigationController)
+		systemMessageNavController.topViewController!.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 		
 	}
 	
