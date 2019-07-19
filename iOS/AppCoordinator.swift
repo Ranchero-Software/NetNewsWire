@@ -21,7 +21,7 @@ public extension Notification.Name {
 	static let ArticleSelectionDidChange = Notification.Name(rawValue: "ArticleSelectionDidChange")
 }
 
-class AppCoordinator: UndoableCommandRunner {
+class AppCoordinator: NSObject, UndoableCommandRunner {
 	
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
@@ -184,6 +184,8 @@ class AppCoordinator: UndoableCommandRunner {
 	
 	init(_ rootSplitViewController: UISplitViewController) {
 
+		super.init()
+		
 		for section in treeController.rootNode.childNodes {
 			expandedNodes.append(section)
 			shadowTable.append([Node]())
@@ -204,6 +206,7 @@ class AppCoordinator: UndoableCommandRunner {
 		rootSplitViewController.delegate = self
 		
 		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
+		masterNavigationController.delegate = self
 		masterFeedViewController = (masterNavigationController.topViewController as! MasterFeedViewController)
 		masterFeedViewController.coordinator = self
 		
@@ -560,6 +563,22 @@ class AppCoordinator: UndoableCommandRunner {
 		
 		activityViewController.popoverPresentationController?.barButtonItem = detailViewController.actionBarButtonItem
 		detailViewController.present(activityViewController, animated: true)
+	}
+	
+}
+
+// MARK: UINavigationControllerDelegate
+
+extension AppCoordinator: UINavigationControllerDelegate {
+
+	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+		if navigationController.viewControllers.count == 1 {
+			let systemMessageNavController = UIStoryboard.main.instantiateViewController(identifier: "SystemMessageNavigationController") as! UINavigationController
+			let systemMessageViewController = systemMessageNavController.topViewController as! SystemMessageViewController
+			systemMessageViewController.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
+			systemMessageViewController.navigationItem.leftItemsSupplementBackButton = true
+			rootSplitViewController.showDetailViewController(systemMessageNavController, sender: self)
+		}
 	}
 	
 }
