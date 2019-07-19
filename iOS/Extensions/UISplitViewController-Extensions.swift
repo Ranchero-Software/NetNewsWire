@@ -13,7 +13,11 @@ extension UISplitViewController {
 	static func template() -> UISplitViewController {
 		let splitViewController = UISplitViewController()
 		splitViewController.preferredDisplayMode = .allVisible
-		splitViewController.viewControllers = [UINavigationController()]
+
+		let navController = UINavigationController()
+		navController.isToolbarHidden = false
+		splitViewController.viewControllers = [navController]
+		
 		return splitViewController
 	}
 	

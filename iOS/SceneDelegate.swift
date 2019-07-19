@@ -11,14 +11,14 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
     var window: UIWindow?
-	var coordinator: AppCoordinator?
+	var coordinator = AppCoordinator()
 	
     // UIWindowScene delegate
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
 		window!.tintColor = AppAssets.netNewsWireBlueColor
-		coordinator = AppCoordinator(window!.rootViewController as! UISplitViewController)
+		window?.rootViewController = coordinator.start()
 
 //        if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
 //            if !configure(window: window, with: userActivity) {
