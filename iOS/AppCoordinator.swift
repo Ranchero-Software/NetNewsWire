@@ -441,10 +441,14 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func selectFeed(_ indexPath: IndexPath) {
-		masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-		masterTimelineViewController!.coordinator = self
-		currentMasterIndexPath = indexPath
-		navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: true)
+		if let _ = navControllerForTimeline().viewControllers.first as? MasterTimelineViewController {
+			currentMasterIndexPath = indexPath
+		} else {
+			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+			masterTimelineViewController!.coordinator = self
+			currentMasterIndexPath = indexPath
+			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: true)
+		}
 	}
 	
 	func selectArticle(_ indexPath: IndexPath) {
