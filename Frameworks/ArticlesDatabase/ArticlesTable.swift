@@ -102,23 +102,22 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Fetching Today Articles
 
-	func fetchTodayArticles(_ feedIDs: Set<String>) -> Set<Article> {
-		return fetchArticles{ self.fetchTodayArticles(feedIDs, $0) }
+	func fetchArticlesSince(_ feedIDs: Set<String>, _ cutoffDate: Date) -> Set<Article> {
+		return fetchArticles{ self.fetchArticlesSince(feedIDs, cutoffDate, $0) }
 	}
 
-	func fetchTodayArticlesAsync(_ feedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		fetchArticlesAsync({ self.fetchTodayArticles(feedIDs, $0) }, callback)
+	func fetchArticlesSinceAsync(_ feedIDs: Set<String>, _ cutoffDate: Date, _ callback: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchArticlesSince(feedIDs, cutoffDate, $0) }, callback)
 	}
 
-	private func fetchTodayArticles(_ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+	private func fetchArticlesSince(_ feedIDs: Set<String>, _ cutoffDate: Date, _ database: FMDatabase) -> Set<Article> {
 		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and (datePublished > ? || (datePublished is null and dateArrived > ?)
 		//
 		// datePublished may be nil, so we fall back to dateArrived.
 		if feedIDs.isEmpty {
 			return Set<Article>()
 		}
-		let startOfToday = NSCalendar.startOfToday()
-		let parameters = feedIDs.map { $0 as AnyObject } + [startOfToday as AnyObject, startOfToday as AnyObject]
+		let parameters = feedIDs.map { $0 as AnyObject } + [cutoffDate as AnyObject, cutoffDate as AnyObject]
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 		let whereClause = "feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and userDeleted = 0"
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
