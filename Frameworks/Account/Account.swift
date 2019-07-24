@@ -557,8 +557,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func fetchUnreadCountForToday(_ callback: @escaping (Int) -> Void) {
-		let startOfToday = NSCalendar.startOfToday()
-		database.fetchUnreadCount(for: flattenedFeeds().feedIDs(), since: startOfToday, callback: callback)
+		database.fetchUnreadCountForToday(for: flattenedFeeds().feedIDs(), callback: callback)
 	}
 
 	public func fetchUnreadCountForStarredArticles(_ callback: @escaping (Int) -> Void) {

@@ -57,7 +57,7 @@ public final class ArticlesDatabase {
 	}
 
 	public func fetchTodayArticles(_ feedIDs: Set<String>) -> Set<Article> {
-		return articlesTable.fetchTodayArticles(feedIDs)
+		return articlesTable.fetchArticlesSince(feedIDs, todayCutoffDate())
 	}
 
 	public func fetchStarredArticles(_ feedIDs: Set<String>) -> Set<Article> {
@@ -83,7 +83,7 @@ public final class ArticlesDatabase {
 	}
 
 	public func fetchTodayArticlesAsync(_ feedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		articlesTable.fetchTodayArticlesAsync(feedIDs, callback)
+		articlesTable.fetchArticlesSinceAsync(feedIDs, todayCutoffDate(), callback)
 	}
 
 	public func fetchedStarredArticlesAsync(_ feedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
@@ -98,6 +98,10 @@ public final class ArticlesDatabase {
 	
 	public func fetchUnreadCounts(for feedIDs: Set<String>, _ callback: @escaping UnreadCountCompletionBlock) {
 		articlesTable.fetchUnreadCounts(feedIDs, callback)
+	}
+
+	public func fetchUnreadCountForToday(for feedIDs: Set<String>, callback: @escaping (Int) -> Void) {
+		fetchUnreadCount(for: feedIDs, since: todayCutoffDate(), callback: callback)
 	}
 
 	public func fetchUnreadCount(for feedIDs: Set<String>, since: Date, callback: @escaping (Int) -> Void) {
@@ -164,4 +168,9 @@ private extension ArticlesDatabase {
 
 	CREATE TRIGGER if not EXISTS articles_after_delete_trigger_delete_search_text after delete on articles begin delete from search where rowid = OLD.searchRowID; end;
 	"""
+
+	func todayCutoffDate() -> Date {
+		// 28 hours previous. This is used by the Today smart feed, which should not actually empty out at midnight.
+		return Date(timeIntervalSinceNow: -(60 * 60 * 28)) // This does not need to be more precise.
+	}
 }
