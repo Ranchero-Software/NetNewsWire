@@ -5,11 +5,11 @@
 
 More topics to do…
 
-How to add a feed
+[How to add a feed](adding-feeds.html)
 
-Installing and using the Safari Extension to add feeds
+[Installing and using the Safari Extension to add feeds](safari-extension.html)
 
-How to import OPML
+[How to import OPML](import-opml.html)
 
 How to export OPML
 
@@ -27,7 +27,7 @@ How to get NetNewsWire news (see Help menu command)
 
 Keyboard shortcuts (see Help menu command)
 
-About the On My Mac account
+[About the On My Mac account](on-my-mac.html)
 
 Privacy (including link to privacy policy)
 
