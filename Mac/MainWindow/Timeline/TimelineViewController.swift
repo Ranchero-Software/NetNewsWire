@@ -159,7 +159,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 			NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(calendarDayChanged(_:)), name: .NSCalendarDayChanged, object: nil)
 			DistributedNotificationCenter.default.addObserver(self,	selector: #selector(appleInterfaceThemeChanged), name: .AppleInterfaceThemeChangedNotification, object: nil)
 
 				didRegisterForNotifications = true
@@ -526,14 +525,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 		self.sortDirection = AppDefaults.timelineSortDirection
 	}
 	
-	@objc func calendarDayChanged(_ note: Notification) {
-		if representedObjectsContainsTodayFeed() {
-			DispatchQueue.main.async { [weak self] in
-				self?.fetchAndReplaceArticlesAsync()
-			}
-		}
-	}
-
 	@objc func appleInterfaceThemeChanged(_ note: Notification) {
 		appDelegate.authorAvatarDownloader.resetCache()
 		appDelegate.feedIconDownloader.resetCache()
