@@ -17,9 +17,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
+		window = UIWindow(windowScene: scene as! UIWindowScene)
 		window!.tintColor = AppAssets.netNewsWireBlueColor
-		window?.rootViewController = coordinator.start()
-
+		window!.rootViewController = coordinator.start()
+		window!.makeKeyAndVisible()
+		
 //        if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
 //            if !configure(window: window, with: userActivity) {
 //                print("Failed to restore from \(userActivity)")

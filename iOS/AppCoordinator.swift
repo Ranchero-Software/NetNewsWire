@@ -103,7 +103,6 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		}
 	}
 	
-	
 	private(set) var showFeedNames = false
 	private(set) var showAvatars = false
 
@@ -456,13 +455,19 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 			currentArticleIndexPath = indexPath
 		} else {
 			let targetSplit = targetSplitForDetail()
+
 			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
 			detailViewController.coordinator = self
+
+			let detailNavController = UINavigationController(rootViewController: detailViewController)
+			detailNavController.isToolbarHidden = false
 			detailViewController.navigationItem.leftBarButtonItem = targetSplit.displayModeButtonItem
 			detailViewController.navigationItem.leftItemsSupplementBackButton = true
+
 			currentArticleIndexPath = indexPath
 			//		rootSplitViewController.toggleMasterView()
-			targetSplit.showDetailViewController(detailViewController, sender: self)
+
+			targetSplit.showDetailViewController(detailNavController, sender: self)
 		}
 	}
 	
