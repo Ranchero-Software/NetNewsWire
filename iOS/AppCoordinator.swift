@@ -41,7 +41,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	private var isThreePane: Bool {
-		return rootSplitViewController.traitCollection.horizontalSizeClass == .regular
+		return !rootSplitViewController.isCollapsed && rootSplitViewController.displayMode == .allVisible
 	}
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
@@ -215,6 +215,10 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
 		
+		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+		let controller = addNavControllerIfNecessary(systemMessageViewController, split: rootSplitViewController, showBackButton: true)
+		rootSplitViewController.showDetailViewController(controller, sender: self)
+
 		return rootSplitViewController
 	}
 	
@@ -459,15 +463,19 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
 			detailViewController.coordinator = self
 
-			let detailNavController = UINavigationController(rootViewController: detailViewController)
-			detailNavController.isToolbarHidden = false
-			detailViewController.navigationItem.leftBarButtonItem = targetSplit.displayModeButtonItem
-			detailViewController.navigationItem.leftItemsSupplementBackButton = true
-
+			let showBackButton = rootSplitViewController.displayMode != .allVisible
+			let controller = addNavControllerIfNecessary(detailViewController, split: targetSplit, showBackButton: showBackButton)
 			currentArticleIndexPath = indexPath
-			//		rootSplitViewController.toggleMasterView()
 
-			targetSplit.showDetailViewController(detailNavController, sender: self)
+			targetSplit.showDetailViewController(controller, sender: self)
+		}
+		
+		// Automatically hide the overlay
+		if rootSplitViewController.displayMode == .primaryOverlay {
+			UIView.animate(withDuration: 0.3) {
+				self.rootSplitViewController.preferredDisplayMode = .primaryHidden
+			}
+			rootSplitViewController.preferredDisplayMode = .automatic
 		}
 	}
 	
@@ -583,11 +591,11 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 extension AppCoordinator: UINavigationControllerDelegate {
 
 	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-		if isThreePane && navigationController.viewControllers.count == 1 {
+		if rootSplitViewController.isCollapsed != true && navigationController.viewControllers.count == 1 {
 			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-			systemMessageViewController.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
-			systemMessageViewController.navigationItem.leftItemsSupplementBackButton = true
-			rootSplitViewController.showDetailViewController(systemMessageViewController, sender: self)
+			let showBackButton = rootSplitViewController.displayMode != .allVisible
+			let controller = addNavControllerIfNecessary(systemMessageViewController, split: rootSplitViewController, showBackButton: showBackButton)
+			rootSplitViewController.showDetailViewController(controller, sender: self)
 		}
 	}
 	
@@ -829,13 +837,30 @@ private extension AppCoordinator {
 	
 	// MARK: Double Split
 	
+	func addNavControllerIfNecessary(_ controller: UIViewController, split: UISplitViewController, showBackButton: Bool) -> UIViewController {
+		if split.isCollapsed {
+			return controller
+		} else {
+			let navController = UINavigationController(rootViewController: controller)
+			navController.isToolbarHidden = false
+			if showBackButton {
+				controller.navigationItem.leftBarButtonItem = split.displayModeButtonItem
+				controller.navigationItem.leftItemsSupplementBackButton = true
+			}
+			return navController
+		}
+	}
+
 	func ensureDoubleSplit() -> UISplitViewController {
 		if let subSplit = rootSplitViewController.viewControllers.last as? UISplitViewController {
 			return subSplit
 		}
 		
+		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.33
+		
 		let subSplit = UISplitViewController.template()
 		subSplit.delegate = self
+		subSplit.preferredDisplayMode = .allVisible
 		subSplit.preferredPrimaryColumnWidthFraction = 0.5
 		rootSplitViewController.showDetailViewController(subSplit, sender: self)
 		return subSplit
