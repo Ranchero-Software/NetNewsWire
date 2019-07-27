@@ -40,7 +40,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		return nil
 	}
 	
-	private var isThreePane: Bool {
+	private var isThreePanelMode: Bool {
 		return !rootSplitViewController.isCollapsed && rootSplitViewController.displayMode == .allVisible
 	}
 	
@@ -867,7 +867,7 @@ private extension AppCoordinator {
 	}
 	
 	func navControllerForTimeline() -> UINavigationController {
-		if isThreePane {
+		if isThreePanelMode {
 			let subSplit = ensureDoubleSplit()
 			return subSplit.viewControllers.first as! UINavigationController
 		} else {
@@ -876,7 +876,7 @@ private extension AppCoordinator {
 	}
 	
 	func targetSplitForDetail() -> UISplitViewController {
-		if isThreePane {
+		if isThreePanelMode {
 			return ensureDoubleSplit()
 		} else {
 			return rootSplitViewController
