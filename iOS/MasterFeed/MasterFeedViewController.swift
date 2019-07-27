@@ -103,7 +103,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				return
 		}
 
-		tableView.reloadRows(at: [indexPath], with: .automatic)
+		performBlockAndRestoreSelection {
+			tableView.reloadRows(at: [indexPath], with: .automatic)
+		}
 
 	}
 
@@ -672,4 +674,12 @@ private extension MasterFeedViewController {
 		}
 	}
 
+	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
+		let indexPaths = tableView.indexPathsForSelectedRows
+		block()
+		indexPaths?.forEach { [weak self] indexPath in
+			self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+		}
+	}
+	
 }
