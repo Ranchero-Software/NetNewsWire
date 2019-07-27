@@ -452,6 +452,13 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 			currentMasterIndexPath = indexPath
 			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: true)
 		}
+		
+		if isThreePanelMode {
+			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+			let targetSplitController = targetSplitForDetail()
+			let controller = addNavControllerIfNecessary(systemMessageViewController, split: targetSplitController, showBackButton: false)
+			targetSplitController.showDetailViewController(controller, sender: self)
+		}
 	}
 	
 	func selectArticle(_ indexPath: IndexPath) {

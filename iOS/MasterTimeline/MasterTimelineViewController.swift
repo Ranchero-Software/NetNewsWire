@@ -352,6 +352,7 @@ private extension MasterTimelineViewController {
 		title = coordinator.timelineName
 		navigationController?.title = coordinator.timelineName
 		
+		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
 		if coordinator.articles.count > 0 {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
