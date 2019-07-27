@@ -33,14 +33,5 @@ final class TimelineContainerView: NSView {
 			}
 		}
 	}
-
-	override var isOpaque: Bool {
-		return true
-	}
-
-	override func draw(_ dirtyRect: NSRect) {
-		NSColor.textBackgroundColor.setFill()
-		dirtyRect.fill()
-	}
 }
 
