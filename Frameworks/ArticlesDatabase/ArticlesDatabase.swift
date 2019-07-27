@@ -170,7 +170,7 @@ private extension ArticlesDatabase {
 	"""
 
 	func todayCutoffDate() -> Date {
-		// 28 hours previous. This is used by the Today smart feed, which should not actually empty out at midnight.
-		return Date(timeIntervalSinceNow: -(60 * 60 * 28)) // This does not need to be more precise.
+		// 24 hours previous. This is used by the Today smart feed, which should not actually empty out at midnight.
+		return Date(timeIntervalSinceNow: -(60 * 60 * 24)) // This does not need to be more precise.
 	}
 }
