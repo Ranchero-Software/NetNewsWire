@@ -12,10 +12,6 @@ final class DetailContainerView: NSView {
 
 	@IBOutlet var detailStatusBarView: DetailStatusBarView!
 
-	override var isOpaque: Bool {
-		return true
-	}
-
 	var contentViewConstraints: [NSLayoutConstraint]?
 
 	var contentView: NSView? {
@@ -38,10 +34,5 @@ final class DetailContainerView: NSView {
 				contentViewConstraints = constraints
 			}
 		}
-	}
-
-	override func draw(_ dirtyRect: NSRect) {
-		NSColor.textBackgroundColor.setFill()
-		dirtyRect.fill()
 	}
 }
