@@ -40,10 +40,6 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		return nil
 	}
 	
-	private var isThreePanelMode: Bool {
-		return !rootSplitViewController.isCollapsed && rootSplitViewController.displayMode == .allVisible
-	}
-	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
@@ -64,6 +60,10 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	private(set) lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
+	
+	var isThreePanelMode: Bool {
+		return !rootSplitViewController.isCollapsed && rootSplitViewController.displayMode == .allVisible
+	}
 	
 	var rootNode: Node {
 		return treeController.rootNode

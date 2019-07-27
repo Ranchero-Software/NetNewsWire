@@ -11,7 +11,7 @@ import RSCore
 import Account
 import Articles
 
-class MasterTimelineViewController: ProgressTableViewController, UndoableCommandRunner {
+class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	private var numberOfTextLines = 0
 	
@@ -36,6 +36,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: coordinator)
@@ -56,6 +57,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		becomeFirstResponder()
+		updateProgressIndicatorIfNeeded()
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
@@ -274,6 +276,10 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		tableView.reloadData()
 	}
 	
+	@objc func progressDidChange(_ note: Notification) {
+		updateProgressIndicatorIfNeeded()
+	}
+	
 	// MARK: Reloading
 	
 	@objc func reloadAllVisibleCells() {
@@ -364,6 +370,12 @@ private extension MasterTimelineViewController {
 	func updateUI() {
 		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
+	}
+	
+	func updateProgressIndicatorIfNeeded() {
+		if !coordinator.isThreePanelMode {
+			navigationController?.updateAccountRefreshProgressIndicator()
+		}
 	}
 	
 	func configureTimelineCell(_ cell: MasterTimelineTableViewCell, article: Article) {

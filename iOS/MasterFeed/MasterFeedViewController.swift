@@ -13,7 +13,7 @@ import RSCore
 import RSTree
 import SwiftUI
 
-class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunner {
+class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet private weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet private weak var addNewItemButton: UIBarButtonItem!
@@ -44,7 +44,8 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+
 		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
@@ -65,6 +66,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		becomeFirstResponder()
+		navigationController?.updateAccountRefreshProgressIndicator()
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
@@ -156,6 +158,10 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	@objc func accountStateDidChange(_ notification: Notification) {
 		updateUI()
+	}
+	
+	@objc func progressDidChange(_ note: Notification) {
+		navigationController?.updateAccountRefreshProgressIndicator()
 	}
 	
 	@objc func masterSelectionDidChange(_ note: Notification) {

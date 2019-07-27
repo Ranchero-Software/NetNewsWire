@@ -40,7 +40,6 @@
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */; };
 		5183CCDF226F1FCC0010922C /* UINavigationController+Progress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDE226F1FCC0010922C /* UINavigationController+Progress.swift */; };
-		5183CCE3226F314C0010922C /* ProgressTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE2226F314C0010922C /* ProgressTableViewController.swift */; };
 		5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		5183CCE6226F4E110010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		5183CCE8226F68D90010922C /* AccountRefreshTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */; };
@@ -691,12 +690,11 @@
 		515436872291D75D005E1CDF /* AddLocalAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocalAccountViewController.swift; sourceTree = "<group>"; };
 		515436892291FED9005E1CDF /* FeedbinAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAccountViewController.swift; sourceTree = "<group>"; };
 		51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SyncDatabase.xcodeproj; path = Frameworks/SyncDatabase/SyncDatabase.xcodeproj; sourceTree = SOURCE_ROOT; };
-		515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SystemMessageViewController.swift; path = SystemMessageViewController.swift; sourceTree = "<group>"; };
+		515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMessageViewController.swift; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProgressView.swift; sourceTree = "<group>"; };
 		5183CCDE226F1FCC0010922C /* UINavigationController+Progress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Progress.swift"; sourceTree = "<group>"; };
-		5183CCE2226F314C0010922C /* ProgressTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressTableViewController.swift; sourceTree = "<group>"; };
 		5183CCE4226F4DFA0010922C /* RefreshInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshInterval.swift; sourceTree = "<group>"; };
 		5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRefreshTimer.swift; sourceTree = "<group>"; };
 		5183CCEC22711DCE0010922C /* Settings.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
@@ -1050,7 +1048,6 @@
 		5183CCDB226F1EEB0010922C /* Progress */ = {
 			isa = PBXGroup;
 			children = (
-				5183CCE2226F314C0010922C /* ProgressTableViewController.swift */,
 				5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */,
 				5183CCDE226F1FCC0010922C /* UINavigationController+Progress.swift */,
 			);
@@ -2415,7 +2412,6 @@
 				DF999FF722B5AEFA0064B687 /* SafariView.swift in Sources */,
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
 				84DEE56622C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
-				5183CCE3226F314C0010922C /* ProgressTableViewController.swift in Sources */,
 				512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */,
 				51C45268226508F600C03939 /* MasterFeedUnreadCountView.swift in Sources */,
 				5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */,
