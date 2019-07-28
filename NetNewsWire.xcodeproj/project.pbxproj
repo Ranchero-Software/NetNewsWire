@@ -669,7 +669,7 @@
 		510D707F22B02A5F004E8F65 /* SettingsFeedbinAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFeedbinAccountView.swift; sourceTree = "<group>"; };
 		510D708122B041CC004E8F65 /* SettingsAccountLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountLabelView.swift; sourceTree = "<group>"; };
 		5110AB7722B7BD6200A94F76 /* AddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddView.swift; sourceTree = "<group>"; };
-		51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOS_target.xcconfig; sourceTree = "<group>"; };
+		51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSapp_target.xcconfig; sourceTree = "<group>"; };
 		51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContainerViewController.swift; sourceTree = "<group>"; };
 		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
 		5126EE96226CB48A00C22AFC /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -925,13 +925,14 @@
 		84F9EAE4213660A100CF2DE4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
+		D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_safariextension_target.xcconfig; sourceTree = "<group>"; };
 		D553737C20186C1F006D8857 /* Article+Scriptability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Article+Scriptability.swift"; sourceTree = "<group>"; };
 		D57BE6DF204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScriptCommand+NetNewsWire.swift"; sourceTree = "<group>"; };
 		D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_project_release.xcconfig; sourceTree = "<group>"; };
 		D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_project_debug.xcconfig; sourceTree = "<group>"; };
 		D5907CDE2002F0BE005947E5 /* NetNewsWire_project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_project.xcconfig; sourceTree = "<group>"; };
 		D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWireTests_target.xcconfig; sourceTree = "<group>"; };
-		D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_target.xcconfig; sourceTree = "<group>"; };
+		D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_macapp_target.xcconfig; sourceTree = "<group>"; };
 		D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSApplication+Scriptability.swift"; sourceTree = "<group>"; };
 		D5907D962004B7EB005947E5 /* Account+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+Scriptability.swift"; sourceTree = "<group>"; };
 		D5907DB12004BB37005947E5 /* ScriptingObjectContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingObjectContainer.swift; sourceTree = "<group>"; };
@@ -1846,9 +1847,10 @@
 				D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */,
 				D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */,
 				D5907CDE2002F0BE005947E5 /* NetNewsWire_project.xcconfig */,
-				D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */,
+				D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */,
 				D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */,
-				51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */,
+				D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */,
+				51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */,
 			);
 			path = xcconfig;
 			sourceTree = "<group>";
@@ -1925,10 +1927,11 @@
 				849C645C1ED37A5D003D8FC0 /* Sources */,
 				849C645D1ED37A5D003D8FC0 /* Frameworks */,
 				849C645E1ED37A5D003D8FC0 /* Resources */,
-				84C987A52000AC9E0066B150 /* ShellScript */,
+				84C987A52000AC9E0066B150 /* Run Script: Automated build numbers */,
 				84B06F681ED37B9000F0B54B /* Embed Frameworks */,
 				6581C75720CED60100F4AD34 /* Embed App Extensions */,
-				8423E3E3220158E700C3795B /* ShellScript */,
+				D519E77022EE5B4100923F27 /* Run Script: Verify No Build Settings */,
+				8423E3E3220158E700C3795B /* Run Script: codesign release builds */,
 			);
 			buildRules = (
 			);
@@ -1978,12 +1981,12 @@
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = DY2XQRVWN9;
+						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = DY2XQRVWN9;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1993,8 +1996,8 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = DY2XQRVWN9;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -2003,7 +2006,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = DY2XQRVWN9;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -2290,7 +2293,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8423E3E3220158E700C3795B /* ShellScript */ = {
+		8423E3E3220158E700C3795B /* Run Script: codesign release builds */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2299,6 +2302,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Script: codesign release builds";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -2307,18 +2311,37 @@
 			shellPath = /bin/sh;
 			shellScript = "# See https://github.com/Watson1978/kotori/commit/ffe320f2e058828f0af294b65ed88dfd7baaabff\n\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n    codesign --verbose --force --deep -o runtime --sign \"Developer ID Application: Brent Simmons\" \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\nfi\n";
 		};
-		84C987A52000AC9E0066B150 /* ShellScript */ = {
+		84C987A52000AC9E0066B150 /* Run Script: Automated build numbers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run Script: Automated build numbers";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# See https://blog.curtisherbert.com/automated-build-numbers/\n\ngit=`sh /etc/profile; which git`\nbranch_name=`$git symbolic-ref HEAD | sed -e 's,.*/\\\\(.*\\\\),\\\\1,'`\ngit_count=`$git rev-list $branch_name |wc -l | sed 's/^ *//;s/ *$//'`\nsimple_branch_name=`$git rev-parse --abbrev-ref HEAD`\n\nbuild_number=\"$git_count\"\nif [ $CONFIGURATION != \"Release\" ]; then\nbuild_number+=\"-$simple_branch_name\"\nfi\n\nplist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\ndsym_plist=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\nif [ -f \"$DSYM_INFO_PLIST\" ] ; then\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$dsym_plist\"\nfi\n";
+		};
+		D519E77022EE5B4100923F27 /* Run Script: Verify No Build Settings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Verify No Build Settings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2760,162 +2783,29 @@
 /* Begin XCBuildConfiguration section */
 		6581C74720CED60100F4AD34 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */;
+			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_ENTITLEMENTS = Mac/SafariExtension/Subscribe_to_Feed.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				INFOPLIST_FILE = Mac/SafariExtension/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen.Subscribe-to-Feed";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		6581C74820CED60100F4AD34 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */;
+			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_ENTITLEMENTS = Mac/SafariExtension/Subscribe_to_Feed.entitlements;
-				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = Mac/SafariExtension/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen.Subscribe-to-Feed";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
 		840D61A42029031E009BC708 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */;
+			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = iOS/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen.iOS";
-				PRODUCT_NAME = NetNewsWire;
-				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		840D61A52029031E009BC708 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */;
+			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = iOS/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen.iOS";
-				PRODUCT_NAME = NetNewsWire;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -2923,7 +2813,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */;
 			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 			};
 			name = Debug;
 		};
@@ -2931,37 +2820,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */;
 			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 			};
 			name = Release;
 		};
 		849C647B1ED37A5D003D8FC0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_ENTITLEMENTS = Mac/Resources/NetNewsWire.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				INFOPLIST_FILE = Mac/Resources/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.14.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen";
-				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Debug;
 		};
 		849C647C1ED37A5D003D8FC0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_ENTITLEMENTS = Mac/Resources/NetNewsWire.entitlements;
-				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = Mac/Resources/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.14.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire-Evergreen";
-				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Release;
 		};
@@ -2969,8 +2841,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				PRODUCT_NAME = NetNewsWireTests;
 			};
 			name = Debug;
 		};
@@ -2978,7 +2848,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = NetNewsWireTests;
 			};
 			name = Release;
 		};
