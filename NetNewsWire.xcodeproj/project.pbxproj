@@ -1927,10 +1927,11 @@
 				849C645C1ED37A5D003D8FC0 /* Sources */,
 				849C645D1ED37A5D003D8FC0 /* Frameworks */,
 				849C645E1ED37A5D003D8FC0 /* Resources */,
-				84C987A52000AC9E0066B150 /* ShellScript */,
+				84C987A52000AC9E0066B150 /* Run Script: Automated build numbers */,
 				84B06F681ED37B9000F0B54B /* Embed Frameworks */,
 				6581C75720CED60100F4AD34 /* Embed App Extensions */,
-				8423E3E3220158E700C3795B /* ShellScript */,
+				D519E77022EE5B4100923F27 /* Run Script: Verify No Build Settings */,
+				8423E3E3220158E700C3795B /* Run Script: codesign release builds */,
 			);
 			buildRules = (
 			);
@@ -2292,7 +2293,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8423E3E3220158E700C3795B /* ShellScript */ = {
+		8423E3E3220158E700C3795B /* Run Script: codesign release builds */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2301,6 +2302,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Script: codesign release builds";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -2309,18 +2311,37 @@
 			shellPath = /bin/sh;
 			shellScript = "# See https://github.com/Watson1978/kotori/commit/ffe320f2e058828f0af294b65ed88dfd7baaabff\n\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n    codesign --verbose --force --deep -o runtime --sign \"Developer ID Application: Brent Simmons\" \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\nfi\n";
 		};
-		84C987A52000AC9E0066B150 /* ShellScript */ = {
+		84C987A52000AC9E0066B150 /* Run Script: Automated build numbers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run Script: Automated build numbers";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# See https://blog.curtisherbert.com/automated-build-numbers/\n\ngit=`sh /etc/profile; which git`\nbranch_name=`$git symbolic-ref HEAD | sed -e 's,.*/\\\\(.*\\\\),\\\\1,'`\ngit_count=`$git rev-list $branch_name |wc -l | sed 's/^ *//;s/ *$//'`\nsimple_branch_name=`$git rev-parse --abbrev-ref HEAD`\n\nbuild_number=\"$git_count\"\nif [ $CONFIGURATION != \"Release\" ]; then\nbuild_number+=\"-$simple_branch_name\"\nfi\n\nplist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\ndsym_plist=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\nif [ -f \"$DSYM_INFO_PLIST\" ] ; then\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$dsym_plist\"\nfi\n";
+		};
+		D519E77022EE5B4100923F27 /* Run Script: Verify No Build Settings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Verify No Build Settings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
