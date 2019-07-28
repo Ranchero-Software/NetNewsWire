@@ -1981,12 +1981,12 @@
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = DY2XQRVWN9;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Manual;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = DY2XQRVWN9;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1996,8 +1996,8 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = DY2XQRVWN9;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -2006,7 +2006,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = DY2XQRVWN9;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
