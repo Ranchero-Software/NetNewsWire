@@ -71,6 +71,7 @@
             <enumerator name="feedbin" code="Fdbn" description="A Feedbin account"/>
             <enumerator name="feed wrangler" code="FWrg" description="A Feed Wrangler account"/>
             <enumerator name="newsblur" code="NBlr" description="A Newsblur account"/>
+			<enumerator name="fresh rss" code="Frsh" description="A Fresh RSS account"/>
         </enumeration>
 
         <class name="account" code="Acct" plural="accounts" description="An account for subscribing to feeds">

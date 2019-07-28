@@ -21,9 +21,26 @@ public extension Notification.Name {
 	static let ArticleSelectionDidChange = Notification.Name(rawValue: "ArticleSelectionDidChange")
 }
 
-class AppCoordinator {
-
-	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
+class AppCoordinator: NSObject, UndoableCommandRunner {
+	
+	var undoableCommands = [UndoableCommand]()
+	var undoManager: UndoManager? {
+		return rootSplitViewController.undoManager
+	}
+	
+	private var rootSplitViewController: UISplitViewController!
+	private var masterNavigationController: UINavigationController!
+	private var masterFeedViewController: MasterFeedViewController!
+	private var masterTimelineViewController: MasterTimelineViewController?
+	
+	private var detailViewController: DetailViewController? {
+		if let detailNavController = targetSplitForDetail().viewControllers.last as? UINavigationController {
+			return detailNavController.topViewController as? DetailViewController
+		}
+		return nil
+	}
+	
+	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	
@@ -40,9 +57,13 @@ class AppCoordinator {
 	}
 
 	private let treeControllerDelegate = FeedTreeControllerDelegate()
-	lazy var treeController: TreeController = {
+	private(set) lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
+	
+	var isThreePanelMode: Bool {
+		return !rootSplitViewController.isCollapsed && rootSplitViewController.displayMode == .allVisible
+	}
 	
 	var rootNode: Node {
 		return treeController.rootNode
@@ -52,7 +73,7 @@ class AppCoordinator {
 		return shadowTable.count
 	}
 
-	var currentMasterIndexPath: IndexPath? {
+	private(set) var currentMasterIndexPath: IndexPath? {
 		didSet {
 			guard let ip = currentMasterIndexPath, let node = nodeFor(ip) else {
 				assertionFailure()
@@ -82,9 +103,8 @@ class AppCoordinator {
 		}
 	}
 	
-	
-	var showFeedNames = false
-	var showAvatars = false
+	private(set) var showFeedNames = false
+	private(set) var showAvatars = false
 
 	var isPrevArticleAvailable: Bool {
 		guard let indexPath = currentArticleIndexPath else {
@@ -130,7 +150,7 @@ class AppCoordinator {
 		return nil
 	}
 	
-	var currentArticleIndexPath: IndexPath? {
+	private(set) var currentArticleIndexPath: IndexPath? {
 		didSet {
 			if currentArticleIndexPath != oldValue {
 				NotificationCenter.default.post(name: .ArticleSelectionDidChange, object: self, userInfo: nil)
@@ -138,7 +158,7 @@ class AppCoordinator {
 		}
 	}
 	
-	var articles = ArticleArray() {
+	private(set) var articles = ArticleArray() {
 		didSet {
 			if articles == oldValue {
 				return
@@ -165,8 +185,9 @@ class AppCoordinator {
 		return appDelegate.unreadCount > 0
 	}
 	
-	init() {
-
+	override init() {
+		super.init()
+		
 		for section in treeController.rootNode.childNodes {
 			expandedNodes.append(section)
 			shadowTable.append([Node]())
@@ -182,7 +203,23 @@ class AppCoordinator {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
+	}
+	
+	func start() -> UIViewController {
+		rootSplitViewController = UISplitViewController.template()
+		rootSplitViewController.delegate = self
 		
+		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
+		masterNavigationController.delegate = self
+		masterFeedViewController = UIStoryboard.main.instantiateController(ofType: MasterFeedViewController.self)
+		masterFeedViewController.coordinator = self
+		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
+		
+		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+		let controller = addNavControllerIfNecessary(systemMessageViewController, split: rootSplitViewController, showBackButton: true)
+		rootSplitViewController.showDetailViewController(controller, sender: self)
+
+		return rootSplitViewController
 	}
 	
 	// MARK: Notifications
@@ -392,7 +429,6 @@ class AppCoordinator {
 	}
 	
 	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
-		
 		var indexes = IndexSet()
 		
 		articleIDs.forEach { (articleID) in
@@ -405,6 +441,61 @@ class AppCoordinator {
 		}
 		
 		return indexes
+	}
+	
+	func selectFeed(_ indexPath: IndexPath) {
+		if let _ = navControllerForTimeline().viewControllers.first as? MasterTimelineViewController {
+			currentMasterIndexPath = indexPath
+		} else {
+			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+			masterTimelineViewController!.coordinator = self
+			currentMasterIndexPath = indexPath
+			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: true)
+		}
+		
+		if isThreePanelMode {
+			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+			let targetSplitController = targetSplitForDetail()
+			let controller = addNavControllerIfNecessary(systemMessageViewController, split: targetSplitController, showBackButton: false)
+			targetSplitController.showDetailViewController(controller, sender: self)
+		}
+	}
+	
+	func selectArticle(_ indexPath: IndexPath) {
+		if detailViewController != nil {
+			currentArticleIndexPath = indexPath
+		} else {
+			let targetSplit = targetSplitForDetail()
+
+			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
+			detailViewController.coordinator = self
+
+			let showBackButton = rootSplitViewController.displayMode != .allVisible
+			let controller = addNavControllerIfNecessary(detailViewController, split: targetSplit, showBackButton: showBackButton)
+			currentArticleIndexPath = indexPath
+
+			targetSplit.showDetailViewController(controller, sender: self)
+		}
+		
+		// Automatically hide the overlay
+		if rootSplitViewController.displayMode == .primaryOverlay {
+			UIView.animate(withDuration: 0.3) {
+				self.rootSplitViewController.preferredDisplayMode = .primaryHidden
+			}
+			rootSplitViewController.preferredDisplayMode = .automatic
+		}
+	}
+	
+	func selectPrevArticle() {
+		if let indexPath = prevArticleIndexPath {
+			selectArticle(indexPath)
+		}
+	}
+	
+	func selectNextArticle() {
+		if let indexPath = nextArticleIndexPath {
+			selectArticle(indexPath)
+		}
 	}
 	
 	func selectNextUnread() {
@@ -422,6 +513,97 @@ class AppCoordinator {
 		selectNextUnreadFeedFetcher()
 		selectNextUnreadArticleInTimeline()
 		
+	}
+	
+	func markAllAsRead() {
+		let accounts = AccountManager.shared.activeAccounts
+		var articles = Set<Article>()
+		accounts.forEach { account in
+			articles.formUnion(account.fetchArticles(.unread))
+		}
+		
+		guard let undoManager = undoManager,
+			let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
+				return
+		}
+		
+		runCommand(markReadCommand)
+	}
+	
+	func markAllAsReadInTimeline() {
+		guard let undoManager = undoManager,
+			let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
+				return
+		}
+		runCommand(markReadCommand)
+		masterNavigationController.popViewController(animated: true)
+	}
+	
+	func toggleReadForCurrentArticle() {
+		if let article = currentArticle {
+			markArticles(Set([article]), statusKey: .read, flag: !article.status.read)
+		}
+	}
+	
+	func toggleStarForCurrentArticle() {
+		if let article = currentArticle {
+			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
+		}
+	}
+	
+	func showSettings() {
+		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
+		settingsNavViewController.modalPresentationStyle = .formSheet
+		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
+		settingsViewController.presentingParentController = masterFeedViewController
+		masterFeedViewController.present(settingsNavViewController, animated: true)
+		
+		//		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
+		//		self.present(settings, animated: true)
+	}
+	
+	func showAdd() {
+		let addViewController = UIStoryboard.add.instantiateInitialViewController()!
+		addViewController.modalPresentationStyle = .formSheet
+		addViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
+		masterFeedViewController.present(addViewController, animated: true)
+	}
+	
+	func showBrowserForCurrentArticle() {
+		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
+			return
+		}
+		UIApplication.shared.open(url, options: [:])
+	}
+	
+	func showActivityDialogForCurrentArticle() {
+		guard let detailViewController = detailViewController else {
+			return
+		}
+		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
+			return
+		}
+		
+		let itemSource = ArticleActivityItemSource(url: url, subject: currentArticle?.title)
+		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
+		
+		activityViewController.popoverPresentationController?.barButtonItem = detailViewController.actionBarButtonItem
+		detailViewController.present(activityViewController, animated: true)
+	}
+	
+}
+
+// MARK: UINavigationControllerDelegate
+
+extension AppCoordinator: UINavigationControllerDelegate {
+
+	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+		if rootSplitViewController.isCollapsed != true && navigationController.viewControllers.count == 1 {
+			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+			let showBackButton = rootSplitViewController.displayMode != .allVisible
+			let controller = addNavControllerIfNecessary(systemMessageViewController, split: rootSplitViewController, showBackButton: showBackButton)
+			rootSplitViewController.showDetailViewController(controller, sender: self)
+		}
 	}
 	
 }
@@ -608,7 +790,7 @@ private extension AppCoordinator {
 	}
 	
 	func queueFetchAndMergeArticles() {
-		AppCoordinator.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
+		fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
 	}
 	
 	@objc func fetchAndMergeArticles() {
@@ -658,6 +840,54 @@ private extension AppCoordinator {
 		
 		return false
 		
+	}
+	
+	// MARK: Double Split
+	
+	func addNavControllerIfNecessary(_ controller: UIViewController, split: UISplitViewController, showBackButton: Bool) -> UIViewController {
+		if split.isCollapsed {
+			return controller
+		} else {
+			let navController = UINavigationController(rootViewController: controller)
+			navController.isToolbarHidden = false
+			if showBackButton {
+				controller.navigationItem.leftBarButtonItem = split.displayModeButtonItem
+				controller.navigationItem.leftItemsSupplementBackButton = true
+			}
+			return navController
+		}
+	}
+
+	func ensureDoubleSplit() -> UISplitViewController {
+		if let subSplit = rootSplitViewController.viewControllers.last as? UISplitViewController {
+			return subSplit
+		}
+		
+		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.33
+		
+		let subSplit = UISplitViewController.template()
+		subSplit.delegate = self
+		subSplit.preferredDisplayMode = .allVisible
+		subSplit.preferredPrimaryColumnWidthFraction = 0.5
+		rootSplitViewController.showDetailViewController(subSplit, sender: self)
+		return subSplit
+	}
+	
+	func navControllerForTimeline() -> UINavigationController {
+		if isThreePanelMode {
+			let subSplit = ensureDoubleSplit()
+			return subSplit.viewControllers.first as! UINavigationController
+		} else {
+			return masterNavigationController
+		}
+	}
+	
+	func targetSplitForDetail() -> UISplitViewController {
+		if isThreePanelMode {
+			return ensureDoubleSplit()
+		} else {
+			return rootSplitViewController
+		}
 	}
 	
 }

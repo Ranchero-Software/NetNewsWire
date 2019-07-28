@@ -10,27 +10,17 @@ import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
+    var window: UIWindow?
 	var coordinator = AppCoordinator()
 	
-    var window: UIWindow?
-    
     // UIWindowScene delegate
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
+		window = UIWindow(windowScene: scene as! UIWindowScene)
 		window!.tintColor = AppAssets.netNewsWireBlueColor
-
-		let splitViewController = UIStoryboard.main.instantiateInitialViewController() as! UISplitViewController
-		splitViewController.delegate = coordinator
-		window!.rootViewController = splitViewController
-
-		let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
-		let masterFeedViewController = masterNavigationController.topViewController as! MasterFeedViewController
-		masterFeedViewController.coordinator = coordinator
-
-		let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
-		navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
-		
+		window!.rootViewController = coordinator.start()
+		window!.makeKeyAndVisible()
 		
 //        if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
 //            if !configure(window: window, with: userActivity) {

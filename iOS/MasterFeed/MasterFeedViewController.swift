@@ -13,7 +13,7 @@ import RSCore
 import RSTree
 import SwiftUI
 
-class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunner {
+class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet private weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet private weak var addNewItemButton: UIBarButtonItem!
@@ -44,7 +44,8 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+
 		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
@@ -65,6 +66,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		becomeFirstResponder()
+		navigationController?.updateAccountRefreshProgressIndicator()
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
@@ -101,7 +103,9 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 				return
 		}
 
-		tableView.reloadRows(at: [indexPath], with: .automatic)
+		performBlockAndRestoreSelection {
+			tableView.reloadRows(at: [indexPath], with: .automatic)
+		}
 
 	}
 
@@ -156,6 +160,10 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	
 	@objc func accountStateDidChange(_ notification: Notification) {
 		updateUI()
+	}
+	
+	@objc func progressDidChange(_ note: Notification) {
+		navigationController?.updateAccountRefreshProgressIndicator()
 	}
 	
 	@objc func masterSelectionDidChange(_ note: Notification) {
@@ -276,12 +284,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		
-		let timeline = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-		timeline.coordinator = coordinator
-		coordinator.currentMasterIndexPath = indexPath
-		self.navigationController?.pushViewController(timeline, animated: true)
-
+		coordinator.selectFeed(indexPath)
 	}
 
 	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -398,18 +401,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	// MARK: Actions
 	
 	@IBAction func settings(_ sender: UIBarButtonItem) {
-		
-		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		settingsNavViewController.modalPresentationStyle = .formSheet
-		
-		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
-		settingsViewController.presentingParentController = self
-		
-		self.present(settingsNavViewController, animated: true)
-
-//		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
-//		self.present(settings, animated: true)
-		
+		coordinator.showSettings()
 	}
 
 	@IBAction func markAllAsRead(_ sender: Any) {
@@ -424,20 +416,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 		
 		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-			
-			let accounts = AccountManager.shared.activeAccounts
-			var articles = Set<Article>()
-			accounts.forEach { account in
-				articles.formUnion(account.fetchUnreadArticles())
-			}
-			
-			guard let undoManager = self?.undoManager,
-				let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
-					return
-			}
-			
-			self?.runCommand(markReadCommand)
-			
+			self?.coordinator.markAllAsRead()
 		}
 		
 		alertController.addAction(markAction)
@@ -447,12 +426,7 @@ class MasterFeedViewController: ProgressTableViewController, UndoableCommandRunn
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
-		let addViewController = UIStoryboard.add.instantiateInitialViewController()!
-		addViewController.modalPresentationStyle = .formSheet
-		addViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
-		addViewController.popoverPresentationController?.barButtonItem = sender
-		
-		self.present(addViewController, animated: true)
+		coordinator.showAdd()
 	}
 	
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
@@ -630,10 +604,14 @@ extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 private extension MasterFeedViewController {
 	
 	@objc private func refreshAccounts(_ sender: Any) {
-		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
 		refreshControl?.endRefreshing()
+		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
+		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
+		}
 	}
-	
+
 	func updateUI() {
 		markAllAsReadButton.isEnabled = coordinator.isAnyUnreadAvailable
 		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
@@ -696,4 +674,12 @@ private extension MasterFeedViewController {
 		}
 	}
 
+	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
+		let indexPaths = tableView.indexPathsForSelectedRows
+		block()
+		indexPaths?.forEach { [weak self] indexPath in
+			self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+		}
+	}
+	
 }

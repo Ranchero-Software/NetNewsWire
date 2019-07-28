@@ -449,7 +449,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return feed
 	}
 	
-	public func removeFeed(_ feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.removeFeed(for: self, with: feed, from: container, completion: completion)
 	}
 	
@@ -557,8 +557,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func fetchUnreadCountForToday(_ callback: @escaping (Int) -> Void) {
-		let startOfToday = NSCalendar.startOfToday()
-		database.fetchUnreadCount(for: flattenedFeeds().feedIDs(), since: startOfToday, callback: callback)
+		database.fetchUnreadCountForToday(for: flattenedFeeds().feedIDs(), callback: callback)
 	}
 
 	public func fetchUnreadCountForStarredArticles(_ callback: @escaping (Int) -> Void) {

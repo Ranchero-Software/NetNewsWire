@@ -11,7 +11,7 @@ import RSCore
 import Account
 import Articles
 
-class MasterTimelineViewController: ProgressTableViewController, UndoableCommandRunner {
+class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	private var numberOfTextLines = 0
 	
@@ -36,6 +36,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: coordinator)
@@ -56,6 +57,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		becomeFirstResponder()
+		updateProgressIndicatorIfNeeded()
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
@@ -63,16 +65,6 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		resignFirstResponder()
 	}
 
-	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == "showDetail" {
-			let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-			controller.coordinator = coordinator
-			controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-			controller.navigationItem.leftItemsSupplementBackButton = true
-			splitViewController?.toggleMasterView()
-		}
-	}
-	
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
 		super.traitCollectionDidChange(previousTraitCollection)
 		
@@ -100,16 +92,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		
 		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-
-			guard let articles = self?.coordinator.articles,
-				let undoManager = self?.undoManager,
-				let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
-				return
-			}
-			self?.runCommand(markReadCommand)
-			
-			self?.navigationController?.popViewController(animated: true)
-			
+			self?.coordinator.markAllAsReadInTimeline()
 		}
 		
 		alertController.addAction(markAction)
@@ -185,7 +168,7 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		coordinator.currentArticleIndexPath = indexPath
+		coordinator.selectArticle(indexPath)
 	}
 	
 	// MARK: Notifications
@@ -293,6 +276,10 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 		tableView.reloadData()
 	}
 	
+	@objc func progressDidChange(_ note: Notification) {
+		updateProgressIndicatorIfNeeded()
+	}
+	
 	// MARK: Reloading
 	
 	@objc func reloadAllVisibleCells() {
@@ -358,8 +345,12 @@ class MasterTimelineViewController: ProgressTableViewController, UndoableCommand
 private extension MasterTimelineViewController {
 
 	@objc private func refreshAccounts(_ sender: Any) {
-		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
 		refreshControl?.endRefreshing()
+		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
+		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
+		}
 	}
 
 	func resetUI() {
@@ -367,6 +358,7 @@ private extension MasterTimelineViewController {
 		title = coordinator.timelineName
 		navigationController?.title = coordinator.timelineName
 		
+		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
 		if coordinator.articles.count > 0 {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
@@ -378,6 +370,12 @@ private extension MasterTimelineViewController {
 	func updateUI() {
 		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
+	}
+	
+	func updateProgressIndicatorIfNeeded() {
+		if !coordinator.isThreePanelMode {
+			navigationController?.updateAccountRefreshProgressIndicator()
+		}
 	}
 	
 	func configureTimelineCell(_ cell: MasterTimelineTableViewCell, article: Article) {

@@ -304,7 +304,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func removeFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if feed.folderRelationship?.count ?? 0 > 1 {
 			deleteTagging(for: account, with: feed, from: container, completion: completion)
 		} else {
@@ -454,8 +454,8 @@ private extension ReaderAPIAccountDelegate {
 	}
 	
 	func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
-		
 		guard let tags = tags else { return }
+		assert(Thread.isMainThread)
 
 		os_log(.debug, log: log, "Syncing folders with %ld tags.", tags.count)
 
@@ -465,13 +465,11 @@ private extension ReaderAPIAccountDelegate {
 		if let folders = account.folders {
 			folders.forEach { folder in
 				if !tagNames.contains(folder.name ?? "") {
-					DispatchQueue.main.sync {
-						for feed in folder.topLevelFeeds {
-							account.addFeed(feed)
-							clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-						}
-						account.removeFolder(folder)
+					for feed in folder.topLevelFeeds {
+						account.addFeed(feed)
+						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					}
+					account.removeFolder(folder)
 				}
 			}
 		}
@@ -487,9 +485,7 @@ private extension ReaderAPIAccountDelegate {
 		// Make any folders Reader has, but we don't
 		tagNames.forEach { tagName in
 			if !folderNames.contains(tagName) {
-				DispatchQueue.main.sync {
-					_ = account.ensureFolder(with: tagName)
-				}
+				_ = account.ensureFolder(with: tagName)
 			}
 		}
 		
@@ -523,7 +519,8 @@ private extension ReaderAPIAccountDelegate {
 	func syncFeeds(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 		
 		guard let subscriptions = subscriptions else { return }
-		
+		assert(Thread.isMainThread)
+
 		os_log(.debug, log: log, "Syncing feeds with %ld subscriptions.", subscriptions.count)
 		
 		let subFeedIds = subscriptions.map { String($0.feedID) }
@@ -533,9 +530,7 @@ private extension ReaderAPIAccountDelegate {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
 					if !subFeedIds.contains(feed.feedID) {
-						DispatchQueue.main.sync {
-							folder.removeFeed(feed)
-						}
+						folder.removeFeed(feed)
 					}
 				}
 			}
@@ -543,9 +538,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.feedID) {
-				DispatchQueue.main.sync {
-					account.removeFeed(feed)
-				}
+				account.removeFeed(feed)
 			}
 		}
 		
@@ -553,17 +546,14 @@ private extension ReaderAPIAccountDelegate {
 		subscriptions.forEach { subscription in
 			
 			let subFeedId = String(subscription.feedID)
-			
-			DispatchQueue.main.sync {
-				if let feed = account.idToFeedDictionary[subFeedId] {
-					feed.name = subscription.name
-					feed.homePageURL = subscription.homePageURL
-				} else {
-					let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
-					feed.iconURL = subscription.iconURL
-					feed.subscriptionID = String(subscription.feedID)
-					account.addFeed(feed)
-				}
+			if let feed = account.idToFeedDictionary[subFeedId] {
+				feed.name = subscription.name
+				feed.homePageURL = subscription.homePageURL
+			} else {
+				let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
+				feed.iconURL = subscription.iconURL
+				feed.subscriptionID = String(subscription.feedID)
+				account.addFeed(feed)
 			}
 			
 		}
@@ -573,6 +563,7 @@ private extension ReaderAPIAccountDelegate {
 	func syncTaggings(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 		
 		guard let subscriptions = subscriptions else { return }
+		assert(Thread.isMainThread)
 
 		os_log(.debug, log: log, "Syncing taggings with %ld subscriptions.", subscriptions.count)
 		
@@ -613,11 +604,9 @@ private extension ReaderAPIAccountDelegate {
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
 				if !taggingFeedIDs.contains(feed.feedID) {
-					DispatchQueue.main.sync {
-						folder.removeFeed(feed)
-						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-						account.addFeed(feed)
-					}
+					folder.removeFeed(feed)
+					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+					account.addFeed(feed)
 				}
 			}
 			
@@ -631,10 +620,8 @@ private extension ReaderAPIAccountDelegate {
 					guard let feed = idDictionary[taggingFeedID] else {
 						continue
 					}
-					DispatchQueue.main.sync {
-						saveFolderRelationship(for: feed, withFolderName: folderName, id: String(subscription.feedID))
-						folder.addFeed(feed)
-					}
+					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(subscription.feedID))
+					folder.addFeed(feed)
 				}
 			}
 			
@@ -643,11 +630,9 @@ private extension ReaderAPIAccountDelegate {
 		let taggedFeedIDs = Set(subscriptions.map { String($0.feedID) })
 		
 		// Remove all feeds from the account container that have a tag
-		DispatchQueue.main.sync {
-			for feed in account.topLevelFeeds {
-				if taggedFeedIDs.contains(feed.feedID) {
-					account.removeFeed(feed)
-				}
+		for feed in account.topLevelFeeds {
+			if taggedFeedIDs.contains(feed.feedID) {
+				account.removeFeed(feed)
 			}
 		}
 
