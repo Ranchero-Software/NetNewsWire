@@ -12,7 +12,9 @@ PROVISIONING_PROFILE_SPECIFIER =
 // As an example, make a ../../SharedXcodeSettings/DeveloperSettings.xcconfig file and
 // give it the contents
 //
-//    CODE_SIGN_IDENTITY = Mac Developer
+//    CODE_SIGN_IDENTITY[sdk=macosx*] = Mac Developer
+//    CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+//    CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = iPhone Developer
 //    DEVELOPMENT_TEAM = <Your Team ID>
 //    CODE_SIGN_STYLE = Automatic
 //    PROVISIONING_PROFILE_SPECIFIER =
@@ -26,16 +28,15 @@ PROVISIONING_PROFILE_SPECIFIER =
 //     /Users/Shared/git/SharedXcodeSettings/DeveloperSettings.xcconfig
 //
 
-PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire-Evergreen.iOS
-
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
 ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
 COMBINE_HIDPI_IMAGES = YES
 FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Frameworks/Vendor
-IPHONEOS_DEPLOYMENT_TARGET = 12.2
+IPHONEOS_DEPLOYMENT_TARGET = 13.0
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
 INFOPLIST_FILE = iOS/Resources/Info.plist
+PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire-Evergreen.iOS
 PRODUCT_NAME = NetNewsWire
 SDKROOT = iphoneos;
