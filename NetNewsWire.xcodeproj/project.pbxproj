@@ -669,7 +669,7 @@
 		510D707F22B02A5F004E8F65 /* SettingsFeedbinAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFeedbinAccountView.swift; sourceTree = "<group>"; };
 		510D708122B041CC004E8F65 /* SettingsAccountLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountLabelView.swift; sourceTree = "<group>"; };
 		5110AB7722B7BD6200A94F76 /* AddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddView.swift; sourceTree = "<group>"; };
-		51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOS_target.xcconfig; sourceTree = "<group>"; };
+		51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSapp_target.xcconfig; sourceTree = "<group>"; };
 		51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContainerViewController.swift; sourceTree = "<group>"; };
 		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
 		5126EE96226CB48A00C22AFC /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -931,7 +931,7 @@
 		D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_project_debug.xcconfig; sourceTree = "<group>"; };
 		D5907CDE2002F0BE005947E5 /* NetNewsWire_project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_project.xcconfig; sourceTree = "<group>"; };
 		D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWireTests_target.xcconfig; sourceTree = "<group>"; };
-		D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_target.xcconfig; sourceTree = "<group>"; };
+		D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_macapp_target.xcconfig; sourceTree = "<group>"; };
 		D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSApplication+Scriptability.swift"; sourceTree = "<group>"; };
 		D5907D962004B7EB005947E5 /* Account+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+Scriptability.swift"; sourceTree = "<group>"; };
 		D5907DB12004BB37005947E5 /* ScriptingObjectContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingObjectContainer.swift; sourceTree = "<group>"; };
@@ -1846,9 +1846,9 @@
 				D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */,
 				D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */,
 				D5907CDE2002F0BE005947E5 /* NetNewsWire_project.xcconfig */,
-				D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */,
+				D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */,
 				D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */,
-				51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */,
+				51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */,
 			);
 			path = xcconfig;
 			sourceTree = "<group>";
@@ -1978,7 +1978,7 @@
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = MV49DW5446;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
@@ -2002,7 +2002,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = MV49DW5446;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -2759,7 +2759,7 @@
 /* Begin XCBuildConfiguration section */
 		6581C74720CED60100F4AD34 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_ENTITLEMENTS = Mac/SafariExtension/Subscribe_to_Feed.entitlements;
@@ -2774,7 +2774,7 @@
 		};
 		6581C74820CED60100F4AD34 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_ENTITLEMENTS = Mac/SafariExtension/Subscribe_to_Feed.entitlements;
@@ -2789,7 +2789,7 @@
 		};
 		840D61A42029031E009BC708 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */;
+			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -2816,7 +2816,7 @@
 		};
 		840D61A52029031E009BC708 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOS_target.xcconfig */;
+			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -2851,7 +2851,7 @@
 		};
 		849C647B1ED37A5D003D8FC0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_ENTITLEMENTS = Mac/Resources/NetNewsWire.entitlements;
@@ -2867,7 +2867,7 @@
 		};
 		849C647C1ED37A5D003D8FC0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_target.xcconfig */;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_ENTITLEMENTS = Mac/Resources/NetNewsWire.entitlements;
