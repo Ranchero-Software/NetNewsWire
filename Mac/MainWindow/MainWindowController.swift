@@ -387,6 +387,16 @@ extension MainWindowController: SidebarDelegate {
 		updateWindowTitle()
 		NotificationCenter.default.post(name: .InspectableObjectsDidChange, object: nil)
 	}
+
+	func unreadCount(for representedObject: AnyObject) -> Int {
+		guard let timelineViewController = regularTimelineViewController else {
+			return 0
+		}
+		guard timelineViewController.representsThisObjectOnly(representedObject) else {
+			return 0
+		}
+		return timelineViewController.unreadCount
+	}
 }
 
 // MARK: - TimelineContainerViewControllerDelegate
@@ -543,6 +553,10 @@ private extension MainWindowController {
 
 	var currentTimelineViewController: TimelineViewController? {
 		return timelineContainerViewController?.currentTimelineViewController
+	}
+
+	var regularTimelineViewController: TimelineViewController? {
+		return timelineContainerViewController?.regularTimelineViewController
 	}
 
 	var sidebarSplitViewItem: NSSplitViewItem? {

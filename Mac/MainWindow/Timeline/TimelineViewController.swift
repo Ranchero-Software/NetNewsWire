@@ -19,14 +19,14 @@ protocol TimelineDelegate: class  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
 }
 
-final class TimelineViewController: NSViewController, UndoableCommandRunner {
+final class TimelineViewController: NSViewController, UndoableCommandRunner, UnreadCountProvider {
 
 	@IBOutlet var tableView: TimelineTableView!
 
 	var representedObjects: [AnyObject]? {
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
-
+				unreadCount = 0
 				if let representedObjects = representedObjects {
 					if representedObjects.count == 1 && representedObjects.first is Feed {
 						showFeedNames = false
@@ -76,11 +76,21 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 				// Just reload visible cells in this case: don’t call reloadData.
 				articleRowMap = [String: Int]()
 				reloadVisibleCells()
+				updateUnreadCount()
 				return
 			}
 			updateShowAvatars()
 			articleRowMap = [String: Int]()
 			tableView.reloadData()
+			updateUnreadCount()
+		}
+	}
+
+	var unreadCount: Int = 0 {
+		didSet {
+			if unreadCount != oldValue {
+				postUnreadCountDidChangeNotification()
+			}
 		}
 	}
 
@@ -219,6 +229,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 	func canMarkSelectedArticlesAsRead() -> Bool {
 
 		return selectedArticles.canMarkAllAsRead()
+	}
+
+	func representsThisObjectOnly(_ object: AnyObject) -> Bool {
+		guard let representedObjects = representedObjects else {
+			return false
+		}
+		if representedObjects.count != 1 {
+			return false
+		}
+		return representedObjects.first! === object
 	}
 
 	// MARK: - Actions
@@ -448,6 +468,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner {
 			return
 		}
 		reloadVisibleCells(for: articles)
+		updateUnreadCount()
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
@@ -808,6 +829,16 @@ private extension TimelineViewController {
 		if let indexesToReload = tableView.indexesOfAvailableRows() {
 			reloadCells(for: indexesToReload)
 		}
+	}
+
+	func updateUnreadCount() {
+		var count = 0
+		for article in articles {
+			if !article.status.read {
+				count += 1
+			}
+		}
+		unreadCount = count
 	}
 
 	func queueReloadAvailableCells() {
