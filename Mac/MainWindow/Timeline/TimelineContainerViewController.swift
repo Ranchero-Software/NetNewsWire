@@ -30,7 +30,7 @@ final class TimelineContainerViewController: NSViewController {
 
 	weak var delegate: TimelineContainerViewControllerDelegate?
 
-	private lazy var regularTimelineViewController = {
+	lazy var regularTimelineViewController = {
 		return TimelineViewController(delegate: self)
 	}()
 	private lazy var searchTimelineViewController: TimelineViewController = {

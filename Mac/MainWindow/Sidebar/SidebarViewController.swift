@@ -14,6 +14,7 @@ import RSCore
 
 protocol SidebarDelegate: class {
 	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?)
+	func unreadCount(for: AnyObject) -> Int
 }
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, NSMenuDelegate, UndoableCommandRunner {
@@ -496,6 +497,14 @@ private extension SidebarViewController {
 	}
 
 	func unreadCountFor(_ node: Node) -> Int {
+		// If this node is the one and only selection,
+		// then the unread count comes from the timeline.
+		// This ensures that any transients in the timeline
+		// are accounted for in the unread count.
+		if selectedNodes.count == 1 && node === selectedNodes.first! {
+			return delegate?.unreadCount(for: node.representedObject) ?? 0
+		}
+
 		if let unreadCountProvider = node.representedObject as? UnreadCountProvider {
 			return unreadCountProvider.unreadCount
 		}
