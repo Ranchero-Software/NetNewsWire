@@ -54,6 +54,31 @@ final class TimelineContainerViewController: NSViewController {
 	func showTimeline(for mode: TimelineSourceMode) {
 		currentTimelineViewController = timelineViewController(for: mode)
 	}
+
+	func regularTimelineViewControllerHasRepresentedObjects(_ representedObjects: [AnyObject]?) -> Bool {
+		// Use this to find out if the regular timeline view already has the specified representedObjects.
+		// This is used in determining whether a search should end.
+		// The sidebar may think that the selection has changed, and therefore search should end —
+		// but it could be that the regular timeline already has these representedObjects,
+		// and therefore the selection hasn’t actually changed,
+		// and therefore search shouldn’t end.
+		// https://github.com/brentsimmons/NetNewsWire/issues/791
+		if representedObjects == nil && regularTimelineViewController.representedObjects == nil {
+			return true
+		}
+		guard let currentObjects = regularTimelineViewController.representedObjects, let representedObjects = representedObjects else {
+			return false
+		}
+		if currentObjects.count != representedObjects.count {
+			return false
+		}
+		for object in representedObjects {
+			guard let _ = currentObjects.firstIndex(where: { $0 === object } ) else {
+				return false
+			}
+		}
+		return true
+	}
 }
 
 extension TimelineContainerViewController: TimelineDelegate {

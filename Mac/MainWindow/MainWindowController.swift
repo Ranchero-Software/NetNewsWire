@@ -381,9 +381,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 extension MainWindowController: SidebarDelegate {
 
 	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?) {
-		// TODO: if searching, cancel search
-		timelineContainerViewController?.setRepresentedObjects(selectedObjects, mode: .regular)
-		forceSearchToEnd()
+		// Don’t update the timeline if it already has those objects.
+		let representedObjectsAreTheSame = timelineContainerViewController?.regularTimelineViewControllerHasRepresentedObjects(selectedObjects) ?? false
+		if !representedObjectsAreTheSame {
+			timelineContainerViewController?.setRepresentedObjects(selectedObjects, mode: .regular)
+			forceSearchToEnd()
+		}
 		updateWindowTitle()
 		NotificationCenter.default.post(name: .InspectableObjectsDidChange, object: nil)
 	}
