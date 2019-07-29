@@ -1,16 +1,17 @@
 DEVELOPMENT_TEAM = 9C84TZ7Q6Z
+CODE_SIGN_IDENTITY = -;
 CODE_SIGN_STYLE = Automatic
 
 // See the notes in NetNewsWire_target.xcconfig on why the
 // DeveloperSettings.xcconfig is #included here
 
-#include "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
+#include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
-COMBINE_HIDPI_IMAGES = YES
 BUNDLE_LOADER = $(TEST_HOST)
-LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks @loader_path/../Frameworks
+COMBINE_HIDPI_IMAGES = YES
 INFOPLIST_FILE = Tests/NetNewsWireTests/Info.plist
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks @loader_path/../Frameworks
 PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWireTests
-PRODUCT_NAME = $(TARGET_NAME)
+PRODUCT_NAME = NetNewsWireTests
 TEST_HOST = $(BUILT_PRODUCTS_DIR)/NetNewsWire.app/Contents/MacOS/NetNewsWire

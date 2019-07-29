@@ -1,0 +1,47 @@
+CODE_SIGN_IDENTITY = Developer ID Application
+DEVELOPMENT_TEAM = DY2XQRVWN9
+CODE_SIGN_STYLE = Automatic
+PROVISIONING_PROFILE_SPECIFIER =
+
+// developers can locally override the Xcode settings for code signing
+// by creating a DeveloperSettings.xcconfig file locally at the appropriate path
+// This allows a pristine project to have code signing set up with the appropriate
+// developer ID and certificates, and for dev to be able to have local settings
+// without needing to check in anything into source control
+//
+// As an example, make a ../../SharedXcodeSettings/DeveloperSettings.xcconfig file and
+// give it the contents
+//
+//    CODE_SIGN_IDENTITY[sdk=macosx*] = Mac Developer
+//    CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+//    CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = iPhone Developer
+//    DEVELOPMENT_TEAM = <Your Team ID>
+//    CODE_SIGN_STYLE = Automatic
+//    PROVISIONING_PROFILE_SPECIFIER =
+//
+// And you should be able to build without code signing errors and without modifying
+// the NetNewsWire Xcode project.
+//
+// Example:  if your NetNewsWire Xcode project file is at
+//     /Users/Shared/git/NetNewsWire/NetNewsWire.xcodeproj
+// create your DeveloperSettings.xcconfig file at
+//     /Users/Shared/git/SharedXcodeSettings/DeveloperSettings.xcconfig
+//
+
+#include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
+
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
+CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+
+COMBINE_HIDPI_IMAGES = YES
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Frameworks/Vendor
+GCC_C_LANGUAGE_STANDARD = gnu11;
+
+IPHONEOS_DEPLOYMENT_TARGET = 13.0
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
+INFOPLIST_FILE = iOS/Resources/Info.plist
+PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire-Evergreen.iOS
+PRODUCT_NAME = NetNewsWire
+SDKROOT = iphoneos;
+TARGETED_DEVICE_FAMILY = 1,2
