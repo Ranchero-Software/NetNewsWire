@@ -41,6 +41,8 @@ public func processXcodeprojAt(url: URL) -> ProcessXcodeprojResult {
                 inBuildSettingsBlock = false
             } else if let _ = nthLine.range(of:"CODE_SIGN_IDENTITY") {
 
+            } else if let _ = nthLine.range(of:"PRODUCT_NAME") {
+
             } else {
                 badLines.append(nthLine)
             }
