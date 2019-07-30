@@ -12,7 +12,7 @@ The Safari Extension is installed automatically with NetNewsWire. However, it mu
 You will enable the extension in Safari:
 
 1. Open Safari
-2. Click on the **Safari** menu and select **Preferences…** (⌘,)
+2. Click on the **Safari** menu and select **Preferences…** (⌘-,)
 3. Click the **Extensions** panel
 4. From the list, click the checkbox beside **Subscribe to Feed** to enable the extension
 5. Close the Preferences window
