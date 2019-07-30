@@ -104,7 +104,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 
 		performBlockAndRestoreSelection {
-			tableView.reloadRows(at: [indexPath], with: .automatic)
+			tableView.reloadRows(at: [indexPath], with: .none)
 		}
 
 	}
