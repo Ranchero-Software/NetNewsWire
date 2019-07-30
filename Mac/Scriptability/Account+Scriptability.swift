@@ -25,7 +25,17 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         let scriptObjectSpecifier = myContainer.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
         return (scriptObjectSpecifier)
     }
-    
+
+	@objc(scriptingIsActive)
+	var scriptingIsActive: Bool {
+		get {
+			return account.isActive
+		}
+		set {
+			account.isActive = newValue
+		}
+	}
+	
     // MARK: --- ScriptingObject protocol ---
     
     var scriptingKey: String {
