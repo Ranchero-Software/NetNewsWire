@@ -11,19 +11,19 @@ More topics to do…
 
 [How to import OPML](import-opml.html)
 
-How to export OPML
+[How to export OPML](export-opml.html)
 
-How to go through your articles (take special note of the space bar and the n key)
+[How to go through your articles](reading-articles.html)
 
 Sharing to other apps, including MarsEdit and Micro.blog
 
-How to delete feeds and folders (note that undo is available)
+[How to delete feeds and folders](deleting-feeds-folders.html)
 
 How to add a syncing account
 
-How to contribute (GitHub, Slack)
+[How to contribute](contributing.html)
 
-How to get NetNewsWire news (see Help menu command)
+[How to get NetNewsWire news](netnewswire-news.html)
 
 Keyboard shortcuts (see Help menu command)
 
