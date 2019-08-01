@@ -210,7 +210,6 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		rootSplitViewController.delegate = self
 		
 		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
-		masterNavigationController.delegate = self
 		masterFeedViewController = UIStoryboard.main.instantiateController(ofType: MasterFeedViewController.self)
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
@@ -453,18 +452,24 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: true)
 		}
 		
-		if isThreePanelMode {
-			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-			let targetSplitController = targetSplitForDetail()
-			let controller = addNavControllerIfNecessary(systemMessageViewController, split: targetSplitController, showBackButton: false)
-			targetSplitController.showDetailViewController(controller, sender: self)
-		}
+		selectArticle(nil)
 	}
 	
-	func selectArticle(_ indexPath: IndexPath) {
-		if detailViewController != nil {
-			currentArticleIndexPath = indexPath
-		} else {
+	func selectArticle(_ indexPath: IndexPath?) {
+		currentArticleIndexPath = indexPath
+
+		if indexPath == nil {
+			if !rootSplitViewController.isCollapsed {
+				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+				let showBackButton = rootSplitViewController.displayMode != .allVisible
+				let targetSplit = targetSplitForDetail()
+				let controller = addNavControllerIfNecessary(systemMessageViewController, split: targetSplit, showBackButton: showBackButton)
+				targetSplit.showDetailViewController(controller, sender: self)
+			}
+			return
+		}
+		
+		if detailViewController == nil {
 			let targetSplit = targetSplitForDetail()
 
 			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
@@ -589,21 +594,6 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		
 		activityViewController.popoverPresentationController?.barButtonItem = detailViewController.actionBarButtonItem
 		detailViewController.present(activityViewController, animated: true)
-	}
-	
-}
-
-// MARK: UINavigationControllerDelegate
-
-extension AppCoordinator: UINavigationControllerDelegate {
-
-	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-		if rootSplitViewController.isCollapsed != true && navigationController.viewControllers.count == 1 {
-			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-			let showBackButton = rootSplitViewController.displayMode != .allVisible
-			let controller = addNavControllerIfNecessary(systemMessageViewController, split: rootSplitViewController, showBackButton: showBackButton)
-			rootSplitViewController.showDetailViewController(controller, sender: self)
-		}
 	}
 	
 }
