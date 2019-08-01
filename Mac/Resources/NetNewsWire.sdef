@@ -85,7 +85,10 @@
             <property name="type" code="ATyp" type="account type" access="r" description="The type of the account">
                 <cocoa key="accountType"/>
             </property>
-            <property name="contents" code="Cnts" access="r" description="The type of the account">
+			<property name="active" code="Actv" type="boolean" access="rw" description="Whether or not the account is active">
+				<cocoa key="scriptingIsActive"/>
+			</property>
+           <property name="contents" code="Cnts" access="r" description="The type of the account">
                 <cocoa key="contents"/>
                 <type type="account item" list="yes"/>
             </property>

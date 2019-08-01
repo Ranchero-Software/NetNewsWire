@@ -81,8 +81,16 @@ class ScriptingTests: AppleScriptXCTestCase {
               actions and the keystrokes aren't delivered to the app right away, so the ui
               isn't updated in time for 'current article' to be set.  But, breaking them up
               in this way seems to work.
+              
+              July 30, 2019:  There's an issue where in order for a script to send keystrokes,
+			  The app has to be allowed to interact with the SystemEvents.app in
+			  System Preferences -> Security & Privacy -> Privacy -> Accessibility
+			  and this premission needs to be renewed every time the app is recompiled unless
+			  the app is codesigned.  Until we figure out how to get around this limitation,
+			  this test is disabled.
 */
-    func testCurrentArticleScripts() {
+    func disabledTestCurrentArticleScripts() {
+        
         doIndividualScriptWithExpectation(filename: "uiScriptingTestSetup")
         doIndividualScriptWithExpectation(filename: "establishMainWindowStartingState")
         doIndividualScriptWithExpectation(filename: "selectAFeed")

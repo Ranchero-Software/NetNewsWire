@@ -6,7 +6,7 @@ NetNewsWire collects items for you from feeds published on web sites. To do this
 
 *It’s okay if you don’t know that.* NetNewsWire will look at any web page and try to find it for you. All you need to give is the site’s URL, like `inessential.com`.
 
-To get started, click the Add Feed button on the toolbar, or use File → New Feed (⌘-N) from the menu bar.
+To get started, click the Add Feed button on the toolbar, or use **File → New Feed** (⌘-N) from the menu bar.
 
 If you’ve got the address already – great! Type it or paste it into the URL box. Otherwise, just enter the website’s address into the box. 
 
