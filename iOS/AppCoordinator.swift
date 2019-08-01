@@ -560,8 +560,8 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
 		settingsNavViewController.modalPresentationStyle = .formSheet
 		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
-		settingsViewController.presentingParentController = masterFeedViewController
-		masterFeedViewController.present(settingsNavViewController, animated: true)
+		settingsViewController.presentingParentController = rootSplitViewController
+		rootSplitViewController.present(settingsNavViewController, animated: true)
 		
 		//		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
 		//		self.present(settings, animated: true)

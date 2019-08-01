@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14845" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14854.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14799.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14806.4"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -24,7 +24,7 @@
                                 </wkWebViewConfiguration>
                             </wkWebView>
                         </subviews>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="t8d-md-Yhc" firstAttribute="top" secondItem="VUw-jc-0yf" secondAttribute="top" id="0aK-ew-1HG"/>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="t8d-md-Yhc" secondAttribute="trailing" id="31v-r8-kzh"/>
@@ -122,7 +122,6 @@
         <!--System Message-->
         <scene sceneID="tbo-yR-QVH">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="rgH-br-nLG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="SystemMessageViewController" title="System Message" id="Xld-e9-xoL" customClass="SystemMessageViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5hz-HK-J2Q">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -135,7 +134,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="6C9-Jb-ZZR" firstAttribute="centerX" secondItem="5hz-HK-J2Q" secondAttribute="centerX" id="9iO-I1-FtK"/>
                             <constraint firstItem="6C9-Jb-ZZR" firstAttribute="centerY" secondItem="5hz-HK-J2Q" secondAttribute="centerY" id="jXm-OI-Igs"/>
@@ -148,6 +147,7 @@
                         <outlet property="messageLabel" destination="6C9-Jb-ZZR" id="HeR-Qv-yfz"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rgH-br-nLG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="872" y="-87"/>
         </scene>
@@ -158,7 +158,7 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="mtv-Ik-FoJ">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" rowHeight="208" id="T5d-L4-OKG" customClass="MasterTimelineTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="414" height="208"/>
@@ -238,7 +238,14 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8"/>
+                    <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8">
+                        <barButtonItem key="leftBarButtonItem" image="settingsImage" id="TlU-Pg-ATe">
+                            <connections>
+                                <action selector="settings:" destination="7bK-jq-Zjz" id="Y8a-lz-Im7"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="addNewItemButton" destination="yo6-w4-SfI" id="NbL-RH-N4J"/>
@@ -256,6 +263,7 @@
         <image name="arrow.up" catalog="system" width="58" height="64"/>
         <image name="circle" catalog="system" width="64" height="62"/>
         <image name="safari" catalog="system" width="64" height="62"/>
+        <image name="settingsImage" width="24" height="24"/>
         <image name="square.and.arrow.up" catalog="system" width="56" height="64"/>
         <image name="star" catalog="system" width="64" height="58"/>
     </resources>

@@ -29,11 +29,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		super.viewDidLoad()
 
-		let settingsButton = UIBarButtonItem()
-		settingsButton.image = AppAssets.settingsImage
-		settingsButton.action = #selector(settings(_:))
-		navigationItem.leftBarButtonItem = settingsButton
-		
 		navigationItem.rightBarButtonItem = editButtonItem
 		
 		tableView.register(MasterFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
