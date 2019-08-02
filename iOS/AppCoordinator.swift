@@ -913,12 +913,6 @@ private extension AppCoordinator {
 
 		} else {
 			
-			masterTimelineViewController!.navigationItem.leftBarButtonItem = nil
-			
-			let subSplit = ensureDoubleSplit()
-			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
-			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
-
 			let controller: UIViewController = {
 				if let result = detailViewController {
 					return result
@@ -926,6 +920,12 @@ private extension AppCoordinator {
 					return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
 				}
 			}()
+			
+			masterTimelineViewController!.navigationItem.leftBarButtonItem = nil
+			
+			let subSplit = ensureDoubleSplit()
+			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
+			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
 			
 			let navController = addNavControllerIfNecessary(controller, showButton: false)
 			subSplit.showDetailViewController(navController, sender: self)
