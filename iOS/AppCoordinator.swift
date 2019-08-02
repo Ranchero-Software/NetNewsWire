@@ -864,7 +864,6 @@ private extension AppCoordinator {
 			navController.isToolbarHidden = false
 			if showButton {
 				controller.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
-				controller.navigationItem.leftItemsSupplementBackButton = true
 			}
 			return navController
 		}
