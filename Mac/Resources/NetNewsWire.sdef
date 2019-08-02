@@ -77,7 +77,7 @@
         <class name="account" code="Acct" plural="accounts" description="An account for subscribing to feeds">
             <cocoa class="ScriptableAccount"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the account">
-                <cocoa key="name"/>
+                <cocoa key="scriptingName"/>
             </property>
             <property name="id" code="ID  " type="text" access="r" description="The unique id of the account">
                 <cocoa key="uniqueId"/>

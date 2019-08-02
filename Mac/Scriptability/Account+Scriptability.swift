@@ -35,7 +35,17 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 			account.isActive = newValue
 		}
 	}
-	
+
+	@objc(scriptingName)
+	var scriptingName: NSString {
+		get {
+			return account.nameForDisplay as NSString
+		}
+		set {
+			account.name = newValue as String
+		}
+	}
+
     // MARK: --- ScriptingObject protocol ---
     
     var scriptingKey: String {
