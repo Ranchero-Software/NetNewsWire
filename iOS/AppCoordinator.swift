@@ -34,10 +34,11 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	private var masterTimelineViewController: MasterTimelineViewController?
 	
 	private var detailViewController: DetailViewController? {
-		if let detailNavController = targetSplitForDetail().viewControllers.last as? UINavigationController {
-			return detailNavController.topViewController as? DetailViewController
+		if let subSplit = rootSplitViewController.viewControllers.last?.children.first as? UISplitViewController {
+			return subSplit.viewControllers.last as? DetailViewController
+		} else {
+			return rootSplitViewController.viewControllers.last?.children.first as? DetailViewController
 		}
-		return nil
 	}
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
@@ -215,8 +216,10 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
 		
 		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-		let controller = addNavControllerIfNecessary(systemMessageViewController, split: rootSplitViewController, showBackButton: true)
-		rootSplitViewController.showDetailViewController(controller, sender: self)
+		let detailNavController = addNavControllerIfNecessary(systemMessageViewController, showButton: true)
+		let shimController = UIViewController()
+		shimController.replaceChildAndPinView(detailNavController)
+		rootSplitViewController.showDetailViewController(shimController, sender: self)
 
 		return rootSplitViewController
 	}
@@ -461,25 +464,15 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		if indexPath == nil {
 			if !rootSplitViewController.isCollapsed {
 				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-				let showBackButton = rootSplitViewController.displayMode != .allVisible
-				let targetSplit = targetSplitForDetail()
-				let controller = addNavControllerIfNecessary(systemMessageViewController, split: targetSplit, showBackButton: showBackButton)
-				targetSplit.showDetailViewController(controller, sender: self)
+				installDetailController(systemMessageViewController)
 			}
 			return
 		}
 		
 		if detailViewController == nil {
-			let targetSplit = targetSplitForDetail()
-
 			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
 			detailViewController.coordinator = self
-
-			let showBackButton = rootSplitViewController.displayMode != .allVisible
-			let controller = addNavControllerIfNecessary(detailViewController, split: targetSplit, showBackButton: showBackButton)
-			currentArticleIndexPath = indexPath
-
-			targetSplit.showDetailViewController(controller, sender: self)
+			installDetailController(detailViewController)
 		}
 		
 		// Automatically hide the overlay
@@ -846,14 +839,28 @@ private extension AppCoordinator {
 	
 	// MARK: Double Split
 	
-	func addNavControllerIfNecessary(_ controller: UIViewController, split: UISplitViewController, showBackButton: Bool) -> UIViewController {
-		if split.isCollapsed {
+	func installDetailController(_ detailController: UIViewController) {
+		let showButton = rootSplitViewController.displayMode != .allVisible
+		let controller = addNavControllerIfNecessary(detailController, showButton: showButton)
+		
+		if isThreePanelMode {
+			let targetSplit = ensureDoubleSplit()
+			targetSplit.showDetailViewController(controller, sender: self)
+		} else {
+			if let shimController = rootSplitViewController.viewControllers.last {
+				shimController.replaceChildAndPinView(controller)
+			}
+		}
+	}
+	
+	func addNavControllerIfNecessary(_ controller: UIViewController, showButton: Bool) -> UIViewController {
+		if rootSplitViewController.isCollapsed {
 			return controller
 		} else {
 			let navController = UINavigationController(rootViewController: controller)
 			navController.isToolbarHidden = false
-			if showBackButton {
-				controller.navigationItem.leftBarButtonItem = split.displayModeButtonItem
+			if showButton {
+				controller.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 				controller.navigationItem.leftItemsSupplementBackButton = true
 			}
 			return navController
@@ -861,7 +868,7 @@ private extension AppCoordinator {
 	}
 
 	func ensureDoubleSplit() -> UISplitViewController {
-		if let subSplit = rootSplitViewController.viewControllers.last as? UISplitViewController {
+		if let shimController = rootSplitViewController.viewControllers.last, let subSplit = shimController.children.first as? UISplitViewController {
 			return subSplit
 		}
 		
@@ -870,7 +877,11 @@ private extension AppCoordinator {
 		let subSplit = UISplitViewController.template()
 		subSplit.preferredDisplayMode = .allVisible
 		subSplit.preferredPrimaryColumnWidthFraction = 0.5
-		rootSplitViewController.showDetailViewController(subSplit, sender: self)
+		
+		let shimController = UIViewController()
+		shimController.addChildAndPinView(subSplit)
+		
+		rootSplitViewController.showDetailViewController(shimController, sender: self)
 		return subSplit
 	}
 	
@@ -880,14 +891,6 @@ private extension AppCoordinator {
 			return subSplit.viewControllers.first as! UINavigationController
 		} else {
 			return masterNavigationController
-		}
-	}
-	
-	func targetSplitForDetail() -> UISplitViewController {
-		if isThreePanelMode {
-			return ensureDoubleSplit()
-		} else {
-			return rootSplitViewController
 		}
 	}
 	
@@ -905,10 +908,9 @@ private extension AppCoordinator {
 
 		} else {
 			
-			let detailController: UIViewController = {
-				if let detailNavController = rootSplitViewController.viewControllers.last as? UINavigationController,
-					let detailController = detailNavController.topViewController as? DetailViewController {
-					return detailController
+			let controller: UIViewController = {
+				if let result = detailViewController {
+					return result
 				} else {
 					return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
 				}
@@ -919,30 +921,29 @@ private extension AppCoordinator {
 			let subSplit = ensureDoubleSplit()
 			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
 			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
-			let detailNavController = addNavControllerIfNecessary(detailController, split: subSplit, showBackButton: false)
-			subSplit.showDetailViewController(detailNavController, sender: false)
-			
+
+			installDetailController(controller)
 		}
-		
 	}
 	
 	func transitionFromThreePanelMode() {
 		
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = UISplitViewController.automaticDimension
 		
-		if let secondarySplit = rootSplitViewController.viewControllers.last as? UISplitViewController {
+		if let shimController = rootSplitViewController.viewControllers.last, let subSplit = shimController.children.first as? UISplitViewController {
 
-			if let masterTimelineNav = secondarySplit.viewControllers.first as? UINavigationController,
+			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController,
 				let masterTimeline = masterTimelineNav.topViewController {
 				masterNavigationController.pushViewController(masterTimeline, animated: false)
 			}
 
-			if let detailNav = secondarySplit.viewControllers.last as? UINavigationController, let topController = detailNav.topViewController {
-				let newNav = addNavControllerIfNecessary(topController, split: rootSplitViewController, showBackButton: true)
-				rootSplitViewController.showDetailViewController(newNav, sender: self)
+			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let topController = detailNav.topViewController {
+				let newNav = addNavControllerIfNecessary(topController, showButton: true)
+				shimController.replaceChildAndPinView(newNav)
 			}
 
 		}
+		
 	}
 	
 }
