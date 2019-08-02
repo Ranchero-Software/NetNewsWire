@@ -34,6 +34,9 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	private var masterTimelineViewController: MasterTimelineViewController?
 	
 	private var detailViewController: DetailViewController? {
+		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
+			return detail
+		}
 		if let subSplit = rootSplitViewController.viewControllers.last?.children.first as? UISplitViewController {
 			if let navController = subSplit.viewControllers.last as? UINavigationController {
 				return navController.topViewController as? DetailViewController
@@ -72,7 +75,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	var isThreePanelMode: Bool {
-		return rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && rootSplitViewController.displayMode == .allVisible
+		return rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && !rootSplitViewController.isCollapsed && rootSplitViewController.displayMode == .allVisible
 	}
 	
 	var rootNode: Node {
@@ -617,7 +620,61 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
+
+		if let shimController = rootSplitViewController.viewControllers.last,
+			let detailNav = shimController.children.first as? UINavigationController,
+			let detail = detailNav.topViewController as? DetailViewController {
+				masterNavigationController.pushViewController(detail, animated: false)
+				return true
+		}
+		
+		if let subSplit = secondaryViewController.children.first as? UISplitViewController {
+
+			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController,
+				let masterTimeline = masterTimelineNav.topViewController {
+				masterNavigationController.pushViewController(masterTimeline, animated: false)
+			}
+
+			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let detail = detailNav.topViewController {
+				masterNavigationController.pushViewController(detail, animated: false)
+			}
+
+			return true
+			
+		}
+		
 		return currentArticle == nil
+	}
+	
+	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
+
+		if isThreePanelMode {
+			return transitionToThreePanelMode()
+		}
+
+		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
+
+			masterNavigationController.viewControllers.removeLast()
+			let detailNav = addNavControllerIfNecessary(detail, showButton: true)
+			let shimController = UIViewController()
+			shimController.addChildAndPinView(detailNav)
+			return shimController
+			
+		}
+		
+//
+//		} else {
+//
+//			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+//			let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: true)
+//			let shimController = UIViewController()
+//			shimController.addChildAndPinView(navController)
+//			return shimController
+//
+//		}
+//
+		return nil
+
 	}
 	
 }
@@ -849,7 +906,7 @@ private extension AppCoordinator {
 		let controller = addNavControllerIfNecessary(detailController, showButton: showButton)
 		
 		if isThreePanelMode {
-			let targetSplit = ensureDoubleSplit()
+			let targetSplit = ensureDoubleSplit().children.first as! UISplitViewController
 			targetSplit.showDetailViewController(controller, sender: self)
 		} else if rootSplitViewController.isCollapsed {
 			rootSplitViewController.showDetailViewController(controller, sender: self)
@@ -873,9 +930,9 @@ private extension AppCoordinator {
 		}
 	}
 
-	func ensureDoubleSplit() -> UISplitViewController {
-		if let shimController = rootSplitViewController.viewControllers.last, let subSplit = shimController.children.first as? UISplitViewController {
-			return subSplit
+	func ensureDoubleSplit() -> UIViewController {
+		if let shimController = rootSplitViewController.viewControllers.last, shimController.children.first is UISplitViewController {
+			return shimController
 		}
 		
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.30
@@ -888,19 +945,20 @@ private extension AppCoordinator {
 		shimController.addChildAndPinView(subSplit)
 		
 		rootSplitViewController.showDetailViewController(shimController, sender: self)
-		return subSplit
+		return shimController
 	}
 	
 	func navControllerForTimeline() -> UINavigationController {
 		if isThreePanelMode {
-			let subSplit = ensureDoubleSplit()
+			let subSplit = ensureDoubleSplit().children.first as! UISplitViewController
 			return subSplit.viewControllers.first as! UINavigationController
 		} else {
 			return masterNavigationController
 		}
 	}
 	
-	func transitionToThreePanelMode() {
+	@discardableResult
+	func transitionToThreePanelMode() -> UIViewController {
 		defer {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
@@ -910,7 +968,8 @@ private extension AppCoordinator {
 			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
 			let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: false)
 			rootSplitViewController.showDetailViewController(navController, sender: self)
-
+			return navController
+			
 		} else {
 			
 			let controller: UIViewController = {
@@ -923,13 +982,15 @@ private extension AppCoordinator {
 			
 			masterTimelineViewController!.navigationItem.leftBarButtonItem = nil
 			
-			let subSplit = ensureDoubleSplit()
+			let shimController = ensureDoubleSplit()
+			let subSplit = shimController.children.first as! UISplitViewController
 			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
 			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
 			
 			let navController = addNavControllerIfNecessary(controller, showButton: false)
 			subSplit.showDetailViewController(navController, sender: self)
 			
+			return shimController
 		}
 	}
 	
