@@ -35,10 +35,15 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	
 	private var detailViewController: DetailViewController? {
 		if let subSplit = rootSplitViewController.viewControllers.last?.children.first as? UISplitViewController {
-			return subSplit.viewControllers.last as? DetailViewController
+			if let navController = subSplit.viewControllers.last as? UINavigationController {
+				return navController.topViewController as? DetailViewController
+			}
 		} else {
-			return rootSplitViewController.viewControllers.last?.children.first as? DetailViewController
+			if let navController = rootSplitViewController.viewControllers.last?.children.first as? UINavigationController {
+				return navController.topViewController as? DetailViewController
+			}
 		}
+		return nil
 	}
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
@@ -901,11 +906,10 @@ private extension AppCoordinator {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
 
-		if masterNavigationController.viewControllers.count == 1 {
+		if currentArticle == nil {
 			
 			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-			let navController = UINavigationController(rootViewController: systemMessageViewController)
-			navController.isToolbarHidden = false
+			let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: false)
 			rootSplitViewController.showDetailViewController(navController, sender: self)
 
 		} else {
@@ -917,14 +921,18 @@ private extension AppCoordinator {
 					return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
 				}
 			}()
+			
+			let navController = addNavControllerIfNecessary(controller, showButton: false)
 
 			masterTimelineViewController!.navigationItem.leftBarButtonItem = nil
 			
 			let subSplit = ensureDoubleSplit()
+			
 			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
 			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
 
-			installDetailController(controller)
+			subSplit.showDetailViewController(navController, sender: self)
+			
 		}
 	}
 	
