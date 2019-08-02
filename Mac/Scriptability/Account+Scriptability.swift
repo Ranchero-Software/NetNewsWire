@@ -121,18 +121,21 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     // MARK: --- Scriptable properties ---
 
-    @objc(contents)
-    var contents:NSArray  {
-        var contentsArray:[AnyObject] = []
+    @objc(allFeeds)
+    var allFeeds: NSArray  {
+		var feeds = [ScriptableFeed]()
 		for feed in account.topLevelFeeds {
-			contentsArray.append(ScriptableFeed(feed, container: self))
+			feeds.append(ScriptableFeed(feed, container: self))
 		}
 		if let folders = account.folders {
 			for folder in folders {
-				contentsArray.append(ScriptableFolder(folder, container:self))
+				let scriptableFolder = ScriptableFolder(folder, container: self)
+				for feed in folder.topLevelFeeds {
+					feeds.append(ScriptableFeed(feed, container: scriptableFolder))
+				}
 			}
 		}
-		return contentsArray as NSArray
+		return feeds as NSArray
     }
 
     @objc(opmlRepresentation)

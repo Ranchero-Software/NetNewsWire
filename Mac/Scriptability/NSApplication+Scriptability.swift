@@ -56,7 +56,7 @@ extension NSApplication : ScriptingObjectContainer {
 
     @objc(accounts)
     func accounts() -> NSArray {
-        let accounts = AccountManager.shared.activeAccounts
+        let accounts = AccountManager.shared.accounts
         return accounts.map { ScriptableAccount($0) } as NSArray
     }
     

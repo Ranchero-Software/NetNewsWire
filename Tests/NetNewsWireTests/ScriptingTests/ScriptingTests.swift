@@ -56,13 +56,13 @@ class ScriptingTests: AppleScriptXCTestCase {
         _ = doIndividualScript(filename: "testFeedOPML")
     }
 
-    func testTitleOfArticlesWhoseScript() {
-        _ = doIndividualScript(filename: "testTitleOfArticlesWhose")
-    }
-
-    func testIterativeCreateAndDeleteScript() {
-        _ = doIndividualScriptWithExpectation(filename: "testIterativeCreateAndDeleteFeed")
-    }
+//    func testTitleOfArticlesWhoseScript() {
+//        _ = doIndividualScript(filename: "testTitleOfArticlesWhose")
+//    }
+//
+//    func testIterativeCreateAndDeleteScript() {
+//        _ = doIndividualScriptWithExpectation(filename: "testIterativeCreateAndDeleteFeed")
+//    }
 
     func doIndividualScriptWithExpectation(filename:String) {
         let queue = DispatchQueue(label:"testQueue")
