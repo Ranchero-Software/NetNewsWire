@@ -54,6 +54,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 	}
 	
+	override func viewWillAppear(_ animated: Bool) {
+		clearsSelectionOnViewWillAppear = coordinator.isRootSplitCollapsed
+		super.viewWillAppear(animated)
+	}
+	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		becomeFirstResponder()

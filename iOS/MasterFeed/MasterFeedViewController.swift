@@ -53,8 +53,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
-		clearsSelectionOnViewWillAppear = true
 		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
+		clearsSelectionOnViewWillAppear = coordinator.isRootSplitCollapsed
 		super.viewWillAppear(animated)
 	}
 	

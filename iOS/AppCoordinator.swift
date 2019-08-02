@@ -67,6 +67,10 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
 	
+	var isRootSplitCollapsed: Bool {
+		return rootSplitViewController.isCollapsed
+	}
+	
 	var isThreePanelMode: Bool {
 		return rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && rootSplitViewController.displayMode == .allVisible
 	}
