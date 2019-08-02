@@ -874,11 +874,11 @@ private extension AppCoordinator {
 			return subSplit
 		}
 		
-		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.33
+		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.30
 		
 		let subSplit = UISplitViewController.template()
 		subSplit.preferredDisplayMode = .allVisible
-		subSplit.preferredPrimaryColumnWidthFraction = 0.5
+		subSplit.preferredPrimaryColumnWidthFraction = 0.4285
 		
 		let shimController = UIViewController()
 		shimController.addChildAndPinView(subSplit)
