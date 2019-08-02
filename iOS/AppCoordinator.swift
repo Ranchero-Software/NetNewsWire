@@ -601,19 +601,15 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 extension AppCoordinator: UISplitViewControllerDelegate {
 
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-
 		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad else {
 			return
 		}
-
 		if rootSplitViewController.displayMode != .allVisible && displayMode == .allVisible {
 			transitionToThreePanelMode()
 		}
-
 		if rootSplitViewController.displayMode == .allVisible && displayMode != .allVisible {
 			transitionFromThreePanelMode()
 		}
-		
 	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
