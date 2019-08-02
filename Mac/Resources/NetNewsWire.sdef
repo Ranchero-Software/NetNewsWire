@@ -66,7 +66,7 @@
          </class>
 
         <enumeration name="account type" code="enum">
-            <enumerator name="local" code="Locl" description="The On my Mac account"/>
+            <enumerator name="onmymac" code="Locl" description="An On my Mac (local) account"/>
             <enumerator name="feedly" code="Fdly" description="A Feedly account"/>
             <enumerator name="feedbin" code="Fdbn" description="A Feedbin account"/>
             <enumerator name="feed wrangler" code="FWrg" description="A Feed Wrangler account"/>
@@ -77,12 +77,12 @@
         <class name="account" code="Acct" plural="accounts" description="An account for subscribing to feeds">
             <cocoa class="ScriptableAccount"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the account">
-                <cocoa key="name"/>
+                <cocoa key="scriptingName"/>
             </property>
             <property name="id" code="ID  " type="text" access="r" description="The unique id of the account">
                 <cocoa key="uniqueId"/>
             </property>
-            <property name="type" code="ATyp" type="account type" access="r" description="The type of the account">
+            <property name="accountType" code="ATyp" type="account type" access="r" description="The type of the account">
                 <cocoa key="accountType"/>
             </property>
 			<property name="active" code="Actv" type="boolean" access="rw" description="Whether or not the account is active">
