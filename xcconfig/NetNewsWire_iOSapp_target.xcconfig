@@ -39,7 +39,7 @@ FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Frameworks/Vendor
 GCC_C_LANGUAGE_STANDARD = gnu11;
 
 IPHONEOS_DEPLOYMENT_TARGET = 13.0
-LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks
 INFOPLIST_FILE = iOS/Resources/Info.plist
 PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire-Evergreen.iOS
 PRODUCT_NAME = NetNewsWire
