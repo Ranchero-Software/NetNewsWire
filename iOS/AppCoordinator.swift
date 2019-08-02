@@ -902,7 +902,7 @@ private extension AppCoordinator {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
 
-		if currentArticle == nil {
+		if currentMasterIndexPath == nil && currentArticleIndexPath == nil {
 			
 			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
 			let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: false)
@@ -910,6 +910,12 @@ private extension AppCoordinator {
 
 		} else {
 			
+			masterTimelineViewController!.navigationItem.leftBarButtonItem = nil
+			
+			let subSplit = ensureDoubleSplit()
+			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
+			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
+
 			let controller: UIViewController = {
 				if let result = detailViewController {
 					return result
@@ -919,14 +925,6 @@ private extension AppCoordinator {
 			}()
 			
 			let navController = addNavControllerIfNecessary(controller, showButton: false)
-
-			masterTimelineViewController!.navigationItem.leftBarButtonItem = nil
-			
-			let subSplit = ensureDoubleSplit()
-			
-			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
-			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
-
 			subSplit.showDetailViewController(navController, sender: self)
 			
 		}
