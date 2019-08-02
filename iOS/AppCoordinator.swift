@@ -846,6 +846,8 @@ private extension AppCoordinator {
 		if isThreePanelMode {
 			let targetSplit = ensureDoubleSplit()
 			targetSplit.showDetailViewController(controller, sender: self)
+		} else if rootSplitViewController.isCollapsed {
+			rootSplitViewController.showDetailViewController(controller, sender: self)
 		} else {
 			if let shimController = rootSplitViewController.viewControllers.last {
 				shimController.replaceChildAndPinView(controller)
