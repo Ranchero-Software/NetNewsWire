@@ -87,9 +87,9 @@
 			<property name="active" code="Actv" type="boolean" access="rw" description="Whether or not the account is active">
 				<cocoa key="scriptingIsActive"/>
 			</property>
-           <property name="contents" code="Cnts" access="r" description="The type of the account">
-                <cocoa key="contents"/>
-                <type type="account item" list="yes"/>
+           	<property name="allFeeds" code="Feds" access="r" description="All feeds, including feeds inside folders">
+                <cocoa key="allFeeds"/>
+                <type type="feed" list="yes"/>
             </property>
             <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the account">
                 <cocoa key="opmlRepresentation"/>
@@ -102,10 +102,7 @@
             </element>
         </class>
         
-        <class name="account item" code="AItm" plural="account items" description="a folder or feed">
-        </class>
-        
-        <class name="feed" code="Feed" plural="feeds" description="An RSS feeds" inherits="account item">
+        <class name="feed" code="Feed" plural="feeds" description="An RSS feeds">
             <cocoa class="ScriptableFeed"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the feed">
                 <cocoa key="name"/>
@@ -154,7 +151,7 @@
             </property>
         </class>
 
-        <class name="folder" code="fold" plural="folders" description="A folder for organizing feeds" inherits="account item">
+        <class name="folder" code="fold" plural="folders" description="A folder for organizing feeds">
             <cocoa class="ScriptableFolder"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the account">
                 <cocoa key="name"/>
