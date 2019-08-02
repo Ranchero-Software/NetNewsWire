@@ -621,11 +621,10 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
 
-		if let shimController = rootSplitViewController.viewControllers.last,
-			let detailNav = shimController.children.first as? UINavigationController,
-			let detail = detailNav.topViewController as? DetailViewController {
-				masterNavigationController.pushViewController(detail, animated: false)
-				return true
+		if let detailNav = secondaryViewController.children.first as? UINavigationController, let detail = detailNav.topViewController {
+			masterNavigationController.pushViewController(detail, animated: false)
+			detail.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
+			return true
 		}
 		
 		if let subSplit = secondaryViewController.children.first as? UISplitViewController {
@@ -967,7 +966,9 @@ private extension AppCoordinator {
 			
 			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
 			let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: false)
-			rootSplitViewController.showDetailViewController(navController, sender: self)
+			let shimController = UIViewController()
+			shimController.addChildAndPinView(navController)
+			rootSplitViewController.showDetailViewController(shimController, sender: self)
 			return navController
 			
 		} else {
