@@ -75,7 +75,9 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	var isThreePanelMode: Bool {
-		return rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && !rootSplitViewController.isCollapsed && rootSplitViewController.displayMode == .allVisible
+		return rootSplitViewController.traitCollection.userInterfaceIdiom == .pad &&
+			!rootSplitViewController.isCollapsed &&
+			rootSplitViewController.displayMode == .allVisible
 	}
 	
 	var rootNode: Node {
@@ -607,14 +609,14 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 
 extension AppCoordinator: UISplitViewControllerDelegate {
 
-	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && !rootSplitViewController.isCollapsed else {
+	func splitViewController(_ splitViewController: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+		guard splitViewController.traitCollection.userInterfaceIdiom == .pad && !splitViewController.isCollapsed else {
 			return
 		}
-		if rootSplitViewController.displayMode != .allVisible && displayMode == .allVisible {
+		if splitViewController.displayMode != .allVisible && displayMode == .allVisible {
 			transitionToThreePanelMode()
 		}
-		if rootSplitViewController.displayMode == .allVisible && displayMode != .allVisible {
+		if splitViewController.displayMode == .allVisible && displayMode != .allVisible {
 			transitionFromThreePanelMode()
 		}
 	}
