@@ -107,9 +107,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@IBAction func firstUnread(_ sender: Any) {
-		if let indexPath = coordinator.firstUnreadArticleIndexPath {
-			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
-		}
+		coordinator.selectNextUnread()
 	}
 	
 	// MARK: - Table view

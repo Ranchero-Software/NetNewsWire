@@ -510,6 +510,10 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		}
 	}
 	
+	func selectFirstUnread() {
+		selectFirstUnreadArticleInTimeline()
+	}
+	
 	func selectNextUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
@@ -719,8 +723,12 @@ private extension AppCoordinator {
 	// MARK: Select Next Unread
 
 	@discardableResult
+	func selectFirstUnreadArticleInTimeline() -> Bool {
+		return selectArticleInTimeline(startingRow: 0)
+	}
+	
+	@discardableResult
 	func selectNextUnreadArticleInTimeline() -> Bool {
-		
 		let startingRow: Int = {
 			if let indexPath = currentArticleIndexPath {
 				return indexPath.row
@@ -729,10 +737,15 @@ private extension AppCoordinator {
 			}
 		}()
 		
+		return selectArticleInTimeline(startingRow: startingRow)
+	}
+	
+	func selectArticleInTimeline(startingRow: Int) -> Bool {
+		
 		for i in startingRow..<articles.count {
 			let article = articles[i]
 			if !article.status.read {
-				currentArticleIndexPath = IndexPath(row: i, section: 0)
+				selectArticle(IndexPath(row: i, section: 0))
 				return true
 			}
 		}
