@@ -89,17 +89,17 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         guard let url = self.urlForNewFeed(arguments:arguments) else {return nil}
         
         if let existingFeed = account.existingFeed(withURL:url) {
-            return self.scriptableFeed(existingFeed, account:account, folder:folder)
+            return scriptableFeed(existingFeed, account:account, folder:folder).objectSpecifier
         }
 		
 		let container: Container = folder != nil ? folder! : account
 		
-        // at this point, we need to download the feed and parse it.
-        // RS Parser does the callback for the download on the main thread (which it probably shouldn't?)
-        // because we can't wait here (on the main thread, maybe) for the callback, we have to return from this function
-        // Generally, returning from an AppleEvent handler function means that handling the appleEvent is over,
-        // but we don't yet have the result of the event yet, so we prevent the AppleEvent from returning by calling
-        // suspendExecution().  When we get the callback, we can supply the event result and call resumeExecution()
+        // We need to download the feed and parse it.
+        // RSParser does the callback for the download on the main thread.
+        // Because we can't wait here (on the main thread) for the callback, we have to return from this function.
+        // Generally, returning from an AppleEvent handler function means that handling the Apple event is over,
+        // but we don’t yet have the result of the event yet, so we prevent the Apple event from returning by calling
+        // suspendExecution(). When we get the callback, we supply the event result and call resumeExecution().
         command.suspendExecution()
         
 		account.createFeed(url: url, name: titleFromArgs, container: container) { result in
