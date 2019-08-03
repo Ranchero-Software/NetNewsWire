@@ -676,7 +676,7 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 		} else {
 
 			// Display a no selection controller since we don't have any detail selected
-			return fullyWrappedSystemMesssageController()
+			return fullyWrappedSystemMesssageController(showButton: true)
 
 		}
 	}
@@ -969,9 +969,9 @@ private extension AppCoordinator {
 		}
 	}
 	
-	func fullyWrappedSystemMesssageController() -> UIViewController {
+	func fullyWrappedSystemMesssageController(showButton: Bool) -> UIViewController {
 		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-		let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: false)
+		let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: showButton)
 		let shimController = UIViewController()
 		shimController.addChildAndPinView(navController)
 		return shimController
@@ -985,7 +985,7 @@ private extension AppCoordinator {
 
 		if currentMasterIndexPath == nil && currentArticleIndexPath == nil {
 			
-			let wrappedSystemMessageController = fullyWrappedSystemMesssageController()
+			let wrappedSystemMessageController = fullyWrappedSystemMesssageController(showButton: false)
 			rootSplitViewController.showDetailViewController(wrappedSystemMessageController, sender: self)
 			return wrappedSystemMessageController
 			
