@@ -623,8 +623,7 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 	
 		if let subSplit = secondaryViewController.children.first as? UISplitViewController {
 
-			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController,
-				let masterTimeline = masterTimelineNav.topViewController {
+			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController, let masterTimeline = masterTimelineNav.topViewController {
 				masterNavigationController.pushViewController(masterTimeline, animated: false)
 			}
 
