@@ -608,7 +608,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 extension AppCoordinator: UISplitViewControllerDelegate {
 
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad else {
+		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && !rootSplitViewController.isCollapsed else {
 			return
 		}
 		if rootSplitViewController.displayMode != .allVisible && displayMode == .allVisible {
@@ -620,13 +620,7 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-
-		if let detailNav = secondaryViewController.children.first as? UINavigationController, let detail = detailNav.topViewController {
-			masterNavigationController.pushViewController(detail, animated: false)
-			detail.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
-			return true
-		}
-		
+	
 		if let subSplit = secondaryViewController.children.first as? UISplitViewController {
 
 			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController,
@@ -634,19 +628,27 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 				masterNavigationController.pushViewController(masterTimeline, animated: false)
 			}
 
-			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let detail = detailNav.topViewController {
+			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
 				masterNavigationController.pushViewController(detail, animated: false)
 			}
 
-			return true
+		} else {
 			
+			if let timeline = masterTimelineViewController, masterNavigationController.viewControllers.count == 1 {
+				masterNavigationController.pushViewController(timeline, animated: false)
+			}
+			
+			if let detailNav = secondaryViewController.children.first as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
+				masterNavigationController.pushViewController(detail, animated: false)
+			}
+
 		}
 		
-		return currentArticle == nil
+		return true
+		
 	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
-
 		if isThreePanelMode {
 			return transitionToThreePanelMode()
 		}
@@ -659,21 +661,15 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 			shimController.addChildAndPinView(detailNav)
 			return shimController
 			
-		}
-		
-//
-//		} else {
-//
-//			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-//			let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: true)
-//			let shimController = UIViewController()
-//			shimController.addChildAndPinView(navController)
-//			return shimController
-//
-//		}
-//
-		return nil
+		} else {
 
+			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+			let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: true)
+			let shimController = UIViewController()
+			shimController.addChildAndPinView(navController)
+			return shimController
+
+		}
 	}
 	
 }
