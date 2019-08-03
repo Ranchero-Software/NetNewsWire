@@ -10,6 +10,12 @@ import UIKit
 
 class MasterUnreadIndicatorView: UIView {
 
+	var isSelected = false {
+		didSet {
+			setNeedsDisplay()
+		}
+	}
+	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		self.isOpaque = false
@@ -26,7 +32,11 @@ class MasterUnreadIndicatorView: UIView {
 	}()
 	
     override func draw(_ dirtyRect: CGRect) {
-		AppAssets.timelineUnreadCircleColor.setFill()
+		if isSelected {
+			AppAssets.selectedTextColor.setFill()
+		} else {
+			AppAssets.timelineUnreadCircleColor.setFill()
+		}
 		MasterUnreadIndicatorView.bezierPath.fill()
     }
     

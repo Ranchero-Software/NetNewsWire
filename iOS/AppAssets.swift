@@ -60,6 +60,10 @@ struct AppAssets {
 		return UIColor(named: "netNewsWireBlueColor")!
 	}()
 	
+	static var selectedTextColor: UIColor = {
+		return UIColor(named: "selectedTextColor")!
+	}()
+
 	static var settingsImage: UIImage = {
 		return UIImage(named: "settingsImage")!
 	}()
