@@ -623,23 +623,29 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
 	
+		// Check to see if the system is currently configured for three panel mode
 		if let subSplit = secondaryViewController.children.first as? UISplitViewController {
 
+			// Take the timeline controller out of the subsplit and throw it on the master navigation stack
 			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController, let masterTimeline = masterTimelineNav.topViewController {
 				masterNavigationController.pushViewController(masterTimeline, animated: false)
 			}
 
+			// Take the detail view (ignoring system message controllers) and put it on the master navigation stack
 			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
 				masterNavigationController.pushViewController(detail, animated: false)
 			}
 
 		} else {
 			
+			// If the timeline controller has been initialized and only the feeds controller is on the stack, we add the timeline controller
 			if let timeline = masterTimelineViewController, masterNavigationController.viewControllers.count == 1 {
 				masterNavigationController.pushViewController(timeline, animated: false)
 			}
 			
+			// Take the detail view (ignoring system message controllers) and put it on the master navigation stack
 			if let detailNav = secondaryViewController.children.first as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
+				// I have no idea why, I have to wire up the left bar button item for this, but not when I am transitioning from three panel mode
 				detail.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 				detail.navigationItem.leftItemsSupplementBackButton = true
 				masterNavigationController.pushViewController(detail, animated: false)
@@ -652,12 +658,15 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
+		
+		// If we are in three panel mode, return back the new shim controller that contains a new sub split controller
 		if isThreePanelMode {
 			return transitionToThreePanelMode()
 		}
 
 		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
 
+			// If we have a detail controller on the stack, remove it, wrap it in a shim, and return it.
 			masterNavigationController.viewControllers.removeLast()
 			let detailNav = addNavControllerIfNecessary(detail, showButton: true)
 			let shimController = UIViewController()
@@ -666,11 +675,8 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 			
 		} else {
 
-			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-			let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: true)
-			let shimController = UIViewController()
-			shimController.addChildAndPinView(navController)
-			return shimController
+			// Display a no selection controller since we don't have any detail selected
+			return fullyWrappedSystemMesssageController()
 
 		}
 	}
@@ -899,6 +905,13 @@ private extension AppCoordinator {
 	
 	// MARK: Double Split
 	
+	// Note about the Shim Controller
+	// In the root split view controller's secondary (or detail) position we use a view controller that
+	// only acts as a shim (or wrapper) for the actaully desired contents of the second position.  This
+	// is because we normally can't change the root split view controllers second position contents
+	// during the display mode change callback (in the split view controller delegate).  To fool the
+	// system, we leave the same controller, the shim, in place and change its child controllers instead.
+	
 	func installDetailController(_ detailController: UIViewController) {
 		let showButton = rootSplitViewController.displayMode != .allVisible
 		let controller = addNavControllerIfNecessary(detailController, showButton: showButton)
@@ -956,6 +969,14 @@ private extension AppCoordinator {
 		}
 	}
 	
+	func fullyWrappedSystemMesssageController() -> UIViewController {
+		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+		let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: false)
+		let shimController = UIViewController()
+		shimController.addChildAndPinView(navController)
+		return shimController
+	}
+	
 	@discardableResult
 	func transitionToThreePanelMode() -> UIViewController {
 		defer {
@@ -964,12 +985,9 @@ private extension AppCoordinator {
 
 		if currentMasterIndexPath == nil && currentArticleIndexPath == nil {
 			
-			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-			let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: false)
-			let shimController = UIViewController()
-			shimController.addChildAndPinView(navController)
-			rootSplitViewController.showDetailViewController(shimController, sender: self)
-			return navController
+			let wrappedSystemMessageController = fullyWrappedSystemMesssageController()
+			rootSplitViewController.showDetailViewController(wrappedSystemMessageController, sender: self)
+			return wrappedSystemMessageController
 			
 		} else {
 			
@@ -981,11 +999,13 @@ private extension AppCoordinator {
 				}
 			}()
 			
+			// Create the new sub split controller (wrapped in the shim of course) and add the timeline in the primary position
 			let shimController = ensureDoubleSplit()
 			let subSplit = shimController.children.first as! UISplitViewController
 			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
 			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
 			
+			// Put the detail or no selection controller in the secondary (or detail) position of the sub split
 			let navController = addNavControllerIfNecessary(controller, showButton: false)
 			subSplit.showDetailViewController(navController, sender: self)
 			
@@ -999,11 +1019,14 @@ private extension AppCoordinator {
 		
 		if let shimController = rootSplitViewController.viewControllers.last, let subSplit = shimController.children.first as? UISplitViewController {
 
-			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController,
-				let masterTimeline = masterTimelineNav.topViewController {
+			// Push the timeline on to the master navigation controller.  This should always be true if we have installed
+			// the sub split controller because we only install the sub split controller if a timeline needs to be displayed.
+			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController, let masterTimeline = masterTimelineNav.topViewController {
 				masterNavigationController.pushViewController(masterTimeline, animated: false)
 			}
 
+			// Pull the detail or no selection controller out of the sub split second position and move it to the root split controller
+			// secondary (detail) position, by replacing the contents of the shim controller in the second position.
 			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let topController = detailNav.topViewController {
 				let newNav = addNavControllerIfNecessary(topController, showButton: true)
 				shimController.replaceChildAndPinView(newNav)
