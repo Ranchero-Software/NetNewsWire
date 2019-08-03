@@ -44,10 +44,6 @@ struct AppAssets {
 		return RSImage(named: "feedImage")!
 	}()
 	
-	static var masterFolderColor: UIColor = {
-		return UIColor(named: "masterFolderColor")!
-	}()
-	
 	static var masterFolderImage: UIImage = {
 		return UIImage(systemName: "folder.fill")!
 	}()
