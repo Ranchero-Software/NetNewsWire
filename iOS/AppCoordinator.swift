@@ -638,6 +638,8 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 			}
 			
 			if let detailNav = secondaryViewController.children.first as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
+				detail.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
+				detail.navigationItem.leftItemsSupplementBackButton = true
 				masterNavigationController.pushViewController(detail, animated: false)
 			}
 
@@ -919,6 +921,7 @@ private extension AppCoordinator {
 			navController.isToolbarHidden = false
 			if showButton {
 				controller.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
+				controller.navigationItem.leftItemsSupplementBackButton = true
 			}
 			return navController
 		}
