@@ -977,8 +977,6 @@ private extension AppCoordinator {
 				}
 			}()
 			
-			masterTimelineViewController!.navigationItem.leftBarButtonItem = nil
-			
 			let shimController = ensureDoubleSplit()
 			let subSplit = shimController.children.first as! UISplitViewController
 			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
