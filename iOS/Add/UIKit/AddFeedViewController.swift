@@ -91,9 +91,12 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		}
 		
 		delegate?.processingDidBegin()
+		
+		let feedName = (nameTextField.text?.isEmpty ?? true) ? nil : nameTextField.text
+		
 		BatchUpdate.shared.start()
 		
-		account!.createFeed(url: url.absoluteString, name: nameTextField.text, container: container) { result in
+		account!.createFeed(url: url.absoluteString, name: feedName, container: container) { result in
 
 			BatchUpdate.shared.end()
 			
