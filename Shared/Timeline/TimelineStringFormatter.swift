@@ -65,7 +65,6 @@ struct TimelineStringFormatter {
 		s = s.replacingOccurrences(of: "\r", with: "")
 		s = s.replacingOccurrences(of: "\t", with: "")
 		s = s.rsparser_stringByDecodingHTMLEntities()
-		s = s.replacingOccurrences(of: "↦", with: "")
 		s = s.rs_stringByTrimmingWhitespace()
 		s = s.rs_stringWithCollapsedWhitespace()
 
