@@ -12,7 +12,7 @@ Like this imaginary squished-down web page:
 
 The good part is the part in the middle — that’s the part with the news. That’s the part that you read. That’s the part you’re interested in.
 
-<p>And that’s what RSS is — it’s just that part, minus the rest of the stuff.
+And that’s what RSS is — it’s just that part, minus the rest of the stuff.
 
 #### Details
 

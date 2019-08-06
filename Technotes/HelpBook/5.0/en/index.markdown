@@ -10,11 +10,11 @@
 
 [How to go through your articles](reading-articles.html)
 
-How to sort the timeline
+[How to sort the timeline](sorting-the-timeline.html)
 
 Tour of the built-in smart feeds: Today, All Unread, Starred
 
-Keyboard shortcuts (see Help menu command)
+[Keyboard shortcuts](keyboard-shortcuts.html)
 
 Sharing to other apps, including MarsEdit and Micro.blog
 
@@ -42,7 +42,7 @@ Accounts overview
 
 [About the On My Mac account](on-my-mac.html)
 
-How to add a syncing account
+[How to add a syncing account](syncing-accounts.html)
 
 
 
@@ -69,6 +69,8 @@ How to add a syncing account
 
 
 ## Other ideas? Add them here.
+
+
 
 ---
 

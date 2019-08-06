@@ -4,7 +4,10 @@
 
 The very best way to get news about NetNewsWire is with NetNewsWire itself, using the *NetNewsWire News Feed*. Important and notable news about NetNewsWire will appear there: new version announcements, critical bug notices, tech notes and important project announcements.
 
-## Add the NetNewsWire News Feed
+
+
+Add the NetNewsWire News Feed
+-----------------------------
 
 The NetNewsWire News Feed is part of the default subscription list installed the first time you launched NetNewsWire. If it’s no longer in your list, it’s easy to add it back.
 
