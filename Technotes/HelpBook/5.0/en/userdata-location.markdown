@@ -6,7 +6,8 @@ NetNewsWire remembers your feeds and article read status, as well as your accoun
 
 
 
-## Preferences file
+Preferences file
+----------------
 
 Your NetNewsWire preferences file is called `com.ranchero.NetNewsWire-Evergreen.plist`. It’s stored in your account’s Preferences folder, which can be found in the Finder by navigating to:
 
@@ -19,7 +20,8 @@ The contents in the preferences `plist` file are cached by macOS. If you make an
 
 
 
-## Feeds and accounts data
+Feeds and accounts data
+-----------------------
 
 Information about your subscribed feeds, article read status and accounts (On my Mac and Feedbin) are stored in your account’s Application Support folder. This can be found in the Finder by navigating to:
 
@@ -32,9 +34,12 @@ If you just want to export your list of subscribed feeds, NetNewsWire [can expor
 
 
 
-## Resetting or removing NetNewsWire
+Resetting or removing NetNewsWire
+---------------------------------
 
-If you are encountering problems while using NetNewsWire, by removing the files and folders above you can set up NetNewsWire again from scratch. You may also want to delete these files if you want to completely remove NetNewsWire from your Mac.
+If you are running into problems while using NetNewsWire, you may want to reset your settings. By removing the files and folders above you can start over again from scratch. 
+
+You may also want to delete these files if you want to completely remove NetNewsWire from your Mac.
 
 
 ### Can’t find the Library folder?

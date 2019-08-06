@@ -5,7 +5,9 @@
 NetNewsWire provides a Safari Extension which adds a *Subscribe to Feed* button to your Safari toolbar. This allows you to quickly add a site’s feed without entering an address manually into NetNewsWire.
 
 
-## Installing the NetNewsWire Safari Extension
+
+Installing the NetNewsWire Safari Extension
+-------------------------------------------
 
 The Safari Extension is installed automatically with NetNewsWire. However, it must be *enabled* before you can use it.
 
@@ -20,7 +22,9 @@ You will enable the extension in Safari:
 Once this is done, the *Subscribe to Feed* button will be added to your Safari toolbar.
 
 
-## Adding a feed using the Safari Extension
+
+Adding a feed using the Safari Extension
+----------------------------------------
 
 For any site that advertises its feeds, you can use the ‘Subscribe to Feed’ button. Clicking it send the feed’s address to NetNewsWire where you can set options like an alternative feed name, and the account and folder where it will be stored.
 
