@@ -44,6 +44,17 @@ class MasterTimelineTableViewCell: UITableViewCell {
 		}
 	}
 	
+	override func setSelected(_ selected: Bool, animated: Bool) {
+		let selectedTextColor = selected ? AppAssets.selectedTextColor : UIColor.label
+		titleView.textColor = selectedTextColor
+		summaryView.textColor = selectedTextColor
+		dateView.textColor = selectedTextColor
+		feedNameView.textColor = selectedTextColor
+		unreadIndicatorView.isSelected = selected
+		
+		super.setSelected(selected, animated: animated)
+	}
+
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
 		let layout = updatedLayout(width: size.width)
 		return CGSize(width: size.width, height: layout.height)

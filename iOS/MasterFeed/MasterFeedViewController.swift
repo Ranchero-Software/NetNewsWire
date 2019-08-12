@@ -29,11 +29,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		super.viewDidLoad()
 
-		let settingsButton = UIBarButtonItem()
-		settingsButton.image = AppAssets.settingsImage
-		settingsButton.action = #selector(settings(_:))
-		navigationItem.leftBarButtonItem = settingsButton
-		
 		navigationItem.rightBarButtonItem = editButtonItem
 		
 		tableView.register(MasterFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
@@ -58,8 +53,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
-		clearsSelectionOnViewWillAppear = true
 		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
+		clearsSelectionOnViewWillAppear = coordinator.isRootSplitCollapsed
 		super.viewWillAppear(animated)
 	}
 	
@@ -104,7 +99,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 
 		performBlockAndRestoreSelection {
-			tableView.reloadRows(at: [indexPath], with: .automatic)
+			tableView.reloadRows(at: [indexPath], with: .none)
 		}
 
 	}

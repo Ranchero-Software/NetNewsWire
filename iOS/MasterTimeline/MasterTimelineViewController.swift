@@ -54,6 +54,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 	}
 	
+	override func viewWillAppear(_ animated: Bool) {
+		clearsSelectionOnViewWillAppear = coordinator.isRootSplitCollapsed
+		super.viewWillAppear(animated)
+	}
+	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		becomeFirstResponder()
@@ -102,9 +107,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@IBAction func firstUnread(_ sender: Any) {
-		if let indexPath = coordinator.firstUnreadArticleIndexPath {
-			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
-		}
+		coordinator.selectNextUnread()
 	}
 	
 	// MARK: - Table view

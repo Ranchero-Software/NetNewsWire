@@ -28,14 +28,12 @@ struct AppAssets {
 	
 	static var chevronDownImage: UIImage = {
 		let image = UIImage(systemName: "chevron.down")!
-		return image
-//		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
+		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var chevronRightImage: UIImage = {
 		let image = UIImage(systemName: "chevron.right")!
-		return image
-//		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
+		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var faviconTemplateImage: RSImage = {
@@ -46,20 +44,18 @@ struct AppAssets {
 		return RSImage(named: "feedImage")!
 	}()
 	
-	static var masterFolderColor: UIColor = {
-		return UIColor(named: "masterFolderColor")!
-	}()
-	
 	static var masterFolderImage: UIImage = {
-		let image = UIImage(systemName: "folder.fill")!
-		return image
-//		return image.withTintColor(AppAssets.masterFolderColor, renderingMode: .alwaysOriginal)
+		return UIImage(systemName: "folder.fill")!
 	}()
 	
 	static var netNewsWireBlueColor: UIColor = {
 		return UIColor(named: "netNewsWireBlueColor")!
 	}()
 	
+	static var selectedTextColor: UIColor = {
+		return UIColor(named: "selectedTextColor")!
+	}()
+
 	static var settingsImage: UIImage = {
 		return UIImage(named: "settingsImage")!
 	}()
@@ -69,9 +65,7 @@ struct AppAssets {
 	}()
 	
 	static var smartFeedImage: UIImage = {
-		let image = UIImage(systemName: "gear")!
-		return image
-//		return image.withTintColor(AppAssets.smartFeedColor, renderingMode: .alwaysOriginal)
+		return UIImage(systemName: "gear")!
 	}()
 	
 	static var starColor: UIColor = {
@@ -88,8 +82,7 @@ struct AppAssets {
 	
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
-		return image
-//		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
+		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var timelineUnreadCircleColor: UIColor = {

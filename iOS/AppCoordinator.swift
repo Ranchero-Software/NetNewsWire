@@ -34,8 +34,17 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	private var masterTimelineViewController: MasterTimelineViewController?
 	
 	private var detailViewController: DetailViewController? {
-		if let detailNavController = targetSplitForDetail().viewControllers.last as? UINavigationController {
-			return detailNavController.topViewController as? DetailViewController
+		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
+			return detail
+		}
+		if let subSplit = rootSplitViewController.viewControllers.last?.children.first as? UISplitViewController {
+			if let navController = subSplit.viewControllers.last as? UINavigationController {
+				return navController.topViewController as? DetailViewController
+			}
+		} else {
+			if let navController = rootSplitViewController.viewControllers.last?.children.first as? UINavigationController {
+				return navController.topViewController as? DetailViewController
+			}
 		}
 		return nil
 	}
@@ -61,8 +70,14 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
 	
+	var isRootSplitCollapsed: Bool {
+		return rootSplitViewController.isCollapsed
+	}
+	
 	var isThreePanelMode: Bool {
-		return !rootSplitViewController.isCollapsed && rootSplitViewController.displayMode == .allVisible
+		return rootSplitViewController.traitCollection.userInterfaceIdiom == .pad &&
+			!rootSplitViewController.isCollapsed &&
+			rootSplitViewController.displayMode == .allVisible
 	}
 	
 	var rootNode: Node {
@@ -210,14 +225,15 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		rootSplitViewController.delegate = self
 		
 		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
-		masterNavigationController.delegate = self
 		masterFeedViewController = UIStoryboard.main.instantiateController(ofType: MasterFeedViewController.self)
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
 		
 		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-		let controller = addNavControllerIfNecessary(systemMessageViewController, split: rootSplitViewController, showBackButton: true)
-		rootSplitViewController.showDetailViewController(controller, sender: self)
+		let detailNavController = addNavControllerIfNecessary(systemMessageViewController, showButton: true)
+		let shimController = UIViewController()
+		shimController.replaceChildAndPinView(detailNavController)
+		rootSplitViewController.showDetailViewController(shimController, sender: self)
 
 		return rootSplitViewController
 	}
@@ -453,28 +469,24 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: true)
 		}
 		
-		if isThreePanelMode {
-			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-			let targetSplitController = targetSplitForDetail()
-			let controller = addNavControllerIfNecessary(systemMessageViewController, split: targetSplitController, showBackButton: false)
-			targetSplitController.showDetailViewController(controller, sender: self)
-		}
+		selectArticle(nil)
 	}
 	
-	func selectArticle(_ indexPath: IndexPath) {
-		if detailViewController != nil {
-			currentArticleIndexPath = indexPath
-		} else {
-			let targetSplit = targetSplitForDetail()
+	func selectArticle(_ indexPath: IndexPath?) {
+		currentArticleIndexPath = indexPath
 
+		if indexPath == nil {
+			if !rootSplitViewController.isCollapsed {
+				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+				installDetailController(systemMessageViewController)
+			}
+			return
+		}
+		
+		if detailViewController == nil {
 			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
 			detailViewController.coordinator = self
-
-			let showBackButton = rootSplitViewController.displayMode != .allVisible
-			let controller = addNavControllerIfNecessary(detailViewController, split: targetSplit, showBackButton: showBackButton)
-			currentArticleIndexPath = indexPath
-
-			targetSplit.showDetailViewController(controller, sender: self)
+			installDetailController(detailViewController)
 		}
 		
 		// Automatically hide the overlay
@@ -496,6 +508,10 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		if let indexPath = nextArticleIndexPath {
 			selectArticle(indexPath)
 		}
+	}
+	
+	func selectFirstUnread() {
+		selectFirstUnreadArticleInTimeline()
 	}
 	
 	func selectNextUnread() {
@@ -555,8 +571,8 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
 		settingsNavViewController.modalPresentationStyle = .formSheet
 		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
-		settingsViewController.presentingParentController = masterFeedViewController
-		masterFeedViewController.present(settingsNavViewController, animated: true)
+		settingsViewController.presentingParentController = rootSplitViewController
+		rootSplitViewController.present(settingsNavViewController, animated: true)
 		
 		//		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
 		//		self.present(settings, animated: true)
@@ -593,33 +609,82 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	
 }
 
-// MARK: UINavigationControllerDelegate
-
-extension AppCoordinator: UINavigationControllerDelegate {
-
-	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-		if rootSplitViewController.isCollapsed != true && navigationController.viewControllers.count == 1 {
-			let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-			let showBackButton = rootSplitViewController.displayMode != .allVisible
-			let controller = addNavControllerIfNecessary(systemMessageViewController, split: rootSplitViewController, showBackButton: showBackButton)
-			rootSplitViewController.showDetailViewController(controller, sender: self)
-		}
-	}
-	
-}
-
 // MARK: UISplitViewControllerDelegate
 
 extension AppCoordinator: UISplitViewControllerDelegate {
 
-	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-		if currentArticle == nil {
-			// Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
-			return true
+	func splitViewController(_ splitViewController: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+		guard splitViewController.traitCollection.userInterfaceIdiom == .pad && !splitViewController.isCollapsed else {
+			return
 		}
-		return false
+		if splitViewController.displayMode != .allVisible && displayMode == .allVisible {
+			transitionToThreePanelMode()
+		}
+		if splitViewController.displayMode == .allVisible && displayMode != .allVisible {
+			transitionFromThreePanelMode()
+		}
 	}
+	
+	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
+	
+		// Check to see if the system is currently configured for three panel mode
+		if let subSplit = secondaryViewController.children.first as? UISplitViewController {
 
+			// Take the timeline controller out of the subsplit and throw it on the master navigation stack
+			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController, let masterTimeline = masterTimelineNav.topViewController {
+				masterNavigationController.pushViewController(masterTimeline, animated: false)
+			}
+
+			// Take the detail view (ignoring system message controllers) and put it on the master navigation stack
+			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
+				masterNavigationController.pushViewController(detail, animated: false)
+			}
+
+		} else {
+			
+			// If the timeline controller has been initialized and only the feeds controller is on the stack, we add the timeline controller
+			if let timeline = masterTimelineViewController, masterNavigationController.viewControllers.count == 1 {
+				masterNavigationController.pushViewController(timeline, animated: false)
+			}
+			
+			// Take the detail view (ignoring system message controllers) and put it on the master navigation stack
+			if let detailNav = secondaryViewController.children.first as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
+				// I have no idea why, I have to wire up the left bar button item for this, but not when I am transitioning from three panel mode
+				detail.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
+				detail.navigationItem.leftItemsSupplementBackButton = true
+				masterNavigationController.pushViewController(detail, animated: false)
+			}
+
+		}
+		
+		return true
+		
+	}
+	
+	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
+		
+		// If we are in three panel mode, return back the new shim controller that contains a new sub split controller
+		if isThreePanelMode {
+			return transitionToThreePanelMode()
+		}
+
+		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
+
+			// If we have a detail controller on the stack, remove it, wrap it in a shim, and return it.
+			masterNavigationController.viewControllers.removeLast()
+			let detailNav = addNavControllerIfNecessary(detail, showButton: true)
+			let shimController = UIViewController()
+			shimController.addChildAndPinView(detailNav)
+			return shimController
+			
+		} else {
+
+			// Display a no selection controller since we don't have any detail selected
+			return fullyWrappedSystemMesssageController(showButton: true)
+
+		}
+	}
+	
 }
 
 // MARK: Private
@@ -658,8 +723,12 @@ private extension AppCoordinator {
 	// MARK: Select Next Unread
 
 	@discardableResult
+	func selectFirstUnreadArticleInTimeline() -> Bool {
+		return selectArticleInTimeline(startingRow: 0)
+	}
+	
+	@discardableResult
 	func selectNextUnreadArticleInTimeline() -> Bool {
-		
 		let startingRow: Int = {
 			if let indexPath = currentArticleIndexPath {
 				return indexPath.row
@@ -668,10 +737,15 @@ private extension AppCoordinator {
 			}
 		}()
 		
+		return selectArticleInTimeline(startingRow: startingRow)
+	}
+	
+	func selectArticleInTimeline(startingRow: Int) -> Bool {
+		
 		for i in startingRow..<articles.count {
 			let article = articles[i]
 			if !article.status.read {
-				currentArticleIndexPath = IndexPath(row: i, section: 0)
+				selectArticle(IndexPath(row: i, section: 0))
 				return true
 			}
 		}
@@ -844,50 +918,135 @@ private extension AppCoordinator {
 	
 	// MARK: Double Split
 	
-	func addNavControllerIfNecessary(_ controller: UIViewController, split: UISplitViewController, showBackButton: Bool) -> UIViewController {
-		if split.isCollapsed {
+	// Note about the Shim Controller
+	// In the root split view controller's secondary (or detail) position we use a view controller that
+	// only acts as a shim (or wrapper) for the actaully desired contents of the second position.  This
+	// is because we normally can't change the root split view controllers second position contents
+	// during the display mode change callback (in the split view controller delegate).  To fool the
+	// system, we leave the same controller, the shim, in place and change its child controllers instead.
+	
+	func installDetailController(_ detailController: UIViewController) {
+		let showButton = rootSplitViewController.displayMode != .allVisible
+		let controller = addNavControllerIfNecessary(detailController, showButton: showButton)
+		
+		if isThreePanelMode {
+			let targetSplit = ensureDoubleSplit().children.first as! UISplitViewController
+			targetSplit.showDetailViewController(controller, sender: self)
+		} else if rootSplitViewController.isCollapsed {
+			rootSplitViewController.showDetailViewController(controller, sender: self)
+		} else {
+			if let shimController = rootSplitViewController.viewControllers.last {
+				shimController.replaceChildAndPinView(controller)
+			}
+		}
+	}
+	
+	func addNavControllerIfNecessary(_ controller: UIViewController, showButton: Bool) -> UIViewController {
+		if rootSplitViewController.isCollapsed {
 			return controller
 		} else {
 			let navController = UINavigationController(rootViewController: controller)
 			navController.isToolbarHidden = false
-			if showBackButton {
-				controller.navigationItem.leftBarButtonItem = split.displayModeButtonItem
+			if showButton {
+				controller.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 				controller.navigationItem.leftItemsSupplementBackButton = true
 			}
 			return navController
 		}
 	}
 
-	func ensureDoubleSplit() -> UISplitViewController {
-		if let subSplit = rootSplitViewController.viewControllers.last as? UISplitViewController {
-			return subSplit
+	func ensureDoubleSplit() -> UIViewController {
+		if let shimController = rootSplitViewController.viewControllers.last, shimController.children.first is UISplitViewController {
+			return shimController
 		}
 		
-		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.33
+		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.30
 		
 		let subSplit = UISplitViewController.template()
-		subSplit.delegate = self
 		subSplit.preferredDisplayMode = .allVisible
-		subSplit.preferredPrimaryColumnWidthFraction = 0.5
-		rootSplitViewController.showDetailViewController(subSplit, sender: self)
-		return subSplit
+		subSplit.preferredPrimaryColumnWidthFraction = 0.4285
+		
+		let shimController = UIViewController()
+		shimController.addChildAndPinView(subSplit)
+		
+		rootSplitViewController.showDetailViewController(shimController, sender: self)
+		return shimController
 	}
 	
 	func navControllerForTimeline() -> UINavigationController {
 		if isThreePanelMode {
-			let subSplit = ensureDoubleSplit()
+			let subSplit = ensureDoubleSplit().children.first as! UISplitViewController
 			return subSplit.viewControllers.first as! UINavigationController
 		} else {
 			return masterNavigationController
 		}
 	}
 	
-	func targetSplitForDetail() -> UISplitViewController {
-		if isThreePanelMode {
-			return ensureDoubleSplit()
-		} else {
-			return rootSplitViewController
+	func fullyWrappedSystemMesssageController(showButton: Bool) -> UIViewController {
+		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+		let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: showButton)
+		let shimController = UIViewController()
+		shimController.addChildAndPinView(navController)
+		return shimController
+	}
+	
+	@discardableResult
+	func transitionToThreePanelMode() -> UIViewController {
+		defer {
+			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
+
+		if currentMasterIndexPath == nil && currentArticleIndexPath == nil {
+			
+			let wrappedSystemMessageController = fullyWrappedSystemMesssageController(showButton: false)
+			rootSplitViewController.showDetailViewController(wrappedSystemMessageController, sender: self)
+			return wrappedSystemMessageController
+			
+		} else {
+			
+			let controller: UIViewController = {
+				if let result = detailViewController {
+					return result
+				} else {
+					return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+				}
+			}()
+			
+			// Create the new sub split controller (wrapped in the shim of course) and add the timeline in the primary position
+			let shimController = ensureDoubleSplit()
+			let subSplit = shimController.children.first as! UISplitViewController
+			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
+			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
+			
+			// Put the detail or no selection controller in the secondary (or detail) position of the sub split
+			let navController = addNavControllerIfNecessary(controller, showButton: false)
+			subSplit.showDetailViewController(navController, sender: self)
+			
+			return shimController
+		}
+	}
+	
+	func transitionFromThreePanelMode() {
+		
+		rootSplitViewController.preferredPrimaryColumnWidthFraction = UISplitViewController.automaticDimension
+		
+		if let shimController = rootSplitViewController.viewControllers.last, let subSplit = shimController.children.first as? UISplitViewController {
+
+			// Push the timeline on to the master navigation controller.  This should always be true if we have installed
+			// the sub split controller because we only install the sub split controller if a timeline needs to be displayed.
+			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController, let masterTimeline = masterTimelineNav.topViewController {
+				masterNavigationController.pushViewController(masterTimeline, animated: false)
+			}
+
+			// Pull the detail or no selection controller out of the sub split second position and move it to the root split controller
+			// secondary (detail) position, by replacing the contents of the shim controller in the second position.
+			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let topController = detailNav.topViewController {
+				let newNav = addNavControllerIfNecessary(topController, showButton: true)
+				shimController.replaceChildAndPinView(newNav)
+			}
+
+		}
+		
 	}
 	
 }

@@ -80,13 +80,6 @@ class DetailViewController: UIViewController {
 		let starImage = article.status.starred ? AppAssets.starClosedImage : AppAssets.starOpenImage
 		starBarButtonItem.image = starImage
 		
-		if let timelineName = coordinator.timelineName {
-			if navigationController?.navigationItem.backBarButtonItem?.title != timelineName {
-				let backItem = UIBarButtonItem(title: timelineName, style: .plain, target: nil, action: nil)
-				navigationController?.navigationItem.backBarButtonItem = backItem
-			}
-		}
-		
 	}
 	
 	func reloadHTML() {

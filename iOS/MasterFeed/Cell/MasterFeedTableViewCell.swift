@@ -105,6 +105,12 @@ class MasterFeedTableViewCell : UITableViewCell {
 		commonInit()
 	}
 
+	override func setSelected(_ selected: Bool, animated: Bool) {
+		titleView.textColor = selected ? AppAssets.selectedTextColor : UIColor.label
+		faviconImageView.tintColor = selected ? AppAssets.selectedTextColor : tintColor
+		super.setSelected(selected, animated: animated)
+	}
+	
 	override func willTransition(to state: UITableViewCell.StateMask) {
 		super.willTransition(to: state)
 		showingEditControl = state.contains(.showingEditControl)

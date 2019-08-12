@@ -51,6 +51,7 @@ private extension AboutViewController {
 		textView.attributedText = string
 		textView.adjustsFontForContentSizeCategory = true
 		textView.font = .preferredFont(forTextStyle: .body)
+		textView.textColor = UIColor.label
 	}
 	
 }
