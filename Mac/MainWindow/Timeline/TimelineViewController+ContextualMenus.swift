@@ -248,7 +248,7 @@ private extension TimelineViewController {
 	}
 
 	func selectFeedInSidebarMenuItem(_ feed: Feed) -> NSMenuItem {
-		let localizedMenuText = NSLocalizedString("Select \"%@\" in Sidebar", comment: "Command")
+		let localizedMenuText = NSLocalizedString("Select “%@” in Sidebar", comment: "Command")
 		let formattedMenuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay)
 		return menuItem(formattedMenuText as String, #selector(selectFeedInSidebarFromContextualMenu(_:)), feed)
 	}
@@ -260,7 +260,7 @@ private extension TimelineViewController {
 			return nil
 		}
 		
-		let localizedMenuText = NSLocalizedString("Mark All as Read in \"%@\"", comment: "Command")
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let menuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		
 		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), articles)
