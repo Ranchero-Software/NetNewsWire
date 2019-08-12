@@ -6,7 +6,28 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
-<item>
+			<item>
+         <title>NetNewsWire 5.0b1</title>
+            <description><![CDATA[
+            	<p><b>Beta!</b> This is the first beta release. This means that we think the app is ready to ship — but it should get more testing to be sure.</p>
+            	<p>There is now a <a href="https://ranchero.com/netnewswire/help/mac/5.0/en/">Help Book</a> on the web. We’ll continue to update it up until we ship.</p>
+         			<p>Unread counts: for the sidebar unread count, get the unread count for the selected feed/folder from the timeline.</p>
+            	<p>Today feed: now shows last 24 hours. This way articles don’t just disappear at midnight. This kind of stretches the meaning of “Today,” but we think it’s fine.</p>
+            	<p>Fixed a few AppleScript bugs, including a crashing bug that could happen when adding a feed that already exists.</p>
+            	<p>Finalized the AppleScript scripting dictionary.</p>
+            	<p>Performance: do async fetches for the timeline when an event triggers a need for a refresh. This way the main thread isn’t blocked.</p>
+            	<p>Performance: reload the sidebar outline less often. Only when actually needed.</p>
+            	<p>Performance: remove some unneeded drawing behind the timeline. This makes resizing the timeline horizontally faster.</p>
+            	<p>Performance: make some additional database operations async that could be made so.</p>
+              <p>About box: add additional credits.</p>
+            	<p>Fix typos in some error messages — they were using a foot mark instead of a curly quote.</p>
+							]]></description>
+            <pubDate>Sun, 11 Aug 2019 22:20:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0b1.zip" sparkle:version="2298" sparkle:shortVersionString="5.0b1" length="5167489" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
           <title>NetNewsWire 5.0a4</title>
             <description><![CDATA[
                <p>Sidebar: fixed a bug where a drag-and-drop that triggers an error could make the app unresponsive.</p>
@@ -17,7 +38,7 @@
 						<p>Updated to the latest Sparkle — the thing that does these in-app version upgrades — which has better support Dark Mode. Also, it might fix a bug where Check for Updates… is sometimes not available when it should be. (Maybe.)</p>
 							<p><b>Status note:</b> At this point we have no known bugs to fix before 5.0 beta. No crashing bugs. All that remains is documentation. So, please keep looking for bugs! :)</p>
 							]]></description>
-            <pubDate>Sat, 15 Jun 2019 19:000:00 -0700</pubDate>
+            <pubDate>Sat, 15 Jun 2019 19:00:00 -0700</pubDate>
             <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0a4.zip" sparkle:version="2237" sparkle:shortVersionString="5.0a4" length="5147527" type="application/zip" />
             <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
         </item>
