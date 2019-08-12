@@ -1982,7 +1982,7 @@
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
 						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
@@ -1997,7 +1997,7 @@
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -2784,7 +2784,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "Subscribe to Feed";
 			};
 			name = Debug;
 		};
@@ -2792,7 +2791,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "Subscribe to Feed";
 			};
 			name = Release;
 		};
@@ -2800,7 +2798,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Debug;
 		};
@@ -2808,7 +2805,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Release;
 		};
@@ -2830,7 +2826,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Debug;
 		};
@@ -2838,7 +2833,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Release;
 		};
