@@ -33,11 +33,16 @@ extension Feed: ArticleFetcher {
 	}
 
 	public func fetchUnreadArticles() -> Set<Article> {
-		preconditionFailure("feed.fetchUnreadArticles is unused.")
+		return fetchArticles().unreadArticles()
 	}
 
 	public func fetchUnreadArticlesAsync(_ callback: @escaping ArticleSetBlock) {
-		preconditionFailure("feed.fetchUnreadArticlesAsync is unused.")
+		guard let account = account else {
+			assertionFailure("Expected feed.account, but got nil.")
+			callback(Set<Article>())
+			return
+		}
+		account.fetchArticlesAsync(.feed(self)) { callback($0.unreadArticles()) }
 	}
 }
 
