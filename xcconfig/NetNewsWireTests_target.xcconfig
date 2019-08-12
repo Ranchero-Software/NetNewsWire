@@ -1,5 +1,5 @@
 DEVELOPMENT_TEAM = 9C84TZ7Q6Z
-CODE_SIGN_IDENTITY = -;
+CODE_SIGN_IDENTITY = -
 CODE_SIGN_STYLE = Automatic
 
 // See the notes in NetNewsWire_target.xcconfig on why the

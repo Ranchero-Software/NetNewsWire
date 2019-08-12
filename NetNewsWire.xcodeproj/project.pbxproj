@@ -2784,7 +2784,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "Subscribe to Feed";
 			};
 			name = Debug;
 		};
@@ -2792,7 +2791,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "Subscribe to Feed";
 			};
 			name = Release;
 		};
@@ -2800,7 +2798,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Debug;
 		};
@@ -2808,7 +2805,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Release;
 		};
@@ -2830,7 +2826,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Debug;
 		};
@@ -2838,7 +2833,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Release;
 		};

@@ -1,6 +1,6 @@
-CODE_SIGN_IDENTITY[Config=Release] = Developer ID Application
-CODE_SIGN_IDENTITY[Config=Debug] = -
-DEVELOPMENT_TEAM[Config=Release] = M8L2WTLA8W 
+CODE_SIGN_IDENTITY[config=Release] = Developer ID Application
+CODE_SIGN_IDENTITY[config=Debug] = -
+DEVELOPMENT_TEAM[config=Release] = M8L2WTLA8W 
 CODE_SIGN_STYLE = Manual
 PROVISIONING_PROFILE_SPECIFIER =
 
