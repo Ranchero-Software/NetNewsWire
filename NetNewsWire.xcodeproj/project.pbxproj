@@ -1238,7 +1238,6 @@
 		514219572353C28900E07E2C /* main_ios.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main_ios.js; sourceTree = "<group>"; };
 		5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsDetailViewController.swift; sourceTree = "<group>"; };
 		5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddLocalWindowController.swift; sourceTree = "<group>"; };
-		5144EA3A227A379E00D19003 /* ImportOPMLSheet.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImportOPMLSheet.xib; sourceTree = "<group>"; };
 		5144EA3E227A37EC00D19003 /* ImportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportOPMLWindowController.swift; sourceTree = "<group>"; };
 		5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsFeedbinWindowController.swift; sourceTree = "<group>"; };
 		5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineTitleView.swift; sourceTree = "<group>"; };
@@ -1467,12 +1466,10 @@
 		849A979E1ED9F130007D329B /* SidebarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarCell.swift; sourceTree = "<group>"; };
 		849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		849ADEE02359817D000E1B81 /* NNW3ImportController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNW3ImportController.swift; sourceTree = "<group>"; };
-		849ADEE523598189000E1B81 /* NNW3OpenPanelAccessoryView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NNW3OpenPanelAccessoryView.xib; sourceTree = "<group>"; };
 		849ADEE7235981A0000E1B81 /* NNW3OpenPanelAccessoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNW3OpenPanelAccessoryViewController.swift; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64671ED37A5D003D8FC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		849C78872362AAFB009A71E4 /* ExportOPMLSheet.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ExportOPMLSheet.xib; sourceTree = "<group>"; };
 		849C78912362AB04009A71E4 /* ExportOPMLWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExportOPMLWindowController.swift; sourceTree = "<group>"; };
 		849EE70E203919360082A1EA /* AppAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAssets.swift; sourceTree = "<group>"; };
 		849EE72020391F560082A1EA /* SharingServicePickerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServicePickerDelegate.swift; sourceTree = "<group>"; };
@@ -1541,6 +1538,9 @@
 		84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = establishMainWindowStartingState.applescript; sourceTree = "<group>"; };
 		84F9EAE4213660A100CF2DE4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
+		8FB3CBC9235D307E0026324C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/NNW3OpenPanelAccessoryView.xib; sourceTree = "<group>"; };
+		8FBBEE432304CC00007279FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ImportOPMLSheet.xib; sourceTree = "<group>"; };
+		8FBBEE4E2304CC06007279FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ExportOPMLSheet.xib; sourceTree = "<group>"; };
 		B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+NetNewsWire.swift"; sourceTree = "<group>"; };
 		B24EFD482330FF99006C6242 /* NetNewsWire-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-Bridging-Header.h"; sourceTree = "<group>"; };
 		B24EFD5923310109006C6242 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
@@ -1548,7 +1548,6 @@
 		B2B8075D239C49D300F191E0 /* RSImage-AppIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-AppIcons.swift"; sourceTree = "<group>"; };
 		B2C12C6528F4C46800373730 /* URLPasteboardWriter+NetNewsWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLPasteboardWriter+NetNewsWire.swift"; sourceTree = "<group>"; };
 		B528F81D23333C7E00E735DD /* page.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
-		BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsNewsBlur.xib; sourceTree = "<group>"; };
 		C47370262A232A0100E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		C47370272A232A0100E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../zh-Hans.lproj/MainWindow.strings"; sourceTree = "<group>"; };
 		C47370282A232A0100E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../../../zh-Hans.lproj/RenameSheet.strings"; sourceTree = "<group>"; };
@@ -4719,6 +4718,14 @@
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
+		5144EA3A227A379E00D19003 /* ImportOPMLSheet.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8FBBEE432304CC00007279FB /* Base */,
+			);
+			name = ImportOPMLSheet.xib;
+			sourceTree = "<group>";
+		};
 		6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -4777,6 +4784,22 @@
 				C47370272A232A0100E77890 /* zh-Hans */,
 			);
 			name = MainWindow.storyboard;
+			sourceTree = "<group>";
+		};
+		849ADEE523598189000E1B81 /* NNW3OpenPanelAccessoryView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8FB3CBC9235D307E0026324C /* Base */,
+			);
+			name = NNW3OpenPanelAccessoryView.xib;
+			sourceTree = "<group>";
+		};
+		849C78872362AAFB009A71E4 /* ExportOPMLSheet.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8FBBEE4E2304CC06007279FB /* Base */,
+			);
+			name = ExportOPMLSheet.xib;
 			sourceTree = "<group>";
 		};
 		84C9FC8022629E4800D921D6 /* Preferences.storyboard */ = {
