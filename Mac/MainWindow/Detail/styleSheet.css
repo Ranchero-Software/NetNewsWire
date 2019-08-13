@@ -5,6 +5,7 @@ body {
 	margin-right: 64px;
 	font-family: -apple-system;
 	font-size: 18px;
+	word-wrap: break-word; /* break long words or URLs */
 }
 
 a {
