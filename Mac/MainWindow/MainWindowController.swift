@@ -455,7 +455,7 @@ extension MainWindowController: NSSearchFieldDelegate {
 			return
 		}
 		lastSentSearchString = searchString
-		let smartFeed = SmartFeed(delegate: SearchFeedDelegate(searchString: searchString), type: .search)
+		let smartFeed = SmartFeed(delegate: SearchFeedDelegate(searchString: searchString))
 		timelineContainerViewController?.setRepresentedObjects([smartFeed], mode: .search)
 		searchSmartFeed = smartFeed
 	}

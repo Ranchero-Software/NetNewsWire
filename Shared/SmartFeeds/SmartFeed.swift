@@ -11,21 +11,11 @@ import RSCore
 import Articles
 import Account
 
-enum SmartFeedType {
-	case today
-	case allUnread
-	case starred
-	case search
-	case custom
-}
-
 final class SmartFeed: PseudoFeed {
 
 	var nameForDisplay: String {
 		return delegate.nameForDisplay
 	}
-
-	let type: SmartFeedType
 
 	var unreadCount = 0 {
 		didSet {
@@ -44,9 +34,8 @@ final class SmartFeed: PseudoFeed {
 	private let delegate: SmartFeedDelegate
 	private var unreadCounts = [String: Int]()
 
-	init(delegate: SmartFeedDelegate, type: SmartFeedType) {
+	init(delegate: SmartFeedDelegate) {
 		self.delegate = delegate
-		self.type = type
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		queueFetchUnreadCounts() // Fetch unread count at startup
 	}

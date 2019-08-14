@@ -83,7 +83,12 @@ protocol SidebarDelegate: class {
 		guard let representedObject = note.object else {
 			return
 		}
-		configureUnreadCountForCellsForRepresentedObject(representedObject as AnyObject)
+		if let timelineViewController = representedObject as? TimelineViewController {
+			configureUnreadCountForCellsForRepresentedObjects(timelineViewController.representedObjects)
+		}
+		else {
+			configureUnreadCountForCellsForRepresentedObjects([representedObject as AnyObject])
+		}
 	}
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
@@ -499,7 +504,6 @@ private extension SidebarViewController {
 
 	func unreadCountFor(_ node: Node) -> Int {
 		// If this node is the one and only selection,
-		// and it’s the Today feed,
 		// then the unread count comes from the timeline.
 		// This ensures that any transients in the timeline
 		// are accounted for in the unread count.
@@ -514,18 +518,15 @@ private extension SidebarViewController {
 	}
 
 	func nodeShouldGetUnreadCountFromTimeline(_ node: Node) -> Bool {
-		// Only if it’s selected, it’s the only node selected,
-		// and it’s the Today feed — which may have transients that are unread.
-		if selectedNodes.count != 1 {
-			return false
-		}
-		if node !== selectedNodes.first! {
-			return false
-		}
+		// Only if it’s selected and it’s the only node selected.
+		return selectedNodes.count == 1 && selectedNodes.first! === node
+	}
+
+	func nodeRepresentsTodayFeed(_ node: Node) -> Bool {
 		guard let smartFeed = node.representedObject as? SmartFeed else {
 			return false
 		}
-		return smartFeed.type == .today
+		return smartFeed === SmartFeedsController.shared.todayFeed
 	}
 
 	func cellForRowView(_ rowView: NSTableRowView) -> SidebarCell? {
@@ -553,8 +554,13 @@ private extension SidebarViewController {
 		applyToCellsForRepresentedObject(representedObject, configure)
 	}
 
-	func configureUnreadCountForCellsForRepresentedObject(_ representedObject: AnyObject) {
-		applyToCellsForRepresentedObject(representedObject, configureUnreadCount)
+	func configureUnreadCountForCellsForRepresentedObjects(_ representedObjects: [AnyObject]?) {
+		guard let representedObjects = representedObjects else {
+			return
+		}
+		for object in representedObjects {
+			applyToCellsForRepresentedObject(object, configureUnreadCount)
+		}
 	}
 
 	@discardableResult
