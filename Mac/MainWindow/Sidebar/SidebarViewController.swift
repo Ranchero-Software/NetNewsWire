@@ -499,10 +499,11 @@ private extension SidebarViewController {
 
 	func unreadCountFor(_ node: Node) -> Int {
 		// If this node is the one and only selection,
+		// and it’s the Today feed,
 		// then the unread count comes from the timeline.
 		// This ensures that any transients in the timeline
 		// are accounted for in the unread count.
-		if selectedNodes.count == 1 && node === selectedNodes.first! {
+		if nodeShouldGetUnreadCountFromTimeline(node) {
 			return delegate?.unreadCount(for: node.representedObject) ?? 0
 		}
 
@@ -510,6 +511,21 @@ private extension SidebarViewController {
 			return unreadCountProvider.unreadCount
 		}
 		return 0
+	}
+
+	func nodeShouldGetUnreadCountFromTimeline(_ node: Node) -> Bool {
+		// Only if it’s selected, it’s the only node selected,
+		// and it’s the Today feed — which may have transients that are unread.
+		if selectedNodes.count != 1 {
+			return false
+		}
+		if node !== selectedNodes.first! {
+			return false
+		}
+		guard let smartFeed = node.representedObject as? SmartFeed else {
+			return false
+		}
+		return smartFeed.type == .today
 	}
 
 	func cellForRowView(_ rowView: NSTableRowView) -> SidebarCell? {
