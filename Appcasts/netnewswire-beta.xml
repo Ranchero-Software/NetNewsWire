@@ -7,12 +7,12 @@
         <language>en</language>
 
 			<item>
-         <title>NetNewsWire 5.0b3</title>
+         <title>NetNewsWire 5.0b4</title>
             <description><![CDATA[
             	<p>Fixed a bug showing the unread count for the selected feed, smart feed, or folder.</p>
  							]]></description>
-            <pubDate>Tue, 13 Aug 2019 21:40:00 -0700</pubDate>
-            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0b3.zip" sparkle:version="2605" sparkle:shortVersionString="5.0b3" length="5357585" type="application/zip" />
+            <pubDate>Wed, 14 Aug 2019 00:30:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0b4.zip" sparkle:version="2606" sparkle:shortVersionString="5.0b4" length="5168358" type="application/zip" />
             <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
         </item>
 
