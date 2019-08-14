@@ -15,9 +15,9 @@ final class SmartFeedsController: DisplayNameProvider {
 	let nameForDisplay = NSLocalizedString("Smart Feeds", comment: "Smart Feeds group title")
 
 	var smartFeeds = [AnyObject]()
-	let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
+	let todayFeed = SmartFeed(delegate: TodayFeedDelegate(), type: .today)
 	let unreadFeed = UnreadFeed()
-	let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
+	let starredFeed = SmartFeed(delegate: StarredFeedDelegate(), type: .starred)
 
 	private init() {
 
