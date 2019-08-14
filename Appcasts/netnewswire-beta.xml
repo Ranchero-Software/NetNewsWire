@@ -7,6 +7,16 @@
         <language>en</language>
 
 			<item>
+         <title>NetNewsWire 5.0b2</title>
+            <description><![CDATA[
+            	<p>Fixed a crashing bug doing mark-all-as-read from the contextual menu on a feed.</p>
+ 							]]></description>
+            <pubDate>Mon, 12 Aug 2019 09:45:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0b2.zip" sparkle:version="2299" sparkle:shortVersionString="5.0b2" length="5167789" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+			<item>
          <title>NetNewsWire 5.0b1</title>
             <description><![CDATA[
             	<p><b>Beta!</b> This is the first beta release. This means that we think the app is ready to ship — but it should get more testing to be sure.</p>
