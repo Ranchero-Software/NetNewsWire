@@ -612,6 +612,14 @@ private extension MasterFeedViewController {
 				actions.append(homePageAction)
 			}
 			
+			if let copyFeedPageAction = self.copyFeedPageAction(indexPath: indexPath) {
+				actions.append(copyFeedPageAction)
+			}
+			
+			if let copyHomePageAction = self.copyHomePageAction(indexPath: indexPath) {
+				actions.append(copyHomePageAction)
+			}
+			
 			if includeDeleteRename {
 				actions.append(self.deleteAction(indexPath: indexPath))
 				actions.append(self.renameAction(indexPath: indexPath))
@@ -635,6 +643,35 @@ private extension MasterFeedViewController {
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
 		let action = UIAction(title: title, image: UIImage(systemName: "safari")) { action in
 			UIApplication.shared.open(url, options: [:])
+		}
+		return action
+	}
+	
+	func copyFeedPageAction(indexPath: IndexPath) -> UIAction? {
+		guard let node = coordinator.nodeFor(indexPath),
+			let feed = node.representedObject as? Feed,
+			let url = URL(string: feed.url) else {
+				return nil
+		}
+		
+		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
+		let action = UIAction(title: title, image: UIImage(systemName: "doc.on.doc")) { action in
+			UIPasteboard.general.url = url
+		}
+		return action
+	}
+	
+	func copyHomePageAction(indexPath: IndexPath) -> UIAction? {
+		guard let node = coordinator.nodeFor(indexPath),
+			let feed = node.representedObject as? Feed,
+			let homePageURL = feed.homePageURL,
+			let url = URL(string: homePageURL) else {
+				return nil
+		}
+		
+		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
+		let action = UIAction(title: title, image: UIImage(systemName: "doc.on.doc")) { action in
+			UIPasteboard.general.url = url
 		}
 		return action
 	}
