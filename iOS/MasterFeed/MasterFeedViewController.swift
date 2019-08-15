@@ -285,7 +285,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		if node.representedObject is Feed {
 			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
 		} else {
-			return nil
+			return makeFolderContextMenu(indexPath: indexPath)
 		}
 	}
 
@@ -632,6 +632,19 @@ private extension MasterFeedViewController {
 		
 	}
 	
+	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+
+			var actions = [UIAction]()
+			actions.append(self.deleteAction(indexPath: indexPath))
+			actions.append(self.renameAction(indexPath: indexPath))
+			
+			let feedMsg = NSLocalizedString("Folder Menu", comment: "Folder Menu")
+			return UIMenu(title: feedMsg, children: actions)
+
+		})
+	}
+
 	func homePageAction(indexPath: IndexPath) -> UIAction? {
 		guard let node = coordinator.nodeFor(indexPath),
 			let feed = node.representedObject as? Feed,
