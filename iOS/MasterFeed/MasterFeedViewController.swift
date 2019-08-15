@@ -277,6 +277,17 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		return UISwipeActionsConfiguration(actions: [deleteAction, renameAction])
 		
 	}
+	
+	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+		guard let node = coordinator.nodeFor(indexPath), !(node.representedObject is PseudoFeed) else {
+			return nil
+		}
+		if node.representedObject is Feed {
+			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
+		} else {
+			return nil
+		}
+	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		coordinator.selectFeed(indexPath)
@@ -592,32 +603,56 @@ private extension MasterFeedViewController {
 		}
 	}
 	
-	func delete(indexPath: IndexPath) {
-
-		guard let undoManager = undoManager,
-			let deleteNode = coordinator.nodeFor(indexPath),
-			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: coordinator.treeController, undoManager: undoManager, errorHandler: ErrorHandler.present(self))
-				else {
-					return
-		}
-
-		var deleteIndexPaths = [indexPath]
-		if coordinator.isExpanded(deleteNode) {
-			for i in 0..<deleteNode.numberOfChildNodes {
-				deleteIndexPaths.append(IndexPath(row: indexPath.row + 1 + i, section: indexPath.section))
+	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+			
+			var actions = [UIAction]()
+			
+			if let homePageAction = self.homePageAction(indexPath: indexPath) {
+				actions.append(homePageAction)
 			}
+			
+			if includeDeleteRename {
+				actions.append(self.deleteAction(indexPath: indexPath))
+				actions.append(self.renameAction(indexPath: indexPath))
+			}
+			
+			let feedMsg = NSLocalizedString("Feed Menu", comment: "Feed Menu")
+			return UIMenu(title: feedMsg, children: actions)
+			
+		})
+		
+	}
+	
+	func homePageAction(indexPath: IndexPath) -> UIAction? {
+		guard let node = coordinator.nodeFor(indexPath),
+			let feed = node.representedObject as? Feed,
+			let homePageURL = feed.homePageURL,
+			let url = URL(string: homePageURL) else {
+				return nil
 		}
 		
-		pushUndoableCommand(deleteCommand)
-
-		coordinator.beginUpdates()
-		deleteCommand.perform {
-			self.coordinator.treeController.rebuild()
-			self.coordinator.rebuildShadowTable()
-			self.tableView.deleteRows(at: deleteIndexPaths, with: .automatic)
-			self.coordinator.endUpdates()
+		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
+		let action = UIAction(title: title, image: UIImage(systemName: "safari")) { action in
+			UIApplication.shared.open(url, options: [:])
 		}
-		
+		return action
+	}
+	
+	func deleteAction(indexPath: IndexPath) -> UIAction {
+		let title = NSLocalizedString("Delete", comment: "Delete")
+		let action = UIAction(title: title, image: UIImage(systemName: "trash")) { action in
+			self.delete(indexPath: indexPath)
+		}
+		return action
+	}
+	
+	func renameAction(indexPath: IndexPath) -> UIAction {
+		let title = NSLocalizedString("Rename", comment: "Rename")
+		let action = UIAction(title: title, image: UIImage(systemName: "square.and.pencil")) { action in
+			self.rename(indexPath: indexPath)
+		}
+		return action
 	}
 	
 	func rename(indexPath: IndexPath) {
@@ -670,6 +705,34 @@ private extension MasterFeedViewController {
 		
 		self.present(alertController, animated: true) {
 			
+		}
+		
+	}
+	
+	func delete(indexPath: IndexPath) {
+
+		guard let undoManager = undoManager,
+			let deleteNode = coordinator.nodeFor(indexPath),
+			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: coordinator.treeController, undoManager: undoManager, errorHandler: ErrorHandler.present(self))
+				else {
+					return
+		}
+
+		var deleteIndexPaths = [indexPath]
+		if coordinator.isExpanded(deleteNode) {
+			for i in 0..<deleteNode.numberOfChildNodes {
+				deleteIndexPaths.append(IndexPath(row: indexPath.row + 1 + i, section: indexPath.section))
+			}
+		}
+		
+		pushUndoableCommand(deleteCommand)
+
+		coordinator.beginUpdates()
+		deleteCommand.perform {
+			self.coordinator.treeController.rebuild()
+			self.coordinator.rebuildShadowTable()
+			self.tableView.deleteRows(at: deleteIndexPaths, with: .automatic)
+			self.coordinator.endUpdates()
 		}
 		
 	}
