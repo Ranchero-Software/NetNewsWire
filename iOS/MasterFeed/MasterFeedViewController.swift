@@ -451,8 +451,40 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 	}
 	
-	// MARK: API
+	@objc func refreshAccounts(_ sender: Any) {
+		refreshControl?.endRefreshing()
+		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
+		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
+		}
+	}
+
+}
+
+// MARK: MasterTableViewCellDelegate
+
+extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 	
+	func disclosureSelected(_ sender: MasterFeedTableViewCell, expanding: Bool) {
+		if expanding {
+			expand(sender)
+		} else {
+			collapse(sender)
+		}
+	}
+	
+}
+
+// MARK: Private
+
+private extension MasterFeedViewController {
+	
+	func updateUI() {
+		markAllAsReadButton.isEnabled = coordinator.isAnyUnreadAvailable
+		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+	}
+
 	func configure(_ cell: MasterFeedTableViewCell, _ node: Node) {
 		
 		cell.delegate = self
@@ -494,6 +526,70 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return unreadCountProvider.unreadCount
 		}
 		return 0
+	}
+	
+	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
+		applyToCellsForRepresentedObject(representedObject, configure)
+	}
+
+	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (MasterFeedTableViewCell, Node) -> Void) {
+		applyToAvailableCells { (cell, node) in
+			if node.representedObject === representedObject {
+				callback(cell, node)
+			}
+		}
+	}
+	
+	func applyToAvailableCells(_ callback: (MasterFeedTableViewCell, Node) -> Void) {
+		tableView.visibleCells.forEach { cell in
+			guard let indexPath = tableView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
+				return
+			}
+			callback(cell as! MasterFeedTableViewCell, node)
+		}
+	}
+
+	private func accountForNode(_ node: Node) -> Account? {
+		if let account = node.representedObject as? Account {
+			return account
+		}
+		if let folder = node.representedObject as? Folder {
+			return folder.account
+		}
+		if let feed = node.representedObject as? Feed {
+			return feed.account
+		}
+		return nil
+	}
+
+	func expand(_ cell: MasterFeedTableViewCell) {
+		guard let indexPath = tableView.indexPath(for: cell)  else {
+			return
+		}
+		coordinator.expand(indexPath) { [weak self] indexPaths in
+			self?.tableView.beginUpdates()
+			self?.tableView.insertRows(at: indexPaths, with: .automatic)
+			self?.tableView.endUpdates()
+		}
+	}
+
+	func collapse(_ cell: MasterFeedTableViewCell) {
+		guard let indexPath = tableView.indexPath(for: cell) else {
+			return
+		}
+		coordinator.collapse(indexPath) { [weak self] indexPaths in
+			self?.tableView.beginUpdates()
+			self?.tableView.deleteRows(at: indexPaths, with: .automatic)
+			self?.tableView.endUpdates()
+		}
+	}
+
+	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
+		let indexPaths = tableView.indexPathsForSelectedRows
+		block()
+		indexPaths?.forEach { [weak self] indexPath in
+			self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+		}
 	}
 	
 	func delete(indexPath: IndexPath) {
@@ -576,105 +672,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			
 		}
 		
-	}
-	
-}
-
-// MARK: MasterTableViewCellDelegate
-
-extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
-	
-	func disclosureSelected(_ sender: MasterFeedTableViewCell, expanding: Bool) {
-		if expanding {
-			expand(sender)
-		} else {
-			collapse(sender)
-		}
-	}
-	
-}
-
-// MARK: Private
-
-private extension MasterFeedViewController {
-	
-	@objc private func refreshAccounts(_ sender: Any) {
-		refreshControl?.endRefreshing()
-		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
-		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
-		}
-	}
-
-	func updateUI() {
-		markAllAsReadButton.isEnabled = coordinator.isAnyUnreadAvailable
-		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
-	}
-
-	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
-		
-		applyToCellsForRepresentedObject(representedObject, configure)
-	}
-
-	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (MasterFeedTableViewCell, Node) -> Void) {
-		applyToAvailableCells { (cell, node) in
-			if node.representedObject === representedObject {
-				callback(cell, node)
-			}
-		}
-	}
-	
-	func applyToAvailableCells(_ callback: (MasterFeedTableViewCell, Node) -> Void) {
-		tableView.visibleCells.forEach { cell in
-			guard let indexPath = tableView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
-				return
-			}
-			callback(cell as! MasterFeedTableViewCell, node)
-		}
-	}
-
-	private func accountForNode(_ node: Node) -> Account? {
-		if let account = node.representedObject as? Account {
-			return account
-		}
-		if let folder = node.representedObject as? Folder {
-			return folder.account
-		}
-		if let feed = node.representedObject as? Feed {
-			return feed.account
-		}
-		return nil
-	}
-
-	func expand(_ cell: MasterFeedTableViewCell) {
-		guard let indexPath = tableView.indexPath(for: cell)  else {
-			return
-		}
-		coordinator.expand(indexPath) { [weak self] indexPaths in
-			self?.tableView.beginUpdates()
-			self?.tableView.insertRows(at: indexPaths, with: .automatic)
-			self?.tableView.endUpdates()
-		}
-	}
-
-	func collapse(_ cell: MasterFeedTableViewCell) {
-		guard let indexPath = tableView.indexPath(for: cell) else {
-			return
-		}
-		coordinator.collapse(indexPath) { [weak self] indexPaths in
-			self?.tableView.beginUpdates()
-			self?.tableView.deleteRows(at: indexPaths, with: .automatic)
-			self?.tableView.endUpdates()
-		}
-	}
-
-	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
-		let indexPaths = tableView.indexPathsForSelectedRows
-		block()
-		indexPaths?.forEach { [weak self] indexPath in
-			self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-		}
 	}
 	
 }
