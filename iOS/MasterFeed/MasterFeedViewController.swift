@@ -255,6 +255,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+		var actions = [UIContextualAction]()
 		
 		// Set up the delete action
 		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
@@ -262,8 +263,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			self?.delete(indexPath: indexPath)
 			completionHandler(true)
 		}
-		
-		deleteAction.backgroundColor = UIColor.red
+		deleteAction.backgroundColor = UIColor.systemRed
+		actions.append(deleteAction)
 		
 		// Set up the rename action
 		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
@@ -271,10 +272,49 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			self?.rename(indexPath: indexPath)
 			completionHandler(true)
 		}
+		renameAction.backgroundColor = UIColor.systemOrange
+		actions.append(renameAction)
 		
-		renameAction.backgroundColor = UIColor.gray
-		
-		return UISwipeActionsConfiguration(actions: [deleteAction, renameAction])
+		if let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed {
+			let moreTitle = NSLocalizedString("More", comment: "More")
+			let moreAction = UIContextualAction(style: .normal, title: moreTitle) { [weak self] (action, view, completionHandler) in
+				
+				if let self = self {
+				
+					let alert = UIAlertController(title: feed.name, message: nil, preferredStyle: .actionSheet)
+					if let popoverController = alert.popoverPresentationController {
+						popoverController.sourceView = view
+						popoverController.sourceRect = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
+					}
+					
+					if let action = self.homePageAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+						alert.addAction(action)
+					}
+						
+					if let action = self.copyFeedPageAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+						alert.addAction(action)
+					}
+
+					if let action = self.copyHomePageAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+						alert.addAction(action)
+					}
+					
+					let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+					alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
+						completionHandler(true)
+					})
+
+					self.present(alert, animated: true)
+					
+				}
+				
+			}
+			
+			moreAction.backgroundColor = UIColor.systemGray
+			actions.append(moreAction)
+		}
+
+		return UISwipeActionsConfiguration(actions: actions)
 		
 	}
 	
@@ -660,6 +700,22 @@ private extension MasterFeedViewController {
 		return action
 	}
 	
+	func homePageAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let node = coordinator.nodeFor(indexPath),
+			let feed = node.representedObject as? Feed,
+			let homePageURL = feed.homePageURL,
+			let url = URL(string: homePageURL) else {
+				return nil
+		}
+		
+		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
+		let action = UIAlertAction(title: title, style: .default) { action in
+			UIApplication.shared.open(url, options: [:])
+			completionHandler(true)
+		}
+		return action
+	}
+	
 	func copyFeedPageAction(indexPath: IndexPath) -> UIAction? {
 		guard let node = coordinator.nodeFor(indexPath),
 			let feed = node.representedObject as? Feed,
@@ -670,6 +726,21 @@ private extension MasterFeedViewController {
 		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
 		let action = UIAction(title: title, image: UIImage(systemName: "doc.on.doc")) { action in
 			UIPasteboard.general.url = url
+		}
+		return action
+	}
+	
+	func copyFeedPageAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let node = coordinator.nodeFor(indexPath),
+			let feed = node.representedObject as? Feed,
+			let url = URL(string: feed.url) else {
+				return nil
+		}
+		
+		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
+		let action = UIAlertAction(title: title, style: .default) { action in
+			UIPasteboard.general.url = url
+			completionHandler(true)
 		}
 		return action
 	}
@@ -685,6 +756,22 @@ private extension MasterFeedViewController {
 		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
 		let action = UIAction(title: title, image: UIImage(systemName: "doc.on.doc")) { action in
 			UIPasteboard.general.url = url
+		}
+		return action
+	}
+	
+	func copyHomePageAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let node = coordinator.nodeFor(indexPath),
+			let feed = node.representedObject as? Feed,
+			let homePageURL = feed.homePageURL,
+			let url = URL(string: homePageURL) else {
+				return nil
+		}
+		
+		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
+		let action = UIAlertAction(title: title, style: .default) { action in
+			UIPasteboard.general.url = url
+			completionHandler(true)
 		}
 		return action
 	}
