@@ -284,7 +284,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 					let alert = UIAlertController(title: feed.name, message: nil, preferredStyle: .actionSheet)
 					if let popoverController = alert.popoverPresentationController {
 						popoverController.sourceView = view
-						popoverController.sourceRect = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
+						popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
 					}
 					
 					if let action = self.homePageAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
