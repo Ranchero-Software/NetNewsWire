@@ -130,11 +130,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			NSLocalizedString("Read", comment: "Read")
 		
 		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completionHandler) in
-			guard let undoManager = self?.undoManager,
-				let markReadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
-					return
-			}
-			self?.runCommand(markReadCommand)
+			self?.toggleArticleReadStatus(article)
 			completionHandler(true)
 		}
 		
@@ -147,11 +143,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			NSLocalizedString("Star", comment: "Star")
 		
 		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (action, view, completionHandler) in
-			guard let undoManager = self?.undoManager,
-				let markReadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
-					return
-			}
-			self?.runCommand(markReadCommand)
+			self?.toggleArticleStarStatus(article)
 			completionHandler(true)
 		}
 		
@@ -160,6 +152,21 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		let configuration = UISwipeActionsConfiguration(actions: [readAction, starAction])
 		return configuration
+		
+	}
+
+	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+
+			var actions = [UIAction]()
+			actions.append(self.toggleArticleReadStatusAction(indexPath: indexPath))
+			actions.append(self.toggleArticleStarStatusAction(indexPath: indexPath))
+			
+			let title = NSLocalizedString("Timeline Menu", comment: "Timeline Menu")
+			return UIMenu(title: title, children: actions)
+
+		})
 		
 	}
 
@@ -444,6 +451,52 @@ private extension MasterTimelineViewController {
 		indexPaths?.forEach { [weak self] indexPath in
 			self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 		}
+	}
+	
+	func toggleArticleReadStatus(_ article: Article) {
+		guard let undoManager = undoManager,
+			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
+				return
+		}
+		runCommand(markReadCommand)
+	}
+	
+	func toggleArticleStarStatus(_ article: Article) {
+		guard let undoManager = undoManager,
+			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
+				return
+		}
+		runCommand(markReadCommand)
+	}
+
+	func toggleArticleReadStatusAction(indexPath: IndexPath) -> UIAction {
+		let article = coordinator.articles[indexPath.row]
+
+		let title = article.status.read ?
+			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
+			NSLocalizedString("Mark as Read", comment: "Mark as Read")
+		let image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
+
+		let action = UIAction(title: title, image: image) { [unowned self] action in
+			self.toggleArticleReadStatus(article)
+		}
+		
+		return action
+	}
+	
+	func toggleArticleStarStatusAction(indexPath: IndexPath) -> UIAction {
+		let article = coordinator.articles[indexPath.row]
+
+		let title = article.status.starred ?
+			NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") :
+			NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
+		let image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
+
+		let action = UIAction(title: title, image: image) { [unowned self] action in
+			self.toggleArticleStarStatus(article)
+		}
+		
+		return action
 	}
 	
 }
