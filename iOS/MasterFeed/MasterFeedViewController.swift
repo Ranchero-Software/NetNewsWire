@@ -694,7 +694,7 @@ private extension MasterFeedViewController {
 		}
 		
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAction(title: title, image: UIImage(systemName: "safari")) { action in
+		let action = UIAction(title: title, image: AppAssets.safariImage) { action in
 			UIApplication.shared.open(url, options: [:])
 		}
 		return action
@@ -724,7 +724,7 @@ private extension MasterFeedViewController {
 		}
 		
 		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
-		let action = UIAction(title: title, image: UIImage(systemName: "doc.on.doc")) { action in
+		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -754,7 +754,7 @@ private extension MasterFeedViewController {
 		}
 		
 		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
-		let action = UIAction(title: title, image: UIImage(systemName: "doc.on.doc")) { action in
+		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -778,7 +778,7 @@ private extension MasterFeedViewController {
 	
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
-		let action = UIAction(title: title, image: UIImage(systemName: "trash")) { action in
+		let action = UIAction(title: title, image: AppAssets.trashImage) { action in
 			self.delete(indexPath: indexPath)
 		}
 		return action
@@ -786,7 +786,7 @@ private extension MasterFeedViewController {
 	
 	func renameAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Rename", comment: "Rename")
-		let action = UIAction(title: title, image: UIImage(systemName: "square.and.pencil")) { action in
+		let action = UIAction(title: title, image: AppAssets.editImage) { action in
 			self.rename(indexPath: indexPath)
 		}
 		return action

@@ -36,6 +36,14 @@ struct AppAssets {
 		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
 	}()
 	
+	static var copyImage: UIImage = {
+		return UIImage(systemName: "doc.on.doc")!
+	}()
+	
+	static var editImage: UIImage = {
+		UIImage(systemName: "square.and.pencil")!
+	}()
+	
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
@@ -50,6 +58,10 @@ struct AppAssets {
 	
 	static var netNewsWireBlueColor: UIColor = {
 		return UIColor(named: "netNewsWireBlueColor")!
+	}()
+	
+	static var safariImage: UIImage = {
+		return UIImage(systemName: "safari")!
 	}()
 	
 	static var selectedTextColor: UIColor = {
@@ -87,6 +99,10 @@ struct AppAssets {
 	
 	static var timelineUnreadCircleColor: UIColor = {
 		return UIColor(named: "timelineUnreadCircleColor")!
+	}()
+	
+	static var trashImage: UIImage = {
+		return UIImage(systemName: "trash")!
 	}()
 	
 }
