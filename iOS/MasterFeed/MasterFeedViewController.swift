@@ -778,16 +778,16 @@ private extension MasterFeedViewController {
 	
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
-		let action = UIAction(title: title, image: AppAssets.trashImage) { action in
-			self.delete(indexPath: indexPath)
+		let action = UIAction(title: title, image: AppAssets.trashImage) { [weak self] action in
+			self?.delete(indexPath: indexPath)
 		}
 		return action
 	}
 	
 	func renameAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Rename", comment: "Rename")
-		let action = UIAction(title: title, image: AppAssets.editImage) { action in
-			self.rename(indexPath: indexPath)
+		let action = UIAction(title: title, image: AppAssets.editImage) { [weak self] action in
+			self?.rename(indexPath: indexPath)
 		}
 		return action
 	}
