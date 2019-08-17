@@ -177,14 +177,54 @@
             <objects>
                 <viewController storyboardIdentifier="Advanced" id="GNh-Wp-giO" customClass="AdvancedPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Hij-7D-6Pw">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="93"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="285"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="YHH-fu-i0y">
-                                <rect key="frame" x="116" y="52" width="219" height="25"/>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="zbT-cG-BvH">
+                                <rect key="frame" x="60" y="20" width="330" height="245"/>
                                 <subviews>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="T4A-0o-p2w">
+                                        <rect key="frame" x="-2" y="229" width="304" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Check for NetNewsWire updates automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="dm8-Xy-0Ba">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q6M-Iz-Ypx">
+                                        <rect key="frame" x="-2" y="202" width="252" height="17"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="When updating NetNewsWire, download:" id="6bb-c0-guo">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QCu-J4-0yV">
+                                        <rect key="frame" x="76" y="177" width="110" height="18"/>
+                                        <buttonCell key="cell" type="radio" title="Release builds" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="F8M-rS-und">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CeE-AE-hRG">
+                                        <rect key="frame" x="76" y="155" width="88" height="18"/>
+                                        <buttonCell key="cell" type="radio" title="Test builds" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Fuf-rU-D6M">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="MzL-QQ-2oL">
+                                        <rect key="frame" x="-2" y="97" width="334" height="51"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="330" id="jf8-5e-Eij"/>
+                                        </constraints>
+                                        <textFieldCell key="cell" selectable="YES" title="If you’re not sure, choose Release builds. Test builds will have bugs, which may include crashing bugs and data loss." id="fOZ-zv-QTc">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                     <textField horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="SUN-k3-ZEb">
-                                        <rect key="frame" x="2" y="4" width="73" height="17"/>
+                                        <rect key="frame" x="-2" y="40" width="73" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Crash logs:" id="qcq-fU-Ks0">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -192,7 +232,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="UHg-1l-FlD">
-                                        <rect key="frame" x="79" y="3" width="138" height="18"/>
+                                        <rect key="frame" x="75" y="39" width="138" height="18"/>
                                         <buttonCell key="cell" type="check" title="Send automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="jnc-C5-4oI">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -211,40 +251,58 @@
                                             </binding>
                                         </connections>
                                     </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uuc-f2-OFX">
+                                        <rect key="frame" x="71" y="-7" width="124" height="32"/>
+                                        <buttonCell key="cell" type="push" title="Privacy Policy" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kSv-Wu-NYx">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="showPrivacyPolicy:" target="VX1-M3-K0J" id="s1x-cP-hGd"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="SUN-k3-ZEb" firstAttribute="top" secondItem="YHH-fu-i0y" secondAttribute="top" constant="4" id="1ob-SX-cEr"/>
-                                    <constraint firstItem="SUN-k3-ZEb" firstAttribute="leading" secondItem="YHH-fu-i0y" secondAttribute="leading" constant="4" id="4S2-oa-ux0"/>
-                                    <constraint firstAttribute="bottom" secondItem="SUN-k3-ZEb" secondAttribute="bottom" constant="4" id="Jca-Ye-1QG"/>
-                                    <constraint firstItem="UHg-1l-FlD" firstAttribute="leading" secondItem="SUN-k3-ZEb" secondAttribute="trailing" constant="8" symbolic="YES" id="VR4-qB-pAv"/>
-                                    <constraint firstItem="UHg-1l-FlD" firstAttribute="firstBaseline" secondItem="SUN-k3-ZEb" secondAttribute="firstBaseline" id="fsO-Cm-ojt"/>
-                                    <constraint firstAttribute="trailing" secondItem="UHg-1l-FlD" secondAttribute="trailing" constant="4" id="gW6-Lm-rC4"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="CeE-AE-hRG" secondAttribute="trailing" id="0VM-mG-EE3"/>
+                                    <constraint firstItem="T4A-0o-p2w" firstAttribute="leading" secondItem="zbT-cG-BvH" secondAttribute="leading" id="1f1-0y-bYh"/>
+                                    <constraint firstItem="MzL-QQ-2oL" firstAttribute="leading" secondItem="zbT-cG-BvH" secondAttribute="leading" id="4Gq-MM-YuV"/>
+                                    <constraint firstItem="QCu-J4-0yV" firstAttribute="top" secondItem="Q6M-Iz-Ypx" secondAttribute="bottom" constant="8" id="4ev-Ao-Ue8"/>
+                                    <constraint firstItem="T4A-0o-p2w" firstAttribute="top" secondItem="zbT-cG-BvH" secondAttribute="top" id="BrB-Tt-5Y1"/>
+                                    <constraint firstItem="UHg-1l-FlD" firstAttribute="firstBaseline" secondItem="SUN-k3-ZEb" secondAttribute="firstBaseline" id="F8v-Lf-EPQ"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Q6M-Iz-Ypx" secondAttribute="trailing" constant="20" symbolic="YES" id="JNt-oI-6XA"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="QCu-J4-0yV" secondAttribute="trailing" id="Nnm-he-9Sw"/>
+                                    <constraint firstItem="MzL-QQ-2oL" firstAttribute="top" secondItem="CeE-AE-hRG" secondAttribute="bottom" constant="8" symbolic="YES" id="SO6-8h-Bzc"/>
+                                    <constraint firstItem="SUN-k3-ZEb" firstAttribute="top" secondItem="MzL-QQ-2oL" secondAttribute="bottom" constant="40" id="U56-Kv-yD7"/>
+                                    <constraint firstItem="Q6M-Iz-Ypx" firstAttribute="top" secondItem="T4A-0o-p2w" secondAttribute="bottom" constant="12" id="W9S-K0-xrm"/>
+                                    <constraint firstItem="UHg-1l-FlD" firstAttribute="leading" secondItem="SUN-k3-ZEb" secondAttribute="trailing" constant="8" symbolic="YES" id="ZIQ-wZ-m8p"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="uuc-f2-OFX" secondAttribute="trailing" id="bov-yT-PKB"/>
+                                    <constraint firstItem="SUN-k3-ZEb" firstAttribute="leading" secondItem="zbT-cG-BvH" secondAttribute="leading" id="dJs-gH-SH7"/>
+                                    <constraint firstAttribute="trailing" secondItem="MzL-QQ-2oL" secondAttribute="trailing" id="gHV-uJ-McX"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="T4A-0o-p2w" secondAttribute="trailing" constant="20" symbolic="YES" id="h6h-25-cU7"/>
+                                    <constraint firstItem="CeE-AE-hRG" firstAttribute="leading" secondItem="QCu-J4-0yV" secondAttribute="leading" id="klN-56-uUV"/>
+                                    <constraint firstAttribute="bottom" secondItem="uuc-f2-OFX" secondAttribute="bottom" id="no1-kU-Z6u"/>
+                                    <constraint firstItem="uuc-f2-OFX" firstAttribute="leading" secondItem="UHg-1l-FlD" secondAttribute="leading" id="ryc-d5-mWF"/>
+                                    <constraint firstItem="Q6M-Iz-Ypx" firstAttribute="leading" secondItem="zbT-cG-BvH" secondAttribute="leading" id="tN8-fe-kWV"/>
+                                    <constraint firstItem="UHg-1l-FlD" firstAttribute="leading" secondItem="QCu-J4-0yV" secondAttribute="leading" id="tX0-fI-1I3"/>
+                                    <constraint firstItem="uuc-f2-OFX" firstAttribute="top" secondItem="UHg-1l-FlD" secondAttribute="bottom" constant="20" symbolic="YES" id="vbI-TQ-puW"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="UHg-1l-FlD" secondAttribute="trailing" id="xuS-X0-22q"/>
+                                    <constraint firstItem="CeE-AE-hRG" firstAttribute="top" secondItem="QCu-J4-0yV" secondAttribute="bottom" constant="6" symbolic="YES" id="yO4-jb-E41"/>
                                 </constraints>
                             </customView>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uuc-f2-OFX">
-                                <rect key="frame" x="163" y="13" width="124" height="32"/>
-                                <buttonCell key="cell" type="push" title="Privacy Policy" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kSv-Wu-NYx">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="showPrivacyPolicy:" target="VX1-M3-K0J" id="s1x-cP-hGd"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="YHH-fu-i0y" firstAttribute="centerX" secondItem="Hij-7D-6Pw" secondAttribute="centerX" id="A8h-AD-wpA"/>
-                            <constraint firstItem="uuc-f2-OFX" firstAttribute="top" secondItem="UHg-1l-FlD" secondAttribute="bottom" constant="16" id="Iyi-OX-Im2"/>
-                            <constraint firstAttribute="bottom" secondItem="uuc-f2-OFX" secondAttribute="bottom" constant="20" symbolic="YES" id="Qfi-i7-9Tw"/>
-                            <constraint firstItem="YHH-fu-i0y" firstAttribute="top" secondItem="Hij-7D-6Pw" secondAttribute="top" constant="16" id="Vjr-8X-8Ib"/>
-                            <constraint firstItem="uuc-f2-OFX" firstAttribute="centerX" secondItem="Hij-7D-6Pw" secondAttribute="centerX" id="frb-uz-KeI"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="zbT-cG-BvH" secondAttribute="trailing" constant="20" symbolic="YES" id="086-YN-5S9"/>
+                            <constraint firstAttribute="bottom" secondItem="zbT-cG-BvH" secondAttribute="bottom" constant="20" symbolic="YES" id="1hs-57-lai"/>
+                            <constraint firstItem="zbT-cG-BvH" firstAttribute="centerX" secondItem="Hij-7D-6Pw" secondAttribute="centerX" id="8Cd-br-png"/>
+                            <constraint firstItem="zbT-cG-BvH" firstAttribute="top" secondItem="Hij-7D-6Pw" secondAttribute="top" constant="20" symbolic="YES" id="Lqm-jI-l7p"/>
+                            <constraint firstItem="zbT-cG-BvH" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Hij-7D-6Pw" secondAttribute="leading" constant="20" symbolic="YES" id="Y98-zV-mGB"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="VX1-M3-K0J" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController id="Y8q-yi-F5Z"/>
             </objects>
-            <point key="canvasLocation" x="-29" y="347"/>
+            <point key="canvasLocation" x="-29" y="455.5"/>
         </scene>
         <!--Accounts Preferences View Controller-->
         <scene sceneID="Rsj-41-ZOj">
