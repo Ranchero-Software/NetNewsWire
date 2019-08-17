@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>NetNewsWire Releases</title>
+        <link>https://ranchero.com/downloads/netnewswire-release.xml</link>
+        <description>Most recent NetNewsWire releases (not test builds). Well, we’re including test builds up until 5.0 ships, but after that it won’t be test builds.</description>
+        <language>en</language>
+
+			<item>
+         <title>NetNewsWire 5.0b4</title>
+            <description><![CDATA[
+            	<p>Fixed a bug showing the unread count for the selected feed, smart feed, or folder.</p>
+ 							]]></description>
+            <pubDate>Wed, 14 Aug 2019 00:30:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0b4.zip" sparkle:version="2606" sparkle:shortVersionString="5.0b4" length="5168358" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+    </channel>
+</rss>
