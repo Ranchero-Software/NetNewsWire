@@ -57,7 +57,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	private var expandedNodes = [Node]()
 	private var shadowTable = [[Node]]()
 	
-	private var sortDirection = AppDefaults.timelineSortDirection {
+	private(set) var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
 				sortDirectionDidChange()
