@@ -99,10 +99,13 @@ extension TimelineViewController {
 	
 	@objc func openInBrowserFromContextualMenu(_ sender: Any?) {
 
-		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
+		guard let menuItem = sender as? NSMenuItem, let urlStrings = menuItem.representedObject as? [String] else {
 			return
 		}
-		Browser.open(urlString, inBackground: false)
+		
+		for urlString in urlStrings {
+			Browser.open(urlString, inBackground: false)
+		}
 	}
 
 	@objc func performShareServiceFromContextualMenu(_ sender: Any?) {
@@ -181,9 +184,11 @@ private extension TimelineViewController {
 			}
 		}
 		
-		if articles.count == 1, let link = articles.first!.preferredLink {
+		if articles.count > 0 {
 			menu.addSeparatorIfNeeded()
-			menu.addItem(openInBrowserMenuItem(link))
+			
+			let links = articles.compactMap { $0.preferredLink }
+			menu.addItem(openInBrowserMenuItem(links))
 		}
 
 		if let sharingMenu = shareMenu(for: articles) {
@@ -266,9 +271,9 @@ private extension TimelineViewController {
 		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), articles)
 	}
 	
-	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {
+	func openInBrowserMenuItem(_ urlStrings: [String]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString)
+		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlStrings)
 	}
 
 	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any) -> NSMenuItem {

@@ -183,7 +183,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		
 		if item.action == #selector(openArticleInBrowser(_:)) {
-			return currentLink != nil
+			return currentLinks != nil
 		}
 		
 		if item.action == #selector(nextUnread(_:)) {
@@ -244,9 +244,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
-		if let link = currentLink {
-			Browser.open(link)
-		}		
+		if let links = currentLinks {
+			for link in links {
+				Browser.open(link)
+			}
+		}
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -580,9 +582,12 @@ private extension MainWindowController {
 		}
 		return nil
 	}
-
-	var currentLink: String? {
-		return oneSelectedArticle?.preferredLink
+	
+	var currentLinks: [String]? {
+		if let articles = selectedArticles {
+			return articles.compactMap { $0.preferredLink }
+		}
+		return nil
 	}
 
 	// MARK: - Command Validation
