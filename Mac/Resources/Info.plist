@@ -56,6 +56,8 @@
 	<key>OSAScriptingDefinition</key>
 	<string>NetNewsWire.sdef</string>
 	<key>SUFeedURL</key>
+	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
+	<key>FeedURLForTestBuilds</key>
 	<string>https://ranchero.com/downloads/netnewswire-beta.xml</string>
 	<key>UserAgent</key>
 	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
