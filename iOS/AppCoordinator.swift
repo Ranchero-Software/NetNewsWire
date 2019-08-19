@@ -567,6 +567,11 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		}
 	}
 	
+	func discloseFeed(_ feed: Feed) {
+		masterNavigationController.popViewController(animated: true)
+		masterFeedViewController.discloseFeed(feed)
+	}
+	
 	func showSettings() {
 		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
 		settingsNavViewController.modalPresentationStyle = .formSheet

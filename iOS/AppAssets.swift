@@ -64,8 +64,16 @@ struct AppAssets {
 		return UIImage(systemName: "folder.fill")!
 	}()
 	
+	static var moreImage: UIImage = {
+		return UIImage(systemName: "ellipsis.circle")!
+	}()
+	
 	static var netNewsWireBlueColor: UIColor = {
 		return UIColor(named: "netNewsWireBlueColor")!
+	}()
+	
+	static var openInSidebarImage: UIImage = {
+		return UIImage(systemName: "arrow.turn.down.left")!
 	}()
 	
 	static var safariImage: UIImage = {

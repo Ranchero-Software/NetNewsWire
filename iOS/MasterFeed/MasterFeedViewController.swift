@@ -121,32 +121,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func userDidAddFeed(_ notification: Notification) {
-		
-		guard let feed = notification.userInfo?[UserInfoKey.feed],
-			let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
-				return
-		}
-		
-		if let indexPath = coordinator.indexPathFor(node) {
-			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-	
-		// It wasn't already visable, so expand its folder and try again
-		guard let parent = node.parent, let indexPath = coordinator.indexPathFor(parent) else {
-			return
-		}
-		
-		coordinator.expand(indexPath) { [weak self] indexPaths in
-			self?.tableView.beginUpdates()
-			self?.tableView.insertRows(at: indexPaths, with: .automatic)
-			self?.tableView.endUpdates()
-		}
-
-		if let indexPath = coordinator.indexPathFor(node) {
-			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
-		}
-
+		discloseFeed(feed)
 	}
 	
 	@objc func accountsDidChange(_ notification: Notification) {
@@ -510,6 +488,39 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
 		}
 	}
+	
+	// MARK: API
+	
+	func discloseFeed(_ feed: Feed) {
+		
+		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
+				return
+		}
+		
+		if let indexPath = coordinator.indexPathFor(node) {
+			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+			coordinator.selectFeed(indexPath)
+			return
+		}
+	
+		// It wasn't already visable, so expand its folder and try again
+		guard let parent = node.parent, let indexPath = coordinator.indexPathFor(parent) else {
+			return
+		}
+		
+		coordinator.expand(indexPath) { [weak self] indexPaths in
+			self?.tableView.beginUpdates()
+			tableView.reloadRows(at: [indexPath], with: .automatic)
+			self?.tableView.insertRows(at: indexPaths, with: .automatic)
+			self?.tableView.endUpdates()
+		}
+		
+		if let indexPath = coordinator.indexPathFor(node) {
+			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+			coordinator.selectFeed(indexPath)
+		}
+
+	}
 
 }
 
@@ -644,7 +655,9 @@ private extension MasterFeedViewController {
 	}
 	
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
+			
+			guard let self = self else { return nil }
 			
 			var actions = [UIAction]()
 			
@@ -673,8 +686,10 @@ private extension MasterFeedViewController {
 	}
 	
 	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
+			guard let self = self else { return nil }
+			
 			var actions = [UIAction]()
 			actions.append(self.deleteAction(indexPath: indexPath))
 			actions.append(self.renameAction(indexPath: indexPath))

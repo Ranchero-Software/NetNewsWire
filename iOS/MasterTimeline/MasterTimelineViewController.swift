@@ -164,6 +164,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 				
 				alert.addAction(self.markOlderAsReadAlertAction(indexPath: indexPath, completionHandler: completionHandler))
 				
+				if let action = self.discloseFeedAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+					alert.addAction(action)
+				}
+				
 				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 				alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 					completionHandler(true)
@@ -175,6 +179,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			
 		}
 		
+		moreAction.image = AppAssets.moreImage
 		moreAction.backgroundColor = UIColor.systemGray
 
 		let configuration = UISwipeActionsConfiguration(actions: [readAction, starAction, moreAction])
@@ -184,12 +189,18 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
 
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
+			guard let self = self else { return nil }
+			
 			var actions = [UIAction]()
 			actions.append(self.toggleArticleReadStatusAction(indexPath: indexPath))
 			actions.append(self.toggleArticleStarStatusAction(indexPath: indexPath))
 			actions.append(self.markOlderAsReadAction(indexPath: indexPath))
+			
+			if let action = self.discloseFeedAction(indexPath: indexPath) {
+				actions.append(action)
+			}
 			
 			let title = NSLocalizedString("Timeline Menu", comment: "Timeline Menu")
 			return UIMenu(title: title, children: actions)
@@ -554,6 +565,29 @@ private extension MasterTimelineViewController {
 		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.markOlderArticlesRead(article)
+			completionHandler(true)
+		}
+		return action
+	}
+	
+	func discloseFeedAction(indexPath: IndexPath) -> UIAction? {
+		guard let feed = coordinator.articles[indexPath.row].feed else {
+			return nil
+		}
+		let title = NSLocalizedString("Select Feed", comment: "Select Feed")
+		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
+			self?.coordinator.discloseFeed(feed)
+		}
+		return action
+	}
+	
+	func discloseFeedAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let feed = coordinator.articles[indexPath.row].feed else {
+			return nil
+		}
+		let title = NSLocalizedString("Select Feed", comment: "Select Feed")
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			self?.coordinator.discloseFeed(feed)
 			completionHandler(true)
 		}
 		return action
