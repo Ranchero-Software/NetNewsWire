@@ -615,6 +615,13 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		masterFeedViewController.present(addViewController, animated: true)
 	}
 	
+	func showBrowser(for indexPath: IndexPath) {
+		guard let preferredLink = articles[indexPath.row].preferredLink, let url = URL(string: preferredLink) else {
+			return
+		}
+		UIApplication.shared.open(url, options: [:])
+	}
+
 	func showBrowserForCurrentArticle() {
 		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
 			return

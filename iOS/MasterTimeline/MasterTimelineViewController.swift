@@ -172,6 +172,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 					alert.addAction(action)
 				}
 
+				if let action = self.openInBrowserAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+					alert.addAction(action)
+				}
+
 				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 				alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 					completionHandler(true)
@@ -207,6 +211,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			}
 			
 			if let action = self.markAllInFeedAsReadAction(indexPath: indexPath) {
+				actions.append(action)
+			}
+			
+			if let action = self.openInBrowserAction(indexPath: indexPath) {
 				actions.append(action)
 			}
 			
@@ -599,11 +607,34 @@ private extension MasterTimelineViewController {
 			return nil
 		}
 		
-		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Mark All as Read in Feed")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.markAllAsRead(articles)
+			completionHandler(true)
+		}
+		return action
+	}
+
+	func openInBrowserAction(indexPath: IndexPath) -> UIAction? {
+		guard let preferredLink = coordinator.articles[indexPath.row].preferredLink, let _ = URL(string: preferredLink) else {
+			return nil
+		}
+		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
+		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
+			self?.coordinator.showBrowser(for: indexPath)
+		}
+		return action
+	}
+
+	func openInBrowserAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let preferredLink = coordinator.articles[indexPath.row].preferredLink, let _ = URL(string: preferredLink) else {
+			return nil
+		}
+		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			self?.coordinator.showBrowser(for: indexPath)
 			completionHandler(true)
 		}
 		return action
