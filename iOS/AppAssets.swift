@@ -52,6 +52,14 @@ struct AppAssets {
 		return RSImage(named: "feedImage")!
 	}()
 	
+	static var markOlderAsReadDownImage: UIImage = {
+		return UIImage(systemName: "arrowtriangle.down.circle")!
+	}()
+	
+	static var markOlderAsReadUpImage: UIImage = {
+		return UIImage(systemName: "arrowtriangle.up.circle")!
+	}()
+	
 	static var masterFolderImage: UIImage = {
 		return UIImage(systemName: "folder.fill")!
 	}()
