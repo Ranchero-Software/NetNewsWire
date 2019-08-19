@@ -244,8 +244,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
+		let links = selectedArticles.compactMap { $0.preferredLink }
 		
-		if let link = oneSelectedArticle?.preferredLink {
+		for link in links {
 			Browser.open(link)
 		}
 	}
