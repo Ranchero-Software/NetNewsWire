@@ -202,8 +202,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 				actions.append(action)
 			}
 			
-			let title = NSLocalizedString("Timeline Menu", comment: "Timeline Menu")
-			return UIMenu(title: title, children: actions)
+			return UIMenu(title: "", children: actions)
 
 		})
 		

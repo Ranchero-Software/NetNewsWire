@@ -678,8 +678,7 @@ private extension MasterFeedViewController {
 				actions.append(self.renameAction(indexPath: indexPath))
 			}
 			
-			let feedMsg = NSLocalizedString("Feed Menu", comment: "Feed Menu")
-			return UIMenu(title: feedMsg, children: actions)
+			return UIMenu(title: "", children: actions)
 			
 		})
 		
@@ -694,8 +693,7 @@ private extension MasterFeedViewController {
 			actions.append(self.deleteAction(indexPath: indexPath))
 			actions.append(self.renameAction(indexPath: indexPath))
 			
-			let feedMsg = NSLocalizedString("Folder Menu", comment: "Folder Menu")
-			return UIMenu(title: feedMsg, children: actions)
+			return UIMenu(title: "", children: actions)
 
 		})
 	}
