@@ -5,7 +5,7 @@ We welcome contributions!
 If you’d like to contribute:
 
 1. File a ticket describing the bug you want to fix or feature you want to add. Or find an existing ticket.
-2. On the Slack group, bring it up on the #work channel for discussion (which may or may not include implementation discussion).
+2. On the Slack group, bring it up on the #work channel for discussion (which may or may not include implementation discussion). **This is very important, because there might be things you need to know before you start work.**
 3. Once approved, then go for it. Write the code, then do a pull request. We’ll either have comments or we’ll merge it. (We might revise it afterward, of course.)
 
 ## Notes
