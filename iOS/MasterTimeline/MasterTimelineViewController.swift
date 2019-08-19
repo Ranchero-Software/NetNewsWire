@@ -168,6 +168,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 					alert.addAction(action)
 				}
 				
+				if let action = self.markAllInFeedAsReadAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+					alert.addAction(action)
+				}
+
 				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 				alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 					completionHandler(true)
@@ -199,6 +203,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			actions.append(self.markOlderAsReadAction(indexPath: indexPath))
 			
 			if let action = self.discloseFeedAction(indexPath: indexPath) {
+				actions.append(action)
+			}
+			
+			if let action = self.markAllInFeedAsReadAction(indexPath: indexPath) {
 				actions.append(action)
 			}
 			
@@ -557,6 +565,45 @@ private extension MasterTimelineViewController {
 		let title = NSLocalizedString("Select Feed", comment: "Select Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.discloseFeed(feed)
+			completionHandler(true)
+		}
+		return action
+	}
+	
+	func markAllInFeedAsReadAction(indexPath: IndexPath) -> UIAction? {
+		guard let feed = coordinator.articles[indexPath.row].feed else {
+			return nil
+		}
+		
+		let articles = Array(feed.fetchArticles())
+		guard articles.canMarkAllAsRead() else {
+			return nil
+		}
+		
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		
+		let action = UIAction(title: title, image: AppAssets.markAllInFeedAsReadImage) { [weak self] action in
+			self?.coordinator.markAllAsRead(articles)
+		}
+		return action
+	}
+
+	func markAllInFeedAsReadAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let feed = coordinator.articles[indexPath.row].feed else {
+			return nil
+		}
+		
+		let articles = Array(feed.fetchArticles())
+		guard articles.canMarkAllAsRead() else {
+			return nil
+		}
+		
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			self?.coordinator.markAllAsRead(articles)
 			completionHandler(true)
 		}
 		return action

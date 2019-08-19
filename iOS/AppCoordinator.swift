@@ -531,27 +531,24 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		
 	}
 	
+	func markAllAsRead(_ articles: [Article]) {
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
+	
 	func markAllAsRead() {
 		let accounts = AccountManager.shared.activeAccounts
 		var articles = Set<Article>()
 		accounts.forEach { account in
 			articles.formUnion(account.fetchArticles(.unread))
 		}
-		
-		guard let undoManager = undoManager,
-			let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
-				return
-		}
-		
-		runCommand(markReadCommand)
+		markAllAsRead(Array(articles))
 	}
-	
+
 	func markAllAsReadInTimeline() {
-		guard let undoManager = undoManager,
-			let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
-				return
-		}
-		runCommand(markReadCommand)
+		markAllAsRead(articles)
 		masterNavigationController.popViewController(animated: true)
 	}
 	
@@ -561,11 +558,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		if articlesToMark.isEmpty {
 			return
 		}
-
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markReadCommand)
+		markAllAsRead(articles)
 	}
 	
 	func toggleReadForCurrentArticle() {

@@ -52,6 +52,10 @@ struct AppAssets {
 		return RSImage(named: "feedImage")!
 	}()
 	
+	static var markAllInFeedAsReadImage: UIImage = {
+		return UIImage(systemName: "asterisk.circle")!
+	}()
+	
 	static var markOlderAsReadDownImage: UIImage = {
 		return UIImage(systemName: "arrowtriangle.down.circle")!
 	}()
