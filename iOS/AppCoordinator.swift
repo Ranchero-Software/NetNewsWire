@@ -629,21 +629,6 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		UIApplication.shared.open(url, options: [:])
 	}
 	
-	func showActivityDialogForCurrentArticle() {
-		guard let detailViewController = detailViewController else {
-			return
-		}
-		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
-		
-		let itemSource = ArticleActivityItemSource(url: url, subject: currentArticle?.title)
-		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
-		
-		activityViewController.popoverPresentationController?.barButtonItem = detailViewController.actionBarButtonItem
-		detailViewController.present(activityViewController, animated: true)
-	}
-	
 }
 
 // MARK: UISplitViewControllerDelegate

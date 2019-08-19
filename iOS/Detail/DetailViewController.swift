@@ -149,9 +149,15 @@ class DetailViewController: UIViewController {
 	}
 	
 	@IBAction func showActivityDialog(_ sender: Any) {
-		coordinator.showActivityDialogForCurrentArticle()
+		guard let currentArticle = coordinator.currentArticle, let preferredLink = currentArticle.preferredLink, let url = URL(string: preferredLink) else {
+			return
+		}
+		
+		let itemSource = ArticleActivityItemSource(url: url, subject: currentArticle.title)
+		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
+		activityViewController.popoverPresentationController?.barButtonItem = actionBarButtonItem
+		present(activityViewController, animated: true)
 	}
-	
 }
 
 class ArticleActivityItemSource: NSObject, UIActivityItemSource {
