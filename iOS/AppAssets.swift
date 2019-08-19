@@ -92,6 +92,10 @@ struct AppAssets {
 		return UIImage(named: "settingsImage")!
 	}()
 	
+	static var shareImage: UIImage = {
+		return UIImage(systemName: "square.and.arrow.up")!
+	}()
+	
 	static var smartFeedColor: UIColor = {
 		return UIColor(named: "smartFeedColor")!
 	}()

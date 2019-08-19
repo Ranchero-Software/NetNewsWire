@@ -176,6 +176,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 					alert.addAction(action)
 				}
 
+				if let action = self.shareAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+					alert.addAction(action)
+				}
+
 				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 				alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 					completionHandler(true)
@@ -215,6 +219,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			}
 			
 			if let action = self.openInBrowserAction(indexPath: indexPath) {
+				actions.append(action)
+			}
+			
+			if let action = self.shareAction(indexPath: indexPath) {
 				actions.append(action)
 			}
 			
@@ -636,6 +644,45 @@ private extension MasterTimelineViewController {
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showBrowser(for: indexPath)
 			completionHandler(true)
+		}
+		return action
+	}
+	
+	func shareDialogForTableCell(indexPath: IndexPath, url: URL, title: String?) {
+		let itemSource = ArticleActivityItemSource(url: url, subject: title)
+		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
+		
+		guard let cell = tableView.cellForRow(at: indexPath) else { return }
+		let popoverController = activityViewController.popoverPresentationController
+		popoverController?.sourceView = cell
+		popoverController?.sourceRect = CGRect(x: 0, y: 0, width: cell.frame.size.width, height: cell.frame.size.height)
+		
+		present(activityViewController, animated: true)
+	}
+	
+	func shareAction(indexPath: IndexPath) -> UIAction? {
+		let article = coordinator.articles[indexPath.row]
+		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
+			return nil
+		}
+				
+		let title = NSLocalizedString("Share", comment: "Share")
+		let action = UIAction(title: title, image: AppAssets.shareImage) { [weak self] action in
+			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
+		}
+		return action
+	}
+	
+	func shareAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		let article = coordinator.articles[indexPath.row]
+		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
+			return nil
+		}
+		
+		let title = NSLocalizedString("Share", comment: "Share")
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			completionHandler(true)
+			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
 		}
 		return action
 	}
