@@ -130,7 +130,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			NSLocalizedString("Read", comment: "Read")
 		
 		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completionHandler) in
-			self?.toggleArticleReadStatus(article)
+			self?.coordinator.toggleRead(for: indexPath)
 			completionHandler(true)
 		}
 		
@@ -143,7 +143,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			NSLocalizedString("Star", comment: "Star")
 		
 		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (action, view, completionHandler) in
-			self?.toggleArticleStarStatus(article)
+			self?.coordinator.toggleStar(for: indexPath)
 			completionHandler(true)
 		}
 		
@@ -491,34 +491,6 @@ private extension MasterTimelineViewController {
 		}
 	}
 	
-	func toggleArticleReadStatus(_ article: Article) {
-		guard let undoManager = undoManager,
-			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
-				return
-		}
-		runCommand(markReadCommand)
-	}
-	
-	func toggleArticleStarStatus(_ article: Article) {
-		guard let undoManager = undoManager,
-			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
-				return
-		}
-		runCommand(markReadCommand)
-	}
-
-	func markOlderArticlesRead(_ article: Article) {
-		let articlesToMark = coordinator.articles.filter { $0.logicalDatePublished < article.logicalDatePublished }
-		if articlesToMark.isEmpty {
-			return
-		}
-
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markReadCommand)
-	}
-	
 	func toggleArticleReadStatusAction(indexPath: IndexPath) -> UIAction {
 		let article = coordinator.articles[indexPath.row]
 
@@ -528,7 +500,7 @@ private extension MasterTimelineViewController {
 		let image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
 
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.toggleArticleReadStatus(article)
+			self?.coordinator.toggleRead(for: indexPath)
 		}
 		
 		return action
@@ -543,27 +515,25 @@ private extension MasterTimelineViewController {
 		let image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
 
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.toggleArticleStarStatus(article)
+			self?.coordinator.toggleStar(for: indexPath)
 		}
 		
 		return action
 	}
 	
 	func markOlderAsReadAction(indexPath: IndexPath) -> UIAction {
-		let article = coordinator.articles[indexPath.row]
 		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
 		let image = coordinator.sortDirection == .orderedDescending ? AppAssets.markOlderAsReadDownImage : AppAssets.markOlderAsReadUpImage
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.markOlderArticlesRead(article)
+			self?.coordinator.markAsReadOlderArticlesInTimeline(indexPath)
 		}
 		return action
 	}
 	
 	func markOlderAsReadAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction {
-		let article = coordinator.articles[indexPath.row]
 		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.markOlderArticlesRead(article)
+			self?.coordinator.markAsReadOlderArticlesInTimeline(indexPath)
 			completionHandler(true)
 		}
 		return action

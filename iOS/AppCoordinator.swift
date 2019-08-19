@@ -555,18 +555,50 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		masterNavigationController.popViewController(animated: true)
 	}
 	
+	func markAsReadOlderArticlesInTimeline(_ indexPath: IndexPath) {
+		let article = articles[indexPath.row]
+		let articlesToMark = articles.filter { $0.logicalDatePublished < article.logicalDatePublished }
+		if articlesToMark.isEmpty {
+			return
+		}
+
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
+	
 	func toggleReadForCurrentArticle() {
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: !article.status.read)
 		}
 	}
 	
+	func toggleRead(for indexPath: IndexPath) {
+		let article = articles[indexPath.row]
+		guard let undoManager = undoManager,
+			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
+				return
+		}
+		runCommand(markReadCommand)
+	}
+
 	func toggleStarForCurrentArticle() {
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
 		}
 	}
+
 	
+	func toggleStar(for indexPath: IndexPath) {
+		let article = articles[indexPath.row]
+		guard let undoManager = undoManager,
+			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
+				return
+		}
+		runCommand(markReadCommand)
+	}
+
 	func discloseFeed(_ feed: Feed) {
 		masterNavigationController.popViewController(animated: true)
 		masterFeedViewController.discloseFeed(feed)
