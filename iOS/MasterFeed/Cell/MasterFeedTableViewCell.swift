@@ -107,7 +107,7 @@ class MasterFeedTableViewCell : UITableViewCell {
 
 	override func setSelected(_ selected: Bool, animated: Bool) {
 		titleView.textColor = selected ? AppAssets.selectedTextColor : UIColor.label
-		faviconImageView.tintColor = selected ? AppAssets.selectedTextColor : tintColor
+		faviconImageView.tintColor = selected ? AppAssets.selectedTextColor : AppAssets.netNewsWireBlueColor
 		super.setSelected(selected, animated: animated)
 	}
 	
