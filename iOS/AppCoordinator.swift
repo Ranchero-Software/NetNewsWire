@@ -558,7 +558,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		if articlesToMark.isEmpty {
 			return
 		}
-		markAllAsRead(articles)
+		markAllAsRead(articlesToMark)
 	}
 	
 	func toggleReadForCurrentArticle() {
