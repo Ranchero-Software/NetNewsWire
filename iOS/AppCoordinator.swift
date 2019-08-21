@@ -270,14 +270,14 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	@objc func accountStateDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesSync()
+			fetchAndReplaceArticlesAsync()
 		}
 		rebuildBackingStores()
 	}
 	
 	@objc func accountsDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesSync()
+			fetchAndReplaceArticlesAsync()
 		}
 		rebuildBackingStores()
 	}
@@ -916,8 +916,6 @@ private extension AppCoordinator {
 		}
 	}
 	
-	// MARK: Fetching Articles
-	
 	func queueFetchAndMergeArticles() {
 		fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
 	}
@@ -946,6 +944,11 @@ private extension AppCoordinator {
 		
 	}
 	
+	func cancelPendingAsyncFetches() {
+		fetchSerialNumber += 1
+		fetchRequestQueue.cancelAllRequests()
+	}
+
 	func fetchAndReplaceArticlesSync() {
 		// To be called when the user has made a change of selection in the sidebar.
 		// It blocks the main thread, so that there’s no async delay,
@@ -960,9 +963,17 @@ private extension AppCoordinator {
 		replaceArticles(with: fetchedArticles)
 	}
 
-	func cancelPendingAsyncFetches() {
-		fetchSerialNumber += 1
-		fetchRequestQueue.cancelAllRequests()
+	func fetchAndReplaceArticlesAsync() {
+		// To be called when we need to do an entire fetch, but an async delay is okay.
+		// Example: we have the Today feed selected, and the calendar day just changed.
+		cancelPendingAsyncFetches()
+		guard let timelineFetcher = timelineFetcher else {
+			emptyTheTimeline()
+			return
+		}
+		fetchUnsortedArticlesAsync(for: [timelineFetcher]) { [weak self] (articles) in
+			self?.replaceArticles(with: articles)
+		}
 	}
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
