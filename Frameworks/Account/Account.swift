@@ -614,7 +614,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			database.ensureStatuses(articleIDs, statusKey, flag)
 		}
 	}
-	
+
+	public func has(_ feed: Feed) -> Bool {
+		return flattenedFeeds().contains(feed)
+	}
+
 	// MARK: - Container
 
 	public func flattenedFeeds() -> Set<Feed> {

@@ -67,6 +67,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	var articles = ArticleArray() {
 		didSet {
+			defer {
+				updateUnreadCount()
+			}
 			if articles == oldValue {
 				return
 			}
@@ -76,13 +79,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				// Just reload visible cells in this case: don’t call reloadData.
 				articleRowMap = [String: Int]()
 				reloadVisibleCells()
-				updateUnreadCount()
 				return
 			}
 			updateShowAvatars()
 			articleRowMap = [String: Int]()
 			tableView.reloadData()
-			updateUnreadCount()
 		}
 	}
 
@@ -982,11 +983,21 @@ private extension TimelineViewController {
 	}
 
 	func replaceArticles(with unsortedArticles: Set<Article>) {
-
-		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
+		// Since there may be transients in a smart feed,
+		// make sure each article is in a feed that’s still
+		// subscribed-to.
+		let filteredArticles = unsortedArticles.filter(articleIsInSubscribedToFeed)
+		let sortedArticles = Array(filteredArticles).sortedByDate(sortDirection)
 		if articles != sortedArticles {
 			articles = sortedArticles
 		}
+	}
+
+	func articleIsInSubscribedToFeed(_ article: Article) -> Bool {
+		guard let account = article.account, let feed = article.feed else {
+			return false
+		}
+		return account.has(feed)
 	}
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
