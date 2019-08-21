@@ -50,7 +50,8 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
-	
+	private var fetchSerialNumber = 0
+	private let fetchRequestQueue = FetchRequestQueue()
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	
 	private var animatingChanges = false
@@ -107,14 +108,13 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var timelineFetcher: ArticleFetcher? {
 		didSet {
-			unreadCount = 0
 			currentArticleIndexPath = nil
 			if timelineFetcher is Feed {
 				showFeedNames = false
 			} else {
 				showFeedNames = true
 			}
-			fetchArticles()
+			fetchAndReplaceArticlesSync()
 			NotificationCenter.default.post(name: .ArticlesReinitialized, object: self, userInfo: nil)
 		}
 	}
@@ -269,10 +269,16 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	@objc func accountStateDidChange(_ note: Notification) {
+		if timelineFetcherContainsAnyPseudoFeed() {
+			fetchAndReplaceArticlesSync()
+		}
 		rebuildBackingStores()
 	}
 	
 	@objc func accountsDidChange(_ note: Notification) {
+		if timelineFetcherContainsAnyPseudoFeed() {
+			fetchAndReplaceArticlesSync()
+		}
 		rebuildBackingStores()
 	}
 
@@ -872,18 +878,6 @@ private extension AppCoordinator {
 	
 	// MARK: Fetching Articles
 	
-	func fetchArticles() {
-		
-		guard let timelineFetcher = timelineFetcher else {
-			articles = ArticleArray()
-			return
-		}
-		
-		let fetchedArticles = timelineFetcher.fetchArticles()
-		updateArticles(with: fetchedArticles)
-		
-	}
-	
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
 			articles = [Article]()
@@ -891,10 +885,10 @@ private extension AppCoordinator {
 	}
 	
 	func sortDirectionDidChange() {
-		updateArticles(with: Set(articles))
+		replaceArticles(with: Set(articles))
 	}
 	
-	func updateArticles(with unsortedArticles: Set<Article>) {
+	func replaceArticles(with unsortedArticles: Set<Article>) {
 		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
 		if articles != sortedArticles {
 			articles = sortedArticles
@@ -922,6 +916,8 @@ private extension AppCoordinator {
 		}
 	}
 	
+	// MARK: Fetching Articles
+	
 	func queueFetchAndMergeArticles() {
 		fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
 	}
@@ -932,20 +928,72 @@ private extension AppCoordinator {
 			return
 		}
 		
-		var unsortedArticles = timelineFetcher.fetchArticles()
-		
-		// Merge articles by articleID. For any unique articleID in current articles, add to unsortedArticles.
-		let unsortedArticleIDs = unsortedArticles.articleIDs()
-		for article in articles {
-			if !unsortedArticleIDs.contains(article.articleID) {
-				unsortedArticles.insert(article)
+		fetchUnsortedArticlesAsync(for: [timelineFetcher]) { [weak self] (unsortedArticles) in
+			// Merge articles by articleID. For any unique articleID in current articles, add to unsortedArticles.
+			guard let strongSelf = self else {
+				return
 			}
+			let unsortedArticleIDs = unsortedArticles.articleIDs()
+			var updatedArticles = unsortedArticles
+			for article in strongSelf.articles {
+				if !unsortedArticleIDs.contains(article.articleID) {
+					updatedArticles.insert(article)
+				}
+			}
+
+			strongSelf.replaceArticles(with: updatedArticles)
 		}
-		
-		updateArticles(with: unsortedArticles)
 		
 	}
 	
+	func fetchAndReplaceArticlesSync() {
+		// To be called when the user has made a change of selection in the sidebar.
+		// It blocks the main thread, so that there’s no async delay,
+		// so that the entire display refreshes at once.
+		// It’s a better user experience this way.
+		cancelPendingAsyncFetches()
+		guard let timelineFetcher = timelineFetcher else {
+			emptyTheTimeline()
+			return
+		}
+		let fetchedArticles = fetchUnsortedArticlesSync(for: [timelineFetcher])
+		replaceArticles(with: fetchedArticles)
+	}
+
+	func cancelPendingAsyncFetches() {
+		fetchSerialNumber += 1
+		fetchRequestQueue.cancelAllRequests()
+	}
+
+	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
+		cancelPendingAsyncFetches()
+		let articleFetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
+		if articleFetchers.isEmpty {
+			return Set<Article>()
+		}
+
+		var fetchedArticles = Set<Article>()
+		for articleFetcher in articleFetchers {
+			fetchedArticles.formUnion(articleFetcher.fetchArticles())
+		}
+		return fetchedArticles
+	}
+
+	func fetchUnsortedArticlesAsync(for representedObjects: [Any], callback: @escaping ArticleSetBlock) {
+		// The callback will *not* be called if the fetch is no longer relevant — that is,
+		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
+		precondition(Thread.isMainThread)
+		cancelPendingAsyncFetches()
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, representedObjects: representedObjects) { [weak self] (articles, operation) in
+			precondition(Thread.isMainThread)
+			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
+				return
+			}
+			callback(articles)
+		}
+		fetchRequestQueue.add(fetchOperation)
+	}
+
 	func timelineFetcherContainsAnyPseudoFeed() -> Bool {
 		if timelineFetcher is PseudoFeed {
 			return true
