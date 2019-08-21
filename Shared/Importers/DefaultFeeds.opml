@@ -18,7 +18,7 @@
     <outline text="Erica Sadun" title="Erica Sadun" type="rss" version="RSS" htmlUrl="https://ericasadun.com/" xmlUrl="https://ericasadun.com/feed/"/>
     <outline text="One Foot Tsunami" title="One Foot Tsunami" type="rss" version="RSS" htmlUrl="https://onefoottsunami.com/" xmlUrl="https://onefoottsunami.com/feed/json/"/>
     <outline text="The Omni Blog" title="The Omni Blog" type="rss" version="RSS" htmlUrl="https://www.omnigroup.com/blog/" xmlUrl="https://www.omnigroup.com/blog/rss/"/>
-    <outline text="Om Malik" title="Om Malik" type="rss" version="RSS" htmlUrl="https://om.co/" xmlUrl="https://om.co/feed"/>
-    <outline text="Xcoders" title="Xcoders" type="rss" version="RSS" htmlUrl="https://xcoders.org/" xmlUrl="https://xcoders.org/feed.json"/>
+    <outline text="Rose Orchard" title="Rose Orchard" type="rss" version="RSS" htmlUrl="https://rosemaryorchard.com/" xmlUrl="https://rosemaryorchard.com/category/blog/feed"/>
+    <outline text="Michael Tsai" title="Michael Tsai" type="rss" version="RSS" htmlUrl="https://mjtsai.com/blog/" xmlUrl="https://mjtsai.com/blog/feed/"/>
   </body>
 </opml>
