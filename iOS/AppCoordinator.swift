@@ -979,7 +979,7 @@ private extension AppCoordinator {
 	
 	// Note about the Shim Controller
 	// In the root split view controller's secondary (or detail) position we use a view controller that
-	// only acts as a shim (or wrapper) for the actaully desired contents of the second position.  This
+	// only acts as a shim (or wrapper) for the actually desired contents of the second position.  This
 	// is because we normally can't change the root split view controllers second position contents
 	// during the display mode change callback (in the split view controller delegate).  To fool the
 	// system, we leave the same controller, the shim, in place and change its child controllers instead.
