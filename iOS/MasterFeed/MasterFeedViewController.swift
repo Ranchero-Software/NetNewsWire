@@ -93,9 +93,15 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		
-		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject),
-			let indexPath = coordinator.indexPathFor(node) else {
-				return
+		var node: Node? = nil
+		if let coordinator = representedObject as? AppCoordinator, let fetcher = coordinator.timelineFetcher {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(fetcher as AnyObject)
+		} else {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
+		}
+		
+		guard let unwrappedNode = node, let indexPath = coordinator.indexPathFor(unwrappedNode) else {
+			return
 		}
 
 		performBlockAndRestoreSelection {
@@ -559,7 +565,7 @@ private extension MasterFeedViewController {
 		cell.allowDisclosureSelection = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
-		cell.unreadCount = unreadCountFor(node)
+		cell.unreadCount = coordinator.unreadCountFor(node)
 		configureFavicon(cell, node)
 		cell.shouldShowImage = node.representedObject is SmallIconProvider
 		
@@ -582,14 +588,7 @@ private extension MasterFeedViewController {
 		}
 		return ""
 	}
-	
-	func unreadCountFor(_ node: Node) -> Int {
-		if let unreadCountProvider = node.representedObject as? UnreadCountProvider {
-			return unreadCountProvider.unreadCount
-		}
-		return 0
-	}
-	
+
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
 		applyToCellsForRepresentedObject(representedObject, configure)
 	}

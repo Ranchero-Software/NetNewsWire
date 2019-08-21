@@ -21,7 +21,7 @@ public extension Notification.Name {
 	static let ArticleSelectionDidChange = Notification.Name(rawValue: "ArticleSelectionDidChange")
 }
 
-class AppCoordinator: NSObject, UndoableCommandRunner {
+class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
@@ -107,6 +107,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	
 	var timelineFetcher: ArticleFetcher? {
 		didSet {
+			unreadCount = 0
 			currentArticleIndexPath = nil
 			if timelineFetcher is Feed {
 				showFeedNames = false
@@ -181,11 +182,13 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 			if articles.representSameArticlesInSameOrder(as: oldValue) {
 				articleRowMap = [String: Int]()
 				NotificationCenter.default.post(name: .ArticleDataDidChange, object: self, userInfo: nil)
+				updateUnreadCount()
 				return
 			}
 			updateShowAvatars()
 			articleRowMap = [String: Int]()
 			NotificationCenter.default.post(name: .ArticlesDidChange, object: self, userInfo: nil)
+			updateUnreadCount()
 		}
 	}
 	
@@ -200,6 +203,14 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		return appDelegate.unreadCount > 0
 	}
 	
+	var unreadCount: Int = 0 {
+		didSet {
+			if unreadCount != oldValue {
+				postUnreadCountDidChangeNotification()
+			}
+		}
+	}
+
 	override init() {
 		super.init()
 		
@@ -210,6 +221,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		
 		rebuildShadowTable()
 		
+		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
@@ -239,6 +251,10 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	// MARK: Notifications
+	
+	@objc func statusesDidChange(_ note: Notification) {
+		updateUnreadCount()
+	}
 	
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		rebuildBackingStores()
@@ -335,7 +351,18 @@ class AppCoordinator: NSObject, UndoableCommandRunner {
 		}
 		return nil
 	}
-	
+
+	func unreadCountFor(_ node: Node) -> Int {
+		// The coordinator supplies the unread count for the currently selected feed node
+		if let indexPath = currentMasterIndexPath, let selectedNode = nodeFor(indexPath), selectedNode == node {
+			return unreadCount
+		}
+		if let unreadCountProvider = node.representedObject as? UnreadCountProvider {
+			return unreadCountProvider.unreadCount
+		}
+		return 0
+	}
+		
 	func expand(section: Int, completion: ([IndexPath]) -> ()) {
 		
 		guard let expandNode = treeController.rootNode.childAtIndex(section) else {
@@ -712,6 +739,16 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 // MARK: Private
 
 private extension AppCoordinator {
+
+	func updateUnreadCount() {
+		var count = 0
+		for article in articles {
+			if !article.status.read {
+				count += 1
+			}
+		}
+		unreadCount = count
+	}
 
 	func rebuildBackingStores() {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
