@@ -169,6 +169,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 			DistributedNotificationCenter.default.addObserver(self,	selector: #selector(appleInterfaceThemeChanged), name: .AppleInterfaceThemeChangedNotification, object: nil)
 
@@ -537,6 +538,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	
 	@objc func accountsDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() {
+			fetchAndReplaceArticlesAsync()
+		}
+	}
+
+	@objc func containerChildrenDidChange(_ note: Notification) {
+		if representedObjectsContainsAnyPseudoFeed() || representedObjectsContainAnyFolder() {
 			fetchAndReplaceArticlesAsync()
 		}
 	}
@@ -983,21 +990,10 @@ private extension TimelineViewController {
 	}
 
 	func replaceArticles(with unsortedArticles: Set<Article>) {
-		// Since there may be transients in a smart feed,
-		// make sure each article is in a feed that’s still
-		// subscribed-to.
-		let filteredArticles = unsortedArticles.filter(articleIsInSubscribedToFeed)
-		let sortedArticles = Array(filteredArticles).sortedByDate(sortDirection)
+		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
 		if articles != sortedArticles {
 			articles = sortedArticles
 		}
-	}
-
-	func articleIsInSubscribedToFeed(_ article: Article) -> Bool {
-		guard let account = article.account, let feed = article.feed else {
-			return false
-		}
-		return account.has(feed)
 	}
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
@@ -1073,7 +1069,11 @@ private extension TimelineViewController {
 	func representedObjectsContainsTodayFeed() -> Bool {
 		return representedObjects?.contains(where: { $0 === SmartFeedsController.shared.todayFeed }) ?? false
 	}
-	
+
+	func representedObjectsContainAnyFolder() -> Bool {
+		return representedObjects?.contains(where: { $0 is Folder }) ?? false
+	}
+
 	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
 
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
