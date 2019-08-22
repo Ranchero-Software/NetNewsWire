@@ -7,6 +7,18 @@
         <language>en</language>
 
 			<item>
+         <title>NetNewsWire 5.0b5</title>
+            <description><![CDATA[
+            	<p>This is probably the last beta before the 5.0 release.</p>
+            	<p>Preferences > Advanced now has app updating options — you can follow test builds or release builds. Release builds is the default. If you want to continue to get test builds, you’ll have to check the box next to “Test builds.”</p>
+            	<p>Fixed a bug where smart feeds and folders wouldn’t re-fetch after a feed or folder was deleted, and so they might contain articles that should have been removed.</p>
+ 							]]></description>
+            <pubDate>Wed, 21 Aug 2019 22:05:00 -0700</pubDate>
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0b5/NetNewsWire5.0b5.zip" sparkle:version="2607" sparkle:shortVersionString="5.0b5" length="5174826" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+			<item>
          <title>NetNewsWire 5.0b4</title>
             <description><![CDATA[
             	<p>Fixed a bug showing the unread count for the selected feed, smart feed, or folder.</p>

@@ -662,7 +662,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			database.ensureStatuses(articleIDs, statusKey, flag)
 		}
 	}
-	
+
 	// MARK: - Container
 
 	public func flattenedFeeds() -> Set<Feed> {
