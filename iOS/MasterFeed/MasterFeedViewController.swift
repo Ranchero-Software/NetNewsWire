@@ -38,8 +38,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: coordinator)
@@ -73,6 +71,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: Notifications
 	
 	@objc dynamic func backingStoresDidRebuild(_ notification: Notification) {
+		updateUI()
 		tableView.reloadData()
 	}
 	
@@ -132,14 +131,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		discloseFeed(feed)
-	}
-	
-	@objc func accountsDidChange(_ notification: Notification) {
-		updateUI()
-	}
-	
-	@objc func accountStateDidChange(_ notification: Notification) {
-		updateUI()
 	}
 	
 	@objc func progressDidChange(_ note: Notification) {
