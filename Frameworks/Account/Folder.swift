@@ -102,10 +102,6 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 		postChildrenDidChangeNotification()
 	}
 
-	public func has(_ feed: Feed) -> Bool {
-		return flattenedFeeds().contains(feed)
-	}
-
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {

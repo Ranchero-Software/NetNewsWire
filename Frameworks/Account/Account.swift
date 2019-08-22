@@ -649,10 +649,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		postChildrenDidChangeNotification()
 	}
 	
-	public func has(_ feed: Feed) -> Bool {
-		return flattenedFeeds().contains(feed)
-	}
-
 	// MARK: - Debug
 
 	public func debugDropConditionalGetInfo() {
