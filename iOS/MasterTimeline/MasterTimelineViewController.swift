@@ -33,8 +33,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 
@@ -250,7 +249,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@objc func statusesDidChange(_ note: Notification) {
-		
 		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
 			return
 		}
@@ -258,55 +256,59 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		
 		performBlockAndRestoreSelection {
 			tableView.indexPathsForVisibleRows?.forEach { indexPath in
-				
 				guard let article = coordinator.articles.articleAtRow(indexPath.row) else {
 					return
 				}
-				
 				if feed == article.feed {
 					tableView.reloadRows(at: [indexPath], with: .none)
 					return
 				}
-				
 			}
 		}
-
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		
 		guard coordinator.showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
 		
 		performBlockAndRestoreSelection {
 			tableView.indexPathsForVisibleRows?.forEach { indexPath in
-				
 				guard let article = coordinator.articles.articleAtRow(indexPath.row), let authors = article.authors, !authors.isEmpty else {
 					return
 				}
-				
 				for author in authors {
 					if author.avatarURL == avatarURL {
 						tableView.reloadRows(at: [indexPath], with: .none)
 					}
 				}
-
 			}
 		}
-		
 	}
 
-	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		if coordinator.showAvatars {
-			queueReloadVisableCells()
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+		guard coordinator.showAvatars, let faviconURL = note.userInfo?["faviconURL"] as? String else {
+			return
+		}
+		
+		performBlockAndRestoreSelection {
+			tableView.indexPathsForVisibleRows?.forEach { indexPath in
+				
+				guard let article = coordinator.articles.articleAtRow(indexPath.row), let articleFaviconURL = article.feed?.faviconURL else {
+					return
+				}
+				if faviconURL == articleFaviconURL {
+					tableView.reloadRows(at: [indexPath], with: .none)
+					return
+				}
+
+			}
 		}
 	}
 
