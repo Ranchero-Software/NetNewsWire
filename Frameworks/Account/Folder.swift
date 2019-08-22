@@ -101,7 +101,7 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 		topLevelFeeds.remove(feed)
 		postChildrenDidChangeNotification()
 	}
-	
+
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {

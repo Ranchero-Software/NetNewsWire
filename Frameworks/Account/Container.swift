@@ -33,6 +33,7 @@ public protocol Container: class {
 
 	//Recursive — checks subfolders
 	func flattenedFeeds() -> Set<Feed>
+	func has(_ feed: Feed) -> Bool
 	func hasFeed(with feedID: String) -> Bool
 	func hasFeed(withURL url: String) -> Bool
 	func existingFeed(with feedID: String) -> Feed?
@@ -94,6 +95,10 @@ public extension Container {
 		return existingFeed(withURL: url) != nil
 	}
 
+	func has(_ feed: Feed) -> Bool {
+		return flattenedFeeds().contains(feed)
+	}
+	
 	func existingFeed(with feedID: String) -> Feed? {
 		for feed in flattenedFeeds() {
 			if feed.feedID == feedID {
