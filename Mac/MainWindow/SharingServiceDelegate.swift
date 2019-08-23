@@ -15,24 +15,14 @@ import AppKit
 	init(_ window: NSWindow?) {
 		self.window = window
 	}
-	
-	func sharingService(_ sharingService: NSSharingService, willShareItems items: [Any]) {
-		
-		var subject = ""
-		
-		for (index, item) in items.enumerated() {
-			
-			guard let writer = item as? ArticlePasteboardWriter,
-				let title = writer.article.title else {
-				continue
-			}
-			
-			subject += index != 0 ? ", \(title)" : title
-			
-		}
 
-		sharingService.subject = subject
-		
+	func sharingService(_ sharingService: NSSharingService, willShareItems items: [Any]) {
+		sharingService.subject = items
+			.compactMap { item in
+				let writer = item as? ArticlePasteboardWriter
+				return writer?.article.title
+			}
+			.joined(separator: ", ")
 	}
 	
 	func sharingService(_ sharingService: NSSharingService, sourceWindowForShareItems items: [Any], sharingContentScope: UnsafeMutablePointer<NSSharingService.SharingContentScope>) -> NSWindow? {
