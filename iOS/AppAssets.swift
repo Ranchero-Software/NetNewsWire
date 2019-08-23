@@ -14,6 +14,18 @@ struct AppAssets {
 		return UIColor(named: "avatarBackgroundColor")!
 	}()
 
+	static var barBackgroundColor: UIColor = {
+		return UIColor(named: "barBackgroundColor")!
+	}()
+
+	static var barTintColor: UIColor = {
+		return UIColor(named: "barTintColor")!
+	}()
+
+	static var barTitleColor: UIColor = {
+		return UIColor(named: "barTitleColor")!
+	}()
+
 	static var circleClosedImage: UIImage = {
 		return UIImage(systemName: "circle.fill")!
 	}()

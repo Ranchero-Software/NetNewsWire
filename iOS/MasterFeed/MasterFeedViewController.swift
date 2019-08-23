@@ -29,7 +29,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		super.viewDidLoad()
 
-		navigationController?.navigationBar.prefersLargeTitles = true
+		if traitCollection.userInterfaceIdiom == .phone {
+			navigationController?.navigationBar.prefersLargeTitles = true
+		}
+		
 		navigationItem.rightBarButtonItem = editButtonItem
 		
 		tableView.register(MasterFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")

@@ -237,6 +237,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rootSplitViewController.delegate = self
 		
 		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
+		
 		masterFeedViewController = UIStoryboard.main.instantiateController(ofType: MasterFeedViewController.self)
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
@@ -1063,7 +1064,7 @@ private extension AppCoordinator {
 		if rootSplitViewController.isCollapsed {
 			return controller
 		} else {
-			let navController = UINavigationController(rootViewController: controller)
+			let navController = ThemedNavigationController.template(rootViewController: controller)
 			navController.isToolbarHidden = false
 			if showButton {
 				controller.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
