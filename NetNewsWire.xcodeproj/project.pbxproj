@@ -322,6 +322,7 @@
 		D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */; };
 		D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */; };
 		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
+		DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD82AB09231003F6002269DF /* SharingTests.swift */; };
 		DF999FF722B5AEFA0064B687 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF999FF622B5AEFA0064B687 /* SafariView.swift */; };
 /* End PBXBuildFile section */
 
@@ -942,6 +943,7 @@
 		D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingObject.swift; sourceTree = "<group>"; };
 		D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feed+Scriptability.swift"; sourceTree = "<group>"; };
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
+		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
 		DF999FF622B5AEFA0064B687 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1792,6 +1794,7 @@
 			children = (
 				84F9EAD0213660A100CF2DE4 /* ScriptingTests */,
 				84F9EAE3213660A100CF2DE4 /* NetNewsWireTests.swift */,
+				DD82AB09231003F6002269DF /* SharingTests.swift */,
 				84F9EAE4213660A100CF2DE4 /* Info.plist */,
 			);
 			path = NetNewsWireTests;
@@ -2582,6 +2585,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */,
 				84F9EAEB213660A100CF2DE4 /* testIterativeCreateAndDeleteFeed.applescript in Sources */,
 				84F9EAF4213660A100CF2DE4 /* testGenericScript.applescript in Sources */,
 				84F9EAE6213660A100CF2DE4 /* ScriptingTests.swift in Sources */,
