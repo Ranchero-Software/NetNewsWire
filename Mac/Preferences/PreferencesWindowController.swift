@@ -29,7 +29,6 @@ private struct ToolbarItemIdentifier {
 
 class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	
-	private let windowFrameName = "Preferences"
 	private let windowWidth = CGFloat(512.0) // Width is constant for all views; only the height changes
 	private var viewControllers = [String: NSViewController]()
 	private let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
@@ -50,9 +49,8 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 
 		window?.showsToolbarButton = false
 		window?.toolbar = toolbar
+		window?.center()
 
-		window?.setFrameAutosaveName(NSWindow.FrameAutosaveName(windowFrameName))
-		
 		switchToViewAtIndex(0)
 	}
 
