@@ -344,7 +344,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard indexPath.section < shadowTable.count || indexPath.row < shadowTable[indexPath.section].count else {
+		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].count else {
 			return nil
 		}
 		return shadowTable[indexPath.section][indexPath.row]
