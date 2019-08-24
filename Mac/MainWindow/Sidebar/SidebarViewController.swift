@@ -363,9 +363,8 @@ private extension SidebarViewController {
 
 	func rebuildTreeAndReloadDataIfNeeded() {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
-			if treeController.rebuild() {
-				outlineView.reloadData()
-			}
+			treeController.rebuild()
+			outlineView.reloadData()
 		}
 	}
 
