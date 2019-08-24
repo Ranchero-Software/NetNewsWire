@@ -49,9 +49,10 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 
 		window?.showsToolbarButton = false
 		window?.toolbar = toolbar
-		window?.center()
 
 		switchToViewAtIndex(0)
+
+		window?.center()
 	}
 
 	// MARK: Actions
