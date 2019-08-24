@@ -768,42 +768,10 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
 
-		let avatar = avatarFor(article)
+		let avatar = article.avatarImage()
 		let featuredImage = featuredImageFor(article)
 
 		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatars, featuredImage: featuredImage)
-	}
-
-	private func avatarFor(_ article: Article) -> NSImage? {
-		if !showAvatars {
-			return nil
-		}
-		
-		if let authors = article.authors {
-			for author in authors {
-				if let image = avatarForAuthor(author) {
-					return image
-				}
-			}
-		}
-
-		guard let feed = article.feed else {
-			return nil
-		}
-
-		if let feedIcon = appDelegate.feedIconDownloader.icon(for: feed) {
-			return feedIcon
-		}
-
-		if let favicon = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
-			return favicon
-		}
-		
-		return FaviconGenerator.favicon(feed)
-	}
-
-	private func avatarForAuthor(_ author: Author) -> NSImage? {
-		return appDelegate.authorAvatarDownloader.image(for: author)
 	}
 
 	private func featuredImageFor(_ article: Article) -> NSImage? {
