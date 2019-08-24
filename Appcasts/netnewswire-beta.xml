@@ -7,6 +7,19 @@
         <language>en</language>
 
 			<item>
+         <title>NetNewsWire 5.0b6</title>
+            <description><![CDATA[
+            	<p>Okay — one last beta! Pretty sure, at least.</p>
+            	<p>Fixes a bug with undoing deleting feeds or folders. The sidebar wouldn’t update afterward to show that the feed is back. Now it does.</p>
+            	<p>Opens preferences window in center of screen.</p>
+           		<p>Centers main window on first launch.</p>
+ 							]]></description>
+            <pubDate>Fri, 23 Aug 2019 18:50:00 -0700</pubDate>
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0b6/NetNewsWire5.0b6.zip" sparkle:version="2608" sparkle:shortVersionString="5.0b6" length="5174618" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+			<item>
          <title>NetNewsWire 5.0b5</title>
             <description><![CDATA[
             	<p>This is probably the last beta before the 5.0 release.</p>
