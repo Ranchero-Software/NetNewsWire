@@ -463,39 +463,11 @@ private extension MasterTimelineViewController {
 		
 	}
 	
-	func avatarFor(_ article: Article) -> UIImage? {
-		
+	func avatarFor(_ article: Article) -> RSImage? {
 		if !coordinator.showAvatars {
 			return nil
 		}
-		
-		if let authors = article.authors {
-			for author in authors {
-				if let image = avatarForAuthor(author) {
-					return image
-				}
-			}
-		}
-		
-		guard let feed = article.feed else {
-			return nil
-		}
-		
-		let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)
-		if feedIconImage != nil {
-			return feedIconImage
-		}
-		
-		if let feed = article.feed, let faviconImage = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
-			return faviconImage
-		}
-		
-		return FaviconGenerator.favicon(feed)
-		
-	}
-	
-	func avatarForAuthor(_ author: Author) -> UIImage? {
-		return appDelegate.authorAvatarDownloader.image(for: author)
+		return article.avatarImage()
 	}
 	
 	func featuredImageFor(_ article: Article) -> UIImage? {

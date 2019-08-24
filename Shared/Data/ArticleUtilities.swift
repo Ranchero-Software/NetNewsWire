@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import Articles
 import Account
 
@@ -56,4 +57,30 @@ extension Article {
 	var logicalDatePublished: Date {
 		return datePublished ?? dateModified ?? status.dateArrived
 	}
+
+	func avatarImage() -> RSImage? {
+		if let authors = authors {
+			for author in authors {
+				if let image = appDelegate.authorAvatarDownloader.image(for: author) {
+					return image
+				}
+			}
+		}
+		
+		guard let feed = feed else {
+			return nil
+		}
+		
+		let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)
+		if feedIconImage != nil {
+			return feedIconImage
+		}
+		
+		if let faviconImage = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+			return faviconImage
+		}
+		
+		return FaviconGenerator.favicon(feed)
+	}
+	
 }

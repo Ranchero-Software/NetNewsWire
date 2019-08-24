@@ -210,6 +210,8 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			}
 		}
 	}
+	
+	private(set) var readActivity: NSUserActivity? = nil
 
 	override init() {
 		super.init()
@@ -508,7 +510,8 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func selectArticle(_ indexPath: IndexPath?) {
 		currentArticleIndexPath = indexPath
-
+		updateReadArticleUserActivity()
+		
 		if indexPath == nil {
 			if !rootSplitViewController.isCollapsed {
 				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
@@ -1166,6 +1169,18 @@ private extension AppCoordinator {
 
 		}
 		
+	}
+	
+	// MARK: NSUserActivity
+	
+	func updateReadArticleUserActivity() {
+		readActivity?.invalidate()
+		readActivity = nil
+		
+		guard let article = currentArticle else { return }
+		
+		readActivity = ActivityFactory.make(article)
+		readActivity?.becomeCurrent()
 	}
 	
 }
