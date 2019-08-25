@@ -366,7 +366,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return nil
 	}
 
-	func indexPath(for object: AnyObject) -> IndexPath? {
+	func indexPathFor(_ object: AnyObject) -> IndexPath? {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(object) else {
 			return nil
 		}
@@ -1199,19 +1199,19 @@ private extension AppCoordinator {
 	}
 	
 	func handleSelectToday() {
-		if let indexPath = indexPath(for: SmartFeedsController.shared.todayFeed) {
+		if let indexPath = indexPathFor(SmartFeedsController.shared.todayFeed) {
 			selectFeed(indexPath)
 		}
 	}
 	
 	func handleSelectAllUnread() {
-		if let indexPath = indexPath(for: SmartFeedsController.shared.unreadFeed) {
+		if let indexPath = indexPathFor(SmartFeedsController.shared.unreadFeed) {
 			selectFeed(indexPath)
 		}
 	}
 	
 	func handleSelectStarred() {
-		if let indexPath = indexPath(for: SmartFeedsController.shared.starredFeed) {
+		if let indexPath = indexPathFor(SmartFeedsController.shared.starredFeed) {
 			selectFeed(indexPath)
 		}
 	}
