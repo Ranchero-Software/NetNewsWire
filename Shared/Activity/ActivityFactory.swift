@@ -38,6 +38,7 @@ class ActivityFactory {
 		attributeSet.title = article.title
 		attributeSet.contentDescription = article.summary
 		attributeSet.keywords = keywords
+		attributeSet.relatedUniqueIdentifier = article.url
 		
 		if let image = article.avatarImage() {
 			attributeSet.thumbnailData = image.pngData()
