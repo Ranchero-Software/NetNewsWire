@@ -1179,7 +1179,7 @@ private extension AppCoordinator {
 		
 		guard let article = currentArticle else { return }
 		
-		readActivity = ActivityFactory.make(article)
+		readActivity = ActivityManager.shared.makeReadArticleActivity(article)
 		readActivity?.becomeCurrent()
 	}
 	

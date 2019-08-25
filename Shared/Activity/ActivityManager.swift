@@ -1,5 +1,5 @@
 //
-//  ActivityFactory.swift
+//  ActivityManager.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 8/23/19.
@@ -11,9 +11,11 @@ import CoreSpotlight
 import CoreServices
 import Articles
 
-class ActivityFactory {
+class ActivityManager {
 	
-	static func make(_ article: Article) -> NSUserActivity {
+	public static var shared = ActivityManager()
+	
+	func makeReadArticleActivity(_ article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 
 		activity.title = article.title
