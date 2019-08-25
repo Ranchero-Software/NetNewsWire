@@ -10,6 +10,7 @@ import Foundation
 
 enum ActivityID: String {
 	case accountID = "accountID"
+	case accountName = "accountName"
 	case feedID = "feedID"
 	case articleID = "articleID"
 }

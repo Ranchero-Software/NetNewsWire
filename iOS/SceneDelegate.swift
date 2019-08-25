@@ -32,6 +32,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // The `window` property will automatically be loaded with the storyboard's initial view controller.
     }
 	
+	func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+		coordinator.handle(userActivity)
+	}
+	
 	func sceneDidEnterBackground(_ scene: UIScene) {
 		appDelegate.prepareAccountsForBackground()
 	}

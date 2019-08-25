@@ -253,6 +253,14 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return rootSplitViewController
 	}
 	
+	func handle(_ activity: NSUserActivity) {
+		guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
+		switch activityType {
+		case .readArticle:
+			handleReadArticle(activity)
+		}
+	}
+	
 	// MARK: Notifications
 	
 	@objc func statusesDidChange(_ note: Notification) {
@@ -1181,6 +1189,53 @@ private extension AppCoordinator {
 		
 		readActivity = ActivityFactory.make(article)
 		readActivity?.becomeCurrent()
+	}
+	
+	func handleReadArticle(_ activity: NSUserActivity) {
+		guard let accountNode = findAccountNode(for: activity), let feedNode = findFeedNode(for: activity, beginningAt: accountNode) else {
+			return
+		}
+		
+		masterFeedViewController.discloseFeed(feedNode.representedObject as! Feed)
+		
+		guard let articleID = activity.userInfo?[ActivityID.articleID.rawValue] as? String else { return }
+		
+		for (index, article) in articles.enumerated() {
+			if article.articleID == articleID {
+				selectArticle(IndexPath(row: index, section: 0))
+				break
+			}
+		}
+	}
+	
+	func findAccountNode(for activity: NSUserActivity) -> Node? {
+		guard let accountID = activity.userInfo?[ActivityID.accountID.rawValue] as? String else {
+			return nil
+		}
+		
+		if let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.accountID == accountID }) {
+			return node
+		}
+
+		guard let accountName = activity.userInfo?[ActivityID.accountName.rawValue] as? String else {
+			return nil
+		}
+
+		if let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.name == accountName }) {
+			return node
+		}
+
+		return nil
+	}
+	
+	func findFeedNode(for activity: NSUserActivity, beginningAt startingNode: Node) -> Node? {
+		guard let feedID = activity.userInfo?[ActivityID.feedID.rawValue] as? String else {
+			return nil
+		}
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
+			return node
+		}
+		return nil
 	}
 	
 }

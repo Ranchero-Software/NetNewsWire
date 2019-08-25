@@ -14,7 +14,7 @@ import Articles
 class ActivityFactory {
 	
 	static func make(_ article: Article) -> NSUserActivity {
-		let activity = NSUserActivity(activityType: "com.ranchero.NetNewsWire.ReadArticle")
+		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 
 		activity.title = article.title
 		
@@ -25,6 +25,7 @@ class ActivityFactory {
 		
 		activity.userInfo = [
 			ActivityID.accountID.rawValue: article.accountID,
+			ActivityID.accountName.rawValue: article.account?.name ?? "",
 			ActivityID.feedID.rawValue: article.feedID,
 			ActivityID.articleID.rawValue: article.articleID
 		]
