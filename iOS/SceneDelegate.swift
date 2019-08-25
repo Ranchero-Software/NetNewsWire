@@ -16,20 +16,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // UIWindowScene delegate
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-
 		window = UIWindow(windowScene: scene as! UIWindowScene)
 		window!.tintColor = AppAssets.netNewsWireBlueColor
 		window!.rootViewController = coordinator.start()
 		window!.makeKeyAndVisible()
-		
-//        if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
-//            if !configure(window: window, with: userActivity) {
-//                print("Failed to restore from \(userActivity)")
-//            }
-//        }
 
-        // If there were no user activities, we don't have to do anything.
-        // The `window` property will automatically be loaded with the storyboard's initial view controller.
+        if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
+			DispatchQueue.main.asyncAfter(deadline: .now()) {
+				self.coordinator.handle(userActivity)
+			}
+        }
     }
 	
 	func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
@@ -47,24 +43,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //    func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {
 //        return scene.userActivity
 //    }
-//
-    // Utilities
-    
-//    func configure(window: UIWindow?, with activity: NSUserActivity) -> Bool {
-//        if activity.title == GalleryOpenDetailPath {
-//            if let photoID = activity.userInfo?[GalleryOpenDetailPhotoIdKey] as? String {
-//
-//                if let photoDetailViewController = PhotoDetailViewController.loadFromStoryboard() {
-//                    photoDetailViewController.photo = Photo(name: photoID)
-//
-//                    if let navigationController = window?.rootViewController as? UINavigationController {
-//                        navigationController.pushViewController(photoDetailViewController, animated: false)
-//                        return true
-//                    }
-//                }
-//            }
-//        }
-//        return false
-//     }
 
 }
