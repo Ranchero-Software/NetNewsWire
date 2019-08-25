@@ -36,11 +36,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
-
-		NotificationCenter.default.addObserver(self, selector: #selector(articlesReinitialized(_:)), name: .ArticlesReinitialized, object: coordinator)
-		NotificationCenter.default.addObserver(self, selector: #selector(articleDataDidChange(_:)), name: .ArticleDataDidChange, object: coordinator)
-		NotificationCenter.default.addObserver(self, selector: #selector(articlesDidChange(_:)), name: .ArticlesDidChange, object: coordinator)
-		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
 		refreshControl = UIRefreshControl()
@@ -109,6 +104,31 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		coordinator.selectNextUnread()
 	}
 	
+	// MARK: API
+	
+	func reinitializeArticles() {
+		resetUI()
+	}
+	
+	func updateArticles() {
+		reloadAllVisibleCells()
+	}
+	
+	func reloadArticles() {
+		performBlockAndRestoreSelection {
+			tableView.reloadData()
+		}
+	}
+	
+	func updateArticleSelection() {
+		if let indexPath = coordinator.currentArticleIndexPath {
+			if tableView.indexPathForSelectedRow != indexPath {
+				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+			}
+		}
+		updateUI()
+	}
+
 	// MARK: - Table view
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -320,32 +340,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 	}
 	
-	@objc func articlesReinitialized(_ note: Notification) {
-		resetUI()
-	}
-	
-	@objc func articleDataDidChange(_ note: Notification) {
-		reloadAllVisibleCells()
-	}
-	
-	@objc func articlesDidChange(_ note: Notification) {
-		performBlockAndRestoreSelection {
-			tableView.reloadData()
-		}
-	}
-	
-	@objc func articleSelectionDidChange(_ note: Notification) {
-		
-		if let indexPath = coordinator.currentArticleIndexPath {
-			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
-			}
-		}
-		
-		updateUI()
-		
-	}
-
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		tableView.reloadData()
 	}

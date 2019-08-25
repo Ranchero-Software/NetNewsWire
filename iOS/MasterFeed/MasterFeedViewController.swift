@@ -42,9 +42,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
-
-		NotificationCenter.default.addObserver(self, selector: #selector(backingStoresDidRebuild(_:)), name: .BackingStoresDidRebuild, object: coordinator)
-		NotificationCenter.default.addObserver(self, selector: #selector(masterSelectionDidChange(_:)), name: .MasterSelectionDidChange, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
 		refreshControl = UIRefreshControl()
@@ -72,11 +69,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	// MARK: Notifications
-	
-	@objc dynamic func backingStoresDidRebuild(_ notification: Notification) {
-		updateUI()
-		tableView.reloadData()
-	}
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
 		
@@ -138,14 +130,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func progressDidChange(_ note: Notification) {
 		navigationController?.updateAccountRefreshProgressIndicator()
-	}
-	
-	@objc func masterSelectionDidChange(_ note: Notification) {
-		if let indexPath = coordinator.currentMasterIndexPath {
-			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
-			}
-		}
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -491,6 +475,19 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	// MARK: API
+	
+	func updateFeedSelection() {
+		if let indexPath = coordinator.currentMasterIndexPath {
+			if tableView.indexPathForSelectedRow != indexPath {
+				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+			}
+		}
+	}
+
+	func reloadFeeds() {
+		updateUI()
+		tableView.reloadData()
+	}
 	
 	func discloseFeed(_ feed: Feed) {
 		

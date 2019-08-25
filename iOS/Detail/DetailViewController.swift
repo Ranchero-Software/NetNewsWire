@@ -37,7 +37,6 @@ class DetailViewController: UIViewController {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(articleSelectionDidChange(_:)), name: .ArticleSelectionDidChange, object: coordinator)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 	}
@@ -109,12 +108,6 @@ class DetailViewController: UIViewController {
 		}
 	}
 
-	@objc func articleSelectionDidChange(_ note: Notification) {
-		markAsRead()
-		updateUI()
-		reloadHTML()
-	}
-
 	@objc func progressDidChange(_ note: Notification) {
 		updateProgressIndicatorIfNeeded()
 	}
@@ -159,6 +152,15 @@ class DetailViewController: UIViewController {
 		activityViewController.popoverPresentationController?.barButtonItem = actionBarButtonItem
 		present(activityViewController, animated: true)
 	}
+	
+	// MARK: API
+	func updateArticleSelection() {
+		markAsRead()
+		updateUI()
+		reloadHTML()
+	}
+
+
 }
 
 class ArticleActivityItemSource: NSObject, UIActivityItemSource {

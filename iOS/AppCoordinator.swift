@@ -12,15 +12,6 @@ import Articles
 import RSCore
 import RSTree
 
-public extension Notification.Name {
-	static let MasterSelectionDidChange = Notification.Name(rawValue: "MasterSelectionDidChange")
-	static let BackingStoresDidRebuild = Notification.Name(rawValue: "BackingStoresDidRebuild")
-	static let ArticlesReinitialized = Notification.Name(rawValue: "ArticlesReinitialized")
-	static let ArticleDataDidChange = Notification.Name(rawValue: "ArticleDataDidChange")
-	static let ArticlesDidChange = Notification.Name(rawValue: "ArticlesDidChange")
-	static let ArticleSelectionDidChange = Notification.Name(rawValue: "ArticleSelectionDidChange")
-}
-
 class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var undoableCommands = [UndoableCommand]()
@@ -98,7 +89,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			if let fetcher = node.representedObject as? ArticleFetcher {
 				timelineFetcher = fetcher
 			}
-			NotificationCenter.default.post(name: .MasterSelectionDidChange, object: self, userInfo: nil)
+			masterFeedViewController.updateFeedSelection()
 		}
 	}
 	
@@ -115,7 +106,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 				showFeedNames = true
 			}
 			fetchAndReplaceArticlesSync()
-			NotificationCenter.default.post(name: .ArticlesReinitialized, object: self, userInfo: nil)
+			masterTimelineViewController?.reinitializeArticles()
 		}
 	}
 	
@@ -169,7 +160,8 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private(set) var currentArticleIndexPath: IndexPath? {
 		didSet {
 			if currentArticleIndexPath != oldValue {
-				NotificationCenter.default.post(name: .ArticleSelectionDidChange, object: self, userInfo: nil)
+				masterTimelineViewController?.updateArticleSelection()
+				detailViewController?.updateArticleSelection()
 			}
 		}
 	}
@@ -181,13 +173,13 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			}
 			if articles.representSameArticlesInSameOrder(as: oldValue) {
 				articleRowMap = [String: Int]()
-				NotificationCenter.default.post(name: .ArticleDataDidChange, object: self, userInfo: nil)
+				masterTimelineViewController?.updateArticles()
 				updateUnreadCount()
 				return
 			}
 			updateShowAvatars()
 			articleRowMap = [String: Int]()
-			NotificationCenter.default.post(name: .ArticlesDidChange, object: self, userInfo: nil)
+			masterTimelineViewController?.reloadArticles()
 			updateUnreadCount()
 		}
 	}
@@ -772,7 +764,7 @@ private extension AppCoordinator {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
 			treeController.rebuild()
 			rebuildShadowTable()
-			NotificationCenter.default.post(name: .BackingStoresDidRebuild, object: self, userInfo: nil)
+			masterFeedViewController.reloadFeeds()
 		}
 	}
 	
