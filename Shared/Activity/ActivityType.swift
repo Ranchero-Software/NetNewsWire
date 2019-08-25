@@ -9,5 +9,8 @@
 import Foundation
 
 enum ActivityType: String {
+	case selectToday = "com.ranchero.NetNewsWire.SelectToday"
+	case selectAllUnread = "com.ranchero.NetNewsWire.SelectAllUnread"
+	case selectStarred = "com.ranchero.NetNewsWire.SelectStarred"
 	case readArticle = "com.ranchero.NetNewsWire.ReadArticle"
 }

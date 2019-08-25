@@ -10,18 +10,65 @@ import Foundation
 import CoreSpotlight
 import CoreServices
 import Articles
+import Intents
 
 class ActivityManager {
 	
 	public static var shared = ActivityManager()
+	
+	private var selectingActivity: NSUserActivity? = nil
+	private var readingActivity: NSUserActivity? = nil
+
+	func selectingToday() {
+		let title = NSLocalizedString("See articles for Today", comment: "Today")
+		selectingActivity = makeSmartFeedActivity(type: ActivityType.selectToday, title: title, identifier: "smartfeed.today")
+		selectingActivity!.becomeCurrent()
+	}
+	
+	func selectingAllUnread() {
+		let title = NSLocalizedString("See articles in All Unread", comment: "All Unread")
+		selectingActivity = makeSmartFeedActivity(type: ActivityType.selectAllUnread, title: title, identifier: "smartfeed.allUnread")
+		selectingActivity!.becomeCurrent()
+	}
+	
+	func selectingStarred() {
+		let title = NSLocalizedString("See articles in Starred", comment: "Starred")
+		selectingActivity = makeSmartFeedActivity(type: ActivityType.selectStarred, title: title, identifier: "smartfeed.starred")
+		selectingActivity!.becomeCurrent()
+	}
+	
+	func reading(_ article: Article?) {
+		readingActivity?.invalidate()
+		readingActivity = nil
+		guard let article = article else { return }
+		readingActivity = makeReadArticleActivity(article)
+		readingActivity?.becomeCurrent()
+	}
+	
+}
+
+// MARK: Private
+
+private extension ActivityManager {
+	
+	func makeSmartFeedActivity(type: ActivityType, title: String, identifier: String) -> NSUserActivity {
+		let activity = NSUserActivity(activityType: type.rawValue)
+		activity.title = title
+		activity.suggestedInvocationPhrase = title
+		activity.keywords = Set(makeKeywords(title))
+		activity.isEligibleForPrediction = true
+		activity.isEligibleForSearch = true
+		activity.persistentIdentifier = identifier
+		return activity
+	}
 	
 	func makeReadArticleActivity(_ article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 
 		activity.title = article.title
 		
-		let feedNameKeywords = article.feed?.nameForDisplay.components(separatedBy: " ").filter { $0.count > 2 } ?? []
-		let articleTitleKeywords = article.title?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
+		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
+		let articleTitleKeywords = makeKeywords(article.title)
 		let keywords = feedNameKeywords + articleTitleKeywords
 		activity.keywords = Set(keywords)
 		
@@ -49,6 +96,10 @@ class ActivityManager {
 		activity.contentAttributeSet = attributeSet
 		
 		return activity
+	}
+	
+	func makeKeywords(_ value: String?) -> [String] {
+		return value?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
 	}
 	
 }

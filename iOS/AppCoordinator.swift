@@ -90,6 +90,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 				timelineFetcher = fetcher
 			}
 			masterFeedViewController.updateFeedSelection()
+			updateSelectingActivity(with: node)
 		}
 	}
 	
@@ -203,8 +204,6 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	private(set) var readActivity: NSUserActivity? = nil
-
 	override init() {
 		super.init()
 		
@@ -248,6 +247,12 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func handle(_ activity: NSUserActivity) {
 		guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
 		switch activityType {
+		case .selectToday:
+			handleSelectToday()
+		case .selectAllUnread:
+			handleSelectAllUnread()
+		case .selectStarred:
+			handleSelectStarred()
 		case .readArticle:
 			handleReadArticle(activity)
 		}
@@ -361,6 +366,13 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return nil
 	}
 
+	func indexPath(for object: AnyObject) -> IndexPath? {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(object) else {
+			return nil
+		}
+		return indexPathFor(node)
+	}
+	
 	func unreadCountFor(_ node: Node) -> Int {
 		// The coordinator supplies the unread count for the currently selected feed node
 		if let indexPath = currentMasterIndexPath, let selectedNode = nodeFor(indexPath), selectedNode == node {
@@ -510,7 +522,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func selectArticle(_ indexPath: IndexPath?) {
 		currentArticleIndexPath = indexPath
-		updateReadArticleUserActivity()
+		ActivityManager.shared.reading(currentArticle)
 		
 		if indexPath == nil {
 			if !rootSplitViewController.isCollapsed {
@@ -1173,14 +1185,35 @@ private extension AppCoordinator {
 	
 	// MARK: NSUserActivity
 	
-	func updateReadArticleUserActivity() {
-		readActivity?.invalidate()
-		readActivity = nil
-		
-		guard let article = currentArticle else { return }
-		
-		readActivity = ActivityManager.shared.makeReadArticleActivity(article)
-		readActivity?.becomeCurrent()
+	func updateSelectingActivity(with node: Node) {
+		switch true {
+		case node.representedObject === SmartFeedsController.shared.todayFeed:
+			ActivityManager.shared.selectingToday()
+		case node.representedObject === SmartFeedsController.shared.unreadFeed:
+			ActivityManager.shared.selectingAllUnread()
+		case node.representedObject === SmartFeedsController.shared.starredFeed:
+			ActivityManager.shared.selectingStarred()
+		default:
+			break
+		}
+	}
+	
+	func handleSelectToday() {
+		if let indexPath = indexPath(for: SmartFeedsController.shared.todayFeed) {
+			selectFeed(indexPath)
+		}
+	}
+	
+	func handleSelectAllUnread() {
+		if let indexPath = indexPath(for: SmartFeedsController.shared.unreadFeed) {
+			selectFeed(indexPath)
+		}
+	}
+	
+	func handleSelectStarred() {
+		if let indexPath = indexPath(for: SmartFeedsController.shared.starredFeed) {
+			selectFeed(indexPath)
+		}
 	}
 	
 	func handleReadArticle(_ activity: NSUserActivity) {

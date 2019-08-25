@@ -49,6 +49,9 @@
 	<true/>
 	<key>NSUserActivityTypes</key>
 	<array>
+		<string>com.ranchero.NetNewsWire.SelectAllUnread</string>
+		<string>com.ranchero.NetNewsWire.SelectStarred</string>
+		<string>com.ranchero.NetNewsWire.SelectToday</string>
 		<string>com.ranchero.NetNewsWire.ReadArticle</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
