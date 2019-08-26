@@ -78,6 +78,10 @@ class MasterTimelineTableViewCell: UITableViewCell {
 		
 	}
 	
+	func setAvatarImage(_ image: UIImage) {
+		avatarImageView.image = image
+	}
+	
 }
 
 // MARK: - Private

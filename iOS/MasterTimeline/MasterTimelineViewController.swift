@@ -285,9 +285,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 				guard let article = coordinator.articles.articleAtRow(indexPath.row) else {
 					return
 				}
-				if feed == article.feed {
-					tableView.reloadRows(at: [indexPath], with: .none)
-					return
+				if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
+					cell.setAvatarImage(image)
 				}
 			}
 		}
@@ -304,8 +303,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 					return
 				}
 				for author in authors {
-					if author.avatarURL == avatarURL {
-						tableView.reloadRows(at: [indexPath], with: .none)
+					if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
+						cell.setAvatarImage(image)
 					}
 				}
 			}
@@ -323,8 +322,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 				guard let article = coordinator.articles.articleAtRow(indexPath.row), let articleFaviconURL = article.feed?.faviconURL else {
 					return
 				}
-				if faviconURL == articleFaviconURL {
-					tableView.reloadRows(at: [indexPath], with: .none)
+				if faviconURL == articleFaviconURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
+					cell.setAvatarImage(image)
 					return
 				}
 
