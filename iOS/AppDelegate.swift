@@ -78,11 +78,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
 		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
-		faviconDownloader = FaviconDownloader(folder: faviconsFolderURL.absoluteString)
+		let faviconsFolder = faviconsFolderURL.absoluteString
+		let faviconsFolderPath = faviconsFolder.suffix(from: faviconsFolder.index(faviconsFolder.startIndex, offsetBy: 7))
+		faviconDownloader = FaviconDownloader(folder: String(faviconsFolderPath))
 		
 		let imagesFolderURL = tempDir.appendingPathComponent("Images")
+		let imagesFolder = imagesFolderURL.absoluteString
+		let imagesFolderPath = imagesFolder.suffix(from: imagesFolder.index(imagesFolder.startIndex, offsetBy: 7))
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-		imageDownloader = ImageDownloader(folder: imagesFolderURL.absoluteString)
+		imageDownloader = ImageDownloader(folder: String(imagesFolderPath))
 		
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
 		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader)
