@@ -25,10 +25,11 @@ public final class FeedIconDownloader {
 	private var homePagesWithNoIconURL = Set<String>()
 	private var urlsInProgress = Set<String>()
 	private var cache = [Feed: RSImage]()
+	private var waitingForFeedURLs = [String: Feed]()
 
 	init(imageDownloader: ImageDownloader) {
-
 		self.imageDownloader = imageDownloader
+		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
 	}
 
 	func resetCache() {
@@ -45,7 +46,7 @@ public final class FeedIconDownloader {
 			guard let homePageURL = feed.homePageURL else {
 				return
 			}
-			icon(forHomePageURL: homePageURL) { (image) in
+			icon(forHomePageURL: homePageURL, feed: feed) { (image) in
 				if let image = image {
 					self.postFeedIconDidBecomeAvailableNotification(feed)
 					self.cache[feed] = image
@@ -54,7 +55,7 @@ public final class FeedIconDownloader {
 		}
 
 		if let iconURL = feed.iconURL {
-			icon(forURL: iconURL) { (image) in
+			icon(forURL: iconURL, feed: feed) { (image) in
 				if let image = image {
 					self.postFeedIconDidBecomeAvailableNotification(feed)
 					self.cache[feed] = image
@@ -71,11 +72,20 @@ public final class FeedIconDownloader {
 
 		return nil
 	}
+
+	@objc func imageDidBecomeAvailable(_ note: Notification) {
+		guard let url = note.userInfo?[UserInfoKey.url] as? String, let feed = waitingForFeedURLs[url]  else {
+			return
+		}
+		waitingForFeedURLs[url] = nil
+		_ = icon(for: feed)
+	}
+	
 }
 
 private extension FeedIconDownloader {
 
-	func icon(forHomePageURL homePageURL: String, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+	func icon(forHomePageURL homePageURL: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
 
 		if homePagesWithNoIconURL.contains(homePageURL) {
 			imageResultBlock(nil)
@@ -83,14 +93,15 @@ private extension FeedIconDownloader {
 		}
 
 		if let iconURL = cachedIconURL(for: homePageURL) {
-			icon(forURL: iconURL, imageResultBlock)
+			icon(forURL: iconURL, feed: feed, imageResultBlock)
 			return
 		}
 
-		findIconURLForHomePageURL(homePageURL)
+		findIconURLForHomePageURL(homePageURL, feed: feed)
 	}
 
-	func icon(forURL url: String, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+		waitingForFeedURLs[url] = feed
 		guard let imageData = imageDownloader.image(for: url) else {
 			imageResultBlock(nil)
 			return
@@ -117,7 +128,7 @@ private extension FeedIconDownloader {
 		homePageToIconURLCache[homePageURL] = iconURL
 	}
 
-	func findIconURLForHomePageURL(_ homePageURL: String) {
+	func findIconURLForHomePageURL(_ homePageURL: String, feed: Feed) {
 
 		guard !urlsInProgress.contains(homePageURL) else {
 			return
@@ -130,15 +141,15 @@ private extension FeedIconDownloader {
 			guard let metadata = metadata else {
 				return
 			}
-			self.pullIconURL(from: metadata, homePageURL: homePageURL)
+			self.pullIconURL(from: metadata, homePageURL: homePageURL, feed: feed)
 		}
 	}
 
-	func pullIconURL(from metadata: RSHTMLMetadata, homePageURL: String) {
+	func pullIconURL(from metadata: RSHTMLMetadata, homePageURL: String, feed: Feed) {
 
 		if let url = metadata.bestWebsiteIconURL() {
 			cacheIconURL(for: homePageURL, url)
-			icon(forURL: url) { (image) in
+			icon(forURL: url, feed: feed) { (image) in
 			}
 			return
 		}
