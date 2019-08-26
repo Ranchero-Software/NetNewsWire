@@ -508,7 +508,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func selectFeed(_ indexPath: IndexPath) {
-		if let _ = navControllerForTimeline().viewControllers.first as? MasterTimelineViewController {
+		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count > 0 {
 			currentMasterIndexPath = indexPath
 		} else {
 			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
