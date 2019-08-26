@@ -31,8 +31,8 @@ class MasterFeedUnreadCountView : UIView {
 		return unreadCount < 1 ? "" : "\(unreadCount)"
 	}
 
-	private var intrinsicContentSizeIsValid = false
-	private var _intrinsicContentSize = CGSize.zero
+	private var contentSizeIsValid = false
+	private var _contentSize = CGSize.zero
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -46,26 +46,27 @@ class MasterFeedUnreadCountView : UIView {
 	
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
 		textSizeCache = [Int: CGSize]()
-		invalidateIntrinsicContentSize()
+		contentSizeIsValid = false
 		setNeedsDisplay()
 	}
 	
-	override var intrinsicContentSize: CGSize {
-		if !intrinsicContentSizeIsValid {
+	var contentSize: CGSize {
+		if !contentSizeIsValid {
 			var size = CGSize.zero
 			if unreadCount > 0 {
 				size = textSize()
 				size.width += (padding.left + padding.right)
 				size.height += (padding.top + padding.bottom)
 			}
-			_intrinsicContentSize = size
-			intrinsicContentSizeIsValid = true
+			_contentSize = size
+			contentSizeIsValid = true
 		}
-		return _intrinsicContentSize
+		return _contentSize
 	}
 	
-	override func invalidateIntrinsicContentSize() {
-		intrinsicContentSizeIsValid = false
+	// Prevent autolayout from messing around with our frame settings
+	override var intrinsicContentSize: CGSize {
+		return CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
 	}
 
 	private func textSize() -> CGSize {

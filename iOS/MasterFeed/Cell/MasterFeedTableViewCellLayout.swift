@@ -52,7 +52,7 @@ struct MasterFeedTableViewCellLayout {
 		separatorInsets = UIEdgeInsets(top: 0, left: rFavicon.maxX + MasterFeedTableViewCellLayout.imageMarginRight, bottom: 0, right: 0)
 		
 		// Unread Count
-		let unreadCountSize = unreadCountView.intrinsicContentSize
+		let unreadCountSize = unreadCountView.contentSize
 		let unreadCountIsHidden = unreadCountView.unreadCount < 1
 
 		var rUnread = CGRect.zero

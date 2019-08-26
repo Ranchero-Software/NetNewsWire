@@ -93,7 +93,7 @@ class MasterFeedTableViewCell : UITableViewCell {
 	}()
 
 	private let faviconImageView: UIImageView = {
-		return UIImageView(image: AppAssets.feedImage)
+		return NonIntrinsicImageView(image: AppAssets.feedImage)
 	}()
 
 	private var unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
@@ -156,7 +156,7 @@ private extension MasterFeedTableViewCell {
 
 	func addDisclosureView() {
 		
-		disclosureButton = UIButton(type: .roundedRect)
+		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.tintColor = AppAssets.chevronDisclosureColor
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
 		

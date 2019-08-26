@@ -281,16 +281,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 	}
 	
-//	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-//		guard let node = coordinator.nodeFor(indexPath), !(node.representedObject is PseudoFeed) else {
-//			return nil
-//		}
-//		if node.representedObject is Feed {
-//			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
-//		} else {
-//			return makeFolderContextMenu(indexPath: indexPath)
-//		}
-//	}
+	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+		guard let node = coordinator.nodeFor(indexPath), !(node.representedObject is PseudoFeed) else {
+			return nil
+		}
+		if node.representedObject is Feed {
+			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
+		} else {
+			return makeFolderContextMenu(indexPath: indexPath)
+		}
+	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		coordinator.selectFeed(indexPath)
