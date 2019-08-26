@@ -22,7 +22,7 @@ class MasterFeedUnreadCountView : UIView {
 
 	var unreadCount = 0 {
 		didSet {
-			invalidateIntrinsicContentSize()
+			contentSizeIsValid = false
 			setNeedsDisplay()
 		}
 	}
