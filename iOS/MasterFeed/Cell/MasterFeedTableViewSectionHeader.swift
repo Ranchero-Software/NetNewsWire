@@ -65,7 +65,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	private let unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
 	private var disclosureView: UIImageView = {
-		let iView = UIImageView()
+		let iView = NonIntrinsicImageView()
 		iView.contentMode = .center
 		return iView
 	}()
