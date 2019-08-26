@@ -164,8 +164,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
@@ -475,7 +474,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+		guard showAvatars, let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
@@ -511,10 +510,19 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	@objc func imageDidBecomeAvailable(_ note: Notification) {
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+		guard showAvatars, let faviconURL = note.userInfo?[FaviconDownloader.UserInfoKey.faviconURL] as? String else {
+			return
+		}
 
-		if showAvatars {
-			queueReloadAvailableCells()
+		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
+			guard let article = articles.articleAtRow(row) else {
+				return false
+			}
+			return article.feed?.faviconURL == faviconURL
+		}
+		if let indexesToReload = indexesToReload {
+			reloadCells(for: indexesToReload)
 		}
 	}
 
