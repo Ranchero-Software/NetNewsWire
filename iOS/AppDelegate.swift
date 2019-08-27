@@ -89,7 +89,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		imageDownloader = ImageDownloader(folder: String(imagesFolderPath))
 		
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
-		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader)
+		
+		let tempFolder = tempDir.absoluteString
+		let tempFolderPath = tempFolder.suffix(from: tempFolder.index(tempFolder.startIndex, offsetBy: 7))
+		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: String(tempFolderPath))
 		
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
