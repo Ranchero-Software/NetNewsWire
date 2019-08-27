@@ -20,15 +20,27 @@ extension Notification.Name {
 
 public final class FeedIconDownloader {
 
+	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
+
 	private let imageDownloader: ImageDownloader
+
 	private var homePageToIconURLCache = [String: String]()
+	private var homePageToIconURLCachePath: String
+	private var homePageToIconURLCacheDirty = false {
+		didSet {
+			queueSaveHomePageToIconURLCacheIfNeeded()
+		}
+	}
+	
 	private var homePagesWithNoIconURL = Set<String>()
 	private var urlsInProgress = Set<String>()
 	private var cache = [Feed: RSImage]()
 	private var waitingForFeedURLs = [String: Feed]()
 
-	init(imageDownloader: ImageDownloader) {
+	init(imageDownloader: ImageDownloader, folder: String) {
 		self.imageDownloader = imageDownloader
+		self.homePageToIconURLCachePath = (folder as NSString).appendingPathComponent("HomePageToIconURLCache.plist")
+		loadHomePageToIconURLCache()
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
 	}
 
@@ -81,6 +93,12 @@ public final class FeedIconDownloader {
 		_ = icon(for: feed)
 	}
 	
+	@objc func saveHomePageToIconURLCacheIfNeeded() {
+		if homePageToIconURLCacheDirty {
+			saveHomePageToIconURLCache()
+		}
+	}
+	
 }
 
 private extension FeedIconDownloader {
@@ -123,9 +141,9 @@ private extension FeedIconDownloader {
 	}
 
 	func cacheIconURL(for homePageURL: String, _ iconURL: String) {
-
 		homePagesWithNoIconURL.remove(homePageURL)
 		homePageToIconURLCache[homePageURL] = iconURL
+		homePageToIconURLCacheDirty = true
 	}
 
 	func findIconURLForHomePageURL(_ homePageURL: String, feed: Feed) {
@@ -156,4 +174,32 @@ private extension FeedIconDownloader {
 
 		homePagesWithNoIconURL.insert(homePageURL)
 	}
+	
+	func loadHomePageToIconURLCache() {
+		let url = URL(fileURLWithPath: homePageToIconURLCachePath)
+		guard let data = try? Data(contentsOf: url) else {
+			return
+		}
+		let decoder = PropertyListDecoder()
+		homePageToIconURLCache = (try? decoder.decode([String: String].self, from: data)) ?? [String: String]()
+	}
+
+	func queueSaveHomePageToIconURLCacheIfNeeded() {
+		FeedIconDownloader.saveQueue.add(self, #selector(saveHomePageToIconURLCacheIfNeeded))
+	}
+
+	func saveHomePageToIconURLCache() {
+		homePageToIconURLCacheDirty = false
+
+		let encoder = PropertyListEncoder()
+		encoder.outputFormat = .binary
+		let url = URL(fileURLWithPath: homePageToIconURLCachePath)
+		do {
+			let data = try encoder.encode(homePageToIconURLCache)
+			try data.write(to: url)
+		} catch {
+			assertionFailure(error.localizedDescription)
+		}
+	}
+	
 }
