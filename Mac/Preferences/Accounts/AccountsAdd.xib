@@ -79,8 +79,8 @@
                                                     </stackView>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="xsr-pQ-ts2" firstAttribute="centerX" secondItem="wVK-qI-WAx" secondAttribute="centerX" id="NyC-iA-yed"/>
                                                     <constraint firstItem="xsr-pQ-ts2" firstAttribute="centerY" secondItem="wVK-qI-WAx" secondAttribute="centerY" id="lQw-mm-Vnb"/>
+                                                    <constraint firstItem="xsr-pQ-ts2" firstAttribute="leading" secondItem="wVK-qI-WAx" secondAttribute="leading" constant="20" id="msT-9I-cEP"/>
                                                 </constraints>
                                                 <connections>
                                                     <outlet property="accountImageView" destination="cjk-vg-Vn6" id="laA-LX-gYz"/>
