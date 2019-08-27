@@ -254,9 +254,9 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		case .selectStarred:
 			handleSelectStarred()
 		case .selectFolder:
-			print("folder selected")
+			handleSelectFolder(activity)
 		case .selectFeed:
-			print("feed selected")
+			handleSelectFeed(activity)
 		case .readArticle:
 			handleReadArticle(activity)
 		}
@@ -1224,12 +1224,30 @@ private extension AppCoordinator {
 		}
 	}
 	
+	func handleSelectFolder(_ activity: NSUserActivity) {
+		guard let accountNode = findAccountNode(for: activity), let folderNode = findFolderNode(for: activity, beginningAt: accountNode) else {
+			return
+		}
+		if let indexPath = indexPathFor(folderNode) {
+			selectFeed(indexPath)
+		}
+	}
+	
+	func handleSelectFeed(_ activity: NSUserActivity) {
+		guard let accountNode = findAccountNode(for: activity), let feedNode = findFeedNode(for: activity, beginningAt: accountNode) else {
+			return
+		}
+		if let feed = feedNode.representedObject as? Feed {
+			discloseFeed(feed)
+		}
+	}
+	
 	func handleReadArticle(_ activity: NSUserActivity) {
 		guard let accountNode = findAccountNode(for: activity), let feedNode = findFeedNode(for: activity, beginningAt: accountNode) else {
 			return
 		}
 		
-		masterFeedViewController.discloseFeed(feedNode.representedObject as! Feed)
+		discloseFeed(feedNode.representedObject as! Feed)
 		
 		guard let articleID = activity.userInfo?[ActivityID.articleID.rawValue] as? String else { return }
 		
@@ -1261,6 +1279,16 @@ private extension AppCoordinator {
 		return nil
 	}
 	
+	func findFolderNode(for activity: NSUserActivity, beginningAt startingNode: Node) -> Node? {
+		guard let folderName = activity.userInfo?[ActivityID.folderName.rawValue] as? String else {
+			return nil
+		}
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Folder)?.nameForDisplay == folderName }) {
+			return node
+		}
+		return nil
+	}
+
 	func findFeedNode(for activity: NSUserActivity, beginningAt startingNode: Node) -> Node? {
 		guard let feedID = activity.userInfo?[ActivityID.feedID.rawValue] as? String else {
 			return nil

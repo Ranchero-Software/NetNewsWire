@@ -13,4 +13,5 @@ enum ActivityID: String {
 	case accountName = "accountName"
 	case feedID = "feedID"
 	case articleID = "articleID"
+	case folderName = "folderName"
 }

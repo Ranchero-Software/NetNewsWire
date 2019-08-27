@@ -42,14 +42,27 @@ class ActivityManager {
 		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, folder.nameForDisplay) as String
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: "folder.\(folder.nameForDisplay)")
-		selectingActivity!.becomeCurrent()
+	 
+		selectingActivity!.userInfo = [
+			ActivityID.accountID.rawValue: folder.account?.accountID ?? "",
+			ActivityID.accountName.rawValue: folder.account?.name ?? "",
+			ActivityID.folderName.rawValue: folder.nameForDisplay
+		]
 
+		selectingActivity!.becomeCurrent()
 	}
 	
 	func selectingFeed(_ feed: Feed) {
 		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Feed")
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFeed, title: title, identifier: feed.url)
+		
+		selectingActivity!.userInfo = [
+			ActivityID.accountID.rawValue: feed.account?.accountID ?? "",
+			ActivityID.accountName.rawValue: feed.account?.name ?? "",
+			ActivityID.feedID.rawValue: feed.feedID
+		]
+
 		selectingActivity!.becomeCurrent()
 	}
 	
