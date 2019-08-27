@@ -1,6 +1,7 @@
 # ![Icon](Technotes/Images/icon.png) NetNewsWire
 
 [![CircleCI](https://circleci.com/gh/brentsimmons/NetNewsWire.svg?style=svg)](https://circleci.com/gh/brentsimmons/NetNewsWire)
+[![GitHub All Releases](https://img.shields.io/github/downloads/brentsimmons/netnewswire/total)](https://github.com/brentsimmons/NetNewsWire/releases)
 
 It’s a free and open source feed reader for macOS.
 
