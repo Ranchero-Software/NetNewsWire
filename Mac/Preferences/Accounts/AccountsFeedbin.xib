@@ -21,7 +21,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="433" height="249"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="433" height="249"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -55,8 +55,11 @@
                             <real value="3.4028234663852886e+38"/>
                         </customSpacing>
                     </stackView>
-                    <gridView xPlacement="trailing" yPlacement="center" rowAlignment="none" rowSpacing="12" columnSpacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="zBB-JH-huI">
-                        <rect key="frame" x="79" y="61" width="276" height="97"/>
+                    <gridView xPlacement="trailing" yPlacement="center" rowAlignment="none" rowSpacing="12" columnSpacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="zBB-JH-huI">
+                        <rect key="frame" x="82" y="61" width="270" height="97"/>
+                        <constraints>
+                            <constraint firstItem="byK-Sd-r7F" firstAttribute="width" secondItem="JSa-LY-zNQ" secondAttribute="width" id="ImZ-BU-uKB"/>
+                        </constraints>
                         <rows>
                             <gridRow id="DRl-lC-vUc"/>
                             <gridRow id="eW8-uH-txq"/>
@@ -79,7 +82,7 @@
                             </gridCell>
                             <gridCell row="DRl-lC-vUc" column="7CY-bX-6x4" id="Z0b-qS-MUJ">
                                 <textField key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="78p-Cf-f55">
-                                    <rect key="frame" x="76" y="75" width="200" height="22"/>
+                                    <rect key="frame" x="70" y="75" width="200" height="22"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="200" id="Qin-jm-4zt"/>
                                     </constraints>
@@ -102,7 +105,7 @@
                             </gridCell>
                             <gridCell row="eW8-uH-txq" column="7CY-bX-6x4" id="m16-3v-9pf">
                                 <secureTextField key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JSa-LY-zNQ">
-                                    <rect key="frame" x="76" y="41" width="200" height="22"/>
+                                    <rect key="frame" x="70" y="41" width="200" height="22"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="200" id="eal-wa-1nU"/>
                                     </constraints>
@@ -116,17 +119,17 @@
                                     </secureTextFieldCell>
                                 </secureTextField>
                             </gridCell>
-                            <gridCell row="DbI-7g-Xme" column="fCQ-jY-Mts" headOfMergedCell="xX0-vn-AId" xPlacement="leading" id="xX0-vn-AId">
+                            <gridCell row="DbI-7g-Xme" column="fCQ-jY-Mts" xPlacement="leading" id="xX0-vn-AId"/>
+                            <gridCell row="DbI-7g-Xme" column="7CY-bX-6x4" yPlacement="top" id="hk5-St-E4y">
                                 <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="byK-Sd-r7F">
-                                    <rect key="frame" x="-2" y="6" width="104" height="17"/>
-                                    <textFieldCell key="cell" lineBreakMode="clipping" id="0yh-Ab-UTX">
+                                    <rect key="frame" x="68" y="12" width="204" height="17"/>
+                                    <textFieldCell key="cell" id="0yh-Ab-UTX">
                                         <font key="font" usesAppearanceFont="YES"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
                             </gridCell>
-                            <gridCell row="DbI-7g-Xme" column="7CY-bX-6x4" headOfMergedCell="xX0-vn-AId" id="hk5-St-E4y"/>
                         </gridCells>
                     </gridView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9mz-D9-krh">
