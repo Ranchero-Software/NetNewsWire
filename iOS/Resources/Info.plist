@@ -49,6 +49,8 @@
 	<true/>
 	<key>NSUserActivityTypes</key>
 	<array>
+		<string>com.ranchero.NetNewsWire.SelectFeed</string>
+		<string>com.ranchero.NetNewsWire.SelectFolder</string>
 		<string>com.ranchero.NetNewsWire.SelectAllUnread</string>
 		<string>com.ranchero.NetNewsWire.SelectStarred</string>
 		<string>com.ranchero.NetNewsWire.SelectToday</string>

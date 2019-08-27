@@ -253,6 +253,10 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			handleSelectAllUnread()
 		case .selectStarred:
 			handleSelectStarred()
+		case .selectFolder:
+			print("folder selected")
+		case .selectFeed:
+			print("feed selected")
 		case .readArticle:
 			handleReadArticle(activity)
 		}
@@ -1193,6 +1197,10 @@ private extension AppCoordinator {
 			ActivityManager.shared.selectingAllUnread()
 		case node.representedObject === SmartFeedsController.shared.starredFeed:
 			ActivityManager.shared.selectingStarred()
+		case node.representedObject is Folder:
+			ActivityManager.shared.selectingFolder(node.representedObject as! Folder)
+		case node.representedObject is Feed:
+			ActivityManager.shared.selectingFeed(node.representedObject as! Feed)
 		default:
 			break
 		}

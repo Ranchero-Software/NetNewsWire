@@ -9,6 +9,7 @@
 import Foundation
 import CoreSpotlight
 import CoreServices
+import Account
 import Articles
 import Intents
 
@@ -21,19 +22,34 @@ class ActivityManager {
 
 	func selectingToday() {
 		let title = NSLocalizedString("See articles for Today", comment: "Today")
-		selectingActivity = makeSmartFeedActivity(type: ActivityType.selectToday, title: title, identifier: "smartfeed.today")
+		selectingActivity = makeSelectingActivity(type: ActivityType.selectToday, title: title, identifier: "smartfeed.today")
 		selectingActivity!.becomeCurrent()
 	}
 	
 	func selectingAllUnread() {
 		let title = NSLocalizedString("See articles in All Unread", comment: "All Unread")
-		selectingActivity = makeSmartFeedActivity(type: ActivityType.selectAllUnread, title: title, identifier: "smartfeed.allUnread")
+		selectingActivity = makeSelectingActivity(type: ActivityType.selectAllUnread, title: title, identifier: "smartfeed.allUnread")
 		selectingActivity!.becomeCurrent()
 	}
 	
 	func selectingStarred() {
 		let title = NSLocalizedString("See articles in Starred", comment: "Starred")
-		selectingActivity = makeSmartFeedActivity(type: ActivityType.selectStarred, title: title, identifier: "smartfeed.starred")
+		selectingActivity = makeSelectingActivity(type: ActivityType.selectStarred, title: title, identifier: "smartfeed.starred")
+		selectingActivity!.becomeCurrent()
+	}
+	
+	func selectingFolder(_ folder: Folder) {
+		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
+		let title = NSString.localizedStringWithFormat(localizedText as NSString, folder.nameForDisplay) as String
+		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: "folder.\(folder.nameForDisplay)")
+		selectingActivity!.becomeCurrent()
+
+	}
+	
+	func selectingFeed(_ feed: Feed) {
+		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Feed")
+		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
+		selectingActivity = makeSelectingActivity(type: ActivityType.selectFeed, title: title, identifier: feed.url)
 		selectingActivity!.becomeCurrent()
 	}
 	
@@ -51,7 +67,7 @@ class ActivityManager {
 
 private extension ActivityManager {
 	
-	func makeSmartFeedActivity(type: ActivityType, title: String, identifier: String) -> NSUserActivity {
+	func makeSelectingActivity(type: ActivityType, title: String, identifier: String) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: type.rawValue)
 		activity.title = title
 		activity.suggestedInvocationPhrase = title
