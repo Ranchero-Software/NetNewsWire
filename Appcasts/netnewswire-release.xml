@@ -9,8 +9,7 @@
 				<item>
          <title>NetNewsWire 5.0</title>
             <description><![CDATA[
-            	<p>This is the final, shipping version of NetNewsWire 5.0.</p>
-            	<p><b>Note: the announcement will happen Monday morning (Pacific).</b> You’re just getting it one day early. :)</p>
+            	<p>This is the shipping version of NetNewsWire 5.0.</p>
   							]]></description>
             <pubDate>Sun, 25 Aug 2019 11:40:00 -0700</pubDate>
             <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0/NetNewsWire5.0.zip" sparkle:version="2609" sparkle:shortVersionString="5.0" length="5174696" type="application/zip" />
