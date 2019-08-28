@@ -66,7 +66,6 @@ class ActivityManager {
 			ActivityID.accountName.rawValue: feed.account?.name ?? "",
 			ActivityID.feedID.rawValue: feed.feedID
 		]
-		selectingActivity!.requiredUserInfoKeys = [ActivityID.accountID.rawValue, ActivityID.accountName.rawValue, ActivityID.feedID.rawValue]
 		updateSelectingActivityFeedSearchAttributes(with: feed)
 		
 		selectingActivity!.becomeCurrent()
