@@ -114,6 +114,7 @@ struct SettingsDetailAccountView : View {
 		
 		func delete() {
 			AccountManager.shared.deleteAccount(account)
+			ActivityManager.shared.cleanUp(account)
 		}
 	}
 }

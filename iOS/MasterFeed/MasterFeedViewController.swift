@@ -859,6 +859,12 @@ private extension MasterFeedViewController {
 					return
 		}
 
+		if let folder = deleteNode.representedObject as? Folder {
+			ActivityManager.shared.cleanUp(folder)
+		} else if let feed = deleteNode.representedObject as? Feed {
+			ActivityManager.shared.cleanUp(feed)
+		}
+		
 		var deleteIndexPaths = [indexPath]
 		if coordinator.isExpanded(deleteNode) {
 			for i in 0..<deleteNode.numberOfChildNodes {
