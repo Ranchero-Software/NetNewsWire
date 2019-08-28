@@ -20,6 +20,10 @@ class ActivityManager {
 	private var selectingActivity: NSUserActivity? = nil
 	private var readingActivity: NSUserActivity? = nil
 
+	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
+	}
+	
 	func selectingToday() {
 		let title = NSLocalizedString("See articles for Today", comment: "Today")
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectToday, title: title, identifier: "smartfeed.today")
@@ -62,16 +66,8 @@ class ActivityManager {
 			ActivityID.accountName.rawValue: feed.account?.name ?? "",
 			ActivityID.feedID.rawValue: feed.feedID
 		]
-
-		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
-		attributeSet.title = feed.nameForDisplay
-		attributeSet.keywords = makeKeywords(feed.nameForDisplay)
-		if let image = appDelegate.feedIconDownloader.icon(for: feed) {
-			attributeSet.thumbnailData = image.pngData()
-		} else if let image = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
-			attributeSet.thumbnailData = image.pngData()
-		}
-		selectingActivity!.contentAttributeSet = attributeSet
+		selectingActivity!.requiredUserInfoKeys = [ActivityID.accountID.rawValue, ActivityID.accountName.rawValue, ActivityID.feedID.rawValue]
+		updateSelectingActivityFeedSearchAttributes(with: feed)
 		
 		selectingActivity!.becomeCurrent()
 	}
@@ -115,6 +111,15 @@ class ActivityManager {
 		NSUserActivity.deleteSavedUserActivities(withPersistentIdentifiers: identifers(for: feed)) {}
 	}
 	
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ActivityID.feedID.rawValue] as? String else {
+			return
+		}
+		if activityFeedId == feed.feedID {
+			updateSelectingActivityFeedSearchAttributes(with: feed)
+		}
+	}
+
 }
 
 // MARK: Private
@@ -193,6 +198,22 @@ private extension ActivityManager {
 		}
 		
 		return ids
+	}
+	
+	func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
+		
+		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
+		attributeSet.title = feed.nameForDisplay
+		attributeSet.keywords = makeKeywords(feed.nameForDisplay)
+		if let image = appDelegate.feedIconDownloader.icon(for: feed) {
+			attributeSet.thumbnailData = image.pngData()
+		} else if let image = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+			attributeSet.thumbnailData = image.pngData()
+		}
+		
+		selectingActivity!.contentAttributeSet = attributeSet
+		selectingActivity!.needsSave = true
+		
 	}
 	
 }
