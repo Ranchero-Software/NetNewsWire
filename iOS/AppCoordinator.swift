@@ -273,7 +273,11 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	@objc func containerChildrenDidChange(_ note: Notification) {
-		rebuildBackingStores()
+		if timelineFetcherContainsAnyPseudoFeed() || timelineFetcherContainsAnyFolder() {
+			fetchAndReplaceArticlesAsync() { [weak self] in
+				self?.rebuildBackingStores()
+			}
+		}
 	}
 	
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
@@ -951,7 +955,7 @@ private extension AppCoordinator {
 		replaceArticles(with: fetchedArticles)
 	}
 
-	func fetchAndReplaceArticlesAsync() {
+	func fetchAndReplaceArticlesAsync(completion: @escaping () -> Void) {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
 		cancelPendingAsyncFetches()
@@ -961,6 +965,7 @@ private extension AppCoordinator {
 		}
 		fetchUnsortedArticlesAsync(for: [timelineFetcher]) { [weak self] (articles) in
 			self?.replaceArticles(with: articles)
+			completion()
 		}
 	}
 
@@ -995,6 +1000,13 @@ private extension AppCoordinator {
 
 	func timelineFetcherContainsAnyPseudoFeed() -> Bool {
 		if timelineFetcher is PseudoFeed {
+			return true
+		}
+		return false
+	}
+	
+	func timelineFetcherContainsAnyFolder() -> Bool {
+		if timelineFetcher is Folder {
 			return true
 		}
 		return false
