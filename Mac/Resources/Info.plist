@@ -44,7 +44,7 @@
 		<true/>
 	</dict>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>NetNewsWire communicates with other apps on your Mac when you choose to share a news item.</string>
+	<string>NetNewsWire communicates with other apps on your Mac when you choose to share an article.</string>
 	<key>NSAppleScriptEnabled</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
