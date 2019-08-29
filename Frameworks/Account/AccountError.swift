@@ -48,8 +48,8 @@ public enum AccountError: LocalizedError {
 		case .wrappedError(let error, _):
 			switch error {
 			case TransportError.httpError(let status):
-				if status == 401 {
-					return NSLocalizedString("Please update your credentials for this account.", comment: "Try later")
+				if status == 401  || status == 403 {
+					return NSLocalizedString("Please update your credentials for this account, or ensure that your account with this service is still valid.", comment: "Expired credentials")
 				} else {
 					return NSLocalizedString("Please try again later.", comment: "Try later")
 				}

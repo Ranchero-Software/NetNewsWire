@@ -76,8 +76,12 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return treeController.rootNode
 	}
 	
-	var numberOfSections: Int {
-		return shadowTable.count
+	var allSections: [Int] {
+		var sections = [Int]()
+		for (index, _) in shadowTable.enumerated() {
+			sections.append(index)
+		}
+		return sections
 	}
 
 	private(set) var currentMasterIndexPath: IndexPath? {
@@ -313,14 +317,6 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	// MARK: API
 	
-	func beginUpdates() {
-		animatingChanges = true
-	}
-
-	func endUpdates() {
-		animatingChanges = false
-	}
-	
 	func rowsInSection(_ section: Int) -> Int {
 		return shadowTable[section].count
 	}
@@ -361,6 +357,10 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return shadowTable[indexPath.section][indexPath.row]
 	}
 	
+	func nodesFor(section: Int) -> [Node] {
+		return shadowTable[section]
+	}
+	
 	func indexPathFor(_ node: Node) -> IndexPath? {
 		for i in 0..<shadowTable.count {
 			if let row = shadowTable[i].firstIndex(of: node) {
@@ -388,8 +388,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return 0
 	}
 		
-	func expand(section: Int, completion: ([IndexPath]) -> ()) {
-		
+	func expand(section: Int) {
 		guard let expandNode = treeController.rootNode.childAtIndex(section) else {
 			return
 		}
@@ -397,11 +396,9 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		animatingChanges = true
 		
-		var indexPathsToInsert = [IndexPath]()
 		var i = 0
 		
 		func addNode(_ node: Node) {
-			indexPathsToInsert.append(IndexPath(row: i, section: section))
 			shadowTable[section].insert(node, at: i)
 			i = i + 1
 		}
@@ -415,36 +412,26 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			}
 		}
 		
-		completion(indexPathsToInsert)
-		
 		animatingChanges = false
-		
 	}
 	
-	func expand(_ indexPath: IndexPath, completion: ([IndexPath]) -> ()) {
-		
+	func expand(_ indexPath: IndexPath) {
 		let expandNode = shadowTable[indexPath.section][indexPath.row]
 		expandedNodes.append(expandNode)
 		
 		animatingChanges = true
 		
-		var indexPathsToInsert = [IndexPath]()
 		for i in 0..<expandNode.childNodes.count {
 			if let child = expandNode.childAtIndex(i) {
 				let nextIndex = indexPath.row + i + 1
-				indexPathsToInsert.append(IndexPath(row: nextIndex, section: indexPath.section))
 				shadowTable[indexPath.section].insert(child, at: nextIndex)
 			}
 		}
 		
-		completion(indexPathsToInsert)
-		
 		animatingChanges = false
-		
 	}
 	
-	func collapse(section: Int, completion: ([IndexPath]) -> ()) {
-		
+	func collapse(section: Int) {
 		animatingChanges = true
 		
 		guard let collapseNode = treeController.rootNode.childAtIndex(section) else {
@@ -455,33 +442,17 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			expandedNodes.remove(at: removeNode)
 		}
 		
-		var indexPathsToRemove = [IndexPath]()
-		for i in 0..<shadowTable[section].count {
-			indexPathsToRemove.append(IndexPath(row: i, section: section))
-		}
 		shadowTable[section] = [Node]()
 		
-		completion(indexPathsToRemove)
-		
 		animatingChanges = false
-		
 	}
 	
-	func collapse(_ indexPath: IndexPath, completion: ([IndexPath]) -> ()) {
-		
+	func collapse(_ indexPath: IndexPath) {
 		animatingChanges = true
 		
 		let collapseNode = shadowTable[indexPath.section][indexPath.row]
 		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
 			expandedNodes.remove(at: removeNode)
-		}
-		
-		var indexPathsToRemove = [IndexPath]()
-		
-		for child in collapseNode.childNodes {
-			if let index = shadowTable[indexPath.section].firstIndex(of: child) {
-				indexPathsToRemove.append(IndexPath(row: index, section: indexPath.section))
-			}
 		}
 		
 		for child in collapseNode.childNodes {
@@ -490,10 +461,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			}
 		}
 		
-		completion(indexPathsToRemove)
-		
 		animatingChanges = false
-		
 	}
 	
 	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
