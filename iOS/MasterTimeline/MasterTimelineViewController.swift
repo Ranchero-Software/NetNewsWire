@@ -479,7 +479,7 @@ private extension MasterTimelineViewController {
 		block()
 		if let articleID = article?.articleID, let index = coordinator.indexesForArticleIDs(Set([articleID])).first {
 			let indexPath = IndexPath(row: index, section: 0)
-			tableView.selectRow(at: indexPath, animated: false, scrollPosition: .middle)
+			tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 		}
 	}
 	
