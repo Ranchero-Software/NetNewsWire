@@ -389,10 +389,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		coordinator.expand(indexPath)
-		
-		// I don't think this should be necessary when using diffable datasources, but they don't
-		// always reload cells that you want them too.
-		configureCellsForRepresentedObject(parent.representedObject)
+		reloadNode(parent)
 
 		self.applyChanges(animate: true) { [weak self] in
 			if let indexPath = self?.coordinator.indexPathFor(node) {
@@ -426,6 +423,12 @@ private extension MasterFeedViewController {
 	func updateUI() {
 		markAllAsReadButton.isEnabled = coordinator.isAnyUnreadAvailable
 		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+	}
+	
+	func reloadNode(_ node: Node) {
+		var snapshot = dataSource.snapshot()
+		snapshot.reloadItems([node])
+		dataSource.apply(snapshot)
 	}
 	
 	func applyChanges(animate: Bool, completion: (() -> Void)? = nil) {
@@ -725,7 +728,7 @@ private extension MasterFeedViewController {
 				feed.rename(to: name) { result in
 					switch result {
 					case .success:
-						self?.configureCellsForRepresentedObject(feed)
+						self?.reloadNode(node)
 					case .failure(let error):
 						self?.presentError(error)
 					}
@@ -734,7 +737,7 @@ private extension MasterFeedViewController {
 				folder.rename(to: name) { result in
 					switch result {
 					case .success:
-						self?.configureCellsForRepresentedObject(folder)
+						self?.reloadNode(node)
 					case .failure(let error):
 						self?.presentError(error)
 					}
