@@ -286,14 +286,14 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	@objc func accountStateDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync()
+			fetchAndReplaceArticlesSync()
 		}
 		rebuildBackingStores()
 	}
 	
 	@objc func accountsDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync()
+			fetchAndReplaceArticlesSync()
 		}
 		rebuildBackingStores()
 	}
