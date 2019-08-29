@@ -75,7 +75,31 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
 		updateUI()
-		applyChanges(animate: false)
+
+		guard let representedObject = note.object else {
+			return
+		}
+		
+		if let account = representedObject as? Account {
+			if let node = coordinator.rootNode.childNodeRepresentingObject(account) {
+				let sectionIndex = coordinator.rootNode.indexOfChild(node)!
+				if let headerView = tableView.headerView(forSection: sectionIndex) as? MasterFeedTableViewSectionHeader {
+					headerView.unreadCount = account.unreadCount
+				}
+			}
+			return
+		}
+		
+		var node: Node? = nil
+		if let coordinator = representedObject as? AppCoordinator, let fetcher = coordinator.timelineFetcher {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(fetcher as AnyObject)
+		} else {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
+		}
+
+		if let node = node, coordinator.indexPathFor(node) != nil {
+			reloadNode(node)
+		}
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -426,23 +450,19 @@ private extension MasterFeedViewController {
 	}
 	
 	func reloadNode(_ node: Node) {
+		let savedNode = selectedNode()
+		
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems([node])
-		dataSource.apply(snapshot)
+		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+			self?.selectRow(node: savedNode)
+		}
 	}
 	
 	func applyChanges(animate: Bool, completion: (() -> Void)? = nil) {
-		
-		let selectedNode: Node? = {
-			if let selectedIndexPath = tableView.indexPathForSelectedRow {
-				return coordinator.nodeFor(selectedIndexPath)
-			} else {
-				return nil
-			}
-		}()
+		let savedNode = selectedNode()
 		
         var snapshot = NSDiffableDataSourceSnapshot<Int, Node>()
-		
 		let sections = coordinator.allSections
 		snapshot.appendSections(sections)
 
@@ -451,12 +471,24 @@ private extension MasterFeedViewController {
 		}
         
 		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
-			if let nodeToSelect = selectedNode, let selectingIndexPath = self?.coordinator.indexPathFor(nodeToSelect) {
-				self?.tableView.selectRow(at: selectingIndexPath, animated: false, scrollPosition: .none)
-			}
+			self?.selectRow(node: savedNode)
 			completion?()
 		}
-		
+	}
+	
+	func selectedNode() -> Node? {
+		if let selectedIndexPath = tableView.indexPathForSelectedRow {
+			return coordinator.nodeFor(selectedIndexPath)
+		} else {
+			return nil
+		}
+	}
+	
+	func selectRow(node: Node?) {
+		if let nodeToSelect = node, let selectingIndexPath = coordinator.indexPathFor(nodeToSelect) {
+			tableView.selectRow(at: selectingIndexPath, animated: false, scrollPosition: .none)
+		}
+
 	}
 
     func makeDataSource() -> UITableViewDiffableDataSource<Int, Node> {
