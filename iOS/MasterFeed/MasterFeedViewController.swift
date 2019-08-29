@@ -389,10 +389,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		coordinator.expand(indexPath)
-		self.applyChanges(animate: true)
-		if let indexPath = coordinator.indexPathFor(node) {
-			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
-			coordinator.selectFeed(indexPath)
+		
+		// I don't think this should be necessary when using diffable datasources, but they don't
+		// always reload cells that you want them too.
+		configureCellsForRepresentedObject(parent.representedObject)
+
+		self.applyChanges(animate: true) { [weak self] in
+			if let indexPath = self?.coordinator.indexPathFor(node) {
+				self?.tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+				self?.coordinator.selectFeed(indexPath)
+			}
 		}
 
 	}
@@ -422,7 +428,7 @@ private extension MasterFeedViewController {
 		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}
 	
-	func applyChanges(animate: Bool) {
+	func applyChanges(animate: Bool, completion: (() -> Void)? = nil) {
 		
 		let selectedNode: Node? = {
 			if let selectedIndexPath = tableView.indexPathForSelectedRow {
@@ -441,10 +447,11 @@ private extension MasterFeedViewController {
 			snapshot.appendItems(coordinator.nodesFor(section: section), toSection: section)
 		}
         
-        dataSource.apply(snapshot, animatingDifferences: animate)
-		
-		if let nodeToSelect = selectedNode, let selectingIndexPath = coordinator.indexPathFor(nodeToSelect) {
-			tableView.selectRow(at: selectingIndexPath, animated: false, scrollPosition: .none)
+		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
+			if let nodeToSelect = selectedNode, let selectingIndexPath = self?.coordinator.indexPathFor(nodeToSelect) {
+				self?.tableView.selectRow(at: selectingIndexPath, animated: false, scrollPosition: .none)
+			}
+			completion?()
 		}
 		
 	}
