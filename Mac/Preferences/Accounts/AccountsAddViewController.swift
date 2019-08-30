@@ -15,6 +15,8 @@ class AccountsAddViewController: NSViewController {
 	
 	private var accountsAddWindowController: NSWindowController?
 	
+	private let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .freshRSS]
+	
 	init() {
 		super.init(nibName: "AccountsAdd", bundle: nil)
 	}
@@ -39,7 +41,7 @@ class AccountsAddViewController: NSViewController {
 extension AccountsAddViewController: NSTableViewDataSource {
 	
 	func numberOfRows(in tableView: NSTableView) -> Int {
-		return 3
+		return addableAccountTypes.count
 	}
 	
 	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
@@ -56,14 +58,14 @@ extension AccountsAddViewController: NSTableViewDelegate {
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? AccountsAddTableCellView {
-			switch row {
-			case 0:
+			switch addableAccountTypes[row] {
+			case .onMyMac:
 				cell.accountNameLabel?.stringValue = Account.defaultLocalAccountName
 				cell.accountImageView?.image = AppAssets.accountLocal
-			case 1:
+			case .feedbin:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedbin", comment: "Feedbin")
 				cell.accountImageView?.image = AppAssets.accountFeedbin
-			case 2:
+			case .freshRSS:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("FreshRSS", comment: "FreshRSS")
 				cell.accountImageView?.image = AppAssets.accountFreshRSS
 			default:
@@ -81,16 +83,16 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			return
 		}
 
-		switch selectedRow {
-		case 0:
+		switch addableAccountTypes[selectedRow] {
+		case .onMyMac:
 			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
 			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsAddLocalWindowController
-		case 1:
+		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsFeedbinWindowController
-		case 2:
+		case .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = .freshRSS
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
