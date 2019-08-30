@@ -475,15 +475,13 @@ private extension MasterTimelineViewController {
 	}
 
 	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
-		let articleID: String? = {
-			if let indexPath = tableView.indexPathForSelectedRow, indexPath.row < coordinator.articles.count {
-				return coordinator.articles[indexPath.row].articleID
-			}
-			return nil
-		}()
-		
+		guard traitCollection.userInterfaceIdiom == .pad else {
+			block()
+			return
+		}
+
+		let articleID = coordinator.currentArticle?.articleID
 		block()
-		
 		if let articleID = articleID, let index = coordinator.indexesForArticleIDs(Set([articleID])).first {
 			let indexPath = IndexPath(row: index, section: 0)
 			tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)

@@ -883,7 +883,11 @@ private extension AppCoordinator {
 	func replaceArticles(with unsortedArticles: Set<Article>) {
 		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
 		if articles != sortedArticles {
+			let article = currentArticle
 			articles = sortedArticles
+			if let articleID = article?.articleID, let index = row(for: articleID) {
+				currentArticleIndexPath = IndexPath(row: index, section: 0)
+			}
 		}
 	}
 	
