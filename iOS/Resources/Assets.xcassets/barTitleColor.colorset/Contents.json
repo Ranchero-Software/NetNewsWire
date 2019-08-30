@@ -7,13 +7,8 @@
     {
       "idiom" : "universal",
       "color" : {
-        "color-space" : "srgb",
-        "components" : {
-          "red" : "0x08",
-          "alpha" : "1.000",
-          "blue" : "0xEE",
-          "green" : "0x6A"
-        }
+        "platform" : "osx",
+        "reference" : "labelColor"
       }
     }
   ]
