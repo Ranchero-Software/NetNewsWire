@@ -267,9 +267,9 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func ensureStatuses(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
+	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
 		self.queue.update { (database) in
-			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database)
+			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, defaultRead, database)
 			let statuses = Set(statusesDictionary.values)
 			self.statusesTable.mark(statuses, statusKey, flag, database)
 		}
@@ -371,16 +371,16 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Statuses
 	
-	func fetchUnreadArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
-		statusesTable.fetchUnreadArticleIDs(callback)
+	func fetchUnreadArticleIDs() -> Set<String>{
+		return statusesTable.fetchUnreadArticleIDs()
 	}
 	
-	func fetchStarredArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
-		statusesTable.fetchStarredArticleIDs(callback)
+	func fetchStarredArticleIDs() -> Set<String> {
+		return statusesTable.fetchStarredArticleIDs()
 	}
 	
-	func fetchArticleIDsForStatusesWithoutArticles(_ callback: @escaping (Set<String>) -> Void) {
-		statusesTable.fetchArticleIDsForStatusesWithoutArticles(callback)
+	func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
+		return statusesTable.fetchArticleIDsForStatusesWithoutArticles()
 	}
 	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
