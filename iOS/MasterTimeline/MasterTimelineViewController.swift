@@ -18,6 +18,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
 	
+	private lazy var dataSource = makeDataSource()
 	weak var coordinator: AppCoordinator!
 	var undoableCommands = [UndoableCommand]()
 	
@@ -28,7 +29,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	override func viewDidLoad() {
 		
 		super.viewDidLoad()
-		
+		tableView.dataSource = dataSource
+
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
@@ -44,6 +46,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		numberOfTextLines = AppDefaults.timelineNumberOfLines
 		resetEstimatedRowHeight()
 		
+		applyChanges(animate: false)
 		resetUI()
 		
 	}
@@ -71,8 +74,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			appDelegate.authorAvatarDownloader.resetCache()
 			appDelegate.feedIconDownloader.resetCache()
 			appDelegate.faviconDownloader.resetCache()
-			performBlockAndRestoreSelection {
-				tableView.reloadData()
+			
+			// traitCollectionDidChange will get called on a background thread
+			DispatchQueue.main.async {
+				self.reloadAllVisibleCells()
 			}
 		}
 	}
@@ -115,8 +120,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	func reloadArticles() {
-		performBlockAndRestoreSelection {
-			tableView.reloadData()
+		applyChanges(animate: true) { [weak self] in
+			self?.updateArticleSelection()
 		}
 	}
 	
@@ -130,14 +135,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	// MARK: - Table view
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return coordinator.articles.count
-    }
 
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		
@@ -251,13 +248,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 	}
 
-	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
-		let article = coordinator.articles[indexPath.row]
-		configureTimelineCell(cell, article: article)
-		return cell
-	}
-	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		coordinator.selectArticle(indexPath)
 	}
@@ -279,15 +269,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		
-		performBlockAndRestoreSelection {
-			tableView.indexPathsForVisibleRows?.forEach { indexPath in
-				guard let article = coordinator.articles.articleAtRow(indexPath.row) else {
-					return
-				}
-				if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
-					cell.setAvatarImage(image)
-				}
+		tableView.indexPathsForVisibleRows?.forEach { indexPath in
+			guard let article = coordinator.articles.articleAtRow(indexPath.row) else {
+				return
+			}
+			if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
+				cell.setAvatarImage(image)
 			}
 		}
 	}
@@ -296,16 +283,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		guard coordinator.showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
-		
-		performBlockAndRestoreSelection {
-			tableView.indexPathsForVisibleRows?.forEach { indexPath in
-				guard let article = coordinator.articles.articleAtRow(indexPath.row), let authors = article.authors, !authors.isEmpty else {
-					return
-				}
-				for author in authors {
-					if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
-						cell.setAvatarImage(image)
-					}
+		tableView.indexPathsForVisibleRows?.forEach { indexPath in
+			guard let article = coordinator.articles.articleAtRow(indexPath.row), let authors = article.authors, !authors.isEmpty else {
+				return
+			}
+			for author in authors {
+				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
+					cell.setAvatarImage(image)
 				}
 			}
 		}
@@ -315,18 +299,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		guard coordinator.showAvatars, let faviconURL = note.userInfo?["faviconURL"] as? String else {
 			return
 		}
-		
-		performBlockAndRestoreSelection {
-			tableView.indexPathsForVisibleRows?.forEach { indexPath in
-				
-				guard let article = coordinator.articles.articleAtRow(indexPath.row), let articleFaviconURL = article.feed?.faviconURL else {
-					return
-				}
-				if faviconURL == articleFaviconURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
-					cell.setAvatarImage(image)
-					return
-				}
-
+		tableView.indexPathsForVisibleRows?.forEach { indexPath in
+			guard let article = coordinator.articles.articleAtRow(indexPath.row), let articleFaviconURL = article.feed?.faviconURL else {
+				return
+			}
+			if faviconURL == articleFaviconURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
+				cell.setAvatarImage(image)
+				return
 			}
 		}
 	}
@@ -335,12 +314,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		if numberOfTextLines != AppDefaults.timelineNumberOfLines {
 			numberOfTextLines = AppDefaults.timelineNumberOfLines
 			resetEstimatedRowHeight()
-			tableView.reloadData()
+			reloadAllVisibleCells()
 		}
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
-		tableView.reloadData()
+		reloadAllVisibleCells()
 	}
 	
 	@objc func progressDidChange(_ note: Notification) {
@@ -349,12 +328,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	// MARK: Reloading
 	
-	@objc func reloadAllVisibleCells() {
-		tableView.beginUpdates()
-		performBlockAndRestoreSelection {
-			tableView.reloadRows(at: tableView.indexPathsForVisibleRows!, with: .none)
-		}
-		tableView.endUpdates()
+	private func reloadAllVisibleCells() {
+		let visibleArticles = tableView.indexPathsForVisibleRows!.map { return coordinator.articles[$0.row] }
+		reloadCells(visibleArticles)
 	}
 	
 	private func reloadVisibleCells(for articles: [Article]) {
@@ -374,12 +350,21 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	private func reloadVisibleCells(for indexes: IndexSet) {
-		performBlockAndRestoreSelection {
-			tableView.indexPathsForVisibleRows?.forEach { indexPath in
-				if indexes.contains(indexPath.row) {
-					tableView.reloadRows(at: [indexPath], with: .none)
-				}
+		let reloadArticles: [Article] = tableView.indexPathsForVisibleRows!.compactMap { indexPath in
+			if indexes.contains(indexPath.row) {
+				return coordinator.articles[indexPath.row]
+			} else {
+				return nil
 			}
+		}
+		reloadCells(reloadArticles)
+	}
+	
+	private func reloadCells(_ articles: [Article]) {
+		var snapshot = dataSource.snapshot()
+		snapshot.reloadItems(articles)
+		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+			self?.restoreSelectionIfNecessary()
 		}
 	}
 	
@@ -444,8 +429,27 @@ private extension MasterTimelineViewController {
 			navigationController?.updateAccountRefreshProgressIndicator()
 		}
 	}
+
+	func applyChanges(animate: Bool, completion: (() -> Void)? = nil) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
+		snapshot.appendSections([0])
+		snapshot.appendItems(coordinator.articles, toSection: 0)
+        
+		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
+			self?.restoreSelectionIfNecessary()
+			completion?()
+		}
+	}
 	
-	func configureTimelineCell(_ cell: MasterTimelineTableViewCell, article: Article) {
+	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
+		return MasterTimelineDataSource(coordinator: coordinator, tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
+			let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
+			self?.configure(cell, article: article)
+			return cell
+		})
+    }
+	
+	func configure(_ cell: MasterTimelineTableViewCell, article: Article) {
 		
 		let avatar = avatarFor(article)
 		let featuredImage = featuredImageFor(article)
@@ -470,19 +474,11 @@ private extension MasterTimelineViewController {
 		return nil
 	}
 
-	func queueReloadVisableCells() {
-		CoalescingQueue.standard.add(self, #selector(reloadAllVisibleCells))
-	}
-
-	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
+	func restoreSelectionIfNecessary() {
 		guard traitCollection.userInterfaceIdiom == .pad else {
-			block()
 			return
 		}
-
-		let articleID = coordinator.currentArticle?.articleID
-		block()
-		if let articleID = articleID, let index = coordinator.indexesForArticleIDs(Set([articleID])).first {
+		if let articleID = coordinator.currentArticle?.articleID, let index = coordinator.indexesForArticleIDs(Set([articleID])).first {
 			let indexPath = IndexPath(row: index, section: 0)
 			tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 		}

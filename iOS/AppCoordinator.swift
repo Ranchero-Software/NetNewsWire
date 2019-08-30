@@ -468,11 +468,17 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = false
 	}
 	
+	func indexForArticleID(_ articleID: String?) -> Int? {
+		guard let articleID = articleID else { return nil }
+		updateArticleRowMapIfNeeded()
+		return articleRowMap[articleID]
+	}
+	
 	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
 		var indexes = IndexSet()
 		
 		articleIDs.forEach { (articleID) in
-			guard let oneIndex = row(for: articleID) else {
+			guard let oneIndex = indexForArticleID(articleID) else {
 				return
 			}
 			if oneIndex != NSNotFound {
@@ -482,7 +488,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		return indexes
 	}
-	
+
 	func selectFeed(_ indexPath: IndexPath) {
 		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count > 0 {
 			currentMasterIndexPath = indexPath
@@ -885,15 +891,10 @@ private extension AppCoordinator {
 		if articles != sortedArticles {
 			let article = currentArticle
 			articles = sortedArticles
-			if let articleID = article?.articleID, let index = row(for: articleID) {
+			if let articleID = article?.articleID, let index = indexForArticleID(articleID) {
 				currentArticleIndexPath = IndexPath(row: index, section: 0)
 			}
 		}
-	}
-	
-	func row(for articleID: String) -> Int? {
-		updateArticleRowMapIfNeeded()
-		return articleRowMap[articleID]
 	}
 	
 	func updateArticleRowMap() {
