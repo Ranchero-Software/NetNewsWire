@@ -119,16 +119,16 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		reloadAllVisibleCells()
 	}
 	
-	func reloadArticles() {
-		applyChanges(animate: true) { [weak self] in
-			self?.updateArticleSelection()
+	func reloadArticles(animate: Bool) {
+		applyChanges(animate: animate) { [weak self] in
+			self?.updateArticleSelection(animate: animate)
 		}
 	}
 	
-	func updateArticleSelection() {
+	func updateArticleSelection(animate: Bool) {
 		if let indexPath = coordinator.currentArticleIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+				tableView.selectRow(at: indexPath, animated: animate, scrollPosition: .middle)
 			}
 		}
 		updateUI()

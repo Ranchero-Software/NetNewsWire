@@ -156,7 +156,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	var currentArticle: Article? {
-		if let indexPath = currentArticleIndexPath {
+		if let indexPath = currentArticleIndexPath, indexPath.row < articles.count {
 			return articles[indexPath.row]
 		}
 		return nil
@@ -165,7 +165,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private(set) var currentArticleIndexPath: IndexPath? {
 		didSet {
 			if currentArticleIndexPath != oldValue {
-				masterTimelineViewController?.updateArticleSelection()
+				masterTimelineViewController?.updateArticleSelection(animate: true)
 				detailViewController?.updateArticleSelection()
 			}
 		}
@@ -184,7 +184,6 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			}
 			updateShowAvatars()
 			articleRowMap = [String: Int]()
-			masterTimelineViewController?.reloadArticles()
 			updateUnreadCount()
 		}
 	}
@@ -883,14 +882,15 @@ private extension AppCoordinator {
 	}
 	
 	func sortDirectionDidChange() {
-		replaceArticles(with: Set(articles))
+		replaceArticles(with: Set(articles), animate: true)
 	}
 	
-	func replaceArticles(with unsortedArticles: Set<Article>) {
+	func replaceArticles(with unsortedArticles: Set<Article>, animate: Bool) {
 		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
 		if articles != sortedArticles {
 			let article = currentArticle
 			articles = sortedArticles
+			masterTimelineViewController?.reloadArticles(animate: animate)
 			if let articleID = article?.articleID, let index = indexForArticleID(articleID) {
 				currentArticleIndexPath = IndexPath(row: index, section: 0)
 			}
@@ -936,7 +936,7 @@ private extension AppCoordinator {
 				}
 			}
 
-			strongSelf.replaceArticles(with: updatedArticles)
+			strongSelf.replaceArticles(with: updatedArticles, animate: true)
 		}
 		
 	}
@@ -957,7 +957,7 @@ private extension AppCoordinator {
 			return
 		}
 		let fetchedArticles = fetchUnsortedArticlesSync(for: [timelineFetcher])
-		replaceArticles(with: fetchedArticles)
+		replaceArticles(with: fetchedArticles, animate: false)
 	}
 
 	func fetchAndReplaceArticlesAsync(completion: @escaping () -> Void) {
@@ -969,7 +969,7 @@ private extension AppCoordinator {
 			return
 		}
 		fetchUnsortedArticlesAsync(for: [timelineFetcher]) { [weak self] (articles) in
-			self?.replaceArticles(with: articles)
+			self?.replaceArticles(with: articles, animate: false)
 			completion()
 		}
 	}
