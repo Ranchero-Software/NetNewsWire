@@ -270,7 +270,7 @@ class DetailViewControllerWebViewProvider {
 		webView.uiDelegate = nil
 		webView.navigationDelegate = nil
 
-		let html = ArticleRenderer.noSelectionHTML(style: .defaultStyle)
+		let html = ArticleRenderer.noContentHTML(style: .defaultStyle)
 		webView.loadHTMLString(html, baseURL: nil)
 
 		queue.insert(webView, at: 0)
