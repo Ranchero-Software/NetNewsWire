@@ -28,7 +28,6 @@ class DetailViewController: UIViewController {
 	override func viewDidLoad() {
 		
 		super.viewDidLoad()
-		webView.isHidden = true
 		webView.navigationDelegate = self
 		
 		markAsRead()
@@ -213,16 +212,6 @@ extension DetailViewController: WKNavigationDelegate {
 		}
 		
 	}
-	
-	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		// We initially hide the webview and only show it after it has loaded to avoid the
-		// white flashing that WKWebView does when it loads.  This is especially noticable
-		// in dark mode.
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-			webView.isHidden = false
-		}
-	}
-	
 }
 
 private extension DetailViewController {
