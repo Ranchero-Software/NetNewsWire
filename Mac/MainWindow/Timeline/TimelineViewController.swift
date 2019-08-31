@@ -684,9 +684,15 @@ extension TimelineViewController: NSUserInterfaceValidations {
 
 	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
+		if item.action == #selector(openArticleInBrowser(_:)) {
+			let currentLink = oneSelectedArticle?.preferredLink
+			return currentLink != nil
+		}
+
 		if item.action == #selector(copy(_:)) {
 			return NSPasteboard.general.canCopyAtLeastOneObject(selectedArticles)
 		}
+
 		return true
 	}
 }
