@@ -46,7 +46,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		searchController.obscuresBackgroundDuringPresentation = false
 		searchController.searchBar.delegate = self
 		searchController.searchBar.placeholder = NSLocalizedString("Search Articles", comment: "Search Articles")
-		searchController.searchBar.showsScopeBar = true
 		searchController.searchBar.scopeButtonTitles = [
 			NSLocalizedString("Here", comment: "Here"),
 			NSLocalizedString("All Articles", comment: "All Articles")
@@ -425,6 +424,16 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 	func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
 		let searchScope = SearchScope(rawValue: selectedScope)!
 		coordinator.searchArticles(searchBar.text!, searchScope)
+	}
+	
+	func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+		searchBar.showsScopeBar = true
+		return true
+	}
+	
+	func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+		searchBar.showsScopeBar = false
+		return true
 	}
 	
 }
