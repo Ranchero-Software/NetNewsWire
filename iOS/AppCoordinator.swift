@@ -324,31 +324,6 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return shadowTable[section].count
 	}
 	
-	func rebuildShadowTable() {
-		
-		shadowTable = [[Node]]()
-
-		for i in 0..<treeController.rootNode.numberOfChildNodes {
-			
-			var result = [Node]()
-			
-			if let nodes = treeController.rootNode.childAtIndex(i)?.childNodes {
-				for node in nodes {
-					result.append(node)
-					if expandedNodes.contains(node) {
-						for child in node.childNodes {
-							result.append(child)
-						}
-					}
-				}
-			}
-			
-			shadowTable.append(result)
-			
-		}
-		
-	}
-
 	func isExpanded(_ node: Node) -> Bool {
 		return expandedNodes.contains(node)
 	}
@@ -761,6 +736,28 @@ private extension AppCoordinator {
 		}
 	}
 	
+	func rebuildShadowTable() {
+		shadowTable = [[Node]]()
+
+		for i in 0..<treeController.rootNode.numberOfChildNodes {
+			
+			var result = [Node]()
+			if let nodes = treeController.rootNode.childAtIndex(i)?.childNodes {
+				for node in nodes {
+					result.append(node)
+					if expandedNodes.contains(node) {
+						for child in node.childNodes {
+							result.append(child)
+						}
+					}
+				}
+			}
+			
+			shadowTable.append(result)
+			
+		}
+	}
+
 	func updateShowAvatars() {
 		
 		if showFeedNames {
