@@ -49,6 +49,8 @@
 		51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CC1230F5963006127BE /* ThemedNavigationController.swift */; };
 		51934CCE2310792F006127BE /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
 		51934CD023108953006127BE /* ActivityID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCF23108953006127BE /* ActivityID.swift */; };
+		51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
+		51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E743422C663F900A78E47 /* SceneDelegate.swift */; };
 		51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
@@ -710,6 +712,7 @@
 		51934CC1230F5963006127BE /* ThemedNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemedNavigationController.swift; sourceTree = "<group>"; };
 		51934CCD2310792F006127BE /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
 		51934CCF23108953006127BE /* ActivityID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityID.swift; sourceTree = "<group>"; };
+		51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTimelineFeedDelegate.swift; sourceTree = "<group>"; };
 		5194B5ED22B6965300144881 /* SettingsSubscriptionsImportDocumentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSubscriptionsImportDocumentPickerView.swift; sourceTree = "<group>"; };
 		5194B5F122B69FCC00144881 /* SettingsSubscriptionsExportDocumentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSubscriptionsExportDocumentPickerView.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
@@ -1813,6 +1816,7 @@
 				84F2D5361FC22FCB00998D64 /* TodayFeedDelegate.swift */,
 				845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */,
 				8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */,
+				51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */,
 				84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */,
 			);
 			path = SmartFeeds;
@@ -2419,6 +2423,7 @@
 				5126EE97226CB48A00C22AFC /* AppCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
+				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
 				5183CCEF227125970010922C /* SettingsViewController.swift in Sources */,
 				51F85BE5227217D000C787DC /* RefreshIntervalViewController.swift in Sources */,
@@ -2565,6 +2570,7 @@
 				849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */,
 				5183CCE8226F68D90010922C /* AccountRefreshTimer.swift in Sources */,
 				849A97831ED9EC63007D329B /* SidebarStatusBarView.swift in Sources */,
+				51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
 				84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */,
 				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
 				84DEE56522C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,

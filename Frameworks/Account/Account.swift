@@ -48,6 +48,7 @@ public enum FetchType {
 	case feed(Feed)
 	case articleIDs(Set<String>)
 	case search(String)
+	case searchWithArticleIDs(String, Set<String>)
 }
 
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
@@ -534,6 +535,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return fetchArticles(articleIDs: articleIDs)
 		case .search(let searchString):
 			return fetchArticlesMatching(searchString)
+		case .searchWithArticleIDs(let searchString, let articleIDs):
+			return fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
 		}
 	}
 
@@ -553,6 +556,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			fetchArticlesAsync(articleIDs: articleIDs, callback)
 		case .search(let searchString):
 			fetchArticlesMatchingAsync(searchString, callback)
+		case .searchWithArticleIDs(let searchString, let articleIDs):
+			return fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, callback)
 		}
 	}
 
@@ -862,8 +867,16 @@ private extension Account {
 		return database.fetchArticlesMatching(searchString, flattenedFeeds().feedIDs())
 	}
 
+	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) -> Set<Article> {
+		return database.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+	}
+	
 	func fetchArticlesMatchingAsync(_ searchString: String, _ callback: @escaping ArticleSetBlock) {
 		database.fetchArticlesMatchingAsync(searchString, flattenedFeeds().feedIDs(), callback)
+	}
+
+	func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
+		database.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, callback)
 	}
 
 	func fetchArticles(articleIDs: Set<String>) -> Set<Article> {

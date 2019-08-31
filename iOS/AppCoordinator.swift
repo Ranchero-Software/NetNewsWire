@@ -12,6 +12,11 @@ import Articles
 import RSCore
 import RSTree
 
+enum SearchScope: Int {
+	case timeline = 0
+	case global = 1
+}
+
 class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var undoableCommands = [UndoableCommand]()
@@ -49,7 +54,9 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var expandedNodes = [Node]()
 	private var shadowTable = [[Node]]()
 	private var lastSearchString = ""
+	private var lastSearchScope: SearchScope? = nil
 	private var isSearching: Bool = false
+	private var searchArticleIds: Set<String>? = nil
 	
 	private(set) var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
@@ -517,25 +524,41 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func searchArticles(_ searchString: String) {
+	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
 		guard !searchString.isEmpty else {
 			isSearching = false
+			lastSearchString = ""
+			lastSearchScope = nil
+			searchArticleIds = nil
+			
 			if let ip = currentMasterIndexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 				timelineFetcher = fetcher
 			}
+			
 			return
 		}
 		
-		isSearching = true
-		
+		if !isSearching {
+			isSearching = true
+			searchArticleIds = Set(articles.map { $0.articleID })
+		}
+
 		if searchString.count < 3 {
 			timelineFetcher = nil
 			return
 		}
 		
-		if searchString != lastSearchString {
-			timelineFetcher = SmartFeed(delegate: SearchFeedDelegate(searchString: searchString))
+		if searchString != lastSearchString || searchScope != lastSearchScope {
+			
+			switch searchScope {
+			case .global:
+				timelineFetcher = SmartFeed(delegate: SearchFeedDelegate(searchString: searchString))
+			case .timeline:
+				timelineFetcher = SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: searchArticleIds!))
+			}
+			
 			lastSearchString = searchString
+			lastSearchScope = searchScope
 		}
 		
 	}

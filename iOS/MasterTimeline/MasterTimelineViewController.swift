@@ -44,10 +44,16 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		// Setup the Search Controller
 		searchController.searchResultsUpdater = self
 		searchController.obscuresBackgroundDuringPresentation = false
+		searchController.searchBar.delegate = self
 		searchController.searchBar.placeholder = NSLocalizedString("Search Articles", comment: "Search Articles")
+		searchController.searchBar.showsScopeBar = true
+		searchController.searchBar.scopeButtonTitles = [
+			NSLocalizedString("Here", comment: "Here"),
+			NSLocalizedString("All Articles", comment: "All Articles")
+		]
 		navigationItem.searchController = searchController
 		definesPresentationContext = true
-		
+
 		// Setup the Refresh Control
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -403,12 +409,24 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 }
 
-// MARK: UISearchResultsUpdating
+// MARK: Searching
 
 extension MasterTimelineViewController: UISearchResultsUpdating {
+
 	func updateSearchResults(for searchController: UISearchController) {
-		coordinator.searchArticles(searchController.searchBar.text!)
+		let searchScope = SearchScope(rawValue: searchController.searchBar.selectedScopeButtonIndex)!
+		coordinator.searchArticles(searchController.searchBar.text!, searchScope)
 	}
+
+}
+
+extension MasterTimelineViewController: UISearchBarDelegate {
+	
+	func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+		let searchScope = SearchScope(rawValue: selectedScope)!
+		coordinator.searchArticles(searchBar.text!, searchScope)
+	}
+	
 }
 
 // MARK: Private

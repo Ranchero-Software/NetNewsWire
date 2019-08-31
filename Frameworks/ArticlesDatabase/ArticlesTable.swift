@@ -146,12 +146,23 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Fetching Search Articles
 
-	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) -> Set<Article> {
+	func fetchArticlesMatching(_ searchString: String) -> Set<Article> {
 		var articles: Set<Article> = Set<Article>()
 		queue.fetchSync { (database) in
 			articles = self.fetchArticlesMatching(searchString, database)
 		}
+		return articles
+	}
+
+	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) -> Set<Article> {
+		var articles = fetchArticlesMatching(searchString)
 		articles = articles.filter{ feedIDs.contains($0.feedID) }
+		return articles
+	}
+
+	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) -> Set<Article> {
+		var articles = fetchArticlesMatching(searchString)
+		articles = articles.filter{ articleIDs.contains($0.articleID) }
 		return articles
 	}
 
@@ -159,24 +170,20 @@ final class ArticlesTable: DatabaseTable {
 		fetchArticlesAsync({ self.fetchArticlesMatching(searchString, feedIDs, $0) }, callback)
 	}
 
-	private func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
-		let sql = "select rowid from search where search match ?;"
-		let sqlSearchString = sqliteSearchString(with: searchString)
-		let searchStringParameters = [sqlSearchString]
-		guard let resultSet = database.executeQuery(sql, withArgumentsIn: searchStringParameters) else {
-			return Set<Article>()
-		}
-		let searchRowIDs = resultSet.mapToSet { $0.longLongInt(forColumnIndex: 0) }
-		if searchRowIDs.isEmpty {
-			return Set<Article>()
-		}
+	func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs, $0) }, callback)
+	}
 
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))!
-		let whereClause = "searchRowID in \(placeholders)"
-		let parameters: [AnyObject] = Array(searchRowIDs) as [AnyObject]
-		let articles = fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
+	private func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+		let articles = fetchArticlesMatching(searchString, database)
 		// TODO: include the feedIDs in the SQL rather than filtering here.
 		return articles.filter{ feedIDs.contains($0.feedID) }
+	}
+
+	private func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+		let articles = fetchArticlesMatching(searchString, database)
+		// TODO: include the articleIDs in the SQL rather than filtering here.
+		return articles.filter{ articleIDs.contains($0.articleID) }
 	}
 
 	// MARK: - Fetching Articles for Indexer
