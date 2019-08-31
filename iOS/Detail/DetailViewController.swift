@@ -14,22 +14,36 @@ import SafariServices
 
 class DetailViewController: UIViewController {
 
-	@IBOutlet weak var nextUnreadBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var prevArticleBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var nextArticleBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var readBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var starBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var actionBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var browserBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var webView: WKWebView!
-	
+	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
+	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
+	@IBOutlet private weak var nextArticleBarButtonItem: UIBarButtonItem!
+	@IBOutlet private weak var readBarButtonItem: UIBarButtonItem!
+	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
+	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
+	@IBOutlet private weak var browserBarButtonItem: UIBarButtonItem!
+	@IBOutlet private weak var webViewContainer: UIView!
+	private var webView: WKWebView!
+
 	weak var coordinator: AppCoordinator!
 	
 	override func viewDidLoad() {
-		
 		super.viewDidLoad()
+
+		webView = WKWebView(frame: webViewContainer.bounds)
+		webView.translatesAutoresizingMaskIntoConstraints = false
 		webView.navigationDelegate = self
 		
+		webViewContainer.addSubview(webView)
+		
+		let constraints: [NSLayoutConstraint] = [
+			webView.leadingAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.leadingAnchor),
+			webView.trailingAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.trailingAnchor),
+			webView.topAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.topAnchor),
+			webView.bottomAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.bottomAnchor),
+		]
+		
+		NSLayoutConstraint.activate(constraints)
+
 		markAsRead()
 		updateUI()
 		reloadHTML()
