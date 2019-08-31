@@ -7,7 +7,7 @@
     {
       "idiom" : "universal",
       "color" : {
-        "platform" : "osx",
+        "platform" : "ios",
         "reference" : "labelColor"
       }
     }
