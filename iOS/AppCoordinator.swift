@@ -49,6 +49,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var expandedNodes = [Node]()
 	private var shadowTable = [[Node]]()
 	private var lastSearchString = ""
+	private var isSearching: Bool = false
 	
 	private(set) var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
@@ -105,14 +106,23 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var timelineFetcher: ArticleFetcher? {
 		didSet {
+
 			currentArticleIndexPath = nil
 			if timelineFetcher is Feed {
 				showFeedNames = false
 			} else {
 				showFeedNames = true
 			}
-			fetchAndReplaceArticlesSync()
-			masterTimelineViewController?.reinitializeArticles()
+
+			if isSearching {
+				fetchAndReplaceArticlesAsync {
+					self.masterTimelineViewController?.reinitializeArticles()
+				}
+			} else {
+				fetchAndReplaceArticlesSync()
+				masterTimelineViewController?.reinitializeArticles()
+			}
+
 		}
 	}
 	
@@ -506,9 +516,17 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func searchArticles(_ searchString: String) {
 		guard !searchString.isEmpty else {
+			isSearching = false
 			if let ip = currentMasterIndexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 				timelineFetcher = fetcher
 			}
+			return
+		}
+		
+		isSearching = true
+		
+		if searchString.count < 3 {
+			timelineFetcher = nil
 			return
 		}
 		
@@ -890,7 +908,7 @@ private extension AppCoordinator {
 	
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
-			articles = [Article]()
+			replaceArticles(with: Set<Article>(), animate: true)
 		}
 	}
 	
