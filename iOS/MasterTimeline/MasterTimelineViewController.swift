@@ -19,9 +19,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
 	
 	private lazy var dataSource = makeDataSource()
+	private let searchController = UISearchController(searchResultsController: nil)
+	
 	weak var coordinator: AppCoordinator!
 	var undoableCommands = [UndoableCommand]()
-	
+
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -29,7 +31,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	override func viewDidLoad() {
 		
 		super.viewDidLoad()
-		tableView.dataSource = dataSource
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
@@ -40,9 +41,19 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
+		// Setup the Search Controller
+		searchController.searchResultsUpdater = self
+		searchController.obscuresBackgroundDuringPresentation = false
+		searchController.searchBar.placeholder = NSLocalizedString("Search Articles", comment: "Search Articles")
+		navigationItem.searchController = searchController
+		definesPresentationContext = true
+		
+		// Setup the Refresh Control
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
+		// Configure the table
+		tableView.dataSource = dataSource
 		numberOfTextLines = AppDefaults.timelineNumberOfLines
 		resetEstimatedRowHeight()
 		
@@ -390,6 +401,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 	}
 	
+}
+
+// MARK: UISearchResultsUpdating
+
+extension MasterTimelineViewController: UISearchResultsUpdating {
+	func updateSearchResults(for searchController: UISearchController) {
+		coordinator.searchArticles(searchController.searchBar.text!)
+	}
 }
 
 // MARK: Private

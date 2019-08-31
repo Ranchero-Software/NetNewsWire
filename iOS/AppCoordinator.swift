@@ -48,6 +48,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var animatingChanges = false
 	private var expandedNodes = [Node]()
 	private var shadowTable = [[Node]]()
+	private var lastSearchString = ""
 	
 	private(set) var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
@@ -501,6 +502,21 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			}
 			rootSplitViewController.preferredDisplayMode = .automatic
 		}
+	}
+	
+	func searchArticles(_ searchString: String) {
+		guard !searchString.isEmpty else {
+			if let ip = currentMasterIndexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
+				timelineFetcher = fetcher
+			}
+			return
+		}
+		
+		if searchString != lastSearchString {
+			timelineFetcher = SmartFeed(delegate: SearchFeedDelegate(searchString: searchString))
+			lastSearchString = searchString
+		}
+		
 	}
 	
 	func selectPrevArticle() {
