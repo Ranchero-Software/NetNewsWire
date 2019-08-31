@@ -263,6 +263,10 @@ class DetailViewControllerWebViewProvider {
 	}
 	
 	func enqueueWebView(_ webView: WKWebView) {
+		guard queue.count < maximumQueueDepth else {
+			return
+		}
+
 		webView.uiDelegate = nil
 		webView.navigationDelegate = nil
 
@@ -275,6 +279,7 @@ class DetailViewControllerWebViewProvider {
 	// MARK: Private
 
 	private let minimumQueueDepth = 3
+	private let maximumQueueDepth = 6
 	private var queue: [WKWebView] = []
 	
 	private init() {
