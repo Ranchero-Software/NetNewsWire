@@ -26,10 +26,16 @@ class DetailViewController: UIViewController {
 
 	weak var coordinator: AppCoordinator!
 	
+	deinit {
+		webView.removeFromSuperview()
+		DetailViewControllerWebViewProvider.shared.enqueueWebView(webView)
+		webView = nil
+	}
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		webView = WKWebView(frame: webViewContainer.bounds)
+		webView = DetailViewControllerWebViewProvider.shared.dequeueWebView()
 		webView.translatesAutoresizingMaskIntoConstraints = false
 		webView.navigationDelegate = self
 		
@@ -236,4 +242,49 @@ private extension DetailViewController {
 		}
 	}
 	
+}
+
+// MARK: -
+
+/// WKWebView has an awful behavior of a flash to white on first load when in dark mode.
+/// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-shite part of their lifecycle.
+class DetailViewControllerWebViewProvider {
+	static var shared = DetailViewControllerWebViewProvider()
+	
+	func dequeueWebView() -> WKWebView {
+		if let webView = queue.popLast() {
+			replenishQueueIfNeeded()
+			return webView
+		}
+		
+		assertionFailure("Creating WKWebView in \(#function); queue has run dry.")
+		let webView = WKWebView(frame: .zero)
+		return webView
+	}
+	
+	func enqueueWebView(_ webView: WKWebView) {
+		webView.uiDelegate = nil
+		webView.navigationDelegate = nil
+
+		let html = ArticleRenderer.noSelectionHTML(style: .defaultStyle)
+		webView.loadHTMLString(html, baseURL: nil)
+
+		queue.insert(webView, at: 0)
+	}
+
+	// MARK: Private
+
+	private let minimumQueueDepth = 3
+	private var queue: [WKWebView] = []
+	
+	private init() {
+		replenishQueueIfNeeded()
+	}
+	
+	private func replenishQueueIfNeeded() {
+		while queue.count < minimumQueueDepth {
+			let webView = WKWebView(frame: .zero)
+			enqueueWebView(webView)
+		}
+	}
 }
