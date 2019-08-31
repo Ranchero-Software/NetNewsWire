@@ -41,6 +41,11 @@ struct ArticleRenderer {
 		let renderer = ArticleRenderer(article: nil, style: style)
 		return renderer.noSelectionHTML
 	}
+	
+	static func noContentHTML(style: ArticleStyle) -> String {
+		let renderer = ArticleRenderer(article: nil, style: style)
+		return renderer.noContentHTML
+	}
 }
 
 // MARK: - Private
@@ -60,6 +65,10 @@ private extension ArticleRenderer {
 	private var noSelectionHTML: String {
 		let body = "<h3 class='systemMessage'>No selection</h3>"
 		return renderHTML(withBody: body)
+	}
+
+	private var noContentHTML: String {
+		return renderHTML(withBody: "")
 	}
 
 	static var faviconImgTagCache = [Feed: String]()
