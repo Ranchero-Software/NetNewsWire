@@ -15,13 +15,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DNb-lt-KzC">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DNb-lt-KzC">
                                 <rect key="frame" x="0.0" y="44" width="414" height="769"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="DNb-lt-KzC" firstAttribute="top" secondItem="VUw-jc-0yf" secondAttribute="top" id="Bfh-RL-m4d"/>
+                            <constraint firstItem="DNb-lt-KzC" firstAttribute="bottom" secondItem="VUw-jc-0yf" secondAttribute="bottom" id="FfW-6G-Bcp"/>
+                            <constraint firstItem="DNb-lt-KzC" firstAttribute="trailing" secondItem="VUw-jc-0yf" secondAttribute="trailing" id="QJ5-Ne-ndd"/>
+                            <constraint firstItem="DNb-lt-KzC" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="ezE-0p-35X"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
                     </view>
                     <toolbarItems>
