@@ -46,20 +46,12 @@ final class DeleteCommand: UndoableCommand {
 	}
 
 	func perform() {
-
-		BatchUpdate.shared.perform {
-			itemSpecifiers.forEach { $0.delete() {} }
-			treeController.rebuild()
-		}
+		itemSpecifiers.forEach { $0.delete() {} }
 		registerUndo()
 	}
 
 	func undo() {
-
-		BatchUpdate.shared.perform {
-			itemSpecifiers.forEach { $0.restore() }
-			treeController.rebuild()
-		}
+		itemSpecifiers.forEach { $0.restore() }
 		registerRedo()
 	}
 
