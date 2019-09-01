@@ -392,12 +392,13 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	func reloadFeeds() {
 		updateUI()
-		applyChanges(animate: true)
-		
+
 		// We have to reload all the visible cells because if we got here by doing a table cell move,
 		// then the table itself is in a weird state.  This is because we do unusual things like allowing
 		// drops on a "folder" that should cause the dropped cell to disappear.
-		reloadAllVisibleCells()
+		applyChanges(animate: true) { [weak self] in
+			self?.reloadAllVisibleCells()
+		}
 	}
 	
 	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
