@@ -2,9 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/brentsimmons/NetNewsWire.svg?style=svg)](https://circleci.com/gh/brentsimmons/NetNewsWire)
 
-It’s a free and open source feed reader for macOS.
-
-It’s not in beta just yet. Getting close! While NetNewsWire 5.0 is feature-complete as of May 25, 2019, it has known bugs — and, surely, plenty of unknown bugs.
+It’s a free and open source feed reader for macOS. An iOS version is in progress.
 
 It supports [RSS](http://cyber.harvard.edu/rss/rss.html), [Atom](https://tools.ietf.org/html/rfc4287), [JSON Feed](https://jsonfeed.org/), and [RSS-in-JSON](https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md) formats.
 
