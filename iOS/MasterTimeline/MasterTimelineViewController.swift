@@ -427,11 +427,13 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 	}
 	
 	func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+		coordinator.beginSearching()
 		searchBar.showsScopeBar = true
 		return true
 	}
 	
 	func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+		coordinator.endSearching()
 		searchBar.showsScopeBar = false
 		return true
 	}

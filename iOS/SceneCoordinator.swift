@@ -530,25 +530,27 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 	}
 	
-	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
-		guard !searchString.isEmpty else {
-			isSearching = false
-			lastSearchString = ""
-			lastSearchScope = nil
-			searchArticleIds = nil
-			
-			if let ip = currentMasterIndexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
-				timelineFetcher = fetcher
-			}
-			
-			return
-		}
-		
-		if !isSearching {
-			isSearching = true
-			searchArticleIds = Set(articles.map { $0.articleID })
-		}
+	func beginSearching() {
+		isSearching = true
+		searchArticleIds = Set(articles.map { $0.articleID })
+		timelineFetcher = nil
+	}
 
+	func endSearching() {
+		isSearching = false
+		lastSearchString = ""
+		lastSearchScope = nil
+		searchArticleIds = nil
+		
+		if let ip = currentMasterIndexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
+			timelineFetcher = fetcher
+		}
+	}
+	
+	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
+		
+		guard isSearching else { return }
+		
 		if searchString.count < 3 {
 			timelineFetcher = nil
 			return
