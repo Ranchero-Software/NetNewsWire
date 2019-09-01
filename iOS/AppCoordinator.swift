@@ -299,10 +299,9 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	@objc func containerChildrenDidChange(_ note: Notification) {
+		rebuildBackingStores()
 		if timelineFetcherContainsAnyPseudoFeed() || timelineFetcherContainsAnyFolder() {
-			fetchAndReplaceArticlesAsync() { [weak self] in
-				self?.rebuildBackingStores()
-			}
+			fetchAndReplaceArticlesAsync() {}
 		}
 	}
 	
