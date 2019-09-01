@@ -120,7 +120,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	var timelineFetcher: ArticleFetcher? {
 		didSet {
 
-			currentArticleIndexPath = nil
+			selectArticle(nil)
 			if timelineFetcher is Feed {
 				showFeedNames = false
 			} else {
@@ -186,14 +186,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return nil
 	}
 	
-	private(set) var currentArticleIndexPath: IndexPath? {
-		didSet {
-			if currentArticleIndexPath != oldValue {
-				masterTimelineViewController?.updateArticleSelection(animate: true)
-				detailViewController?.updateArticleSelection()
-			}
-		}
-	}
+	private(set) var currentArticleIndexPath: IndexPath?
 	
 	private(set) var articles = ArticleArray() {
 		didSet {
@@ -506,6 +499,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		currentArticleIndexPath = indexPath
 		activityManager.reading(currentArticle)
 		
+		if let article = currentArticle {
+			markArticles(Set([article]), statusKey: .read, flag: true)
+		}
+
 		if indexPath == nil {
 			if !rootSplitViewController.isCollapsed {
 				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
@@ -527,6 +524,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			}
 			rootSplitViewController.preferredDisplayMode = .automatic
 		}
+
+		masterTimelineViewController?.updateArticleSelection(animate: true)
+		detailViewController?.updateArticleSelection()
+		
 	}
 	
 	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
