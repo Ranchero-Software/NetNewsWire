@@ -69,7 +69,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	private let treeControllerDelegate = FeedTreeControllerDelegate()
-	private(set) lazy var treeController: TreeController = {
+	private lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
 	

@@ -14,7 +14,6 @@ import Articles
 
 final class DeleteCommand: UndoableCommand {
 
-	let treeController: TreeController
 	let undoManager: UndoManager
 	let undoActionName: String
 	var redoActionName: String {
@@ -24,7 +23,7 @@ final class DeleteCommand: UndoableCommand {
 
 	private let itemSpecifiers: [SidebarItemSpecifier]
 
-	init?(nodesToDelete: [Node], treeController: TreeController, undoManager: UndoManager, errorHandler: @escaping (Error) -> ()) {
+	init?(nodesToDelete: [Node], undoManager: UndoManager, errorHandler: @escaping (Error) -> ()) {
 
 		guard DeleteCommand.canDelete(nodesToDelete) else {
 			return nil
@@ -33,7 +32,6 @@ final class DeleteCommand: UndoableCommand {
 			return nil
 		}
 
-		self.treeController = treeController
 		self.undoActionName = actionName
 		self.undoManager = undoManager
 		self.errorHandler = errorHandler

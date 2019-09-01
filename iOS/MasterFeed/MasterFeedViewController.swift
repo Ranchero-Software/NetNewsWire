@@ -811,7 +811,7 @@ private extension MasterFeedViewController {
 	func delete(indexPath: IndexPath) {
 		guard let undoManager = undoManager,
 			let deleteNode = coordinator.nodeFor(indexPath),
-			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], treeController: coordinator.treeController, undoManager: undoManager, errorHandler: ErrorHandler.present(self))
+			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], undoManager: undoManager, errorHandler: ErrorHandler.present(self))
 				else {
 					return
 		}
