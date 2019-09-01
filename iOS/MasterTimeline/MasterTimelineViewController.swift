@@ -21,7 +21,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
 	
-	weak var coordinator: AppCoordinator!
+	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
 
 	override var canBecomeFirstResponder: Bool {

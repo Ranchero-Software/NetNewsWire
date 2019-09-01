@@ -10,7 +10,7 @@
 		5110AB7822B7BD6200A94F76 /* AddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5110AB7722B7BD6200A94F76 /* AddView.swift */; };
 		51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
 		5115CAF42266301400B21BCE /* AddContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */; };
-		5126EE97226CB48A00C22AFC /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* AppCoordinator.swift */; };
+		5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
 		512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
@@ -682,7 +682,7 @@
 		51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSapp_target.xcconfig; sourceTree = "<group>"; };
 		51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContainerViewController.swift; sourceTree = "<group>"; };
 		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
-		5126EE96226CB48A00C22AFC /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneCoordinator.swift; sourceTree = "<group>"; };
 		5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailKeyboardDelegate.swift; sourceTree = "<group>"; };
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeader.swift; sourceTree = "<group>"; };
@@ -1755,7 +1755,7 @@
 				84C9FC9F2262A1B300D921D6 /* Main.storyboard */,
 				840D617E2029031C009BC708 /* AppDelegate.swift */,
 				519E743422C663F900A78E47 /* SceneDelegate.swift */,
-				5126EE96226CB48A00C22AFC /* AppCoordinator.swift */,
+				5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */,
 				51C45254226507D200C03939 /* AppAssets.swift */,
 				51C45255226507D200C03939 /* AppDefaults.swift */,
 				51E3EB3C229AB08300645299 /* ErrorHandler.swift */,
@@ -2420,7 +2420,7 @@
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
 				51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */,
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
-				5126EE97226CB48A00C22AFC /* AppCoordinator.swift in Sources */,
+				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
 				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,

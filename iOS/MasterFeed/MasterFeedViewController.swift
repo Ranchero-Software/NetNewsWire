@@ -20,7 +20,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	private lazy var dataSource = makeDataSource()
 	var undoableCommands = [UndoableCommand]()
-	weak var coordinator: AppCoordinator!
+	weak var coordinator: SceneCoordinator!
 	
 	override var canBecomeFirstResponder: Bool {
 		return true
@@ -91,7 +91,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		var node: Node? = nil
-		if let coordinator = representedObject as? AppCoordinator, let fetcher = coordinator.timelineFetcher {
+		if let coordinator = representedObject as? SceneCoordinator, let fetcher = coordinator.timelineFetcher {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(fetcher as AnyObject)
 		} else {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)

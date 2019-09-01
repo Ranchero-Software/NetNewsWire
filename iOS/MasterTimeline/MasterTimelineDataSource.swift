@@ -10,9 +10,9 @@ import UIKit
 
 class MasterTimelineDataSource<SectionIdentifierType, ItemIdentifierType>: UITableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType> where SectionIdentifierType : Hashable, ItemIdentifierType : Hashable {
 
-	private var coordinator: AppCoordinator!
+	private var coordinator: SceneCoordinator!
 
-	init(coordinator: AppCoordinator, tableView: UITableView, cellProvider: @escaping UITableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>.CellProvider) {
+	init(coordinator: SceneCoordinator, tableView: UITableView, cellProvider: @escaping UITableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>.CellProvider) {
 		super.init(tableView: tableView, cellProvider: cellProvider)
 		self.coordinator = coordinator
 	}

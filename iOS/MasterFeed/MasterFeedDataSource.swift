@@ -13,10 +13,10 @@ import Account
 
 class MasterFeedDataSource<SectionIdentifierType, ItemIdentifierType>: UITableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType> where SectionIdentifierType : Hashable, ItemIdentifierType : Hashable {
 
-	private var coordinator: AppCoordinator!
+	private var coordinator: SceneCoordinator!
 	private var errorHandler: ((Error) -> ())!
 	
-	init(coordinator: AppCoordinator, errorHandler: @escaping (Error) -> (), tableView: UITableView, cellProvider: @escaping UITableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>.CellProvider) {
+	init(coordinator: SceneCoordinator, errorHandler: @escaping (Error) -> (), tableView: UITableView, cellProvider: @escaping UITableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>.CellProvider) {
 		super.init(tableView: tableView, cellProvider: cellProvider)
 		self.coordinator = coordinator
 		self.errorHandler = errorHandler

@@ -24,7 +24,7 @@ class DetailViewController: UIViewController {
 	@IBOutlet private weak var webViewContainer: UIView!
 	private var webView: WKWebView!
 
-	weak var coordinator: AppCoordinator!
+	weak var coordinator: SceneCoordinator!
 	
 	deinit {
 		webView.removeFromSuperview()

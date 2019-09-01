@@ -17,7 +17,7 @@ enum SearchScope: Int {
 	case global = 1
 }
 
-class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
+class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
@@ -705,7 +705,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 // MARK: UISplitViewControllerDelegate
 
-extension AppCoordinator: UISplitViewControllerDelegate {
+extension SceneCoordinator: UISplitViewControllerDelegate {
 
 	func splitViewController(_ splitViewController: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
 		guard splitViewController.traitCollection.userInterfaceIdiom == .pad && !splitViewController.isCollapsed else {
@@ -783,7 +783,7 @@ extension AppCoordinator: UISplitViewControllerDelegate {
 
 // MARK: Private
 
-private extension AppCoordinator {
+private extension SceneCoordinator {
 
 	func updateUnreadCount() {
 		var count = 0
