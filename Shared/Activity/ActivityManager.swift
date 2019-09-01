@@ -29,6 +29,13 @@ class ActivityManager {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 	}
 	
+	func invalidateCurrentActivities() {
+		readingActivity?.invalidate()
+		readingActivity = nil
+		selectingActivity?.invalidate()
+		selectingActivity = nil
+	}
+	
 	func selectingToday() {
 		let title = NSLocalizedString("See articles for Today", comment: "Today")
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectToday, title: title, identifier: "smartfeed.today")

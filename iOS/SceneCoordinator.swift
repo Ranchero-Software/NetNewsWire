@@ -253,6 +253,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rootSplitViewController.delegate = self
 		
 		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
+		masterNavigationController.delegate = self
 		
 		masterFeedViewController = UIStoryboard.main.instantiateController(ofType: MasterFeedViewController.self)
 		masterFeedViewController.coordinator = self
@@ -782,6 +783,16 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 		}
 	}
 	
+}
+
+// MARK: UINavigationControllerDelegate
+
+extension SceneCoordinator: UINavigationControllerDelegate {
+	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+		if rootSplitViewController.isCollapsed && viewController === masterFeedViewController {
+			activityManager.invalidateCurrentActivities()
+		}
+	}
 }
 
 // MARK: Private
