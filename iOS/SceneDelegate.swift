@@ -40,8 +40,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		appDelegate.prepareAccountsForForeground()
 	}
 	
-//    func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {
-//        return scene.userActivity
-//    }
+    func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {
+		return coordinator.stateRestorationActivity
+    }
 
 }

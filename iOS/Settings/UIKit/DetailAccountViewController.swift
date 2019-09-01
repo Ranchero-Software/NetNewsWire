@@ -121,7 +121,7 @@ private extension DetailAccountViewController {
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
 			guard let account = self?.account else { return }
 			AccountManager.shared.deleteAccount(account)
-			ActivityManager.shared.cleanUp(account)
+			ActivityManager.cleanUp(account)
 			self?.navigationController?.popViewController(animated: true)
 		}
 		alertController.addAction(markAction)

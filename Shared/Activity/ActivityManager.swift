@@ -15,11 +15,16 @@ import Intents
 
 class ActivityManager {
 	
-	public static var shared = ActivityManager()
-	
 	private var selectingActivity: NSUserActivity? = nil
 	private var readingActivity: NSUserActivity? = nil
 
+	var stateRestorationActivity: NSUserActivity? {
+		if readingActivity != nil {
+			return readingActivity
+		}
+		return selectingActivity
+	}
+	
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 	}
@@ -45,7 +50,7 @@ class ActivityManager {
 	func selectingFolder(_ folder: Folder) {
 		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, folder.nameForDisplay) as String
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: identifer(for: folder))
+		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: ActivityManager.identifer(for: folder))
 	 
 		selectingActivity!.userInfo = [
 			ActivityID.accountID.rawValue: folder.account?.accountID ?? "",
@@ -59,7 +64,7 @@ class ActivityManager {
 	func selectingFeed(_ feed: Feed) {
 		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Feed")
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectFeed, title: title, identifier: identifer(for: feed))
+		selectingActivity = makeSelectingActivity(type: ActivityType.selectFeed, title: title, identifier: ActivityManager.identifer(for: feed))
 		
 		selectingActivity!.userInfo = [
 			ActivityID.accountID.rawValue: feed.account?.accountID ?? "",
@@ -79,7 +84,7 @@ class ActivityManager {
 		readingActivity?.becomeCurrent()
 	}
 	
-	func cleanUp(_ account: Account) {
+	static func cleanUp(_ account: Account) {
 		var ids = [String]()
 		
 		if let folders = account.folders {
@@ -95,7 +100,7 @@ class ActivityManager {
 		NSUserActivity.deleteSavedUserActivities(withPersistentIdentifiers: ids) {}
 	}
 	
-	func cleanUp(_ folder: Folder) {
+	static func cleanUp(_ folder: Folder) {
 		var ids = [String]()
 		ids.append(identifer(for: folder))
 		
@@ -106,7 +111,7 @@ class ActivityManager {
 		NSUserActivity.deleteSavedUserActivities(withPersistentIdentifiers: ids) {}
 	}
 	
-	func cleanUp(_ feed: Feed) {
+	static func cleanUp(_ feed: Feed) {
 		NSUserActivity.deleteSavedUserActivities(withPersistentIdentifiers: identifers(for: feed)) {}
 	}
 	
@@ -155,7 +160,7 @@ private extension ActivityManager {
 		activity.isEligibleForSearch = true
 		activity.isEligibleForPrediction = false
 		activity.isEligibleForHandoff = true
-		activity.persistentIdentifier = identifer(for: article)
+		activity.persistentIdentifier = ActivityManager.identifer(for: article)
 		
 		// CoreSpotlight
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeCompositeContent as String)
@@ -176,29 +181,6 @@ private extension ActivityManager {
 		return value?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
 	}
 	
-	func identifer(for folder: Folder) -> String {
-		return "account_\(folder.account!.accountID)_folder_\(folder.nameForDisplay)"
-	}
-	
-	func identifer(for feed: Feed) -> String {
-		return "account_\(feed.account!.accountID)_feed_\(feed.feedID)"
-	}
-	
-	func identifer(for article: Article) -> String {
-		return "account_\(article.accountID)_feed_\(article.feedID)_article_\(article.articleID)"
-	}
-	
-	func identifers(for feed: Feed) -> [String] {
-		var ids = [String]()
-		ids.append(identifer(for: feed))
-		
-		for article in feed.fetchArticles() {
-			ids.append(identifer(for: article))
-		}
-		
-		return ids
-	}
-	
 	func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
 		
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
@@ -213,6 +195,29 @@ private extension ActivityManager {
 		selectingActivity!.contentAttributeSet = attributeSet
 		selectingActivity!.needsSave = true
 		
+	}
+	
+	static func identifer(for folder: Folder) -> String {
+		return "account_\(folder.account!.accountID)_folder_\(folder.nameForDisplay)"
+	}
+	
+	static func identifer(for feed: Feed) -> String {
+		return "account_\(feed.account!.accountID)_feed_\(feed.feedID)"
+	}
+	
+	static func identifer(for article: Article) -> String {
+		return "account_\(article.accountID)_feed_\(article.feedID)_article_\(article.articleID)"
+	}
+	
+	static func identifers(for feed: Feed) -> [String] {
+		var ids = [String]()
+		ids.append(identifer(for: feed))
+		
+		for article in feed.fetchArticles() {
+			ids.append(identifer(for: article))
+		}
+		
+		return ids
 	}
 	
 }

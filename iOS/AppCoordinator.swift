@@ -24,6 +24,8 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return rootSplitViewController.undoManager
 	}
 	
+	private var activityManager = ActivityManager()
+	
 	private var rootSplitViewController: UISplitViewController!
 	private var masterNavigationController: UINavigationController!
 	private var masterFeedViewController: MasterFeedViewController!
@@ -70,6 +72,10 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private(set) lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
+	
+	var stateRestorationActivity: NSUserActivity? {
+		return activityManager.stateRestorationActivity
+	}
 	
 	var isRootSplitCollapsed: Bool {
 		return rootSplitViewController.isCollapsed
@@ -499,7 +505,7 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func selectArticle(_ indexPath: IndexPath?) {
 		currentArticleIndexPath = indexPath
-		ActivityManager.shared.reading(currentArticle)
+		activityManager.reading(currentArticle)
 		
 		if indexPath == nil {
 			if !rootSplitViewController.isCollapsed {
@@ -1234,15 +1240,15 @@ private extension AppCoordinator {
 	func updateSelectingActivity(with node: Node) {
 		switch true {
 		case node.representedObject === SmartFeedsController.shared.todayFeed:
-			ActivityManager.shared.selectingToday()
+			activityManager.selectingToday()
 		case node.representedObject === SmartFeedsController.shared.unreadFeed:
-			ActivityManager.shared.selectingAllUnread()
+			activityManager.selectingAllUnread()
 		case node.representedObject === SmartFeedsController.shared.starredFeed:
-			ActivityManager.shared.selectingStarred()
+			activityManager.selectingStarred()
 		case node.representedObject is Folder:
-			ActivityManager.shared.selectingFolder(node.representedObject as! Folder)
+			activityManager.selectingFolder(node.representedObject as! Folder)
 		case node.representedObject is Feed:
-			ActivityManager.shared.selectingFeed(node.representedObject as! Feed)
+			activityManager.selectingFeed(node.representedObject as! Feed)
 		default:
 			break
 		}
