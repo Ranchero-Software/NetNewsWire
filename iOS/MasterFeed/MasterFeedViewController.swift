@@ -400,7 +400,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		reloadAllVisibleCells()
 	}
 	
-	func discloseFeed(_ feed: Feed) {
+	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
 		
 		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
 				return
@@ -424,6 +424,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			if let indexPath = self?.coordinator.indexPathFor(node) {
 				self?.tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
 				self?.coordinator.selectFeed(indexPath)
+				completion?()
 			}
 		}
 

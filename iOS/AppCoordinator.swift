@@ -663,9 +663,11 @@ class AppCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		runCommand(markReadCommand)
 	}
 
-	func discloseFeed(_ feed: Feed) {
+	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
 		masterNavigationController.popViewController(animated: true)
-		masterFeedViewController.discloseFeed(feed)
+		masterFeedViewController.discloseFeed(feed) {
+			completion?()
+		}
 	}
 	
 	func showSettings() {
@@ -1119,7 +1121,7 @@ private extension AppCoordinator {
 			let targetSplit = ensureDoubleSplit().children.first as! UISplitViewController
 			targetSplit.showDetailViewController(controller, sender: self)
 		} else if rootSplitViewController.isCollapsed {
-			rootSplitViewController.showDetailViewController(controller, sender: self)
+			masterNavigationController.pushViewController(controller, animated: true)
 		} else {
 			if let shimController = rootSplitViewController.viewControllers.last {
 				shimController.replaceChildAndPinView(controller)
@@ -1295,15 +1297,17 @@ private extension AppCoordinator {
 			return
 		}
 		
-		discloseFeed(feedNode.representedObject as! Feed)
+		discloseFeed(feedNode.representedObject as! Feed) {
 		
-		guard let articleID = activity.userInfo?[ActivityID.articleID.rawValue] as? String else { return }
+			guard let articleID = activity.userInfo?[ActivityID.articleID.rawValue] as? String else { return }
 		
-		for (index, article) in articles.enumerated() {
-			if article.articleID == articleID {
-				selectArticle(IndexPath(row: index, section: 0))
-				break
+			for (index, article) in self.articles.enumerated() {
+				if article.articleID == articleID {
+					self.selectArticle(IndexPath(row: index, section: 0))
+					break
+				}
 			}
+			
 		}
 	}
 	
