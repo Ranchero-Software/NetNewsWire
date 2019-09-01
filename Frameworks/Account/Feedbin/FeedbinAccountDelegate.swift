@@ -278,6 +278,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {
 			account.removeFolder(folder)
+			completion(.success(()))
 			return
 		}
 		

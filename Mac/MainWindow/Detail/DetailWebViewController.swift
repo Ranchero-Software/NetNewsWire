@@ -19,7 +19,7 @@ protocol DetailWebViewControllerDelegate: class {
 final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 	weak var delegate: DetailWebViewControllerDelegate?
-	var webview: DetailWebView!
+	var webView: DetailWebView!
 	var state: DetailState = .noSelection {
 		didSet {
 			if state != oldValue {
@@ -28,6 +28,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		}
 	}
 	
+	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
 	
 	private struct MessageName {
@@ -36,6 +37,16 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 	}
 
 	override func loadView() {
+		// Wrap the webview in a box configured with the same background color that the web view uses
+		let box = NSBox(frame: .zero)
+		box.boxType = .custom
+		box.borderType = .noBorder
+		box.titlePosition = .noTitle
+		box.contentViewMargins = .zero
+		box.fillColor = NSColor(named: "webviewBackgroundColor")!
+
+		view = box
+		
 		let preferences = WKPreferences()
 		preferences.minimumFontSize = 12.0
 		preferences.javaScriptCanOpenWindowsAutomatically = false
@@ -51,18 +62,32 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		userContentController.add(self, name: MessageName.mouseDidExit)
 		configuration.userContentController = userContentController
 
-		webview = DetailWebView(frame: NSRect.zero, configuration: configuration)
-		webview.uiDelegate = self
-		webview.navigationDelegate = self
-		webview.keyboardDelegate = keyboardDelegate
-		webview.translatesAutoresizingMaskIntoConstraints = false
+		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
+		webView.uiDelegate = self
+		webView.navigationDelegate = self
+		webView.keyboardDelegate = keyboardDelegate
+		webView.translatesAutoresizingMaskIntoConstraints = false
 		if let userAgent = UserAgent.fromInfoPlist() {
-			webview.customUserAgent = userAgent
+			webView.customUserAgent = userAgent
 		}
 
-		view = webview
-		
-		self.reloadHTML()
+		box.addSubview(webView)
+
+		let constraints = [
+			webView.topAnchor.constraint(equalTo: view.topAnchor),
+			webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+			webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+		]
+
+		NSLayoutConstraint.activate(constraints)
+
+		// Hide the web view until the first reload (navigation) is complete (plus some delay) to avoid the awful white flash that happens on the initial display in dark mode.
+		// See bug #901.
+		webView.isHidden = true
+		waitingForFirstReload = true
+
+		reloadHTML()
 	}
 
 	// MARK: Scrolling
@@ -74,7 +99,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 	}
 
 	override func scrollPageDown(_ sender: Any?) {
-		webview.scrollPageDown(sender)
+		webView.scrollPageDown(sender)
 	}
 }
 
@@ -107,6 +132,20 @@ extension DetailWebViewController: WKNavigationDelegate {
 
 		decisionHandler(.allow)
 	}
+	
+	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+		// See note in viewDidLoad()
+		if waitingForFirstReload {
+			assert(webView.isHidden)
+			waitingForFirstReload = false
+
+			// Waiting for the first navigation to complete isn't long enough to avoid the flash of white.
+			// A hard coded value is awful, but 5/100th of a second seems to be enough.
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+				webView.isHidden = false
+			}
+		}
+	}
 }
 
 // MARK: - Private
@@ -126,13 +165,13 @@ private extension DetailWebViewController {
 			html = ArticleRenderer.articleHTML(article: article, style: style)
 		}
 
-		webview.loadHTMLString(html, baseURL: nil)
+		webView.loadHTMLString(html, baseURL: nil)
 	}
 
 	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {
 		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
 
-		webview.evaluateJavaScript(javascriptString) { (info, error) in
+		webView.evaluateJavaScript(javascriptString) { (info, error) in
 			guard let info = info as? [String: Any] else {
 				callback(nil)
 				return
@@ -142,7 +181,7 @@ private extension DetailWebViewController {
 				return
 			}
 
-			let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webview.frame.height, offsetY: offsetY)
+			let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webView.frame.height, offsetY: offsetY)
 			callback(scrollInfo)
 		}
 	}
