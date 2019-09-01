@@ -62,6 +62,8 @@ private extension SceneDelegate {
 		switch shortcutItem.type {
 		case "com.ranchero.NetNewsWire.FirstUnread":
 			coordinator.selectFirstUnreadInAllUnread()
+		case "com.ranchero.NetNewsWire.ShowSearch":
+			coordinator.showSearch()
 		default:
 			break
 		}

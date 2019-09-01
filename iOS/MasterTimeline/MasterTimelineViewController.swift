@@ -150,6 +150,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		updateUI()
 	}
 
+	func showSearchAll() {
+		navigationItem.searchController?.isActive = true
+		navigationItem.searchController?.searchBar.selectedScopeButtonIndex = 1
+	}
+	
 	// MARK: - Table view
 
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

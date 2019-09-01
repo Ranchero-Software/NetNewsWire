@@ -99,19 +99,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return sections
 	}
 
-	private(set) var currentMasterIndexPath: IndexPath? {
-		didSet {
-			guard let ip = currentMasterIndexPath, let node = nodeFor(ip) else {
-				assertionFailure()
-				return
-			}
-			if let fetcher = node.representedObject as? ArticleFetcher {
-				timelineFetcher = fetcher
-			}
-			masterFeedViewController.updateFeedSelection()
-			updateSelectingActivity(with: node)
-		}
-	}
+	private(set) var currentMasterIndexPath: IndexPath?
 	
 	var timelineName: String? {
 		return (timelineFetcher as? DisplayNameProvider)?.nameForDisplay
@@ -284,6 +272,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		case .readArticle:
 			handleReadArticle(activity)
 		}
+	}
+	
+	func selectFirstUnreadInAllUnread() {
+		selectFeed(IndexPath(row: 1, section: 0))
+		selectFirstUnreadArticleInTimeline()
+	}
+
+	func showSearch() {
+		selectFeed(nil)
+		masterTimelineViewController?.showSearchAll()
 	}
 	
 	// MARK: Notifications
@@ -483,16 +481,23 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return indexes
 	}
 
-	func selectFeed(_ indexPath: IndexPath) {
-		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count > 0 {
-			currentMasterIndexPath = indexPath
-		} else {
+	func selectFeed(_ indexPath: IndexPath?) {
+		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
 			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
 			masterTimelineViewController!.coordinator = self
-			currentMasterIndexPath = indexPath
 			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: true)
 		}
+
+		currentMasterIndexPath = indexPath
+
+		if let ip = indexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
+			timelineFetcher = fetcher
+			updateSelectingActivity(with: node)
+		} else {
+			timelineFetcher = nil
+		}
 		
+		masterFeedViewController.updateFeedSelection()
 		selectArticle(nil)
 	}
 	
@@ -582,11 +587,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if let indexPath = nextArticleIndexPath {
 			selectArticle(indexPath)
 		}
-	}
-	
-	func selectFirstUnreadInAllUnread() {
-		selectFeed(IndexPath(row: 1, section: 0))
-		selectFirstUnreadArticleInTimeline()
 	}
 	
 	func selectFirstUnread() {
