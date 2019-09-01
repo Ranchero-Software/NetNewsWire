@@ -584,6 +584,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
+	func selectFirstUnreadInAllUnread() {
+		selectFeed(IndexPath(row: 1, section: 0))
+		selectFirstUnreadArticleInTimeline()
+	}
+	
 	func selectFirstUnread() {
 		selectFirstUnreadArticleInTimeline()
 	}

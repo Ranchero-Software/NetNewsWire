@@ -75,24 +75,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		let localAccount = AccountManager.shared.defaultAccount
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 		
-		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
-		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
-		let faviconsFolder = faviconsFolderURL.absoluteString
-		let faviconsFolderPath = faviconsFolder.suffix(from: faviconsFolder.index(faviconsFolder.startIndex, offsetBy: 7))
-		faviconDownloader = FaviconDownloader(folder: String(faviconsFolderPath))
-		
-		let imagesFolderURL = tempDir.appendingPathComponent("Images")
-		let imagesFolder = imagesFolderURL.absoluteString
-		let imagesFolderPath = imagesFolder.suffix(from: imagesFolder.index(imagesFolder.startIndex, offsetBy: 7))
-		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-		imageDownloader = ImageDownloader(folder: String(imagesFolderPath))
-		
-		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
-		
-		let tempFolder = tempDir.absoluteString
-		let tempFolderPath = tempFolder.suffix(from: tempFolder.index(tempFolder.startIndex, offsetBy: 7))
-		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: String(tempFolderPath))
+		initializeDownloaders()
+		initializeHomeScreenQuickActions()
 		
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
@@ -188,8 +172,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	
 }
 
+// MARK: App Initialization
 
-// MARK: - Background Tasks
+private extension AppDelegate {
+	
+	private func initializeDownloaders() {
+		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
+		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
+		let faviconsFolder = faviconsFolderURL.absoluteString
+		let faviconsFolderPath = faviconsFolder.suffix(from: faviconsFolder.index(faviconsFolder.startIndex, offsetBy: 7))
+		faviconDownloader = FaviconDownloader(folder: String(faviconsFolderPath))
+		
+		let imagesFolderURL = tempDir.appendingPathComponent("Images")
+		let imagesFolder = imagesFolderURL.absoluteString
+		let imagesFolderPath = imagesFolder.suffix(from: imagesFolder.index(imagesFolder.startIndex, offsetBy: 7))
+		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
+		imageDownloader = ImageDownloader(folder: String(imagesFolderPath))
+		
+		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
+		
+		let tempFolder = tempDir.absoluteString
+		let tempFolderPath = tempFolder.suffix(from: tempFolder.index(tempFolder.startIndex, offsetBy: 7))
+		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: String(tempFolderPath))
+	}
+	
+	private func initializeHomeScreenQuickActions() {
+		let unreadTitle = NSLocalizedString("First Unread", comment: "First Unread")
+		let unreadIcon = UIApplicationShortcutIcon(systemImageName: "arrow.down.circle")
+		let unreadItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.FirstUnread", localizedTitle: unreadTitle, localizedSubtitle: nil, icon: unreadIcon, userInfo: nil)
+		
+		let searchTitle = NSLocalizedString("Search", comment: "Search")
+		let searchIcon = UIApplicationShortcutIcon(systemImageName: "magnifyingglass")
+		let searchItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.ShowSearch", localizedTitle: searchTitle, localizedSubtitle: nil, icon: searchIcon, userInfo: nil)
+
+		UIApplication.shared.shortcutItems = [searchItem, unreadItem]
+	}
+	
+}
+
+// MARK: Background Tasks
+
 private extension AppDelegate {
 
 	/// Register all background tasks.
@@ -263,7 +286,6 @@ private extension AppDelegate {
 }
 
 private extension AppDelegate {
-	
 	
 	func sendReceivedArticlesUserNotification(newArticleCount: Int) {
 		
