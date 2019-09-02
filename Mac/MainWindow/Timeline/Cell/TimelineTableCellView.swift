@@ -27,11 +27,18 @@ class TimelineTableCellView: NSTableCellView {
 	}()
 
 	private let starView = TimelineTableCellView.imageView(with: AppAssets.timelineStar, scaling: .scaleNone)
+	private let separatorView = TimelineTableCellView.separatorView()
 
 	private lazy var textFields = {
 		return [self.dateView, self.feedNameView, self.titleView, self.summaryView, self.textView]
 	}()
 
+	private var showsSeparator: Bool = AppDefaults.timelineShowsSeparators {
+		didSet {
+			separatorView.isHidden = !showsSeparator
+		}
+	}
+	
 	var cellAppearance: TimelineCellAppearance! {
 		didSet {
 			if cellAppearance != oldValue {
@@ -77,6 +84,15 @@ class TimelineTableCellView: NSTableCellView {
 	convenience init() {
 		self.init(frame: NSRect.zero)
 	}
+	
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		separatorView.isHidden = !showsSeparator
+	}
+	
+	func timelineShowsSeparatorsDefaultDidChange() {
+		showsSeparator = AppDefaults.timelineShowsSeparators
+	}
 
 	override func setFrameSize(_ newSize: NSSize) {
 		
@@ -111,6 +127,7 @@ class TimelineTableCellView: NSTableCellView {
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
 		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
 		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
+		separatorView.rs_setFrameIfNotEqual(layoutRects.separatorRect)
 	}
 }
 
@@ -147,6 +164,11 @@ private extension TimelineTableCellView {
 		imageView.imageAlignment = .alignCenter
 		imageView.imageScaling = scaling
 		return imageView
+	}
+	
+	static func separatorView() -> NSView {
+
+		return TimelineSeparatorView(frame: .zero)
 	}
 
 	func setFrame(for textField: NSTextField, rect: NSRect) {
@@ -193,6 +215,7 @@ private extension TimelineTableCellView {
 		addSubviewAtInit(feedNameView, hidden: true)
 		addSubviewAtInit(avatarImageView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
+		addSubviewAtInit(separatorView, hidden: !AppDefaults.timelineShowsSeparators)
 
 		makeTextFieldColorsNormal()
 	}
@@ -294,5 +317,34 @@ private extension TimelineTableCellView {
 		updateUnreadIndicator()
 		updateStarView()
 		updateAvatar()
+	}
+}
+
+// MARK: -
+
+private class TimelineSeparatorView: NSView {
+	private static let backgroundColor = NSColor(named: "timelineSeparatorColor")!
+	
+	override init(frame: NSRect) {
+		super.init(frame: frame)
+		self.wantsLayer = true
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+	override func viewDidChangeEffectiveAppearance() {
+		super.viewDidChangeEffectiveAppearance()
+		needsDisplay = true
+	}
+	
+	override var wantsUpdateLayer: Bool {
+		return true
+	}
+	
+	override func updateLayer() {
+		super.updateLayer()
+		layer?.backgroundColor = TimelineSeparatorView.backgroundColor.cgColor
 	}
 }
