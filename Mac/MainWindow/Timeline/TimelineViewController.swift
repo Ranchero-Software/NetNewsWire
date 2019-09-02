@@ -141,12 +141,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	private let keyboardDelegate = TimelineKeyboardDelegate()
+	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
+		self.startObservingUserDefaults()
 	}
-
+	
 	override func viewDidLoad() {
 
 		cellAppearance = TimelineCellAppearance(showAvatar: false, fontSize: fontSize)
@@ -846,6 +848,19 @@ extension TimelineViewController: NSTableViewDelegate {
 
 private extension TimelineViewController {
 
+	func startObservingUserDefaults() {
+		
+		assert(timelineShowsSeparatorsObserver == nil)
+		timelineShowsSeparatorsObserver = UserDefaults.standard.observe(\UserDefaults.CorreiaSeparators) { [weak self] (_, _) in
+			guard let self = self, self.isViewLoaded else { return }
+			self.tableView.enumerateAvailableRowViews { (rowView, index) in
+				if let cellView = rowView.view(atColumn: 0) as? TimelineTableCellView {
+					cellView.timelineShowsSeparatorsDefaultDidChange()
+				}
+			}
+		}
+	}
+	
 	@objc func reloadAvailableCells() {
 
 		if let indexesToReload = tableView.indexesOfAvailableRows() {
@@ -1114,4 +1129,3 @@ private extension TimelineViewController {
 		return false
 	}
 }
-
