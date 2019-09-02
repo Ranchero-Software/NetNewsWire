@@ -951,7 +951,7 @@ private extension SceneCoordinator {
 				}
 				
 				if unreadCountProvider.unreadCount > 0 {
-					currentMasterIndexPath = nextIndexPath
+					selectFeed(nextIndexPath)
 					return true
 				}
 				
