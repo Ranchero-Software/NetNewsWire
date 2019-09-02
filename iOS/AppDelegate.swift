@@ -210,11 +210,7 @@ private extension AppDelegate {
 		let addIcon = UIApplicationShortcutIcon(systemImageName: "plus")
 		let addItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.ShowAdd", localizedTitle: addTitle, localizedSubtitle: nil, icon: addIcon, userInfo: nil)
 
-		let refreshTitle = NSLocalizedString("Refresh", comment: "Refresh")
-		let refreshIcon = UIApplicationShortcutIcon(systemImageName: "arrow.clockwise")
-		let refreshItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.Refresh", localizedTitle: refreshTitle, localizedSubtitle: nil, icon: refreshIcon, userInfo: nil)
-
-		UIApplication.shared.shortcutItems = [addItem, searchItem, unreadItem, refreshItem]
+		UIApplication.shared.shortcutItems = [addItem, searchItem, unreadItem]
 	}
 	
 }
