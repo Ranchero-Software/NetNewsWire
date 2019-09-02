@@ -42,6 +42,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
 		// Setup the Search Controller
+		searchController.delegate = self
 		searchController.searchResultsUpdater = self
 		searchController.obscuresBackgroundDuringPresentation = false
 		searchController.searchBar.delegate = self
@@ -415,6 +416,20 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 // MARK: Searching
 
+extension MasterTimelineViewController: UISearchControllerDelegate {
+
+	func willPresentSearchController(_ searchController: UISearchController) {
+		coordinator.beginSearching()
+		searchController.searchBar.showsScopeBar = true
+	}
+
+	func willDismissSearchController(_ searchController: UISearchController) {
+		coordinator.endSearching()
+		searchController.searchBar.showsScopeBar = false
+	}
+
+}
+
 extension MasterTimelineViewController: UISearchResultsUpdating {
 
 	func updateSearchResults(for searchController: UISearchController) {
@@ -425,24 +440,10 @@ extension MasterTimelineViewController: UISearchResultsUpdating {
 }
 
 extension MasterTimelineViewController: UISearchBarDelegate {
-	
 	func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
 		let searchScope = SearchScope(rawValue: selectedScope)!
 		coordinator.searchArticles(searchBar.text!, searchScope)
 	}
-	
-	func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-		coordinator.beginSearching()
-		searchBar.showsScopeBar = true
-		return true
-	}
-	
-	func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
-		coordinator.endSearching()
-		searchBar.showsScopeBar = false
-		return true
-	}
-	
 }
 
 // MARK: Private
