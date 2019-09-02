@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Account
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
@@ -66,6 +67,8 @@ private extension SceneDelegate {
 			coordinator.showSearch()
 		case "com.ranchero.NetNewsWire.ShowAdd":
 			coordinator.showAdd()
+		case "com.ranchero.NetNewsWire.Refresh":
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 		default:
 			break
 		}
