@@ -879,7 +879,7 @@ private extension SceneCoordinator {
 	func selectNextUnreadArticleInTimeline() -> Bool {
 		let startingRow: Int = {
 			if let indexPath = currentArticleIndexPath {
-				return indexPath.row
+				return indexPath.row + 1
 			} else {
 				return 0
 			}
@@ -889,6 +889,10 @@ private extension SceneCoordinator {
 	}
 	
 	func selectArticleInTimeline(startingRow: Int) -> Bool {
+		
+		guard startingRow < articles.count else {
+			return false
+		}
 		
 		for i in startingRow..<articles.count {
 			let article = articles[i]
