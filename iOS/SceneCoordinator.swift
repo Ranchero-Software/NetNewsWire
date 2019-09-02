@@ -501,7 +501,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		selectArticle(nil)
 	}
 	
-	func selectArticle(_ indexPath: IndexPath?) {
+	func selectArticle(_ indexPath: IndexPath?, automated: Bool = true) {
 		currentArticleIndexPath = indexPath
 		activityManager.reading(currentArticle)
 		
@@ -531,7 +531,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			rootSplitViewController.preferredDisplayMode = .automatic
 		}
 
-		masterTimelineViewController?.updateArticleSelection(animate: true)
+		if automated {
+			masterTimelineViewController?.updateArticleSelection(animate: true)
+		}
+		
 		detailViewController?.updateArticleSelection()
 		
 	}

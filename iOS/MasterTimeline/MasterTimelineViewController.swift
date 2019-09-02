@@ -270,7 +270,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		coordinator.selectArticle(indexPath)
+		coordinator.selectArticle(indexPath, automated: false)
 	}
 	
 	// MARK: Notifications
