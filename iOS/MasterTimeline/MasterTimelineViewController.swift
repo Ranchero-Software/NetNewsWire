@@ -532,7 +532,7 @@ private extension MasterTimelineViewController {
 		guard traitCollection.userInterfaceIdiom == .pad else {
 			return
 		}
-		if let articleID = coordinator.currentArticle?.articleID, let index = coordinator.indexesForArticleIDs(Set([articleID])).first {
+		if let articleID = coordinator.currentArticle?.articleID, let index = coordinator.indexForArticleID(articleID) {
 			let indexPath = IndexPath(row: index, section: 0)
 			tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 		}
