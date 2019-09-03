@@ -38,21 +38,31 @@ class MasterTimelineTableViewCell: NNWTableViewCell {
 		commonInit()
 	}
 	
+	override func applyThemeProperties() {
+		super.applyThemeProperties()
+
+		let highlightedTextColor = AppAssets.tableViewCellHighlightedTextColor
+		
+		titleView.highlightedTextColor = highlightedTextColor
+		summaryView.highlightedTextColor = highlightedTextColor
+		dateView.highlightedTextColor = highlightedTextColor
+		feedNameView.highlightedTextColor = highlightedTextColor
+	}
+	
 	override var frame: CGRect {
 		didSet {
 			setNeedsLayout()
 		}
 	}
 	
+	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+		super.setHighlighted(highlighted, animated: animated)
+		unreadIndicatorView.isSelected = isHighlighted || isSelected
+	}
+
 	override func setSelected(_ selected: Bool, animated: Bool) {
-		let selectedTextColor = selected ? AppAssets.selectedTextColor : UIColor.label
-		titleView.textColor = selectedTextColor
-		summaryView.textColor = selectedTextColor
-		dateView.textColor = selectedTextColor
-		feedNameView.textColor = selectedTextColor
-		unreadIndicatorView.isSelected = selected
-		
 		super.setSelected(selected, animated: animated)
+		unreadIndicatorView.isSelected = isHighlighted || isSelected
 	}
 
 	override func sizeThatFits(_ size: CGSize) -> CGSize {

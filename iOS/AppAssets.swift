@@ -96,10 +96,6 @@ struct AppAssets {
 		return UIImage(systemName: "safari")!
 	}()
 	
-	static var selectedTextColor: UIColor = {
-		return UIColor(named: "selectedTextColor")!
-	}()
-
 	static var settingsImage: UIImage = {
 		return UIImage(named: "settingsImage")!
 	}()
@@ -128,6 +124,10 @@ struct AppAssets {
 		return UIImage(systemName: "star")!
 	}()
 	
+	static var tableViewCellHighlightedTextColor: UIColor = {
+		return UIColor(named: "tableViewCellHighlightedTextColor")!
+	}()
+
 	static var tableViewCellSelectionColor: UIColor = {
 		return UIColor(named: "tableViewCellSelectionColor")!
 	}()
