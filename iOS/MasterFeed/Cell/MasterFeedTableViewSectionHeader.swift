@@ -70,6 +70,18 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		return iView
 	}()
 
+	private let topSeparatorView: UIView = {
+		let view = UIView()
+		view.backgroundColor = UIColor.separator
+		return view
+	}()
+	
+	private let bottomSeparatorView: UIView = {
+		let view = UIView()
+		view.backgroundColor = UIColor.separator
+		return view
+	}()
+	
 	override init(reuseIdentifier: String?) {
 		super.init(reuseIdentifier: reuseIdentifier)
 		commonInit()
@@ -114,6 +126,8 @@ private extension MasterFeedTableViewSectionHeader {
 		updateDisclosureImage()
 		addSubviewAtInit(disclosureView)
 		addBackgroundView()
+		addSubviewAtInit(topSeparatorView)
+		addSubviewAtInit(bottomSeparatorView)
 	}
 	
 	func updateDisclosureImage() {
@@ -133,6 +147,11 @@ private extension MasterFeedTableViewSectionHeader {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureView.setFrameIfNotEqual(layout.disclosureButtonRect)
+		
+		let top = CGRect(x: safeAreaInsets.left, y: 0, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.5)
+		topSeparatorView.setFrameIfNotEqual(top)
+		let bottom = CGRect(x: safeAreaInsets.left, y: frame.height - 0.5, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.5)
+		bottomSeparatorView.setFrameIfNotEqual(bottom)
 	}
 	
 	func addBackgroundView() {
