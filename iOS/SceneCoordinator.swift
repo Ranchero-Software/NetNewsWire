@@ -549,7 +549,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func beginSearching() {
 		isSearching = true
 		searchArticleIds = Set(articles.map { $0.articleID })
-		timelineFetcher = nil
+		selectFeed(nil)
 	}
 
 	func endSearching() {
@@ -560,6 +560,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		if let ip = currentMasterIndexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 			timelineFetcher = fetcher
+		} else {
+			timelineFetcher = nil
 		}
 	}
 	

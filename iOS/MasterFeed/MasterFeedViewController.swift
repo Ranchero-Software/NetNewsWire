@@ -387,6 +387,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
 			}
+		} else {
+			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 		}
 	}
 
