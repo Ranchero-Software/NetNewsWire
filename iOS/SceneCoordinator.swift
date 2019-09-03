@@ -269,6 +269,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			handleSelectFolder(activity)
 		case .selectFeed:
 			handleSelectFeed(activity)
+		case .nextUnread:
+			selectFirstUnreadInAllUnread()
 		case .readArticle:
 			handleReadArticle(activity)
 		}
@@ -609,7 +611,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func selectFirstUnread() {
-		selectFirstUnreadArticleInTimeline()
+		if selectFirstUnreadArticleInTimeline() {
+			activityManager.selectingNextUnread()
+		}
 	}
 	
 	func selectNextUnread() {
@@ -621,12 +625,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		if selectNextUnreadArticleInTimeline() {
+			activityManager.selectingNextUnread()
 			return
 		}
 		
 		selectNextUnreadFeedFetcher()
-		selectNextUnreadArticleInTimeline()
-		
+		if selectNextUnreadArticleInTimeline() {
+			activityManager.selectingNextUnread()
+		}
+
 	}
 	
 	func markAllAsRead(_ articles: [Article]) {

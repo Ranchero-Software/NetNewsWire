@@ -15,8 +15,9 @@ import Intents
 
 class ActivityManager {
 	
-	private var selectingActivity: NSUserActivity? = nil
-	private var readingActivity: NSUserActivity? = nil
+	private var nextUnreadActivity: NSUserActivity?
+	private var selectingActivity: NSUserActivity?
+	private var readingActivity: NSUserActivity?
 
 	var stateRestorationActivity: NSUserActivity? {
 		if readingActivity != nil {
@@ -30,31 +31,38 @@ class ActivityManager {
 	}
 	
 	func invalidateCurrentActivities() {
-		readingActivity?.invalidate()
-		readingActivity = nil
-		selectingActivity?.invalidate()
-		selectingActivity = nil
+		invalidateReading()
+		invalidateSelecting()
+		invalidateNextUnread()
 	}
 	
 	func selectingToday() {
-		let title = NSLocalizedString("See articles for Today", comment: "Today")
+		invalidateCurrentActivities()
+		
+		let title = NSLocalizedString("See articles for “Today”", comment: "Today")
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectToday, title: title, identifier: "smartfeed.today")
 		selectingActivity!.becomeCurrent()
 	}
 	
 	func selectingAllUnread() {
-		let title = NSLocalizedString("See articles in All Unread", comment: "All Unread")
+		invalidateCurrentActivities()
+		
+		let title = NSLocalizedString("See articles in “All Unread”", comment: "All Unread")
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectAllUnread, title: title, identifier: "smartfeed.allUnread")
 		selectingActivity!.becomeCurrent()
 	}
 	
 	func selectingStarred() {
-		let title = NSLocalizedString("See articles in Starred", comment: "Starred")
+		invalidateCurrentActivities()
+		
+		let title = NSLocalizedString("See articles in “Starred”", comment: "Starred")
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectStarred, title: title, identifier: "smartfeed.starred")
 		selectingActivity!.becomeCurrent()
 	}
 	
 	func selectingFolder(_ folder: Folder) {
+		invalidateCurrentActivities()
+		
 		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, folder.nameForDisplay) as String
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: ActivityManager.identifer(for: folder))
@@ -69,6 +77,8 @@ class ActivityManager {
 	}
 	
 	func selectingFeed(_ feed: Feed) {
+		invalidateCurrentActivities()
+		
 		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Feed")
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFeed, title: title, identifier: ActivityManager.identifer(for: feed))
@@ -83,12 +93,34 @@ class ActivityManager {
 		selectingActivity!.becomeCurrent()
 	}
 	
+	func invalidateSelecting() {
+		selectingActivity?.invalidate()
+		selectingActivity = nil
+	}
+	
+	func selectingNextUnread() {
+		guard nextUnreadActivity == nil else { return }
+		let title = NSLocalizedString("See first unread article", comment: "First Unread")
+		nextUnreadActivity = makeSelectingActivity(type: ActivityType.nextUnread, title: title, identifier: "action.nextUnread")
+		nextUnreadActivity!.becomeCurrent()
+	}
+	
+	func invalidateNextUnread() {
+		nextUnreadActivity?.invalidate()
+		nextUnreadActivity = nil
+	}
+	
 	func reading(_ article: Article?) {
-		readingActivity?.invalidate()
-		readingActivity = nil
+		invalidateReading()
+		invalidateNextUnread()
 		guard let article = article else { return }
 		readingActivity = makeReadArticleActivity(article)
 		readingActivity?.becomeCurrent()
+	}
+	
+	func invalidateReading() {
+		nextUnreadActivity?.invalidate()
+		nextUnreadActivity = nil
 	}
 	
 	static func cleanUp(_ account: Account) {

@@ -14,5 +14,6 @@ enum ActivityType: String {
 	case selectStarred = "com.ranchero.NetNewsWire.SelectStarred"
 	case selectFolder = "com.ranchero.NetNewsWire.SelectFolder"
 	case selectFeed = "com.ranchero.NetNewsWire.SelectFeed"
+	case nextUnread = "com.ranchero.NetNewsWire.NextUnread"
 	case readArticle = "com.ranchero.NetNewsWire.ReadArticle"
 }
