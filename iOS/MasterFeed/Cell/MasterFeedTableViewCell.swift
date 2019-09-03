@@ -15,7 +15,7 @@ protocol MasterFeedTableViewCellDelegate: class {
 	func disclosureSelected(_ sender: MasterFeedTableViewCell, expanding: Bool)
 }
 
-class MasterFeedTableViewCell : UITableViewCell {
+class MasterFeedTableViewCell : NNWTableViewCell {
 
 	weak var delegate: MasterFeedTableViewCellDelegate?
 	var allowDisclosureSelection = false
@@ -104,11 +104,24 @@ class MasterFeedTableViewCell : UITableViewCell {
 		super.init(coder: coder)
 		commonInit()
 	}
+	
+	override func applyThemeProperties() {
+		super.applyThemeProperties()
+		titleView.highlightedTextColor = AppAssets.tableViewCellHighlightedTextColor
+	}
+
+	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+		super.setHighlighted(highlighted, animated: animated)
+
+		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.netNewsWireBlueColor
+		faviconImageView.tintColor = tintColor
+	}
 
 	override func setSelected(_ selected: Bool, animated: Bool) {
-		titleView.textColor = selected ? AppAssets.selectedTextColor : UIColor.label
-		faviconImageView.tintColor = selected ? AppAssets.selectedTextColor : AppAssets.netNewsWireBlueColor
 		super.setSelected(selected, animated: animated)
+
+		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.netNewsWireBlueColor
+		faviconImageView.tintColor = tintColor
 	}
 	
 	override func willTransition(to state: UITableViewCell.StateMask) {
@@ -141,17 +154,10 @@ class MasterFeedTableViewCell : UITableViewCell {
 private extension MasterFeedTableViewCell {
 
 	func commonInit() {
-		theme()
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(faviconImageView)
 		addSubviewAtInit(titleView)
 		addDisclosureView()
-	}
-
-	func theme() {
-		let bgView = UIView()
-		bgView.backgroundColor = AppAssets.netNewsWireBlueColor
-		selectedBackgroundView = bgView
 	}
 
 	func addDisclosureView() {

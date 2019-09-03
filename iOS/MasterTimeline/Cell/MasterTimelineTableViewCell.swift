@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-class MasterTimelineTableViewCell: UITableViewCell {
+class MasterTimelineTableViewCell: NNWTableViewCell {
 	
 	private let titleView = MasterTimelineTableViewCell.multiLineUILabel()
 	private let summaryView = MasterTimelineTableViewCell.multiLineUILabel()
@@ -38,21 +38,31 @@ class MasterTimelineTableViewCell: UITableViewCell {
 		commonInit()
 	}
 	
+	override func applyThemeProperties() {
+		super.applyThemeProperties()
+
+		let highlightedTextColor = AppAssets.tableViewCellHighlightedTextColor
+		
+		titleView.highlightedTextColor = highlightedTextColor
+		summaryView.highlightedTextColor = highlightedTextColor
+		dateView.highlightedTextColor = highlightedTextColor
+		feedNameView.highlightedTextColor = highlightedTextColor
+	}
+	
 	override var frame: CGRect {
 		didSet {
 			setNeedsLayout()
 		}
 	}
 	
+	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+		super.setHighlighted(highlighted, animated: animated)
+		unreadIndicatorView.isSelected = isHighlighted || isSelected
+	}
+
 	override func setSelected(_ selected: Bool, animated: Bool) {
-		let selectedTextColor = selected ? AppAssets.selectedTextColor : UIColor.label
-		titleView.textColor = selectedTextColor
-		summaryView.textColor = selectedTextColor
-		dateView.textColor = selectedTextColor
-		feedNameView.textColor = selectedTextColor
-		unreadIndicatorView.isSelected = selected
-		
 		super.setSelected(selected, animated: animated)
+		unreadIndicatorView.isSelected = isHighlighted || isSelected
 	}
 
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
@@ -124,7 +134,6 @@ private extension MasterTimelineTableViewCell {
 	
 	func commonInit() {
 		
-		theme()
 		addAccessoryView()
 		addSubviewAtInit(titleView, hidden: false)
 		addSubviewAtInit(summaryView, hidden: true)
@@ -136,12 +145,6 @@ private extension MasterTimelineTableViewCell {
 		
 	}
 	
-	func theme() {
-		let bgView = UIView()
-		bgView.backgroundColor = AppAssets.netNewsWireBlueColor
-		selectedBackgroundView = bgView
-	}
-
 	func addAccessoryView() {
 		accessoryView = UIImageView(image: AppAssets.chevronRightImage)
 	}

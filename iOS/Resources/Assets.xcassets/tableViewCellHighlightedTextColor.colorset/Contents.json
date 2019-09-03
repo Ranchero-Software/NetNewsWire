@@ -15,6 +15,19 @@
           "green" : "1.000"
         }
       }
+    },
+    {
+      "idiom" : "universal",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "color" : {
+        "platform" : "ios",
+        "reference" : "labelColor"
+      }
     }
   ]
 }

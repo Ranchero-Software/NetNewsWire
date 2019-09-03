@@ -159,6 +159,7 @@
 		51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */; };
 		55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */; };
 		55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */; };
+		5F323809231DF9F000706F6B /* NNWTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F323808231DF9F000706F6B /* NNWTableViewCell.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
@@ -773,6 +774,7 @@
 		557EE1A522B6F4E1004206FA /* SettingsReaderAPIAccountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsReaderAPIAccountView.swift; sourceTree = "<group>"; };
 		55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsReaderAPI.xib; sourceTree = "<group>"; };
 		55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsReaderAPIWindowController.swift; sourceTree = "<group>"; };
+		5F323808231DF9F000706F6B /* NNWTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NNWTableViewCell.swift; sourceTree = "<group>"; };
 		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6581C73420CED60100F4AD34 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionHandler.swift; sourceTree = "<group>"; };
@@ -1242,6 +1244,14 @@
 				51EF0F7B2277919E0050506E /* TimelineNumberOfLinesViewController.swift */,
 			);
 			path = UIKit;
+			sourceTree = "<group>";
+		};
+		5F3237FF231DF9D000706F6B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5F323808231DF9F000706F6B /* NNWTableViewCell.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		6581C73620CED60100F4AD34 /* SafariExtension */ = {
@@ -1766,6 +1776,7 @@
 				5183CCEB227117C70010922C /* Settings */,
 				5183CCDB226F1EEB0010922C /* Progress */,
 				51C45245226506C800C03939 /* Extensions */,
+				5F3237FF231DF9D000706F6B /* Views */,
 				5194B5E222B693EC00144881 /* Wrappers */,
 				84C9FC9A2262A1A900D921D6 /* Resources */,
 			);
@@ -2018,11 +2029,11 @@
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
 						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = DY2XQRVWN9;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -2033,7 +2044,7 @@
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -2042,7 +2053,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = 9C84TZ7Q6Z;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -2431,6 +2442,7 @@
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
 				5183CCDF226F1FCC0010922C /* UINavigationController+Progress.swift in Sources */,
 				51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */,
+				5F323809231DF9F000706F6B /* NNWTableViewCell.swift in Sources */,
 				512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
 				51F85BE7227245FC00C787DC /* AboutViewController.swift in Sources */,
