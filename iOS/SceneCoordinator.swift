@@ -176,22 +176,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private(set) var currentArticleIndexPath: IndexPath?
 	
-	private(set) var articles = ArticleArray() {
-		didSet {
-			if articles == oldValue {
-				return
-			}
-			if articles.representSameArticlesInSameOrder(as: oldValue) {
-				articleRowMap = [String: Int]()
-				masterTimelineViewController?.updateArticles()
-				updateUnreadCount()
-				return
-			}
-			updateShowAvatars()
-			articleRowMap = [String: Int]()
-			updateUnreadCount()
-		}
-	}
+	private(set) var articles = ArticleArray()
 	
 	var isTimelineUnreadAvailable: Bool {
 		if let unreadProvider = timelineFetcher as? UnreadCountProvider {
@@ -1000,13 +985,21 @@ private extension SceneCoordinator {
 	
 	func replaceArticles(with unsortedArticles: Set<Article>, animate: Bool) {
 		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
+		
 		if articles != sortedArticles {
+			
 			let article = currentArticle
 			articles = sortedArticles
+			
+			updateShowAvatars()
+			articleRowMap = [String: Int]()
+			updateUnreadCount()
+			
 			masterTimelineViewController?.reloadArticles(animate: animate)
 			if let articleID = article?.articleID, let index = indexForArticleID(articleID) {
 				currentArticleIndexPath = IndexPath(row: index, section: 0)
 			}
+			
 		}
 	}
 	
