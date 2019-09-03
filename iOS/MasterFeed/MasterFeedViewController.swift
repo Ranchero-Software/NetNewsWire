@@ -269,7 +269,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			if proposedDestinationIndexPath.section == 0 {
 				return IndexPath(row: 0, section: 1)
 			}
-			return proposedDestinationIndexPath
+			return coordinator.cappedIndexPath(proposedDestinationIndexPath)
 		}()
 		
 		guard let draggedNode = coordinator.nodeFor(sourceIndexPath), let destNode = coordinator.nodeFor(destIndexPath), let parentNode = destNode.parent else {

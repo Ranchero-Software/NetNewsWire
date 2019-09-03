@@ -357,6 +357,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return shadowTable[section]
 	}
 	
+	func cappedIndexPath(_ indexPath: IndexPath) -> IndexPath {
+		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].count else {
+			return IndexPath(row: shadowTable[shadowTable.count - 1].count - 1, section: shadowTable.count - 1)
+		}
+		return indexPath
+	}
+	
 	func indexPathFor(_ node: Node) -> IndexPath? {
 		for i in 0..<shadowTable.count {
 			if let row = shadowTable[i].firstIndex(of: node) {
