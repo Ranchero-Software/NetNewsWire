@@ -469,8 +469,6 @@ private extension MasterFeedViewController {
 	}
 	
 	func applyChanges(animate: Bool, completion: (() -> Void)? = nil) {
-		let savedNode = selectedNode()
-		
         var snapshot = NSDiffableDataSourceSnapshot<Int, Node>()
 		let sections = coordinator.allSections
 		snapshot.appendSections(sections)
@@ -480,7 +478,7 @@ private extension MasterFeedViewController {
 		}
         
 		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
-			self?.selectRow(node: savedNode)
+			self?.restoreSelectionIfNecessary()
 			completion?()
 		}
 	}
@@ -603,6 +601,15 @@ private extension MasterFeedViewController {
 		}
 		coordinator.collapse(indexPath)
 		self.applyChanges(animate: true)
+	}
+
+	func restoreSelectionIfNecessary() {
+		guard traitCollection.userInterfaceIdiom == .pad else {
+			return
+		}
+		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline(), indexPath != tableView.indexPathForSelectedRow {
+			tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+		}
 	}
 
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
