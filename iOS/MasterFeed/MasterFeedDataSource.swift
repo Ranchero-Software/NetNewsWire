@@ -71,17 +71,98 @@ class MasterFeedDataSource<SectionIdentifierType, ItemIdentifierType>: UITableVi
 			return
 		}
 		
-		BatchUpdate.shared.start()
-		source.account?.moveFeed(feed, from: source, to: destination) { result in
-			switch result {
-			case .success:
-				BatchUpdate.shared.end()
-			case .failure(let error):
-				self.errorHandler(error)
-			}
+		if sameAccount(sourceNode, destParentNode!) {
+			moveFeedInAccount(feed: feed, sourceContainer: source, destinationContainer: destination)
+		} else {
+			moveFeedBetweenAccounts(feed: feed, sourceContainer: source, destinationContainer: destination)
 		}
 
 	}
 	
+	private func sameAccount(_ node: Node, _ parentNode: Node) -> Bool {
+		if let accountID = nodeAccountID(node), let parentAccountID = nodeAccountID(parentNode) {
+			if accountID == parentAccountID {
+				return true
+			}
+		}
+		return false
+	}
+	
+	private func nodeAccount(_ node: Node) -> Account? {
+		if let account = node.representedObject as? Account {
+			return account
+		} else if let folder = node.representedObject as? Folder {
+			return folder.account
+		} else if let feed = node.representedObject as? Feed {
+			return feed.account
+		} else {
+			return nil
+		}
+
+	}
+
+	private func nodeAccountID(_ node: Node) -> String? {
+		return nodeAccount(node)?.accountID
+	}
+
+	func moveFeedInAccount(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
+		BatchUpdate.shared.start()
+		sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer) { result in
+			BatchUpdate.shared.end()
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				self.errorHandler(error)
+			}
+		}
+	}
+	
+	func moveFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
+		
+		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
+			
+			BatchUpdate.shared.start()
+			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
+				switch result {
+				case .success:
+					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
+						BatchUpdate.shared.end()
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							self.errorHandler(error)
+						}
+					}
+				case .failure(let error):
+					BatchUpdate.shared.end()
+					self.errorHandler(error)
+				}
+			}
+			
+		} else {
+			
+			BatchUpdate.shared.start()
+			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+				switch result {
+				case .success:
+					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
+						BatchUpdate.shared.end()
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							self.errorHandler(error)
+						}
+					}
+				case .failure(let error):
+					BatchUpdate.shared.end()
+					self.errorHandler(error)
+				}
+			}
+			
+		}
+	}
 
 }
