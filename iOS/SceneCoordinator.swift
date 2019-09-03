@@ -1066,7 +1066,7 @@ private extension SceneCoordinator {
 			return
 		}
 		fetchUnsortedArticlesAsync(for: [timelineFetcher]) { [weak self] (articles) in
-			self?.replaceArticles(with: articles, animate: false)
+			self?.replaceArticles(with: articles, animate: true)
 			completion()
 		}
 	}
