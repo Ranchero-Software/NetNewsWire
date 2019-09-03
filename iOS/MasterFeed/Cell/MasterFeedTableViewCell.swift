@@ -15,7 +15,7 @@ protocol MasterFeedTableViewCellDelegate: class {
 	func disclosureSelected(_ sender: MasterFeedTableViewCell, expanding: Bool)
 }
 
-class MasterFeedTableViewCell : UITableViewCell {
+class MasterFeedTableViewCell : NNWTableViewCell {
 
 	weak var delegate: MasterFeedTableViewCellDelegate?
 	var allowDisclosureSelection = false
@@ -141,17 +141,10 @@ class MasterFeedTableViewCell : UITableViewCell {
 private extension MasterFeedTableViewCell {
 
 	func commonInit() {
-		theme()
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(faviconImageView)
 		addSubviewAtInit(titleView)
 		addDisclosureView()
-	}
-
-	func theme() {
-		let bgView = UIView()
-		bgView.backgroundColor = AppAssets.netNewsWireBlueColor
-		selectedBackgroundView = bgView
 	}
 
 	func addDisclosureView() {

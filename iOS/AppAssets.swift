@@ -128,6 +128,10 @@ struct AppAssets {
 		return UIImage(systemName: "star")!
 	}()
 	
+	static var tableViewCellSelectionColor: UIColor = {
+		return UIColor(named: "tableViewCellSelectionColor")!
+	}()
+
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)

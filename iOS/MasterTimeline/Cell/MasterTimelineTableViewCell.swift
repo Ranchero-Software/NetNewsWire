@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-class MasterTimelineTableViewCell: UITableViewCell {
+class MasterTimelineTableViewCell: NNWTableViewCell {
 	
 	private let titleView = MasterTimelineTableViewCell.multiLineUILabel()
 	private let summaryView = MasterTimelineTableViewCell.multiLineUILabel()
@@ -124,7 +124,6 @@ private extension MasterTimelineTableViewCell {
 	
 	func commonInit() {
 		
-		theme()
 		addAccessoryView()
 		addSubviewAtInit(titleView, hidden: false)
 		addSubviewAtInit(summaryView, hidden: true)
@@ -136,12 +135,6 @@ private extension MasterTimelineTableViewCell {
 		
 	}
 	
-	func theme() {
-		let bgView = UIView()
-		bgView.backgroundColor = AppAssets.netNewsWireBlueColor
-		selectedBackgroundView = bgView
-	}
-
 	func addAccessoryView() {
 		accessoryView = UIImageView(image: AppAssets.chevronRightImage)
 	}
