@@ -1216,6 +1216,8 @@
 			isa = PBXGroup;
 			children = (
 				84F204DF1FAACBB30076E152 /* ArticleArray.swift */,
+				84CAFCA322BC8C08007694F0 /* FetchRequestQueue.swift */,
+				84CAFCAE22BC8C35007694F0 /* FetchRequestOperation.swift */,
 				849A97731ED9EC04007D329B /* TimelineStringFormatter.swift */,
 			);
 			path = Timeline;
@@ -1479,8 +1481,6 @@
 				84E8E0DA202EC49300562D8F /* TimelineViewController+ContextualMenus.swift */,
 				849A97691ED9EBC8007D329B /* TimelineTableRowView.swift */,
 				849A976A1ED9EBC8007D329B /* TimelineTableView.swift */,
-				84CAFCA322BC8C08007694F0 /* FetchRequestQueue.swift */,
-				84CAFCAE22BC8C35007694F0 /* FetchRequestOperation.swift */,
 				844B5B6C1FEA282400C7C76A /* Keyboard */,
 				84E95D231FB1087500552D99 /* ArticlePasteboardWriter.swift */,
 				849A976F1ED9EC04007D329B /* Cell */,
@@ -2029,11 +2029,11 @@
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
 						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = DY2XQRVWN9;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -2044,7 +2044,7 @@
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -2053,7 +2053,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
