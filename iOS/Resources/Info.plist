@@ -86,7 +86,9 @@
 		<string>fetch</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
+	<string>LaunchScreenPhone</string>
+	<key>UILaunchStoryboardName~ipad</key>
+	<string>LaunchScreenPad</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
