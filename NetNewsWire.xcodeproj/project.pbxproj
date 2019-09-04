@@ -15,6 +15,7 @@
 		511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
 		511D43D2231FA62C00FB1562 /* GlobalKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */; };
 		511D43EF231FBDE900FB1562 /* LaunchScreenPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 511D43ED231FBDE800FB1562 /* LaunchScreenPad.storyboard */; };
+		511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511D4410231FC02D00FB1562 /* KeyboardManager.swift */; };
 		5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
@@ -32,6 +33,7 @@
 		5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */; };
 		5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */; };
 		5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */; };
+		514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */; };
 		51543685228F6753005E1CDF /* DetailAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51543684228F6753005E1CDF /* DetailAccountViewController.swift */; };
 		515436882291D75D005E1CDF /* AddLocalAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515436872291D75D005E1CDF /* AddLocalAccountViewController.swift */; };
 		5154368A2291FED9005E1CDF /* FeedbinAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515436892291FED9005E1CDF /* FeedbinAccountViewController.swift */; };
@@ -689,6 +691,7 @@
 		51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContainerViewController.swift; sourceTree = "<group>"; };
 		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
 		511D43EE231FBDE800FB1562 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreenPad.storyboard; sourceTree = "<group>"; };
+		511D4410231FC02D00FB1562 /* KeyboardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardManager.swift; sourceTree = "<group>"; };
 		5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneCoordinator.swift; sourceTree = "<group>"; };
 		5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailKeyboardDelegate.swift; sourceTree = "<group>"; };
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
@@ -703,6 +706,7 @@
 		5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOPMLWindowController.swift; sourceTree = "<group>"; };
 		5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsFeedbinWindowController.swift; sourceTree = "<group>"; };
 		5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsFeedbin.xib; sourceTree = "<group>"; };
+		514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
 		51543684228F6753005E1CDF /* DetailAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailAccountViewController.swift; sourceTree = "<group>"; };
 		515436872291D75D005E1CDF /* AddLocalAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocalAccountViewController.swift; sourceTree = "<group>"; };
 		515436892291FED9005E1CDF /* FeedbinAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAccountViewController.swift; sourceTree = "<group>"; };
@@ -1781,6 +1785,8 @@
 				840D617E2029031C009BC708 /* AppDelegate.swift */,
 				519E743422C663F900A78E47 /* SceneDelegate.swift */,
 				5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */,
+				514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */,
+				511D4410231FC02D00FB1562 /* KeyboardManager.swift */,
 				51C45254226507D200C03939 /* AppAssets.swift */,
 				51C45255226507D200C03939 /* AppDefaults.swift */,
 				51E3EB3C229AB08300645299 /* ErrorHandler.swift */,
@@ -2447,6 +2453,7 @@
 				51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */,
 				51C452A522650A2D00C03939 /* SmallIconProvider.swift in Sources */,
 				51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */,
+				514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
 				51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */,
@@ -2518,6 +2525,7 @@
 				51934CD023108953006127BE /* ActivityID.swift in Sources */,
 				51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */,
 				51C45259226508D300C03939 /* AppDefaults.swift in Sources */,
+				511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */,
 				51C45293226509C800C03939 /* StarredFeedDelegate.swift in Sources */,
 				51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */,
 				51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */,

@@ -22,10 +22,15 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
 	
+	lazy var keyboardManager = KeyboardManager(type: .sidebar, coordinator: coordinator)
+	override var keyCommands: [UIKeyCommand]? {
+		return keyboardManager.keyCommands
+	}
+	
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
-
+	
 	override func viewDidLoad() {
 
 		super.viewDidLoad()
@@ -253,6 +258,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		becomeFirstResponder()
 		coordinator.selectFeed(indexPath)
 	}
 
@@ -372,6 +378,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
 		}
+	}
+	
+	// MARK: Keyboard shortcuts
+	
+	@objc func openInBrowser(_ sender: Any?) {
+		coordinator.showBrowserForCurrentFeed()
 	}
 	
 	// MARK: API
@@ -651,31 +663,25 @@ private extension MasterFeedViewController {
 	}
 
 	func homePageAction(indexPath: IndexPath) -> UIAction? {
-		guard let node = coordinator.nodeFor(indexPath),
-			let feed = node.representedObject as? Feed,
-			let homePageURL = feed.homePageURL,
-			let url = URL(string: homePageURL) else {
-				return nil
+		guard coordinator.homePageURLForFeed(indexPath) != nil else {
+			return nil
 		}
 		
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAction(title: title, image: AppAssets.safariImage) { action in
-			UIApplication.shared.open(url, options: [:])
+		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
+			self?.coordinator.showBrowserForFeed(indexPath)
 		}
 		return action
 	}
 	
 	func homePageAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let node = coordinator.nodeFor(indexPath),
-			let feed = node.representedObject as? Feed,
-			let homePageURL = feed.homePageURL,
-			let url = URL(string: homePageURL) else {
-				return nil
+		guard coordinator.homePageURLForFeed(indexPath) != nil else {
+			return nil
 		}
-		
+
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAlertAction(title: title, style: .default) { action in
-			UIApplication.shared.open(url, options: [:])
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			self?.coordinator.showBrowserForFeed(indexPath)
 			completionHandler(true)
 		}
 		return action

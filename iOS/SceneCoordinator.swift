@@ -26,7 +26,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private var activityManager = ActivityManager()
 	
-	private var rootSplitViewController: UISplitViewController!
+	private var rootSplitViewController: RootSplitViewController!
 	private var masterNavigationController: UINavigationController!
 	private var masterFeedViewController: MasterFeedViewController!
 	private var masterTimelineViewController: MasterTimelineViewController?
@@ -222,7 +222,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func start() -> UIViewController {
-		rootSplitViewController = UISplitViewController.template()
+		rootSplitViewController = RootSplitViewController()
+		rootSplitViewController.coordinator = self
+		rootSplitViewController.preferredDisplayMode = .automatic
+		rootSplitViewController.viewControllers = [ThemedNavigationController.template()]
 		rootSplitViewController.delegate = self
 		
 		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
@@ -707,7 +710,29 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.present(addViewController, animated: true)
 	}
 	
-	func showBrowser(for indexPath: IndexPath) {
+	func homePageURLForFeed(_ indexPath: IndexPath) -> URL? {
+		guard let node = nodeFor(indexPath),
+			let feed = node.representedObject as? Feed,
+			let homePageURL = feed.homePageURL,
+			let url = URL(string: homePageURL) else {
+				return nil
+		}
+		return url
+	}
+	
+	func showBrowserForFeed(_ indexPath: IndexPath) {
+		if let url = homePageURLForFeed(indexPath) {
+			UIApplication.shared.open(url, options: [:])
+		}
+	}
+	
+	func showBrowserForCurrentFeed() {
+		if let ip = currentMasterIndexPath, let url = homePageURLForFeed(ip) {
+			UIApplication.shared.open(url, options: [:])
+		}
+	}
+	
+	func showBrowserForArticle(_ indexPath: IndexPath) {
 		guard let preferredLink = articles[indexPath.row].preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}

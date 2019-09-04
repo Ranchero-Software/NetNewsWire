@@ -24,10 +24,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
 
+	lazy var keyboardManager = KeyboardManager(type: .timeline, coordinator: coordinator)
+	override var keyCommands: [UIKeyCommand]? {
+		return keyboardManager.keyCommands
+	}
+	
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
-	
+
 	override func viewDidLoad() {
 		
 		super.viewDidLoad()
@@ -261,6 +266,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		becomeFirstResponder()
 		coordinator.selectArticle(indexPath, automated: false)
 	}
 	
@@ -644,7 +650,7 @@ private extension MasterTimelineViewController {
 		}
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
-			self?.coordinator.showBrowser(for: indexPath)
+			self?.coordinator.showBrowserForArticle(indexPath)
 		}
 		return action
 	}
@@ -655,7 +661,7 @@ private extension MasterTimelineViewController {
 		}
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.showBrowser(for: indexPath)
+			self?.coordinator.showBrowserForArticle(indexPath)
 			completionHandler(true)
 		}
 		return action
