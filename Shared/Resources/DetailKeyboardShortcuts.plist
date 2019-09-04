@@ -3,6 +3,8 @@
 <plist version="1.0">
 <array>
 	<dict>
+		<key>title</key>
+		<string>Navigate to Timeline</string>
 		<key>key</key>
 		<string>[leftarrow]</string>
 		<key>action</key>
