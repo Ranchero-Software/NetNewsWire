@@ -75,15 +75,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		becomeFirstResponder()
 		updateProgressIndicatorIfNeeded()
 	}
 	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		resignFirstResponder()
-	}
-
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
 		super.traitCollectionDidChange(previousTraitCollection)
 		

@@ -62,13 +62,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		becomeFirstResponder()
 		navigationController?.updateAccountRefreshProgressIndicator()
-	}
-	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		resignFirstResponder()
 	}
 
 	// MARK: Notifications
