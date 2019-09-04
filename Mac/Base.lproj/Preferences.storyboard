@@ -31,14 +31,14 @@
             <objects>
                 <viewController title="General" storyboardIdentifier="General" id="iuH-lz-18x" customClass="GeneralPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="WnV-px-wCT">
-                        <rect key="frame" x="0.0" y="0.0" width="501" height="119"/>
+                        <rect key="frame" x="0.0" y="0.0" width="501" height="151"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ut3-yd-q6G">
-                                <rect key="frame" x="83" y="16" width="334" height="83"/>
+                                <rect key="frame" x="83" y="16" width="334" height="119"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ucw-vG-yLt">
-                                        <rect key="frame" x="29" y="64" width="92" height="17"/>
+                                        <rect key="frame" x="29" y="96" width="92" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Refresh feeds:" id="F7c-lm-g97">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -46,7 +46,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SFF-mL-yc8">
-                                        <rect key="frame" x="125" y="59" width="212" height="25"/>
+                                        <rect key="frame" x="125" y="91" width="212" height="25"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="N1a-qV-4Os"/>
                                         </constraints>
@@ -81,7 +81,7 @@
                                         </popUpButtonCell>
                                     </popUpButton>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rbK-cS-VQl">
-                                        <rect key="frame" x="-2" y="33" width="123" height="17"/>
+                                        <rect key="frame" x="-2" y="65" width="123" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Default RSS reader:" id="bUb-r3-SmS">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -89,7 +89,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cSu-T2-Jby">
-                                        <rect key="frame" x="125" y="28" width="212" height="25"/>
+                                        <rect key="frame" x="125" y="60" width="212" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="NetNewsWire" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bEy-Qx-Grl" id="Dyk-WN-XOo" userLabel="Popup">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -104,7 +104,7 @@
                                         </connections>
                                     </popUpButton>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Wsb-Lr-8Q7">
-                                        <rect key="frame" x="45" y="3" width="76" height="17"/>
+                                        <rect key="frame" x="45" y="34" width="76" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Web pages:" id="CgU-dE-Qtb">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -112,7 +112,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button verticalHuggingPriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ubm-Pk-l7x">
-                                        <rect key="frame" x="125" y="2" width="211" height="18"/>
+                                        <rect key="frame" x="125" y="33" width="211" height="18"/>
                                         <buttonCell key="cell" type="check" title="Open in background in browser" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="t0a-LN-rCv">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -131,6 +131,35 @@
                                             </binding>
                                         </connections>
                                     </button>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jVd-Ie-CGX">
+                                        <rect key="frame" x="53" y="3" width="68" height="17"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Dock icon:" id="vFc-Nz-RFp">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mwT-nY-TrX">
+                                        <rect key="frame" x="125" y="2" width="139" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Show unread count" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="lh0-G6-9v4">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.JustinMillerHideDockUnreadCount" id="J0i-eh-Rqq">
+                                                <dictionary key="options">
+                                                    <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                                    <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                                    <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                                    <integer key="NSNotApplicablePlaceholder" value="1"/>
+                                                    <integer key="NSNullPlaceholder" value="1"/>
+                                                    <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="Ubm-Pk-l7x" firstAttribute="width" secondItem="SFF-mL-yc8" secondAttribute="width" id="0dn-WI-rjt"/>
@@ -138,19 +167,25 @@
                                     <constraint firstAttribute="trailing" secondItem="Ubm-Pk-l7x" secondAttribute="trailing" id="3h4-m7-pMW"/>
                                     <constraint firstAttribute="trailing" secondItem="cSu-T2-Jby" secondAttribute="trailing" id="4L1-zz-ztr"/>
                                     <constraint firstItem="cSu-T2-Jby" firstAttribute="width" secondItem="SFF-mL-yc8" secondAttribute="width" id="4Zo-pu-jyl"/>
+                                    <constraint firstItem="mwT-nY-TrX" firstAttribute="firstBaseline" secondItem="jVd-Ie-CGX" secondAttribute="firstBaseline" id="5nL-J8-5as"/>
                                     <constraint firstItem="Ubm-Pk-l7x" firstAttribute="leading" secondItem="SFF-mL-yc8" secondAttribute="leading" id="7cy-O4-Zz2"/>
-                                    <constraint firstItem="Ubm-Pk-l7x" firstAttribute="top" secondItem="cSu-T2-Jby" secondAttribute="bottom" constant="13" id="Djw-BF-2qv"/>
-                                    <constraint firstAttribute="bottom" secondItem="Ubm-Pk-l7x" secondAttribute="bottom" constant="4" id="JpQ-qK-UId"/>
+                                    <constraint firstItem="Ubm-Pk-l7x" firstAttribute="top" secondItem="cSu-T2-Jby" secondAttribute="bottom" constant="14" id="Djw-BF-2qv"/>
+                                    <constraint firstItem="mwT-nY-TrX" firstAttribute="top" secondItem="Ubm-Pk-l7x" secondAttribute="bottom" constant="17" id="F2Z-oi-tis"/>
+                                    <constraint firstItem="Wsb-Lr-8Q7" firstAttribute="trailing" secondItem="jVd-Ie-CGX" secondAttribute="trailing" id="ITg-ay-Y2x"/>
                                     <constraint firstItem="Ubm-Pk-l7x" firstAttribute="leading" secondItem="Wsb-Lr-8Q7" secondAttribute="trailing" constant="8" symbolic="YES" id="Mgj-Eq-IgQ"/>
                                     <constraint firstItem="cSu-T2-Jby" firstAttribute="leading" secondItem="SFF-mL-yc8" secondAttribute="leading" id="Mk0-6R-yC3"/>
                                     <constraint firstAttribute="trailing" secondItem="SFF-mL-yc8" secondAttribute="trailing" id="N39-Q9-X5Q"/>
                                     <constraint firstItem="SFF-mL-yc8" firstAttribute="firstBaseline" secondItem="ucw-vG-yLt" secondAttribute="firstBaseline" id="aqn-St-DJy"/>
-                                    <constraint firstItem="cSu-T2-Jby" firstAttribute="top" secondItem="SFF-mL-yc8" secondAttribute="bottom" constant="10" id="fI9-cF-7sm"/>
-                                    <constraint firstItem="SFF-mL-yc8" firstAttribute="top" secondItem="Ut3-yd-q6G" secondAttribute="top" id="fXo-df-bJh"/>
+                                    <constraint firstItem="jVd-Ie-CGX" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="dDb-jw-vca"/>
+                                    <constraint firstItem="cSu-T2-Jby" firstAttribute="top" secondItem="SFF-mL-yc8" secondAttribute="bottom" constant="10" symbolic="YES" id="fI9-cF-7sm"/>
+                                    <constraint firstItem="SFF-mL-yc8" firstAttribute="top" secondItem="Ut3-yd-q6G" secondAttribute="top" constant="4" id="fXo-df-bJh"/>
+                                    <constraint firstItem="mwT-nY-TrX" firstAttribute="leading" secondItem="Ubm-Pk-l7x" secondAttribute="leading" id="fb7-Og-rSp"/>
                                     <constraint firstItem="ucw-vG-yLt" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="gJ9-Cu-GzZ"/>
                                     <constraint firstItem="rbK-cS-VQl" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="jBC-cr-zIT"/>
+                                    <constraint firstAttribute="bottom" secondItem="mwT-nY-TrX" secondAttribute="bottom" constant="4" id="jFE-ye-pSr"/>
                                     <constraint firstItem="rbK-cS-VQl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="k6n-MY-jmI"/>
                                     <constraint firstItem="cSu-T2-Jby" firstAttribute="leading" secondItem="rbK-cS-VQl" secondAttribute="trailing" constant="8" symbolic="YES" id="o6s-o6-i3O"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="mwT-nY-TrX" secondAttribute="trailing" id="skS-m8-bVR"/>
                                     <constraint firstItem="Ubm-Pk-l7x" firstAttribute="firstBaseline" secondItem="Wsb-Lr-8Q7" secondAttribute="firstBaseline" id="uET-8x-UNO"/>
                                     <constraint firstItem="cSu-T2-Jby" firstAttribute="firstBaseline" secondItem="rbK-cS-VQl" secondAttribute="firstBaseline" id="vdQ-R6-ZDZ"/>
                                     <constraint firstItem="SFF-mL-yc8" firstAttribute="leading" secondItem="ucw-vG-yLt" secondAttribute="trailing" constant="8" symbolic="YES" id="yBm-Dc-lGA"/>
@@ -160,7 +195,7 @@
                         <constraints>
                             <constraint firstItem="Ut3-yd-q6G" firstAttribute="centerX" secondItem="WnV-px-wCT" secondAttribute="centerX" constant="-1" id="87C-ym-WzY"/>
                             <constraint firstAttribute="bottom" secondItem="Ut3-yd-q6G" secondAttribute="bottom" constant="16" id="FVX-gg-o9H"/>
-                            <constraint firstItem="Ut3-yd-q6G" firstAttribute="top" secondItem="WnV-px-wCT" secondAttribute="top" constant="20" symbolic="YES" id="jtz-mW-ptL"/>
+                            <constraint firstItem="Ut3-yd-q6G" firstAttribute="top" secondItem="WnV-px-wCT" secondAttribute="top" constant="16" id="jtz-mW-ptL"/>
                         </constraints>
                     </view>
                     <connections>
@@ -170,7 +205,7 @@
                 <customObject id="bSQ-tq-wd3" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="mAF-gO-1PI"/>
             </objects>
-            <point key="canvasLocation" x="-568" y="360"/>
+            <point key="canvasLocation" x="-568.5" y="359"/>
         </scene>
         <!--Advanced Preferences View Controller-->
         <scene sceneID="z1G-rc-sP5">

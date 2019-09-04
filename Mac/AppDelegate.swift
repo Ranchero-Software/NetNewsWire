@@ -257,6 +257,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		updateSortMenuItems()
 		refreshTimer?.update()
+		updateDockBadge()
 	}
 
 	// MARK: Main Window
