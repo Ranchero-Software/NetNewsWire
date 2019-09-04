@@ -543,7 +543,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func beginSearching() {
 		isSearching = true
 		searchArticleIds = Set(articles.map { $0.articleID })
-		selectFeed(nil)
+		timelineFetcher = nil
 	}
 
 	func endSearching() {
