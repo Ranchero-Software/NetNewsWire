@@ -122,9 +122,15 @@ code, pre {
 pre  {
 	white-space: pre-wrap;
 }
-img, video {
+img, figure, video {
 	max-width: 100%;
 	height: auto;
+	margin: 0 auto;
+}
+
+figcaption {
+	font-size: 14px;
+	line-height: 1.3em;
 }
 
 /*Block ads and junk*/
