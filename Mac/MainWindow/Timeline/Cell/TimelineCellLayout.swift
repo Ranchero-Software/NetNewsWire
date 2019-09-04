@@ -22,9 +22,10 @@ struct TimelineCellLayout {
 	let unreadIndicatorRect: NSRect
 	let starRect: NSRect
 	let avatarImageRect: NSRect
+	let separatorRect: NSRect
 	let paddingBottom: CGFloat
 	
-	init(width: CGFloat, height: CGFloat, feedNameRect: NSRect, dateRect: NSRect, titleRect: NSRect, numberOfLinesForTitle: Int, summaryRect: NSRect, textRect: NSRect, unreadIndicatorRect: NSRect, starRect: NSRect, avatarImageRect: NSRect, paddingBottom: CGFloat) {
+	init(width: CGFloat, height: CGFloat, feedNameRect: NSRect, dateRect: NSRect, titleRect: NSRect, numberOfLinesForTitle: Int, summaryRect: NSRect, textRect: NSRect, unreadIndicatorRect: NSRect, starRect: NSRect, avatarImageRect: NSRect, separatorRect: NSRect, paddingBottom: CGFloat) {
 		
 		self.width = width
 		self.feedNameRect = feedNameRect
@@ -36,6 +37,7 @@ struct TimelineCellLayout {
 		self.unreadIndicatorRect = unreadIndicatorRect
 		self.starRect = starRect
 		self.avatarImageRect = avatarImageRect
+		self.separatorRect = separatorRect
 		self.paddingBottom = paddingBottom
 
 		if height > 0.1 {
@@ -73,10 +75,11 @@ struct TimelineCellLayout {
 		let avatarImageRect = TimelineCellLayout.rectForAvatar(cellData, appearance, showAvatar, textBoxRect, width, height)
 		let unreadIndicatorRect = TimelineCellLayout.rectForUnreadIndicator(appearance, textBoxRect)
 		let starRect = TimelineCellLayout.rectForStar(appearance, unreadIndicatorRect)
+		let separatorRect = TimelineCellLayout.rectForSeparator(cellData, appearance, showAvatar ? avatarImageRect : titleRect, width, height)
 
 		let paddingBottom = appearance.cellPadding.bottom
 
-		self.init(width: width, height: height, feedNameRect: feedNameRect, dateRect: dateRect, titleRect: titleRect, numberOfLinesForTitle: numberOfLinesForTitle, summaryRect: summaryRect, textRect: textRect, unreadIndicatorRect: unreadIndicatorRect, starRect: starRect, avatarImageRect: avatarImageRect, paddingBottom: paddingBottom)
+		self.init(width: width, height: height, feedNameRect: feedNameRect, dateRect: dateRect, titleRect: titleRect, numberOfLinesForTitle: numberOfLinesForTitle, summaryRect: summaryRect, textRect: textRect, unreadIndicatorRect: unreadIndicatorRect, starRect: starRect, avatarImageRect: avatarImageRect, separatorRect: separatorRect, paddingBottom: paddingBottom)
 	}
 
 	static func height(for width: CGFloat, cellData: TimelineCellData, appearance: TimelineCellAppearance) -> CGFloat {
@@ -209,6 +212,10 @@ private extension TimelineCellLayout {
 		r.origin.y = textBoxRect.origin.y + appearance.avatarAdjustmentTop
 
 		return r
+	}
+	
+	static func rectForSeparator(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ alignmentRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
+		return NSRect(x: alignmentRect.minX, y: height - 1, width: width - alignmentRect.minX, height: 1)
 	}
 }
 
