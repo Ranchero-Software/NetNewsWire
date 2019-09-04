@@ -52,10 +52,14 @@ class FetchRequestOperation {
 		var fetchersReturned = 0
 		var fetchedArticles = Set<Article>()
 		for articleFetcher in articleFetchers {
+			var didCallCompletion = false
 			articleFetcher.fetchArticlesAsync { (articles) in
 				precondition(Thread.isMainThread)
 				if self.isCanceled {
-					completion(self)
+					if !didCallCompletion {
+						didCallCompletion = true
+						completion(self)
+					}
 					return
 				}
 				fetchedArticles.formUnion(articles)
