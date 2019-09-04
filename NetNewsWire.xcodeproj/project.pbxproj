@@ -10,6 +10,10 @@
 		5110AB7822B7BD6200A94F76 /* AddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5110AB7722B7BD6200A94F76 /* AddView.swift */; };
 		51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
 		5115CAF42266301400B21BCE /* AddContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */; };
+		511D43CF231FA62200FB1562 /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
+		511D43D0231FA62500FB1562 /* TimelineKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */; };
+		511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
+		511D43D2231FA62C00FB1562 /* GlobalKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */; };
 		5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
@@ -1030,11 +1034,21 @@
 			path = UIKit;
 			sourceTree = "<group>";
 		};
+		511D43CE231FA51100FB1562 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */,
+				844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */,
+				845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */,
+				5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		5127B235222B4849006D641D /* Keyboard */ = {
 			isa = PBXGroup;
 			children = (
 				5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */,
-				5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */,
 			);
 			path = Keyboard;
 			sourceTree = "<group>";
@@ -1344,7 +1358,6 @@
 			isa = PBXGroup;
 			children = (
 				844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */,
-				844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */,
 			);
 			path = Keyboard;
 			sourceTree = "<group>";
@@ -1353,7 +1366,6 @@
 			isa = PBXGroup;
 			children = (
 				844B5B661FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift */,
-				844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */,
 			);
 			path = Keyboard;
 			sourceTree = "<group>";
@@ -1362,7 +1374,6 @@
 			isa = PBXGroup;
 			children = (
 				844B5B5A1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift */,
-				845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */,
 			);
 			path = Keyboard;
 			sourceTree = "<group>";
@@ -1683,6 +1694,7 @@
 				849A97561ED9EB0D007D329B /* Data */,
 				512E08DD22687FA000BDCFDD /* Tree */,
 				849A97961ED9EFAA007D329B /* Extensions */,
+				511D43CE231FA51100FB1562 /* Resources */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -2277,16 +2289,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				511D43D0231FA62500FB1562 /* TimelineKeyboardShortcuts.plist in Resources */,
 				51C452862265093600C03939 /* Add.storyboard in Resources */,
+				511D43D2231FA62C00FB1562 /* GlobalKeyboardShortcuts.plist in Resources */,
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
 				51F85BF32272531500C787DC /* Dedication.rtf in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreen.storyboard in Resources */,
 				51F85BEB22724CB600C787DC /* About.rtf in Resources */,
 				5183CCED22711DCE0010922C /* Settings.storyboard in Resources */,
 				51F85BED227251DF00C787DC /* Acknowledgments.rtf in Resources */,
+				511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */,
 				51C452AB22650DC600C03939 /* template.html in Resources */,
 				51F85BF12272524100C787DC /* Credits.rtf in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
+				511D43CF231FA62200FB1562 /* DetailKeyboardShortcuts.plist in Resources */,
 				51E595AB228DF94C00FCC42B /* SettingsTableViewCell.xib in Resources */,
 				51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
