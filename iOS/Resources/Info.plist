@@ -49,6 +49,7 @@
 	<true/>
 	<key>NSUserActivityTypes</key>
 	<array>
+		<string>com.ranchero.NetNewsWire.NextUnread</string>
 		<string>com.ranchero.NetNewsWire.SelectFeed</string>
 		<string>com.ranchero.NetNewsWire.SelectFolder</string>
 		<string>com.ranchero.NetNewsWire.SelectAllUnread</string>
