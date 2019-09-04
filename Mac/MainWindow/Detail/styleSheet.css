@@ -130,7 +130,7 @@ img, figure, video {
 
 figcaption {
 	font-size: 14px;
-	padding: 0;
+	line-height: 1.3em;
 }
 
 /*Block ads and junk*/
