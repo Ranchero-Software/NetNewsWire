@@ -39,19 +39,29 @@ private extension KeyboardManager {
 		let specificCommands = specificEntries.compactMap { createKeyCommand(keyEntry: $0) }
 		
 		globalCommands.append(contentsOf: specificCommands)
+		
+		if type == .sidebar {
+			globalCommands.append(contentsOf: sidebarAuxilaryKeyCommands())
+		}
+		
 		keyCommands = globalCommands
 	}
 	
 	func createKeyCommand(keyEntry: [String: Any]) -> UIKeyCommand? {
 		guard let input = createKeyCommandInput(keyEntry: keyEntry) else { return nil }
 		let modifiers = createKeyModifierFlags(keyEntry: keyEntry)
-		let action = NSSelectorFromString(keyEntry["action"] as! String)
+		let action = keyEntry["action"] as! String
 		
 		if let title = keyEntry["title"] as? String {
-			return UIKeyCommand(title: title, image: nil, action: action, input: input, modifierFlags: modifiers, propertyList: nil, alternates: [], discoverabilityTitle: nil, attributes: [], state: .on)
+			return createKeyCommand(title: title, action: action, input: input, modifiers: modifiers)
 		} else {
-			return UIKeyCommand(input: input, modifierFlags: modifiers, action: action)
+			return UIKeyCommand(input: input, modifierFlags: modifiers, action: NSSelectorFromString(action))
 		}
+	}
+	
+	func createKeyCommand(title: String, action: String, input: String, modifiers: UIKeyModifierFlags) -> UIKeyCommand {
+		let selector = NSSelectorFromString(action)
+		return UIKeyCommand(title: title, image: nil, action: selector, input: input, modifierFlags: modifiers, propertyList: nil, alternates: [], discoverabilityTitle: nil, attributes: [], state: .on)
 	}
 	
 	func createKeyCommandInput(keyEntry: [String: Any]) -> String? {
@@ -104,6 +114,18 @@ private extension KeyboardManager {
 		}
 
 		return flags
+	}
+	
+	func sidebarAuxilaryKeyCommands() -> [UIKeyCommand] {
+		var keys = [UIKeyCommand]()
+		
+		let nextUpTitle = NSLocalizedString("Select Next Up", comment: "Select Next Up")
+		keys.append(createKeyCommand(title: nextUpTitle, action: "selectNextUp:", input: UIKeyCommand.inputUpArrow, modifiers: []))
+
+		let nextDownTitle = NSLocalizedString("Select Next Down", comment: "Select Next Down")
+		keys.append(createKeyCommand(title: nextDownTitle, action: "selectNextDown:", input: UIKeyCommand.inputDownArrow, modifiers: []))
+
+		return keys
 	}
 	
 }

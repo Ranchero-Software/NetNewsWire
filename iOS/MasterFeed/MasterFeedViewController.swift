@@ -382,6 +382,18 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	// MARK: Keyboard shortcuts
 	
+	@objc func selectNextUp(_ sender: Any?) {
+		coordinator.selectPrevFeed()
+	}
+
+	@objc func selectNextDown(_ sender: Any?) {
+		coordinator.selectNextFeed()
+	}
+
+	@objc func navigateToTimeline(_ sender: Any?) {
+		coordinator.navigateToTimeline()
+	}
+
 	@objc func openInBrowser(_ sender: Any?) {
 		coordinator.showBrowserForCurrentFeed()
 	}
@@ -389,7 +401,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: API
 	
 	func updateFeedSelection() {
-		if let indexPath = coordinator.currentMasterIndexPath {
+		if let indexPath = coordinator.currentFeedIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
 			}
@@ -439,6 +451,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	}
 
+	func focus() {
+		becomeFirstResponder()
+	}
+	
 }
 
 // MARK: MasterTableViewCellDelegate

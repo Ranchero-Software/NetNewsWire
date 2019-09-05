@@ -98,7 +98,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 	}
 	
-	// MARK Actions
+	// MARK: Actions
 
 	@IBAction func markAllAsRead(_ sender: Any) {
 		
@@ -125,6 +125,24 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		coordinator.selectNextUnread()
 	}
 	
+	// MARK: Keyboard shortcuts
+	
+	@objc func selectNextUp(_ sender: Any?) {
+		coordinator.selectPrevArticle()
+	}
+
+	@objc func selectNextDown(_ sender: Any?) {
+		coordinator.selectNextArticle()
+	}
+
+	@objc func navigateToSidebar(_ sender: Any?) {
+		coordinator.navigateToFeeds()
+	}
+	
+	@objc func navigateToDetail(_ sender: Any?) {
+		coordinator.navigateToDetail()
+	}
+	
 	// MARK: API
 	
 	func reinitializeArticles() {
@@ -142,6 +160,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRow(at: indexPath, animated: animate, scrollPosition: .middle)
 			}
+		} else {
+			tableView.selectRow(at: nil, animated: animate, scrollPosition: .none)
 		}
 		updateUI()
 	}
@@ -151,6 +171,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		navigationItem.searchController?.searchBar.selectedScopeButtonIndex = 1
 	}
 	
+	func focus() {
+		becomeFirstResponder()
+	}
+
 	// MARK: - Table view
 
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

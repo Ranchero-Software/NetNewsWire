@@ -99,7 +99,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return sections
 	}
 
-	private(set) var currentMasterIndexPath: IndexPath?
+	private(set) var currentFeedIndexPath: IndexPath?
 	
 	var timelineName: String? {
 		return (timelineFetcher as? DisplayNameProvider)?.nameForDisplay
@@ -130,6 +130,61 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private(set) var showFeedNames = false
 	private(set) var showAvatars = false
 
+	var isPrevFeedAvailable: Bool {
+		guard let indexPath = currentFeedIndexPath else {
+			return false
+		}
+		return indexPath.section > 0 || indexPath.row > 0
+	}
+	
+	var isNextFeedAvailable: Bool {
+		guard let indexPath = currentFeedIndexPath else {
+			return false
+		}
+		
+		let nextIndexPath: IndexPath = {
+			if indexPath.row + 1 >= shadowTable[indexPath.section].count {
+				return IndexPath(row: 0, section: indexPath.section + 1)
+			} else {
+				return IndexPath(row: indexPath.row + 1, section: indexPath.section)
+			}
+		}()
+		
+		return nextIndexPath.section < shadowTable.count && nextIndexPath.row < shadowTable[nextIndexPath.section].count
+	}
+
+	var prevFeedIndexPath: IndexPath? {
+		guard isPrevFeedAvailable, let indexPath = currentFeedIndexPath else {
+			return nil
+		}
+		
+		let prevIndexPath: IndexPath = {
+			if indexPath.row - 1 < 0 {
+				return IndexPath(row: shadowTable[indexPath.section - 1].count - 1, section: indexPath.section - 1)
+			} else {
+				return IndexPath(row: indexPath.row - 1, section: indexPath.section)
+			}
+		}()
+		
+		return prevIndexPath
+	}
+	
+	var nextFeedIndexPath: IndexPath? {
+		guard isNextFeedAvailable, let indexPath = currentFeedIndexPath else {
+			return nil
+		}
+		
+		let nextIndexPath: IndexPath = {
+			if indexPath.row + 1 >= shadowTable[indexPath.section].count {
+				return IndexPath(row: 0, section: indexPath.section + 1)
+			} else {
+				return IndexPath(row: indexPath.row + 1, section: indexPath.section)
+			}
+		}()
+		
+		return nextIndexPath
+	}
+
 	var isPrevArticleAvailable: Bool {
 		guard let indexPath = currentArticleIndexPath else {
 			return false
@@ -145,14 +200,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	var prevArticleIndexPath: IndexPath? {
-		guard let indexPath = currentArticleIndexPath else {
+		guard isPrevArticleAvailable, let indexPath = currentArticleIndexPath else {
 			return nil
 		}
 		return IndexPath(row: indexPath.row - 1, section: indexPath.section)
 	}
 	
 	var nextArticleIndexPath: IndexPath? {
-		guard let indexPath = currentArticleIndexPath else {
+		guard isNextArticleAvailable, let indexPath = currentArticleIndexPath else {
 			return nil
 		}
 		return IndexPath(row: indexPath.row + 1, section: indexPath.section)
@@ -372,7 +427,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func unreadCountFor(_ node: Node) -> Int {
 		// The coordinator supplies the unread count for the currently selected feed node
-		if let indexPath = currentMasterIndexPath, let selectedNode = nodeFor(indexPath), selectedNode == node {
+		if let indexPath = currentFeedIndexPath, let selectedNode = nodeFor(indexPath), selectedNode == node {
 			return unreadCount
 		}
 		if let unreadCountProvider = node.representedObject as? UnreadCountProvider {
@@ -492,7 +547,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: true)
 		}
 
-		currentMasterIndexPath = indexPath
+		currentFeedIndexPath = indexPath
 
 		if let ip = indexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 			timelineFetcher = fetcher
@@ -505,6 +560,18 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		selectArticle(nil)
 	}
 	
+	func selectPrevFeed() {
+		if let indexPath = prevFeedIndexPath {
+			selectFeed(indexPath)
+		}
+	}
+	
+	func selectNextFeed() {
+		if let indexPath = nextFeedIndexPath {
+			selectFeed(indexPath)
+		}
+	}
+
 	func selectArticle(_ indexPath: IndexPath?, automated: Bool = true) {
 		currentArticleIndexPath = indexPath
 		activityManager.reading(currentArticle)
@@ -518,6 +585,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
 				installDetailController(systemMessageViewController)
 			}
+			masterTimelineViewController?.updateArticleSelection(animate: true)
 			return
 		}
 		
@@ -555,7 +623,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		lastSearchScope = nil
 		searchArticleIds = nil
 		
-		if let ip = currentMasterIndexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
+		if let ip = currentFeedIndexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 			timelineFetcher = fetcher
 		} else {
 			timelineFetcher = nil
@@ -674,7 +742,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
 		}
 	}
-
 	
 	func toggleStar(for indexPath: IndexPath) {
 		let article = articles[indexPath.row]
@@ -727,7 +794,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showBrowserForCurrentFeed() {
-		if let ip = currentMasterIndexPath, let url = homePageURLForFeed(ip) {
+		if let ip = currentFeedIndexPath, let url = homePageURLForFeed(ip) {
 			UIApplication.shared.open(url, options: [:])
 		}
 	}
@@ -744,6 +811,22 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		UIApplication.shared.open(url, options: [:])
+	}
+	
+	func navigateToFeeds() {
+		masterFeedViewController?.focus()
+		selectArticle(nil)
+	}
+	
+	func navigateToTimeline() {
+		masterTimelineViewController?.focus()
+		if currentArticleIndexPath == nil {
+			selectArticle(IndexPath(row: 0, section: 0))
+		}
+	}
+	
+	func navigateToDetail() {
+		detailViewController?.focus()
 	}
 	
 }
@@ -941,7 +1024,7 @@ private extension SceneCoordinator {
 	
 	func selectNextUnreadFeedFetcher() {
 		
-		guard let indexPath = currentMasterIndexPath else {
+		guard let indexPath = currentFeedIndexPath else {
 			assertionFailure()
 			return
 		}
@@ -1250,7 +1333,7 @@ private extension SceneCoordinator {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
 
-		if currentMasterIndexPath == nil && currentArticleIndexPath == nil {
+		if currentFeedIndexPath == nil && currentArticleIndexPath == nil {
 			
 			let wrappedSystemMessageController = fullyWrappedSystemMesssageController(showButton: false)
 			rootSplitViewController.showDetailViewController(wrappedSystemMessageController, sender: self)

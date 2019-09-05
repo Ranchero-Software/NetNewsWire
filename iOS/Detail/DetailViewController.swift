@@ -26,6 +26,15 @@ class DetailViewController: UIViewController {
 
 	weak var coordinator: SceneCoordinator!
 	
+	lazy var keyboardManager = KeyboardManager(type: .detail, coordinator: coordinator)
+	override var keyCommands: [UIKeyCommand]? {
+		return keyboardManager.keyCommands
+	}
+	
+	override var canBecomeFirstResponder: Bool {
+		return true
+	}
+
 	deinit {
 		webView.removeFromSuperview()
 		DetailViewControllerWebViewProvider.shared.enqueueWebView(webView)
@@ -164,12 +173,20 @@ class DetailViewController: UIViewController {
 		present(activityViewController, animated: true)
 	}
 	
+	// MARK: Keyboard Shortcuts
+	@objc func navigateToTimeline(_ sender: Any?) {
+		coordinator.navigateToTimeline()
+	}
+	
 	// MARK: API
 	func updateArticleSelection() {
 		updateUI()
 		reloadHTML()
 	}
 
+	func focus() {
+		webView.becomeFirstResponder()
+	}
 
 }
 
