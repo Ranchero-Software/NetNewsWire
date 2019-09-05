@@ -731,6 +731,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterNavigationController.popViewController(animated: true)
 	}
 	
+	func markAsReadOlderArticlesInTimeline() {
+		if let indexPath = currentArticleIndexPath {
+			markAsReadOlderArticlesInTimeline(indexPath)
+		}
+	}
 	func markAsReadOlderArticlesInTimeline(_ indexPath: IndexPath) {
 		let article = articles[indexPath.row]
 		let articlesToMark = articles.filter { $0.logicalDatePublished < article.logicalDatePublished }
@@ -738,6 +743,18 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		markAllAsRead(articlesToMark)
+	}
+	
+	func markAsReadForCurrentArticle() {
+		if let article = currentArticle {
+			markArticles(Set([article]), statusKey: .read, flag: true)
+		}
+	}
+	
+	func markAsUnreadForCurrentArticle() {
+		if let article = currentArticle {
+			markArticles(Set([article]), statusKey: .read, flag: false)
+		}
 	}
 	
 	func toggleReadForCurrentArticle() {

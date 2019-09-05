@@ -26,21 +26,29 @@ class RootSplitViewController: UISplitViewController {
 	}
 	
 	@objc func nextUnread(_ sender: Any?) {
+		coordinator.selectNextUnread()
 	}
 	
 	@objc func markRead(_ sender: Any?) {
+		coordinator.markAsReadForCurrentArticle()
 	}
 	
 	@objc func markUnreadAndGoToNextUnread(_ sender: Any?) {
+		coordinator.markAsUnreadForCurrentArticle()
+		coordinator.selectNextUnread()
 	}
 	
 	@objc func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
+		coordinator.markAllAsReadInTimeline()
+		coordinator.selectNextUnread()
 	}
 	
 	@objc func markOlderArticlesAsRead(_ sender: Any?) {
+		coordinator.markAsReadOlderArticlesInTimeline()
 	}
 	
 	@objc func markUnread(_ sender: Any?) {
+		coordinator.markAsUnreadForCurrentArticle()
 	}
 	
 	@objc func goToPreviousSubscription(_ sender: Any?) {
