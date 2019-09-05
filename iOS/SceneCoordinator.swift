@@ -819,10 +819,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func navigateToTimeline() {
-		masterTimelineViewController?.focus()
 		if currentArticleIndexPath == nil {
 			selectArticle(IndexPath(row: 0, section: 0))
 		}
+		masterTimelineViewController?.focus()
 	}
 	
 	func navigateToDetail() {

@@ -31,10 +31,6 @@ class DetailViewController: UIViewController {
 		return keyboardManager.keyCommands
 	}
 	
-	override var canBecomeFirstResponder: Bool {
-		return true
-	}
-
 	deinit {
 		webView.removeFromSuperview()
 		DetailViewControllerWebViewProvider.shared.enqueueWebView(webView)
