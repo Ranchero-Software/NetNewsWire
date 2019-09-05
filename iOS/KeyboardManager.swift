@@ -34,8 +34,13 @@ private extension KeyboardManager {
 		let entries = NSArray(contentsOfFile: file)! as! [[String: Any]]
 		keyCommands = entries.compactMap { createKeyCommand(keyEntry: $0) }
 		
-		if type == .sidebar {
+		switch type {
+		case .global:
+			keyCommands?.append(contentsOf: globalAuxilaryKeyCommands())
+		case .sidebar:
 			keyCommands?.append(contentsOf: sidebarAuxilaryKeyCommands())
+		default:
+			break
 		}
 	}
 	
@@ -106,6 +111,33 @@ private extension KeyboardManager {
 		}
 
 		return flags
+	}
+	
+	func globalAuxilaryKeyCommands() -> [UIKeyCommand] {
+		var keys = [UIKeyCommand]()
+		
+		let addNewFeedTitle = NSLocalizedString("New Feed", comment: "New Feed")
+		keys.append(createKeyCommand(title: addNewFeedTitle, action: "addNewFeed:", input: "n", modifiers: [.command]))
+
+		let addNewFolderTitle = NSLocalizedString("New Folder", comment: "New Folder")
+		keys.append(createKeyCommand(title: addNewFolderTitle, action: "addNewFolder:", input: "n", modifiers: [.command, .shift]))
+
+		let refreshTitle = NSLocalizedString("Refresh", comment: "Refresh")
+		keys.append(createKeyCommand(title: refreshTitle, action: "refresh:", input: "r", modifiers: [.command]))
+
+		let nextUnreadTitle = NSLocalizedString("Next Unread", comment: "Next Unread")
+		keys.append(createKeyCommand(title: nextUnreadTitle, action: "nextUnread:", input: "/", modifiers: [.command]))
+
+		let goToTodayTitle = NSLocalizedString("Go To Today", comment: "Go To Today")
+		keys.append(createKeyCommand(title: goToTodayTitle, action: "goToToday:", input: "1", modifiers: [.command]))
+
+		let goToAllUnreadTitle = NSLocalizedString("Go To All Unread", comment: "Go To All Unread")
+		keys.append(createKeyCommand(title: goToAllUnreadTitle, action: "goToAllUnread:", input: "2", modifiers: [.command]))
+
+		let goToStarredTitle = NSLocalizedString("Go To Starred", comment: "Go To Starred")
+		keys.append(createKeyCommand(title: goToStarredTitle, action: "goToStarred:", input: "3", modifiers: [.command]))
+
+		return keys
 	}
 	
 	func sidebarAuxilaryKeyCommands() -> [UIKeyCommand] {

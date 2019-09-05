@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Account
 
 class RootSplitViewController: UISplitViewController {
 	
@@ -52,6 +53,28 @@ class RootSplitViewController: UISplitViewController {
 	
 	@objc func openInBrowser(_ sender: Any?) {
 		coordinator.showBrowserForCurrentArticle()
+	}
+	
+	@objc func addNewFeed(_ sender: Any?) {
+	}
+
+	@objc func addNewFolder(_ sender: Any?) {
+	}
+
+	@objc func refresh(_ sender: Any?) {
+		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
+	}
+	
+	@objc func goToToday(_ sender: Any?) {
+		coordinator.selectTodayFeed()
+	}
+	
+	@objc func goToAllUnread(_ sender: Any?) {
+		coordinator.selectAllUnreadFeed()
+	}
+	
+	@objc func goToStarred(_ sender: Any?) {
+		coordinator.selectStarredFeed()
 	}
 	
 }

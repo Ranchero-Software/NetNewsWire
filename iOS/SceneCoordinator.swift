@@ -571,6 +571,24 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			selectFeed(indexPath)
 		}
 	}
+	
+	func selectTodayFeed() {
+		masterFeedViewController?.ensureSectionIsExpanded(0) {
+			self.selectFeed(IndexPath(row: 0, section: 0))
+		}
+	}
+
+	func selectAllUnreadFeed() {
+		masterFeedViewController?.ensureSectionIsExpanded(0) {
+			self.selectFeed(IndexPath(row: 1, section: 0))
+		}
+	}
+
+	func selectStarredFeed() {
+		masterFeedViewController?.ensureSectionIsExpanded(0) {
+			self.selectFeed(IndexPath(row: 2, section: 0))
+		}
+	}
 
 	func selectArticle(_ indexPath: IndexPath?, automated: Bool = true) {
 		currentArticleIndexPath = indexPath

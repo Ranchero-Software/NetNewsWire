@@ -421,6 +421,21 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
+	func ensureSectionIsExpanded(_ sectionIndex: Int, completion: (() -> Void)? = nil) {
+		guard let sectionNode = coordinator.rootNode.childAtIndex(sectionIndex) else {
+				return
+		}
+		
+		if !coordinator.isExpanded(sectionNode) {
+			coordinator.expand(section: sectionIndex)
+			self.applyChanges(animate: true) {
+				completion?()
+			}
+		} else {
+			completion?()
+		}
+	}
+	
 	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
 		
 		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
@@ -481,12 +496,10 @@ private extension MasterFeedViewController {
 	}
 	
 	func reloadNode(_ node: Node) {
-		let savedNode = selectedNode()
-		
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems([node])
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			self?.selectRow(node: savedNode)
+			self?.restoreSelectionIfNecessary()
 		}
 	}
 	
@@ -503,21 +516,6 @@ private extension MasterFeedViewController {
 			self?.restoreSelectionIfNecessary()
 			completion?()
 		}
-	}
-	
-	func selectedNode() -> Node? {
-		if let selectedIndexPath = tableView.indexPathForSelectedRow {
-			return coordinator.nodeFor(selectedIndexPath)
-		} else {
-			return nil
-		}
-	}
-	
-	func selectRow(node: Node?) {
-		if let nodeToSelect = node, let selectingIndexPath = coordinator.indexPathFor(nodeToSelect) {
-			tableView.selectRow(at: selectingIndexPath, animated: false, scrollPosition: .none)
-		}
-
 	}
 
     func makeDataSource() -> UITableViewDiffableDataSource<Int, Node> {
