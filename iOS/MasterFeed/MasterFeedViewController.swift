@@ -398,6 +398,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		coordinator.showBrowserForCurrentFeed()
 	}
 	
+	@objc override func delete(_ sender: Any?) {
+		if let indexPath = coordinator.currentFeedIndexPath {
+			delete(indexPath: indexPath)
+		}
+	}
+	
 	// MARK: API
 	
 	func updateFeedSelection() {
