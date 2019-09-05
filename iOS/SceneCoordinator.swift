@@ -437,9 +437,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 		
 	func expandSection(_ section: Int) {
-		guard let expandNode = treeController.rootNode.childAtIndex(section) else {
+		guard let expandNode = treeController.rootNode.childAtIndex(section), !expandedNodes.contains(expandNode) else {
 			return
 		}
+
 		expandedNodes.append(expandNode)
 		
 		animatingChanges = true
@@ -463,6 +464,20 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = false
 	}
 	
+	func expandAllSectionsAndFolders() {
+		for (sectionIndex, sectionNode) in treeController.rootNode.childNodes.enumerated() {
+
+			expandSection(sectionIndex)
+			
+			for topLevelNode in sectionNode.childNodes {
+				if topLevelNode.representedObject is Folder, let indexPath = indexPathFor(topLevelNode) {
+					expandFolder(indexPath)
+				}
+			}
+
+		}
+	}
+	
 	func expandFolder(_ indexPath: IndexPath) {
 		let expandNode = shadowTable[indexPath.section][indexPath.row]
 		guard !expandedNodes.contains(expandNode) else { return }
@@ -481,12 +496,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func collapseSection(_ section: Int) {
-		animatingChanges = true
-		
-		guard let collapseNode = treeController.rootNode.childAtIndex(section) else {
+		guard let collapseNode = treeController.rootNode.childAtIndex(section), expandedNodes.contains(collapseNode) else {
 			return
 		}
 		
+		animatingChanges = true
+
 		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
 			expandedNodes.remove(at: removeNode)
 		}
@@ -494,6 +509,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		shadowTable[section] = [Node]()
 		
 		animatingChanges = false
+	}
+	
+	func collapseAllFolders() {
+		for sectionNode in treeController.rootNode.childNodes {
+			for topLevelNode in sectionNode.childNodes {
+				if topLevelNode.representedObject is Folder, let indexPath = indexPathFor(topLevelNode) {
+					collapseFolder(indexPath)
+				}
+			}
+		}
 	}
 	
 	func collapseFolder(_ indexPath: IndexPath) {
