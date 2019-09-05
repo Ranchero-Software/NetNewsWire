@@ -64,9 +64,11 @@ class RootSplitViewController: UISplitViewController {
 	}
 	
 	@objc func addNewFeed(_ sender: Any?) {
+		coordinator.showAdd(.feed)
 	}
 
 	@objc func addNewFolder(_ sender: Any?) {
+		coordinator.showAdd(.folder)
 	}
 
 	@objc func refresh(_ sender: Any?) {

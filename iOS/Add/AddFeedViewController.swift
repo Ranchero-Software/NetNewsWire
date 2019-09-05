@@ -44,6 +44,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		urlTextField.autocapitalizationType = .none
 		urlTextField.text = initialFeed
 		urlTextField.delegate = self
+		urlTextField.becomeFirstResponder()
 		
 		if initialFeed != nil {
 			delegate?.readyToAdd(state: true)

@@ -347,7 +347,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
-		coordinator.showAdd()
+		coordinator.showAdd(.feed)
 	}
 	
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {

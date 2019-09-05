@@ -33,6 +33,7 @@ class AddContainerViewController: UIViewController {
 	
 	private var currentViewController: AddContainerViewControllerChild?
 	
+	var initialControllerType: AddControllerType?
 	var initialFeed: String?
 	var initialFeedName: String?
 	
@@ -40,20 +41,26 @@ class AddContainerViewController: UIViewController {
 		
         super.viewDidLoad()
 		activityIndicatorView.isHidden = true
-		
-		switchToFeed()
+
+		typeSelectorSegmentedControl.selectedSegmentIndex = initialControllerType?.rawValue ?? 0
+		switch initialControllerType {
+		case .feed:
+			switchToFeed()
+		case .folder:
+			switchToFolder()
+		default:
+			assertionFailure()
+		}
 		
     }
 
 	@IBAction func typeSelectorChanged(_ sender: UISegmentedControl) {
-		
 		switch sender.selectedSegmentIndex {
 		case 0:
 			switchToFeed()
 		default:
 			switchToFolder()
 		}
-		
 	}
 	
 	@IBAction func cancel(_ sender: Any) {

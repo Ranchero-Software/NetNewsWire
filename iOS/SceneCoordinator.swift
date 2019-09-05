@@ -805,8 +805,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		//		self.present(settings, animated: true)
 	}
 	
-	func showAdd() {
-		let addViewController = UIStoryboard.add.instantiateInitialViewController()!
+	func showAdd(_ type: AddControllerType) {
+		let addViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
+		let containerController = addViewController.topViewController as! AddContainerViewController
+		containerController.initialControllerType = type
 		addViewController.modalPresentationStyle = .formSheet
 		addViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
 		masterFeedViewController.present(addViewController, animated: true)
