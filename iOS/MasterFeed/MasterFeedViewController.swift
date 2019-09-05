@@ -404,6 +404,20 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
+	@objc func expandSelectedRows(_ sender: Any?) {
+		if let indexPath = coordinator.currentFeedIndexPath {
+			coordinator.expand(indexPath)
+			self.applyChanges(animate: true)
+		}
+	}
+	
+	@objc func collapseSelectedRows(_ sender: Any?) {
+		if let indexPath = coordinator.currentFeedIndexPath {
+			coordinator.collapse(indexPath)
+			self.applyChanges(animate: true)
+		}
+	}
+	
 	// MARK: API
 	
 	func updateFeedSelection() {

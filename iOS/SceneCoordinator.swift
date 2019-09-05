@@ -465,6 +465,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func expand(_ indexPath: IndexPath) {
 		let expandNode = shadowTable[indexPath.section][indexPath.row]
+		guard !expandedNodes.contains(expandNode) else { return }
 		expandedNodes.append(expandNode)
 		
 		animatingChanges = true
@@ -499,6 +500,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = true
 		
 		let collapseNode = shadowTable[indexPath.section][indexPath.row]
+		guard expandedNodes.contains(collapseNode) else { return }
 		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
 			expandedNodes.remove(at: removeNode)
 		}
