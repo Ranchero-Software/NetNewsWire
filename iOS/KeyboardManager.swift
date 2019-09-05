@@ -30,21 +30,13 @@ class KeyboardManager {
 private extension KeyboardManager {
 	
 	func load(type: KeyboardType) {
-		let globalFile = Bundle.main.path(forResource: KeyboardType.global.rawValue, ofType: "plist")!
-		let globalEntries = NSArray(contentsOfFile: globalFile)! as! [[String: Any]]
-		var globalCommands = globalEntries.compactMap { createKeyCommand(keyEntry: $0) }
-		
-		let specificFile = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
-		let specificEntries = NSArray(contentsOfFile: specificFile)! as! [[String: Any]]
-		let specificCommands = specificEntries.compactMap { createKeyCommand(keyEntry: $0) }
-		
-		globalCommands.append(contentsOf: specificCommands)
+		let file = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
+		let entries = NSArray(contentsOfFile: file)! as! [[String: Any]]
+		keyCommands = entries.compactMap { createKeyCommand(keyEntry: $0) }
 		
 		if type == .sidebar {
-			globalCommands.append(contentsOf: sidebarAuxilaryKeyCommands())
+			keyCommands?.append(contentsOf: sidebarAuxilaryKeyCommands())
 		}
-		
-		keyCommands = globalCommands
 	}
 	
 	func createKeyCommand(keyEntry: [String: Any]) -> UIKeyCommand? {
