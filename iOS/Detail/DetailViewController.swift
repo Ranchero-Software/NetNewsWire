@@ -26,7 +26,7 @@ class DetailViewController: UIViewController {
 
 	weak var coordinator: SceneCoordinator!
 	
-	lazy var keyboardManager = KeyboardManager(type: .detail, coordinator: coordinator)
+	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
 	}

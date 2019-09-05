@@ -22,7 +22,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
 	
-	lazy var keyboardManager = KeyboardManager(type: .sidebar, coordinator: coordinator)
+	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
 	}

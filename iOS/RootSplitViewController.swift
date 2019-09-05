@@ -13,7 +13,7 @@ class RootSplitViewController: UISplitViewController {
 	
 	var coordinator: SceneCoordinator!
 	
-	lazy var keyboardManager = KeyboardManager(type: .global, coordinator: coordinator)
+	private let keyboardManager = KeyboardManager(type: .global)
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
 	}

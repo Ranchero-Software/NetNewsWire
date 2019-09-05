@@ -17,19 +17,9 @@ enum KeyboardType: String {
 
 class KeyboardManager {
 	
-	private let coordinator: SceneCoordinator
 	private(set) var keyCommands: [UIKeyCommand]?
 	
-	init(type: KeyboardType, coordinator: SceneCoordinator) {
-		self.coordinator = coordinator
-		load(type: type)
-	}
-	
-}
-
-private extension KeyboardManager {
-	
-	func load(type: KeyboardType) {
+	init(type: KeyboardType) {
 		let file = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
 		let entries = NSArray(contentsOfFile: file)! as! [[String: Any]]
 		keyCommands = entries.compactMap { createKeyCommand(keyEntry: $0) }
@@ -43,6 +33,10 @@ private extension KeyboardManager {
 			break
 		}
 	}
+	
+}
+
+private extension KeyboardManager {
 	
 	func createKeyCommand(keyEntry: [String: Any]) -> UIKeyCommand? {
 		guard let input = createKeyCommandInput(keyEntry: keyEntry) else { return nil }

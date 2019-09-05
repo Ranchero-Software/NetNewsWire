@@ -24,7 +24,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
 
-	lazy var keyboardManager = KeyboardManager(type: .timeline, coordinator: coordinator)
+	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
 	}
