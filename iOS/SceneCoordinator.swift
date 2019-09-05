@@ -717,6 +717,22 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
+	func selectPrevUnread() {
+		
+		// This should never happen, but I don't want to risk throwing us
+		// into an infinate loop searching for an unread that isn't there.
+		if appDelegate.unreadCount < 1 {
+			return
+		}
+		
+		if selectPrevUnreadArticleInTimeline() {
+			return
+		}
+		
+		selectPrevUnreadFeedFetcher()
+		selectPrevUnreadArticleInTimeline()
+	}
+
 	func selectNextUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
@@ -1048,11 +1064,113 @@ private extension SceneCoordinator {
 		self.showAvatars = false
 	}
 	
-	// MARK: Select Next Unread
+	// MARK: Select Prev Unread
 
 	@discardableResult
+	func selectPrevUnreadArticleInTimeline() -> Bool {
+		let startingRow: Int = {
+			if let indexPath = currentArticleIndexPath {
+				return indexPath.row - 1
+			} else {
+				return articles.count - 1
+			}
+		}()
+		
+		return selectPrevArticleInTimeline(startingRow: startingRow)
+	}
+	
+	func selectPrevArticleInTimeline(startingRow: Int) -> Bool {
+		
+		guard startingRow >= 0 else {
+			return false
+		}
+		
+		for i in (0...startingRow).reversed() {
+			let article = articles[i]
+			if !article.status.read {
+				selectArticle(IndexPath(row: i, section: 0))
+				return true
+			}
+		}
+		
+		return false
+		
+	}
+	
+	func selectPrevUnreadFeedFetcher() {
+		
+		let indexPath: IndexPath = {
+			if currentFeedIndexPath == nil {
+				return IndexPath(row: 0, section: 0)
+			} else {
+				return currentFeedIndexPath!
+			}
+		}()
+
+		// Increment or wrap around the IndexPath
+		let nextIndexPath: IndexPath = {
+			if indexPath.row - 1 < 0 {
+				if indexPath.section - 1 < 0 {
+					return IndexPath(row: shadowTable[shadowTable.count - 1].count - 1, section: shadowTable.count - 1)
+				} else {
+					return IndexPath(row: shadowTable[indexPath.section - 1].count - 1, section: indexPath.section - 1)
+				}
+			} else {
+				return IndexPath(row: indexPath.row - 1, section: indexPath.section)
+			}
+		}()
+		
+		if selectPrevUnreadFeedFetcher(startingWith: nextIndexPath) {
+			return
+		}
+		let maxIndexPath = IndexPath(row: shadowTable[shadowTable.count - 1].count - 1, section: shadowTable.count - 1)
+		selectPrevUnreadFeedFetcher(startingWith: maxIndexPath)
+		
+	}
+	
+	@discardableResult
+	func selectPrevUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
+		
+		for i in (0...indexPath.section).reversed() {
+			
+			let startingRow: Int = {
+				if indexPath.section == i {
+					return indexPath.row
+				} else {
+					return shadowTable[i].count - 1
+				}
+			}()
+			
+			for j in (0...startingRow).reversed() {
+				
+				let prevIndexPath = IndexPath(row: j, section: i)
+				guard let node = nodeFor(prevIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
+					assertionFailure()
+					return true
+				}
+				
+				if expandedNodes.contains(node) {
+					continue
+				}
+				
+				if unreadCountProvider.unreadCount > 0 {
+					selectFeed(prevIndexPath)
+					return true
+				}
+				
+			}
+			
+		}
+		
+		return false
+		
+	}
+	
+	// MARK: Select Next Unread
+	
+	@discardableResult
 	func selectFirstUnreadArticleInTimeline() -> Bool {
-		return selectArticleInTimeline(startingRow: 0)
+		return selectNextArticleInTimeline(startingRow: 0)
 	}
 	
 	@discardableResult
@@ -1065,10 +1183,10 @@ private extension SceneCoordinator {
 			}
 		}()
 		
-		return selectArticleInTimeline(startingRow: startingRow)
+		return selectNextArticleInTimeline(startingRow: startingRow)
 	}
 	
-	func selectArticleInTimeline(startingRow: Int) -> Bool {
+	func selectNextArticleInTimeline(startingRow: Int) -> Bool {
 		
 		guard startingRow < articles.count else {
 			return false
@@ -1088,10 +1206,13 @@ private extension SceneCoordinator {
 	
 	func selectNextUnreadFeedFetcher() {
 		
-		guard let indexPath = currentFeedIndexPath else {
-			assertionFailure()
-			return
-		}
+		let indexPath: IndexPath = {
+			if currentFeedIndexPath == nil {
+				return IndexPath(row: -1, section: 0)
+			} else {
+				return currentFeedIndexPath!
+			}
+		}()
 		
 		// Increment or wrap around the IndexPath
 		let nextIndexPath: IndexPath = {
@@ -1118,7 +1239,15 @@ private extension SceneCoordinator {
 		
 		for i in indexPath.section..<shadowTable.count {
 			
-			for j in indexPath.row..<shadowTable[indexPath.section].count {
+			let startingRow: Int = {
+				if indexPath.section == i {
+					return indexPath.row
+				} else {
+					return 0
+				}
+			}()
+			
+			for j in startingRow..<shadowTable[indexPath.section].count {
 				
 				let nextIndexPath = IndexPath(row: j, section: i)
 				guard let node = nodeFor(nextIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {

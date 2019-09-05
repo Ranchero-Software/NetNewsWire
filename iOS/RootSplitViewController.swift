@@ -23,6 +23,7 @@ class RootSplitViewController: UISplitViewController {
 	}
 	
 	@objc func goToPreviousUnread(_ sender: Any?) {
+		coordinator.selectPrevUnread()
 	}
 	
 	@objc func nextUnread(_ sender: Any?) {
