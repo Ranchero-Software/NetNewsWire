@@ -361,11 +361,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		if coordinator.isExpanded(sectionNode) {
 			headerView.disclosureExpanded = false
-			coordinator.collapse(section: sectionIndex)
+			coordinator.collapseSection(sectionIndex)
 			self.applyChanges(animate: true)
 		} else {
 			headerView.disclosureExpanded = true
-			coordinator.expand(section: sectionIndex)
+			coordinator.expandSection(sectionIndex)
 			self.applyChanges(animate: true)
 		}
 		
@@ -406,14 +406,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func expandSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath {
-			coordinator.expand(indexPath)
+			coordinator.expandFolder(indexPath)
 			self.applyChanges(animate: true)
 		}
 	}
 	
 	@objc func collapseSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath {
-			coordinator.collapse(indexPath)
+			coordinator.collapseFolder(indexPath)
 			self.applyChanges(animate: true)
 		}
 	}
@@ -447,7 +447,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		if !coordinator.isExpanded(sectionNode) {
-			coordinator.expand(section: sectionIndex)
+			coordinator.expandSection(sectionIndex)
 			self.applyChanges(animate: true) {
 				completion?()
 			}
@@ -473,7 +473,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		
-		coordinator.expand(indexPath)
+		coordinator.expandFolder(indexPath)
 		reloadNode(parent)
 
 		self.applyChanges(animate: true) { [weak self] in
@@ -631,7 +631,7 @@ private extension MasterFeedViewController {
 		guard let indexPath = tableView.indexPath(for: cell)  else {
 			return
 		}
-		coordinator.expand(indexPath)
+		coordinator.expandFolder(indexPath)
 		self.applyChanges(animate: true)
 	}
 
@@ -639,7 +639,7 @@ private extension MasterFeedViewController {
 		guard let indexPath = tableView.indexPath(for: cell) else {
 			return
 		}
-		coordinator.collapse(indexPath)
+		coordinator.collapseFolder(indexPath)
 		self.applyChanges(animate: true)
 	}
 

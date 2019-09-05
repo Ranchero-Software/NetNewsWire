@@ -436,7 +436,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return 0
 	}
 		
-	func expand(section: Int) {
+	func expandSection(_ section: Int) {
 		guard let expandNode = treeController.rootNode.childAtIndex(section) else {
 			return
 		}
@@ -463,7 +463,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = false
 	}
 	
-	func expand(_ indexPath: IndexPath) {
+	func expandFolder(_ indexPath: IndexPath) {
 		let expandNode = shadowTable[indexPath.section][indexPath.row]
 		guard !expandedNodes.contains(expandNode) else { return }
 		expandedNodes.append(expandNode)
@@ -480,7 +480,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = false
 	}
 	
-	func collapse(section: Int) {
+	func collapseSection(_ section: Int) {
 		animatingChanges = true
 		
 		guard let collapseNode = treeController.rootNode.childAtIndex(section) else {
@@ -496,7 +496,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = false
 	}
 	
-	func collapse(_ indexPath: IndexPath) {
+	func collapseFolder(_ indexPath: IndexPath) {
 		animatingChanges = true
 		
 		let collapseNode = shadowTable[indexPath.section][indexPath.row]
