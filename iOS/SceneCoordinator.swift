@@ -772,7 +772,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		runCommand(markReadCommand)
 	}
 
-	func toggleStarForCurrentArticle() {
+	func toggleStarredForCurrentArticle() {
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
 		}

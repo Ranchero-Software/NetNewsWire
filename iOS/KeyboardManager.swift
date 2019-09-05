@@ -131,6 +131,21 @@ private extension KeyboardManager {
 		let goToStarredTitle = NSLocalizedString("Go To Starred", comment: "Go To Starred")
 		keys.append(createKeyCommand(title: goToStarredTitle, action: "goToStarred:", input: "3", modifiers: [.command]))
 
+		let toggleReadTitle = NSLocalizedString("Toggle Read Status", comment: "Toggle Read Status")
+		keys.append(createKeyCommand(title: toggleReadTitle, action: "toggleRead:", input: "U", modifiers: [.command, .shift]))
+
+		let markAllAsReadTitle = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+		keys.append(createKeyCommand(title: markAllAsReadTitle, action: "markAllAsRead:", input: "k", modifiers: [.command]))
+
+		let markOlderAsReadTitle = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
+		keys.append(createKeyCommand(title: markOlderAsReadTitle, action: "markOlderArticlesAsRead:", input: "k", modifiers: [.command, .shift]))
+
+		let toggleStarredTitle = NSLocalizedString("Toggle Starred Status", comment: "Toggle Starred Status")
+		keys.append(createKeyCommand(title: toggleStarredTitle, action: "toggleStarred:", input: "l", modifiers: [.command, .shift]))
+
+		let openInBrowserTitle = NSLocalizedString("Open In Browser", comment: "Open In Browser")
+		keys.append(createKeyCommand(title: openInBrowserTitle, action: "openInBrowser:", input: UIKeyCommand.inputRightArrow, modifiers: [.command]))
+
 		return keys
 	}
 	

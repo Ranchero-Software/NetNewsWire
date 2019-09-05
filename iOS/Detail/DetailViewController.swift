@@ -151,7 +151,7 @@ class DetailViewController: UIViewController {
 	}
 	
 	@IBAction func toggleStar(_ sender: Any) {
-		coordinator.toggleStarForCurrentArticle()
+		coordinator.toggleStarredForCurrentArticle()
 	}
 	
 	@IBAction func openBrowser(_ sender: Any) {

@@ -87,4 +87,12 @@ class RootSplitViewController: UISplitViewController {
 		coordinator.selectStarredFeed()
 	}
 	
+	@objc func toggleRead(_ sender: Any?) {
+		coordinator.toggleReadForCurrentArticle()
+	}
+	
+	@objc func toggleStarred(_ sender: Any?) {
+		coordinator.toggleStarredForCurrentArticle()
+	}
+	
 }
