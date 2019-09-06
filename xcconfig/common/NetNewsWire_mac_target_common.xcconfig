@@ -1,0 +1,10 @@
+
+// High Level Settings common to both the Mac application and any extensions we bundle with it
+MARKETING_VERSION = 5.0.1d1
+CURRENT_PROJECT_VERSION = 2611
+
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
+COMBINE_HIDPI_IMAGES = YES
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Frameworks/Vendor
+MACOSX_DEPLOYMENT_TARGET = 10.14.4

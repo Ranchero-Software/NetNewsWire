@@ -30,15 +30,11 @@ PROVISIONING_PROFILE_SPECIFIER =
 //
 
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
+#include "./common/NetNewsWire_mac_target_common.xcconfig"
 
-ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO
-ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
 CODE_SIGN_ENTITLEMENTS = Mac/SafariExtension/Subscribe_to_Feed.entitlements
-COMBINE_HIDPI_IMAGES = YES
-FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Frameworks/Vendor
 INFOPLIST_FILE = Mac/SafariExtension/Info.plist
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks
-MACOSX_DEPLOYMENT_TARGET = 10.14.4
 PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire-Evergreen.Subscribe-to-Feed
 PRODUCT_NAME = $(TARGET_NAME)
 
