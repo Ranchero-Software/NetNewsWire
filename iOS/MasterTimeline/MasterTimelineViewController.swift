@@ -156,6 +156,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	func updateArticleSelection(animate: Bool) {
+		guard !coordinator.articles.isEmpty else { return }
+		
 		if let indexPath = coordinator.currentArticleIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRow(at: indexPath, animated: animate, scrollPosition: .middle)
@@ -163,6 +165,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		} else {
 			tableView.selectRow(at: nil, animated: animate, scrollPosition: .none)
 		}
+		
 		updateUI()
 	}
 
