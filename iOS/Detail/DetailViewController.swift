@@ -196,11 +196,7 @@ class DetailViewController: UIViewController {
 		let scrollToY: CGFloat = {
 			let fullScroll = webView.scrollView.contentOffset.y + webView.scrollView.bounds.size.height
 			let final = finalScrollPosition()
-			if fullScroll < final {
-				return fullScroll
-			} else {
-				return final
-			}
+			return fullScroll < final ? fullScroll : final
 		}()
 		
 		let convertedPoint = self.view.convert(CGPoint(x: 0, y: 0), to: webView.scrollView)
