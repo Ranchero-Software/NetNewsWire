@@ -432,6 +432,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: API
 	
 	func updateFeedSelection() {
+		guard traitCollection.userInterfaceIdiom == .pad else {
+			return
+		}
 		if let indexPath = coordinator.currentFeedIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
