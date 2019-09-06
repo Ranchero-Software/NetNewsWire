@@ -169,6 +169,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	func showSearchAll() {
 		navigationItem.searchController?.isActive = true
 		navigationItem.searchController?.searchBar.selectedScopeButtonIndex = 1
+		navigationItem.searchController?.searchBar.becomeFirstResponder()
 	}
 	
 	func focus() {

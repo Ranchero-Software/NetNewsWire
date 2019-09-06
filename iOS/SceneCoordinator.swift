@@ -327,7 +327,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	func showSearch() {
 		selectFeed(nil)
-		masterTimelineViewController?.showSearchAll()
+		
+		masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+		masterTimelineViewController!.coordinator = self
+		navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: false)
+		
+		DispatchQueue.main.asyncAfter(deadline: .now()) {
+			self.masterTimelineViewController!.showSearchAll()
+		}
 	}
 	
 	// MARK: Notifications
@@ -633,13 +640,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if indexPath == nil {
 			if rootSplitViewController.isCollapsed {
 				if masterNavigationController.children.last is DetailViewController {
-					masterNavigationController.popViewController(animated: false)
+					masterNavigationController.popViewController(animated: !automated)
 				}
 			} else {
 				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
 				installDetailController(systemMessageViewController, automated: automated)
 			}
-			masterTimelineViewController?.updateArticleSelection(animate: true)
+			masterTimelineViewController?.updateArticleSelection(animate: !automated)
 			return
 		}
 		
