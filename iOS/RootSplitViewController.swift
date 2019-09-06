@@ -13,11 +13,6 @@ class RootSplitViewController: UISplitViewController {
 	
 	var coordinator: SceneCoordinator!
 	
-	private let keyboardManager = KeyboardManager(type: .global)
-	override var keyCommands: [UIKeyCommand]? {
-		return keyboardManager.keyCommands
-	}
-
 	// MARK: Keyboard Shortcuts
 	
 	@objc func scrollOrGoToNextUnread(_ sender: Any?) {

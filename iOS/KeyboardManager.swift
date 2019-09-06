@@ -20,17 +20,17 @@ class KeyboardManager {
 	private(set) var keyCommands: [UIKeyCommand]?
 	
 	init(type: KeyboardType) {
-		let file = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
-		let entries = NSArray(contentsOfFile: file)! as! [[String: Any]]
-		keyCommands = entries.compactMap { createKeyCommand(keyEntry: $0) }
+		let globalFile = Bundle.main.path(forResource: KeyboardType.global.rawValue, ofType: "plist")!
+		let globalEntries = NSArray(contentsOfFile: globalFile)! as! [[String: Any]]
+		keyCommands = globalEntries.compactMap { createKeyCommand(keyEntry: $0) }
+		keyCommands!.append(contentsOf: globalAuxilaryKeyCommands())
+
+		let specificFile = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
+		let specificEntries = NSArray(contentsOfFile: specificFile)! as! [[String: Any]]
+		keyCommands!.append(contentsOf: specificEntries.compactMap { createKeyCommand(keyEntry: $0) } )
 		
-		switch type {
-		case .global:
-			keyCommands?.append(contentsOf: globalAuxilaryKeyCommands())
-		case .sidebar:
-			keyCommands?.append(contentsOf: sidebarAuxilaryKeyCommands())
-		default:
-			break
+		if type == .sidebar {
+			keyCommands!.append(contentsOf: sidebarAuxilaryKeyCommands())
 		}
 	}
 	
