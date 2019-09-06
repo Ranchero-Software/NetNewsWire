@@ -108,7 +108,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	var timelineFetcher: ArticleFetcher? {
 		didSet {
 
-			selectArticle(nil)
 			if timelineFetcher is Feed {
 				showFeedNames = false
 			} else {
@@ -300,6 +299,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func handle(_ activity: NSUserActivity) {
+		selectFeed(nil)
+		
 		guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
 		switch activityType {
 		case .selectToday:
@@ -567,24 +568,28 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return indexes
 	}
 
-	func selectFeed(_ indexPath: IndexPath?) {
-		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
-			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-			masterTimelineViewController!.coordinator = self
-			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: true)
-		}
-
+	func selectFeed(_ indexPath: IndexPath?, automated: Bool = true) {
+		selectArticle(nil)
 		currentFeedIndexPath = indexPath
 
 		if let ip = indexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 			timelineFetcher = fetcher
 			updateSelectingActivity(with: node)
+
+			if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
+				masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+				masterTimelineViewController!.coordinator = self
+				navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: !automated)
+			}
 		} else {
 			timelineFetcher = nil
+
+			if rootSplitViewController.isCollapsed && navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
+				navControllerForTimeline().popViewController(animated: !automated)
+			}
 		}
 		
 		masterFeedViewController.updateFeedSelection()
-		selectArticle(nil)
 	}
 	
 	func selectPrevFeed() {
@@ -626,9 +631,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 
 		if indexPath == nil {
-			if !rootSplitViewController.isCollapsed {
+			if rootSplitViewController.isCollapsed {
+				if masterNavigationController.children.last is DetailViewController {
+					masterNavigationController.popViewController(animated: false)
+				}
+			} else {
 				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-				installDetailController(systemMessageViewController)
+				installDetailController(systemMessageViewController, automated: automated)
 			}
 			masterTimelineViewController?.updateArticleSelection(animate: true)
 			return
@@ -637,7 +646,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if detailViewController == nil {
 			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
 			detailViewController.coordinator = self
-			installDetailController(detailViewController)
+			installDetailController(detailViewController, automated: automated)
 		}
 		
 		// Automatically hide the overlay
@@ -649,7 +658,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 
 		if automated {
-			masterTimelineViewController?.updateArticleSelection(animate: true)
+			masterTimelineViewController?.updateArticleSelection(animate: false)
 		}
 		
 		detailViewController?.updateArticleSelection()
@@ -839,7 +848,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
-		masterNavigationController.popViewController(animated: true)
 		masterFeedViewController.discloseFeed(feed) {
 			completion?()
 		}
@@ -1463,7 +1471,7 @@ private extension SceneCoordinator {
 	// during the display mode change callback (in the split view controller delegate).  To fool the
 	// system, we leave the same controller, the shim, in place and change its child controllers instead.
 	
-	func installDetailController(_ detailController: UIViewController) {
+	func installDetailController(_ detailController: UIViewController, automated: Bool) {
 		let showButton = rootSplitViewController.displayMode != .allVisible
 		let controller = addNavControllerIfNecessary(detailController, showButton: showButton)
 		
@@ -1471,7 +1479,7 @@ private extension SceneCoordinator {
 			let targetSplit = ensureDoubleSplit().children.first as! UISplitViewController
 			targetSplit.showDetailViewController(controller, sender: self)
 		} else if rootSplitViewController.isCollapsed {
-			masterNavigationController.pushViewController(controller, animated: true)
+			masterNavigationController.pushViewController(controller, animated: !automated)
 		} else {
 			if let shimController = rootSplitViewController.viewControllers.last {
 				shimController.replaceChildAndPinView(controller)

@@ -259,7 +259,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		becomeFirstResponder()
-		coordinator.selectFeed(indexPath)
+		coordinator.selectFeed(indexPath, automated: false)
 	}
 
 	override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
@@ -469,17 +469,20 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
 		
 		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
-				return
+			completion?()
+			return
 		}
 		
 		if let indexPath = coordinator.indexPathFor(node) {
 			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
 			coordinator.selectFeed(indexPath)
+			completion?()
 			return
 		}
 	
 		// It wasn't already visable, so expand its folder and try again
 		guard let parent = node.parent, let indexPath = coordinator.indexPathFor(parent) else {
+			completion?()
 			return
 		}
 		
