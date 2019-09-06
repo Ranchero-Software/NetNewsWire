@@ -299,6 +299,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.username = username
 		case .readerAPIAuthLogin(let username, _):
 			self.username = username
+		case .oauthAccessToken(let username, _):
+			self.username = username
+		case .oauthRefreshToken(let username, _):
+			self.username = username
 		}
 		
 		try CredentialsManager.storeCredentials(credentials, server: server)
