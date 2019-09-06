@@ -56,6 +56,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		updateUI()
 		applyChanges(animate: false)
+		becomeFirstResponder()
 		
 	}
 
