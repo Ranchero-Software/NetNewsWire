@@ -786,6 +786,7 @@
 		55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsReaderAPIWindowController.swift; sourceTree = "<group>"; };
 		5F323808231DF9F000706F6B /* NNWTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NNWTableViewCell.swift; sourceTree = "<group>"; };
 		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6543108B2322D90900658221 /* common */ = {isa = PBXFileReference; lastKnownFileType = folder; path = common; sourceTree = "<group>"; };
 		6581C73420CED60100F4AD34 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionHandler.swift; sourceTree = "<group>"; };
 		6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionViewController.swift; sourceTree = "<group>"; };
@@ -1911,6 +1912,7 @@
 				D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */,
 				D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */,
 				51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */,
+				6543108B2322D90900658221 /* common */,
 			);
 			path = xcconfig;
 			sourceTree = "<group>";
@@ -2388,7 +2390,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# See https://blog.curtisherbert.com/automated-build-numbers/\n\n#git=`sh /etc/profile; which git`\n#branch_name=`$git symbolic-ref HEAD | sed -e 's,.*/\\\\(.*\\\\),\\\\1,'`\n#git_count=`$git rev-list $branch_name |wc -l | sed 's/^ *//;s/ *$//'`\n#simple_branch_name=`$git rev-parse --abbrev-ref HEAD`\n\n#build_number=\"$git_count\"\n#if [ $CONFIGURATION != \"Release\" ]; then\n#build_number+=\"-$simple_branch_name\"\n#fi\n\n#plist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n#dsym_plist=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\n#if [ -f \"$DSYM_INFO_PLIST\" ] ; then\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$dsym_plist\"\n#fi\n";
+			shellScript = "# See https://blog.curtisherbert.com/automated-build-numbers/\n\n# WARNING: If automated build numbers are restored then take \n# care to ensure any app extensions are versioned the same as the app.\n# ask Daniel (jalkut@red-sweater.com) if in doubt about this. \n#git=`sh /etc/profile; which git`\n#branch_name=`$git symbolic-ref HEAD | sed -e 's,.*/\\\\(.*\\\\),\\\\1,'`\n#git_count=`$git rev-list $branch_name |wc -l | sed 's/^ *//;s/ *$//'`\n#simple_branch_name=`$git rev-parse --abbrev-ref HEAD`\n\n#build_number=\"$git_count\"\n#if [ $CONFIGURATION != \"Release\" ]; then\n#build_number+=\"-$simple_branch_name\"\n#fi\n\n#plist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n#dsym_plist=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\n#if [ -f \"$DSYM_INFO_PLIST\" ] ; then\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$dsym_plist\"\n#fi\n";
 		};
 		D519E77022EE5B4100923F27 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
