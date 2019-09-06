@@ -46,7 +46,7 @@ aDirectory/
   SharedXcodeSettings/
     DeveloperSettings.xcconfig
   NetNewsWire
-    NewNewsSire.xcworkspace
+    NetNewsWire.xcworkspace
 ```
 
 Then create a plain text file in it: `SharedXcodeSettings/DeveloperSettings.xcconfig` and
