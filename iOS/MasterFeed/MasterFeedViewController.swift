@@ -432,7 +432,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: API
 	
 	func updateFeedSelection() {
-		guard traitCollection.userInterfaceIdiom == .pad else {
+		guard !coordinator.isRootSplitCollapsed else {
 			return
 		}
 		if let indexPath = coordinator.currentFeedIndexPath {
@@ -628,7 +628,9 @@ private extension MasterFeedViewController {
 	private func reloadCells(_ nodes: [Node]) {
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems(nodes)
-		dataSource.apply(snapshot, animatingDifferences: false)
+		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+			self?.restoreSelectionIfNecessary()
+		}
 	}
 	
 	private func accountForNode(_ node: Node) -> Account? {
@@ -661,7 +663,7 @@ private extension MasterFeedViewController {
 	}
 
 	func restoreSelectionIfNecessary() {
-		guard traitCollection.userInterfaceIdiom == .pad else {
+		guard !coordinator.isRootSplitCollapsed else {
 			return
 		}
 		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline(), indexPath != tableView.indexPathForSelectedRow {

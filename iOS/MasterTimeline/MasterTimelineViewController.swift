@@ -156,7 +156,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	func updateArticleSelection(animate: Bool) {
-		guard traitCollection.userInterfaceIdiom == .pad && !coordinator.articles.isEmpty else {
+		guard !coordinator.isRootSplitCollapsed && !coordinator.articles.isEmpty else {
 			return
 		}
 
@@ -555,7 +555,7 @@ private extension MasterTimelineViewController {
 	}
 
 	func restoreSelectionIfNecessary() {
-		guard traitCollection.userInterfaceIdiom == .pad else {
+		guard !coordinator.isRootSplitCollapsed else {
 			return
 		}
 		if let articleID = coordinator.currentArticle?.articleID, let index = coordinator.indexForArticleID(articleID) {
