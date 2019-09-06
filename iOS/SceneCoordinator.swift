@@ -872,6 +872,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showAdd(_ type: AddControllerType) {
+		selectFeed(nil)
+
 		let addViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
 		let containerController = addViewController.topViewController as! AddContainerViewController
 		containerController.initialControllerType = type
