@@ -63,6 +63,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private let log = Log()
 	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
+	private let appMovementMonitor = RSAppMovementMonitor()
 
 	override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
