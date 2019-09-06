@@ -10,7 +10,7 @@
 	</dict>
 	<dict>
 		<key>title</key>
-		<string>Collapse Selected Rows</string>
+		<string>Collapse Selected Row</string>
 		<key>key</key>
 		<string>,</string>
 		<key>action</key>
@@ -18,7 +18,7 @@
 	</dict>
 	<dict>
 		<key>title</key>
-		<string>Expand Selected Rows</string>
+		<string>Expand Selected Row</string>
 		<key>key</key>
 		<string>.</string>
 		<key>action</key>

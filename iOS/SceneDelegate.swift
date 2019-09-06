@@ -17,21 +17,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // UIWindowScene delegate
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+		
 		window = UIWindow(windowScene: scene as! UIWindowScene)
 		window!.tintColor = AppAssets.netNewsWireBlueColor
 		window!.rootViewController = coordinator.start()
-		window!.makeKeyAndVisible()
 
 		if let shortcutItem = connectionOptions.shortcutItem {
+			window!.makeKeyAndVisible()
 			handleShortcutItem(shortcutItem)
 			return
 		}
 		
         if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
-			DispatchQueue.main.asyncAfter(deadline: .now()) {
-				self.coordinator.handle(userActivity)
-			}
+			self.coordinator.handle(userActivity)
         }
+		
+		window!.makeKeyAndVisible()
     }
 	
 	func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
@@ -66,7 +67,7 @@ private extension SceneDelegate {
 		case "com.ranchero.NetNewsWire.ShowSearch":
 			coordinator.showSearch()
 		case "com.ranchero.NetNewsWire.ShowAdd":
-			coordinator.showAdd()
+			coordinator.showAdd(.feed)
 		default:
 			break
 		}

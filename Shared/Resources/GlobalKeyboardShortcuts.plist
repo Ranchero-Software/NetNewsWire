@@ -19,8 +19,6 @@
 		<string>goToPreviousUnread:</string>
 	</dict>
 	<dict>
-		<key>title</key>
-		<string>Go to Previous Unread</string>
 		<key>key</key>
 		<string>[uparrow]</string>
 		<key>shiftModifier</key>
@@ -29,16 +27,12 @@
 		<string>goToPreviousUnread:</string>
 	</dict>
 	<dict>
-		<key>title</key>
-		<string>Next Unread</string>
 		<key>key</key>
 		<string>+</string>
 		<key>action</key>
 		<string>nextUnread:</string>
 	</dict>
 	<dict>
-		<key>title</key>
-		<string>Next Unread</string>
 		<key>key</key>
 		<string>+</string>
 		<key>shiftModifier</key>

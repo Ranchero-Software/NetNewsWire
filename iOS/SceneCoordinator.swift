@@ -108,7 +108,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	var timelineFetcher: ArticleFetcher? {
 		didSet {
 
-			selectArticle(nil)
 			if timelineFetcher is Feed {
 				showFeedNames = false
 			} else {
@@ -300,6 +299,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func handle(_ activity: NSUserActivity) {
+		selectFeed(nil)
+		
 		guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
 		switch activityType {
 		case .selectToday:
@@ -326,7 +327,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	func showSearch() {
 		selectFeed(nil)
-		masterTimelineViewController?.showSearchAll()
+		
+		masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+		masterTimelineViewController!.coordinator = self
+		navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: false)
+		
+		DispatchQueue.main.asyncAfter(deadline: .now()) {
+			self.masterTimelineViewController!.showSearchAll()
+		}
 	}
 	
 	// MARK: Notifications
@@ -436,10 +444,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return 0
 	}
 		
-	func expand(section: Int) {
-		guard let expandNode = treeController.rootNode.childAtIndex(section) else {
+	func expandSection(_ section: Int) {
+		guard let expandNode = treeController.rootNode.childAtIndex(section), !expandedNodes.contains(expandNode) else {
 			return
 		}
+
 		expandedNodes.append(expandNode)
 		
 		animatingChanges = true
@@ -463,8 +472,23 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = false
 	}
 	
-	func expand(_ indexPath: IndexPath) {
+	func expandAllSectionsAndFolders() {
+		for (sectionIndex, sectionNode) in treeController.rootNode.childNodes.enumerated() {
+
+			expandSection(sectionIndex)
+			
+			for topLevelNode in sectionNode.childNodes {
+				if topLevelNode.representedObject is Folder, let indexPath = indexPathFor(topLevelNode) {
+					expandFolder(indexPath)
+				}
+			}
+
+		}
+	}
+	
+	func expandFolder(_ indexPath: IndexPath) {
 		let expandNode = shadowTable[indexPath.section][indexPath.row]
+		guard !expandedNodes.contains(expandNode) else { return }
 		expandedNodes.append(expandNode)
 		
 		animatingChanges = true
@@ -479,13 +503,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = false
 	}
 	
-	func collapse(section: Int) {
-		animatingChanges = true
-		
-		guard let collapseNode = treeController.rootNode.childAtIndex(section) else {
+	func collapseSection(_ section: Int) {
+		guard let collapseNode = treeController.rootNode.childAtIndex(section), expandedNodes.contains(collapseNode) else {
 			return
 		}
 		
+		animatingChanges = true
+
 		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
 			expandedNodes.remove(at: removeNode)
 		}
@@ -495,10 +519,21 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = false
 	}
 	
-	func collapse(_ indexPath: IndexPath) {
+	func collapseAllFolders() {
+		for sectionNode in treeController.rootNode.childNodes {
+			for topLevelNode in sectionNode.childNodes {
+				if topLevelNode.representedObject is Folder, let indexPath = indexPathFor(topLevelNode) {
+					collapseFolder(indexPath)
+				}
+			}
+		}
+	}
+	
+	func collapseFolder(_ indexPath: IndexPath) {
 		animatingChanges = true
 		
 		let collapseNode = shadowTable[indexPath.section][indexPath.row]
+		guard expandedNodes.contains(collapseNode) else { return }
 		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
 			expandedNodes.remove(at: removeNode)
 		}
@@ -540,24 +575,28 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return indexes
 	}
 
-	func selectFeed(_ indexPath: IndexPath?) {
-		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
-			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-			masterTimelineViewController!.coordinator = self
-			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: true)
-		}
-
+	func selectFeed(_ indexPath: IndexPath?, automated: Bool = true) {
+		selectArticle(nil)
 		currentFeedIndexPath = indexPath
 
 		if let ip = indexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 			timelineFetcher = fetcher
 			updateSelectingActivity(with: node)
+
+			if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
+				masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+				masterTimelineViewController!.coordinator = self
+				navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: !automated)
+			}
 		} else {
 			timelineFetcher = nil
+
+			if rootSplitViewController.isCollapsed && navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
+				navControllerForTimeline().popViewController(animated: !automated)
+			}
 		}
 		
 		masterFeedViewController.updateFeedSelection()
-		selectArticle(nil)
 	}
 	
 	func selectPrevFeed() {
@@ -571,6 +610,24 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			selectFeed(indexPath)
 		}
 	}
+	
+	func selectTodayFeed() {
+		masterFeedViewController?.ensureSectionIsExpanded(0) {
+			self.selectFeed(IndexPath(row: 0, section: 0))
+		}
+	}
+
+	func selectAllUnreadFeed() {
+		masterFeedViewController?.ensureSectionIsExpanded(0) {
+			self.selectFeed(IndexPath(row: 1, section: 0))
+		}
+	}
+
+	func selectStarredFeed() {
+		masterFeedViewController?.ensureSectionIsExpanded(0) {
+			self.selectFeed(IndexPath(row: 2, section: 0))
+		}
+	}
 
 	func selectArticle(_ indexPath: IndexPath?, automated: Bool = true) {
 		currentArticleIndexPath = indexPath
@@ -581,18 +638,22 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 
 		if indexPath == nil {
-			if !rootSplitViewController.isCollapsed {
+			if rootSplitViewController.isCollapsed {
+				if masterNavigationController.children.last is DetailViewController {
+					masterNavigationController.popViewController(animated: !automated)
+				}
+			} else {
 				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-				installDetailController(systemMessageViewController)
+				installDetailController(systemMessageViewController, automated: automated)
 			}
-			masterTimelineViewController?.updateArticleSelection(animate: true)
+			masterTimelineViewController?.updateArticleSelection(animate: !automated)
 			return
 		}
 		
 		if detailViewController == nil {
 			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
 			detailViewController.coordinator = self
-			installDetailController(detailViewController)
+			installDetailController(detailViewController, automated: automated)
 		}
 		
 		// Automatically hide the overlay
@@ -604,7 +665,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 
 		if automated {
-			masterTimelineViewController?.updateArticleSelection(animate: true)
+			masterTimelineViewController?.updateArticleSelection(animate: false)
 		}
 		
 		detailViewController?.updateArticleSelection()
@@ -672,6 +733,22 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
+	func selectPrevUnread() {
+		
+		// This should never happen, but I don't want to risk throwing us
+		// into an infinate loop searching for an unread that isn't there.
+		if appDelegate.unreadCount < 1 {
+			return
+		}
+		
+		if selectPrevUnreadArticleInTimeline() {
+			return
+		}
+		
+		selectPrevUnreadFeedFetcher()
+		selectPrevUnreadArticleInTimeline()
+	}
+
 	func selectNextUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
@@ -690,6 +767,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			activityManager.selectingNextUnread()
 		}
 
+	}
+	
+	func scrollOrGoToNextUnread() {
+		if detailViewController?.canScrollDown() ?? false {
+			detailViewController?.scrollPageDown()
+		} else {
+			selectNextUnread()
+		}
 	}
 	
 	func markAllAsRead(_ articles: [Article]) {
@@ -713,6 +798,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterNavigationController.popViewController(animated: true)
 	}
 	
+	func markAsReadOlderArticlesInTimeline() {
+		if let indexPath = currentArticleIndexPath {
+			markAsReadOlderArticlesInTimeline(indexPath)
+		}
+	}
 	func markAsReadOlderArticlesInTimeline(_ indexPath: IndexPath) {
 		let article = articles[indexPath.row]
 		let articlesToMark = articles.filter { $0.logicalDatePublished < article.logicalDatePublished }
@@ -720,6 +810,18 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		markAllAsRead(articlesToMark)
+	}
+	
+	func markAsReadForCurrentArticle() {
+		if let article = currentArticle {
+			markArticles(Set([article]), statusKey: .read, flag: true)
+		}
+	}
+	
+	func markAsUnreadForCurrentArticle() {
+		if let article = currentArticle {
+			markArticles(Set([article]), statusKey: .read, flag: false)
+		}
 	}
 	
 	func toggleReadForCurrentArticle() {
@@ -737,7 +839,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		runCommand(markReadCommand)
 	}
 
-	func toggleStarForCurrentArticle() {
+	func toggleStarredForCurrentArticle() {
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
 		}
@@ -753,7 +855,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
-		masterNavigationController.popViewController(animated: true)
 		masterFeedViewController.discloseFeed(feed) {
 			completion?()
 		}
@@ -770,8 +871,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		//		self.present(settings, animated: true)
 	}
 	
-	func showAdd() {
-		let addViewController = UIStoryboard.add.instantiateInitialViewController()!
+	func showAdd(_ type: AddControllerType) {
+		selectFeed(nil)
+
+		let addViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
+		let containerController = addViewController.topViewController as! AddContainerViewController
+		containerController.initialControllerType = type
 		addViewController.modalPresentationStyle = .formSheet
 		addViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
 		masterFeedViewController.present(addViewController, animated: true)
@@ -819,10 +924,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func navigateToTimeline() {
-		masterTimelineViewController?.focus()
 		if currentArticleIndexPath == nil {
 			selectArticle(IndexPath(row: 0, section: 0))
 		}
+		masterTimelineViewController?.focus()
 	}
 	
 	func navigateToDetail() {
@@ -984,11 +1089,113 @@ private extension SceneCoordinator {
 		self.showAvatars = false
 	}
 	
-	// MARK: Select Next Unread
+	// MARK: Select Prev Unread
 
 	@discardableResult
+	func selectPrevUnreadArticleInTimeline() -> Bool {
+		let startingRow: Int = {
+			if let indexPath = currentArticleIndexPath {
+				return indexPath.row - 1
+			} else {
+				return articles.count - 1
+			}
+		}()
+		
+		return selectPrevArticleInTimeline(startingRow: startingRow)
+	}
+	
+	func selectPrevArticleInTimeline(startingRow: Int) -> Bool {
+		
+		guard startingRow >= 0 else {
+			return false
+		}
+		
+		for i in (0...startingRow).reversed() {
+			let article = articles[i]
+			if !article.status.read {
+				selectArticle(IndexPath(row: i, section: 0))
+				return true
+			}
+		}
+		
+		return false
+		
+	}
+	
+	func selectPrevUnreadFeedFetcher() {
+		
+		let indexPath: IndexPath = {
+			if currentFeedIndexPath == nil {
+				return IndexPath(row: 0, section: 0)
+			} else {
+				return currentFeedIndexPath!
+			}
+		}()
+
+		// Increment or wrap around the IndexPath
+		let nextIndexPath: IndexPath = {
+			if indexPath.row - 1 < 0 {
+				if indexPath.section - 1 < 0 {
+					return IndexPath(row: shadowTable[shadowTable.count - 1].count - 1, section: shadowTable.count - 1)
+				} else {
+					return IndexPath(row: shadowTable[indexPath.section - 1].count - 1, section: indexPath.section - 1)
+				}
+			} else {
+				return IndexPath(row: indexPath.row - 1, section: indexPath.section)
+			}
+		}()
+		
+		if selectPrevUnreadFeedFetcher(startingWith: nextIndexPath) {
+			return
+		}
+		let maxIndexPath = IndexPath(row: shadowTable[shadowTable.count - 1].count - 1, section: shadowTable.count - 1)
+		selectPrevUnreadFeedFetcher(startingWith: maxIndexPath)
+		
+	}
+	
+	@discardableResult
+	func selectPrevUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
+		
+		for i in (0...indexPath.section).reversed() {
+			
+			let startingRow: Int = {
+				if indexPath.section == i {
+					return indexPath.row
+				} else {
+					return shadowTable[i].count - 1
+				}
+			}()
+			
+			for j in (0...startingRow).reversed() {
+				
+				let prevIndexPath = IndexPath(row: j, section: i)
+				guard let node = nodeFor(prevIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
+					assertionFailure()
+					return true
+				}
+				
+				if expandedNodes.contains(node) {
+					continue
+				}
+				
+				if unreadCountProvider.unreadCount > 0 {
+					selectFeed(prevIndexPath)
+					return true
+				}
+				
+			}
+			
+		}
+		
+		return false
+		
+	}
+	
+	// MARK: Select Next Unread
+	
+	@discardableResult
 	func selectFirstUnreadArticleInTimeline() -> Bool {
-		return selectArticleInTimeline(startingRow: 0)
+		return selectNextArticleInTimeline(startingRow: 0)
 	}
 	
 	@discardableResult
@@ -1001,10 +1208,10 @@ private extension SceneCoordinator {
 			}
 		}()
 		
-		return selectArticleInTimeline(startingRow: startingRow)
+		return selectNextArticleInTimeline(startingRow: startingRow)
 	}
 	
-	func selectArticleInTimeline(startingRow: Int) -> Bool {
+	func selectNextArticleInTimeline(startingRow: Int) -> Bool {
 		
 		guard startingRow < articles.count else {
 			return false
@@ -1024,10 +1231,13 @@ private extension SceneCoordinator {
 	
 	func selectNextUnreadFeedFetcher() {
 		
-		guard let indexPath = currentFeedIndexPath else {
-			assertionFailure()
-			return
-		}
+		let indexPath: IndexPath = {
+			if currentFeedIndexPath == nil {
+				return IndexPath(row: -1, section: 0)
+			} else {
+				return currentFeedIndexPath!
+			}
+		}()
 		
 		// Increment or wrap around the IndexPath
 		let nextIndexPath: IndexPath = {
@@ -1054,7 +1264,15 @@ private extension SceneCoordinator {
 		
 		for i in indexPath.section..<shadowTable.count {
 			
-			for j in indexPath.row..<shadowTable[indexPath.section].count {
+			let startingRow: Int = {
+				if indexPath.section == i {
+					return indexPath.row
+				} else {
+					return 0
+				}
+			}()
+			
+			for j in startingRow..<shadowTable[indexPath.section].count {
 				
 				let nextIndexPath = IndexPath(row: j, section: i)
 				guard let node = nodeFor(nextIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
@@ -1262,7 +1480,7 @@ private extension SceneCoordinator {
 	// during the display mode change callback (in the split view controller delegate).  To fool the
 	// system, we leave the same controller, the shim, in place and change its child controllers instead.
 	
-	func installDetailController(_ detailController: UIViewController) {
+	func installDetailController(_ detailController: UIViewController, automated: Bool) {
 		let showButton = rootSplitViewController.displayMode != .allVisible
 		let controller = addNavControllerIfNecessary(detailController, showButton: showButton)
 		
@@ -1270,7 +1488,7 @@ private extension SceneCoordinator {
 			let targetSplit = ensureDoubleSplit().children.first as! UISplitViewController
 			targetSplit.showDetailViewController(controller, sender: self)
 		} else if rootSplitViewController.isCollapsed {
-			masterNavigationController.pushViewController(controller, animated: true)
+			masterNavigationController.pushViewController(controller, animated: !automated)
 		} else {
 			if let shimController = rootSplitViewController.viewControllers.last {
 				shimController.replaceChildAndPinView(controller)

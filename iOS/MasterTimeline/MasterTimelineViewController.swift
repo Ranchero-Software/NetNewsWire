@@ -24,7 +24,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
 
-	lazy var keyboardManager = KeyboardManager(type: .timeline, coordinator: coordinator)
+	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
 	}
@@ -156,6 +156,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	func updateArticleSelection(animate: Bool) {
+		guard !coordinator.articles.isEmpty else { return }
+		
 		if let indexPath = coordinator.currentArticleIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRow(at: indexPath, animated: animate, scrollPosition: .middle)
@@ -163,12 +165,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		} else {
 			tableView.selectRow(at: nil, animated: animate, scrollPosition: .none)
 		}
+		
 		updateUI()
 	}
 
 	func showSearchAll() {
 		navigationItem.searchController?.isActive = true
 		navigationItem.searchController?.searchBar.selectedScopeButtonIndex = 1
+		navigationItem.searchController?.searchBar.becomeFirstResponder()
 	}
 	
 	func focus() {

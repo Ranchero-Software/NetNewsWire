@@ -17,35 +17,26 @@ enum KeyboardType: String {
 
 class KeyboardManager {
 	
-	private let coordinator: SceneCoordinator
 	private(set) var keyCommands: [UIKeyCommand]?
 	
-	init(type: KeyboardType, coordinator: SceneCoordinator) {
-		self.coordinator = coordinator
-		load(type: type)
+	init(type: KeyboardType) {
+		let globalFile = Bundle.main.path(forResource: KeyboardType.global.rawValue, ofType: "plist")!
+		let globalEntries = NSArray(contentsOfFile: globalFile)! as! [[String: Any]]
+		keyCommands = globalEntries.compactMap { createKeyCommand(keyEntry: $0) }
+		keyCommands!.append(contentsOf: globalAuxilaryKeyCommands())
+
+		let specificFile = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
+		let specificEntries = NSArray(contentsOfFile: specificFile)! as! [[String: Any]]
+		keyCommands!.append(contentsOf: specificEntries.compactMap { createKeyCommand(keyEntry: $0) } )
+		
+		if type == .sidebar {
+			keyCommands!.append(contentsOf: sidebarAuxilaryKeyCommands())
+		}
 	}
 	
 }
 
 private extension KeyboardManager {
-	
-	func load(type: KeyboardType) {
-		let globalFile = Bundle.main.path(forResource: KeyboardType.global.rawValue, ofType: "plist")!
-		let globalEntries = NSArray(contentsOfFile: globalFile)! as! [[String: Any]]
-		var globalCommands = globalEntries.compactMap { createKeyCommand(keyEntry: $0) }
-		
-		let specificFile = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
-		let specificEntries = NSArray(contentsOfFile: specificFile)! as! [[String: Any]]
-		let specificCommands = specificEntries.compactMap { createKeyCommand(keyEntry: $0) }
-		
-		globalCommands.append(contentsOf: specificCommands)
-		
-		if type == .sidebar {
-			globalCommands.append(contentsOf: sidebarAuxilaryKeyCommands())
-		}
-		
-		keyCommands = globalCommands
-	}
 	
 	func createKeyCommand(keyEntry: [String: Any]) -> UIKeyCommand? {
 		guard let input = createKeyCommandInput(keyEntry: keyEntry) else { return nil }
@@ -69,7 +60,7 @@ private extension KeyboardManager {
 		
 		switch(key) {
 		case "[space]":
-			return " "
+			return "\u{0020}"
 		case "[uparrow]":
 			return UIKeyCommand.inputUpArrow
 		case "[downarrow]":
@@ -114,6 +105,48 @@ private extension KeyboardManager {
 		}
 
 		return flags
+	}
+	
+	func globalAuxilaryKeyCommands() -> [UIKeyCommand] {
+		var keys = [UIKeyCommand]()
+		
+		let addNewFeedTitle = NSLocalizedString("New Feed", comment: "New Feed")
+		keys.append(createKeyCommand(title: addNewFeedTitle, action: "addNewFeed:", input: "n", modifiers: [.command]))
+
+		let addNewFolderTitle = NSLocalizedString("New Folder", comment: "New Folder")
+		keys.append(createKeyCommand(title: addNewFolderTitle, action: "addNewFolder:", input: "n", modifiers: [.command, .shift]))
+
+		let refreshTitle = NSLocalizedString("Refresh", comment: "Refresh")
+		keys.append(createKeyCommand(title: refreshTitle, action: "refresh:", input: "r", modifiers: [.command]))
+
+		let nextUnreadTitle = NSLocalizedString("Next Unread", comment: "Next Unread")
+		keys.append(createKeyCommand(title: nextUnreadTitle, action: "nextUnread:", input: "/", modifiers: [.command]))
+
+		let goToTodayTitle = NSLocalizedString("Go To Today", comment: "Go To Today")
+		keys.append(createKeyCommand(title: goToTodayTitle, action: "goToToday:", input: "1", modifiers: [.command]))
+
+		let goToAllUnreadTitle = NSLocalizedString("Go To All Unread", comment: "Go To All Unread")
+		keys.append(createKeyCommand(title: goToAllUnreadTitle, action: "goToAllUnread:", input: "2", modifiers: [.command]))
+
+		let goToStarredTitle = NSLocalizedString("Go To Starred", comment: "Go To Starred")
+		keys.append(createKeyCommand(title: goToStarredTitle, action: "goToStarred:", input: "3", modifiers: [.command]))
+
+		let toggleReadTitle = NSLocalizedString("Toggle Read Status", comment: "Toggle Read Status")
+		keys.append(createKeyCommand(title: toggleReadTitle, action: "toggleRead:", input: "U", modifiers: [.command, .shift]))
+
+		let markAllAsReadTitle = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+		keys.append(createKeyCommand(title: markAllAsReadTitle, action: "markAllAsRead:", input: "k", modifiers: [.command]))
+
+		let markOlderAsReadTitle = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
+		keys.append(createKeyCommand(title: markOlderAsReadTitle, action: "markOlderArticlesAsRead:", input: "k", modifiers: [.command, .shift]))
+
+		let toggleStarredTitle = NSLocalizedString("Toggle Starred Status", comment: "Toggle Starred Status")
+		keys.append(createKeyCommand(title: toggleStarredTitle, action: "toggleStarred:", input: "l", modifiers: [.command, .shift]))
+
+		let openInBrowserTitle = NSLocalizedString("Open In Browser", comment: "Open In Browser")
+		keys.append(createKeyCommand(title: openInBrowserTitle, action: "openInBrowser:", input: UIKeyCommand.inputRightArrow, modifiers: [.command]))
+
+		return keys
 	}
 	
 	func sidebarAuxilaryKeyCommands() -> [UIKeyCommand] {

@@ -22,7 +22,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
 	
-	lazy var keyboardManager = KeyboardManager(type: .sidebar, coordinator: coordinator)
+	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
 	}
@@ -56,6 +56,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		updateUI()
 		applyChanges(animate: false)
+		becomeFirstResponder()
 		
 	}
 
@@ -259,7 +260,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		becomeFirstResponder()
-		coordinator.selectFeed(indexPath)
+		coordinator.selectFeed(indexPath, automated: false)
 	}
 
 	override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
@@ -347,7 +348,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
-		coordinator.showAdd()
+		coordinator.showAdd(.feed)
 	}
 	
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
@@ -361,11 +362,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		if coordinator.isExpanded(sectionNode) {
 			headerView.disclosureExpanded = false
-			coordinator.collapse(section: sectionIndex)
+			coordinator.collapseSection(sectionIndex)
 			self.applyChanges(animate: true)
 		} else {
 			headerView.disclosureExpanded = true
-			coordinator.expand(section: sectionIndex)
+			coordinator.expandSection(sectionIndex)
 			self.applyChanges(animate: true)
 		}
 		
@@ -398,6 +399,36 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		coordinator.showBrowserForCurrentFeed()
 	}
 	
+	@objc override func delete(_ sender: Any?) {
+		if let indexPath = coordinator.currentFeedIndexPath {
+			delete(indexPath: indexPath)
+		}
+	}
+	
+	@objc func expandSelectedRows(_ sender: Any?) {
+		if let indexPath = coordinator.currentFeedIndexPath {
+			coordinator.expandFolder(indexPath)
+			self.applyChanges(animate: true)
+		}
+	}
+	
+	@objc func collapseSelectedRows(_ sender: Any?) {
+		if let indexPath = coordinator.currentFeedIndexPath {
+			coordinator.collapseFolder(indexPath)
+			self.applyChanges(animate: true)
+		}
+	}
+	
+	@objc func expandAll(_ sender: Any?) {
+		coordinator.expandAllSectionsAndFolders()
+		self.applyChanges(animate: true)
+	}
+	
+	@objc func collapseAllExceptForGroupItems(_ sender: Any?) {
+		coordinator.collapseAllFolders()
+		self.applyChanges(animate: true)
+	}
+	
 	// MARK: API
 	
 	func updateFeedSelection() {
@@ -421,24 +452,42 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
+	func ensureSectionIsExpanded(_ sectionIndex: Int, completion: (() -> Void)? = nil) {
+		guard let sectionNode = coordinator.rootNode.childAtIndex(sectionIndex) else {
+				return
+		}
+		
+		if !coordinator.isExpanded(sectionNode) {
+			coordinator.expandSection(sectionIndex)
+			self.applyChanges(animate: true) {
+				completion?()
+			}
+		} else {
+			completion?()
+		}
+	}
+	
 	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
 		
 		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
-				return
+			completion?()
+			return
 		}
 		
 		if let indexPath = coordinator.indexPathFor(node) {
 			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
 			coordinator.selectFeed(indexPath)
+			completion?()
 			return
 		}
 	
 		// It wasn't already visable, so expand its folder and try again
 		guard let parent = node.parent, let indexPath = coordinator.indexPathFor(parent) else {
+			completion?()
 			return
 		}
 		
-		coordinator.expand(indexPath)
+		coordinator.expandFolder(indexPath)
 		reloadNode(parent)
 
 		self.applyChanges(animate: true) { [weak self] in
@@ -481,12 +530,10 @@ private extension MasterFeedViewController {
 	}
 	
 	func reloadNode(_ node: Node) {
-		let savedNode = selectedNode()
-		
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems([node])
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			self?.selectRow(node: savedNode)
+			self?.restoreSelectionIfNecessary()
 		}
 	}
 	
@@ -503,21 +550,6 @@ private extension MasterFeedViewController {
 			self?.restoreSelectionIfNecessary()
 			completion?()
 		}
-	}
-	
-	func selectedNode() -> Node? {
-		if let selectedIndexPath = tableView.indexPathForSelectedRow {
-			return coordinator.nodeFor(selectedIndexPath)
-		} else {
-			return nil
-		}
-	}
-	
-	func selectRow(node: Node?) {
-		if let nodeToSelect = node, let selectingIndexPath = coordinator.indexPathFor(nodeToSelect) {
-			tableView.selectRow(at: selectingIndexPath, animated: false, scrollPosition: .none)
-		}
-
 	}
 
     func makeDataSource() -> UITableViewDiffableDataSource<Int, Node> {
@@ -613,7 +645,7 @@ private extension MasterFeedViewController {
 		guard let indexPath = tableView.indexPath(for: cell)  else {
 			return
 		}
-		coordinator.expand(indexPath)
+		coordinator.expandFolder(indexPath)
 		self.applyChanges(animate: true)
 	}
 
@@ -621,7 +653,7 @@ private extension MasterFeedViewController {
 		guard let indexPath = tableView.indexPath(for: cell) else {
 			return
 		}
-		coordinator.collapse(indexPath)
+		coordinator.collapseFolder(indexPath)
 		self.applyChanges(animate: true)
 	}
 
