@@ -354,17 +354,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		guard coordinator.showAvatars, let faviconURL = note.userInfo?["faviconURL"] as? String else {
-			return
-		}
-		tableView.indexPathsForVisibleRows?.forEach { indexPath in
-			guard let article = coordinator.articles.articleAtRow(indexPath.row), let articleFaviconURL = article.feed?.faviconURL else {
-				return
-			}
-			if faviconURL == articleFaviconURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
-				cell.setAvatarImage(image)
-				return
-			}
+		if coordinator.showAvatars {
+			queueReloadAvailableCells()
 		}
 	}
 
@@ -386,7 +377,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	// MARK: Reloading
 	
-	private func reloadAllVisibleCells() {
+	func queueReloadAvailableCells() {
+		CoalescingQueue.standard.add(self, #selector(reloadAllVisibleCells))
+	}
+
+	@objc private func reloadAllVisibleCells() {
 		let visibleArticles = tableView.indexPathsForVisibleRows!.map { return coordinator.articles[$0.row] }
 		reloadCells(visibleArticles)
 	}
