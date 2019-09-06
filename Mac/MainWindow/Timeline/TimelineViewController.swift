@@ -513,18 +513,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		guard showAvatars, let faviconURL = note.userInfo?[FaviconDownloader.UserInfoKey.faviconURL] as? String else {
-			return
-		}
-
-		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
-			guard let article = articles.articleAtRow(row) else {
-				return false
-			}
-			return article.feed?.faviconURL == faviconURL
-		}
-		if let indexesToReload = indexesToReload {
-			reloadCells(for: indexesToReload)
+		if showAvatars {
+			queueReloadAvailableCells()
 		}
 	}
 
