@@ -7,6 +7,28 @@
         <language>en</language>
 
 			<item>
+         <title>NetNewsWire 5.0.1d1</title>
+            <description><![CDATA[
+<p>(Probably) fix a crashing bug having to do with a callback being called more than once, when it was designed to be called just once.</p>
+<p>Preferences > General: add checkbox to hide the unread count in the Dock.</p>
+<p>Article pane: handle figures and iframes as we do images, so they fit in the view.</p>
+<p>Article pane: fix white flash on first article load while in Dark Mode.</p>
+<p>Enable the Open in Browser command only when a single article is selected.</p>
+<p>Detect RDF (RSS 1.0) feeds that lack an XML header.</p>
+<p>Parse Atom-style dates that are missing a T character in the middle.</p>
+<p>About window: add link to NetNewsWire website.</p>
+<p>RSS parser: don’t let author/title overwrite item/title.</p>
+<p>Deleting an empty Feedbin folder no longer makes the sidebar non-responsive.</p>
+<p>Updated the UI when a Feedbin user with an expired trial creates an account in NetNewsWire.</p>
+<p>Feedbin syncing: fixed a bug where starred articles could appear as unread.</p>
+<p>Microblog Mac app sharing: when it has to launch the app first, it waits a little longer before sending it content, which should fix a bug where sometimes you get no content in that case.</p>
+  							]]></description>
+            <pubDate>Wed, 04 Sep 2019 21:30:00 -0700</pubDate>
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.1d1/NetNewsWire5.0.1d1.zip" sparkle:version="2611" sparkle:shortVersionString="5.0" length="5188084" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+			<item>
          <title>NetNewsWire 5.0</title>
             <description><![CDATA[
             	<p>This is the shipping version of NetNewsWire 5.0.</p>
