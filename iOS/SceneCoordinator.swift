@@ -579,6 +579,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		selectArticle(nil)
 		currentFeedIndexPath = indexPath
 
+		masterFeedViewController.updateFeedSelection()
+
 		if let ip = indexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 			timelineFetcher = fetcher
 			updateSelectingActivity(with: node)
@@ -596,7 +598,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			}
 		}
 		
-		masterFeedViewController.updateFeedSelection()
 	}
 	
 	func selectPrevFeed() {
@@ -633,10 +634,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		currentArticleIndexPath = indexPath
 		activityManager.reading(currentArticle)
 		
-		if let article = currentArticle {
-			markArticles(Set([article]), statusKey: .read, flag: true)
-		}
-
 		if indexPath == nil {
 			if rootSplitViewController.isCollapsed {
 				if masterNavigationController.children.last is DetailViewController {
@@ -670,6 +667,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		detailViewController?.updateArticleSelection()
 		
+		if let article = currentArticle {
+			markArticles(Set([article]), statusKey: .read, flag: true)
+		}
 	}
 	
 	func beginSearching() {

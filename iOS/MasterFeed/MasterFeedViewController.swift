@@ -97,8 +97,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
 
-		if let node = node, coordinator.indexPathFor(node) != nil {
-			reloadNode(node)
+		if let node = node, let indexPath = coordinator.indexPathFor(node), let unreadCountProvider = node.representedObject as? UnreadCountProvider {
+			if let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
+				cell.unreadCount = unreadCountProvider.unreadCount
+			}
 		}
 	}
 
@@ -437,7 +439,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		if let indexPath = coordinator.currentFeedIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
 			}
 		} else {
 			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
@@ -667,7 +669,7 @@ private extension MasterFeedViewController {
 			return
 		}
 		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline(), indexPath != tableView.indexPathForSelectedRow {
-			tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
 		}
 	}
 

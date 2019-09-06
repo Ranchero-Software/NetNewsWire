@@ -162,7 +162,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		if let indexPath = coordinator.currentArticleIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRow(at: indexPath, animated: animate, scrollPosition: .middle)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
 			}
 		} else {
 			tableView.selectRow(at: nil, animated: animate, scrollPosition: .none)
@@ -307,10 +307,20 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@objc func statusesDidChange(_ note: Notification) {
-		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
+		guard let updatedArticles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
 			return
 		}
-		reloadVisibleCells(for: articles)
+		
+		let visibleArticles = tableView.indexPathsForVisibleRows!.map { return coordinator.articles[$0.row] }
+		let visibleUpdatedArticles = visibleArticles.filter { updatedArticles.contains($0) }
+
+		for article in visibleUpdatedArticles {
+			if let articleIndex = coordinator.indexForArticleID(article.articleID) {
+				if let cell = tableView.cellForRow(at: IndexPath(row: articleIndex, section: 0)) as? MasterTimelineTableViewCell {
+					configure(cell, article: article)
+				}
+			}
+		}
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
@@ -379,33 +389,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private func reloadAllVisibleCells() {
 		let visibleArticles = tableView.indexPathsForVisibleRows!.map { return coordinator.articles[$0.row] }
 		reloadCells(visibleArticles)
-	}
-	
-	private func reloadVisibleCells(for articles: [Article]) {
-		reloadVisibleCells(for: Set(articles.articleIDs()))
-	}
-	
-	private func reloadVisibleCells(for articles: Set<Article>) {
-		reloadVisibleCells(for: articles.articleIDs())
-	}
-	
-	private func reloadVisibleCells(for articleIDs: Set<String>) {
-		if articleIDs.isEmpty {
-			return
-		}
-		let indexes = coordinator.indexesForArticleIDs(articleIDs)
-		reloadVisibleCells(for: indexes)
-	}
-	
-	private func reloadVisibleCells(for indexes: IndexSet) {
-		let reloadArticles: [Article] = tableView.indexPathsForVisibleRows!.compactMap { indexPath in
-			if indexes.contains(indexPath.row) {
-				return coordinator.articles[indexPath.row]
-			} else {
-				return nil
-			}
-		}
-		reloadCells(reloadArticles)
 	}
 	
 	private func reloadCells(_ articles: [Article]) {
@@ -560,7 +543,7 @@ private extension MasterTimelineViewController {
 		}
 		if let articleID = coordinator.currentArticle?.articleID, let index = coordinator.indexForArticleID(articleID) {
 			let indexPath = IndexPath(row: index, section: 0)
-			tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
 		}
 	}
 	
