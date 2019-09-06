@@ -60,7 +60,7 @@ private extension KeyboardManager {
 		
 		switch(key) {
 		case "[space]":
-			return " "
+			return "\u{0020}"
 		case "[uparrow]":
 			return UIKeyCommand.inputUpArrow
 		case "[downarrow]":

@@ -19,7 +19,9 @@ class RootSplitViewController: UISplitViewController {
 	}
 
 	// MARK: Keyboard Shortcuts
+	
 	@objc func scrollOrGoToNextUnread(_ sender: Any?) {
+		coordinator.scrollOrGoToNextUnread()
 	}
 	
 	@objc func goToPreviousUnread(_ sender: Any?) {

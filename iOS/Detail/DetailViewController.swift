@@ -184,7 +184,32 @@ class DetailViewController: UIViewController {
 		webView.becomeFirstResponder()
 	}
 
+	func finalScrollPosition() -> CGFloat {
+		return webView.scrollView.contentSize.height - webView.scrollView.bounds.size.height + webView.scrollView.contentInset.bottom
+	}
+	
+	func canScrollDown() -> Bool {
+		return webView.scrollView.contentOffset.y < finalScrollPosition()
+	}
+
+	func scrollPageDown() {
+		let scrollToY: CGFloat = {
+			let fullScroll = webView.scrollView.contentOffset.y + webView.scrollView.bounds.size.height
+			let final = finalScrollPosition()
+			if fullScroll < final {
+				return fullScroll
+			} else {
+				return final
+			}
+		}()
+		
+		let convertedPoint = self.view.convert(CGPoint(x: 0, y: 0), to: webView.scrollView)
+		let scrollToPoint = CGPoint(x: convertedPoint.x, y: scrollToY)
+		webView.scrollView.setContentOffset(scrollToPoint, animated: true)
+	}
+	
 }
+//print("\(candidateY) : \(webView.scrollView.contentSize.height)")
 
 class ArticleActivityItemSource: NSObject, UIActivityItemSource {
 	

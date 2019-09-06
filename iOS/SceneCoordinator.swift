@@ -753,6 +753,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	}
 	
+	func scrollOrGoToNextUnread() {
+		if detailViewController?.canScrollDown() ?? false {
+			detailViewController?.scrollPageDown()
+		} else {
+			selectNextUnread()
+		}
+	}
+	
 	func markAllAsRead(_ articles: [Article]) {
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
 			return
