@@ -146,6 +146,9 @@ private extension KeyboardManager {
 		let openInBrowserTitle = NSLocalizedString("Open In Browser", comment: "Open In Browser")
 		keys.append(createKeyCommand(title: openInBrowserTitle, action: "openInBrowser:", input: UIKeyCommand.inputRightArrow, modifiers: [.command]))
 
+		let articleSearchTitle = NSLocalizedString("Article Search", comment: "Article Search")
+		keys.append(createKeyCommand(title: articleSearchTitle, action: "articleSearch:", input: "f", modifiers: [.command, .shift]))
+
 		return keys
 	}
 	
