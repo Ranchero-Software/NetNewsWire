@@ -10,18 +10,21 @@ import SwiftUI
 import Combine
 import Account
 
+
 struct SettingsView : View {
 	
 	@ObservedObject var viewModel: ViewModel
+
+	@Environment(\.viewController) private var viewController: UIViewController?
 	
-	@State var isWebsitePresented: Bool = false
-	@State var website: String? = nil
+	@State private var isWebsitePresented: Bool = false
+	@State private var website: String? = nil
 	
-	@State var isOPMLImportPresented: Bool = false
-	@State var isOPMLImportDocPickerPresented: Bool = false
-	@State var isOPMLExportPresented: Bool = false
-	@State var isOPMLExportDocPickerPresented: Bool = false
-	@State var opmlAccount: Account? = nil
+	@State private var isOPMLImportPresented: Bool = false
+	@State private var isOPMLImportDocPickerPresented: Bool = false
+	@State private var isOPMLExportPresented: Bool = false
+	@State private var isOPMLExportDocPickerPresented: Bool = false
+	@State private var opmlAccount: Account? = nil
 
     var body: some View {
 		NavigationView {
@@ -123,6 +126,7 @@ struct SettingsView : View {
 				
 			}
 			.navigationBarTitle(Text("Settings"), displayMode: .inline)
+			.navigationBarItems(leading: Button(action: { self.viewController?.dismiss(animated: true) }) { Text("Done") } )
 		}
     }
 	

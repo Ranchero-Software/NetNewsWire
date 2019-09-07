@@ -859,9 +859,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 //		settingsViewController.presentingParentController = rootSplitViewController
 //		rootSplitViewController.present(settingsNavViewController, animated: true)
 		
-		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
-		settings.modalPresentationStyle = .formSheet
-		rootSplitViewController.present(settings, animated: true)
+		rootSplitViewController.present(style: .formSheet) {
+			SettingsView(viewModel: SettingsView.ViewModel())
+		}
 	}
 	
 	func showAdd(_ type: AddControllerType) {
