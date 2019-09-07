@@ -11,26 +11,29 @@ import Combine
 import Account
 
 struct SettingsView : View {
-	@ObjectBinding var viewModel: ViewModel
-	@State var subscriptionsImportAccounts: ActionSheet? = nil
-	@State var subscriptionsImportDocumentPicker: Modal? = nil
-	@State var subscriptionsExportAccounts: ActionSheet? = nil
-	@State var subscriptionsExportDocumentPicker: Modal? = nil
+	
+	@ObservedObject var viewModel: ViewModel
+	
+	@State var isWebsitePresented: Bool = false
+	@State var isGithubRepoPresented: Bool = false
+	@State var isBugTrackerPresented: Bool = false
+	@State var isTechnotesPresented: Bool = false
+	@State var isHowToSupportPresented: Bool = false
 
     var body: some View {
 		NavigationView {
 			Form {
 				
-				Section(header: Text("ACCOUNTS")) {
-					ForEach(viewModel.accounts.identified(by: \.self)) { account in
-						NavigationButton(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(account)), isDetail: false) {
-							Text(verbatim: account.nameForDisplay)
-						}
-					}
-					NavigationButton(destination: SettingsAddAccountView(), isDetail: false) {
-						Text("Add Account")
-					}
-				}
+//				Section(header: Text("ACCOUNTS")) {
+//					ForEach(viewModel.accounts.identified(by: \.self)) { account in
+//						NavigationLink(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(account)), isDetail: false) {
+//							Text(verbatim: account.nameForDisplay)
+//						}
+//					}
+//					NavigationLink(destination: SettingsAddAccountView(), isDetail: false) {
+//						Text("Add Account")
+//					}
+//				}
 				
 				Section(header: Text("TIMELINE")) {
 					Toggle(isOn: $viewModel.sortOldestToNewest) {
@@ -41,90 +44,115 @@ struct SettingsView : View {
 					}
 				}
 				
-				Section(header: Text("DATABASE")) {
-					Picker(selection: $viewModel.refreshInterval, label: Text("Refresh Interval")) {
-						ForEach(RefreshInterval.allCases.identified(by: \.self)) { interval in
-							Text(interval.description()).tag(interval)
-						}
-					}
-					Button(action: {
-						self.subscriptionsImportAccounts = self.createSubscriptionsImportAccounts
-					}) {
-						Text("Import Subscriptions...")
-					}
-						.presentation(subscriptionsImportAccounts)
-						.presentation(subscriptionsImportDocumentPicker)
-					Button(action: {
-						self.subscriptionsExportAccounts = self.createSubscriptionsExportAccounts
-					}) {
-						Text("Export Subscriptions...")
-					}
-						.presentation(subscriptionsExportAccounts)
-						.presentation(subscriptionsExportDocumentPicker)
-				}
-				.foregroundColor(.primary)
+//				Section(header: Text("DATABASE")) {
+//					Picker(selection: $viewModel.refreshInterval, label: Text("Refresh Interval")) {
+//						ForEach(RefreshInterval.allCases.identified(by: \.self)) { interval in
+//							Text(interval.description()).tag(interval)
+//						}
+//					}
+//					Button(action: {
+//						self.subscriptionsImportAccounts = self.createSubscriptionsImportAccounts
+//					}) {
+//						Text("Import Subscriptions...")
+//					}
+//						.presentation(subscriptionsImportAccounts)
+//						.presentation(subscriptionsImportDocumentPicker)
+//					Button(action: {
+//						self.subscriptionsExportAccounts = self.createSubscriptionsExportAccounts
+//					}) {
+//						Text("Export Subscriptions...")
+//					}
+//						.presentation(subscriptionsExportAccounts)
+//						.presentation(subscriptionsExportDocumentPicker)
+//				}
+//				.foregroundColor(.primary)
 
 				Section(header: Text("ABOUT"), footer: buildFooter) {
 					Text("About NetNewsWire")
-					PresentationButton(destination: SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!)) {
+					
+					Button(action: { self.isWebsitePresented.toggle() }) {
 						Text("Website")
+						}
+					}.sheet(isPresented: $isWebsitePresented) {
+						SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!)
 					}
-					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!)) {
-						Text("Github Repository")
+					
+					VStack {
+						Button(action: { self.isGithubRepoPresented.toggle() }) {
+							Text("Github Repository")
+						}
+					}.sheet(isPresented: $isGithubRepoPresented) {
+						SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!)
 					}
-					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!)) {
-						Text("Bug Tracker")
+					
+					VStack {
+						Button(action: { self.isBugTrackerPresented.toggle() }) {
+							Text("Bug Tracker")
+						}
+					}.sheet(isPresented: $isBugTrackerPresented) {
+						SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!)
 					}
-					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!)) {
-						Text("Technotes")
+					
+					VStack {
+						Button(action: { self.isTechnotesPresented.toggle() }) {
+							Text("Technotes")
+						}
+					}.sheet(isPresented: $isTechnotesPresented) {
+						SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!)
 					}
-					PresentationButton(destination: SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!)) {
-						Text("How to Support NetNewsWire")
+					
+					VStack {
+						Button(action: { self.isHowToSupportPresented.toggle() }) {
+							Text("Technotes")
+						}
+					}.sheet(isPresented: $isHowToSupportPresented) {
+						SafariView(url: URL(string: "hhttps://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!)
 					}
+
 					Text("Add NetNewsWire News Feed")
-					}
-					.foregroundColor(.primary)
+					
+				}
+				.foregroundColor(.primary)
 				
 			}
 			.navigationBarTitle(Text("Settings"), displayMode: .inline)
-
 		}
     }
 	
-	var createSubscriptionsImportAccounts: ActionSheet {
-		var buttons = [ActionSheet.Button]()
-		
-		for account in viewModel.activeAccounts {
-			if !account.isOPMLImportSupported {
-				continue
-			}
-			
-			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
-				self.subscriptionsImportAccounts = nil
-				self.subscriptionsImportDocumentPicker = Modal(SettingsSubscriptionsImportDocumentPickerView(account: account))
-			}
-			
-			buttons.append(button)
-		}
-		
-		buttons.append(.cancel { self.subscriptionsImportAccounts = nil })
-		return ActionSheet(title: Text("Import Subscriptions..."), message: Text("Select the account to import your OPML file into."), buttons: buttons)
-	}
-	
-	var createSubscriptionsExportAccounts: ActionSheet {
-		var buttons = [ActionSheet.Button]()
-		
-		for account in viewModel.accounts {
-			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
-				self.subscriptionsExportAccounts = nil
-				self.subscriptionsExportDocumentPicker = Modal(SettingsSubscriptionsExportDocumentPickerView(account: account))
-			}
-			buttons.append(button)
-		}
-		
-		buttons.append(.cancel { self.subscriptionsExportAccounts = nil })
-		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
-	}
+//	var createSubscriptionsImportAccounts: ActionSheet {
+//		var buttons = [ActionSheet.Button]()
+//		
+//		for account in viewModel.activeAccounts {
+//			if !account.isOPMLImportSupported {
+//				continue
+//			}
+//			
+//			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
+//				self.subscriptionsImportAccounts = nil
+//				self.subscriptionsImportDocumentPicker = Modal(SettingsSubscriptionsImportDocumentPickerView(account: account))
+//			}
+//			
+//			buttons.append(button)
+//		}
+//		
+//		buttons.append(.cancel { self.subscriptionsImportAccounts = nil })
+//		return ActionSheet(title: Text("Import Subscriptions..."), message: Text("Select the account to import your OPML file into."), buttons: buttons)
+//	}
+//	
+//	var createSubscriptionsExportAccounts: ActionSheet {
+//		var buttons = [ActionSheet.Button]()
+//		
+//		for account in viewModel.accounts {
+//			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
+//				self.subscriptionsExportAccounts = nil
+//				self.subscriptionsExportDocumentPicker = Modal(SettingsSubscriptionsExportDocumentPickerView(account: account))
+//			}
+//			buttons.append(button)
+//		}
+//		
+//		buttons.append(.cancel { self.subscriptionsExportAccounts = nil })
+//		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
+//	}
 	
 	var buildFooter: some View {
 		return Text(verbatim: "\(Bundle.main.appName) v \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))")
@@ -134,9 +162,9 @@ struct SettingsView : View {
 	
 	// MARK: ViewModel
 	
-	class ViewModel: BindableObject {
+	class ViewModel: ObservableObject {
 		
-		let didChange = PassthroughSubject<ViewModel, Never>()
+		let objectWillChange = ObservableObjectPublisher()
 		
 		init() {
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
@@ -164,12 +192,12 @@ struct SettingsView : View {
 				return AppDefaults.timelineSortDirection == .orderedDescending
 			}
 			set {
+				objectWillChange.send()
 				if newValue == true {
 					AppDefaults.timelineSortDirection = .orderedDescending
 				} else {
 					AppDefaults.timelineSortDirection = .orderedAscending
 				}
-				didChange.send(self)
 			}
 		}
 		
@@ -178,8 +206,8 @@ struct SettingsView : View {
 				return AppDefaults.timelineNumberOfLines
 			}
 			set {
+				objectWillChange.send()
 				AppDefaults.timelineNumberOfLines = newValue
-				didChange.send(self)
 			}
 		}
 		
@@ -188,17 +216,17 @@ struct SettingsView : View {
 				return AppDefaults.refreshInterval
 			}
 			set {
+				objectWillChange.send()
 				AppDefaults.refreshInterval = newValue
-				didChange.send(self)
 			}
 		}
 		
 		@objc func accountsDidChange(_ notification: Notification) {
-			didChange.send(self)
+			objectWillChange.send()
 		}
 		
 		@objc func displayNameDidChange(_ notification: Notification) {
-			didChange.send(self)
+			objectWillChange.send()
 		}
 		
 	}
