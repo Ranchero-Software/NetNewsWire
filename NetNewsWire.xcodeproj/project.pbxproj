@@ -61,6 +61,8 @@
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		519D73FB2323FF35008BB345 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F35D0822AFD4760003CE1B /* SettingsView.swift */; };
 		519D740623243CC0008BB345 /* RefreshInterval-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519D740523243CC0008BB345 /* RefreshInterval-Extensions.swift */; };
+		519D740723243FE7008BB345 /* SettingsSubscriptionsExportDocumentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194B5F122B69FCC00144881 /* SettingsSubscriptionsExportDocumentPickerView.swift */; };
+		519D740823243FEA008BB345 /* SettingsSubscriptionsImportDocumentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194B5ED22B6965300144881 /* SettingsSubscriptionsImportDocumentPickerView.swift */; };
 		519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E743422C663F900A78E47 /* SceneDelegate.swift */; };
 		51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
 		51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2464,9 +2466,11 @@
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
 				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
+				519D740823243FEA008BB345 /* SettingsSubscriptionsImportDocumentPickerView.swift in Sources */,
 				5183CCEF227125970010922C /* SettingsViewController.swift in Sources */,
 				51F85BE5227217D000C787DC /* RefreshIntervalViewController.swift in Sources */,
 				51F85BF52273625800C787DC /* Bundle-Extensions.swift in Sources */,
+				519D740723243FE7008BB345 /* SettingsSubscriptionsExportDocumentPickerView.swift in Sources */,
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
 				5183CCDF226F1FCC0010922C /* UINavigationController+Progress.swift in Sources */,
 				51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */,

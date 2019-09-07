@@ -16,6 +16,12 @@ struct SettingsView : View {
 	
 	@State var isWebsitePresented: Bool = false
 	@State var website: String? = nil
+	
+	@State var isOPMLImportPresented: Bool = false
+	@State var isOPMLImportDocPickerPresented: Bool = false
+	@State var isOPMLExportPresented: Bool = false
+	@State var isOPMLExportDocPickerPresented: Bool = false
+	@State var opmlAccount: Account? = nil
 
     var body: some View {
 		NavigationView {
@@ -47,20 +53,26 @@ struct SettingsView : View {
 							Text(interval.description()).tag(interval)
 						}
 					}
-//					Button(action: {
-//						self.subscriptionsImportAccounts = self.createSubscriptionsImportAccounts
-//					}) {
-//						Text("Import Subscriptions...")
-//					}
-//						.presentation(subscriptionsImportAccounts)
-//						.presentation(subscriptionsImportDocumentPicker)
-//					Button(action: {
-//						self.subscriptionsExportAccounts = self.createSubscriptionsExportAccounts
-//					}) {
-//						Text("Export Subscriptions...")
-//					}
-//						.presentation(subscriptionsExportAccounts)
-//						.presentation(subscriptionsExportDocumentPicker)
+					
+					VStack {
+						 Button("Import Subscriptions...") {
+							 self.isOPMLImportPresented = true
+						 }
+					}.actionSheet(isPresented: $isOPMLImportPresented) {
+						createSubscriptionsImportAccounts
+					}.sheet(isPresented: $isOPMLImportDocPickerPresented) {
+						SettingsSubscriptionsImportDocumentPickerView(account: self.opmlAccount!)
+					}
+					
+					VStack {
+						 Button("Export Subscriptions...") {
+							 self.isOPMLExportPresented = true
+						 }
+					 }.actionSheet(isPresented: $isOPMLExportPresented) {
+						createSubscriptionsExportAccounts
+					 }.sheet(isPresented: $isOPMLExportDocPickerPresented) {
+						 SettingsSubscriptionsExportDocumentPickerView(account: self.opmlAccount!)
+					 }
 				}
 				.foregroundColor(.primary)
 
@@ -114,40 +126,40 @@ struct SettingsView : View {
 		}
     }
 	
-//	var createSubscriptionsImportAccounts: ActionSheet {
-//		var buttons = [ActionSheet.Button]()
-//		
-//		for account in viewModel.activeAccounts {
-//			if !account.isOPMLImportSupported {
-//				continue
-//			}
-//			
-//			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
-//				self.subscriptionsImportAccounts = nil
-//				self.subscriptionsImportDocumentPicker = Modal(SettingsSubscriptionsImportDocumentPickerView(account: account))
-//			}
-//			
-//			buttons.append(button)
-//		}
-//		
-//		buttons.append(.cancel { self.subscriptionsImportAccounts = nil })
-//		return ActionSheet(title: Text("Import Subscriptions..."), message: Text("Select the account to import your OPML file into."), buttons: buttons)
-//	}
-//	
-//	var createSubscriptionsExportAccounts: ActionSheet {
-//		var buttons = [ActionSheet.Button]()
-//		
-//		for account in viewModel.accounts {
-//			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
-//				self.subscriptionsExportAccounts = nil
-//				self.subscriptionsExportDocumentPicker = Modal(SettingsSubscriptionsExportDocumentPickerView(account: account))
-//			}
-//			buttons.append(button)
-//		}
-//		
-//		buttons.append(.cancel { self.subscriptionsExportAccounts = nil })
-//		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
-//	}
+	var createSubscriptionsImportAccounts: ActionSheet {
+		var buttons = [ActionSheet.Button]()
+		
+		for account in viewModel.activeAccounts {
+			if !account.isOPMLImportSupported {
+				continue
+			}
+			
+			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
+				self.opmlAccount = account
+				self.isOPMLImportDocPickerPresented = true
+			}
+			
+			buttons.append(button)
+		}
+		
+		buttons.append(.cancel())
+		return ActionSheet(title: Text("Import Subscriptions..."), message: Text("Select the account to import your OPML file into."), buttons: buttons)
+	}
+	
+	var createSubscriptionsExportAccounts: ActionSheet {
+		var buttons = [ActionSheet.Button]()
+		
+		for account in viewModel.accounts {
+			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
+				self.opmlAccount = account
+				self.isOPMLExportDocPickerPresented = true
+			}
+			buttons.append(button)
+		}
+		
+		buttons.append(.cancel())
+		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
+	}
 	
 	var buildFooter: some View {
 		return Text(verbatim: "\(Bundle.main.appName) v \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))")
