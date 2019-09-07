@@ -261,7 +261,6 @@
 		84C9FC7D22629E1200D921D6 /* AccountsDetail.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC7422629E1200D921D6 /* AccountsDetail.xib */; };
 		84C9FC8222629E4800D921D6 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8022629E4800D921D6 /* Preferences.storyboard */; };
 		84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8722629E8F00D921D6 /* KeyboardShortcuts.html */; };
-		84C9FC8D22629E8F00D921D6 /* EvergreenLarge.png in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8822629E8F00D921D6 /* EvergreenLarge.png */; };
 		84C9FC8E22629E8F00D921D6 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8922629E8F00D921D6 /* Credits.rtf */; };
 		84C9FC8F22629E8F00D921D6 /* NetNewsWire.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8A22629E8F00D921D6 /* NetNewsWire.sdef */; };
 		84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9B2262A1A900D921D6 /* Assets.xcassets */; };
@@ -868,7 +867,6 @@
 		84C9FC7422629E1200D921D6 /* AccountsDetail.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsDetail.xib; sourceTree = "<group>"; };
 		84C9FC8122629E4800D921D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Mac/Base.lproj/Preferences.storyboard; sourceTree = SOURCE_ROOT; };
 		84C9FC8722629E8F00D921D6 /* KeyboardShortcuts.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = KeyboardShortcuts.html; sourceTree = "<group>"; };
-		84C9FC8822629E8F00D921D6 /* EvergreenLarge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = EvergreenLarge.png; sourceTree = "<group>"; };
 		84C9FC8922629E8F00D921D6 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		84C9FC8A22629E8F00D921D6 /* NetNewsWire.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NetNewsWire.sdef; sourceTree = "<group>"; };
 		84C9FC9022629ECB00D921D6 /* NetNewsWire.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire.entitlements; sourceTree = "<group>"; };
@@ -1655,7 +1653,6 @@
 			isa = PBXGroup;
 			children = (
 				849C64671ED37A5D003D8FC0 /* Assets.xcassets */,
-				84C9FC8822629E8F00D921D6 /* EvergreenLarge.png */,
 				84C9FC8922629E8F00D921D6 /* Credits.rtf */,
 				84C9FC8A22629E8F00D921D6 /* NetNewsWire.sdef */,
 				84C9FC9022629ECB00D921D6 /* NetNewsWire.entitlements */,
@@ -2239,7 +2236,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */,
-				84C9FC8D22629E8F00D921D6 /* EvergreenLarge.png in Resources */,
 				5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */,
 				845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */,
 				848362FF2262A30E00DA1D35 /* template.html in Resources */,
