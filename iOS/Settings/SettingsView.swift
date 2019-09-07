@@ -15,10 +15,7 @@ struct SettingsView : View {
 	@ObservedObject var viewModel: ViewModel
 	
 	@State var isWebsitePresented: Bool = false
-	@State var isGithubRepoPresented: Bool = false
-	@State var isBugTrackerPresented: Bool = false
-	@State var isTechnotesPresented: Bool = false
-	@State var isHowToSupportPresented: Bool = false
+	@State var website: String? = nil
 
     var body: some View {
 		NavigationView {
@@ -70,47 +67,45 @@ struct SettingsView : View {
 				Section(header: Text("ABOUT"), footer: buildFooter) {
 					Text("About NetNewsWire")
 					
-					Button(action: { self.isWebsitePresented.toggle() }) {
+					Button(action: {
+						self.isWebsitePresented.toggle()
+						self.website = "https://ranchero.com/netnewswire/"
+					}) {
 						Text("Website")
-						}
-					}.sheet(isPresented: $isWebsitePresented) {
-						SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!)
 					}
 					
-					VStack {
-						Button(action: { self.isGithubRepoPresented.toggle() }) {
-							Text("Github Repository")
-						}
-					}.sheet(isPresented: $isGithubRepoPresented) {
-						SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire")!)
+					Button(action: {
+						self.isWebsitePresented.toggle()
+						self.website = "https://github.com/brentsimmons/NetNewsWire"
+					}) {
+						Text("Github Repository")
 					}
 					
-					VStack {
-						Button(action: { self.isBugTrackerPresented.toggle() }) {
-							Text("Bug Tracker")
-						}
-					}.sheet(isPresented: $isBugTrackerPresented) {
-						SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!)
+					Button(action: {
+						self.isWebsitePresented.toggle()
+						self.website = "https://github.com/brentsimmons/NetNewsWire/issues"
+					}) {
+						Text("Bug Tracker")
 					}
 					
-					VStack {
-						Button(action: { self.isTechnotesPresented.toggle() }) {
-							Text("Technotes")
-						}
-					}.sheet(isPresented: $isTechnotesPresented) {
-						SafariView(url: URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!)
+					Button(action: {
+						self.isWebsitePresented.toggle()
+						self.website = "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes"
+					}) {
+						Text("Technotes")
 					}
 					
-					VStack {
-						Button(action: { self.isHowToSupportPresented.toggle() }) {
-							Text("Technotes")
-						}
-					}.sheet(isPresented: $isHowToSupportPresented) {
-						SafariView(url: URL(string: "hhttps://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!)
+					Button(action: {
+						self.isWebsitePresented.toggle()
+						self.website = "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown"
+					}) {
+						Text("How To Support NetNewsWire")
 					}
 
 					Text("Add NetNewsWire News Feed")
 					
+				}.sheet(isPresented: $isWebsitePresented) {
+					SafariView(url: URL(string: self.website!)!)
 				}
 				.foregroundColor(.primary)
 				
