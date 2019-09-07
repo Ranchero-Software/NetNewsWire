@@ -41,12 +41,12 @@ struct SettingsView : View {
 					}
 				}
 				
-//				Section(header: Text("DATABASE")) {
-//					Picker(selection: $viewModel.refreshInterval, label: Text("Refresh Interval")) {
-//						ForEach(RefreshInterval.allCases.identified(by: \.self)) { interval in
-//							Text(interval.description()).tag(interval)
-//						}
-//					}
+				Section(header: Text("DATABASE")) {
+					Picker(selection: $viewModel.refreshInterval, label: Text("Refresh Interval")) {
+						ForEach(RefreshInterval.allCases) { interval in
+							Text(interval.description()).tag(interval)
+						}
+					}
 //					Button(action: {
 //						self.subscriptionsImportAccounts = self.createSubscriptionsImportAccounts
 //					}) {
@@ -61,8 +61,8 @@ struct SettingsView : View {
 //					}
 //						.presentation(subscriptionsExportAccounts)
 //						.presentation(subscriptionsExportDocumentPicker)
-//				}
-//				.foregroundColor(.primary)
+				}
+				.foregroundColor(.primary)
 
 				Section(header: Text("ABOUT"), footer: buildFooter) {
 					Text("About NetNewsWire")
