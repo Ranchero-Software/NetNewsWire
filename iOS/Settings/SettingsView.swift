@@ -10,7 +10,6 @@ import SwiftUI
 import Combine
 import Account
 
-
 struct SettingsView : View {
 	
 	@ObservedObject var viewModel: ViewModel
@@ -40,7 +39,7 @@ struct SettingsView : View {
     }
 	
 	func buildAccountsSection() -> some View {
-		Section(header: Text("ACCOUNTS")) {
+		Section(header: Text("ACCOUNTS").padding(.top, 22.0)) {
 			ForEach(viewModel.accounts) { account in
 				NavigationLink(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(account))) {
 					Text(verbatim: account.nameForDisplay)
