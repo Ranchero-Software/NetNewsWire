@@ -40,6 +40,7 @@ class AddContainerViewController: UIViewController {
 	override func viewDidLoad() {
 		
         super.viewDidLoad()
+		activityIndicatorView.color = UIColor.label
 		activityIndicatorView.isHidden = true
 
 		typeSelectorSegmentedControl.selectedSegmentIndex = initialControllerType?.rawValue ?? 0
