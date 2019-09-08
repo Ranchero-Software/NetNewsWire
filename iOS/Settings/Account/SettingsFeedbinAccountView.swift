@@ -17,6 +17,9 @@ struct SettingsFeedbinAccountView : View {
 	@State var busy: Bool = false
 	@State var error: String = ""
 
+	// This is a hack around the fact that onDismiss isn't being called by the sheet modifier.
+	var onDismiss: () -> Void
+	
 	var body: some View {
 		NavigationView {
 			Form {
@@ -116,6 +119,7 @@ struct SettingsFeedbinAccountView : View {
 	
 	private func dismiss() {
 		presentation.wrappedValue.dismiss()
+		onDismiss()
 	}
 	
 	class ViewModel: ObservableObject {
@@ -160,7 +164,7 @@ struct SettingsFeedbinAccountView : View {
 #if DEBUG
 struct SettingsFeedbinAccountView_Previews : PreviewProvider {
     static var previews: some View {
-		SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())
+		SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel(), onDismiss: {})
     }
 }
 #endif

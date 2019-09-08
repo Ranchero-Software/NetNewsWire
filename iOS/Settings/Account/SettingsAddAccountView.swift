@@ -10,7 +10,7 @@ import SwiftUI
 import Account
 
 struct SettingsAddAccountView : View {
-	
+	@Environment(\.presentationMode) var presentation
 	@State private var selectedAccountType: AccountType = nil
 	
     var body: some View {
@@ -32,10 +32,10 @@ struct SettingsAddAccountView : View {
 		}
 		.sheet(item: $selectedAccountType) { accountType in
 			if accountType == .onMyMac {
-				SettingsLocalAccountView(name: "")
+				SettingsLocalAccountView(name: "", onDismiss: { self.presentation.wrappedValue.dismiss() })
 			}
 			if accountType == .feedbin {
-				SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())
+				SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel(), onDismiss: { self.presentation.wrappedValue.dismiss() })
 			}
 		}
 		

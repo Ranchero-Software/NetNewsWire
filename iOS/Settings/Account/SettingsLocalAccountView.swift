@@ -13,6 +13,9 @@ struct SettingsLocalAccountView : View {
 	@Environment(\.presentationMode) var presentation
 	@State var name: String
 
+	// This is a hack around the fact that onDismiss isn't being called by the sheet modifier.
+	var onDismiss: () -> Void
+	
     var body: some View {
 		NavigationView {
 			Form {
@@ -50,6 +53,7 @@ struct SettingsLocalAccountView : View {
 	
 	private func dismiss() {
 		presentation.wrappedValue.dismiss()
+		onDismiss()
 	}
 	
 }
@@ -57,7 +61,7 @@ struct SettingsLocalAccountView : View {
 #if DEBUG
 struct SettingsLocalAccountView_Previews : PreviewProvider {
     static var previews: some View {
-		SettingsLocalAccountView(name: "")
+		SettingsLocalAccountView(name: "", onDismiss: {})
     }
 }
 #endif
