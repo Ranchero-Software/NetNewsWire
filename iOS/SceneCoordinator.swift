@@ -1045,8 +1045,10 @@ private extension SceneCoordinator {
 		for i in 0..<treeController.rootNode.numberOfChildNodes {
 			
 			var result = [Node]()
-			if let nodes = treeController.rootNode.childAtIndex(i)?.childNodes {
-				for node in nodes {
+			let sectionNode = treeController.rootNode.childAtIndex(i)!
+			
+			if expandedNodes.contains(sectionNode) {
+				for node in sectionNode.childNodes {
 					result.append(node)
 					if expandedNodes.contains(node) {
 						for child in node.childNodes {
