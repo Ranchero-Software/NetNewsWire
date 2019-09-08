@@ -331,9 +331,9 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View" id="HyV-fh-RgO">
                                     <items>
-                                        <menuItem title="Sort By" id="nLP-fa-KUi">
+                                        <menuItem title="Sort Articles By" id="nLP-fa-KUi">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Sort By" id="OlJ-93-6OP">
+                                            <menu key="submenu" title="Sort Articles By" id="OlJ-93-6OP">
                                                 <items>
                                                     <menuItem title="Newest Article on Top" id="TNS-TV-n0U">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
