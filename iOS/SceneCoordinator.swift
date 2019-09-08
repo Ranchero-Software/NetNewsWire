@@ -6,7 +6,8 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import SwiftUI
 import Account
 import Articles
 import RSCore
@@ -852,14 +853,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showSettings() {
-		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		settingsNavViewController.modalPresentationStyle = .formSheet
-		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
-		settingsViewController.presentingParentController = rootSplitViewController
-		rootSplitViewController.present(settingsNavViewController, animated: true)
+//		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
+//		settingsNavViewController.modalPresentationStyle = .formSheet
+//		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
+//		settingsViewController.presentingParentController = rootSplitViewController
+//		rootSplitViewController.present(settingsNavViewController, animated: true)
 		
-		//		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
-		//		self.present(settings, animated: true)
+		rootSplitViewController.present(style: .formSheet) {
+			SettingsView(viewModel: SettingsView.ViewModel())
+		}
 	}
 	
 	func showAdd(_ type: AddControllerType) {
