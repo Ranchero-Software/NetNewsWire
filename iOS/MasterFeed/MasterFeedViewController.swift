@@ -434,12 +434,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: API
 	
 	func updateFeedSelection() {
-		guard !coordinator.isRootSplitCollapsed else {
-			return
-		}
 		if let indexPath = coordinator.currentFeedIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true, deselect: coordinator.isRootSplitCollapsed)
 			}
 		} else {
 			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
@@ -665,11 +662,8 @@ private extension MasterFeedViewController {
 	}
 
 	func restoreSelectionIfNecessary() {
-		guard !coordinator.isRootSplitCollapsed else {
-			return
-		}
 		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline(), indexPath != tableView.indexPathForSelectedRow {
-			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
+			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
 		}
 	}
 

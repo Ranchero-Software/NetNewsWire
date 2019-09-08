@@ -156,13 +156,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	func updateArticleSelection(animate: Bool) {
-		guard !coordinator.isRootSplitCollapsed && !coordinator.articles.isEmpty else {
-			return
-		}
-
 		if let indexPath = coordinator.currentArticleIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true, deselect: coordinator.isRootSplitCollapsed)
 			}
 		} else {
 			tableView.selectRow(at: nil, animated: animate, scrollPosition: .none)
@@ -533,12 +529,9 @@ private extension MasterTimelineViewController {
 	}
 
 	func restoreSelectionIfNecessary() {
-		guard !coordinator.isRootSplitCollapsed else {
-			return
-		}
 		if let articleID = coordinator.currentArticle?.articleID, let index = coordinator.indexForArticleID(articleID) {
 			let indexPath = IndexPath(row: index, section: 0)
-			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
+			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
 		}
 	}
 	
