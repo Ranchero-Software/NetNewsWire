@@ -10,17 +10,38 @@ import SwiftUI
 import Account
 
 struct SettingsAddAccountView : View {
+	
+	@State private var isAddPresented = false
+	@State private var selectedAccountType: AccountType = nil
+	
     var body: some View {
 		Form {
-			PresentationButton(destination: SettingsLocalAccountView(name: "")) {
+			
+			Button(action: {
+				self.selectedAccountType = AccountType.onMyMac
+				self.isAddPresented.toggle()
+			}) {
 				SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName)
 			}
-			.padding(4)
-			PresentationButton(destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())) {
+			
+			Button(action: {
+				self.selectedAccountType = AccountType.feedbin
+				self.isAddPresented.toggle()
+			}) {
 				SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin")
 			}
-			.padding(4)
+
+			
 		}
+		.sheet(isPresented: $isAddPresented) {
+			if self.selectedAccountType == .onMyMac {
+				SettingsLocalAccountView(name: "")
+			}
+			if self.selectedAccountType == .feedbin {
+				SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())
+			}
+		}
+		
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)
 	}
 }

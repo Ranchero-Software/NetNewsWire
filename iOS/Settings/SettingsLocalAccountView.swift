@@ -10,7 +10,7 @@ import SwiftUI
 import Account
 
 struct SettingsLocalAccountView : View {
-	@Environment(\.isPresented) private var isPresented
+	@Environment(\.presentationMode) var presentation
 	@State var name: String
 
     var body: some View {
@@ -20,9 +20,7 @@ struct SettingsLocalAccountView : View {
 					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName).padding()
 				)  {
 					HStack {
-						Text("Name")
-						Divider()
-						TextField($name, placeholder: Text("(Optional)"))
+						TextField("Name", text: $name)
 					}
 				}
 				Section {
@@ -47,7 +45,7 @@ struct SettingsLocalAccountView : View {
 	}
 	
 	private func dismiss() {
-		isPresented?.value = false
+		presentation.wrappedValue.dismiss()
 	}
 	
 }

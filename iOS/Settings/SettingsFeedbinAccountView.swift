@@ -12,10 +12,10 @@ import Account
 import RSWeb
 
 struct SettingsFeedbinAccountView : View {
-	@Environment(\.isPresented) private var isPresented
-	@ObjectBinding var viewModel: ViewModel
+	@Environment(\.presentationMode) var presentation
+	@ObservedObject var viewModel: ViewModel
 	@State var busy: Bool = false
-	@State var error: Text = Text("")
+	@State var error: String = ""
 
 	var body: some View {
 		NavigationView {
@@ -23,22 +23,13 @@ struct SettingsFeedbinAccountView : View {
 				Section(header:
 					SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin").padding()
 				)  {
-					HStack {
-						Text("Email:")
-						Divider()
-						TextField($viewModel.email)
-						.textContentType(.username)
-					}
-					HStack {
-						Text("Password:")
-						Divider()
-						SecureField($viewModel.password)
-					}
+					TextField("Email", text: $viewModel.email).textContentType(.emailAddress)
+					SecureField("Password", text: $viewModel.password)
 				}
 				Section(footer:
 					HStack {
 						Spacer()
-						error.color(.red)
+						Text(verbatim: error).foregroundColor(.red)
 						Spacer()
 					}
 					) {
@@ -67,7 +58,7 @@ struct SettingsFeedbinAccountView : View {
 	private func addAccount() {
 		
 		busy = true
-		error = Text("")
+		error = ""
 		
 		let emailAddress = viewModel.email.trimmingCharacters(in: .whitespaces)
 		let credentials = Credentials.basic(username: emailAddress, password: viewModel.password)
@@ -104,15 +95,15 @@ struct SettingsFeedbinAccountView : View {
 						self.dismiss()
 						
 					} catch {
-						self.error = Text("Keychain error while storing credentials.")
+						self.error = "Keychain error while storing credentials."
 					}
 					
 				} else {
-					self.error = Text("Invalid email/password combination.")
+					self.error = "Invalid email/password combination."
 				}
 				
 			case .failure:
-				self.error = Text("Network error. Try again later.")
+				self.error = "Network error. Try again later."
 			}
 			
 		}
@@ -120,11 +111,12 @@ struct SettingsFeedbinAccountView : View {
 	}
 	
 	private func dismiss() {
-		isPresented?.value = false
+		presentation.wrappedValue.dismiss()
 	}
 	
-	class ViewModel: BindableObject {
-		let didChange = PassthroughSubject<ViewModel, Never>()
+	class ViewModel: ObservableObject {
+		
+		let objectWillChange = ObservableObjectPublisher()
 		var account: Account? = nil
 		
 		init() {
@@ -139,13 +131,14 @@ struct SettingsFeedbinAccountView : View {
 		}
 
 		var email: String = "" {
-			didSet {
-				didChange.send(self)
+			willSet {
+				objectWillChange.send()
 			}
 		}
+		
 		var password: String = "" {
-			didSet {
-				didChange.send(self)
+			willSet {
+				objectWillChange.send()
 			}
 		}
 		

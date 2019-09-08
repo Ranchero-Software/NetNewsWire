@@ -14,19 +14,13 @@ struct SettingsAccountLabelView : View {
 	
     var body: some View {
 		HStack {
-			Spacer()
-			HStack {
-				Image(accountImage)
-					.resizable()
-					.aspectRatio(1, contentMode: .fit)
-					.frame(height: 32)
-				Text(verbatim: accountLabel).font(.title)
-
-			}
-			.layoutPriority(1)
-			Spacer()
+			Image(accountImage)
+				.resizable()
+				.aspectRatio(1, contentMode: .fit)
+				.frame(height: 32)
+			Text(verbatim: accountLabel).font(.title)
 		}
-		.foregroundColor(.primary)
+		.foregroundColor(.primary).padding(4.0)
 	}
 }
 

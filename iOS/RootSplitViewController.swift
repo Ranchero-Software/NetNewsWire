@@ -61,6 +61,10 @@ class RootSplitViewController: UISplitViewController {
 		coordinator.showBrowserForCurrentArticle()
 	}
 	
+	@objc func articleSearch(_ sender: Any?) {
+		coordinator.showSearch()
+	}
+	
 	@objc func addNewFeed(_ sender: Any?) {
 		coordinator.showAdd(.feed)
 	}

@@ -6,7 +6,8 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import SwiftUI
 import Account
 import Articles
 import RSCore
@@ -327,11 +328,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	func showSearch() {
 		selectFeed(nil)
-		
-		masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-		masterTimelineViewController!.coordinator = self
-		navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: false)
-		
+		installTimelineControllerIfNecessary(animated: false)
 		DispatchQueue.main.asyncAfter(deadline: .now()) {
 			self.masterTimelineViewController!.showSearchAll()
 		}
@@ -584,12 +581,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if let ip = indexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 			timelineFetcher = fetcher
 			updateSelectingActivity(with: node)
-
-			if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
-				masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-				masterTimelineViewController!.coordinator = self
-				navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: !automated)
-			}
+			installTimelineControllerIfNecessary(animated: !automated)
 		} else {
 			timelineFetcher = nil
 
@@ -861,14 +853,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showSettings() {
-		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		settingsNavViewController.modalPresentationStyle = .formSheet
-		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
-		settingsViewController.presentingParentController = rootSplitViewController
-		rootSplitViewController.present(settingsNavViewController, animated: true)
+//		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
+//		settingsNavViewController.modalPresentationStyle = .formSheet
+//		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
+//		settingsViewController.presentingParentController = rootSplitViewController
+//		rootSplitViewController.present(settingsNavViewController, animated: true)
 		
-		//		let settings = UIHostingController(rootView: SettingsView(viewModel: SettingsView.ViewModel()))
-		//		self.present(settings, animated: true)
+		rootSplitViewController.present(style: .formSheet) {
+			SettingsView(viewModel: SettingsView.ViewModel())
+		}
 	}
 	
 	func showAdd(_ type: AddControllerType) {
@@ -1472,6 +1465,14 @@ private extension SceneCoordinator {
 	}
 	
 	// MARK: Double Split
+	
+	func installTimelineControllerIfNecessary(animated: Bool) {
+		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
+			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+			masterTimelineViewController!.coordinator = self
+			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: animated)
+		}
+	}
 	
 	// Note about the Shim Controller
 	// In the root split view controller's secondary (or detail) position we use a view controller that
