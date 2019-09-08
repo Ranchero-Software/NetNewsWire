@@ -54,7 +54,7 @@ struct SettingsView : View {
 	func buildTimelineSection() -> some View {
 		Section(header: Text("TIMELINE")) {
 			Toggle(isOn: $viewModel.sortOldestToNewest) {
-				Text("Sort Oldest to Newest")
+				Text("Sort Newest to Oldest")
 			}
 			Toggle(isOn: $viewModel.groupByFeed) {
 				Text("Group By Feed")
