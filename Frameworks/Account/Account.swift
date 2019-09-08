@@ -118,7 +118,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		set {
 			if newValue != metadata.isActive {
 				metadata.isActive = newValue
-				NotificationCenter.default.post(name: .AccountStateDidChange, object: self, userInfo: nil)
+				var userInfo = [AnyHashable: Any]()
+				userInfo[UserInfoKey.account] = self
+				NotificationCenter.default.post(name: .AccountStateDidChange, object: self, userInfo: userInfo)
 			}
 		}
 	}

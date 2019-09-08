@@ -360,7 +360,25 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesSync()
 		}
-		rebuildBackingStores()
+		
+		guard let account = note.userInfo?[Account.UserInfoKey.account] as? Account else {
+			assertionFailure()
+			return
+		}
+		
+		// If we are deactivating an account, clean up the expandedNodes table
+		if !account.isActive, let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
+			if let nodeIndex = self.expandedNodes.firstIndex(of: node) {
+				self.expandedNodes.remove(at: nodeIndex)
+			}
+		}
+		
+		rebuildBackingStores() {
+			// If we are activating an account, then automatically expand it
+			if account.isActive, let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
+				self.expandedNodes.append(node)
+			}
+		}
 	}
 	
 	@objc func userDidAddAccount(_ note: Notification) {
@@ -369,6 +387,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		rebuildBackingStores() {
+			// Automatically expand any new accounts
 			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
 				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
 				self.expandedNodes.append(node)
@@ -382,6 +401,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		rebuildBackingStores() {
+			// Clean up the expandedNodes table for any deleted accounts
 			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
 				let node = self.treeController.rootNode.childNodeRepresentingObject(account),
 				let nodeIndex = self.expandedNodes.firstIndex(of: node) {
