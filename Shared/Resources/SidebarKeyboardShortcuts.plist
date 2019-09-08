@@ -82,5 +82,25 @@
 		<key>action</key>
 		<string>delete:</string>
 	</dict>
+	<dict>
+		<key>title</key>
+		<string>Expand Selected Row</string>
+		<key>key</key>
+		<string>[rightarrow]</string>
+		<key>action</key>
+		<string>expandSelectedRows:</string>
+		<key>commandModifier</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>Collapse Selected Row</string>
+		<key>key</key>
+		<string>[leftarrow]</string>
+		<key>action</key>
+		<string>collapseSelectedRows:</string>
+		<key>commandModifier</key>
+		<true/>
+	</dict>
 </array>
 </plist>
