@@ -21,7 +21,11 @@ struct SettingsFeedbinAccountView : View {
 		NavigationView {
 			Form {
 				Section(header:
-					SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin").padding()
+					HStack {
+						Spacer()
+						SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin").padding()
+						Spacer()
+					}
 				)  {
 					TextField("Email", text: $viewModel.email).textContentType(.emailAddress)
 					SecureField("Password", text: $viewModel.password)

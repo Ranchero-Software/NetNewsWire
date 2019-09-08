@@ -17,7 +17,11 @@ struct SettingsLocalAccountView : View {
 		NavigationView {
 			Form {
 				Section(header:
-					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName).padding()
+					HStack {
+						Spacer()
+						SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName).padding()
+						Spacer()
+					}
 				)  {
 					HStack {
 						TextField("Name", text: $name)
