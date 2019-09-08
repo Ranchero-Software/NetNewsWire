@@ -46,7 +46,13 @@ extension Article {
 	}
 	
 	var preferredLink: String? {
-		return url ?? externalURL
+		if let url = url, !url.isEmpty {
+			return url
+		}
+		if let externalURL = externalURL, !externalURL.isEmpty {
+			return externalURL
+		}
+		return nil
 	}
 	
 	var body: String? {
