@@ -9,6 +9,12 @@
 import Foundation
 import Account
 
+extension AccountType: Identifiable {
+	public var id: Int {
+		return rawValue
+	}
+}
+
 extension Account: Identifiable {
 	public var id: String {
 		return accountID
