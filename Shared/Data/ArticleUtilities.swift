@@ -90,3 +90,21 @@ extension Article {
 	}
 	
 }
+
+// MARK: SortableArticle
+
+extension Article: SortableArticle {
+	
+	var sortableName: String {
+		return feed?.name ?? ""
+	}
+	
+	var sortableDate: Date {
+		return logicalDatePublished
+	}
+	
+	var sortableID: String {
+		return articleID
+	}
+	
+}
