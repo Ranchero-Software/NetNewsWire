@@ -36,9 +36,6 @@
 		514B7D1F23219F3C00BAC947 /* AddControllerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514B7D1E23219F3C00BAC947 /* AddControllerType.swift */; };
 		5152E0F923248F6200E5C7AD /* SettingsLocalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D707D22B02A4B004E8F65 /* SettingsLocalAccountView.swift */; };
 		5152E1022324900D00E5C7AD /* SettingsAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D707322B028E1004E8F65 /* SettingsAddAccountView.swift */; };
-		51543685228F6753005E1CDF /* DetailAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51543684228F6753005E1CDF /* DetailAccountViewController.swift */; };
-		515436882291D75D005E1CDF /* AddLocalAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515436872291D75D005E1CDF /* AddLocalAccountViewController.swift */; };
-		5154368A2291FED9005E1CDF /* FeedbinAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515436892291FED9005E1CDF /* FeedbinAccountViewController.swift */; };
 		5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		51554C24228B71910055115A /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
 		51554C25228B71910055115A /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -53,8 +50,6 @@
 		5183CCE6226F4E110010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		5183CCE8226F68D90010922C /* AccountRefreshTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */; };
 		5183CCE9226F68D90010922C /* AccountRefreshTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */; };
-		5183CCED22711DCE0010922C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5183CCEC22711DCE0010922C /* Settings.storyboard */; };
-		5183CCEF227125970010922C /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCEE227125970010922C /* SettingsViewController.swift */; };
 		51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CC1230F5963006127BE /* ThemedNavigationController.swift */; };
 		51934CCE2310792F006127BE /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
 		51934CD023108953006127BE /* ActivityID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCF23108953006127BE /* ActivityID.swift */; };
@@ -149,21 +144,16 @@
 		51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB3C229AB08300645299 /* ErrorHandler.swift */; };
 		51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
 		51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
-		51E595AB228DF94C00FCC42B /* SettingsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51E595AA228DF94C00FCC42B /* SettingsTableViewCell.xib */; };
-		51E595AD228E1C2100FCC42B /* AddAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595AC228E1C2100FCC42B /* AddAccountViewController.swift */; };
 		51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */; };
 		51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
 		51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		51EF0F79227716380050506E /* ColorHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F78227716380050506E /* ColorHash.swift */; };
 		51EF0F7A22771B890050506E /* ColorHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F78227716380050506E /* ColorHash.swift */; };
-		51EF0F7C2277919E0050506E /* TimelineNumberOfLinesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F7B2277919E0050506E /* TimelineNumberOfLinesViewController.swift */; };
 		51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F7D2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift */; };
 		51EF0F802277A8330050506E /* MasterTimelineCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F7F2277A8330050506E /* MasterTimelineCellLayout.swift */; };
 		51EF0F8E2279C9260050506E /* AccountsAdd.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51EF0F8D2279C9260050506E /* AccountsAdd.xib */; };
 		51EF0F902279C9500050506E /* AccountsAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F8F2279C9500050506E /* AccountsAddViewController.swift */; };
 		51EF0F922279CA620050506E /* AccountsAddTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F912279CA620050506E /* AccountsAddTableCellView.swift */; };
-		51F85BE5227217D000C787DC /* RefreshIntervalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BDB2272162F00C787DC /* RefreshIntervalViewController.swift */; };
-		51F85BE7227245FC00C787DC /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BE6227245FC00C787DC /* AboutViewController.swift */; };
 		51F85BEB22724CB600C787DC /* About.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEA22724CB600C787DC /* About.rtf */; };
 		51F85BED227251DF00C787DC /* Acknowledgments.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEC227251DF00C787DC /* Acknowledgments.rtf */; };
 		51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEE2272520B00C787DC /* Thanks.rtf */; };
@@ -1094,6 +1084,19 @@
 			path = ../Frameworks/Account/Credentials;
 			sourceTree = "<group>";
 		};
+		515E4F06232506240057B0E7 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				510D708122B041CC004E8F65 /* SettingsAccountLabelView.swift */,
+				510D707322B028E1004E8F65 /* SettingsAddAccountView.swift */,
+				51F772EC22B2789B0087D9D1 /* SettingsDetailAccountView.swift */,
+				510D707F22B02A5F004E8F65 /* SettingsFeedbinAccountView.swift */,
+				510D707D22B02A4B004E8F65 /* SettingsLocalAccountView.swift */,
+				557EE1A522B6F4E1004206FA /* SettingsReaderAPIAccountView.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
 		5183CCDB226F1EEB0010922C /* Progress */ = {
 			isa = PBXGroup;
 			children = (
@@ -1116,15 +1119,10 @@
 		5183CCEB227117C70010922C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				557EE1A522B6F4E1004206FA /* SettingsReaderAPIAccountView.swift */,
-				510D708122B041CC004E8F65 /* SettingsAccountLabelView.swift */,
-				510D707322B028E1004E8F65 /* SettingsAddAccountView.swift */,
-				51F772EC22B2789B0087D9D1 /* SettingsDetailAccountView.swift */,
-				510D707F22B02A5F004E8F65 /* SettingsFeedbinAccountView.swift */,
-				510D707D22B02A4B004E8F65 /* SettingsLocalAccountView.swift */,
+				51F35D0822AFD4760003CE1B /* SettingsView.swift */,
 				5194B5F122B69FCC00144881 /* SettingsSubscriptionsExportDocumentPickerView.swift */,
 				5194B5ED22B6965300144881 /* SettingsSubscriptionsImportDocumentPickerView.swift */,
-				51F35D0822AFD4760003CE1B /* SettingsView.swift */,
+				515E4F06232506240057B0E7 /* Account */,
 				51F35CFD22AFD0350003CE1B /* UIKit */,
 			);
 			path = Settings;
@@ -2328,14 +2326,12 @@
 				51F85BF32272531500C787DC /* Dedication.rtf in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreenPhone.storyboard in Resources */,
 				51F85BEB22724CB600C787DC /* About.rtf in Resources */,
-				5183CCED22711DCE0010922C /* Settings.storyboard in Resources */,
 				51F85BED227251DF00C787DC /* Acknowledgments.rtf in Resources */,
 				511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */,
 				51C452AB22650DC600C03939 /* template.html in Resources */,
 				51F85BF12272524100C787DC /* Credits.rtf in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				511D43CF231FA62200FB1562 /* DetailKeyboardShortcuts.plist in Resources */,
-				51E595AB228DF94C00FCC42B /* SettingsTableViewCell.xib in Resources */,
 				51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
 				51C452B82265178500C03939 /* styleSheet.css in Resources */,
@@ -2488,8 +2484,6 @@
 				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
 				519D740823243FEA008BB345 /* SettingsSubscriptionsImportDocumentPickerView.swift in Sources */,
-				5183CCEF227125970010922C /* SettingsViewController.swift in Sources */,
-				51F85BE5227217D000C787DC /* RefreshIntervalViewController.swift in Sources */,
 				51AF460C23247F11001742EF /* SettingsFeedbinAccountView.swift in Sources */,
 				51F85BF52273625800C787DC /* Bundle-Extensions.swift in Sources */,
 				519D740723243FE7008BB345 /* SettingsSubscriptionsExportDocumentPickerView.swift in Sources */,
@@ -2499,15 +2493,12 @@
 				5F323809231DF9F000706F6B /* NNWTableViewCell.swift in Sources */,
 				512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
-				51F85BE7227245FC00C787DC /* AboutViewController.swift in Sources */,
-				5154368A2291FED9005E1CDF /* FeedbinAccountViewController.swift in Sources */,
 				51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */,
 				51C45292226509C800C03939 /* TodayFeedDelegate.swift in Sources */,
 				51C452A222650A1900C03939 /* RSHTMLMetadata+Extension.swift in Sources */,
 				514B7D1F23219F3C00BAC947 /* AddControllerType.swift in Sources */,
 				51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */,
 				5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */,
-				51EF0F7C2277919E0050506E /* TimelineNumberOfLinesViewController.swift in Sources */,
 				51C4529D22650A1000C03939 /* FaviconURLFinder.swift in Sources */,
 				51C45258226508CF00C03939 /* AppAssets.swift in Sources */,
 				51C4527C2265091600C03939 /* MasterTimelineDefaultCellLayout.swift in Sources */,
@@ -2516,11 +2507,9 @@
 				51C4526A226508F600C03939 /* MasterFeedTableViewCellLayout.swift in Sources */,
 				51C452AE2265104D00C03939 /* TimelineStringFormatter.swift in Sources */,
 				512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */,
-				51543685228F6753005E1CDF /* DetailAccountViewController.swift in Sources */,
 				51C4529922650A0000C03939 /* ArticleStylesManager.swift in Sources */,
 				51EF0F802277A8330050506E /* MasterTimelineCellLayout.swift in Sources */,
 				51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */,
-				515436882291D75D005E1CDF /* AddLocalAccountViewController.swift in Sources */,
 				51C452AF2265108300C03939 /* ArticleArray.swift in Sources */,
 				51C4528E2265099C00C03939 /* SmartFeedsController.swift in Sources */,
 				84CAFCA522BC8C08007694F0 /* FetchRequestQueue.swift in Sources */,
@@ -2548,7 +2537,6 @@
 				5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */,
 				51C4529F22650A1900C03939 /* AuthorAvatarDownloader.swift in Sources */,
 				519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */,
-				51E595AD228E1C2100FCC42B /* AddAccountViewController.swift in Sources */,
 				51CC9B3E231720B2000E842F /* MasterFeedDataSource.swift in Sources */,
 				51C452A322650A1E00C03939 /* HTMLMetadataDownloader.swift in Sources */,
 				51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */,
