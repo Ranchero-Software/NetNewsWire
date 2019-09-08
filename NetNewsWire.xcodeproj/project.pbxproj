@@ -1027,6 +1027,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		515E4EA82324FF710057B0E7 /* Credentials */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Credentials;
+			path = ../Frameworks/Account/Credentials;
+			sourceTree = "<group>";
+		};
 		5183CCDB226F1EEB0010922C /* Progress */ = {
 			isa = PBXGroup;
 			children = (
@@ -1579,6 +1587,7 @@
 		84C9FC6822629C9A00D921D6 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				515E4EA82324FF710057B0E7 /* Credentials */,
 				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
 				841D4D542106B3D500DD04E6 /* Articles.xcodeproj */,
 				841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */,
@@ -1951,12 +1960,12 @@
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1972,8 +1981,8 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -1982,7 +1991,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
