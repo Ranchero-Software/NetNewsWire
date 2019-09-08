@@ -12,6 +12,7 @@ import Account
 import RSWeb
 
 struct SettingsDetailAccountView : View {
+	@Environment(\.presentationMode) var presentation
 	@ObservedObject var viewModel: ViewModel
 	@State private var isFeedbinCredentialsPresented = false
 	@State private var isDeleteAlertPresented = false
@@ -55,8 +56,11 @@ struct SettingsDetailAccountView : View {
 					}
 					.alert(isPresented: $isDeleteAlertPresented) {
 						Alert(title: Text("Are you sure you want to delete \"\(viewModel.nameForDisplay)\"?"),
-							  primaryButton: Alert.Button.default(Text("Delete"), action: { self.viewModel.delete() }),
-							  secondaryButton: Alert.Button.cancel())
+							primaryButton: Alert.Button.default(Text("Delete"), action: {
+								self.viewModel.delete()
+								self.presentation.wrappedValue.dismiss()
+							}),
+							secondaryButton: Alert.Button.cancel())
 					}
 				}
 			}
