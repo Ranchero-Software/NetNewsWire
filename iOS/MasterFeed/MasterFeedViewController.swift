@@ -882,6 +882,11 @@ private extension MasterFeedViewController {
 		
 		pushUndoableCommand(deleteCommand)
 		deleteCommand.perform()
+		
+		if indexPath == coordinator.currentFeedIndexPath {
+			coordinator.selectFeed(nil)
+		}
+		
 	}
 	
 }
