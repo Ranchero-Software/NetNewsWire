@@ -56,6 +56,9 @@ struct SettingsView : View {
 			Toggle(isOn: $viewModel.sortOldestToNewest) {
 				Text("Sort Oldest to Newest")
 			}
+			Toggle(isOn: $viewModel.groupByFeed) {
+				Text("Group By Feed")
+			}
 			Stepper(value: $viewModel.timelineNumberOfLines, in: 2...6) {
 				Text("Number of Text Lines: \(viewModel.timelineNumberOfLines)")
 			}
@@ -218,6 +221,16 @@ struct SettingsView : View {
 				} else {
 					AppDefaults.timelineSortDirection = .orderedAscending
 				}
+			}
+		}
+		
+		var groupByFeed: Bool {
+			get {
+				return AppDefaults.timelineGroupByFeed
+			}
+			set {
+				objectWillChange.send()
+				AppDefaults.timelineGroupByFeed = newValue
 			}
 		}
 		

@@ -12,10 +12,11 @@ struct AppDefaults {
 
 	struct Key {
 		static let firstRunDate = "firstRunDate"
+		static let timelineGroupByFeed = "timelineGroupByFeed"
+		static let timelineNumberOfLines = "timelineNumberOfLines"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let refreshInterval = "refreshInterval"
 		static let lastRefresh = "lastRefresh"
-		static let timelineNumberOfLines = "timelineNumberOfLines"
 	}
 
 	static let isFirstRun: Bool = {
@@ -33,6 +34,15 @@ struct AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.refreshInterval)
+		}
+	}
+	
+	static var timelineGroupByFeed: Bool {
+		get {
+			return bool(for: Key.timelineGroupByFeed)
+		}
+		set {
+			setBool(for: Key.timelineGroupByFeed, newValue)
 		}
 	}
 
@@ -64,7 +74,10 @@ struct AppDefaults {
 	}
 	
 	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, Key.refreshInterval: RefreshInterval.everyHour.rawValue, Key.timelineNumberOfLines: 3]
+		let defaults: [String : Any] = [Key.refreshInterval: RefreshInterval.everyHour.rawValue,
+										Key.timelineGroupByFeed: false,
+										Key.timelineNumberOfLines: 3,
+										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue]
 		UserDefaults.standard.register(defaults: defaults)
 	}
 
