@@ -342,6 +342,7 @@
 		DF999FF722B5AEFA0064B687 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF999FF622B5AEFA0064B687 /* SafariView.swift */; };
 		FF3ABF13232599810074C542 /* ArticleArrayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF09232599450074C542 /* ArticleArrayTests.swift */; };
 		FF3ABF1523259DDB0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
+		FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2480,6 +2481,7 @@
 				51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */,
 				514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */,
 				5152E0F923248F6200E5C7AD /* SettingsLocalAccountView.swift in Sources */,
+				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
 				51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */,
