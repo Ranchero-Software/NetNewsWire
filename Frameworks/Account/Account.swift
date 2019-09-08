@@ -21,6 +21,8 @@ import os.log
 // Main thread only.
 
 public extension Notification.Name {
+	static let UserDidAddAccount = Notification.Name("UserDidAddAccount")
+	static let UserDidDeleteAccount = Notification.Name("UserDidDeleteAccount")
 	static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
 	static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
 	static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
@@ -54,6 +56,7 @@ public enum FetchType {
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
     public struct UserInfoKey {
+		public static let account = "account" // UserDidAddAccount, UserDidDeleteAccount
 		public static let newArticles = "newArticles" // AccountDidDownloadArticles
 		public static let updatedArticles = "updatedArticles" // AccountDidDownloadArticles
 		public static let statuses = "statuses" // StatusesDidChange

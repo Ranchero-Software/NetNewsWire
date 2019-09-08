@@ -12,10 +12,6 @@ import Articles
 
 // Main thread only.
 
-public extension Notification.Name {
-	static let AccountsDidChange = Notification.Name("AccountsDidChange")
-}
-
 public final class AccountManager: UnreadCountProvider {
 
 	public static let shared = AccountManager()
@@ -115,7 +111,9 @@ public final class AccountManager: UnreadCountProvider {
 		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)!
 		accountsDictionary[accountID] = account
 		
-		NotificationCenter.default.post(name: .AccountsDidChange, object: self)
+		var userInfo = [String: Any]()
+		userInfo[Account.UserInfoKey.account] = account
+		NotificationCenter.default.post(name: .UserDidAddAccount, object: self, userInfo: userInfo)
 		
 		return account
 	}
@@ -137,7 +135,10 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		
 		updateUnreadCount()
-		NotificationCenter.default.post(name: .AccountsDidChange, object: self)
+
+		var userInfo = [String: Any]()
+		userInfo[Account.UserInfoKey.account] = account
+		NotificationCenter.default.post(name: .UserDidDeleteAccount, object: self, userInfo: userInfo)
 	}
 	
 	public func existingAccount(with accountID: String) -> Account? {

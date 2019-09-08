@@ -267,8 +267,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .AccountsDidChange, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
+
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		
@@ -341,10 +342,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	@objc func containerChildrenDidChange(_ note: Notification) {
-		rebuildBackingStores()
 		if timelineFetcherContainsAnyPseudoFeed() || timelineFetcherContainsAnyFolder() {
 			fetchAndReplaceArticlesAsync() {}
 		}
+		rebuildBackingStores()
 	}
 	
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
@@ -362,11 +363,31 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rebuildBackingStores()
 	}
 	
-	@objc func accountsDidChange(_ note: Notification) {
+	@objc func userDidAddAccount(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesSync()
 		}
-		rebuildBackingStores()
+		
+		rebuildBackingStores() {
+			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
+				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
+				self.expandedNodes.append(node)
+			}
+		}
+	}
+
+	@objc func userDidDeleteAccount(_ note: Notification) {
+		if timelineFetcherContainsAnyPseudoFeed() {
+			fetchAndReplaceArticlesSync()
+		}
+		
+		rebuildBackingStores() {
+			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
+				let node = self.treeController.rootNode.childNodeRepresentingObject(account),
+				let nodeIndex = self.expandedNodes.firstIndex(of: node) {
+				self.expandedNodes.remove(at: nodeIndex)
+			}
+		}
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
@@ -374,7 +395,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
-		
 		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
 			return
 		}
@@ -383,7 +403,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if shouldFetchAndMergeArticles {
 			queueFetchAndMergeArticles()
 		}
-		
 	}
 
 	// MARK: API
@@ -1031,9 +1050,10 @@ private extension SceneCoordinator {
 		unreadCount = count
 	}
 
-	func rebuildBackingStores() {
+	func rebuildBackingStores(_ updateExpandedNodes: (() -> Void)? = nil) {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
 			treeController.rebuild()
+			updateExpandedNodes?()
 			rebuildShadowTable()
 			masterFeedViewController.reloadFeeds()
 		}
