@@ -29,108 +29,117 @@ struct SettingsView : View {
     var body: some View {
 		NavigationView {
 			Form {
-				
-//				Section(header: Text("ACCOUNTS")) {
-//					ForEach(viewModel.accounts.identified(by: \.self)) { account in
-//						NavigationLink(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(account)), isDetail: false) {
-//							Text(verbatim: account.nameForDisplay)
-//						}
-//					}
-//					NavigationLink(destination: SettingsAddAccountView(), isDetail: false) {
-//						Text("Add Account")
-//					}
-//				}
-				
-				Section(header: Text("TIMELINE")) {
-					Toggle(isOn: $viewModel.sortOldestToNewest) {
-						Text("Sort Oldest to Newest")
-					}
-					Stepper(value: $viewModel.timelineNumberOfLines, in: 2...6) {
-						Text("Number of Text Lines: \(viewModel.timelineNumberOfLines)")
-					}
-				}
-				
-				Section(header: Text("DATABASE")) {
-					Picker(selection: $viewModel.refreshInterval, label: Text("Refresh Interval")) {
-						ForEach(RefreshInterval.allCases) { interval in
-							Text(interval.description()).tag(interval)
-						}
-					}
-					
-					VStack {
-						 Button("Import Subscriptions...") {
-							 self.isOPMLImportPresented = true
-						 }
-					}.actionSheet(isPresented: $isOPMLImportPresented) {
-						createSubscriptionsImportAccounts
-					}.sheet(isPresented: $isOPMLImportDocPickerPresented) {
-						SettingsSubscriptionsImportDocumentPickerView(account: self.opmlAccount!)
-					}
-					
-					VStack {
-						 Button("Export Subscriptions...") {
-							 self.isOPMLExportPresented = true
-						 }
-					 }.actionSheet(isPresented: $isOPMLExportPresented) {
-						createSubscriptionsExportAccounts
-					 }.sheet(isPresented: $isOPMLExportDocPickerPresented) {
-						 SettingsSubscriptionsExportDocumentPickerView(account: self.opmlAccount!)
-					 }
-				}
-				.foregroundColor(.primary)
-
-				Section(header: Text("ABOUT"), footer: buildFooter) {
-					Text("About NetNewsWire")
-					
-					Button(action: {
-						self.isWebsitePresented.toggle()
-						self.website = "https://ranchero.com/netnewswire/"
-					}) {
-						Text("Website")
-					}
-					
-					Button(action: {
-						self.isWebsitePresented.toggle()
-						self.website = "https://github.com/brentsimmons/NetNewsWire"
-					}) {
-						Text("Github Repository")
-					}
-					
-					Button(action: {
-						self.isWebsitePresented.toggle()
-						self.website = "https://github.com/brentsimmons/NetNewsWire/issues"
-					}) {
-						Text("Bug Tracker")
-					}
-					
-					Button(action: {
-						self.isWebsitePresented.toggle()
-						self.website = "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes"
-					}) {
-						Text("Technotes")
-					}
-					
-					Button(action: {
-						self.isWebsitePresented.toggle()
-						self.website = "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown"
-					}) {
-						Text("How To Support NetNewsWire")
-					}
-
-					Text("Add NetNewsWire News Feed")
-					
-				}.sheet(isPresented: $isWebsitePresented) {
-					SafariView(url: URL(string: self.website!)!)
-				}
-				.foregroundColor(.primary)
-				
+				buildAccountsSection()
+				buildTimelineSection()
+				buildDatabaseSection()
+				buildAboutSection()
 			}
 			.navigationBarTitle(Text("Settings"), displayMode: .inline)
 			.navigationBarItems(leading: Button(action: { self.viewController?.dismiss(animated: true) }) { Text("Done") } )
 		}
     }
 	
-	var createSubscriptionsImportAccounts: ActionSheet {
+	func buildAccountsSection() -> some View {
+		Section(header: Text("ACCOUNTS")) {
+			ForEach(viewModel.accounts) { account in
+				NavigationLink(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(account))) {
+					Text(verbatim: account.nameForDisplay)
+				}
+			}
+			NavigationLink(destination: SettingsAddAccountView()) {
+				Text("Add Account")
+			}
+		}
+	}
+	
+	func buildTimelineSection() -> some View {
+		Section(header: Text("TIMELINE")) {
+			Toggle(isOn: $viewModel.sortOldestToNewest) {
+				Text("Sort Oldest to Newest")
+			}
+			Stepper(value: $viewModel.timelineNumberOfLines, in: 2...6) {
+				Text("Number of Text Lines: \(viewModel.timelineNumberOfLines)")
+			}
+		}
+	}
+	
+	func buildDatabaseSection() -> some View {
+		Section(header: Text("DATABASE")) {
+			Picker(selection: $viewModel.refreshInterval, label: Text("Refresh Interval")) {
+				ForEach(RefreshInterval.allCases) { interval in
+					Text(interval.description()).tag(interval)
+				}
+			}
+			
+			VStack {
+				 Button("Import Subscriptions...") {
+					 self.isOPMLImportPresented = true
+				 }
+			}.actionSheet(isPresented: $isOPMLImportPresented) {
+				buildSubscriptionsImportAccounts()
+			}.sheet(isPresented: $isOPMLImportDocPickerPresented) {
+				SettingsSubscriptionsImportDocumentPickerView(account: self.opmlAccount!)
+			}.foregroundColor(.primary)
+			
+			VStack {
+				 Button("Export Subscriptions...") {
+					 self.isOPMLExportPresented = true
+				 }
+			 }.actionSheet(isPresented: $isOPMLExportPresented) {
+				buildSubscriptionsExportAccounts()
+			 }.sheet(isPresented: $isOPMLExportDocPickerPresented) {
+				 SettingsSubscriptionsExportDocumentPickerView(account: self.opmlAccount!)
+			 }.foregroundColor(.primary)
+		}
+	}
+	
+	func buildAboutSection() -> some View {
+		Section(header: Text("ABOUT"), footer: buildFooter()) {
+			Text("About NetNewsWire")
+			
+			Button(action: {
+				self.isWebsitePresented.toggle()
+				self.website = "https://ranchero.com/netnewswire/"
+			}) {
+				Text("Website")
+			}.foregroundColor(.primary)
+			
+			Button(action: {
+				self.isWebsitePresented.toggle()
+				self.website = "https://github.com/brentsimmons/NetNewsWire"
+			}) {
+				Text("Github Repository")
+			}.foregroundColor(.primary)
+			
+			Button(action: {
+				self.isWebsitePresented.toggle()
+				self.website = "https://github.com/brentsimmons/NetNewsWire/issues"
+			}) {
+				Text("Bug Tracker")
+			}.foregroundColor(.primary)
+			
+			Button(action: {
+				self.isWebsitePresented.toggle()
+				self.website = "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes"
+			}) {
+				Text("Technotes")
+			}.foregroundColor(.primary)
+			
+			Button(action: {
+				self.isWebsitePresented.toggle()
+				self.website = "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown"
+			}) {
+				Text("How To Support NetNewsWire")
+			}.foregroundColor(.primary)
+
+			Text("Add NetNewsWire News Feed")
+			
+		}.sheet(isPresented: $isWebsitePresented) {
+			SafariView(url: URL(string: self.website!)!)
+		}
+	}
+	
+	func buildSubscriptionsImportAccounts() -> ActionSheet {
 		var buttons = [ActionSheet.Button]()
 		
 		for account in viewModel.activeAccounts {
@@ -150,7 +159,7 @@ struct SettingsView : View {
 		return ActionSheet(title: Text("Import Subscriptions..."), message: Text("Select the account to import your OPML file into."), buttons: buttons)
 	}
 	
-	var createSubscriptionsExportAccounts: ActionSheet {
+	func buildSubscriptionsExportAccounts() -> ActionSheet {
 		var buttons = [ActionSheet.Button]()
 		
 		for account in viewModel.accounts {
@@ -165,7 +174,7 @@ struct SettingsView : View {
 		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
 	}
 	
-	var buildFooter: some View {
+	func buildFooter() -> some View {
 		return Text(verbatim: "\(Bundle.main.appName) v \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))")
 			.font(.footnote)
 			.foregroundColor(.secondary)

@@ -34,6 +34,8 @@
 		5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */; };
 		514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */; };
 		514B7D1F23219F3C00BAC947 /* AddControllerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514B7D1E23219F3C00BAC947 /* AddControllerType.swift */; };
+		5152E0F923248F6200E5C7AD /* SettingsLocalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D707D22B02A4B004E8F65 /* SettingsLocalAccountView.swift */; };
+		5152E1022324900D00E5C7AD /* SettingsAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D707322B028E1004E8F65 /* SettingsAddAccountView.swift */; };
 		51543685228F6753005E1CDF /* DetailAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51543684228F6753005E1CDF /* DetailAccountViewController.swift */; };
 		515436882291D75D005E1CDF /* AddLocalAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515436872291D75D005E1CDF /* AddLocalAccountViewController.swift */; };
 		5154368A2291FED9005E1CDF /* FeedbinAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515436892291FED9005E1CDF /* FeedbinAccountViewController.swift */; };
@@ -64,6 +66,10 @@
 		519D740723243FE7008BB345 /* SettingsSubscriptionsExportDocumentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194B5F122B69FCC00144881 /* SettingsSubscriptionsExportDocumentPickerView.swift */; };
 		519D740823243FEA008BB345 /* SettingsSubscriptionsImportDocumentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194B5ED22B6965300144881 /* SettingsSubscriptionsImportDocumentPickerView.swift */; };
 		519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E743422C663F900A78E47 /* SceneDelegate.swift */; };
+		51AF45E123246731001742EF /* SettingsAccountLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D708122B041CC004E8F65 /* SettingsAccountLabelView.swift */; };
+		51AF460323247321001742EF /* SettingsDetailAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F772EC22B2789B0087D9D1 /* SettingsDetailAccountView.swift */; };
+		51AF460C23247F11001742EF /* SettingsFeedbinAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D707F22B02A5F004E8F65 /* SettingsFeedbinAccountView.swift */; };
+		51AF460E232488C6001742EF /* Account-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51AF460D232488C6001742EF /* Account-Extensions.swift */; };
 		51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
 		51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51C451B9226377C900C03939 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; };
@@ -732,6 +738,7 @@
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		519D740523243CC0008BB345 /* RefreshInterval-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RefreshInterval-Extensions.swift"; sourceTree = "<group>"; };
 		519E743422C663F900A78E47 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		51AF460D232488C6001742EF /* Account-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account-Extensions.swift"; sourceTree = "<group>"; };
 		51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard-Extensions.swift"; sourceTree = "<group>"; };
 		51C45250226506F400C03939 /* String-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String-Extensions.swift"; sourceTree = "<group>"; };
 		51C45254226507D200C03939 /* AppAssets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppAssets.swift; sourceTree = "<group>"; };
@@ -1137,6 +1144,7 @@
 			isa = PBXGroup;
 			children = (
 				519D740523243CC0008BB345 /* RefreshInterval-Extensions.swift */,
+				51AF460D232488C6001742EF /* Account-Extensions.swift */,
 			);
 			path = "Model Extensions";
 			sourceTree = "<group>";
@@ -2443,6 +2451,7 @@
 				5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */,
 				51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,
+				5152E1022324900D00E5C7AD /* SettingsAddAccountView.swift in Sources */,
 				515ADE4022E11FAE006B2460 /* SystemMessageViewController.swift in Sources */,
 				51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */,
 				51C45296226509D300C03939 /* OPMLExporter.swift in Sources */,
@@ -2451,12 +2460,15 @@
 				51C45269226508F600C03939 /* MasterFeedTableViewCell.swift in Sources */,
 				51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */,
 				51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */,
+				51AF460E232488C6001742EF /* Account-Extensions.swift in Sources */,
 				5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */,
+				51AF45E123246731001742EF /* SettingsAccountLabelView.swift in Sources */,
 				51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */,
 				51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */,
 				51C452A522650A2D00C03939 /* SmallIconProvider.swift in Sources */,
 				51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */,
 				514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */,
+				5152E0F923248F6200E5C7AD /* SettingsLocalAccountView.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
 				51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */,
@@ -2469,6 +2481,7 @@
 				519D740823243FEA008BB345 /* SettingsSubscriptionsImportDocumentPickerView.swift in Sources */,
 				5183CCEF227125970010922C /* SettingsViewController.swift in Sources */,
 				51F85BE5227217D000C787DC /* RefreshIntervalViewController.swift in Sources */,
+				51AF460C23247F11001742EF /* SettingsFeedbinAccountView.swift in Sources */,
 				51F85BF52273625800C787DC /* Bundle-Extensions.swift in Sources */,
 				519D740723243FE7008BB345 /* SettingsSubscriptionsExportDocumentPickerView.swift in Sources */,
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
@@ -2506,6 +2519,7 @@
 				51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
 				51C45290226509C100C03939 /* PseudoFeed.swift in Sources */,
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,
+				51AF460323247321001742EF /* SettingsDetailAccountView.swift in Sources */,
 				5115CAF42266301400B21BCE /* AddContainerViewController.swift in Sources */,
 				51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */,
 				512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */,

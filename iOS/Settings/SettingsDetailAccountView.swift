@@ -12,17 +12,15 @@ import Account
 import RSWeb
 
 struct SettingsDetailAccountView : View {
-	@ObjectBinding var viewModel: ViewModel
-	@State private var verifyDelete = false
-	@State private var showFeedbinCredentials = false
-	
+	@ObservedObject var viewModel: ViewModel
+	@State private var isFeedbinCredentialsPresented = false
+	@State private var isDeleteAlertPresented = false
+
     var body: some View {
 		Form {
 			Section {
 				HStack {
-					Text("Name")
-					Divider()
-					TextField($viewModel.name, placeholder: Text("(Optional)"))
+					TextField("Name", text: $viewModel.name)
 				}
 				Toggle(isOn: $viewModel.isActive) {
 					Text("Active")
@@ -33,14 +31,15 @@ struct SettingsDetailAccountView : View {
 					HStack {
 						Spacer()
 						Button(action: {
-							self.showFeedbinCredentials = true
+							self.isFeedbinCredentialsPresented.toggle()
 						}) {
 							Text("Credentials")
 						}
-						.presentation(showFeedbinCredentials ? feedbinCredentialsModal : nil)
-						.onDisappear() { self.showFeedbinCredentials = false }
 						Spacer()
 					}
+				}
+				.sheet(isPresented: $isFeedbinCredentialsPresented) {
+					self.settingsFeedbinAccountView
 				}
 			}
 			if viewModel.isDeletable {
@@ -48,17 +47,16 @@ struct SettingsDetailAccountView : View {
 					HStack {
 						Spacer()
 						Button(action: {
-							self.verifyDelete = true
+							self.isDeleteAlertPresented.toggle()
 						}) {
-							Text("Delete Account")
-								.foregroundColor(.red)
-						}
-						.presentation($verifyDelete) {
-							Alert(title: Text("Are you sure you want to delete \"\(viewModel.nameForDisplay)\"?"),
-								  primaryButton: Alert.Button.default(Text("Delete"), onTrigger: { self.viewModel.delete() }),
-								  secondaryButton: Alert.Button.cancel())
+							Text("Delete Account").foregroundColor(.red)
 						}
 						Spacer()
+					}
+					.alert(isPresented: $isDeleteAlertPresented) {
+						Alert(title: Text("Are you sure you want to delete \"\(viewModel.nameForDisplay)\"?"),
+							  primaryButton: Alert.Button.default(Text("Delete"), action: { self.viewModel.delete() }),
+							  secondaryButton: Alert.Button.cancel())
 					}
 				}
 			}
@@ -67,13 +65,15 @@ struct SettingsDetailAccountView : View {
 
 	}
 	
-	var feedbinCredentialsModal: Modal {
+	var settingsFeedbinAccountView: SettingsFeedbinAccountView {
 		let feedbinViewModel = SettingsFeedbinAccountView.ViewModel(account: viewModel.account)
-		return Modal(SettingsFeedbinAccountView(viewModel: feedbinViewModel))
+		return SettingsFeedbinAccountView(viewModel: feedbinViewModel)
 	}
 	
-	class ViewModel: BindableObject {
-		let didChange = PassthroughSubject<ViewModel, Never>()
+	class ViewModel: ObservableObject {
+		
+		let objectWillChange = ObservableObjectPublisher()
+
 		let account: Account
 		
 		init(_ account: Account) {
@@ -89,8 +89,8 @@ struct SettingsDetailAccountView : View {
 				account.name ?? ""
 			}
 			set {
+				objectWillChange.send()
 				account.name = newValue.isEmpty ? nil : newValue
-				didChange.send(self)
 			}
 		}
 		
@@ -99,8 +99,8 @@ struct SettingsDetailAccountView : View {
 				account.isActive
 			}
 			set {
+				objectWillChange.send()
 				account.isActive = newValue
-				didChange.send(self)
 			}
 		}
 		
@@ -114,7 +114,7 @@ struct SettingsDetailAccountView : View {
 		
 		func delete() {
 			AccountManager.shared.deleteAccount(account)
-			ActivityManager.shared.cleanUp(account)
+//			ActivityManager.shared.cleanUp(account)
 		}
 	}
 }
