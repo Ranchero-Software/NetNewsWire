@@ -6,7 +6,25 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
-			<item>
+				<item>
+         <title>NetNewsWire 5.0.1d2</title>
+            <description><![CDATA[
+<p>Crash fix: when the app is renamed or moved on disk while running, alert the user and quit the app. This prevents crashes that will happen due to renaming/moving. See Daniel Jalkut on <a href="https://red-sweater.com/blog/3508/app-movement-monitoring">App Movement Monitoring</a> for more info.</p>
+
+<p>Timeline: update UI more quickly when a feed icon is downloaded.</p>
+
+<p>Article pane: stop blocking links containing the string “feedburner” — there are legitimate cases where that string appears.</p>
+
+<p>Timeline and article pane: make sure the link for an article isn’t an empty string.</p>
+
+<p>RSS parser: check for bad permalinks more aggressively. If they don’t contain a / character, then do not consider them permalinks.</p>
+ 							]]></description>
+            <pubDate>Sat, 07 Sep 2019 21:00:00 -0700</pubDate>
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.1d2/NetNewsWire5.0.1d2.zip" sparkle:version="2612" sparkle:shortVersionString="5.0.1d2" length="5095642" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
          <title>NetNewsWire 5.0.1d1</title>
             <description><![CDATA[
 <p>(Probably) fix a crashing bug having to do with a callback being called more than once, when it was designed to be called just once.</p>
