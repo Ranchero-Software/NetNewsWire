@@ -549,7 +549,7 @@ private extension ReaderAPIAccountDelegate {
 		subscriptions.forEach { subscription in
 			
 			let subFeedId = String(subscription.feedID)
-			if let feed = account.idToFeedDictionary[subFeedId] {
+			if let feed = account.existingFeed(withFeedID: subFeedId) {
 				feed.name = subscription.name
 				feed.homePageURL = subscription.homePageURL
 			} else {
@@ -619,8 +619,7 @@ private extension ReaderAPIAccountDelegate {
 			for subscription in groupedTaggings {
 				let taggingFeedID = String(subscription.feedID)
 				if !folderFeedIds.contains(taggingFeedID) {
-					let idDictionary = account.idToFeedDictionary
-					guard let feed = idDictionary[taggingFeedID] else {
+					guard let feed = account.existingFeed(withFeedID: taggingFeedID) else {
 						continue
 					}
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(subscription.feedID))
@@ -880,7 +879,7 @@ private extension ReaderAPIAccountDelegate {
 			
 			group.enter()
 			
-			if let feed = account.idToFeedDictionary[feedID] {
+			if let feed = account.existingFeed(withFeedID: feedID) {
 				DispatchQueue.main.async {
 					account.update(feed, parsedItems: Set(mapItems), defaultRead: true) {
 						group.leave()
