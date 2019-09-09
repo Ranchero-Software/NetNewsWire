@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		window = UIWindow(windowScene: scene as! UIWindowScene)
 		window!.tintColor = AppAssets.netNewsWireBlueColor
-		window!.rootViewController = coordinator.start()
+		window!.rootViewController = coordinator.start(for: window!.frame.size)
 
 		if let shortcutItem = connectionOptions.shortcutItem {
 			window!.makeKeyAndVisible()

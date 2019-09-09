@@ -83,12 +83,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	var isThreePanelMode: Bool {
-		return rootSplitViewController.traitCollection.userInterfaceIdiom == .pad &&
-			!rootSplitViewController.isCollapsed &&
-			UIDevice.current.orientation.isLandscape
-	}
-	
-	var isThreePanelModeConfigured: Bool {
 		return rootSplitViewController.children.last?.children.first is UISplitViewController
 	}
 	
@@ -274,7 +268,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		
@@ -282,7 +275,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		let _ = DetailViewControllerWebViewProvider.shared
 	}
 	
-	func start() -> UIViewController {
+	func start(for size: CGSize) -> UIViewController {
 		rootSplitViewController = RootSplitViewController()
 		rootSplitViewController.coordinator = self
 		rootSplitViewController.preferredDisplayMode = .automatic
@@ -302,6 +295,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		shimController.replaceChildAndPinView(detailNavController)
 		rootSplitViewController.showDetailViewController(shimController, sender: self)
 
+		configureThreePanelMode(for: size)
+		
 		return rootSplitViewController
 	}
 	
@@ -324,6 +319,21 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			selectFirstUnreadInAllUnread()
 		case .readArticle:
 			handleReadArticle(activity)
+		}
+	}
+	
+	func configureThreePanelMode(for size: CGSize) {
+		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && !rootSplitViewController.isCollapsed else {
+			return
+		}
+		if size.width > size.height {
+			if !isThreePanelMode {
+				transitionToThreePanelMode()
+			}
+		} else {
+			if isThreePanelMode {
+				transitionFromThreePanelMode()
+			}
 		}
 	}
 	
@@ -415,10 +425,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 
-	@objc func orientationDidChange(_ note: Notification) {
-		configureThreePanelMode()
-	}
-	
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		self.sortDirection = AppDefaults.timelineSortDirection
 	}
@@ -1589,56 +1595,35 @@ private extension SceneCoordinator {
 		return shimController
 	}
 	
-	func configureThreePanelMode() {
-		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && !rootSplitViewController.isCollapsed else {
-			return
-		}
-		if UIDevice.current.orientation.isLandscape {
-			if !isThreePanelModeConfigured {
-				transitionToThreePanelMode()
-			}
-		} else {
-			if isThreePanelModeConfigured {
-				transitionFromThreePanelMode()
-			}
-		}
-	}
-	
 	@discardableResult
 	func transitionToThreePanelMode() -> UIViewController {
 		
 		defer {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
+		
+		installTimelineControllerIfNecessary(animated: false)
+		
+		let controller: UIViewController = {
+			if let result = detailViewController {
+				return result
+			} else {
+				return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+			}
+		}()
+		
+		// Create the new sub split controller (wrapped in the shim of course) and add the timeline in the primary position
+		let shimController = ensureDoubleSplit()
+		let subSplit = shimController.children.first as! UISplitViewController
+		let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
+		masterTimelineNavController.viewControllers = [masterTimelineViewController!]
+		
+		// Put the detail or no selection controller in the secondary (or detail) position of the sub split
+		let navController = addNavControllerIfNecessary(controller, showButton: false)
+		subSplit.showDetailViewController(navController, sender: self)
+		
+		return shimController
 
-		if currentFeedIndexPath == nil && currentArticleIndexPath == nil {
-			
-			let wrappedSystemMessageController = fullyWrappedSystemMesssageController(showButton: false)
-			rootSplitViewController.showDetailViewController(wrappedSystemMessageController, sender: self)
-			return wrappedSystemMessageController
-			
-		} else {
-			
-			let controller: UIViewController = {
-				if let result = detailViewController {
-					return result
-				} else {
-					return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-				}
-			}()
-			
-			// Create the new sub split controller (wrapped in the shim of course) and add the timeline in the primary position
-			let shimController = ensureDoubleSplit()
-			let subSplit = shimController.children.first as! UISplitViewController
-			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
-			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
-			
-			// Put the detail or no selection controller in the secondary (or detail) position of the sub split
-			let navController = addNavControllerIfNecessary(controller, showButton: false)
-			subSplit.showDetailViewController(navController, sender: self)
-			
-			return shimController
-		}
 	}
 	
 	func transitionFromThreePanelMode() {
