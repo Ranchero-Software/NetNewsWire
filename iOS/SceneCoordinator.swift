@@ -85,7 +85,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	var isThreePanelMode: Bool {
 		return rootSplitViewController.traitCollection.userInterfaceIdiom == .pad &&
 			!rootSplitViewController.isCollapsed &&
-			rootSplitViewController.displayMode == .allVisible
+			UIDevice.current.orientation.isLandscape
 	}
 	
 	var rootNode: Node {
