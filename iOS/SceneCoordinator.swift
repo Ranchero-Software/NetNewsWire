@@ -278,7 +278,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func start(for size: CGSize) -> UIViewController {
 		rootSplitViewController = RootSplitViewController()
 		rootSplitViewController.coordinator = self
-		rootSplitViewController.preferredDisplayMode = .automatic
+		rootSplitViewController.preferredDisplayMode = .allVisible
 		rootSplitViewController.viewControllers = [ThemedNavigationController.template()]
 		rootSplitViewController.delegate = self
 		
@@ -289,11 +289,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
 		
-		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-		let detailNavController = addNavControllerIfNecessary(systemMessageViewController, showButton: true)
-		let shimController = UIViewController()
-		shimController.replaceChildAndPinView(detailNavController)
-		rootSplitViewController.showDetailViewController(shimController, sender: self)
+		let noSelectionController = fullyWrappedSystemMesssageController(showButton: true)
+		rootSplitViewController.showDetailViewController(noSelectionController, sender: self)
 
 		configureThreePanelMode(for: size)
 		
