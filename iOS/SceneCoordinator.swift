@@ -1528,19 +1528,21 @@ private extension SceneCoordinator {
 	// system, we leave the same controller, the shim, in place and change its child controllers instead.
 	
 	func installDetailController(_ detailController: UIViewController, automated: Bool) {
-		let showButton = rootSplitViewController.displayMode != .allVisible
-		let controller = addNavControllerIfNecessary(detailController, showButton: showButton)
-		
+
 		if isThreePanelMode {
+			let controller = addNavControllerIfNecessary(detailController, showButton: false)
 			let targetSplit = ensureDoubleSplit().children.first as! UISplitViewController
 			targetSplit.showDetailViewController(controller, sender: self)
 		} else if rootSplitViewController.isCollapsed {
+			let controller = addNavControllerIfNecessary(detailController, showButton: false)
 			masterNavigationController.pushViewController(controller, animated: !automated)
 		} else {
+			let controller = addNavControllerIfNecessary(detailController, showButton: true)
 			if let shimController = rootSplitViewController.viewControllers.last {
 				shimController.replaceChildAndPinView(controller)
 			}
-		}
+  	 	}
+		
 	}
 	
 	func addNavControllerIfNecessary(_ controller: UIViewController, showButton: Bool) -> UIViewController {
@@ -1552,6 +1554,9 @@ private extension SceneCoordinator {
 			if showButton {
 				controller.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 				controller.navigationItem.leftItemsSupplementBackButton = true
+			} else {
+				controller.navigationItem.leftBarButtonItem = nil
+				controller.navigationItem.leftItemsSupplementBackButton = false
 			}
 			return navController
 		}
