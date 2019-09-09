@@ -119,7 +119,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public var folders: Set<Folder>? = Set<Folder>()
 	private var feedDictionaryNeedsUpdate = true
 	private var _idToFeedDictionary = [String: Feed]()
-	var idToFeedDictionary: [String: Feed] {
+	private var idToFeedDictionary: [String: Feed] {
 		if feedDictionaryNeedsUpdate {
 			rebuildFeedDictionaries()
 		}
@@ -754,7 +754,7 @@ extension Account: FeedMetadataDelegate {
 
 	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
 		feedMetadataDirty = true
-		guard let feed = existingFeed(with: feedMetadata.feedID) else {
+		guard let feed = existingFeed(withFeedID: feedMetadata.feedID) else {
 			return
 		}
 		feed.postFeedSettingDidChangeNotification(key)
@@ -1151,7 +1151,7 @@ private extension Account {
 
 extension Account {
 
-	public func existingFeed(with feedID: String) -> Feed? {
+	public func existingFeed(withFeedID feedID: String) -> Feed? {
 		return idToFeedDictionary[feedID]
 	}
 }

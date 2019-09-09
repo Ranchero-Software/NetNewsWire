@@ -42,7 +42,7 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 extension Article {
 	
 	var feed: Feed? {
-		return account?.existingFeed(with: feedID)
+		return account?.existingFeed(withFeedID: feedID)
 	}
 	
 	var preferredLink: String? {

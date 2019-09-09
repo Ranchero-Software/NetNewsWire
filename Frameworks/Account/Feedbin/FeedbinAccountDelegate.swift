@@ -706,7 +706,7 @@ private extension FeedbinAccountDelegate {
 			
 			let subFeedId = String(subscription.feedID)
 			
-			if let feed = account.idToFeedDictionary[subFeedId] {
+			if let feed = account.existingFeed(withFeedID: subFeedId) {
 				feed.name = subscription.name
 				// If the name has been changed on the server remove the locally edited name
 				feed.editedName = nil
@@ -769,7 +769,7 @@ private extension FeedbinAccountDelegate {
 			for tagging in groupedTaggings {
 				let taggingFeedID = String(tagging.feedID)
 				if !folderFeedIds.contains(taggingFeedID) {
-					guard let feed = account.idToFeedDictionary[taggingFeedID] else {
+					guard let feed = account.existingFeed(withFeedID: taggingFeedID) else {
 						continue
 					}
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(tagging.taggingID))
@@ -1063,7 +1063,7 @@ private extension FeedbinAccountDelegate {
 			
 			group.enter()
 			
-			if let feed = account.idToFeedDictionary[feedID] {
+			if let feed = account.existingFeed(withFeedID: feedID) {
 				DispatchQueue.main.async {
 					account.update(feed, parsedItems: Set(mapItems), defaultRead: true) {
 						group.leave()
