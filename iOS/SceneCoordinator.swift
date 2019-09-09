@@ -523,8 +523,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func expandFolder(_ indexPath: IndexPath) {
-		let expandNode = shadowTable[indexPath.section][indexPath.row]
-		guard !expandedNodes.contains(expandNode) else { return }
+		guard let expandNode = nodeFor(indexPath), !expandedNodes.contains(expandNode) && expandNode.representedObject is Folder else {
+			return
+		}
+		
 		expandedNodes.append(expandNode)
 		
 		animatingChanges = true
@@ -566,10 +568,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func collapseFolder(_ indexPath: IndexPath) {
+		guard let collapseNode = nodeFor(indexPath), expandedNodes.contains(collapseNode) && collapseNode.representedObject is Folder else {
+			return
+		}
+		
 		animatingChanges = true
 		
-		let collapseNode = shadowTable[indexPath.section][indexPath.row]
-		guard expandedNodes.contains(collapseNode) else { return }
 		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
 			expandedNodes.remove(at: removeNode)
 		}
