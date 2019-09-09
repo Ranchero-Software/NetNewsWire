@@ -88,6 +88,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			UIDevice.current.orientation.isLandscape
 	}
 	
+	var isThreePanelModeConfigured: Bool {
+		return rootSplitViewController.children.last?.children.first is UISplitViewController
+	}
+	
 	var rootNode: Node {
 		return treeController.rootNode
 	}
@@ -270,6 +274,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 
+		NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		
@@ -410,6 +415,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 
+	@objc func orientationDidChange(_ note: Notification) {
+		configureThreePanelMode()
+	}
+	
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		self.sortDirection = AppDefaults.timelineSortDirection
 	}
@@ -975,18 +984,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 // MARK: UISplitViewControllerDelegate
 
 extension SceneCoordinator: UISplitViewControllerDelegate {
-
-	func splitViewController(_ splitViewController: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-		guard splitViewController.traitCollection.userInterfaceIdiom == .pad && !splitViewController.isCollapsed else {
-			return
-		}
-		if splitViewController.displayMode != .allVisible && displayMode == .allVisible {
-			transitionToThreePanelMode()
-		}
-		if splitViewController.displayMode == .allVisible && displayMode != .allVisible {
-			transitionFromThreePanelMode()
-		}
-	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
 	
@@ -1592,8 +1589,24 @@ private extension SceneCoordinator {
 		return shimController
 	}
 	
+	func configureThreePanelMode() {
+		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && !rootSplitViewController.isCollapsed else {
+			return
+		}
+		if UIDevice.current.orientation.isLandscape {
+			if !isThreePanelModeConfigured {
+				transitionToThreePanelMode()
+			}
+		} else {
+			if isThreePanelModeConfigured {
+				transitionFromThreePanelMode()
+			}
+		}
+	}
+	
 	@discardableResult
 	func transitionToThreePanelMode() -> UIViewController {
+		
 		defer {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
@@ -1629,7 +1642,7 @@ private extension SceneCoordinator {
 	}
 	
 	func transitionFromThreePanelMode() {
-		
+
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = UISplitViewController.automaticDimension
 		
 		if let shimController = rootSplitViewController.viewControllers.last, let subSplit = shimController.children.first as? UISplitViewController {
