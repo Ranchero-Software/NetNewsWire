@@ -39,6 +39,10 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
+	// Note: this is available only if the icon URL was available in the feed.
+	// The icon URL is a JSON-Feed-only feature.
+	// Otherwise we find an icon URL via other means, but we don’t store it
+	// as part of feed metadata.
 	public var iconURL: String? {
 		get {
 			return metadata.iconURL
@@ -48,6 +52,10 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
+	// Note: this is available only if the favicon URL was available in the feed.
+	// The favicon URL is a JSON-Feed-only feature.
+	// Otherwise we find a favicon URL via other means, but we don’t store it
+	// as part of feed metadata.
 	public var faviconURL: String? {
 		get {
 			return metadata.faviconURL
