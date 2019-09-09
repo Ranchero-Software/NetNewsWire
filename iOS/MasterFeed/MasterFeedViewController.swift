@@ -410,25 +410,33 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func expandSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath {
 			coordinator.expandFolder(indexPath)
-			self.applyChanges(animate: true)
+			self.applyChanges(animate: true) {
+				self.reloadAllVisibleCells()
+			}
 		}
 	}
 	
 	@objc func collapseSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath {
 			coordinator.collapseFolder(indexPath)
-			self.applyChanges(animate: true)
+			self.applyChanges(animate: true) {
+				self.reloadAllVisibleCells()
+			}
 		}
 	}
 	
 	@objc func expandAll(_ sender: Any?) {
 		coordinator.expandAllSectionsAndFolders()
-		self.applyChanges(animate: true)
+		self.applyChanges(animate: true) {
+			self.reloadAllVisibleCells()
+		}
 	}
 	
 	@objc func collapseAllExceptForGroupItems(_ sender: Any?) {
 		coordinator.collapseAllFolders()
-		self.applyChanges(animate: true)
+		self.applyChanges(animate: true) {
+			self.reloadAllVisibleCells()
+		}
 	}
 	
 	// MARK: API
