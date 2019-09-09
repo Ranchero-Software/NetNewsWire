@@ -2107,6 +2107,7 @@
 				840D617A2029031C009BC708 /* Resources */,
 				51C451DF2264C7F200C03939 /* Embed Frameworks */,
 				513C5CF1232571C2003D4054 /* Embed App Extensions */,
+				515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */,
 			);
 			buildRules = (
 			);
@@ -2517,6 +2518,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Verify No Build Settings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
+		};
 		8423E3E3220158E700C3795B /* Run Script: codesign release builds */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
