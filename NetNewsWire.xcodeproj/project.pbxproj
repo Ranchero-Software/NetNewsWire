@@ -777,7 +777,7 @@
 		51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SyncDatabase.xcodeproj; path = Frameworks/SyncDatabase/SyncDatabase.xcodeproj; sourceTree = SOURCE_ROOT; };
 		515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMessageViewController.swift; sourceTree = "<group>"; };
 		515D4FCB2325815A00EE1167 /* SafariExt.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SafariExt.js; sourceTree = "<group>"; };
-		515D4FCD2325909200EE1167 /* NetNewsWire.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire.entitlements; sourceTree = "<group>"; };
+		515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_ShareExtension.entitlements; sourceTree = "<group>"; };
 		515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSshareextension_target.xcconfig; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
@@ -1148,6 +1148,7 @@
 				513C5CEA232571C2003D4054 /* MainInterface.storyboard */,
 				513C5CED232571C2003D4054 /* Info.plist */,
 				515D4FCB2325815A00EE1167 /* SafariExt.js */,
+				515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */,
 			);
 			path = ShareExtension;
 			sourceTree = "<group>";
@@ -1669,7 +1670,6 @@
 		849C64571ED37A5D003D8FC0 = {
 			isa = PBXGroup;
 			children = (
-				515D4FCD2325909200EE1167 /* NetNewsWire.entitlements */,
 				845B14A51FC2299E0013CF92 /* README.md */,
 				84D2200922B0BC4B0019E085 /* CONTRIBUTING.md */,
 				84CBDDAE1FD3674C005A61AA /* Technotes */,
