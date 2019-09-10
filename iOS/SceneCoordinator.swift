@@ -704,14 +704,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			installDetailController(detailViewController, automated: automated)
 		}
 		
-		// Automatically hide the overlay
-		if rootSplitViewController.displayMode == .primaryOverlay {
-			UIView.animate(withDuration: 0.3) {
-				self.rootSplitViewController.preferredDisplayMode = .primaryHidden
-			}
-			rootSplitViewController.preferredDisplayMode = .automatic
-		}
-
 		if automated {
 			masterTimelineViewController?.updateArticleSelection(animate: false)
 		}
