@@ -15,7 +15,9 @@ class RootSplitViewController: UISplitViewController {
 	
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
 		coordinator.animate(alongsideTransition: { [weak self] context in
-			self?.coordinator.configureThreePanelMode(for: size)
+			if UIApplication.shared.applicationState != .background {
+				self?.coordinator.configureThreePanelMode(for: size)
+			}
 		})
 	}
 	
