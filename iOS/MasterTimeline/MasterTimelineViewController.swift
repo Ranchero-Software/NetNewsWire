@@ -145,6 +145,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	// MARK: API
 	
+	func restoreSelectionIfNecessary() {
+		if let articleID = coordinator.currentArticle?.articleID, let index = coordinator.indexForArticleID(articleID) {
+			let indexPath = IndexPath(row: index, section: 0)
+			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
+		}
+	}
+
 	func reinitializeArticles() {
 		resetUI()
 	}
@@ -526,13 +533,6 @@ private extension MasterTimelineViewController {
 			return RSImage(data: data)
 		}
 		return nil
-	}
-
-	func restoreSelectionIfNecessary() {
-		if let articleID = coordinator.currentArticle?.articleID, let index = coordinator.indexForArticleID(articleID) {
-			let indexPath = IndexPath(row: index, section: 0)
-			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
-		}
 	}
 	
 	func toggleArticleReadStatusAction(indexPath: IndexPath) -> UIAction {
