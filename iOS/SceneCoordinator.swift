@@ -1058,9 +1058,14 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 
 extension SceneCoordinator: UINavigationControllerDelegate {
 	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-		if rootSplitViewController.isCollapsed && viewController === masterFeedViewController {
+		
+		if viewController === masterFeedViewController {
 			activityManager.invalidateCurrentActivities()
+			if !rootSplitViewController.isCollapsed {
+				selectFeed(nil)
+			}
 		}
+		
 	}
 }
 
