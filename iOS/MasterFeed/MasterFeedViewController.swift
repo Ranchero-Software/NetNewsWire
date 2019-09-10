@@ -441,6 +441,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	// MARK: API
 	
+	func restoreSelectionIfNecessary(adjustScroll: Bool) {
+		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline() {
+			if adjustScroll {
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
+			} else {
+				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+			}
+		}
+	}
+
 	func updateFeedSelection() {
 		if let indexPath = coordinator.currentFeedIndexPath {
 			if tableView.indexPathForSelectedRow != indexPath {
@@ -500,9 +510,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		coordinator.expandFolder(indexPath)
 		reloadNode(parent)
 
-		self.applyChanges(animate: true) { [weak self] in
+		self.applyChanges(animate: true, adjustScroll: true) { [weak self] in
 			if let indexPath = self?.coordinator.indexPathFor(node) {
-				self?.tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
 				self?.coordinator.selectFeed(indexPath)
 				completion?()
 			}
@@ -543,11 +552,11 @@ private extension MasterFeedViewController {
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems([node])
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			self?.restoreSelectionIfNecessary()
+			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
 	}
 	
-	func applyChanges(animate: Bool, completion: (() -> Void)? = nil) {
+	func applyChanges(animate: Bool, adjustScroll: Bool = false, completion: (() -> Void)? = nil) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Node>()
 		let sections = coordinator.allSections
 		snapshot.appendSections(sections)
@@ -557,7 +566,7 @@ private extension MasterFeedViewController {
 		}
         
 		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
-			self?.restoreSelectionIfNecessary()
+			self?.restoreSelectionIfNecessary(adjustScroll: adjustScroll)
 			completion?()
 		}
 	}
@@ -636,7 +645,7 @@ private extension MasterFeedViewController {
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems(nodes)
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			self?.restoreSelectionIfNecessary()
+			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
 	}
 	
@@ -667,12 +676,6 @@ private extension MasterFeedViewController {
 		}
 		coordinator.collapseFolder(indexPath)
 		self.applyChanges(animate: true)
-	}
-
-	func restoreSelectionIfNecessary() {
-		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline() {
-			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
-		}
 	}
 
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {

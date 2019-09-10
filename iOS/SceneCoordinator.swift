@@ -1620,6 +1620,7 @@ private extension SceneCoordinator {
 		let navController = addNavControllerIfNecessary(controller, showButton: false)
 		subSplitViewController!.showDetailViewController(navController, sender: self)
 		
+		masterFeedViewController.restoreSelectionIfNecessary(adjustScroll: true)
 		masterTimelineViewController!.restoreSelectionIfNecessary()
 		
 		// Return the shim controller
