@@ -1049,16 +1049,17 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 // MARK: UINavigationControllerDelegate
 
 extension SceneCoordinator: UINavigationControllerDelegate {
+
 	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
 		
-		if viewController === masterFeedViewController {
+		// If we are showing the Feeds and only the feeds start clearing stuff
+		if viewController === masterFeedViewController && !isThreePanelMode {
 			activityManager.invalidateCurrentActivities()
-			if !rootSplitViewController.isCollapsed {
-				selectFeed(nil)
-			}
+			selectFeed(nil)
 		}
 		
 	}
+	
 }
 
 // MARK: Private
