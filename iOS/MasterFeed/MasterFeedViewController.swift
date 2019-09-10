@@ -670,7 +670,7 @@ private extension MasterFeedViewController {
 	}
 
 	func restoreSelectionIfNecessary() {
-		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline(), indexPath != tableView.indexPathForSelectedRow {
+		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline() {
 			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
 		}
 	}
