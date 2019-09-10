@@ -40,7 +40,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
 			return detail
 		}
-		if let subSplit = rootSplitViewController.viewControllers.last?.children.first as? UISplitViewController {
+		if let subSplit = subSplitViewController {
 			if let navController = subSplit.viewControllers.last as? UINavigationController {
 				return navController.topViewController as? DetailViewController
 			}
@@ -1601,9 +1601,6 @@ private extension SceneCoordinator {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
 		
-		configureDoubleSplit()
-		installTimelineControllerIfNecessary(animated: false)
-		
 		let controller: UIViewController = {
 			if let result = detailViewController {
 				return result
@@ -1611,6 +1608,9 @@ private extension SceneCoordinator {
 				return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
 			}
 		}()
+		
+		configureDoubleSplit()
+		installTimelineControllerIfNecessary(animated: false)
 		
 		// Create the new sub split controller (wrapped in the shim of course) and add the timeline in the primary position
 		let masterTimelineNavController = subSplitViewController!.viewControllers.first as! UINavigationController
