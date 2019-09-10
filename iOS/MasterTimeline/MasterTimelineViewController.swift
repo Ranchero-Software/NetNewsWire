@@ -157,9 +157,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	func reloadArticles(animate: Bool) {
-		applyChanges(animate: animate) { [weak self] in
-			self?.updateArticleSelection(animate: animate)
-		}
+		applyChanges(animate: animate)
 	}
 	
 	func updateArticleSelection(animate: Bool) {
