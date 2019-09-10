@@ -604,7 +604,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func masterFeedIndexPathForCurrentTimeline() -> IndexPath? {
-		guard let node = treeController.rootNode.descendantNode(where: { return $0.representedObject === timelineFetcher as AnyObject }) else {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(timelineFetcher as AnyObject) else {
 			return nil
 		}
 		return indexPathFor(node)
