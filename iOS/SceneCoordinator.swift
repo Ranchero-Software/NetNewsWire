@@ -32,6 +32,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var masterFeedViewController: MasterFeedViewController!
 	private var masterTimelineViewController: MasterTimelineViewController?
 	
+	private var subSplitViewController: UISplitViewController? {
+		return rootSplitViewController.children.last?.children.first as? UISplitViewController
+	}
+	
 	private var detailViewController: DetailViewController? {
 		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
 			return detail
@@ -83,7 +87,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	var isThreePanelMode: Bool {
-		return rootSplitViewController.children.last?.children.first is UISplitViewController
+		return subSplitViewController != nil
 	}
 	
 	var rootNode: Node {
@@ -1529,10 +1533,9 @@ private extension SceneCoordinator {
 	
 	func installDetailController(_ detailController: UIViewController, automated: Bool) {
 
-		if isThreePanelMode {
+		if let subSplit = subSplitViewController {
 			let controller = addNavControllerIfNecessary(detailController, showButton: false)
-			let targetSplit = ensureDoubleSplit().children.first as! UISplitViewController
-			targetSplit.showDetailViewController(controller, sender: self)
+			subSplit.showDetailViewController(controller, sender: self)
 		} else if rootSplitViewController.isCollapsed {
 			let controller = addNavControllerIfNecessary(detailController, showButton: false)
 			masterNavigationController.pushViewController(controller, animated: !automated)
@@ -1562,11 +1565,7 @@ private extension SceneCoordinator {
 		}
 	}
 
-	func ensureDoubleSplit() -> UIViewController {
-		if let shimController = rootSplitViewController.viewControllers.last, shimController.children.first is UISplitViewController {
-			return shimController
-		}
-		
+	func configureDoubleSplit() {
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.30
 		
 		let subSplit = UISplitViewController.template()
@@ -1577,12 +1576,10 @@ private extension SceneCoordinator {
 		shimController.addChildAndPinView(subSplit)
 		
 		rootSplitViewController.showDetailViewController(shimController, sender: self)
-		return shimController
 	}
 	
 	func navControllerForTimeline() -> UINavigationController {
-		if isThreePanelMode {
-			let subSplit = ensureDoubleSplit().children.first as! UISplitViewController
+		if let subSplit = subSplitViewController {
 			return subSplit.viewControllers.first as! UINavigationController
 		} else {
 			return masterNavigationController
@@ -1604,6 +1601,7 @@ private extension SceneCoordinator {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
 		
+		configureDoubleSplit()
 		installTimelineControllerIfNecessary(animated: false)
 		
 		let controller: UIViewController = {
@@ -1615,16 +1613,15 @@ private extension SceneCoordinator {
 		}()
 		
 		// Create the new sub split controller (wrapped in the shim of course) and add the timeline in the primary position
-		let shimController = ensureDoubleSplit()
-		let subSplit = shimController.children.first as! UISplitViewController
-		let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
+		let masterTimelineNavController = subSplitViewController!.viewControllers.first as! UINavigationController
 		masterTimelineNavController.viewControllers = [masterTimelineViewController!]
 		
 		// Put the detail or no selection controller in the secondary (or detail) position of the sub split
 		let navController = addNavControllerIfNecessary(controller, showButton: false)
-		subSplit.showDetailViewController(navController, sender: self)
+		subSplitViewController!.showDetailViewController(navController, sender: self)
 		
-		return shimController
+		// Return the shim controller
+		return subSplitViewController!.parent!
 
 	}
 	
