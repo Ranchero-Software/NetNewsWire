@@ -48,6 +48,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 					if articles.count > 0 {
 						tableView.scrollRowToVisible(0)
 					}
+					updateUnreadCount()
 				}
 			}
 		}
@@ -106,6 +107,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			if showFeedNames != oldValue {
 				updateShowAvatars()
 				updateTableViewRowHeight()
+				reloadVisibleCells()
 			}
 		}
 	}
@@ -1009,10 +1011,7 @@ private extension TimelineViewController {
 	}
 
 	func replaceArticles(with unsortedArticles: Set<Article>) {
-		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
-		if articles != sortedArticles {
-			articles = sortedArticles
-		}
+		articles = Array(unsortedArticles).sortedByDate(sortDirection)
 	}
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
