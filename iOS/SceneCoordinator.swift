@@ -196,14 +196,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		guard isPrevArticleAvailable, let articleRow = currentArticleRow else {
 			return nil
 		}
-		return articles[articleRow]
+		return articles[articleRow - 1]
 	}
 	
 	var nextArticle: Article? {
 		guard isNextArticleAvailable, let articleRow = currentArticleRow else {
 			return nil
 		}
-		return articles[articleRow]
+		return articles[articleRow + 1]
 	}
 	
 	var firstUnreadArticleIndexPath: IndexPath? {
