@@ -97,7 +97,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
 
-		if let node = node, let indexPath = coordinator.indexPathFor(node), let unreadCountProvider = node.representedObject as? UnreadCountProvider {
+		if let node = node, let indexPath = dataSource.indexPath(for: node), let unreadCountProvider = node.representedObject as? UnreadCountProvider {
 			if let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
 				cell.unreadCount = unreadCountProvider.unreadCount
 			}
@@ -206,7 +206,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		renameAction.backgroundColor = UIColor.systemOrange
 		actions.append(renameAction)
 		
-		if let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed {
+		if let feed = dataSource.itemIdentifier(for: indexPath)?.representedObject as? Feed {
 			let moreTitle = NSLocalizedString("More", comment: "More")
 			let moreAction = UIContextualAction(style: .normal, title: moreTitle) { [weak self] (action, view, completionHandler) in
 				
@@ -250,7 +250,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-		guard let node = coordinator.nodeFor(indexPath), !(node.representedObject is PseudoFeed) else {
+		guard let node = dataSource.itemIdentifier(for: indexPath), !(node.representedObject is PseudoFeed) else {
 			return nil
 		}
 		if node.representedObject is Feed {
@@ -275,7 +275,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return coordinator.cappedIndexPath(proposedDestinationIndexPath)
 		}()
 		
-		guard let draggedNode = coordinator.nodeFor(sourceIndexPath), let destNode = coordinator.nodeFor(destIndexPath), let parentNode = destNode.parent else {
+		guard let draggedNode = dataSource.itemIdentifier(for: sourceIndexPath), let destNode = dataSource.itemIdentifier(for: destIndexPath), let parentNode = destNode.parent else {
 			assertionFailure("This should never happen")
 			return sourceIndexPath
 		}
@@ -302,7 +302,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			if parentNode.representedObject is Account {
 				return IndexPath(row: 0, section: destIndexPath.section)
 			} else {
-				return coordinator.indexPathFor(parentNode)!
+				return dataSource.indexPath(for: parentNode)!
 			}
 			
 		} else {
@@ -312,10 +312,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
 			let adjustedIndex = index - movementAdjustment
 			if adjustedIndex >= sortedNodes.count {
-				let lastSortedIndexPath = coordinator.indexPathFor(sortedNodes[sortedNodes.count - 1])!
+				let lastSortedIndexPath = dataSource.indexPath(for: sortedNodes[sortedNodes.count - 1])!
 				return IndexPath(row: lastSortedIndexPath.row + 1, section: lastSortedIndexPath.section)
 			} else {
-				return coordinator.indexPathFor(sortedNodes[adjustedIndex])!
+				return dataSource.indexPath(for: sortedNodes[adjustedIndex])!
 			}
 			
 		}
@@ -494,7 +494,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		
-		if let indexPath = coordinator.indexPathFor(node) {
+		if let indexPath = dataSource.indexPath(for: node) {
 			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
 			coordinator.selectFeed(indexPath)
 			completion?()
@@ -502,7 +502,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	
 		// It wasn't already visable, so expand its folder and try again
-		guard let parent = node.parent, let indexPath = coordinator.indexPathFor(parent) else {
+		guard let parent = node.parent, let indexPath = dataSource.indexPath(for: parent) else {
 			completion?()
 			return
 		}
@@ -511,7 +511,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		reloadNode(parent)
 
 		self.applyChanges(animate: true, adjustScroll: true) { [weak self] in
-			if let indexPath = self?.coordinator.indexPathFor(node) {
+			if let indexPath = self?.dataSource.indexPath(for: node) {
 				self?.coordinator.selectFeed(indexPath)
 				completion?()
 			}
@@ -630,7 +630,7 @@ private extension MasterFeedViewController {
 	
 	func applyToAvailableCells(_ callback: (MasterFeedTableViewCell, Node) -> Void) {
 		tableView.visibleCells.forEach { cell in
-			guard let indexPath = tableView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
+			guard let indexPath = tableView.indexPath(for: cell), let node = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
 			callback(cell as! MasterFeedTableViewCell, node)
@@ -638,7 +638,7 @@ private extension MasterFeedViewController {
 	}
 
 	private func reloadAllVisibleCells() {
-		let visibleNodes = tableView.indexPathsForVisibleRows!.compactMap { return coordinator.nodeFor($0) }
+		let visibleNodes = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
 		reloadCells(visibleNodes)
 	}
 	
@@ -749,7 +749,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func copyFeedPageAction(indexPath: IndexPath) -> UIAction? {
-		guard let node = coordinator.nodeFor(indexPath),
+		guard let node = dataSource.itemIdentifier(for: indexPath),
 			let feed = node.representedObject as? Feed,
 			let url = URL(string: feed.url) else {
 				return nil
@@ -763,7 +763,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func copyFeedPageAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let node = coordinator.nodeFor(indexPath),
+		guard let node = dataSource.itemIdentifier(for: indexPath),
 			let feed = node.representedObject as? Feed,
 			let url = URL(string: feed.url) else {
 				return nil
@@ -778,7 +778,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func copyHomePageAction(indexPath: IndexPath) -> UIAction? {
-		guard let node = coordinator.nodeFor(indexPath),
+		guard let node = dataSource.itemIdentifier(for: indexPath),
 			let feed = node.representedObject as? Feed,
 			let homePageURL = feed.homePageURL,
 			let url = URL(string: homePageURL) else {
@@ -793,7 +793,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func copyHomePageAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let node = coordinator.nodeFor(indexPath),
+		guard let node = dataSource.itemIdentifier(for: indexPath),
 			let feed = node.representedObject as? Feed,
 			let homePageURL = feed.homePageURL,
 			let url = URL(string: homePageURL) else {
@@ -826,7 +826,7 @@ private extension MasterFeedViewController {
 	
 	func rename(indexPath: IndexPath) {
 		
-		let name = (coordinator.nodeFor(indexPath)?.representedObject as? DisplayNameProvider)?.nameForDisplay ?? ""
+		let name = (dataSource.itemIdentifier(for: indexPath)?.representedObject as? DisplayNameProvider)?.nameForDisplay ?? ""
 		let formatString = NSLocalizedString("Rename “%@”", comment: "Feed finder")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, name) as String
 		
@@ -838,7 +838,7 @@ private extension MasterFeedViewController {
 		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
 		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] action in
 			
-			guard let node = self?.coordinator.nodeFor(indexPath),
+			guard let node = self?.dataSource.itemIdentifier(for: indexPath),
 				let name = alertController.textFields?[0].text,
 				!name.isEmpty else {
 					return
@@ -880,7 +880,7 @@ private extension MasterFeedViewController {
 	
 	func delete(indexPath: IndexPath) {
 		guard let undoManager = undoManager,
-			let deleteNode = coordinator.nodeFor(indexPath),
+			let deleteNode = dataSource.itemIdentifier(for: indexPath),
 			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], undoManager: undoManager, errorHandler: ErrorHandler.present(self))
 				else {
 					return
