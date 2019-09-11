@@ -431,10 +431,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	// MARK: API
 	
-	func rowsInSection(_ section: Int) -> Int {
-		return shadowTable[section].count
-	}
-	
 	func isExpanded(_ node: Node) -> Bool {
 		return expandedNodes.contains(node)
 	}
@@ -1568,9 +1564,9 @@ private extension SceneCoordinator {
 			// Push a new timeline on to the master navigation controller.  For some reason recycling the timeline can freak
 			// the system out and throw it into an infinite loop.
 			if currentFeedIndexPath != nil {
-				let timelineController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-				timelineController.coordinator = self
-				masterNavigationController.pushViewController(timelineController, animated: false)
+				masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+				masterTimelineViewController!.coordinator = self
+				masterNavigationController.pushViewController(masterTimelineViewController!, animated: false)
 			}
 
 			// Pull the detail or no selection controller out of the sub split second position and move it to the root split controller
