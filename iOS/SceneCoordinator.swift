@@ -217,7 +217,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private(set) var articles = ArticleArray()
 	var currentArticle: Article?
-	var currentArticleRow: Int? {
+	private var currentArticleRow: Int? {
 		guard let article = currentArticle else { return nil }
 		return articles.firstIndex(of: article)
 	}
