@@ -435,13 +435,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return expandedNodes.contains(node)
 	}
 	
-	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].count else {
-			return nil
-		}
-		return shadowTable[indexPath.section][indexPath.row]
-	}
-	
 	func shadowNodesFor(section: Int) -> [Node] {
 		return shadowTable[section]
 	}
@@ -451,22 +444,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return IndexPath(row: shadowTable[shadowTable.count - 1].count - 1, section: shadowTable.count - 1)
 		}
 		return indexPath
-	}
-	
-	func indexPathFor(_ node: Node) -> IndexPath? {
-		for i in 0..<shadowTable.count {
-			if let row = shadowTable[i].firstIndex(of: node) {
-				return IndexPath(row: row, section: i)
-			}
-		}
-		return nil
-	}
-
-	func indexPathFor(_ object: AnyObject) -> IndexPath? {
-		guard let node = treeController.rootNode.descendantNodeRepresentingObject(object) else {
-			return nil
-		}
-		return indexPathFor(node)
 	}
 	
 	func unreadCountFor(_ node: Node) -> Int {
@@ -1072,6 +1049,29 @@ private extension SceneCoordinator {
 		}
 	}
 
+	func nodeFor(_ indexPath: IndexPath) -> Node? {
+		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].count else {
+			return nil
+		}
+		return shadowTable[indexPath.section][indexPath.row]
+	}
+	
+	func indexPathFor(_ node: Node) -> IndexPath? {
+		for i in 0..<shadowTable.count {
+			if let row = shadowTable[i].firstIndex(of: node) {
+				return IndexPath(row: row, section: i)
+			}
+		}
+		return nil
+	}
+
+	func indexPathFor(_ object: AnyObject) -> IndexPath? {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(object) else {
+			return nil
+		}
+		return indexPathFor(node)
+	}
+	
 	func updateShowAvatars() {
 		
 		if showFeedNames {
