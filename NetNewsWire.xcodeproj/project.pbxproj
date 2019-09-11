@@ -1251,7 +1251,7 @@
 			path = "Model Extensions";
 			sourceTree = "<group>";
 		};
-		51C45245226506C800C03939 /* Extensions */ = {
+		51C45245226506C800C03939 /* UIKit Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				51F85BFA2275D85000C787DC /* Array-Extensions.swift */,
@@ -1266,7 +1266,7 @@
 				512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */,
 				51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */,
 			);
-			path = Extensions;
+			path = "UIKit Extensions";
 			sourceTree = "<group>";
 		};
 		51C4525D226508F600C03939 /* MasterFeed */ = {
@@ -1911,8 +1911,8 @@
 				51C452802265093600C03939 /* Add */,
 				5183CCEB227117C70010922C /* Settings */,
 				5183CCDB226F1EEB0010922C /* Progress */,
-				51C45245226506C800C03939 /* Extensions */,
 				519D740423243C68008BB345 /* Model Extensions */,
+				51C45245226506C800C03939 /* UIKit Extensions */,
 				5F3237FF231DF9D000706F6B /* Views */,
 				5194B5E222B693EC00144881 /* Wrappers */,
 				513C5CE7232571C2003D4054 /* ShareExtension */,
