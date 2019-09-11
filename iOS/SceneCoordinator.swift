@@ -57,7 +57,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private let fetchRequestQueue = FetchRequestQueue()
 	
 	private var animatingChanges = false
-	private var expandedNodes = [Node]()
 	private var shadowTable = [[Node]]()
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope? = nil
@@ -246,7 +245,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		super.init()
 		
 		for section in treeController.rootNode.childNodes {
-			expandedNodes.append(section)
+			section.isExpanded = true
 			shadowTable.append([Node]())
 		}
 		
@@ -370,17 +369,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		
-		// If we are deactivating an account, clean up the expandedNodes table
-		if !account.isActive, let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
-			if let nodeIndex = self.expandedNodes.firstIndex(of: node) {
-				self.expandedNodes.remove(at: nodeIndex)
-			}
-		}
-		
 		rebuildBackingStores() {
 			// If we are activating an account, then automatically expand it
 			if account.isActive, let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
-				self.expandedNodes.append(node)
+				node.isExpanded = true
 			}
 		}
 	}
@@ -394,7 +386,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			// Automatically expand any new accounts
 			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
 				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
-				self.expandedNodes.append(node)
+				node.isExpanded = true
 			}
 		}
 	}
@@ -403,15 +395,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesSync()
 		}
-		
-		rebuildBackingStores() {
-			// Clean up the expandedNodes table for any deleted accounts
-			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
-				let node = self.treeController.rootNode.childNodeRepresentingObject(account),
-				let nodeIndex = self.expandedNodes.firstIndex(of: node) {
-				self.expandedNodes.remove(at: nodeIndex)
-			}
-		}
+		rebuildBackingStores()
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
@@ -430,10 +414,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	// MARK: API
-	
-	func isExpanded(_ node: Node) -> Bool {
-		return expandedNodes.contains(node)
-	}
 	
 	func shadowNodesFor(section: Int) -> [Node] {
 		return shadowTable[section]
@@ -458,11 +438,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 		
 	func expandSection(_ section: Int) {
-		guard let expandNode = treeController.rootNode.childAtIndex(section), !expandedNodes.contains(expandNode) else {
+		guard let expandNode = treeController.rootNode.childAtIndex(section), !expandNode.isExpanded else {
 			return
 		}
 
-		expandedNodes.append(expandNode)
+		expandNode.isExpanded = true
 		
 		animatingChanges = true
 		
@@ -475,7 +455,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		for child in expandNode.childNodes {
 			addNode(child)
-			if expandedNodes.contains(child) {
+			if child.isExpanded {
 				for gChild in child.childNodes {
 					addNode(gChild)
 				}
@@ -500,11 +480,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func expandFolder(_ indexPath: IndexPath) {
-		guard let expandNode = nodeFor(indexPath), !expandedNodes.contains(expandNode) && expandNode.representedObject is Folder else {
+		guard let expandNode = nodeFor(indexPath), !expandNode.isExpanded && expandNode.representedObject is Folder else {
 			return
 		}
 		
-		expandedNodes.append(expandNode)
+		expandNode.isExpanded = true
 		
 		animatingChanges = true
 		
@@ -519,18 +499,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func collapseSection(_ section: Int) {
-		guard let collapseNode = treeController.rootNode.childAtIndex(section), expandedNodes.contains(collapseNode) else {
+		guard let collapseNode = treeController.rootNode.childAtIndex(section), collapseNode.isExpanded else {
 			return
 		}
 		
 		animatingChanges = true
-
-		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
-			expandedNodes.remove(at: removeNode)
-		}
-		
+		collapseNode.isExpanded = false
 		shadowTable[section] = [Node]()
-		
 		animatingChanges = false
 	}
 	
@@ -545,15 +520,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func collapseFolder(_ indexPath: IndexPath) {
-		guard let collapseNode = nodeFor(indexPath), expandedNodes.contains(collapseNode) && collapseNode.representedObject is Folder else {
+		guard let collapseNode = nodeFor(indexPath), collapseNode.isExpanded && collapseNode.representedObject is Folder else {
 			return
 		}
 		
 		animatingChanges = true
-		
-		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
-			expandedNodes.remove(at: removeNode)
-		}
+
+		collapseNode.isExpanded = false
 		
 		for child in collapseNode.childNodes {
 			if let index = shadowTable[indexPath.section].firstIndex(of: child) {
@@ -1033,10 +1006,10 @@ private extension SceneCoordinator {
 			var result = [Node]()
 			let sectionNode = treeController.rootNode.childAtIndex(i)!
 			
-			if expandedNodes.contains(sectionNode) {
+			if sectionNode.isExpanded {
 				for node in sectionNode.childNodes {
 					result.append(node)
-					if expandedNodes.contains(node) {
+					if node.isExpanded {
 						for child in node.childNodes {
 							result.append(child)
 						}
@@ -1178,7 +1151,7 @@ private extension SceneCoordinator {
 					return true
 				}
 				
-				if expandedNodes.contains(node) {
+				if node.isExpanded {
 					continue
 				}
 				
@@ -1284,7 +1257,7 @@ private extension SceneCoordinator {
 					return true
 				}
 				
-				if expandedNodes.contains(node) {
+				if node.isExpanded {
 					continue
 				}
 				

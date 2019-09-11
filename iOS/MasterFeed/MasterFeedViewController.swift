@@ -168,7 +168,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		headerView.tag = section
-		headerView.disclosureExpanded = coordinator.isExpanded(sectionNode)
+		headerView.disclosureExpanded = sectionNode.isExpanded
 
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
@@ -281,7 +281,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
-		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !coordinator.isExpanded(destNode)) {
+		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !destNode.isExpanded) {
 			let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
 			return IndexPath(row: destIndexPath.row + movementAdjustment, section: destIndexPath.section)
 		}
@@ -362,7 +362,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 					return
 		}
 		
-		if coordinator.isExpanded(sectionNode) {
+		if sectionNode.isExpanded {
 			headerView.disclosureExpanded = false
 			coordinator.collapseSection(sectionIndex)
 			self.applyChanges(animate: true)
@@ -477,7 +477,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				return
 		}
 		
-		if !coordinator.isExpanded(sectionNode) {
+		if !sectionNode.isExpanded {
 			coordinator.expandSection(sectionIndex)
 			self.applyChanges(animate: true) {
 				completion?()
@@ -588,7 +588,7 @@ private extension MasterFeedViewController {
 		} else {
 			cell.indentationLevel = 0
 		}
-		cell.disclosureExpanded = coordinator.isExpanded(node)
+		cell.disclosureExpanded = node.isExpanded
 		cell.allowDisclosureSelection = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
