@@ -606,7 +606,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			installTimelineControllerIfNecessary(animated: !automated)
 		} else {
 			timelineFetcher = nil
-
+			activityManager.invalidateSelecting()
 			if rootSplitViewController.isCollapsed && navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
 				navControllerForTimeline().popViewController(animated: !automated)
 			}
@@ -1014,6 +1014,11 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		if viewController === masterFeedViewController && !isThreePanelMode {
 			activityManager.invalidateCurrentActivities()
 			selectFeed(nil)
+		}
+		
+		// If we are using a phone and navigate away from the detail, clear up the article resources (including activity)
+		if viewController === masterTimelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed {
+			selectArticle(nil)
 		}
 		
 	}
