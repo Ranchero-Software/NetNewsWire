@@ -45,7 +45,7 @@ a:hover {
 
 @media(prefers-color-scheme: dark) {
 	:root {
-		--link-color: #4490e2;
+		--link-color: #8CBFFA;
 		--header-table-border-color: rgba(255, 255, 255, 0.1);
 		--header-color: #d2d2d2;
 		--header-link-color: #4490e2;
