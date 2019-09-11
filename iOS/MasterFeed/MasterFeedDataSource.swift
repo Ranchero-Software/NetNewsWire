@@ -11,26 +11,26 @@ import RSCore
 import RSTree
 import Account
 
-class MasterFeedDataSource<SectionIdentifierType, ItemIdentifierType>: UITableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType> where SectionIdentifierType : Hashable, ItemIdentifierType : Hashable {
+class MasterFeedDataSource: UITableViewDiffableDataSource<Node, Node> {
 
 	private var coordinator: SceneCoordinator!
 	private var errorHandler: ((Error) -> ())!
 	
-	init(coordinator: SceneCoordinator, errorHandler: @escaping (Error) -> (), tableView: UITableView, cellProvider: @escaping UITableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>.CellProvider) {
+	init(coordinator: SceneCoordinator, errorHandler: @escaping (Error) -> (), tableView: UITableView, cellProvider: @escaping UITableViewDiffableDataSource<Node, Node>.CellProvider) {
 		super.init(tableView: tableView, cellProvider: cellProvider)
 		self.coordinator = coordinator
 		self.errorHandler = errorHandler
 	}
 	
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-		guard let node = coordinator.nodeFor(indexPath), !(node.representedObject is PseudoFeed) else {
+		guard let node = itemIdentifier(for: indexPath), !(node.representedObject is PseudoFeed) else {
 			return false
 		}
 		return true
 	}
 	
 	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-		guard let node = coordinator.nodeFor(indexPath) else {
+		guard let node = itemIdentifier(for: indexPath) else {
 			return false
 		}
 		return node.representedObject is Feed
@@ -38,7 +38,7 @@ class MasterFeedDataSource<SectionIdentifierType, ItemIdentifierType>: UITableVi
 	
 	override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
 
-		guard let sourceNode = coordinator.nodeFor(sourceIndexPath), let feed = sourceNode.representedObject as? Feed else {
+		guard let sourceNode = itemIdentifier(for: sourceIndexPath), let feed = sourceNode.representedObject as? Feed else {
 			return
 		}
 
@@ -49,7 +49,7 @@ class MasterFeedDataSource<SectionIdentifierType, ItemIdentifierType>: UITableVi
 			} else {
 				let movementAdjustment = sourceIndexPath > destinationIndexPath ? 1 : 0
 				let adjustedDestIndexPath = IndexPath(row: destinationIndexPath.row - movementAdjustment, section: destinationIndexPath.section)
-				return coordinator.nodeFor(adjustedDestIndexPath)!
+				return itemIdentifier(for: adjustedDestIndexPath)!
 			}
 		}()
 

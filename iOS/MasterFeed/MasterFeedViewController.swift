@@ -557,12 +557,13 @@ private extension MasterFeedViewController {
 	}
 	
 	func applyChanges(animate: Bool, adjustScroll: Bool = false, completion: (() -> Void)? = nil) {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, Node>()
-		let sections = coordinator.allSections
-		snapshot.appendSections(sections)
+        var snapshot = NSDiffableDataSourceSnapshot<Node, Node>()
+		let sectionNodes = coordinator.rootNode.childNodes
+		snapshot.appendSections(sectionNodes)
 
-		for section in sections {
-			snapshot.appendItems(coordinator.nodesFor(section: section), toSection: section)
+		for (index, sectionNode) in sectionNodes.enumerated() {
+			let shadowTableNodes = coordinator.shadowNodesFor(section: index)
+			snapshot.appendItems(shadowTableNodes, toSection: sectionNode)
 		}
         
 		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
@@ -571,7 +572,7 @@ private extension MasterFeedViewController {
 		}
 	}
 
-    func makeDataSource() -> UITableViewDiffableDataSource<Int, Node> {
+    func makeDataSource() -> UITableViewDiffableDataSource<Node, Node> {
 		return MasterFeedDataSource(coordinator: coordinator, errorHandler: ErrorHandler.present(self), tableView: tableView, cellProvider: { [weak self] tableView, indexPath, node in
 			let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterFeedTableViewCell
 			self?.configure(cell, node)

@@ -94,14 +94,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return treeController.rootNode
 	}
 	
-	var allSections: [Int] {
-		var sections = [Int]()
-		for (index, _) in shadowTable.enumerated() {
-			sections.append(index)
-		}
-		return sections
-	}
-
 	private(set) var currentFeedIndexPath: IndexPath?
 	
 	var timelineName: String? {
@@ -458,7 +450,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return shadowTable[indexPath.section][indexPath.row]
 	}
 	
-	func nodesFor(section: Int) -> [Node] {
+	func shadowNodesFor(section: Int) -> [Node] {
 		return shadowTable[section]
 	}
 	
