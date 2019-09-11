@@ -1571,7 +1571,6 @@ private extension SceneCoordinator {
 				let timelineController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
 				timelineController.coordinator = self
 				masterNavigationController.pushViewController(timelineController, animated: false)
-				timelineController.restoreSelectionIfNecessary()
 			}
 
 			// Pull the detail or no selection controller out of the sub split second position and move it to the root split controller

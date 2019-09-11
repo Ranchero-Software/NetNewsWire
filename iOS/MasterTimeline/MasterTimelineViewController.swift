@@ -68,13 +68,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		numberOfTextLines = AppDefaults.timelineNumberOfLines
 		resetEstimatedRowHeight()
 		
-		applyChanges(animate: false)
 		resetUI()
 		
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		clearsSelectionOnViewWillAppear = coordinator.isRootSplitCollapsed
+		applyChanges(animate: false)
 		super.viewWillAppear(animated)
 	}
 	
@@ -495,6 +495,7 @@ private extension MasterTimelineViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(coordinator.articles, toSection: 0)
+		print("********* article count: \(coordinator.articles.count)")
         
 		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
 			self?.restoreSelectionIfNecessary()
