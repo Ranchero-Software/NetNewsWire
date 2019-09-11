@@ -76,8 +76,13 @@ struct AppAssets {
 		return UIImage(systemName: "arrowtriangle.up.circle")!
 	}()
 	
+	static var masterFolderColor: UIColor = {
+		return UIColor(named: "masterFolderColor")!
+	}()
+	
 	static var masterFolderImage: UIImage = {
-		return UIImage(systemName: "folder.fill")!
+		let image = UIImage(systemName: "folder.fill")!
+		return image.withTintColor(AppAssets.masterFolderColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var moreImage: UIImage = {
@@ -109,7 +114,8 @@ struct AppAssets {
 	}()
 	
 	static var smartFeedImage: UIImage = {
-		return UIImage(systemName: "gear")!
+		let image = UIImage(systemName: "gear")!
+		return image.withTintColor(AppAssets.smartFeedColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var starColor: UIColor = {
