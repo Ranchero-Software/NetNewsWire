@@ -55,7 +55,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
-	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	
 	private var animatingChanges = false
 	private var expandedNodes = [Node]()
@@ -180,31 +179,31 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	var isPrevArticleAvailable: Bool {
-		guard let indexPath = currentArticleIndexPath else {
+		guard let articleRow = currentArticleRow else {
 			return false
 		}
-		return indexPath.row > 0
+		return articleRow > 0
 	}
 	
 	var isNextArticleAvailable: Bool {
-		guard let indexPath = currentArticleIndexPath else {
+		guard let articleRow = currentArticleRow else {
 			return false
 		}
-		return indexPath.row + 1 < articles.count
+		return articleRow + 1 < articles.count
 	}
 	
-	var prevArticleIndexPath: IndexPath? {
-		guard isPrevArticleAvailable, let indexPath = currentArticleIndexPath else {
+	var prevArticle: Article? {
+		guard isPrevArticleAvailable, let articleRow = currentArticleRow else {
 			return nil
 		}
-		return IndexPath(row: indexPath.row - 1, section: indexPath.section)
+		return articles[articleRow]
 	}
 	
-	var nextArticleIndexPath: IndexPath? {
-		guard isNextArticleAvailable, let indexPath = currentArticleIndexPath else {
+	var nextArticle: Article? {
+		guard isNextArticleAvailable, let articleRow = currentArticleRow else {
 			return nil
 		}
-		return IndexPath(row: indexPath.row + 1, section: indexPath.section)
+		return articles[articleRow]
 	}
 	
 	var firstUnreadArticleIndexPath: IndexPath? {
@@ -216,17 +215,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return nil
 	}
 	
-	var currentArticle: Article? {
-		if let indexPath = currentArticleIndexPath, indexPath.row < articles.count {
-			return articles[indexPath.row]
-		}
-		return nil
-	}
-	
-	private(set) var currentArticleIndexPath: IndexPath?
-	
 	private(set) var articles = ArticleArray()
-	
+	var currentArticle: Article?
+	var currentArticleRow: Int? {
+		guard let article = currentArticle else { return nil }
+		return articles.firstIndex(of: article)
+	}
+
 	var isTimelineUnreadAvailable: Bool {
 		if let unreadProvider = timelineFetcher as? UnreadCountProvider {
 			return unreadProvider.unreadCount > 0
@@ -602,27 +597,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return indexPathFor(node)
 	}
 	
-	func indexForArticleID(_ articleID: String?) -> Int? {
-		guard let articleID = articleID else { return nil }
-		updateArticleRowMapIfNeeded()
-		return articleRowMap[articleID]
-	}
-	
-	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
-		var indexes = IndexSet()
-		
-		articleIDs.forEach { (articleID) in
-			guard let oneIndex = indexForArticleID(articleID) else {
-				return
-			}
-			if oneIndex != NSNotFound {
-				indexes.insert(oneIndex)
-			}
-		}
-		
-		return indexes
-	}
-
 	func selectFeed(_ indexPath: IndexPath?, automated: Bool = true) {
 		selectArticle(nil)
 		currentFeedIndexPath = indexPath
@@ -673,11 +647,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 
-	func selectArticle(_ indexPath: IndexPath?, automated: Bool = true) {
-		currentArticleIndexPath = indexPath
+	func selectArticle(_ article: Article?, automated: Bool = true) {
+		currentArticle = article
 		activityManager.reading(currentArticle)
 		
-		if indexPath == nil {
+		if article == nil {
 			if rootSplitViewController.isCollapsed {
 				if masterNavigationController.children.last is DetailViewController {
 					masterNavigationController.popViewController(animated: !automated)
@@ -751,14 +725,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func selectPrevArticle() {
-		if let indexPath = prevArticleIndexPath {
-			selectArticle(indexPath)
+		if let article = prevArticle {
+			selectArticle(article)
 		}
 	}
 	
 	func selectNextArticle() {
-		if let indexPath = nextArticleIndexPath {
-			selectArticle(indexPath)
+		if let article = nextArticle {
+			selectArticle(article)
 		}
 	}
 	
@@ -834,12 +808,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func markAsReadOlderArticlesInTimeline() {
-		if let indexPath = currentArticleIndexPath {
-			markAsReadOlderArticlesInTimeline(indexPath)
+		if let article = currentArticle {
+			markAsReadOlderArticlesInTimeline(article)
 		}
 	}
-	func markAsReadOlderArticlesInTimeline(_ indexPath: IndexPath) {
-		let article = articles[indexPath.row]
+	
+	func markAsReadOlderArticlesInTimeline(_ article: Article) {
 		let articlesToMark = articles.filter { $0.logicalDatePublished < article.logicalDatePublished }
 		if articlesToMark.isEmpty {
 			return
@@ -865,8 +839,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func toggleRead(for indexPath: IndexPath) {
-		let article = articles[indexPath.row]
+	func toggleRead(_ article: Article) {
 		guard let undoManager = undoManager,
 			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
 				return
@@ -880,8 +853,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func toggleStar(for indexPath: IndexPath) {
-		let article = articles[indexPath.row]
+	func toggleStar(_ article: Article) {
 		guard let undoManager = undoManager,
 			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
 				return
@@ -940,8 +912,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func showBrowserForArticle(_ indexPath: IndexPath) {
-		guard let preferredLink = articles[indexPath.row].preferredLink, let url = URL(string: preferredLink) else {
+	func showBrowserForArticle(_ article: Article) {
+		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}
 		UIApplication.shared.open(url, options: [:])
@@ -960,8 +932,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func navigateToTimeline() {
-		if currentArticleIndexPath == nil {
-			selectArticle(IndexPath(row: 0, section: 0))
+		if currentArticle == nil && articles.count > 0 {
+			selectArticle(articles[0])
 		}
 		masterTimelineViewController?.focus()
 	}
@@ -1124,8 +1096,8 @@ private extension SceneCoordinator {
 	@discardableResult
 	func selectPrevUnreadArticleInTimeline() -> Bool {
 		let startingRow: Int = {
-			if let indexPath = currentArticleIndexPath {
-				return indexPath.row - 1
+			if let articleRow = currentArticleRow {
+				return articleRow
 			} else {
 				return articles.count - 1
 			}
@@ -1143,7 +1115,7 @@ private extension SceneCoordinator {
 		for i in (0...startingRow).reversed() {
 			let article = articles[i]
 			if !article.status.read {
-				selectArticle(IndexPath(row: i, section: 0))
+				selectArticle(article)
 				return true
 			}
 		}
@@ -1231,8 +1203,8 @@ private extension SceneCoordinator {
 	@discardableResult
 	func selectNextUnreadArticleInTimeline() -> Bool {
 		let startingRow: Int = {
-			if let indexPath = currentArticleIndexPath {
-				return indexPath.row + 1
+			if let articleRow = currentArticleRow {
+				return articleRow + 1
 			} else {
 				return 0
 			}
@@ -1250,7 +1222,7 @@ private extension SceneCoordinator {
 		for i in startingRow..<articles.count {
 			let article = articles[i]
 			if !article.status.read {
-				selectArticle(IndexPath(row: i, section: 0))
+				selectArticle(article)
 				return true
 			}
 		}
@@ -1344,34 +1316,11 @@ private extension SceneCoordinator {
 		
 		if articles != sortedArticles {
 			
-			let article = currentArticle
 			articles = sortedArticles
-			
 			updateShowAvatars()
-			articleRowMap = [String: Int]()
 			updateUnreadCount()
 			
 			masterTimelineViewController?.reloadArticles(animate: animate)
-			if let articleID = article?.articleID, let index = indexForArticleID(articleID) {
-				currentArticleIndexPath = IndexPath(row: index, section: 0)
-			}
-			
-		}
-	}
-	
-	func updateArticleRowMap() {
-		var rowMap = [String: Int]()
-		var index = 0
-		articles.forEach { (article) in
-			rowMap[article.articleID] = index
-			index += 1
-		}
-		articleRowMap = rowMap
-	}
-	
-	func updateArticleRowMapIfNeeded() {
-		if articleRowMap.isEmpty {
-			updateArticleRowMap()
 		}
 	}
 	
@@ -1698,12 +1647,8 @@ private extension SceneCoordinator {
 		discloseFeed(feedNode.representedObject as! Feed) {
 		
 			guard let articleID = activity.userInfo?[ActivityID.articleID.rawValue] as? String else { return }
-		
-			for (index, article) in self.articles.enumerated() {
-				if article.articleID == articleID {
-					self.selectArticle(IndexPath(row: index, section: 0))
-					break
-				}
+			if let article = self.articles.first(where: { $0.articleID == articleID }) {
+				self.selectArticle(article)
 			}
 			
 		}
