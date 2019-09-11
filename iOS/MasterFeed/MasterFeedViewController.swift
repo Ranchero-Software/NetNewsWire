@@ -508,7 +508,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		coordinator.expand(parent)
-		reloadNode(parent)
 
 		self.applyChanges(animate: true, adjustScroll: true) { [weak self] in
 			if let indexPath = self?.dataSource.indexPath(for: node) {
