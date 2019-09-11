@@ -12,7 +12,7 @@
 <p>Timeline: reload the timeline when show-feed-names is toggled. This fixes a bug where switching between a folder and a feed with the exact same list of articles to appear in the timeline would result in display glitches.</p>
  							]]></description>
             <pubDate>Tue, 10 Sep 2019 20:50:00 -0700</pubDate>
-            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.1b1/NetNewsWire5.0.1b1zip" sparkle:version="2613" sparkle:shortVersionString="5.0.1b1" length="5094966" type="application/zip" />
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.1b1/NetNewsWire5.0.1b1.zip" sparkle:version="2613" sparkle:shortVersionString="5.0.1b1" length="5094966" type="application/zip" />
             <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
         </item>
 
