@@ -364,11 +364,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		if sectionNode.isExpanded {
 			headerView.disclosureExpanded = false
-			coordinator.collapseSection(sectionIndex)
+			coordinator.collapse(sectionNode)
 			self.applyChanges(animate: true)
 		} else {
 			headerView.disclosureExpanded = true
-			coordinator.expandSection(sectionIndex)
+			coordinator.expand(sectionNode)
 			self.applyChanges(animate: true)
 		}
 		
@@ -408,8 +408,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func expandSelectedRows(_ sender: Any?) {
-		if let indexPath = coordinator.currentFeedIndexPath {
-			coordinator.expandFolder(indexPath)
+		if let indexPath = coordinator.currentFeedIndexPath, let node = dataSource.itemIdentifier(for: indexPath) {
+			coordinator.expand(node)
 			self.applyChanges(animate: true) {
 				self.reloadAllVisibleCells()
 			}
@@ -417,8 +417,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func collapseSelectedRows(_ sender: Any?) {
-		if let indexPath = coordinator.currentFeedIndexPath {
-			coordinator.collapseFolder(indexPath)
+		if let indexPath = coordinator.currentFeedIndexPath, let node = dataSource.itemIdentifier(for: indexPath) {
+			coordinator.collapse(node)
 			self.applyChanges(animate: true) {
 				self.reloadAllVisibleCells()
 			}
@@ -478,7 +478,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		if !sectionNode.isExpanded {
-			coordinator.expandSection(sectionIndex)
+			coordinator.expand(sectionNode)
 			self.applyChanges(animate: true) {
 				completion?()
 			}
@@ -502,12 +502,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	
 		// It wasn't already visable, so expand its folder and try again
-		guard let parent = node.parent, let indexPath = dataSource.indexPath(for: parent) else {
+		guard let parent = node.parent else {
 			completion?()
 			return
 		}
 		
-		coordinator.expandFolder(indexPath)
+		coordinator.expand(parent)
 		reloadNode(parent)
 
 		self.applyChanges(animate: true, adjustScroll: true) { [weak self] in
@@ -664,18 +664,18 @@ private extension MasterFeedViewController {
 	}
 
 	func expand(_ cell: MasterFeedTableViewCell) {
-		guard let indexPath = tableView.indexPath(for: cell)  else {
+		guard let indexPath = tableView.indexPath(for: cell), let node = dataSource.itemIdentifier(for: indexPath) else {
 			return
 		}
-		coordinator.expandFolder(indexPath)
+		coordinator.expand(node)
 		self.applyChanges(animate: true)
 	}
 
 	func collapse(_ cell: MasterFeedTableViewCell) {
-		guard let indexPath = tableView.indexPath(for: cell) else {
+		guard let indexPath = tableView.indexPath(for: cell), let node = dataSource.itemIdentifier(for: indexPath) else {
 			return
 		}
-		coordinator.collapseFolder(indexPath)
+		coordinator.collapse(node)
 		self.applyChanges(animate: true)
 	}
 

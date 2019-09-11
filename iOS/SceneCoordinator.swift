@@ -437,103 +437,45 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return 0
 	}
 		
-	func expandSection(_ section: Int) {
-		guard let expandNode = treeController.rootNode.childAtIndex(section), !expandNode.isExpanded else {
-			return
-		}
-
-		expandNode.isExpanded = true
-		
+	func expand(_ node: Node) {
+		node.isExpanded = true
 		animatingChanges = true
-		
-		var i = 0
-		
-		func addNode(_ node: Node) {
-			shadowTable[section].insert(node, at: i)
-			i = i + 1
-		}
-		
-		for child in expandNode.childNodes {
-			addNode(child)
-			if child.isExpanded {
-				for gChild in child.childNodes {
-					addNode(gChild)
-				}
-			}
-		}
-		
+		rebuildShadowTable()
 		animatingChanges = false
 	}
 	
 	func expandAllSectionsAndFolders() {
-		for (sectionIndex, sectionNode) in treeController.rootNode.childNodes.enumerated() {
-
-			expandSection(sectionIndex)
-			
+		for sectionNode in treeController.rootNode.childNodes {
+			sectionNode.isExpanded = true
 			for topLevelNode in sectionNode.childNodes {
-				if topLevelNode.representedObject is Folder, let indexPath = indexPathFor(topLevelNode) {
-					expandFolder(indexPath)
+				if topLevelNode.representedObject is Folder {
+					topLevelNode.isExpanded = true
 				}
 			}
-
 		}
-	}
-	
-	func expandFolder(_ indexPath: IndexPath) {
-		guard let expandNode = nodeFor(indexPath), !expandNode.isExpanded && expandNode.representedObject is Folder else {
-			return
-		}
-		
-		expandNode.isExpanded = true
-		
 		animatingChanges = true
-		
-		for i in 0..<expandNode.childNodes.count {
-			if let child = expandNode.childAtIndex(i) {
-				let nextIndex = indexPath.row + i + 1
-				shadowTable[indexPath.section].insert(child, at: nextIndex)
-			}
-		}
-		
+		rebuildShadowTable()
 		animatingChanges = false
 	}
 	
-	func collapseSection(_ section: Int) {
-		guard let collapseNode = treeController.rootNode.childAtIndex(section), collapseNode.isExpanded else {
-			return
-		}
-		
+	func collapse(_ node: Node) {
+		node.isExpanded = false
 		animatingChanges = true
-		collapseNode.isExpanded = false
-		shadowTable[section] = [Node]()
+		rebuildShadowTable()
 		animatingChanges = false
 	}
 	
 	func collapseAllFolders() {
 		for sectionNode in treeController.rootNode.childNodes {
+			sectionNode.isExpanded = true
 			for topLevelNode in sectionNode.childNodes {
-				if topLevelNode.representedObject is Folder, let indexPath = indexPathFor(topLevelNode) {
-					collapseFolder(indexPath)
+				if topLevelNode.representedObject is Folder {
+					topLevelNode.isExpanded = true
 				}
 			}
 		}
-	}
-	
-	func collapseFolder(_ indexPath: IndexPath) {
-		guard let collapseNode = nodeFor(indexPath), collapseNode.isExpanded && collapseNode.representedObject is Folder else {
-			return
-		}
-		
 		animatingChanges = true
-
-		collapseNode.isExpanded = false
-		
-		for child in collapseNode.childNodes {
-			if let index = shadowTable[indexPath.section].firstIndex(of: child) {
-				shadowTable[indexPath.section].remove(at: index)
-			}
-		}
-		
+		rebuildShadowTable()
 		animatingChanges = false
 	}
 	
