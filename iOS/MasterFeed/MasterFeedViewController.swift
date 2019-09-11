@@ -55,7 +55,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
 		updateUI()
-		applyChanges(animate: false)
 		becomeFirstResponder()
 		
 	}
@@ -63,6 +62,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	override func viewWillAppear(_ animated: Bool) {
 		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
 		clearsSelectionOnViewWillAppear = coordinator.isRootSplitCollapsed
+		applyChanges(animate: false)
 		super.viewWillAppear(animated)
 	}
 	
