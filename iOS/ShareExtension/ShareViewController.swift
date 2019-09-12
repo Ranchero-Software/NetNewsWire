@@ -14,13 +14,21 @@ import Articles
 import RSCore
 import RSTree
 
-class ShareViewController: SLComposeServiceViewController {
+class ShareViewController: SLComposeServiceViewController, ShareFolderPickerControllerDelegate {
 	
+	private var pickerData: FlattenedAccountFolderPickerData?
+
 	private var url: URL?
+	private var container: Container?
 	
 	override func viewDidLoad() {
 		
 		AccountManager.shared = AccountManager(accountsFolder: RSDataSubfolder(nil, "Accounts")!)
+		pickerData = FlattenedAccountFolderPickerData()
+		
+		if pickerData?.containers.count ?? 0 > 0 {
+			container = pickerData?.containers[0]
+		}
 
 		title = "NetNewsWire"
 		placeholder = "Feed Name (Optional)"
@@ -87,18 +95,26 @@ class ShareViewController: SLComposeServiceViewController {
 	}
 	
 	override func isContentValid() -> Bool {
-		return url != nil
+		return url != nil && container != nil
 	}
 	
 	override func didSelectPost() {
 
-		// Temporarily hardcoded
-		let account = AccountManager.shared.activeAccounts.first
-		let container = account!
+		var account: Account?
+		if let containerAccount = container as? Account {
+			account = containerAccount
+		} else if let containerFolder = container as? Folder, let containerAccount = containerFolder.account {
+			account = containerAccount
+		}
+		
+		if let urlString = url?.absoluteString, account!.hasFeed(withURL: urlString) {
+			presentError(AccountError.createErrorAlreadySubscribed)
+ 			return
+		}
 		
 		let feedName = contentText.isEmpty ? nil : contentText
 		
-		account!.createFeed(url: url!.absoluteString, name: feedName, container: container) { result in
+		account!.createFeed(url: url!.absoluteString, name: feedName, container: container!) { result in
 
 			switch result {
 			case .success:
@@ -118,6 +134,10 @@ class ShareViewController: SLComposeServiceViewController {
 		// Inform the host that we're done, so it un-blocks its UI. Note: Alternatively you could call super's -didSelectPost, which will similarly complete the extension context.
 	}
 	
+	func shareFolderPickerDidSelect(_ container: Container) {
+		self.container = container
+	}
+
 	override func configurationItems() -> [Any]! {
 		
 		// To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
@@ -127,28 +147,26 @@ class ShareViewController: SLComposeServiceViewController {
 		
 		guard let folderItem = SLComposeSheetConfigurationItem() else { return nil }
 		folderItem.title = "Folder"
-		folderItem.value = "On My iPhone"
-		folderItem.tapHandler = {
-			print("Tapped that!")
+		
+		if let nameProvider = container as? DisplayNameProvider {
+			folderItem.value = nameProvider.nameForDisplay
 		}
 		
-		// Example how you might navigate to a UIViewController with an edit field...
-		//        aliasConfigItem.tapHandler = {
-		//
-		//            let aliasEditViewController = UIViewController()
-		//            aliasEditViewController.navigationController?.title = "Alias"
-		//
-		//            let textField = UITextField(frame: CGRectMake(10,10,self.view.frame.width - 50,50))
-		//            textField.borderStyle = UITextBorderStyle.RoundedRect;
-		//            textField.placeholder = "enter your alias";
-		//            textField.keyboardType = UIKeyboardType.Default;
-		//            textField.returnKeyType = UIReturnKeyType.Done;
-		//            aliasEditViewController.view.addSubview(textField)
-		//
-		//            self.pushConfigurationViewController(aliasEditViewController)
-		//        }
+		folderItem.tapHandler = {
+			
+			let folderPickerController = ShareFolderPickerController()
+			
+			folderPickerController.navigationController?.title = NSLocalizedString("Folder", comment: "Folder")
+			folderPickerController.delegate = self
+			folderPickerController.pickerData = self.pickerData
+			folderPickerController.selectedContainer = self.container
+			
+			self.pushConfigurationViewController(folderPickerController)
+			
+		}
 		
 		return [folderItem, urlItem]
+		
 	}
 	
 }

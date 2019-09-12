@@ -19,7 +19,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 	@IBOutlet private weak var folderPickerView: UIPickerView!
 	@IBOutlet private weak var folderLabel: UILabel!
 	
-	private lazy var pickerData: AddFeedFolderPickerData = AddFeedFolderPickerData()
+	private lazy var pickerData: FlattenedAccountFolderPickerData = FlattenedAccountFolderPickerData()
 	private var shouldDisplayPicker: Bool {
 		return pickerData.containerNames.count > 1
 	}
