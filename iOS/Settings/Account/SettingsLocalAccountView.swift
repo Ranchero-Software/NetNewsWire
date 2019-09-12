@@ -18,7 +18,9 @@ struct SettingsLocalAccountView : View {
 			Section(header:
 				HStack {
 					Spacer()
-					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName).padding()
+					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName)
+						.padding()
+						.layoutPriority(1.0)
 					Spacer()
 				}
 			)  {

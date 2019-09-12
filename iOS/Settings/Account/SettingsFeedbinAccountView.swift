@@ -22,7 +22,9 @@ struct SettingsFeedbinAccountView : View {
 			Section(header:
 				HStack {
 					Spacer()
-					SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin").padding()
+					SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin")
+						.padding()
+						.layoutPriority(1.0)
 					Spacer()
 				}
 			)  {
