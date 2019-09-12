@@ -452,12 +452,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	func updateFeedSelection() {
-		if let indexPath = coordinator.currentFeedIndexPath {
-			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true, deselect: coordinator.isRootSplitCollapsed)
+		if dataSource.snapshot().numberOfItems > 0 {
+			if let indexPath = coordinator.currentFeedIndexPath {
+				if tableView.indexPathForSelectedRow != indexPath {
+					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true, deselect: coordinator.isRootSplitCollapsed)
+				}
+			} else {
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			}
-		} else {
-			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 		}
 	}
 
@@ -495,7 +497,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		if let indexPath = dataSource.indexPath(for: node) {
-			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
 			coordinator.selectFeed(indexPath)
 			completion?()
 			return
