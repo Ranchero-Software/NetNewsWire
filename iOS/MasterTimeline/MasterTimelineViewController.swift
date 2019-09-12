@@ -495,7 +495,6 @@ private extension MasterTimelineViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(coordinator.articles, toSection: 0)
-		print("********* article count: \(coordinator.articles.count)")
         
 		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
 			self?.restoreSelectionIfNecessary()
