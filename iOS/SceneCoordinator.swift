@@ -587,6 +587,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		} else {
 			timelineFetcher = nil
 		}
+		
+		selectArticle(nil)
 	}
 	
 	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
