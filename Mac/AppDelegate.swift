@@ -69,6 +69,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
 
+		AccountManager.shared = AccountManager(accountsFolder: RSDataSubfolder(nil, "Accounts")!)
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 
