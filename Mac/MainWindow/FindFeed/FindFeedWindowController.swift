@@ -1,5 +1,5 @@
 //
-//  AddFeedWindowController.swift
+//  FindFeedWindowController.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 8/1/15.
@@ -12,28 +12,26 @@ import RSTree
 import Articles
 import Account
 
-protocol AddFeedWindowControllerDelegate: class {
+protocol FindFeedWindowControllerDelegate: class {
 
 	// userEnteredURL will have already been validated and normalized.
-	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, container: Container)
+	func findFeedWindowController(_: FindFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, container: Container)
 
-	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController)
+	func findFeedWindowControllerUserDidCancel(_: FindFeedWindowController)
 }
 
-class AddFeedWindowController : NSWindowController {
+class FindFeedWindowController : NSWindowController {
     
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!
-	@IBOutlet var folderPopupButton: NSPopUpButton!
 
 	private var urlString: String?
 	private var initialName: String?
 	private weak var initialAccount: Account?
 	private var initialFolder: Folder?
-	private weak var delegate: AddFeedWindowControllerDelegate?
+	private weak var delegate: FindFeedWindowControllerDelegate?
 	private var folderTreeController: TreeController!
-	private var findFeedController: FindFeedController!
 
 	private var userEnteredTitle: String? {
 		var s = nameTextField.stringValue
@@ -44,8 +42,8 @@ class AddFeedWindowController : NSWindowController {
 		return s
 	}
 	
-	convenience init(urlString: String?, name: String?, account: Account?, folder: Folder?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
-		self.init(windowNibName: NSNib.Name("AddFeedSheet"))
+	convenience init(urlString: String?, name: String?, account: Account?, folder: Folder?, folderTreeController: TreeController, delegate: FindFeedWindowControllerDelegate?) {
+		self.init(windowNibName: NSNib.Name("FindFeedSheet"))
 		self.urlString = urlString
 		self.initialName = name
 		self.initialAccount = account
@@ -55,6 +53,7 @@ class AddFeedWindowController : NSWindowController {
 	}
 	
     func runSheetOnWindow(_ hostWindow: NSWindow) {
+		
 		hostWindow.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
 		}
     }
@@ -67,15 +66,6 @@ class AddFeedWindowController : NSWindowController {
 			nameTextField.stringValue = initialName
 		}
 
-		folderPopupButton.menu = FolderTreeMenu.createFolderPopupMenu(with: folderTreeController.rootNode)
-		if let account = initialAccount {
-			FolderTreeMenu.select(account: account, folder: initialFolder, in: folderPopupButton)
-		} else if let accountID = AppDefaults.addFeedAccountID {
-			if let account = AccountManager.shared.existingAccount(with: accountID) {
-				FolderTreeMenu.select(account: account, folder: nil, in: folderPopupButton)
-			}
-		}
-		
 		updateUI()
 	}
 
@@ -105,15 +95,9 @@ class AddFeedWindowController : NSWindowController {
 			AppDefaults.addFeedAccountID = selectedAccount.accountID
 		}
 
-		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: container)
+		delegate?.findFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: container)
 		
     }
-
-	@IBAction func searchForAFeed(_ sender: Any?) {
-		findFeedController = FindFeedController(hostWindow: window!)
-		
-		findFeedController.showAddFeedSheet(nil, nil, nil, nil)
-	}
 	
 	// MARK: NSTextFieldDelegate
 
@@ -126,17 +110,17 @@ class AddFeedWindowController : NSWindowController {
 	}
 }
 
-private extension AddFeedWindowController {
+private extension FindFeedWindowController {
 	
 	private func updateUI() {
 		addButton.isEnabled = urlTextField.stringValue.rs_stringMayBeURL()
 	}
 
 	func cancelSheet() {
-		delegate?.addFeedWindowControllerUserDidCancel(self)
+		delegate?.findFeedWindowControllerUserDidCancel(self)
 	}
 
 	func selectedContainer() -> Container? {
-		return folderPopupButton.selectedItem?.representedObject as? Container
+		return nil
 	}
 }

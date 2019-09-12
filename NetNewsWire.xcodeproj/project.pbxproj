@@ -199,6 +199,9 @@
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
 		6581C74020CED60100F4AD34 /* netnewswire-subscribe-to-feed.js in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */; };
 		6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */; };
+		784A817C232A6864003A8A12 /* FindFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784A8172232A6864003A8A12 /* FindFeedWindowController.swift */; };
+		784A817D232A6864003A8A12 /* FindFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784A8173232A6864003A8A12 /* FindFeedController.swift */; };
+		784A8180232A68C0003A8A12 /* FindFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 784A817E232A68C0003A8A12 /* FindFeedSheet.xib */; };
 		8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD892213E0E3008CE1BF /* DetailContainerView.swift */; };
 		8405DD9922153B6B008CE1BF /* TimelineContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD9822153B6B008CE1BF /* TimelineContainerView.swift */; };
 		8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */; };
@@ -871,6 +874,9 @@
 		6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "netnewswire-subscribe-to-feed.js"; sourceTree = "<group>"; };
 		6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ToolbarItemIcon.pdf; sourceTree = "<group>"; };
 		6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Subscribe_to_Feed.entitlements; sourceTree = "<group>"; };
+		784A8172232A6864003A8A12 /* FindFeedWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindFeedWindowController.swift; sourceTree = "<group>"; };
+		784A8173232A6864003A8A12 /* FindFeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindFeedController.swift; sourceTree = "<group>"; };
+		784A817F232A68C0003A8A12 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/FindFeedSheet.xib; sourceTree = SOURCE_ROOT; };
 		8405DD892213E0E3008CE1BF /* DetailContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailContainerView.swift; sourceTree = "<group>"; };
 		8405DD9822153B6B008CE1BF /* TimelineContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineContainerView.swift; sourceTree = "<group>"; };
 		8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView-Extensions.swift"; sourceTree = "<group>"; };
@@ -1415,6 +1421,17 @@
 			path = SafariExtension;
 			sourceTree = "<group>";
 		};
+		784A8171232A6864003A8A12 /* Find Feed */ = {
+			isa = PBXGroup;
+			children = (
+				784A817E232A68C0003A8A12 /* FindFeedSheet.xib */,
+				784A8172232A6864003A8A12 /* FindFeedWindowController.swift */,
+				784A8173232A6864003A8A12 /* FindFeedController.swift */,
+			);
+			name = "Find Feed";
+			path = FindFeed;
+			sourceTree = "<group>";
+		};
 		840716652262A60D00344432 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1470,6 +1487,7 @@
 				849A975F1ED9EB95007D329B /* Sidebar */,
 				849A97681ED9EBC8007D329B /* Timeline */,
 				849A977C1ED9EC42007D329B /* Detail */,
+				784A8171232A6864003A8A12 /* Find Feed */,
 				849A97551ED9EAC3007D329B /* Add Feed */,
 				849A97411ED9EAA9007D329B /* Add Folder */,
 				5144EA39227A377700D19003 /* OPML */,
@@ -2509,6 +2527,7 @@
 				8483630B2262A3F000DA1D35 /* RenameSheet.xib in Resources */,
 				848363052262A3CC00DA1D35 /* AddFolderSheet.xib in Resources */,
 				5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */,
+				784A8180232A68C0003A8A12 /* FindFeedSheet.xib in Resources */,
 				8405DDA222168920008CE1BF /* TimelineTableView.xib in Resources */,
 				8483630E2262A3FE00DA1D35 /* MainWindow.storyboard in Resources */,
 				55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */,
@@ -2784,6 +2803,7 @@
 				842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */,
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
+				784A817D232A6864003A8A12 /* FindFeedController.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
 				8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */,
 				519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */,
@@ -2799,6 +2819,7 @@
 				84AD1EAA2031617300BC20B7 /* PasteboardFolder.swift in Sources */,
 				5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */,
 				84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */,
+				784A817C232A6864003A8A12 /* FindFeedWindowController.swift in Sources */,
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
 				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,
@@ -3018,6 +3039,14 @@
 				6581C73C20CED60100F4AD34 /* Base */,
 			);
 			name = SafariExtensionViewController.xib;
+			sourceTree = "<group>";
+		};
+		784A817E232A68C0003A8A12 /* FindFeedSheet.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				784A817F232A68C0003A8A12 /* Base */,
+			);
+			name = FindFeedSheet.xib;
 			sourceTree = "<group>";
 		};
 		848363002262A3BC00DA1D35 /* AddFeedSheet.xib */ = {
