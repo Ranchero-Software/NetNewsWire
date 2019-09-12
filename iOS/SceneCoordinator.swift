@@ -1458,11 +1458,13 @@ private extension SceneCoordinator {
 		
 		configureDoubleSplit()
 		installTimelineControllerIfNecessary(animated: false)
-		
+		masterTimelineViewController?.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
+		masterTimelineViewController?.navigationItem.leftItemsSupplementBackButton = true
+
 		// Create the new sub split controller and add the timeline in the primary position
 		let masterTimelineNavController = subSplitViewController!.viewControllers.first as! UINavigationController
 		masterTimelineNavController.viewControllers = [masterTimelineViewController!]
-		
+
 		// Put the detail or no selection controller in the secondary (or detail) position of the sub split
 		let navController = addNavControllerIfNecessary(controller, showButton: false)
 		subSplitViewController!.showDetailViewController(navController, sender: self)
