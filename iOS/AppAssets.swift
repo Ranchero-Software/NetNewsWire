@@ -76,13 +76,8 @@ struct AppAssets {
 		return UIImage(systemName: "arrowtriangle.up.circle")!
 	}()
 	
-	static var masterFolderColor: UIColor = {
-		return UIColor(named: "masterFolderColor")!
-	}()
-	
 	static var masterFolderImage: UIImage = {
-		let image = UIImage(systemName: "folder.fill")!
-		return image.withTintColor(AppAssets.masterFolderColor, renderingMode: .alwaysOriginal)
+		return UIImage(systemName: "folder.fill")!
 	}()
 	
 	static var moreImage: UIImage = {
@@ -109,13 +104,8 @@ struct AppAssets {
 		return UIImage(systemName: "square.and.arrow.up")!
 	}()
 	
-	static var smartFeedColor: UIColor = {
-		return UIColor(named: "smartFeedColor")!
-	}()
-	
 	static var smartFeedImage: UIImage = {
-		let image = UIImage(systemName: "gear")!
-		return image.withTintColor(AppAssets.smartFeedColor, renderingMode: .alwaysOriginal)
+		return UIImage(systemName: "gear")!
 	}()
 	
 	static var starColor: UIColor = {
@@ -134,6 +124,10 @@ struct AppAssets {
 		return UIColor(named: "tableViewCellHighlightedTextColor")!
 	}()
 
+	static var tableViewCellIconColor: UIColor = {
+		return UIColor(named: "tableViewCellIconColor")!
+	}()
+	
 	static var tableViewCellSelectionColor: UIColor = {
 		return UIColor(named: "tableViewCellSelectionColor")!
 	}()
