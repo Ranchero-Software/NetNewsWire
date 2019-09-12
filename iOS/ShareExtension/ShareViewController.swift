@@ -20,6 +20,8 @@ class ShareViewController: SLComposeServiceViewController {
 	
 	override func viewDidLoad() {
 		
+		AccountManager.shared = AccountManager(accountsFolder: RSDataSubfolder(nil, "Accounts")!)
+
 		title = "NetNewsWire"
 		placeholder = "Feed Name (Optional)"
 		if let button = navigationController?.navigationBar.topItem?.rightBarButtonItem {
@@ -98,13 +100,13 @@ class ShareViewController: SLComposeServiceViewController {
 		
 		account!.createFeed(url: url!.absoluteString, name: feedName, container: container) { result in
 
-			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
-
 			switch result {
-			case .success(let feed):
-				break
+			case .success:
+				self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 			case .failure(let error):
-				print(error.localizedDescription)
+				self.presentError(error) {
+					self.extensionContext!.cancelRequest(withError: error)
+				}
 			}
 
 		}
