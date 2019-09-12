@@ -13,7 +13,6 @@ import RSParser
 
 final class OPMLFile: NSObject, NSFilePresenter {
 	
-	
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "account")
 
 	private let filename: String
@@ -21,7 +20,7 @@ final class OPMLFile: NSObject, NSFilePresenter {
 	private let operationQueue: OperationQueue
 	
 	var presentedItemURL: URL? {
-		return URL(string: filename)
+		return URL(fileURLWithPath: filename)
 	}
 	
 	var presentedItemOperationQueue: OperationQueue {
@@ -33,43 +32,26 @@ final class OPMLFile: NSObject, NSFilePresenter {
 		self.account = account
 		operationQueue = OperationQueue()
 		operationQueue.maxConcurrentOperationCount = 1
+	
+		super.init()
+		
+		NSFileCoordinator.addFilePresenter(self)
+	}
+	
+	func presentedItemDidChange() {
+		DispatchQueue.main.async {
+			self.reload()
+		}
 	}
 	
 	func load() {
-		let opmlFileURL = URL(fileURLWithPath: filename)
-		var fileData: Data?
-		do {
-			fileData = try Data(contentsOf: opmlFileURL)
-		} catch {
-			// Commented out because it’s not an error on first run.
-			// TODO: make it so we know if it’s first run or not.
-			//NSApplication.shared.presentError(error)
-			return
-		}
-		guard let opmlData = fileData else {
-			return
-		}
-
-		let parserData = ParserData(url: opmlFileURL.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
-
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			os_log(.error, log: log, "OPML Import failed: %@.", error.localizedDescription)
-			return
-		}
-		guard let parsedOPML = opmlDocument, let children = parsedOPML.children else {
-			return
-		}
-
+		guard let opmlItems = parsedOPMLItems() else { return }
 		BatchUpdate.shared.perform {
-			account.loadOPMLItems(children, parentFolder: nil)
+			account.loadOPMLItems(opmlItems, parentFolder: nil)
 		}
 	}
-
+	
 	func save() {
-
 		let opmlDocumentString = opmlDocument()
 		do {
 			let url = URL(fileURLWithPath: filename)
@@ -82,6 +64,44 @@ final class OPMLFile: NSObject, NSFilePresenter {
 }
 
 private extension OPMLFile {
+	
+	func reload() {
+		guard let opmlItems = parsedOPMLItems() else { return }
+		BatchUpdate.shared.perform {
+			account.topLevelFeeds.removeAll()
+			account.loadOPMLItems(opmlItems, parentFolder: nil)
+		}
+	}
+
+	func parsedOPMLItems() -> [RSOPMLItem]? {
+		
+		let opmlFileURL = URL(fileURLWithPath: filename)
+		var fileData: Data?
+		do {
+			fileData = try Data(contentsOf: opmlFileURL)
+		} catch {
+			// Commented out because it’s not an error on first run.
+			// TODO: make it so we know if it’s first run or not.
+			//NSApplication.shared.presentError(error)
+			return nil
+		}
+		guard let opmlData = fileData else {
+			return nil
+		}
+
+		let parserData = ParserData(url: opmlFileURL.absoluteString, data: opmlData)
+		var opmlDocument: RSOPMLDocument?
+
+		do {
+			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+		} catch {
+			os_log(.error, log: log, "OPML Import failed: %@.", error.localizedDescription)
+			return nil
+		}
+		
+		return opmlDocument?.children
+		
+	}
 	
 	func opmlDocument() -> String {
 		let escapedTitle = account.nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
