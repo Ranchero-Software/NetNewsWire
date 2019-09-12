@@ -77,11 +77,14 @@ final class LocalAccountDelegate: AccountDelegate {
 			return
 		}
 
-		// We use the same mechanism to load local accounts as we do to load the subscription
-		// OPML all accounts.
-		BatchUpdate.shared.perform {
-			account.loadOPML(loadDocument)
+		guard let children = loadDocument.children else {
+			return
 		}
+
+		BatchUpdate.shared.perform {
+			account.loadOPMLItems(children, parentFolder: nil)
+		}
+		
 		completion(.success(()))
 
 	}
