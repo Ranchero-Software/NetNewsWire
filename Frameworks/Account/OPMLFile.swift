@@ -13,7 +13,7 @@ import RSParser
 
 final class OPMLFile: NSObject, NSFilePresenter {
 	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "account")
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "opmlFile")
 
 	private var isDirty = false {
 		didSet {
