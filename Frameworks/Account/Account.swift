@@ -172,10 +172,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	private var flattenedFeedsNeedUpdate = true
 
 	private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
-	private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.opml"), account: self)
+	private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.plist"), account: self)
 	var metadata = AccountMetadata()
 
-	private lazy var feedMetadataFile = FeedMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("FeedMetadata.opml"), account: self)
+	private lazy var feedMetadataFile = FeedMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist"), account: self)
 	typealias FeedMetadataDictionary = [String: FeedMetadata]
 	var feedMetadata = FeedMetadataDictionary()
 
