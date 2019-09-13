@@ -129,7 +129,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public var folders: Set<Folder>? = Set<Folder>()
 	private var feedDictionaryNeedsUpdate = true
 	private var _idToFeedDictionary = [String: Feed]()
-	private var idToFeedDictionary: [String: Feed] {
+	var idToFeedDictionary: [String: Feed] {
 		if feedDictionaryNeedsUpdate {
 			rebuildFeedDictionaries()
 		}
@@ -175,14 +175,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.opml"), account: self)
 	var metadata = AccountMetadata()
 
-	private let feedMetadataPath: String
-	private typealias FeedMetadataDictionary = [String: FeedMetadata]
-	private var feedMetadata = FeedMetadataDictionary()
-	private var feedMetadataDirty = false {
-		didSet {
-			queueSaveFeedMetadataIfNeeded()
-		}
-	}
+	private lazy var feedMetadataFile = FeedMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("FeedMetadata.opml"), account: self)
+	typealias FeedMetadataDictionary = [String: FeedMetadata]
+	var feedMetadata = FeedMetadataDictionary()
 
 	private var startingUp = true
 
@@ -243,8 +238,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
 		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID)
 
-		self.feedMetadataPath = (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist")
-
 		switch type {
 		case .onMyMac:
 			defaultName = Account.defaultLocalAccountName
@@ -266,8 +259,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
-		pullObjectsFromDisk()
-		
+		metadataFile.load()
+		feedMetadataFile.load()
+		opmlFile.load()
+
 		DispatchQueue.main.async {
 			self.fetchAllUnreadCounts()
 		}
@@ -756,12 +751,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	@objc func saveFeedMetadataIfNeeded() {
-		if feedMetadataDirty && !isDeleted {
-			saveFeedMetadata()
-		}
-	}
-
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {
@@ -788,7 +777,7 @@ extension Account: AccountMetadataDelegate {
 extension Account: FeedMetadataDelegate {
 
 	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
-		feedMetadataDirty = true
+		feedMetadataFile.markAsDirty()
 		guard let feed = existingFeed(withFeedID: feedMetadata.feedID) else {
 			return
 		}
@@ -927,55 +916,6 @@ private extension Account {
 
 		feed.unreadCount = feedUnreadCount
 	}
-}
-
-// MARK: - Disk (Private)
-
-private extension Account {
-	
-	func pullObjectsFromDisk() {
-		metadataFile.load()
-		loadFeedMetadata()
-		opmlFile.load()
-	}
-
-	func loadFeedMetadata() {
-		let url = URL(fileURLWithPath: feedMetadataPath)
-		guard let data = try? Data(contentsOf: url) else {
-			return
-		}
-		let decoder = PropertyListDecoder()
-		feedMetadata = (try? decoder.decode(FeedMetadataDictionary.self, from: data)) ?? FeedMetadataDictionary()
-		feedMetadata.values.forEach { $0.delegate = self }
-	}
-
-	func queueSaveFeedMetadataIfNeeded() {
-		Account.saveQueue.add(self, #selector(saveFeedMetadataIfNeeded))
-	}
-
-	private func metadataForOnlySubscribedToFeeds() -> FeedMetadataDictionary {
-		let feedIDs = idToFeedDictionary.keys
-		return feedMetadata.filter { (feedID: String, metadata: FeedMetadata) -> Bool in
-			return feedIDs.contains(metadata.feedID)
-		}
-	}
-
-	func saveFeedMetadata() {
-		feedMetadataDirty = false
-
-		let d = metadataForOnlySubscribedToFeeds()
-		let encoder = PropertyListEncoder()
-		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: feedMetadataPath)
-		do {
-			let data = try encoder.encode(d)
-			try data.write(to: url)
-		}
-		catch {
-			assertionFailure(error.localizedDescription)
-		}
-	}
-
 }
 
 // MARK: - Private

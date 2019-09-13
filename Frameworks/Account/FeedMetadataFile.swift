@@ -1,5 +1,5 @@
 //
-//  AccountMetadataFile.swift
+//  FeedMetadataFile.swift
 //  Account
 //
 //  Created by Maurice Parker on 9/13/19.
@@ -10,9 +10,9 @@ import Foundation
 import os.log
 import RSCore
 
-final class AccountMetadataFile {
+final class FeedMetadataFile {
 	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "accountMetadataFile")
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "feedMetadataFile")
 
 	private let fileURL: URL
 	private let account: Account
@@ -37,7 +37,7 @@ final class AccountMetadataFile {
 	
 }
 
-private extension AccountMetadataFile {
+private extension FeedMetadataFile {
 
 	func loadCallback() {
 
@@ -47,7 +47,7 @@ private extension AccountMetadataFile {
 		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
 			if let fileData = try? Data(contentsOf: readURL) {
 				let decoder = PropertyListDecoder()
-				account.metadata = (try? decoder.decode(AccountMetadata.self, from: fileData)) ?? AccountMetadata()
+				account.feedMetadata = (try? decoder.decode(Account.FeedMetadataDictionary.self, from: fileData)) ?? Account.FeedMetadataDictionary()
 			}
 		})
 		
@@ -55,12 +55,15 @@ private extension AccountMetadataFile {
 			os_log(.error, log: log, "Read from disk coordination failed: %@.", error.localizedDescription)
 		}
 		
-		account.metadata.delegate = account
+		account.feedMetadata.values.forEach { $0.delegate = account }
+
 	}
 	
 	func saveCallback() {
 		guard !account.isDeleted else { return }
 		
+		let feedMetadata = metadataForOnlySubscribedToFeeds()
+
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
 
@@ -69,7 +72,7 @@ private extension AccountMetadataFile {
 		
 		fileCoordinator.coordinate(writingItemAt: fileURL, options: .forReplacing, error: errorPointer, byAccessor: { writeURL in
 			do {
-				let data = try encoder.encode(account.metadata)
+				let data = try encoder.encode(feedMetadata)
 				try data.write(to: writeURL)
 			} catch let error as NSError {
 				os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
@@ -81,4 +84,11 @@ private extension AccountMetadataFile {
 		}
 	}
 	
+	private func metadataForOnlySubscribedToFeeds() -> Account.FeedMetadataDictionary {
+		let feedIDs = account.idToFeedDictionary.keys
+		return account.feedMetadata.filter { (feedID: String, metadata: FeedMetadata) -> Bool in
+			return feedIDs.contains(metadata.feedID)
+		}
+	}
+
 }
