@@ -13,6 +13,10 @@ class TimelineTableView: NSTableView {
 	
 	weak var keyboardDelegate: KeyboardDelegate?
 	
+	override func accessibilityLabel() -> String? {
+		return NSLocalizedString("Timeline", comment: "Timeline")
+	}
+	
 	// MARK: - NSResponder
 	
 	override func keyDown(with event: NSEvent) {

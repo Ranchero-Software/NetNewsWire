@@ -17,49 +17,43 @@ struct SettingsFeedbinAccountView : View {
 	@State var busy: Bool = false
 	@State var error: String = ""
 
-	// This is a hack around the fact that onDismiss isn't being called by the sheet modifier.
-	var onDismiss: () -> Void
-	
 	var body: some View {
-		NavigationView {
-			Form {
-				Section(header:
-					HStack {
-						Spacer()
-						SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin").padding()
-						Spacer()
-					}
-				)  {
-					TextField("Email", text: $viewModel.email).textContentType(.emailAddress)
-					SecureField("Password", text: $viewModel.password)
+		Form {
+			Section(header:
+				HStack {
+					Spacer()
+					SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin")
+						.padding()
+						.layoutPriority(1.0)
+					Spacer()
 				}
-				Section(footer:
-					HStack {
-						Spacer()
-						Text(verbatim: error).foregroundColor(.red)
-						Spacer()
-					}
-					) {
-					HStack {
-						Spacer()
-						Button(action: { self.addAccount() }) {
-							if viewModel.isUpdate {
-								Text("Update Account")
-							} else {
-								Text("Add Account")
-							}
+			)  {
+				TextField("Email", text: $viewModel.email).textContentType(.emailAddress)
+				SecureField("Password", text: $viewModel.password)
+			}
+			Section(footer:
+				HStack {
+					Spacer()
+					Text(verbatim: error).foregroundColor(.red)
+					Spacer()
+				}
+				) {
+				HStack {
+					Spacer()
+					Button(action: { self.addAccount() }) {
+						if viewModel.isUpdate {
+							Text("Update Account")
+						} else {
+							Text("Add Account")
 						}
-						.disabled(!viewModel.isValid)
-						Spacer()
 					}
+					.disabled(!viewModel.isValid)
+					Spacer()
 				}
 			}
-			.disabled(busy)
-			.navigationBarTitle(Text(""), displayMode: .inline)
-			.navigationBarItems(leading:
-				Button(action: { self.dismiss() }) { Text("Cancel") }
-			)
 		}
+//		.disabled(busy)  // Maybe someday we can do this, but right now it crashes on the iPad
+		.navigationBarTitle(Text(""), displayMode: .inline)
 	}
 	
 	private func addAccount() {
@@ -71,14 +65,14 @@ struct SettingsFeedbinAccountView : View {
 		let credentials = Credentials.basic(username: emailAddress, password: viewModel.password)
 
 		Account.validateCredentials(type: .feedbin, credentials: credentials) { result in
-			
+
 			self.busy = false
-			
+
 			switch result {
 			case .success(let authenticated):
-				
+
 				if (authenticated != nil) {
-					
+
 					var newAccount = false
 					let workAccount: Account
 					if self.viewModel.account == nil {
@@ -87,39 +81,38 @@ struct SettingsFeedbinAccountView : View {
 					} else {
 						workAccount = self.viewModel.account!
 					}
-					
+
 					do {
-						
+
 						do {
 							try workAccount.removeCredentials()
 						} catch {}
 						try workAccount.storeCredentials(credentials)
-						
+
 						if newAccount {
 							workAccount.refreshAll() { result in }
 						}
-						
+
 						self.dismiss()
-						
+
 					} catch {
 						self.error = "Keychain error while storing credentials."
 					}
-					
+
 				} else {
 					self.error = "Invalid email/password combination."
 				}
-				
+
 			case .failure:
 				self.error = "Network error. Try again later."
 			}
-			
+
 		}
 		
 	}
 	
 	private func dismiss() {
 		presentation.wrappedValue.dismiss()
-		onDismiss()
 	}
 	
 	class ViewModel: ObservableObject {
@@ -164,7 +157,7 @@ struct SettingsFeedbinAccountView : View {
 #if DEBUG
 struct SettingsFeedbinAccountView_Previews : PreviewProvider {
     static var previews: some View {
-		SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel(), onDismiss: {})
+		SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())
     }
 }
 #endif

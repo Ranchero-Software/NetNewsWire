@@ -68,13 +68,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		numberOfTextLines = AppDefaults.timelineNumberOfLines
 		resetEstimatedRowHeight()
 		
-		applyChanges(animate: false)
 		resetUI()
 		
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		clearsSelectionOnViewWillAppear = coordinator.isRootSplitCollapsed
+		applyChanges(animate: false)
 		super.viewWillAppear(animated)
 	}
 	
@@ -145,18 +145,22 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	// MARK: API
 	
+	func restoreSelectionIfNecessary() {
+		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
+			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
+		}
+	}
+
 	func reinitializeArticles() {
 		resetUI()
 	}
 	
 	func reloadArticles(animate: Bool) {
-		applyChanges(animate: animate) { [weak self] in
-			self?.updateArticleSelection(animate: animate)
-		}
+		applyChanges(animate: animate)
 	}
 	
 	func updateArticleSelection(animate: Bool) {
-		if let indexPath = coordinator.currentArticleIndexPath {
+		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true, deselect: coordinator.isRootSplitCollapsed)
 			}
@@ -181,7 +185,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		
-		let article = coordinator.articles[indexPath.row]
+		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 		
 		// Set up the read action
 		let readTitle = article.status.read ?
@@ -189,7 +193,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			NSLocalizedString("Read", comment: "Read")
 		
 		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completionHandler) in
-			self?.coordinator.toggleRead(for: indexPath)
+			self?.coordinator.toggleRead(article)
 			completionHandler(true)
 		}
 		
@@ -202,7 +206,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			NSLocalizedString("Star", comment: "Star")
 		
 		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (action, view, completionHandler) in
-			self?.coordinator.toggleStar(for: indexPath)
+			self?.coordinator.toggleStar(article)
 			completionHandler(true)
 		}
 		
@@ -221,21 +225,21 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 					popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
 				}
 				
-				alert.addAction(self.markOlderAsReadAlertAction(indexPath: indexPath, completionHandler: completionHandler))
+				alert.addAction(self.markOlderAsReadAlertAction(article, completionHandler: completionHandler))
 				
-				if let action = self.discloseFeedAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+				if let action = self.discloseFeedAlertAction(article, completionHandler: completionHandler) {
 					alert.addAction(action)
 				}
 				
-				if let action = self.markAllInFeedAsReadAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+				if let action = self.markAllInFeedAsReadAlertAction(article, completionHandler: completionHandler) {
 					alert.addAction(action)
 				}
 
-				if let action = self.openInBrowserAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+				if let action = self.openInBrowserAlertAction(article, completionHandler: completionHandler) {
 					alert.addAction(action)
 				}
 
-				if let action = self.shareAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+				if let action = self.shareAlertAction(article, indexPath: indexPath, completionHandler: completionHandler) {
 					alert.addAction(action)
 				}
 
@@ -260,28 +264,30 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
 
+		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
+		
 		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
 			guard let self = self else { return nil }
 			
 			var actions = [UIAction]()
-			actions.append(self.toggleArticleReadStatusAction(indexPath: indexPath))
-			actions.append(self.toggleArticleStarStatusAction(indexPath: indexPath))
-			actions.append(self.markOlderAsReadAction(indexPath: indexPath))
+			actions.append(self.toggleArticleReadStatusAction(article))
+			actions.append(self.toggleArticleStarStatusAction(article))
+			actions.append(self.markOlderAsReadAction(article))
 			
-			if let action = self.discloseFeedAction(indexPath: indexPath) {
+			if let action = self.discloseFeedAction(article) {
 				actions.append(action)
 			}
 			
-			if let action = self.markAllInFeedAsReadAction(indexPath: indexPath) {
+			if let action = self.markAllInFeedAsReadAction(article) {
 				actions.append(action)
 			}
 			
-			if let action = self.openInBrowserAction(indexPath: indexPath) {
+			if let action = self.openInBrowserAction(article) {
 				actions.append(action)
 			}
 			
-			if let action = self.shareAction(indexPath: indexPath) {
+			if let action = self.shareAction(article, indexPath: indexPath) {
 				actions.append(action)
 			}
 			
@@ -293,7 +299,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		becomeFirstResponder()
-		coordinator.selectArticle(indexPath, automated: false)
+		let article = dataSource.itemIdentifier(for: indexPath)
+		coordinator.selectArticle(article, automated: false)
 	}
 	
 	// MARK: Notifications
@@ -307,12 +314,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			return
 		}
 		
-		let visibleArticles = tableView.indexPathsForVisibleRows!.map { return coordinator.articles[$0.row] }
+		let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
 		let visibleUpdatedArticles = visibleArticles.filter { updatedArticles.contains($0) }
 
 		for article in visibleUpdatedArticles {
-			if let articleIndex = coordinator.indexForArticleID(article.articleID) {
-				if let cell = tableView.cellForRow(at: IndexPath(row: articleIndex, section: 0)) as? MasterTimelineTableViewCell {
+			if let indexPath = dataSource.indexPath(for: article) {
+				if let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell {
 					configure(cell, article: article)
 				}
 			}
@@ -324,7 +331,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			return
 		}
 		tableView.indexPathsForVisibleRows?.forEach { indexPath in
-			guard let article = coordinator.articles.articleAtRow(indexPath.row) else {
+			guard let article = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
 			if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
@@ -338,7 +345,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			return
 		}
 		tableView.indexPathsForVisibleRows?.forEach { indexPath in
-			guard let article = coordinator.articles.articleAtRow(indexPath.row), let authors = article.authors, !authors.isEmpty else {
+			guard let article = dataSource.itemIdentifier(for: indexPath), let authors = article.authors, !authors.isEmpty else {
 				return
 			}
 			for author in authors {
@@ -378,7 +385,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc private func reloadAllVisibleCells() {
-		let visibleArticles = tableView.indexPathsForVisibleRows!.map { return coordinator.articles[$0.row] }
+		let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
 		reloadCells(visibleArticles)
 	}
 	
@@ -465,7 +472,7 @@ private extension MasterTimelineViewController {
 		navigationController?.title = coordinator.timelineName
 		
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
-		if coordinator.articles.count > 0 {
+		if dataSource.snapshot().itemIdentifiers(inSection: 0).count > 0 {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
 		
@@ -527,16 +534,8 @@ private extension MasterTimelineViewController {
 		}
 		return nil
 	}
-
-	func restoreSelectionIfNecessary() {
-		if let articleID = coordinator.currentArticle?.articleID, let index = coordinator.indexForArticleID(articleID) {
-			let indexPath = IndexPath(row: index, section: 0)
-			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
-		}
-	}
 	
-	func toggleArticleReadStatusAction(indexPath: IndexPath) -> UIAction {
-		let article = coordinator.articles[indexPath.row]
+	func toggleArticleReadStatusAction(_ article: Article) -> UIAction {
 
 		let title = article.status.read ?
 			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
@@ -544,14 +543,13 @@ private extension MasterTimelineViewController {
 		let image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
 
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.coordinator.toggleRead(for: indexPath)
+			self?.coordinator.toggleRead(article)
 		}
 		
 		return action
 	}
 	
-	func toggleArticleStarStatusAction(indexPath: IndexPath) -> UIAction {
-		let article = coordinator.articles[indexPath.row]
+	func toggleArticleStarStatusAction(_ article: Article) -> UIAction {
 
 		let title = article.status.starred ?
 			NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") :
@@ -559,34 +557,33 @@ private extension MasterTimelineViewController {
 		let image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
 
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.coordinator.toggleStar(for: indexPath)
+			self?.coordinator.toggleStar(article)
 		}
 		
 		return action
 	}
 	
-	func markOlderAsReadAction(indexPath: IndexPath) -> UIAction {
+	func markOlderAsReadAction(_ article: Article) -> UIAction {
 		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
 		let image = coordinator.sortDirection == .orderedDescending ? AppAssets.markOlderAsReadDownImage : AppAssets.markOlderAsReadUpImage
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.coordinator.markAsReadOlderArticlesInTimeline(indexPath)
+			self?.coordinator.markAsReadOlderArticlesInTimeline(article)
 		}
 		return action
 	}
 	
-	func markOlderAsReadAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction {
+	func markOlderAsReadAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction {
 		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.markAsReadOlderArticlesInTimeline(indexPath)
+			self?.coordinator.markAsReadOlderArticlesInTimeline(article)
 			completionHandler(true)
 		}
 		return action
 	}
 	
-	func discloseFeedAction(indexPath: IndexPath) -> UIAction? {
-		guard let feed = coordinator.articles[indexPath.row].feed else {
-			return nil
-		}
+	func discloseFeedAction(_ article: Article) -> UIAction? {
+		guard let feed = article.feed else { return nil }
+		
 		let title = NSLocalizedString("Select Feed", comment: "Select Feed")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
 			self?.coordinator.discloseFeed(feed)
@@ -594,10 +591,9 @@ private extension MasterTimelineViewController {
 		return action
 	}
 	
-	func discloseFeedAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = coordinator.articles[indexPath.row].feed else {
-			return nil
-		}
+	func discloseFeedAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let feed = article.feed else { return nil }
+
 		let title = NSLocalizedString("Select Feed", comment: "Select Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.discloseFeed(feed)
@@ -606,11 +602,9 @@ private extension MasterTimelineViewController {
 		return action
 	}
 	
-	func markAllInFeedAsReadAction(indexPath: IndexPath) -> UIAction? {
-		guard let feed = coordinator.articles[indexPath.row].feed else {
-			return nil
-		}
-		
+	func markAllInFeedAsReadAction(_ article: Article) -> UIAction? {
+		guard let feed = article.feed else { return nil }
+
 		let articles = Array(feed.fetchArticles())
 		guard articles.canMarkAllAsRead() else {
 			return nil
@@ -625,11 +619,9 @@ private extension MasterTimelineViewController {
 		return action
 	}
 
-	func markAllInFeedAsReadAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = coordinator.articles[indexPath.row].feed else {
-			return nil
-		}
-		
+	func markAllInFeedAsReadAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let feed = article.feed else { return nil }
+
 		let articles = Array(feed.fetchArticles())
 		guard articles.canMarkAllAsRead() else {
 			return nil
@@ -645,24 +637,24 @@ private extension MasterTimelineViewController {
 		return action
 	}
 
-	func openInBrowserAction(indexPath: IndexPath) -> UIAction? {
-		guard let preferredLink = coordinator.articles[indexPath.row].preferredLink, let _ = URL(string: preferredLink) else {
+	func openInBrowserAction(_ article: Article) -> UIAction? {
+		guard let preferredLink = article.preferredLink, let _ = URL(string: preferredLink) else {
 			return nil
 		}
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
-			self?.coordinator.showBrowserForArticle(indexPath)
+			self?.coordinator.showBrowserForArticle(article)
 		}
 		return action
 	}
 
-	func openInBrowserAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let preferredLink = coordinator.articles[indexPath.row].preferredLink, let _ = URL(string: preferredLink) else {
+	func openInBrowserAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let preferredLink = article.preferredLink, let _ = URL(string: preferredLink) else {
 			return nil
 		}
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.showBrowserForArticle(indexPath)
+			self?.coordinator.showBrowserForArticle(article)
 			completionHandler(true)
 		}
 		return action
@@ -680,8 +672,7 @@ private extension MasterTimelineViewController {
 		present(activityViewController, animated: true)
 	}
 	
-	func shareAction(indexPath: IndexPath) -> UIAction? {
-		let article = coordinator.articles[indexPath.row]
+	func shareAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
 		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
 			return nil
 		}
@@ -693,8 +684,7 @@ private extension MasterTimelineViewController {
 		return action
 	}
 	
-	func shareAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		let article = coordinator.articles[indexPath.row]
+	func shareAlertAction(_ article: Article, indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
 			return nil
 		}

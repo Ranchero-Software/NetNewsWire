@@ -52,15 +52,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		
 		super.init()
 		appDelegate = self
+
+		AccountManager.shared = AccountManager(accountsFolder: RSDataSubfolder(nil, "Accounts")!)
 		
 		registerBackgroundTasks()
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-		
-		// Reinitialize the shared state as early as possible
-		_ = AccountManager.shared
 		
 	}
 	

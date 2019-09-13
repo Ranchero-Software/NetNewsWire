@@ -19,7 +19,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 	@IBOutlet private weak var folderPickerView: UIPickerView!
 	@IBOutlet private weak var folderLabel: UILabel!
 	
-	private lazy var pickerData: AddFeedFolderPickerData = AddFeedFolderPickerData()
+	private lazy var pickerData: FlattenedAccountFolderPickerData = FlattenedAccountFolderPickerData()
 	private var shouldDisplayPicker: Bool {
 		return pickerData.containerNames.count > 1
 	}
@@ -93,7 +93,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		}
 		
 		if account!.hasFeed(withURL: url.absoluteString) {
-			showAlreadySubscribedError()
+			presentError(AccountError.createErrorAlreadySubscribed)
  			return
 		}
 		
@@ -112,17 +112,8 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 				self.delegate?.processingDidEnd()
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 			case .failure(let error):
-				switch error {
-				case AccountError.createErrorAlreadySubscribed:
-					self.showAlreadySubscribedError()
-					self.delegate?.processingDidCancel()
-				case AccountError.createErrorNotFound:
-					self.showNoFeedsErrorMessage()
-					self.delegate?.processingDidCancel()
-				default:
-					self.presentError(error)
-					self.delegate?.processingDidCancel()
-				}
+				self.presentError(error)
+				self.delegate?.processingDidCancel()
 			}
 
 		}
@@ -161,29 +152,6 @@ extension AddFeedViewController: UIPickerViewDataSource, UIPickerViewDelegate {
 	
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
 		folderLabel.text = pickerData.containerNames[row]
-	}
-	
-}
-
-private extension AddFeedViewController {
-	
-	private func showAlreadySubscribedError() {
-		let title = NSLocalizedString("Already subscribed", comment: "Feed finder")
-		let message = NSLocalizedString("Can’t add this feed because you’ve already subscribed to it.", comment: "Feed finder")
-		presentError(title: title, message: message)
-	}
-	
-	private func showNoFeedsErrorMessage() {
-		let title = NSLocalizedString("Feed not found", comment: "Feed finder")
-		let message = NSLocalizedString("Can’t add a feed because no feed was found.", comment: "Feed finder")
-		presentError(title: title, message: message)
-	}
-	
-	private func showInitialDownloadError(_ error: Error) {
-		let title = NSLocalizedString("Download Error", comment: "Feed finder")
-		let formatString = NSLocalizedString("Can’t add this feed because of a download error: “%@”", comment: "Feed finder")
-		let message = NSString.localizedStringWithFormat(formatString as NSString, error.localizedDescription)
-		presentError(title: title, message: message as String)
 	}
 	
 }

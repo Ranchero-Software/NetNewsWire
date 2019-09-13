@@ -14,10 +14,11 @@ import Articles
 
 public final class AccountManager: UnreadCountProvider {
 
-	public static let shared = AccountManager()
+	public static var shared: AccountManager!
+	
 	public let defaultAccount: Account
 
-	private let accountsFolder = RSDataSubfolder(nil, "Accounts")!
+	private let accountsFolder: String
     private var accountsDictionary = [String: Account]()
 
 	private let defaultAccountFolderName = "OnMyMac"
@@ -71,7 +72,9 @@ public final class AccountManager: UnreadCountProvider {
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
 	
-	public init() {
+	public init(accountsFolder: String) {
+		self.accountsFolder = accountsFolder
+		
 		// The local "On My Mac" account must always exist, even if it's empty.
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
 		do {

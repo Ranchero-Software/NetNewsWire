@@ -1,0 +1,7 @@
+
+#include "./NetNewsWire_iOSapp_target.xcconfig"
+
+CODE_SIGN_ENTITLEMENTS = iOS/ShareExtension/NetNewsWire_iOS_ShareExtension.entitlements
+INFOPLIST_FILE = iOS/ShareExtension/Info.plist
+PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire-Evergreen.iOS.Share-Extension
+PRODUCT_NAME = $(TARGET_NAME)

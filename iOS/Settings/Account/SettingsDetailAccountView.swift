@@ -71,7 +71,7 @@ struct SettingsDetailAccountView : View {
 	
 	var settingsFeedbinAccountView: SettingsFeedbinAccountView {
 		let feedbinViewModel = SettingsFeedbinAccountView.ViewModel(account: viewModel.account)
-		return SettingsFeedbinAccountView(viewModel: feedbinViewModel, onDismiss: {})
+		return SettingsFeedbinAccountView(viewModel: feedbinViewModel)
 	}
 	
 	class ViewModel: ObservableObject {

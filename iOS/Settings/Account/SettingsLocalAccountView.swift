@@ -13,36 +13,32 @@ struct SettingsLocalAccountView : View {
 	@Environment(\.presentationMode) var presentation
 	@State var name: String
 
-	// This is a hack around the fact that onDismiss isn't being called by the sheet modifier.
-	var onDismiss: () -> Void
-	
     var body: some View {
-		NavigationView {
-			Form {
-				Section(header:
-					HStack {
-						Spacer()
-						SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName).padding()
-						Spacer()
-					}
-				)  {
-					HStack {
-						TextField("Name", text: $name)
-					}
+		Form {
+			Section(header:
+				HStack {
+					Spacer()
+					SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName)
+						.padding()
+						.layoutPriority(1.0)
+					Spacer()
 				}
-				Section {
-					HStack {
-						Spacer()
-						Button(action: { self.addAccount() }) {
-							Text("Add Account")
-						}
-						Spacer()
-					}
+			)  {
+				HStack {
+					TextField("Name", text: $name)
 				}
 			}
-			.navigationBarTitle(Text(""), displayMode: .inline)
-			.navigationBarItems(leading: Button(action: { self.dismiss() }) { Text("Cancel") } )
+			Section {
+				HStack {
+					Spacer()
+					Button(action: { self.addAccount() }) {
+						Text("Add Account")
+					}
+					Spacer()
+				}
+			}
 		}
+		.navigationBarTitle(Text(""), displayMode: .inline)
 	}
 	
 	private func addAccount() {
@@ -53,7 +49,6 @@ struct SettingsLocalAccountView : View {
 	
 	private func dismiss() {
 		presentation.wrappedValue.dismiss()
-		onDismiss()
 	}
 	
 }
@@ -61,7 +56,7 @@ struct SettingsLocalAccountView : View {
 #if DEBUG
 struct SettingsLocalAccountView_Previews : PreviewProvider {
     static var previews: some View {
-		SettingsLocalAccountView(name: "", onDismiss: {})
+		SettingsLocalAccountView(name: "")
     }
 }
 #endif

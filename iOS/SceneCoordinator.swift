@@ -32,16 +32,20 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var masterFeedViewController: MasterFeedViewController!
 	private var masterTimelineViewController: MasterTimelineViewController?
 	
+	private var subSplitViewController: UISplitViewController? {
+		return rootSplitViewController.children.last as? UISplitViewController
+	}
+	
 	private var detailViewController: DetailViewController? {
 		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
 			return detail
 		}
-		if let subSplit = rootSplitViewController.viewControllers.last?.children.first as? UISplitViewController {
+		if let subSplit = subSplitViewController {
 			if let navController = subSplit.viewControllers.last as? UINavigationController {
 				return navController.topViewController as? DetailViewController
 			}
 		} else {
-			if let navController = rootSplitViewController.viewControllers.last?.children.first as? UINavigationController {
+			if let navController = rootSplitViewController.viewControllers.last as? UINavigationController {
 				return navController.topViewController as? DetailViewController
 			}
 		}
@@ -51,10 +55,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
-	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	
 	private var animatingChanges = false
-	private var expandedNodes = [Node]()
 	private var shadowTable = [[Node]]()
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope? = nil
@@ -90,23 +92,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	var isThreePanelMode: Bool {
-		return rootSplitViewController.traitCollection.userInterfaceIdiom == .pad &&
-			!rootSplitViewController.isCollapsed &&
-			rootSplitViewController.displayMode == .allVisible
+		return subSplitViewController != nil
 	}
 	
 	var rootNode: Node {
 		return treeController.rootNode
 	}
 	
-	var allSections: [Int] {
-		var sections = [Int]()
-		for (index, _) in shadowTable.enumerated() {
-			sections.append(index)
-		}
-		return sections
-	}
-
 	private(set) var currentFeedIndexPath: IndexPath?
 	
 	var timelineName: String? {
@@ -193,31 +185,31 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	var isPrevArticleAvailable: Bool {
-		guard let indexPath = currentArticleIndexPath else {
+		guard let articleRow = currentArticleRow else {
 			return false
 		}
-		return indexPath.row > 0
+		return articleRow > 0
 	}
 	
 	var isNextArticleAvailable: Bool {
-		guard let indexPath = currentArticleIndexPath else {
+		guard let articleRow = currentArticleRow else {
 			return false
 		}
-		return indexPath.row + 1 < articles.count
+		return articleRow + 1 < articles.count
 	}
 	
-	var prevArticleIndexPath: IndexPath? {
-		guard isPrevArticleAvailable, let indexPath = currentArticleIndexPath else {
+	var prevArticle: Article? {
+		guard isPrevArticleAvailable, let articleRow = currentArticleRow else {
 			return nil
 		}
-		return IndexPath(row: indexPath.row - 1, section: indexPath.section)
+		return articles[articleRow - 1]
 	}
 	
-	var nextArticleIndexPath: IndexPath? {
-		guard isNextArticleAvailable, let indexPath = currentArticleIndexPath else {
+	var nextArticle: Article? {
+		guard isNextArticleAvailable, let articleRow = currentArticleRow else {
 			return nil
 		}
-		return IndexPath(row: indexPath.row + 1, section: indexPath.section)
+		return articles[articleRow + 1]
 	}
 	
 	var firstUnreadArticleIndexPath: IndexPath? {
@@ -229,17 +221,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return nil
 	}
 	
-	var currentArticle: Article? {
-		if let indexPath = currentArticleIndexPath, indexPath.row < articles.count {
-			return articles[indexPath.row]
-		}
-		return nil
-	}
-	
-	private(set) var currentArticleIndexPath: IndexPath?
-	
+	var currentArticle: Article?
+
 	private(set) var articles = ArticleArray()
-	
+	private var currentArticleRow: Int? {
+		guard let article = currentArticle else { return nil }
+		return articles.firstIndex(of: article)
+	}
+
 	var isTimelineUnreadAvailable: Bool {
 		if let unreadProvider = timelineFetcher as? UnreadCountProvider {
 			return unreadProvider.unreadCount > 0
@@ -263,7 +252,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		super.init()
 		
 		for section in treeController.rootNode.childNodes {
-			expandedNodes.append(section)
+			section.isExpanded = true
 			shadowTable.append([Node]())
 		}
 		
@@ -284,10 +273,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		let _ = DetailViewControllerWebViewProvider.shared
 	}
 	
-	func start() -> UIViewController {
+	func start(for size: CGSize) -> UIViewController {
 		rootSplitViewController = RootSplitViewController()
 		rootSplitViewController.coordinator = self
-		rootSplitViewController.preferredDisplayMode = .automatic
+		rootSplitViewController.preferredDisplayMode = .allVisible
 		rootSplitViewController.viewControllers = [ThemedNavigationController.template()]
 		rootSplitViewController.delegate = self
 		
@@ -298,12 +287,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
 		
-		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-		let detailNavController = addNavControllerIfNecessary(systemMessageViewController, showButton: true)
-		let shimController = UIViewController()
-		shimController.replaceChildAndPinView(detailNavController)
-		rootSplitViewController.showDetailViewController(shimController, sender: self)
+		let noSelectionController = fullyWrappedSystemMesssageController(showButton: true)
+		rootSplitViewController.showDetailViewController(noSelectionController, sender: self)
 
+		configureThreePanelMode(for: size)
+		
 		return rootSplitViewController
 	}
 	
@@ -326,6 +314,21 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			selectFirstUnreadInAllUnread()
 		case .readArticle:
 			handleReadArticle(activity)
+		}
+	}
+	
+	func configureThreePanelMode(for size: CGSize) {
+		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && !rootSplitViewController.isCollapsed else {
+			return
+		}
+		if size.width > size.height {
+			if !isThreePanelMode {
+				transitionToThreePanelMode()
+			}
+		} else {
+			if isThreePanelMode {
+				transitionFromThreePanelMode()
+			}
 		}
 	}
 	
@@ -373,17 +376,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		
-		// If we are deactivating an account, clean up the expandedNodes table
-		if !account.isActive, let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
-			if let nodeIndex = self.expandedNodes.firstIndex(of: node) {
-				self.expandedNodes.remove(at: nodeIndex)
-			}
-		}
-		
 		rebuildBackingStores() {
 			// If we are activating an account, then automatically expand it
 			if account.isActive, let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
-				self.expandedNodes.append(node)
+				node.isExpanded = true
 			}
 		}
 	}
@@ -397,7 +393,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			// Automatically expand any new accounts
 			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
 				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
-				self.expandedNodes.append(node)
+				node.isExpanded = true
 			}
 		}
 	}
@@ -406,15 +402,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesSync()
 		}
-		
-		rebuildBackingStores() {
-			// Clean up the expandedNodes table for any deleted accounts
-			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
-				let node = self.treeController.rootNode.childNodeRepresentingObject(account),
-				let nodeIndex = self.expandedNodes.firstIndex(of: node) {
-				self.expandedNodes.remove(at: nodeIndex)
-			}
-		}
+		rebuildBackingStores()
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
@@ -435,22 +423,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	// MARK: API
 	
-	func rowsInSection(_ section: Int) -> Int {
-		return shadowTable[section].count
-	}
-	
-	func isExpanded(_ node: Node) -> Bool {
-		return expandedNodes.contains(node)
-	}
-	
-	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].count else {
-			return nil
-		}
-		return shadowTable[indexPath.section][indexPath.row]
-	}
-	
-	func nodesFor(section: Int) -> [Node] {
+	func shadowNodesFor(section: Int) -> [Node] {
 		return shadowTable[section]
 	}
 	
@@ -459,22 +432,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return IndexPath(row: shadowTable[shadowTable.count - 1].count - 1, section: shadowTable.count - 1)
 		}
 		return indexPath
-	}
-	
-	func indexPathFor(_ node: Node) -> IndexPath? {
-		for i in 0..<shadowTable.count {
-			if let row = shadowTable[i].firstIndex(of: node) {
-				return IndexPath(row: row, section: i)
-			}
-		}
-		return nil
-	}
-
-	func indexPathFor(_ object: AnyObject) -> IndexPath? {
-		guard let node = treeController.rootNode.descendantNodeRepresentingObject(object) else {
-			return nil
-		}
-		return indexPathFor(node)
 	}
 	
 	func unreadCountFor(_ node: Node) -> Int {
@@ -488,137 +445,55 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return 0
 	}
 		
-	func expandSection(_ section: Int) {
-		guard let expandNode = treeController.rootNode.childAtIndex(section), !expandedNodes.contains(expandNode) else {
-			return
-		}
-
-		expandedNodes.append(expandNode)
-		
+	func expand(_ node: Node) {
+		node.isExpanded = true
 		animatingChanges = true
-		
-		var i = 0
-		
-		func addNode(_ node: Node) {
-			shadowTable[section].insert(node, at: i)
-			i = i + 1
-		}
-		
-		for child in expandNode.childNodes {
-			addNode(child)
-			if expandedNodes.contains(child) {
-				for gChild in child.childNodes {
-					addNode(gChild)
-				}
-			}
-		}
-		
+		rebuildShadowTable()
 		animatingChanges = false
 	}
 	
 	func expandAllSectionsAndFolders() {
-		for (sectionIndex, sectionNode) in treeController.rootNode.childNodes.enumerated() {
-
-			expandSection(sectionIndex)
-			
+		for sectionNode in treeController.rootNode.childNodes {
+			sectionNode.isExpanded = true
 			for topLevelNode in sectionNode.childNodes {
-				if topLevelNode.representedObject is Folder, let indexPath = indexPathFor(topLevelNode) {
-					expandFolder(indexPath)
+				if topLevelNode.representedObject is Folder {
+					topLevelNode.isExpanded = true
 				}
 			}
-
 		}
-	}
-	
-	func expandFolder(_ indexPath: IndexPath) {
-		let expandNode = shadowTable[indexPath.section][indexPath.row]
-		guard !expandedNodes.contains(expandNode) else { return }
-		expandedNodes.append(expandNode)
-		
 		animatingChanges = true
-		
-		for i in 0..<expandNode.childNodes.count {
-			if let child = expandNode.childAtIndex(i) {
-				let nextIndex = indexPath.row + i + 1
-				shadowTable[indexPath.section].insert(child, at: nextIndex)
-			}
-		}
-		
+		rebuildShadowTable()
 		animatingChanges = false
 	}
 	
-	func collapseSection(_ section: Int) {
-		guard let collapseNode = treeController.rootNode.childAtIndex(section), expandedNodes.contains(collapseNode) else {
-			return
-		}
-		
+	func collapse(_ node: Node) {
+		node.isExpanded = false
 		animatingChanges = true
-
-		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
-			expandedNodes.remove(at: removeNode)
-		}
-		
-		shadowTable[section] = [Node]()
-		
+		rebuildShadowTable()
 		animatingChanges = false
 	}
 	
 	func collapseAllFolders() {
 		for sectionNode in treeController.rootNode.childNodes {
+			sectionNode.isExpanded = true
 			for topLevelNode in sectionNode.childNodes {
-				if topLevelNode.representedObject is Folder, let indexPath = indexPathFor(topLevelNode) {
-					collapseFolder(indexPath)
+				if topLevelNode.representedObject is Folder {
+					topLevelNode.isExpanded = true
 				}
 			}
 		}
-	}
-	
-	func collapseFolder(_ indexPath: IndexPath) {
 		animatingChanges = true
-		
-		let collapseNode = shadowTable[indexPath.section][indexPath.row]
-		guard expandedNodes.contains(collapseNode) else { return }
-		if let removeNode = expandedNodes.firstIndex(of: collapseNode) {
-			expandedNodes.remove(at: removeNode)
-		}
-		
-		for child in collapseNode.childNodes {
-			if let index = shadowTable[indexPath.section].firstIndex(of: child) {
-				shadowTable[indexPath.section].remove(at: index)
-			}
-		}
-		
+		rebuildShadowTable()
 		animatingChanges = false
 	}
 	
 	func masterFeedIndexPathForCurrentTimeline() -> IndexPath? {
-		guard let node = treeController.rootNode.descendantNode(where: { return $0.representedObject === timelineFetcher as AnyObject }) else {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(timelineFetcher as AnyObject) else {
 			return nil
 		}
 		return indexPathFor(node)
 	}
 	
-	func indexForArticleID(_ articleID: String?) -> Int? {
-		guard let articleID = articleID else { return nil }
-		updateArticleRowMapIfNeeded()
-		return articleRowMap[articleID]
-	}
-	
-	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
-		var indexes = IndexSet()
-		
-		articleIDs.forEach { (articleID) in
-			guard let oneIndex = indexForArticleID(articleID) else {
-				return
-			}
-			if oneIndex != NSNotFound {
-				indexes.insert(oneIndex)
-			}
-		}
-		
-		return indexes
-	}
-
 	func selectFeed(_ indexPath: IndexPath?, automated: Bool = true) {
 		selectArticle(nil)
 		currentFeedIndexPath = indexPath
@@ -631,7 +506,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			installTimelineControllerIfNecessary(animated: !automated)
 		} else {
 			timelineFetcher = nil
-
+			activityManager.invalidateSelecting()
 			if rootSplitViewController.isCollapsed && navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
 				navControllerForTimeline().popViewController(animated: !automated)
 			}
@@ -669,11 +544,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 
-	func selectArticle(_ indexPath: IndexPath?, automated: Bool = true) {
-		currentArticleIndexPath = indexPath
+	func selectArticle(_ article: Article?, automated: Bool = true) {
+		currentArticle = article
 		activityManager.reading(currentArticle)
 		
-		if indexPath == nil {
+		if article == nil {
 			if rootSplitViewController.isCollapsed {
 				if masterNavigationController.children.last is DetailViewController {
 					masterNavigationController.popViewController(animated: !automated)
@@ -692,14 +567,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			installDetailController(detailViewController, automated: automated)
 		}
 		
-		// Automatically hide the overlay
-		if rootSplitViewController.displayMode == .primaryOverlay {
-			UIView.animate(withDuration: 0.3) {
-				self.rootSplitViewController.preferredDisplayMode = .primaryHidden
-			}
-			rootSplitViewController.preferredDisplayMode = .automatic
-		}
-
 		if automated {
 			masterTimelineViewController?.updateArticleSelection(animate: false)
 		}
@@ -728,6 +595,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		} else {
 			timelineFetcher = nil
 		}
+		
+		selectArticle(nil)
 	}
 	
 	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
@@ -755,14 +624,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func selectPrevArticle() {
-		if let indexPath = prevArticleIndexPath {
-			selectArticle(indexPath)
+		if let article = prevArticle {
+			selectArticle(article)
 		}
 	}
 	
 	func selectNextArticle() {
-		if let indexPath = nextArticleIndexPath {
-			selectArticle(indexPath)
+		if let article = nextArticle {
+			selectArticle(article)
 		}
 	}
 	
@@ -838,12 +707,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func markAsReadOlderArticlesInTimeline() {
-		if let indexPath = currentArticleIndexPath {
-			markAsReadOlderArticlesInTimeline(indexPath)
+		if let article = currentArticle {
+			markAsReadOlderArticlesInTimeline(article)
 		}
 	}
-	func markAsReadOlderArticlesInTimeline(_ indexPath: IndexPath) {
-		let article = articles[indexPath.row]
+	
+	func markAsReadOlderArticlesInTimeline(_ article: Article) {
 		let articlesToMark = articles.filter { $0.logicalDatePublished < article.logicalDatePublished }
 		if articlesToMark.isEmpty {
 			return
@@ -869,8 +738,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func toggleRead(for indexPath: IndexPath) {
-		let article = articles[indexPath.row]
+	func toggleRead(_ article: Article) {
 		guard let undoManager = undoManager,
 			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
 				return
@@ -884,8 +752,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func toggleStar(for indexPath: IndexPath) {
-		let article = articles[indexPath.row]
+	func toggleStar(_ article: Article) {
 		guard let undoManager = undoManager,
 			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
 				return
@@ -944,8 +811,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func showBrowserForArticle(_ indexPath: IndexPath) {
-		guard let preferredLink = articles[indexPath.row].preferredLink, let url = URL(string: preferredLink) else {
+	func showBrowserForArticle(_ article: Article) {
+		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}
 		UIApplication.shared.open(url, options: [:])
@@ -964,8 +831,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func navigateToTimeline() {
-		if currentArticleIndexPath == nil {
-			selectArticle(IndexPath(row: 0, section: 0))
+		if currentArticle == nil && articles.count > 0 {
+			selectArticle(articles[0])
 		}
 		masterTimelineViewController?.focus()
 	}
@@ -979,23 +846,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 // MARK: UISplitViewControllerDelegate
 
 extension SceneCoordinator: UISplitViewControllerDelegate {
-
-	func splitViewController(_ splitViewController: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-		guard splitViewController.traitCollection.userInterfaceIdiom == .pad && !splitViewController.isCollapsed else {
-			return
-		}
-		if splitViewController.displayMode != .allVisible && displayMode == .allVisible {
-			transitionToThreePanelMode()
-		}
-		if splitViewController.displayMode == .allVisible && displayMode != .allVisible {
-			transitionFromThreePanelMode()
-		}
-	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
 	
 		// Check to see if the system is currently configured for three panel mode
-		if let subSplit = secondaryViewController.children.first as? UISplitViewController {
+		if let subSplit = secondaryViewController as? UISplitViewController {
 
 			// Take the timeline controller out of the subsplit and throw it on the master navigation stack
 			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController, let masterTimeline = masterTimelineNav.topViewController {
@@ -1015,7 +870,7 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 			}
 			
 			// Take the detail view (ignoring system message controllers) and put it on the master navigation stack
-			if let detailNav = secondaryViewController.children.first as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
+			if let detailNav = secondaryViewController as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
 				// I have no idea why, I have to wire up the left bar button item for this, but not when I am transitioning from three panel mode
 				detail.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 				detail.navigationItem.leftItemsSupplementBackButton = true
@@ -1030,19 +885,16 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 	
 	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
 		
-		// If we are in three panel mode, return back the new shim controller that contains a new sub split controller
 		if isThreePanelMode {
 			return transitionToThreePanelMode()
 		}
 
 		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
 
-			// If we have a detail controller on the stack, remove it, wrap it in a shim, and return it.
+			// If we have a detail controller on the stack, remove it and return it.
 			masterNavigationController.viewControllers.removeLast()
 			let detailNav = addNavControllerIfNecessary(detail, showButton: true)
-			let shimController = UIViewController()
-			shimController.addChildAndPinView(detailNav)
-			return shimController
+			return detailNav
 			
 		} else {
 
@@ -1057,11 +909,22 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 // MARK: UINavigationControllerDelegate
 
 extension SceneCoordinator: UINavigationControllerDelegate {
+
 	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-		if rootSplitViewController.isCollapsed && viewController === masterFeedViewController {
+		
+		// If we are showing the Feeds and only the feeds start clearing stuff
+		if viewController === masterFeedViewController && !isThreePanelMode {
 			activityManager.invalidateCurrentActivities()
+			selectFeed(nil)
 		}
+		
+		// If we are using a phone and navigate away from the detail, clear up the article resources (including activity)
+		if viewController === masterTimelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed {
+			selectArticle(nil)
+		}
+		
 	}
+	
 }
 
 // MARK: Private
@@ -1095,10 +958,10 @@ private extension SceneCoordinator {
 			var result = [Node]()
 			let sectionNode = treeController.rootNode.childAtIndex(i)!
 			
-			if expandedNodes.contains(sectionNode) {
+			if sectionNode.isExpanded {
 				for node in sectionNode.childNodes {
 					result.append(node)
-					if expandedNodes.contains(node) {
+					if node.isExpanded {
 						for child in node.childNodes {
 							result.append(child)
 						}
@@ -1111,6 +974,29 @@ private extension SceneCoordinator {
 		}
 	}
 
+	func nodeFor(_ indexPath: IndexPath) -> Node? {
+		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].count else {
+			return nil
+		}
+		return shadowTable[indexPath.section][indexPath.row]
+	}
+	
+	func indexPathFor(_ node: Node) -> IndexPath? {
+		for i in 0..<shadowTable.count {
+			if let row = shadowTable[i].firstIndex(of: node) {
+				return IndexPath(row: row, section: i)
+			}
+		}
+		return nil
+	}
+
+	func indexPathFor(_ object: AnyObject) -> IndexPath? {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(object) else {
+			return nil
+		}
+		return indexPathFor(node)
+	}
+	
 	func updateShowAvatars() {
 		
 		if showFeedNames {
@@ -1137,8 +1023,8 @@ private extension SceneCoordinator {
 	@discardableResult
 	func selectPrevUnreadArticleInTimeline() -> Bool {
 		let startingRow: Int = {
-			if let indexPath = currentArticleIndexPath {
-				return indexPath.row - 1
+			if let articleRow = currentArticleRow {
+				return articleRow
 			} else {
 				return articles.count - 1
 			}
@@ -1156,7 +1042,7 @@ private extension SceneCoordinator {
 		for i in (0...startingRow).reversed() {
 			let article = articles[i]
 			if !article.status.read {
-				selectArticle(IndexPath(row: i, section: 0))
+				selectArticle(article)
 				return true
 			}
 		}
@@ -1217,7 +1103,7 @@ private extension SceneCoordinator {
 					return true
 				}
 				
-				if expandedNodes.contains(node) {
+				if node.isExpanded {
 					continue
 				}
 				
@@ -1244,8 +1130,8 @@ private extension SceneCoordinator {
 	@discardableResult
 	func selectNextUnreadArticleInTimeline() -> Bool {
 		let startingRow: Int = {
-			if let indexPath = currentArticleIndexPath {
-				return indexPath.row + 1
+			if let articleRow = currentArticleRow {
+				return articleRow + 1
 			} else {
 				return 0
 			}
@@ -1263,7 +1149,7 @@ private extension SceneCoordinator {
 		for i in startingRow..<articles.count {
 			let article = articles[i]
 			if !article.status.read {
-				selectArticle(IndexPath(row: i, section: 0))
+				selectArticle(article)
 				return true
 			}
 		}
@@ -1323,7 +1209,7 @@ private extension SceneCoordinator {
 					return true
 				}
 				
-				if expandedNodes.contains(node) {
+				if node.isExpanded {
 					continue
 				}
 				
@@ -1361,34 +1247,11 @@ private extension SceneCoordinator {
 		
 		if articles != sortedArticles {
 			
-			let article = currentArticle
 			articles = sortedArticles
-			
 			updateShowAvatars()
-			articleRowMap = [String: Int]()
 			updateUnreadCount()
 			
 			masterTimelineViewController?.reloadArticles(animate: animate)
-			if let articleID = article?.articleID, let index = indexForArticleID(articleID) {
-				currentArticleIndexPath = IndexPath(row: index, section: 0)
-			}
-			
-		}
-	}
-	
-	func updateArticleRowMap() {
-		var rowMap = [String: Int]()
-		var index = 0
-		articles.forEach { (article) in
-			rowMap[article.articleID] = index
-			index += 1
-		}
-		articleRowMap = rowMap
-	}
-	
-	func updateArticleRowMapIfNeeded() {
-		if articleRowMap.isEmpty {
-			updateArticleRowMap()
 		}
 	}
 	
@@ -1528,64 +1391,58 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	// Note about the Shim Controller
-	// In the root split view controller's secondary (or detail) position we use a view controller that
-	// only acts as a shim (or wrapper) for the actually desired contents of the second position.  This
-	// is because we normally can't change the root split view controllers second position contents
-	// during the display mode change callback (in the split view controller delegate).  To fool the
-	// system, we leave the same controller, the shim, in place and change its child controllers instead.
-	
 	func installDetailController(_ detailController: UIViewController, automated: Bool) {
-		let showButton = rootSplitViewController.displayMode != .allVisible
-		let controller = addNavControllerIfNecessary(detailController, showButton: showButton)
-		
-		if isThreePanelMode {
-			let targetSplit = ensureDoubleSplit().children.first as! UISplitViewController
-			targetSplit.showDetailViewController(controller, sender: self)
+
+		if let subSplit = subSplitViewController {
+			let controller = addNavControllerIfNecessary(detailController, showButton: false)
+			subSplit.showDetailViewController(controller, sender: self)
 		} else if rootSplitViewController.isCollapsed {
+			let controller = addNavControllerIfNecessary(detailController, showButton: false)
 			masterNavigationController.pushViewController(controller, animated: !automated)
 		} else {
-			if let shimController = rootSplitViewController.viewControllers.last {
-				shimController.replaceChildAndPinView(controller)
-			}
-		}
+			let controller = addNavControllerIfNecessary(detailController, showButton: true)
+			rootSplitViewController.showDetailViewController(controller, sender: self)
+  	 	}
+		
 	}
 	
 	func addNavControllerIfNecessary(_ controller: UIViewController, showButton: Bool) -> UIViewController {
+		
 		if rootSplitViewController.isCollapsed {
+			
 			return controller
+			
 		} else {
+			
 			let navController = ThemedNavigationController.template(rootViewController: controller)
 			navController.isToolbarHidden = false
+			
 			if showButton {
 				controller.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 				controller.navigationItem.leftItemsSupplementBackButton = true
+			} else {
+				controller.navigationItem.leftBarButtonItem = nil
+				controller.navigationItem.leftItemsSupplementBackButton = false
 			}
+			
 			return navController
-		}
-	}
-
-	func ensureDoubleSplit() -> UIViewController {
-		if let shimController = rootSplitViewController.viewControllers.last, shimController.children.first is UISplitViewController {
-			return shimController
+			
 		}
 		
+	}
+
+	func configureDoubleSplit() {
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.30
 		
 		let subSplit = UISplitViewController.template()
 		subSplit.preferredDisplayMode = .allVisible
 		subSplit.preferredPrimaryColumnWidthFraction = 0.4285
 		
-		let shimController = UIViewController()
-		shimController.addChildAndPinView(subSplit)
-		
-		rootSplitViewController.showDetailViewController(shimController, sender: self)
-		return shimController
+		rootSplitViewController.showDetailViewController(subSplit, sender: self)
 	}
 	
 	func navControllerForTimeline() -> UINavigationController {
-		if isThreePanelMode {
-			let subSplit = ensureDoubleSplit().children.first as! UISplitViewController
+		if let subSplit = subSplitViewController {
 			return subSplit.viewControllers.first as! UINavigationController
 		} else {
 			return masterNavigationController
@@ -1595,64 +1452,64 @@ private extension SceneCoordinator {
 	func fullyWrappedSystemMesssageController(showButton: Bool) -> UIViewController {
 		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
 		let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: showButton)
-		let shimController = UIViewController()
-		shimController.addChildAndPinView(navController)
-		return shimController
+		return navController
 	}
 	
 	@discardableResult
 	func transitionToThreePanelMode() -> UIViewController {
+		
 		defer {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
+		
+		let controller: UIViewController = {
+			if let result = detailViewController {
+				return result
+			} else {
+				return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+			}
+		}()
+		
+		configureDoubleSplit()
+		installTimelineControllerIfNecessary(animated: false)
+		masterTimelineViewController?.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
+		masterTimelineViewController?.navigationItem.leftItemsSupplementBackButton = true
 
-		if currentFeedIndexPath == nil && currentArticleIndexPath == nil {
-			
-			let wrappedSystemMessageController = fullyWrappedSystemMesssageController(showButton: false)
-			rootSplitViewController.showDetailViewController(wrappedSystemMessageController, sender: self)
-			return wrappedSystemMessageController
-			
-		} else {
-			
-			let controller: UIViewController = {
-				if let result = detailViewController {
-					return result
-				} else {
-					return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-				}
-			}()
-			
-			// Create the new sub split controller (wrapped in the shim of course) and add the timeline in the primary position
-			let shimController = ensureDoubleSplit()
-			let subSplit = shimController.children.first as! UISplitViewController
-			let masterTimelineNavController = subSplit.viewControllers.first as! UINavigationController
-			masterTimelineNavController.viewControllers = [masterTimelineViewController!]
-			
-			// Put the detail or no selection controller in the secondary (or detail) position of the sub split
-			let navController = addNavControllerIfNecessary(controller, showButton: false)
-			subSplit.showDetailViewController(navController, sender: self)
-			
-			return shimController
-		}
+		// Create the new sub split controller and add the timeline in the primary position
+		let masterTimelineNavController = subSplitViewController!.viewControllers.first as! UINavigationController
+		masterTimelineNavController.viewControllers = [masterTimelineViewController!]
+
+		// Put the detail or no selection controller in the secondary (or detail) position of the sub split
+		let navController = addNavControllerIfNecessary(controller, showButton: false)
+		subSplitViewController!.showDetailViewController(navController, sender: self)
+		
+		masterFeedViewController.restoreSelectionIfNecessary(adjustScroll: true)
+		masterTimelineViewController!.restoreSelectionIfNecessary()
+		
+		// We made sure this was there above when we called configureDoubleSplit
+		return subSplitViewController!
+
 	}
 	
 	func transitionFromThreePanelMode() {
-		
+
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = UISplitViewController.automaticDimension
 		
-		if let shimController = rootSplitViewController.viewControllers.last, let subSplit = shimController.children.first as? UISplitViewController {
+		if let subSplit = rootSplitViewController.viewControllers.last as? UISplitViewController {
 
-			// Push the timeline on to the master navigation controller.  This should always be true if we have installed
-			// the sub split controller because we only install the sub split controller if a timeline needs to be displayed.
-			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController, let masterTimeline = masterTimelineNav.topViewController {
-				masterNavigationController.pushViewController(masterTimeline, animated: false)
+			// Push a new timeline on to the master navigation controller.  For some reason recycling the timeline can freak
+			// the system out and throw it into an infinite loop.
+			if currentFeedIndexPath != nil {
+				masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+				masterTimelineViewController!.coordinator = self
+				masterNavigationController.pushViewController(masterTimelineViewController!, animated: false)
 			}
 
 			// Pull the detail or no selection controller out of the sub split second position and move it to the root split controller
-			// secondary (detail) position, by replacing the contents of the shim controller in the second position.
+			// secondary (detail) position.
 			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let topController = detailNav.topViewController {
 				let newNav = addNavControllerIfNecessary(topController, showButton: true)
-				shimController.replaceChildAndPinView(newNav)
+				rootSplitViewController.showDetailViewController(newNav, sender: self)
 			}
 
 		}
@@ -1722,12 +1579,8 @@ private extension SceneCoordinator {
 		discloseFeed(feedNode.representedObject as! Feed) {
 		
 			guard let articleID = activity.userInfo?[ActivityID.articleID.rawValue] as? String else { return }
-		
-			for (index, article) in self.articles.enumerated() {
-				if article.articleID == articleID {
-					self.selectArticle(IndexPath(row: index, section: 0))
-					break
-				}
+			if let article = self.articles.first(where: { $0.articleID == articleID }) {
+				self.selectArticle(article)
 			}
 			
 		}

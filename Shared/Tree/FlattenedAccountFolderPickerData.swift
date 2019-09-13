@@ -1,5 +1,5 @@
 //
-//  AddFeedFolderPickerData.swift
+//  FlattenedAccountFolderPickerData.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/16/19.
@@ -12,7 +12,7 @@ import Account
 import RSCore
 import RSTree
 
-struct AddFeedFolderPickerData {
+struct FlattenedAccountFolderPickerData {
 	
 	var containerNames = [String]()
 	var containers = [Container]()

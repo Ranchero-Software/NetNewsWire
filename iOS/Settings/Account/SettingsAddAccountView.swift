@@ -11,34 +11,16 @@ import Account
 
 struct SettingsAddAccountView : View {
 	@Environment(\.presentationMode) var presentation
-	@State private var selectedAccountType: AccountType = nil
 	
     var body: some View {
 		Form {
-			
-			Button(action: {
-				self.selectedAccountType = AccountType.onMyMac
-			}) {
+			NavigationLink(destination: SettingsLocalAccountView(name: "")) {
 				SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName)
 			}
-			
-			Button(action: {
-				self.selectedAccountType = AccountType.feedbin
-			}) {
+			NavigationLink(destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())) {
 				SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin")
 			}
-
-			
 		}
-		.sheet(item: $selectedAccountType) { accountType in
-			if accountType == .onMyMac {
-				SettingsLocalAccountView(name: "", onDismiss: { self.presentation.wrappedValue.dismiss() })
-			}
-			if accountType == .feedbin {
-				SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel(), onDismiss: { self.presentation.wrappedValue.dismiss() })
-			}
-		}
-		
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)
 	}
 }

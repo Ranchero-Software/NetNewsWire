@@ -104,10 +104,6 @@ struct AppAssets {
 		return UIImage(systemName: "square.and.arrow.up")!
 	}()
 	
-	static var smartFeedColor: UIColor = {
-		return UIColor(named: "smartFeedColor")!
-	}()
-	
 	static var smartFeedImage: UIImage = {
 		return UIImage(systemName: "gear")!
 	}()
@@ -128,6 +124,10 @@ struct AppAssets {
 		return UIColor(named: "tableViewCellHighlightedTextColor")!
 	}()
 
+	static var tableViewCellIconColor: UIColor = {
+		return UIColor(named: "tableViewCellIconColor")!
+	}()
+	
 	static var tableViewCellSelectionColor: UIColor = {
 		return UIColor(named: "tableViewCellSelectionColor")!
 	}()

@@ -23,6 +23,27 @@
 		512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */; };
 		512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */; };
 		512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteCommand.swift */; };
+		513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C5CE8232571C2003D4054 /* ShareViewController.swift */; };
+		513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 513C5CEA232571C2003D4054 /* MainInterface.storyboard */; };
+		513C5CF0232571C2003D4054 /* NetNewsWire iOS Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		513C5CFD2325749A003D4054 /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; };
+		513C5CFE2325749A003D4054 /* Account.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513C5D00232574AF003D4054 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; };
+		513C5D01232574AF003D4054 /* Articles.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513C5D02232574B4003D4054 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
+		513C5D03232574B4003D4054 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513C5D04232574B9003D4054 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8520DD8CF200CA8CF5 /* RSCore.framework */; };
+		513C5D05232574B9003D4054 /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8520DD8CF200CA8CF5 /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513C5D06232574C0003D4054 /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FC420DD8E0C00CA8CF5 /* RSDatabase.framework */; };
+		513C5D07232574C0003D4054 /* RSDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FC420DD8E0C00CA8CF5 /* RSDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513C5D08232574C6003D4054 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8C20DD8CF800CA8CF5 /* RSParser.framework */; };
+		513C5D09232574C6003D4054 /* RSParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8C20DD8CF800CA8CF5 /* RSParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513C5D0A232574D2003D4054 /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FA320DD8D0500CA8CF5 /* RSWeb.framework */; };
+		513C5D0B232574D2003D4054 /* RSWeb.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FA320DD8D0500CA8CF5 /* RSWeb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513C5D0C232574DA003D4054 /* RSTree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F9520DD8CFE00CA8CF5 /* RSTree.framework */; };
+		513C5D0D232574DA003D4054 /* RSTree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F9520DD8CFE00CA8CF5 /* RSTree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513C5D0E232574E4003D4054 /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
+		513C5D0F232574E4003D4054 /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5144EA2F2279FAB600D19003 /* AccountsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */; };
 		5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */; };
 		5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */; };
@@ -42,6 +63,11 @@
 		51554C30228B71A10055115A /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
 		51554C31228B71A10055115A /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		515ADE4022E11FAE006B2460 /* SystemMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */; };
+		515D4FC123257A3200EE1167 /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
+		515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
+		515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */ = {isa = PBXBuildFile; fileRef = 515D4FCB2325815A00EE1167 /* SafariExt.js */; };
+		51707439232AA97100A461A3 /* ShareFolderPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51707438232AA97100A461A3 /* ShareFolderPickerController.swift */; };
+		5170743A232AABFC00A461A3 /* FlattenedAccountFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452812265093600C03939 /* FlattenedAccountFolderPickerData.swift */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */; };
@@ -102,7 +128,7 @@
 		51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */; };
 		51C4527C2265091600C03939 /* MasterTimelineDefaultCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452752265091600C03939 /* MasterTimelineDefaultCellLayout.swift */; };
 		51C4527F2265092C00C03939 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4527E2265092C00C03939 /* DetailViewController.swift */; };
-		51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452812265093600C03939 /* AddFeedFolderPickerData.swift */; };
+		51C452852265093600C03939 /* FlattenedAccountFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452812265093600C03939 /* FlattenedAccountFolderPickerData.swift */; };
 		51C452862265093600C03939 /* Add.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C452822265093600C03939 /* Add.storyboard */; };
 		51C452882265093600C03939 /* AddFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452842265093600C03939 /* AddFeedViewController.swift */; };
 		51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4528B2265095F00C03939 /* AddFolderViewController.swift */; };
@@ -346,6 +372,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		513C5CEE232571C2003D4054 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 513C5CE5232571C2003D4054;
+			remoteInfo = "NetNewsWire iOS Share Extension";
+		};
 		51554C00228B6EB50055115A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */;
@@ -622,6 +655,36 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		513C5CF1232571C2003D4054 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				513C5CF0232571C2003D4054 /* NetNewsWire iOS Share Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		513C5CFF2325749A003D4054 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				513C5D0B232574D2003D4054 /* RSWeb.framework in Embed Frameworks */,
+				513C5D0D232574DA003D4054 /* RSTree.framework in Embed Frameworks */,
+				513C5CFE2325749A003D4054 /* Account.framework in Embed Frameworks */,
+				513C5D01232574AF003D4054 /* Articles.framework in Embed Frameworks */,
+				513C5D09232574C6003D4054 /* RSParser.framework in Embed Frameworks */,
+				513C5D07232574C0003D4054 /* RSDatabase.framework in Embed Frameworks */,
+				513C5D0F232574E4003D4054 /* SyncDatabase.framework in Embed Frameworks */,
+				513C5D05232574B9003D4054 /* RSCore.framework in Embed Frameworks */,
+				513C5D03232574B4003D4054 /* ArticlesDatabase.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		51C451DF2264C7F200C03939 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -698,6 +761,10 @@
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeader.swift; sourceTree = "<group>"; };
 		512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISplitViewController-Extensions.swift"; sourceTree = "<group>"; };
+		513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		513C5CE8232571C2003D4054 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		513C5CEB232571C2003D4054 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		513C5CED232571C2003D4054 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsDetailViewController.swift; sourceTree = "<group>"; };
 		5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsAddLocal.xib; sourceTree = "<group>"; };
 		5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddLocalWindowController.swift; sourceTree = "<group>"; };
@@ -714,6 +781,10 @@
 		515436892291FED9005E1CDF /* FeedbinAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAccountViewController.swift; sourceTree = "<group>"; };
 		51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SyncDatabase.xcodeproj; path = Frameworks/SyncDatabase/SyncDatabase.xcodeproj; sourceTree = SOURCE_ROOT; };
 		515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMessageViewController.swift; sourceTree = "<group>"; };
+		515D4FCB2325815A00EE1167 /* SafariExt.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SafariExt.js; sourceTree = "<group>"; };
+		515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_ShareExtension.entitlements; sourceTree = "<group>"; };
+		515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSshareextension_target.xcconfig; sourceTree = "<group>"; };
+		51707438232AA97100A461A3 /* ShareFolderPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerController.swift; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCDC226F1F5C0010922C /* NavigationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationProgressView.swift; sourceTree = "<group>"; };
@@ -747,7 +818,7 @@
 		51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterUnreadIndicatorView.swift; sourceTree = "<group>"; };
 		51C452752265091600C03939 /* MasterTimelineDefaultCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineDefaultCellLayout.swift; sourceTree = "<group>"; };
 		51C4527E2265092C00C03939 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		51C452812265093600C03939 /* AddFeedFolderPickerData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedFolderPickerData.swift; sourceTree = "<group>"; };
+		51C452812265093600C03939 /* FlattenedAccountFolderPickerData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlattenedAccountFolderPickerData.swift; sourceTree = "<group>"; };
 		51C452822265093600C03939 /* Add.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Add.storyboard; sourceTree = "<group>"; };
 		51C452842265093600C03939 /* AddFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedViewController.swift; sourceTree = "<group>"; };
 		51C4528B2265095F00C03939 /* AddFolderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
@@ -983,6 +1054,22 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		513C5CE3232571C2003D4054 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				513C5D0A232574D2003D4054 /* RSWeb.framework in Frameworks */,
+				513C5D0C232574DA003D4054 /* RSTree.framework in Frameworks */,
+				513C5CFD2325749A003D4054 /* Account.framework in Frameworks */,
+				513C5D00232574AF003D4054 /* Articles.framework in Frameworks */,
+				513C5D08232574C6003D4054 /* RSParser.framework in Frameworks */,
+				513C5D06232574C0003D4054 /* RSDatabase.framework in Frameworks */,
+				513C5D0E232574E4003D4054 /* SyncDatabase.framework in Frameworks */,
+				513C5D04232574B9003D4054 /* RSCore.framework in Frameworks */,
+				513C5D02232574B4003D4054 /* ArticlesDatabase.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6581C73020CED60000F4AD34 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1056,10 +1143,24 @@
 		512E08DD22687FA000BDCFDD /* Tree */ = {
 			isa = PBXGroup;
 			children = (
+				51C452812265093600C03939 /* FlattenedAccountFolderPickerData.swift */,
 				849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */,
 				849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */,
 			);
 			path = Tree;
+			sourceTree = "<group>";
+		};
+		513C5CE7232571C2003D4054 /* ShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				513C5CE8232571C2003D4054 /* ShareViewController.swift */,
+				51707438232AA97100A461A3 /* ShareFolderPickerController.swift */,
+				513C5CEA232571C2003D4054 /* MainInterface.storyboard */,
+				513C5CED232571C2003D4054 /* Info.plist */,
+				515D4FCB2325815A00EE1167 /* SafariExt.js */,
+				515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */,
+			);
+			path = ShareExtension;
 			sourceTree = "<group>";
 		};
 		5144EA39227A377700D19003 /* OPML */ = {
@@ -1160,7 +1261,7 @@
 			path = "Model Extensions";
 			sourceTree = "<group>";
 		};
-		51C45245226506C800C03939 /* Extensions */ = {
+		51C45245226506C800C03939 /* UIKit Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				51F85BFA2275D85000C787DC /* Array-Extensions.swift */,
@@ -1175,7 +1276,7 @@
 				512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */,
 				51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */,
 			);
-			path = Extensions;
+			path = "UIKit Extensions";
 			sourceTree = "<group>";
 		};
 		51C4525D226508F600C03939 /* MasterFeed */ = {
@@ -1240,7 +1341,6 @@
 				51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */,
 				514B7D1E23219F3C00BAC947 /* AddControllerType.swift */,
 				51C452842265093600C03939 /* AddFeedViewController.swift */,
-				51C452812265093600C03939 /* AddFeedFolderPickerData.swift */,
 				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
 			);
 			path = Add;
@@ -1606,6 +1706,7 @@
 				849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */,
 				840D617C2029031C009BC708 /* NetNewsWire.app */,
 				6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */,
+				513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1820,10 +1921,11 @@
 				51C452802265093600C03939 /* Add */,
 				5183CCEB227117C70010922C /* Settings */,
 				5183CCDB226F1EEB0010922C /* Progress */,
-				51C45245226506C800C03939 /* Extensions */,
 				519D740423243C68008BB345 /* Model Extensions */,
+				51C45245226506C800C03939 /* UIKit Extensions */,
 				5F3237FF231DF9D000706F6B /* Views */,
 				5194B5E222B693EC00144881 /* Wrappers */,
+				513C5CE7232571C2003D4054 /* ShareExtension */,
 				84C9FC9A2262A1A900D921D6 /* Resources */,
 			);
 			path = iOS;
@@ -1945,6 +2047,7 @@
 				D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */,
 				D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */,
 				51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */,
+				515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */,
 				6543108B2322D90900658221 /* common */,
 			);
 			path = xcconfig;
@@ -1971,6 +2074,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 513C5CFC232571C2003D4054 /* Build configuration list for PBXNativeTarget "NetNewsWire iOS Share Extension" */;
+			buildPhases = (
+				513C5CE2232571C2003D4054 /* Sources */,
+				513C5CE3232571C2003D4054 /* Frameworks */,
+				513C5CE4232571C2003D4054 /* Resources */,
+				513C5CFF2325749A003D4054 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "NetNewsWire iOS Share Extension";
+			productName = "NetNewsWire iOS Share Extension";
+			productReference = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		6581C73220CED60000F4AD34 /* Subscribe to Feed */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6581C75620CED60100F4AD34 /* Build configuration list for PBXNativeTarget "Subscribe to Feed" */;
@@ -1996,6 +2117,8 @@
 				840D61792029031C009BC708 /* Frameworks */,
 				840D617A2029031C009BC708 /* Resources */,
 				51C451DF2264C7F200C03939 /* Embed Frameworks */,
+				513C5CF1232571C2003D4054 /* Embed App Extensions */,
+				515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */,
 			);
 			buildRules = (
 			);
@@ -2009,6 +2132,7 @@
 				51C451F72264C83900C03939 /* PBXTargetDependency */,
 				51C451FB2264C83E00C03939 /* PBXTargetDependency */,
 				51554C33228B71A10055115A /* PBXTargetDependency */,
+				513C5CEF232571C2003D4054 /* PBXTargetDependency */,
 			);
 			name = "NetNewsWire-iOS";
 			productName = "NetNewsWire-iOS";
@@ -2071,10 +2195,15 @@
 		849C64581ED37A5D003D8FC0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0930;
+				LastSwiftUpdateCheck = 1100;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
+					513C5CE5232571C2003D4054 = {
+						CreatedOnToolsVersion = 11.0;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
+					};
 					6581C73220CED60000F4AD34 = {
 						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
@@ -2163,6 +2292,7 @@
 				849C64701ED37A5D003D8FC0 /* NetNewsWireTests */,
 				840D617B2029031C009BC708 /* NetNewsWire-iOS */,
 				6581C73220CED60000F4AD34 /* Subscribe to Feed */,
+				513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -2311,6 +2441,15 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		513C5CE4232571C2003D4054 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */,
+				513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6581C73120CED60000F4AD34 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2390,6 +2529,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Verify No Build Settings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
+		};
 		8423E3E3220158E700C3795B /* Run Script: codesign release builds */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2443,6 +2600,18 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		513C5CE2232571C2003D4054 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				515D4FC123257A3200EE1167 /* FolderTreeControllerDelegate.swift in Sources */,
+				515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */,
+				513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */,
+				5170743A232AABFC00A461A3 /* FlattenedAccountFolderPickerData.swift in Sources */,
+				51707439232AA97100A461A3 /* ShareFolderPickerController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6581C72F20CED60000F4AD34 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2484,7 +2653,7 @@
 				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
-				51C452852265093600C03939 /* AddFeedFolderPickerData.swift in Sources */,
+				51C452852265093600C03939 /* FlattenedAccountFolderPickerData.swift in Sources */,
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
@@ -2722,6 +2891,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		513C5CEF232571C2003D4054 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */;
+			targetProxy = 513C5CEE232571C2003D4054 /* PBXContainerItemProxy */;
+		};
 		51554C27228B71910055115A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SyncDatabase;
@@ -2828,6 +3002,14 @@
 			name = LaunchScreenPad.storyboard;
 			sourceTree = "<group>";
 		};
+		513C5CEA232571C2003D4054 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				513C5CEB232571C2003D4054 /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
 		6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2903,6 +3085,20 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		513C5CF2232571C2003D4054 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		513C5CF3232571C2003D4054 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		6581C74720CED60100F4AD34 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
@@ -2976,6 +3172,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		513C5CFC232571C2003D4054 /* Build configuration list for PBXNativeTarget "NetNewsWire iOS Share Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				513C5CF2232571C2003D4054 /* Debug */,
+				513C5CF3232571C2003D4054 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		6581C75620CED60100F4AD34 /* Build configuration list for PBXNativeTarget "Subscribe to Feed" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

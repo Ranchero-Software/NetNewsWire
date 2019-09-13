@@ -13,6 +13,14 @@ class RootSplitViewController: UISplitViewController {
 	
 	var coordinator: SceneCoordinator!
 	
+	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		coordinator.animate(alongsideTransition: { [weak self] context in
+			if UIApplication.shared.applicationState != .background {
+				self?.coordinator.configureThreePanelMode(for: size)
+			}
+		})
+	}
+	
 	// MARK: Keyboard Shortcuts
 	
 	@objc func scrollOrGoToNextUnread(_ sender: Any?) {
