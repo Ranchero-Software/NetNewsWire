@@ -12,46 +12,58 @@ import Foundation
 protocol SortableArticle {
 	var sortableName: String { get }
 	var sortableDate: Date { get }
-	var sortableID: String { get }
+	var sortableArticleID: String { get }
+	var sortableFeedID: String { get }
 }
 
 struct ArticleSorter {
-	
+		
 	static func sortedByDate<T: SortableArticle>(articles: [T],
 												 sortDirection: ComparisonResult,
 												 groupByFeed: Bool) -> [T] {
-		let articles = articles.sorted { (article1, article2) -> Bool in
-			if groupByFeed {
-				let feedName1 = article1.sortableName
-				let feedName2 = article2.sortableName
-				
-				let comparison = feedName1.caseInsensitiveCompare(feedName2)
-				switch comparison {
-				case .orderedSame:
-					return isSortedByDate(article1, article2, sortDirection: sortDirection)
-				case .orderedAscending, .orderedDescending:
-					return comparison == .orderedAscending
-				}
-			} else {
-				return isSortedByDate(article1, article2, sortDirection: sortDirection)
-			}
+		if groupByFeed {
+			return sortedByFeedName(articles: articles, sortByDateDirection: sortDirection)
+		} else {
+			return sortedByDate(articles: articles, sortDirection: sortDirection)
 		}
-		
-		return articles
 	}
 	
 	// MARK: -
+		
+	private static func sortedByFeedName<T: SortableArticle>(articles: [T],
+															 sortByDateDirection: ComparisonResult) -> [T] {
+		// Group articles by feed - feed ID is used to differentiate between
+		// two feeds that have the same name
+		var groupedArticles = Dictionary(grouping: articles) { "\($0.sortableName.lowercased())-\($0.sortableFeedID)" }
+		
+		// Sort the articles within each group
+		for tuple in groupedArticles {
+			groupedArticles[tuple.key] = sortedByDate(articles: tuple.value,
+													  sortDirection: sortByDateDirection)
+		}
+		
+		// Flatten the articles dictionary back into an array sorted by feed name
+		var sortedArticles: [T] = []
+		for feedName in groupedArticles.keys.sorted() {
+			sortedArticles.append(contentsOf: groupedArticles[feedName] ?? [])
+		}
+		
+		return sortedArticles
+	}
 	
-	private static func isSortedByDate(_ lhs: SortableArticle,
-									   _ rhs: SortableArticle,
-									   sortDirection: ComparisonResult) -> Bool {
-		if lhs.sortableDate == rhs.sortableDate {
-			return lhs.sortableID < rhs.sortableID
+	private static func sortedByDate<T: SortableArticle>(articles: [T],
+														 sortDirection: ComparisonResult) -> [T] {
+		let articles = articles.sorted { (article1, article2) -> Bool in
+			if article1.sortableDate == article2.sortableDate {
+				return article1.sortableArticleID < article2.sortableArticleID
+			}
+			if sortDirection == .orderedDescending {
+				return article1.sortableDate > article2.sortableDate
+			}
+			
+			return article1.sortableDate < article2.sortableDate
 		}
-		if sortDirection == .orderedDescending {
-			return lhs.sortableDate > rhs.sortableDate
-		}
-		return lhs.sortableDate < rhs.sortableDate
+		return articles
 	}
 	
 }

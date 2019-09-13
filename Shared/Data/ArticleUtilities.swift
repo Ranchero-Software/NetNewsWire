@@ -103,8 +103,12 @@ extension Article: SortableArticle {
 		return logicalDatePublished
 	}
 	
-	var sortableID: String {
+	var sortableArticleID: String {
 		return articleID
+	}
+	
+	var sortableFeedID: String {
+		return feedID
 	}
 	
 }
