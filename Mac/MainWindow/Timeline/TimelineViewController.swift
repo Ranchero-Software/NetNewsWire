@@ -126,14 +126,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
-				sortDirectionDidChange()
+				sortParametersDidChange()
 			}
 		}
 	}
 	private var groupByFeed = AppDefaults.timelineGroupByFeed {
 		didSet {
 			if groupByFeed != oldValue {
-				groupByFeedDidChange()
+				sortParametersDidChange()
 			}
 		}
 	}
@@ -884,20 +884,13 @@ private extension TimelineViewController {
 		}
 	}
 
-	func sortDirectionDidChange() {
+	func sortParametersDidChange() {
 		performBlockAndRestoreSelection {
 			let unsortedArticles = Set(articles)
 			replaceArticles(with: unsortedArticles)
 		}
 	}
 	
-	func groupByFeedDidChange() {
-		performBlockAndRestoreSelection {
-			let unsortedArticles = Set(articles)
-			replaceArticles(with: unsortedArticles)
-		}
-	}
-
 	func selectedArticleIDs() -> [String] {
 
 		return selectedArticles.articleIDs()
