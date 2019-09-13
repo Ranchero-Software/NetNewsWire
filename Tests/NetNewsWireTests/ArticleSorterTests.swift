@@ -1,5 +1,5 @@
 //
-//  ArticleArrayTests.swift
+//  ArticleSorterTests.swift
 //  NetNewsWire
 //
 //  Created by Phil Viso on 9/8/19.
@@ -12,7 +12,7 @@ import XCTest
 
 @testable import NetNewsWire
 
-class ArticleArrayTests: XCTestCase {
+class ArticleSorterTests: XCTestCase {
 	
 	// MARK: sortByDate ascending tests
 	
