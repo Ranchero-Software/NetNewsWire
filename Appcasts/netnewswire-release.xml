@@ -7,12 +7,49 @@
         <language>en</language>
 
 				<item>
-         <title>NetNewsWire 5.0</title>
+         <title>NetNewsWire 5.0.1</title>
             <description><![CDATA[
-            	<p>This is the shipping version of NetNewsWire 5.0.</p>
-  							]]></description>
-            <pubDate>Sun, 25 Aug 2019 11:40:00 -0700</pubDate>
-            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0/NetNewsWire5.0.zip" sparkle:version="2609" sparkle:shortVersionString="5.0" length="5174696" type="application/zip" />
+<p>Crash fix: when the app is renamed or moved on disk while running, alert the user and quit the app. This prevents crashes that will happen due to renaming/moving. See Daniel Jalkut on <a href="https://red-sweater.com/blog/3508/app-movement-monitoring">App Movement Monitoring</a> for more info.</p>
+
+<p>(Probably) fix a crashing bug having to do with a callback being called more than once, when it was designed to be called just once.</p>
+
+<p>Sidebar: deleting an empty Feedbin folder no longer makes the sidebar non-responsive.</p>
+
+<p>Timeline: update UI more quickly when a feed icon is downloaded.</p>
+
+<p>Timeline: reload the timeline when show-feed-names is toggled. This fixes a bug where switching between a folder and a feed with the exact same list of articles to appear in the timeline would result in display glitches.</p>
+
+<p>Timeline and article pane: make sure the link for an article isn’t an empty string.</p>
+
+<p>Article pane: stop blocking links containing the string “feedburner” — there are legitimate cases where that string appears.</p>
+
+<p>Article pane: handle figures and iframes as we do images, so they fit in the view.</p>
+
+<p>Article pane: fix white flash on first article load while in Dark Mode.</p>
+
+<p>Preferences > General: add checkbox to hide the unread count in the Dock.</p>
+
+<p>Preferences > Accounts: Updated the UI when a Feedbin user with an expired trial creates an account in NetNewsWire.</p>
+
+<p>RSS parser: Detect RDF (RSS 1.0) feeds that lack an XML header.</p>
+
+<p>RSS parser: Parse Atom-style dates that are missing a T character in the middle.</p>
+
+<p>RSS parser: check for bad permalinks more aggressively. If they don’t contain a / character, then do not consider them permalinks.</p>
+
+<p>RSS parser: don’t let author/title overwrite item/title.</p>
+
+<p>About window: add link to NetNewsWire website.</p>
+
+<p>Feedbin syncing: fixed a bug where starred articles could appear as unread.</p>
+
+<p>Microblog Mac app sharing: when it has to launch the app first, it waits a little longer before sending it content, which should fix a bug where sometimes you get no content in that case.</p>
+
+<p>Enable the Open in Browser command only when a single article is selected.</p>
+
+ 							]]></description>
+            <pubDate>Fri, 13 Sep 2019 13:40:00 -0700</pubDate>
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.1/NetNewsWire5.0.1.zip" sparkle:version="2614" sparkle:shortVersionString="5.0.1" length="5095218" type="application/zip" />
             <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
         </item>
 
