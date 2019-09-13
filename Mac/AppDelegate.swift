@@ -41,6 +41,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBOutlet var debugMenuItem: NSMenuItem!
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
+	@IBOutlet var groupArticlesByFeedMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
 	
 	var unreadCount = 0 {
@@ -148,6 +149,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
 
 		updateSortMenuItems()
+		updateGroupByFeedMenuItem()
         createAndShowMainWindow()
 		if isFirstRun {
 			mainWindowController?.window?.center()
@@ -259,6 +261,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		updateSortMenuItems()
+		updateGroupByFeedMenuItem()
 		refreshTimer?.update()
 		updateDockBadge()
 	}
@@ -509,6 +512,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		AppDefaults.timelineSortDirection = .orderedDescending
 	}
+	
+	@IBAction func groupByFeedToggled(_ sender: NSMenuItem) {		
+		AppDefaults.timelineGroupByFeed.toggle()
+	}
+	
 }
 
 // MARK: - Debug Menu
@@ -545,6 +553,11 @@ private extension AppDelegate {
 		let sortByNewestOnTop = AppDefaults.timelineSortDirection == .orderedDescending
 		sortByNewestArticleOnTopMenuItem.state = sortByNewestOnTop ? .on : .off
 		sortByOldestArticleOnTopMenuItem.state = sortByNewestOnTop ? .off : .on
+	}
+	
+	func updateGroupByFeedMenuItem() {
+		let groupByFeedEnabled = AppDefaults.timelineGroupByFeed
+		groupArticlesByFeedMenuItem.state = groupByFeedEnabled ? .on : .off
 	}
 }
 

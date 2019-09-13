@@ -126,7 +126,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
-				sortDirectionDidChange()
+				sortParametersDidChange()
+			}
+		}
+	}
+	private var groupByFeed = AppDefaults.timelineGroupByFeed {
+		didSet {
+			if groupByFeed != oldValue {
+				sortParametersDidChange()
 			}
 		}
 	}
@@ -555,6 +562,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		self.fontSize = AppDefaults.timelineFontSize
 		self.sortDirection = AppDefaults.timelineSortDirection
+		self.groupByFeed = AppDefaults.timelineGroupByFeed
 	}
 	
 	@objc func appleInterfaceThemeChanged(_ note: Notification) {
@@ -876,14 +884,13 @@ private extension TimelineViewController {
 		}
 	}
 
-	func sortDirectionDidChange() {
-
+	func sortParametersDidChange() {
 		performBlockAndRestoreSelection {
 			let unsortedArticles = Set(articles)
 			replaceArticles(with: unsortedArticles)
 		}
 	}
-
+	
 	func selectedArticleIDs() -> [String] {
 
 		return selectedArticles.articleIDs()
@@ -980,7 +987,7 @@ private extension TimelineViewController {
 	}
 
 	func replaceArticles(with unsortedArticles: Set<Article>) {
-		articles = Array(unsortedArticles).sortedByDate(sortDirection)
+		articles = Array(unsortedArticles).sortedByDate(sortDirection, groupByFeed: groupByFeed)
 	}
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {

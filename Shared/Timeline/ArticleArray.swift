@@ -49,22 +49,11 @@ extension Array where Element == Article {
 			return articleAtRow(oneIndex)
 		})
 	}
-
-	func sortedByDate(_ sortDirection: ComparisonResult) -> ArticleArray {
-
-		let articles = sorted { (article1, article2) -> Bool in
-			if article1.logicalDatePublished == article2.logicalDatePublished {
-				return article1.articleID < article2.articleID
-			}
-			if sortDirection == .orderedDescending {
-				return article1.logicalDatePublished > article2.logicalDatePublished
-			}
-			return article1.logicalDatePublished < article2.logicalDatePublished
-		}
 		
-		return articles
+	func sortedByDate(_ sortDirection: ComparisonResult, groupByFeed: Bool = false) -> ArticleArray {
+		return ArticleSorter.sortedByDate(articles: self, sortDirection: sortDirection, groupByFeed: groupByFeed)
 	}
-
+	
 	func canMarkAllAsRead() -> Bool {
 
 		return anyArticleIsUnread()

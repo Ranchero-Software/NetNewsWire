@@ -22,6 +22,7 @@ struct AppDefaults {
 		static let sidebarFontSize = "sidebarFontSize"
 		static let timelineFontSize = "timelineFontSize"
 		static let timelineSortDirection = "timelineSortDirection"
+		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 		static let mainWindowWidths = "mainWindowWidths"
@@ -137,6 +138,15 @@ struct AppDefaults {
 		}
 	}
 	
+	static var timelineGroupByFeed: Bool {
+		get {
+			return bool(for: Key.timelineGroupByFeed)
+		}
+		set {
+			setBool(for: Key.timelineGroupByFeed, newValue)
+		}
+	}
+	
 	static var timelineShowsSeparators: Bool {
 		return bool(for: Key.timelineShowsSeparators)
 	}
@@ -161,7 +171,13 @@ struct AppDefaults {
 	}
 
 	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false, Key.refreshInterval: RefreshInterval.everyHour.rawValue]
+		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue,
+										Key.timelineFontSize: FontSize.medium.rawValue,
+										Key.detailFontSize: FontSize.medium.rawValue,
+										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+										Key.timelineGroupByFeed: false,
+										"NSScrollViewShouldScrollUnderTitlebar": false,
+										Key.refreshInterval: RefreshInterval.everyHour.rawValue]
 
 		UserDefaults.standard.register(defaults: defaults)
 

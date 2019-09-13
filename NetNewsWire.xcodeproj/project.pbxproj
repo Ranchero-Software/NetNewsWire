@@ -366,6 +366,9 @@
 		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
 		DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD82AB09231003F6002269DF /* SharingTests.swift */; };
 		DF999FF722B5AEFA0064B687 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF999FF622B5AEFA0064B687 /* SafariView.swift */; };
+		FF3ABF13232599810074C542 /* ArticleSorterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF09232599450074C542 /* ArticleSorterTests.swift */; };
+		FF3ABF1523259DDB0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
+		FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1046,6 +1049,8 @@
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
 		DF999FF622B5AEFA0064B687 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
+		FF3ABF09232599450074C542 /* ArticleSorterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorterTests.swift; sourceTree = "<group>"; };
+		FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1354,8 +1359,9 @@
 			isa = PBXGroup;
 			children = (
 				84F204DF1FAACBB30076E152 /* ArticleArray.swift */,
-				84CAFCA322BC8C08007694F0 /* FetchRequestQueue.swift */,
+				FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */,
 				84CAFCAE22BC8C35007694F0 /* FetchRequestOperation.swift */,
+				84CAFCA322BC8C08007694F0 /* FetchRequestQueue.swift */,
 				849A97731ED9EC04007D329B /* TimelineStringFormatter.swift */,
 			);
 			path = Timeline;
@@ -1979,6 +1985,7 @@
 			isa = PBXGroup;
 			children = (
 				84F9EAD0213660A100CF2DE4 /* ScriptingTests */,
+				FF3ABF09232599450074C542 /* ArticleSorterTests.swift */,
 				84F9EAE3213660A100CF2DE4 /* NetNewsWireTests.swift */,
 				DD82AB09231003F6002269DF /* SharingTests.swift */,
 				84F9EAE4213660A100CF2DE4 /* Info.plist */,
@@ -2643,6 +2650,7 @@
 				51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */,
 				514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */,
 				5152E0F923248F6200E5C7AD /* SettingsLocalAccountView.swift in Sources */,
+				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
 				51C452852265093600C03939 /* FlattenedAccountFolderPickerData.swift in Sources */,
@@ -2777,6 +2785,7 @@
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
 				8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */,
 				519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */,
+				FF3ABF1523259DDB0074C542 /* ArticleSorter.swift in Sources */,
 				84E8E0DB202EC49300562D8F /* TimelineViewController+ContextualMenus.swift in Sources */,
 				849A97791ED9EC04007D329B /* TimelineStringFormatter.swift in Sources */,
 				84E185C3203BB12600F69BFA /* MultilineTextFieldSizer.swift in Sources */,
@@ -2855,6 +2864,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FF3ABF13232599810074C542 /* ArticleSorterTests.swift in Sources */,
 				DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */,
 				84F9EAEB213660A100CF2DE4 /* testIterativeCreateAndDeleteFeed.applescript in Sources */,
 				84F9EAF4213660A100CF2DE4 /* testGenericScript.applescript in Sources */,

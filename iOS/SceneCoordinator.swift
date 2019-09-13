@@ -66,7 +66,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private(set) var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
-				sortDirectionDidChange()
+				sortParametersDidChange()
+			}
+		}
+	}
+	private(set) var groupByFeed = AppDefaults.timelineGroupByFeed {
+		didSet {
+			if groupByFeed != oldValue {
+				sortParametersDidChange()
 			}
 		}
 	}
@@ -400,6 +407,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		self.sortDirection = AppDefaults.timelineSortDirection
+		self.groupByFeed = AppDefaults.timelineGroupByFeed
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
@@ -1226,12 +1234,12 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func sortDirectionDidChange() {
+	func sortParametersDidChange() {
 		replaceArticles(with: Set(articles), animate: true)
 	}
-	
+		
 	func replaceArticles(with unsortedArticles: Set<Article>, animate: Bool) {
-		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection)
+		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection, groupByFeed: groupByFeed)
 		
 		if articles != sortedArticles {
 			
