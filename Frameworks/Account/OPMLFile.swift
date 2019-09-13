@@ -15,6 +15,13 @@ final class OPMLFile: NSObject, NSFilePresenter {
 	
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "account")
 
+	private var isDirty = false {
+		didSet {
+			queueSaveToDiskIfNeeded()
+		}
+	}
+	
+	private var isLoading = false
 	private let filename: String
 	private let account: Account
 	private let operationQueue: OperationQueue
@@ -44,13 +51,36 @@ final class OPMLFile: NSObject, NSFilePresenter {
 		}
 	}
 	
+	func markAsDirty() {
+		if !isLoading {
+			isDirty = true
+		}
+	}
+	
+	func queueSaveToDiskIfNeeded() {
+		Account.saveQueue.add(self, #selector(saveToDiskIfNeeded))
+	}
+
 	func load() {
+		isLoading = true
 		guard let opmlItems = parsedOPMLItems() else { return }
 		BatchUpdate.shared.perform {
 			account.loadOPMLItems(opmlItems, parentFolder: nil)
 		}
+		isLoading = false
 	}
 	
+}
+
+private extension OPMLFile {
+	
+	@objc func saveToDiskIfNeeded() {
+		if isDirty && !account.isDeleted {
+			isDirty = false
+			save()
+		}
+	}
+
 	func save() {
 		let opmlDocumentString = opmlDocument()
 		do {
@@ -61,16 +91,14 @@ final class OPMLFile: NSObject, NSFilePresenter {
 		}
 	}
 	
-}
-
-private extension OPMLFile {
-	
 	func reload() {
+		isLoading = true
 		guard let opmlItems = parsedOPMLItems() else { return }
 		BatchUpdate.shared.perform {
 			account.topLevelFeeds.removeAll()
 			account.loadOPMLItems(opmlItems, parentFolder: nil)
 		}
+		isLoading = false
 	}
 
 	func parsedOPMLItems() -> [RSOPMLItem]? {

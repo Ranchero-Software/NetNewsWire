@@ -191,12 +191,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	private var startingUp = true
 
-	public var dirty = false {
-		didSet {
-			queueSaveToDiskIfNeeded()
-		}
-	}
-
     public var unreadCount = 0 {
         didSet {
             if unreadCount != oldValue {
@@ -221,7 +215,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				}
 				else {
 					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
-					queueSaveToDiskIfNeeded()
+					opmlFile.queueSaveToDiskIfNeeded()
 				}
 			}
 		}
@@ -625,7 +619,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		// Feeds were added or deleted. Or folders added or deleted.
 		// Or feeds inside folders were added or deleted.
 		if !startingUp {
-			dirty = true
+			opmlFile.markAsDirty()
 		}
 		flattenedFeedsNeedUpdate = true
 		feedDictionaryNeedsUpdate = true
@@ -765,13 +759,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	@objc func displayNameDidChange(_ note: Notification) {
 		if let folder = note.object as? Folder, folder.account === self {
 			structureDidChange()
-		}
-	}
-
-	@objc func saveToDiskIfNeeded() {
-		if dirty && !isDeleted {
-			dirty = false
-			opmlFile.save()
 		}
 	}
 
@@ -958,10 +945,6 @@ private extension Account {
 
 private extension Account {
 	
-	func queueSaveToDiskIfNeeded() {
-		Account.saveQueue.add(self, #selector(saveToDiskIfNeeded))
-	}
-
 	func pullObjectsFromDisk() {
 		loadAccountMetadata()
 		loadFeedMetadata()
