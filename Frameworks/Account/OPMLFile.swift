@@ -56,7 +56,7 @@ private extension OPMLFile {
 		let errorPointer: NSErrorPointer = nil
 		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
 		
-		fileCoordinator.coordinate(writingItemAt: fileURL, options: .forReplacing, error: errorPointer, byAccessor: { writeURL in
+		fileCoordinator.coordinate(writingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { writeURL in
 			do {
 				try opmlDocumentString.write(to: writeURL, atomically: true, encoding: .utf8)
 			} catch let error as NSError {

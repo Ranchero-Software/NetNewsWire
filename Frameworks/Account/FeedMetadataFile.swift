@@ -70,7 +70,7 @@ private extension FeedMetadataFile {
 		let errorPointer: NSErrorPointer = nil
 		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
 		
-		fileCoordinator.coordinate(writingItemAt: fileURL, options: .forReplacing, error: errorPointer, byAccessor: { writeURL in
+		fileCoordinator.coordinate(writingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { writeURL in
 			do {
 				let data = try encoder.encode(feedMetadata)
 				try data.write(to: writeURL)
