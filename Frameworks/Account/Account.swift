@@ -167,18 +167,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
 
 	private var unreadCounts = [String: Int]() // [feedID: Int]
-	private lazy var opmlFile: OPMLFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
 
 	private var _flattenedFeeds = Set<Feed>()
 	private var flattenedFeedsNeedUpdate = true
 
-	private let metadataPath: String
+	private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
+	private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.opml"), account: self)
 	var metadata = AccountMetadata()
-	private var metadataDirty = false {
-		didSet {
-			queueSaveAccountMetadatafNeeded()
-		}
-	}
 
 	private let feedMetadataPath: String
 	private typealias FeedMetadataDictionary = [String: FeedMetadata]
@@ -249,7 +244,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID)
 
 		self.feedMetadataPath = (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist")
-		self.metadataPath = (dataFolder as NSString).appendingPathComponent("Settings.plist")
 
 		switch type {
 		case .onMyMac:
@@ -768,12 +762,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	@objc func saveAccountMetadataIfNeeded() {
-		if metadataDirty && !isDeleted {
-			saveAccountMetadata()
-		}
-	}
-
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {
@@ -791,7 +779,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 extension Account: AccountMetadataDelegate {
 	func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys) {
-		metadataDirty = true
+		metadataFile.markAsDirty()
 	}
 }
 
@@ -946,20 +934,9 @@ private extension Account {
 private extension Account {
 	
 	func pullObjectsFromDisk() {
-		loadAccountMetadata()
+		metadataFile.load()
 		loadFeedMetadata()
 		opmlFile.load()
-	}
-
-	func loadAccountMetadata() {
-		let url = URL(fileURLWithPath: metadataPath)
-		guard let data = try? Data(contentsOf: url) else {
-			metadata.delegate = self
-			return
-		}
-		let decoder = PropertyListDecoder()
-		metadata = (try? decoder.decode(AccountMetadata.self, from: data)) ?? AccountMetadata()
-		metadata.delegate = self
 	}
 
 	func loadFeedMetadata() {
@@ -999,24 +976,6 @@ private extension Account {
 		}
 	}
 
-	func queueSaveAccountMetadatafNeeded() {
-		Account.saveQueue.add(self, #selector(saveAccountMetadataIfNeeded))
-	}
-
-	func saveAccountMetadata() {
-		metadataDirty = false
-
-		let encoder = PropertyListEncoder()
-		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: metadataPath)
-		do {
-			let data = try encoder.encode(metadata)
-			try data.write(to: url)
-		}
-		catch {
-			assertionFailure(error.localizedDescription)
-		}
-	}
 }
 
 // MARK: - Private

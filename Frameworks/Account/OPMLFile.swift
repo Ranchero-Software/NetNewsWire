@@ -17,7 +17,7 @@ final class OPMLFile {
 
 	private let fileURL: URL
 	private let account: Account
-	private lazy var managedFile = ManagedResourceFile(fileURL: fileURL, load: loadCallback, reload: reloadCallback, save: saveCallback)
+	private lazy var managedFile = ManagedResourceFile(fileURL: fileURL, load: loadCallback, save: saveCallback)
 	
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
@@ -43,6 +43,7 @@ private extension OPMLFile {
 	func loadCallback() {
 		guard let opmlItems = parsedOPMLItems() else { return }
 		BatchUpdate.shared.perform {
+			account.topLevelFeeds.removeAll()
 			account.loadOPMLItems(opmlItems, parentFolder: nil)
 		}
 	}
@@ -68,14 +69,6 @@ private extension OPMLFile {
 		}
 	}
 	
-	func reloadCallback() {
-		guard let opmlItems = parsedOPMLItems() else { return }
-		BatchUpdate.shared.perform {
-			account.topLevelFeeds.removeAll()
-			account.loadOPMLItems(opmlItems, parentFolder: nil)
-		}
-	}
-
 	func parsedOPMLItems() -> [RSOPMLItem]? {
 
 		var fileData: Data? = nil
