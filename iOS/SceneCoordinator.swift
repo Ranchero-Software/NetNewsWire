@@ -495,6 +495,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func selectFeed(_ indexPath: IndexPath?, automated: Bool = true) {
+		guard indexPath != currentFeedIndexPath else { return 	}
+		
 		selectArticle(nil)
 		currentFeedIndexPath = indexPath
 
@@ -545,6 +547,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func selectArticle(_ article: Article?, automated: Bool = true) {
+		guard article != currentArticle else { return }
+		
 		currentArticle = article
 		activityManager.reading(currentArticle)
 		
