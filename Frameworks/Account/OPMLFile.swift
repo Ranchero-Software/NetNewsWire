@@ -11,81 +11,49 @@ import os.log
 import RSCore
 import RSParser
 
-final class OPMLFile: NSObject, NSFilePresenter {
+final class OPMLFile {
 	
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "opmlFile")
 
-	private var isDirty = false {
-		didSet {
-			queueSaveToDiskIfNeeded()
-		}
-	}
-	
-	private var isLoading = false
 	private let fileURL: URL
 	private let account: Account
-	private let operationQueue: OperationQueue
-	
-	var presentedItemURL: URL? {
-		return fileURL
-	}
-	
-	var presentedItemOperationQueue: OperationQueue {
-		return operationQueue
-	}
+	private lazy var managedFile = ManagedResourceFile(fileURL: fileURL, load: loadCallback, reload: reloadCallback, save: saveCallback)
 	
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
-		operationQueue = OperationQueue()
-		operationQueue.maxConcurrentOperationCount = 1
-	
-		super.init()
-		
-		NSFileCoordinator.addFilePresenter(self)
-	}
-	
-	func presentedItemDidChange() {
-		DispatchQueue.main.async {
-			self.reload()
-		}
 	}
 	
 	func markAsDirty() {
-		if !isLoading {
-			isDirty = true
-		}
+		managedFile.markAsDirty()
 	}
 	
 	func queueSaveToDiskIfNeeded() {
-		Account.saveQueue.add(self, #selector(saveToDiskIfNeeded))
+		managedFile.queueSaveToDiskIfNeeded()
 	}
 
 	func load() {
-		isLoading = true
-		guard let opmlItems = parsedOPMLItems() else { return }
-		BatchUpdate.shared.perform {
-			account.loadOPMLItems(opmlItems, parentFolder: nil)
-		}
-		isLoading = false
+		managedFile.load()
 	}
 	
 }
 
 private extension OPMLFile {
-	
-	@objc func saveToDiskIfNeeded() {
-		if isDirty && !account.isDeleted {
-			isDirty = false
-			save()
+
+	func loadCallback() {
+		guard let opmlItems = parsedOPMLItems() else { return }
+		BatchUpdate.shared.perform {
+			account.loadOPMLItems(opmlItems, parentFolder: nil)
 		}
 	}
-
-	func save() {
+	
+	func saveCallback() {
+		guard !account.isDeleted else { return }
+		
 		let opmlDocumentString = opmlDocument()
 		
 		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator(filePresenter: self)
+		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
 		
 		fileCoordinator.coordinate(writingItemAt: fileURL, options: .forReplacing, error: errorPointer, byAccessor: { writeURL in
 			do {
@@ -100,21 +68,19 @@ private extension OPMLFile {
 		}
 	}
 	
-	func reload() {
-		isLoading = true
+	func reloadCallback() {
 		guard let opmlItems = parsedOPMLItems() else { return }
 		BatchUpdate.shared.perform {
 			account.topLevelFeeds.removeAll()
 			account.loadOPMLItems(opmlItems, parentFolder: nil)
 		}
-		isLoading = false
 	}
 
 	func parsedOPMLItems() -> [RSOPMLItem]? {
 
 		var fileData: Data? = nil
 		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator(filePresenter: self)
+		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
 		
 		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
 			do {
