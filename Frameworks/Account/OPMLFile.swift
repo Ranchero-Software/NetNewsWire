@@ -22,12 +22,12 @@ final class OPMLFile: NSObject, NSFilePresenter {
 	}
 	
 	private var isLoading = false
-	private let filename: String
+	private let fileURL: URL
 	private let account: Account
 	private let operationQueue: OperationQueue
 	
 	var presentedItemURL: URL? {
-		return URL(fileURLWithPath: filename)
+		return fileURL
 	}
 	
 	var presentedItemOperationQueue: OperationQueue {
@@ -35,7 +35,7 @@ final class OPMLFile: NSObject, NSFilePresenter {
 	}
 	
 	init(filename: String, account: Account) {
-		self.filename = filename
+		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 		operationQueue = OperationQueue()
 		operationQueue.maxConcurrentOperationCount = 1
@@ -83,11 +83,20 @@ private extension OPMLFile {
 
 	func save() {
 		let opmlDocumentString = opmlDocument()
-		do {
-			let url = URL(fileURLWithPath: filename)
-			try opmlDocumentString.write(to: url, atomically: true, encoding: .utf8)
-		} catch let error as NSError {
-			os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
+		
+		let errorPointer: NSErrorPointer = nil
+		let fileCoordinator = NSFileCoordinator(filePresenter: self)
+		
+		fileCoordinator.coordinate(writingItemAt: fileURL, options: .forReplacing, error: errorPointer, byAccessor: { writeURL in
+			do {
+				try opmlDocumentString.write(to: writeURL, atomically: true, encoding: .utf8)
+			} catch let error as NSError {
+				os_log(.error, log: log, "OPML save to disk failed: %@.", error.localizedDescription)
+			}
+		})
+		
+		if let error = errorPointer?.pointee {
+			os_log(.error, log: log, "OPML save to disk coordination failed: %@.", error.localizedDescription)
 		}
 	}
 	
@@ -102,22 +111,31 @@ private extension OPMLFile {
 	}
 
 	func parsedOPMLItems() -> [RSOPMLItem]? {
+
+		var fileData: Data? = nil
+		let errorPointer: NSErrorPointer = nil
+		let fileCoordinator = NSFileCoordinator(filePresenter: self)
 		
-		let opmlFileURL = URL(fileURLWithPath: filename)
-		var fileData: Data?
-		do {
-			fileData = try Data(contentsOf: opmlFileURL)
-		} catch {
-			// Commented out because it’s not an error on first run.
-			// TODO: make it so we know if it’s first run or not.
-			//NSApplication.shared.presentError(error)
-			return nil
+		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
+			do {
+				fileData = try Data(contentsOf: readURL)
+			} catch {
+				// Commented out because it’s not an error on first run.
+				// TODO: make it so we know if it’s first run or not.
+				//NSApplication.shared.presentError(error)
+				os_log(.error, log: log, "OPML read from disk failed: %@.", error.localizedDescription)
+			}
+		})
+		
+		if let error = errorPointer?.pointee {
+			os_log(.error, log: log, "OPML read from disk coordination failed: %@.", error.localizedDescription)
 		}
+
 		guard let opmlData = fileData else {
 			return nil
 		}
 
-		let parserData = ParserData(url: opmlFileURL.absoluteString, data: opmlData)
+		let parserData = ParserData(url: fileURL.absoluteString, data: opmlData)
 		var opmlDocument: RSOPMLDocument?
 
 		do {
