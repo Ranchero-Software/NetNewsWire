@@ -95,9 +95,9 @@ public extension UINavigationController {
 	- parameter progress: The new progress value.
 	- parameter animated: true if the change should be animated, false if the change should happen immediately.
 	*/
-	func setProgress(_ progress: Float, animated: Bool) {
+	func setProgress(_ progress: Float, animated: Bool, completion: @escaping () -> Void) {
 		progressView.bar.alpha = 1
-		progressView.setProgress(progress, animated: animated)
+		progressView.setProgress(progress, animated: animated, completion: completion)
 	}
 	
 	/**
@@ -105,26 +105,22 @@ public extension UINavigationController {
 	*/
 	func finishProgress() {
 		progressView.bar.alpha = 1
-		progressView.setProgress(1, animated: true)
-		
-		UIView.animate(withDuration: 0.25,
-					   animations: {
-						self.progressView.bar.alpha = 0
-		}, completion: { finished in
-			self.progressView.progress = 0
+		progressView.setProgress(1, animated: true) {
+			UIView.animate(withDuration: 0.5, animations: { self.progressView.bar.alpha = 0 }) { finished in
+				self.progressView.progress = 0
+			}
 		}
-		)
 	}
 	
 	/**
 	While progress is changed to 0.0, the bar will fade out.
 	*/
 	func cancelProgress() {
-		progressView.setProgress(0, animated: true)
-		
-		UIView.animate(withDuration: 0.25, animations: {
-			self.progressView.bar.alpha = 0
-		})
+		progressView.setProgress(0, animated: true) {
+			UIView.animate(withDuration: 0.5, animations: {
+				self.progressView.bar.alpha = 0
+			})
+		}
 	}
 	
 	func updateAccountRefreshProgressIndicator() {
@@ -137,7 +133,7 @@ public extension UINavigationController {
 			}
 		} else {
 			let percent = Float(progress.numberCompleted) / Float(progress.numberOfTasks)
-			setProgress(percent, animated: true)
+			setProgress(percent, animated: true) {}
 		}
 		
 	}
