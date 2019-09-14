@@ -71,47 +71,46 @@ struct SettingsReaderAPIAccountView : View {
 		}
 
 		Account.validateCredentials(type: viewModel.accountType, credentials: credentials, endpoint: apiURL) { result in
-			
+
 			self.busy = false
 			
 			switch result {
-			case .success(let authenticated):
+			case .success(let validatedCredentials):
 				
-				if (authenticated != nil) {
-					
-					var newAccount = false
-					let workAccount: Account
-					if self.viewModel.account == nil {
-						workAccount = AccountManager.shared.createAccount(type: self.viewModel.accountType)
-						newAccount = true
-					} else {
-						workAccount = self.viewModel.account!
-					}
-					
-					do {
-						
-						do {
-							try workAccount.removeCredentials()
-						} catch {}
-						
-						workAccount.endpointURL = apiURL
-						
-						try workAccount.storeCredentials(credentials)
-						
-						if newAccount {
-							workAccount.refreshAll() { result in }
-						}
-						
-						self.dismiss()
-						
-					} catch {
-						self.error = "Keychain error while storing credentials."
-					}
-					
-				} else {
+				guard let validatedCredentials = validatedCredentials else {
 					self.error = "Invalid email/password combination."
+					return
+				}
+
+				var newAccount = false
+				let workAccount: Account
+				if self.viewModel.account == nil {
+					workAccount = AccountManager.shared.createAccount(type: self.viewModel.accountType)
+					newAccount = true
+				} else {
+					workAccount = self.viewModel.account!
 				}
 				
+				do {
+					
+					do {
+						try workAccount.removeCredentials()
+					} catch {}
+					
+					workAccount.endpointURL = apiURL
+					
+					try workAccount.storeCredentials(validatedCredentials)
+					
+					if newAccount {
+						workAccount.refreshAll() { result in }
+					}
+					
+					self.dismiss()
+					
+				} catch {
+					self.error = "Keychain error while storing credentials."
+				}
+					
 			case .failure:
 				self.error = "Network error. Try again later."
 			}
