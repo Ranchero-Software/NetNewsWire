@@ -106,8 +106,10 @@ public extension UINavigationController {
 	func finishProgress() {
 		progressView.bar.alpha = 1
 		progressView.setProgress(1, animated: true) {
-			UIView.animate(withDuration: 0.5, animations: { self.progressView.bar.alpha = 0 }) { finished in
-				self.progressView.progress = 0
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+				UIView.animate(withDuration: 0.5, animations: { self.progressView.bar.alpha = 0 }) { finished in
+					self.progressView.progress = 0
+				}
 			}
 		}
 	}
@@ -117,9 +119,11 @@ public extension UINavigationController {
 	*/
 	func cancelProgress() {
 		progressView.setProgress(0, animated: true) {
-			UIView.animate(withDuration: 0.5, animations: {
-				self.progressView.bar.alpha = 0
-			})
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+				UIView.animate(withDuration: 0.5, animations: {
+					self.progressView.bar.alpha = 0
+				})
+			}
 		}
 	}
 	
