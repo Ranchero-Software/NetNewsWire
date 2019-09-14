@@ -12,74 +12,61 @@ import Account
 import RSWeb
 
 struct SettingsReaderAPIAccountView : View {
-	@Environment(\.isPresented) private var isPresented
-	@ObjectBinding var viewModel: ViewModel
+	@Environment(\.presentationMode) var presentation
+	@ObservedObject var viewModel: ViewModel
+
 	@State var busy: Bool = false
-	@State var error: Text = Text("")
+	@State var error: String = ""
 
 	var body: some View {
-		NavigationView {
-			List {
-				Section(header:
-					SettingsAccountLabelView(accountImage: "accountFreshRSS", accountLabel: "FreshRSS").padding()
-				)  {
-					HStack {
-						Text("Email:")
-						Divider()
-						TextField($viewModel.email)
-						.textContentType(.username)
-					}
-					HStack {
-						Text("Password:")
-						Divider()
-						SecureField($viewModel.password)
-					}
-					HStack {
-						Text("API URL:")
-						Divider()
-						TextField($viewModel.apiURL)
-							.textContentType(.URL)
-					}
+		Form {
+			Section(header:
+				HStack {
+					Spacer()
+					SettingsAccountLabelView(accountImage: "accountFreshRSS", accountLabel: "FreshRSS")
+						.padding()
+						.layoutPriority(1.0)
+					Spacer()
 				}
-				Section(footer:
-					HStack {
-						Spacer()
-						error.color(.red)
-						Spacer()
-					}
-					) {
-					HStack {
-						Spacer()
-						Button(action: { self.addAccount() }) {
-							if viewModel.isUpdate {
-								Text("Update Account")
-							} else {
-								Text("Add Account")
-							}
+			)  {
+				TextField("Email", text: $viewModel.email).textContentType(.username)
+				SecureField("Password", text: $viewModel.password)
+				TextField("API URL:", text: $viewModel.apiURL).textContentType(.URL)
+			}
+			
+			Section(footer:
+				HStack {
+					Spacer()
+					Text(verbatim: error).foregroundColor(.red)
+					Spacer()
+				}
+				) {
+				HStack {
+					Spacer()
+					Button(action: { self.addAccount() }) {
+						if viewModel.isUpdate {
+							Text("Update Account")
+						} else {
+							Text("Add Account")
 						}
-						.disabled(!viewModel.isValid)
-						Spacer()
 					}
+					.disabled(!viewModel.isValid)
+					Spacer()
 				}
 			}
-			.disabled(busy)
-			.listStyle(.grouped)
-			.navigationBarTitle(Text(""), displayMode: .inline)
-			.navigationBarItems(leading:
-				Button(action: { self.dismiss() }) { Text("Cancel") }
-			)
 		}
+//			.disabled(busy)
 	}
 	
 	private func addAccount() {
 		
 		busy = true
-		error = Text("")
+		error = ""
 		
 		let emailAddress = viewModel.email.trimmingCharacters(in: .whitespaces)
 		let credentials = Credentials.readerAPIBasicLogin(username: emailAddress, password: viewModel.password)
 		guard let apiURL = URL(string: viewModel.apiURL) else {
-			self.error = Text("Invalide API URL.")
+			self.error = "Invalid API URL."
 			return
 		}
 
@@ -118,15 +105,15 @@ struct SettingsReaderAPIAccountView : View {
 						self.dismiss()
 						
 					} catch {
-						self.error = Text("Keychain error while storing credentials.")
+						self.error = "Keychain error while storing credentials."
 					}
 					
 				} else {
-					self.error = Text("Invalid email/password combination.")
+					self.error = "Invalid email/password combination."
 				}
 				
 			case .failure:
-				self.error = Text("Network error. Try again later.")
+				self.error = "Network error. Try again later."
 			}
 			
 		}
@@ -134,11 +121,12 @@ struct SettingsReaderAPIAccountView : View {
 	}
 	
 	private func dismiss() {
-		isPresented?.value = false
+		presentation.wrappedValue.dismiss()
 	}
 	
-	class ViewModel: BindableObject {
-		let didChange = PassthroughSubject<ViewModel, Never>()
+	class ViewModel: ObservableObject {
+		
+		let objectWillChange = ObservableObjectPublisher()
 		var accountType: AccountType
 		var account: Account? = nil
 		
@@ -146,28 +134,29 @@ struct SettingsReaderAPIAccountView : View {
 			self.accountType = accountType
 		}
 		
-		init(accountType: AccountType, account: Account) {
+		init(account: Account) {
 			self.account = account
-			self.accountType = accountType
-			if case .basic(let username, let password) = try? account.retrieveCredentials() {
+			self.accountType = account.type
+			if case .readerAPIBasicLogin(let username, let password) = try? account.retrieveCredentials() {
 				self.email = username
 				self.password = password
+				self.apiURL = account.endpointURL?.absoluteString ?? ""
 			}
 		}
 
 		var email: String = "" {
-			didSet {
-				didChange.send(self)
+			willSet {
+				objectWillChange.send()
 			}
 		}
 		var password: String = "" {
-			didSet {
-				didChange.send(self)
+			willSet {
+				objectWillChange.send()
 			}
 		}
 		var apiURL: String = "" {
-			didSet {
-				didChange.send(self)
+			willSet {
+				objectWillChange.send()
 			}
 		}
 		var isUpdate: Bool {

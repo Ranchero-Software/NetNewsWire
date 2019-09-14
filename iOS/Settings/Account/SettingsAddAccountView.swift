@@ -20,6 +20,9 @@ struct SettingsAddAccountView : View {
 			NavigationLink(destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())) {
 				SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin")
 			}
+			NavigationLink(destination: SettingsReaderAPIAccountView(viewModel: SettingsReaderAPIAccountView.ViewModel(accountType: .freshRSS))) {
+				SettingsAccountLabelView(accountImage: "accountFreshRSS", accountLabel: "Fresh RSS")
+			}
 		}
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)
 	}

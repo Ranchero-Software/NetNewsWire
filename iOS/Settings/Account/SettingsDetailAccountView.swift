@@ -14,7 +14,7 @@ import RSWeb
 struct SettingsDetailAccountView : View {
 	@Environment(\.presentationMode) var presentation
 	@ObservedObject var viewModel: ViewModel
-	@State private var isFeedbinCredentialsPresented = false
+	@State private var accountType: AccountType = nil
 	@State private var isDeleteAlertPresented = false
 
     var body: some View {
@@ -32,15 +32,20 @@ struct SettingsDetailAccountView : View {
 					HStack {
 						Spacer()
 						Button(action: {
-							self.isFeedbinCredentialsPresented.toggle()
+							self.accountType = self.viewModel.account.type
 						}) {
 							Text("Credentials")
 						}
 						Spacer()
 					}
 				}
-				.sheet(isPresented: $isFeedbinCredentialsPresented) {
-					self.settingsFeedbinAccountView
+				.sheet(item: $accountType) { type in
+					if type == .feedbin {
+						self.settingsFeedbinAccountView
+					}
+					if type == .freshRSS {
+						self.settingsReaderAPIAccountView
+					}
 				}
 			}
 			if viewModel.isDeletable {
@@ -74,6 +79,11 @@ struct SettingsDetailAccountView : View {
 		return SettingsFeedbinAccountView(viewModel: feedbinViewModel)
 	}
 	
+	var settingsReaderAPIAccountView: SettingsReaderAPIAccountView {
+		let readerAPIModel = SettingsReaderAPIAccountView.ViewModel(account: viewModel.account)
+		return SettingsReaderAPIAccountView(viewModel: readerAPIModel)
+	}
+
 	class ViewModel: ObservableObject {
 		
 		let objectWillChange = ObservableObjectPublisher()
