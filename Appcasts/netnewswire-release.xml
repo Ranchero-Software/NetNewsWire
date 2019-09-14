@@ -7,6 +7,18 @@
         <language>en</language>
 
 				<item>
+         <title>NetNewsWire 5.0.2</title>
+            <description><![CDATA[
+<p>The app movement monitor has been updated to handle quarantined apps and translocation.</p>
+
+<p>Normally we wouldn’t have pushed out a new release for a single bug fix, but this one is important — we were getting false positives on app movement, which was affecting some users negatively.</p>
+ 							]]></description>
+            <pubDate>Sat, 14 Sep 2019 11:20:00 -0700</pubDate>
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.2/NetNewsWire5.0.2.zip" sparkle:version="2615" sparkle:shortVersionString="5.0.2" length="5082387" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+				<item>
          <title>NetNewsWire 5.0.1</title>
             <description><![CDATA[
 <p>Crash fix: when the app is renamed or moved on disk while running, alert the user and quit the app. This prevents crashes that will happen due to renaming/moving. See Daniel Jalkut on <a href="https://red-sweater.com/blog/3508/app-movement-monitoring">App Movement Monitoring</a> for more info.</p>
