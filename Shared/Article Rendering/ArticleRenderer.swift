@@ -219,7 +219,6 @@ private extension ArticleRenderer {
 	}
 
 	func base64String(forImage image: RSImage) -> String? {
-		print("height: \(image.size.height) width: \(image.size.width)")
 		return image.dataRepresentation()?.base64EncodedString()
 	}
 
