@@ -8,7 +8,9 @@
 
 import AppKit
 import RSCore
+import RSParser
 import RSTree
+import RSWeb
 import Articles
 import Account
 
@@ -26,12 +28,7 @@ class FindFeedWindowController : NSWindowController {
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!
 
-	private var urlString: String?
-	private var initialName: String?
-	private weak var initialAccount: Account?
-	private var initialFolder: Folder?
 	private weak var delegate: FindFeedWindowControllerDelegate?
-	private var folderTreeController: TreeController!
 
 	private var userEnteredTitle: String? {
 		var s = nameTextField.stringValue
@@ -42,14 +39,9 @@ class FindFeedWindowController : NSWindowController {
 		return s
 	}
 	
-	convenience init(urlString: String?, name: String?, account: Account?, folder: Folder?, folderTreeController: TreeController, delegate: FindFeedWindowControllerDelegate?) {
+	convenience init(delegate: FindFeedWindowControllerDelegate?) {
 		self.init(windowNibName: NSNib.Name("FindFeedSheet"))
-		self.urlString = urlString
-		self.initialName = name
-		self.initialAccount = account
-		self.initialFolder = folder
 		self.delegate = delegate
-		self.folderTreeController = folderTreeController
 	}
 	
     func runSheetOnWindow(_ hostWindow: NSWindow) {
@@ -59,12 +51,6 @@ class FindFeedWindowController : NSWindowController {
     }
 
 	override func windowDidLoad() {
-		if let urlString = urlString {
-			urlTextField.stringValue = urlString
-		}
-		if let initialName = initialName, !initialName.isEmpty {
-			nameTextField.stringValue = initialName
-		}
 
 		updateUI()
 	}
@@ -106,7 +92,9 @@ class FindFeedWindowController : NSWindowController {
 	}
 
 	@objc func controlTextDidChange(_ obj: Notification) {
-		updateUI()
+		FeedFinder.find(query: urlTextField.stringValue) { [weak self] result in
+			self?.nameTextField.stringValue = (try? result.get())?.joined(separator: "\n") ?? ""
+		}
 	}
 }
 

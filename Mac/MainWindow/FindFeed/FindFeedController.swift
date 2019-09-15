@@ -25,8 +25,6 @@ class FindFeedController: FindFeedWindowControllerDelegate {
 
 	private let hostWindow: NSWindow
 	private var findFeedWindowController: FindFeedWindowController?
-	private var foundFeedURLString: String?
-	private var titleFromFeed: String?
 	
 	init(hostWindow: NSWindow) {
 		
@@ -35,10 +33,7 @@ class FindFeedController: FindFeedWindowControllerDelegate {
 
 	func showAddFeedSheet(_ urlString: String?, _ name: String?, _ account: Account?, _ folder: Folder?) {
 
-		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
-		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
-
-		findFeedWindowController = FindFeedWindowController(urlString: urlString ?? urlStringFromPasteboard, name: name, account: account, folder: folder, folderTreeController: folderTreeController, delegate: self)
+		findFeedWindowController = FindFeedWindowController(delegate: self)
 		findFeedWindowController!.runSheetOnWindow(hostWindow)
 	}
 

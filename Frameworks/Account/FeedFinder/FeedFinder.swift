@@ -11,9 +11,10 @@ import RSParser
 import RSWeb
 import RSCore
 
-class FeedFinder {
+public class FeedFinder {
 	
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
+
 		downloadUsingCache(url) { (data, response, error) in
 			if response?.forcedStatusCode == 404 {
 				completion(.failure(AccountError.createErrorNotFound))
@@ -49,7 +50,56 @@ class FeedFinder {
 			FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString, completion: completion)
 		}
 	}
+	
+	public static func find(query: String, completion: @escaping (Result<[String], Error>) -> Void) {
+		
+		precondition(Thread.isMainThread)
+
+		let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+		let url = URL(string: "https://www.google.com/search?q=\(encodedQuery)")!
+		
+		var urlRequest = URLRequest(url: url)
+		urlRequest.addValue("User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.85 Safari/537.36", forHTTPHeaderField: "User-Agent")
+
+		download(urlRequest) { (data, response, error) in
+			if response?.forcedStatusCode == 404 {
+				completion(.failure(AccountError.createErrorNotFound))
+				return
+			}
+			
+			if let error = error {
+				completion(.failure(error))
+				return
+			}
+			
+			guard let data = data, let response = response else {
+				completion(.failure(AccountError.createErrorNotFound))
+				return
+			}
+			
+			if !response.statusIsOK || data.isEmpty {
+				completion(.failure(AccountError.createErrorNotFound))
+				return
+			}
+			
+			if !FeedFinder.isHTML(data) {
+				completion(.failure(AccountError.createErrorNotFound))
+				return
+			}
+			
+			let links = RSHTMLLinkParser.htmlLinks(with: ParserData(url: url.absoluteString, data: data)) ?? []
+			let potentialLinks = links.compactMap { $0.urlString }.filter { !$0.contains("google.") && !$0.contains("googleusercontent.") && $0.starts(with: "http") }
+			completion(.success(potentialLinks))
+		}
+	}
 }
+
+public func possibleFeedsInHTMLPage(htmlData: Data, urlString: String) -> [String] {
+	return FeedFinder
+		.possibleFeedsInHTMLPage(htmlData: htmlData, urlString: urlString)
+		.map { $0.urlString }
+}
+
 
 private extension FeedFinder {
 
