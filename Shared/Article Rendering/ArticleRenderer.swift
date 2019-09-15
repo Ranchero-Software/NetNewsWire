@@ -159,48 +159,6 @@ private extension ArticleRenderer {
 		return permalink != preferredLink // Make date a link if it’s a different link from the title’s link
 	}
 
-	static let avatarDimension = 48
-	static let doubledDimension = CGFloat(avatarDimension * 2)
-
-	static func imageScaledForDisplay(image: RSImage) -> RSImage {
-		// Aspect fit.
-		#if os(macOS)
-
-		if image.size.height <= doubledDimension && image.size.width <= doubledDimension {
-			return image
-		}
-
-		let scaledImage = NSImage.init(size: NSSize(width: doubledDimension, height: doubledDimension))
-		scaledImage.lockFocus()
-
-		var imageRectWidth = doubledDimension
-		var imageRectHeight = doubledDimension
-		var imageRectOriginX = CGFloat(0.0)
-		var imageRectOriginY = CGFloat(0.0)
-
-		if image.size.width > image.size.height {
-			let factor: CGFloat = doubledDimension / image.size.width
-			imageRectHeight = image.size.height * factor
-			imageRectOriginY = (doubledDimension - imageRectHeight) / 2.0
-		}
-		else if image.size.height > image.size.width {
-			let factor: CGFloat = doubledDimension / image.size.height
-			imageRectWidth = image.size.width * factor
-			imageRectOriginX = (doubledDimension - imageRectWidth) / 2.0
-		}
-
-		image.draw(in: NSRect(x: imageRectOriginX, y: imageRectOriginY, width: imageRectWidth, height: imageRectHeight))
-		scaledImage.unlockFocus()
-		return scaledImage
-
-		#else //iOS
-
-		// TODO: https://github.com/brentsimmons/NetNewsWire/issues/1021
-
-		return image
-		#endif
-	}
-
 	func faviconImgTag(forFeed feed: Feed) -> String? {
 
 		if let cachedImgTag = ArticleRenderer.faviconImgTagCache[feed] {
@@ -208,8 +166,7 @@ private extension ArticleRenderer {
 		}
 
 		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
-			let scaledImage = ArticleRenderer.imageScaledForDisplay(image: favicon)
-			if let s = base64String(forImage: scaledImage) {
+			if let s = base64String(forImage: favicon) {
 				var dimension = min(favicon.size.height, CGFloat(ArticleRenderer.avatarDimension)) // Assuming square images.
 				dimension = max(dimension, 16) // Some favicons say they’re < 16. Force them larger.
 				if dimension >= CGFloat(ArticleRenderer.avatarDimension) * 0.8 { //Close enough to scale up.
@@ -238,8 +195,7 @@ private extension ArticleRenderer {
 		}
 
 		if let icon = appDelegate.feedIconDownloader.icon(for: feed) {
-			let scaledImage = ArticleRenderer.imageScaledForDisplay(image: icon)
-			if let s = base64String(forImage: scaledImage) {
+			if let s = base64String(forImage: icon) {
 				#if os(macOS)
 				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=48 width=48 />"
 				#else
@@ -272,6 +228,7 @@ private extension ArticleRenderer {
 		return nil
 	}
 
+	static let avatarDimension = 48
 
 	struct Avatar {
 		let imageURL: String
