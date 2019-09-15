@@ -76,7 +76,12 @@ struct SettingsView : View {
 			
 			VStack {
 				 Button("Import Subscriptions...") {
-					 self.isOPMLImportPresented = true
+					if AccountManager.shared.activeAccounts.count == 1 {
+						self.opmlAccount = AccountManager.shared.activeAccounts.first
+						self.isOPMLImportDocPickerPresented = true
+					} else {
+						self.isOPMLImportPresented = true
+					}
 				 }
 			}.actionSheet(isPresented: $isOPMLImportPresented) {
 				buildSubscriptionsImportAccounts()
@@ -86,7 +91,12 @@ struct SettingsView : View {
 			
 			VStack {
 				 Button("Export Subscriptions...") {
-					 self.isOPMLExportPresented = true
+					if AccountManager.shared.accounts.count == 1 {
+						self.opmlAccount = AccountManager.shared.accounts.first
+						self.isOPMLImportDocPickerPresented = true
+					} else {
+						self.isOPMLExportPresented = true
+					}
 				 }
 			 }.actionSheet(isPresented: $isOPMLExportPresented) {
 				buildSubscriptionsExportAccounts()
