@@ -27,10 +27,8 @@ class AccountsFeedbinWindowController: NSWindowController {
 	}
 	
 	override func windowDidLoad() {
-		if let account = account, let credentials = try? account.retrieveCredentials() {
-			if case .basic(let username, _) = credentials {
-				usernameTextField.stringValue = username
-			}
+		if let account = account, let credentials = try? account.retrieveCredentials(type: .basic) {
+			usernameTextField.stringValue = credentials.username
 			actionButton.title = NSLocalizedString("Update", comment: "Update")
 		} else {
 			actionButton.title = NSLocalizedString("Create", comment: "Create")
@@ -63,7 +61,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 		progressIndicator.isHidden = false
 		progressIndicator.startAnimation(self)
 		
-		let credentials = Credentials.basic(username: usernameTextField.stringValue, password: passwordTextField.stringValue)
+		let credentials = Credentials(type: .basic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
 		Account.validateCredentials(type: .feedbin, credentials: credentials) { [weak self] result in
 			
 			guard let self = self else { return }
@@ -79,6 +77,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
 					return
 				}
+				
 				var newAccount = false
 				if self.account == nil {
 					self.account = AccountManager.shared.createAccount(type: .feedbin)
@@ -86,7 +85,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 				}
 			
 				do {
-					try self.account?.removeCredentials()
+					try self.account?.removeCredentials(type: .basic)
 					try self.account?.storeCredentials(validatedCredentials)
 					if newAccount {
 						self.account?.refreshAll() { result in

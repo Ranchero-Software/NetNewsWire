@@ -525,7 +525,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func accountDidInitialize(_ account: Account) {
-		credentials = try? account.retrieveCredentials()
+		credentials = try? account.retrieveCredentials(type: .basic)
 		accountMetadata = account.metadata
 	}
 	
@@ -1229,7 +1229,7 @@ private extension FeedbinAccountDelegate {
 
 	func retrieveCredentialsIfNecessary(_ account: Account) {
 		if credentials == nil {
-			credentials = try? account.retrieveCredentials()
+			credentials = try? account.retrieveCredentials(type: .basic)
 		}
 	}
 	

@@ -62,7 +62,7 @@ struct SettingsFeedbinAccountView : View {
 		error = ""
 		
 		let emailAddress = viewModel.email.trimmingCharacters(in: .whitespaces)
-		let credentials = Credentials.basic(username: emailAddress, password: viewModel.password)
+		let credentials = Credentials(type: .basic, username: emailAddress, secret: viewModel.password)
 
 		Account.validateCredentials(type: .feedbin, credentials: credentials) { result in
 
@@ -85,7 +85,7 @@ struct SettingsFeedbinAccountView : View {
 					do {
 
 						do {
-							try workAccount.removeCredentials()
+							try workAccount.removeCredentials(type: .basic)
 						} catch {}
 						try workAccount.storeCredentials(credentials)
 
@@ -125,9 +125,8 @@ struct SettingsFeedbinAccountView : View {
 		
 		init(account: Account) {
 			self.account = account
-			if case .basic(let username, let password) = try? account.retrieveCredentials() {
-				self.email = username
-				self.password = password
+			if let credentials = try? account.retrieveCredentials(type: .basic) {
+				self.email = credentials.username
 			}
 		}
 

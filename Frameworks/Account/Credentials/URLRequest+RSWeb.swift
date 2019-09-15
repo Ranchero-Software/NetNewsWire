@@ -19,29 +19,28 @@ public extension URLRequest {
 			return
 		}
 		
-		switch credentials {
-		case .basic(let username, let password):
-			let data = "\(username):\(password)".data(using: .utf8)
+		switch credentials.type {
+		case .basic:
+			let data = "\(credentials.username):\(credentials.secret)".data(using: .utf8)
 			let base64 = data?.base64EncodedString()
 			let auth = "Basic \(base64 ?? "")"
 			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
-        case .readerAPIBasicLogin(let username, let password):
+        case .readerBasic:
             setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             httpMethod = "POST"
-            let postData = "Email=\(username)&Passwd=\(password)"
+			let postData = "Email=\(credentials.username)&Passwd=\(credentials.secret)"
             httpBody = postData.data(using: String.Encoding.utf8)
-        case .readerAPIAuthLogin(_, let apiKey):
-            let auth = "GoogleLogin auth=\(apiKey)"
+		case .readerAPIKey:
+            let auth = "GoogleLogin auth=\(credentials.secret)"
             setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
-        case .oauthAccessToken(_, let token):
-            let auth = "OAuth \(token)"
+		case .oauthAccessToken:
+            let auth = "OAuth \(credentials.secret)"
             setValue(auth, forHTTPHeaderField: "Authorization")
         case .oauthRefreshToken:
             // While both access and refresh tokens are credentials, it seems the `Credentials` cases
             // enumerates how the identity of the user can be proved rather than
             // credentials-in-general, such as in this refresh token case,
             // the authority to prove an identity.
-            // TODO: Refactor as usage becomes clearer.
             assertionFailure("Refresh tokens are used to replace expired access tokens. Did you mean to use `accessToken` instead?")
             break
         }

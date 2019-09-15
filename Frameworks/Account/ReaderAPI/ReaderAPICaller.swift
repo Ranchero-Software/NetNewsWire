@@ -84,11 +84,6 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		guard case .readerAPIBasicLogin(let username, _) = credentials else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
-		}
-		
 		let request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.login.rawValue), credentials: credentials)
 
 		transport.send(request: request) { result in
@@ -117,7 +112,7 @@ final class ReaderAPICaller: NSObject {
 				}
 				
 				// Save Auth Token for later use
-				self.credentials = .readerAPIAuthLogin(username: username, apiKey: authString)
+				self.credentials = Credentials(type: .readerAPIKey, username: credentials.username, secret: authString)
 				
 				completion(.success(self.credentials))
 			case .failure(let error):

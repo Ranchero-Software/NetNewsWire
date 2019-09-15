@@ -64,7 +64,7 @@ struct SettingsReaderAPIAccountView : View {
 		error = ""
 		
 		let emailAddress = viewModel.email.trimmingCharacters(in: .whitespaces)
-		let credentials = Credentials.readerAPIBasicLogin(username: emailAddress, password: viewModel.password)
+		let credentials = Credentials(type: .readerBasic, username: emailAddress, secret: viewModel.password)
 		guard let apiURL = URL(string: viewModel.apiURL) else {
 			self.error = "Invalid API URL."
 			return
@@ -94,11 +94,13 @@ struct SettingsReaderAPIAccountView : View {
 				do {
 					
 					do {
-						try workAccount.removeCredentials()
+						try workAccount.removeCredentials(type: .readerBasic)
+						try workAccount.removeCredentials(type: .readerAPIKey)
 					} catch {}
 					
 					workAccount.endpointURL = apiURL
 					
+					try workAccount.storeCredentials(credentials)
 					try workAccount.storeCredentials(validatedCredentials)
 					
 					if newAccount {
@@ -136,9 +138,8 @@ struct SettingsReaderAPIAccountView : View {
 		init(account: Account) {
 			self.account = account
 			self.accountType = account.type
-			if case .readerAPIBasicLogin(let username, let password) = try? account.retrieveCredentials() {
-				self.email = username
-				self.password = password
+			if let credentials = try? account.retrieveCredentials(type: .readerBasic) {
+				self.email = credentials.username
 				self.apiURL = account.endpointURL?.absoluteString ?? ""
 			}
 		}

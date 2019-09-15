@@ -414,7 +414,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	func accountDidInitialize(_ account: Account) {
 		accountMetadata = account.metadata
-		credentials = try? account.retrieveCredentials()
+		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {

@@ -13,11 +13,22 @@ public enum CredentialsError: Error {
 	case unhandledError(status: OSStatus)
 }
 
-public enum Credentials {
-    case basic(username: String, password: String)
-    case readerAPIBasicLogin(username: String, password: String)
-    case readerAPIAuthLogin(username: String, apiKey: String)
-    case oauthAccessToken(username: String, token: String)
-    case oauthRefreshToken(username: String, token: String)
+public enum CredentialsType: String {
+	case basic = "password"
+	case readerBasic = "readerBasic"
+	case readerAPIKey = "readerAPIKey"
+	case oauthAccessToken = "oauthAccessToken"
+	case oauthRefreshToken = "oauthRefreshToken"
 }
 
+public struct Credentials {
+	public let type: CredentialsType
+	public let username: String
+	public let secret: String
+	
+	public init(type: CredentialsType, username: String, secret: String) {
+		self.type = type
+		self.username = username
+		self.secret = secret
+	}
+}
