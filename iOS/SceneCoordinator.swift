@@ -771,23 +771,21 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showSettings() {
-//		let settingsNavViewController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-//		settingsNavViewController.modalPresentationStyle = .formSheet
-//		let settingsViewController = settingsNavViewController.topViewController as! SettingsViewController
-//		settingsViewController.presentingParentController = rootSplitViewController
-//		rootSplitViewController.present(settingsNavViewController, animated: true)
-		
 		rootSplitViewController.present(style: .formSheet) {
-			SettingsView(viewModel: SettingsView.ViewModel())
+			SettingsView(viewModel: SettingsView.ViewModel()).environment(\.sceneCoordinator, self)
 		}
 	}
 	
-	func showAdd(_ type: AddControllerType) {
+	func showAdd(_ type: AddControllerType, initialFeed: String? = nil, initialFeedName: String? = nil) {
 		selectFeed(nil)
 
 		let addViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
+		
 		let containerController = addViewController.topViewController as! AddContainerViewController
 		containerController.initialControllerType = type
+		containerController.initialFeed = initialFeed
+		containerController.initialFeedName = initialFeedName
+		
 		addViewController.modalPresentationStyle = .formSheet
 		addViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
 		masterFeedViewController.present(addViewController, animated: true)
@@ -1626,4 +1624,21 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
+}
+
+// MARK: SwiftUI
+
+struct SceneCoordinatorHolder {
+	weak var value: SceneCoordinator?
+}
+
+struct SceneCoordinatorKey: EnvironmentKey {
+	static var defaultValue: SceneCoordinatorHolder { return SceneCoordinatorHolder(value: nil ) }
+}
+
+extension EnvironmentValues {
+	var sceneCoordinator: SceneCoordinator? {
+		get { return self[SceneCoordinatorKey.self].value }
+		set { self[SceneCoordinatorKey.self].value = newValue }
+	}
 }

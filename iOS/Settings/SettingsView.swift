@@ -15,6 +15,7 @@ struct SettingsView : View {
 	@ObservedObject var viewModel: ViewModel
 
 	@Environment(\.viewController) private var viewController: UIViewController?
+	@Environment(\.sceneCoordinator) private var coordinator: SceneCoordinator?
 	
 	@State private var isWebsitePresented: Bool = false
 	@State private var website: String? = nil
@@ -134,7 +135,16 @@ struct SettingsView : View {
 				Text("How To Support NetNewsWire")
 			}.foregroundColor(.primary)
 
-			Text("Add NetNewsWire News Feed")
+			if !AccountManager.shared.anyAccountHasFeedWithURL("https://nnw.ranchero.com/feed.json") {
+				Button(action: {
+					self.viewController?.dismiss(animated: true) {
+						let feedName = NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News")
+						self.coordinator?.showAdd(.feed, initialFeed: "https://nnw.ranchero.com/feed.json", initialFeedName: feedName)
+					}
+				}) {
+					Text("Add NetNewsWire News Feed")
+				}.foregroundColor(.primary)
+			}
 			
 		}.sheet(isPresented: $isWebsitePresented) {
 			SafariView(url: URL(string: self.website!)!)
