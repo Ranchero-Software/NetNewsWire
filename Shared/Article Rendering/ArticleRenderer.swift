@@ -165,7 +165,7 @@ private extension ArticleRenderer {
 			return cachedImgTag
 		}
 
-		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
+		if let favicon = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
 			if let s = base64String(forImage: favicon) {
 				var dimension = min(favicon.size.height, CGFloat(ArticleRenderer.avatarDimension)) // Assuming square images.
 				dimension = max(dimension, 16) // Some favicons say they’re < 16. Force them larger.
@@ -210,6 +210,7 @@ private extension ArticleRenderer {
 	}
 
 	func base64String(forImage image: RSImage) -> String? {
+		print("height: \(image.size.height) width: \(image.size.width)")
 		return image.dataRepresentation()?.base64EncodedString()
 	}
 
