@@ -24,6 +24,7 @@
 		512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */; };
 		512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */; };
 		512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteCommand.swift */; };
+		51322855232EED360033D4ED /* VibrantSelectAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51322854232EED360033D4ED /* VibrantSelectAction.swift */; };
 		513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C5CE8232571C2003D4054 /* ShareViewController.swift */; };
 		513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 513C5CEA232571C2003D4054 /* MainInterface.storyboard */; };
 		513C5CF0232571C2003D4054 /* NetNewsWire iOS Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -762,6 +763,7 @@
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeader.swift; sourceTree = "<group>"; };
 		512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISplitViewController-Extensions.swift"; sourceTree = "<group>"; };
+		51322854232EED360033D4ED /* VibrantSelectAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantSelectAction.swift; sourceTree = "<group>"; };
 		513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		513C5CE8232571C2003D4054 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		513C5CEB232571C2003D4054 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
@@ -1245,12 +1247,13 @@
 			path = Activity;
 			sourceTree = "<group>";
 		};
-		5194B5E222B693EC00144881 /* Wrappers */ = {
+		5194B5E222B693EC00144881 /* SwiftUI Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				DF999FF622B5AEFA0064B687 /* SafariView.swift */,
+				51322854232EED360033D4ED /* VibrantSelectAction.swift */,
 			);
-			path = Wrappers;
+			path = "SwiftUI Extensions";
 			sourceTree = "<group>";
 		};
 		519D740423243C68008BB345 /* Model Extensions */ = {
@@ -1922,10 +1925,10 @@
 				51C452802265093600C03939 /* Add */,
 				5183CCEB227117C70010922C /* Settings */,
 				5183CCDB226F1EEB0010922C /* Progress */,
-				519D740423243C68008BB345 /* Model Extensions */,
-				51C45245226506C800C03939 /* UIKit Extensions */,
 				5F3237FF231DF9D000706F6B /* Views */,
-				5194B5E222B693EC00144881 /* Wrappers */,
+				519D740423243C68008BB345 /* Model Extensions */,
+				5194B5E222B693EC00144881 /* SwiftUI Extensions */,
+				51C45245226506C800C03939 /* UIKit Extensions */,
 				513C5CE7232571C2003D4054 /* ShareExtension */,
 				84C9FC9A2262A1A900D921D6 /* Resources */,
 			);
@@ -2712,6 +2715,7 @@
 				84DEE56622C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
 				512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */,
 				519D740623243CC0008BB345 /* RefreshInterval-Extensions.swift in Sources */,
+				51322855232EED360033D4ED /* VibrantSelectAction.swift in Sources */,
 				51C45268226508F600C03939 /* MasterFeedUnreadCountView.swift in Sources */,
 				5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */,
 				51C4529F22650A1900C03939 /* AuthorAvatarDownloader.swift in Sources */,

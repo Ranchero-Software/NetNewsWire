@@ -68,41 +68,40 @@ struct SettingsView : View {
 	
 	func buildDatabaseSection() -> some View {
 		Section(header: Text("DATABASE")) {
+
 			Picker(selection: $viewModel.refreshInterval, label: Text("Refresh Interval")) {
 				ForEach(RefreshInterval.allCases) { interval in
 					Text(interval.description()).tag(interval)
 				}
 			}
 			
-			VStack {
-				 Button("Import Subscriptions...") {
-					if AccountManager.shared.activeAccounts.count == 1 {
-						self.opmlAccount = AccountManager.shared.activeAccounts.first
-						self.isOPMLImportDocPickerPresented = true
-					} else {
-						self.isOPMLImportPresented = true
-					}
-				 }
-			}.actionSheet(isPresented: $isOPMLImportPresented) {
+			Text("Import Subscriptions...")
+			.actionSheet(isPresented: $isOPMLImportPresented) {
 				buildSubscriptionsImportAccounts()
 			}.sheet(isPresented: $isOPMLImportDocPickerPresented) {
 				SettingsSubscriptionsImportDocumentPickerView(account: self.opmlAccount!)
-			}.foregroundColor(.primary)
-			
-			VStack {
-				 Button("Export Subscriptions...") {
-					if AccountManager.shared.accounts.count == 1 {
-						self.opmlAccount = AccountManager.shared.accounts.first
-						self.isOPMLImportDocPickerPresented = true
-					} else {
-						self.isOPMLExportPresented = true
-					}
-				 }
-			 }.actionSheet(isPresented: $isOPMLExportPresented) {
-				buildSubscriptionsExportAccounts()
-			 }.sheet(isPresented: $isOPMLExportDocPickerPresented) {
-				 SettingsSubscriptionsExportDocumentPickerView(account: self.opmlAccount!)
-			 }.foregroundColor(.primary)
+			}.modifier(VibrantSelectAction(action: {
+				if AccountManager.shared.activeAccounts.count == 1 {
+					self.opmlAccount = AccountManager.shared.activeAccounts.first
+					self.isOPMLImportDocPickerPresented = true
+				} else {
+					self.isOPMLImportPresented = true
+				}
+			}))
+
+			Text("Export Subscriptions...")
+				.actionSheet(isPresented: $isOPMLExportPresented) {
+					buildSubscriptionsExportAccounts()
+			}.sheet(isPresented: $isOPMLExportDocPickerPresented) {
+				SettingsSubscriptionsExportDocumentPickerView(account: self.opmlAccount!)
+			}.modifier(VibrantSelectAction(action: {
+				if AccountManager.shared.accounts.count == 1 {
+					self.opmlAccount = AccountManager.shared.accounts.first
+					self.isOPMLImportDocPickerPresented = true
+				} else {
+					self.isOPMLExportPresented = true
+				}
+			}))
 		}
 	}
 	
