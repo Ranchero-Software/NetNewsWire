@@ -91,11 +91,32 @@ class FindFeedWindowController : NSWindowController {
 		updateUI()
 	}
 
-	@objc func controlTextDidChange(_ obj: Notification) {
-		FeedFinder.find(query: urlTextField.stringValue) { [weak self] result in
+	lazy var debouncedSearch = debounce(interval: .milliseconds(300), queue: .main) {
+		FeedFinder.find(query: self.urlTextField.stringValue) { [weak self] result in
 			self?.nameTextField.stringValue = (try? result.get())?.joined(separator: "\n") ?? ""
 		}
 	}
+
+	@objc func controlTextDidChange(_ obj: Notification) {
+		debouncedSearch()
+	}
+}
+
+private func debounce(interval dispatchDelay: DispatchTimeInterval, queue: DispatchQueue, action: @escaping (() -> Void)) -> () -> Void {
+    var lastFireTime = DispatchTime.now()
+
+    return {
+        lastFireTime = DispatchTime.now()
+        let dispatchTime: DispatchTime = DispatchTime.now() + dispatchDelay
+
+        queue.asyncAfter(deadline: dispatchTime) {
+            let when: DispatchTime = lastFireTime + dispatchDelay
+            let now = DispatchTime.now()
+            if now.rawValue >= when.rawValue {
+                action()
+            }
+        }
+    }
 }
 
 private extension FindFeedWindowController {
