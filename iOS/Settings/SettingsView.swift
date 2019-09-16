@@ -16,6 +16,8 @@ struct SettingsView : View {
 
 	@Environment(\.viewController) private var viewController: UIViewController?
 	@Environment(\.sceneCoordinator) private var coordinator: SceneCoordinator?
+
+	@State private var accountAction: Int? = nil
 	
 	@State private var isWebsitePresented: Bool = false
 	@State private var website: String? = nil
@@ -39,16 +41,14 @@ struct SettingsView : View {
 		}
     }
 	
-	@State private var accountAction: Int? = nil
-	
 	func buildAccountsSection() -> some View {
 		Section(header: Text("ACCOUNTS").padding(.top, 22.0)) {
-			ForEach(0..<viewModel.accounts.count) { index in
-				NavigationLink(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(self.viewModel.accounts[index])), tag: index, selection: self.$accountAction) {
-					Text(verbatim: self.viewModel.accounts[index].nameForDisplay)
+			ForEach(viewModel.accounts) { account in
+				NavigationLink(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(account)), tag: self.viewModel.accounts.firstIndex(of: account) ?? -1, selection: self.$accountAction) {
+					Text(verbatim: account.nameForDisplay)
 				}
 				.modifier(VibrantSelectAction(action: {
-					self.accountAction = index
+					self.accountAction = self.viewModel.accounts.firstIndex(of: account)
 				}))
 			}
 			NavigationLink(destination: SettingsAddAccountView(), tag: 1000, selection: $accountAction) {
