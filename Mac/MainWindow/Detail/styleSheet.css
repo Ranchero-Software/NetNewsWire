@@ -122,7 +122,7 @@ code, pre {
 pre  {
 	white-space: pre-wrap;
 }
-img, figure, video, iframe {
+img, figure, video, iframe, div {
 	max-width: 100%;
 	height: auto !important;
 	margin: 0 auto;
