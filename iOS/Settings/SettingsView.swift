@@ -36,7 +36,7 @@ struct SettingsView : View {
 				buildDatabaseSection()
 				buildAboutSection()
 			}
-			.buttonStyle(VibrantButtonStyle())
+			.buttonStyle(VibrantButtonStyle(alignment: .leading))
 			.navigationBarTitle(Text("Settings"), displayMode: .inline)
 			.navigationBarItems(leading: Button(action: { self.viewController?.dismiss(animated: true) }) { Text("Done") } )
 		}

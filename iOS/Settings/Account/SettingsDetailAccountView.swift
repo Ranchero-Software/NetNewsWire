@@ -29,14 +29,10 @@ struct SettingsDetailAccountView : View {
 			}
 			if viewModel.isCreditialsAvailable {
 				Section {
-					HStack {
-						Spacer()
-						Button(action: {
-							self.accountType = self.viewModel.account.type
-						}) {
-							Text("Credentials")
-						}
-						Spacer()
+					Button(action: {
+						self.accountType = self.viewModel.account.type
+					}) {
+						Text("Credentials")
 					}
 				}
 				.sheet(item: $accountType) { type in
@@ -50,14 +46,10 @@ struct SettingsDetailAccountView : View {
 			}
 			if viewModel.isDeletable {
 				Section {
-					HStack {
-						Spacer()
-						Button(action: {
-							self.isDeleteAlertPresented.toggle()
-						}) {
-							Text("Delete Account").foregroundColor(.red)
-						}
-						Spacer()
+					Button(action: {
+						self.isDeleteAlertPresented.toggle()
+					}) {
+						Text("Delete Account").foregroundColor(.red)
 					}
 					.alert(isPresented: $isDeleteAlertPresented) {
 						Alert(title: Text("Are you sure you want to delete \"\(viewModel.nameForDisplay)\"?"),
@@ -70,6 +62,7 @@ struct SettingsDetailAccountView : View {
 				}
 			}
 		}
+		.buttonStyle(VibrantButtonStyle(alignment: .center))
 		.navigationBarTitle(Text(verbatim: viewModel.nameForDisplay), displayMode: .inline)
 
 	}

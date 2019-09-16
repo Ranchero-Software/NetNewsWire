@@ -41,18 +41,15 @@ struct SettingsReaderAPIAccountView : View {
 					Spacer()
 				}
 				) {
-				HStack {
-					Spacer()
-					Button(action: { self.addAccount() }) {
-						if viewModel.isUpdate {
-							Text("Update Account")
-						} else {
-							Text("Add Account")
-						}
+				Button(action: { self.addAccount() }) {
+					if viewModel.isUpdate {
+						Text("Update Account")
+					} else {
+						Text("Add Account")
 					}
-					.disabled(!viewModel.isValid)
-					Spacer()
 				}
+				.buttonStyle(VibrantButtonStyle(alignment: .center))
+				.disabled(!viewModel.isValid)
 			}
 		}
 //			.disabled(busy)

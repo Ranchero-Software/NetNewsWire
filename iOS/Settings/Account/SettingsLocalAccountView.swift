@@ -29,13 +29,10 @@ struct SettingsLocalAccountView : View {
 				}
 			}
 			Section {
-				HStack {
-					Spacer()
-					Button(action: { self.addAccount() }) {
-						Text("Add Account")
-					}
-					Spacer()
+				Button(action: { self.addAccount() }) {
+					Text("Add Account")
 				}
+				.buttonStyle(VibrantButtonStyle(alignment: .center))
 			}
 		}
 		.navigationBarTitle(Text(""), displayMode: .inline)

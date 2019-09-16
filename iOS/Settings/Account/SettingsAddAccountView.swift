@@ -11,18 +11,32 @@ import Account
 
 struct SettingsAddAccountView : View {
 	@Environment(\.presentationMode) var presentation
-	
+	@State private var accountAddAction: Int? = nil
+
     var body: some View {
 		Form {
-			NavigationLink(destination: SettingsLocalAccountView(name: "")) {
+			
+			NavigationLink(destination: SettingsLocalAccountView(name: ""), tag: 1, selection: $accountAddAction) {
 				SettingsAccountLabelView(accountImage: "accountLocal", accountLabel: Account.defaultLocalAccountName)
 			}
-			NavigationLink(destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())) {
+			.modifier(VibrantSelectAction(action: {
+				self.accountAddAction = 1
+			}))
+			
+			NavigationLink(destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel()), tag: 2, selection: $accountAddAction) {
 				SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin")
 			}
-			NavigationLink(destination: SettingsReaderAPIAccountView(viewModel: SettingsReaderAPIAccountView.ViewModel(accountType: .freshRSS))) {
+			.modifier(VibrantSelectAction(action: {
+				self.accountAddAction = 2
+			}))
+			
+			NavigationLink(destination: SettingsReaderAPIAccountView(viewModel: SettingsReaderAPIAccountView.ViewModel(accountType: .freshRSS)), tag: 3, selection: $accountAddAction) {
 				SettingsAccountLabelView(accountImage: "accountFreshRSS", accountLabel: "Fresh RSS")
 			}
+			.modifier(VibrantSelectAction(action: {
+				self.accountAddAction = 3
+			}))
+			
 		}
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)
 	}
