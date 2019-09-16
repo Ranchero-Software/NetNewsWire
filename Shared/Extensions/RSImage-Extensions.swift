@@ -28,9 +28,9 @@ extension RSImage {
 			return nil
 		}
 		
-		if cgImage.width < avatarSize || cgImage.height < avatarSize {
-			cgImage = RSImage.compositeAvatar(cgImage)
-		}
+//		if cgImage.width < avatarSize || cgImage.height < avatarSize {
+//			cgImage = RSImage.compositeAvatar(cgImage)
+//		}
 		
 		#if os(iOS)
 		return RSImage(cgImage: cgImage)
