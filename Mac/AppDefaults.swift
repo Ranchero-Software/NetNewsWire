@@ -19,6 +19,7 @@ struct AppDefaults {
 
 	struct Key {
 		static let firstRunDate = "firstRunDate"
+		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let sidebarFontSize = "sidebarFontSize"
 		static let timelineFontSize = "timelineFontSize"
 		static let timelineSortDirection = "timelineSortDirection"
@@ -47,6 +48,15 @@ struct AppDefaults {
 		firstRunDate = Date()
 		return true
 	}()
+	
+	static var lastImageCacheFlushDate: Date? {
+		get {
+			return date(for: Key.lastImageCacheFlushDate)
+		}
+		set {
+			setDate(for: Key.lastImageCacheFlushDate, newValue)
+		}
+	}
 	
 	static var openInBrowserInBackground: Bool {
 		get {
@@ -161,7 +171,7 @@ struct AppDefaults {
 	}
 
 	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false, Key.refreshInterval: RefreshInterval.everyHour.rawValue]
+		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(), Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false, Key.refreshInterval: RefreshInterval.everyHour.rawValue]
 
 		UserDefaults.standard.register(defaults: defaults)
 

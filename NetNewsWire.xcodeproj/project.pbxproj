@@ -17,6 +17,7 @@
 		512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */; };
 		512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */; };
 		512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteCommand.swift */; };
+		513228D023302E470033D4ED /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513228CF23302E470033D4ED /* Reachability.swift */; };
 		5144EA2F2279FAB600D19003 /* AccountsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */; };
 		5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */; };
 		5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */; };
@@ -674,6 +675,7 @@
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeader.swift; sourceTree = "<group>"; };
 		512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISplitViewController-Extensions.swift"; sourceTree = "<group>"; };
+		513228CF23302E470033D4ED /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsDetailViewController.swift; sourceTree = "<group>"; };
 		5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsAddLocal.xib; sourceTree = "<group>"; };
 		5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddLocalWindowController.swift; sourceTree = "<group>"; };
@@ -1008,6 +1010,14 @@
 			path = Tree;
 			sourceTree = "<group>";
 		};
+		513228CE23302E470033D4ED /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				513228CF23302E470033D4ED /* Reachability.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
 		5144EA39227A377700D19003 /* OPML */ = {
 			isa = PBXGroup;
 			children = (
@@ -1025,14 +1035,6 @@
 				51554C01228B6EB50055115A /* SyncDatabase.framework */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		515E4EA82324FF710057B0E7 /* Credentials */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Credentials;
-			path = ../Frameworks/Account/Credentials;
 			sourceTree = "<group>";
 		};
 		5183CCDB226F1EEB0010922C /* Progress */ = {
@@ -1587,7 +1589,6 @@
 		84C9FC6822629C9A00D921D6 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				515E4EA82324FF710057B0E7 /* Credentials */,
 				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
 				841D4D542106B3D500DD04E6 /* Articles.xcodeproj */,
 				841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */,
@@ -1606,6 +1607,7 @@
 				5183CCEA226F70350010922C /* Timer */,
 				849A97561ED9EB0D007D329B /* Data */,
 				512E08DD22687FA000BDCFDD /* Tree */,
+				513228CE23302E470033D4ED /* Network */,
 				849A97961ED9EFAA007D329B /* Extensions */,
 			);
 			path = Shared;
@@ -2460,6 +2462,7 @@
 				8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
+				513228D023302E470033D4ED /* Reachability.swift in Sources */,
 				849A97651ED9EB96007D329B /* FeedTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
 				840BEE4121D70E64009BBAFA /* CrashReportWindowController.swift in Sources */,
