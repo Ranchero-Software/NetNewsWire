@@ -18,7 +18,8 @@ struct SettingsView : View {
 	@Environment(\.sceneCoordinator) private var coordinator: SceneCoordinator?
 
 	@State private var accountAction: Int? = nil
-	
+	@State private var refreshAction: Int? = nil
+
 	@State private var isWebsitePresented: Bool = false
 	@State private var website: String? = nil
 	
@@ -78,13 +79,18 @@ struct SettingsView : View {
 	func buildDatabaseSection() -> some View {
 		Section(header: Text("DATABASE")) {
 
-			Picker(selection: $viewModel.refreshInterval, label: Text("Refresh Interval")) {
-				ForEach(RefreshInterval.allCases) { interval in
-					Text(interval.description()).tag(interval)
+			NavigationLink(destination: SettingsRefreshSelectionView(selectedInterval: $viewModel.refreshInterval), tag: 1, selection: $refreshAction) {
+				HStack {
+					Text("Refresh Interval")
+					Spacer()
+					Text(verbatim: self.viewModel.refreshInterval.description()).foregroundColor(.secondary)
 				}
 			}
+			.modifier(VibrantSelectAction(action: {
+				self.refreshAction = 1
+			}))
 			
-			 Button("Import Subscriptions...") {
+			Button("Import Subscriptions...") {
 				if AccountManager.shared.activeAccounts.count == 1 {
 					self.opmlAccount = AccountManager.shared.activeAccounts.first
 					self.isOPMLImportDocPickerPresented = true
