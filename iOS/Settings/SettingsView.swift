@@ -36,6 +36,7 @@ struct SettingsView : View {
 				buildDatabaseSection()
 				buildAboutSection()
 			}
+			.buttonStyle(VibrantButtonStyle())
 			.navigationBarTitle(Text("Settings"), displayMode: .inline)
 			.navigationBarItems(leading: Button(action: { self.viewController?.dismiss(animated: true) }) { Text("Done") } )
 		}
@@ -43,14 +44,20 @@ struct SettingsView : View {
 	
 	func buildAccountsSection() -> some View {
 		Section(header: Text("ACCOUNTS").padding(.top, 22.0)) {
-			ForEach(viewModel.accounts) { account in
-				NavigationLink(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(account))) {
-					Text(verbatim: account.nameForDisplay)
+			ForEach(0..<viewModel.accounts.count) { index in
+				NavigationLink(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(self.viewModel.accounts[index])), tag: index, selection: self.$accountAction) {
+					Text(verbatim: self.viewModel.accounts[index].nameForDisplay)
 				}
+				.modifier(VibrantSelectAction(action: {
+					self.accountAction = index
+				}))
 			}
-			NavigationLink(destination: SettingsAddAccountView()) {
+			NavigationLink(destination: SettingsAddAccountView(), tag: 1000, selection: $accountAction) {
 				Text("Add Account")
 			}
+			.modifier(VibrantSelectAction(action: {
+				self.accountAction = 1000
+			}))
 		}
 	}
 	
@@ -77,35 +84,31 @@ struct SettingsView : View {
 				}
 			}
 			
-			VStack {
-				 Button("Import Subscriptions...") {
-					if AccountManager.shared.activeAccounts.count == 1 {
-						self.opmlAccount = AccountManager.shared.activeAccounts.first
-						self.isOPMLImportDocPickerPresented = true
-					} else {
-						self.isOPMLImportPresented = true
-					}
-				 }
+			 Button("Import Subscriptions...") {
+				if AccountManager.shared.activeAccounts.count == 1 {
+					self.opmlAccount = AccountManager.shared.activeAccounts.first
+					self.isOPMLImportDocPickerPresented = true
+				} else {
+					self.isOPMLImportPresented = true
+				}
 			}.actionSheet(isPresented: $isOPMLImportPresented) {
 				buildSubscriptionsImportAccounts()
 			}.sheet(isPresented: $isOPMLImportDocPickerPresented) {
 				SettingsSubscriptionsImportDocumentPickerView(account: self.opmlAccount!)
-			}.foregroundColor(.primary)
+			}
 			
-			VStack {
-				 Button("Export Subscriptions...") {
-					if AccountManager.shared.accounts.count == 1 {
-						self.opmlAccount = AccountManager.shared.accounts.first
-						self.isOPMLImportDocPickerPresented = true
-					} else {
-						self.isOPMLExportPresented = true
-					}
-				 }
+			 Button("Export Subscriptions...") {
+				if AccountManager.shared.accounts.count == 1 {
+					self.opmlAccount = AccountManager.shared.accounts.first
+					self.isOPMLImportDocPickerPresented = true
+				} else {
+					self.isOPMLExportPresented = true
+				}
 			 }.actionSheet(isPresented: $isOPMLExportPresented) {
 				buildSubscriptionsExportAccounts()
 			 }.sheet(isPresented: $isOPMLExportDocPickerPresented) {
 				 SettingsSubscriptionsExportDocumentPickerView(account: self.opmlAccount!)
-			 }.foregroundColor(.primary)
+			 }
 		}
 	}
 	
@@ -118,35 +121,35 @@ struct SettingsView : View {
 				self.website = "https://ranchero.com/netnewswire/"
 			}) {
 				Text("Website")
-			}.foregroundColor(.primary)
+			}
 			
 			Button(action: {
 				self.isWebsitePresented.toggle()
 				self.website = "https://github.com/brentsimmons/NetNewsWire"
 			}) {
 				Text("Github Repository")
-			}.foregroundColor(.primary)
+			}
 			
 			Button(action: {
 				self.isWebsitePresented.toggle()
 				self.website = "https://github.com/brentsimmons/NetNewsWire/issues"
 			}) {
 				Text("Bug Tracker")
-			}.foregroundColor(.primary)
+			}
 			
 			Button(action: {
 				self.isWebsitePresented.toggle()
 				self.website = "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes"
 			}) {
 				Text("Technotes")
-			}.foregroundColor(.primary)
+			}
 			
 			Button(action: {
 				self.isWebsitePresented.toggle()
 				self.website = "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown"
 			}) {
 				Text("How To Support NetNewsWire")
-			}.foregroundColor(.primary)
+			}
 
 			if !AccountManager.shared.anyAccountHasFeedWithURL("https://nnw.ranchero.com/feed.json") {
 				Button(action: {
@@ -156,7 +159,7 @@ struct SettingsView : View {
 					}
 				}) {
 					Text("Add NetNewsWire News Feed")
-				}.foregroundColor(.primary)
+				}
 			}
 			
 		}.sheet(isPresented: $isWebsitePresented) {
