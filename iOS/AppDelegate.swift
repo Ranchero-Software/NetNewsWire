@@ -178,12 +178,31 @@ private extension AppDelegate {
 	private func initializeDownloaders() {
 		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
+		let imagesFolderURL = tempDir.appendingPathComponent("Images")
+		let homePageToIconURL = tempDir.appendingPathComponent("HomePageToIconURLCache.plist")
+
+		// If the image disk cache hasn't been flushed for 3 days and the network is available, delete it
+		if let flushDate = AppDefaults.lastImageCacheFlushDate, flushDate.addingTimeInterval(3600*24*3) < Date() {
+			if let reachability = try? Reachability(hostname: "apple.com") {
+				if reachability.connection != .unavailable {
+					for tempItem in [faviconsFolderURL, imagesFolderURL, homePageToIconURL] {
+						do {
+							os_log(.info, log: self.log, "Removing cache file: %@", tempItem.absoluteString)
+							try FileManager.default.removeItem(at: tempItem)
+						} catch {
+							os_log(.error, log: self.log, "Could not delete cache file: %@", error.localizedDescription)
+						}
+					}
+					AppDefaults.lastImageCacheFlushDate = Date()
+				}
+			}
+		}
+		
 		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
 		let faviconsFolder = faviconsFolderURL.absoluteString
 		let faviconsFolderPath = faviconsFolder.suffix(from: faviconsFolder.index(faviconsFolder.startIndex, offsetBy: 7))
 		faviconDownloader = FaviconDownloader(folder: String(faviconsFolderPath))
 		
-		let imagesFolderURL = tempDir.appendingPathComponent("Images")
 		let imagesFolder = imagesFolderURL.absoluteString
 		let imagesFolderPath = imagesFolder.suffix(from: imagesFolder.index(imagesFolder.startIndex, offsetBy: 7))
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)

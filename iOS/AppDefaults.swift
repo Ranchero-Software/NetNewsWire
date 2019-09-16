@@ -11,6 +11,7 @@ import UIKit
 struct AppDefaults {
 
 	struct Key {
+		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let firstRunDate = "firstRunDate"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
@@ -27,6 +28,15 @@ struct AppDefaults {
 		return true
 	}()
 	
+	static var lastImageCacheFlushDate: Date? {
+		get {
+			return date(for: Key.lastImageCacheFlushDate)
+		}
+		set {
+			setDate(for: Key.lastImageCacheFlushDate, newValue)
+		}
+	}
+
 	static var refreshInterval: RefreshInterval {
 		get {
 			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
@@ -74,7 +84,8 @@ struct AppDefaults {
 	}
 	
 	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.refreshInterval: RefreshInterval.everyHour.rawValue,
+		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(),
+										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.timelineNumberOfLines: 3,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue]
