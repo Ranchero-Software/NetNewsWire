@@ -83,21 +83,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		updateProgressIndicatorIfNeeded()
 	}
 	
-	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-		super.traitCollectionDidChange(previousTraitCollection)
-		
-		if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
-			appDelegate.authorAvatarDownloader.resetCache()
-			appDelegate.feedIconDownloader.resetCache()
-			appDelegate.faviconDownloader.resetCache()
-			
-			// traitCollectionDidChange will get called on a background thread
-			DispatchQueue.main.async {
-				self.reloadAllVisibleCells()
-			}
-		}
-	}
-	
 	// MARK: Actions
 
 	@IBAction func markAllAsRead(_ sender: Any) {
