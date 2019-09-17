@@ -30,17 +30,10 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 	private var webInspectorEnabled: Bool {
 		get {
-			if let webView = webView {
-				let val: NSNumber? = webView.configuration.preferences.value(forKey: "developerExtrasEnabled") as? NSNumber
-				return val != nil ? val!.boolValue : false
-			}
-
-			return false
+			return webView.configuration.preferences._developerExtrasEnabled
 		}
 		set {
-			if let webView = webView {
-				webView.configuration.preferences.setValue(newValue, forKey: "developerExtrasEnabled")
-			}
+			webView.configuration.preferences._developerExtrasEnabled = newValue
 		}
 	}
 	
