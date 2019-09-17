@@ -309,6 +309,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
+		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
+			(item as! NSMenuItem).state = AppDefaults.webInspectorEnabled ? .on : .off
+		}
 		return true
 	}
 
@@ -524,6 +527,15 @@ extension AppDelegate {
 
 	@IBAction func debugSearch(_ sender: Any?) {
 		AccountManager.shared.defaultAccount.debugRunSearch()
+	}
+
+	@IBAction func toggleWebInspectorEnabled(_ sender: Any?) {
+		let newValue = !AppDefaults.webInspectorEnabled
+		AppDefaults.webInspectorEnabled = newValue
+		// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
+		// And reset to a separate window when the preference is toggled off and on again in case the inspector is accidentally reattached.
+		UserDefaults.standard.set(false, forKey: "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached")
+		NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
 }
 

@@ -27,6 +27,22 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 			}
 		}
 	}
+
+	private var webInspectorEnabled: Bool {
+		get {
+			if let webView = webView {
+				let val: NSNumber? = webView.configuration.preferences.value(forKey: "developerExtrasEnabled") as? NSNumber
+				return val != nil ? val!.boolValue : false
+			}
+
+			return false
+		}
+		set {
+			if let webView = webView {
+				webView.configuration.preferences.setValue(newValue, forKey: "developerExtrasEnabled")
+			}
+		}
+	}
 	
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
@@ -86,6 +102,12 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		// See bug #901.
 		webView.isHidden = true
 		waitingForFirstReload = true
+
+		webInspectorEnabled = AppDefaults.webInspectorEnabled
+
+		NotificationCenter.default.addObserver(forName: .WebInspectorEnabledDidChange, object: nil, queue: OperationQueue.main) { (notification) in
+			self.webInspectorEnabled = notification.object! as! Bool
+		}
 
 		reloadHTML()
 	}

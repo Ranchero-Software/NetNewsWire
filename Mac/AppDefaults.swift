@@ -36,6 +36,8 @@ struct AppDefaults {
 		static let timelineShowsSeparators = "CorreiaSeparators"
 		static let showTitleOnMainWindow = "KafasisTitleMode"
 		static let hideDockUnreadCount = "JustinMillerHideDockUnreadCount"
+
+		static let webInspectorEnabled = "WebInspectorEnabled"
 	}
 
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
@@ -136,6 +138,15 @@ struct AppDefaults {
 
 	static var hideDockUnreadCount: Bool {
 		return bool(for: Key.hideDockUnreadCount)
+	}
+
+	static var webInspectorEnabled: Bool {
+		get {
+			return bool(for: Key.webInspectorEnabled)
+		}
+		set {
+			setBool(for: Key.webInspectorEnabled, newValue)
+		}
 	}
 
 	static var timelineSortDirection: ComparisonResult {
