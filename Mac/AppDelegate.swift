@@ -533,7 +533,7 @@ extension AppDelegate {
 		let newValue = !AppDefaults.webInspectorEnabled
 		AppDefaults.webInspectorEnabled = newValue
 		// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
-		// And reset to a separate window when the preference is toggled off and on again in case the inspector is accidentally reattached.
+		// and reset to a separate window when the preference is toggled off and on again in case the inspector is accidentally reattached.
 		UserDefaults.standard.set(false, forKey: "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached")
 		NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
