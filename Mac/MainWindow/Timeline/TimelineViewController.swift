@@ -11,10 +11,6 @@ import RSCore
 import Articles
 import Account
 
-extension Notification.Name {
-	static let AppleInterfaceThemeChangedNotification = Notification.Name("AppleInterfaceThemeChangedNotification")
-}
-
 protocol TimelineDelegate: class  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
 }
@@ -182,9 +178,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-			DistributedNotificationCenter.default.addObserver(self,	selector: #selector(appleInterfaceThemeChanged), name: .AppleInterfaceThemeChangedNotification, object: nil)
 
-				didRegisterForNotifications = true
+			didRegisterForNotifications = true
 		}
 	}
 	
@@ -565,15 +560,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		self.groupByFeed = AppDefaults.timelineGroupByFeed
 	}
 	
-	@objc func appleInterfaceThemeChanged(_ note: Notification) {
-		appDelegate.authorAvatarDownloader.resetCache()
-		appDelegate.feedIconDownloader.resetCache()
-		appDelegate.faviconDownloader.resetCache()
-		performBlockAndRestoreSelection {
-			tableView.reloadData()
-		}
-	}
-
 	// MARK: - Reloading Data
 
 	private func cellForRowView(_ rowView: NSView) -> NSView? {
