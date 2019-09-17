@@ -17,11 +17,7 @@ class MasterTimelineTableViewCell: NNWTableViewCell {
 	private let dateView = MasterTimelineTableViewCell.singleLineUILabel()
 	private let feedNameView = MasterTimelineTableViewCell.singleLineUILabel()
 	
-	private lazy var avatarImageView: UIImageView = {
-		let imageView = NonIntrinsicImageView(image: AppAssets.feedImage)
-		imageView.contentMode = .scaleAspectFit
-		return imageView
-	}()
+	private lazy var avatarView = MasterTimelineAvatarView()
 	
 	private lazy var starView = {
 		return NonIntrinsicImageView(image: AppAssets.timelineStarImage)
@@ -78,7 +74,7 @@ class MasterTimelineTableViewCell: NNWTableViewCell {
 
 		unreadIndicatorView.setFrameIfNotEqual(layout.unreadIndicatorRect)
 		starView.setFrameIfNotEqual(layout.starRect)
-		avatarImageView.setFrameIfNotEqual(layout.avatarImageRect)
+		avatarView.setFrameIfNotEqual(layout.avatarImageRect)
 		setFrame(for: titleView, rect: layout.titleRect)
 		setFrame(for: summaryView, rect: layout.summaryRect)
 		feedNameView.setFrameIfNotEqual(layout.feedNameRect)
@@ -89,7 +85,7 @@ class MasterTimelineTableViewCell: NNWTableViewCell {
 	}
 	
 	func setAvatarImage(_ image: UIImage) {
-		avatarImageView.image = image
+		avatarView.image = image
 	}
 	
 }
@@ -140,7 +136,7 @@ private extension MasterTimelineTableViewCell {
 		addSubviewAtInit(unreadIndicatorView, hidden: true)
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
-		addSubviewAtInit(avatarImageView, hidden: true)
+		addSubviewAtInit(avatarView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
 		
 	}
@@ -211,23 +207,23 @@ private extension MasterTimelineTableViewCell {
 			return
 		}
 
-		showView(avatarImageView)
-		avatarImageView.layer.cornerRadius = MasterTimelineDefaultCellLayout.avatarCornerRadius
-		avatarImageView.clipsToBounds = true
+		showView(avatarView)
+		avatarView.layer.cornerRadius = MasterTimelineDefaultCellLayout.avatarCornerRadius
+		avatarView.clipsToBounds = true
 		
-		if avatarImageView.image !== cellData.avatar {
-			avatarImageView.image = image
+		if avatarView.image !== cellData.avatar {
+			avatarView.image = image
 			setNeedsLayout()
 		}
 	}
 	
 	func makeAvatarEmpty() {
 		
-		if avatarImageView.image != nil {
-			avatarImageView.image = nil
+		if avatarView.image != nil {
+			avatarView.image = nil
 			setNeedsLayout()
 		}
-		hideView(avatarImageView)
+		hideView(avatarView)
 	}
 	
 	func hideView(_ view: UIView) {
