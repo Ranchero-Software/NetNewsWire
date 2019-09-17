@@ -19,6 +19,7 @@ struct SettingsView : View {
 
 	@State private var accountAction: Int? = nil
 	@State private var refreshAction: Int? = nil
+	@State private var aboutAction: Int? = nil
 
 	@State private var isWebsitePresented: Bool = false
 	@State private var website: String? = nil
@@ -120,7 +121,13 @@ struct SettingsView : View {
 	
 	func buildAboutSection() -> some View {
 		Section(header: Text("ABOUT"), footer: buildFooter()) {
-			Text("About NetNewsWire")
+
+			NavigationLink(destination: SettingsAboutView(viewModel: SettingsAboutView.ViewModel()), tag: 1, selection: $aboutAction) {
+				Text("About NetNewsWire")
+			}
+			.modifier(VibrantSelectAction(action: {
+				self.aboutAction = 1
+			}))
 			
 			Button(action: {
 				self.isWebsitePresented.toggle()

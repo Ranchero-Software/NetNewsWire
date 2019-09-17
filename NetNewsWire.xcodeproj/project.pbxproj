@@ -29,6 +29,8 @@
 		5132285B232FF2C40033D4ED /* SettingsRefreshSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */; };
 		513228FB233037630033D4ED /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513228F2233037620033D4ED /* Reachability.swift */; };
 		513228FC233037630033D4ED /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513228F2233037620033D4ED /* Reachability.swift */; };
+		513229312330523F0033D4ED /* AttributedStringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513229302330523F0033D4ED /* AttributedStringView.swift */; };
+		5132293B23305D4C0033D4ED /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132293A23305D4C0033D4ED /* SettingsAboutView.swift */; };
 		513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C5CE8232571C2003D4054 /* ShareViewController.swift */; };
 		513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 513C5CEA232571C2003D4054 /* MainInterface.storyboard */; };
 		513C5CF0232571C2003D4054 /* NetNewsWire iOS Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -771,6 +773,8 @@
 		51322858232FDDB80033D4ED /* VibrantButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantButtonStyle.swift; sourceTree = "<group>"; };
 		5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRefreshSelectionView.swift; sourceTree = "<group>"; };
 		513228F2233037620033D4ED /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		513229302330523F0033D4ED /* AttributedStringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringView.swift; sourceTree = "<group>"; };
+		5132293A23305D4C0033D4ED /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
 		513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		513C5CE8232571C2003D4054 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		513C5CEB232571C2003D4054 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
@@ -1236,6 +1240,7 @@
 			isa = PBXGroup;
 			children = (
 				51F35D0822AFD4760003CE1B /* SettingsView.swift */,
+				5132293A23305D4C0033D4ED /* SettingsAboutView.swift */,
 				5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */,
 				5194B5F122B69FCC00144881 /* SettingsSubscriptionsExportDocumentPickerView.swift */,
 				5194B5ED22B6965300144881 /* SettingsSubscriptionsImportDocumentPickerView.swift */,
@@ -1258,9 +1263,10 @@
 		5194B5E222B693EC00144881 /* SwiftUI Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				513229302330523F0033D4ED /* AttributedStringView.swift */,
 				DF999FF622B5AEFA0064B687 /* SafariView.swift */,
-				51322854232EED360033D4ED /* VibrantSelectAction.swift */,
 				51322858232FDDB80033D4ED /* VibrantButtonStyle.swift */,
+				51322854232EED360033D4ED /* VibrantSelectAction.swift */,
 			);
 			path = "SwiftUI Extensions";
 			sourceTree = "<group>";
@@ -1279,6 +1285,7 @@
 			children = (
 				51F85BFA2275D85000C787DC /* Array-Extensions.swift */,
 				51F85BF42273625800C787DC /* Bundle-Extensions.swift */,
+				5F323808231DF9F000706F6B /* NNWTableViewCell.swift */,
 				51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */,
 				5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */,
 				5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */,
@@ -1403,14 +1410,6 @@
 				51EF0F7B2277919E0050506E /* TimelineNumberOfLinesViewController.swift */,
 			);
 			path = UIKit;
-			sourceTree = "<group>";
-		};
-		5F3237FF231DF9D000706F6B /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				5F323808231DF9F000706F6B /* NNWTableViewCell.swift */,
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 		6581C73620CED60100F4AD34 /* SafariExtension */ = {
@@ -1934,7 +1933,6 @@
 				51C452802265093600C03939 /* Add */,
 				5183CCEB227117C70010922C /* Settings */,
 				5183CCDB226F1EEB0010922C /* Progress */,
-				5F3237FF231DF9D000706F6B /* Views */,
 				519D740423243C68008BB345 /* Model Extensions */,
 				5194B5E222B693EC00144881 /* SwiftUI Extensions */,
 				51C45245226506C800C03939 /* UIKit Extensions */,
@@ -2672,6 +2670,7 @@
 				51C452852265093600C03939 /* FlattenedAccountFolderPickerData.swift in Sources */,
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
+				5132293B23305D4C0033D4ED /* SettingsAboutView.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
 				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
@@ -2741,6 +2740,7 @@
 				519D73FB2323FF35008BB345 /* SettingsView.swift in Sources */,
 				511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */,
 				51C45293226509C800C03939 /* StarredFeedDelegate.swift in Sources */,
+				513229312330523F0033D4ED /* AttributedStringView.swift in Sources */,
 				51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */,
 				51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */,
 			);
