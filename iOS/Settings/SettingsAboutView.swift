@@ -16,18 +16,18 @@ struct SettingsAboutView: View {
     var body: some View {
 		Form {
 			Text("NetNewsWire").font(.largeTitle)
-			AttributedStringView(string: viewModel.about).frame(height: 54)
+			SettingsAttributedStringView(string: viewModel.about).frame(height: 54)
 			Section(header: Text("CREDITS")) {
-				AttributedStringView(string: viewModel.credits).frame(height: 135)
+				SettingsAttributedStringView(string: viewModel.credits).frame(height: 135)
 			}
 			Section(header: Text("ACKNOWLEDGEMENTS")) {
-				AttributedStringView(string: viewModel.acknowledgements).frame(height: 81)
+				SettingsAttributedStringView(string: viewModel.acknowledgements).frame(height: 81)
 			}
 			Section(header: Text("THANKS")) {
-				AttributedStringView(string: viewModel.thanks).frame(height: 189)
+				SettingsAttributedStringView(string: viewModel.thanks).frame(height: 189)
 			}
 			Section(header: Text("DEDICATION"), footer: Text("Copyright © 2002-2019 Ranchero Software").font(.footnote)) {
-				AttributedStringView(string: viewModel.dedication).frame(height: 108)
+				SettingsAttributedStringView(string: viewModel.dedication).frame(height: 108)
 			}
 		}
     }

@@ -1,5 +1,5 @@
 //
-//  AttributedStringView.swift
+//  SettingsAttributedStringView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 9/16/19.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct AttributedStringView: UIViewRepresentable {
+struct SettingsAttributedStringView: UIViewRepresentable {
 	
 	let string: NSAttributedString
 	
