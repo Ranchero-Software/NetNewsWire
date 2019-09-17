@@ -12,10 +12,11 @@ final class TimelineAvatarView: NSView {
 
 	var image: NSImage? = nil {
 		didSet {
-			imageView.image = image
-			updateHasExposedBackground()
-			needsDisplay = true
-			needsLayout = true
+			if image !== oldValue {
+				imageView.image = image
+				needsDisplay = true
+				needsLayout = true
+			}
 		}
 	}
 
@@ -27,17 +28,16 @@ final class TimelineAvatarView: NSView {
 		let imageView = NSImageView(frame: NSRect.zero)
 		imageView.animates = false
 		imageView.imageAlignment = .alignCenter
-		imageView.imageScaling = .scaleProportionallyDown
+		imageView.imageScaling = .scaleProportionallyUpOrDown
 		return imageView
 	}()
 
-	private var hasExposedBackground = true {
-		didSet {
-			if oldValue != hasExposedBackground {
-				needsDisplay = true
-			}
-		}
+	private var hasExposedVerticalBackground: Bool {
+		return imageView.frame.size.height < bounds.size.height
 	}
+
+	private static var lightBackgroundColor = AppAssets.avatarLightBackgroundColor
+	private static var darkBackgroundColor = AppAssets.avatarDarkBackgroundColor
 
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
@@ -67,15 +67,11 @@ final class TimelineAvatarView: NSView {
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
-		guard hasExposedBackground else {
-			return
-		}
-		let rImage = imageView.frame
-		if rImage.contains(dirtyRect) {
+		guard hasExposedVerticalBackground else {
 			return
 		}
 
-		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? AppAssets.avatarDarkBackgroundColor : AppAssets.avatarLightBackgroundColor
+		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? TimelineAvatarView.darkBackgroundColor : TimelineAvatarView.lightBackgroundColor
 		color.set()
 		dirtyRect.fill()
 	}
@@ -85,6 +81,7 @@ private extension TimelineAvatarView {
 
 	func commonInit() {
 		addSubview(imageView)
+		wantsLayer = true
 	}
 
 	func rectForImageView() -> NSRect {
@@ -95,7 +92,12 @@ private extension TimelineAvatarView {
 		let imageSize = image.size
 		let viewSize = bounds.size
 		if imageSize.height == imageSize.width {
-			return NSMakeRect(0.0, 0.0, viewSize.width, viewSize.height)
+			if imageSize.height >= viewSize.height * 0.75 {
+				// Close enough to viewSize to scale up the image.
+				return NSMakeRect(0.0, 0.0, viewSize.width, viewSize.height)
+			}
+			let offset = floor((viewSize.height - imageSize.height) / 2.0)
+			return NSMakeRect(offset, offset, imageSize.width, imageSize.height)
 		}
 		else if imageSize.height > imageSize.width {
 			let factor = viewSize.height / imageSize.height
@@ -109,10 +111,5 @@ private extension TimelineAvatarView {
 		let height = imageSize.height * factor
 		let originY = floor((viewSize.height - height) / 2.0)
 		return NSMakeRect(0.0, originY, viewSize.width, height)
-	}
-
-	func updateHasExposedBackground() {
-		let rImage = rectForImageView()
-		hasExposedBackground = rImage.size.height < bounds.size.height || rImage.size.width < bounds.size.width
 	}
 }
