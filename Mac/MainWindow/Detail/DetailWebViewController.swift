@@ -105,9 +105,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 		webInspectorEnabled = AppDefaults.webInspectorEnabled
 
-		NotificationCenter.default.addObserver(forName: .WebInspectorEnabledDidChange, object: nil, queue: OperationQueue.main) { (notification) in
-			self.webInspectorEnabled = notification.object! as! Bool
-		}
+		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
 		reloadHTML()
 	}
@@ -206,6 +204,10 @@ private extension DetailWebViewController {
 			let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webView.frame.height, offsetY: offsetY)
 			callback(scrollInfo)
 		}
+	}
+
+	@objc func webInspectorEnabledDidChange(_ notification: Notification) {
+		self.webInspectorEnabled = notification.object! as! Bool
 	}
 }
 
