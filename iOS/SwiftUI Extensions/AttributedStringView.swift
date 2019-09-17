@@ -1,5 +1,5 @@
 //
-//  RichTextView.swift
+//  AttributedStringView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 9/16/19.
