@@ -143,7 +143,6 @@ iframe[src*="plusone.google"] {
 
 a[href*=".ads."],
 a[href*="feedads"],
-a[href*="feedburner"],
 a[href*="doubleclick"],
 a[href*="//ads."],
 a[href*="api.tweetmeme"],
@@ -163,6 +162,7 @@ img[src*=".ads."],
 img[src*="//ads."],
 img[src*="doubleclick"],
 img[src*="feedads"],
+img[src*="feedburner"],
 img[src*="feedblitz"],
 img[src*="share-buttons"] {
 	display: none !important;
