@@ -15,7 +15,7 @@ class AccountsAddViewController: NSViewController {
 	
 	private var accountsAddWindowController: NSWindowController?
 	
-	private let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .freshRSS]
+	private let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .freshRSS, .feedly]
 	
 	init() {
 		super.init(nibName: "AccountsAdd", bundle: nil)
@@ -68,6 +68,9 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			case .freshRSS:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("FreshRSS", comment: "FreshRSS")
 				cell.accountImageView?.image = AppAssets.accountFreshRSS
+			case .feedly:
+				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedly", comment: "Feedly")
+				cell.accountImageView?.image = AppAssets.accountFreshRSS
 			default:
 				break
 			}
@@ -97,6 +100,10 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			accountsReaderAPIWindowController.accountType = .freshRSS
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsReaderAPIWindowController
+		case .feedly:
+			let accountsFeedlyWindowController = AccountsFeedlyWebWindowController()
+			accountsFeedlyWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsFeedlyWindowController
 		default:
 			break
 		}
