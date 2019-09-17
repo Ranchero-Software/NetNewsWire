@@ -17,14 +17,12 @@ struct SettingsAttributedStringView: UIViewRepresentable {
 		
 		textView.attributedText = string
 		textView.translatesAutoresizingMaskIntoConstraints = false
-		
+		textView.isEditable = false
+
 		textView.adjustsFontForContentSizeCategory = true
 		textView.font = .preferredFont(forTextStyle: .body)
 		textView.textColor = UIColor.label
 		textView.backgroundColor = UIColor.secondarySystemGroupedBackground
-		
-		textView.isEditable = false
-		textView.isSelectable = false
 		
 		return textView
     }
