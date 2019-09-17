@@ -532,8 +532,11 @@ extension AppDelegate {
 	@IBAction func toggleWebInspectorEnabled(_ sender: Any?) {
 		let newValue = !AppDefaults.webInspectorEnabled
 		AppDefaults.webInspectorEnabled = newValue
+
 		// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
-		// and reset to a separate window when the preference is toggled off and on again in case the inspector is accidentally reattached.
+		// and reset the default to a separate window when the preference is toggled off and on again in case the inspector is
+		// accidentally reattached.
+		
 		AppDefaults.webInspectorStartsAttached = false
 		NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
