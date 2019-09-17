@@ -13,14 +13,18 @@ struct SettingsAttributedStringView: UIViewRepresentable {
 	let string: NSAttributedString
 	
     func makeUIView(context: Context) -> UITextView {
-		
 		let textView = UITextView()
+		
 		textView.attributedText = string
-		textView.adjustsFontForContentSizeCategory = true
 		textView.translatesAutoresizingMaskIntoConstraints = false
+		
+		textView.adjustsFontForContentSizeCategory = true
 		textView.font = .preferredFont(forTextStyle: .body)
 		textView.textColor = UIColor.label
 		textView.backgroundColor = UIColor.secondarySystemGroupedBackground
+		
+		textView.isEditable = false
+		textView.isSelectable = false
 		
 		return textView
     }
