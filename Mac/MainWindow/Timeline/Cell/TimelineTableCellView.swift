@@ -18,13 +18,7 @@ class TimelineTableCellView: NSTableCellView {
 	private let dateView = TimelineTableCellView.singleLineTextField()
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
-	private lazy var avatarImageView: NSImageView = {
-		let imageView = TimelineTableCellView.imageView(with: AppAssets.genericFeedImage, scaling: .scaleNone)
-		imageView.imageAlignment = .alignTop
-		imageView.imageScaling = .scaleProportionallyDown
-		imageView.wantsLayer = true
-		return imageView
-	}()
+	private lazy var avatarView = TimelineAvatarView()
 
 	private let starView = TimelineTableCellView.imageView(with: AppAssets.timelineStar, scaling: .scaleNone)
 	private let separatorView = TimelineTableCellView.separatorView()
@@ -43,7 +37,7 @@ class TimelineTableCellView: NSTableCellView {
 		didSet {
 			if cellAppearance != oldValue {
 				updateTextFieldFonts()
-				avatarImageView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
+				avatarView.layer?.cornerRadius = cellAppearance.avatarCornerRadius
 				needsLayout = true
 			}
 		}
@@ -125,7 +119,7 @@ class TimelineTableCellView: NSTableCellView {
 		dateView.rs_setFrameIfNotEqual(layoutRects.dateRect)
 		unreadIndicatorView.rs_setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
 		feedNameView.rs_setFrameIfNotEqual(layoutRects.feedNameRect)
-		avatarImageView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
+		avatarView.rs_setFrameIfNotEqual(layoutRects.avatarImageRect)
 		starView.rs_setFrameIfNotEqual(layoutRects.starRect)
 		separatorView.rs_setFrameIfNotEqual(layoutRects.separatorRect)
 	}
@@ -213,7 +207,7 @@ private extension TimelineTableCellView {
 		addSubviewAtInit(unreadIndicatorView, hidden: true)
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
-		addSubviewAtInit(avatarImageView, hidden: true)
+		addSubviewAtInit(avatarView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
 		addSubviewAtInit(separatorView, hidden: !AppDefaults.timelineShowsSeparators)
 
@@ -222,7 +216,7 @@ private extension TimelineTableCellView {
 
 	func updatedLayoutRects() -> TimelineCellLayout {
 
-		return TimelineCellLayout(width: bounds.width, height: bounds.height, cellData: cellData, appearance: cellAppearance, hasAvatar: avatarImageView.image != nil)
+		return TimelineCellLayout(width: bounds.width, height: bounds.height, cellData: cellData, appearance: cellAppearance, hasAvatar: avatarView.image != nil)
 	}
 
 	func updateTitleView() {
@@ -277,19 +271,19 @@ private extension TimelineTableCellView {
 			return
 		}
 
-		showView(avatarImageView)
-		if avatarImageView.image !== image {
-			avatarImageView.image = image
+		showView(avatarView)
+		if avatarView.image !== image {
+			avatarView.image = image
 			needsLayout = true
 		}
 	}
 
 	func makeAvatarEmpty() {
-		if avatarImageView.image != nil {
-			avatarImageView.image = nil
+		if avatarView.image != nil {
+			avatarView.image = nil
 			needsLayout = true
 		}
-		hideView(avatarImageView)
+		hideView(avatarView)
 	}
 
 	func hideView(_ view: NSView) {
