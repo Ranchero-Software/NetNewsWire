@@ -476,6 +476,13 @@
                                                 <action selector="debugSearch:" target="Ady-hI-5gd" id="HvM-F7-u7s"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="OOI-Hk-eqi"/>
+                                        <menuItem title="Enable Web Inspector" id="EwI-z4-ZA3">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleWebInspectorEnabled:" target="Voe-Tx-rLC" id="nsd-PV-Tz2"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

@@ -342,6 +342,9 @@ private extension ArticleRenderer {
 				anchors[i].addEventListener("mouseenter", function() { mouseDidEnterLink(this) });
 				anchors[i].addEventListener("mouseleave", function() { mouseDidExitLink(this) });
 			}
+		
+			document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
+			document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
 		}
 
 		function mouseDidEnterLink(anchor) {
@@ -376,7 +379,20 @@ private extension ArticleRenderer {
 		s += "<meta name=\"viewport\" content=\"width=device-width\">\n"
 		s += title.htmlBySurroundingWithTag("title")
 		s += styleString().htmlBySurroundingWithTag("style")
-		s += "\n\n</head><body>\n\n"
+		s += """
+
+		<script type="text/javascript">
+
+		function startup() {
+			document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
+			document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
+		}
+
+		</script>
+
+		"""
+		
+		s += "\n\n</head><body onload='startup()'>\n\n"
 		s += body
 		s += "\n\n</body></html>"
 		

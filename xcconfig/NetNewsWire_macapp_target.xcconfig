@@ -39,3 +39,4 @@ INFOPLIST_FILE = Mac/Resources/Info.plist
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
 PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire-Evergreen
 PRODUCT_NAME = NetNewsWire
+SWIFT_OBJC_BRIDGING_HEADER = Mac/NetNewsWire-Bridging-Header.h
