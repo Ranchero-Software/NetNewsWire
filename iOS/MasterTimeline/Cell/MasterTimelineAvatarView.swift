@@ -57,7 +57,7 @@ final class MasterTimelineAvatarView: UIView {
 		if hasExposedVerticalBackground {
 			AppAssets.avatarBackgroundColor.set()
 		} else {
-			UIColor.clear.set()
+			UIColor.systemBackground.set()
 		}
 		UIRectFill(dirtyRect)
 	}
