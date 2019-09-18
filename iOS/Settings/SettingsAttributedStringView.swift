@@ -22,6 +22,7 @@ struct SettingsAttributedStringView: UIViewRepresentable {
 		textView.adjustsFontForContentSizeCategory = true
 		textView.font = .preferredFont(forTextStyle: .body)
 		textView.textColor = UIColor.label
+		textView.tintColor = AppAssets.secondaryAccentColor
 		textView.backgroundColor = UIColor.secondarySystemGroupedBackground
 		
 		return textView
