@@ -49,4 +49,21 @@ struct AppAssets {
 	static var avatarDarkBackgroundColor: NSColor = {
 		return NSColor(named: NSColor.Name("avatarDarkBackgroundColor"))!
 	}()
+
+	static var searchFeedImage: RSImage = {
+		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	}()
+
+	static var starredFeedImage: RSImage = {
+		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	}()
+
+	static var todayFeedImage: RSImage = {
+		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	}()
+
+	static var unreadFeedImage: RSImage = {
+		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	}()
+
 }

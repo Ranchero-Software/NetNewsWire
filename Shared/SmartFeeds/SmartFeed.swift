@@ -25,6 +25,10 @@ final class SmartFeed: PseudoFeed {
 		}
 	}
 
+	var smallIcon: RSImage? {
+		return delegate.smallIcon
+	}
+	
 	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {
 		return SmartFeedPasteboardWriter(smartFeed: self)

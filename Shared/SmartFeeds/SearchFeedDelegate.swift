@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import Account
 import Articles
 
@@ -19,6 +20,7 @@ struct SearchFeedDelegate: SmartFeedDelegate {
 	let nameForDisplayPrefix = NSLocalizedString("Search: ", comment: "Search smart feed title prefix")
 	let searchString: String
 	let fetchType: FetchType
+	var smallIcon: RSImage? = AppAssets.searchFeedImage
 
 	init(searchString: String) {
 		self.searchString = searchString

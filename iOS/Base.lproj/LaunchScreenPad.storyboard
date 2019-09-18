@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14865.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Cqo-6I-B1A">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Cqo-6I-B1A">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14819.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -70,7 +70,7 @@
                         <barButtonItem systemItem="add" id="PVr-3K-nPg"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Feeds" largeTitleDisplayMode="never" id="lE1-xw-gjH">
-                        <barButtonItem key="leftBarButtonItem" title="Item" image="settingsImage" id="AK3-N5-4ke"/>
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="gear" catalog="system" id="AK3-N5-4ke"/>
                         <barButtonItem key="rightBarButtonItem" title="Edit" id="Khk-Hd-iNS"/>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
@@ -114,6 +114,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="settingsImage" width="24" height="24"/>
+        <image name="gear" catalog="system" width="64" height="60"/>
     </resources>
 </document>

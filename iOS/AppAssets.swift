@@ -27,7 +27,7 @@ struct AppAssets {
 	}()
 
 	static var circleClosedImage: UIImage = {
-		return UIImage(systemName: "circle.fill")!
+		return UIImage(systemName: "largecircle.fill.circle")!
 	}()
 	
 	static var circleOpenImage: UIImage = {
@@ -58,10 +58,6 @@ struct AppAssets {
 	
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
-	}()
-	
-	static var feedImage: RSImage = {
-		return RSImage(named: "feedImage")!
 	}()
 	
 	static var markAllInFeedAsReadImage: UIImage = {
@@ -96,8 +92,8 @@ struct AppAssets {
 		return UIImage(systemName: "safari")!
 	}()
 	
-	static var settingsImage: UIImage = {
-		return UIImage(named: "settingsImage")!
+	static var searchFeedImage: UIImage = {
+		return UIImage(named: "magnifyingglass")!
 	}()
 	
 	static var shareImage: UIImage = {
@@ -120,6 +116,10 @@ struct AppAssets {
 		return UIImage(systemName: "star")!
 	}()
 	
+	static var starredFeedImage: UIImage = {
+		return UIImage(systemName: "star.fill")!
+	}()
+
 	static var tableViewCellHighlightedTextColor: UIColor = {
 		return UIColor(named: "tableViewCellHighlightedTextColor")!
 	}()
@@ -141,8 +141,16 @@ struct AppAssets {
 		return UIColor(named: "timelineUnreadCircleColor")!
 	}()
 	
+	static var todayFeedImage: UIImage = {
+		return UIImage(systemName: "sun.max.fill")!
+	}()
+
 	static var trashImage: UIImage = {
 		return UIImage(systemName: "trash")!
+	}()
+	
+	static var unreadFeedImage: UIImage = {
+		return UIImage(systemName: "largecircle.fill.circle")!
 	}()
 	
 }

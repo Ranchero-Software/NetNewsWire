@@ -11,7 +11,7 @@ import Account
 import Articles
 import RSCore
 
-protocol SmartFeedDelegate: DisplayNameProvider, ArticleFetcher {
+protocol SmartFeedDelegate: DisplayNameProvider, ArticleFetcher, SmallIconProvider {
 
 	var fetchType: FetchType { get }
 

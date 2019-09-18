@@ -11,6 +11,7 @@ import AppKit
 #else
 import Foundation
 #endif
+import RSCore
 import Account
 import Articles
 
@@ -29,6 +30,8 @@ final class UnreadFeed: PseudoFeed {
 		}
 	}
 
+	var smallIcon: RSImage? = AppAssets.unreadFeedImage
+	
 	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {
 		return SmartFeedPasteboardWriter(smartFeed: self)
