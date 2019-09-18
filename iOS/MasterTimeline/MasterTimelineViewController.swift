@@ -182,7 +182,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			completionHandler(true)
 		}
 		
-		readAction.image = AppAssets.circleClosedImage
+		readAction.image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
 		readAction.backgroundColor = AppAssets.primaryAccentColor
 		
 		// Set up the star action
@@ -195,7 +195,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			completionHandler(true)
 		}
 		
-		starAction.image = AppAssets.starClosedImage
+		starAction.image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
 		starAction.backgroundColor = AppAssets.starColor
 		
 		// Set up the read action
