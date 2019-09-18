@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14865.1" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14865.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -168,6 +168,22 @@
                                         <action selector="refreshAll:" target="Oky-zY-oP4" id="KRz-Df-3zA"/>
                                     </connections>
                                 </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="642D2379-B9AF-4990-8E09-A1115C60ED1A" label="Reader" paletteLabel="Reader" image="articleExtractor" id="6Vm-OW-3mR" customClass="RSToolbarItem" customModule="RSCore">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="38" height="25"/>
+                                    <size key="maxSize" width="38" height="27"/>
+                                    <button key="view" verticalHuggingPriority="750" id="1b9-Tf-u5V" customClass="ArticleExtractorButton" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="3" y="14" width="38" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="articleExtractor" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sXz-Xe-Kd7">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <connections>
+                                        <action selector="toggleArticleExtractor:" target="B8D-0N-5wS" id="ZKQ-SK-5YJ"/>
+                                    </connections>
+                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="Skp-5r-70Q"/>
@@ -180,6 +196,7 @@
                                 <toolbarItem reference="p7Y-Vm-ILH"/>
                                 <toolbarItem reference="Gxg-WQ-ufC"/>
                                 <toolbarItem reference="N7D-g2-EPD"/>
+                                <toolbarItem reference="6Vm-OW-3mR"/>
                                 <toolbarItem reference="tid-SB-me3"/>
                                 <toolbarItem reference="nv0-Ju-lP7"/>
                             </defaultToolbarItems>
@@ -192,6 +209,7 @@
                         </connections>
                     </window>
                     <connections>
+                        <outlet property="articleExtractorButton" destination="1b9-Tf-u5V" id="W8P-DA-hmV"/>
                         <segue destination="reS-fe-pD8" kind="relationship" relationship="window.shadowedContentViewController" id="WS2-WB-dc4"/>
                     </connections>
                 </windowController>
@@ -276,7 +294,7 @@
                                             <tableColumns>
                                                 <tableColumn width="164" minWidth="23" maxWidth="1000" id="ih9-mJ-EA7">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="label" size="11"/>
+                                                        <font key="font" metaFont="menu" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
@@ -488,6 +506,7 @@
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
+        <image name="articleExtractor" width="16" height="16"/>
         <image name="markAllRead" width="22" height="19"/>
         <image name="markRead" width="19" height="19"/>
         <image name="newFolder" width="19" height="19"/>

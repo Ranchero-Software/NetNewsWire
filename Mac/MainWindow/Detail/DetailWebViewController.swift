@@ -176,6 +176,8 @@ private extension DetailWebViewController {
 			html = ArticleRenderer.multipleSelectionHTML(style: style)
 		case .article(let article):
 			html = ArticleRenderer.articleHTML(article: article, style: style)
+		case .extracted(let article, let extractedArticle):
+			html = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
 		}
 
 		webView.loadHTMLString(html, baseURL: nil)

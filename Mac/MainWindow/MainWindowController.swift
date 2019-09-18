@@ -17,6 +17,9 @@ enum TimelineSourceMode {
 
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
+	@IBOutlet weak var articleExtractorButton: ArticleExtractorButton!
+	
+	private var articleExtractor: ArticleExtractor? = nil
 	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName("MainWindow")
@@ -206,6 +209,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return canMarkOlderArticlesAsRead()
 		}
 
+		if item.action == #selector(toggleArticleExtractor(_:)) {
+			return validateToggleArticleExtractor(item)
+		}
+		
 		if item.action == #selector(toolbarShowShareMenu(_:)) {
 			return canShowShareMenu()
 		}
@@ -290,6 +297,34 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func toggleStarred(_ sender: Any?) {
 		currentTimelineViewController?.toggleStarredStatusForSelectedArticles()
+	}
+
+	@IBAction func toggleArticleExtractor(_ sender: Any?) {
+		
+		guard let currentLink = currentLink, let article = oneSelectedArticle else {
+			return
+		}
+		
+		guard articleExtractorButton.state == .on else {
+			let detailState = DetailState.article(article)
+			detailViewController?.setState(detailState, mode: timelineSourceMode)
+			return
+		}
+		
+		if let articleExtractor = articleExtractor, let extractedArticle = articleExtractor.article {
+			if currentLink == articleExtractor.articleLink {
+				let detailState = DetailState.extracted(article, extractedArticle)
+				detailViewController?.setState(detailState, mode: timelineSourceMode)
+			}
+		} else {
+			if let extractor = ArticleExtractor(currentLink) {
+				extractor.delegate = self
+				extractor.process()
+				articleExtractor = extractor
+				makeToolbarValidate()
+			}
+		}
+		
 	}
 
 	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
@@ -407,6 +442,11 @@ extension MainWindowController: SidebarDelegate {
 extension MainWindowController: TimelineContainerViewControllerDelegate {
 
 	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode) {
+		articleExtractorButton.isError = false
+		articleExtractorButton.isInProgress = false
+		articleExtractorButton.state = .off
+		articleExtractor = nil
+
 		let detailState: DetailState
 		if let articles = articles {
 			detailState = articles.count == 1 ? .article(articles.first!) : .multipleSelection
@@ -414,6 +454,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		else {
 			detailState = .noSelection
 		}
+
 		detailViewController?.setState(detailState, mode: mode)
 	}
 }
@@ -479,6 +520,24 @@ extension MainWindowController: NSSearchFieldDelegate {
 		timelineSourceMode = .regular
 		timelineContainerViewController?.setRepresentedObjects(nil, mode: .search)
 	}
+}
+
+// MARK: - ArticleExtractorDelegate
+
+extension MainWindowController: ArticleExtractorDelegate {
+	
+	func articleExtractionDidFail(with: Error) {
+		makeToolbarValidate()
+	}
+	
+	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
+		makeToolbarValidate()
+		if articleExtractorButton.state == .on, let article = oneSelectedArticle {
+			let detailState = DetailState.extracted(article, extractedArticle)
+			detailViewController?.setState(detailState, mode: timelineSourceMode)
+		}
+	}
+	
 }
 
 // MARK: - Scripting Access
@@ -630,6 +689,34 @@ private extension MainWindowController {
 		}
 		
 		return result
+	}
+
+	func validateToggleArticleExtractor(_ item: NSValidatedUserInterfaceItem) -> Bool {
+		guard let articleExtractorState = articleExtractor?.state else {
+			articleExtractorButton.isError = false
+			articleExtractorButton.isInProgress = false
+			return currentLink != nil
+		}
+		
+		switch articleExtractorState {
+		case .ready:
+			articleExtractorButton.isError = false
+			articleExtractorButton.isInProgress = false
+			return currentLink != nil
+		case .processing:
+			articleExtractorButton.isError = false
+			articleExtractorButton.isInProgress = true
+			return true
+		case .failedToParse:
+			articleExtractorButton.isError = true
+			articleExtractorButton.isInProgress = false
+			articleExtractorButton.state = .off
+			return true
+		case .complete:
+			articleExtractorButton.isError = false
+			articleExtractorButton.isInProgress = false
+			return currentLink != nil
+		}
 	}
 
 	func canMarkOlderArticlesAsRead() -> Bool {

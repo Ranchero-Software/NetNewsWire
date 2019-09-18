@@ -16,6 +16,7 @@ enum DetailState: Equatable {
 	case noSelection
 	case multipleSelection
 	case article(Article)
+	case extracted(Article, ExtractedArticle)
 }
 
 final class DetailViewController: NSViewController, WKUIDelegate {

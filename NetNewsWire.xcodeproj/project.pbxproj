@@ -199,6 +199,13 @@
 		51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */; };
 		51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFA2275D85000C787DC /* Array-Extensions.swift */; };
 		51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */; };
+		51FA73A42332BE110090D516 /* ArticleExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A32332BE110090D516 /* ArticleExtractor.swift */; };
+		51FA73A52332BE110090D516 /* ArticleExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A32332BE110090D516 /* ArticleExtractor.swift */; };
+		51FA73A72332BE880090D516 /* ExtractedArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A62332BE880090D516 /* ExtractedArticle.swift */; };
+		51FA73A82332BE880090D516 /* ExtractedArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A62332BE880090D516 /* ExtractedArticle.swift */; };
+		51FA73AA2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */; };
+		51FA73AB2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */; };
+		51FA73B72332D5F70090D516 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */; };
 		55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */; };
 		55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */; };
 		5F323809231DF9F000706F6B /* NNWTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F323808231DF9F000706F6B /* NNWTableViewCell.swift */; };
@@ -863,6 +870,10 @@
 		51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BFA2275D85000C787DC /* Array-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLineUILabelSizer.swift; sourceTree = "<group>"; };
+		51FA73A32332BE110090D516 /* ArticleExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractor.swift; sourceTree = "<group>"; };
+		51FA73A62332BE880090D516 /* ExtractedArticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractedArticle.swift; sourceTree = "<group>"; };
+		51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorConfig.swift; sourceTree = "<group>"; };
+		51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
 		557EE1A522B6F4E1004206FA /* SettingsReaderAPIAccountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsReaderAPIAccountView.swift; sourceTree = "<group>"; };
 		55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsReaderAPI.xib; sourceTree = "<group>"; };
 		55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsReaderAPIWindowController.swift; sourceTree = "<group>"; };
@@ -1391,6 +1402,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		51FA739A2332BDE70090D516 /* Article Extractor */ = {
+			isa = PBXGroup;
+			children = (
+				51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */,
+				51FA73A32332BE110090D516 /* ArticleExtractor.swift */,
+				51FA73A62332BE880090D516 /* ExtractedArticle.swift */,
+			);
+			path = "Article Extractor";
+			sourceTree = "<group>";
+		};
 		6581C73620CED60100F4AD34 /* SafariExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -1456,6 +1477,7 @@
 				849A975D1ED9EB72007D329B /* MainWindowController.swift */,
 				519B8D322143397200FA689C /* SharingServiceDelegate.swift */,
 				849EE72020391F560082A1EA /* SharingServicePickerDelegate.swift */,
+				51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */,
 				844B5B6B1FEA224B00C7C76A /* Keyboard */,
 				849A975F1ED9EB95007D329B /* Sidebar */,
 				849A97681ED9EBC8007D329B /* Timeline */,
@@ -1807,6 +1829,7 @@
 				51C452AD2265102800C03939 /* Timeline */,
 				84702AB31FA27AE8006B8943 /* Commands */,
 				51934CCC231078DC006127BE /* Activity */,
+				51FA739A2332BDE70090D516 /* Article Extractor */,
 				51C452A822650DA100C03939 /* Article Rendering */,
 				849A97861ED9ECEF007D329B /* Article Styles */,
 				84DAEE201F86CAE00058304B /* Importers */,
@@ -2645,10 +2668,12 @@
 				51322859232FDDB80033D4ED /* VibrantButtonStyle.swift in Sources */,
 				514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */,
 				5152E0F923248F6200E5C7AD /* SettingsLocalAccountView.swift in Sources */,
+				51FA73A52332BE110090D516 /* ArticleExtractor.swift in Sources */,
 				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
 				510BD15D232D765D002692E4 /* SettingsReaderAPIAccountView.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
+				51FA73AB2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */,
 				5132285B232FF2C40033D4ED /* SettingsRefreshSelectionView.swift in Sources */,
 				51C452852265093600C03939 /* FlattenedAccountFolderPickerData.swift in Sources */,
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
@@ -2676,6 +2701,7 @@
 				5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */,
 				51C4529D22650A1000C03939 /* FaviconURLFinder.swift in Sources */,
 				51C45258226508CF00C03939 /* AppAssets.swift in Sources */,
+				51FA73A82332BE880090D516 /* ExtractedArticle.swift in Sources */,
 				51C4527C2265091600C03939 /* MasterTimelineDefaultCellLayout.swift in Sources */,
 				51C4529A22650A0400C03939 /* ArticleStyle.swift in Sources */,
 				51C4527F2265092C00C03939 /* DetailViewController.swift in Sources */,
@@ -2736,6 +2762,7 @@
 				84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */,
 				848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */,
 				847CD6CA232F4CBF00FAC46D /* TimelineAvatarView.swift in Sources */,
+				51FA73AA2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */,
 				84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */,
 				51EF0F7A22771B890050506E /* ColorHash.swift in Sources */,
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,
@@ -2815,6 +2842,7 @@
 				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
 				84DEE56522C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
 				845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */,
+				51FA73B72332D5F70090D516 /* ArticleExtractorButton.swift in Sources */,
 				51EF0F922279CA620050506E /* AccountsAddTableCellView.swift in Sources */,
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
 				8405DDA522168C62008CE1BF /* TimelineContainerViewController.swift in Sources */,
@@ -2838,6 +2866,7 @@
 				84E8E0EB202F693600562D8F /* DetailWebView.swift in Sources */,
 				849A976C1ED9EBC8007D329B /* TimelineTableRowView.swift in Sources */,
 				849A977B1ED9EC04007D329B /* UnreadIndicatorView.swift in Sources */,
+				51FA73A72332BE880090D516 /* ExtractedArticle.swift in Sources */,
 				84B99C9D1FAE83C600ECDEDB /* DeleteCommand.swift in Sources */,
 				849A97541ED9EAC0007D329B /* AddFeedWindowController.swift in Sources */,
 				5144EA40227A37EC00D19003 /* ImportOPMLWindowController.swift in Sources */,
@@ -2846,6 +2875,7 @@
 				D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */,
 				84C9FC7922629E1200D921D6 /* PreferencesWindowController.swift in Sources */,
 				84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */,
+				51FA73A42332BE110090D516 /* ArticleExtractor.swift in Sources */,
 				84CAFCA422BC8C08007694F0 /* FetchRequestQueue.swift in Sources */,
 				844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */,
 				84C9FC7C22629E1200D921D6 /* AccountsPreferencesViewController.swift in Sources */,
