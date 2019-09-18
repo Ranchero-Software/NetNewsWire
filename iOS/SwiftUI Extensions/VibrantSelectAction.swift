@@ -18,10 +18,10 @@ struct VibrantSelectAction: ViewModifier {
 		GeometryReader { geometry in
 			content
 				.frame(width: geometry.size.width, height: geometry.size.height, alignment: .leading)
-				.background(self.isLongPressed || self.isTapped ? Color(AppAssets.tableViewCellSelectionColor) : Color(.secondarySystemGroupedBackground))
+				.background(self.isLongPressed || self.isTapped ? Color(AppAssets.primaryAccentColor) : Color(.secondarySystemGroupedBackground))
 		}
 		.foregroundColor(isLongPressed || isTapped ? Color(AppAssets.tableViewCellHighlightedTextColor) : .primary)
-		.listRowBackground(isLongPressed || isTapped ? Color(AppAssets.tableViewCellSelectionColor) : nil)
+		.listRowBackground(isLongPressed || isTapped ? Color(AppAssets.primaryAccentColor) : nil)
 		.gesture(
 			LongPressGesture().onEnded( { _ in self.action() })
 				.updating($isLongPressed) { value, state, transcation in state = value	}

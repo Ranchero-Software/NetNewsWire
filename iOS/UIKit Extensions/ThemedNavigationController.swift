@@ -40,15 +40,15 @@ class ThemedNavigationController: UINavigationController {
 		} else {
 			let navigationAppearance = UINavigationBarAppearance()
 			navigationAppearance.backgroundColor = AppAssets.barBackgroundColor
-			navigationAppearance.titleTextAttributes = [.foregroundColor: AppAssets.barTitleColor]
-			navigationAppearance.largeTitleTextAttributes = [.foregroundColor: AppAssets.barTitleColor]
+			navigationAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+			navigationAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
 			navigationBar.standardAppearance = navigationAppearance
-			navigationBar.tintColor = AppAssets.barTintColor
+			navigationBar.tintColor = AppAssets.primaryAccentColor
 			
 			let toolbarAppearance = UIToolbarAppearance()
 			toolbarAppearance.backgroundColor = UIColor.white
 			toolbar.standardAppearance = toolbarAppearance
-			toolbar.tintColor = AppAssets.barTintColor
+			toolbar.tintColor = AppAssets.primaryAccentColor
 		}
 		
 	}

@@ -26,7 +26,7 @@ class NNWTableViewCell: UITableViewCell {
 	/// Subclass overrides should call super
 	func applyThemeProperties() {
 		let selectedBackgroundView = UIView(frame: .zero)
-		selectedBackgroundView.backgroundColor = AppAssets.tableViewCellSelectionColor
+		selectedBackgroundView.backgroundColor = AppAssets.primaryAccentColor
 		self.selectedBackgroundView = selectedBackgroundView
 	}
 }

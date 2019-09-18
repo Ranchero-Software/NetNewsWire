@@ -183,7 +183,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 		
 		readAction.image = AppAssets.circleClosedImage
-		readAction.backgroundColor = AppAssets.netNewsWireBlueColor
+		readAction.backgroundColor = AppAssets.primaryAccentColor
 		
 		// Set up the star action
 		let starTitle = article.status.starred ?

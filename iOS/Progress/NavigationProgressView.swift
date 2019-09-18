@@ -24,7 +24,7 @@ public final class NavigationProgressView: UIView {
 	
 	internal let bar = UIView()
 	
-	@objc public dynamic var progressTintColor: UIColor? = AppAssets.barTintColor {
+	@objc public dynamic var progressTintColor: UIColor? = AppAssets.primaryAccentColor {
 		didSet {
 			bar.backgroundColor = progressTintColor
 		}

@@ -18,8 +18,8 @@ struct VibrantButtonStyle: ButtonStyle {
 				.frame(width: geometry.size.width, height: geometry.size.height, alignment: self.alignment)
 		}
 		.foregroundColor(configuration.isPressed ? Color(AppAssets.tableViewCellHighlightedTextColor) : .primary)
-		.listRowBackground(configuration.isPressed ? Color(AppAssets.tableViewCellSelectionColor) : Color(.secondarySystemGroupedBackground))
-		.background(configuration.isPressed ? Color(AppAssets.tableViewCellSelectionColor) : Color(.secondarySystemGroupedBackground))
+		.listRowBackground(configuration.isPressed ? Color(AppAssets.primaryAccentColor) : Color(.secondarySystemGroupedBackground))
+		.background(configuration.isPressed ? Color(AppAssets.primaryAccentColor) : Color(.secondarySystemGroupedBackground))
     }
 	
 }

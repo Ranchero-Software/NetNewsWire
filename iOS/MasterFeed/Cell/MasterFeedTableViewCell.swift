@@ -113,14 +113,14 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
 		super.setHighlighted(highlighted, animated: animated)
 
-		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.tableViewCellIconColor
+		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.secondaryAccentColor
 		faviconImageView.tintColor = tintColor
 	}
 
 	override func setSelected(_ selected: Bool, animated: Bool) {
 		super.setSelected(selected, animated: animated)
 
-		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.tableViewCellIconColor
+		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.secondaryAccentColor
 		faviconImageView.tintColor = tintColor
 	}
 	

@@ -18,14 +18,6 @@ struct AppAssets {
 		return UIColor(named: "barBackgroundColor")!
 	}()
 
-	static var barTintColor: UIColor = {
-		return UIColor(named: "barTintColor")!
-	}()
-
-	static var barTitleColor: UIColor = {
-		return UIColor(named: "barTitleColor")!
-	}()
-
 	static var circleClosedImage: UIImage = {
 		return UIImage(systemName: "largecircle.fill.circle")!
 	}()
@@ -80,12 +72,12 @@ struct AppAssets {
 		return UIImage(systemName: "ellipsis.circle")!
 	}()
 	
-	static var netNewsWireBlueColor: UIColor = {
-		return UIColor(named: "netNewsWireBlueColor")!
-	}()
-	
 	static var openInSidebarImage: UIImage = {
 		return UIImage(systemName: "arrow.turn.down.left")!
+	}()
+	
+	static var primaryAccentColor: UIColor = {
+		return UIColor(named: "primaryAccentColor")!
 	}()
 	
 	static var safariImage: UIImage = {
@@ -94,6 +86,10 @@ struct AppAssets {
 	
 	static var searchFeedImage: UIImage = {
 		return UIImage(named: "magnifyingglass")!
+	}()
+	
+	static var secondaryAccentColor: UIColor = {
+		return UIColor(named: "secondaryAccentColor")!
 	}()
 	
 	static var shareImage: UIImage = {
@@ -124,21 +120,9 @@ struct AppAssets {
 		return UIColor(named: "tableViewCellHighlightedTextColor")!
 	}()
 
-	static var tableViewCellIconColor: UIColor = {
-		return UIColor(named: "tableViewCellIconColor")!
-	}()
-	
-	static var tableViewCellSelectionColor: UIColor = {
-		return UIColor(named: "tableViewCellSelectionColor")!
-	}()
-
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
-	}()
-	
-	static var timelineUnreadCircleColor: UIColor = {
-		return UIColor(named: "timelineUnreadCircleColor")!
 	}()
 	
 	static var todayFeedImage: UIImage = {

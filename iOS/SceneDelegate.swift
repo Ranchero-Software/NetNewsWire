@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 		
 		window = UIWindow(windowScene: scene as! UIWindowScene)
-		window!.tintColor = AppAssets.netNewsWireBlueColor
+		window!.tintColor = AppAssets.primaryAccentColor
 		window!.rootViewController = coordinator.start(for: window!.frame.size)
 
 		if let shortcutItem = connectionOptions.shortcutItem {
