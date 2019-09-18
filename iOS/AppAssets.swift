@@ -85,7 +85,7 @@ struct AppAssets {
 	}()
 	
 	static var searchFeedImage: UIImage = {
-		return UIImage(named: "magnifyingglass")!
+		return UIImage(systemName: "magnifyingglass")!
 	}()
 	
 	static var secondaryAccentColor: UIColor = {
