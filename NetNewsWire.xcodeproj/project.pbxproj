@@ -1051,10 +1051,10 @@
 		84F9EAE4213660A100CF2DE4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
-		B24EFD482330FF99006C6242 /* NetNewsWire-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-Bridging-Header.h"; sourceTree = "<group>"; };
-		B24EFD5923310109006C6242 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		9EA33BB72318F8C10097B644 /* AccountsFeedlyWebWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsFeedlyWebWindowController.swift; sourceTree = "<group>"; };
 		9EA33BB82318F8C10097B644 /* AccountsFeedlyWeb.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsFeedlyWeb.xib; sourceTree = "<group>"; };
+		B24EFD482330FF99006C6242 /* NetNewsWire-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-Bridging-Header.h"; sourceTree = "<group>"; };
+		B24EFD5923310109006C6242 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_safariextension_target.xcconfig; sourceTree = "<group>"; };
 		D553737C20186C1F006D8857 /* Article+Scriptability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Article+Scriptability.swift"; sourceTree = "<group>"; };
 		D57BE6DF204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScriptCommand+NetNewsWire.swift"; sourceTree = "<group>"; };
@@ -2165,6 +2165,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 849C647A1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "NetNewsWire" */;
 			buildPhases = (
+				51D6803823330CFF0097A009 /* Update Feedbin Mercury API Keys */,
 				849C645C1ED37A5D003D8FC0 /* Sources */,
 				849C645D1ED37A5D003D8FC0 /* Frameworks */,
 				849C645E1ED37A5D003D8FC0 /* Resources */,
@@ -2569,6 +2570,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
+		};
+		51D6803823330CFF0097A009 /* Update Feedbin Mercury API Keys */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Update Feedbin Mercury API Keys";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FAILED=false\n\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\necho \"Not a release build.  ArticleExtractorConfig.swift not changed.\"\nexit 0\nfi\n\nif [ -z \"${MERCURY_CLIENT_ID}\" ]; then\necho \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift:21:1: warning: Missing Feedbin Mercury Client ID\"\nFAILED=true\nfi\n\nif [ -z \"${MERCURY_CLIENT_SECRET}\" ]; then\necho \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift:22:1: warning: Missing Feedbin Mercury Client Secret\"\nFAILED=true\nfi\n\nsed -i .tmp \"s|{MERCURYID}|${MERCURY_CLIENT_ID}|g; s|{MERCURYSECRET}|${MERCURY_CLIENT_SECRET}|g\" \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n\nrm -f \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift.tmp\"\n\nif [ \"$FAILED\" = true ]; then\nexit 1\nfi\n\necho \"All env values found!\"\n";
 		};
 		8423E3E3220158E700C3795B /* Run Script: codesign release builds */ = {
 			isa = PBXShellScriptBuildPhase;
