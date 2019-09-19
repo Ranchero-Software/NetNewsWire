@@ -38,8 +38,10 @@ struct AppDefaults {
 		static let showTitleOnMainWindow = "KafasisTitleMode"
 		static let hideDockUnreadCount = "JustinMillerHideDockUnreadCount"
 
-		static let webInspectorEnabled = "WebInspectorEnabled"
-		static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
+		#if !MAC_APP_STORE
+			static let webInspectorEnabled = "WebInspectorEnabled"
+			static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
+		#endif
 	}
 
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
@@ -142,23 +144,25 @@ struct AppDefaults {
 		return bool(for: Key.hideDockUnreadCount)
 	}
 
-	static var webInspectorEnabled: Bool {
-		get {
-			return bool(for: Key.webInspectorEnabled)
+	#if !MAC_APP_STORE
+		static var webInspectorEnabled: Bool {
+			get {
+				return bool(for: Key.webInspectorEnabled)
+			}
+			set {
+				setBool(for: Key.webInspectorEnabled, newValue)
+			}
 		}
-		set {
-			setBool(for: Key.webInspectorEnabled, newValue)
-		}
-	}
 
-	static var webInspectorStartsAttached: Bool {
-		get {
-			return bool(for: Key.webInspectorStartsAttached)
+		static var webInspectorStartsAttached: Bool {
+			get {
+				return bool(for: Key.webInspectorStartsAttached)
+			}
+			set {
+				setBool(for: Key.webInspectorStartsAttached, newValue)
+			}
 		}
-		set {
-			setBool(for: Key.webInspectorStartsAttached, newValue)
-		}
-	}
+	#endif
 
 	static var timelineSortDirection: ComparisonResult {
 		get {

@@ -28,14 +28,16 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		}
 	}
 
-	private var webInspectorEnabled: Bool {
-		get {
-			return webView.configuration.preferences._developerExtrasEnabled
+	#if !MAC_APP_STORE
+		private var webInspectorEnabled: Bool {
+			get {
+				return webView.configuration.preferences._developerExtrasEnabled
+			}
+			set {
+				webView.configuration.preferences._developerExtrasEnabled = newValue
+			}
 		}
-		set {
-			webView.configuration.preferences._developerExtrasEnabled = newValue
-		}
-	}
+	#endif
 	
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
@@ -96,9 +98,11 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		webView.isHidden = true
 		waitingForFirstReload = true
 
-		webInspectorEnabled = AppDefaults.webInspectorEnabled
+		#if !MAC_APP_STORE
+			webInspectorEnabled = AppDefaults.webInspectorEnabled
 
-		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
+		#endif
 
 		reloadHTML()
 	}
@@ -201,9 +205,11 @@ private extension DetailWebViewController {
 		}
 	}
 
-	@objc func webInspectorEnabledDidChange(_ notification: Notification) {
-		self.webInspectorEnabled = notification.object! as! Bool
-	}
+	#if !MAC_APP_STORE
+		@objc func webInspectorEnabledDidChange(_ notification: Notification) {
+			self.webInspectorEnabled = notification.object! as! Bool
+		}
+	#endif
 }
 
 // MARK: - ScrollInfo
