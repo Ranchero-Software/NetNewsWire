@@ -71,18 +71,6 @@
             ReferencedContainer = "container:NetNewsWire.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "MERCURY_CLIENT_ID"
-            value = "netnewswire"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "MERCURY_CLIENT_SECRET"
-            value = "PM9QZZwckFPLcJdUt4BADDqwHdKCAy8zxaAakjmpGdbjEjfcAdU3CTNdBf8Lw"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
