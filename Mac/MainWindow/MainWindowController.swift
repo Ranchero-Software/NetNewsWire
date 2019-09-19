@@ -321,8 +321,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 				extractor.delegate = self
 				extractor.process()
 				articleExtractor = extractor
-				makeToolbarValidate()
 			}
+			makeToolbarValidate()
 		}
 		
 	}
@@ -695,6 +695,7 @@ private extension MainWindowController {
 		guard let articleExtractorState = articleExtractor?.state else {
 			articleExtractorButton.isError = false
 			articleExtractorButton.isInProgress = false
+			articleExtractorButton.state = .off
 			return currentLink != nil
 		}
 		
