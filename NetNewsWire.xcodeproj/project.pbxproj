@@ -987,6 +987,7 @@
 		84B7178B201E66580091657D /* SidebarViewController+ContextualMenus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SidebarViewController+ContextualMenus.swift"; sourceTree = "<group>"; };
 		84B99C9C1FAE83C600ECDEDB /* DeleteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteCommand.swift; sourceTree = "<group>"; };
 		84BAE64821CEDAF20046DB56 /* CrashReporterWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CrashReporterWindow.xib; sourceTree = "<group>"; };
+		84BB0F812333426400DED65E /* NetNewsWire.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire.entitlements; sourceTree = "<group>"; };
 		84BBB12B20142A4700F054F5 /* Inspector.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Inspector.storyboard; sourceTree = "<group>"; };
 		84BBB12C20142A4700F054F5 /* InspectorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InspectorWindowController.swift; sourceTree = "<group>"; };
 		84C37F7A20DD8CF200CA8CF5 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = submodules/RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
@@ -1964,6 +1965,7 @@
 				51C452B72265178500C03939 /* styleSheet.css */,
 				84C9FC9B2262A1A900D921D6 /* Assets.xcassets */,
 				84C9FC9C2262A1A900D921D6 /* Info.plist */,
+				84BB0F812333426400DED65E /* NetNewsWire.entitlements */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2224,7 +2226,7 @@
 				TargetAttributes = {
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = DY2XQRVWN9;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
@@ -2233,7 +2235,7 @@
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = DY2XQRVWN9;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -2569,7 +2571,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
+			shellScript = "##xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n##$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
 		};
 		51D6803823330CFF0097A009 /* Update Feedbin Mercury API Keys */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3149,6 +3151,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire.iOS.Share-Extension";
 			};
 			name = Debug;
@@ -3157,6 +3161,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ranchero.NetNewsWire.iOS.Share-Extension";
 			};
 			name = Release;
@@ -3179,6 +3185,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = iOS/Resources/NetNewsWire.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire.iOS;
 			};
 			name = Debug;
@@ -3187,6 +3196,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = iOS/Resources/NetNewsWire.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = M8L2WTLA8W;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire.iOS;
 			};
 			name = Release;
