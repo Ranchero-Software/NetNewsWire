@@ -100,7 +100,13 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
-		reloadHTML()
+		webView.loadHTMLString(template(), baseURL: nil)
+	}
+
+	func template() -> String {
+		let path = Bundle.main.path(forResource: "page", ofType: "html")!
+		let s = try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
+		return s as String
 	}
 
 	// MARK: Scrolling
@@ -162,6 +168,9 @@ extension DetailWebViewController: WKNavigationDelegate {
 }
 
 // MARK: - Private
+struct TemplateData: Codable {
+	let body: String
+}
 
 private extension DetailWebViewController {
 
@@ -179,8 +188,17 @@ private extension DetailWebViewController {
 		case .extracted(let article, let extractedArticle):
 			html = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
 		}
+		
+		let templateData = TemplateData(body: html)
+		
+		let encoder = JSONEncoder()
+		var render = "error();"
+		if let data = try? encoder.encode(templateData) {
+			let json = String(data: data, encoding: .utf8)!
+			render = "render(\(json));"
+		}
 
-		webView.loadHTMLString(html, baseURL: nil)
+		webView.evaluateJavaScript(render)
 	}
 
 	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {
