@@ -66,6 +66,9 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			accountsFreshRSSWindowController.account = account
 			accountsFreshRSSWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsFreshRSSWindowController
+		case .feedly:
+			assertionFailure("Implement feedly logout window controller")
+			break
 		default:
 			break
 		}
