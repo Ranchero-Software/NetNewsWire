@@ -12,13 +12,17 @@ class ArticleExtractorButton: NSButton {
 	
 	var isError = false {
 		didSet {
-			needsDisplay = true
+			if isError != oldValue {
+				needsDisplay = true
+			}
 		}
 	}
 	
 	var isInProgress = false {
 		didSet {
-			needsDisplay = true
+			if isInProgress != oldValue {
+				needsDisplay = true
+			}
 		}
 	}
 	
