@@ -42,7 +42,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
-	
+	@IBOutlet var enableWebInspectorMenuItem: NSMenuItem!
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -116,6 +117,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		#if MAC_APP_STORE
 			checkForUpdatesMenuItem.isHidden = true
+			enableWebInspectorMenuItem.isHidden = true
 		#endif
 		
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
@@ -309,9 +311,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
+		#if MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.webInspectorEnabled ? .on : .off
 		}
+		#endif
 		return true
 	}
 
@@ -530,15 +534,17 @@ extension AppDelegate {
 	}
 
 	@IBAction func toggleWebInspectorEnabled(_ sender: Any?) {
-		let newValue = !AppDefaults.webInspectorEnabled
-		AppDefaults.webInspectorEnabled = newValue
+		#if MAC_APP_STORE
+			let newValue = !AppDefaults.webInspectorEnabled
+			AppDefaults.webInspectorEnabled = newValue
 
-		// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
-		// and reset the default to a separate window when the preference is toggled off and on again in case the inspector is
-		// accidentally reattached.
-		
-		AppDefaults.webInspectorStartsAttached = false
-		NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
+			// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
+			// and reset the default to a separate window when the preference is toggled off and on again in case the inspector is
+			// accidentally reattached.
+
+			AppDefaults.webInspectorStartsAttached = false
+			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
+		#endif
 	}
 }
 
