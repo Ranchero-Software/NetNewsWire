@@ -473,7 +473,7 @@
                                         <menuItem title="Enable Web Inspector" id="EwI-z4-ZA3">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="toggleWebInspectorEnabled:" target="Voe-Tx-rLC" id="nsd-PV-Tz2"/>
+                                                <action selector="toggleWebInspectorEnabled:" target="Voe-Tx-rLC" id="SNL-zh-XIE"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -588,6 +588,7 @@
                     <connections>
                         <outlet property="checkForUpdatesMenuItem" destination="1nF-7O-aKU" id="JmT-jc-DJ8"/>
                         <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
+                        <outlet property="enableWebInspectorMenuItem" destination="EwI-z4-ZA3" id="EGp-lP-f91"/>
                         <outlet property="sortByNewestArticleOnTopMenuItem" destination="TNS-TV-n0U" id="gix-Nd-9k4"/>
                         <outlet property="sortByOldestArticleOnTopMenuItem" destination="iii-kP-qoF" id="fTe-Tf-EWG"/>
                     </connections>
