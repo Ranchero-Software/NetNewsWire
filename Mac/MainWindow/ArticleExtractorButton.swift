@@ -33,7 +33,6 @@ class ArticleExtractorButton: NSButton {
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
-		
 		super.draw(dirtyRect)
 		
 		guard let hostedLayer = self.layer else {
@@ -52,13 +51,12 @@ class ArticleExtractorButton: NSButton {
 		
 		switch true {
 		case isError:
-			addImageSublayer(to: hostedLayer, imageName: "articleExtractorError", opacity: opacity)
+			addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractorError, opacity: opacity)
 		case isInProgress:
 			addProgressSublayer(to: hostedLayer)
 		default:
-			addImageSublayer(to: hostedLayer, imageName: "articleExtractor", opacity: opacity)
+			addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractor, opacity: opacity)
 		}
-		
 	}
 	
 	private func makeLayerForImage(_ image: NSImage) -> CALayer {
@@ -68,25 +66,18 @@ class ArticleExtractorButton: NSButton {
 		return imageLayer
 	}
 	
-	private func addImageSublayer(to hostedLayer: CALayer, imageName: String, opacity: Float = 1.0) {
-		
-		guard let image = NSImage(named: imageName) else {
-			fatalError("Image doesn't exist: \(imageName)")
-		}
-		
+	private func addImageSublayer(to hostedLayer: CALayer, image: NSImage, opacity: Float = 1.0) {
 		let imageLayer = makeLayerForImage(image)
 		imageLayer.contents = image
 		imageLayer.opacity = opacity
 		hostedLayer.addSublayer(imageLayer)
-		
 	}
 	
 	private func addProgressSublayer(to hostedLayer: CALayer) {
-		
-		let imageProgress1 = NSImage(named: "articleExtractorProgress1")
-		let imageProgress2 = NSImage(named: "articleExtractorProgress2")
-		let imageProgress3 = NSImage(named: "articleExtractorProgress3")
-		let imageProgress4 = NSImage(named: "articleExtractorProgress4")
+		let imageProgress1 = AppAssets.articleExtractorProgress1
+		let imageProgress2 = AppAssets.articleExtractorProgress2
+		let imageProgress3 = AppAssets.articleExtractorProgress3
+		let imageProgress4 = AppAssets.articleExtractorProgress4
 		let images = [imageProgress1, imageProgress2, imageProgress3, imageProgress4, imageProgress3, imageProgress2]
 		
 		let imageLayer = CALayer()
@@ -103,7 +94,6 @@ class ArticleExtractorButton: NSButton {
 		animation.repeatCount = HUGE
 		
 		imageLayer.add(animation, forKey: "contents")
-		
 	}
 	
 }

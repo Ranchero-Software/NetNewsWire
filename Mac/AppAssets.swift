@@ -38,6 +38,30 @@ struct AppAssets {
 		return RSImage(named: "accountFreshRSS")
 	}()
 	
+	static var articleExtractor: RSImage! = {
+		return RSImage(named: "articleExtractor")
+	}()
+	
+	static var articleExtractorError: RSImage! = {
+		return RSImage(named: "articleExtractorError")
+	}()
+	
+	static var articleExtractorProgress1: RSImage! = {
+		return RSImage(named: "articleExtractorProgress1")
+	}()
+	
+	static var articleExtractorProgress2: RSImage! = {
+		return RSImage(named: "articleExtractorProgress2")
+	}()
+	
+	static var articleExtractorProgress3: RSImage! = {
+		return RSImage(named: "articleExtractorProgress3")
+	}()
+	
+	static var articleExtractorProgress4: RSImage! = {
+		return RSImage(named: "articleExtractorProgress4")
+	}()
+	
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
