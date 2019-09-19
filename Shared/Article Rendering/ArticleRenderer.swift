@@ -27,10 +27,11 @@ struct ArticleRenderer {
 		self.title = article?.title ?? ""
 		if let content = extractedArticle?.content {
 			self.body = content
+			self.baseURL = extractedArticle?.url
 		} else {
 			self.body = article?.body ?? ""
+			self.baseURL = article?.baseURL?.absoluteString
 		}
-		self.baseURL = article?.baseURL?.absoluteString
 	}
 
 	// MARK: - API
