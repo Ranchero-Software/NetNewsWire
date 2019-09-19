@@ -30,7 +30,16 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		return caller.server
 	}
 	
-	var credentials: Credentials?
+	var credentials: Credentials? {
+		didSet {
+			// https://developer.feedly.com/v3/developer/
+			if let devToken = ProcessInfo.processInfo.environment["FEEDLY_DEV_ACCESS_TOKEN"], !devToken.isEmpty {
+				caller.credentials = Credentials(type: .oauthAccessToken, username: "", secret: devToken)
+			} else {
+				caller.credentials = credentials
+			}
+		}
+	}
 	
 	var accountMetadata: AccountMetadata?
 	
@@ -38,6 +47,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	private let database: SyncDatabase
 	private let caller: FeedlyAPICaller
+	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
 	
 	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API = .default) {
 		
@@ -70,16 +80,27 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	// MARK: Account API
 	
+	private var syncStrategy: FeedlySyncStrategy?
+	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		let date = Date()
+		let log = self.log
+		let progress = refreshProgress
+		progress.addToNumberOfTasksAndRemaining(1)
+		syncStrategy?.startSync { result in
+			os_log(.debug, log: log, "Sync took %.3f seconds", -date.timeIntervalSinceNow)
+			progress.completeTask()
+		}
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
-		fatalError()
+		os_log(.debug, log: log, "*** SKIPPING SEND ARTICLE STATUS ***")
+		completion()
 	}
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
-		fatalError()
+		os_log(.debug, log: log, "*** SKIPPING REFRESH ARTICLE STATUS ***")
+		completion()
 	}
 	
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -127,12 +148,38 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		fatalError()
+		
+		let log = self.log
+		
+		switch statusKey {
+		case .read:
+			let ids = articles.map { $0.articleID }
+			caller.markAsRead(articleIds: ids) { result in
+				switch result {
+				case .success:
+					account.update(articles, statusKey: statusKey, flag: flag)
+				case .failure(let error):
+					os_log(.debug, log: log, "*** SKIPPING MARKING ARTICLES READ: %@ %@ ***", error as NSError, ids)
+				}
+				
+			}
+		default:
+			os_log(.debug, log: log, "*** SKIPPING STATUS UPDATE FOR ARTICLES: %@ ***", articles)
+		}
+		
+		return nil
 	}
-	
+
 	func accountDidInitialize(_ account: Account) {
 //		accountMetadata = account.metadata
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
+		
+		syncStrategy = FeedlySyncStrategy(account: account, caller: caller, log: log)
+		
+		//TODO: Figure out how other accounts get refreshed automatically.
+		refreshAll(for: account) { result in
+			print("sync after initialise did complete")
+		}
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
