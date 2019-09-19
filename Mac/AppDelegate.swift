@@ -42,7 +42,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
-	@IBOutlet var enableWebInspectorMenuItem: NSMenuItem!
 
 	var unreadCount = 0 {
 		didSet {
@@ -117,7 +116,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		#if MAC_APP_STORE
 			checkForUpdatesMenuItem.isHidden = true
-			enableWebInspectorMenuItem.isHidden = true
 		#endif
 		
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
