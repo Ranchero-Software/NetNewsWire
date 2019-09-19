@@ -1,6 +1,7 @@
 CODE_SIGN_IDENTITY = Developer ID Application
 DEVELOPMENT_TEAM = DY2XQRVWN9
 CODE_SIGN_STYLE = Automatic
+BUNDLE_ROOT = com.ranchero
 PROVISIONING_PROFILE_SPECIFIER =
 
 // developers can locally override the Xcode settings for code signing
@@ -16,6 +17,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 //    CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
 //    CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = iPhone Developer
 //    DEVELOPMENT_TEAM = <Your Team ID>
+//    BUNDLE_ROOT = <Your Domain Name Reversed>
 //    CODE_SIGN_STYLE = Automatic
 //    PROVISIONING_PROFILE_SPECIFIER =
 //
@@ -41,7 +43,8 @@ GCC_C_LANGUAGE_STANDARD = gnu11;
 IPHONEOS_DEPLOYMENT_TARGET = 13.0
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks
 INFOPLIST_FILE = iOS/Resources/Info.plist
-PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire.iOS
+CODE_SIGN_ENTITLEMENTS = iOS/Resources/NetNewsWire.entitlements
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS
 PRODUCT_NAME = NetNewsWire
 SDKROOT = iphoneos;
 TARGETED_DEVICE_FAMILY = 1,2

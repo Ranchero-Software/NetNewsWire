@@ -56,6 +56,7 @@ give it the contents:
 CODE_SIGN_IDENTITY = Mac Developer
 DEVELOPMENT_TEAM = <Your Team ID>
 CODE_SIGN_STYLE = Automatic
+ORGANIZATION_IDENTIFIER = <Your Domain Name Reversed>
 PROVISIONING_PROFILE_SPECIFIER =
 ```
 
