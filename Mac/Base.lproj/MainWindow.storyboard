@@ -208,7 +208,6 @@
                         </connections>
                     </window>
                     <connections>
-                        <outlet property="articleExtractorButton" destination="1b9-Tf-u5V" id="W8P-DA-hmV"/>
                         <segue destination="reS-fe-pD8" kind="relationship" relationship="window.shadowedContentViewController" id="WS2-WB-dc4"/>
                     </connections>
                 </windowController>

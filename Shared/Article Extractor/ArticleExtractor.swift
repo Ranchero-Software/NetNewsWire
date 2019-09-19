@@ -13,6 +13,7 @@ public enum ArticleExtractorState {
     case processing
     case failedToParse
     case complete
+	case cancelled
 }
 
 protocol ArticleExtractorDelegate {
@@ -27,6 +28,8 @@ enum ArticleExtractorError: Error {
 }
 
 class ArticleExtractor {
+	
+	private var dataTask: URLSessionDataTask? = nil
     
     var state: ArticleExtractorState!
     var article: ExtractedArticle?
@@ -57,7 +60,7 @@ class ArticleExtractor {
         
         state = .processing
 
-        let dataTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+        dataTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             
             guard let self = self else { return }
             
@@ -95,8 +98,13 @@ class ArticleExtractor {
             
         }
         
-        dataTask.resume()
-        
+        dataTask!.resume()
+		
     }
+	
+	public func cancel() {
+		state = .cancelled
+		dataTask?.cancel()
+	}
     
 }

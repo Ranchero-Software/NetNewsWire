@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14865.1" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14865.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -440,6 +440,11 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="qgr-Gl-Xhw"/>
+                                        <menuItem title="Show Reader View" keyEquivalent="R" id="p5x-Xq-1fW">
+                                            <connections>
+                                                <action selector="toggleArticleExtractor:" target="Ady-hI-5gd" id="H3B-RR-1tB"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Open in Browser" keyEquivalent="" id="4iQ-1v-dTa">
                                             <connections>
                                                 <action selector="openArticleInBrowser:" target="Ady-hI-5gd" id="KeH-ES-fpo"/>
@@ -595,8 +600,8 @@
                     <connections>
                         <outlet property="checkForUpdatesMenuItem" destination="1nF-7O-aKU" id="JmT-jc-DJ8"/>
                         <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
-                        <outlet property="groupArticlesByFeedMenuItem" destination="Zxm-O6-NRE" id="gwn-VT-2YZ"/>
                         <outlet property="enableWebInspectorMenuItem" destination="EwI-z4-ZA3" id="EGp-lP-f91"/>
+                        <outlet property="groupArticlesByFeedMenuItem" destination="Zxm-O6-NRE" id="gwn-VT-2YZ"/>
                         <outlet property="sortByNewestArticleOnTopMenuItem" destination="TNS-TV-n0U" id="gix-Nd-9k4"/>
                         <outlet property="sortByOldestArticleOnTopMenuItem" destination="iii-kP-qoF" id="fTe-Tf-EWG"/>
                     </connections>
