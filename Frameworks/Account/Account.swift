@@ -227,6 +227,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .freshRSS:
 			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport)
+		case .feedly:
+			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport)
 		default:
 			fatalError("Only Local and Feedbin accounts are supported")
 		}
@@ -306,6 +308,35 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		default:
 			break
 		}
+	}
+	
+	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType, client: OAuthAuthorizationClient) -> URLRequest {
+		let grantingType: OAuthAuthorizationGranting.Type
+		switch type {
+		case .feedly:
+			grantingType = FeedlyAccountDelegate.self
+		default:
+			fatalError("\(type) does not support OAuth authorization code granting.")
+		}
+		
+		return grantingType.oauthAuthorizationCodeGrantRequest(for: client)
+	}
+	
+	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
+											   client: OAuthAuthorizationClient,
+											   accountType: AccountType,
+											   transport: Transport = URLSession.webserviceTransport(),
+											   completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+		let grantingType: OAuthAuthorizationGranting.Type
+		
+		switch accountType {
+		case .feedly:
+			grantingType = FeedlyAccountDelegate.self
+		default:
+			fatalError("\(accountType) does not support OAuth authorization code granting.")
+		}
+		
+		grantingType.requestOAuthAccessToken(with: response, client: client, transport: transport, completionHandler: completionHandler)
 	}
 
 	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {

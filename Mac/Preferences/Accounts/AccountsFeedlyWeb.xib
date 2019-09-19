@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14865.1" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14865.1"/>
+        <plugIn identifier="com.apple.WebKit2IBPlugin" version="14865.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="AccountsFeedlyWebWindowController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="webView" destination="W4c-Xp-rpq" id="l11-5B-8yc"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="480" height="708"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="708"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <wkWebView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W4c-Xp-rpq">
+                        <rect key="frame" x="0.0" y="61" width="480" height="647"/>
+                        <wkWebViewConfiguration key="configuration">
+                            <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                            <wkPreferences key="preferences"/>
+                        </wkWebViewConfiguration>
+                        <connections>
+                            <outlet property="navigationDelegate" destination="-2" id="wAp-Oh-5EK"/>
+                        </connections>
+                    </wkWebView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PD2-Zk-3yM">
+                        <rect key="frame" x="384" y="13" width="82" height="32"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IEi-N0-sbw">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancel:" target="-2" id="5BT-to-e4W"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="W4c-Xp-rpq" secondAttribute="trailing" id="D9j-IU-BZj"/>
+                    <constraint firstAttribute="bottom" secondItem="PD2-Zk-3yM" secondAttribute="bottom" constant="20" symbolic="YES" id="Qdc-tu-9kO"/>
+                    <constraint firstItem="W4c-Xp-rpq" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="V7Q-kM-JDA"/>
+                    <constraint firstAttribute="trailing" secondItem="PD2-Zk-3yM" secondAttribute="trailing" constant="20" symbolic="YES" id="bQS-L4-jbx"/>
+                    <constraint firstItem="W4c-Xp-rpq" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="ec6-U0-t8X"/>
+                    <constraint firstItem="PD2-Zk-3yM" firstAttribute="top" secondItem="W4c-Xp-rpq" secondAttribute="bottom" constant="20" symbolic="YES" id="zlA-8I-aKr"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+            </connections>
+            <point key="canvasLocation" x="134" y="556"/>
+        </window>
+    </objects>
+</document>
