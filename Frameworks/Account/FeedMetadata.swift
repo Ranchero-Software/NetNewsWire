@@ -87,7 +87,7 @@ final class FeedMetadata: Codable {
 		}
 	}
 	
-	var isArticleExtractorAlwaysOn = false {
+	var isArticleExtractorAlwaysOn: Bool? {
 		didSet {
 			if isArticleExtractorAlwaysOn != oldValue {
 				valueDidChange(.contentHash)
