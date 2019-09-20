@@ -222,7 +222,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		case .feedly:
 			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport)
 		default:
-			fatalError("Only Local and Feedbin accounts are supported")
+			return nil
 		}
 
 		self.accountID = accountID
