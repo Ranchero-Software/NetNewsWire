@@ -89,7 +89,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		progress.addToNumberOfTasksAndRemaining(1)
 		syncStrategy?.startSync { result in
 			os_log(.debug, log: log, "Sync took %.3f seconds", -date.timeIntervalSinceNow)
-			progress.completeTask()
+			DispatchQueue.main.async {
+				progress.completeTask()
+			}
 		}
 	}
 	
