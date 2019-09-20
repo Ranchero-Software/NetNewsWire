@@ -636,6 +636,30 @@ private extension SidebarOutlineDataSource {
 	}
 	
 	func violatesAccountSpecificBehavior(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
+		if violatesDisallowFeedInRootFolder(parentNode) {
+			return true
+		}
+
+		if violatesDisallowFeedCopyInRootFolder(parentNode, draggedFeeds) {
+			return true
+		}
+		
+		return false
+	}
+	
+	func violatesDisallowFeedInRootFolder(_ parentNode: Node) -> Bool {
+		guard let parentAccount = nodeAccount(parentNode), parentAccount.behaviors.contains(.disallowFeedInRootFolder) else {
+			return false
+		}
+		
+		if parentNode.representedObject is Account {
+			return true
+		}
+		
+		return false
+	}
+
+	func violatesDisallowFeedCopyInRootFolder(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		guard let parentAccount = nodeAccount(parentNode), parentAccount.behaviors.contains(.disallowFeedCopyInRootFolder) else {
 			return false
 		}
@@ -646,14 +670,13 @@ private extension SidebarOutlineDataSource {
 			}
 		}
 		
-		// Can't copy to the account when using tags
 		if parentNode.representedObject is Account && (NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false) {
 			return true
 		}
 		
 		return false
 	}
-	
+
 	func indexWhereDraggedFeedWouldAppear(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Int {
 		let draggedFeedWrapper = PasteboardFeedObjectWrapper(pasteboardFeed: draggedFeed)
 		let draggedFeedNode = Node(representedObject: draggedFeedWrapper, parent: nil)

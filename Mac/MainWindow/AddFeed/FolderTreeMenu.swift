@@ -16,15 +16,21 @@ class FolderTreeMenu {
 	static func createFolderPopupMenu(with rootNode: Node) -> NSMenu {
 		
 		let menu = NSMenu(title: "Folders")
+		menu.autoenablesItems = false
 		
 		for childNode in rootNode.childNodes {
 			
-			guard let nameProvider = childNode.representedObject as? DisplayNameProvider else {
+			guard let account = childNode.representedObject as? Account else {
 				continue
 			}
 			
-			let menuItem = NSMenuItem(title: nameProvider.nameForDisplay, action: nil, keyEquivalent: "")
+			let menuItem = NSMenuItem(title: account.nameForDisplay, action: nil, keyEquivalent: "")
 			menuItem.representedObject = childNode.representedObject
+			
+			if account.behaviors.contains(.disallowFeedInRootFolder) {
+				menuItem.isEnabled = false
+			}
+			
 			menu.addItem(menuItem)
 
 			let childNodes = childNode.childNodes
