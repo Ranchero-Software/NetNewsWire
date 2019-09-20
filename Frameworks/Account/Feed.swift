@@ -134,6 +134,15 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
+	public var isArticleExtractorAlwaysOn: Bool {
+		get {
+			return metadata.isArticleExtractorAlwaysOn
+		}
+		set {
+			metadata.isArticleExtractorAlwaysOn = newValue
+		}
+	}
+	
 	public var subscriptionID: String? {
 		get {
 			return metadata.subscriptionID

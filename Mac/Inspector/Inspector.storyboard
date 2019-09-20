@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Window Controller-->
         <scene sceneID="nxk-j5-jp4">
             <objects>
-                <windowController storyboardIdentifier="WindowController" showSeguePresentationStyle="single" id="cfG-Pn-VJS" customClass="InspectorWindowController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" identifier="InspectorPanel" title="Inspector" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="bma-LM-jVu" customClass="NSPanel">
+                <windowController storyboardIdentifier="WindowController" showSeguePresentationStyle="single" id="cfG-Pn-VJS" customClass="InspectorWindowController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" identifier="InspectorPanel" title="Inspector" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="bma-LM-jVu" customClass="NSPanel">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="314" y="928" width="256" height="256"/>
@@ -31,13 +32,13 @@
         <!--Feed-->
         <scene sceneID="vUh-Rc-fPi">
             <objects>
-                <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="FeedInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="FeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ecA-UY-KEd">
-                        <rect key="frame" x="0.0" y="0.0" width="256" height="268"/>
+                        <rect key="frame" x="0.0" y="0.0" width="256" height="298"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="H9X-OG-K0p">
-                                <rect key="frame" x="104" y="200" width="48" height="48"/>
+                                <rect key="frame" x="104" y="230" width="48" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="1Cy-0w-dBg"/>
                                     <constraint firstAttribute="height" constant="48" id="edb-lw-Ict"/>
@@ -45,7 +46,7 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSNetwork" id="MZ2-89-Bje"/>
                             </imageView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IWu-80-XC5">
-                                <rect key="frame" x="20" y="136" width="216" height="56"/>
+                                <rect key="frame" x="20" y="166" width="216" height="56"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="56" id="zV3-AX-gyC"/>
                                 </constraints>
@@ -54,7 +55,7 @@
                                     <string key="title">Feed
 Name
 Field</string>
-                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
@@ -62,7 +63,7 @@ Field</string>
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2WO-Iu-p5e">
-                                <rect key="frame" x="18" y="99" width="220" height="17"/>
+                                <rect key="frame" x="18" y="130" width="220" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Home Page" usesSingleLineMode="YES" id="Fg8-rA-G5J">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -70,7 +71,7 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zm0-15-BFy">
-                                <rect key="frame" x="18" y="78" width="220" height="17"/>
+                                <rect key="frame" x="18" y="110" width="220" height="16"/>
                                 <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="http://example.com/" id="L2p-ur-j7a">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -78,7 +79,7 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ju6-Zo-8X4">
-                                <rect key="frame" x="18" y="41" width="220" height="17"/>
+                                <rect key="frame" x="18" y="74" width="220" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Feed" usesSingleLineMode="YES" id="zzB-rX-1dK">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -86,18 +87,31 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Vvk-KG-JlG">
-                                <rect key="frame" x="18" y="20" width="220" height="17"/>
+                                <rect key="frame" x="18" y="54" width="220" height="16"/>
                                 <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="http://example.com/feed" id="HpC-rK-YGK">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nH2-ab-KJ5">
+                                <rect key="frame" x="18" y="18" width="174" height="18"/>
+                                <buttonCell key="cell" type="check" title="Reader View is always on" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="aRe-yV-R0h">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="isReaderViewAlwaysOnChanged:" target="sfH-oR-GXm" id="rsD-0e-ksP"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="zm0-15-BFy" firstAttribute="top" secondItem="2WO-Iu-p5e" secondAttribute="bottom" constant="4" id="2fb-QO-XIm"/>
                             <constraint firstItem="IWu-80-XC5" firstAttribute="top" secondItem="H9X-OG-K0p" secondAttribute="bottom" constant="8" symbolic="YES" id="4WB-WJ-3Z4"/>
+                            <constraint firstItem="nH2-ab-KJ5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="8pK-lW-xQk"/>
                             <constraint firstItem="H9X-OG-K0p" firstAttribute="centerX" secondItem="ecA-UY-KEd" secondAttribute="centerX" id="9CA-KA-HEg"/>
+                            <constraint firstAttribute="bottom" secondItem="nH2-ab-KJ5" secondAttribute="bottom" constant="20" symbolic="YES" id="BlS-oO-dVy"/>
+                            <constraint firstItem="nH2-ab-KJ5" firstAttribute="top" secondItem="Vvk-KG-JlG" secondAttribute="bottom" constant="20" id="Hh5-qo-dip"/>
                             <constraint firstAttribute="trailing" secondItem="ju6-Zo-8X4" secondAttribute="trailing" constant="20" symbolic="YES" id="Jzi-tP-TIw"/>
                             <constraint firstAttribute="trailing" secondItem="Vvk-KG-JlG" secondAttribute="trailing" constant="20" symbolic="YES" id="KAS-A7-TxB"/>
                             <constraint firstItem="ju6-Zo-8X4" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="NwI-2x-dAr"/>
@@ -111,25 +125,25 @@ Field</string>
                             <constraint firstItem="2WO-Iu-p5e" firstAttribute="top" secondItem="IWu-80-XC5" secondAttribute="bottom" constant="20" id="mlo-9L-OMV"/>
                             <constraint firstItem="IWu-80-XC5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="r6h-Z0-g7b"/>
                             <constraint firstItem="Vvk-KG-JlG" firstAttribute="top" secondItem="ju6-Zo-8X4" secondAttribute="bottom" constant="4" id="sAt-dN-Taz"/>
-                            <constraint firstAttribute="bottom" secondItem="Vvk-KG-JlG" secondAttribute="bottom" constant="20" symbolic="YES" id="uL4-qx-Mj1"/>
                             <constraint firstItem="Vvk-KG-JlG" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="uS2-JS-PPg"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="homePageURLTextField" destination="zm0-15-BFy" id="0Jh-yy-mnF"/>
                         <outlet property="imageView" destination="H9X-OG-K0p" id="Rm6-X6-csH"/>
+                        <outlet property="isReaderViewAlwaysOnCheckBox" destination="nH2-ab-KJ5" id="xPg-P5-3cr"/>
                         <outlet property="nameTextField" destination="IWu-80-XC5" id="zg4-5h-hoP"/>
                         <outlet property="urlTextField" destination="Vvk-KG-JlG" id="bcl-fq-3nQ"/>
                     </connections>
                 </viewController>
                 <customObject id="1ho-ZO-Gkb" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="67" y="30"/>
+            <point key="canvasLocation" x="67" y="46"/>
         </scene>
         <!--Folder-->
         <scene sceneID="8By-fa-WDQ">
             <objects>
-                <viewController title="Folder" storyboardIdentifier="Folder" showSeguePresentationStyle="single" id="ylq-Dz-pnT" customClass="FolderInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Folder" storyboardIdentifier="Folder" showSeguePresentationStyle="single" id="ylq-Dz-pnT" customClass="FolderInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="DIQ-fD-5q6">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="152"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -152,7 +166,7 @@ Field</string>
                                     <string key="title">Folder
 Name
 Field</string>
-                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
@@ -180,13 +194,13 @@ Field</string>
         <!--Builtin Smart Feed-->
         <scene sceneID="dFq-3d-JKW">
             <objects>
-                <viewController title="Builtin Smart Feed" storyboardIdentifier="BuiltinSmartFeed" showSeguePresentationStyle="single" id="ye3-co-8lc" customClass="BuiltinSmartFeedInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Builtin Smart Feed" storyboardIdentifier="BuiltinSmartFeed" showSeguePresentationStyle="single" id="ye3-co-8lc" customClass="BuiltinSmartFeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="DXo-3M-jJQ">
-                        <rect key="frame" x="0.0" y="0.0" width="256" height="113"/>
+                        <rect key="frame" x="0.0" y="0.0" width="256" height="112"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cwK-Ep-mNL">
-                                <rect key="frame" x="104" y="45" width="48" height="48"/>
+                                <rect key="frame" x="104" y="44" width="48" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="33r-tp-RWH"/>
                                     <constraint firstAttribute="height" constant="48" id="8F1-sH-5Xs"/>
@@ -194,7 +208,7 @@ Field</string>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSSmartBadgeTemplate" id="Z52-bd-Lgz"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4Xp-FX-kn3">
-                                <rect key="frame" x="18" y="20" width="220" height="17"/>
+                                <rect key="frame" x="18" y="20" width="220" height="16"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Label" id="3v9-Z7-d7l">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -222,13 +236,13 @@ Field</string>
         <!--Nothing to inspect-->
         <scene sceneID="lUc-e1-dN7">
             <objects>
-                <viewController title="Nothing to inspect" storyboardIdentifier="Nothing" showSeguePresentationStyle="single" id="Fdj-2F-Kl1" customClass="NothingInspectorViewController" customModule="Evergreen" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Nothing to inspect" storyboardIdentifier="Nothing" showSeguePresentationStyle="single" id="Fdj-2F-Kl1" customClass="NothingInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="FDE-PJ-bJl">
-                        <rect key="frame" x="0.0" y="0.0" width="256" height="57"/>
+                        <rect key="frame" x="0.0" y="0.0" width="256" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="icb-M6-R2N">
-                                <rect key="frame" x="18" y="20" width="220" height="17"/>
+                                <rect key="frame" x="18" y="20" width="220" height="16"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Nothing to inspect" id="iLD-8q-EAJ">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -236,7 +250,7 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zQp-oc-Qtc">
-                                <rect key="frame" x="18" y="20" width="220" height="17"/>
+                                <rect key="frame" x="18" y="20" width="220" height="16"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Multiple selection" id="5oG-0x-T8O">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

@@ -16,7 +16,8 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	@IBOutlet var nameTextField: NSTextField?
 	@IBOutlet var homePageURLTextField: NSTextField?
 	@IBOutlet var urlTextField: NSTextField?
-
+	@IBOutlet weak var isReaderViewAlwaysOnCheckBox: NSButton?
+	
 	private var feed: Feed? {
 		didSet {
 			if feed != oldValue {
@@ -35,7 +36,6 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	}
 
 	func canInspect(_ objects: [Any]) -> Bool {
-
 		return objects.count == 1 && objects.first is Feed
 	}
 
@@ -50,29 +50,33 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 	}
 
+	// MARK: Actions
+	@IBAction func isReaderViewAlwaysOnChanged(_ sender: Any) {
+		feed?.isArticleExtractorAlwaysOn = (isReaderViewAlwaysOnCheckBox?.state ?? .off) == .on ? true : false
+	}
+	
 	// MARK: Notifications
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-
 		updateImage()
 	}
+	
 }
 
 extension FeedInspectorViewController: NSTextFieldDelegate {
 
 	func controlTextDidChange(_ note: Notification) {
-
 		guard let feed = feed, let nameTextField = nameTextField else {
 			return
 		}
 		feed.editedName = nameTextField.stringValue
 	}
+	
 }
 
 private extension FeedInspectorViewController {
 
 	func updateFeed() {
-
 		guard let objects = objects, objects.count == 1, let singleFeed = objects.first as? Feed else {
 			feed = nil
 			return
@@ -81,17 +85,16 @@ private extension FeedInspectorViewController {
 	}
 
 	func updateUI() {
-
 		updateImage()
 		updateName()
 		updateHomePageURL()
 		updateFeedURL()
-
+		updateIsReaderViewAlwaysOn()
+		
 		view.needsLayout = true
 	}
 
 	func updateImage() {
-
 		guard let feed = feed else {
 			imageView?.image = nil
 			return
@@ -114,7 +117,6 @@ private extension FeedInspectorViewController {
 	}
 
 	func updateName() {
-
 		guard let nameTextField = nameTextField else {
 			return
 		}
@@ -126,12 +128,14 @@ private extension FeedInspectorViewController {
 	}
 
 	func updateHomePageURL() {
-
 		homePageURLTextField?.stringValue = feed?.homePageURL ?? ""
 	}
 
 	func updateFeedURL() {
-
 		urlTextField?.stringValue = feed?.url ?? ""
+	}
+	
+	func updateIsReaderViewAlwaysOn() {
+		isReaderViewAlwaysOnCheckBox?.state = (feed?.isArticleExtractorAlwaysOn ?? false) ? .on : .off
 	}
 }
