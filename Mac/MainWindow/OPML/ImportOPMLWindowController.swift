@@ -26,7 +26,7 @@ class ImportOPMLWindowController: NSWindowController {
 
 		for oneAccount in AccountManager.shared.sortedActiveAccounts {
 			
-			if !oneAccount.isOPMLImportSupported {
+			if oneAccount.behaviors.contains(.disallowOPMLImports) {
 				continue
 			}
 			

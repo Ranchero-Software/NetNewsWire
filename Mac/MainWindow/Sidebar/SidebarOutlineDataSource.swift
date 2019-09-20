@@ -199,7 +199,7 @@ private extension SidebarOutlineDataSource {
 		if nodeHasChildRepresentingDraggedFeed(dropTargetNode, draggedFeed) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
-		if violatesTagSpecificBehavior(dropTargetNode, draggedFeed) {
+		if violatesAccountSpecificBehavior(dropTargetNode, draggedFeed) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if parentNode == dropTargetNode && index == NSOutlineViewDropOnItemIndex {
@@ -220,7 +220,7 @@ private extension SidebarOutlineDataSource {
 		if nodeHasChildRepresentingAnyDraggedFeed(dropTargetNode, draggedFeeds) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
-		if violatesTagSpecificBehavior(dropTargetNode, draggedFeeds) {
+		if violatesAccountSpecificBehavior(dropTargetNode, draggedFeeds) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if parentNode !== dropTargetNode || index != NSOutlineViewDropOnItemIndex {
@@ -631,12 +631,12 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 
-	func violatesTagSpecificBehavior(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Bool {
-		return violatesTagSpecificBehavior(parentNode, Set([draggedFeed]))
+	func violatesAccountSpecificBehavior(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Bool {
+		return violatesAccountSpecificBehavior(parentNode, Set([draggedFeed]))
 	}
 	
-	func violatesTagSpecificBehavior(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
-		guard let parentAccount = nodeAccount(parentNode), parentAccount.isTagBasedSystem else {
+	func violatesAccountSpecificBehavior(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
+		guard let parentAccount = nodeAccount(parentNode), parentAccount.behaviors.contains(.disallowFeedCopyInRootFolder) else {
 			return false
 		}
 		

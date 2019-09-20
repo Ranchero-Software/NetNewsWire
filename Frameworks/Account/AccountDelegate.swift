@@ -12,10 +12,8 @@ import RSWeb
 
 protocol AccountDelegate {
 
-	// Local account does not; some synced accounts might.
-	var isSubfoldersSupported: Bool { get }
-	var isTagBasedSystem: Bool { get }
-	var isOPMLImportSupported: Bool { get }
+	var behaviors: AccountBehaviors { get }
+
 	var isOPMLImportInProgress: Bool { get }
 	
 	var server: String? { get }

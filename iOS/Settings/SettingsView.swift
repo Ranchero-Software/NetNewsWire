@@ -184,7 +184,7 @@ struct SettingsView : View {
 		var buttons = [ActionSheet.Button]()
 		
 		for account in viewModel.activeAccounts {
-			if !account.isOPMLImportSupported {
+			if account.behaviors.contains(.disallowOPMLImports) {
 				continue
 			}
 			

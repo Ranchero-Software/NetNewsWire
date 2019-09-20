@@ -24,9 +24,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	private let caller: FeedbinAPICaller
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedbin")
 
-	let isSubfoldersSupported = false
-	let isTagBasedSystem = true
-	let isOPMLImportSupported = true
+	let behaviors: AccountBehaviors = [.disallowFeedCopyInRootFolder]
 	let server: String? = "api.feedbin.com"
 	var isOPMLImportInProgress = false
 	

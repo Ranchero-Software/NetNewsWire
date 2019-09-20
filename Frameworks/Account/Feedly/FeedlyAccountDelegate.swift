@@ -14,14 +14,11 @@ import SyncDatabase
 import os.log
 
 final class FeedlyAccountDelegate: AccountDelegate {
+
+	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
+	// See https://developer.feedly.com/v3/opml/
+	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder]
 	
-	// Collections are one-level deep.
-	let isSubfoldersSupported = false
-	
-	// Feedly uses collections and streams. But it does have tags?
-	let isTagBasedSystem = false
-	
-	// Could be true. See https://developer.feedly.com/v3/opml/
 	let isOPMLImportSupported = false
 	
 	var isOPMLImportInProgress = false

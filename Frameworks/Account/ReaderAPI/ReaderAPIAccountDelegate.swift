@@ -25,8 +25,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	private let caller: ReaderAPICaller
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
 
-	let isSubfoldersSupported = false
-	let isTagBasedSystem = true
+	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowOPMLImports]
 
 	var server: String? {
 		get {
@@ -34,7 +33,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	let isOPMLImportSupported = false
 	var isOPMLImportInProgress = false
 	
 	var credentials: Credentials? {

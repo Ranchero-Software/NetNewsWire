@@ -18,9 +18,7 @@ public enum LocalAccountDelegateError: String, Error {
 
 final class LocalAccountDelegate: AccountDelegate {
 	
-	let isSubfoldersSupported = false
-	let isTagBasedSystem = false
-	let isOPMLImportSupported = true
+	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
 	
 	let server: String? = nil

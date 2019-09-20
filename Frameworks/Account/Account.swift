@@ -189,12 +189,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
         }
     }
     
-	public var isTagBasedSystem: Bool {
-		return delegate.isTagBasedSystem
-	}
-	
-	public var isOPMLImportSupported: Bool {
-		return delegate.isOPMLImportSupported
+	public var behaviors: AccountBehaviors {
+		return delegate.behaviors
 	}
 	
 	var refreshInProgress = false {
@@ -213,10 +209,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	var refreshProgress: DownloadProgress {
 		return delegate.refreshProgress
-	}
-	
-	var isSubfoldersSupported: Bool {
-		return delegate.isSubfoldersSupported
 	}
 	
 	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
