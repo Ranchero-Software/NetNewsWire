@@ -1884,8 +1884,6 @@
 		84C9FC6F22629E1200D921D6 /* Accounts */ = {
 			isa = PBXGroup;
 			children = (
-				55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */,
-				55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */,
 				84C9FC7022629E1200D921D6 /* AccountsTableViewBackgroundView.swift */,
 				84C9FC7122629E1200D921D6 /* AccountsControlsBackgroundView.swift */,
 				84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */,
@@ -1896,8 +1894,10 @@
 				5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */,
 				5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */,
 				5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */,
-				9EA33BB72318F8C10097B644 /* AccountsFeedlyWebWindowController.swift */,
 				9EA33BB82318F8C10097B644 /* AccountsFeedlyWeb.xib */,
+				9EA33BB72318F8C10097B644 /* AccountsFeedlyWebWindowController.swift */,
+				55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */,
+				55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */,
 				5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */,
 				5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */,
 			);

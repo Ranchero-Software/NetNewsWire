@@ -34,6 +34,10 @@ struct AppAssets {
 		return RSImage(named: "accountFeedbin")
 	}()
 	
+	static var accountFeedly: RSImage! = {
+		return RSImage(named: "accountFeedly")
+	}()
+	
 	static var accountFreshRSS: RSImage! = {
 		return RSImage(named: "accountFreshRSS")
 	}()
