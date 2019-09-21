@@ -104,11 +104,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 		#endif
 
-		let pageURL = Bundle.main.url(forResource: "page", withExtension: "html")!
-		let page = try! String(contentsOf: pageURL)
-		let baseURL = pageURL.deletingLastPathComponent()
-		
-		webView.loadHTMLString(page, baseURL: baseURL)
+		webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
 		
 	}
 
@@ -181,7 +177,7 @@ private extension DetailWebViewController {
 
 	func reloadHTML() {
 		let style = ArticleStylesManager.shared.currentStyle
-		let rendering: ArticleRendering
+		let rendering: ArticleRenderer.Rendering
 
 		switch state {
 		case .noSelection:

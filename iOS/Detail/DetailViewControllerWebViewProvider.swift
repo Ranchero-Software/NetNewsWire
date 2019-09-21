@@ -38,11 +38,7 @@ class DetailViewControllerWebViewProvider: NSObject, WKNavigationDelegate {
 		webView.navigationDelegate = self
 		queue.insert(webView, at: 0)
 
-		let pageURL = Bundle.main.url(forResource: "page", withExtension: "html")!
-		let page = try! String(contentsOf: pageURL)
-		let baseURL = pageURL.deletingLastPathComponent()
-
-		webView.loadHTMLString(page, baseURL: baseURL)
+		webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
 
 	}
 

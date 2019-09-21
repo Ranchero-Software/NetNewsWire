@@ -11,10 +11,18 @@ import RSCore
 import Articles
 import Account
 
-typealias ArticleRendering = (style: String, html: String)
-
 struct ArticleRenderer {
 
+	typealias Rendering = (style: String, html: String)
+	typealias Page = (html: String, baseURL: URL)
+
+	static var page: Page = {
+		let pageURL = Bundle.main.url(forResource: "page", withExtension: "html")!
+		let html = try! String(contentsOf: pageURL)
+		let baseURL = pageURL.deletingLastPathComponent()
+		return Page(html: html, baseURL: baseURL)
+	}()
+	
 	private let article: Article?
 	private let extractedArticle: ExtractedArticle?
 	private let articleStyle: ArticleStyle
@@ -38,22 +46,22 @@ struct ArticleRenderer {
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> ArticleRendering {
+	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, style: style)
 		return (renderer.styleString(), renderer.articleHTML)
 	}
 
-	static func multipleSelectionHTML(style: ArticleStyle) -> ArticleRendering {
+	static func multipleSelectionHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
 		return (renderer.styleString(), renderer.multipleSelectionHTML)
 	}
 
-	static func noSelectionHTML(style: ArticleStyle) -> ArticleRendering {
+	static func noSelectionHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
 		return (renderer.styleString(), renderer.noSelectionHTML)
 	}
 	
-	static func noContentHTML(style: ArticleStyle) -> ArticleRendering {
+	static func noContentHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
 		return (renderer.styleString(), renderer.noContentHTML)
 	}
