@@ -133,6 +133,20 @@ figcaption {
 	line-height: 1.3em;
 }
 
+.iframeWrap {
+	position: relative;
+	display: block;
+	padding-top: 56.25%;
+}
+
+.iframeWrap iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100% !important;
+	width: 100% !important;
+}
+
 /*Block ads and junk*/
 
 iframe[src*="feedads"],
