@@ -40,27 +40,21 @@ class DetailViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		webView = DetailViewControllerWebViewProvider.shared.dequeueWebView()
-		webView.translatesAutoresizingMaskIntoConstraints = false
-		webView.navigationDelegate = self
-		
-		webViewContainer.addSubview(webView)
-		
-		let constraints: [NSLayoutConstraint] = [
-			webView.leadingAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.leadingAnchor),
-			webView.trailingAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.trailingAnchor),
-			webView.topAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.topAnchor),
-			webView.bottomAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.bottomAnchor),
-		]
-		
-		NSLayoutConstraint.activate(constraints)
-
-		updateArticleSelection()
-		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+
+		DetailViewControllerWebViewProvider.shared.dequeueWebView() { webView in
+			
+			self.webView = webView
+			webView.navigationDelegate = self
+			
+			self.webViewContainer.addChildAndPin(webView)
+			self.updateArticleSelection()
+			
+		}
+		
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -260,59 +254,4 @@ private extension DetailViewController {
 private struct TemplateData: Codable {
 	let style: String
 	let body: String
-}
-
-
-// MARK: -
-
-/// WKWebView has an awful behavior of a flash to white on first load when in dark mode.
-/// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-shite part of their lifecycle.
-class DetailViewControllerWebViewProvider {
-	
-	static var shared = DetailViewControllerWebViewProvider()
-	
-	func dequeueWebView() -> WKWebView {
-		if let webView = queue.popLast() {
-			replenishQueueIfNeeded()
-			return webView
-		}
-		
-		assertionFailure("Creating WKWebView in \(#function); queue has run dry.")
-		let webView = WKWebView(frame: .zero)
-		return webView
-	}
-	
-	func enqueueWebView(_ webView: WKWebView) {
-		guard queue.count < maximumQueueDepth else {
-			return
-		}
-
-		webView.uiDelegate = nil
-		webView.navigationDelegate = nil
-
-		let pageURL = Bundle.main.url(forResource: "page", withExtension: "html")!
-		let page = try! String(contentsOf: pageURL)
-		let baseURL = pageURL.deletingLastPathComponent()
-
-		webView.loadHTMLString(page, baseURL: baseURL)
-
-		queue.insert(webView, at: 0)
-	}
-
-	// MARK: Private
-
-	private let minimumQueueDepth = 3
-	private let maximumQueueDepth = 6
-	private var queue: [WKWebView] = []
-	
-	private init() {
-		replenishQueueIfNeeded()
-	}
-	
-	private func replenishQueueIfNeeded() {
-		while queue.count < minimumQueueDepth {
-			let webView = WKWebView(frame: .zero)
-			enqueueWebView(webView)
-		}
-	}
 }
