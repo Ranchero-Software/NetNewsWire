@@ -28,6 +28,12 @@ function linkHover() {
 	}
 }
 
+function inlineVideos() {
+	document.querySelectorAll("video").forEach(element => {
+		element.setAttribute("playsinline", true)
+	});
+}
+
 function error() {
 	document.body.innerHTML = "error";
 }
@@ -40,4 +46,5 @@ function render(data) {
 	wrapFrames()
 	stripStyles()
 	linkHover()
+	inlineVideos()
 }
