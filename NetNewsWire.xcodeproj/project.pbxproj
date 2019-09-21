@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49F40DF82335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
+		49F40DF92335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
 		510BD15D232D765D002692E4 /* SettingsReaderAPIAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557EE1A522B6F4E1004206FA /* SettingsReaderAPIAccountView.swift */; };
 		51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
 		5115CAF42266301400B21BCE /* AddContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */; };
@@ -769,6 +771,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		49F40DEF2335B71000552BF4 /* newsfoot.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = newsfoot.js; sourceTree = "<group>"; };
 		510D707322B028E1004E8F65 /* SettingsAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAddAccountView.swift; sourceTree = "<group>"; };
 		510D707D22B02A4B004E8F65 /* SettingsLocalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLocalAccountView.swift; sourceTree = "<group>"; };
 		510D707F22B02A5F004E8F65 /* SettingsFeedbinAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFeedbinAccountView.swift; sourceTree = "<group>"; };
@@ -1387,6 +1390,7 @@
 		51C452A822650DA100C03939 /* Article Rendering */ = {
 			isa = PBXGroup;
 			children = (
+				49F40DEF2335B71000552BF4 /* newsfoot.js */,
 				849A977D1ED9EC42007D329B /* ArticleRenderer.swift */,
 				848362FE2262A30E00DA1D35 /* template.html */,
 			);
@@ -2235,16 +2239,16 @@
 				TargetAttributes = {
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = DY2XQRVWN9;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
 						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = DY2XQRVWN9;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -2255,7 +2259,7 @@
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -2264,7 +2268,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = 9C84TZ7Q6Z;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -2513,6 +2517,7 @@
 				51F85BF12272524100C787DC /* Credits.rtf in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				511D43CF231FA62200FB1562 /* DetailKeyboardShortcuts.plist in Resources */,
+				49F40DF92335B71000552BF4 /* newsfoot.js in Resources */,
 				51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
 				51C452B82265178500C03939 /* styleSheet.css in Resources */,
@@ -2548,6 +2553,7 @@
 				B528F81E23333C7E00E735DD /* page.html in Resources */,
 				8483630E2262A3FE00DA1D35 /* MainWindow.storyboard in Resources */,
 				55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */,
+				49F40DF82335B71000552BF4 /* newsfoot.js in Resources */,
 				84BAE64921CEDAF20046DB56 /* CrashReporterWindow.xib in Resources */,
 				84C9FC8E22629E8F00D921D6 /* Credits.rtf in Resources */,
 				84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */,
