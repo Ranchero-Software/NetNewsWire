@@ -101,6 +101,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private(set) var currentFeedIndexPath: IndexPath?
 	
+	var timelineFavicon: RSImage? {
+		return (timelineFetcher as? SmallIconProvider)?.smallIcon
+	}
+	
 	var timelineName: String? {
 		return (timelineFetcher as? DisplayNameProvider)?.nameForDisplay
 	}
