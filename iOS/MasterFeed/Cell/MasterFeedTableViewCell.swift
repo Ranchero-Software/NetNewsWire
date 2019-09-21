@@ -93,7 +93,10 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 	}()
 
 	private let faviconImageView: UIImageView = {
-		return NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
+		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
+		imageView.layer.cornerRadius = MasterFeedTableViewCellLayout.faviconCornerRadius
+		imageView.clipsToBounds = true
+		return imageView
 	}()
 
 	private var unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)

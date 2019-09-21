@@ -21,6 +21,8 @@ struct MasterFeedTableViewCellLayout {
 
 	private static let minRowHeight = CGFloat(integerLiteral: 44)
 	
+	static let faviconCornerRadius = CGFloat(integerLiteral: 2)
+
 	let faviconRect: CGRect
 	let titleRect: CGRect
 	let unreadCountRect: CGRect
