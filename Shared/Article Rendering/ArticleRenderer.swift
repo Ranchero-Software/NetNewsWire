@@ -312,8 +312,6 @@ private extension ArticleRenderer {
 		return dateFormatter.string(from: date)
 	}
 
-	#if os(macOS)
-	
 	func renderHTML(withBody body: String) -> String {
 
 		var s = "<!DOCTYPE html><html><head>\n\n"
@@ -326,18 +324,32 @@ private extension ArticleRenderer {
 		s += """
 
 		<script type="text/javascript">
-
-		function startup() {
-			var anchors = document.getElementsByTagName("a");
-			for (var i = 0; i < anchors.length; i++) {
-				anchors[i].addEventListener("mouseenter", function() { mouseDidEnterLink(this) });
-				anchors[i].addEventListener("mouseleave", function() { mouseDidExitLink(this) });
+		var init = {
+			wrapFrames: function () {
+				document.querySelectorAll("iframe").forEach(element => {
+					var wrapper = document.createElement("div");
+					wrapper.classList.add("iframeWrap");
+					element.parentNode.insertBefore(wrapper, element);
+					wrapper.appendChild(element);
+				});
+			},
+			stripStyles: function() {
+				document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
+				document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
+			},
+			linkHover: function() {
+				var anchors = document.getElementsByTagName("a");
+				for (var i = 0; i < anchors.length; i++) {
+					anchors[i].addEventListener("mouseenter", function() { mouseDidEnterLink(this) });
+					anchors[i].addEventListener("mouseleave", function() { mouseDidExitLink(this) });
+				}
 			}
-		
-			document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
-			document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
 		}
-
+		
+		document.addEventListener("DOMContentLoaded", function(event) {
+			Object.values(init).forEach(item => item());
+		})
+		
 		function mouseDidEnterLink(anchor) {
 			window.webkit.messageHandlers.mouseDidEnter.postMessage(anchor.href);
 		}
@@ -350,7 +362,7 @@ private extension ArticleRenderer {
 
 		"""
 		
-		s += "\n\n</head><body onload='startup()'>\n\n"
+		s += "\n\n</head><body>\n\n"
 		s += body
 		s += "\n\n</body></html>"
 
@@ -358,40 +370,6 @@ private extension ArticleRenderer {
 
 		return s
 	}
-	
-	#else
-	
-	func renderHTML(withBody body: String) -> String {
-		
-		var s = "<!DOCTYPE html><html><head>\n"
-		if let baseURL = baseURL {
-			s += ("<base href=\"" + baseURL + "\"\n>")
-		}
-		s += "<meta name=\"viewport\" content=\"width=device-width\">\n"
-		s += title.htmlBySurroundingWithTag("title")
-		s += styleString().htmlBySurroundingWithTag("style")
-		s += """
-
-		<script type="text/javascript">
-
-		function startup() {
-			document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
-			document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
-		}
-
-		</script>
-
-		"""
-		
-		s += "\n\n</head><body onload='startup()'>\n\n"
-		s += body
-		s += "\n\n</body></html>"
-		
-		return s
-		
-	}
-	
-	#endif
 	
 }
 
