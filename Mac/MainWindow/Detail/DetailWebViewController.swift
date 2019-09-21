@@ -104,13 +104,8 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 		#endif
 
-		webView.loadHTMLString(template(), baseURL: nil)
-	}
-
-	func template() -> String {
-		let path = Bundle.main.path(forResource: "page", ofType: "html")!
-		let s = try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
-		return s as String
+		webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
+		
 	}
 
 	// MARK: Scrolling
@@ -182,13 +177,15 @@ private extension DetailWebViewController {
 
 	func reloadHTML() {
 		let style = ArticleStylesManager.shared.currentStyle
-		let rendering: ArticleRendering
+		let rendering: ArticleRenderer.Rendering
 
 		switch state {
 		case .noSelection:
 			rendering = ArticleRenderer.noSelectionHTML(style: style)
 		case .multipleSelection:
 			rendering = ArticleRenderer.multipleSelectionHTML(style: style)
+		case .loading:
+			rendering = ArticleRenderer.loadingHTML(style: style)
 		case .article(let article):
 			rendering = ArticleRenderer.articleHTML(article: article, style: style)
 		case .extracted(let article, let extractedArticle):

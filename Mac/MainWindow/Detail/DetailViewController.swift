@@ -15,6 +15,7 @@ import RSWeb
 enum DetailState: Equatable {
 	case noSelection
 	case multipleSelection
+	case loading
 	case article(Article)
 	case extracted(Article, ExtractedArticle)
 }

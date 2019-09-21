@@ -40,27 +40,23 @@ class DetailViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		webView = DetailViewControllerWebViewProvider.shared.dequeueWebView()
-		webView.translatesAutoresizingMaskIntoConstraints = false
-		webView.navigationDelegate = self
-		
-		webViewContainer.addSubview(webView)
-		
-		let constraints: [NSLayoutConstraint] = [
-			webView.leadingAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.leadingAnchor),
-			webView.trailingAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.trailingAnchor),
-			webView.topAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.topAnchor),
-			webView.bottomAnchor.constraint(equalTo: webViewContainer.safeAreaLayoutGuide.bottomAnchor),
-		]
-		
-		NSLayoutConstraint.activate(constraints)
-
-		updateArticleSelection()
-		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+
+		DetailViewControllerWebViewProvider.shared.dequeueWebView() { webView in
+			
+			self.webView = webView
+			self.webViewContainer.addChildAndPin(webView)
+			webView.navigationDelegate = self
+			
+			// Even though page.html should be loaded into this webview, we have to do it again
+			// to work around this bug: http://www.openradar.me/22855188
+			webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
+
+		}
+		
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -243,6 +239,11 @@ extension DetailViewController: WKNavigationDelegate {
 		}
 		
 	}
+
+	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+		self.updateArticleSelection()
+	}
+	
 }
 
 // MARK: Private
@@ -260,61 +261,4 @@ private extension DetailViewController {
 private struct TemplateData: Codable {
 	let style: String
 	let body: String
-}
-
-
-// MARK: -
-
-/// WKWebView has an awful behavior of a flash to white on first load when in dark mode.
-/// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-shite part of their lifecycle.
-class DetailViewControllerWebViewProvider {
-	
-	static var shared = DetailViewControllerWebViewProvider()
-	
-	static let template: String = {
-		let path = Bundle.main.path(forResource: "page", ofType: "html")!
-		let s = try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
-		return s as String
-	}()
-	
-	func dequeueWebView() -> WKWebView {
-		if let webView = queue.popLast() {
-			replenishQueueIfNeeded()
-			return webView
-		}
-		
-		assertionFailure("Creating WKWebView in \(#function); queue has run dry.")
-		let webView = WKWebView(frame: .zero)
-		return webView
-	}
-	
-	func enqueueWebView(_ webView: WKWebView) {
-		guard queue.count < maximumQueueDepth else {
-			return
-		}
-
-		webView.uiDelegate = nil
-		webView.navigationDelegate = nil
-
-		webView.loadHTMLString(DetailViewControllerWebViewProvider.template, baseURL: nil)
-
-		queue.insert(webView, at: 0)
-	}
-
-	// MARK: Private
-
-	private let minimumQueueDepth = 3
-	private let maximumQueueDepth = 6
-	private var queue: [WKWebView] = []
-	
-	private init() {
-		replenishQueueIfNeeded()
-	}
-	
-	private func replenishQueueIfNeeded() {
-		while queue.count < minimumQueueDepth {
-			let webView = WKWebView(frame: .zero)
-			enqueueWebView(webView)
-		}
-	}
 }
