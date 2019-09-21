@@ -48,11 +48,13 @@ class DetailViewController: UIViewController {
 		DetailViewControllerWebViewProvider.shared.dequeueWebView() { webView in
 			
 			self.webView = webView
+			self.webViewContainer.addChildAndPin(webView)
 			webView.navigationDelegate = self
 			
-			self.webViewContainer.addChildAndPin(webView)
-			self.updateArticleSelection()
-			
+			// Even though page.html should be loaded into this webview, we have to do it again
+			// to work around this bug: http://www.openradar.me/22855188
+			webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
+
 		}
 		
 	}
@@ -237,6 +239,11 @@ extension DetailViewController: WKNavigationDelegate {
 		}
 		
 	}
+
+	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+		self.updateArticleSelection()
+	}
+	
 }
 
 // MARK: Private
