@@ -99,14 +99,23 @@ class DetailViewController: UIViewController {
 	}
 	
 	func reloadHTML() {
-		
 		guard let article = coordinator.currentArticle, let webView = webView else {
 			return
 		}
-		let style = ArticleStylesManager.shared.currentStyle
-		let (styleSheet, html) = ArticleRenderer.articleHTML(article: article, style: style)
-		webView.loadHTMLString(html, baseURL: nil)
 		
+		let style = ArticleStylesManager.shared.currentStyle
+		let rendering = ArticleRenderer.articleHTML(article: article, style: style)
+		
+		let templateData = TemplateData(style: rendering.style, body: rendering.html)
+		
+		let encoder = JSONEncoder()
+		var render = "error();"
+		if let data = try? encoder.encode(templateData) {
+			let json = String(data: data, encoding: .utf8)!
+			render = "render(\(json));"
+		}
+
+		webView.evaluateJavaScript(render)
 	}
 	
 	// MARK: Notifications
@@ -205,31 +214,8 @@ class DetailViewController: UIViewController {
 	}
 	
 }
-//print("\(candidateY) : \(webView.scrollView.contentSize.height)")
 
-class ArticleActivityItemSource: NSObject, UIActivityItemSource {
-	
-	private let url: URL
-	private let subject: String?
-	
-	init(url: URL, subject: String?) {
-		self.url = url
-		self.subject = subject
-	}
-	
-	func activityViewControllerPlaceholderItem(_ : UIActivityViewController) -> Any {
-		return url
-	}
-	
-	func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
-		return url
-	}
-	
-	func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
-		return subject ?? ""
-	}
-	
-}
+// MARK: WKNavigationDelegate
 
 extension DetailViewController: WKNavigationDelegate {
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -259,6 +245,8 @@ extension DetailViewController: WKNavigationDelegate {
 	}
 }
 
+// MARK: Private
+
 private extension DetailViewController {
 	
 	func updateProgressIndicatorIfNeeded() {
@@ -269,12 +257,25 @@ private extension DetailViewController {
 	
 }
 
+private struct TemplateData: Codable {
+	let style: String
+	let body: String
+}
+
+
 // MARK: -
 
 /// WKWebView has an awful behavior of a flash to white on first load when in dark mode.
 /// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-shite part of their lifecycle.
 class DetailViewControllerWebViewProvider {
+	
 	static var shared = DetailViewControllerWebViewProvider()
+	
+	static let template: String = {
+		let path = Bundle.main.path(forResource: "page", ofType: "html")!
+		let s = try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
+		return s as String
+	}()
 	
 	func dequeueWebView() -> WKWebView {
 		if let webView = queue.popLast() {
@@ -295,8 +296,7 @@ class DetailViewControllerWebViewProvider {
 		webView.uiDelegate = nil
 		webView.navigationDelegate = nil
 
-		let html = ArticleRenderer.noContentHTML(style: .defaultStyle)
-		webView.loadHTMLString(html, baseURL: nil)
+		webView.loadHTMLString(DetailViewControllerWebViewProvider.template, baseURL: nil)
 
 		queue.insert(webView, at: 0)
 	}

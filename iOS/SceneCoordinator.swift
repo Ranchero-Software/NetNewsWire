@@ -269,8 +269,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		
-		// Force lazy initialization of the web view provider so that it can warm up the queue of prepared web views
-		let _ = DetailViewControllerWebViewProvider.shared
 	}
 	
 	func start(for size: CGSize) -> UIViewController {
