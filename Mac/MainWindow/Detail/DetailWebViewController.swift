@@ -184,6 +184,8 @@ private extension DetailWebViewController {
 			rendering = ArticleRenderer.noSelectionHTML(style: style)
 		case .multipleSelection:
 			rendering = ArticleRenderer.multipleSelectionHTML(style: style)
+		case .loading:
+			rendering = ArticleRenderer.loadingHTML(style: style)
 		case .article(let article):
 			rendering = ArticleRenderer.articleHTML(article: article, style: style)
 		case .extracted(let article, let extractedArticle):

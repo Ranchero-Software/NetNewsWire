@@ -329,11 +329,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 				detailViewController?.setState(detailState, mode: timelineSourceMode)
 			}
 		} else {
-			if let extractor = ArticleExtractor(currentLink) {
-				extractor.delegate = self
-				extractor.process()
-				articleExtractor = extractor
-			}
+			startArticleExtractorForCurrentLink()
 		}
 		
 	}
@@ -453,18 +449,24 @@ extension MainWindowController: SidebarDelegate {
 extension MainWindowController: TimelineContainerViewControllerDelegate {
 
 	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode) {
-
 		articleExtractor?.cancel()
 		articleExtractor = nil
 		isShowingExtractedArticle = false
-		
 		makeToolbarValidate()
 		
 		let detailState: DetailState
 		if let articles = articles {
-			detailState = articles.count == 1 ? .article(articles.first!) : .multipleSelection
-		}
-		else {
+			if articles.count == 1 {
+				if articles.first?.feed?.isArticleExtractorAlwaysOn ?? false {
+					detailState = .loading
+					startArticleExtractorForCurrentLink()
+				} else {
+					detailState = .article(articles.first!)
+				}
+			} else {
+				detailState = .multipleSelection
+			}
+		} else {
 			detailState = .noSelection
 		}
 
@@ -832,6 +834,14 @@ private extension MainWindowController {
 			return
 		}
 		
+	}
+	
+	func startArticleExtractorForCurrentLink() {
+		if let link = currentLink, let extractor = ArticleExtractor(link) {
+			extractor.delegate = self
+			extractor.process()
+			articleExtractor = extractor
+		}
 	}
 
 	func saveSplitViewState() {

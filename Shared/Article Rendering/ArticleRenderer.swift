@@ -56,6 +56,11 @@ struct ArticleRenderer {
 		return (renderer.styleString(), renderer.multipleSelectionHTML)
 	}
 
+	static func loadingHTML(style: ArticleStyle) -> Rendering {
+		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
+		return (renderer.styleString(), renderer.loadingHTML)
+	}
+
 	static func noSelectionHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
 		return (renderer.styleString(), renderer.noSelectionHTML)
@@ -78,6 +83,11 @@ private extension ArticleRenderer {
 
 	private var multipleSelectionHTML: String {
 		let body = "<h3 class='systemMessage'>Multiple selection</h3>"
+		return renderHTML(withBody: body)
+	}
+
+	private var loadingHTML: String {
+		let body = "<h3 class='systemMessage'>Loading...</h3>"
 		return renderHTML(withBody: body)
 	}
 
