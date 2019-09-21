@@ -271,12 +271,6 @@ class DetailViewControllerWebViewProvider {
 	
 	static var shared = DetailViewControllerWebViewProvider()
 	
-	static let template: String = {
-		let path = Bundle.main.path(forResource: "page", ofType: "html")!
-		let s = try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
-		return s as String
-	}()
-	
 	func dequeueWebView() -> WKWebView {
 		if let webView = queue.popLast() {
 			replenishQueueIfNeeded()
@@ -296,7 +290,11 @@ class DetailViewControllerWebViewProvider {
 		webView.uiDelegate = nil
 		webView.navigationDelegate = nil
 
-		webView.loadHTMLString(DetailViewControllerWebViewProvider.template, baseURL: nil)
+		let pageURL = Bundle.main.url(forResource: "page", withExtension: "html")!
+		let page = try! String(contentsOf: pageURL)
+		let baseURL = pageURL.deletingLastPathComponent()
+
+		webView.loadHTMLString(page, baseURL: baseURL)
 
 		queue.insert(webView, at: 0)
 	}

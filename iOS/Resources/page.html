@@ -6,29 +6,8 @@
 				color-scheme: light dark;
 			}
         </style>
-        <script>
-            function mouseDidEnterLink(anchor) {
-                window.webkit.messageHandlers.mouseDidEnter.postMessage(anchor.href);
-            }
-
-            function mouseDidExitLink(anchor) {
-                window.webkit.messageHandlers.mouseDidExit.postMessage(anchor.href);
-            }
-
-            function render(data) {
-				document.getElementsByTagName("style")[0].innerHTML = data.style;
-                document.body.innerHTML = data.body;
-                window.scrollTo(0, 0);
-                document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
-                document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
-            }
-
-            function error() {
-                document.body.innerHTML = "error";
-            }
-        </script>
+        <script src="main.js"></script>
     </head>
     <body>
     </body>
 </html>
-

@@ -104,13 +104,12 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 		#endif
 
-		webView.loadHTMLString(template(), baseURL: nil)
-	}
-
-	func template() -> String {
-		let path = Bundle.main.path(forResource: "page", ofType: "html")!
-		let s = try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
-		return s as String
+		let pageURL = Bundle.main.url(forResource: "page", withExtension: "html")!
+		let page = try! String(contentsOf: pageURL)
+		let baseURL = pageURL.deletingLastPathComponent()
+		
+		webView.loadHTMLString(page, baseURL: baseURL)
+		
 	}
 
 	// MARK: Scrolling
