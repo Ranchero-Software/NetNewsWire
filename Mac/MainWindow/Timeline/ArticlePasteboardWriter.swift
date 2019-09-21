@@ -20,7 +20,8 @@ import RSCore
 	static let articleUTIInternalType = NSPasteboard.PasteboardType(rawValue: articleUTIInternal)
 
 	private lazy var renderedHTML: String = {
-		return ArticleRenderer.articleHTML(article: article, style: ArticleStylesManager.shared.currentStyle)
+		let rendering = ArticleRenderer.articleHTML(article: article, style: ArticleStylesManager.shared.currentStyle)
+		return rendering.html
 	}()
 
 	init(article: Article) {

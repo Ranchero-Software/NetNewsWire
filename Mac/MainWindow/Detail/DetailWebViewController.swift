@@ -161,6 +161,7 @@ extension DetailWebViewController: WKNavigationDelegate {
 		if waitingForFirstReload {
 			assert(webView.isHidden)
 			waitingForFirstReload = false
+			reloadHTML()
 
 			// Waiting for the first navigation to complete isn't long enough to avoid the flash of white.
 			// A hard coded value is awful, but 5/100th of a second seems to be enough.
@@ -173,6 +174,7 @@ extension DetailWebViewController: WKNavigationDelegate {
 
 // MARK: - Private
 struct TemplateData: Codable {
+	let style: String
 	let body: String
 }
 
@@ -180,20 +182,20 @@ private extension DetailWebViewController {
 
 	func reloadHTML() {
 		let style = ArticleStylesManager.shared.currentStyle
-		let html: String
+		let rendering: ArticleRendering
 
 		switch state {
 		case .noSelection:
-			html = ArticleRenderer.noSelectionHTML(style: style)
+			rendering = ArticleRenderer.noSelectionHTML(style: style)
 		case .multipleSelection:
-			html = ArticleRenderer.multipleSelectionHTML(style: style)
+			rendering = ArticleRenderer.multipleSelectionHTML(style: style)
 		case .article(let article):
-			html = ArticleRenderer.articleHTML(article: article, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, style: style)
 		case .extracted(let article, let extractedArticle):
-			html = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
 		}
 		
-		let templateData = TemplateData(body: html)
+		let templateData = TemplateData(style: rendering.style, body: rendering.html)
 		
 		let encoder = JSONEncoder()
 		var render = "error();"

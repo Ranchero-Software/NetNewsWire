@@ -11,6 +11,8 @@ import RSCore
 import Articles
 import Account
 
+typealias ArticleRendering = (style: String, html: String)
+
 struct ArticleRenderer {
 
 	private let article: Article?
@@ -36,24 +38,24 @@ struct ArticleRenderer {
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> String {
+	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> ArticleRendering {
 		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, style: style)
-		return renderer.articleHTML
+		return (renderer.styleString(), renderer.articleHTML)
 	}
 
-	static func multipleSelectionHTML(style: ArticleStyle) -> String {
+	static func multipleSelectionHTML(style: ArticleStyle) -> ArticleRendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return renderer.multipleSelectionHTML
+		return (renderer.styleString(), renderer.multipleSelectionHTML)
 	}
 
-	static func noSelectionHTML(style: ArticleStyle) -> String {
+	static func noSelectionHTML(style: ArticleStyle) -> ArticleRendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return renderer.noSelectionHTML
+		return (renderer.styleString(), renderer.noSelectionHTML)
 	}
 	
-	static func noContentHTML(style: ArticleStyle) -> String {
+	static func noContentHTML(style: ArticleStyle) -> ArticleRendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return renderer.noContentHTML
+		return (renderer.styleString(), renderer.noContentHTML)
 	}
 }
 

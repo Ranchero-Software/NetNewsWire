@@ -104,7 +104,7 @@ class DetailViewController: UIViewController {
 			return
 		}
 		let style = ArticleStylesManager.shared.currentStyle
-		let html = ArticleRenderer.articleHTML(article: article, style: style)
+		let (styleSheet, html) = ArticleRenderer.articleHTML(article: article, style: style)
 		webView.loadHTMLString(html, baseURL: nil)
 		
 	}
