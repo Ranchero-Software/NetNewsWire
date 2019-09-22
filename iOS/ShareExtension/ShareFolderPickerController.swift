@@ -10,7 +10,7 @@ import UIKit
 import Account
 
 protocol ShareFolderPickerControllerDelegate: class {
-	func shareFolderPickerDidSelect(_ container: Container)
+	func shareFolderPickerDidSelect(_ container: Container, _ selectionName: String)
 }
 
 class ShareFolderPickerController: UITableViewController {
@@ -45,8 +45,7 @@ class ShareFolderPickerController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		guard let pickerData = pickerData else { return }
-		delegate?.shareFolderPickerDidSelect(pickerData.containers[indexPath.row])
-		navigationController?.popViewController(animated: true)
+		delegate?.shareFolderPickerDidSelect(pickerData.containers[indexPath.row], pickerData.containerNames[indexPath.row])
 	}
 	
 }
