@@ -37,6 +37,8 @@ class ShareFolderPickerController: UITableViewController {
 		cell.textLabel?.text = pickerData?.containerNames[indexPath.row] ?? ""
 		if pickerData?.containers[indexPath.row] === selectedContainer {
 			cell.accessoryType = .checkmark
+		} else {
+			cell.accessoryType = .none
 		}
 		return cell
 	}
