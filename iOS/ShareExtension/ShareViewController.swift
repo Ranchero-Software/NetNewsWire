@@ -23,11 +23,7 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 	
 	override func viewDidLoad() {
 		
-		let rootID = Bundle.main.bundleIdentifier!.replacingOccurrences(of: ".Share-Extension", with: "")
-		let accountsURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.\(rootID)")
-		let accountsFolder = accountsURL!.appendingPathComponent("Accounts").absoluteString
-		let accountsFolderPath = accountsFolder.suffix(from: accountsFolder.index(accountsFolder.startIndex, offsetBy: 7))
-		AccountManager.shared = AccountManager(accountsFolder: String(accountsFolderPath))
+		AccountManager.shared = AccountManager()
 
 		pickerData = FlattenedAccountFolderPickerData()
 		

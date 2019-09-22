@@ -10,6 +10,15 @@ import Foundation
 
 public struct CredentialsManager {
 	
+	private static var keychainGroup: String? = {
+		guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
+			return nil
+		}
+		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
+		let appGroupSuffix = appGroup.suffix(appGroup.count - 6)
+		return "\(appIdentifierPrefix)\(appGroupSuffix)"
+	}()
+
 	public static func storeCredentials(_ credentials: Credentials, server: String) throws {
 		
 		var query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
@@ -18,6 +27,10 @@ public struct CredentialsManager {
 		
 		if credentials.type != .basic {
 			query[kSecAttrSecurityDomain as String] = credentials.type.rawValue
+		}
+		
+		if let securityGroup = keychainGroup {
+			query[kSecAttrAccessGroup as String] = securityGroup
 		}
 		
 		let secretData = credentials.secret.data(using: String.Encoding.utf8)!
@@ -59,6 +72,10 @@ public struct CredentialsManager {
 			query[kSecAttrSecurityDomain as String] = type.rawValue
 		}
 
+		if let securityGroup = keychainGroup {
+			query[kSecAttrAccessGroup as String] = securityGroup
+		}
+		
 		var item: CFTypeRef?
 		let status = SecItemCopyMatching(query as CFDictionary, &item)
 		
@@ -93,6 +110,10 @@ public struct CredentialsManager {
 			query[kSecAttrSecurityDomain as String] = type.rawValue
 		}
 
+		if let securityGroup = keychainGroup {
+			query[kSecAttrAccessGroup as String] = securityGroup
+		}
+		
 		let status = SecItemDelete(query as CFDictionary)
 		guard status == errSecSuccess || status == errSecItemNotFound else {
 			throw CredentialsError.unhandledError(status: status)
