@@ -746,6 +746,32 @@ extension TimelineViewController: NSTableViewDelegate {
 		cell.objectValue = nil
 		cell.cellData = TimelineCellData()
 	}
+
+	private func toggleArticleRead(_ article: Article) {
+		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
+			return
+		}
+		self.runCommand(markUnreadCommand)
+	}
+
+	func tableView(_ tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {
+
+		if edge == .leading {
+			guard let article = articles.articleAtRow(row) else {
+				return []
+			}
+
+			let title = article.status.read ? NSLocalizedString("Mark Unread", comment: "mark unread") : NSLocalizedString("Mark Read", comment: "mark read")
+
+			let action = NSTableViewRowAction(style: .regular, title: title) { (action, row) in
+				self.toggleArticleRead(article);
+				tableView.rowActionsVisible = false
+			}
+			return [action]
+		}
+
+		return []
+	}
 }
 
 // MARK: - Private
