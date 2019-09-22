@@ -181,3 +181,51 @@ img[src*="feedblitz"],
 img[src*="share-buttons"] {
 	display: none !important;
 }
+
+
+/* Newsfoot specific styles. Structural styles come first, theme styles second */
+.newsfoot-footnote-container {
+	position: relative;
+	display: inline-block;
+}
+.newsfoot-footnote-popover {
+	position: absolute;
+	display: block;
+	padding: 0em 1em;
+	margin: 1em;
+	left: -11em;
+	right: -11em;
+	max-width: none;
+	border-radius: 0.3em;
+	box-sizing: border-box;
+}
+a.footnote {
+	display: inline-block;
+	text-decoration: none;
+	padding: 0.05em 0.75em;
+	border-radius: 1em;
+	min-width: 1em;
+	text-align: center;
+	font-size: 0.8em;
+	line-height: 1em;
+	position:relative;
+	top: -0.1em;
+}
+
+/* light / default */
+.newsfoot-footnote-popover {
+	background: #fafafa;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	color: black;
+	border: 1px solid #ccc;
+}
+body a.footnote,
+body a.footnote:visited {
+	background: #aaa;
+	color: white;
+	transition: background-color 200ms ease-out;
+}
+a.footnote:hover {
+	background: #666;
+	transition: background-color 200ms ease-out;
+}
