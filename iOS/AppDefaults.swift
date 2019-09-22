@@ -10,6 +10,8 @@ import UIKit
 
 struct AppDefaults {
 
+	static var shared =  UserDefaults.standard
+	
 	struct Key {
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let firstRunDate = "firstRunDate"
@@ -21,7 +23,7 @@ struct AppDefaults {
 	}
 
 	static let isFirstRun: Bool = {
-		if let _ = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date {
+		if let _ = AppDefaults.shared.object(forKey: Key.firstRunDate) as? Date {
 			return false
 		}
 		firstRunDate = Date()
@@ -39,11 +41,11 @@ struct AppDefaults {
 
 	static var refreshInterval: RefreshInterval {
 		get {
-			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
+			let rawValue = AppDefaults.shared.integer(forKey: Key.refreshInterval)
 			return RefreshInterval(rawValue: rawValue) ?? RefreshInterval.everyHour
 		}
 		set {
-			UserDefaults.standard.set(newValue.rawValue, forKey: Key.refreshInterval)
+			AppDefaults.shared.set(newValue.rawValue, forKey: Key.refreshInterval)
 		}
 	}
 	
@@ -89,7 +91,7 @@ struct AppDefaults {
 										Key.timelineGroupByFeed: false,
 										Key.timelineNumberOfLines: 3,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue]
-		UserDefaults.standard.register(defaults: defaults)
+		AppDefaults.shared.register(defaults: defaults)
 	}
 
 }
@@ -106,27 +108,27 @@ private extension AppDefaults {
 	}
 
 	static func bool(for key: String) -> Bool {
-		return UserDefaults.standard.bool(forKey: key)
+		return AppDefaults.shared.bool(forKey: key)
 	}
 
 	static func setBool(for key: String, _ flag: Bool) {
-		UserDefaults.standard.set(flag, forKey: key)
+		AppDefaults.shared.set(flag, forKey: key)
 	}
 
 	static func int(for key: String) -> Int {
-		return UserDefaults.standard.integer(forKey: key)
+		return AppDefaults.shared.integer(forKey: key)
 	}
 	
 	static func setInt(for key: String, _ x: Int) {
-		UserDefaults.standard.set(x, forKey: key)
+		AppDefaults.shared.set(x, forKey: key)
 	}
 	
 	static func date(for key: String) -> Date? {
-		return UserDefaults.standard.object(forKey: key) as? Date
+		return AppDefaults.shared.object(forKey: key) as? Date
 	}
 
 	static func setDate(for key: String, _ date: Date?) {
-		UserDefaults.standard.set(date, forKey: key)
+		AppDefaults.shared.set(date, forKey: key)
 	}
 
 	static func sortDirection(for key:String) -> ComparisonResult {
