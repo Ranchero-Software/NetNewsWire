@@ -368,6 +368,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 	}
 	
+	public func saveIfNecessary() {
+		metadataFile.saveIfNecessary()
+		feedMetadataFile.saveIfNecessary()
+		opmlFile.saveIfNecessary()
+	}
+	
 	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
 		var feedsToAdd = Set<Feed>()
 

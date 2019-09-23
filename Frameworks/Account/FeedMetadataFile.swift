@@ -31,6 +31,10 @@ final class FeedMetadataFile {
 		managedFile.load()
 	}
 	
+	func saveIfNecessary() {
+		managedFile.saveIfNecessary()
+	}
+	
 }
 
 private extension FeedMetadataFile {

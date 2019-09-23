@@ -32,6 +32,10 @@ final class OPMLFile {
 		managedFile.load()
 	}
 	
+	func saveIfNecessary() {
+		managedFile.saveIfNecessary()
+	}
+	
 }
 
 private extension OPMLFile {

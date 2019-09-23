@@ -31,6 +31,10 @@ final class AccountMetadataFile {
 		managedFile.load()
 	}
 	
+	func saveIfNecessary() {
+		managedFile.saveIfNecessary()
+	}
+	
 }
 
 private extension AccountMetadataFile {
