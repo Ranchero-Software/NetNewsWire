@@ -52,7 +52,12 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlySyncOperation 
 				let url = collectionFeed.id
 				let metadata = FeedMetadata(feedID: url)
 				// TODO: More metadata
-				metadata.name = collectionFeed.title
+				
+				// Kiel, I'm commenting this out as we shouldn't be storing the name
+				// in the feed metadata.  It should be stored in the OPML file.
+				// You can just set the name directly on the feed itself.
+//				metadata.name = collectionFeed.title
+				
 				let feed = Feed(account: account, url: url, metadata: metadata)
 				
 				// So the same feed isn't created more than once.

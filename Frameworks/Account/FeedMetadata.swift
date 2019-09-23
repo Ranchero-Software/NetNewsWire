@@ -21,7 +21,6 @@ final class FeedMetadata: Codable {
 		case homePageURL
 		case iconURL
 		case faviconURL
-		case name
 		case editedName
 		case authors
 		case contentHash
@@ -59,14 +58,6 @@ final class FeedMetadata: Codable {
 		didSet {
 			if faviconURL != oldValue {
 				valueDidChange(.faviconURL)
-			}
-		}
-	}
-
-	var name: String? {
-		didSet {
-			if name != oldValue {
-				valueDidChange(.name)
 			}
 		}
 	}
