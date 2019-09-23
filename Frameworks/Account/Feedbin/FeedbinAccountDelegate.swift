@@ -524,7 +524,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .basic)
-		accountMetadata = account.metadata
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {

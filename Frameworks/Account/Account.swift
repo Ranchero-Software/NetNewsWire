@@ -174,7 +174,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
 	private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.plist"), account: self)
-	var metadata = AccountMetadata()
+	var metadata = AccountMetadata() {
+		didSet {
+			delegate.accountMetadata = metadata
+		}
+	}
 
 	private lazy var feedMetadataFile = FeedMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist"), account: self)
 	typealias FeedMetadataDictionary = [String: FeedMetadata]
