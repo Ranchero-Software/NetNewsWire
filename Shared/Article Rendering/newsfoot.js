@@ -107,16 +107,27 @@
 		}
 	}
 
+	// Handle clicks on the footnote reference
 	document.addEventListener("click", (ev) => {
 		if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
 		if (!ev.target.matches(".footnote")) return;
 		ev.preventDefault();
 
 		const content = document.querySelector(`[id='${ev.target.hash.substring(1)}']`).cloneNode(true);
-	    if (content instanceof HTMLElement) {
-		    remove(content.querySelector(".reversefootnote"));
-        }
 		installContainer(ev.target);
 		void new Footnote(fragFromContents(content), ev.target);
     });
+										   
+	// Handle clicks on the footnote reverse link
+    document.addEventListener("click", (ev) =>
+    {
+	    if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
+        if (!ev.target.matches(".footnotes .reversefootnote")) return;
+		const hash = ev.target.hash;
+		if (!hash) return;
+		const fnref = document.getElementById(hash.substring(1));
+      
+		window.scrollTo({ top: fnref.getBoundingClientRect().top + window.scrollY });
+	    ev.preventDefault();
+	});
 }());

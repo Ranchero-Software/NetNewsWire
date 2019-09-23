@@ -199,6 +199,9 @@ img[src*="share-buttons"] {
 	border-radius: 0.3em;
 	box-sizing: border-box;
 }
+.newsfoot-footnote-popover .reversefootnote {
+	display: none;
+}
 a.footnote {
 	display: inline-block;
 	text-decoration: none;
