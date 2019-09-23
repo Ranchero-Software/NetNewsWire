@@ -94,10 +94,10 @@
 		    const leftOverhang = center - (popoverHalfWidth + marginLeft) < 0;
 										   
 			let offset = 0;
-			if (leftOverhang && !rightOverhang) {
+			if (!leftOverhang && rightOverhang) {
 				offset = -((center + popoverHalfWidth + marginRight) - window.innerWidth);
 			}
-			else if (rightOverhang && !leftOverhang) {
+			else if (leftOverhang && !rightOverhang) {
 				offset = (popoverHalfWidth + marginLeft) - center;
 			}
 			this.popover.style.transform = `translate(${offset}px)`;
