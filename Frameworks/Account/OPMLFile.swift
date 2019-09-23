@@ -28,10 +28,6 @@ final class OPMLFile {
 		managedFile.markAsDirty()
 	}
 	
-	func queueSaveToDiskIfNeeded() {
-		managedFile.queueSaveToDiskIfNeeded()
-	}
-
 	func load() {
 		managedFile.load()
 	}

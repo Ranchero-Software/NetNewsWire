@@ -206,7 +206,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				}
 				else {
 					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
-					opmlFile.queueSaveToDiskIfNeeded()
+					opmlFile.markAsDirty()
 				}
 			}
 		}
