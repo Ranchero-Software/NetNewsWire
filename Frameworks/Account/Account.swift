@@ -184,7 +184,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	typealias FeedMetadataDictionary = [String: FeedMetadata]
 	var feedMetadata = FeedMetadataDictionary()
 
-	private var startingUp = true
+	var startingUp = true
 
     public var unreadCount = 0 {
         didSet {
@@ -406,10 +406,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 	}
 	
-	public func resetAllFeedMetadata() {
+	public func resetFeedMetadataAndUnreadCounts() {
 		for feed in flattenedFeeds() {
 			feed.metadata = feedMetadata(feedURL: feed.url, feedID: feed.feedID)
 		}
+		fetchAllUnreadCounts()
 		NotificationCenter.default.post(name: .FeedMetadataDidChange, object: self, userInfo: nil)
 	}
 	
