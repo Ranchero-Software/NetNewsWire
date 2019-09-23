@@ -10,7 +10,7 @@ import Foundation
 import os.log
 
 /// Single responsibility is to accurately reflect Collections and their Feeds as Folders and their Feeds.
-final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlySyncOperation {
+final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 	
 	let account: Account
 	let collectionsAndFoldersProvider: FeedlyCollectionsAndFoldersProviding
@@ -52,13 +52,9 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlySyncOperation 
 				let url = collectionFeed.id
 				let metadata = FeedMetadata(feedID: url)
 				// TODO: More metadata
-				
-				// Kiel, I'm commenting this out as we shouldn't be storing the name
-				// in the feed metadata.  It should be stored in the OPML file.
-				// You can just set the name directly on the feed itself.
-//				metadata.name = collectionFeed.title
-				
+								
 				let feed = Feed(account: account, url: url, metadata: metadata)
+				feed.name = collectionFeed.title
 				
 				// So the same feed isn't created more than once.
 				localFeeds.insert(feed)

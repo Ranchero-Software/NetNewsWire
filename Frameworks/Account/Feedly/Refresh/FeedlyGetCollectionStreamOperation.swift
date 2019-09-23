@@ -14,7 +14,7 @@ protocol FeedlyCollectionStreamProviding: class {
 }
 
 /// Single responsibility is to get the stream content of a Collection from Feedly.
-final class FeedlyGetCollectionStreamOperation: FeedlySyncOperation, FeedlyCollectionStreamProviding {
+final class FeedlyGetCollectionStreamOperation: FeedlyOperation, FeedlyCollectionStreamProviding {
 	
 	private(set) var collection: FeedlyCollection
 	
@@ -30,11 +30,13 @@ final class FeedlyGetCollectionStreamOperation: FeedlySyncOperation, FeedlyColle
 	
 	let account: Account
 	let caller: FeedlyAPICaller
+	let unreadOnly: Bool
 	
-	init(account: Account, collection: FeedlyCollection, caller: FeedlyAPICaller) {
+	init(account: Account, collection: FeedlyCollection, caller: FeedlyAPICaller, unreadOnly: Bool = false) {
 		self.account = account
 		self.collection = collection
 		self.caller = caller
+		self.unreadOnly = unreadOnly
 	}
 	
 	override func main() {
@@ -44,7 +46,7 @@ final class FeedlyGetCollectionStreamOperation: FeedlySyncOperation, FeedlyColle
 		}
 		
 		//TODO: Use account metadata to get articles newer than some date.
-		caller.getStream(for: collection) { result in
+		caller.getStream(for: collection, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
 				self.storedStream = stream

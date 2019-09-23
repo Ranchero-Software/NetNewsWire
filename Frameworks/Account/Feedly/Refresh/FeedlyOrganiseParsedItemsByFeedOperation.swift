@@ -18,7 +18,7 @@ protocol FeedlyParsedItemsByFeedProviding {
 }
 
 /// Single responsibility is to group articles by their feeds.
-final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlySyncOperation, FeedlyParsedItemsByFeedProviding {
+final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyParsedItemsByFeedProviding {
 	private let account: Account
 	private let parsedItemsProvider: FeedlyStreamParsedItemsProviding
 	private let log: OSLog

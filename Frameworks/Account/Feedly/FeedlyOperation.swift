@@ -1,5 +1,5 @@
 //
-//  FeedlySyncOperation.swift
+//  FeedlyOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 20/9/19.
@@ -8,15 +8,15 @@
 
 import Foundation
 
-protocol FeedlySyncOperationDelegate: class {
-	func feedlySyncOperation(_ operation: FeedlySyncOperation, didFailWith error: Error)
+protocol FeedlyOperationDelegate: class {
+	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error)
 }
 
 /// Abstract class common to all the tasks required to ingest content from Feedly into NetNewsWire.
 /// Each task should try to have a single responsibility so they can be easily composed with others.
-class FeedlySyncOperation: Operation {
+class FeedlyOperation: Operation {
 	
-	weak var delegate: FeedlySyncOperationDelegate?
+	weak var delegate: FeedlyOperationDelegate?
 	
 	func didFinish() {
 		self.isExecutingOperation = false
@@ -25,7 +25,7 @@ class FeedlySyncOperation: Operation {
 	
 	func didFinish(_ error: Error) {
 		assert(delegate != nil)
-		delegate?.feedlySyncOperation(self, didFailWith: error)
+		delegate?.feedlyOperation(self, didFailWith: error)
 		didFinish()
 	}
 	
