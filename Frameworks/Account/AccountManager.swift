@@ -72,6 +72,14 @@ public final class AccountManager: UnreadCountProvider {
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
 	
+	public convenience init() {
+		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
+		let accountsURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
+		let accountsFolder = accountsURL!.appendingPathComponent("Accounts").absoluteString
+		let accountsFolderPath = accountsFolder.suffix(from: accountsFolder.index(accountsFolder.startIndex, offsetBy: 7))
+		self.init(accountsFolder: String(accountsFolderPath))
+	}
+	
 	public init(accountsFolder: String) {
 		self.accountsFolder = accountsFolder
 		

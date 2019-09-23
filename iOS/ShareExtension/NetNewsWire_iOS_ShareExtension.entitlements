@@ -6,5 +6,9 @@
 	<array>
 		<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS</string>
 	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)$(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS</string>
+	</array>
 </dict>
 </plist>

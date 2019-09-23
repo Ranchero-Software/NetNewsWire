@@ -454,7 +454,12 @@ private extension MasterTimelineViewController {
 	func resetUI() {
 		
 		title = coordinator.timelineName
-		navigationController?.title = coordinator.timelineName
+		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
+			titleView.imageView.image = coordinator.timelineFavicon
+			titleView.label.text = coordinator.timelineName
+			navigationItem.titleView = titleView
+		}
+
 		
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
 		if dataSource.snapshot().itemIdentifiers(inSection: 0).count > 0 {

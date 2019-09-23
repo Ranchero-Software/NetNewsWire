@@ -53,6 +53,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedMetadataDidChange(_:)), name: .FeedMetadataDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
@@ -121,6 +122,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
 			configureCellsForRepresentedObject(feed)
 		}
+	}
+	
+	@objc func feedMetadataDidChange(_ note: Notification) {
+		reloadAllVisibleCells()
 	}
 	
 	@objc func userDidAddFeed(_ notification: Notification) {

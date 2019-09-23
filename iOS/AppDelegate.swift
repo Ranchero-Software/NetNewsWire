@@ -55,8 +55,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
 		// Force lazy initialization of the web view provider so that it can warm up the queue of prepared web views
 		let _ = DetailViewControllerWebViewProvider.shared
-
-		AccountManager.shared = AccountManager(accountsFolder: RSDataSubfolder(nil, "Accounts")!)
+		AccountManager.shared = AccountManager()
+		AppDefaults.shared = UserDefaults.init(suiteName: "group.\(Bundle.main.bundleIdentifier!)")!
 		
 		registerBackgroundTasks()
 		

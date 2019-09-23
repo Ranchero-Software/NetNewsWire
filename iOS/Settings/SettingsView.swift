@@ -46,7 +46,7 @@ struct SettingsView : View {
 	
 	func buildAccountsSection() -> some View {
 		Section(header: Text("ACCOUNTS").padding(.top, 22.0)) {
-			ForEach(0..<viewModel.accounts.count) { index in
+			ForEach(viewModel.accounts.indices, id: \.self) { index in
 				NavigationLink(destination: SettingsDetailAccountView(viewModel: SettingsDetailAccountView.ViewModel(self.viewModel.accounts[index])), tag: index, selection: self.$accountAction) {
 					Text(verbatim: self.viewModel.accounts[index].nameForDisplay)
 				}

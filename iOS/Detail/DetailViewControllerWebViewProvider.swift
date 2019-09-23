@@ -63,7 +63,16 @@ class DetailViewControllerWebViewProvider: NSObject, WKNavigationDelegate {
 
 	private func replenishQueueIfNeeded() {
 		while queue.count < minimumQueueDepth {
-			let webView = WKWebView(frame: .zero)
+			let preferences = WKPreferences()
+			preferences.javaScriptCanOpenWindowsAutomatically = false
+			preferences.javaScriptEnabled = true
+
+			let configuration = WKWebViewConfiguration()
+			configuration.preferences = preferences
+			configuration.allowsInlineMediaPlayback = true
+			configuration.mediaTypesRequiringUserActionForPlayback = .video
+			
+			let webView = WKWebView(frame: .zero, configuration: configuration)
 			enqueueWebView(webView)
 		}
 	}

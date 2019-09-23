@@ -63,6 +63,8 @@
 		5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */; };
 		5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */; };
 		5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */; };
+		5148F44B2336DB4700F8CD8B /* MasterTimelineTitleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5148F44A2336DB4700F8CD8B /* MasterTimelineTitleView.xib */; };
+		5148F4552336DB7000F8CD8B /* MasterTimelineTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */; };
 		514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */; };
 		514B7D1F23219F3C00BAC947 /* AddControllerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514B7D1E23219F3C00BAC947 /* AddControllerType.swift */; };
 		5152E0F923248F6200E5C7AD /* SettingsLocalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D707D22B02A4B004E8F65 /* SettingsLocalAccountView.swift */; };
@@ -808,6 +810,8 @@
 		5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOPMLWindowController.swift; sourceTree = "<group>"; };
 		5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsFeedbinWindowController.swift; sourceTree = "<group>"; };
 		5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsFeedbin.xib; sourceTree = "<group>"; };
+		5148F44A2336DB4700F8CD8B /* MasterTimelineTitleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterTimelineTitleView.xib; sourceTree = "<group>"; };
+		5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineTitleView.swift; sourceTree = "<group>"; };
 		514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
 		514B7D1E23219F3C00BAC947 /* AddControllerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddControllerType.swift; sourceTree = "<group>"; };
 		51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SyncDatabase.xcodeproj; path = Frameworks/SyncDatabase/SyncDatabase.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -1350,6 +1354,8 @@
 			children = (
 				51C4526E2265091600C03939 /* MasterTimelineViewController.swift */,
 				51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */,
+				5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */,
+				5148F44A2336DB4700F8CD8B /* MasterTimelineTitleView.xib */,
 				51C4526F2265091600C03939 /* Cell */,
 			);
 			path = MasterTimeline;
@@ -2510,6 +2516,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				517630052336215100E15FFF /* main.js in Resources */,
+				5148F44B2336DB4700F8CD8B /* MasterTimelineTitleView.xib in Resources */,
 				511D43D0231FA62500FB1562 /* TimelineKeyboardShortcuts.plist in Resources */,
 				51C452862265093600C03939 /* Add.storyboard in Resources */,
 				511D43EF231FBDE900FB1562 /* LaunchScreenPad.storyboard in Resources */,
@@ -2800,6 +2807,7 @@
 				51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */,
 				51934CD023108953006127BE /* ActivityID.swift in Sources */,
 				51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */,
+				5148F4552336DB7000F8CD8B /* MasterTimelineTitleView.swift in Sources */,
 				513228FC233037630033D4ED /* Reachability.swift in Sources */,
 				51C45259226508D300C03939 /* AppDefaults.swift in Sources */,
 				519D73FB2323FF35008BB345 /* SettingsView.swift in Sources */,
