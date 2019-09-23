@@ -406,6 +406,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		for feed in flattenedFeeds() {
 			feed.metadata = feedMetadata(feedURL: feed.url, feedID: feed.feedID)
 		}
+		NotificationCenter.default.post(name: .FeedMetadataDidChange, object: self, userInfo: nil)
 	}
 	
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
