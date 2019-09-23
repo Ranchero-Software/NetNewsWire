@@ -195,10 +195,36 @@ img[src*="share-buttons"] {
 	margin: 1em;
 	left: -11em;
 	right: -11em;
+	top: 0.75em;
 	max-width: none;
 	border-radius: 0.3em;
 	box-sizing: border-box;
 }
+.newsfoot-footnote-popover-arrow {
+	content: '';
+	display: block;
+	width: 1em;
+	position: absolute;
+	top: -0.5em;
+	left: calc(50% - 0.5em);
+	height: 1em !important;
+	transform: rotate(45deg);
+	z-index:0;
+}
+.newsfoot-footnote-popover-inner {
+	border-radius: calc(0.3em - 1px);
+	padding: 1em;
+	position: relative;
+	z-index: 1;
+}
+
+.newsfoot-footnote-popover-inner :first-child {
+	margin-top: 0;
+}
+.newsfoot-footnote-popover-inner :last-child {
+	margin-bottom: 0;
+}
+
 .newsfoot-footnote-popover .reversefootnote {
 	display: none;
 }
@@ -217,18 +243,27 @@ a.footnote {
 
 /* light / default */
 .newsfoot-footnote-popover {
-	background: #fafafa;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	background: #ccc;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 3px 6px rgba(0, 0, 0, 0.25);
 	color: black;
+	padding: 1px;
+}
+.newsfoot-footnote-popover-arrow {
+	background: #fafafa;
 	border: 1px solid #ccc;
 }
+.newsfoot-footnote-popover-inner {
+	background: #fafafa;
+}
 body a.footnote,
-body a.footnote:visited {
+body a.footnote:visited,
+.newsfoot-footnote-popover + a.footnote:hover {
 	background: #aaa;
 	color: white;
 	transition: background-color 200ms ease-out;
 }
-a.footnote:hover {
+a.footnote:hover,
+.newsfoot-footnote-popover + a.footnote {
 	background: #666;
 	transition: background-color 200ms ease-out;
 }

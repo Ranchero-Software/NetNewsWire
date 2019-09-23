@@ -29,6 +29,8 @@
 	const clsPrefix = "newsfoot-footnote-";
 	const CONTAINER_CLS = `${clsPrefix}container`;
 	const POPOVER_CLS = `${clsPrefix}popover`;
+    const POPOVER_INNER_CLS = `${clsPrefix}popover-inner`;
+    const POPOVER_ARROW_CLS = `${clsPrefix}popover-arrow`;
 
 	/**
 	 * @param {Node} content
@@ -36,7 +38,11 @@
 	 */
 	function footnoteMarkup(content) {
 		const popover = newEl("div", POPOVER_CLS);
-		popover.appendChild(content);
+		const arrow = newEl("div", POPOVER_ARROW_CLS);
+        const inner = newEl("div", POPOVER_INNER_CLS);
+		popover.appendChild(inner);
+		popover.appendChild(arrow);
+		inner.appendChild(content);
 		return popover;
 	}
 
@@ -49,13 +55,17 @@
 			this.popover = footnoteMarkup(content);
 			this.style = window.getComputedStyle(this.popover);
 			this.fnref = fnref;
-			this.fnref.closest(`.${CONTAINER_CLS}`).appendChild(this.popover);
+			this.fnref.closest(`.${CONTAINER_CLS}`).insertBefore(this.popover, fnref);
 			this.reposition();
   
 			/** @type {(ev:MouseEvent) => void} */
 			this.clickoutHandler = (ev) => {
 				if (!(ev.target instanceof Element)) return;
 				if (ev.target.closest(`.${POPOVER_CLS}`) === this.popover) return;
+				if (ev.target === this.fnref) {
+				    ev.stopPropagation();
+					ev.preventDefault();
+				}
 				this.cleanup();
 			}
 			document.addEventListener("click", this.clickoutHandler, {capture: true});
@@ -80,14 +90,18 @@
 			const marginLeft = stripPx(this.style.marginLeft);
 			const marginRight = stripPx(this.style.marginRight);
   
+		    const rightOverhang = center + popoverHalfWidth + marginRight > window.innerWidth;
+		    const leftOverhang = center - (popoverHalfWidth + marginLeft) < 0;
+										   
 			let offset = 0;
-			if (center + popoverHalfWidth + marginRight > window.innerWidth) {
+			if (leftOverhang && !rightOverhang) {
 				offset = -((center + popoverHalfWidth + marginRight) - window.innerWidth);
 			}
-			else if (center - (popoverHalfWidth + marginLeft) < 0) {
+			else if (rightOverhang && !leftOverhang) {
 				offset = (popoverHalfWidth + marginLeft) - center;
 			}
 			this.popover.style.transform = `translate(${offset}px)`;
+			this.popover.querySelector(`.${POPOVER_ARROW_CLS}`).style.transform = `translate(${-offset}px) rotate(45deg)`;
 		}
 	}
 
