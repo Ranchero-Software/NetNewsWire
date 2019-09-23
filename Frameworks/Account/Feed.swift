@@ -196,10 +196,11 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
+	var metadata: FeedMetadata
+
 	// MARK: - Private
 
 	private let accountID: String // Used for hashing and equality; account may turn nil
-	private let metadata: FeedMetadata
 
 	// MARK: - Init
 

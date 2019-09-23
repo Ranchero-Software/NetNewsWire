@@ -48,6 +48,7 @@ private extension AccountMetadataFile {
 			if let fileData = try? Data(contentsOf: readURL) {
 				let decoder = PropertyListDecoder()
 				account.metadata = (try? decoder.decode(AccountMetadata.self, from: fileData)) ?? AccountMetadata()
+				account.metadata.delegate = account
 			}
 		})
 		
@@ -55,7 +56,6 @@ private extension AccountMetadataFile {
 			os_log(.error, log: log, "Read from disk coordination failed: %@.", error.localizedDescription)
 		}
 		
-		account.metadata.delegate = account
 	}
 	
 	func saveCallback() {

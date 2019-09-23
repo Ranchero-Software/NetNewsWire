@@ -48,6 +48,8 @@ private extension FeedMetadataFile {
 			if let fileData = try? Data(contentsOf: readURL) {
 				let decoder = PropertyListDecoder()
 				account.feedMetadata = (try? decoder.decode(Account.FeedMetadataDictionary.self, from: fileData)) ?? Account.FeedMetadataDictionary()
+				account.feedMetadata.values.forEach { $0.delegate = account }
+				account.resetAllFeedMetadata()
 			}
 		})
 		
@@ -55,7 +57,6 @@ private extension FeedMetadataFile {
 			os_log(.error, log: log, "Read from disk coordination failed: %@.", error.localizedDescription)
 		}
 		
-		account.feedMetadata.values.forEach { $0.delegate = account }
 
 	}
 	

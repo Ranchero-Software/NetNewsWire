@@ -29,6 +29,7 @@ public extension Notification.Name {
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
+	static let FeedMetadataDidChange = Notification.Name(rawValue: "FeedMetadataDidChange")
 }
 
 public enum AccountType: Int {
@@ -399,6 +400,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 		
+	}
+	
+	public func resetAllFeedMetadata() {
+		for feed in flattenedFeeds() {
+			feed.metadata = feedMetadata(feedURL: feed.url, feedID: feed.feedID)
+		}
 	}
 	
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
