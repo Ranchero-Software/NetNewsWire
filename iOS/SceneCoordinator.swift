@@ -556,6 +556,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func selectArticle(_ article: Article?, automated: Bool = true) {
 		guard article != currentArticle else { return }
 		
+		articleExtractor?.cancel()
+		articleExtractor = nil
+		isShowingExtractedArticle = false
+//		makeToolbarValidate()
+
 		currentArticle = article
 		activityManager.reading(currentArticle)
 		
