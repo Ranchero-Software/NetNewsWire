@@ -223,7 +223,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				
 				if let self = self {
 				
-					let alert = UIAlertController(title: feed.name, message: nil, preferredStyle: .actionSheet)
+					let alert = UIAlertController(title: feed.nameForDisplay, message: nil, preferredStyle: .actionSheet)
 					if let popoverController = alert.popoverPresentationController {
 						popoverController.sourceView = view
 						popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)

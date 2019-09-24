@@ -27,12 +27,12 @@ final class FeedMetadataFile {
 		managedFile.markAsDirty()
 	}
 	
-	func queueSaveToDiskIfNeeded() {
-		managedFile.queueSaveToDiskIfNeeded()
-	}
-
 	func load() {
 		managedFile.load()
+	}
+	
+	func saveIfNecessary() {
+		managedFile.saveIfNecessary()
 	}
 	
 }
@@ -49,7 +49,9 @@ private extension FeedMetadataFile {
 				let decoder = PropertyListDecoder()
 				account.feedMetadata = (try? decoder.decode(Account.FeedMetadataDictionary.self, from: fileData)) ?? Account.FeedMetadataDictionary()
 				account.feedMetadata.values.forEach { $0.delegate = account }
-				account.resetAllFeedMetadata()
+				if !account.startingUp {
+					account.resetFeedMetadataAndUnreadCounts()
+				}
 			}
 		})
 		

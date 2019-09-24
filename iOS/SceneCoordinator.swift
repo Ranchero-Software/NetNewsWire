@@ -289,8 +289,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
 		
-		let noSelectionController = fullyWrappedSystemMesssageController(showButton: true)
-		rootSplitViewController.showDetailViewController(noSelectionController, sender: self)
+		let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
+		detailViewController.coordinator = self
+		let detailNavigationController = addNavControllerIfNecessary(detailViewController, showButton: false)
+		rootSplitViewController.showDetailViewController(detailNavigationController, sender: self)
 
 		configureThreePanelMode(for: size)
 		
@@ -560,8 +562,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 					masterNavigationController.popViewController(animated: !automated)
 				}
 			} else {
-				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-				installDetailController(systemMessageViewController, automated: automated)
+				detailViewController?.state = .noSelection
 			}
 			masterTimelineViewController?.updateArticleSelection(animate: !automated)
 			return
@@ -577,11 +578,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			masterTimelineViewController?.updateArticleSelection(animate: false)
 		}
 		
-		detailViewController?.updateArticleSelection()
+		detailViewController?.state = .article(article!)
 		
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: true)
 		}
+		
 	}
 	
 	func beginSearching() {
@@ -852,60 +854,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 extension SceneCoordinator: UISplitViewControllerDelegate {
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-	
-		// Check to see if the system is currently configured for three panel mode
-		if let subSplit = secondaryViewController as? UISplitViewController {
-
-			// Take the timeline controller out of the subsplit and throw it on the master navigation stack
-			if let masterTimelineNav = subSplit.viewControllers.first as? UINavigationController, let masterTimeline = masterTimelineNav.topViewController {
-				masterNavigationController.pushViewController(masterTimeline, animated: false)
-			}
-
-			// Take the detail view (ignoring system message controllers) and put it on the master navigation stack
-			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
-				masterNavigationController.pushViewController(detail, animated: false)
-			}
-
-		} else {
-			
-			// If the timeline controller has been initialized and only the feeds controller is on the stack, we add the timeline controller
-			if let timeline = masterTimelineViewController, masterNavigationController.viewControllers.count == 1 {
-				masterNavigationController.pushViewController(timeline, animated: false)
-			}
-			
-			// Take the detail view (ignoring system message controllers) and put it on the master navigation stack
-			if let detailNav = secondaryViewController as? UINavigationController, let detail = detailNav.topViewController as? DetailViewController {
-				// I have no idea why, I have to wire up the left bar button item for this, but not when I am transitioning from three panel mode
-				detail.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
-				detail.navigationItem.leftItemsSupplementBackButton = true
-				masterNavigationController.pushViewController(detail, animated: false)
-			}
-
-		}
-		
-		return true
-		
-	}
-	
-	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
-		
-		if isThreePanelMode {
-			return transitionToThreePanelMode()
-		}
-
-		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
-
-			// If we have a detail controller on the stack, remove it and return it.
-			masterNavigationController.viewControllers.removeLast()
-			let detailNav = addNavControllerIfNecessary(detail, showButton: true)
-			return detailNav
-			
-		} else {
-
-			// Display a no selection controller since we don't have any detail selected
-			return fullyWrappedSystemMesssageController(showButton: true)
-
-		}
+		return currentArticle == nil
 	}
 	
 }
@@ -1449,12 +1398,6 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func fullyWrappedSystemMesssageController(showButton: Bool) -> UIViewController {
-		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-		let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: showButton)
-		return navController
-	}
-	
 	@discardableResult
 	func transitionToThreePanelMode() -> UIViewController {
 		
@@ -1466,7 +1409,9 @@ private extension SceneCoordinator {
 			if let result = detailViewController {
 				return result
 			} else {
-				return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+				let detailController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
+				detailController.coordinator = self
+				return detailController
 			}
 		}()
 		

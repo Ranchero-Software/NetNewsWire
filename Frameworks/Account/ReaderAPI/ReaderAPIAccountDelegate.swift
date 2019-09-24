@@ -411,7 +411,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func accountDidInitialize(_ account: Account) {
-		accountMetadata = account.metadata
 		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
 	}
 	

@@ -170,7 +170,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
-//		accountMetadata = account.metadata
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		
 		syncStrategy = FeedlySyncStrategy(account: account, caller: caller, log: log)

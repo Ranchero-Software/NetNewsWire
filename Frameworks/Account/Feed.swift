@@ -65,18 +65,7 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
-	public var name: String? {
-		get {
-			return metadata.name
-		}
-		set {
-			let oldNameForDisplay = nameForDisplay
-			metadata.name = newValue
-			if oldNameForDisplay != newValue {
-				postDisplayNameDidChangeNotification()
-			}
-		}
-	}
+	public var name: String?
 
 	public var authors: Set<Author>? {
 		get {

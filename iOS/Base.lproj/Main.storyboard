@@ -113,39 +113,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1619" y="-87"/>
-        </scene>
-        <!--System Message-->
-        <scene sceneID="tbo-yR-QVH">
-            <objects>
-                <viewController storyboardIdentifier="SystemMessageViewController" title="System Message" id="Xld-e9-xoL" customClass="SystemMessageViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="5hz-HK-J2Q">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="System Message" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6C9-Jb-ZZR">
-                                <rect key="frame" x="141.5" y="437.5" width="131" height="21"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="6C9-Jb-ZZR" firstAttribute="centerX" secondItem="5hz-HK-J2Q" secondAttribute="centerX" id="9iO-I1-FtK"/>
-                            <constraint firstItem="6C9-Jb-ZZR" firstAttribute="centerY" secondItem="5hz-HK-J2Q" secondAttribute="centerY" id="jXm-OI-Igs"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="zOb-OV-HXy"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="2kf-IY-WDY"/>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
-                    <connections>
-                        <outlet property="messageLabel" destination="6C9-Jb-ZZR" id="HeR-Qv-yfz"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="rgH-br-nLG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="872" y="-87"/>
+            <point key="canvasLocation" x="2320" y="-759"/>
         </scene>
         <!--Timeline-->
         <scene sceneID="fag-XH-avP">
