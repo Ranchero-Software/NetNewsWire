@@ -22,6 +22,7 @@ enum ArticleViewState: Equatable {
 
 class ArticleViewController: UIViewController {
 
+	@IBOutlet private weak var readerViewBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var nextArticleBarButtonItem: UIBarButtonItem!
@@ -177,6 +178,10 @@ class ArticleViewController: UIViewController {
 	}
 	
 	// MARK: Actions
+	
+	@IBAction func toggleReaderView(_ sender: Any) {
+		coordinator.toggleArticleExtractor()
+	}
 	
 	@IBAction func nextUnread(_ sender: Any) {
 		coordinator.selectNextUnread()

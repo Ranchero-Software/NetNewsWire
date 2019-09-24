@@ -27,6 +27,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private var activityManager = ActivityManager()
 	
+	private var isShowingExtractedArticle = false
+	private var articleExtractor: ArticleExtractor? = nil
+
 	private var rootSplitViewController: RootSplitViewController!
 	private var masterNavigationController: UINavigationController!
 	private var masterFeedViewController: MasterFeedViewController!
@@ -795,6 +798,37 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.present(addViewController, animated: true)
 	}
 	
+	func toggleArticleExtractor() {
+		
+		guard let article = currentArticle else {
+			return
+		}
+
+		guard articleExtractor?.state != .processing else {
+			articleExtractor?.cancel()
+			articleExtractor = nil
+			isShowingExtractedArticle = false
+			articleViewController?.state = .article(article)
+			return
+		}
+		
+		guard !isShowingExtractedArticle else {
+			isShowingExtractedArticle = false
+			articleViewController?.state = .article(article)
+			return
+		}
+		
+		if let articleExtractor = articleExtractor, let extractedArticle = articleExtractor.article {
+			if currentArticle?.preferredLink == articleExtractor.articleLink {
+				isShowingExtractedArticle = true
+				articleViewController?.state = .extracted(article, extractedArticle)
+			}
+		} else {
+			startArticleExtractorForCurrentLink()
+		}
+		
+	}
+	
 	func homePageURLForFeed(_ indexPath: IndexPath) -> URL? {
 		guard let node = nodeFor(indexPath),
 			let feed = node.representedObject as? Feed,
@@ -876,6 +910,24 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 			selectArticle(nil)
 		}
 		
+	}
+	
+}
+
+// MARK: ArticleExtractorDelegate
+
+extension SceneCoordinator: ArticleExtractorDelegate {
+	
+	func articleExtractionDidFail(with: Error) {
+//		makeToolbarValidate()
+	}
+	
+	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
+		if let article = currentArticle, articleExtractor?.state != .cancelled {
+			isShowingExtractedArticle = true
+			articleViewController?.state = .extracted(article, extractedArticle)
+//			makeToolbarValidate()
+		}
 	}
 	
 }
@@ -1181,6 +1233,14 @@ private extension SceneCoordinator {
 	
 	// MARK: Fetching Articles
 	
+	func startArticleExtractorForCurrentLink() {
+		if let link = currentArticle?.preferredLink, let extractor = ArticleExtractor(link) {
+			extractor.delegate = self
+			extractor.process()
+			articleExtractor = extractor
+		}
+	}
+
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
 			replaceArticles(with: Set<Article>(), animate: true)
