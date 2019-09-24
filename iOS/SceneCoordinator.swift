@@ -854,7 +854,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 extension SceneCoordinator: UISplitViewControllerDelegate {
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-		return true
+		return currentArticle == nil
 	}
 	
 }
