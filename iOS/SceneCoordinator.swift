@@ -36,17 +36,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return rootSplitViewController.children.last as? UISplitViewController
 	}
 	
-	private var detailViewController: DetailViewController? {
-		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
+	private var articleViewController: ArticleViewController? {
+		if let detail = masterNavigationController.viewControllers.last as? ArticleViewController {
 			return detail
 		}
 		if let subSplit = subSplitViewController {
 			if let navController = subSplit.viewControllers.last as? UINavigationController {
-				return navController.topViewController as? DetailViewController
+				return navController.topViewController as? ArticleViewController
 			}
 		} else {
 			if let navController = rootSplitViewController.viewControllers.last as? UINavigationController {
-				return navController.topViewController as? DetailViewController
+				return navController.topViewController as? ArticleViewController
 			}
 		}
 		return nil
@@ -289,9 +289,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
 		
-		let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
-		detailViewController.coordinator = self
-		let detailNavigationController = addNavControllerIfNecessary(detailViewController, showButton: false)
+		let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+		articleViewController.coordinator = self
+		let detailNavigationController = addNavControllerIfNecessary(articleViewController, showButton: false)
 		rootSplitViewController.showDetailViewController(detailNavigationController, sender: self)
 
 		configureThreePanelMode(for: size)
@@ -558,27 +558,27 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		if article == nil {
 			if rootSplitViewController.isCollapsed {
-				if masterNavigationController.children.last is DetailViewController {
+				if masterNavigationController.children.last is ArticleViewController {
 					masterNavigationController.popViewController(animated: !automated)
 				}
 			} else {
-				detailViewController?.state = .noSelection
+				articleViewController?.state = .noSelection
 			}
 			masterTimelineViewController?.updateArticleSelection(animate: !automated)
 			return
 		}
 		
-		if detailViewController == nil {
-			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
-			detailViewController.coordinator = self
-			installDetailController(detailViewController, automated: automated)
+		if articleViewController == nil {
+			let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+			articleViewController.coordinator = self
+			installArticleController(articleViewController, automated: automated)
 		}
 		
 		if automated {
 			masterTimelineViewController?.updateArticleSelection(animate: false)
 		}
 		
-		detailViewController?.state = .article(article!)
+		articleViewController?.state = .article(article!)
 		
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: true)
@@ -686,8 +686,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func scrollOrGoToNextUnread() {
-		if detailViewController?.canScrollDown() ?? false {
-			detailViewController?.scrollPageDown()
+		if articleViewController?.canScrollDown() ?? false {
+			articleViewController?.scrollPageDown()
 		} else {
 			selectNextUnread()
 		}
@@ -844,7 +844,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func navigateToDetail() {
-		detailViewController?.focus()
+		articleViewController?.focus()
 	}
 	
 }
@@ -1340,16 +1340,16 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func installDetailController(_ detailController: UIViewController, automated: Bool) {
+	func installArticleController(_ articleController: UIViewController, automated: Bool) {
 
 		if let subSplit = subSplitViewController {
-			let controller = addNavControllerIfNecessary(detailController, showButton: false)
+			let controller = addNavControllerIfNecessary(articleController, showButton: false)
 			subSplit.showDetailViewController(controller, sender: self)
 		} else if rootSplitViewController.isCollapsed {
-			let controller = addNavControllerIfNecessary(detailController, showButton: false)
+			let controller = addNavControllerIfNecessary(articleController, showButton: false)
 			masterNavigationController.pushViewController(controller, animated: !automated)
 		} else {
-			let controller = addNavControllerIfNecessary(detailController, showButton: true)
+			let controller = addNavControllerIfNecessary(articleController, showButton: true)
 			rootSplitViewController.showDetailViewController(controller, sender: self)
   	 	}
 		
@@ -1406,12 +1406,12 @@ private extension SceneCoordinator {
 		}
 		
 		let controller: UIViewController = {
-			if let result = detailViewController {
+			if let result = articleViewController {
 				return result
 			} else {
-				let detailController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
-				detailController.coordinator = self
-				return detailController
+				let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+				articleViewController.coordinator = self
+				return articleViewController
 			}
 		}()
 		

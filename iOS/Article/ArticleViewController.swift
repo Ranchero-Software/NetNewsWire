@@ -1,5 +1,5 @@
 //
-//  DetailViewController.swift
+//  ArticleViewController.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/8/19.
@@ -12,7 +12,7 @@ import Account
 import Articles
 import SafariServices
 
-enum DetailViewState: Equatable {
+enum ArticleViewState: Equatable {
 	case noSelection
 	case multipleSelection
 	case loading
@@ -20,7 +20,7 @@ enum DetailViewState: Equatable {
 	case extracted(Article, ExtractedArticle)
 }
 
-class DetailViewController: UIViewController {
+class ArticleViewController: UIViewController {
 
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
@@ -34,7 +34,7 @@ class DetailViewController: UIViewController {
 
 	weak var coordinator: SceneCoordinator!
 	
-	var state: DetailViewState = .noSelection {
+	var state: ArticleViewState = .noSelection {
 		didSet {
 			if state != oldValue {
 				updateUI()
@@ -61,7 +61,7 @@ class DetailViewController: UIViewController {
 	
 	deinit {
 		webView.removeFromSuperview()
-		DetailViewControllerWebViewProvider.shared.enqueueWebView(webView)
+		ArticleViewControllerWebViewProvider.shared.enqueueWebView(webView)
 		webView = nil
 	}
 	
@@ -73,7 +73,7 @@ class DetailViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
-		DetailViewControllerWebViewProvider.shared.dequeueWebView() { webView in
+		ArticleViewControllerWebViewProvider.shared.dequeueWebView() { webView in
 			
 			self.webView = webView
 			self.webViewContainer.addChildAndPin(webView)
@@ -248,7 +248,7 @@ class DetailViewController: UIViewController {
 
 // MARK: WKNavigationDelegate
 
-extension DetailViewController: WKNavigationDelegate {
+extension ArticleViewController: WKNavigationDelegate {
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
 		
 		if navigationAction.navigationType == .linkActivated {
@@ -284,7 +284,7 @@ extension DetailViewController: WKNavigationDelegate {
 
 // MARK: Private
 
-private extension DetailViewController {
+private extension ArticleViewController {
 	
 	func updateProgressIndicatorIfNeeded() {
 		if !(UIDevice.current.userInterfaceIdiom == .pad) {
