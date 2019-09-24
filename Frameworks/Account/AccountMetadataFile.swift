@@ -48,8 +48,8 @@ private extension AccountMetadataFile {
 			if let fileData = try? Data(contentsOf: readURL) {
 				let decoder = PropertyListDecoder()
 				account.metadata = (try? decoder.decode(AccountMetadata.self, from: fileData)) ?? AccountMetadata()
-				account.metadata.delegate = account
 			}
+			account.metadata.delegate = account
 		})
 		
 		if let error = errorPointer?.pointee {
