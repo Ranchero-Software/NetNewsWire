@@ -10,6 +10,28 @@ import RSCore
 
 struct AppAssets {
 
+	static var articleExtractorError: UIImage = {
+		return UIImage(named: "articleExtractorOff")!
+	}()
+
+	static var articleExtractorOff: UIImage = {
+		return UIImage(named: "articleExtractorOff")!
+	}()
+
+	static var articleExtractorOffTinted: UIImage = {
+		let image = UIImage(named: "articleExtractorOff")!
+		return image.maskWithColor(color: AppAssets.primaryAccentColor.cgColor)!
+	}()
+
+	static var articleExtractorOn: UIImage = {
+		return UIImage(named: "articleExtractorOn")!
+	}()
+
+	static var articleExtractorOnTinted: UIImage = {
+		let image = UIImage(named: "articleExtractorOn")!
+		return image.maskWithColor(color: AppAssets.primaryAccentColor.cgColor)!
+	}()
+
 	static var avatarBackgroundColor: UIColor = {
 		return UIColor(named: "avatarBackgroundColor")!
 	}()

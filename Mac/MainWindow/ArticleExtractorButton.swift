@@ -57,7 +57,7 @@ class ArticleExtractorButton: NSButton {
 		case isError:
 			addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractorError, opacity: opacity)
 		case isInProgress:
-			addProgressSublayer(to: hostedLayer)
+			addAnimatedSublayer(to: hostedLayer)
 		default:
 			addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractor, opacity: opacity)
 		}
@@ -77,7 +77,7 @@ class ArticleExtractorButton: NSButton {
 		hostedLayer.addSublayer(imageLayer)
 	}
 	
-	private func addProgressSublayer(to hostedLayer: CALayer) {
+	private func addAnimatedSublayer(to hostedLayer: CALayer) {
 		let imageProgress1 = AppAssets.articleExtractorProgress1
 		let imageProgress2 = AppAssets.articleExtractorProgress2
 		let imageProgress3 = AppAssets.articleExtractorProgress3

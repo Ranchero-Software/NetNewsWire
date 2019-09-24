@@ -559,7 +559,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		articleExtractor?.cancel()
 		articleExtractor = nil
 		isShowingExtractedArticle = false
-//		makeToolbarValidate()
+		articleViewController?.articleExtractorButtonState = .off
 
 		currentArticle = article
 		activityManager.reading(currentArticle)
@@ -813,12 +813,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			articleExtractor?.cancel()
 			articleExtractor = nil
 			isShowingExtractedArticle = false
+			articleViewController?.articleExtractorButtonState = .off
 			articleViewController?.state = .article(article)
 			return
 		}
 		
 		guard !isShowingExtractedArticle else {
 			isShowingExtractedArticle = false
+			articleViewController?.articleExtractorButtonState = .off
 			articleViewController?.state = .article(article)
 			return
 		}
@@ -826,6 +828,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if let articleExtractor = articleExtractor, let extractedArticle = articleExtractor.article {
 			if currentArticle?.preferredLink == articleExtractor.articleLink {
 				isShowingExtractedArticle = true
+				articleViewController?.articleExtractorButtonState = .on
 				articleViewController?.state = .extracted(article, extractedArticle)
 			}
 		} else {
@@ -924,14 +927,14 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 extension SceneCoordinator: ArticleExtractorDelegate {
 	
 	func articleExtractionDidFail(with: Error) {
-//		makeToolbarValidate()
+		articleViewController?.articleExtractorButtonState = .error
 	}
 	
 	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
 		if let article = currentArticle, articleExtractor?.state != .cancelled {
 			isShowingExtractedArticle = true
 			articleViewController?.state = .extracted(article, extractedArticle)
-//			makeToolbarValidate()
+			articleViewController?.articleExtractorButtonState = .on
 		}
 	}
 	
@@ -1243,6 +1246,7 @@ private extension SceneCoordinator {
 			extractor.delegate = self
 			extractor.process()
 			articleExtractor = extractor
+			articleViewController?.articleExtractorButtonState = .animated
 		}
 	}
 

@@ -22,7 +22,7 @@ enum ArticleViewState: Equatable {
 
 class ArticleViewController: UIViewController {
 
-	@IBOutlet private weak var readerViewBarButtonItem: UIBarButtonItem!
+	@IBOutlet private weak var articleExtractorButton: ArticleExtractorButton!
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var nextArticleBarButtonItem: UIBarButtonItem!
@@ -55,6 +55,15 @@ class ArticleViewController: UIViewController {
 		}
 	}
 
+	var articleExtractorButtonState: ArticleExtractorButtonState {
+		get {
+			return articleExtractorButton.buttonState
+		}
+		set {
+			articleExtractorButton.buttonState = newValue
+		}
+	}
+	
 	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
@@ -74,6 +83,9 @@ class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
+		// For some reason interface builder won't let me set this there.
+		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
+		
 		ArticleViewControllerWebViewProvider.shared.dequeueWebView() { webView in
 			
 			self.webView = webView
@@ -96,6 +108,7 @@ class ArticleViewController: UIViewController {
 	func updateUI() {
 		
 		guard let article = currentArticle else {
+			articleExtractorButton.isEnabled = false
 			nextUnreadBarButtonItem.isEnabled = false
 			prevArticleBarButtonItem.isEnabled = false
 			nextArticleBarButtonItem.isEnabled = false
@@ -110,6 +123,7 @@ class ArticleViewController: UIViewController {
 		prevArticleBarButtonItem.isEnabled = coordinator.isPrevArticleAvailable
 		nextArticleBarButtonItem.isEnabled = coordinator.isNextArticleAvailable
 
+		articleExtractorButton.isEnabled = true
 		readBarButtonItem.isEnabled = true
 		starBarButtonItem.isEnabled = true
 		browserBarButtonItem.isEnabled = true
@@ -179,7 +193,7 @@ class ArticleViewController: UIViewController {
 	
 	// MARK: Actions
 	
-	@IBAction func toggleReaderView(_ sender: Any) {
+	@IBAction func toggleArticleExtractor(_ sender: Any) {
 		coordinator.toggleArticleExtractor()
 	}
 	
