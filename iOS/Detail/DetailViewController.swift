@@ -12,6 +12,14 @@ import Account
 import Articles
 import SafariServices
 
+enum DetailViewState: Equatable {
+	case noSelection
+	case multipleSelection
+	case loading
+	case article(Article)
+	case extracted(Article, ExtractedArticle)
+}
+
 class DetailViewController: UIViewController {
 
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
@@ -26,6 +34,26 @@ class DetailViewController: UIViewController {
 
 	weak var coordinator: SceneCoordinator!
 	
+	var state: DetailViewState = .noSelection {
+		didSet {
+			if state != oldValue {
+				updateUI()
+				reloadHTML()
+			}
+		}
+	}
+	
+	var currentArticle: Article? {
+		switch state {
+		case .article(let article):
+			return article
+		case .extracted(let article, _):
+			return article
+		default:
+			return nil
+		}
+	}
+
 	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
@@ -66,7 +94,7 @@ class DetailViewController: UIViewController {
 	
 	func updateUI() {
 		
-		guard let article = coordinator.currentArticle else {
+		guard let article = currentArticle else {
 			nextUnreadBarButtonItem.isEnabled = false
 			prevArticleBarButtonItem.isEnabled = false
 			nextArticleBarButtonItem.isEnabled = false
@@ -95,12 +123,22 @@ class DetailViewController: UIViewController {
 	}
 	
 	func reloadHTML() {
-		guard let article = coordinator.currentArticle, let webView = webView else {
-			return
-		}
-		
+
 		let style = ArticleStylesManager.shared.currentStyle
-		let rendering = ArticleRenderer.articleHTML(article: article, style: style)
+		let rendering: ArticleRenderer.Rendering
+
+		switch state {
+		case .noSelection:
+			rendering = ArticleRenderer.noSelectionHTML(style: style)
+		case .multipleSelection:
+			rendering = ArticleRenderer.multipleSelectionHTML(style: style)
+		case .loading:
+			rendering = ArticleRenderer.loadingHTML(style: style)
+		case .article(let article):
+			rendering = ArticleRenderer.articleHTML(article: article, style: style)
+		case .extracted(let article, let extractedArticle):
+			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
+		}
 		
 		let templateData = TemplateData(style: rendering.style, body: rendering.html)
 		
@@ -111,7 +149,8 @@ class DetailViewController: UIViewController {
 			render = "render(\(json));"
 		}
 
-		webView.evaluateJavaScript(render)
+		webView?.evaluateJavaScript(render)
+		
 	}
 	
 	// MARK: Notifications
@@ -124,7 +163,7 @@ class DetailViewController: UIViewController {
 		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
 			return
 		}
-		if articles.count == 1 && articles.first?.articleID == coordinator.currentArticle?.articleID {
+		if articles.count == 1 && articles.first?.articleID == currentArticle?.articleID {
 			updateUI()
 		}
 	}
@@ -164,11 +203,11 @@ class DetailViewController: UIViewController {
 	}
 	
 	@IBAction func showActivityDialog(_ sender: Any) {
-		guard let currentArticle = coordinator.currentArticle, let preferredLink = currentArticle.preferredLink, let url = URL(string: preferredLink) else {
+		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}
 		
-		let itemSource = ArticleActivityItemSource(url: url, subject: currentArticle.title)
+		let itemSource = ArticleActivityItemSource(url: url, subject: currentArticle!.title)
 		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
 		activityViewController.popoverPresentationController?.barButtonItem = actionBarButtonItem
 		present(activityViewController, animated: true)
@@ -180,10 +219,6 @@ class DetailViewController: UIViewController {
 	}
 	
 	// MARK: API
-	func updateArticleSelection() {
-		updateUI()
-		reloadHTML()
-	}
 
 	func focus() {
 		webView.becomeFirstResponder()
@@ -241,7 +276,8 @@ extension DetailViewController: WKNavigationDelegate {
 	}
 
 	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		self.updateArticleSelection()
+		self.updateUI()
+		self.reloadHTML()
 	}
 	
 }

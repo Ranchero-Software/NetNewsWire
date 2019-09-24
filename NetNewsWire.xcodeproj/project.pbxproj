@@ -72,7 +72,6 @@
 		51554C25228B71910055115A /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51554C30228B71A10055115A /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
 		51554C31228B71A10055115A /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		515ADE4022E11FAE006B2460 /* SystemMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */; };
 		515D4FC123257A3200EE1167 /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
 		515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
 		515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */ = {isa = PBXBuildFile; fileRef = 515D4FCB2325815A00EE1167 /* SafariExt.js */; };
@@ -812,7 +811,6 @@
 		514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
 		514B7D1E23219F3C00BAC947 /* AddControllerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddControllerType.swift; sourceTree = "<group>"; };
 		51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SyncDatabase.xcodeproj; path = Frameworks/SyncDatabase/SyncDatabase.xcodeproj; sourceTree = SOURCE_ROOT; };
-		515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMessageViewController.swift; sourceTree = "<group>"; };
 		515D4FCB2325815A00EE1167 /* SafariExt.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SafariExt.js; sourceTree = "<group>"; };
 		515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_ShareExtension.entitlements; sourceTree = "<group>"; };
 		515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSshareextension_target.xcconfig; sourceTree = "<group>"; };
@@ -1379,7 +1377,6 @@
 			children = (
 				51C4527E2265092C00C03939 /* DetailViewController.swift */,
 				517630222336657E00E15FFF /* DetailViewControllerWebViewProvider.swift */,
-				515ADE3F22E11FAE006B2460 /* SystemMessageViewController.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -2704,7 +2701,6 @@
 				51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,
 				5152E1022324900D00E5C7AD /* SettingsAddAccountView.swift in Sources */,
-				515ADE4022E11FAE006B2460 /* SystemMessageViewController.swift in Sources */,
 				51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */,
 				51B62E68233186730085F949 /* MasterTimelineAvatarView.swift in Sources */,
 				51C45296226509D300C03939 /* OPMLExporter.swift in Sources */,

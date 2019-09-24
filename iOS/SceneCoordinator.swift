@@ -289,8 +289,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
 		
-		let noSelectionController = fullyWrappedSystemMesssageController(showButton: true)
-		rootSplitViewController.showDetailViewController(noSelectionController, sender: self)
+		let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
+		detailViewController.coordinator = self
+		let detailNavigationController = addNavControllerIfNecessary(detailViewController, showButton: false)
+		rootSplitViewController.showDetailViewController(detailNavigationController, sender: self)
 
 		configureThreePanelMode(for: size)
 		
@@ -560,8 +562,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 					masterNavigationController.popViewController(animated: !automated)
 				}
 			} else {
-				let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-				installDetailController(systemMessageViewController, automated: automated)
+				detailViewController?.state = .noSelection
 			}
 			masterTimelineViewController?.updateArticleSelection(animate: !automated)
 			return
@@ -577,11 +578,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			masterTimelineViewController?.updateArticleSelection(animate: false)
 		}
 		
-		detailViewController?.updateArticleSelection()
+		detailViewController?.state = .article(article!)
 		
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: true)
 		}
+		
 	}
 	
 	func beginSearching() {
@@ -1396,12 +1398,6 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func fullyWrappedSystemMesssageController(showButton: Bool) -> UIViewController {
-		let systemMessageViewController = UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
-		let navController = addNavControllerIfNecessary(systemMessageViewController, showButton: showButton)
-		return navController
-	}
-	
 	@discardableResult
 	func transitionToThreePanelMode() -> UIViewController {
 		
@@ -1413,7 +1409,9 @@ private extension SceneCoordinator {
 			if let result = detailViewController {
 				return result
 			} else {
-				return UIStoryboard.main.instantiateController(ofType: SystemMessageViewController.self)
+				let detailController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
+				detailController.coordinator = self
+				return detailController
 			}
 		}()
 		
