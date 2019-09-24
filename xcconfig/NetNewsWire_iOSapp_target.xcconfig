@@ -30,6 +30,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 //     /Users/Shared/git/SharedXcodeSettings/DeveloperSettings.xcconfig
 //
 
+#include? "../../SharedXcodeSettings/ProjectSettings.xcconfig"
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES

@@ -1,4 +1,3 @@
-#include? "../../SharedXcodeSettings/ReleaseSettings.xcconfig"
 #include "./NetNewsWire_project.xcconfig"
 
 COPY_PHASE_STRIP = NO
