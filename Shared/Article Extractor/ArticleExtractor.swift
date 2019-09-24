@@ -21,12 +21,6 @@ protocol ArticleExtractorDelegate {
     func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
 }
 
-enum ArticleExtractorError: Error {
-    case UnableToParseHTML
-    case MissingURL
-    case UnableToLoadURL
-}
-
 class ArticleExtractor {
 	
 	private var dataTask: URLSessionDataTask? = nil
@@ -75,7 +69,7 @@ class ArticleExtractor {
             guard let data = data else {
                 self.state = .failedToParse
                 DispatchQueue.main.async {
-                    self.delegate?.articleExtractionDidFail(with: ArticleExtractorError.UnableToLoadURL)
+					self.delegate?.articleExtractionDidFail(with: URLError(.cannotDecodeContentData))
                 }
                 return
             }
