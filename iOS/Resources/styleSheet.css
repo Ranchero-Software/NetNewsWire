@@ -8,7 +8,6 @@ body {
 	word-wrap: break-word;
 	word-break: break-word;
 	-webkit-hyphens: auto;
-	
 }
 
 a {
@@ -181,3 +180,121 @@ img[src*="feedblitz"],
 img[src*="share-buttons"] {
 	display: none !important;
 }
+
+
+
+
+/* Newsfoot specific styles. Structural styles come first, theme styles second */
+.newsfoot-footnote-container {
+	position: relative;
+	display: inline-block;
+}
+.newsfoot-footnote-popover {
+	position: absolute;
+	display: block;
+	padding: 0em 1em;
+	margin: 1em;
+	left: calc(-1 * (50vw - 1em));
+	right: calc(-1 * (50vw - 1em));
+	top: 0.75em;
+	max-width: none;
+	border-radius: 0.3em;
+	box-sizing: border-box;
+}
+.newsfoot-footnote-popover-arrow {
+	content: '';
+	display: block;
+	width: 1em;
+	position: absolute;
+	top: -0.5em;
+	left: calc(50% - 0.5em);
+	height: 1em !important;
+	transform: rotate(45deg);
+	z-index:0;
+}
+.newsfoot-footnote-popover-inner {
+	border-radius: calc(0.3em - 1px);
+	padding: 1em;
+	position: relative;
+	z-index: 1;
+}
+
+.newsfoot-footnote-popover-inner :first-child {
+	margin-top: 0;
+}
+.newsfoot-footnote-popover-inner :last-child {
+	margin-bottom: 0;
+}
+
+.newsfoot-footnote-popover .reversefootnote {
+	display: none;
+}
+a.footnote {
+	display: inline-block;
+	text-decoration: none;
+	padding: 0.05em 0.75em;
+	border-radius: 1em;
+	min-width: 1em;
+	text-align: center;
+	font-size: 0.8em;
+	line-height: 1em;
+	position:relative;
+	top: -0.1em;
+}
+
+/* light / default */
+.newsfoot-footnote-popover {
+	background: #ccc;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 3px 6px rgba(0, 0, 0, 0.25);
+	color: black;
+	padding: 1px;
+}
+.newsfoot-footnote-popover-arrow {
+	background: #fafafa;
+	border: 1px solid #ccc;
+}
+.newsfoot-footnote-popover-inner {
+	background: #fafafa;
+}
+body a.footnote,
+body a.footnote:visited,
+.newsfoot-footnote-popover + a.footnote:hover {
+	background: #aaa;
+	color: white;
+	transition: background-color 200ms ease-out;
+}
+a.footnote:hover,
+.newsfoot-footnote-popover + a.footnote {
+	background: #666;
+	transition: background-color 200ms ease-out;
+}
+
+
+/* dark */
+@media screen and (prefers-color-scheme: dark) {
+	.newsfoot-footnote-popover {
+		background: #444;
+		color: rgb(224, 224, 224);
+	}
+	.newsfoot-footnote-popover-arrow {
+		background: #242424;
+		border: 1px solid #444;
+	}
+	.newsfoot-footnote-popover-inner {
+		background: #242424;
+	}
+	body a.footnote,
+	body a.footnote:visited,
+	.newsfoot-footnote-popover + a.footnote:hover {
+		background: #aaa;
+		color: white;
+		transition: background-color 200ms ease-out;
+	}
+	a.footnote:hover,
+	.newsfoot-footnote-popover + a.footnote {
+		background: #666;
+		transition: background-color 200ms ease-out;
+	}
+
+}
+
