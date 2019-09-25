@@ -1,5 +1,5 @@
 //
-//  DetailViewControllerWebViewProvider.swift
+//  ArticleViewControllerWebViewProvider.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 9/21/19.
@@ -11,9 +11,9 @@ import WebKit
 
 /// WKWebView has an awful behavior of a flash to white on first load when in dark mode.
 /// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-shite part of their lifecycle.
-class DetailViewControllerWebViewProvider: NSObject, WKNavigationDelegate {
+class ArticleViewControllerWebViewProvider: NSObject, WKNavigationDelegate {
 	
-	static let shared = DetailViewControllerWebViewProvider()
+	static let shared = ArticleViewControllerWebViewProvider()
 	
 	private let minimumQueueDepth = 3
 	private let maximumQueueDepth = 6

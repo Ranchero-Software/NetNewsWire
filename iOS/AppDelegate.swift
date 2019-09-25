@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 		appDelegate = self
 
 		// Force lazy initialization of the web view provider so that it can warm up the queue of prepared web views
-		let _ = DetailViewControllerWebViewProvider.shared
+		let _ = ArticleViewControllerWebViewProvider.shared
 		AccountManager.shared = AccountManager()
 		AppDefaults.shared = UserDefaults.init(suiteName: "group.\(Bundle.main.bundleIdentifier!)")!
 		

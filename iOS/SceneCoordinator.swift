@@ -27,6 +27,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private var activityManager = ActivityManager()
 	
+	private var isShowingExtractedArticle = false
+	private var articleExtractor: ArticleExtractor? = nil
+
 	private var rootSplitViewController: RootSplitViewController!
 	private var masterNavigationController: UINavigationController!
 	private var masterFeedViewController: MasterFeedViewController!
@@ -36,17 +39,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return rootSplitViewController.children.last as? UISplitViewController
 	}
 	
-	private var detailViewController: DetailViewController? {
-		if let detail = masterNavigationController.viewControllers.last as? DetailViewController {
+	private var articleViewController: ArticleViewController? {
+		if let detail = masterNavigationController.viewControllers.last as? ArticleViewController {
 			return detail
 		}
 		if let subSplit = subSplitViewController {
 			if let navController = subSplit.viewControllers.last as? UINavigationController {
-				return navController.topViewController as? DetailViewController
+				return navController.topViewController as? ArticleViewController
 			}
 		} else {
 			if let navController = rootSplitViewController.viewControllers.last as? UINavigationController {
-				return navController.topViewController as? DetailViewController
+				return navController.topViewController as? ArticleViewController
 			}
 		}
 		return nil
@@ -289,9 +292,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
 		
-		let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
-		detailViewController.coordinator = self
-		let detailNavigationController = addNavControllerIfNecessary(detailViewController, showButton: false)
+		let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+		articleViewController.coordinator = self
+		let detailNavigationController = addNavControllerIfNecessary(articleViewController, showButton: false)
 		rootSplitViewController.showDetailViewController(detailNavigationController, sender: self)
 
 		configureThreePanelMode(for: size)
@@ -553,32 +556,37 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func selectArticle(_ article: Article?, automated: Bool = true) {
 		guard article != currentArticle else { return }
 		
+		articleExtractor?.cancel()
+		articleExtractor = nil
+		isShowingExtractedArticle = false
+		articleViewController?.articleExtractorButtonState = .off
+
 		currentArticle = article
 		activityManager.reading(currentArticle)
 		
 		if article == nil {
 			if rootSplitViewController.isCollapsed {
-				if masterNavigationController.children.last is DetailViewController {
+				if masterNavigationController.children.last is ArticleViewController {
 					masterNavigationController.popViewController(animated: !automated)
 				}
 			} else {
-				detailViewController?.state = .noSelection
+				articleViewController?.state = .noSelection
 			}
 			masterTimelineViewController?.updateArticleSelection(animate: !automated)
 			return
 		}
 		
-		if detailViewController == nil {
-			let detailViewController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
-			detailViewController.coordinator = self
-			installDetailController(detailViewController, automated: automated)
+		if articleViewController == nil {
+			let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+			articleViewController.coordinator = self
+			installArticleController(articleViewController, automated: automated)
 		}
 		
 		if automated {
 			masterTimelineViewController?.updateArticleSelection(animate: false)
 		}
 		
-		detailViewController?.state = .article(article!)
+		articleViewController?.state = .article(article!)
 		
 		if let article = currentArticle {
 			markArticles(Set([article]), statusKey: .read, flag: true)
@@ -686,8 +694,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func scrollOrGoToNextUnread() {
-		if detailViewController?.canScrollDown() ?? false {
-			detailViewController?.scrollPageDown()
+		if articleViewController?.canScrollDown() ?? false {
+			articleViewController?.scrollPageDown()
 		} else {
 			selectNextUnread()
 		}
@@ -795,6 +803,40 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.present(addViewController, animated: true)
 	}
 	
+	func toggleArticleExtractor() {
+		
+		guard let article = currentArticle else {
+			return
+		}
+
+		guard articleExtractor?.state != .processing else {
+			articleExtractor?.cancel()
+			articleExtractor = nil
+			isShowingExtractedArticle = false
+			articleViewController?.articleExtractorButtonState = .off
+			articleViewController?.state = .article(article)
+			return
+		}
+		
+		guard !isShowingExtractedArticle else {
+			isShowingExtractedArticle = false
+			articleViewController?.articleExtractorButtonState = .off
+			articleViewController?.state = .article(article)
+			return
+		}
+		
+		if let articleExtractor = articleExtractor, let extractedArticle = articleExtractor.article {
+			if currentArticle?.preferredLink == articleExtractor.articleLink {
+				isShowingExtractedArticle = true
+				articleViewController?.articleExtractorButtonState = .on
+				articleViewController?.state = .extracted(article, extractedArticle)
+			}
+		} else {
+			startArticleExtractorForCurrentLink()
+		}
+		
+	}
+	
 	func homePageURLForFeed(_ indexPath: IndexPath) -> URL? {
 		guard let node = nodeFor(indexPath),
 			let feed = node.representedObject as? Feed,
@@ -844,7 +886,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func navigateToDetail() {
-		detailViewController?.focus()
+		articleViewController?.focus()
 	}
 	
 }
@@ -876,6 +918,24 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 			selectArticle(nil)
 		}
 		
+	}
+	
+}
+
+// MARK: ArticleExtractorDelegate
+
+extension SceneCoordinator: ArticleExtractorDelegate {
+	
+	func articleExtractionDidFail(with: Error) {
+		articleViewController?.articleExtractorButtonState = .error
+	}
+	
+	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
+		if let article = currentArticle, articleExtractor?.state != .cancelled {
+			isShowingExtractedArticle = true
+			articleViewController?.state = .extracted(article, extractedArticle)
+			articleViewController?.articleExtractorButtonState = .on
+		}
 	}
 	
 }
@@ -1181,6 +1241,15 @@ private extension SceneCoordinator {
 	
 	// MARK: Fetching Articles
 	
+	func startArticleExtractorForCurrentLink() {
+		if let link = currentArticle?.preferredLink, let extractor = ArticleExtractor(link) {
+			extractor.delegate = self
+			extractor.process()
+			articleExtractor = extractor
+			articleViewController?.articleExtractorButtonState = .animated
+		}
+	}
+
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
 			replaceArticles(with: Set<Article>(), animate: true)
@@ -1340,16 +1409,16 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func installDetailController(_ detailController: UIViewController, automated: Bool) {
+	func installArticleController(_ articleController: UIViewController, automated: Bool) {
 
 		if let subSplit = subSplitViewController {
-			let controller = addNavControllerIfNecessary(detailController, showButton: false)
+			let controller = addNavControllerIfNecessary(articleController, showButton: false)
 			subSplit.showDetailViewController(controller, sender: self)
 		} else if rootSplitViewController.isCollapsed {
-			let controller = addNavControllerIfNecessary(detailController, showButton: false)
+			let controller = addNavControllerIfNecessary(articleController, showButton: false)
 			masterNavigationController.pushViewController(controller, animated: !automated)
 		} else {
-			let controller = addNavControllerIfNecessary(detailController, showButton: true)
+			let controller = addNavControllerIfNecessary(articleController, showButton: true)
 			rootSplitViewController.showDetailViewController(controller, sender: self)
   	 	}
 		
@@ -1406,12 +1475,12 @@ private extension SceneCoordinator {
 		}
 		
 		let controller: UIViewController = {
-			if let result = detailViewController {
+			if let result = articleViewController {
 				return result
 			} else {
-				let detailController = UIStoryboard.main.instantiateController(ofType: DetailViewController.self)
-				detailController.coordinator = self
-				return detailController
+				let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+				articleViewController.coordinator = self
+				return articleViewController
 			}
 		}()
 		

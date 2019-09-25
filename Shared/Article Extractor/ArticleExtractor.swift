@@ -21,12 +21,6 @@ protocol ArticleExtractorDelegate {
     func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
 }
 
-enum ArticleExtractorError: Error {
-    case UnableToParseHTML
-    case MissingURL
-    case UnableToLoadURL
-}
-
 class ArticleExtractor {
 	
 	private var dataTask: URLSessionDataTask? = nil
@@ -41,9 +35,9 @@ class ArticleExtractor {
     public init?(_ articleLink: String) {
 		self.articleLink = articleLink
 		
-		let clientURL = ArticleExtractorConfig.Mercury.clientURL
-		let username = ArticleExtractorConfig.Mercury.clientId
-		let signiture = articleLink.hmacUsingSHA1(key: ArticleExtractorConfig.Mercury.clientSecret)
+		let clientURL = ArticleExtractorConfig.clientURL
+		let username = ArticleExtractorConfig.clientId
+		let signiture = articleLink.hmacUsingSHA1(key: ArticleExtractorConfig.clientSecret)
 		
 		if let base64URL = articleLink.data(using: .utf8)?.base64EncodedString() {
 			let fullURL = "\(clientURL)/\(username)/\(signiture)?base64_url=\(base64URL)"
@@ -75,7 +69,7 @@ class ArticleExtractor {
             guard let data = data else {
                 self.state = .failedToParse
                 DispatchQueue.main.async {
-                    self.delegate?.articleExtractionDidFail(with: ArticleExtractorError.UnableToLoadURL)
+					self.delegate?.articleExtractionDidFail(with: URLError(.cannotDecodeContentData))
                 }
                 return
             }

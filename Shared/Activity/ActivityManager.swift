@@ -119,8 +119,8 @@ class ActivityManager {
 	}
 	
 	func invalidateReading() {
-		nextUnreadActivity?.invalidate()
-		nextUnreadActivity = nil
+		readingActivity?.invalidate()
+		readingActivity = nil
 	}
 	
 	static func cleanUp(_ account: Account) {
