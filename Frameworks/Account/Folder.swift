@@ -24,6 +24,7 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 	
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 	public let folderID: Int // not saved: per-run only
+	public var externalID: String? = nil
 	static var incrementingID = 0
 
 	// MARK: - DisplayNameProvider
@@ -136,20 +137,29 @@ private extension Folder {
 
 extension Folder: OPMLRepresentable {
 
-	public func OPMLString(indentLevel: Int) -> String {
+	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
+		
+		let attrExternalID: String = {
+			if !strictConformance, let externalID = externalID {
+				return " nnw_externalID=\"\(externalID)\""
+			} else {
+				return ""
+			}
+		}()
+		
 		let escapedTitle = nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
-		var s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\">\n"
+		var s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"\(attrExternalID)>\n"
 		s = s.rs_string(byPrependingNumberOfTabs: indentLevel)
 
 		var hasAtLeastOneChild = false
 
 		for feed in topLevelFeeds  {
-			s += feed.OPMLString(indentLevel: indentLevel + 1)
+			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
 			hasAtLeastOneChild = true
 		}
 
 		if !hasAtLeastOneChild {
-			s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"/>\n"
+			s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"\(attrExternalID)/>\n"
 			s = s.rs_string(byPrependingNumberOfTabs: indentLevel)
 			return s
 		}

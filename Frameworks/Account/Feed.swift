@@ -225,7 +225,7 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 extension Feed: OPMLRepresentable {
 
-	public func OPMLString(indentLevel: Int) -> String {
+	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
 		// https://github.com/brentsimmons/NetNewsWire/issues/527
 		// Don’t use nameForDisplay because that can result in a feed name "Untitled" written to disk,
 		// which NetNewsWire may take later to be the actual name.

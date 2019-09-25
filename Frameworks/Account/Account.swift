@@ -394,6 +394,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 
 			if let folder = ensureFolder(with: folderName) {
+				folder.externalID = item.attributes?["nnw_externalID"] as? String
 				if let itemChildren = item.children {
 					loadOPMLItems(itemChildren, parentFolder: folder)
 				}
@@ -1023,13 +1024,13 @@ extension Account {
 
 extension Account: OPMLRepresentable {
 
-	public func OPMLString(indentLevel: Int) -> String {
+	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
 		var s = ""
 		for feed in topLevelFeeds {
-			s += feed.OPMLString(indentLevel: indentLevel + 1)
+			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
 		}
 		for folder in folders! {
-			s += folder.OPMLString(indentLevel: indentLevel + 1)
+			s += folder.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
 		}
 		return s
 	}
