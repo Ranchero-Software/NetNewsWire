@@ -150,7 +150,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     @objc(opmlRepresentation)
     var opmlRepresentation:String  {
-        return self.account.OPMLString(indentLevel:0)
+        return self.account.OPMLString(indentLevel:0, strictConformance: true)
     }
 
     @objc(accountType)
