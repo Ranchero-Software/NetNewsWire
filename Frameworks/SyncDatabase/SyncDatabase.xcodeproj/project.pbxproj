@@ -328,7 +328,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.SyncDatabase;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -355,7 +354,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.SyncDatabase;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
