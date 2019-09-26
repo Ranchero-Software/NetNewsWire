@@ -225,10 +225,19 @@ img[src*="share-buttons"] {
 	margin-bottom: 0;
 }
 
-.newsfoot-footnote-popover .reversefootnote {
+.newsfoot-footnote-popover .reversefootnote,
+.newsfoot-footnote-popover .footnoteBackLink,
+.newsfoot-footnote-popover .footnote-return {
 	display: none;
 }
-a.footnote {
+
+sup[id^='fn'] {
+	vertical-align: baseline;
+}
+
+a.footnote,
+sup > a[href^='#fn'],
+sup > div > a[href^='#fn'] {
 	display: inline-block;
 	text-decoration: none;
 	padding: 0.05em 0.75em;
@@ -257,13 +266,17 @@ a.footnote {
 }
 body a.footnote,
 body a.footnote:visited,
-.newsfoot-footnote-popover + a.footnote:hover {
+.newsfoot-footnote-popover + a.footnote:hover,
+sup > a[href^='#fn'],
+sup > div > a[href^='#fn'] {
 	background: #aaa;
 	color: white;
 	transition: background-color 200ms ease-out;
 }
 a.footnote:hover,
-.newsfoot-footnote-popover + a.footnote {
+.newsfoot-footnote-popover + a.footnote,
+sup > a[href^='#fn']:hover,
+sup > div > a[href^='#fn']:hover {
 	background: #666;
 	transition: background-color 200ms ease-out;
 }
@@ -284,13 +297,17 @@ a.footnote:hover,
 	}
 	body a.footnote,
 	body a.footnote:visited,
-	.newsfoot-footnote-popover + a.footnote:hover {
+	.newsfoot-footnote-popover + a.footnote:hover,
+	sup > a[href^='#fn'],
+	sup > div > a[href^='#fn'] {
 		background: #aaa;
 		color: white;
 		transition: background-color 200ms ease-out;
 	}
 	a.footnote:hover,
-	.newsfoot-footnote-popover + a.footnote {
+	.newsfoot-footnote-popover + a.footnote,
+	sup > a[href^='#fn']:hover,
+	sup > div > a[href^='#fn']:hover {
 		background: #666;
 		transition: background-color 200ms ease-out;
 	}

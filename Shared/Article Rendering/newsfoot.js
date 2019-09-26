@@ -1,5 +1,5 @@
+// @ts-check
  (function () {
-	// @ts-check
 	/** @param {Node | null} el */
 	const remove = (el) => { if (el) el.parentElement.removeChild(el) };
 
@@ -33,7 +33,7 @@
     const POPOVER_ARROW_CLS = `${clsPrefix}popover-arrow`;
 
 	/**
-	 * @param {Node} content
+	 * @param {string} content
 	 * @returns {HTMLElement}
 	 */
 	function footnoteMarkup(content) {
@@ -42,13 +42,13 @@
         const inner = newEl("div", POPOVER_INNER_CLS);
 		popover.appendChild(inner);
 		popover.appendChild(arrow);
-		inner.appendChild(content);
+		inner.innerHTML = content;
 		return popover;
 	}
 
 	class Footnote {
 		/**
-		 * @param {Node} content
+		 * @param {string} content
 		 * @param {Element} fnref
 		 */
 		constructor(content, fnref) {
@@ -56,6 +56,8 @@
 			this.style = window.getComputedStyle(this.popover);
 			this.fnref = fnref;
 			this.fnref.closest(`.${CONTAINER_CLS}`).insertBefore(this.popover, fnref);
+			/** @type {HTMLElement} */
+		    this.arrow = this.popover.querySelector(`.${POPOVER_ARROW_CLS}`);
 			this.reposition();
   
 			/** @type {(ev:MouseEvent) => void} */
@@ -101,15 +103,8 @@
 				offset = (popoverHalfWidth + marginLeft) - center;
 			}
 			this.popover.style.transform = `translate(${offset}px)`;
-			this.popover.querySelector(`.${POPOVER_ARROW_CLS}`).style.transform = `translate(${-offset}px) rotate(45deg)`;
+			this.arrow.style.transform = `translate(${-offset}px) rotate(45deg)`;
 		}
-	}
-
-	/** @param {Node} n */
-	function fragFromContents(n) {
-		const frag = document.createDocumentFragment();
-		n.childNodes.forEach((ch) => frag.appendChild(ch));
-		return frag;
 	}
 
 	/** @param {HTMLAnchorElement} a */
@@ -120,23 +115,50 @@
 			container.appendChild(a);
 		}
 	}
-
+			
+	function idFromHash(target) {
+		if (!target.hash) return;
+		return target.hash.substring(1);
+	}
+	/** @type {{fnref(target:HTMLAnchorElement): string|undefined}[]} */
+	const footnoteFormats = [
+		{ // Multimarkdown
+			fnref(target) {
+				if (!target.matches(".footnote")) return;	 
+				return idFromHash(target);			
+			}
+		},
+	    {// Daring Fireball
+			fnref(target) {
+				if (!target.matches("sup > a[href^='#fn'], sup > div > a[href^='#fn']")) return;
+				return idFromHash(target);
+			}
+		}
+	];
+	
 	// Handle clicks on the footnote reference
 	document.addEventListener("click", (ev) => {
 		if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
-		if (!ev.target.matches(".footnote")) return;
+
+		let targetId = undefined;
+		for(const f of footnoteFormats) {
+			targetId = f.fnref(ev.target);
+			if (targetId) break;
+		}
+		if (targetId === undefined) return;
+
 		ev.preventDefault();
 
-		const content = document.querySelector(`[id='${ev.target.hash.substring(1)}']`).cloneNode(true);
 		installContainer(ev.target);
-		void new Footnote(fragFromContents(content), ev.target);
+		const content = document.querySelector(`[id='${targetId}']`).innerHTML;
+		void new Footnote(content, ev.target);
     });
 										   
 	// Handle clicks on the footnote reverse link
     document.addEventListener("click", (ev) =>
     {
 	    if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
-        if (!ev.target.matches(".footnotes .reversefootnote")) return;
+        if (!ev.target.matches(".footnotes .reversefootnote, .footnotes .footnoteBackLink, footnotes .footnote-return")) return;
 		const hash = ev.target.hash;
 		if (!hash) return;
 		const fnref = document.getElementById(hash.substring(1));
