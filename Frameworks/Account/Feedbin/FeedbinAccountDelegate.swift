@@ -544,23 +544,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 private extension FeedbinAccountDelegate {
 	
-	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		caller.retrieveTags { result in
-			switch result {
-			case .success(let tags):
-				BatchUpdate.shared.perform {
-					self.syncFolders(account, tags)
-				}
-				self.refreshProgress.completeTask()
-				self.refreshFeeds(account, completion: completion)
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-		
-	}
-	
 	func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		DispatchQueue.main.async {
@@ -596,6 +579,88 @@ private extension FeedbinAccountDelegate {
 			
 		}
 		
+	}
+	
+	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		caller.retrieveTags { result in
+			switch result {
+			case .success(let tags):
+				
+				self.refreshProgress.completeTask()
+				self.caller.retrieveSubscriptions { result in
+					switch result {
+					case .success(let subscriptions):
+						
+						self.refreshProgress.completeTask()
+						self.forceExpireFolderFeedRelationship(account, tags)
+						self.caller.retrieveTaggings { result in
+							switch result {
+							case .success(let taggings):
+								
+								self.refreshProgress.completeTask()
+								self.caller.retrieveIcons { result in
+									switch result {
+									case .success(let icons):
+
+										BatchUpdate.shared.perform {
+											self.syncFolders(account, tags)
+											self.syncFeeds(account, subscriptions)
+											self.syncFeedFolderRelationship(account, taggings)
+											self.syncFavicons(account, icons)
+										}
+
+										self.refreshProgress.completeTask()
+										completion(.success(()))
+										
+									case .failure(let error):
+										completion(.failure(error))
+									}
+									
+								}
+								
+							case .failure(let error):
+								completion(.failure(error))
+							}
+							
+						}
+						
+					case .failure(let error):
+						completion(.failure(error))
+					}
+			
+				}
+					
+			case .failure(let error):
+				completion(.failure(error))
+			}
+				
+		}
+		
+	}
+
+	// This function can be deleted if Feedbin updates their taggings.json service to
+	// show a change when a tag is renamed.
+	func forceExpireFolderFeedRelationship(_ account: Account, _ tags: [FeedbinTag]?) {
+		guard let tags = tags else { return }
+
+		let folderNames: [String] =  {
+			if let folders = account.folders {
+				return folders.map { $0.name ?? "" }
+			} else {
+				return [String]()
+			}
+		}()
+
+		// Feedbin has a tag that we don't have a folder for.  We might not get a new
+		// taggings response for it if it is a folder rename.  Force expire the tagging
+		// so that we will for sure get the new tagging information.
+		tags.forEach { tag in
+			if !folderNames.contains(tag.name) {
+				accountMetadata?.conditionalGetInfo[FeedbinAPICaller.ConditionalGetKeys.taggings] = nil
+			}
+		}
+
 	}
 	
 	func syncFolders(_ account: Account, _ tags: [FeedbinTag]?) {
@@ -636,51 +701,6 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
-	func refreshFeeds(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		caller.retrieveSubscriptions { result in
-			switch result {
-			case .success(let subscriptions):
-				
-				self.refreshProgress.completeTask()
-				self.caller.retrieveTaggings { result in
-					switch result {
-					case .success(let taggings):
-						
-						self.refreshProgress.completeTask()
-						self.caller.retrieveIcons { result in
-							switch result {
-							case .success(let icons):
-
-								BatchUpdate.shared.perform {
-									self.syncFeeds(account, subscriptions)
-									self.syncTaggings(account, taggings)
-									self.syncFavicons(account, icons)
-								}
-
-								self.refreshProgress.completeTask()
-								completion(.success(()))
-								
-							case .failure(let error):
-								completion(.failure(error))
-							}
-							
-						}
-						
-					case .failure(let error):
-						completion(.failure(error))
-					}
-					
-				}
-				
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
-		
-	}
-
 	func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
 		
 		guard let subscriptions = subscriptions else { return }
@@ -726,7 +746,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func syncTaggings(_ account: Account, _ taggings: [FeedbinTagging]?) {
+	func syncFeedFolderRelationship(_ account: Account, _ taggings: [FeedbinTagging]?) {
 		
 		guard let taggings = taggings else { return }
 		assert(Thread.isMainThread)
