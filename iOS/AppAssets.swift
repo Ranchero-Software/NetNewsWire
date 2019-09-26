@@ -11,7 +11,7 @@ import RSCore
 struct AppAssets {
 
 	static var articleExtractorError: UIImage = {
-		return UIImage(named: "articleExtractorOff")!
+		return UIImage(named: "articleExtractorError")!
 	}()
 
 	static var articleExtractorOff: UIImage = {
