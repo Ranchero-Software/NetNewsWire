@@ -41,7 +41,7 @@ COMBINE_HIDPI_IMAGES = YES
 FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Frameworks/Vendor
 GCC_C_LANGUAGE_STANDARD = gnu11;
 
-IPHONEOS_DEPLOYMENT_TARGET = 13.0
+IPHONEOS_DEPLOYMENT_TARGET = 13.1
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks
 INFOPLIST_FILE = iOS/Resources/Info.plist
 CODE_SIGN_ENTITLEMENTS = iOS/Resources/NetNewsWire.entitlements
