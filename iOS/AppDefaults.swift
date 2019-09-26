@@ -10,7 +10,7 @@ import UIKit
 
 struct AppDefaults {
 
-	static var shared =  UserDefaults.standard
+	static var shared =  UserDefaults.init(suiteName: "group.\(Bundle.main.bundleIdentifier!)")!
 	
 	struct Key {
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
