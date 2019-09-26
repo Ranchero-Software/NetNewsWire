@@ -29,6 +29,8 @@ final class TimelineAvatarView: NSView {
 		imageView.animates = false
 		imageView.imageAlignment = .alignCenter
 		imageView.imageScaling = .scaleProportionallyUpOrDown
+		imageView.layer.cornerRadius = 2.0
+		imageView.clipsToBounds = true
 		return imageView
 	}()
 
