@@ -22,6 +22,8 @@ final class MasterTimelineAvatarView: UIView {
 	private let imageView: UIImageView = {
 		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
 		imageView.contentMode = .scaleAspectFit
+		imageView.clipsToBounds = true
+		imageView.layer.cornerRadius = 2.0
 		return imageView
 	}()
 
