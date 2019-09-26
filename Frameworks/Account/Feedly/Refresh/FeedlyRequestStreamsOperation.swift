@@ -15,7 +15,7 @@ protocol FeedlyRequestStreamsOperationDelegate: class {
 
 /// Single responsibility is to create one stream request operation for one Feedly collection.
 /// This is the start of the process of refreshing the entire contents of a Folder.
-final class FeedlyRequestStreamsOperation: FeedlySyncOperation {
+final class FeedlyRequestStreamsOperation: FeedlyOperation {
 	
 	weak var queueDelegate: FeedlyRequestStreamsOperationDelegate?
 	

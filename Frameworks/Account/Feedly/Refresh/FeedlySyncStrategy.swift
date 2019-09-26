@@ -14,13 +14,15 @@ final class FeedlySyncStrategy {
 	let account: Account
 	let caller: FeedlyAPICaller
 	let operationQueue: OperationQueue
+	let articleStatusCoordinator: FeedlyArticleStatusCoordinator
 	let log: OSLog
 	
-	init(account: Account, caller: FeedlyAPICaller, log: OSLog) {
+	init(account: Account, caller: FeedlyAPICaller, articleStatusCoordinator: FeedlyArticleStatusCoordinator, log: OSLog) {
 		self.account = account
 		self.caller = caller
 		self.operationQueue = OperationQueue()
 		self.log = log
+		self.articleStatusCoordinator = articleStatusCoordinator
 	}
 	
 	func cancel() {
@@ -34,17 +36,19 @@ final class FeedlySyncStrategy {
 	func startSync(completionHandler: @escaping (Result<Void, Error>) -> ()) {
 		guard operationQueue.operationCount == 0 else {
 			os_log(.debug, log: log, "Reqeusted start sync but ignored because a sync is already in progress.")
+			completionHandler(.success(()))
 			return
 		}
 		
 		// Since the truth is in the cloud, everything hinges of what Collections the user has.
-		let getCollections = FeedlyGetCollectionsOperation(caller: caller)
+		let getCollections = FeedlyGetCollectionsOperation(caller: caller, log: log)
 		getCollections.delegate = self
 		
 		// Ensure a folder exists for each Collection, removing Folders without a corresponding Collection.
 		let mirrorCollectionsAsFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account,
 																				   collectionsProvider: getCollections,
-																				   caller: caller)
+																				   caller: caller,
+																				   log: log)
 		mirrorCollectionsAsFolders.delegate = self
 		mirrorCollectionsAsFolders.addDependency(getCollections)
 		
@@ -94,7 +98,7 @@ final class FeedlySyncStrategy {
 		os_log(.debug, log: log, "Sync started: %@", syncId)
 	}
 	
-	private var finalOperation: Operation?
+	private weak var finalOperation: Operation?
 }
 
 extension FeedlySyncStrategy: FeedlyRequestStreamsOperationDelegate {
@@ -127,21 +131,30 @@ extension FeedlySyncStrategy: FeedlyRequestStreamsOperationDelegate {
 		updateOperation.delegate = self
 		updateOperation.addDependency(groupItemsByFeed)
 		
+		// Once the articles are in the account, ensure they have the correct status
+		let ensureUnreadOperation = FeedlyRefreshStreamEntriesStatusOperation(account: account,
+																			  collectionStreamProvider: collectionStreamOperation,
+																			  articleStatusCoordinator: articleStatusCoordinator,
+																			  log: log)
+		
+		ensureUnreadOperation.delegate = self
+		ensureUnreadOperation.addDependency(updateOperation)
+		
 		// Sync completes successfully when the account has been updated with all the parsedd entries from the stream.
 		if let operation = finalOperation {
-			operation.addDependency(updateOperation)
+			operation.addDependency(ensureUnreadOperation)
 		}
 		
-		let operations = [collectionStreamOperation, parseItemsOperation, groupItemsByFeed, updateOperation]
+		let operations = [collectionStreamOperation, parseItemsOperation, groupItemsByFeed, updateOperation, ensureUnreadOperation]
 		
 		operationQueue.addOperations(operations, waitUntilFinished: false)
 	}
 }
 
-extension FeedlySyncStrategy: FeedlySyncOperationDelegate {
+extension FeedlySyncStrategy: FeedlyOperationDelegate {
 	
-	func feedlySyncOperation(_ operation: FeedlySyncOperation, didFailWith error: Error) {
-		os_log(.debug, log: log, "**** Operation failed! **** %@", error as NSError)
+	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
+		os_log(.debug, log: log, "%@ failed so sync failed with error %@", operation, error.localizedDescription)
 		cancel()
 		
 		startSyncCompletionHandler?(.failure(error))

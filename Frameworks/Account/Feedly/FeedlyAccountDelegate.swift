@@ -42,15 +42,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	private let database: SyncDatabase
 	private let caller: FeedlyAPICaller
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
+	private let articleStatusCoodinator: FeedlyArticleStatusCoordinator
 	
 	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API = .default) {
 		
-		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		database = SyncDatabase(databaseFilePath: databaseFilePath)
-				
 		if let transport = transport {
 			caller = FeedlyAPICaller(transport: transport, api: api)
 			
@@ -73,6 +70,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			caller = FeedlyAPICaller(transport: session, api: api)
 		}
 		
+		articleStatusCoodinator = FeedlyArticleStatusCoordinator(dataFolderPath: dataFolder,
+																 caller: caller,
+																 log: log)
 	}
 	
 	// MARK: Account API
@@ -93,17 +93,59 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
-		os_log(.debug, log: log, "*** SKIPPING SEND ARTICLE STATUS ***")
-		completion()
+		// Ensure remote articles have the same status as they do locally.
+		articleStatusCoodinator.sendArticleStatus(for: account, completion: completion)
 	}
 	
+	/// Attempts to ensure local articles have the same status as they do remotely.
+	/// So if the user is using another client roughly simultaneously with this app,
+	/// this app does its part to ensure the articles have a consistent status between both.
+	///
+	/// Feedly has no API that allows the app to fetch the identifiers of unread articles only.
+	/// The only way to identify unread articles is to pull all of the article data,
+	/// which is effectively equivalent of a full refresh.
+	///
+	/// - Parameter account: The account whose articles have a remote status.
+	/// - Parameter completion: Call on the main queue.
 	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
-		os_log(.debug, log: log, "*** SKIPPING REFRESH ARTICLE STATUS ***")
-		completion()
+		refreshAll(for: account) { _ in
+			completion()
+		}
 	}
 	
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		let data: Data
+		
+		do {
+			data = try Data(contentsOf: opmlFile)
+		} catch {
+			completion(.failure(error))
+			return
+		}
+		
+		os_log(.debug, log: log, "Begin importing OPML...")
+		isOPMLImportInProgress = true
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		
+		caller.importOpml(data) { result in
+			switch result {
+			case .success:
+				os_log(.debug, log: self.log, "Import OPML done.")
+				self.refreshProgress.completeTask()
+				self.isOPMLImportInProgress = false
+				DispatchQueue.main.async {
+					completion(.success(()))
+				}
+			case .failure(let error):
+				os_log(.debug, log: self.log, "Import OPML failed.")
+				self.refreshProgress.completeTask()
+				self.isOPMLImportInProgress = false
+				DispatchQueue.main.async {
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
+				}
+			}
+		}
 	}
 	
 	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
@@ -148,31 +190,21 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
 		
-		let log = self.log
+		let acceptedStatuses = articleStatusCoodinator.articles(articles,
+																for: account,
+																didChangeStatus: statusKey,
+																flag: flag)
 		
-		switch statusKey {
-		case .read:
-			let ids = articles.map { $0.articleID }
-			caller.markAsRead(articleIds: ids) { result in
-				switch result {
-				case .success:
-					account.update(articles, statusKey: statusKey, flag: flag)
-				case .failure(let error):
-					os_log(.debug, log: log, "*** SKIPPING MARKING ARTICLES READ: %@ %@ ***", error as NSError, ids)
-				}
-				
-			}
-		default:
-			os_log(.debug, log: log, "*** SKIPPING STATUS UPDATE FOR ARTICLES: %@ ***", articles)
-		}
-		
-		return nil
+		return acceptedStatuses
 	}
-
+	
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		
-		syncStrategy = FeedlySyncStrategy(account: account, caller: caller, log: log)
+		syncStrategy = FeedlySyncStrategy(account: account,
+										  caller: caller,
+										  articleStatusCoordinator: articleStatusCoodinator,
+										  log: log)
 		
 		//TODO: Figure out how other accounts get refreshed automatically.
 		refreshAll(for: account) { result in

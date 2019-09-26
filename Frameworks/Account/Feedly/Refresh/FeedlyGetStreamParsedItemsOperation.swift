@@ -17,7 +17,7 @@ protocol FeedlyStreamParsedItemsProviding: class {
 }
 
 /// Single responsibility is to model articles as ParsedItems for entries in a Collection's stream from Feedly.
-final class FeedlyGetStreamParsedItemsOperation: FeedlySyncOperation, FeedlyStreamParsedItemsProviding {
+final class FeedlyGetStreamParsedItemsOperation: FeedlyOperation, FeedlyStreamParsedItemsProviding {
 	private let account: Account
 	private let caller: FeedlyAPICaller
 	private let collectionStreamProvider: FeedlyCollectionStreamProviding

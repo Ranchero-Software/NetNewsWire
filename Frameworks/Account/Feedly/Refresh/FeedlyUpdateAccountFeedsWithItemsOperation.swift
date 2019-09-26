@@ -11,7 +11,7 @@ import RSParser
 import os.log
 
 /// Single responsibility is to combine the articles with their feeds for a specific account.
-final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlySyncOperation {
+final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 	private let account: Account
 	private let organisedItemsProvider: FeedlyParsedItemsByFeedProviding
 	private let log: OSLog
@@ -40,7 +40,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlySyncOperation {
 			group.enter()
 			os_log(.debug, log: log, "Updating %i items for feed \"%@\" in collection \"%@\"", items.count, feed.nameForDisplay, organisedItemsProvider.collection.label)
 			
-			account.update(feed, parsedItems: items) {
+			account.update(feed, parsedItems: items, defaultRead: true) {
 				group.leave()
 			}
 		}

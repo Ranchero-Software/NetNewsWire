@@ -70,7 +70,7 @@ class AccountsFeedlyWebWindowController: NSWindowController, WKNavigationDelegat
 			NSApplication.shared.presentError(error)
 			
 		} catch {
-			NSApplication.shared.presentError(error)
+			print(error)
 		}
 		
 		decisionHandler(.allow)

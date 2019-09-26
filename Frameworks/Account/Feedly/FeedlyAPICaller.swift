@@ -89,7 +89,7 @@ final class FeedlyAPICaller {
 		}
 	}
 	
-	func getStream(for collection: FeedlyCollection, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
+	func getStream(for collection: FeedlyCollection, unreadOnly: Bool = false, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -98,7 +98,8 @@ final class FeedlyAPICaller {
 		var components = baseUrlComponents
 		components.path = "/v3/streams/contents"
 		components.queryItems = [
-			URLQueryItem(name: "streamId", value: collection.id)
+			URLQueryItem(name: "streamId", value: collection.id),
+			URLQueryItem(name: "unreadOnly", value: unreadOnly ? "true" : "false")
 		]
 		
 		guard let url = components.url else {
@@ -130,7 +131,33 @@ final class FeedlyAPICaller {
 		}
 	}
 	
-	func markAsRead(articleIds: [String], completionHandler: @escaping (Result<Void, Error>) -> ()) {
+	enum MarkAction {
+		case read
+		case unread
+		case saved
+		case unsaved
+		
+		var actionValue: String {
+			switch self {
+			case .read:
+				return "markAsRead"
+			case .unread:
+				return "keepUnread"
+			case .saved:
+				return "markAsSaved"
+			case .unsaved:
+				return "markAsUnsaved"
+			}
+		}
+	}
+	
+	private struct MarkerEntriesBody: Encodable {
+		let type = "entries"
+		var action: String
+		var entryIds: [String]
+	}
+	
+	func mark(_ articleIds: Set<String>, as action: MarkAction, completionHandler: @escaping (Result<Void, Error>) -> ()) {
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -144,37 +171,62 @@ final class FeedlyAPICaller {
 		}
 		
 		var request = URLRequest(url: url)
+		request.httpMethod = "POST"
 		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		let json: [String: Any] = [
-			"action": "markAsRead",
-			"type": "entries",
-			"entryIds": articleIds
-		]
-		
 		do {
-			request.httpBody = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+			let body = MarkerEntriesBody(action: action.actionValue, entryIds: Array(articleIds))
+			let encoder = JSONEncoder()
+			let data = try encoder.encode(body)
+			request.httpBody = data
 		} catch {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(error))
 			}
 		}
 		
-		//			URLSession.shared.dataTask(with: request) { (data, response, error) in
-		//				let obj = try! JSONSerialization.jsonObject(with: data!, options: .allowFragments)
-		//				let data = try! JSONSerialization.data(withJSONObject: obj, options: .prettyPrinted)
-		//				print(String(data: data, encoding: .utf8)!)
-		//			}.resume()
-		
-		transport.send(request: request, resultType: FeedlyStream.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		transport.send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (httpResponse, _)):
 				if httpResponse.statusCode == 200 {
 					completionHandler(.success(()))
 				} else {
-					// tempror
+					completionHandler(.failure(URLError(.cannotDecodeContentData)))
+				}
+			case .failure(let error):
+				completionHandler(.failure(error))
+			}
+		}
+	}
+	
+	func importOpml(_ opmlData: Data, completionHandler: @escaping (Result<Void, Error>) -> ()) {
+		guard let accessToken = credentials?.secret else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(CredentialsError.incompleteCredentials))
+			}
+		}
+		var components = baseUrlComponents
+		components.path = "/v3/opml"
+		
+		guard let url = components.url else {
+			fatalError("\(components) does not produce a valid URL.")
+		}
+		
+		var request = URLRequest(url: url)
+		request.httpMethod = "POST"
+		request.addValue("text/xml", forHTTPHeaderField: HTTPRequestHeader.contentType)
+		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
+		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
+		request.httpBody = opmlData
+		
+		transport.send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+			switch result {
+			case .success(let (httpResponse, _)):
+				if httpResponse.statusCode == 200 {
+					completionHandler(.success(()))
+				} else {
 					completionHandler(.failure(URLError(.cannotDecodeContentData)))
 				}
 			case .failure(let error):
