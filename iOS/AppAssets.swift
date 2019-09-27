@@ -48,12 +48,12 @@ struct AppAssets {
 		return UIImage(systemName: "circle")!
 	}()
 	
-	static var chevronDownImage: UIImage = {
-		return UIImage(systemName: "chevron.down")!
+	static var chevronSmallImage: UIImage = {
+		return UIImage(named: "chevronSmall")!
 	}()
 	
-	static var chevronRightImage: UIImage = {
-		return UIImage(systemName: "chevron.right")!
+	static var chevronBaseImage: UIImage = {
+		return UIImage(named: "chevronBase")!
 	}()
 	
 	static var copyImage: UIImage = {

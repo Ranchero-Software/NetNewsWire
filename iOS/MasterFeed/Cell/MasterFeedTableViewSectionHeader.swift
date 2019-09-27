@@ -66,6 +66,8 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	private let unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
 	private var disclosureView: UIImageView = {
 		let iView = NonIntrinsicImageView()
+		iView.tintColor = UIColor.tertiaryLabel
+		iView.image = AppAssets.chevronSmallImage
 		iView.contentMode = .center
 		return iView
 	}()
@@ -131,11 +133,12 @@ private extension MasterFeedTableViewSectionHeader {
 	}
 	
 	func updateDisclosureImage() {
-		disclosureView.tintColor = UIColor.tertiaryLabel
-		if disclosureExpanded {
-			disclosureView.image = AppAssets.chevronDownImage
-		} else {
-			disclosureView.image = AppAssets.chevronRightImage
+		UIView.animate(withDuration: 0.3) {
+			if self.disclosureExpanded {
+				self.disclosureView.transform = CGAffineTransform(rotationAngle: 1.570796)
+			} else {
+				self.disclosureView.transform = CGAffineTransform(rotationAngle: 0)
+			}
 		}
 	}
 

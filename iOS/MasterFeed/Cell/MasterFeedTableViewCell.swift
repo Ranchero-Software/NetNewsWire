@@ -152,15 +152,18 @@ private extension MasterFeedTableViewCell {
 	func addDisclosureView() {
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
+		disclosureButton?.setImage(AppAssets.chevronBaseImage, for: .normal)
 		updateDisclosureImage()
 		addSubviewAtInit(disclosureButton!)
 	}
 	
 	func updateDisclosureImage() {
-		if disclosureExpanded {
-			disclosureButton?.setImage(AppAssets.chevronDownImage, for: .normal)
-		} else {
-			disclosureButton?.setImage(AppAssets.chevronRightImage, for: .normal)
+		UIView.animate(withDuration: 0.3) {
+			if self.disclosureExpanded {
+				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 1.570796)
+			} else {
+				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 0)
+			}
 		}
 	}
 
