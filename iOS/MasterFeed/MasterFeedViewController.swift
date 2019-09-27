@@ -606,7 +606,6 @@ private extension MasterFeedViewController {
 		cell.name = nameFor(node)
 		cell.unreadCount = coordinator.unreadCountFor(node)
 		configureFavicon(cell, node)
-		cell.shouldShowImage = node.representedObject is SmallIconProvider
 		
 	}
 	

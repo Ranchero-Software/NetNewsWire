@@ -48,18 +48,16 @@ struct AppAssets {
 		return UIImage(systemName: "circle")!
 	}()
 	
-	static var chevronDisclosureColor: UIColor = {
-		return UIColor(named: "chevronDisclosureColor")!
+	static var sectionChevronDisclosureColor: UIColor = {
+		return UIColor(named: "sectionChevronDisclosureColor")!
 	}()
 	
 	static var chevronDownImage: UIImage = {
-		let image = UIImage(systemName: "chevron.down")!
-		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
+		return UIImage(systemName: "chevron.down")!
 	}()
 	
 	static var chevronRightImage: UIImage = {
-		let image = UIImage(systemName: "chevron.right")!
-		return image.withTintColor(AppAssets.chevronDisclosureColor, renderingMode: .alwaysOriginal)
+		return UIImage(systemName: "chevron.right")!
 	}()
 	
 	static var copyImage: UIImage = {

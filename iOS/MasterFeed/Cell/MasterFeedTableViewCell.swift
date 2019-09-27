@@ -40,21 +40,7 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 	
 	var faviconImage: UIImage? {
 		didSet {
-			if let image = faviconImage {
-				faviconImageView.image = shouldShowImage ? image : nil
-			}
-			else {
-				faviconImageView.image = nil
-			}
-		}
-	}
-
-	var shouldShowImage = false {
-		didSet {
-			if shouldShowImage != oldValue {
-				setNeedsLayout()
-			}
-			faviconImageView.image = shouldShowImage ? faviconImage : nil
+			faviconImageView.image = faviconImage
 		}
 	}
 
@@ -101,7 +87,7 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 
 	private var unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
 	private var showingEditControl = false
-	private var disclosureButton: UIButton?
+	var disclosureButton: UIButton?
 	
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
@@ -133,15 +119,13 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let shouldShowDisclosure = !(showingEditControl && showsReorderControl)
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: shouldShowDisclosure)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
 		return CGSize(width: bounds.width, height: layout.height)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let shouldShowDisclosure = !(showingEditControl && showsReorderControl)
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, shouldShowImage: shouldShowImage, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: shouldShowDisclosure)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
 		layoutWith(layout)
 	}
 	
@@ -164,14 +148,10 @@ private extension MasterFeedTableViewCell {
 	}
 
 	func addDisclosureView() {
-		
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
-		disclosureButton!.tintColor = AppAssets.chevronDisclosureColor
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
-		
 		updateDisclosureImage()
 		addSubviewAtInit(disclosureButton!)
-		
 	}
 	
 	func updateDisclosureImage() {
