@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedlyCollection: Decodable {
+struct FeedlyCollection: Codable {
 	var feeds: [FeedlyFeed]
 	var label: String
 	var id: String
