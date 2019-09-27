@@ -56,9 +56,15 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 	func add() {
 		let account = accounts[accountPickerView.selectedRow(inComponent: 0)]
 		if let folderName = nameTextField.text {
-			account.ensureFolder(with: folderName)
+			account.addFolder(folderName) { result in
+				switch result {
+				case .success:
+					self.delegate?.processingDidEnd()
+				case .failure(let error):
+					self.presentError(error)
+				}
+			}
 		}
-		delegate?.processingDidEnd()
 	}
 
 	@objc func textDidChange(_ note: Notification) {
