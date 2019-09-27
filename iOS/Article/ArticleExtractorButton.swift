@@ -26,6 +26,14 @@ class ArticleExtractorButton: UIButton {
 		super.init(coder: coder)
 	}
 	
+	override var isEnabled: Bool {
+		didSet {
+			if isEnabled != oldValue {
+				tintColor = isEnabled ? nil : UIColor.secondaryLabel
+			}
+		}
+	}
+	
 	var buttonState: ArticleExtractorButtonState = .off {
 		didSet {
 			if buttonState != oldValue {
