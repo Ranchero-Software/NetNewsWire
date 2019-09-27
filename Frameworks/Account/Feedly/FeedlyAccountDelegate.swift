@@ -149,15 +149,51 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		fatalError()
+		caller.createCollection(named: name) { result in
+			switch result {
+			case .success(let collection):
+				if let folder = account.ensureFolder(with: collection.label) {
+					folder.externalID = collection.id
+					completion(.success(folder))
+				} else {
+					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		guard let id = folder.externalID else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			return
+		}
+		caller.renameCollection(with: id, to: name) { result in
+			switch result {
+			case .success(let collection):
+				folder.name = collection.label
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		guard let id = folder.externalID else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			return
+		}
+		caller.deleteCollection(with: id) { result in
+			switch result {
+			case .success:
+				account.removeFolder(folder)
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
