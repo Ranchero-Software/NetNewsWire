@@ -17,6 +17,15 @@ enum ArticleExtractorButtonState {
 
 class ArticleExtractorButton: UIButton {
 
+	init() {
+		super.init(frame: .zero)
+		setImage(AppAssets.articleExtractorOff, for: .normal)
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+	}
+	
 	var buttonState: ArticleExtractorButtonState = .off {
 		didSet {
 			if buttonState != oldValue {

@@ -22,7 +22,6 @@ enum ArticleViewState: Equatable {
 
 class ArticleViewController: UIViewController {
 
-	@IBOutlet private weak var articleExtractorButton: ArticleExtractorButton!
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var nextArticleBarButtonItem: UIBarButtonItem!
@@ -31,6 +30,8 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var browserBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var webViewContainer: UIView!
+
+	private var articleExtractorButton = ArticleExtractorButton()
 	private var webView: WKWebView!
 
 	weak var coordinator: SceneCoordinator!
@@ -83,9 +84,9 @@ class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
-		// For some reason interface builder won't let me set this there.
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
-		
+		navigationItem.titleView = articleExtractorButton
+
 		ArticleViewControllerWebViewProvider.shared.dequeueWebView() { webView in
 			
 			self.webView = webView
