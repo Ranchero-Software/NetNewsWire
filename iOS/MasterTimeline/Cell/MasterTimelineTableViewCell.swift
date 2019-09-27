@@ -130,7 +130,6 @@ private extension MasterTimelineTableViewCell {
 	
 	func commonInit() {
 		
-		addAccessoryView()
 		addSubviewAtInit(titleView, hidden: false)
 		addSubviewAtInit(summaryView, hidden: true)
 		addSubviewAtInit(unreadIndicatorView, hidden: true)
@@ -141,10 +140,6 @@ private extension MasterTimelineTableViewCell {
 		
 	}
 	
-	func addAccessoryView() {
-		accessoryView = UIImageView(image: AppAssets.chevronRightImage)
-	}
-
 	func updatedLayout(width: CGFloat) -> MasterTimelineCellLayout {
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			return MasterTimelineAccessibilityCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)

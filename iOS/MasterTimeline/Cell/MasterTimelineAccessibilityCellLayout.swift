@@ -45,7 +45,7 @@ struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 			self.avatarImageRect = CGRect.zero
 		}
 		
-		let textAreaWidth = width - (currentPoint.x + MasterTimelineDefaultCellLayout.chevronWidth + MasterTimelineDefaultCellLayout.cellPadding.right + insets.right)
+		let textAreaWidth = width - (currentPoint.x + MasterTimelineDefaultCellLayout.cellPadding.right + insets.right)
 		
 		// Title Text Block
 		let (titleRect, numberOfLinesForTitle) = MasterTimelineAccessibilityCellLayout.rectForTitle(cellData, currentPoint, textAreaWidth)

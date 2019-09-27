@@ -42,8 +42,6 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 		return UIFont.preferredFont(forTextStyle: .body)
 	}
 
-	static let chevronWidth = CGFloat(integerLiteral: 28)
-
 	let height: CGFloat
 	let unreadIndicatorRect: CGRect
 	let starRect: CGRect
@@ -78,7 +76,7 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 			self.avatarImageRect = CGRect.zero
 		}
 		
-		let textAreaWidth = width - (currentPoint.x + MasterTimelineDefaultCellLayout.chevronWidth + MasterTimelineDefaultCellLayout.cellPadding.right + insets.right)
+		let textAreaWidth = width - (currentPoint.x + MasterTimelineDefaultCellLayout.cellPadding.right + insets.right)
 		
 		// Title Text Block
 		let (titleRect, numberOfLinesForTitle) = MasterTimelineDefaultCellLayout.rectForTitle(cellData, currentPoint, textAreaWidth)
