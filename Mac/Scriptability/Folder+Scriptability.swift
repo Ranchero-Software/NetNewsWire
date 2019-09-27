@@ -76,11 +76,20 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
             print("support for folders within folders is NYI");
             return nil
         }
-        let scriptableAccount = ScriptableAccount(account)        
-        if let newFolder = account.ensureFolder(with:name) {
-            let scriptableFolder = ScriptableFolder(newFolder, container:scriptableAccount)
-            return(scriptableFolder.objectSpecifier)
-        }
+		
+		command.suspendExecution()
+		
+		account.addFolder(name) { result in
+			switch result {
+			case .success(let folder):
+				let scriptableAccount = ScriptableAccount(account)
+				let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
+				command.resumeExecution(withResult:scriptableFolder.objectSpecifier)
+			case .failure:
+				command.resumeExecution(withResult:nil)
+			}
+		}
+		
         return nil
     }
     

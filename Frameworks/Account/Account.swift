@@ -426,7 +426,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	@discardableResult
-	public func ensureFolder(with name: String) -> Folder? {
+	func ensureFolder(with name: String) -> Folder? {
 		// TODO: support subfolders, maybe, some day
 
 		if name.isEmpty {

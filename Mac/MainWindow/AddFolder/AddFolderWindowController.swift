@@ -72,7 +72,15 @@ class AddFolderWindowController : NSWindowController {
 			return
 		}
 		
-		account.ensureFolder(with: folderName)
+		account.addFolder(folderName) { result in
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				NSApplication.shared.presentError(error)
+			}
+		}
+			
 	}
 	
 	// MARK: Actions
