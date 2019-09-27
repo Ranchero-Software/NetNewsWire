@@ -48,10 +48,6 @@ struct AppAssets {
 		return UIImage(systemName: "circle")!
 	}()
 	
-	static var sectionChevronDisclosureColor: UIColor = {
-		return UIColor(named: "sectionChevronDisclosureColor")!
-	}()
-	
 	static var chevronDownImage: UIImage = {
 		return UIImage(systemName: "chevron.down")!
 	}()

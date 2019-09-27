@@ -131,7 +131,7 @@ private extension MasterFeedTableViewSectionHeader {
 	}
 	
 	func updateDisclosureImage() {
-		disclosureView.tintColor = AppAssets.sectionChevronDisclosureColor
+		disclosureView.tintColor = UIColor.tertiaryLabel
 		if disclosureExpanded {
 			disclosureView.image = AppAssets.chevronDownImage
 		} else {
