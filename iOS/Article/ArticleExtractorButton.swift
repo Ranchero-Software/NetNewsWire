@@ -18,7 +18,7 @@ enum ArticleExtractorButtonState {
 class ArticleExtractorButton: UIButton {
 
 	init() {
-		super.init(frame: .zero)
+		super.init(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
 		setImage(AppAssets.articleExtractorOff, for: .normal)
 	}
 	
