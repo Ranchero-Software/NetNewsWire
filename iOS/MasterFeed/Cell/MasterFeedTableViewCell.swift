@@ -103,6 +103,7 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 		super.setHighlighted(highlighted, animated: animated)
 
 		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.secondaryAccentColor
+		disclosureButton?.tintColor  = tintColor
 		faviconImageView.tintColor = tintColor
 	}
 
@@ -110,6 +111,7 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 		super.setSelected(selected, animated: animated)
 
 		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.secondaryAccentColor
+		disclosureButton?.tintColor  = tintColor
 		faviconImageView.tintColor = tintColor
 	}
 	
