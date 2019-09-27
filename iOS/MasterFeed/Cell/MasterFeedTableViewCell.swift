@@ -18,8 +18,7 @@ protocol MasterFeedTableViewCellDelegate: class {
 class MasterFeedTableViewCell : NNWTableViewCell {
 
 	weak var delegate: MasterFeedTableViewCellDelegate?
-	var isDisclosureAvailable = false
-	
+
 	override var accessibilityLabel: String? {
 		set {}
 		get {
@@ -32,18 +31,20 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 		}
 	}
 
-	var disclosureExpanded = false {
-		didSet {
-			updateDisclosureImage()
-		}
-	}
-	
 	var faviconImage: UIImage? {
 		didSet {
 			faviconImageView.image = faviconImage
 		}
 	}
 
+	var isDisclosureAvailable = false {
+		didSet {
+			if isDisclosureAvailable != oldValue {
+				setNeedsLayout()
+			}
+		}
+	}
+	
 	var unreadCount: Int {
 		get {
 			return unreadCountView.unreadCount
@@ -85,13 +86,27 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 		return imageView
 	}()
 
+	private var isDisclosureExpanded = false
+	private var disclosureButton: UIButton?
 	private var unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
-	private var showingEditControl = false
-	var disclosureButton: UIButton?
+	private var isShowingEditControl = false
 	
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
+	}
+	
+	func setDisclosure(isExpanded: Bool, animated: Bool) {
+		isDisclosureExpanded = isExpanded
+		let duration = animated ? 0.3 : 0.0
+
+		UIView.animate(withDuration: duration) {
+			if self.isDisclosureExpanded {
+				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 1.570796)
+			} else {
+				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 0)
+			}
+		}
 	}
 	
 	override func applyThemeProperties() {
@@ -117,24 +132,24 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 	
 	override func willTransition(to state: UITableViewCell.StateMask) {
 		super.willTransition(to: state)
-		showingEditControl = state.contains(.showingEditControl)
+		isShowingEditControl = state.contains(.showingEditControl)
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
 		return CGSize(width: bounds.width, height: layout.height)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: showingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
 		layoutWith(layout)
 	}
 	
 	@objc func buttonPressed(_ sender: UIButton) {
 		if isDisclosureAvailable {
-			disclosureExpanded = !disclosureExpanded
-			delegate?.disclosureSelected(self, expanding: disclosureExpanded)
+			setDisclosure(isExpanded: !isDisclosureExpanded, animated: true)
+			delegate?.disclosureSelected(self, expanding: isDisclosureExpanded)
 		}
 	}
 	
@@ -153,20 +168,9 @@ private extension MasterFeedTableViewCell {
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
 		disclosureButton?.setImage(AppAssets.chevronBaseImage, for: .normal)
-		updateDisclosureImage()
 		addSubviewAtInit(disclosureButton!)
 	}
 	
-	func updateDisclosureImage() {
-		UIView.animate(withDuration: 0.3) {
-			if self.disclosureExpanded {
-				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 1.570796)
-			} else {
-				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 0)
-			}
-		}
-	}
-
 	func addSubviewAtInit(_ view: UIView) {
 		addSubview(view)
 		view.translatesAutoresizingMaskIntoConstraints = false

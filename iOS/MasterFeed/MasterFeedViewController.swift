@@ -600,7 +600,7 @@ private extension MasterFeedViewController {
 		} else {
 			cell.indentationLevel = 0
 		}
-		cell.disclosureExpanded = node.isExpanded
+		cell.setDisclosure(isExpanded: node.isExpanded, animated: false)
 		cell.isDisclosureAvailable = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
