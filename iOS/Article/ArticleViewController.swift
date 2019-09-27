@@ -31,7 +31,12 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var browserBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var webViewContainer: UIView!
 
-	private var articleExtractorButton = ArticleExtractorButton()
+	private var articleExtractorButton: ArticleExtractorButton = {
+		let button = ArticleExtractorButton(type: .system)
+		button.setImage(AppAssets.articleExtractorOff, for: .normal)
+		return button
+	}()
+	
 	private var webView: WKWebView!
 
 	weak var coordinator: SceneCoordinator!

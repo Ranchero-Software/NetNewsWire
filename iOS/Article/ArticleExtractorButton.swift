@@ -16,23 +16,6 @@ enum ArticleExtractorButtonState {
 }
 
 class ArticleExtractorButton: UIButton {
-
-	init() {
-		super.init(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
-		setImage(AppAssets.articleExtractorOff, for: .normal)
-	}
-	
-	required init?(coder: NSCoder) {
-		super.init(coder: coder)
-	}
-	
-	override var isEnabled: Bool {
-		didSet {
-			if isEnabled != oldValue {
-				tintColor = isEnabled ? nil : UIColor.secondaryLabel
-			}
-		}
-	}
 	
 	var buttonState: ArticleExtractorButtonState = .off {
 		didSet {
