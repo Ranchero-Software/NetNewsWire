@@ -13,10 +13,9 @@ struct MasterFeedTableViewCellLayout {
 
 	private static let editingControlIndent = CGFloat(integerLiteral: 40)
 	private static let imageSize = CGSize(width: 20, height: 20)
-	private static let marginLeft = CGFloat(integerLiteral: 8)
 	private static let imageMarginRight = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginLeft = CGFloat(integerLiteral: 8)
-	private static let unreadCountMarginRight = CGFloat(integerLiteral: 0)
+	private static let unreadCountMarginRight = CGFloat(integerLiteral: 16)
 	private static let disclosureButtonSize = CGSize(width: 44, height: 44)
 
 	private static let minRowHeight = CGFloat(integerLiteral: 44)
@@ -33,7 +32,7 @@ struct MasterFeedTableViewCellLayout {
 	
 	init(cellWidth: CGFloat, insets: UIEdgeInsets, shouldShowImage: Bool, label: UILabel, unreadCountView: MasterFeedUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
 
-		var initialIndent = MasterFeedTableViewCellLayout.marginLeft + insets.left
+		var initialIndent = insets.left
 		if indent {
 			initialIndent += MasterFeedTableViewCellLayout.imageSize.width + MasterFeedTableViewCellLayout.imageMarginRight
 		}
@@ -43,11 +42,19 @@ struct MasterFeedTableViewCellLayout {
 		
 		let bounds = CGRect(x: initialIndent, y: 0.0, width: floor(cellWidth - initialIndent - insets.right), height: 0.0)
 		
+		// Disclosure Button
+		var rDisclosure = CGRect.zero
+		if shouldShowDisclosure {
+			rDisclosure.size = MasterFeedTableViewCellLayout.disclosureButtonSize
+			rDisclosure.origin.x = bounds.origin.x
+		}
+
 		// Favicon
 		var rFavicon = CGRect.zero
 		if shouldShowImage {
+			let x = bounds.origin.x + MasterFeedTableViewCellLayout.disclosureButtonSize.width
 			let y = UIFontMetrics.default.scaledValue(for: CGFloat(integerLiteral: 4))
-			rFavicon = CGRect(x: bounds.origin.x, y: y, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
+			rFavicon = CGRect(x: x, y: y, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
 		}
 
 		//  Separator Insets
@@ -60,26 +67,21 @@ struct MasterFeedTableViewCellLayout {
 		var rUnread = CGRect.zero
 		if !unreadCountIsHidden {
 			rUnread.size = unreadCountSize
-			rUnread.origin.x = bounds.maxX -
-				(unreadCountSize.width + MasterFeedTableViewCellLayout.unreadCountMarginRight + MasterFeedTableViewCellLayout.disclosureButtonSize.width)
+			rUnread.origin.x = bounds.maxX - (MasterFeedTableViewCellLayout.unreadCountMarginRight + unreadCountSize.width)
+			if showingEditingControl {
+				rUnread.origin.x = rUnread.origin.x - MasterFeedTableViewCellLayout.editingControlIndent
+			}
 		}
 		
-		// Disclosure Button
-		var rDisclosure = CGRect.zero
-		if shouldShowDisclosure {
-			rDisclosure.size = MasterFeedTableViewCellLayout.disclosureButtonSize
-			rDisclosure.origin.x = bounds.maxX - MasterFeedTableViewCellLayout.disclosureButtonSize.width
-		}
-
 		// Title
-		let labelWidth = bounds.width - (rFavicon.width + MasterFeedTableViewCellLayout.imageMarginRight + MasterFeedTableViewCellLayout.unreadCountMarginLeft + rUnread.width + MasterFeedTableViewCellLayout.unreadCountMarginRight + MasterFeedTableViewCellLayout.disclosureButtonSize.width)
+		let labelWidth = bounds.width - (rFavicon.width + MasterFeedTableViewCellLayout.imageMarginRight + MasterFeedTableViewCellLayout.unreadCountMarginLeft + rUnread.width + MasterFeedTableViewCellLayout.disclosureButtonSize.width + MasterFeedTableViewCellLayout.unreadCountMarginRight)
 		let labelSizeInfo = MultilineUILabelSizer.size(for: label.text ?? "", font: label.font, numberOfLines: 0, width: Int(floor(labelWidth)))
 		
 		var rLabel = CGRect(x: 0.0, y: 0.0, width: labelSizeInfo.size.width, height: labelSizeInfo.size.height)
 		if shouldShowImage {
 			rLabel.origin.x = rFavicon.maxX + MasterFeedTableViewCellLayout.imageMarginRight
 		} else {
-			rLabel.origin.x = bounds.minX
+			rLabel.origin.x = bounds.minX + MasterFeedTableViewCellLayout.disclosureButtonSize.width
 		}
 		
 		// Determine cell height

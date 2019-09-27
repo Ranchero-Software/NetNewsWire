@@ -18,7 +18,7 @@ protocol MasterFeedTableViewCellDelegate: class {
 class MasterFeedTableViewCell : NNWTableViewCell {
 
 	weak var delegate: MasterFeedTableViewCellDelegate?
-	var allowDisclosureSelection = false
+	var isDisclosureAvailable = false
 	
 	override var accessibilityLabel: String? {
 		set {}
@@ -146,7 +146,7 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 	}
 	
 	@objc func buttonPressed(_ sender: UIButton) {
-		if allowDisclosureSelection {
+		if isDisclosureAvailable {
 			disclosureExpanded = !disclosureExpanded
 			delegate?.disclosureSelected(self, expanding: disclosureExpanded)
 		}
@@ -192,6 +192,7 @@ private extension MasterFeedTableViewCell {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton?.setFrameIfNotEqual(layout.disclosureButtonRect)
+		disclosureButton?.isHidden = !isDisclosureAvailable
 		separatorInset = layout.separatorInsets
 	}
 	

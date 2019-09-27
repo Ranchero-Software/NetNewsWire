@@ -601,7 +601,7 @@ private extension MasterFeedViewController {
 			cell.indentationLevel = 0
 		}
 		cell.disclosureExpanded = node.isExpanded
-		cell.allowDisclosureSelection = node.canHaveChildNodes
+		cell.isDisclosureAvailable = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
 		cell.unreadCount = coordinator.unreadCountFor(node)
