@@ -21,7 +21,11 @@ struct FeedInspectorView : View {
 				Section(header:
 					HStack {
 						Spacer()
-						Image(uiImage: self.viewModel.image).resizable().frame(width: 48.0, height: 48.0)
+						if self.viewModel.image.size.width < 32 || self.viewModel.image.size.height < 32 {
+							Image(uiImage: self.viewModel.image).resizable().frame(width: 24.0, height: 24.0).cornerRadius(2.0)
+						} else {
+							Image(uiImage: self.viewModel.image).resizable().frame(width: 48.0, height: 48.0).cornerRadius(5.0)
+						}
 						Spacer()
 					}) {
 					TextField("Feed Name", text: $viewModel.name)
