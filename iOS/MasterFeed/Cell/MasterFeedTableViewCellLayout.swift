@@ -13,7 +13,7 @@ struct MasterFeedTableViewCellLayout {
 
 	private static let editingControlIndent = CGFloat(integerLiteral: 40)
 	private static let imageSize = CGSize(width: 20, height: 20)
-	private static let imageMarginRight = CGFloat(integerLiteral: 8)
+	private static let imageMarginRight = CGFloat(integerLiteral: 11)
 	private static let unreadCountMarginLeft = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginRight = CGFloat(integerLiteral: 16)
 	private static let disclosureButtonSize = CGSize(width: 44, height: 44)
@@ -58,7 +58,11 @@ struct MasterFeedTableViewCellLayout {
 		}
 
 		//  Separator Insets
-		separatorInsets = UIEdgeInsets(top: 0, left: rFavicon.maxX + MasterFeedTableViewCellLayout.imageMarginRight, bottom: 0, right: 0)
+		if shouldShowDisclosure {
+			separatorInsets = UIEdgeInsets(top: 0, left: MasterFeedTableViewCellLayout.disclosureButtonSize.width, bottom: 0, right: 0)
+		} else {
+			separatorInsets = UIEdgeInsets(top: 0, left: rFavicon.maxX + MasterFeedTableViewCellLayout.imageMarginRight, bottom: 0, right: 0)
+		}
 		
 		// Unread Count
 		let unreadCountSize = unreadCountView.contentSize
