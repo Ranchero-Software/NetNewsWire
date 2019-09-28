@@ -472,8 +472,6 @@ private extension MasterTimelineViewController {
 			titleView.label.text = coordinator.timelineName
 			
 			if coordinator.timelineFetcher is Feed {
-				let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
-				titleView.widthAnchor.constraint(equalToConstant: width).isActive = true
 				titleView.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
 				let tap = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 				titleView.addGestureRecognizer(tap)
