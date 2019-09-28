@@ -229,6 +229,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 						popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
 					}
 					
+					if let action = self.getInfoAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+						alert.addAction(action)
+					}
+					
 					if let action = self.homePageAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
 						alert.addAction(action)
 					}
@@ -697,6 +701,10 @@ private extension MasterFeedViewController {
 			
 			var actions = [UIAction]()
 			
+			if let inspectorAction = self.getInfoAction(indexPath: indexPath) {
+				actions.append(inspectorAction)
+			}
+			
 			if let homePageAction = self.homePageAction(indexPath: indexPath) {
 				actions.append(homePageAction)
 			}
@@ -831,6 +839,31 @@ private extension MasterFeedViewController {
 		let title = NSLocalizedString("Rename", comment: "Rename")
 		let action = UIAction(title: title, image: AppAssets.editImage) { [weak self] action in
 			self?.rename(indexPath: indexPath)
+		}
+		return action
+	}
+	
+	func getInfoAction(indexPath: IndexPath) -> UIAction? {
+		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? Feed else {
+			return nil
+		}
+		
+		let title = NSLocalizedString("Get Info", comment: "Get Info")
+		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
+			self?.coordinator.showFeedInspector(for: feed)
+		}
+		return action
+	}
+
+	func getInfoAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? Feed else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Get Info", comment: "Get Infor")
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			self?.coordinator.showFeedInspector(for: feed)
+			completionHandler(true)
 		}
 		return action
 	}

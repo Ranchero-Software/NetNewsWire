@@ -800,6 +800,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
+	func showFeedInspector(for feed: Feed) {
+		rootSplitViewController.present(style: .formSheet) {
+			FeedInspectorView(viewModel: FeedInspectorView.ViewModel(feed: feed))
+		}
+	}
+	
 	func showAdd(_ type: AddControllerType, initialFeed: String? = nil, initialFeedName: String? = nil) {
 		selectFeed(nil)
 
