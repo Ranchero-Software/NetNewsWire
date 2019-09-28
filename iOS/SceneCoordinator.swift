@@ -586,11 +586,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			masterTimelineViewController?.updateArticleSelection(animate: false)
 		}
 		
-		articleViewController?.state = .article(article!)
-		
-		if let article = currentArticle {
-			markArticles(Set([article]), statusKey: .read, flag: true)
+		if article!.feed?.isArticleExtractorAlwaysOn ?? false {
+			startArticleExtractorForCurrentLink()
+			articleViewController?.state = .loading
+		} else {
+			articleViewController?.state = .article(article!)
 		}
+		
+		markArticles(Set([article!]), statusKey: .read, flag: true)
 		
 	}
 	
