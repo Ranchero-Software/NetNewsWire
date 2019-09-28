@@ -30,7 +30,7 @@ struct FeedInspectorView : View {
 					}) {
 					TextField("Feed Name", text: $viewModel.name)
 					Toggle(isOn: $viewModel.isArticleExtractorAlwaysOn) {
-						Text("Reader View is always on")
+						Text("Always Show Reader View")
 					}
 				}
 				Section(header: Text("HOME PAGE")) {
@@ -54,6 +54,7 @@ struct FeedInspectorView : View {
 		
 		init(feed: Feed) {
 			self.feed = feed
+			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 		}
 		
 		var image: UIImage {
@@ -97,7 +98,11 @@ struct FeedInspectorView : View {
 		var feedLinkURL: String {
 			return feed.url
 		}
-		
+
+		@objc func feedIconDidBecomeAvailable(_ notification: Notification) {
+			objectWillChange.send()
+		}
+
 	}
 
 }
