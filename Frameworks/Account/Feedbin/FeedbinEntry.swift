@@ -10,7 +10,7 @@ import Foundation
 import RSParser
 import RSCore
 
-struct FeedbinEntry: Codable {
+final class FeedbinEntry: Codable {
 
 	let articleID: Int
 	let feedID: Int
@@ -22,6 +22,19 @@ struct FeedbinEntry: Codable {
 	let datePublished: String?
 	let dateArrived: String?
 	let jsonFeed: FeedbinEntryJSONFeed?
+
+	// Feedbin dates can't be decoded by the JSONDecoding 8601 decoding strategy. Feedbin
+	// requires a very specific date formatter to work and even then it fails occasionally.
+	// Rather than loose all the entries we only lose the one date by decoding as a string
+	// and letting the one date fail when parsed.
+	lazy var parsedDatePublished: Date? = {
+		if let datePublished = datePublished {
+			return RSDateWithString(datePublished)
+		}
+		else {
+			return nil
+		}
+	}()
 
 	enum CodingKeys: String, CodingKey {
 		case articleID = "id"
@@ -35,19 +48,6 @@ struct FeedbinEntry: Codable {
 		case dateArrived = "created_at"
 		case jsonFeed = "json_feed"
 	}
-
-	// Feedbin dates can't be decoded by the JSONDecoding 8601 decoding strategy.  Feedbin
-	// requires a very specific date formatter to work and even then it fails occasionally.
-	// Rather than loose all the entries we only lose the one date by decoding as a string
-	// and letting the one date fail when parsed.
-	func parseDatePublished() -> Date? {
-		if datePublished != nil  {
-			return FeedbinDate.formatter.date(from: datePublished!)
-		} else {
-			return nil
-		}
-	}
-	
 }
 
 struct FeedbinEntryJSONFeed: Codable {
