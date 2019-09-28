@@ -20,6 +20,7 @@ final class ArticlesTable: DatabaseTable {
 	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
+	private var databaseArticlesCache = [String: DatabaseArticle]()
 
 	private lazy var searchTable: SearchTable = {
 		return SearchTable(queue: queue, articlesTable: self)
@@ -480,6 +481,12 @@ private extension ArticlesTable {
 				return nil
 			}
 
+			// Articles are removed from the cache when they’re updated.
+			// See saveUpdatedArticles.
+			if let databaseArticle = databaseArticlesCache[articleID] {
+				return databaseArticle
+			}
+
 			// The resultSet is a result of a JOIN query with the statuses table,
 			// so we can get the statuses at the same time and avoid additional database lookups.
 			guard let status = statusesTable.statusWithRow(resultSet, articleID: articleID) else {
@@ -506,7 +513,9 @@ private extension ArticlesTable {
 			let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 			let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 
-			return DatabaseArticle(articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, status: status)
+			let databaseArticle = DatabaseArticle(articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, status: status)
+			databaseArticlesCache[articleID] = databaseArticle
+			return databaseArticle
 		}
 
 		return articles
@@ -662,6 +671,7 @@ private extension ArticlesTable {
 	
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
+		removeArticlesFromDatabaseArticlesCache(updatedArticles)
 		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
 		
 		for updatedArticle in updatedArticles {
@@ -682,10 +692,17 @@ private extension ArticlesTable {
 			// Not unexpected. There may be no changes.
 			return
 		}
-		
+
 		updateRowsWithDictionary(changesDictionary, whereKey: DatabaseKey.articleID, matches: updatedArticle.articleID, database: database)
 	}
-	
+
+	func removeArticlesFromDatabaseArticlesCache(_ updatedArticles: Set<Article>) {
+		let articleIDs = updatedArticles.articleIDs()
+		for articleID in articleIDs {
+			databaseArticlesCache[articleID] = nil
+		}
+	}
+
 	func statusIndicatesArticleIsIgnorable(_ status: ArticleStatus) -> Bool {
 		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).
 		if status.userDeleted {
