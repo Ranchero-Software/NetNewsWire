@@ -25,6 +25,19 @@ public extension URLRequest {
 			let base64 = data?.base64EncodedString()
 			let auth = "Basic \(base64 ?? "")"
 			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
+		case .feedWranglerBasic:
+			
+			guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+				return
+			}
+			components.queryItems = [
+				URLQueryItem(name: "email", value: credentials.username),
+				URLQueryItem(name: "password", value: credentials.secret),
+				URLQueryItem(name: "client_key", value: FeedWranglerConfig.clientKey)
+			]
+			self.url = components.url
+		case .feedWranglerToken:
+			fatalError() // TODO: implement
         case .readerBasic:
             setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             httpMethod = "POST"

@@ -226,6 +226,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .feedly:
 			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport)
+		case .feedWrangler:
+			self.delegate = FeedWranglerAccountDelegate(dataFolder: dataFolder, transport: transport)
 		default:
 			return nil
 		}
@@ -302,6 +304,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .freshRSS:
 			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
+		case .feedWrangler:
+			FeedWranglerAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		default:
 			break
 		}

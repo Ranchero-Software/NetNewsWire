@@ -15,6 +15,8 @@ public enum CredentialsError: Error {
 
 public enum CredentialsType: String {
 	case basic = "password"
+	case feedWranglerBasic = "feedWranglerBasic"
+	case feedWranglerToken = "feedWranglerToken"
 	case readerBasic = "readerBasic"
 	case readerAPIKey = "readerAPIKey"
 	case oauthAccessToken = "oauthAccessToken"
