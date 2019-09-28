@@ -105,17 +105,21 @@ final class StatusesTable: DatabaseTable {
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
 			return nil
 		}
+		return statusWithRow(row, articleID: articleID)
+	}
+
+	func statusWithRow(_ row: FMResultSet, articleID: String) ->ArticleStatus? {
 		if let cachedStatus = cache[articleID] {
 			return cachedStatus
 		}
-		
+
 		guard let dateArrived = row.date(forColumn: DatabaseKey.dateArrived) else {
 			return nil
 		}
 
 		let articleStatus = ArticleStatus(articleID: articleID, dateArrived: dateArrived, row: row)
 		cache.addStatusIfNotCached(articleStatus)
-		
+
 		return articleStatus
 	}
 

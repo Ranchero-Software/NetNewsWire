@@ -475,16 +475,15 @@ private extension ArticlesTable {
 	func makeDatabaseArticles(with resultSet: FMResultSet) -> Set<DatabaseArticle> {
 		let articles = resultSet.mapToSet { (row) -> DatabaseArticle? in
 
-			// The resultSet is a result of a JOIN query with the statuses table,
-			// so we can get the statuses at the same time and avoid additional database lookups.
-
-			guard let status = statusesTable.statusWithRow(resultSet) else {
-				assertionFailure("Expected status.")
+			guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+				assertionFailure("Expected articleID.")
 				return nil
 			}
 
-			guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
-				assertionFailure("Expected articleID.")
+			// The resultSet is a result of a JOIN query with the statuses table,
+			// so we can get the statuses at the same time and avoid additional database lookups.
+			guard let status = statusesTable.statusWithRow(resultSet, articleID: articleID) else {
+				assertionFailure("Expected status.")
 				return nil
 			}
 			guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
