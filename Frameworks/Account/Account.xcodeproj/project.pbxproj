@@ -529,7 +529,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8489350A1F62485000CEBD24 /* Build configuration list for PBXNativeTarget "Account" */;
 			buildPhases = (
+				3B90F52F233F266A00D481CC /* Run Script: Update FeedWranglerConfig.swift */,
 				848934F11F62484F00CEBD24 /* Sources */,
+				3B90F530233F267400D481CC /* Run Script: Reset FeedWranglerConfig.swift */,
 				848934F21F62484F00CEBD24 /* Frameworks */,
 				848934F31F62484F00CEBD24 /* Headers */,
 				848934F41F62484F00CEBD24 /* Resources */,
@@ -673,6 +675,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3B90F52F233F266A00D481CC /* Run Script: Update FeedWranglerConfig.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Update FeedWranglerConfig.swift";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FAILED=false\n\nif [ -z \"${FEED_WRANGLER_KEY}\" ]; then\nFAILED=true\nfi\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feed Wrangler Key. FeedWranglerConfig.swift not changed.\"\nexit 0\nfi\n\nsed -i .tmp \"s|{FEEDWRANGLERKEY}|${FEED_WRANGLER_KEY}|g; s|{FEEDWRANGLERKEY}|${FEED_WRANGLER_KEY}|g\" \"${SRCROOT}/FeedWrangler/FeedWranglerConfig.swift\"\n\nrm -f \"${SRCROOT}/FeedWrangler/FeedWranglerConfig.swift.tmp\"\n\necho \"All Feed Wrangler env values found!\"\n\n";
+		};
+		3B90F530233F267400D481CC /* Run Script: Reset FeedWranglerConfig.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Reset FeedWranglerConfig.swift";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "git checkout \"${SRCROOT}/FeedWrangler/FeedWranglerConfig.swift\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		848934F11F62484F00CEBD24 /* Sources */ = {
