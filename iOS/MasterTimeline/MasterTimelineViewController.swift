@@ -46,6 +46,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+
 
 		// Setup the Search Controller
 		searchController.delegate = self
@@ -127,6 +129,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	@objc func navigateToDetail(_ sender: Any?) {
 		coordinator.navigateToDetail()
+	}
+	
+	@objc func showFeedInspector(_ sender: UITapGestureRecognizer) {
+		coordinator.showFeedInspector()
 	}
 	
 	// MARK: API
@@ -365,6 +371,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		updateProgressIndicatorIfNeeded()
 	}
 	
+	@objc func displayNameDidChange(_ note: Notification) {
+		titleView?.label.text = coordinator.timelineName
+	}
+	
 	// MARK: Reloading
 	
 	func queueReloadAvailableCells() {
@@ -454,12 +464,21 @@ private extension MasterTimelineViewController {
 	}
 
 	func resetUI() {
-		
 		title = coordinator.timelineName
+		
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
 			self.titleView = titleView
 			titleView.imageView.image = coordinator.timelineFavicon
 			titleView.label.text = coordinator.timelineName
+			
+			if coordinator.timelineFetcher is Feed {
+				let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
+				titleView.widthAnchor.constraint(equalToConstant: width).isActive = true
+				titleView.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
+				let tap = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
+				titleView.addGestureRecognizer(tap)
+			}
+			
 			navigationItem.titleView = titleView
 		}
 
