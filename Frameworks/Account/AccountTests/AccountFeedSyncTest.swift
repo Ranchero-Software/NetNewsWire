@@ -27,7 +27,7 @@ class AccountFeedSyncTest: XCTestCase {
 		
 		// Test initial folders
 		let initialExpection = self.expectation(description: "Initial feeds")
-		account.refreshAll() {
+		account.refreshAll() { _ in
 			initialExpection.fulfill()
 		}
 		waitForExpectations(timeout: 5, handler: nil)
@@ -44,7 +44,7 @@ class AccountFeedSyncTest: XCTestCase {
 		testTransport.testFiles["https://api.feedbin.com/v2/subscriptions.json"] = "subscriptions_add.json"
 		
 		let addExpection = self.expectation(description: "Add feeds")
-		account.refreshAll() {
+		account.refreshAll() { _ in 
 			addExpection.fulfill()
 		}
 		waitForExpectations(timeout: 5, handler: nil)

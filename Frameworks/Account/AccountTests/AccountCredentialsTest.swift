@@ -26,12 +26,12 @@ class AccountCredentialsTest: XCTestCase {
 		
 		// Make sure any left over from failed tests are gone
 		do {
-			try account.removeBasicCredentials()
+			try account.removeCredentials(type: .basic)
 		} catch {
 			XCTFail(error.localizedDescription)
 		}
 
-		var credentials: Credentials? = Credentials.basic(username: "maurice", password: "hardpasswd")
+		var credentials: Credentials? = Credentials(type: .basic, username: "maurice", secret: "hardpasswd")
 		
 		// Store the credentials
 		do {
@@ -43,19 +43,21 @@ class AccountCredentialsTest: XCTestCase {
 		// Retrieve them
 		credentials = nil
 		do {
-			credentials = try account.retrieveBasicCredentials()
+			credentials = try account.retrieveCredentials(type: .basic)
 		} catch {
 			XCTFail(error.localizedDescription)
 		}
 		
-		switch credentials! {
-		case .basic(let username, let password):
-			XCTAssertEqual("maurice", username)
-			XCTAssertEqual("hardpasswd", password)
+		switch credentials!.type {
+		case .basic:
+			XCTAssertEqual("maurice", credentials?.username)
+			XCTAssertEqual("hardpasswd", credentials?.secret)
+		default:
+			XCTFail("Expected \(CredentialsType.basic), received \(credentials!.type)")
 		}
 		
 		// Update them
-		credentials = Credentials.basic(username: "maurice", password: "easypasswd")
+		credentials = Credentials(type: .basic, username: "maurice", secret: "easypasswd")
 		do {
 			try account.storeCredentials(credentials!)
 		} catch {
@@ -65,27 +67,29 @@ class AccountCredentialsTest: XCTestCase {
 		// Retrieve them again
 		credentials = nil
 		do {
-			credentials = try account.retrieveBasicCredentials()
+			credentials = try account.retrieveCredentials(type: .basic)
 		} catch {
 			XCTFail(error.localizedDescription)
 		}
 
-		switch credentials! {
-		case .basic(let username, let password):
-			XCTAssertEqual("maurice", username)
-			XCTAssertEqual("easypasswd", password)
+		switch credentials!.type {
+		case .basic:
+			XCTAssertEqual("maurice", credentials?.username)
+			XCTAssertEqual("easypasswd", credentials?.secret)
+		default:
+			XCTFail("Expected \(CredentialsType.basic), received \(credentials!.type)")
 		}
 
 		// Delete them
 		do {
-			try account.removeBasicCredentials()
+			try account.removeCredentials(type: .basic)
 		} catch {
 			XCTFail(error.localizedDescription)
 		}
 
 		// Make sure they are gone
 		do {
-			try credentials = account.retrieveBasicCredentials()
+			try credentials = account.retrieveCredentials(type: .basic)
 		} catch {
 			XCTFail(error.localizedDescription)
 		}
