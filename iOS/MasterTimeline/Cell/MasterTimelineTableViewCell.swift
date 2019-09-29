@@ -105,7 +105,7 @@ private extension MasterTimelineTableViewCell {
 	static func multiLineUILabel() -> UILabel {
 		let label = NonIntrinsicLabel()
 		label.numberOfLines = 0
-		label.lineBreakMode = .byWordWrapping
+		label.lineBreakMode = .byTruncatingTail
 		label.allowsDefaultTighteningForTruncation = false
 		label.adjustsFontForContentSizeCategory = true
 		return label
