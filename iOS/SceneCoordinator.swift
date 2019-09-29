@@ -1516,7 +1516,7 @@ private extension SceneCoordinator {
 		subSplitViewController!.showDetailViewController(navController, sender: self)
 		
 		masterFeedViewController.restoreSelectionIfNecessary(adjustScroll: true)
-		masterTimelineViewController!.restoreSelectionIfNecessary()
+		masterTimelineViewController!.restoreSelectionIfNecessary(adjustScroll: true)
 		
 		// We made sure this was there above when we called configureDoubleSplit
 		return subSplitViewController!

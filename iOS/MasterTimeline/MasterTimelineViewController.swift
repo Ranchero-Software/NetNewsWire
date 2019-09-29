@@ -137,9 +137,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	// MARK: API
 	
-	func restoreSelectionIfNecessary() {
+	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
-			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
+			if adjustScroll {
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
+			} else {
+				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+			}
 		}
 	}
 
@@ -390,7 +394,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems(articles)
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			self?.restoreSelectionIfNecessary()
+			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
 	}
 	
@@ -507,7 +511,7 @@ private extension MasterTimelineViewController {
 		snapshot.appendItems(coordinator.articles, toSection: 0)
         
 		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
-			self?.restoreSelectionIfNecessary()
+			self?.restoreSelectionIfNecessary(adjustScroll: false)
 			completion?()
 		}
 	}
