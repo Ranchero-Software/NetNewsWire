@@ -134,5 +134,11 @@
 		<key>action</key>
 		<string>goToNextSubscription:</string>
 	</dict>
+	<dict>
+		<key>key</key>
+		<string>s</string>
+		<key>action</key>
+		<string>toggleStarred:</string>
+	</dict>
 </array>
 </plist>
