@@ -28,7 +28,7 @@ class AccountFolderContentsSyncTest: XCTestCase {
 		
 		// Test initial folders
 		let initialExpection = self.expectation(description: "Initial contents")
-		account.refreshAll() {
+		account.refreshAll() { _ in
 			initialExpection.fulfill()
 		}
 		waitForExpectations(timeout: 5, handler: nil)
@@ -41,7 +41,7 @@ class AccountFolderContentsSyncTest: XCTestCase {
 		testTransport.testFiles["https://api.feedbin.com/v2/taggings.json"] = "taggings_add.json"
 
 		let addExpection = self.expectation(description: "Add contents")
-		account.refreshAll() {
+		account.refreshAll() { _ in
 			addExpection.fulfill()
 		}
 		waitForExpectations(timeout: 5, handler: nil)
@@ -53,7 +53,7 @@ class AccountFolderContentsSyncTest: XCTestCase {
 		testTransport.testFiles["https://api.feedbin.com/v2/taggings.json"] = "taggings_delete.json"
 		
 		let deleteExpection = self.expectation(description: "Delete contents")
-		account.refreshAll() {
+		account.refreshAll() { _ in
 			deleteExpection.fulfill()
 		}
 		waitForExpectations(timeout: 5, handler: nil)
