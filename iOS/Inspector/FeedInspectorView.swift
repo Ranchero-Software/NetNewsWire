@@ -24,10 +24,9 @@ struct FeedInspectorView : View {
 						Spacer()
 						if self.viewModel.image.size.width < 32 || self.viewModel.image.size.height < 32 {
 							if colorScheme == .dark && self.viewModel.image.isDark() {
-								ZStack {
-									Color(AppAssets.avatarBackgroundColor)
-									Image(uiImage: self.viewModel.image).resizable()
-								}
+								Image(uiImage: self.viewModel.image)
+								.resizable()
+								.background(Color(AppAssets.avatarBackgroundColor))
 								.frame(width: 24.0, height: 24.0)
 								.cornerRadius(2.0)
 							} else {
@@ -37,10 +36,18 @@ struct FeedInspectorView : View {
 									.cornerRadius(2.0)
 							}
 						} else {
-							Image(uiImage: self.viewModel.image)
-								.resizable()
-								.frame(width: 48.0, height: 48.0)
-								.cornerRadius(5.0)
+							if colorScheme == .dark && self.viewModel.image.isDark() {
+								Image(uiImage: self.viewModel.image)
+									.resizable()
+									.background(Color(AppAssets.avatarBackgroundColor))
+									.frame(width: 48.0, height: 48.0)
+									.cornerRadius(5.0)
+							} else {
+								Image(uiImage: self.viewModel.image)
+									.resizable()
+									.frame(width: 48.0, height: 48.0)
+									.cornerRadius(5.0)
+							}
 						}
 						Spacer()
 					}) {
