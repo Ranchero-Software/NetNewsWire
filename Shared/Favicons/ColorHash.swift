@@ -18,7 +18,7 @@ import AppKit
 
 public class ColorHash {
 	
-	public static let defaultLS = [CGFloat(0.35), CGFloat(0.5), CGFloat(0.65)]
+	public static let defaultLS = [CGFloat(0.45), CGFloat(0.6), CGFloat(0.75)]
 	let seed = CGFloat(131.0)
 	let seed2 = CGFloat(137.0)
 	let maxSafeInteger = 9007199254740991.0 / CGFloat(137.0)
