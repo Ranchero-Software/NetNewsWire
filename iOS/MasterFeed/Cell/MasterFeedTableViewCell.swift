@@ -34,6 +34,21 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 	var faviconImage: UIImage? {
 		didSet {
 			faviconImageView.image = faviconImage
+			
+			if self.traitCollection.userInterfaceStyle == .dark {
+				DispatchQueue.global(qos: .background).async {
+					if self.faviconImage?.isDark() ?? false {
+						DispatchQueue.main.async {
+							self.faviconImageView.backgroundColor = AppAssets.avatarBackgroundColor
+						}
+					} else {
+						DispatchQueue.main.async {
+							self.faviconImageView.backgroundColor = nil
+						}
+					}
+				}
+			}
+			
 		}
 	}
 
