@@ -96,11 +96,15 @@ struct FeedInspectorView : View {
 		
 		var name: String {
 			get {
-				return feed.editedName ?? feed.name ?? ""
+				return feed.editedName ?? ""
 			}
 			set {
 				objectWillChange.send()
-				feed.editedName = newValue
+				if newValue.isEmpty {
+					feed.editedName = nil
+				} else {
+					feed.editedName = newValue
+				}
 			}
 		}
 		
