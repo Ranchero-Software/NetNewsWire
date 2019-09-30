@@ -54,7 +54,7 @@
 		<key>key</key>
 		<string>r</string>
 		<key>action</key>
-		<string>markRead:</string>
+		<string>toggleRead:</string>
 	</dict>
 	<dict>
 		<key>title</key>
@@ -94,7 +94,7 @@
 		<key>key</key>
 		<string>u</string>
 		<key>action</key>
-		<string>markUnread:</string>
+		<string>toggleRead:</string>
 	</dict>
 	<dict>
 		<key>title</key>
