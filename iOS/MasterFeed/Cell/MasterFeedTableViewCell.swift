@@ -117,8 +117,10 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 
 		UIView.animate(withDuration: duration) {
 			if self.isDisclosureExpanded {
+				self.disclosureButton?.accessibilityLabel = NSLocalizedString("Collapse Folder", comment: "Collapse Folder")
 				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 1.570796)
 			} else {
+				self.disclosureButton?.accessibilityLabel = NSLocalizedString("Expand Folder", comment: "Expand Folder") 
 				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 0)
 			}
 		}
