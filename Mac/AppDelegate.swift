@@ -454,7 +454,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func openSlackGroup(_ sender: Any?) {
-		Browser.open("https://join.slack.com/t/netnewswire/shared_invite/enQtNjM4MDA1MjQzMDkzLTNlNjBhOWVhYzdhYjA4ZWFhMzQ1MTUxYjU0NTE5ZGY0YzYwZWJhNjYwNTNmNTg2NjIwYWY4YzhlYzk5NmU3ZTc", inBackground: false)
+		Browser.open("https://ranchero.com/netnewswire/slack", inBackground: false)
 	}
 
 	@IBAction func openTechnotes(_ sender: Any?) {
