@@ -28,7 +28,9 @@ struct SettingsFeedbinAccountView : View {
 					Spacer()
 				}
 			)  {
-				TextField("Email", text: $viewModel.email).textContentType(.emailAddress)
+				TextField("Email", text: $viewModel.email)
+					.keyboardType(.emailAddress)
+					.textContentType(.emailAddress)
 				SecureField("Password", text: $viewModel.password)
 			}
 			Section(footer:
