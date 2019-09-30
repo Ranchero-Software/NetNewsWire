@@ -13,6 +13,7 @@ import Account
 struct FeedInspectorView : View {
 	
 	@ObservedObject var viewModel: ViewModel
+	@Environment(\.colorScheme) private var colorScheme: ColorScheme
 	@Environment(\.viewController) private var viewController: UIViewController?
 
     var body: some View {
@@ -22,9 +23,24 @@ struct FeedInspectorView : View {
 					HStack {
 						Spacer()
 						if self.viewModel.image.size.width < 32 || self.viewModel.image.size.height < 32 {
-							Image(uiImage: self.viewModel.image).resizable().frame(width: 24.0, height: 24.0).cornerRadius(2.0)
+							if colorScheme == .dark && self.viewModel.image.isDark() {
+								ZStack {
+									Color(AppAssets.avatarBackgroundColor)
+									Image(uiImage: self.viewModel.image).resizable()
+								}
+								.frame(width: 24.0, height: 24.0)
+								.cornerRadius(2.0)
+							} else {
+								Image(uiImage: self.viewModel.image)
+									.resizable()
+									.frame(width: 24.0, height: 24.0)
+									.cornerRadius(2.0)
+							}
 						} else {
-							Image(uiImage: self.viewModel.image).resizable().frame(width: 48.0, height: 48.0).cornerRadius(5.0)
+							Image(uiImage: self.viewModel.image)
+								.resizable()
+								.frame(width: 48.0, height: 48.0)
+								.cornerRadius(5.0)
 						}
 						Spacer()
 					}) {
