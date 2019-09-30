@@ -216,6 +216,7 @@
 		51FA73AA2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */; };
 		51FA73AB2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */; };
 		51FA73B72332D5F70090D516 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */; };
+		51FD40C72341555A00880194 /* UIImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FD40BD2341555600880194 /* UIImage-Extensions.swift */; };
 		55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */; };
 		55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */; };
 		5F323809231DF9F000706F6B /* NNWTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F323808231DF9F000706F6B /* NNWTableViewCell.swift */; };
@@ -895,6 +896,7 @@
 		51FA73A62332BE880090D516 /* ExtractedArticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractedArticle.swift; sourceTree = "<group>"; };
 		51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorConfig.swift; sourceTree = "<group>"; };
 		51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
+		51FD40BD2341555600880194 /* UIImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage-Extensions.swift"; sourceTree = "<group>"; };
 		557EE1A522B6F4E1004206FA /* SettingsReaderAPIAccountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsReaderAPIAccountView.swift; sourceTree = "<group>"; };
 		55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsReaderAPI.xib; sourceTree = "<group>"; };
 		55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsReaderAPIWindowController.swift; sourceTree = "<group>"; };
@@ -1332,6 +1334,7 @@
 				51934CC1230F5963006127BE /* ThemedNavigationController.swift */,
 				51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */,
 				51F85BF622749FA100C787DC /* UIFont-Extensions.swift */,
+				51FD40BD2341555600880194 /* UIImage-Extensions.swift */,
 				512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */,
 				51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */,
 			);
@@ -2807,6 +2810,7 @@
 				51C452852265093600C03939 /* FlattenedAccountFolderPickerData.swift in Sources */,
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
+				51FD40C72341555A00880194 /* UIImage-Extensions.swift in Sources */,
 				5132293B23305D4C0033D4ED /* SettingsAboutView.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
