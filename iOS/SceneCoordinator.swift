@@ -556,11 +556,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func selectArticle(_ article: Article?, automated: Bool = true) {
 		guard article != currentArticle else { return }
 		
-		articleExtractor?.cancel()
-		articleExtractor = nil
-		isShowingExtractedArticle = false
-		articleViewController?.articleExtractorButtonState = .off
-
+		stopArticleExtractor()
 		currentArticle = article
 		activityManager.reading(currentArticle)
 		
@@ -576,10 +572,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		
+		let currentArticleViewController: ArticleViewController
 		if articleViewController == nil {
-			let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
-			articleViewController.coordinator = self
-			installArticleController(articleViewController, automated: automated)
+			currentArticleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+			currentArticleViewController.coordinator = self
+			installArticleController(currentArticleViewController, automated: automated)
+		} else {
+			currentArticleViewController = articleViewController!
 		}
 		
 		if automated {
@@ -588,9 +587,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		if article!.feed?.isArticleExtractorAlwaysOn ?? false {
 			startArticleExtractorForCurrentLink()
-			articleViewController?.state = .loading
+			currentArticleViewController.state = .loading
 		} else {
-			articleViewController?.state = .article(article!)
+			currentArticleViewController.state = .article(article!)
 		}
 		
 		markArticles(Set([article!]), statusKey: .read, flag: true)
@@ -828,10 +827,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 
 		guard articleExtractor?.state != .processing else {
-			articleExtractor?.cancel()
-			articleExtractor = nil
-			isShowingExtractedArticle = false
-			articleViewController?.articleExtractorButtonState = .off
+			stopArticleExtractor()
 			articleViewController?.state = .article(article)
 			return
 		}
@@ -933,7 +929,9 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		
 		// If we are using a phone and navigate away from the detail, clear up the article resources (including activity)
 		if viewController === masterTimelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed {
-			selectArticle(nil)
+			stopArticleExtractor()
+			currentArticle = nil
+			activityManager.invalidateReading()
 		}
 		
 	}
@@ -1180,7 +1178,7 @@ private extension SceneCoordinator {
 		for i in startingRow..<articles.count {
 			let article = articles[i]
 			if !article.status.read {
-				selectArticle(article)
+				selectArticle(article, automated: false)
 				return true
 			}
 		}
@@ -1268,6 +1266,13 @@ private extension SceneCoordinator {
 		}
 	}
 
+	func stopArticleExtractor() {
+		articleExtractor?.cancel()
+		articleExtractor = nil
+		isShowingExtractedArticle = false
+		articleViewController?.articleExtractorButtonState = .off
+	}
+	
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
 			replaceArticles(with: Set<Article>(), animate: true)
