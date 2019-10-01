@@ -508,7 +508,11 @@ private extension MasterTimelineViewController {
 	
 	func updateTitleUnreadCount() {
 		if let unreadCountProvider = coordinator.timelineFetcher as? UnreadCountProvider {
-			titleView?.unreadCountView.unreadCount = unreadCountProvider.unreadCount
+			UIView.animate(withDuration: 0.3) {
+				self.titleView?.unreadCountView.unreadCount = unreadCountProvider.unreadCount
+				self.titleView?.setNeedsLayout()
+				self.titleView?.layoutIfNeeded()
+			}
 		}
 	}
 	
