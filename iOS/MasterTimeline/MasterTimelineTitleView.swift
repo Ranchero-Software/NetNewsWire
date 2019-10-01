@@ -20,5 +20,6 @@ class MasterTimelineTitleView: UIView {
 	}
 
 	@IBOutlet weak var label: UILabel!
+	@IBOutlet weak var unreadCountView: MasterTimelineUnreadCountView!
 	
 }

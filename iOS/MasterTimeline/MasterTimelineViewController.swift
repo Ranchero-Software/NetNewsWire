@@ -479,7 +479,8 @@ private extension MasterTimelineViewController {
 			}
 			
 			titleView.label.text = coordinator.timelineName
-			
+			updateTitleUnreadCount()
+
 			if coordinator.timelineFetcher is Feed {
 				titleView.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
 				let tap = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
@@ -500,8 +501,15 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateUI() {
+		updateTitleUnreadCount()
 		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
+	}
+	
+	func updateTitleUnreadCount() {
+		if let unreadCountProvider = coordinator.timelineFetcher as? UnreadCountProvider {
+			titleView?.unreadCountView.unreadCount = unreadCountProvider.unreadCount
+		}
 	}
 	
 	func updateProgressIndicatorIfNeeded() {
