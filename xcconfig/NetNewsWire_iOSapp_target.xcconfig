@@ -1,7 +1,7 @@
 CODE_SIGN_IDENTITY = Developer ID Application
 DEVELOPMENT_TEAM = DY2XQRVWN9
 CODE_SIGN_STYLE = Automatic
-BUNDLE_ROOT = com.ranchero
+ORGANIZATION_IDENTIFIER = com.ranchero
 PROVISIONING_PROFILE_SPECIFIER =
 
 // developers can locally override the Xcode settings for code signing
