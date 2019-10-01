@@ -21,21 +21,22 @@ struct SettingsAddAccountView : View {
 			}
 			.modifier(VibrantSelectAction(action: {
 				self.accountAddAction = 1
-			}))
+			})).padding(.vertical, 16)
 			
 			NavigationLink(destination: SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel()), tag: 2, selection: $accountAddAction) {
 				SettingsAccountLabelView(accountImage: "accountFeedbin", accountLabel: "Feedbin")
+
 			}
 			.modifier(VibrantSelectAction(action: {
 				self.accountAddAction = 2
-			}))
-			
-			NavigationLink(destination: SettingsReaderAPIAccountView(viewModel: SettingsReaderAPIAccountView.ViewModel(accountType: .freshRSS)), tag: 3, selection: $accountAddAction) {
-				SettingsAccountLabelView(accountImage: "accountFreshRSS", accountLabel: "Fresh RSS")
-			}
-			.modifier(VibrantSelectAction(action: {
-				self.accountAddAction = 3
-			}))
+			})).padding(.vertical, 16)
+
+//			NavigationLink(destination: SettingsReaderAPIAccountView(viewModel: SettingsReaderAPIAccountView.ViewModel(accountType: .freshRSS)), tag: 3, selection: $accountAddAction) {
+//				SettingsAccountLabelView(accountImage: "accountFreshRSS", accountLabel: "Fresh RSS")
+//			}
+//			.modifier(VibrantSelectAction(action: {
+//				self.accountAddAction = 3
+//			}))
 			
 		}
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)
