@@ -77,9 +77,11 @@ class ArticleViewController: UIViewController {
 	}
 	
 	deinit {
-		webView.removeFromSuperview()
-		ArticleViewControllerWebViewProvider.shared.enqueueWebView(webView)
-		webView = nil
+		if webView != nil  {
+			webView.removeFromSuperview()
+			ArticleViewControllerWebViewProvider.shared.enqueueWebView(webView)
+			webView = nil
+		}
 	}
 	
 	override func viewDidLoad() {
