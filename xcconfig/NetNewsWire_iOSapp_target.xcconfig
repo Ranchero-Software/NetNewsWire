@@ -1,4 +1,5 @@
-CODE_SIGN_IDENTITY = Developer ID Application
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = iPhone Developer
 DEVELOPMENT_TEAM = DY2XQRVWN9
 CODE_SIGN_STYLE = Automatic
 ORGANIZATION_IDENTIFIER = com.ranchero
