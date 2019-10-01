@@ -65,6 +65,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var lastSearchScope: SearchScope? = nil
 	private var isSearching: Bool = false
 	private var searchArticleIds: Set<String>? = nil
+	private var isArticleViewControllerPending = false
 	
 	private(set) var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
@@ -925,13 +926,22 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		if viewController === masterFeedViewController && !isThreePanelMode {
 			activityManager.invalidateCurrentActivities()
 			selectFeed(nil)
+			return
 		}
 		
-		// If we are using a phone and navigate away from the detail, clear up the article resources (including activity)
-		if viewController === masterTimelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed {
+		// If we are using a phone and navigate away from the detail, clear up the article resources (including activity).
+		// Don't clear it if we have pushed an ArticleViewController, but don't yet see it on the navigation stack.
+		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
+		// ArticleViewController will be pushed, but we will breifly show the Timeline.  Don't clear things out when that happens.
+		if viewController === masterTimelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed && !isArticleViewControllerPending {
 			stopArticleExtractor()
 			currentArticle = nil
 			activityManager.invalidateReading()
+			return
+		}
+		
+		if viewController is ArticleViewController {
+			isArticleViewControllerPending = false
 		}
 		
 	}
@@ -1433,6 +1443,8 @@ private extension SceneCoordinator {
 	}
 	
 	func installArticleController(_ articleController: UIViewController, automated: Bool) {
+
+		isArticleViewControllerPending = true
 
 		if let subSplit = subSplitViewController {
 			let controller = addNavControllerIfNecessary(articleController, showButton: false)
