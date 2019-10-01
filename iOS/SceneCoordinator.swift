@@ -922,6 +922,10 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 
 	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
 		
+		if UIApplication.shared.applicationState == .background {
+			return
+		}
+		
 		// If we are showing the Feeds and only the feeds start clearing stuff
 		if viewController === masterFeedViewController && !isThreePanelMode {
 			activityManager.invalidateCurrentActivities()
