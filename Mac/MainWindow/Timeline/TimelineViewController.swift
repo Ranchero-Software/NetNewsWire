@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import Articles
 import Account
+import os.log
 
 protocol TimelineDelegate: class  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
@@ -785,7 +786,7 @@ extension TimelineViewController: NSTableViewDelegate {
 				return [action]
 
 			@unknown default:
-				NSLog("Unknown table row edge: %ld", edge.rawValue)
+				os_log(.error, "Unknown table row edge: %ld", edge.rawValue)
 		}
 
 		return []
