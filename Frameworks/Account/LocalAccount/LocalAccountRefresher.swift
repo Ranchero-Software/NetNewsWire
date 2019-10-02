@@ -14,6 +14,8 @@ import Articles
 
 final class LocalAccountRefresher {
 	
+	private var completion: (() -> Void)?
+	
 	private lazy var downloadSession: DownloadSession = {
 		return DownloadSession(delegate: self)
 	}()
@@ -22,7 +24,8 @@ final class LocalAccountRefresher {
 		return downloadSession.progress
 	}
 
-	public func refreshFeeds(_ feeds: Set<Feed>) {
+	public func refreshFeeds(_ feeds: Set<Feed>, completion: @escaping () -> Void) {
+		self.completion = completion
 		downloadSession.downloadObjects(feeds as NSSet)
 	}
 }
@@ -102,6 +105,12 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
 	}
+	
+	func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession) {
+		completion?()
+		completion = nil
+	}
+
 }
 
 // MARK: - Utility

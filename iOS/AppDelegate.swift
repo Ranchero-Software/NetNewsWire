@@ -265,75 +265,21 @@ private extension AppDelegate {
 		
 		scheduleBackgroundFeedRefresh() // schedule next refresh
 		
-		var startingUnreadCount = 0
-		
-		DispatchQueue.global(qos: .background).async { [unowned self] in
-			
-			os_log("Woken to perform account refresh.", log: self.log, type: .info)
-	
-			os_log("Getting unread count.", log: self.log, type: .info)
-			while(!AccountManager.shared.isUnreadCountsInitialized) {
-				os_log("Waiting for unread counts to be initialized...", log: self.log, type: .info)
-				sleep(1)
-			}
-			os_log(.info, log: self.log, "Got unread count: %i", self.unreadCount)
-			startingUnreadCount = self.unreadCount
-			
-			DispatchQueue.main.async {
-				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
-			}
-			os_log("Accounts requested to begin refresh.", log: self.log, type: .info)
-			
-			sleep(1)
-			while (!AccountManager.shared.combinedRefreshProgress.isComplete) {
-				os_log("Waiting for account refresh processing to complete...", log: self.log, type: .info)
-				sleep(1)
-			}
-			
-			if startingUnreadCount < self.unreadCount {
-				os_log("Updating unread count badge, posting notification.", log: self.log, type: .info)
-				self.sendReceivedArticlesUserNotification(newArticleCount: self.unreadCount - startingUnreadCount)
-				task.setTaskCompleted(success: true)
-			} else {
+		os_log("Woken to perform account refresh.", log: self.log, type: .info)
+
+		DispatchQueue.main.async {
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) {
+				AccountManager.shared.saveAll()
 				os_log("Account refresh operation completed.", log: self.log, type: .info)
 				task.setTaskCompleted(success: true)
 			}
-			
-			AccountManager.shared.saveAll()
-			
 		}
-		
+					
 		// set expiration handler
 		task.expirationHandler = {
 			os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
 			task.setTaskCompleted(success: false)
 		}
-	}
-	
-}
-
-private extension AppDelegate {
-	
-	func sendReceivedArticlesUserNotification(newArticleCount: Int) {
-		
-		let content = UNMutableNotificationContent()
-		content.title = NSLocalizedString("Article Download", comment: "New Articles")
-		
-		let body: String = {
-			if newArticleCount == 1 {
-				return NSLocalizedString("You have downloaded 1 new article.", comment: "Article Downloaded")
-			} else {
-				let formatString = NSLocalizedString("You have downloaded %d new articles.", comment: "Articles Downloaded")
-				return NSString.localizedStringWithFormat(formatString as NSString, newArticleCount) as String
-			}
-		}()
-		
-		content.body = body
-		content.sound = UNNotificationSound.default
-		
-		let request = UNNotificationRequest.init(identifier: "NewArticlesReceived", content: content, trigger: nil)
-		UNUserNotificationCenter.current().add(request)
-		
 	}
 	
 }

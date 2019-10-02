@@ -156,9 +156,13 @@ public final class AccountManager: UnreadCountProvider {
 		return accountsDictionary[accountID]
 	}
 	
-	public func refreshAll(errorHandler: @escaping (Error) -> Void) {
+	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() ->Void)? = nil) {
+		let group = DispatchGroup()
+		
 		activeAccounts.forEach { account in
+			group.enter()
 			account.refreshAll() { result in
+				group.leave()
 				switch result {
 				case .success:
 					break
@@ -167,6 +171,11 @@ public final class AccountManager: UnreadCountProvider {
 				}
 			}
 		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			completion?()
+		}
+		
 	}
 
 	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
