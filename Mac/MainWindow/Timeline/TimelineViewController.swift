@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import Articles
 import Account
+import os.log
 
 protocol TimelineDelegate: class  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
@@ -745,6 +746,50 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {
 		cell.objectValue = nil
 		cell.cellData = TimelineCellData()
+	}
+
+	private func toggleArticleRead(_ article: Article) {
+		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
+			return
+		}
+		self.runCommand(markUnreadCommand)
+	}
+
+	private func toggleArticleStarred(_ article: Article) {
+		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
+			return
+		}
+		self.runCommand(markUnreadCommand)
+	}
+
+	func tableView(_ tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableView.RowActionEdge) -> [NSTableViewRowAction] {
+
+		guard let article = articles.articleAtRow(row) else {
+			return []
+		}
+
+		switch edge {
+			case .leading:
+				let title = article.status.read ? NSLocalizedString("Mark Unread", comment: "mark unread") : NSLocalizedString("Mark Read", comment: "mark read")
+				let action = NSTableViewRowAction(style: .regular, title: title) { (action, row) in
+					self.toggleArticleRead(article);
+					tableView.rowActionsVisible = false
+				}
+				return [action]
+
+			case .trailing:
+				let title = article.status.starred ? NSLocalizedString("Mark Unstarred", comment: "mark unstarred") : NSLocalizedString("Mark Starred", comment: "mark starred")
+				let action = NSTableViewRowAction(style: .regular, title: title) { (action, row) in
+					self.toggleArticleStarred(article);
+					tableView.rowActionsVisible = false
+				}
+				return [action]
+
+			@unknown default:
+				os_log(.error, "Unknown table row edge: %ld", edge.rawValue)
+		}
+
+		return []
 	}
 }
 
