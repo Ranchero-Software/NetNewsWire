@@ -31,7 +31,7 @@ final class FeedMetadataFile {
 		managedFile.load()
 	}
 	
-	func saveIfNecessary() {
+	func save() {
 		managedFile.saveIfNecessary()
 	}
 	

@@ -298,6 +298,9 @@ private extension AppDelegate {
 				os_log("Account refresh operation completed.", log: self.log, type: .info)
 				task.setTaskCompleted(success: true)
 			}
+			
+			AccountManager.shared.saveAll()
+			
 		}
 		
 		// set expiration handler

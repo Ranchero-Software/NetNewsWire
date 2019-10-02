@@ -184,6 +184,10 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 	
+	public func saveAll() {
+		accounts.forEach { $0.save() }
+	}
+	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
 		for account in activeAccounts {
 			if account.hasAtLeastOneFeed() {

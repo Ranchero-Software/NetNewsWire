@@ -368,10 +368,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 	}
 	
-	public func saveIfNecessary() {
-		metadataFile.saveIfNecessary()
-		feedMetadataFile.saveIfNecessary()
-		opmlFile.saveIfNecessary()
+	public func save() {
+		metadataFile.save()
+		feedMetadataFile.save()
+		opmlFile.save()
 	}
 	
 	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
