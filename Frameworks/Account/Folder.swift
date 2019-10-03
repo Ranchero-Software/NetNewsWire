@@ -98,6 +98,14 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 		postChildrenDidChangeNotification()
 	}
 	
+	public func addFeeds(_ feeds: Set<Feed>) {
+		guard !feeds.isEmpty else {
+			return
+		}
+		topLevelFeeds.formUnion(feeds)
+		postChildrenDidChangeNotification()
+	}
+	
 	public func removeFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		postChildrenDidChangeNotification()

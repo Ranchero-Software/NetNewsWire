@@ -82,9 +82,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		// Remove feeds without folders/collections.
 		let feedsAfter = Set(feedsAndFolders.map { $0.0 })
 		let feedsWithoutCollections = feedsBefore.subtracting(feedsAfter)
-		for unmatched in feedsWithoutCollections {
-			account.removeFeed(unmatched)
-		}
+		account.removeFeeds(feedsWithoutCollections)
 		
 		if !feedsWithoutCollections.isEmpty {
 			os_log(.debug, log: log, "Removed %i feeds", feedsWithoutCollections.count)

@@ -679,6 +679,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		postChildrenDidChangeNotification()
 	}
 	
+	public func removeFeeds(_ feeds: Set<Feed>) {
+		guard !feeds.isEmpty else {
+			return
+		}
+		topLevelFeeds.subtract(feeds)
+		structureDidChange()
+		postChildrenDidChangeNotification()
+	}
+	
 	public func addFeed(_ feed: Feed) {
 		topLevelFeeds.insert(feed)
 		structureDidChange()
