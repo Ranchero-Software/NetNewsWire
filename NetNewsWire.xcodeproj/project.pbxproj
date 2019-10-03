@@ -219,6 +219,8 @@
 		51FD413B2342BD0500880194 /* MasterTimelineUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FD413A2342BD0500880194 /* MasterTimelineUnreadCountView.swift */; };
 		51FE10032345529D0056195D /* UserNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FE10022345529D0056195D /* UserNotificationManager.swift */; };
 		51FE10042345529D0056195D /* UserNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FE10022345529D0056195D /* UserNotificationManager.swift */; };
+		51FE10092346739D0056195D /* ActivityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D87EE02311D34700E63F03 /* ActivityType.swift */; };
+		51FE100A234673A00056195D /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
 		55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */; };
 		55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */; };
 		5F323809231DF9F000706F6B /* NNWTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F323808231DF9F000706F6B /* NNWTableViewCell.swift */; };
@@ -2947,6 +2949,7 @@
 				51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
 				849A97651ED9EB96007D329B /* FeedTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
+				51FE10092346739D0056195D /* ActivityType.swift in Sources */,
 				840BEE4121D70E64009BBAFA /* CrashReportWindowController.swift in Sources */,
 				8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */,
 				84C9FC7B22629E1200D921D6 /* AccountsControlsBackgroundView.swift in Sources */,
@@ -2973,6 +2976,7 @@
 				84E185C3203BB12600F69BFA /* MultilineTextFieldSizer.swift in Sources */,
 				8477ACBE22238E9500DF7F37 /* SearchFeedDelegate.swift in Sources */,
 				51E3EB33229AB02C00645299 /* ErrorHandler.swift in Sources */,
+				51FE100A234673A00056195D /* ActivityManager.swift in Sources */,
 				8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */,
 				55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */,
 				5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */,

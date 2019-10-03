@@ -37,7 +37,7 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 	public var deepLinkUserInfo: [AnyHashable : Any] {
 		return [
 			DeepLinkKey.accountID.rawValue: account?.accountID ?? "",
-			DeepLinkKey.accountName.rawValue: account?.name ?? "",
+			DeepLinkKey.accountName.rawValue: account?.nameForDisplay ?? "",
 			DeepLinkKey.folderName.rawValue: nameForDisplay
 		]
 	}

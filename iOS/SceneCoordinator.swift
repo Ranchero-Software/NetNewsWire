@@ -1658,7 +1658,7 @@ private extension SceneCoordinator {
 			return nil
 		}
 
-		if let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.name == accountName }) {
+		if let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.nameForDisplay == accountName }) {
 			return node
 		}
 

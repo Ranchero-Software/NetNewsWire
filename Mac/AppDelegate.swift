@@ -211,6 +211,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		#endif
 	}
+	
+	func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
+		guard let mainWindowController = mainWindowController else {
+			return false
+		}
+		mainWindowController.handle(userActivity)
+		return true
+	}
 
 	func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
 		// https://github.com/brentsimmons/NetNewsWire/issues/522

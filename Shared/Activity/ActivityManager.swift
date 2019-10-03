@@ -113,6 +113,7 @@ class ActivityManager {
 		readingActivity = nil
 	}
 	
+	#if os(iOS)
 	static func cleanUp(_ account: Account) {
 		var ids = [String]()
 		
@@ -143,7 +144,8 @@ class ActivityManager {
 	static func cleanUp(_ feed: Feed) {
 		NSUserActivity.deleteSavedUserActivities(withPersistentIdentifiers: identifers(for: feed)) {}
 	}
-	
+	#endif
+
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
 			return
@@ -162,28 +164,33 @@ private extension ActivityManager {
 	func makeSelectingActivity(type: ActivityType, title: String, identifier: String) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: type.rawValue)
 		activity.title = title
-		activity.suggestedInvocationPhrase = title
 		activity.keywords = Set(makeKeywords(title))
-		activity.isEligibleForPrediction = true
 		activity.isEligibleForSearch = true
+
+		#if os(iOS)
+		activity.suggestedInvocationPhrase = title
+		activity.isEligibleForPrediction = true
 		activity.persistentIdentifier = identifier
+		#endif
+		
 		return activity
 	}
 	
 	func makeReadArticleActivity(_ article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
-
 		activity.title = article.title
+		activity.userInfo = article.deepLinkUserInfo
+		activity.isEligibleForHandoff = true
+		
+		#if os(iOS)
 		
 		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
 		let articleTitleKeywords = makeKeywords(article.title)
 		let keywords = feedNameKeywords + articleTitleKeywords
 		activity.keywords = Set(keywords)
 		
-		activity.userInfo = article.deepLinkUserInfo
 		activity.isEligibleForSearch = true
 		activity.isEligibleForPrediction = false
-		activity.isEligibleForHandoff = true
 		activity.persistentIdentifier = ActivityManager.identifer(for: article)
 		
 		// CoreSpotlight
@@ -197,7 +204,8 @@ private extension ActivityManager {
 		}
 		
 		activity.contentAttributeSet = attributeSet
-		
+		#endif
+
 		return activity
 	}
 	
@@ -211,9 +219,17 @@ private extension ActivityManager {
 		attributeSet.title = feed.nameForDisplay
 		attributeSet.keywords = makeKeywords(feed.nameForDisplay)
 		if let image = appDelegate.feedIconDownloader.icon(for: feed) {
+			#if os(iOS)
 			attributeSet.thumbnailData = image.pngData()
+			#else
+			attributeSet.thumbnailData = image.tiffRepresentation
+			#endif
 		} else if let image = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+			#if os(iOS)
 			attributeSet.thumbnailData = image.pngData()
+			#else
+			attributeSet.thumbnailData = image.tiffRepresentation
+			#endif
 		}
 		
 		selectingActivity!.contentAttributeSet = attributeSet
