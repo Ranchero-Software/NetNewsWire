@@ -10,14 +10,13 @@ import UIKit
 import RSCore
 import RSWeb
 import Account
-import UserNotifications
 import BackgroundTasks
 import os.log
 
 var appDelegate: AppDelegate!
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate, UnreadCountProvider {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 	
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	
@@ -34,6 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "application")
 	
+	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
@@ -90,7 +90,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 				}
 			}
 		}
-		
+
+		UNUserNotificationCenter.current().delegate = self
+		userNotificationManager = UserNotificationManager()
+
 		syncTimer = ArticleStatusSyncTimer()
 		
 		#if DEBUG
@@ -170,6 +173,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 	func logDebugMessage(_ message: String) {
 		logMessage(message, type: .debug)
 	}
+	
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+    }
 	
 }
 

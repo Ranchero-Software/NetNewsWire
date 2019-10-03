@@ -123,6 +123,15 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
+	public var isNotifyAboutNewArticles: Bool? {
+		get {
+			return metadata.isNotifyAboutNewArticles
+		}
+		set {
+			metadata.isNotifyAboutNewArticles = newValue
+		}
+	}
+	
 	public var isArticleExtractorAlwaysOn: Bool? {
 		get {
 			return metadata.isArticleExtractorAlwaysOn

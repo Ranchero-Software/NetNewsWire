@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import UserNotifications
 import Articles
 import RSTree
 import RSWeb
@@ -16,8 +17,9 @@ import RSCore
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UnreadCountProvider {
+class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider {
 
+	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
@@ -130,7 +132,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 		let localAccount = AccountManager.shared.defaultAccount
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
-
+		
 		let tempDirectory = NSTemporaryDirectory()
 		let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
 		let cacheFolder = (tempDirectory as NSString).appendingPathComponent(bundleIdentifier)
@@ -179,6 +181,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		refreshTimer = AccountRefreshTimer()
 		syncTimer = ArticleStatusSyncTimer()
 		
+		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
+			if granted {
+				DispatchQueue.main.async {
+					NSApplication.shared.registerForRemoteNotifications()
+				}
+			}
+		}
+
+		UNUserNotificationCenter.current().delegate = self
+		userNotificationManager = UserNotificationManager()
+
 		#if RELEASE
 			debugMenuItem.menu?.removeItem(debugMenuItem)
 			DispatchQueue.main.async {
@@ -322,6 +335,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		return true
 	}
 
+	// MARK: UNUserNotificationCenterDelegate
+	
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+    }
+	
 	// MARK: Add Feed
 
 	func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {

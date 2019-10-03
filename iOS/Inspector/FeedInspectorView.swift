@@ -52,6 +52,9 @@ struct FeedInspectorView : View {
 						Spacer()
 					}) {
 					TextField("Feed Name", text: $viewModel.name)
+					Toggle(isOn: $viewModel.isNotifyAboutNewArticles) {
+						Text("Notify About New Articles")
+					}
 					Toggle(isOn: $viewModel.isArticleExtractorAlwaysOn) {
 						Text("Always Show Reader View")
 					}
@@ -108,6 +111,16 @@ struct FeedInspectorView : View {
 			}
 		}
 		
+		var isNotifyAboutNewArticles: Bool {
+			get {
+				return feed.isNotifyAboutNewArticles ?? false
+			}
+			set {
+				objectWillChange.send()
+				feed.isNotifyAboutNewArticles = newValue
+			}
+		}
+
 		var isArticleExtractorAlwaysOn: Bool {
 			get {
 				return feed.isArticleExtractorAlwaysOn ?? false
