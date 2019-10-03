@@ -75,6 +75,11 @@
 		84F1F06E2243524700DA0616 /* AccountMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AF4EA3222CFDD100F6A800 /* AccountMetadata.swift */; };
 		84F73CF1202788D90000BCEF /* ArticleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F73CF0202788D80000BCEF /* ArticleFetcher.swift */; };
 		9E12B0202334696A00ADE5A0 /* FeedlyCreateFeedsForCollectionFoldersOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E12B01F2334696A00ADE5A0 /* FeedlyCreateFeedsForCollectionFoldersOperation.swift */; };
+		9E1773D32345700F0056A5A8 /* FeedlyLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1773D22345700E0056A5A8 /* FeedlyLink.swift */; };
+		9E1773D5234570E30056A5A8 /* FeedlyEntryParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1773D4234570E30056A5A8 /* FeedlyEntryParser.swift */; };
+		9E1773D7234575AB0056A5A8 /* FeedlyTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1773D6234575AB0056A5A8 /* FeedlyTag.swift */; };
+		9E1773D923458D590056A5A8 /* FeedlyResourceId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1773D823458D590056A5A8 /* FeedlyResourceId.swift */; };
+		9E1773DB234593CF0056A5A8 /* FeedlyResourceIdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1773DA234593CF0056A5A8 /* FeedlyResourceIdTests.swift */; };
 		9E1D154D233370D800F4944C /* FeedlySyncStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1D154C233370D800F4944C /* FeedlySyncStrategy.swift */; };
 		9E1D154F233371DD00F4944C /* FeedlyGetCollectionsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1D154E233371DD00F4944C /* FeedlyGetCollectionsOperation.swift */; };
 		9E1D15512334282100F4944C /* FeedlyMirrorCollectionsAsFoldersOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1D15502334282100F4944C /* FeedlyMirrorCollectionsAsFoldersOperation.swift */; };
@@ -85,6 +90,17 @@
 		9E1D155B2334423300F4944C /* FeedlyOrganiseParsedItemsByFeedOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1D155A2334423300F4944C /* FeedlyOrganiseParsedItemsByFeedOperation.swift */; };
 		9E1D155D233447F000F4944C /* FeedlyUpdateAccountFeedsWithItemsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1D155C233447F000F4944C /* FeedlyUpdateAccountFeedsWithItemsOperation.swift */; };
 		9E713653233AD63E00765C84 /* FeedlyRefreshStreamEntriesStatusOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E713652233AD63E00765C84 /* FeedlyRefreshStreamEntriesStatusOperation.swift */; };
+		9E7F15072341E96700F860D1 /* AccountFeedlySyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7F15062341E96700F860D1 /* AccountFeedlySyncTest.swift */; };
+		9E7F150A2341EF5A00F860D1 /* feedly_collections_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 9E7F15092341EF5A00F860D1 /* feedly_collections_initial.json */; };
+		9E7F150D2341F32000F860D1 /* macintosh_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 9E7F150C2341F32000F860D1 /* macintosh_initial.json */; };
+		9E7F15112341F39A00F860D1 /* uncategorized_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 9E7F15102341F39A00F860D1 /* uncategorized_initial.json */; };
+		9E7F15132341F3D900F860D1 /* programming_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 9E7F15122341F3D900F860D1 /* programming_initial.json */; };
+		9E7F15152341F42000F860D1 /* weblogs_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 9E7F15142341F42000F860D1 /* weblogs_initial.json */; };
+		9E7F15172341F48900F860D1 /* mustread_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 9E7F15162341F48900F860D1 /* mustread_initial.json */; };
+		9E832B1E2343467900D83249 /* feedly_collections_addcollection.json in Resources */ = {isa = PBXBuildFile; fileRef = 9E832B1D2343467900D83249 /* feedly_collections_addcollection.json */; };
+		9E832B202343476A00D83249 /* newcollection_addcollection.json in Resources */ = {isa = PBXBuildFile; fileRef = 9E832B1F2343476A00D83249 /* newcollection_addcollection.json */; };
+		9E832B23234416B400D83249 /* feedly_collections_addfeed.json in Resources */ = {isa = PBXBuildFile; fileRef = 9E832B22234416B400D83249 /* feedly_collections_addfeed.json */; };
+		9E832B25234416FF00D83249 /* mustread_addfeed.json in Resources */ = {isa = PBXBuildFile; fileRef = 9E832B24234416FF00D83249 /* mustread_addfeed.json */; };
 		9EA3133B231E368100268BA0 /* FeedlyAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA3133A231E368100268BA0 /* FeedlyAccountDelegate.swift */; };
 		9EAEC60C2332FE830085D7C9 /* FeedlyCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEC60B2332FE830085D7C9 /* FeedlyCollection.swift */; };
 		9EAEC60E2332FEC20085D7C9 /* FeedlyFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEC60D2332FEC20085D7C9 /* FeedlyFeed.swift */; };
@@ -215,6 +231,11 @@
 		84EAC4812148CC6300F154AB /* RSDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84F73CF0202788D80000BCEF /* ArticleFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleFetcher.swift; sourceTree = "<group>"; };
 		9E12B01F2334696A00ADE5A0 /* FeedlyCreateFeedsForCollectionFoldersOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyCreateFeedsForCollectionFoldersOperation.swift; sourceTree = "<group>"; };
+		9E1773D22345700E0056A5A8 /* FeedlyLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedlyLink.swift; sourceTree = "<group>"; };
+		9E1773D4234570E30056A5A8 /* FeedlyEntryParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyEntryParser.swift; sourceTree = "<group>"; };
+		9E1773D6234575AB0056A5A8 /* FeedlyTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyTag.swift; sourceTree = "<group>"; };
+		9E1773D823458D590056A5A8 /* FeedlyResourceId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyResourceId.swift; sourceTree = "<group>"; };
+		9E1773DA234593CF0056A5A8 /* FeedlyResourceIdTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyResourceIdTests.swift; sourceTree = "<group>"; };
 		9E1D154C233370D800F4944C /* FeedlySyncStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlySyncStrategy.swift; sourceTree = "<group>"; };
 		9E1D154E233371DD00F4944C /* FeedlyGetCollectionsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyGetCollectionsOperation.swift; sourceTree = "<group>"; };
 		9E1D15502334282100F4944C /* FeedlyMirrorCollectionsAsFoldersOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyMirrorCollectionsAsFoldersOperation.swift; sourceTree = "<group>"; };
@@ -225,6 +246,17 @@
 		9E1D155A2334423300F4944C /* FeedlyOrganiseParsedItemsByFeedOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyOrganiseParsedItemsByFeedOperation.swift; sourceTree = "<group>"; };
 		9E1D155C233447F000F4944C /* FeedlyUpdateAccountFeedsWithItemsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyUpdateAccountFeedsWithItemsOperation.swift; sourceTree = "<group>"; };
 		9E713652233AD63E00765C84 /* FeedlyRefreshStreamEntriesStatusOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyRefreshStreamEntriesStatusOperation.swift; sourceTree = "<group>"; };
+		9E7F15062341E96700F860D1 /* AccountFeedlySyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedlySyncTest.swift; sourceTree = "<group>"; };
+		9E7F15092341EF5A00F860D1 /* feedly_collections_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = feedly_collections_initial.json; sourceTree = "<group>"; };
+		9E7F150C2341F32000F860D1 /* macintosh_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = macintosh_initial.json; sourceTree = "<group>"; };
+		9E7F15102341F39A00F860D1 /* uncategorized_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = uncategorized_initial.json; sourceTree = "<group>"; };
+		9E7F15122341F3D900F860D1 /* programming_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = programming_initial.json; sourceTree = "<group>"; };
+		9E7F15142341F42000F860D1 /* weblogs_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = weblogs_initial.json; sourceTree = "<group>"; };
+		9E7F15162341F48900F860D1 /* mustread_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mustread_initial.json; sourceTree = "<group>"; };
+		9E832B1D2343467900D83249 /* feedly_collections_addcollection.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = feedly_collections_addcollection.json; sourceTree = "<group>"; };
+		9E832B1F2343476A00D83249 /* newcollection_addcollection.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = newcollection_addcollection.json; sourceTree = "<group>"; };
+		9E832B22234416B400D83249 /* feedly_collections_addfeed.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = feedly_collections_addfeed.json; sourceTree = "<group>"; };
+		9E832B24234416FF00D83249 /* mustread_addfeed.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mustread_addfeed.json; sourceTree = "<group>"; };
 		9EA3133A231E368100268BA0 /* FeedlyAccountDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedlyAccountDelegate.swift; sourceTree = "<group>"; };
 		9EAEC60B2332FE830085D7C9 /* FeedlyCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyCollection.swift; sourceTree = "<group>"; };
 		9EAEC60D2332FEC20085D7C9 /* FeedlyFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyFeed.swift; sourceTree = "<group>"; };
@@ -432,10 +464,54 @@
 				5165D7112282080C00D9D53D /* AccountFolderContentsSyncTest.swift */,
 				5107A09C227DE77700C7C3C5 /* TestTransport.swift */,
 				5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */,
+				9E7F15082341E97100F860D1 /* Feedly */,
 				51D58756227F62E300900287 /* JSON */,
 				848935061F62485000CEBD24 /* Info.plist */,
 			);
 			path = AccountTests;
+			sourceTree = "<group>";
+		};
+		9E7F15082341E97100F860D1 /* Feedly */ = {
+			isa = PBXGroup;
+			children = (
+				9E7F15062341E96700F860D1 /* AccountFeedlySyncTest.swift */,
+				9E1773DA234593CF0056A5A8 /* FeedlyResourceIdTests.swift */,
+				9E7F150B2341F2A700F860D1 /* Initial */,
+				9E832B1A234344DA00D83249 /* AddCollection */,
+				9E832B21234416B400D83249 /* AddFeed */,
+			);
+			path = Feedly;
+			sourceTree = "<group>";
+		};
+		9E7F150B2341F2A700F860D1 /* Initial */ = {
+			isa = PBXGroup;
+			children = (
+				9E7F15092341EF5A00F860D1 /* feedly_collections_initial.json */,
+				9E7F150C2341F32000F860D1 /* macintosh_initial.json */,
+				9E7F15162341F48900F860D1 /* mustread_initial.json */,
+				9E7F15122341F3D900F860D1 /* programming_initial.json */,
+				9E7F15102341F39A00F860D1 /* uncategorized_initial.json */,
+				9E7F15142341F42000F860D1 /* weblogs_initial.json */,
+			);
+			path = Initial;
+			sourceTree = "<group>";
+		};
+		9E832B1A234344DA00D83249 /* AddCollection */ = {
+			isa = PBXGroup;
+			children = (
+				9E832B1D2343467900D83249 /* feedly_collections_addcollection.json */,
+				9E832B1F2343476A00D83249 /* newcollection_addcollection.json */,
+			);
+			path = AddCollection;
+			sourceTree = "<group>";
+		};
+		9E832B21234416B400D83249 /* AddFeed */ = {
+			isa = PBXGroup;
+			children = (
+				9E832B22234416B400D83249 /* feedly_collections_addfeed.json */,
+				9E832B24234416FF00D83249 /* mustread_addfeed.json */,
+			);
+			path = AddFeed;
 			sourceTree = "<group>";
 		};
 		9EA31339231E368100268BA0 /* Feedly */ = {
@@ -473,12 +549,16 @@
 		9EBC31B32338AC2E002A567B /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				9E1773D823458D590056A5A8 /* FeedlyResourceId.swift */,
 				9EAEC60B2332FE830085D7C9 /* FeedlyCollection.swift */,
 				9EAEC60D2332FEC20085D7C9 /* FeedlyFeed.swift */,
 				9EAEC623233315F60085D7C9 /* FeedlyEntry.swift */,
+				9E1773D4234570E30056A5A8 /* FeedlyEntryParser.swift */,
 				9EAEC625233318400085D7C9 /* FeedlyStream.swift */,
 				9EAEC62723331C350085D7C9 /* FeedlyCategory.swift */,
 				9EAEC62923331EE70085D7C9 /* FeedlyOrigin.swift */,
+				9E1773D22345700E0056A5A8 /* FeedlyLink.swift */,
+				9E1773D6234575AB0056A5A8 /* FeedlyTag.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -647,10 +727,20 @@
 				5133230E2281089500C30F19 /* icons.json in Resources */,
 				51D5875B227F630B00900287 /* tags_add.json in Resources */,
 				5133230C2281088A00C30F19 /* subscriptions_add.json in Resources */,
+				9E832B202343476A00D83249 /* newcollection_addcollection.json in Resources */,
+				9E832B1E2343467900D83249 /* feedly_collections_addcollection.json in Resources */,
+				9E7F15152341F42000F860D1 /* weblogs_initial.json in Resources */,
 				51D5875C227F630B00900287 /* tags_initial.json in Resources */,
 				51D5875A227F630B00900287 /* tags_delete.json in Resources */,
 				5165D71722821C2400D9D53D /* taggings_add.json in Resources */,
+				9E832B23234416B400D83249 /* feedly_collections_addfeed.json in Resources */,
 				5165D71622821C2400D9D53D /* taggings_delete.json in Resources */,
+				9E7F15112341F39A00F860D1 /* uncategorized_initial.json in Resources */,
+				9E7F15132341F3D900F860D1 /* programming_initial.json in Resources */,
+				9E832B25234416FF00D83249 /* mustread_addfeed.json in Resources */,
+				9E7F150A2341EF5A00F860D1 /* feedly_collections_initial.json in Resources */,
+				9E7F15172341F48900F860D1 /* mustread_initial.json in Resources */,
+				9E7F150D2341F32000F860D1 /* macintosh_initial.json in Resources */,
 				5133230A2281082F00C30F19 /* subscriptions_initial.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -691,6 +781,7 @@
 				844B297D2106C7EC004020B3 /* Feed.swift in Sources */,
 				9E1D15572334355900F4944C /* FeedlyRequestStreamsOperation.swift in Sources */,
 				9E1D15512334282100F4944C /* FeedlyMirrorCollectionsAsFoldersOperation.swift in Sources */,
+				9E1773D7234575AB0056A5A8 /* FeedlyTag.swift in Sources */,
 				515E4EB62324FF8C0057B0E7 /* URLRequest+RSWeb.swift in Sources */,
 				5154367B228EEB28005E1CDF /* FeedbinImportResult.swift in Sources */,
 				84B2D4D02238CD8A00498ADA /* FeedMetadata.swift in Sources */,
@@ -714,8 +805,10 @@
 				552032FE229D5D5A009559E0 /* ReaderAPIAccountDelegate.swift in Sources */,
 				5170743C232AEDB500A461A3 /* OPMLFile.swift in Sources */,
 				51BB7B84233531BC008E8144 /* AccountBehaviors.swift in Sources */,
+				9E1773D923458D590056A5A8 /* FeedlyResourceId.swift in Sources */,
 				552032FC229D5D5A009559E0 /* ReaderAPIUnreadEntry.swift in Sources */,
 				9EC688EA232B973C00A8D0A2 /* FeedlyAPICaller.swift in Sources */,
+				9E1773D32345700F0056A5A8 /* FeedlyLink.swift in Sources */,
 				9EAEC62823331C350085D7C9 /* FeedlyCategory.swift in Sources */,
 				84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */,
 				84CAD7161FDF2E22000F0755 /* FeedbinEntry.swift in Sources */,
@@ -725,6 +818,7 @@
 				846E774F1F6EF9C000A165E2 /* LocalAccountDelegate.swift in Sources */,
 				515E4EB52324FF8C0057B0E7 /* CredentialsManager.swift in Sources */,
 				844B297F210CE37E004020B3 /* UnreadCountProvider.swift in Sources */,
+				9E1773D5234570E30056A5A8 /* FeedlyEntryParser.swift in Sources */,
 				9E1D1555233431A600F4944C /* FeedlyOperation.swift in Sources */,
 				84F1F06E2243524700DA0616 /* AccountMetadata.swift in Sources */,
 				9EBC31B7233987C1002A567B /* FeedlyArticleStatusCoordinator.swift in Sources */,
@@ -736,12 +830,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9E7F15072341E96700F860D1 /* AccountFeedlySyncTest.swift in Sources */,
 				5165D7122282080C00D9D53D /* AccountFolderContentsSyncTest.swift in Sources */,
 				51D5875E227F643C00900287 /* AccountFolderSyncTest.swift in Sources */,
 				5107A09B227DE49500C7C3C5 /* TestAccountManager.swift in Sources */,
 				513323082281070D00C30F19 /* AccountFeedSyncTest.swift in Sources */,
 				5107A09D227DE77700C7C3C5 /* TestTransport.swift in Sources */,
 				5107A099227DE42E00C7C3C5 /* AccountCredentialsTest.swift in Sources */,
+				9E1773DB234593CF0056A5A8 /* FeedlyResourceIdTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -97,9 +97,11 @@ final class FeedlyAPICaller {
 		}
 		var components = baseUrlComponents
 		components.path = "/v3/streams/contents"
+		// If you change these, check AccountFeedlySyncTest.set(testFiles:with:).
 		components.queryItems = [
+			URLQueryItem(name: "unreadOnly", value: unreadOnly ? "true" : "false"),
+			URLQueryItem(name: "count", value: "500"),
 			URLQueryItem(name: "streamId", value: collection.id),
-			URLQueryItem(name: "unreadOnly", value: unreadOnly ? "true" : "false")
 		]
 		
 		guard let url = components.url else {

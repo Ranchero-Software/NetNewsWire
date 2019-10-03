@@ -31,7 +31,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		didSet {
 			// https://developer.feedly.com/v3/developer/
 			if let devToken = ProcessInfo.processInfo.environment["FEEDLY_DEV_ACCESS_TOKEN"], !devToken.isEmpty {
-				caller.credentials = Credentials(type: .oauthAccessToken, username: "", secret: devToken)
+				caller.credentials = Credentials(type: .oauthAccessToken, username: "Developer", secret: devToken)
 			} else {
 				caller.credentials = credentials
 			}
@@ -88,6 +88,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			os_log(.debug, log: log, "Sync took %.3f seconds", -date.timeIntervalSinceNow)
 			DispatchQueue.main.async {
 				progress.completeTask()
+				completion(result)
 			}
 		}
 	}
@@ -241,11 +242,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 										  caller: caller,
 										  articleStatusCoordinator: articleStatusCoodinator,
 										  log: log)
-		
-		//TODO: Figure out how other accounts get refreshed automatically.
-		refreshAll(for: account) { result in
-			print("sync after initialise did complete")
-		}
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {

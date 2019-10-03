@@ -43,25 +43,29 @@ final class FeedlyArticleStatusCoordinator {
 	/// Ensures local articles have the same status as they do remotely.
 	func refreshArticleStatus(for account: Account, stream: FeedlyStream, collection: FeedlyCollection, completion: @escaping (() -> Void)) {
 		
-		guard let folder = account.existingFolder(with: collection.label) else {
-			completion()
-			return
-		}
-		
 		let unreadArticleIds = Set(
 			stream.items
 			.filter { $0.unread }
 			.map { $0.id }
 		)
-		let localArticles = folder.fetchArticles()
-		let localArticleIds = localArticles.articleIDs()
-		let readArticleIds = localArticleIds.subtracting(unreadArticleIds)
-		account.update(localArticles.filter { readArticleIds.contains($0.articleID) }, statusKey: .read, flag: true)
-//		account.ensureStatuses(readArticleIds, true, .read, true)
-		account.update(localArticles.filter { unreadArticleIds.contains($0.articleID) }, statusKey: .read, flag: false)
-//		account.ensureStatuses(unreadArticleIds, false, .read, false)
 		
-		os_log(.debug, log: log, "Ensured %i UNREAD and %i read article(s) in \"%@\".", unreadArticleIds.count, readArticleIds.count, collection.label)
+		// Mark articles as unread
+		let currentUnreadArticleIDs = account.fetchUnreadArticleIDs()
+		let deltaUnreadArticleIDs = unreadArticleIds.subtracting(currentUnreadArticleIDs)
+		let markUnreadArticles = account.fetchArticles(.articleIDs(deltaUnreadArticleIDs))
+		account.update(markUnreadArticles, statusKey: .read, flag: false)
+		
+		let readAritcleIds = Set(
+			stream.items
+			.filter { !$0.unread }
+			.map { $0.id }
+		)
+		
+		let deltaReadArticleIDs = currentUnreadArticleIDs.intersection(readAritcleIds)
+		let markReadArticles = account.fetchArticles(.articleIDs(deltaReadArticleIDs))
+		account.update(markReadArticles, statusKey: .read, flag: true)
+		
+		os_log(.debug, log: log, "\"%@\" - updated %i UNREAD and %i read article(s).", collection.label, unreadArticleIds.count, markReadArticles.count)
 		
 		completion()
 		

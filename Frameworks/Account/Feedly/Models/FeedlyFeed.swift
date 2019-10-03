@@ -13,4 +13,5 @@ struct FeedlyFeed: Codable {
 	var id: String
 	var title: String
 	var updated: Date?
+	var website: String?
 }

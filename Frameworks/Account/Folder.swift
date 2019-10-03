@@ -102,6 +102,14 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 		topLevelFeeds.remove(feed)
 		postChildrenDidChangeNotification()
 	}
+	
+	public func removeFeeds(_ feeds: Set<Feed>) {
+		guard !feeds.isEmpty else {
+			return
+		}
+		topLevelFeeds.subtract(feeds)
+		postChildrenDidChangeNotification()
+	}
 
 	// MARK: - Hashable
 

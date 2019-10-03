@@ -23,16 +23,16 @@ class TestAccountManager {
 	func createAccount(type: AccountType, username: String? = nil, password: String? = nil, transport: Transport) -> Account {
 		
 		let accountID = UUID().uuidString
-		let accountFolder = accountsFolder.appendingPathComponent("\(type.rawValue)_\(accountID)").absoluteString
+		let accountFolder = accountsFolder.appendingPathComponent("\(type.rawValue)_\(accountID)")
 		
 		do {
-			try FileManager.default.createDirectory(atPath: accountFolder, withIntermediateDirectories: true, attributes: nil)
+			try FileManager.default.createDirectory(at: accountFolder, withIntermediateDirectories: true, attributes: nil)
 		} catch {
 			assertionFailure("Could not create folder for \(accountID) account.")
 			abort()
 		}
 		
-		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID, transport: transport)!
+		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID, transport: transport)!
 		
 		return account
 		
@@ -43,8 +43,11 @@ class TestAccountManager {
 		do {
 			try FileManager.default.removeItem(atPath: account.dataFolder)
 		}
+		catch let error as CocoaError where error.code == .fileNoSuchFile {
+			print("Unable to delete folder at: \(account.dataFolder) because \(error)")
+		}
 		catch {
-			assertionFailure("Could not create folder for OnMyMac account.")
+			assertionFailure("Could not delete folder at: \(account.dataFolder) because \(error)")
 			abort()
 		}
 		
