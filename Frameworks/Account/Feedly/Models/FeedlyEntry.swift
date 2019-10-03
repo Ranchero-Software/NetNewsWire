@@ -48,9 +48,13 @@ struct FeedlyEntry: Decodable {
 	
 	/// the feed from which this article was crawled. If present, “streamId” will contain the feed id, “title” will contain the feed title, and “htmlUrl” will contain the feed’s website.
 	var origin: FeedlyOrigin?
-//
-//    /// a list of alternate links for this article. Each link object contains a media type and a URL. Typically, a single object is present, with a link to the original web page.
-//    var alternate: [Link]?
+	
+	/// Used to help find the URL to visit an article on a web site.
+	/// See https://groups.google.com/forum/#!searchin/feedly-cloud/feed$20url%7Csort:date/feedly-cloud/Rx3dVd4aTFQ/Hf1ZfLJoCQAJ
+	var canonical: [FeedlyLink]?
+
+    /// a list of alternate links for this article. Each link object contains a media type and a URL. Typically, a single object is present, with a link to the original web page.
+    var alternate: [FeedlyLink]?
 //
 //    //        var origin:
 //    //        Optional origin object the feed from which this article was crawled. If present, “streamId” will contain the feed id, “title” will contain the feed title, and “htmlUrl” will contain the feed’s website.
@@ -62,8 +66,8 @@ struct FeedlyEntry: Decodable {
     /// Was this entry read by the user? If an Authorization header is not provided, this will always return false. If an Authorization header is provided, it will reflect if the user has read this entry or not.
     var unread: Bool
 //
-//    /// a list of tag objects (“id” and “label”) that the user added to this entry. This value is only returned if an Authorization header is provided, and at least one tag has been added. If the entry has been explicitly marked as read (not the feed itself), the “global.read” tag will be present.
-//    var tags: [Tag]?
+    /// a list of tag objects (“id” and “label”) that the user added to this entry. This value is only returned if an Authorization header is provided, and at least one tag has been added. If the entry has been explicitly marked as read (not the feed itself), the “global.read” tag will be present.
+    var tags: [FeedlyTag]?
 //
     /// a list of category objects (“id” and “label”) that the user associated with the feed of this entry. This value is only returned if an Authorization header is provided.
     var categories: [FeedlyCategory]?
@@ -74,8 +78,8 @@ struct FeedlyEntry: Decodable {
 //    /// Timestamp for tagged articles, contains the timestamp when the article was tagged by the user. This will only be returned when the entry is returned through the streams API.
 //    var actionTimestamp: Date?
 //
-//    /// A list of media links (videos, images, sound etc) provided by the feed. Some entries do not have a summary or content, only a collection of media links.
-//    var enclosure: [Link]?
+    /// A list of media links (videos, images, sound etc) provided by the feed. Some entries do not have a summary or content, only a collection of media links.
+    var enclosure: [FeedlyLink]?
 //
 //    /// The article fingerprint. This value might change if the article is updated.
 //    var fingerprint: String

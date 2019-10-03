@@ -45,32 +45,7 @@ final class FeedlyGetStreamParsedItemsOperation: FeedlyOperation, FeedlyStreamPa
 		
 		guard !isCancelled else { return }
 		
-		parsedItems = stream.items.compactMap { entry -> ParsedItem? in
-			guard let origin = entry.origin else {
-				// Assertion might be too heavy handed here as our understanding of the data quality from Feedly grows.
-				print("Entry has no origin and no way for us to figure out which feed it should belong to: \(entry)")
-				return nil
-			}
-			
-			// TODO: Sensible values here.
-			let parsed = ParsedItem(syncServiceID: entry.id,
-									uniqueID: entry.id,
-									feedURL: origin.streamId,
-									url: nil,
-									externalURL: origin.htmlUrl,
-									title: entry.title,
-									contentHTML: entry.content?.content,
-									contentText: nil, // Seems there is no corresponding field in the JSON, so we might have to derive a value.
-									summary: nil,
-									imageURL: nil,
-									bannerImageURL: nil,
-									datePublished: entry.published,
-									dateModified: entry.updated,
-									authors: nil,
-									tags: nil,
-									attachments: nil)
-			return parsed
-		}
+		parsedItems = stream.items.map { FeedlyEntryParser(entry: $0).parsedItemRepresentation }
 		
 		os_log(.debug, log: log, "Parsed %i items of %i entries for %@", parsedItems.count, stream.items.count, collection.label)
 	}

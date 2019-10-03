@@ -31,6 +31,19 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		let feedsBefore = localFeeds
 		let pairs = collectionsAndFoldersProvider.collectionsAndFolders
 		
+		// Remove feeds in a folder which are not in the corresponding collection.
+		for (collection, folder) in pairs {
+			let feedsInFolder = folder.topLevelFeeds
+			let feedsInCollection = Set(collection.feeds.map { $0.id })
+			let feedsToRemove = feedsInFolder.filter { !feedsInCollection.contains($0.feedID) }
+			if !feedsToRemove.isEmpty {
+				folder.removeFeeds(feedsToRemove)
+				os_log(.debug, log: log, "\"%@\" - removed: %@", collection.label, feedsToRemove.map { $0.feedID }, feedsInCollection)
+			}
+			
+		}
+		
+		// Pair each Feed with its Folder.
 		let feedsAndFolders = pairs
 			.compactMap { ($0.0.feeds, $0.1) }
 			.map({ (collectionFeeds, folder) -> [(FeedlyFeed, Folder)] in
@@ -43,18 +56,15 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 
 				// find an existing feed
 				for feed in localFeeds {
-					if feed.feedID == collectionFeed.feedId {
+					if feed.feedID == collectionFeed.id {
 						return (feed, folder)
 					}
 				}
 
 				// no exsiting feed, create a new one
-				let url = collectionFeed.id
-				let metadata = FeedMetadata(feedID: url)
-				// TODO: More metadata
-								
-				let feed = Feed(account: account, url: url, metadata: metadata)
-				feed.name = collectionFeed.title
+				let id = collectionFeed.id
+				let url = FeedlyFeedResourceId(id: id).url
+				let feed = account.createFeed(with: collectionFeed.title, url: url, feedID: id, homePageURL: collectionFeed.website)
 				
 				// So the same feed isn't created more than once.
 				localFeeds.insert(feed)
@@ -69,11 +79,10 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 			}
 		}
 		
+		// Remove feeds without folders/collections.
 		let feedsAfter = Set(feedsAndFolders.map { $0.0 })
 		let feedsWithoutCollections = feedsBefore.subtracting(feedsAfter)
-		for unmatched in feedsWithoutCollections {
-			account.removeFeed(unmatched)
-		}
+		account.removeFeeds(feedsWithoutCollections)
 		
 		if !feedsWithoutCollections.isEmpty {
 			os_log(.debug, log: log, "Removed %i feeds", feedsWithoutCollections.count)
