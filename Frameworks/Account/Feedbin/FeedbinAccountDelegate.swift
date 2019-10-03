@@ -728,6 +728,7 @@ private extension FeedbinAccountDelegate {
 		}
 		
 		// Add any feeds we don't have and update any we do
+		var subscriptionsToAdd = Set<FeedbinSubscription>()
 		subscriptions.forEach { subscription in
 			
 			let subFeedId = String(subscription.feedID)
@@ -738,11 +739,17 @@ private extension FeedbinAccountDelegate {
 				feed.editedName = nil
 				feed.homePageURL = subscription.homePageURL
 				feed.subscriptionID = String(subscription.subscriptionID)
-			} else {
-				let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
-				feed.subscriptionID = String(subscription.subscriptionID)
-				account.addFeed(feed)
 			}
+			else {
+				subscriptionsToAdd.insert(subscription)
+			}
+		}
+
+		// Actually add subscriptions all in one go, so we don’t trigger various rebuilding things that Account does.
+		subscriptionsToAdd.forEach { subscription in
+			let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
+			feed.subscriptionID = String(subscription.subscriptionID)
+			account.addFeed(feed)
 		}
 	}
 
