@@ -18,6 +18,13 @@ final class TestTransport: Transport {
 	var testFiles = [String: String]()
 	var testStatusCodes = [String: Int]()
 	
+	/// Allows tests to filter time sensitive state out to make matching against test data easier.
+	var blacklistedQueryItemNames = Set([
+		"newerThan",		// Feedly: Mock data has a fixed date.
+		"unreadOnly",		// Feedly: Mock data is read/unread by test expectation.
+		"count",			// Feedly: Mock data is limited by test expectation.
+	])
+	
 	private func httpResponse(for request: URLRequest, statusCode: Int = 200) -> HTTPURLResponse {
 		guard let url = request.url else {
 			fatalError("Attempting to mock a http response for a request without a URL \(request).")
@@ -27,7 +34,16 @@ final class TestTransport: Transport {
 	
 	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		
-		guard let urlString = request.url?.absoluteString else {
+		guard let url = request.url, var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+			completion(.failure(TestTransportError.invalidState))
+			return
+		}
+		
+		components.queryItems = components
+			.queryItems?
+			.filter { !blacklistedQueryItemNames.contains($0.name) }
+		
+		guard let urlString = components.url?.absoluteString else {
 			completion(.failure(TestTransportError.invalidState))
 			return
 		}

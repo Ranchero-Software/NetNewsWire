@@ -30,13 +30,15 @@ final class FeedlyGetCollectionStreamOperation: FeedlyOperation, FeedlyCollectio
 	
 	let account: Account
 	let caller: FeedlyAPICaller
-	let unreadOnly: Bool
+	let unreadOnly: Bool?
+	let newerThan: Date?
 	
-	init(account: Account, collection: FeedlyCollection, caller: FeedlyAPICaller, unreadOnly: Bool = false) {
+	init(account: Account, collection: FeedlyCollection, caller: FeedlyAPICaller, newerThan: Date?, unreadOnly: Bool? = nil) {
 		self.account = account
 		self.collection = collection
 		self.caller = caller
 		self.unreadOnly = unreadOnly
+		self.newerThan = newerThan
 	}
 	
 	override func main() {
@@ -45,8 +47,7 @@ final class FeedlyGetCollectionStreamOperation: FeedlyOperation, FeedlyCollectio
 			return
 		}
 		
-		//TODO: Use account metadata to get articles newer than some date.
-		caller.getStream(for: collection, unreadOnly: unreadOnly) { result in
+		caller.getStream(for: collection, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
 				self.storedStream = stream

@@ -89,20 +89,36 @@ final class FeedlyAPICaller {
 		}
 	}
 	
-	func getStream(for collection: FeedlyCollection, unreadOnly: Bool = false, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
+	func getStream(for collection: FeedlyCollection, newerThan: Date? = nil, unreadOnly: Bool? = nil, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
+		
 		var components = baseUrlComponents
 		components.path = "/v3/streams/contents"
 		// If you change these, check AccountFeedlySyncTest.set(testFiles:with:).
-		components.queryItems = [
-			URLQueryItem(name: "unreadOnly", value: unreadOnly ? "true" : "false"),
-			URLQueryItem(name: "count", value: "500"),
+		var queryItems = [URLQueryItem]()
+		
+		if let date = newerThan {
+			let value = String(Int(date.timeIntervalSince1970 * 1000))
+			let queryItem = URLQueryItem(name: "newerThan", value: value)
+			queryItems.append(queryItem)
+		}
+		
+		if let flag = unreadOnly {
+			let value = flag ? "true" : "false"
+			let queryItem = URLQueryItem(name: "unreadOnly", value: value)
+			queryItems.append(queryItem)
+		}
+		
+		queryItems.append(contentsOf: [
+			URLQueryItem(name: "count", value: "1000"),
 			URLQueryItem(name: "streamId", value: collection.id),
-		]
+		])
+		
+		components.queryItems = queryItems
 		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
