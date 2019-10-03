@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 import SwiftUI
 import Account
 import Articles
@@ -315,14 +316,19 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		case .selectStarred:
 			handleSelectStarred()
 		case .selectFolder:
-			handleSelectFolder(activity)
+			handleSelectFolder(activity.userInfo)
 		case .selectFeed:
-			handleSelectFeed(activity)
+			handleSelectFeed(activity.userInfo)
 		case .nextUnread:
 			selectFirstUnreadInAllUnread()
 		case .readArticle:
-			handleReadArticle(activity)
+			handleReadArticle(activity.userInfo)
 		}
+	}
+	
+	func handle(_ response: UNNotificationResponse) {
+		let userInfo = response.notification.request.content.userInfo
+		handleReadArticle(userInfo)
 	}
 	
 	func configureThreePanelMode(for size: CGSize) {
@@ -1606,8 +1612,8 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func handleSelectFolder(_ activity: NSUserActivity) {
-		guard let accountNode = findAccountNode(for: activity), let folderNode = findFolderNode(for: activity, beginningAt: accountNode) else {
+	func handleSelectFolder(_ userInfo: [AnyHashable : Any]?) {
+		guard let accountNode = findAccountNode(userInfo), let folderNode = findFolderNode(userInfo, beginningAt: accountNode) else {
 			return
 		}
 		if let indexPath = indexPathFor(folderNode) {
@@ -1615,8 +1621,8 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func handleSelectFeed(_ activity: NSUserActivity) {
-		guard let accountNode = findAccountNode(for: activity), let feedNode = findFeedNode(for: activity, beginningAt: accountNode) else {
+	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
+		guard let accountNode = findAccountNode(userInfo), let feedNode = findFeedNode(userInfo, beginningAt: accountNode) else {
 			return
 		}
 		if let feed = feedNode.representedObject as? Feed {
@@ -1624,14 +1630,14 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func handleReadArticle(_ activity: NSUserActivity) {
-		guard let accountNode = findAccountNode(for: activity), let feedNode = findFeedNode(for: activity, beginningAt: accountNode) else {
+	func handleReadArticle(_ userInfo: [AnyHashable : Any]?) {
+		guard let accountNode = findAccountNode(userInfo), let feedNode = findFeedNode(userInfo, beginningAt: accountNode) else {
 			return
 		}
 		
 		discloseFeed(feedNode.representedObject as! Feed) {
 		
-			guard let articleID = activity.userInfo?[ActivityID.articleID.rawValue] as? String else { return }
+			guard let articleID = userInfo?[DeepLinkKey.articleID.rawValue] as? String else { return }
 			if let article = self.articles.first(where: { $0.articleID == articleID }) {
 				self.selectArticle(article)
 			}
@@ -1639,8 +1645,8 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func findAccountNode(for activity: NSUserActivity) -> Node? {
-		guard let accountID = activity.userInfo?[ActivityID.accountID.rawValue] as? String else {
+	func findAccountNode(_ userInfo: [AnyHashable : Any]?) -> Node? {
+		guard let accountID = userInfo?[DeepLinkKey.accountID.rawValue] as? String else {
 			return nil
 		}
 		
@@ -1648,7 +1654,7 @@ private extension SceneCoordinator {
 			return node
 		}
 
-		guard let accountName = activity.userInfo?[ActivityID.accountName.rawValue] as? String else {
+		guard let accountName = userInfo?[DeepLinkKey.accountName.rawValue] as? String else {
 			return nil
 		}
 
@@ -1659,8 +1665,8 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
-	func findFolderNode(for activity: NSUserActivity, beginningAt startingNode: Node) -> Node? {
-		guard let folderName = activity.userInfo?[ActivityID.folderName.rawValue] as? String else {
+	func findFolderNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
+		guard let folderName = userInfo?[DeepLinkKey.folderName.rawValue] as? String else {
 			return nil
 		}
 		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Folder)?.nameForDisplay == folderName }) {
@@ -1669,8 +1675,8 @@ private extension SceneCoordinator {
 		return nil
 	}
 
-	func findFeedNode(for activity: NSUserActivity, beginningAt startingNode: Node) -> Node? {
-		guard let feedID = activity.userInfo?[ActivityID.feedID.rawValue] as? String else {
+	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
+		guard let feedID = userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
 			return nil
 		}
 		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {

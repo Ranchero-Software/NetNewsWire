@@ -42,6 +42,7 @@
 		51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E490352288C37100C791F0 /* FeedbinDate.swift */; };
 		51E59599228C77BC00FCC42B /* FeedbinUnreadEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E59598228C77BC00FCC42B /* FeedbinUnreadEntry.swift */; };
 		51E5959B228C781500FCC42B /* FeedbinStarredEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E5959A228C781500FCC42B /* FeedbinStarredEntry.swift */; };
+		51FE1008234635A20056195D /* DeepLinkProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FE1007234635A20056195D /* DeepLinkProvider.swift */; };
 		552032F8229D5D5A009559E0 /* ReaderAPIEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032ED229D5D5A009559E0 /* ReaderAPIEntry.swift */; };
 		552032F9229D5D5A009559E0 /* ReaderAPISubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032EE229D5D5A009559E0 /* ReaderAPISubscription.swift */; };
 		552032FB229D5D5A009559E0 /* ReaderAPITag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F0229D5D5A009559E0 /* ReaderAPITag.swift */; };
@@ -195,6 +196,7 @@
 		51E490352288C37100C791F0 /* FeedbinDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinDate.swift; sourceTree = "<group>"; };
 		51E59598228C77BC00FCC42B /* FeedbinUnreadEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinUnreadEntry.swift; sourceTree = "<group>"; };
 		51E5959A228C781500FCC42B /* FeedbinStarredEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinStarredEntry.swift; sourceTree = "<group>"; };
+		51FE1007234635A20056195D /* DeepLinkProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkProvider.swift; sourceTree = "<group>"; };
 		552032ED229D5D5A009559E0 /* ReaderAPIEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPIEntry.swift; sourceTree = "<group>"; };
 		552032EE229D5D5A009559E0 /* ReaderAPISubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPISubscription.swift; sourceTree = "<group>"; };
 		552032F0229D5D5A009559E0 /* ReaderAPITag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPITag.swift; sourceTree = "<group>"; };
@@ -431,6 +433,7 @@
 				510BD112232C3E9D002692E4 /* FeedMetadataFile.swift */,
 				841974001F6DD1EC006346C4 /* Folder.swift */,
 				844B297E210CE37E004020B3 /* UnreadCountProvider.swift */,
+				51FE1007234635A20056195D /* DeepLinkProvider.swift */,
 				5165D71F22835E9800D9D53D /* FeedFinder */,
 				515E4EB12324FF7D0057B0E7 /* Credentials */,
 				8419742B1F6DDE84006346C4 /* LocalAccount */,
@@ -807,6 +810,7 @@
 				51BB7B84233531BC008E8144 /* AccountBehaviors.swift in Sources */,
 				9E1773D923458D590056A5A8 /* FeedlyResourceId.swift in Sources */,
 				552032FC229D5D5A009559E0 /* ReaderAPIUnreadEntry.swift in Sources */,
+				51FE1008234635A20056195D /* DeepLinkProvider.swift in Sources */,
 				9EC688EA232B973C00A8D0A2 /* FeedlyAPICaller.swift in Sources */,
 				9E1773D32345700F0056A5A8 /* FeedlyLink.swift in Sources */,
 				9EAEC62823331C350085D7C9 /* FeedlyCategory.swift in Sources */,

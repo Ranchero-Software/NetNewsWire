@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 import Account
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -28,8 +29,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			return
 		}
 		
+		if let notificationResponse = connectionOptions.notificationResponse {
+			window!.makeKeyAndVisible()
+			coordinator.handle(notificationResponse)
+			return
+		}
+		
         if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
-			self.coordinator.handle(userActivity)
+			coordinator.handle(userActivity)
         }
 		
 		window!.makeKeyAndVisible()
@@ -55,6 +62,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {
 		return coordinator.stateRestorationActivity
     }
+	
+	// API
+	
+	func handle(_ response: UNNotificationResponse) {
+		coordinator.handle(response)
+	}
 
 }
 

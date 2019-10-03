@@ -67,12 +67,7 @@ class ActivityManager {
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, folder.nameForDisplay) as String
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: ActivityManager.identifer(for: folder))
 	 
-		selectingActivity!.userInfo = [
-			ActivityID.accountID.rawValue: folder.account?.accountID ?? "",
-			ActivityID.accountName.rawValue: folder.account?.name ?? "",
-			ActivityID.folderName.rawValue: folder.nameForDisplay
-		]
-
+		selectingActivity!.userInfo = folder.deepLinkUserInfo
 		selectingActivity!.becomeCurrent()
 	}
 	
@@ -83,13 +78,8 @@ class ActivityManager {
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFeed, title: title, identifier: ActivityManager.identifer(for: feed))
 		
-		selectingActivity!.userInfo = [
-			ActivityID.accountID.rawValue: feed.account?.accountID ?? "",
-			ActivityID.accountName.rawValue: feed.account?.name ?? "",
-			ActivityID.feedID.rawValue: feed.feedID
-		]
+		selectingActivity!.userInfo = feed.deepLinkUserInfo
 		updateSelectingActivityFeedSearchAttributes(with: feed)
-		
 		selectingActivity!.becomeCurrent()
 	}
 	
@@ -155,7 +145,7 @@ class ActivityManager {
 	}
 	
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ActivityID.feedID.rawValue] as? String else {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
 			return
 		}
 		if activityFeedId == feed.feedID {
@@ -190,12 +180,7 @@ private extension ActivityManager {
 		let keywords = feedNameKeywords + articleTitleKeywords
 		activity.keywords = Set(keywords)
 		
-		activity.userInfo = [
-			ActivityID.accountID.rawValue: article.accountID,
-			ActivityID.accountName.rawValue: article.account?.name ?? "",
-			ActivityID.feedID.rawValue: article.feedID,
-			ActivityID.articleID.rawValue: article.articleID
-		]
+		activity.userInfo = article.deepLinkUserInfo
 		activity.isEligibleForSearch = true
 		activity.isEligibleForPrediction = false
 		activity.isEligibleForHandoff = true

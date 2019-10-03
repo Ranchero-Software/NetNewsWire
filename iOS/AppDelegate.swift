@@ -178,6 +178,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         completionHandler([.alert, .badge, .sound])
     }
 	
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+		defer { completionHandler() }
+		
+		if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
+			sceneDelegate.handle(response)
+		}
+        
+    }
+	
 }
 
 // MARK: App Initialization

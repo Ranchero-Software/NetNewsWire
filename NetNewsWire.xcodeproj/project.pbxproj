@@ -94,7 +94,6 @@
 		5183CCE9226F68D90010922C /* AccountRefreshTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */; };
 		51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CC1230F5963006127BE /* ThemedNavigationController.swift */; };
 		51934CCE2310792F006127BE /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
-		51934CD023108953006127BE /* ActivityID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCF23108953006127BE /* ActivityID.swift */; };
 		51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
 		51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
@@ -836,7 +835,6 @@
 		5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRefreshTimer.swift; sourceTree = "<group>"; };
 		51934CC1230F5963006127BE /* ThemedNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemedNavigationController.swift; sourceTree = "<group>"; };
 		51934CCD2310792F006127BE /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
-		51934CCF23108953006127BE /* ActivityID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityID.swift; sourceTree = "<group>"; };
 		51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTimelineFeedDelegate.swift; sourceTree = "<group>"; };
 		5194B5ED22B6965300144881 /* SettingsSubscriptionsImportDocumentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSubscriptionsImportDocumentPickerView.swift; sourceTree = "<group>"; };
 		5194B5F122B69FCC00144881 /* SettingsSubscriptionsExportDocumentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSubscriptionsExportDocumentPickerView.swift; sourceTree = "<group>"; };
@@ -1301,7 +1299,6 @@
 			isa = PBXGroup;
 			children = (
 				51934CCD2310792F006127BE /* ActivityManager.swift */,
-				51934CCF23108953006127BE /* ActivityID.swift */,
 				51D87EE02311D34700E63F03 /* ActivityType.swift */,
 			);
 			path = Activity;
@@ -2895,7 +2892,6 @@
 				51CC9B3E231720B2000E842F /* MasterFeedDataSource.swift in Sources */,
 				51C452A322650A1E00C03939 /* HTMLMetadataDownloader.swift in Sources */,
 				51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */,
-				51934CD023108953006127BE /* ActivityID.swift in Sources */,
 				51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */,
 				5148F4552336DB7000F8CD8B /* MasterTimelineTitleView.swift in Sources */,
 				513228FC233037630033D4ED /* Reachability.swift in Sources */,

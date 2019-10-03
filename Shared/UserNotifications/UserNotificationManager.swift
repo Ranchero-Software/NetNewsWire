@@ -36,11 +36,16 @@ private extension UserNotificationManager {
 	
 	private func sendNotification(feed: Feed, article: Article) {
 		let content = UNMutableNotificationContent()
-		
+						
 		content.title = feed.nameForDisplay
-		content.body = article.title ?? article.summary ?? ""
+		content.body = TimelineStringFormatter.truncatedTitle(article)
+		if content.body.isEmpty {
+			content.body = TimelineStringFormatter.truncatedSummary(article)
+		}
+
 		content.sound = UNNotificationSound.default
-		
+		content.userInfo = article.deepLinkUserInfo
+
 		let request = UNNotificationRequest.init(identifier: "articleID:\(article.articleID)", content: content, trigger: nil)
 		UNUserNotificationCenter.current().add(request)
 	}
