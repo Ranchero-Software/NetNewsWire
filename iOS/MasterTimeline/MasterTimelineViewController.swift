@@ -179,8 +179,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	// MARK: - Table view
 
-	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-		
+	override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 		
 		// Set up the read action
@@ -195,6 +194,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		readAction.image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
 		readAction.backgroundColor = AppAssets.primaryAccentColor
+		
+		return UISwipeActionsConfiguration(actions: [readAction])
+	}
+	
+	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+		
+		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 		
 		// Set up the star action
 		let starTitle = article.status.starred ?
@@ -253,8 +259,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		moreAction.image = AppAssets.moreImage
 		moreAction.backgroundColor = UIColor.systemGray
 
-		let configuration = UISwipeActionsConfiguration(actions: [readAction, starAction, moreAction])
-		return configuration
+		return UISwipeActionsConfiguration(actions: [starAction, moreAction])
 		
 	}
 
