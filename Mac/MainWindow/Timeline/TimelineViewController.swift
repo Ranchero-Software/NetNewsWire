@@ -387,6 +387,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	// MARK: - Navigation
 	
+	func goToDeepLink(for userInfo: [AnyHashable : Any]) {
+		guard let articleID = userInfo[DeepLinkKey.articleID.rawValue] as? String else { return }
+		guard let ix = articles.firstIndex(where: { $0.articleID == articleID }) else {	return }
+		
+		NSCursor.setHiddenUntilMouseMoves(true)
+		tableView.rs_selectRow(ix)
+		tableView.scrollTo(row: ix)
+	}
+	
 	func goToNextUnread() {
 		guard let ix = indexOfNextUnreadArticle() else {
 			return

@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import UserNotifications
 import Articles
 import Account
 import RSCore
@@ -110,6 +111,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	func selectedObjectsInSidebar() -> [AnyObject]? {
 
 		return sidebarViewController?.selectedObjects
+	}
+
+	func handle(_ response: UNNotificationResponse) {
+		let userInfo = response.notification.request.content.userInfo
+		sidebarViewController?.deepLinkRevealAndSelect(for: userInfo)
+		currentTimelineViewController?.goToDeepLink(for: userInfo)
 	}
 
 	// MARK: - Notifications

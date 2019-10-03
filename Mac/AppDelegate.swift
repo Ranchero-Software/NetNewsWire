@@ -341,6 +341,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
         completionHandler([.alert, .badge, .sound])
     }
 	
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+		mainWindowController?.handle(response)
+		completionHandler()
+    }
+	
 	// MARK: Add Feed
 
 	func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
