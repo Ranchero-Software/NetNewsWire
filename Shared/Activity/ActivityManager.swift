@@ -159,9 +159,11 @@ class ActivityManager {
 			return
 		}
 		
+		#if os(iOS)
 		if let article = readingArticle, activityFeedId == article.feedID {
 			updateReadArticleSearchAttributes(with: article)
 		}
+		#endif
 		
 		if activityFeedId == feed.feedID {
 			updateSelectingActivityFeedSearchAttributes(with: feed)
@@ -208,6 +210,7 @@ private extension ActivityManager {
 		return activity
 	}
 	
+	#if os(iOS)
 	func updateReadArticleSearchAttributes(with article: Article) {
 		
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeCompositeContent as String)
@@ -223,6 +226,7 @@ private extension ActivityManager {
 		readingActivity?.needsSave = true
 		
 	}
+	#endif
 	
 	func makeKeywords(_ article: Article) -> [String] {
 		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
