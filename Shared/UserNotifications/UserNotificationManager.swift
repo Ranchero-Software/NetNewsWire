@@ -16,6 +16,7 @@ final class UserNotificationManager: NSObject {
 	override init() {
 		super.init()
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
@@ -30,6 +31,14 @@ final class UserNotificationManager: NSObject {
 		}
 	}
 
+	@objc func statusesDidChange(_ note: Notification) {
+		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
+			return
+		}
+		let identifiers = articles.filter({ $0.status.read }).map { "articleID:\($0.articleID)" }
+		UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
+	}
+	
 }
 
 private extension UserNotificationManager {
