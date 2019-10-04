@@ -81,7 +81,11 @@ class ArticleExtractor {
 				
 				self.state = .complete
                 DispatchQueue.main.async {
-					self.delegate?.articleExtractionDidComplete(extractedArticle: self.article!)
+					if self.article?.content == nil {
+						self.delegate?.articleExtractionDidFail(with: URLError(.cannotDecodeContentData))
+					} else {
+						self.delegate?.articleExtractionDidComplete(extractedArticle: self.article!)
+					}
                 }
             } catch {
                 self.state = .failedToParse

@@ -963,6 +963,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 extension SceneCoordinator: ArticleExtractorDelegate {
 	
 	func articleExtractionDidFail(with: Error) {
+		stopArticleExtractor()
 		articleViewController?.articleExtractorButtonState = .error
 	}
 	
