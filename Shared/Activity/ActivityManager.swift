@@ -18,6 +18,7 @@ class ActivityManager {
 	private var nextUnreadActivity: NSUserActivity?
 	private var selectingActivity: NSUserActivity?
 	private var readingActivity: NSUserActivity?
+	private var readingArticle: Article?
 
 	var stateRestorationActivity: NSUserActivity? {
 		if readingActivity != nil {
@@ -103,14 +104,21 @@ class ActivityManager {
 	func reading(_ article: Article?) {
 		invalidateReading()
 		invalidateNextUnread()
+		
 		guard let article = article else { return }
 		readingActivity = makeReadArticleActivity(article)
+		
+		#if os(iOS)
+		updateReadArticleSearchAttributes(with: article)
+		#endif
+		
 		readingActivity?.becomeCurrent()
 	}
 	
 	func invalidateReading() {
 		readingActivity?.invalidate()
 		readingActivity = nil
+		readingArticle = nil
 	}
 	
 	#if os(iOS)
@@ -150,6 +158,11 @@ class ActivityManager {
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
 			return
 		}
+		
+		if let article = readingArticle, activityFeedId == article.feedID {
+			updateReadArticleSearchAttributes(with: article)
+		}
+		
 		if activityFeedId == feed.feedID {
 			updateSelectingActivityFeedSearchAttributes(with: feed)
 		}
@@ -183,30 +196,38 @@ private extension ActivityManager {
 		activity.isEligibleForHandoff = true
 		
 		#if os(iOS)
-		
-		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
-		let articleTitleKeywords = makeKeywords(article.title)
-		let keywords = feedNameKeywords + articleTitleKeywords
-		activity.keywords = Set(keywords)
-		
+		activity.keywords = Set(makeKeywords(article))
 		activity.isEligibleForSearch = true
 		activity.isEligibleForPrediction = false
 		activity.persistentIdentifier = ActivityManager.identifer(for: article)
+		updateReadArticleSearchAttributes(with: article)
+		#endif
+
+		readingArticle = article
 		
-		// CoreSpotlight
+		return activity
+	}
+	
+	func updateReadArticleSearchAttributes(with article: Article) {
+		
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeCompositeContent as String)
 		attributeSet.title = article.title
 		attributeSet.contentDescription = article.summary
-		attributeSet.keywords = keywords
+		attributeSet.keywords = makeKeywords(article)
 		
 		if let image = article.avatarImage() {
 			attributeSet.thumbnailData = image.pngData()
 		}
 		
-		activity.contentAttributeSet = attributeSet
-		#endif
-
-		return activity
+		readingActivity?.contentAttributeSet = attributeSet
+		readingActivity?.needsSave = true
+		
+	}
+	
+	func makeKeywords(_ article: Article) -> [String] {
+		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
+		let articleTitleKeywords = makeKeywords(article.title)
+		return feedNameKeywords + articleTitleKeywords
 	}
 	
 	func makeKeywords(_ value: String?) -> [String] {
