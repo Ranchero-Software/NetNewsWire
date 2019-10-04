@@ -711,10 +711,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func markAllAsRead(_ articles: [Article]) {
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markReadCommand)
+		markArticlesWithUndo(articles, statusKey: .read, flag: true)
 	}
 	
 	func markAllAsRead() {
@@ -747,42 +744,34 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func markAsReadForCurrentArticle() {
 		if let article = currentArticle {
-			markArticles(Set([article]), statusKey: .read, flag: true)
+			markArticlesWithUndo([article], statusKey: .read, flag: true)
 		}
 	}
 	
 	func markAsUnreadForCurrentArticle() {
 		if let article = currentArticle {
-			markArticles(Set([article]), statusKey: .read, flag: false)
+			markArticlesWithUndo([article], statusKey: .read, flag: false)
 		}
 	}
 	
 	func toggleReadForCurrentArticle() {
 		if let article = currentArticle {
-			markArticles(Set([article]), statusKey: .read, flag: !article.status.read)
+			toggleRead(article)
 		}
 	}
 	
 	func toggleRead(_ article: Article) {
-		guard let undoManager = undoManager,
-			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
-				return
-		}
-		runCommand(markReadCommand)
+		markArticlesWithUndo([article], statusKey: .read, flag: !article.status.read)
 	}
 
 	func toggleStarredForCurrentArticle() {
 		if let article = currentArticle {
-			markArticles(Set([article]), statusKey: .starred, flag: !article.status.starred)
+			toggleStar(article)
 		}
 	}
 	
 	func toggleStar(_ article: Article) {
-		guard let undoManager = undoManager,
-			let markReadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
-				return
-		}
-		runCommand(markReadCommand)
+		markArticlesWithUndo([article], statusKey: .starred, flag: !article.status.starred)
 	}
 
 	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
@@ -981,6 +970,13 @@ extension SceneCoordinator: ArticleExtractorDelegate {
 
 private extension SceneCoordinator {
 
+	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool) {
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
+	
 	func updateUnreadCount() {
 		var count = 0
 		for article in articles {
