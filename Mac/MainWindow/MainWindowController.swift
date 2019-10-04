@@ -323,6 +323,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			makeToolbarValidate()
 		}
 		
+		if articleExtractor?.state == .failedToParse {
+			startArticleExtractorForCurrentLink()
+			return
+		}
+		
 		guard articleExtractor?.state != .processing else {
 			articleExtractor?.cancel()
 			articleExtractor = nil
