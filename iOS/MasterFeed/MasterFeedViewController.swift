@@ -344,7 +344,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@IBAction func markAllAsRead(_ sender: Any) {
-		if coordinator.shouldWarnBeforeMarkAllAsRead {
+		if coordinator.askBeforeMarkAllAsRead {
 			let alertController = MarkArticlesReadAlertController.allArticlesAlert { [weak self] _ in
 				self?.coordinator.markAllAsRead()
 			}

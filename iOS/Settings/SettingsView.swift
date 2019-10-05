@@ -74,6 +74,9 @@ struct SettingsView : View {
 			Stepper(value: $viewModel.timelineNumberOfLines, in: 2...6) {
 				Text("Number of Text Lines: \(viewModel.timelineNumberOfLines)")
 			}
+			Toggle(isOn: $viewModel.askBeforeMarkAllAsRead) {
+				Text("Ask Before Mark All as Read")
+			}
 		}
 	}
 	
@@ -270,6 +273,16 @@ struct SettingsView : View {
 			set {
 				objectWillChange.send()
 				AppDefaults.timelineGroupByFeed = newValue
+			}
+		}
+		
+		var askBeforeMarkAllAsRead: Bool {
+			get {
+				return AppDefaults.askBeforeMarkAllAsRead
+			}
+			set {
+				objectWillChange.send()
+				AppDefaults.askBeforeMarkAllAsRead = newValue
 			}
 		}
 		

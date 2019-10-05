@@ -83,7 +83,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	private(set) var shouldWarnBeforeMarkAllAsRead = false
+	private(set) var askBeforeMarkAllAsRead = AppDefaults.askBeforeMarkAllAsRead
 
 	private let treeControllerDelegate = FeedTreeControllerDelegate()
 	private lazy var treeController: TreeController = {
@@ -424,6 +424,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		self.sortDirection = AppDefaults.timelineSortDirection
 		self.groupByFeed = AppDefaults.timelineGroupByFeed
+		self.askBeforeMarkAllAsRead = AppDefaults.askBeforeMarkAllAsRead
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {

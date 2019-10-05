@@ -89,7 +89,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	// MARK: Actions
 
 	@IBAction func markAllAsRead(_ sender: Any) {
-		if coordinator.shouldWarnBeforeMarkAllAsRead {
+		if coordinator.askBeforeMarkAllAsRead {
 			let alertController = MarkArticlesReadAlertController.timelineArticlesAlert { [weak self] _ in
 				self?.coordinator.markAllAsReadInTimeline()
 			}

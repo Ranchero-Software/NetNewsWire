@@ -18,6 +18,7 @@ struct AppDefaults {
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
 		static let timelineSortDirection = "timelineSortDirection"
+		static let askBeforeMarkAllAsRead = "askBeforeMarkAllAsRead"
 		static let refreshInterval = "refreshInterval"
 		static let lastRefresh = "lastRefresh"
 	}
@@ -66,6 +67,15 @@ struct AppDefaults {
 			setSortDirection(for: Key.timelineSortDirection, newValue)
 		}
 	}
+	
+	static var askBeforeMarkAllAsRead: Bool {
+		get {
+			return bool(for: Key.askBeforeMarkAllAsRead)
+		}
+		set {
+			setBool(for: Key.askBeforeMarkAllAsRead, newValue)
+		}
+	}
 
 	static var lastRefresh: Date? {
 		get {
@@ -90,6 +100,7 @@ struct AppDefaults {
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.timelineNumberOfLines: 3,
+										Key.askBeforeMarkAllAsRead: true,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue]
 		AppDefaults.shared.register(defaults: defaults)
 	}
