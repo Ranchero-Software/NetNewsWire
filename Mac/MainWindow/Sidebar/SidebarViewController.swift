@@ -47,6 +47,7 @@ protocol SidebarDelegate: class {
 		sidebarCellAppearance = SidebarCellAppearance(fontSize: AppDefaults.sidebarFontSize)
 
 		outlineView.dataSource = dataSource
+		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
 		outlineView.registerForDraggedTypes([FeedPasteboardWriter.feedUTIInternalType, FeedPasteboardWriter.feedUTIType, .URL, .string])
 
@@ -152,6 +153,13 @@ protocol SidebarDelegate: class {
 			return
 		}
 		deleteNodes(selectedNodes)
+	}
+	
+	@IBAction func doubleClickedSidebar(_ sender: Any?) {
+		guard outlineView.clickedRow == outlineView.selectedRow else {
+			return
+		}
+		openInBrowser(sender)
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
