@@ -89,24 +89,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	// MARK: Actions
 
 	@IBAction func markAllAsRead(_ sender: Any) {
-		
-		let title = NSLocalizedString("Mark All Read", comment: "Mark All Read")
-		let message = NSLocalizedString("Mark all articles in this timeline as read?", comment: "Mark all articles")
-		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
-		alertController.addAction(cancelAction)
-		
-		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
-		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-			self?.coordinator.markAllAsReadInTimeline()
+		if coordinator.shouldWarnBeforeMarkAllAsRead {
+			let alertController = MarkArticlesReadAlertController.timelineArticlesAlert { [weak self] _ in
+				self?.coordinator.markAllAsReadInTimeline()
+			}
+			
+			present(alertController, animated: true)
+		} else {
+			coordinator.markAllAsReadInTimeline()
 		}
-		
-		alertController.addAction(markAction)
-		
-		present(alertController, animated: true)
-		
 	}
 	
 	@IBAction func firstUnread(_ sender: Any) {
