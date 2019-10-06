@@ -32,6 +32,14 @@ final class FeedlySyncStrategy {
 	
 	private var startSyncCompletionHandler: ((Result<Void, Error>) -> ())?
 	
+	private var newerThan: Date? {
+		if let date = account.metadata.lastArticleFetch {
+			return date
+		} else {
+			return Calendar.current.date(byAdding: .day, value: -31, to: Date())
+		}
+	}
+	
 	/// The truth is in the cloud.
 	func startSync(completionHandler: @escaping (Result<Void, Error>) -> ()) {
 		guard operationQueue.operationCount == 0 else {
@@ -63,6 +71,8 @@ final class FeedlySyncStrategy {
 		// Get the streams for each Collection. It will call back to enqueue more operations.
 		let getCollectionStreams = FeedlyRequestStreamsOperation(account: account,
 																 collectionsProvider: getCollections,
+																 newerThan: newerThan,
+																 unreadOnly: false,
 																 caller: caller,
 																 log: log)
 		getCollectionStreams.delegate = self
@@ -71,12 +81,16 @@ final class FeedlySyncStrategy {
 		
 		// Last operation to perform, which should be dependent on any other operation added to the queue.
 		let syncId = UUID().uuidString
+		let lastArticleFetchDate = Date()
 		let completionOperation = BlockOperation { [weak self] in
-			if let self = self {
-				os_log(.debug, log: self.log, "Sync completed: %@", syncId)
-				self.startSyncCompletionHandler = nil
+			DispatchQueue.main.async {
+				if let self = self {
+					self.account.metadata.lastArticleFetch = lastArticleFetchDate
+					os_log(.debug, log: self.log, "Sync completed: %@", syncId)
+					self.startSyncCompletionHandler = nil
+				}
+				completionHandler(.success(()))
 			}
-			completionHandler(.success(()))
 		}
 		
 		completionOperation.addDependency(getCollections)

@@ -281,8 +281,9 @@ class AccountFeedlySyncTest: XCTestCase {
 	}
 	
 	func set(testFiles: TestFiles, with transport: TestTransport) {
+		// TestTransport blacklists certain query items to make mocking responses easier.
 		let endpoint = "https://sandbox7.feedly.com/v3"
-		let category = "\(endpoint)/streams/contents?unreadOnly=false&count=500&streamId=user/f2f031bd-f3e3-4893-a447-467a291c6d1e/category"
+		let category = "\(endpoint)/streams/contents?streamId=user/f2f031bd-f3e3-4893-a447-467a291c6d1e/category"
 		
 		switch testFiles {
 		case .initial:
