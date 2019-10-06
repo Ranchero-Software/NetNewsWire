@@ -829,7 +829,8 @@ private extension MasterFeedViewController {
 	
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
-		let action = UIAction(title: title, image: AppAssets.trashImage) { [weak self] action in
+		
+		let action = UIAction(title: title, image: AppAssets.trashImage, attributes: .destructive) { [weak self] action in
 			self?.delete(indexPath: indexPath)
 		}
 		return action
@@ -860,7 +861,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Get Info", comment: "Get Infor")
+		let title = NSLocalizedString("Get Info", comment: "Get Info")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showFeedInspector(for: feed)
 			completionHandler(true)
