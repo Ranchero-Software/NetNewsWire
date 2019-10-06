@@ -1,6 +1,6 @@
-CODE_SIGN_IDENTITY[config=Release] = Developer ID Application
+CODE_SIGN_IDENTITY[config=Release] = Mac Developer
 CODE_SIGN_IDENTITY[config=Debug] = Mac Developer
-DEVELOPMENT_TEAM[config=Release] = M8L2WTLA8W 
+DEVELOPMENT_TEAM[config=Release] = M8L2WTLA8W
 CODE_SIGN_STYLE = Automatic
 PROVISIONING_PROFILE_SPECIFIER =
 
