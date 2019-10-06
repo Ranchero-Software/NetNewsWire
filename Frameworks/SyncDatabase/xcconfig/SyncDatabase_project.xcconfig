@@ -1,6 +1,6 @@
 CODE_SIGN_IDENTITY = Mac Developer
 CODE_SIGN_STYLE = Automatic
-DEVELOPMENT_TEAM = 9C84TZ7Q6Z
+DEVELOPMENT_TEAM = M8L2WTLA8W
 
 // See the notes in NetNewsWire_target.xcconfig on why the
 // DeveloperSettings.xcconfig is #included here
