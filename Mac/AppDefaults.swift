@@ -33,6 +33,7 @@ struct AppDefaults {
 		static let exportOPMLAccountID = "exportOPMLAccountID"
 
 		// Hidden prefs
+		static let showDebugMenu = "ShowDebugMenu"
 		static let timelineShowsSeparators = "CorreiaSeparators"
 		static let showTitleOnMainWindow = "KafasisTitleMode"
 		static let hideDockUnreadCount = "JustinMillerHideDockUnreadCount"
@@ -142,6 +143,10 @@ struct AppDefaults {
 	static var hideDockUnreadCount: Bool {
 		return bool(for: Key.hideDockUnreadCount)
 	}
+	
+	static var showDebugMenu: Bool {
+		return bool(for: Key.showDebugMenu)
+	}
 
 	#if !MAC_APP_STORE
 		static var webInspectorEnabled: Bool {
@@ -196,7 +201,22 @@ struct AppDefaults {
 	}
 
 	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(), Key.sidebarFontSize: FontSize.medium.rawValue, Key.timelineFontSize: FontSize.medium.rawValue, Key.detailFontSize: FontSize.medium.rawValue, Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue, "NSScrollViewShouldScrollUnderTitlebar": false, Key.refreshInterval: RefreshInterval.everyHour.rawValue]
+		#if DEBUG
+		let showDebugMenu = true
+		#else
+		let showDebugMenu = false
+		#endif
+
+		let defaults: [String : Any] = [
+			Key.lastImageCacheFlushDate: Date(),
+			Key.sidebarFontSize: FontSize.medium.rawValue,
+			Key.timelineFontSize: FontSize.medium.rawValue,
+			Key.detailFontSize: FontSize.medium.rawValue,
+			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+			"NSScrollViewShouldScrollUnderTitlebar": false,
+			Key.refreshInterval: RefreshInterval.everyHour.rawValue,
+			Key.showDebugMenu: showDebugMenu,
+		]
 
 		UserDefaults.standard.register(defaults: defaults)
 

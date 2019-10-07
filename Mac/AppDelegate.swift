@@ -175,18 +175,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		refreshTimer = AccountRefreshTimer()
 		syncTimer = ArticleStatusSyncTimer()
 		
-		#if RELEASE
+		if AppDefaults.showDebugMenu {
+			refreshTimer!.update()
+			syncTimer!.update()
+			
+			// The Web Inspector uses SPI and can never appear in a MAC_APP_STORE build.
+			#if MAC_APP_STORE
+			let debugMenu = debugMenuItem.submenu!
+			let toggleWebInspectorItemIndex = debugMenu.indexOfItem(withTarget: self, andAction: #selector(toggleWebInspectorEnabled(_:)))
+			if toggleWebInspectorItemIndex != -1 {
+				debugMenu.removeItem(at: toggleWebInspectorItemIndex)
+			}
+			#endif
+		} else {
 			debugMenuItem.menu?.removeItem(debugMenuItem)
 			DispatchQueue.main.async {
 				self.refreshTimer!.timedRefresh(nil)
 				self.syncTimer!.timedRefresh(nil)
 			}
-		#endif
-
-		#if DEBUG
-			refreshTimer!.update()
-			syncTimer!.update()
-		#endif
+		}
 
 		#if !MAC_APP_STORE
 			DispatchQueue.main.async {
@@ -309,11 +316,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
+
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.webInspectorEnabled ? .on : .off
 		}
 		#endif
+
 		return true
 	}
 
