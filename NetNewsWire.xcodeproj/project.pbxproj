@@ -2287,7 +2287,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Manual;
 					};
 					840D617B2029031C009BC708 = {
