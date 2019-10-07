@@ -878,7 +878,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEB6202422BB00712EC3 /* Account_target.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
 			};
 			name = Debug;
 		};
@@ -886,7 +885,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEB6202422BB00712EC3 /* Account_target.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
 			};
 			name = Release;
 		};

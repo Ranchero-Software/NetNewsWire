@@ -3334,7 +3334,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = M8L2WTLA8W;
 			};
 			name = Debug;
 		};
