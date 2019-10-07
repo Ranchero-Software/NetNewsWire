@@ -407,13 +407,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		513C5CEE232571C2003D4054 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 513C5CE5232571C2003D4054;
-			remoteInfo = "NetNewsWire iOS Share Extension";
-		};
 		51554C00228B6EB50055115A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */;
@@ -422,13 +415,6 @@
 			remoteInfo = SyncDatabase;
 		};
 		51554C26228B71910055115A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 51554BEA228B6E8F0055115A;
-			remoteInfo = SyncDatabase;
-		};
-		51554C32228B71A10055115A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */;
 			proxyType = 1;
@@ -450,62 +436,6 @@
 			remoteInfo = Articles;
 		};
 		51C451BF226377D000C03939 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 848934F51F62484F00CEBD24;
-			remoteInfo = Account;
-		};
-		51C451D42264C7F200C03939 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84C37F9820DD8D0400CA8CF5 /* RSWeb.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 849C08D41E0CACA3006B03FA;
-			remoteInfo = RSWebiOS;
-		};
-		51C451E22264C7F900C03939 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84C37F8F20DD8CFD00CA8CF5 /* RSTree.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 842A0BE01CFCB9BC00BF746C;
-			remoteInfo = RSTree;
-		};
-		51C451E62264C80600C03939 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84C37F8620DD8CF800CA8CF5 /* RSParser.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 84FF5F831EFA285800C15A01;
-			remoteInfo = RSParser;
-		};
-		51C451EA2264C81000C03939 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84C37FB920DD8E0C00CA8CF5 /* RSDatabase.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8400ABF61E0CFBD800AA7C57;
-			remoteInfo = RSDatabaseiOS;
-		};
-		51C451EE2264C81B00C03939 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84C37F7A20DD8CF200CA8CF5 /* RSCore.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 842DD7BB1E14993900E061EB;
-			remoteInfo = RSCoreiOS;
-		};
-		51C451F22264C83100C03939 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 844BEE361F0AB3AA004AB7CD;
-			remoteInfo = ArticlesDatabase;
-		};
-		51C451F62264C83900C03939 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 841D4D542106B3D500DD04E6 /* Articles.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 844BEE5A1F0AB3C8004AB7CD;
-			remoteInfo = Articles;
-		};
-		51C451FA2264C83E00C03939 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
 			proxyType = 1;
@@ -2203,16 +2133,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				51C451D52264C7F200C03939 /* PBXTargetDependency */,
-				51C451E32264C7F900C03939 /* PBXTargetDependency */,
-				51C451E72264C80600C03939 /* PBXTargetDependency */,
-				51C451EB2264C81000C03939 /* PBXTargetDependency */,
-				51C451EF2264C81B00C03939 /* PBXTargetDependency */,
-				51C451F32264C83100C03939 /* PBXTargetDependency */,
-				51C451F72264C83900C03939 /* PBXTargetDependency */,
-				51C451FB2264C83E00C03939 /* PBXTargetDependency */,
-				51554C33228B71A10055115A /* PBXTargetDependency */,
-				513C5CEF232571C2003D4054 /* PBXTargetDependency */,
 			);
 			name = "NetNewsWire-iOS";
 			productName = "NetNewsWire-iOS";
@@ -3078,20 +2998,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		513C5CEF232571C2003D4054 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */;
-			targetProxy = 513C5CEE232571C2003D4054 /* PBXContainerItemProxy */;
-		};
 		51554C27228B71910055115A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SyncDatabase;
 			targetProxy = 51554C26228B71910055115A /* PBXContainerItemProxy */;
-		};
-		51554C33228B71A10055115A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = SyncDatabase;
-			targetProxy = 51554C32228B71A10055115A /* PBXContainerItemProxy */;
 		};
 		51C451AC226377C300C03939 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3107,46 +3017,6 @@
 			isa = PBXTargetDependency;
 			name = Account;
 			targetProxy = 51C451BF226377D000C03939 /* PBXContainerItemProxy */;
-		};
-		51C451D52264C7F200C03939 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RSWebiOS;
-			targetProxy = 51C451D42264C7F200C03939 /* PBXContainerItemProxy */;
-		};
-		51C451E32264C7F900C03939 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RSTree;
-			targetProxy = 51C451E22264C7F900C03939 /* PBXContainerItemProxy */;
-		};
-		51C451E72264C80600C03939 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RSParser;
-			targetProxy = 51C451E62264C80600C03939 /* PBXContainerItemProxy */;
-		};
-		51C451EB2264C81000C03939 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RSDatabaseiOS;
-			targetProxy = 51C451EA2264C81000C03939 /* PBXContainerItemProxy */;
-		};
-		51C451EF2264C81B00C03939 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RSCoreiOS;
-			targetProxy = 51C451EE2264C81B00C03939 /* PBXContainerItemProxy */;
-		};
-		51C451F32264C83100C03939 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ArticlesDatabase;
-			targetProxy = 51C451F22264C83100C03939 /* PBXContainerItemProxy */;
-		};
-		51C451F72264C83900C03939 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Articles;
-			targetProxy = 51C451F62264C83900C03939 /* PBXContainerItemProxy */;
-		};
-		51C451FB2264C83E00C03939 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Account;
-			targetProxy = 51C451FA2264C83E00C03939 /* PBXContainerItemProxy */;
 		};
 		849C64731ED37A5D003D8FC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

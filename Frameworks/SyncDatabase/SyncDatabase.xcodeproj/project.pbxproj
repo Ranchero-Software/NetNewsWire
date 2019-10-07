@@ -184,6 +184,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51554C1A228B701F0055115A /* SyncDatabase_project_debug.xcconfig */;
 			buildSettings = {
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 			};
 			name = Debug;
 		};
@@ -191,6 +192,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51554C1C228B701F0055115A /* SyncDatabase_project_release.xcconfig */;
 			buildSettings = {
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 			};
 			name = Release;
 		};
