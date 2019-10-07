@@ -48,7 +48,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 			caller = FeedWranglerAPICaller(transport: session)
 		}
 		
-		database = SyncDatabase(databaseFilePath: dataFolder.appending("/Sync.sqlite"))
+		database = SyncDatabase(databaseFilePath: dataFolder.appending("/Sync.sqlite3"))
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
