@@ -344,24 +344,15 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@IBAction func markAllAsRead(_ sender: Any) {
-		
-		let title = NSLocalizedString("Mark All Read", comment: "Mark All Read")
-		let message = NSLocalizedString("Mark all articles in all accounts as read?", comment: "Mark all articles")
-		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-		
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
-		alertController.addAction(cancelAction)
-		
-		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
-		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-			self?.coordinator.markAllAsRead()
-		}
-		
-		alertController.addAction(markAction)
-		
-		present(alertController, animated: true)
-		
+		if coordinator.shouldDisplayMarkAllAsReadUndoTip {
+			let alertController = MarkArticlesReadAlertController.allArticlesAlert { [weak self] _ in
+				self?.coordinator.markAllAsRead()
+			}
+			
+			present(alertController, animated: true)
+		} else {
+			coordinator.markAllAsRead()
+		}		
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
