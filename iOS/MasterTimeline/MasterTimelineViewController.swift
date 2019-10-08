@@ -476,7 +476,7 @@ private extension MasterTimelineViewController {
 			}
 			
 			titleView.label.text = coordinator.timelineName
-			updateTitleUnreadCount()
+			updateTitleUnreadCount(animate: false)
 
 			if coordinator.timelineFetcher is Feed {
 				titleView.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
@@ -493,22 +493,30 @@ private extension MasterTimelineViewController {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
 		
-		updateUI()
-		
+		updateToolbar()
+
 	}
 	
 	func updateUI() {
-		updateTitleUnreadCount()
+		updateTitleUnreadCount(animate: true)
+		updateToolbar()
+	}
+	
+	func updateToolbar() {
 		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 	}
 	
-	func updateTitleUnreadCount() {
+	func updateTitleUnreadCount(animate: Bool) {
 		if let unreadCountProvider = coordinator.timelineFetcher as? UnreadCountProvider {
-			UIView.animate(withDuration: 0.3) {
+			if animate {
+				UIView.animate(withDuration: 0.3) {
+					self.titleView?.unreadCountView.unreadCount = unreadCountProvider.unreadCount
+					self.titleView?.setNeedsLayout()
+					self.titleView?.layoutIfNeeded()
+				}
+			} else {
 				self.titleView?.unreadCountView.unreadCount = unreadCountProvider.unreadCount
-				self.titleView?.setNeedsLayout()
-				self.titleView?.layoutIfNeeded()
 			}
 		}
 	}
