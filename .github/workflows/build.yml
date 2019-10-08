@@ -1,0 +1,23 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macOS-latest
+    
+    steps:
+    - name: Checkout Project
+      uses: actions/checkout@v1
+      with: 
+        submodules: recursive
+
+    - name: Switch to Xcode 11
+      run: sudo xcode-select -s /Applications/Xcode_11.app
+    
+    - name: Run Build
+      env:
+          ENCRYPTION_SECRET: ${{ secrets.ENCRYPTION_SECRET }}
+          KEY_SECRET: ${{ secrets.KEY_SECRET }}
+      run: buildscripts/ci-build.sh
