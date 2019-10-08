@@ -18,6 +18,7 @@ struct AppDefaults {
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
 		static let timelineSortDirection = "timelineSortDirection"
+		static let displayMarkAllAsReadUndoTip = "displayMarkAllAsReadUndoTip"
 		static let refreshInterval = "refreshInterval"
 		static let lastRefresh = "lastRefresh"
 	}
@@ -67,6 +68,15 @@ struct AppDefaults {
 		}
 	}
 
+	static var displayMarkAllAsReadUndoTip: Bool {
+		get {
+			return bool(for: Key.displayMarkAllAsReadUndoTip)
+		}
+		set {
+			setBool(for: Key.displayMarkAllAsReadUndoTip, newValue)
+		}
+	}
+	
 	static var lastRefresh: Date? {
 		get {
 			return date(for: Key.lastRefresh)
@@ -90,7 +100,8 @@ struct AppDefaults {
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.timelineNumberOfLines: 3,
-										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue]
+										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+										Key.displayMarkAllAsReadUndoTip: true]
 		AppDefaults.shared.register(defaults: defaults)
 	}
 

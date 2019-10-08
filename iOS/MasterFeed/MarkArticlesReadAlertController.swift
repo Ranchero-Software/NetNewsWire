@@ -12,13 +12,13 @@ import UIKit
 struct MarkArticlesReadAlertController {
 		
 	static func allArticlesAlert(handler: @escaping (UIAlertAction) -> Void) -> UIAlertController {
-		let message = NSLocalizedString("Mark all articles in all accounts as read?",
+		let message = NSLocalizedString("Mark all articles in all accounts as read? You can undo this action with a three finger swipe to the right.",
 										comment: "Mark all articles")
 		return markAllReadAlert(message: message, handler: handler)
 	}
 	
 	static func timelineArticlesAlert(handler:  @escaping (UIAlertAction) -> Void) -> UIAlertController {
-		let message = NSLocalizedString("Mark all articles in this timeline as read?",
+		let message = NSLocalizedString("Mark all articles in this timeline as read? You can undo this action with a three finger swipe to the right.",
 										comment: "Mark all articles")
 		return markAllReadAlert(message: message, handler: handler)
 	}
