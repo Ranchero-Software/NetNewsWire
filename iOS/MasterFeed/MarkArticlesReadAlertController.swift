@@ -10,30 +10,17 @@ import Foundation
 import UIKit
 
 struct MarkArticlesReadAlertController {
-		
-	static func allArticlesAlert(handler: @escaping (UIAlertAction) -> Void) -> UIAlertController {
-		let message = NSLocalizedString("Mark all articles in all accounts as read? You can undo this action with a three finger swipe to the left.",
-										comment: "Mark all articles")
-		return markAllReadAlert(message: message, handler: handler)
-	}
-	
-	static func timelineArticlesAlert(handler:  @escaping (UIAlertAction) -> Void) -> UIAlertController {
-		let message = NSLocalizedString("Mark all articles in this timeline as read? You can undo this action with a three finger swipe to the left.",
-										comment: "Mark all articles")
-		return markAllReadAlert(message: message, handler: handler)
-	}
-	
-	// MARK: -
-	
-	private static func markAllReadAlert(message: String,
-										 handler: @escaping (UIAlertAction) -> Void) -> UIAlertController {
+			
+	static func markAllAsReadAlert(handler: @escaping (UIAlertAction) -> Void) -> UIAlertController {
 		let title = NSLocalizedString("Mark All Read", comment: "Mark All Read")
+		let message = NSLocalizedString("You can undo this and other actions with a three finger swipe to the left.",
+										comment: "Mark all articles")
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
+		let confirmTitle = NSLocalizedString("Got It", comment: "Got It")
 		
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
-		let markAction = UIAlertAction(title: markTitle, style: .default, handler: handler)
+		let markAction = UIAlertAction(title: confirmTitle, style: .default, handler: handler)
 		
 		alertController.addAction(cancelAction)
 		alertController.addAction(markAction)
