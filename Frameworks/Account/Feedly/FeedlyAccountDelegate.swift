@@ -267,13 +267,16 @@ final class FeedlyAccountDelegate: AccountDelegate {
 												  homePageURL: feedlyFeed.website)
 					folder.addFeed(feed)
 				}
+				
 				let feedsAfter = folder.flattenedFeeds()
 				let added = feedsAfter.subtracting(feedsBefore)
+				
 				if let feed = added.first {
 					completion(.success(feed))
 				} else {
-					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+					completion(.failure(AccountError.createErrorNotFound))
 				}
+				
 			case .failure(let error):
 				completion(.failure(error))
 			}
