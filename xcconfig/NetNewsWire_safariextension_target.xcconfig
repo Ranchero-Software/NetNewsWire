@@ -34,7 +34,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 CODE_SIGN_ENTITLEMENTS = Mac/SafariExtension/Subscribe_to_Feed.entitlements
 INFOPLIST_FILE = Mac/SafariExtension/Info.plist
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks
-PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire-Evergreen.Subscribe-to-Feed
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen.Subscribe-to-Feed
 PRODUCT_NAME = $(TARGET_NAME)
 
 SDKROOT = macosx
