@@ -452,7 +452,29 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		let group = DispatchGroup()
+		
+		for feed in folder.topLevelFeeds {
+			
+			folder.topLevelFeeds.remove(feed)
+			
+			group.enter()
+			restoreFeed(for: account, feed: feed, container: folder) { result in
+				group.leave()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+				}
+			}
+			
+		}
+		
+		group.notify(queue: .main) {
+			account.addFolder(folder)
+			completion(.success(()))
+		}
 	}
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
