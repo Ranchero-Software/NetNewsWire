@@ -17,6 +17,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 //    CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
 //    CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = iPhone Developer
 //    DEVELOPMENT_TEAM = <Your Team ID>
+//    ORGANIZATION_IDENTIFIER = <Your Domain Name Reversed>
 //    CODE_SIGN_STYLE = Automatic
 //    PROVISIONING_PROFILE_SPECIFIER =
 //
