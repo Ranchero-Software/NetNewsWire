@@ -430,7 +430,25 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
+			account.addFeed(existingFeed, to: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		} else {
+			createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		}
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
