@@ -254,7 +254,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		progress.addToNumberOfTasksAndRemaining(1)
 		
 		caller.addFeed(with: resourceId, title: name, toCollectionWith: collectionId) { [weak self] result in
-			progress.completeTask()
+			defer { progress.completeTask() }
 			
 			switch result {
 			case .success(let feedlyFeeds):
@@ -276,6 +276,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				}
 				
 				let group = DispatchGroup()
+				progress.addToNumberOfTasksAndRemaining(1)
 				
 				if let self = self {
 					for feed in added {
@@ -299,6 +300,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				}
 				
 				group.notify(queue: .main) {
+					progress.completeTask()
 					completion(.success(first))
 				}
 				
