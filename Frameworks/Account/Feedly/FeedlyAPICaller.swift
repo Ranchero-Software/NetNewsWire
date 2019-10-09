@@ -387,6 +387,98 @@ final class FeedlyAPICaller {
 			}
 		}
 	}
+	
+	func addFeed(with feedId: FeedlyFeedResourceId, title: String? = nil, toCollectionWith collectionId: String, completionHandler: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
+		guard let accessToken = credentials?.secret else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(CredentialsError.incompleteCredentials))
+			}
+		}
+
+		guard let encodedId = encodeForURLPath(collectionId) else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(FeedbinAccountDelegateError.invalidParameter))
+			}
+		}
+		var components = baseUrlComponents
+		components.percentEncodedPath = "/v3/collections/\(encodedId)/feeds"
+		
+		guard let url = components.url else {
+			fatalError("\(components) does not produce a valid URL.")
+		}
+		
+		var request = URLRequest(url: url)
+		request.httpMethod = "PUT"
+		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
+		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
+		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
+		
+		do {
+			struct AddFeedBody: Encodable {
+				var id: String
+				var title: String?
+			}
+			let encoder = JSONEncoder()
+			let data = try encoder.encode(AddFeedBody(id: feedId.id, title: title))
+			request.httpBody = data
+		} catch {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(error))
+			}
+		}
+		
+		transport.send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+			switch result {
+			case .success(_, let collectionFeeds):
+				if let feeds = collectionFeeds {
+					completionHandler(.success(feeds))
+				} else {
+					completionHandler(.failure(URLError(.cannotDecodeContentData)))
+				}
+			case .failure(let error):
+				completionHandler(.failure(error))
+			}
+		}
+	}
+	
+	func removeFeed(_ feedId: String, fromCollectionWith collectionId: String, completionHandler: @escaping (Result<Void, Error>) -> ()) {
+		guard let accessToken = credentials?.secret else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(CredentialsError.incompleteCredentials))
+			}
+		}
+
+		guard let encodedCollectionId = encodeForURLPath(collectionId), let encodedFeedId = encodeForURLPath(feedId) else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(FeedbinAccountDelegateError.invalidParameter))
+			}
+		}
+		var components = baseUrlComponents
+		components.percentEncodedPath = "/v3/collections/\(encodedCollectionId)/feeds/\(encodedFeedId)"
+		
+		guard let url = components.url else {
+			fatalError("\(components) does not produce a valid URL.")
+		}
+		
+		var request = URLRequest(url: url)
+		request.httpMethod = "DELETE"
+		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
+		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
+		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
+		
+		transport.send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+			switch result {
+			case .success(let httpResponse, _):
+				if httpResponse.statusCode == 200 {
+					completionHandler(.success(()))
+				} else {
+					completionHandler(.failure(URLError(.cannotDecodeContentData)))
+				}
+			case .failure(let error):
+				completionHandler(.failure(error))
+			}
+		}
+	}
 }
 
 extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
