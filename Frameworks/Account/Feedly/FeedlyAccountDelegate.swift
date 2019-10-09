@@ -148,14 +148,21 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+		
+		let progress = refreshProgress
+		progress.addToNumberOfTasksAndRemaining(1)
+		
 		caller.createCollection(named: name) { result in
+			progress.completeTask()
+			
 			switch result {
 			case .success(let collection):
 				if let folder = account.ensureFolder(with: collection.label) {
 					folder.externalID = collection.id
 					completion(.success(folder))
 				} else {
-					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+					// Is the name empty? Or one of the global resource names?
+					completion(.failure(FeedlyAccountDelegateError.unableToAddFolder(name)))
 				}
 			case .failure(let error):
 				completion(.failure(error))
@@ -165,26 +172,40 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let id = folder.externalID else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
-			return
+			return DispatchQueue.main.async {
+				completion(.failure(FeedlyAccountDelegateError.unableToRenameFolder(folder.nameForDisplay, name)))
+			}
 		}
+		
+		let nameBefore = folder.name
+		
 		caller.renameCollection(with: id, to: name) { result in
 			switch result {
 			case .success(let collection):
 				folder.name = collection.label
 				completion(.success(()))
 			case .failure(let error):
+				folder.name = nameBefore
 				completion(.failure(error))
 			}
 		}
+		
+		folder.name = name
 	}
 	
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let id = folder.externalID else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
-			return
+			return DispatchQueue.main.async {
+				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFolder(folder.nameForDisplay)))
+			}
 		}
+		
+		let progress = refreshProgress
+		progress.addToNumberOfTasksAndRemaining(1)
+		
 		caller.deleteCollection(with: id) { result in
+			progress.completeTask()
+			
 			switch result {
 			case .success:
 				account.removeFolder(folder)
@@ -195,32 +216,267 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
+	private func isValidContainer(for account: Account, container: Container) throws -> (Folder, String) {
+		guard let folder = container as? Folder else {
+			throw FeedlyAccountDelegateError.addFeedChooseFolder
+		}
+		
+		guard let collectionId = folder.externalID else {
+			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder)
+		}
+		
+		guard let userId = credentials?.username else {
+			throw FeedlyAccountDelegateError.notLoggedIn
+		}
+		
+		let uncategorized = FeedlyCategoryResourceId.uncategorized(for: userId)
+		
+		guard collectionId != uncategorized.id else {
+			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder)
+		}
+		
+		return (folder, collectionId)
+	}
+	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
-		fatalError()
+		let (folder, collectionId): (Folder, String)
+		do {
+			(folder, collectionId) = try isValidContainer(for: account, container: container)
+		} catch {
+			return DispatchQueue.main.async {
+				completion(.failure(error))
+			}
+		}
+		
+		let resourceId = FeedlyFeedResourceId(url: url)
+		
+		let progress = refreshProgress
+		progress.addToNumberOfTasksAndRemaining(1)
+		
+		caller.addFeed(with: resourceId, title: name, toCollectionWith: collectionId) { [weak self] result in
+			defer { progress.completeTask() }
+			
+			switch result {
+			case .success(let feedlyFeeds):
+				let feedsBefore = folder.flattenedFeeds()
+				for feedlyFeed in feedlyFeeds where !account.hasFeed(with: feedlyFeed.feedId) {
+					let resourceId = FeedlyFeedResourceId(id: feedlyFeed.id)
+					let feed = account.createFeed(with: feedlyFeed.title,
+												  url: resourceId.url,
+												  feedID: feedlyFeed.id,
+												  homePageURL: feedlyFeed.website)
+					folder.addFeed(feed)
+				}
+				
+				let feedsAfter = folder.flattenedFeeds()
+				let added = feedsAfter.subtracting(feedsBefore)
+				
+				guard let first = added.first else {
+					return completion(.failure(AccountError.createErrorNotFound))
+				}
+				
+				let group = DispatchGroup()
+				progress.addToNumberOfTasksAndRemaining(1)
+				
+				if let self = self {
+					for feed in added {
+						group.enter()
+						let resourceId = FeedlyFeedResourceId(id: feed.feedID)
+						self.caller.getStream(for: resourceId, newerThan: nil, unreadOnly: nil) { result in
+							switch result {
+							case .success(let stream):
+								let items = Set(stream.items.map { FeedlyEntryParser(entry: $0).parsedItemRepresentation })
+								
+								account.update(feed, parsedItems: items, defaultRead: false) {
+									group.leave()
+								}
+								
+							case .failure:
+								// Feed will remain empty until new articles appear.
+								group.leave()
+							}
+						}
+					}
+				}
+				
+				group.notify(queue: .main) {
+					progress.completeTask()
+					completion(.success(first))
+				}
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
+		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
+			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			return
+		}
+		
+		let feedId = FeedlyFeedResourceId(id: feed.feedID)
+		let editedNameBefore = feed.editedName
+		
+		// Adding an existing feed updates it.
+		// Updating feed name in one folder/collection updates it for all folders/collections.
+		caller.addFeed(with: feedId, title: name, toCollectionWith: collectionId) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+				
+			case .failure(let error):
+				feed.editedName = editedNameBefore
+				completion(.failure(error))
+			}
+		}
+		
+		// optimistically set the name
+		feed.editedName = name
 	}
 	
 	func addFeed(for account: Account, with: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		let (folder, collectionId): (Folder, String)
+		do {
+			(folder, collectionId) = try isValidContainer(for: account, container: container)
+		} catch {
+			return DispatchQueue.main.async {
+				completion(.failure(error))
+			}
+		}
+		
+		let feedId = FeedlyFeedResourceId(id: with.feedID)
+		
+		caller.addFeed(with: feedId, toCollectionWith: collectionId) { result in
+			switch result {
+			case .success(let feedlyFeeds):
+				for feedlyFeed in feedlyFeeds where !folder.hasFeed(with: feedlyFeed.feedId) {
+					let feed: Feed = {
+						if with.url == FeedlyFeedResourceId(id: feedlyFeed.id).url {
+							with.metadata.feedID = feedlyFeed.id
+							with.name = feedlyFeed.title
+							with.homePageURL = feedlyFeed.website
+							return with
+						} else {
+							let resourceId = FeedlyFeedResourceId(id: feedlyFeed.id)
+							return account.createFeed(with: feedlyFeed.title,
+													  url: resourceId.url,
+													  feedID: feedlyFeed.id,
+													  homePageURL: feedlyFeed.website)
+						}
+					}()
+					folder.addFeed(feed)
+				}
+				
+				completion(.success(()))
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		guard let folder = container as? Folder, let collectionId = folder.externalID else {
+			return DispatchQueue.main.async {
+				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed)))
+			}
+		}
+		
+		caller.removeFeed(feed.feedID, fromCollectionWith: collectionId) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				folder.addFeed(feed)
+				completion(.failure(error))
+			}
+		}
+		
+		folder.removeFeed(feed)
 	}
 	
 	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		guard let from = from as? Folder, let to = to as? Folder else {
+			return DispatchQueue.main.async {
+				completion(.failure(FeedlyAccountDelegateError.addFeedChooseFolder))
+			}
+		}
+		
+		addFeed(for: account, with: feed, to: to) { [weak self] addResult in
+			switch addResult {
+				// now that we have added the feed, remove it from the other collection
+			case .success:
+				self?.removeFeed(for: account, with: feed, from: from) { removeResult in
+					switch removeResult {
+					case .success:
+						completion(.success(()))
+					case .failure:
+						from.addFeed(feed)
+						completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed, from, to)))
+					}
+				}
+			case .failure(let error):
+				from.addFeed(feed)
+				to.removeFeed(feed)
+				completion(.failure(error))
+			}
+			
+		}
+		
+		// optimistically move the feed, undoing as appropriate to the failure
+		from.removeFeed(feed)
+		to.addFeed(feed)
 	}
 	
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
+			account.addFeed(existingFeed, to: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		} else {
+			createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		}
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		let group = DispatchGroup()
+		
+		for feed in folder.topLevelFeeds {
+			
+			folder.topLevelFeeds.remove(feed)
+			
+			group.enter()
+			restoreFeed(for: account, feed: feed, container: folder) { result in
+				group.leave()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+				}
+			}
+			
+		}
+		
+		group.notify(queue: .main) {
+			account.addFolder(folder)
+			completion(.success(()))
+		}
 	}
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {

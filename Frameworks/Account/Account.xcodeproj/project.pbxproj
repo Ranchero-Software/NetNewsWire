@@ -115,6 +115,7 @@
 		9EC688EA232B973C00A8D0A2 /* FeedlyAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC688E9232B973C00A8D0A2 /* FeedlyAPICaller.swift */; };
 		9EC688EC232C583300A8D0A2 /* FeedlyAccountDelegate+OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC688EB232C583300A8D0A2 /* FeedlyAccountDelegate+OAuth.swift */; };
 		9EC688EE232C58E800A8D0A2 /* OAuthAuthorizationCodeGranting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC688ED232C58E800A8D0A2 /* OAuthAuthorizationCodeGranting.swift */; };
+		9ECC9A85234DC16E009B5144 /* FeedlyAccountDelegateError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC9A84234DC16E009B5144 /* FeedlyAccountDelegateError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -287,6 +288,7 @@
 		9EC688E9232B973C00A8D0A2 /* FeedlyAPICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyAPICaller.swift; sourceTree = "<group>"; };
 		9EC688EB232C583300A8D0A2 /* FeedlyAccountDelegate+OAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedlyAccountDelegate+OAuth.swift"; sourceTree = "<group>"; };
 		9EC688ED232C58E800A8D0A2 /* OAuthAuthorizationCodeGranting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthAuthorizationCodeGranting.swift; sourceTree = "<group>"; };
+		9ECC9A84234DC16E009B5144 /* FeedlyAccountDelegateError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyAccountDelegateError.swift; sourceTree = "<group>"; };
 		D511EEB5202422BB00712EC3 /* Account_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_debug.xcconfig; sourceTree = "<group>"; };
 		D511EEB6202422BB00712EC3 /* Account_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_target.xcconfig; sourceTree = "<group>"; };
 		D511EEB7202422BB00712EC3 /* Account_project_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_release.xcconfig; sourceTree = "<group>"; };
@@ -540,6 +542,7 @@
 			isa = PBXGroup;
 			children = (
 				9EA3133A231E368100268BA0 /* FeedlyAccountDelegate.swift */,
+				9ECC9A84234DC16E009B5144 /* FeedlyAccountDelegateError.swift */,
 				9EC688EB232C583300A8D0A2 /* FeedlyAccountDelegate+OAuth.swift */,
 				9EC688ED232C58E800A8D0A2 /* OAuthAuthorizationCodeGranting.swift */,
 				9EC688E9232B973C00A8D0A2 /* FeedlyAPICaller.swift */,
@@ -783,6 +786,7 @@
 				8469F81C1F6DD15E0084783E /* Account.swift in Sources */,
 				9EAEC60E2332FEC20085D7C9 /* FeedlyFeed.swift in Sources */,
 				5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */,
+				9ECC9A85234DC16E009B5144 /* FeedlyAccountDelegateError.swift in Sources */,
 				9EA3133B231E368100268BA0 /* FeedlyAccountDelegate.swift in Sources */,
 				51E5959B228C781500FCC42B /* FeedbinStarredEntry.swift in Sources */,
 				9E1D155923343B2A00F4944C /* FeedlyGetStreamParsedItemsOperation.swift in Sources */,
