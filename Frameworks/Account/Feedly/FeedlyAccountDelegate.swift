@@ -253,7 +253,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		let progress = refreshProgress
 		progress.addToNumberOfTasksAndRemaining(1)
 		
-		caller.addFeed(with: resourceId, title: name, toCollectionWith: collectionId) { result in
+		caller.addFeed(with: resourceId, title: name, toCollectionWith: collectionId) { [weak self] result in
 			progress.completeTask()
 			
 			switch result {
@@ -271,10 +271,35 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				let feedsAfter = folder.flattenedFeeds()
 				let added = feedsAfter.subtracting(feedsBefore)
 				
-				if let feed = added.first {
-					completion(.success(feed))
-				} else {
-					completion(.failure(AccountError.createErrorNotFound))
+				guard let first = added.first else {
+					return completion(.failure(AccountError.createErrorNotFound))
+				}
+				
+				let group = DispatchGroup()
+				
+				if let self = self {
+					for feed in added {
+						group.enter()
+						let resourceId = FeedlyFeedResourceId(id: feed.feedID)
+						self.caller.getStream(for: resourceId, newerThan: nil, unreadOnly: nil) { result in
+							switch result {
+							case .success(let stream):
+								let items = Set(stream.items.map { FeedlyEntryParser(entry: $0).parsedItemRepresentation })
+								
+								account.update(feed, parsedItems: items, defaultRead: false) {
+									group.leave()
+								}
+								
+							case .failure:
+								// Feed will remain empty until new articles appear.
+								group.leave()
+							}
+						}
+					}
+				}
+				
+				group.notify(queue: .main) {
+					completion(.success(first))
 				}
 				
 			case .failure(let error):

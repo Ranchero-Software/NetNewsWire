@@ -90,6 +90,11 @@ final class FeedlyAPICaller {
 	}
 	
 	func getStream(for collection: FeedlyCollection, newerThan: Date? = nil, unreadOnly: Bool? = nil, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
+		let id = FeedlyCategoryResourceId(id: collection.id)
+		getStream(for: id, newerThan: newerThan, unreadOnly: unreadOnly, completionHandler: completionHandler)
+	}
+	
+	func getStream(for resource: FeedlyResourceId, newerThan: Date?, unreadOnly: Bool?, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -115,7 +120,7 @@ final class FeedlyAPICaller {
 		
 		queryItems.append(contentsOf: [
 			URLQueryItem(name: "count", value: "1000"),
-			URLQueryItem(name: "streamId", value: collection.id),
+			URLQueryItem(name: "streamId", value: resource.id),
 		])
 		
 		components.queryItems = queryItems
@@ -128,12 +133,6 @@ final class FeedlyAPICaller {
 		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-		
-		//			URLSession.shared.dataTask(with: request) { (data, response, error) in
-		//				let obj = try! JSONSerialization.jsonObject(with: data!, options: .allowFragments)
-		//				let data = try! JSONSerialization.data(withJSONObject: obj, options: .prettyPrinted)
-		//				print(String(data: data, encoding: .utf8)!)
-		//			}.resume()
 		
 		transport.send(request: request, resultType: FeedlyStream.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
