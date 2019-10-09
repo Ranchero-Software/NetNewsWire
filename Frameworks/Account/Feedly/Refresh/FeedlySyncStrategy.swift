@@ -62,7 +62,7 @@ final class FeedlySyncStrategy {
 		
 		// Ensure feeds are created and grouped by their folders.
 		let createFeedsOperation = FeedlyCreateFeedsForCollectionFoldersOperation(account: account,
-																				  collectionsAndFoldersProvider: mirrorCollectionsAsFolders,
+																				  feedsAndFoldersProvider: mirrorCollectionsAsFolders,
 																				  log: log)
 		createFeedsOperation.delegate = self
 		createFeedsOperation.addDependency(mirrorCollectionsAsFolders)
@@ -78,6 +78,41 @@ final class FeedlySyncStrategy {
 		getCollectionStreams.delegate = self
 		getCollectionStreams.queueDelegate = self
 		getCollectionStreams.addDependency(getCollections)
+		
+//		if let user = caller.credentials?.username {
+//
+//			let syncSaved = FeedlyCompoundOperation {
+//
+//				let saved = FeedlyTagResourceId.saved(for: user)
+//				let getSavedStream = FeedlyGetStreamOperation(account: account,
+//															  resource: saved,
+//															  caller: caller,
+//															  newerThan: newerThan)
+//				getSavedStream.delegate = self
+//
+//				getSavedStream.addDependency(getCollections)
+//				getSavedStream.addDependency(mirrorCollectionsAsFolders)
+//				getSavedStream.addDependency(createFeedsOperation)
+//
+//				let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
+//																			  streamProvider: getSavedStream,
+//																			  log: log)
+//				organiseByFeed.delegate = self
+//				organiseByFeed.addDependency(getSavedStream)
+//
+//				let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
+//																			   organisedItemsProvider: organiseByFeed,
+//																			   log: log)
+//				updateAccount.delegate = self
+//				updateAccount.addDependency(organiseByFeed)
+//
+//				// refresh stream entries status
+//
+//				return [getSavedStream, organiseByFeed]
+//			}
+//
+//			operationQueue.addOperation(syncSaved)
+//		}
 		
 		// Last operation to perform, which should be dependent on any other operation added to the queue.
 		let syncId = UUID().uuidString
@@ -117,26 +152,18 @@ final class FeedlySyncStrategy {
 
 extension FeedlySyncStrategy: FeedlyRequestStreamsOperationDelegate {
 	
-	func feedlyRequestStreamsOperation(_ operation: FeedlyRequestStreamsOperation, enqueue collectionStreamOperation: FeedlyGetCollectionStreamOperation) {
+	func feedlyRequestStreamsOperation(_ operation: FeedlyRequestStreamsOperation, enqueue streamOperation: FeedlyGetStreamOperation) {
 		
-		collectionStreamOperation.delegate = self
+		streamOperation.delegate = self
 				
-		os_log(.debug, log: log, "Requesting stream for collection \"%@\"", collectionStreamOperation.collection.label)
-		
-		// Parse the contents of this collection's stream.
-		let parseItemsOperation = FeedlyGetStreamParsedItemsOperation(account: account,
-																	  collectionStreamProvider: collectionStreamOperation,
-																	  caller: caller,
-																	  log: log)
-		parseItemsOperation.delegate = self
-		parseItemsOperation.addDependency(collectionStreamOperation)
+//		os_log(.debug, log: log, "Requesting stream for collection \"%@\"", streamOperation.collection.label)
 		
 		// Group the stream's content by feed.
 		let groupItemsByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
-																		parsedItemsProvider: parseItemsOperation,
+																		entryProvider: streamOperation,
 																		log: log)
 		groupItemsByFeed.delegate = self
-		groupItemsByFeed.addDependency(parseItemsOperation)
+		groupItemsByFeed.addDependency(streamOperation)
 		
 		// Update the account with the articles for the feeds in the stream.
 		let updateOperation = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
@@ -147,7 +174,7 @@ extension FeedlySyncStrategy: FeedlyRequestStreamsOperationDelegate {
 		
 		// Once the articles are in the account, ensure they have the correct status
 		let ensureUnreadOperation = FeedlyRefreshStreamEntriesStatusOperation(account: account,
-																			  collectionStreamProvider: collectionStreamOperation,
+																			  entryProvider: streamOperation,
 																			  articleStatusCoordinator: articleStatusCoordinator,
 																			  log: log)
 		
@@ -159,7 +186,7 @@ extension FeedlySyncStrategy: FeedlyRequestStreamsOperationDelegate {
 			operation.addDependency(ensureUnreadOperation)
 		}
 		
-		let operations = [collectionStreamOperation, parseItemsOperation, groupItemsByFeed, updateOperation, ensureUnreadOperation]
+		let operations = [streamOperation, groupItemsByFeed, updateOperation, ensureUnreadOperation]
 		
 		operationQueue.addOperations(operations, waitUntilFinished: false)
 	}

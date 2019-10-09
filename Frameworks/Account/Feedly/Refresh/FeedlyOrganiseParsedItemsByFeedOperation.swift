@@ -11,8 +11,6 @@ import RSParser
 import os.log
 
 protocol FeedlyParsedItemsByFeedProviding {
-	var collection: FeedlyCollection { get }
-	var stream: FeedlyStream { get }
 	var allFeeds: Set<Feed> { get }
 	func parsedItems(for feed: Feed) -> Set<ParsedItem>?
 }
@@ -20,7 +18,7 @@ protocol FeedlyParsedItemsByFeedProviding {
 /// Single responsibility is to group articles by their feeds.
 final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyParsedItemsByFeedProviding {
 	private let account: Account
-	private let parsedItemsProvider: FeedlyStreamParsedItemsProviding
+	private let entryProvider: FeedlyEntryProviding
 	private let log: OSLog
 	
 	var allFeeds: Set<Feed> {
@@ -32,19 +30,11 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 		return itemsKeyedByFeedId[feed.feedID]
 	}
 	
-	var collection: FeedlyCollection {
-		return parsedItemsProvider.collection
-	}
-	
-	var stream: FeedlyStream {
-		return parsedItemsProvider.stream
-	}
-	
 	private var itemsKeyedByFeedId = [String: Set<ParsedItem>]()
 	
-	init(account: Account, parsedItemsProvider: FeedlyStreamParsedItemsProviding, log: OSLog) {
+	init(account: Account, entryProvider: FeedlyEntryProviding, log: OSLog) {
 		self.account = account
-		self.parsedItemsProvider = parsedItemsProvider
+		self.entryProvider = entryProvider
 		self.log = log
 	}
 	
@@ -53,7 +43,7 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 		
 		guard !isCancelled else { return }
 		
-		let items = parsedItemsProvider.parsedItems
+		let items = entryProvider.parsedEntries
 		var dict = [String: Set<ParsedItem>](minimumCapacity: items.count)
 		
 		for item in items {
@@ -71,7 +61,7 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 			guard !isCancelled else { return }
 		}
 		
-		os_log(.debug, log: log, "Grouped %i items by %i feeds for %@", items.count, dict.count, parsedItemsProvider.collection.label)
+//		os_log(.debug, log: log, "Grouped %i items by %i feeds for %@", items.count, dict.count, parsedItemsProvider.collection.label)
 		
 		itemsKeyedByFeedId = dict
 	}

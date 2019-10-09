@@ -10,7 +10,7 @@ import Foundation
 import os.log
 
 protocol FeedlyRequestStreamsOperationDelegate: class {
-	func feedlyRequestStreamsOperation(_ operation: FeedlyRequestStreamsOperation, enqueue collectionStreamOperation: FeedlyGetCollectionStreamOperation)
+	func feedlyRequestStreamsOperation(_ operation: FeedlyRequestStreamsOperation, enqueue collectionStreamOperation: FeedlyGetStreamOperation)
 }
 
 /// Single responsibility is to create one stream request operation for one Feedly collection.
@@ -45,8 +45,9 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation {
 		// TODO: Prioritise the must read collection/category before others so the most important content for the user loads first.
 		
 		for collection in collectionsProvider.collections {
-			let operation = FeedlyGetCollectionStreamOperation(account: account,
-															   collection: collection,
+			let resource = FeedlyCategoryResourceId(id: collection.id)
+			let operation = FeedlyGetStreamOperation(account: account,
+															   resource: resource,
 															   caller: caller,
 															   newerThan: newerThan,
 															   unreadOnly: unreadOnly)

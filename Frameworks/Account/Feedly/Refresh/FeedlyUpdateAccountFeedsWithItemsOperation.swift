@@ -31,14 +31,14 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 		let group = DispatchGroup()
 		let allFeeds = organisedItemsProvider.allFeeds
 		
-		os_log(.debug, log: log, "Begin updating %i feeds in collection \"%@\"", allFeeds.count, organisedItemsProvider.collection.label)
+//		os_log(.debug, log: log, "Begin updating %i feeds in collection \"%@\"", allFeeds.count, organisedItemsProvider.collection.label)
 		
 		for feed in allFeeds {
 			guard let items = organisedItemsProvider.parsedItems(for: feed) else {
 				continue
 			}
 			group.enter()
-			os_log(.debug, log: log, "Updating %i items for feed \"%@\" in collection \"%@\"", items.count, feed.nameForDisplay, organisedItemsProvider.collection.label)
+//			os_log(.debug, log: log, "Updating %i items for feed \"%@\" in collection \"%@\"", items.count, feed.nameForDisplay, organisedItemsProvider.collection.label)
 			
 			account.update(feed, parsedItems: items, defaultRead: true) {
 				group.leave()
@@ -46,7 +46,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 		}
 		
 		group.notify(qos: .userInitiated, queue: .main) {
-			os_log(.debug, log: self.log, "Finished updating feeds in collection \"%@\"", self.organisedItemsProvider.collection.label)
+//			os_log(.debug, log: self.log, "Finished updating feeds in collection \"%@\"", self.organisedItemsProvider.collection.label)
 			self.didFinish()
 		}
 	}

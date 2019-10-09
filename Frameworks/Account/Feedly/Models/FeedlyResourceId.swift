@@ -49,3 +49,13 @@ struct FeedlyCategoryResourceId: FeedlyResourceId {
 		return FeedlyCategoryResourceId(id: id)
 	}
 }
+
+struct FeedlyTagResourceId: FeedlyResourceId {
+	var id: String
+	
+	static func saved(for userId: String) -> FeedlyTagResourceId {
+		// https://developer.feedly.com/cloud/#global-resource-ids
+		let id = "user/\(userId)/tag/global.saved"
+		return FeedlyTagResourceId(id: id)
+	}
+}

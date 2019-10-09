@@ -41,13 +41,9 @@ final class FeedlyArticleStatusCoordinator {
 	}
 	
 	/// Ensures local articles have the same status as they do remotely.
-	func refreshArticleStatus(for account: Account, stream: FeedlyStream, collection: FeedlyCollection, completion: @escaping (() -> Void)) {
+	func refreshArticleStatus(for account: Account, entries: [FeedlyEntry], completion: @escaping (() -> Void)) {
 		
-		let unreadArticleIds = Set(
-			stream.items
-			.filter { $0.unread }
-			.map { $0.id }
-		)
+		let unreadArticleIds = Set(entries.filter { $0.unread }.map { $0.id })
 		
 		// Mark articles as unread
 		let currentUnreadArticleIDs = account.fetchUnreadArticleIDs()
@@ -55,17 +51,13 @@ final class FeedlyArticleStatusCoordinator {
 		let markUnreadArticles = account.fetchArticles(.articleIDs(deltaUnreadArticleIDs))
 		account.update(markUnreadArticles, statusKey: .read, flag: false)
 		
-		let readAritcleIds = Set(
-			stream.items
-			.filter { !$0.unread }
-			.map { $0.id }
-		)
+		let readAritcleIds = Set(entries.filter { !$0.unread }.map { $0.id })
 		
 		let deltaReadArticleIDs = currentUnreadArticleIDs.intersection(readAritcleIds)
 		let markReadArticles = account.fetchArticles(.articleIDs(deltaReadArticleIDs))
 		account.update(markReadArticles, statusKey: .read, flag: true)
 		
-		os_log(.debug, log: log, "\"%@\" - updated %i UNREAD and %i read article(s).", collection.label, unreadArticleIds.count, markReadArticles.count)
+//		os_log(.debug, log: log, "\"%@\" - updated %i UNREAD and %i read article(s).", collection.label, unreadArticleIds.count, markReadArticles.count)
 		
 		completion()
 		

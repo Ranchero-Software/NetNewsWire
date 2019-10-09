@@ -13,11 +13,11 @@ import os.log
 final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 	
 	let account: Account
-	let collectionsAndFoldersProvider: FeedlyCollectionsAndFoldersProviding
+	let feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding
 	let log: OSLog
 		
-	init(account: Account, collectionsAndFoldersProvider: FeedlyCollectionsAndFoldersProviding, log: OSLog) {
-		self.collectionsAndFoldersProvider = collectionsAndFoldersProvider
+	init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding, log: OSLog) {
+		self.feedsAndFoldersProvider = feedsAndFoldersProvider
 		self.account = account
 		self.log = log
 	}
@@ -29,23 +29,22 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 
 		var localFeeds = account.flattenedFeeds()
 		let feedsBefore = localFeeds
-		let pairs = collectionsAndFoldersProvider.collectionsAndFolders
+		let pairs = feedsAndFoldersProvider.feedsAndFolders
 		
 		// Remove feeds in a folder which are not in the corresponding collection.
-		for (collection, folder) in pairs {
+		for (collectionFeeds, folder) in pairs {
 			let feedsInFolder = folder.topLevelFeeds
-			let feedsInCollection = Set(collection.feeds.map { $0.id })
+			let feedsInCollection = Set(collectionFeeds.map { $0.id })
 			let feedsToRemove = feedsInFolder.filter { !feedsInCollection.contains($0.feedID) }
 			if !feedsToRemove.isEmpty {
 				folder.removeFeeds(feedsToRemove)
-				os_log(.debug, log: log, "\"%@\" - removed: %@", collection.label, feedsToRemove.map { $0.feedID }, feedsInCollection)
+//				os_log(.debug, log: log, "\"%@\" - removed: %@", collection.label, feedsToRemove.map { $0.feedID }, feedsInCollection)
 			}
 			
 		}
 		
 		// Pair each Feed with its Folder.
 		let feedsAndFolders = pairs
-			.compactMap { ($0.0.feeds, $0.1) }
 			.map({ (collectionFeeds, folder) -> [(FeedlyFeed, Folder)] in
 				return collectionFeeds.map { feed -> (FeedlyFeed, Folder) in
 					return (feed, folder) // pairs a folder for every feed in parallel
