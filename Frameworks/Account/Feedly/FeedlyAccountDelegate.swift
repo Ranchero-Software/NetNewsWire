@@ -148,7 +148,13 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+		
+		let progress = refreshProgress
+		progress.addToNumberOfTasksAndRemaining(1)
+		
 		caller.createCollection(named: name) { result in
+			progress.completeTask()
+			
 			switch result {
 			case .success(let collection):
 				if let folder = account.ensureFolder(with: collection.label) {
@@ -194,7 +200,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 		}
 		
+		let progress = refreshProgress
+		progress.addToNumberOfTasksAndRemaining(1)
+		
 		caller.deleteCollection(with: id) { result in
+			progress.completeTask()
+			
 			switch result {
 			case .success:
 				account.removeFolder(folder)
@@ -239,7 +250,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let resourceId = FeedlyFeedResourceId(url: url)
 		
+		let progress = refreshProgress
+		progress.addToNumberOfTasksAndRemaining(1)
+		
 		caller.addFeed(with: resourceId, title: name, toCollectionWith: collectionId) { result in
+			progress.completeTask()
+			
 			switch result {
 			case .success(let feedlyFeeds):
 				let feedsBefore = folder.flattenedFeeds()
@@ -274,6 +290,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		let feedId = FeedlyFeedResourceId(id: feed.feedID)
 		let editedNameBefore = feed.editedName
 		
+		// Adding an existing feed updates it.
+		// Updating feed name in one folder/collection updates it for all folders/collections.
 		caller.addFeed(with: feedId, title: name, toCollectionWith: collectionId) { result in
 			switch result {
 			case .success:
