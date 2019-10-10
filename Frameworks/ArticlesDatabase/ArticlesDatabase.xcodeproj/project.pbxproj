@@ -538,7 +538,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEEA20242E0800712EC3 /* ArticlesDatabase_project_debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
@@ -548,7 +547,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEEB20242E0800712EC3 /* ArticlesDatabase_project_release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
