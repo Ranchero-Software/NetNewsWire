@@ -140,6 +140,18 @@ figcaption {
 	line-height: 1.3em;
 }
 
+sup {
+	vertical-align: top;
+	position: relative;
+	bottom: 0.2rem;
+}
+
+sub {
+	vertical-align: bottom;
+	position: relative;
+	top: 0.2rem;
+}
+
 .iframeWrap {
 	position: relative;
 	display: block;

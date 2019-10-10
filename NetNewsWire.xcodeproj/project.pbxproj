@@ -184,6 +184,9 @@
 		51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */; };
 		51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D87EE02311D34700E63F03 /* ActivityType.swift */; };
+		51E149B3234D82E40004F7A5 /* PasswordField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E149B2234D82E40004F7A5 /* PasswordField.swift */; };
+		51E149C0234D839E0004F7A5 /* ShowHidePasswordView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51E149BF234D839E0004F7A5 /* ShowHidePasswordView.xib */; };
+		51E149C2234D852F0004F7A5 /* ShowHidePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E149C1234D852F0004F7A5 /* ShowHidePasswordView.swift */; };
 		51E3EB33229AB02C00645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB32229AB02C00645299 /* ErrorHandler.swift */; };
 		51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB3C229AB08300645299 /* ErrorHandler.swift */; };
 		51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
@@ -802,6 +805,9 @@
 		51CC9B3D231720B2000E842F /* MasterFeedDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedDataSource.swift; sourceTree = "<group>"; };
 		51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineDataSource.swift; sourceTree = "<group>"; };
 		51D87EE02311D34700E63F03 /* ActivityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityType.swift; sourceTree = "<group>"; };
+		51E149B2234D82E40004F7A5 /* PasswordField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordField.swift; sourceTree = "<group>"; };
+		51E149BF234D839E0004F7A5 /* ShowHidePasswordView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ShowHidePasswordView.xib; sourceTree = "<group>"; };
+		51E149C1234D852F0004F7A5 /* ShowHidePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowHidePasswordView.swift; sourceTree = "<group>"; };
 		51E3EB32229AB02C00645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		51E3EB3C229AB08300645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleStatusSyncTimer.swift; sourceTree = "<group>"; };
@@ -1244,6 +1250,9 @@
 				DF999FF622B5AEFA0064B687 /* SafariView.swift */,
 				51322858232FDDB80033D4ED /* VibrantButtonStyle.swift */,
 				51322854232EED360033D4ED /* VibrantSelectAction.swift */,
+				51E149B2234D82E40004F7A5 /* PasswordField.swift */,
+				51E149C1234D852F0004F7A5 /* ShowHidePasswordView.swift */,
+				51E149BF234D839E0004F7A5 /* ShowHidePasswordView.xib */,
 			);
 			path = "SwiftUI Extensions";
 			sourceTree = "<group>";
@@ -2206,15 +2215,11 @@
 				TargetAttributes = {
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -2223,8 +2228,6 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -2233,8 +2236,6 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 9C84TZ7Q6Z;
-						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
 				};
@@ -2481,6 +2482,7 @@
 				51F85BED227251DF00C787DC /* Acknowledgments.rtf in Resources */,
 				511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */,
 				51C452AB22650DC600C03939 /* template.html in Resources */,
+				51E149C0234D839E0004F7A5 /* ShowHidePasswordView.xib in Resources */,
 				51F85BF12272524100C787DC /* Credits.rtf in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				511D43CF231FA62200FB1562 /* DetailKeyboardShortcuts.plist in Resources */,
@@ -2709,6 +2711,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				840D617F2029031C009BC708 /* AppDelegate.swift in Sources */,
+				51E149B3234D82E40004F7A5 /* PasswordField.swift in Sources */,
 				512E08E72268801200BDCFDD /* FeedTreeControllerDelegate.swift in Sources */,
 				51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */,
 				51EF0F79227716380050506E /* ColorHash.swift in Sources */,
@@ -2777,6 +2780,7 @@
 				51C4529A22650A0400C03939 /* ArticleStyle.swift in Sources */,
 				51C4527F2265092C00C03939 /* ArticleViewController.swift in Sources */,
 				51C4526A226508F600C03939 /* MasterFeedTableViewCellLayout.swift in Sources */,
+				51E149C2234D852F0004F7A5 /* ShowHidePasswordView.swift in Sources */,
 				51C452AE2265104D00C03939 /* TimelineStringFormatter.swift in Sources */,
 				512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */,
 				51C4529922650A0000C03939 /* ArticleStylesManager.swift in Sources */,
