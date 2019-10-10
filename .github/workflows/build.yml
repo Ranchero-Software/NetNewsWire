@@ -15,6 +15,9 @@ jobs:
 
     - name: Switch to Xcode 11
       run: sudo xcode-select -s /Applications/Xcode_11.app
+
+    - name: xcodebuild -showBuildSettings
+      run: xcodebuild -showBuildSettings
     
     - name: Run Build
       env:
