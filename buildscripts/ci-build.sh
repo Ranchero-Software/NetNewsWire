@@ -25,7 +25,7 @@ rm -f buildscripts/certs/dev.cer
 rm -f buildscripts/certs/dev.p12
 
 # Do the build
-xcodebuild -scheme 'NetNewsWire' -configuration Release -showBuildTimingSummary
+xcodebuild -scheme 'NetNewsWire' -configuration Release -showBuildTimingSummary CODE_SIGN_IDENTITY="Developer ID Application"
 
 # Delete the keychain and the provisioningi profile
 security delete-keychain github-build.keychain
