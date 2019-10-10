@@ -1,5 +1,5 @@
 //
-//  MarkArticlesReadAlertControllerr.swift
+//  UndoAvailableAlertController.swift
 //  NetNewsWire
 //
 //  Created by Phil Viso on 9/29/19.
@@ -9,10 +9,10 @@
 import Foundation
 import UIKit
 
-struct MarkArticlesReadAlertController {
+struct UndoAvailableAlertController {
 			
-	static func markAllAsReadAlert(handler: @escaping (UIAlertAction) -> Void) -> UIAlertController {
-		let title = NSLocalizedString("Mark All Read", comment: "Mark All Read")
+	static func alert(handler: @escaping (UIAlertAction) -> Void) -> UIAlertController {
+		let title = NSLocalizedString("Undo Available", comment: "Undo Available")
 		let message = NSLocalizedString("You can undo this and other actions with a three finger swipe to the left.",
 										comment: "Mark all articles")
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")

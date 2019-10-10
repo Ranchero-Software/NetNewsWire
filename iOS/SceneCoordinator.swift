@@ -83,9 +83,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	var displayMarkAllAsReadUndoTip: Bool {
-		get { AppDefaults.displayMarkAllAsReadUndoTip }
-		set { AppDefaults.displayMarkAllAsReadUndoTip = newValue }
+	var displayUndoAvailableTip: Bool {
+		get { AppDefaults.displayUndoAvailableTip }
+		set { AppDefaults.displayUndoAvailableTip = newValue }
 	}
 
 	private let treeControllerDelegate = FeedTreeControllerDelegate()
