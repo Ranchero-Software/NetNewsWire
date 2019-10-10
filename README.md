@@ -1,6 +1,6 @@
 # ![Icon](Technotes/Images/icon.png) NetNewsWire
 
-[![CircleCI](https://circleci.com/gh/brentsimmons/NetNewsWire.svg?style=svg)](https://circleci.com/gh/brentsimmons/NetNewsWire)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fbrentsimmons%2FNetNewsWire%2Fbadge&style=flat)](https://actions-badge.atrox.dev/brentsimmons/NetNewsWire/goto)
 
 It’s a free and open source feed reader for macOS. An iOS version is in progress.
 
