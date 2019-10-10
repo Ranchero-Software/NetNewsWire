@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// An operation with a queue of its own.
 final class FeedlyCompoundOperation: FeedlyOperation {
 	private let operationQueue = OperationQueue()
 	private let operations: [Operation]
@@ -31,6 +32,9 @@ final class FeedlyCompoundOperation: FeedlyOperation {
 			finishOperation.addDependency(operation)
 		}
 		
-		operationQueue.addOperations(operations, waitUntilFinished: false)
+		var operationsWithFinish = operations
+		operationsWithFinish.append(finishOperation)
+		
+		operationQueue.addOperations(operationsWithFinish, waitUntilFinished: false)
 	}
 }

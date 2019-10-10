@@ -238,75 +238,21 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		return (folder, collectionId)
 	}
 	
+	var createFeedRequest: FeedlyCreateFeedRequest?
+	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
-		let (folder, collectionId): (Folder, String)
-		do {
-			(folder, collectionId) = try isValidContainer(for: account, container: container)
-		} catch {
-			return DispatchQueue.main.async {
-				completion(.failure(error))
-			}
-		}
-		
-		let resourceId = FeedlyFeedResourceId(url: url)
-		
+
 		let progress = refreshProgress
 		progress.addToNumberOfTasksAndRemaining(1)
 		
-		caller.addFeed(with: resourceId, title: name, toCollectionWith: collectionId) { [weak self] result in
-			defer { progress.completeTask() }
-			
-			switch result {
-			case .success(let feedlyFeeds):
-				let feedsBefore = folder.flattenedFeeds()
-				for feedlyFeed in feedlyFeeds where !account.hasFeed(with: feedlyFeed.feedId) {
-					let resourceId = FeedlyFeedResourceId(id: feedlyFeed.id)
-					let feed = account.createFeed(with: feedlyFeed.title,
-												  url: resourceId.url,
-												  feedID: feedlyFeed.id,
-												  homePageURL: feedlyFeed.website)
-					folder.addFeed(feed)
-				}
-				
-				let feedsAfter = folder.flattenedFeeds()
-				let added = feedsAfter.subtracting(feedsBefore)
-				
-				guard let first = added.first else {
-					return completion(.failure(AccountError.createErrorNotFound))
-				}
-				
-				let group = DispatchGroup()
-				progress.addToNumberOfTasksAndRemaining(1)
-				
-				if let self = self {
-					for feed in added {
-						group.enter()
-						let resourceId = FeedlyFeedResourceId(id: feed.feedID)
-						self.caller.getStream(for: resourceId, newerThan: nil, unreadOnly: nil) { result in
-							switch result {
-							case .success(let stream):
-								let items = Set(stream.items.map { FeedlyEntryParser(entry: $0).parsedItemRepresentation })
-								
-								account.update(feed, parsedItems: items, defaultRead: false) {
-									group.leave()
-								}
-								
-							case .failure:
-								// Feed will remain empty until new articles appear.
-								group.leave()
-							}
-						}
-					}
-				}
-				
-				group.notify(queue: .main) {
-					progress.completeTask()
-					completion(.success(first))
-				}
-				
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		let createFeedRequest = FeedlyCreateFeedRequest(account: account, caller: caller, container: container, log: log)
+		
+		self.createFeedRequest = createFeedRequest
+		
+		createFeedRequest.start(url: url, name: name) { [weak self] result in
+			progress.completeTask()
+			self?.createFeedRequest = nil
+			completion(result)
 		}
 	}
 	

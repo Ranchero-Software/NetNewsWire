@@ -27,9 +27,11 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		
 		guard !isCancelled else { return }
 
-		var localFeeds = account.flattenedFeeds()
-		let feedsBefore = localFeeds
 		let pairs = feedsAndFoldersProvider.feedsAndFolders
+		
+		let feedsBefore = Set(pairs
+			.map { $0.1 }
+			.flatMap { $0.topLevelFeeds })
 		
 		// Remove feeds in a folder which are not in the corresponding collection.
 		for (collectionFeeds, folder) in pairs {
@@ -44,6 +46,8 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		}
 		
 		// Pair each Feed with its Folder.
+		var feedsAdded = Set<Feed>()
+		
 		let feedsAndFolders = pairs
 			.map({ (collectionFeeds, folder) -> [(FeedlyFeed, Folder)] in
 				return collectionFeeds.map { feed -> (FeedlyFeed, Folder) in
@@ -53,9 +57,12 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 			.flatMap { $0 }
 			.compactMap { (collectionFeed, folder) -> (Feed, Folder) in
 
-				// find an existing feed
-				for feed in localFeeds {
-					if feed.feedID == collectionFeed.id {
+				// find an existing feed previously added to the account
+				if let feed = account.existingFeed(withFeedID: collectionFeed.id) {
+					return (feed, folder)
+				} else {
+					// find an existing feed we created below in an earlier value
+					for feed in feedsAdded where feed.feedID == collectionFeed.id {
 						return (feed, folder)
 					}
 				}
@@ -66,7 +73,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 				let feed = account.createFeed(with: collectionFeed.title, url: url, feedID: id, homePageURL: collectionFeed.website)
 				
 				// So the same feed isn't created more than once.
-				localFeeds.insert(feed)
+				feedsAdded.insert(feed)
 				
 				return (feed, folder)
 			}

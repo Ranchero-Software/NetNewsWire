@@ -18,7 +18,15 @@ protocol FeedlyEntryProviding: class {
 /// Single responsibility is to get the stream content of a Collection from Feedly.
 final class FeedlyGetStreamOperation: FeedlyOperation, FeedlyEntryProviding {
 	
-	private(set) var resource: FeedlyResourceId
+	struct ResourceProvider: FeedlyResourceProviding {
+		var resource: FeedlyResourceId
+	}
+	
+	let resourceProvider: FeedlyResourceProviding
+	
+	var resource: FeedlyResourceId {
+		return resourceProvider.resource
+	}
 	
 	var entries: [FeedlyEntry] {
 		guard let entries = storedStream?.items else {
@@ -55,10 +63,14 @@ final class FeedlyGetStreamOperation: FeedlyOperation, FeedlyEntryProviding {
 	
 	init(account: Account, resource: FeedlyResourceId, caller: FeedlyAPICaller, newerThan: Date?, unreadOnly: Bool? = nil) {
 		self.account = account
-		self.resource = resource
+		self.resourceProvider = ResourceProvider(resource: resource)
 		self.caller = caller
 		self.unreadOnly = unreadOnly
 		self.newerThan = newerThan
+	}
+	
+	convenience init(account: Account, resourceProvider: FeedlyResourceProviding, caller: FeedlyAPICaller, newerThan: Date?, unreadOnly: Bool? = nil) {
+		self.init(account: account, resource: resourceProvider.resource, caller: caller, newerThan: newerThan, unreadOnly: unreadOnly)
 	}
 	
 	override func main() {
@@ -67,7 +79,7 @@ final class FeedlyGetStreamOperation: FeedlyOperation, FeedlyEntryProviding {
 			return
 		}
 		
-		caller.getStream(for: resource, newerThan: newerThan, unreadOnly: unreadOnly) { result in
+		caller.getStream(for: resourceProvider.resource, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
 				self.storedStream = stream
