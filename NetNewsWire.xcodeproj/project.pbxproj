@@ -2215,17 +2215,11 @@
 				TargetAttributes = {
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -2234,8 +2228,6 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -3220,8 +3212,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = M8L2WTLA8W;
-				PROVISIONING_PROFILE_SPECIFIER = NetNewsWire;
 			};
 			name = Debug;
 		};
@@ -3229,8 +3219,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = M8L2WTLA8W;
-				PROVISIONING_PROFILE_SPECIFIER = NetNewsWire;
 			};
 			name = Release;
 		};
