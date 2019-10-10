@@ -102,7 +102,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@IBAction func firstUnread(_ sender: Any) {
-		coordinator.selectNextUnread()
+		coordinator.selectFirstUnread()
 	}
 	
 	// MARK: Keyboard shortcuts

@@ -1173,7 +1173,7 @@ private extension SceneCoordinator {
 	
 	@discardableResult
 	func selectFirstUnreadArticleInTimeline() -> Bool {
-		return selectNextArticleInTimeline(startingRow: 0)
+		return selectNextArticleInTimeline(startingRow: 0, animated: true)
 	}
 	
 	@discardableResult
@@ -1186,10 +1186,10 @@ private extension SceneCoordinator {
 			}
 		}()
 		
-		return selectNextArticleInTimeline(startingRow: startingRow)
+		return selectNextArticleInTimeline(startingRow: startingRow, animated: false)
 	}
 	
-	func selectNextArticleInTimeline(startingRow: Int) -> Bool {
+	func selectNextArticleInTimeline(startingRow: Int, animated: Bool) -> Bool {
 		
 		guard startingRow < articles.count else {
 			return false
@@ -1198,7 +1198,7 @@ private extension SceneCoordinator {
 		for i in startingRow..<articles.count {
 			let article = articles[i]
 			if !article.status.read {
-				selectArticle(article, animated: true)
+				selectArticle(article, animated: animated)
 				return true
 			}
 		}
