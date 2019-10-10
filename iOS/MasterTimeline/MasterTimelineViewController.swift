@@ -147,13 +147,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		applyChanges(animate: animate)
 	}
 	
-	func updateArticleSelection(animate: Bool) {
+	func updateArticleSelection(animated: Bool) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true, deselect: coordinator.isRootSplitCollapsed)
 			}
 		} else {
-			tableView.selectRow(at: nil, animated: animate, scrollPosition: .none)
+			tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
 		}
 		
 		updateUI()
@@ -293,7 +293,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		becomeFirstResponder()
 		let article = dataSource.itemIdentifier(for: indexPath)
-		coordinator.selectArticle(article, automated: false)
+		coordinator.selectArticle(article, animated: true)
 	}
 	
 	// MARK: Notifications

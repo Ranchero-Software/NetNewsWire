@@ -513,7 +513,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return indexPathFor(node)
 	}
 	
-	func selectFeed(_ indexPath: IndexPath?, automated: Bool = true) {
+	func selectFeed(_ indexPath: IndexPath?, animated: Bool = false) {
 		guard indexPath != currentFeedIndexPath else { return 	}
 		
 		selectArticle(nil)
@@ -524,12 +524,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if let ip = indexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 			timelineFetcher = fetcher
 			updateSelectingActivity(with: node)
-			installTimelineControllerIfNecessary(animated: !automated)
+			installTimelineControllerIfNecessary(animated: animated)
 		} else {
 			timelineFetcher = nil
 			activityManager.invalidateSelecting()
 			if rootSplitViewController.isCollapsed && navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
-				navControllerForTimeline().popViewController(animated: !automated)
+				navControllerForTimeline().popViewController(animated: animated)
 			}
 		}
 		
@@ -565,7 +565,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 
-	func selectArticle(_ article: Article?, automated: Bool = true) {
+	func selectArticle(_ article: Article?, animated: Bool = false) {
 		guard article != currentArticle else { return }
 		
 		stopArticleExtractor()
@@ -575,12 +575,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if article == nil {
 			if rootSplitViewController.isCollapsed {
 				if masterNavigationController.children.last is ArticleViewController {
-					masterNavigationController.popViewController(animated: !automated)
+					masterNavigationController.popViewController(animated: animated)
 				}
 			} else {
 				articleViewController?.state = .noSelection
 			}
-			masterTimelineViewController?.updateArticleSelection(animate: !automated)
+			masterTimelineViewController?.updateArticleSelection(animated: animated)
 			return
 		}
 		
@@ -588,14 +588,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if articleViewController == nil {
 			currentArticleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
 			currentArticleViewController.coordinator = self
-			installArticleController(currentArticleViewController, automated: automated)
+			installArticleController(currentArticleViewController, animated: animated)
 		} else {
 			currentArticleViewController = articleViewController!
 		}
 		
-		if automated {
-			masterTimelineViewController?.updateArticleSelection(animate: false)
-		}
+		masterTimelineViewController?.updateArticleSelection(animated: animated)
 		
 		if article!.feed?.isArticleExtractorAlwaysOn ?? false {
 			startArticleExtractorForCurrentLink()
@@ -1200,7 +1198,7 @@ private extension SceneCoordinator {
 		for i in startingRow..<articles.count {
 			let article = articles[i]
 			if !article.status.read {
-				selectArticle(article, automated: false)
+				selectArticle(article, animated: true)
 				return true
 			}
 		}
@@ -1454,7 +1452,7 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func installArticleController(_ articleController: UIViewController, automated: Bool) {
+	func installArticleController(_ articleController: UIViewController, animated: Bool) {
 
 		isArticleViewControllerPending = true
 
@@ -1463,7 +1461,7 @@ private extension SceneCoordinator {
 			subSplit.showDetailViewController(controller, sender: self)
 		} else if rootSplitViewController.isCollapsed {
 			let controller = addNavControllerIfNecessary(articleController, showButton: false)
-			masterNavigationController.pushViewController(controller, animated: !automated)
+			masterNavigationController.pushViewController(controller, animated: animated)
 		} else {
 			let controller = addNavControllerIfNecessary(articleController, showButton: true)
 			rootSplitViewController.showDetailViewController(controller, sender: self)
