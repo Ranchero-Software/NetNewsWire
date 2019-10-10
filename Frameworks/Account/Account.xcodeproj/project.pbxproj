@@ -631,6 +631,7 @@
 				848934F31F62484F00CEBD24 /* Headers */,
 				848934F41F62484F00CEBD24 /* Resources */,
 				51E148EE234B8FFC0004F7A5 /* Embed Frameworks */,
+				51C8F34C234FB14B0048ED95 /* Run Script: Verify No Build Settings */,
 			);
 			buildRules = (
 			);
@@ -782,6 +783,27 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		51C8F34C234FB14B0048ED95 /* Run Script: Verify No Build Settings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Verify No Build Settings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  ../../buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		848934F11F62484F00CEBD24 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -896,8 +918,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEB5202422BB00712EC3 /* Account_project_debug.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 1;
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 			};
 			name = Debug;
 		};
@@ -905,8 +925,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEB7202422BB00712EC3 /* Account_project_release.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 1;
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 			};
 			name = Release;
 		};

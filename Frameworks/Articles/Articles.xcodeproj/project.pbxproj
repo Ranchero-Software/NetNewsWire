@@ -177,6 +177,7 @@
 				844BEE571F0AB3C8004AB7CD /* Frameworks */,
 				844BEE581F0AB3C8004AB7CD /* Headers */,
 				844BEE591F0AB3C8004AB7CD /* Resources */,
+				51C8F34B234FB11A0048ED95 /* Run Script: Verify No Build Settings */,
 			);
 			buildRules = (
 			);
@@ -217,11 +218,13 @@
 				TargetAttributes = {
 					844BEE5A1F0AB3C8004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 					844BEE631F0AB3C9004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -292,6 +295,27 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		51C8F34B234FB11A0048ED95 /* Run Script: Verify No Build Settings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Verify No Build Settings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  ../../buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		844BEE561F0AB3C8004AB7CD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -328,9 +352,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEE120242DFB00712EC3 /* Articles_project_debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
-				SWIFT_VERSION = 5.1;
 			};
 			name = Debug;
 		};
@@ -338,9 +359,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEE420242DFB00712EC3 /* Articles_project_release.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
-				SWIFT_VERSION = 5.1;
 			};
 			name = Release;
 		};
@@ -348,13 +366,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEE320242DFB00712EC3 /* Articles_target.xcconfig */;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Articles;
-				PRODUCT_NAME = Articles;
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -362,13 +373,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEE320242DFB00712EC3 /* Articles_target.xcconfig */;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.Articles;
-				PRODUCT_NAME = Articles;
-				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -376,7 +380,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEE020242DFB00712EC3 /* ArticlesDataTests_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = ArticlesTests;
 			};
 			name = Debug;
 		};
@@ -384,7 +387,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEE020242DFB00712EC3 /* ArticlesDataTests_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = ArticlesTests;
 			};
 			name = Release;
 		};
