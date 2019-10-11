@@ -383,7 +383,6 @@
 		84F9EAF3213660A100CF2DE4 /* testCurrentArticleIsNil.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE0213660A100CF2DE4 /* testCurrentArticleIsNil.applescript */; };
 		84F9EAF4213660A100CF2DE4 /* testGenericScript.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE1213660A100CF2DE4 /* testGenericScript.applescript */; };
 		84F9EAF5213660A100CF2DE4 /* establishMainWindowStartingState.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */; };
-		84F9EAF6213660A100CF2DE4 /* NetNewsWireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE3213660A100CF2DE4 /* NetNewsWireTests.swift */; };
 		84F9EAF7213660A100CF2DE4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 84F9EAE4213660A100CF2DE4 /* Info.plist */; };
 		84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; };
 		84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1011,7 +1010,6 @@
 		84F9EAE0213660A100CF2DE4 /* testCurrentArticleIsNil.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testCurrentArticleIsNil.applescript; sourceTree = "<group>"; };
 		84F9EAE1213660A100CF2DE4 /* testGenericScript.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testGenericScript.applescript; sourceTree = "<group>"; };
 		84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = establishMainWindowStartingState.applescript; sourceTree = "<group>"; };
-		84F9EAE3213660A100CF2DE4 /* NetNewsWireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetNewsWireTests.swift; sourceTree = "<group>"; };
 		84F9EAE4213660A100CF2DE4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
@@ -2006,7 +2004,6 @@
 			children = (
 				84F9EAD0213660A100CF2DE4 /* ScriptingTests */,
 				FF3ABF09232599450074C542 /* ArticleSorterTests.swift */,
-				84F9EAE3213660A100CF2DE4 /* NetNewsWireTests.swift */,
 				DD82AB09231003F6002269DF /* SharingTests.swift */,
 				84F9EAE4213660A100CF2DE4 /* Info.plist */,
 			);
@@ -2998,7 +2995,6 @@
 				84F9EAED213660A100CF2DE4 /* uiScriptingTestSetup.applescript in Sources */,
 				84F9EAE8213660A100CF2DE4 /* testGetURL.applescript in Sources */,
 				84F9EAEA213660A100CF2DE4 /* testFeedExists.applescript in Sources */,
-				84F9EAF6213660A100CF2DE4 /* NetNewsWireTests.swift in Sources */,
 				84F9EAF1213660A100CF2DE4 /* selectAnArticle.applescript in Sources */,
 				84F9EAE9213660A100CF2DE4 /* testNameAndUrlOfEveryFeed.applescript in Sources */,
 				84F9EAF3213660A100CF2DE4 /* testCurrentArticleIsNil.applescript in Sources */,

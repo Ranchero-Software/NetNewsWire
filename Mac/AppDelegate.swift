@@ -13,6 +13,7 @@ import RSTree
 import RSWeb
 import Account
 import RSCore
+import Sparkle
 
 var appDelegate: AppDelegate!
 
@@ -201,6 +202,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		#endif
 
 		#if DEBUG
+			SUUpdater.shared()?.automaticallyChecksForUpdates = false
 			refreshTimer!.update()
 			syncTimer!.update()
 		#endif
