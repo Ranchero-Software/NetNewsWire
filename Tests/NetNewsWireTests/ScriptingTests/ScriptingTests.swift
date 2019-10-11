@@ -6,6 +6,8 @@
 //  Copyright © 2018 Olof Hellman. All rights reserved.
 //
 
+#if !HEADLESS_TEST
+
 import XCTest
 
 class ScriptingTests: AppleScriptXCTestCase {
@@ -100,4 +102,4 @@ class ScriptingTests: AppleScriptXCTestCase {
     }
 }
 
-
+#endif

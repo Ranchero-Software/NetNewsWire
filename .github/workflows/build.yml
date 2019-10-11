@@ -37,4 +37,5 @@ jobs:
           ENCRYPTION_SECRET: ${{ secrets.ENCRYPTION_SECRET }}
           KEY_SECRET: ${{ secrets.KEY_SECRET }}
           SCHEME: ${{ matrix.scheme }}
+          HEADLESS_TEST: YES
       run: buildscripts/ci-build.sh
