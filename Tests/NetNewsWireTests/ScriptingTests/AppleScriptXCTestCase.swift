@@ -6,8 +6,6 @@
 //  Copyright © 2018 Ranchero Software. All rights reserved.
 //
 
-#if !HEADLESS_TEST
-
 import XCTest
 
 class AppleScriptXCTestCase: XCTestCase {
@@ -67,5 +65,3 @@ class AppleScriptXCTestCase: XCTestCase {
         return usrfDictionary["script_result"]
     }
 }
-
-#endif
