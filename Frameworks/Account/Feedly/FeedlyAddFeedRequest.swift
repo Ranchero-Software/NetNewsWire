@@ -1,8 +1,8 @@
 //
-//  FeedlyAddFeedRequest.swift
+//  FeedlyCreateFeedRequest.swift
 //  Account
 //
-//  Created by Kiel Gillard on 11/10/19.
+//  Created by Kiel Gillard on 10/10/19.
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
@@ -37,7 +37,17 @@ final class FeedlyAddFeedRequest {
 		}
 	}
 	
-	func start(adding feed: Feed, to container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func addNewFeed(at url: String, name: String? = nil, completion: @escaping (Result<Feed, Error>) -> Void) {
+		let resource = FeedlyFeedResourceId(url: url)
+		self.start(resource: resource, name: name, refreshes: true, completion: completion)
+	}
+	
+	func add(existing feed: Feed, name: String? = nil, completion: @escaping (Result<Feed, Error>) -> Void) {
+		let resource = FeedlyFeedResourceId(id: feed.feedID)
+		self.start(resource: resource, name: name, refreshes: false, completion: completion)
+	}
+	
+	private func start(resource: FeedlyFeedResourceId, name: String?, refreshes: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		let (folder, collectionId): (Folder, String)
 		do {
@@ -49,21 +59,46 @@ final class FeedlyAddFeedRequest {
 			}
 		}
 		
-		let resource = FeedlyFeedResourceId(id: feed.feedID)
-		
 		let delegate = Delegate(resourceProvider: resource)
 		delegate.completionHandler = completion
 		
-		let addFeed = FeedlyCompoundOperation() {
-			let addRequest = FeedlyAddFeedOperation(account: account, folder: folder, feedResource: resource, collectionId: collectionId, caller: caller)
+		let createFeed = FeedlyCompoundOperation() {
+			let addRequest = FeedlyAddFeedOperation(account: account, folder: folder, feedResource: resource, feedName: name, collectionId: collectionId, caller: caller)
 			
 			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
-			
 			createFeeds.addDependency(addRequest)
 			
-			let operations = [addRequest, createFeeds]
+			let getStream: FeedlyGetStreamOperation? = {
+				if refreshes {
+					let op = FeedlyGetStreamOperation(account: account, resourceProvider: addRequest, caller: caller, newerThan: nil)
+					op.addDependency(createFeeds)
+					return op
+				}
+				return nil
+			}()
+			
+			let organiseByFeed: FeedlyOrganiseParsedItemsByFeedOperation? = {
+				if let getStream = getStream {
+					let op = FeedlyOrganiseParsedItemsByFeedOperation(account: account, entryProvider: getStream, log: log)
+					op.addDependency(getStream)
+					return op
+				}
+				return nil
+			}()
+			
+			let updateAccount: FeedlyUpdateAccountFeedsWithItemsOperation? = {
+				if let organiseByFeed = organiseByFeed {
+					let op = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: organiseByFeed, log: log)
+					op.addDependency(organiseByFeed)
+					return op
+				}
+				return nil
+			}()
+			
+			let operations = [addRequest, createFeeds, getStream, organiseByFeed, updateAccount].compactMap { $0 }
 			
 			for operation in operations {
+				assert(operation.isReady == (operation === addRequest), "Only the add request operation should be ready.")
 				operation.delegate = delegate
 			}
 			
@@ -88,8 +123,8 @@ final class FeedlyAddFeedRequest {
 			}
 		}
 		
-		callback.addDependency(addFeed)
+		callback.addDependency(createFeed)
 		
-		OperationQueue.main.addOperations([addFeed, callback], waitUntilFinished: false)
+		OperationQueue.main.addOperations([createFeed, callback], waitUntilFinished: false)
 	}
 }

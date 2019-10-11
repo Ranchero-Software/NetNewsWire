@@ -16,11 +16,6 @@ final class FeedlyAddFeedOperation: FeedlyOperation, FeedlyFeedsAndFoldersProvid
 	let folder: Folder
 	let feedResource: FeedlyFeedResourceId
 	
-	convenience init(account: Account, folder: Folder, url: String, feedName: String? = nil, collectionId: String, caller: FeedlyAPICaller) {
-		let resource = FeedlyFeedResourceId(url: url)
-		self.init(account: account, folder: folder, feedResource: resource, feedName: feedName, collectionId: collectionId, caller: caller)
-	}
-	
 	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, caller: FeedlyAPICaller) {
 		self.account = account
 		self.folder = folder
