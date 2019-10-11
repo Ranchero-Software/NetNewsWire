@@ -238,18 +238,18 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		return (folder, collectionId)
 	}
 	
-	var createFeedRequest: FeedlyCreateFeedRequest?
+	var createFeedRequest: FeedlyAddFeedRequest?
 	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		let progress = refreshProgress
 		progress.addToNumberOfTasksAndRemaining(1)
 		
-		let createFeedRequest = FeedlyCreateFeedRequest(account: account, caller: caller, container: container, log: log)
+		let request = FeedlyAddFeedRequest(account: account, caller: caller, container: container, log: log)
 		
-		self.createFeedRequest = createFeedRequest
+		self.createFeedRequest = request
 		
-		createFeedRequest.start(url: url, name: name) { [weak self] result in
+		request.addNewFeed(at: url, name: name) { [weak self] result in
 			progress.completeTask()
 			self?.createFeedRequest = nil
 			completion(result)
@@ -259,7 +259,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
 		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			completion(.failure(FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)))
 			return
 		}
 		
@@ -283,41 +283,25 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		feed.editedName = name
 	}
 	
-	func addFeed(for account: Account, with: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		let (folder, collectionId): (Folder, String)
-		do {
-			(folder, collectionId) = try isValidContainer(for: account, container: container)
-		} catch {
-			return DispatchQueue.main.async {
-				completion(.failure(error))
-			}
-		}
+	var addFeedRequest: FeedlyAddFeedRequest?
+	
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+
+		let progress = refreshProgress
+		progress.addToNumberOfTasksAndRemaining(1)
 		
-		let feedId = FeedlyFeedResourceId(id: with.feedID)
+		let request = FeedlyAddFeedRequest(account: account, caller: caller, container: container, log: log)
 		
-		caller.addFeed(with: feedId, toCollectionWith: collectionId) { result in
+		self.addFeedRequest = request
+		
+		request.add(existing: feed) { [weak self] result in
+			progress.completeTask()
+			
+			self?.addFeedRequest = nil
+			
 			switch result {
-			case .success(let feedlyFeeds):
-				for feedlyFeed in feedlyFeeds where !folder.hasFeed(with: feedlyFeed.feedId) {
-					let feed: Feed = {
-						if with.url == FeedlyFeedResourceId(id: feedlyFeed.id).url {
-							with.metadata.feedID = feedlyFeed.id
-							with.name = feedlyFeed.title
-							with.homePageURL = feedlyFeed.website
-							return with
-						} else {
-							let resourceId = FeedlyFeedResourceId(id: feedlyFeed.id)
-							return account.createFeed(with: feedlyFeed.title,
-													  url: resourceId.url,
-													  feedID: feedlyFeed.id,
-													  homePageURL: feedlyFeed.website)
-						}
-					}()
-					folder.addFeed(feed)
-				}
-				
+			case .success:
 				completion(.success(()))
-				
 			case .failure(let error):
 				completion(.failure(error))
 			}

@@ -16,6 +16,7 @@ enum FeedlyAccountDelegateError: LocalizedError {
 	case unableToMoveFeedBetweenFolders(Feed, Folder, Folder)
 	case addFeedChooseFolder
 	case addFeedInvalidFolder(Folder)
+	case unableToRenameFeed(String, String)
 	case unableToRemoveFeed(Feed)
 	
 	var errorDescription: String? {
@@ -45,6 +46,10 @@ enum FeedlyAccountDelegateError: LocalizedError {
 		case .addFeedInvalidFolder(let invalidFolder):
 			let template = NSLocalizedString("Feeds cannot be added to the \"%@\" folder.", comment: "Feedly - Feed can only be added to folders.")
 			return String(format: template, invalidFolder.nameForDisplay)
+			
+		case .unableToRenameFeed(let from, let to):
+			let template = NSLocalizedString("Could not rename \"%@\" to \"%@\".", comment: "Feedly - Could not rename a feed.")
+			return String(format: template, from, to)
 			
 		case .unableToRemoveFeed(let feed):
 			let template = NSLocalizedString("Could not remove \"%@\".", comment: "Feedly - Could not remove a feed.")
@@ -77,6 +82,9 @@ enum FeedlyAccountDelegateError: LocalizedError {
 			return NSLocalizedString("Please choose a different folder to contain the feed.", comment: "Feedly - Feed can only be added to folders recovery suggestion.")
 			
 		case .unableToRemoveFeed:
+			return nil
+			
+		case .unableToRenameFeed:
 			return nil
 		}
 	}
