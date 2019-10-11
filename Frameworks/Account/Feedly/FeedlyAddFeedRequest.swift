@@ -1,15 +1,15 @@
 //
-//  FeedlyCreateFeedRequest.swift
+//  FeedlyAddFeedRequest.swift
 //  Account
 //
-//  Created by Kiel Gillard on 10/10/19.
+//  Created by Kiel Gillard on 11/10/19.
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
 import Foundation
 import os.log
 
-final class FeedlyCreateFeedRequest {
+final class FeedlyAddFeedRequest {
 	let account: Account
 	let caller: FeedlyAPICaller
 	let container: Container
@@ -37,7 +37,7 @@ final class FeedlyCreateFeedRequest {
 		}
 	}
 	
-	func start(url: String, name: String?, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func start(adding feed: Feed, to container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		let (folder, collectionId): (Folder, String)
 		do {
@@ -49,23 +49,19 @@ final class FeedlyCreateFeedRequest {
 			}
 		}
 		
-		let subscribeRequest = FeedlyAddFeedOperation(account: account, folder: folder, url: url, feedName: name, collectionId: collectionId, caller: caller)
+		let resource = FeedlyFeedResourceId(id: feed.feedID)
 		
-		let delegate = Delegate(resourceProvider: subscribeRequest)
+		let delegate = Delegate(resourceProvider: resource)
 		delegate.completionHandler = completion
 		
-		let createFeed = FeedlyCompoundOperation() {
-			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: subscribeRequest, log: log)
-			let getStream = FeedlyGetStreamOperation(account: account, resourceProvider: subscribeRequest, caller: caller, newerThan: nil)
-			let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account, entryProvider: getStream, log: log)
-			let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: organiseByFeed, log: log)
+		let addFeed = FeedlyCompoundOperation() {
+			let addRequest = FeedlyAddFeedOperation(account: account, folder: folder, feedResource: resource, collectionId: collectionId, caller: caller)
 			
-			createFeeds.addDependency(subscribeRequest)
-			getStream.addDependency(createFeeds)
-			organiseByFeed.addDependency(getStream)
-			updateAccount.addDependency(organiseByFeed)
+			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
 			
-			let operations = [subscribeRequest, createFeeds, getStream, organiseByFeed, updateAccount]
+			createFeeds.addDependency(addRequest)
+			
+			let operations = [addRequest, createFeeds]
 			
 			for operation in operations {
 				operation.delegate = delegate
@@ -84,7 +80,7 @@ final class FeedlyCreateFeedRequest {
 			if let error = delegate.error {
 				handler(.failure(error))
 				
-			} else if let feed = folder.existingFeed(withFeedID: subscribeRequest.resource.id) {
+			} else if let feed = folder.existingFeed(withFeedID: resource.id) {
 				handler(.success(feed))
 				
 			} else {
@@ -92,8 +88,8 @@ final class FeedlyCreateFeedRequest {
 			}
 		}
 		
-		callback.addDependency(createFeed)
+		callback.addDependency(addFeed)
 		
-		OperationQueue.main.addOperations([createFeed, callback], waitUntilFinished: false)
+		OperationQueue.main.addOperations([addFeed, callback], waitUntilFinished: false)
 	}
 }

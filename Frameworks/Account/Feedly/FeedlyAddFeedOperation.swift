@@ -1,19 +1,14 @@
 //
-//  FeedlyCreateFeedOperation.swift
+//  FeedlyAddFeedOperation.swift
 //  Account
 //
-//  Created by Kiel Gillard on 10/10/19.
+//  Created by Kiel Gillard on 11/10/19.
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
 import Foundation
 
-protocol FeedlyResourceProviding {
-	var resource: FeedlyResourceId { get }
-}
-
-final class FeedlySubscribeToFeedOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
-	let url: String
+final class FeedlyAddFeedOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
 	let feedName: String?
 	let collectionId: String
 	let caller: FeedlyAPICaller
@@ -21,11 +16,15 @@ final class FeedlySubscribeToFeedOperation: FeedlyOperation, FeedlyFeedsAndFolde
 	let folder: Folder
 	let feedResource: FeedlyFeedResourceId
 	
-	init(account: Account, folder: Folder, url: String, feedName: String?, collectionId: String, caller: FeedlyAPICaller) {
+	convenience init(account: Account, folder: Folder, url: String, feedName: String? = nil, collectionId: String, caller: FeedlyAPICaller) {
+		let resource = FeedlyFeedResourceId(url: url)
+		self.init(account: account, folder: folder, feedResource: resource, feedName: feedName, collectionId: collectionId, caller: caller)
+	}
+	
+	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, caller: FeedlyAPICaller) {
 		self.account = account
 		self.folder = folder
-		self.url = url
-		self.feedResource = FeedlyFeedResourceId(url: url)
+		self.feedResource = feedResource
 		self.feedName = feedName
 		self.collectionId = collectionId
 		self.caller = caller
