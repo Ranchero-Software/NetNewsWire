@@ -25,7 +25,7 @@ rm -f buildscripts/certs/mac-dist.cer
 rm -f buildscripts/certs/mac-dist.p12
 
 # Do the build
-xcodebuild -scheme $SCHEME test -configuration Debug -showBuildTimingSummary
+xcodebuild -scheme $SCHEME test -showBuildTimingSummary
 
 # Delete the keychain and the provisioningi profile
 security delete-keychain github-build.keychain

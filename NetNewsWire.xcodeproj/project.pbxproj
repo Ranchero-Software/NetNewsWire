@@ -812,6 +812,7 @@
 		51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleStatusSyncTimer.swift; sourceTree = "<group>"; };
 		51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicButton.swift; sourceTree = "<group>"; };
 		51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderTreeMenu.swift; path = AddFeed/FolderTreeMenu.swift; sourceTree = "<group>"; };
+		51EC892923511D3B0061B6F6 /* NetNewsWire_project_test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_project_test.xcconfig; sourceTree = "<group>"; };
 		51EF0F76227716200050506E /* FaviconGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconGenerator.swift; sourceTree = "<group>"; };
 		51EF0F78227716380050506E /* ColorHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHash.swift; sourceTree = "<group>"; };
 		51EF0F7D2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineAccessibilityCellLayout.swift; sourceTree = "<group>"; };
@@ -2058,6 +2059,7 @@
 			isa = PBXGroup;
 			children = (
 				D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */,
+				51EC892923511D3B0061B6F6 /* NetNewsWire_project_test.xcconfig */,
 				D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */,
 				D5907CDE2002F0BE005947E5 /* NetNewsWire_project.xcconfig */,
 				D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */,
@@ -3170,6 +3172,48 @@
 			};
 			name = Release;
 		};
+		51EC892A23511DA80061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51EC892923511D3B0061B6F6 /* NetNewsWire_project_test.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC892B23511DA80061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC892C23511DA80061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC892D23511DA80061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC892E23511DA80061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC892F23511DA80061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
 		6581C74720CED60100F4AD34 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
@@ -3247,6 +3291,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				513C5CF2232571C2003D4054 /* Debug */,
+				51EC892F23511DA80061B6F6 /* Test */,
 				513C5CF3232571C2003D4054 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -3256,6 +3301,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6581C74720CED60100F4AD34 /* Debug */,
+				51EC892E23511DA80061B6F6 /* Test */,
 				6581C74820CED60100F4AD34 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -3265,6 +3311,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				840D61A42029031E009BC708 /* Debug */,
+				51EC892D23511DA80061B6F6 /* Test */,
 				840D61A52029031E009BC708 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -3274,6 +3321,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				849C64781ED37A5D003D8FC0 /* Debug */,
+				51EC892A23511DA80061B6F6 /* Test */,
 				849C64791ED37A5D003D8FC0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -3283,6 +3331,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				849C647B1ED37A5D003D8FC0 /* Debug */,
+				51EC892B23511DA80061B6F6 /* Test */,
 				849C647C1ED37A5D003D8FC0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -3292,6 +3341,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				849C647E1ED37A5D003D8FC0 /* Debug */,
+				51EC892C23511DA80061B6F6 /* Test */,
 				849C647F1ED37A5D003D8FC0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

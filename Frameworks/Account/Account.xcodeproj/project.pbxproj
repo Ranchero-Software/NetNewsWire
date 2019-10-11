@@ -207,6 +207,7 @@
 		5165D71E22835E9800D9D53D /* HTMLFeedFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLFeedFinder.swift; sourceTree = "<group>"; };
 		5165D73022837F3400D9D53D /* InitialFeedDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialFeedDownloader.swift; sourceTree = "<group>"; };
 		5170743B232AEDB500A461A3 /* OPMLFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLFile.swift; sourceTree = "<group>"; };
+		518B2EA52351306200400001 /* Account_project_test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_test.xcconfig; sourceTree = "<group>"; };
 		51BB7B83233531BC008E8144 /* AccountBehaviors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountBehaviors.swift; sourceTree = "<group>"; };
 		51D58754227F53BE00900287 /* FeedbinTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinTag.swift; sourceTree = "<group>"; };
 		51D58757227F630B00900287 /* tags_delete.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_delete.json; sourceTree = "<group>"; };
@@ -604,6 +605,7 @@
 			isa = PBXGroup;
 			children = (
 				D511EEB8202422BB00712EC3 /* Account_project.xcconfig */,
+				518B2EA52351306200400001 /* Account_project_test.xcconfig */,
 				D511EEB5202422BB00712EC3 /* Account_project_debug.xcconfig */,
 				D511EEB7202422BB00712EC3 /* Account_project_release.xcconfig */,
 				D511EEB6202422BB00712EC3 /* Account_target.xcconfig */,
@@ -918,6 +920,27 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		51EC893023511FFE0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 518B2EA52351306200400001 /* Account_project_test.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC893123511FFE0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D511EEB6202422BB00712EC3 /* Account_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC893223511FFE0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D511EEB9202422BB00712EC3 /* Accounttests_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
 		848935081F62485000CEBD24 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEB5202422BB00712EC3 /* Account_project_debug.xcconfig */;
@@ -967,6 +990,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				848935081F62485000CEBD24 /* Debug */,
+				51EC893023511FFE0061B6F6 /* Test */,
 				848935091F62485000CEBD24 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -976,6 +1000,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8489350B1F62485000CEBD24 /* Debug */,
+				51EC893123511FFE0061B6F6 /* Test */,
 				8489350C1F62485000CEBD24 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -985,6 +1010,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8489350E1F62485000CEBD24 /* Debug */,
+				51EC893223511FFE0061B6F6 /* Test */,
 				8489350F1F62485000CEBD24 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

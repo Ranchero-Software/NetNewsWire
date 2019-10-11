@@ -112,6 +112,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		518B2EA7235130CD00400001 /* ArticlesDatabase_project_test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ArticlesDatabase_project_test.xcconfig; sourceTree = "<group>"; };
 		51C451FE2264CF2100C03939 /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		840405CE1F1A963700DF0296 /* AttachmentsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsTable.swift; sourceTree = "<group>"; };
 		841D4D732106B59F00DD04E6 /* Articles.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Articles.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -287,6 +288,7 @@
 				D511EEE820242E0800712EC3 /* ArticlesDatabase_target.xcconfig */,
 				D511EEE920242E0800712EC3 /* ArticlesDatabase_project.xcconfig */,
 				D511EEEA20242E0800712EC3 /* ArticlesDatabase_project_debug.xcconfig */,
+				518B2EA7235130CD00400001 /* ArticlesDatabase_project_test.xcconfig */,
 				D511EEEB20242E0800712EC3 /* ArticlesDatabase_project_release.xcconfig */,
 			);
 			path = xcconfig;
@@ -556,6 +558,27 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		51EC89362351201E0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 518B2EA7235130CD00400001 /* ArticlesDatabase_project_test.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC89372351201E0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D511EEE820242E0800712EC3 /* ArticlesDatabase_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC89382351201E0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D511EEE720242E0800712EC3 /* ArticlesDatabaseTests_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
 		844BEE491F0AB3AB004AB7CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEEA20242E0800712EC3 /* ArticlesDatabase_project_debug.xcconfig */;
@@ -605,6 +628,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				844BEE491F0AB3AB004AB7CD /* Debug */,
+				51EC89362351201E0061B6F6 /* Test */,
 				844BEE4A1F0AB3AB004AB7CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -614,6 +638,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				844BEE4C1F0AB3AB004AB7CD /* Debug */,
+				51EC89372351201E0061B6F6 /* Test */,
 				844BEE4D1F0AB3AB004AB7CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -623,6 +648,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				844BEE4F1F0AB3AB004AB7CD /* Debug */,
+				51EC89382351201E0061B6F6 /* Test */,
 				844BEE501F0AB3AB004AB7CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

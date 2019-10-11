@@ -32,6 +32,7 @@
 		51554C35228B72F40055115A /* RSDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51554C37228B7DAC0055115A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		51554C39228B83380055115A /* Articles.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Articles.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		518B2EA82351310D00400001 /* SyncDatabase_project_test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SyncDatabase_project_test.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				51554C1A228B701F0055115A /* SyncDatabase_project_debug.xcconfig */,
+				518B2EA82351310D00400001 /* SyncDatabase_project_test.xcconfig */,
 				51554C1C228B701F0055115A /* SyncDatabase_project_release.xcconfig */,
 				51554C19228B701F0055115A /* SyncDatabase_project.xcconfig */,
 				51554C1D228B701F0055115A /* SyncDatabase_target.xcconfig */,
@@ -230,6 +232,20 @@
 			};
 			name = Release;
 		};
+		51EC89392351202A0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51554C1A228B701F0055115A /* SyncDatabase_project_debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC893A2351202A0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51554C1D228B701F0055115A /* SyncDatabase_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -237,6 +253,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				51554BF1228B6E8F0055115A /* Debug */,
+				51EC89392351202A0061B6F6 /* Test */,
 				51554BF2228B6E8F0055115A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -246,6 +263,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				51554BF4228B6E8F0055115A /* Debug */,
+				51EC893A2351202A0061B6F6 /* Test */,
 				51554BF5228B6E8F0055115A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
