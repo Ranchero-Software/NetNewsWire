@@ -30,3 +30,5 @@ xcodebuild -scheme $SCHEME test -showBuildTimingSummary
 # Delete the keychain and the provisioningi profile
 security delete-keychain github-build.keychain
 rm -f ~/Library/MobileDevice/Provisioning\ Profiles/NetNewsWire.provisionprofile
+
+ls -al ~/Library/Logs/DiagnosticReports/
