@@ -38,3 +38,6 @@ jobs:
           KEY_SECRET: ${{ secrets.KEY_SECRET }}
           SCHEME: ${{ matrix.scheme }}
       run: buildscripts/ci-build.sh
+
+    - name: Check for Crashlog
+      run: ls -al ~/Library/Logs/DiagnosticReports/
