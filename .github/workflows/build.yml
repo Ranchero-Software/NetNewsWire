@@ -8,7 +8,9 @@ jobs:
     runs-on: macOS-latest
     strategy: 
       matrix:
-        scheme: ['NetNewsWire', 'NetNewsWire-iOS']
+        run-config:
+          - { scheme: 'NetNewsWire', destination: 'platform=macOS'}
+          - { scheme: 'NetNewsWire-iOS', destination: 'platform=iOS Simulator,OS=13.0,name=iPhone 11' }
     
     steps:
     - name: Checkout Project
@@ -35,5 +37,7 @@ jobs:
       env:
           ENCRYPTION_SECRET: ${{ secrets.ENCRYPTION_SECRET }}
           KEY_SECRET: ${{ secrets.KEY_SECRET }}
-          SCHEME: ${{ matrix.scheme }}
+          SCHEME: ${{ matrix.run-config['scheme'] }}
+          DESTINATION: ${{ matrix.run-config['destination'] }}
+
       run: buildscripts/ci-build.sh
