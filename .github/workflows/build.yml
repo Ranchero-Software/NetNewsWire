@@ -31,7 +31,9 @@ jobs:
       run: xcodebuild -showsdks
     
     - name: Show Available Destinations
-      run: xcodebuild -scheme ${ matrix.run-config['scheme'] } -showdestinations
+      env:
+        scheme: ${{ matrix.run-config['scheme'] }}    
+      run: xcodebuild -scheme ${scheme} -showdestinations
     
     - name: Run Build
       env:
