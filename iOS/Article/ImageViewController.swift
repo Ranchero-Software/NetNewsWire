@@ -54,6 +54,7 @@ class ImageViewController: UIViewController {
 		guard let image = image else { return }
 		let activityViewController = UIActivityViewController(activityItems: [url!, image], applicationActivities: nil)
 		activityViewController.popoverPresentationController?.sourceView = shareButton
+		activityViewController.popoverPresentationController?.sourceRect = shareButton.bounds
 		present(activityViewController, animated: true)
 	}
 	
