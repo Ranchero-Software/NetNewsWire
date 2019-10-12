@@ -33,7 +33,7 @@ rm -f buildscripts/certs/mac-dist.p12
 # Do the build
 xcodebuild -scheme $SCHEME test -destination "$DESTINATION" -showBuildTimingSummary
 
-# Delete the keychain and the provisioningi profile
+# Delete the keychain and the provisioning profile
 security delete-keychain github-build.keychain
 rm -f ~/Library/MobileDevice/Provisioning\ Profiles/NetNewsWire.provisionprofile
 rm -f ~/Library/MobileDevice/Provisioning\ Profiles/NetNewsWireiOS.mobileprovision
