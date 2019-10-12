@@ -31,7 +31,7 @@ jobs:
       run: xcodebuild -showsdks
     
     - name: Show Available Destinations
-      run: xcodebuild -scheme NetNewsWire-iOS -showdestinations
+      run: xcodebuild -scheme ${ matrix.run-config['scheme'] } -showdestinations
     
     - name: Run Build
       env:
