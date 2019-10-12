@@ -8,8 +8,7 @@ jobs:
     runs-on: macOS-latest
     strategy: 
       matrix:
-        scheme: ['NetNewsWire']
-#        scheme: ['NetNewsWire', 'NetNewsWire-iOS']
+        scheme: ['NetNewsWire', 'NetNewsWire-iOS']
     
     steps:
     - name: Checkout Project

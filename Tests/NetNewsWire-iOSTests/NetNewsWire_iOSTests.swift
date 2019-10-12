@@ -7,7 +7,6 @@
 //
 
 import XCTest
-@testable import NetNewsWire_iOS
 
 class NetNewsWire_iOSTests: XCTestCase {
     

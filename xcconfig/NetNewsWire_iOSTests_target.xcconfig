@@ -1,0 +1,19 @@
+CODE_SIGN_IDENTITY = iPhone Developer
+DEVELOPMENT_TEAM = M8L2WTLA8W
+CODE_SIGN_STYLE = Automatic
+ORGANIZATION_IDENTIFIER = com.ranchero
+PROVISIONING_PROFILE_SPECIFIER =
+
+// See the notes in NetNewsWire_target.xcconfig on why the
+// DeveloperSettings.xcconfig is #included here
+
+#include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
+
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
+BUNDLE_LOADER = $(TEST_HOST)
+COMBINE_HIDPI_IMAGES = YES
+INFOPLIST_FILE = Tests/NetNewsWire-iOSTests/Info.plist
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks @loader_path/../Frameworks
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire-iOSTests
+PRODUCT_NAME = $(TARGET_NAME)
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator
