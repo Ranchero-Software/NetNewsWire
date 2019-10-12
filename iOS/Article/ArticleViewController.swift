@@ -21,6 +21,10 @@ enum ArticleViewState: Equatable {
 }
 
 class ArticleViewController: UIViewController {
+	
+	private struct MessageName {
+		static let imageWasClicked = "imageWasClicked"
+	}
 
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
@@ -102,7 +106,10 @@ class ArticleViewController: UIViewController {
 			self.webViewContainer.addChildAndPin(webView)
 			webView.navigationDelegate = self
 			webView.uiDelegate = self
-			
+
+			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
+			webView.configuration.userContentController.add(self, name: MessageName.imageWasClicked)
+
 			// Even though page.html should be loaded into this webview, we have to do it again
 			// to work around this bug: http://www.openradar.me/22855188
 			webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
@@ -334,6 +341,20 @@ extension ArticleViewController: WKUIDelegate {
 		// link preview launch Safari when the link preview is tapped.  In theory, you shoud be able to get
 		// the link from the elementInfo above and transition to SFSafariViewController instead of launching
 		// Safari.  As the time of this writing, the link in elementInfo is always nil.  ¯\_(ツ)_/¯
+	}
+}
+
+// MARK: WKScriptMessageHandler
+
+extension ArticleViewController: WKScriptMessageHandler {
+
+	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+		if message.name == MessageName.imageWasClicked, let link = message.body as? String, let url = URL(string: link) {
+			let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
+			imageVC.url = url
+			imageVC.modalPresentationStyle = .fullScreen
+			present(imageVC, animated: true)
+		}
 	}
 }
 

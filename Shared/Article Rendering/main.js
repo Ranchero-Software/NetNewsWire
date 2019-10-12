@@ -14,6 +14,18 @@ function linkHover() {
 	});
 }
 
+// Used to pop a resizable image view
+function imageWasClicked(img) {
+	window.webkit.messageHandlers.imageWasClicked.postMessage(img.src);
+}
+
+// Add the click listeners for images
+function imageClicks() {
+	document.querySelectorAll("img").forEach(element => {
+		element.addEventListener("click", function() { imageWasClicked(this) });
+	});
+}
+
 // Here we are making iframes responsive.  Particularly useful for inline Youtube videos.
 function wrapFrames() {
 	document.querySelectorAll("iframe").forEach(element => {
@@ -52,5 +64,6 @@ function render(data) {
 	wrapFrames()
 	stripStyles()
 	linkHover()
+	imageClicks()
 	inlineVideos()
 }
