@@ -411,6 +411,14 @@ final class ArticlesTable: DatabaseTable {
 			}
 		}
 	}
+
+	// MARK: - Caches
+
+	func emptyCaches() {
+		queue.run { _ in
+			self.databaseArticlesCache = [String: DatabaseArticle]()
+		}
+	}
 }
 
 // MARK: - Private

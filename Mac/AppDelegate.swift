@@ -224,9 +224,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 	
 	func applicationDidResignActive(_ notification: Notification) {
-
 		TimelineStringFormatter.emptyCaches()
-
+		AccountManager.shared.emptyCaches()
 		saveState()
 	}
 

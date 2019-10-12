@@ -615,6 +615,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
+	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
+	func emptyCaches() {
+		database.emptyCaches()
+	}
+
 	// MARK: - Container
 
 	public func flattenedFeeds() -> Set<Feed> {

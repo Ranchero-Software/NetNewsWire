@@ -143,6 +143,14 @@ public final class ArticlesDatabase {
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {
 		return articlesTable.mark(articles, statusKey, flag)
 	}
+
+	// MARK: - Caches
+
+	/// Call to free up some memory. Should be done when the app is backgrounded, for instance.
+	/// This does not empty *all* caches — just the ones that are empty-able.
+	public func emptyCaches() {
+		articlesTable.emptyCaches()
+	}
 }
 
 // MARK: - Private
