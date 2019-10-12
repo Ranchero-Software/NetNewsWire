@@ -33,6 +33,7 @@ jobs:
       run: xcodebuild -scheme RSDatabaseiOS -showdestinations
     
     - name: Run Build
+      continue-on-error: true
       env:
           ENCRYPTION_SECRET: ${{ secrets.ENCRYPTION_SECRET }}
           KEY_SECRET: ${{ secrets.KEY_SECRET }}
