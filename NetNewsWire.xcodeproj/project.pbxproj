@@ -58,6 +58,8 @@
 		513C5D0F232574E4003D4054 /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5142192A23522B5500E07E2C /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5142192923522B5500E07E2C /* ImageViewController.swift */; };
 		514219372352510100E07E2C /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514219362352510100E07E2C /* ImageScrollView.swift */; };
+		5142194B2353C1CF00E07E2C /* main_mac.js in Resources */ = {isa = PBXBuildFile; fileRef = 5142194A2353C1CF00E07E2C /* main_mac.js */; };
+		514219582353C28900E07E2C /* main_ios.js in Resources */ = {isa = PBXBuildFile; fileRef = 514219572353C28900E07E2C /* main_ios.js */; };
 		5144EA2F2279FAB600D19003 /* AccountsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */; };
 		5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */; };
 		5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */; };
@@ -754,6 +756,8 @@
 		513C5CED232571C2003D4054 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5142192923522B5500E07E2C /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		514219362352510100E07E2C /* ImageScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageScrollView.swift; sourceTree = "<group>"; };
+		5142194A2353C1CF00E07E2C /* main_mac.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main_mac.js; sourceTree = "<group>"; };
+		514219572353C28900E07E2C /* main_ios.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main_ios.js; sourceTree = "<group>"; };
 		5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsDetailViewController.swift; sourceTree = "<group>"; };
 		5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsAddLocal.xib; sourceTree = "<group>"; };
 		5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddLocalWindowController.swift; sourceTree = "<group>"; };
@@ -1684,6 +1688,7 @@
 				84E8E0EA202F693600562D8F /* DetailWebView.swift */,
 				84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */,
 				B528F81D23333C7E00E735DD /* page.html */,
+				5142194A2353C1CF00E07E2C /* main_mac.js */,
 				848362FC2262A30800DA1D35 /* styleSheet.css */,
 				5127B235222B4849006D641D /* Keyboard */,
 			);
@@ -1980,8 +1985,9 @@
 				51F85BEC227251DF00C787DC /* Acknowledgments.rtf */,
 				51F85BEE2272520B00C787DC /* Thanks.rtf */,
 				51F85BF22272531500C787DC /* Dedication.rtf */,
-				51C452B72265178500C03939 /* styleSheet.css */,
 				51BB7C302335ACDE008E8144 /* page.html */,
+				514219572353C28900E07E2C /* main_ios.js */,
+				51C452B72265178500C03939 /* styleSheet.css */,
 				84C9FC9B2262A1A900D921D6 /* Assets.xcassets */,
 				84C9FC9C2262A1A900D921D6 /* Info.plist */,
 				84BB0F812333426400DED65E /* NetNewsWire.entitlements */,
@@ -2555,6 +2561,7 @@
 				49F40DF92335B71000552BF4 /* newsfoot.js in Resources */,
 				51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
+				514219582353C28900E07E2C /* main_ios.js in Resources */,
 				51C452B82265178500C03939 /* styleSheet.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2574,6 +2581,7 @@
 				84C9FC7D22629E1200D921D6 /* AccountsDetail.xib in Resources */,
 				517630042336215100E15FFF /* main.js in Resources */,
 				5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */,
+				5142194B2353C1CF00E07E2C /* main_mac.js in Resources */,
 				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
