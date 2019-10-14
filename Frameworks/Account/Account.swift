@@ -628,6 +628,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping (() -> Void)) {
+		assert(Thread.isMainThread)
 		guard !feedIDsAndItems.isEmpty else {
 			completion()
 			return
@@ -648,25 +649,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 			completion()
 
-			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
-		}
-	}
-
-	func update(_ feed: Feed, parsedItems: Set<ParsedItem>, defaultRead: Bool = false, _ completion: @escaping (() -> Void)) {
-		let feedIDsAndItems = [feed.feedID: parsedItems]
-		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { (newArticles, updatedArticles) in
-			var userInfo = [String: Any]()
-			if let newArticles = newArticles, !newArticles.isEmpty {
-				self.updateUnreadCounts(for: Set([feed]))
-				userInfo[UserInfoKey.newArticles] = newArticles
-			}
-			if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
-				userInfo[UserInfoKey.updatedArticles] = updatedArticles
-			}
-			userInfo[UserInfoKey.feeds] = Set([feed])
-			
-			completion()
-			
 			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
 		}
 	}
