@@ -5,7 +5,6 @@
 //  Created by Brent Simmons on 9/22/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
-
 import AppKit
 
 enum FontSize: Int {
@@ -228,7 +227,6 @@ struct AppDefaults {
 		// an issue, this could be changed to proactively look for whether the default has been
 		// set _by the user_ to false, and respect that default if it is so-set.
 //		UserDefaults.standard.set(true, forKey: "NSQuitAlwaysKeepsWindows")
-
 		// TODO: revisit the above when coming back to state restoration issues.
 	}
 
@@ -326,7 +324,6 @@ private extension AppDefaults {
 }
 
 // MARK: -
-
 extension UserDefaults {
 	/// This property exists so that it can conveniently be observed via KVO
 	@objc var CorreiaSeparators: Bool {
@@ -338,4 +335,3 @@ extension UserDefaults {
 		}
 	}
 }
-

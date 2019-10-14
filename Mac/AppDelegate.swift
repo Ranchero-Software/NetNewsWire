@@ -5,7 +5,6 @@
 //  Created by Brent Simmons on 7/11/15.
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
-
 import AppKit
 import UserNotifications
 import Articles
@@ -84,7 +83,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	// MARK: - API
-
 	func logMessage(_ message: String, type: LogItem.ItemType) {
 
 		#if DEBUG
@@ -115,7 +113,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 	
 	// MARK: - NSApplicationDelegate
-
 	func applicationWillFinishLaunching(_ notification: Notification) {
 		installAppleEventHandlers()
 		#if TEST
@@ -271,7 +268,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	// MARK: Notifications
-
 	@objc func unreadCountDidChange(_ note: Notification) {
 
 		if note.object is AccountManager {
@@ -305,7 +301,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	// MARK: Main Window
-
 	func windowControllerWithName(_ storyboardName: String) -> NSWindowController {
 
 		let storyboard = NSStoryboard(name: NSStoryboard.Name(storyboardName), bundle: nil)
@@ -322,7 +317,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	// MARK: NSUserInterfaceValidations
-
 	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		if shuttingDown {
 			return false
@@ -362,7 +356,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
     }
 	
 	// MARK: Add Feed
-
 	func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
 
 		createAndShowMainWindow()
@@ -374,14 +367,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	// MARK: - Dock Badge
-
 	@objc func updateDockBadge() {
 		let label = unreadCount > 0 && !AppDefaults.hideDockUnreadCount ? "\(unreadCount)" : ""
 		NSApplication.shared.dockTile.badgeLabel = label
 	}
 
 	// MARK: - Actions
-
 	@IBAction func showPreferences(_ sender: Any?) {
 
 		if preferencesWindowController == nil {
@@ -588,7 +579,6 @@ extension AppDelegate {
 			// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
 			// and reset the default to a separate window when the preference is toggled off and on again in case the inspector is
 			// accidentally reattached.
-
 			AppDefaults.webInspectorStartsAttached = false
 			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 		#endif

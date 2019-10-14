@@ -621,12 +621,40 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping (() -> Void)) {
+		// Used only by an On My Mac account.
 		feed.takeSettings(from: parsedFeed)
-		update(feed, parsedItems: parsedFeed.items, completion)
+		let feedIDsAndItems = [feed.feedID: parsedFeed.items]
+		update(feedIDsAndItems: feedIDsAndItems, defaultRead: false, completion: completion)
 	}
-	
+
+	func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping (() -> Void)) {
+		guard !feedIDsAndItems.isEmpty else {
+			completion()
+			return
+		}
+		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { (newArticles, updatedArticles) in
+			var userInfo = [String: Any]()
+			let feeds = Set(feedIDsAndItems.compactMap { (key, _) -> Feed? in
+				self.existingFeed(withFeedID: key)
+			})
+			if let newArticles = newArticles, !newArticles.isEmpty {
+				self.updateUnreadCounts(for: feeds)
+				userInfo[UserInfoKey.newArticles] = newArticles
+			}
+			if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
+				userInfo[UserInfoKey.updatedArticles] = updatedArticles
+			}
+			userInfo[UserInfoKey.feeds] = feeds
+
+			completion()
+
+			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
+		}
+	}
+
 	func update(_ feed: Feed, parsedItems: Set<ParsedItem>, defaultRead: Bool = false, _ completion: @escaping (() -> Void)) {
-		database.update(feedID: feed.feedID, parsedItems: parsedItems, defaultRead: defaultRead) { (newArticles, updatedArticles) in
+		let feedIDsAndItems = [feed.feedID: parsedItems]
+		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { (newArticles, updatedArticles) in
 			var userInfo = [String: Any]()
 			if let newArticles = newArticles, !newArticles.isEmpty {
 				self.updateUnreadCounts(for: Set([feed]))
@@ -661,6 +689,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		if !articleIDs.isEmpty {
 			database.ensureStatuses(articleIDs, defaultRead, statusKey, flag)
 		}
+	}
+
+	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
+	func emptyCaches() {
+		database.emptyCaches()
 	}
 
 	// MARK: - Container

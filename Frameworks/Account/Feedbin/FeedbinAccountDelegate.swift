@@ -730,9 +730,9 @@ private extension FeedbinAccountDelegate {
 		// Add any feeds we don't have and update any we do
 		var subscriptionsToAdd = Set<FeedbinSubscription>()
 		subscriptions.forEach { subscription in
-			
+
 			let subFeedId = String(subscription.feedID)
-			
+
 			if let feed = account.existingFeed(withFeedID: subFeedId) {
 				feed.name = subscription.name
 				// If the name has been changed on the server remove the locally edited name
@@ -1060,7 +1060,6 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func refreshArticles(_ account: Account, page: String?, completion: @escaping (() -> Void)) {
-		
 		guard let page = page else {
 			completion()
 			return
@@ -1080,42 +1079,16 @@ private extension FeedbinAccountDelegate {
 				os_log(.error, log: self.log, "Refresh articles for additional pages failed: %@.", error.localizedDescription)
 				completion()
 			}
-			
 		}
-		
 	}
 	
 	func processEntries(account: Account, entries: [FeedbinEntry]?, completion: @escaping (() -> Void)) {
-		
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
-		let parsedMap = Dictionary(grouping: parsedItems, by: { item in item.feedURL } )
-		
-		let group = DispatchGroup()
-		
-		for (feedID, mapItems) in parsedMap {
-			
-			group.enter()
-			
-			if let feed = account.existingFeed(withFeedID: feedID) {
-				DispatchQueue.main.async {
-					account.update(feed, parsedItems: Set(mapItems), defaultRead: true) {
-						group.leave()
-					}
-				}
-			} else {
-				group.leave()
-			}
-			
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion()
-		}
-
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true, completion: completion)
 	}
 	
 	func mapEntriesToParsedItems(entries: [FeedbinEntry]?) -> Set<ParsedItem> {
-		
 		guard let entries = entries else {
 			return Set<ParsedItem>()
 		}

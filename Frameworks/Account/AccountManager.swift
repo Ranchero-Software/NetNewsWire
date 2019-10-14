@@ -248,6 +248,15 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
+	// MARK: - Caches
+
+	/// Empty caches that can reasonably be emptied — when the app moves to the background, for instance.
+	public func emptyCaches() {
+		for account in accounts {
+			account.emptyCaches()
+		}
+	}
+
 	// MARK: - Notifications
 	
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
