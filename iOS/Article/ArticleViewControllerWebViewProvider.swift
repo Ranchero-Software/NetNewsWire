@@ -69,6 +69,7 @@ class ArticleViewControllerWebViewProvider: NSObject, WKNavigationDelegate {
 
 			let configuration = WKWebViewConfiguration()
 			configuration.preferences = preferences
+			configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
 			configuration.allowsInlineMediaPlayback = true
 			configuration.mediaTypesRequiringUserActionForPlayback = .video
 			

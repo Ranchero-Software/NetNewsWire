@@ -349,13 +349,36 @@ extension ArticleViewController: WKUIDelegate {
 extension ArticleViewController: WKScriptMessageHandler {
 
 	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-		if message.name == MessageName.imageWasClicked, let link = message.body as? String, let url = URL(string: link) {
-			let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
-			imageVC.url = url
-			imageVC.modalPresentationStyle = .fullScreen
-			present(imageVC, animated: true)
+		if message.name == MessageName.imageWasClicked,
+			let body = message.body as? String,
+			let data = body.data(using: .utf8),
+			let clickMessage = try? JSONDecoder().decode(ImageClickMessage.self, from: data),
+			let range = clickMessage.imageURL.range(of: ";base64,") {
+			
+			let base64Image = String(clickMessage.imageURL.suffix(from: range.upperBound))
+			if let imageData = Data(base64Encoded: base64Image), let image = UIImage(data: imageData) {
+				let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
+				imageVC.image = image
+				imageVC.modalPresentationStyle = .fullScreen
+				present(imageVC, animated: true)
+			}
 		}
 	}
+	
+}
+
+// MARK: JSON
+private struct TemplateData: Codable {
+	let style: String
+	let body: String
+}
+
+private struct ImageClickMessage: Codable {
+	let x: Float
+	let y: Float
+	let width: Float
+	let height: Float
+	let imageURL: String
 }
 
 // MARK: Private
@@ -368,9 +391,4 @@ private extension ArticleViewController {
 		}
 	}
 	
-}
-
-private struct TemplateData: Codable {
-	let style: String
-	let body: String
 }

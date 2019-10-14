@@ -1,6 +1,34 @@
 // Used to pop a resizable image view
-function imageWasClicked(img) {
-	window.webkit.messageHandlers.imageWasClicked.postMessage(img.src);
+async function imageWasClicked(img) {
+	const rect = img.getBoundingClientRect();
+	
+	var message = {
+		x: rect.x,
+		y: rect.y,
+		width: rect.width,
+		height: rect.height
+	};
+	
+	try {
+		const response = await fetch(img.src);
+		if (!response.ok) {
+			throw new Error('Network response was not ok.');
+		}
+
+		const imgBlob = await response.blob();
+
+		var reader = new FileReader();
+		reader.readAsDataURL(imgBlob);
+
+		reader.onloadend = function() {
+			message.imageURL = reader.result;
+			var jsonMessage = JSON.stringify(message);
+			window.webkit.messageHandlers.imageWasClicked.postMessage(jsonMessage);
+		}
+	} catch (error) {
+		console.log('There has been a problem with your fetch operation: ', error.message);
+	}
+	
 }
 
 // Add the click listeners for images
