@@ -16,7 +16,7 @@ import Articles
 
 typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperation) -> Void
 
-class FetchRequestOperation {
+final class FetchRequestOperation {
 
 	let id: Int
 	let resultBlock: FetchRequestOperationResultBlock
@@ -35,8 +35,17 @@ class FetchRequestOperation {
 		precondition(Thread.isMainThread)
 		precondition(!isFinished)
 
+		var didCallCompletion = false
+
+		func callCompletionIfNeeded() {
+			if !didCallCompletion {
+				didCallCompletion = true
+				completion(self)
+			}
+		}
+
 		if isCanceled {
-			completion(self)
+			callCompletionIfNeeded()
 			return
 		}
 
@@ -44,7 +53,7 @@ class FetchRequestOperation {
 		if articleFetchers.isEmpty {
 			isFinished = true
 			resultBlock(Set<Article>(), self)
-			completion(self)
+			callCompletionIfNeeded()
 			return
 		}
 
@@ -52,22 +61,21 @@ class FetchRequestOperation {
 		var fetchersReturned = 0
 		var fetchedArticles = Set<Article>()
 		for articleFetcher in articleFetchers {
-			var didCallCompletion = false
 			articleFetcher.fetchArticlesAsync { (articles) in
 				precondition(Thread.isMainThread)
-				if self.isCanceled {
-					if !didCallCompletion {
-						didCallCompletion = true
-						completion(self)
-					}
+				guard !self.isCanceled else {
+					callCompletionIfNeeded()
 					return
 				}
+				
+				assert(!self.isFinished)
+
 				fetchedArticles.formUnion(articles)
 				fetchersReturned += 1
 				if fetchersReturned == numberOfFetchers {
 					self.isFinished = true
 					self.resultBlock(fetchedArticles, self)
-					completion(self)
+					callCompletionIfNeeded()
 				}
 			}
 		}
