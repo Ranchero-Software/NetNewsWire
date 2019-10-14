@@ -40,7 +40,7 @@ private extension FetchRequestQueue {
 
 		currentRequest = requestToRun
 		pendingRequests.removeFirst()
-		currentRequest.run { (fetchRequestOperation) in
+		currentRequest!.run { (fetchRequestOperation) in
 			precondition(fetchRequestOperation === self.currentRequest)
 			self.currentRequest = nil
 			self.runNextRequestIfNeeded()
