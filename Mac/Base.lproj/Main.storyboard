@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15504"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -89,6 +90,12 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="importOPMLFromFile:" target="Ady-hI-5gd" id="eGY-fm-uvK"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Import NNW 3 Subscriptions ..." id="ely-yi-STg">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="mu3-gN-7uA"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Export Subscriptions…" keyEquivalent="e" id="Xy2-v8-Lj8">
