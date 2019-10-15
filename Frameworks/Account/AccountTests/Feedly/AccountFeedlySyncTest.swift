@@ -148,6 +148,8 @@ class AccountFeedlySyncTest: XCTestCase {
 		account.refreshAll() { _ in
 			preparationExpectation.fulfill()
 		}
+		// If there's a failure here, then an operation hasn't completed.
+		// Check that test files have responses for all the requests this might make.
 		waitForExpectations(timeout: 5)
 	}
 	
@@ -282,18 +284,17 @@ class AccountFeedlySyncTest: XCTestCase {
 	
 	func set(testFiles: TestFiles, with transport: TestTransport) {
 		// TestTransport blacklists certain query items to make mocking responses easier.
-		let endpoint = "https://sandbox7.feedly.com/v3"
-		let category = "\(endpoint)/streams/contents?streamId=user/f2f031bd-f3e3-4893-a447-467a291c6d1e/category"
-		
+		let collectionsEndpoint = "/v3/collections"
 		switch testFiles {
 		case .initial:
 			let dict = [
-				"\(endpoint)/collections": "feedly_collections_initial.json",
-				"\(category)/5ca4d61d-e55d-4999-a8d1-c3b9d8789815": "macintosh_initial.json",
-				"\(category)/global.must": "mustread_initial.json",
-				"\(category)/885f2e01-d314-4e63-abac-17dcb063f5b5": "programming_initial.json",
-				"\(category)/66132046-6f14-488d-b590-8e93422723c8": "uncategorized_initial.json",
-				"\(category)/e31b3fcb-27f6-4f3e-b96c-53902586e366": "weblogs_initial.json",
+				"/global.saved": "saved_initial.json",
+				collectionsEndpoint: "feedly_collections_initial.json",
+				"/5ca4d61d-e55d-4999-a8d1-c3b9d8789815": "macintosh_initial.json",
+				"/global.must": "mustread_initial.json",
+				"/885f2e01-d314-4e63-abac-17dcb063f5b5": "programming_initial.json",
+				"/66132046-6f14-488d-b590-8e93422723c8": "uncategorized_initial.json",
+				"/e31b3fcb-27f6-4f3e-b96c-53902586e366": "weblogs_initial.json",
 			]
 			transport.testFiles = dict
 			
@@ -301,16 +302,16 @@ class AccountFeedlySyncTest: XCTestCase {
 			set(testFiles: .initial, with: transport)
 			
 			var dict = transport.testFiles
-			dict["\(endpoint)/collections"] = "feedly_collections_addcollection.json"
-			dict["\(category)/fc09f383-5a9a-4daa-a575-3efc1733b173"] = "newcollection_addcollection.json"
+			dict[collectionsEndpoint] = "feedly_collections_addcollection.json"
+			dict["/fc09f383-5a9a-4daa-a575-3efc1733b173"] = "newcollection_addcollection.json"
 			transport.testFiles = dict
 			
 		case .addFeed:
 			set(testFiles: .addCollection, with: transport)
 			
 			var dict = transport.testFiles
-			dict["\(endpoint)/collections"] = "feedly_collections_addfeed.json"
-			dict["\(category)/global.must"] = "mustread_addfeed.json"
+			dict[collectionsEndpoint] = "feedly_collections_addfeed.json"
+			dict["/global.must"] = "mustread_addfeed.json"
 			transport.testFiles = dict
 			
 		case .removeFeed:
