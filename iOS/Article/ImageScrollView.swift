@@ -42,6 +42,10 @@ open class ImageScrollView: UIScrollView {
     private var scaleToRestoreAfterResize: CGFloat = 1.0
     var maxScaleFromMinScale: CGFloat = 3.0
     
+	var zoomedFrame: CGRect {
+		return convert(zoomView?.frame ?? CGRect.zero, to: nil)
+	}
+	
     override open var frame: CGRect {
         willSet {
             if frame.equalTo(newValue) == false && newValue.equalTo(CGRect.zero) == false && imageSize.equalTo(CGSize.zero) == false {
@@ -93,16 +97,14 @@ open class ImageScrollView: UIScrollView {
         // center horizontally
         if frameToCenter.size.width < bounds.width {
             frameToCenter.origin.x = (bounds.width - frameToCenter.size.width) / 2
-        }
-        else {
+        } else {
             frameToCenter.origin.x = 0
         }
         
         // center vertically
         if frameToCenter.size.height < bounds.height {
             frameToCenter.origin.y = (bounds.height - frameToCenter.size.height) / 2
-        }
-        else {
+        } else {
             frameToCenter.origin.y = 0
         }
         
@@ -260,8 +262,7 @@ open class ImageScrollView: UIScrollView {
         // zoom out if it bigger than middle scale point. Else, zoom in
         if zoomScale >= maximumZoomScale / 2.0 {
             setZoomScale(minimumZoomScale, animated: true)
-        }
-        else {
+        } else {
             let center = gestureRecognizer.location(in: gestureRecognizer.view)
             let zoomRect = zoomRectForScale(ImageScrollView.kZoomInFactorFromMinWhenDoubleTap * minimumZoomScale, center: center)
             zoom(to: zoomRect, animated: true)

@@ -14,6 +14,9 @@ class ImageViewController: UIViewController {
 	@IBOutlet weak var imageScrollView: ImageScrollView!
 	
 	var image: UIImage!
+	var zoomedFrame: CGRect {
+		return imageScrollView.zoomedFrame
+	}
 	
 	override func viewDidLoad() {
         super.viewDidLoad()

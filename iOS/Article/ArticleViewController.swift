@@ -43,6 +43,7 @@ class ArticleViewController: UIViewController {
 	}()
 	
 	private var webView: WKWebView!
+	private var transition = ImageTransition()
 
 	weak var coordinator: SceneCoordinator!
 	
@@ -65,6 +66,9 @@ class ArticleViewController: UIViewController {
 			return nil
 		}
 	}
+	
+	var clickedImage: UIImage?
+	var clickedImageFrame: CGRect?
 
 	var articleExtractorButtonState: ArticleExtractorButtonState {
 		get {
@@ -357,17 +361,43 @@ extension ArticleViewController: WKScriptMessageHandler {
 			
 			let base64Image = String(clickMessage.imageURL.suffix(from: range.upperBound))
 			if let imageData = Data(base64Encoded: base64Image), let image = UIImage(data: imageData) {
+				
+				let rect = CGRect(x: CGFloat(clickMessage.x), y: CGFloat(clickMessage.y), width: CGFloat(clickMessage.width), height: CGFloat(clickMessage.height))
+				clickedImageFrame = webView.convert(rect, to: nil)
+				clickedImage = image
+				
 				let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
 				imageVC.image = image
 				imageVC.modalPresentationStyle = .fullScreen
+				imageVC.transitioningDelegate = self
 				present(imageVC, animated: true)
+				
 			}
 		}
 	}
 	
 }
 
+// MARK: UIViewControllerTransitioningDelegate
+
+extension ArticleViewController: UIViewControllerTransitioningDelegate {
+
+	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		guard let frame = clickedImageFrame, let image = clickedImage else { return nil }
+		transition.originFrame = frame
+		transition.originImage = image
+		transition.presenting = true
+		return transition
+	}
+	
+	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		transition.presenting = false
+		return transition
+	}
+}
+
 // MARK: JSON
+
 private struct TemplateData: Codable {
 	let style: String
 	let body: String
