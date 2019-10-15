@@ -8,6 +8,7 @@
 
 import Foundation
 import RSWeb
+import XCTest
 
 final class TestTransport: Transport {
 	
@@ -50,13 +51,20 @@ final class TestTransport: Transport {
 		
 		let response = httpResponse(for: request, statusCode: testStatusCodes[urlString] ?? 200)
 		
-		if let testFileName = testFiles[urlString] {
+		var mockResponseFound = false
+		for (key, testFileName) in testFiles where urlString.contains(key) {
 			let testFileURL = Bundle(for: TestTransport.self).resourceURL!.appendingPathComponent(testFileName)
 			let data = try! Data(contentsOf: testFileURL)
 			DispatchQueue.global(qos: .background).async {
 				completion(.success((response, data)))
 			}
-		} else {
+			mockResponseFound = true
+			break
+		}
+		
+		if !mockResponseFound {
+//			XCTFail("Missing mock response for: \(urlString)")
+			print("***\nWARNING: \(self) missing mock response for:\n\(urlString)\n***")
 			DispatchQueue.global(qos: .background).async {
 				completion(.success((response, nil)))
 			}
