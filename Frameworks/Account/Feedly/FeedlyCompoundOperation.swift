@@ -37,4 +37,9 @@ final class FeedlyCompoundOperation: FeedlyOperation {
 		
 		operationQueue.addOperations(operationsWithFinish, waitUntilFinished: false)
 	}
+	
+	override func cancel() {
+		operationQueue.cancelAllOperations()
+		super.cancel()
+	}
 }
