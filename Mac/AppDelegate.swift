@@ -62,6 +62,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var importOPMLController: ImportOPMLWindowController?
+	private var importNNW3Controller: ImportNNW3WindowController?
 	private var exportOPMLController: ExportOPMLWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
@@ -135,6 +136,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			logDebugMessage("Is first run.")
 		}
 		let localAccount = AccountManager.shared.defaultAccount
+		NNW3FeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
 		
 		let tempDirectory = NSTemporaryDirectory()
@@ -422,7 +424,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func toggleInspectorWindow(_ sender: Any?) {
-
 		if inspectorWindowController == nil {
 			inspectorWindowController = (windowControllerWithName("Inspector") as! InspectorWindowController)
 		}
@@ -437,7 +438,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func importOPMLFromFile(_ sender: Any?) {
-
 		createAndShowMainWindow()
 		if mainWindowController!.isDisplayingSheet {
 			return
@@ -445,11 +445,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		
 		importOPMLController = ImportOPMLWindowController()
 		importOPMLController?.runSheetOnWindow(mainWindowController!.window!)
+	}
+	
+	@IBAction func importNNW3FromFile(_ sender: Any?) {
+		createAndShowMainWindow()
+		if mainWindowController!.isDisplayingSheet {
+			return
+		}
 		
+		importNNW3Controller = ImportNNW3WindowController()
+		importNNW3Controller?.runSheetOnWindow(mainWindowController!.window!)
 	}
 	
 	@IBAction func exportOPML(_ sender: Any?) {
-
 		createAndShowMainWindow()
 		if mainWindowController!.isDisplayingSheet {
 			return
@@ -457,11 +465,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		
 		exportOPMLController = ExportOPMLWindowController()
 		exportOPMLController?.runSheetOnWindow(mainWindowController!.window!)
-		
 	}
 	
 	@IBAction func addAppNews(_ sender: Any?) {
-
 		if AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 			return
 		}

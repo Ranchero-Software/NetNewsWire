@@ -92,6 +92,12 @@
                                                 <action selector="importOPMLFromFile:" target="Ady-hI-5gd" id="eGY-fm-uvK"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Import NNW 3 Subscriptions ..." id="ely-yi-STg">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="mu3-gN-7uA"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Export Subscriptions…" keyEquivalent="e" id="Xy2-v8-Lj8">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
