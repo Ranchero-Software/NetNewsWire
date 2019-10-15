@@ -10,11 +10,14 @@ import UIKit
 
 struct AppDefaults {
 
-	static var shared: UserDefaults = {
+	private static var suiteName: String = {
 		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
-		let suiteName = "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
-		return UserDefaults.init(suiteName: suiteName)!
+		return "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
 	}()
+	
+	static var shared: UserDefaults {
+		return UserDefaults.init(suiteName: suiteName)!
+	}
 	
 	struct Key {
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
