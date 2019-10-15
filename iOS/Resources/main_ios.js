@@ -33,9 +33,11 @@ async function imageWasClicked(img) {
 
 // Add the click listeners for images
 function imageClicks() {
-	document.querySelectorAll("img").forEach(element => {
-		element.addEventListener("click", function() { imageWasClicked(this) });
-	});
+	window.onclick = function(event) {
+		if (event.target.matches('img')) {
+			imageWasClicked(event.target);
+		}
+	}
 }
 
 // Add the playsinline attribute to any HTML5 videos that don't have it.
