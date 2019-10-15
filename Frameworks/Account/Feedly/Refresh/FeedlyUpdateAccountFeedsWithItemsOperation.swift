@@ -41,7 +41,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 			feedIDsAndItems[feed.feedID] = items
 		}
 		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) {
-			os_log(.debug, log: self.log, "Finished updating feeds in collection \"%@\"", self.organisedItemsProvider.providerName)
+			os_log(.debug, log: self.log, "Finished updating feeds for \"%@\"", self.organisedItemsProvider.providerName)
 			self.didFinish()
 		}
 	}

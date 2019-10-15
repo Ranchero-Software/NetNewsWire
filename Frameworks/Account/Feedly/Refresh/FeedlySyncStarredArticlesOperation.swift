@@ -53,6 +53,8 @@ final class FeedlySyncStarredArticlesOperation: FeedlyOperation {
 		let syncSaved = FeedlyCompoundOperation {
 
 			let saved = FeedlyTagResourceId.saved(for: user)
+			os_log(.debug, log: log, "Getting starred articles from \"%@\".", saved.id)
+			
 			let getSavedStream = FeedlyGetStreamOperation(account: account,
 														  resource: saved,
 														  caller: caller,
@@ -98,8 +100,6 @@ final class FeedlySyncStarredArticlesOperation: FeedlyOperation {
 		
 		finalOperation.addDependency(syncSaved)
 		operationQueue.addOperations([syncSaved, finalOperation], waitUntilFinished: false)
-		
-		os_log(.debug, log: log, "Syncing starred articles.")
 	}
 	
 }
