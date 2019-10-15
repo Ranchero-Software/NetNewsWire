@@ -31,7 +31,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 		
 		let allFeeds = organisedItemsProvider.allFeeds
 		
-//		os_log(.debug, log: log, "Begin updating %i feeds in collection \"%@\"", allFeeds.count, organisedItemsProvider.collection.label)
+		os_log(.debug, log: log, "Begin updating %i feeds for \"%@\"", allFeeds.count, organisedItemsProvider.providerName)
 
 		var feedIDsAndItems = [String: Set<ParsedItem>]()
 		for feed in allFeeds {
@@ -41,7 +41,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 			feedIDsAndItems[feed.feedID] = items
 		}
 		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) {
-//			os_log(.debug, log: self.log, "Finished updating feeds in collection \"%@\"", self.organisedItemsProvider.collection.label)
+			os_log(.debug, log: self.log, "Finished updating feeds for \"%@\"", self.organisedItemsProvider.providerName)
 			self.didFinish()
 		}
 	}

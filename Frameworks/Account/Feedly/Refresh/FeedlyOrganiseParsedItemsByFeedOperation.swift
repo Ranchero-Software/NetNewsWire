@@ -11,6 +11,7 @@ import RSParser
 import os.log
 
 protocol FeedlyParsedItemsByFeedProviding {
+	var providerName: String { get }
 	var allFeeds: Set<Feed> { get }
 	func parsedItems(for feed: Feed) -> Set<ParsedItem>?
 }
@@ -22,12 +23,18 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 	private let log: OSLog
 	
 	var allFeeds: Set<Feed> {
+		assert(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
 		let keys = Set(itemsKeyedByFeedId.keys)
 		return account.flattenedFeeds().filter { keys.contains($0.feedID) }
 	}
 	
 	func parsedItems(for feed: Feed) -> Set<ParsedItem>? {
+		assert(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
 		return itemsKeyedByFeedId[feed.feedID]
+	}
+	
+	var providerName: String {
+		return entryProvider.resource.id
 	}
 	
 	private var itemsKeyedByFeedId = [String: Set<ParsedItem>]()
@@ -61,7 +68,7 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 			guard !isCancelled else { return }
 		}
 		
-//		os_log(.debug, log: log, "Grouped %i items by %i feeds for %@", items.count, dict.count, parsedItemsProvider.collection.label)
+		os_log(.debug, log: log, "Grouped %i items by %i feeds for %@", items.count, dict.count, entryProvider.resource.id)
 		
 		itemsKeyedByFeedId = dict
 	}

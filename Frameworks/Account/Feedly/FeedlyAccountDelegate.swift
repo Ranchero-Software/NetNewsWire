@@ -44,7 +44,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	private let caller: FeedlyAPICaller
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
-	private let articleStatusCoodinator: FeedlyArticleStatusCoordinator
+	private let database: SyncDatabase
 	
 	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API = .default) {
 		
@@ -70,9 +70,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			caller = FeedlyAPICaller(transport: session, api: api)
 		}
 		
-		articleStatusCoodinator = FeedlyArticleStatusCoordinator(dataFolderPath: dataFolder,
-																 caller: caller,
-																 log: log)
+		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
+		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
 	}
 	
 	// MARK: Account API
@@ -93,7 +92,13 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
-		articleStatusCoodinator.sendArticleStatus(for: account, completion: completion)
+		let send = FeedlySendArticleStatusesOperation(database: database, caller: caller, log: log)
+		send.completionBlock = {
+			DispatchQueue.main.async {
+				completion()
+			}
+		}
+		OperationQueue.main.addOperation(send)
 	}
 	
 	/// Attempts to ensure local articles have the same status as they do remotely.
@@ -214,28 +219,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				completion(.failure(error))
 			}
 		}
-	}
-	
-	private func isValidContainer(for account: Account, container: Container) throws -> (Folder, String) {
-		guard let folder = container as? Folder else {
-			throw FeedlyAccountDelegateError.addFeedChooseFolder
-		}
-		
-		guard let collectionId = folder.externalID else {
-			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder)
-		}
-		
-		guard let userId = credentials?.username else {
-			throw FeedlyAccountDelegateError.notLoggedIn
-		}
-		
-		let uncategorized = FeedlyCategoryResourceId.uncategorized(for: userId)
-		
-		guard collectionId != uncategorized.id else {
-			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder)
-		}
-		
-		return (folder, collectionId)
 	}
 	
 	var createFeedRequest: FeedlyAddFeedRequest?
@@ -411,12 +394,18 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
 		
-		let acceptedStatuses = articleStatusCoodinator.articles(articles,
-																for: account,
-																didChangeStatus: statusKey,
-																flag: flag)
+		let syncStatuses = articles.map { article in
+			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
+		}
 		
-		return acceptedStatuses
+		database.insertStatuses(syncStatuses)
+		os_log(.debug, log: log, "Marking %@ as %@.", articles.map { $0.title }, syncStatuses)
+		
+		if database.selectPendingCount() > 100 {
+			sendArticleStatus(for: account) { }
+		}
+		
+		return account.update(articles, statusKey: statusKey, flag: flag)
 	}
 	
 	func accountDidInitialize(_ account: Account) {
@@ -424,7 +413,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		syncStrategy = FeedlySyncStrategy(account: account,
 										  caller: caller,
-										  articleStatusCoordinator: articleStatusCoodinator,
+										  database: database,
 										  log: log)
 	}
 	

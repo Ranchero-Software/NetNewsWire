@@ -24,7 +24,6 @@ class FeedlyOperation: Operation {
 	}
 	
 	func didFinish(_ error: Error) {
-		assert(delegate != nil)
 		delegate?.feedlyOperation(self, didFailWith: error)
 		didFinish()
 	}
