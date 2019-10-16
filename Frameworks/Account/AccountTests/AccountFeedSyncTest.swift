@@ -27,8 +27,13 @@ class AccountFeedSyncTest: XCTestCase {
 		
 		// Test initial folders
 		let initialExpection = self.expectation(description: "Initial feeds")
-		account.refreshAll() { _ in
-			initialExpection.fulfill()
+		account.refreshAll() { result in
+			switch result {
+			case .success:
+				initialExpection.fulfill()
+			case .failure(let error):
+				XCTFail(error.localizedDescription)
+			}
 		}
 		waitForExpectations(timeout: 5, handler: nil)
 		
@@ -41,11 +46,16 @@ class AccountFeedSyncTest: XCTestCase {
 		XCTAssertEqual("https://favicons.feedbinusercontent.com/6ac/6acc098f35ed2bcc0915ca89d50a97e5793eda45.png", daringFireball!.faviconURL)
 
 		// Test Adding a Feed
-		testTransport.testFiles["https://api.feedbin.com/v2/subscriptions.json"] = "subscriptions_add.json"
+		testTransport.testFiles["subscriptions.json"] = "subscriptions_add.json"
 		
 		let addExpection = self.expectation(description: "Add feeds")
-		account.refreshAll() { _ in 
-			addExpection.fulfill()
+		account.refreshAll() { result in
+			switch result {
+			case .success:
+				addExpection.fulfill()
+			case .failure(let error):
+				XCTFail(error.localizedDescription)
+			}
 		}
 		waitForExpectations(timeout: 5, handler: nil)
 		
