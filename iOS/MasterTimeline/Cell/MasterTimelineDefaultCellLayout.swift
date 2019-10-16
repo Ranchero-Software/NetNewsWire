@@ -15,9 +15,11 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 	
 	static let unreadCircleMarginLeft = CGFloat(integerLiteral: 0)
 	static let unreadCircleDimension = CGFloat(integerLiteral: 12)
+	static let unreadCircleSize = CGSize(width: MasterTimelineDefaultCellLayout.unreadCircleDimension, height: MasterTimelineDefaultCellLayout.unreadCircleDimension)
 	static let unreadCircleMarginRight = CGFloat(integerLiteral: 8)
 
 	static let starDimension = CGFloat(integerLiteral: 16)
+	static let starSize = CGSize(width: MasterTimelineDefaultCellLayout.starDimension, height: MasterTimelineDefaultCellLayout.starDimension)
 
 	static let avatarSize = CGSize(width: 48.0, height: 48.0)
 	static let avatarMarginRight = CGFloat(integerLiteral: 8)
