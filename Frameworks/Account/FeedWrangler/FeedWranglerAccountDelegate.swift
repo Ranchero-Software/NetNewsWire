@@ -19,7 +19,12 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	
 	var isOPMLImportInProgress = false
 	var server: String? = FeedWranglerConfig.clientPath
-	var credentials: Credentials?
+	var credentials: Credentials? {
+		didSet {
+			caller.credentials = credentials
+		}
+	}
+	
 	var accountMetadata: AccountMetadata?
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
@@ -54,13 +59,17 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
-		self.sendArticleStatus(for: account) {
-			self.refreshArticleStatus(for: account) {
-				self.refreshArticles(for: account) {
-					self.refreshMissingArticles(for: account) {
-						self.refreshProgress.clear()
-						DispatchQueue.main.async {
-							completion(.success(()))
+		self.refreshCredentials(for: account) {
+			self.refreshSubscriptions(for: account) { _ in
+				self.sendArticleStatus(for: account) {
+					self.refreshArticleStatus(for: account) {
+						self.refreshArticles(for: account) {
+							self.refreshMissingArticles(for: account) {
+								self.refreshProgress.clear()
+								DispatchQueue.main.async {
+									completion(.success(()))
+								}
+							}
 						}
 					}
 				}
@@ -68,8 +77,31 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
+	func refreshCredentials(for account: Account, completion: @escaping (() -> Void)) {
+		os_log(.debug, log: log, "Refreshing credentials...")
+		// MARK: TODO
+		credentials = try? account.retrieveCredentials(type: .feedWranglerToken)
+		completion()
+	}
+	
+	func refreshSubscriptions(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		os_log(.debug, log: log, "Refreshing subscriptions...")
+		caller.retrieveSubscriptions { result in
+			switch result {
+			case .success(let subscriptions):
+				self.syncFeeds(account, subscriptions)
+				completion(.success(()))
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+			
+		}
+	}
+	
 	func refreshArticles(for account: Account, completion: @escaping (() -> Void)) {
-		os_log(.debug, log: log, "Refreshing articles...")	
+		os_log(.debug, log: log, "Refreshing articles...")
+		completion()
 	}
 	
 	func refreshMissingArticles(for account: Account, completion: @escaping (() -> Void)) {
@@ -152,5 +184,32 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 
 // MARK: Private
 private extension FeedWranglerAccountDelegate {
+	
+	func syncFeeds(_ account: Account, _ subscriptions: [FeedWranglerSubscription]) {
+		assert(Thread.isMainThread)
+		let feedIds = subscriptions.map { String($0.feed_id) }
+		
+		let feedsToRemove = account.topLevelFeeds.filter { !feedIds.contains($0.feedID) }
+		account.removeFeeds(feedsToRemove)
 
+		var subscriptionsToAdd = Set<FeedWranglerSubscription>()
+		subscriptions.forEach { subscription in
+			let subscriptionId = String(subscription.feed_id)
+			
+			if let feed = account.existingFeed(withFeedID: subscriptionId) {
+				feed.name = subscription.title
+				feed.homePageURL = subscription.site_url
+				feed.subscriptionID = nil // MARK: TODO What should this be?
+			} else {
+				subscriptionsToAdd.insert(subscription)
+			}
+		}
+		
+		subscriptionsToAdd.forEach { subscription in
+			let feedId = String(subscription.feed_id)
+			let feed = account.createFeed(with: subscription.title, url: subscription.feed_url, feedID: feedId, homePageURL: subscription.site_url)
+			feed.subscriptionID = nil
+			account.addFeed(feed)
+		}
+	}
 }

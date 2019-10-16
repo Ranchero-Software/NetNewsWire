@@ -56,4 +56,19 @@ final class FeedWranglerAPICaller: NSObject {
 		}
 	}
 	
+	func retrieveSubscriptions(completion: @escaping (Result<[FeedWranglerSubscription], Error>) -> Void) {
+		let url = FeedWranglerConfig.clientURL.appendingPathComponent("subscriptions/list")
+		let request = URLRequest(url: url, credentials: credentials)
+		
+		transport.send(request: request, resultType: FeedWranglerSubscriptionsRequest.self) { result in
+			switch result {
+			case .success(let (_, results)):
+				completion(.success(results?.feeds ?? []))
+
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
 }
