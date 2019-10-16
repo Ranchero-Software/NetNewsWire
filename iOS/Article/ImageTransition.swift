@@ -10,7 +10,7 @@ import UIKit
 
 class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
-	let duration = 0.5
+	let duration = 0.3
 	var presenting = true
 	var originFrame: CGRect!
 	var originImage: UIImage!
@@ -37,10 +37,6 @@ class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 		let imageView = UIImageView(image: originImage)
 		imageView.frame = initialFrame
 		
-//		let xScaleFactor = presenting ?	initialFrame.width / targetFrame.width : targetFrame.width / initialFrame.width
-//		let yScaleFactor = presenting ? initialFrame.height / targetFrame.height :	targetFrame.height / initialFrame.height
-//		let scaleTransform = CGAffineTransform(scaleX: xScaleFactor, y: yScaleFactor)
-
 		let fromView = transitionContext.view(forKey: .from)!
 		fromView.removeFromSuperview()
 		
@@ -49,10 +45,11 @@ class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
 		UIView.animate(
 			withDuration: duration,
+			delay:0.0,
+			usingSpringWithDamping: 0.8,
+			initialSpringVelocity: 0.2,
 			animations: {
 				imageView.frame = targetFrame
-//				imageView.transform = scaleTransform
-//				imageView.center = CGPoint(x: targetFrame.midX, y: targetFrame.midY)
 			}, completion: { _ in
 				imageView.removeFromSuperview()
 				let toView = transitionContext.view(forKey: .to)!

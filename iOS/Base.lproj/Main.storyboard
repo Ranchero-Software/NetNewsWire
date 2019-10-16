@@ -268,11 +268,11 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="RmY-a3-hUg" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="A0i-Hs-1Ac"/>
-                            <constraint firstItem="mbY-02-GFL" firstAttribute="bottom" secondItem="msG-pz-EKk" secondAttribute="bottom" id="AtA-bA-jDr"/>
-                            <constraint firstItem="mbY-02-GFL" firstAttribute="trailing" secondItem="msG-pz-EKk" secondAttribute="trailing" id="R49-qV-8nm"/>
-                            <constraint firstItem="msG-pz-EKk" firstAttribute="leading" secondItem="mbY-02-GFL" secondAttribute="leading" id="XN1-xN-hYS"/>
+                            <constraint firstAttribute="bottom" secondItem="msG-pz-EKk" secondAttribute="bottom" id="AtA-bA-jDr"/>
+                            <constraint firstAttribute="trailing" secondItem="msG-pz-EKk" secondAttribute="trailing" id="R49-qV-8nm"/>
+                            <constraint firstItem="msG-pz-EKk" firstAttribute="leading" secondItem="w6Q-vH-063" secondAttribute="leading" id="XN1-xN-hYS"/>
                             <constraint firstItem="mbY-02-GFL" firstAttribute="trailing" secondItem="RmY-a3-hUg" secondAttribute="trailing" constant="8" id="Zlz-lM-LV8"/>
-                            <constraint firstItem="msG-pz-EKk" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="p1a-s0-wdK"/>
+                            <constraint firstItem="msG-pz-EKk" firstAttribute="top" secondItem="w6Q-vH-063" secondAttribute="top" id="p1a-s0-wdK"/>
                             <constraint firstItem="cXR-ll-xBx" firstAttribute="leading" secondItem="mbY-02-GFL" secondAttribute="leading" constant="8" id="vJs-LN-Ydd"/>
                             <constraint firstItem="cXR-ll-xBx" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="xVN-Qt-WYA"/>
                         </constraints>
