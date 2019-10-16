@@ -170,7 +170,29 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	}
 	
 	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		
+		self.refreshCredentials(for: account) {
+			self.refreshProgress.completeTask()
+			self.caller.removeSubscription(feedID: feed.feedID) { result in
+				self.refreshProgress.completeTask()
+				
+				switch result {
+				case .success:
+					DispatchQueue.main.async {
+						account.clearFeedMetadata(feed)
+						account.removeFeed(feed)
+						completion(.success(()))
+					}
+					
+				case .failure(let error):
+					DispatchQueue.main.async {
+						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						completion(.failure(wrappedError))
+					}
+				}
+			}
+		}
 	}
 	
 	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {

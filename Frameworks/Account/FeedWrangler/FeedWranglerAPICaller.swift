@@ -98,4 +98,31 @@ final class FeedWranglerAPICaller: NSObject {
 			}
 		}
 	}
+	
+	func removeSubscription(feedID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard var components = URLComponents(url: FeedWranglerConfig.clientURL.appendingPathComponent("subscriptions/remove_feed"), resolvingAgainstBaseURL: false) else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		components.queryItems = [
+			URLQueryItem(name: "feed_id", value: feedID)
+		]
+		
+		guard let url = components.url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		
+		let request = URLRequest(url: url, credentials: credentials)
+		
+		transport.send(request: request, resultType: FeedWranglerGenericResult.self) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
 }

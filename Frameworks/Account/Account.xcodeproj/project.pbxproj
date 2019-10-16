@@ -12,6 +12,7 @@
 		3BF610C923571CD4000EF978 /* FeedWranglerAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF610C623571CD4000EF978 /* FeedWranglerAccountDelegate.swift */; };
 		3BF6112423572A62000EF978 /* FeedWranglerSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF6112323572A62000EF978 /* FeedWranglerSubscription.swift */; };
 		3BF6112623572E43000EF978 /* FeedWranglerSubscriptionsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF6112523572E43000EF978 /* FeedWranglerSubscriptionsRequest.swift */; };
+		3BF6119023577173000EF978 /* FeedWranglerGenericResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF6118F23577173000EF978 /* FeedWranglerGenericResult.swift */; };
 		5107A099227DE42E00C7C3C5 /* AccountCredentialsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A098227DE42E00C7C3C5 /* AccountCredentialsTest.swift */; };
 		5107A09B227DE49500C7C3C5 /* TestAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */; };
 		5107A09D227DE77700C7C3C5 /* TestTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09C227DE77700C7C3C5 /* TestTransport.swift */; };
@@ -195,6 +196,7 @@
 		3BF610C623571CD4000EF978 /* FeedWranglerAccountDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountDelegate.swift; sourceTree = "<group>"; };
 		3BF6112323572A62000EF978 /* FeedWranglerSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedWranglerSubscription.swift; sourceTree = "<group>"; };
 		3BF6112523572E43000EF978 /* FeedWranglerSubscriptionsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedWranglerSubscriptionsRequest.swift; sourceTree = "<group>"; };
+		3BF6118F23577173000EF978 /* FeedWranglerGenericResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedWranglerGenericResult.swift; sourceTree = "<group>"; };
 		5107A098227DE42E00C7C3C5 /* AccountCredentialsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCredentialsTest.swift; sourceTree = "<group>"; };
 		5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAccountManager.swift; sourceTree = "<group>"; };
 		5107A09C227DE77700C7C3C5 /* TestTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTransport.swift; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 				3BF610C623571CD4000EF978 /* FeedWranglerAccountDelegate.swift */,
 				3BF6112323572A62000EF978 /* FeedWranglerSubscription.swift */,
 				3BF6112523572E43000EF978 /* FeedWranglerSubscriptionsRequest.swift */,
+				3BF6118F23577173000EF978 /* FeedWranglerGenericResult.swift */,
 			);
 			path = FeedWrangler;
 			sourceTree = "<group>";
@@ -917,6 +920,7 @@
 				5165D72922835F7A00D9D53D /* FeedSpecifier.swift in Sources */,
 				9E1D154D233370D800F4944C /* FeedlySyncStrategy.swift in Sources */,
 				844B297D2106C7EC004020B3 /* Feed.swift in Sources */,
+				3BF6119023577173000EF978 /* FeedWranglerGenericResult.swift in Sources */,
 				9E1D15572334355900F4944C /* FeedlyRequestStreamsOperation.swift in Sources */,
 				9E1D15512334282100F4944C /* FeedlyMirrorCollectionsAsFoldersOperation.swift in Sources */,
 				9E1773D7234575AB0056A5A8 /* FeedlyTag.swift in Sources */,
