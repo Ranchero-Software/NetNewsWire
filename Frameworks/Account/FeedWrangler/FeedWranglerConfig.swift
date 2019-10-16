@@ -9,6 +9,7 @@
 import Foundation
 
 enum FeedWranglerConfig {
+	static let pageSize = 100
 	static let clientKey = "{FEEDWRANGLERKEY}" // Add FEED_WRANGLER_KEY = XYZ to SharedXcodeSettings/DeveloperSettings.xcconfig
 	static let clientPath = "https://feedwrangler.net/api/v2/"
 	static let clientURL = {
