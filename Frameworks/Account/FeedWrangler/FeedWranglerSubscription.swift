@@ -10,9 +10,17 @@ import RSCore
 import RSParser
 
 struct FeedWranglerSubscription: Hashable, Codable {
+	
 	let title: String
-	let feed_id: Int
-	let feed_url: String
-	let site_url: String?
+	let feedID: Int
+	let feedURL: String
+	let siteURL: String?
+	
+	enum CodingKeys: String, CodingKey {
+		case title = "title"
+		case feedID = "feed_id"
+		case feedURL = "feed_url"
+		case siteURL = "site_url"
+	}
 	
 }

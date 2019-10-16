@@ -93,6 +93,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 				completion(.success(()))
 				
 			case .failure(let error):
+				os_log(.debug, log: self.log, "Failed to refresh subscriptions: %@", error.localizedDescription)
 				completion(.failure(error))
 			}
 			
@@ -187,18 +188,18 @@ private extension FeedWranglerAccountDelegate {
 	
 	func syncFeeds(_ account: Account, _ subscriptions: [FeedWranglerSubscription]) {
 		assert(Thread.isMainThread)
-		let feedIds = subscriptions.map { String($0.feed_id) }
+		let feedIds = subscriptions.map { String($0.feedID) }
 		
 		let feedsToRemove = account.topLevelFeeds.filter { !feedIds.contains($0.feedID) }
 		account.removeFeeds(feedsToRemove)
 
 		var subscriptionsToAdd = Set<FeedWranglerSubscription>()
 		subscriptions.forEach { subscription in
-			let subscriptionId = String(subscription.feed_id)
+			let subscriptionId = String(subscription.feedID)
 			
 			if let feed = account.existingFeed(withFeedID: subscriptionId) {
 				feed.name = subscription.title
-				feed.homePageURL = subscription.site_url
+				feed.homePageURL = subscription.siteURL
 				feed.subscriptionID = nil // MARK: TODO What should this be?
 			} else {
 				subscriptionsToAdd.insert(subscription)
@@ -206,8 +207,8 @@ private extension FeedWranglerAccountDelegate {
 		}
 		
 		subscriptionsToAdd.forEach { subscription in
-			let feedId = String(subscription.feed_id)
-			let feed = account.createFeed(with: subscription.title, url: subscription.feed_url, feedID: feedId, homePageURL: subscription.site_url)
+			let feedId = String(subscription.feedID)
+			let feed = account.createFeed(with: subscription.title, url: subscription.feedURL, feedID: feedId, homePageURL: subscription.siteURL)
 			feed.subscriptionID = nil
 			account.addFeed(feed)
 		}
