@@ -40,9 +40,9 @@ public extension URLRequest {
 			guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
 				return
 			}
-			components.queryItems = [
-				URLQueryItem(name: "access_token", value: credentials.secret),
-			]
+			var queryItems = components.queryItems ?? []
+			queryItems.append(URLQueryItem(name: "access_token", value: credentials.secret))
+			components.queryItems = queryItems
 			self.url = components.url
         case .readerBasic:
             setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
