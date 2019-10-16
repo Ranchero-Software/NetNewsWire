@@ -15,7 +15,7 @@ class AccountsAddViewController: NSViewController {
 	
 	private var accountsAddWindowController: NSWindowController?
 	
-	private let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS]
+	private let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .freshRSS]
 	
 	init() {
 		super.init(nibName: "AccountsAdd", bundle: nil)
