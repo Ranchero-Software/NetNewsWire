@@ -49,6 +49,11 @@ final class FeedlySyncStrategy {
 			return
 		}
 		
+		guard let credentials = caller.credentials else {
+			completionHandler(.failure(FeedlyAccountDelegateError.notLoggedIn))
+			return
+		}
+		
 		let sendArticleStatuses = FeedlySendArticleStatusesOperation(database: database, caller: caller, log: log)
 		sendArticleStatuses.delegate = self
 		
@@ -85,7 +90,7 @@ final class FeedlySyncStrategy {
 		getCollectionStreams.queueDelegate = self
 		getCollectionStreams.addDependency(getCollections)
 		
-		let syncStarred = FeedlySyncStarredArticlesOperation(account: account, caller: caller, log: log)
+		let syncStarred = FeedlySyncStarredArticlesOperation(account: account, credentials: credentials, caller: caller, log: log)
 		syncStarred.addDependency(getCollections)
 		syncStarred.addDependency(mirrorCollectionsAsFolders)
 		syncStarred.addDependency(createFeedsOperation)

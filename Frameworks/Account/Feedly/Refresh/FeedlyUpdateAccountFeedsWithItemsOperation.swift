@@ -29,19 +29,10 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 			return
 		}
 		
-		let allFeeds = organisedItemsProvider.allFeeds
+		let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
 		
-		os_log(.debug, log: log, "Begin updating %i feeds for \"%@\"", allFeeds.count, organisedItemsProvider.providerName)
-
-		var feedIDsAndItems = [String: Set<ParsedItem>]()
-		for feed in allFeeds {
-			guard let items = organisedItemsProvider.parsedItems(for: feed) else {
-				continue
-			}
-			feedIDsAndItems[feed.feedID] = items
-		}
 		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) {
-			os_log(.debug, log: self.log, "Finished updating feeds for \"%@\"", self.organisedItemsProvider.providerName)
+			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", feedIDsAndItems.count, self.organisedItemsProvider.providerName)
 			self.didFinish()
 		}
 	}

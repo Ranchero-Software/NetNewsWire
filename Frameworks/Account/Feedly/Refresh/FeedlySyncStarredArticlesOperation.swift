@@ -8,18 +8,86 @@
 
 import Foundation
 import os.log
+import RSParser
 
-final class FeedlySyncStarredArticlesOperation: FeedlyOperation {
+final class FeedlySyncStarredArticlesOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyGetStreamOperationDelegate {
 	private let account: Account
 	private let operationQueue: OperationQueue
 	private let caller: FeedlyAPICaller
 	private let log: OSLog
 	
-	init(account: Account, caller: FeedlyAPICaller, log: OSLog) {
+	private let setStatuses: FeedlySetStarredArticlesOperation
+	
+	/// Buffers every starred/saved entry from every page.
+	private class StarredEntryProvider: FeedlyEntryProviding {
+		var resource: FeedlyResourceId
+		
+		private(set) var parsedEntries = Set<ParsedItem>()
+		private(set) var entries = [FeedlyEntry]()
+		
+		init(resource: FeedlyResourceId) {
+			self.resource = resource
+		}
+		
+		func addEntries(from provider: FeedlyEntryProviding) {
+			entries.append(contentsOf: provider.entries)
+			parsedEntries.formUnion(provider.parsedEntries)
+		}
+	}
+	
+	private let entryProvider: StarredEntryProvider
+	
+	init(account: Account, credentials: Credentials, caller: FeedlyAPICaller, log: OSLog) {
 		self.account = account
 		self.caller = caller
 		self.operationQueue = OperationQueue()
+		self.operationQueue.isSuspended = true
 		self.log = log
+				
+		let saved = FeedlyTagResourceId.saved(for: credentials.username)
+		let provider = StarredEntryProvider(resource: saved)
+		self.entryProvider = provider
+		self.setStatuses = FeedlySetStarredArticlesOperation(account: account,
+															 allStarredEntriesProvider: provider,
+															 log: log)
+		
+		super.init()
+		
+		let getFirstPage = FeedlyGetStreamOperation(account: account,
+													resource: saved,
+													caller: caller,
+													newerThan: nil)
+		
+		let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
+																	  entryProvider: provider,
+																	  log: log)
+
+		let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
+																	   organisedItemsProvider: organiseByFeed,
+																	   log: log)
+		
+		getFirstPage.delegate = self
+		getFirstPage.streamDelegate = self
+		
+		setStatuses.addDependency(getFirstPage)
+		setStatuses.delegate = self
+		
+		organiseByFeed.addDependency(setStatuses)
+		organiseByFeed.delegate = self
+		
+		updateAccount.addDependency(organiseByFeed)
+		updateAccount.delegate = self
+		
+		let finishOperation = BlockOperation { [weak self] in
+			DispatchQueue.main.async {
+				self?.didFinish()
+			}
+		}
+		
+		finishOperation.addDependency(updateAccount)
+		
+		let operations = [getFirstPage, setStatuses, organiseByFeed, updateAccount, finishOperation]
+		operationQueue.addOperations(operations, waitUntilFinished: false)
 	}
 	
 	override func cancel() {
@@ -33,73 +101,31 @@ final class FeedlySyncStarredArticlesOperation: FeedlyOperation {
 			return
 		}
 		
-		guard let user = caller.credentials?.username else {
-			didFinish(FeedlyAccountDelegateError.notLoggedIn)
+		operationQueue.isSuspended = false
+	}
+	
+	func feedlyGetStreamOperation(_ operation: FeedlyGetStreamOperation, didGet stream: FeedlyStream) {
+		entryProvider.addEntries(from: operation)
+		os_log(.debug, log: log, "Collecting %i items from %@", stream.items.count, stream.id)
+		
+		guard let continuation = stream.continuation else {
 			return
 		}
 		
-		class Delegate: FeedlyOperationDelegate {
-			var error: Error?
-			weak var compoundOperation: FeedlyCompoundOperation?
-			
-			func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
-				compoundOperation?.cancel()
-				self.error = error
-			}
-		}
+		let nextPageOperation = FeedlyGetStreamOperation(account: operation.account,
+														 resource: operation.resource,
+														 caller: operation.caller,
+														 continuation: continuation,
+														 newerThan: operation.newerThan)
+		nextPageOperation.delegate = self
+		nextPageOperation.streamDelegate = self
 		
-		let delegate = Delegate()
-		
-		let syncSaved = FeedlyCompoundOperation {
-
-			let saved = FeedlyTagResourceId.saved(for: user)
-			os_log(.debug, log: log, "Getting starred articles from \"%@\".", saved.id)
-			
-			let getSavedStream = FeedlyGetStreamOperation(account: account,
-														  resource: saved,
-														  caller: caller,
-														  newerThan: nil)
-			getSavedStream.delegate = delegate
-			
-			// set statuses
-			let setStatuses = FeedlySetStarredArticlesOperation(account: account,
-																allStarredEntriesProvider: getSavedStream,
-																log: log)
-			setStatuses.delegate = delegate
-			setStatuses.addDependency(getSavedStream)
-
-			// ingest articles
-			let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
-																		  entryProvider: getSavedStream,
-																		  log: log)
-			organiseByFeed.delegate = delegate
-			organiseByFeed.addDependency(setStatuses)
-
-			let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
-																		   organisedItemsProvider: organiseByFeed,
-																		   log: log)
-			updateAccount.delegate = delegate
-			updateAccount.addDependency(organiseByFeed)
-
-			return [getSavedStream, setStatuses, organiseByFeed, updateAccount]
-		}
-		
-		delegate.compoundOperation = syncSaved
-		
-		let finalOperation = BlockOperation { [weak self] in
-			guard let self = self else {
-				return
-			}
-			if let error = delegate.error {
-				self.didFinish(error)
-			} else {
-				self.didFinish()
-			}
-			os_log(.debug, log: self.log, "Done syncing starred articles.")
-		}
-		
-		finalOperation.addDependency(syncSaved)
-		operationQueue.addOperations([syncSaved, finalOperation], waitUntilFinished: false)
+		setStatuses.addDependency(nextPageOperation)
+		operationQueue.addOperation(nextPageOperation)
 	}
 	
+	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
+		operationQueue.cancelAllOperations()
+		didFinish(error)
+	}
 }

@@ -11,11 +11,28 @@ import Foundation
 /// An operation with a queue of its own.
 final class FeedlyCompoundOperation: FeedlyOperation {
 	private let operationQueue = OperationQueue()
-	private let operations: [Operation]
+	private var finishOperation: BlockOperation?
 	
 	init(operations: [Operation]) {
 		assert(!operations.isEmpty)
-		self.operations = operations
+		operationQueue.isSuspended = true
+		finishOperation = nil
+		super.init()
+		
+		let finish = BlockOperation {
+			self.didFinish()
+		}
+		
+		finishOperation = finish
+		
+		for operation in operations {
+			finish.addDependency(operation)
+		}
+		
+		var initialOperations = operations
+		initialOperations.append(finish)
+		
+		operationQueue.addOperations(initialOperations, waitUntilFinished: false)
 	}
 	
 	convenience init(operationsBlock: () -> ([Operation])) {
@@ -24,18 +41,17 @@ final class FeedlyCompoundOperation: FeedlyOperation {
 	}
 	
 	override func main() {
-		let finishOperation = BlockOperation { [weak self] in
-			self?.didFinish()
+		guard !isCancelled else {
+			didFinish()
+			return
 		}
-		
-		for operation in operations {
-			finishOperation.addDependency(operation)
-		}
-		
-		var operationsWithFinish = operations
-		operationsWithFinish.append(finishOperation)
-		
-		operationQueue.addOperations(operationsWithFinish, waitUntilFinished: false)
+		operationQueue.isSuspended = false
+	}
+	
+	func addAnotherOperation(_ operation: Operation) {
+		guard !isCancelled else { return }
+		finishOperation?.addDependency(operation)
+		operationQueue.addOperation(operation)
 	}
 	
 	override func cancel() {

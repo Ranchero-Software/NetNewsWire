@@ -19,11 +19,13 @@ class FeedlyOperation: Operation {
 	weak var delegate: FeedlyOperationDelegate?
 	
 	func didFinish() {
+		assert(Thread.isMainThread)
 		self.isExecutingOperation = false
 		self.isFinishedOperation = true
 	}
 	
 	func didFinish(_ error: Error) {
+		assert(Thread.isMainThread)
 		delegate?.feedlyOperation(self, didFailWith: error)
 		didFinish()
 	}

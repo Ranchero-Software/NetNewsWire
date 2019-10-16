@@ -15,6 +15,10 @@ protocol FeedlyEntryProviding: class {
 	var parsedEntries: Set<ParsedItem> { get }
 }
 
+protocol FeedlyGetStreamOperationDelegate: class {
+	func feedlyGetStreamOperation(_ operation: FeedlyGetStreamOperation, didGet stream: FeedlyStream)
+}
+
 /// Single responsibility is to get the stream content of a Collection from Feedly.
 final class FeedlyGetStreamOperation: FeedlyOperation, FeedlyEntryProviding {
 	
@@ -30,7 +34,8 @@ final class FeedlyGetStreamOperation: FeedlyOperation, FeedlyEntryProviding {
 	
 	var entries: [FeedlyEntry] {
 		guard let entries = storedStream?.items else {
-			assertionFailure("Has a prior operation finished too early? Is the operation included in \(self.dependencies)?")
+			assert(isFinished, "This should only be called when the operation finishes without error.")
+			assertionFailure("Has this operation been addeded as a dependency on the caller?")
 			return []
 		}
 		return entries
@@ -55,16 +60,19 @@ final class FeedlyGetStreamOperation: FeedlyOperation, FeedlyEntryProviding {
 	
 	private var storedParsedEntries: Set<ParsedItem>?
 	
-	
 	let account: Account
 	let caller: FeedlyAPICaller
 	let unreadOnly: Bool?
 	let newerThan: Date?
+	let continuation: String?
 	
-	init(account: Account, resource: FeedlyResourceId, caller: FeedlyAPICaller, newerThan: Date?, unreadOnly: Bool? = nil) {
+	weak var streamDelegate: FeedlyGetStreamOperationDelegate?
+	
+	init(account: Account, resource: FeedlyResourceId, caller: FeedlyAPICaller, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) {
 		self.account = account
 		self.resourceProvider = ResourceProvider(resource: resource)
 		self.caller = caller
+		self.continuation = continuation
 		self.unreadOnly = unreadOnly
 		self.newerThan = newerThan
 	}
@@ -79,11 +87,15 @@ final class FeedlyGetStreamOperation: FeedlyOperation, FeedlyEntryProviding {
 			return
 		}
 		
-		caller.getStream(for: resourceProvider.resource, newerThan: newerThan, unreadOnly: unreadOnly) { result in
+		caller.getStream(for: resourceProvider.resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
 				self.storedStream = stream
+				
+				self.streamDelegate?.feedlyGetStreamOperation(self, didGet: stream)
+				
 				self.didFinish()
+				
 			case .failure(let error):
 				self.didFinish(error)
 			}
