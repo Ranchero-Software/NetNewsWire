@@ -89,12 +89,7 @@ final class FeedlyAPICaller {
 		}
 	}
 	
-	func getStream(for collection: FeedlyCollection, newerThan: Date? = nil, unreadOnly: Bool? = nil, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
-		let id = FeedlyCategoryResourceId(id: collection.id)
-		getStream(for: id, newerThan: newerThan, unreadOnly: unreadOnly, completionHandler: completionHandler)
-	}
-	
-	func getStream(for resource: FeedlyResourceId, newerThan: Date?, unreadOnly: Bool?, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
+	func getStream(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -103,7 +98,7 @@ final class FeedlyAPICaller {
 		
 		var components = baseUrlComponents
 		components.path = "/v3/streams/contents"
-		// If you change these, check AccountFeedlySyncTest.set(testFiles:with:).
+
 		var queryItems = [URLQueryItem]()
 		
 		if let date = newerThan {
@@ -115,6 +110,11 @@ final class FeedlyAPICaller {
 		if let flag = unreadOnly {
 			let value = flag ? "true" : "false"
 			let queryItem = URLQueryItem(name: "unreadOnly", value: value)
+			queryItems.append(queryItem)
+		}
+		
+		if let value = continuation, !value.isEmpty {
+			let queryItem = URLQueryItem(name: "continuation", value: value)
 			queryItems.append(queryItem)
 		}
 		
