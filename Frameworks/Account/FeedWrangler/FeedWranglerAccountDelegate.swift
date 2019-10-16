@@ -141,7 +141,28 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	}
 	
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		
+		self.refreshCredentials(for: account) {
+			self.refreshProgress.completeTask()
+			self.caller.renameSubscription(feedID: feed.feedID, newName: name) { result in
+				self.refreshProgress.completeTask()
+				
+				switch result {
+				case .success:
+					DispatchQueue.main.async {
+						feed.editedName = name
+						completion(.success(()))
+					}
+					
+				case .failure(let error):
+					DispatchQueue.main.async {
+						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						completion(.failure(wrappedError))
+					}
+				}
+			}
+		}
 	}
 	
 	func addFeed(for account: Account, with: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -199,6 +220,7 @@ private extension FeedWranglerAccountDelegate {
 			
 			if let feed = account.existingFeed(withFeedID: subscriptionId) {
 				feed.name = subscription.title
+				feed.editedName = nil
 				feed.homePageURL = subscription.siteURL
 				feed.subscriptionID = nil // MARK: TODO What should this be?
 			} else {
