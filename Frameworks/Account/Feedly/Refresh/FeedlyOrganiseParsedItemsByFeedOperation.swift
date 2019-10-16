@@ -12,8 +12,7 @@ import os.log
 
 protocol FeedlyParsedItemsByFeedProviding {
 	var providerName: String { get }
-	var allFeeds: Set<Feed> { get }
-	func parsedItems(for feed: Feed) -> Set<ParsedItem>?
+	var parsedItemsKeyedByFeedId: [String: Set<ParsedItem>] { get }
 }
 
 /// Single responsibility is to group articles by their feeds.
@@ -22,15 +21,9 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 	private let entryProvider: FeedlyEntryProviding
 	private let log: OSLog
 	
-	var allFeeds: Set<Feed> {
+	var parsedItemsKeyedByFeedId: [String : Set<ParsedItem>] {
 		assert(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
-		let keys = Set(itemsKeyedByFeedId.keys)
-		return account.flattenedFeeds().filter { keys.contains($0.feedID) }
-	}
-	
-	func parsedItems(for feed: Feed) -> Set<ParsedItem>? {
-		assert(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
-		return itemsKeyedByFeedId[feed.feedID]
+		return itemsKeyedByFeedId
 	}
 	
 	var providerName: String {
