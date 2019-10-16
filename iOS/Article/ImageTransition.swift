@@ -10,7 +10,7 @@ import UIKit
 
 class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
-	let duration = 0.3
+	let duration = 0.4
 	var presenting = true
 	var originFrame: CGRect!
 	var originImage: UIImage!
@@ -40,22 +40,43 @@ class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 		let fromView = transitionContext.view(forKey: .from)!
 		fromView.removeFromSuperview()
 		
-		transitionContext.containerView.backgroundColor = UIColor.systemBackground
-		transitionContext.containerView.addSubview(imageView)
+		if presenting {
+			
+			transitionContext.containerView.backgroundColor = UIColor.systemBackground
+			transitionContext.containerView.addSubview(imageView)
+			
+			UIView.animate(
+				withDuration: duration,
+				delay:0.0,
+				usingSpringWithDamping: 0.8,
+				initialSpringVelocity: 0.2,
+				animations: {
+					imageView.frame = targetFrame
+				}, completion: { _ in
+					imageView.removeFromSuperview()
+					let toView = transitionContext.view(forKey: .to)!
+					transitionContext.containerView.addSubview(toView)
+					transitionContext.completeTransition(true)
+			})
+			
+		} else {
 
-		UIView.animate(
-			withDuration: duration,
-			delay:0.0,
-			usingSpringWithDamping: 0.8,
-			initialSpringVelocity: 0.2,
-			animations: {
-				imageView.frame = targetFrame
-			}, completion: { _ in
-				imageView.removeFromSuperview()
-				let toView = transitionContext.view(forKey: .to)!
-				transitionContext.containerView.addSubview(toView)
-				transitionContext.completeTransition(true)
-		})
+			let toView = transitionContext.view(forKey: .to)!
+			transitionContext.containerView.addSubview(toView)
+			transitionContext.containerView.addSubview(imageView)
+
+			UIView.animate(
+				withDuration: duration,
+				delay:0.0,
+				animations: {
+					imageView.frame = targetFrame
+					imageView.alpha = 0
+				}, completion: { _ in
+					imageView.removeFromSuperview()
+					transitionContext.completeTransition(true)
+			})
+			
+		}
 		
 	}
 	
