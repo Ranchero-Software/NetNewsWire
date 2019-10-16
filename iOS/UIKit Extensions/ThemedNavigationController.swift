@@ -36,6 +36,7 @@ class ThemedNavigationController: UINavigationController {
 			navigationBar.standardAppearance = UINavigationBarAppearance()
 			navigationBar.tintColor = view.tintColor
 			toolbar.standardAppearance = UIToolbarAppearance()
+			toolbar.compactAppearance = UIToolbarAppearance()
 			toolbar.tintColor = view.tintColor
 		} else {
 			let navigationAppearance = UINavigationBarAppearance()
@@ -48,6 +49,7 @@ class ThemedNavigationController: UINavigationController {
 			let toolbarAppearance = UIToolbarAppearance()
 			toolbarAppearance.backgroundColor = UIColor.white
 			toolbar.standardAppearance = toolbarAppearance
+			toolbar.compactAppearance = toolbarAppearance
 			toolbar.tintColor = AppAssets.primaryAccentColor
 		}
 		

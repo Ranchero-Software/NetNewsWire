@@ -31,7 +31,7 @@ final class AccountMetadataFile {
 		managedFile.load()
 	}
 	
-	func saveIfNecessary() {
+	func save() {
 		managedFile.saveIfNecessary()
 	}
 	

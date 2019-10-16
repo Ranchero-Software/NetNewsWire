@@ -32,7 +32,7 @@ final class OPMLFile {
 		managedFile.load()
 	}
 	
-	func saveIfNecessary() {
+	func save() {
 		managedFile.saveIfNecessary()
 	}
 	

@@ -99,5 +99,3 @@ class ScriptingTests: AppleScriptXCTestCase {
         doIndividualScriptWithExpectation(filename: "testURLsOfCurrentArticle")
     }
 }
-
-

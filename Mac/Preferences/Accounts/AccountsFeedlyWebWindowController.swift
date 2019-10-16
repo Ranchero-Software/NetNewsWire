@@ -84,11 +84,14 @@ class AccountsFeedlyWebWindowController: NSWindowController, WKNavigationDelegat
 		// TODO: Find an already existing account for this username?
 		let account = AccountManager.shared.createAccount(type: .feedly)
 		do {
-			try account.storeCredentials(grant.accessToken)
 			
+			// Store the refresh token first because it sends this token to the account delegate.
 			if let token = grant.refreshToken {
 				try account.storeCredentials(token)
 			}
+			
+			// Now store the access token because we want the account delegate to use it.
+			try account.storeCredentials(grant.accessToken)
 			
 			self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 		} catch {

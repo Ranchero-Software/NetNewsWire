@@ -156,9 +156,13 @@ public final class AccountManager: UnreadCountProvider {
 		return accountsDictionary[accountID]
 	}
 	
-	public func refreshAll(errorHandler: @escaping (Error) -> Void) {
+	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() ->Void)? = nil) {
+		let group = DispatchGroup()
+		
 		activeAccounts.forEach { account in
+			group.enter()
 			account.refreshAll() { result in
+				group.leave()
 				switch result {
 				case .success:
 					break
@@ -167,6 +171,11 @@ public final class AccountManager: UnreadCountProvider {
 				}
 			}
 		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			completion?()
+		}
+		
 	}
 
 	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
@@ -182,6 +191,10 @@ public final class AccountManager: UnreadCountProvider {
 		group.notify(queue: DispatchQueue.global(qos: .background)) {
 			completion?()
 		}
+	}
+	
+	public func saveAll() {
+		accounts.forEach { $0.save() }
 	}
 	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
@@ -232,6 +245,15 @@ public final class AccountManager: UnreadCountProvider {
 					callback(allFetchedArticles)
 				}
 			}
+		}
+	}
+
+	// MARK: - Caches
+
+	/// Empty caches that can reasonably be emptied — when the app moves to the background, for instance.
+	public func emptyCaches() {
+		for account in accounts {
+			account.emptyCaches()
 		}
 	}
 

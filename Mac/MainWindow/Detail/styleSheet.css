@@ -115,12 +115,19 @@ h1 {
 	line-height: 1.15em;
 	font-weight: bold;
 }
+pre {
+	max-width: 100%;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	line-height: 20px;
+	border: 1px solid #777;
+	word-wrap: normal;
+	padding: 10px;
+}
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
 	font-size: 14px;
-}
-pre  {
-	white-space: pre-wrap;
 }
 img, figure, video, iframe, div {
 	max-width: 100%;
@@ -131,6 +138,18 @@ img, figure, video, iframe, div {
 figcaption {
 	font-size: 14px;
 	line-height: 1.3em;
+}
+
+sup {
+	vertical-align: top;
+	position: relative;
+	bottom: 0.2rem;
+}
+
+sub {
+	vertical-align: bottom;
+	position: relative;
+	top: 0.2rem;
 }
 
 .iframeWrap {

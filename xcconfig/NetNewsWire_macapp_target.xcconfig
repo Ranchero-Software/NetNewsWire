@@ -1,8 +1,8 @@
-CODE_SIGN_IDENTITY[config=Release] = Developer ID Application
-CODE_SIGN_IDENTITY[config=Debug] = -
-DEVELOPMENT_TEAM[config=Release] = M8L2WTLA8W 
+CODE_SIGN_IDENTITY = Developer ID Application
+DEVELOPMENT_TEAM = M8L2WTLA8W
 CODE_SIGN_STYLE = Manual
-PROVISIONING_PROFILE_SPECIFIER =
+ORGANIZATION_IDENTIFIER = com.ranchero
+PROVISIONING_PROFILE_SPECIFIER = NetNewsWire
 
 // developers can locally override the Xcode settings for code signing
 // by creating a DeveloperSettings.xcconfig file locally at the appropriate path
@@ -38,6 +38,6 @@ ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
 CODE_SIGN_ENTITLEMENTS = Mac/Resources/NetNewsWire.entitlements
 INFOPLIST_FILE = Mac/Resources/Info.plist
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
-PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.NetNewsWire-Evergreen
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen
 PRODUCT_NAME = NetNewsWire
 SWIFT_OBJC_BRIDGING_HEADER = Mac/NetNewsWire-Bridging-Header.h

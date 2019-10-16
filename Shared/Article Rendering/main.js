@@ -1,19 +1,3 @@
-// These mouse functions are used by NetNewsWire for Mac to display link previews
-function mouseDidEnterLink(anchor) {
-	window.webkit.messageHandlers.mouseDidEnter.postMessage(anchor.href);
-}
-function mouseDidExitLink(anchor) {
-	window.webkit.messageHandlers.mouseDidExit.postMessage(anchor.href);
-}
-
-// Add the mouse listeners for the above functions
-function linkHover() {
-	document.querySelectorAll("a").forEach(element => {
-		element.addEventListener("mouseenter", function() { mouseDidEnterLink(this) });
-		element.addEventListener("mouseleave", function() { mouseDidExitLink(this) });
-	});
-}
-
 // Here we are making iframes responsive.  Particularly useful for inline Youtube videos.
 function wrapFrames() {
 	document.querySelectorAll("iframe").forEach(element => {
@@ -30,15 +14,6 @@ function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
 }
 
-// Add the playsinline attribute to any HTML5 videos that don't have it.
-// Without this attribute videos may autoplay and take over the whole screen
-// on an iphone when viewing an article.
-function inlineVideos() {
-	document.querySelectorAll("video").forEach(element => {
-		element.setAttribute("playsinline", true)
-	});
-}
-
 function error() {
 	document.body.innerHTML = "error";
 }
@@ -51,6 +26,5 @@ function render(data) {
 	
 	wrapFrames()
 	stripStyles()
-	linkHover()
-	inlineVideos()
+	postRenderProcessing()
 }

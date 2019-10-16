@@ -13,6 +13,7 @@ import Account
 struct FeedInspectorView : View {
 	
 	@ObservedObject var viewModel: ViewModel
+	@Environment(\.colorScheme) private var colorScheme: ColorScheme
 	@Environment(\.viewController) private var viewController: UIViewController?
 
     var body: some View {
@@ -22,15 +23,40 @@ struct FeedInspectorView : View {
 					HStack {
 						Spacer()
 						if self.viewModel.image.size.width < 32 || self.viewModel.image.size.height < 32 {
-							Image(uiImage: self.viewModel.image).resizable().frame(width: 24.0, height: 24.0).cornerRadius(2.0)
+							if colorScheme == .dark && self.viewModel.image.isDark() {
+								Image(uiImage: self.viewModel.image)
+								.resizable()
+								.background(Color(AppAssets.avatarBackgroundColor))
+								.frame(width: 24.0, height: 24.0)
+								.cornerRadius(2.0)
+							} else {
+								Image(uiImage: self.viewModel.image)
+									.resizable()
+									.frame(width: 24.0, height: 24.0)
+									.cornerRadius(2.0)
+							}
 						} else {
-							Image(uiImage: self.viewModel.image).resizable().frame(width: 48.0, height: 48.0).cornerRadius(5.0)
+							if colorScheme == .dark && self.viewModel.image.isDark() {
+								Image(uiImage: self.viewModel.image)
+									.resizable()
+									.background(Color(AppAssets.avatarBackgroundColor))
+									.frame(width: 48.0, height: 48.0)
+									.cornerRadius(5.0)
+							} else {
+								Image(uiImage: self.viewModel.image)
+									.resizable()
+									.frame(width: 48.0, height: 48.0)
+									.cornerRadius(5.0)
+							}
 						}
 						Spacer()
 					}) {
 					TextField("Feed Name", text: $viewModel.name)
+					Toggle(isOn: $viewModel.isNotifyAboutNewArticles) {
+						Text("Notify About New Articles")
+					}
 					Toggle(isOn: $viewModel.isArticleExtractorAlwaysOn) {
-						Text("Reader View is always on")
+						Text("Always Show Reader View")
 					}
 				}
 				Section(header: Text("HOME PAGE")) {
@@ -54,6 +80,7 @@ struct FeedInspectorView : View {
 		
 		init(feed: Feed) {
 			self.feed = feed
+			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 		}
 		
 		var image: UIImage {
@@ -72,14 +99,28 @@ struct FeedInspectorView : View {
 		
 		var name: String {
 			get {
-				return feed.editedName ?? feed.name ?? ""
+				return feed.editedName ?? ""
 			}
 			set {
 				objectWillChange.send()
-				feed.editedName = newValue
+				if newValue.isEmpty {
+					feed.editedName = nil
+				} else {
+					feed.editedName = newValue
+				}
 			}
 		}
 		
+		var isNotifyAboutNewArticles: Bool {
+			get {
+				return feed.isNotifyAboutNewArticles ?? false
+			}
+			set {
+				objectWillChange.send()
+				feed.isNotifyAboutNewArticles = newValue
+			}
+		}
+
 		var isArticleExtractorAlwaysOn: Bool {
 			get {
 				return feed.isArticleExtractorAlwaysOn ?? false
@@ -97,7 +138,11 @@ struct FeedInspectorView : View {
 		var feedLinkURL: String {
 			return feed.url
 		}
-		
+
+		@objc func feedIconDidBecomeAvailable(_ notification: Notification) {
+			objectWillChange.send()
+		}
+
 	}
 
 }

@@ -12,10 +12,11 @@ import Account
 
 final class FeedInspectorViewController: NSViewController, Inspector {
 
-	@IBOutlet var imageView: NSImageView?
-	@IBOutlet var nameTextField: NSTextField?
-	@IBOutlet var homePageURLTextField: NSTextField?
-	@IBOutlet var urlTextField: NSTextField?
+	@IBOutlet weak var imageView: NSImageView?
+	@IBOutlet weak var nameTextField: NSTextField?
+	@IBOutlet weak var homePageURLTextField: NSTextField?
+	@IBOutlet weak var urlTextField: NSTextField?
+	@IBOutlet weak var isNotifyAboutNewArticlesCheckBox: NSButton!
 	@IBOutlet weak var isReaderViewAlwaysOnCheckBox: NSButton?
 	
 	private var feed: Feed? {
@@ -51,6 +52,10 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	}
 
 	// MARK: Actions
+	@IBAction func isNotifyAboutNewArticlesChanged(_ sender: Any) {
+		feed?.isNotifyAboutNewArticles = (isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+	}
+	
 	@IBAction func isReaderViewAlwaysOnChanged(_ sender: Any) {
 		feed?.isArticleExtractorAlwaysOn = (isReaderViewAlwaysOnCheckBox?.state ?? .off) == .on ? true : false
 	}
@@ -89,6 +94,7 @@ private extension FeedInspectorViewController {
 		updateName()
 		updateHomePageURL()
 		updateFeedURL()
+		updateNotifyAboutNewArticles()
 		updateIsReaderViewAlwaysOn()
 		
 		view.needsLayout = true
@@ -135,6 +141,10 @@ private extension FeedInspectorViewController {
 		urlTextField?.stringValue = feed?.url ?? ""
 	}
 	
+	func updateNotifyAboutNewArticles() {
+		isNotifyAboutNewArticlesCheckBox?.state = (feed?.isNotifyAboutNewArticles ?? false) ? .on : .off
+	}
+
 	func updateIsReaderViewAlwaysOn() {
 		isReaderViewAlwaysOnCheckBox?.state = (feed?.isArticleExtractorAlwaysOn ?? false) ? .on : .off
 	}

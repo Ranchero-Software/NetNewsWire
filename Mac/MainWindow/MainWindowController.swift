@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import UserNotifications
 import Articles
 import Account
 import RSCore
@@ -16,6 +17,8 @@ enum TimelineSourceMode {
 }
 
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
+
+	private var activityManager = ActivityManager()
 
 	private var isShowingExtractedArticle = false
 	private var articleExtractor: ArticleExtractor? = nil
@@ -110,6 +113,18 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	func selectedObjectsInSidebar() -> [AnyObject]? {
 
 		return sidebarViewController?.selectedObjects
+	}
+
+	func handle(_ response: UNNotificationResponse) {
+		let userInfo = response.notification.request.content.userInfo
+		sidebarViewController?.deepLinkRevealAndSelect(for: userInfo)
+		currentTimelineViewController?.goToDeepLink(for: userInfo)
+	}
+
+	func handle(_ activity: NSUserActivity) {
+		guard let userInfo = activity.userInfo else { return }
+		sidebarViewController?.deepLinkRevealAndSelect(for: userInfo)
+		currentTimelineViewController?.goToDeepLink(for: userInfo)
 	}
 
 	// MARK: - Notifications
@@ -308,6 +323,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			makeToolbarValidate()
 		}
 		
+		if articleExtractor?.state == .failedToParse {
+			startArticleExtractorForCurrentLink()
+			return
+		}
+		
 		guard articleExtractor?.state != .processing else {
 			articleExtractor?.cancel()
 			articleExtractor = nil
@@ -449,6 +469,8 @@ extension MainWindowController: SidebarDelegate {
 extension MainWindowController: TimelineContainerViewControllerDelegate {
 
 	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode) {
+		activityManager.invalidateReading()
+		
 		articleExtractor?.cancel()
 		articleExtractor = nil
 		isShowingExtractedArticle = false
@@ -457,6 +479,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		let detailState: DetailState
 		if let articles = articles {
 			if articles.count == 1 {
+				activityManager.reading(articles.first!)
 				if articles.first?.feed?.isArticleExtractorAlwaysOn ?? false {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()

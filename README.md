@@ -1,6 +1,6 @@
 # ![Icon](Technotes/Images/icon.png) NetNewsWire
 
-[![CircleCI](https://circleci.com/gh/brentsimmons/NetNewsWire.svg?style=svg)](https://circleci.com/gh/brentsimmons/NetNewsWire)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fbrentsimmons%2FNetNewsWire%2Fbadge&style=flat)](https://actions-badge.atrox.dev/brentsimmons/NetNewsWire/goto)
 
 It’s a free and open source feed reader for macOS. An iOS version is in progress.
 
@@ -16,7 +16,7 @@ Here’s [How to Support NetNewsWire](Technotes/HowToSupportNetNewsWire.markdown
 
 #### Community
 
-[Join the Slack group](https://join.slack.com/t/netnewswire/shared_invite/enQtNjM4MDA1MjQzMDkzLTNlNjBhOWVhYzdhYjA4ZWFhMzQ1MTUxYjU0NTE5ZGY0YzYwZWJhNjYwNTNmNTg2NjIwYWY4YzhlYzk5NmU3ZTc) to talk with other NetNewsWire users — and to help out, if you’d like to, by testing, coding, writing, providing feedback, or just helping us think things through. Everybody is welcome and encouraged to join.
+[Join the Slack group](https://ranchero.com/netnewswire/slack) to talk with other NetNewsWire users — and to help out, if you’d like to, by testing, coding, writing, providing feedback, or just helping us think things through. Everybody is welcome and encouraged to join.
 
 Every community member is expected to abide by the code of conduct which is included in the [Contributing](CONTRIBUTING.md) page.
 

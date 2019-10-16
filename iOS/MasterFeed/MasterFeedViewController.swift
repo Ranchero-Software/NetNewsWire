@@ -229,6 +229,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 						popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
 					}
 					
+					if let action = self.getInfoAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
+						alert.addAction(action)
+					}
+					
 					if let action = self.homePageAlertAction(indexPath: indexPath, completionHandler: completionHandler) {
 						alert.addAction(action)
 					}
@@ -273,7 +277,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		becomeFirstResponder()
-		coordinator.selectFeed(indexPath, automated: false)
+		coordinator.selectFeed(indexPath, animated: true)
 	}
 
 	override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
@@ -340,24 +344,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@IBAction func markAllAsRead(_ sender: Any) {
-		
-		let title = NSLocalizedString("Mark All Read", comment: "Mark All Read")
-		let message = NSLocalizedString("Mark all articles in all accounts as read?", comment: "Mark all articles")
-		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-		
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
-		alertController.addAction(cancelAction)
-		
-		let markTitle = NSLocalizedString("Mark All Read", comment: "Mark All Read")
-		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-			self?.coordinator.markAllAsRead()
-		}
-		
-		alertController.addAction(markAction)
-		
-		present(alertController, animated: true)
-		
+		if coordinator.displayUndoAvailableTip {
+			let alertController = UndoAvailableAlertController.alert { [weak self] _ in
+				self?.coordinator.displayUndoAvailableTip = false
+				self?.coordinator.markAllAsRead()
+			}
+			
+			present(alertController, animated: true)
+		} else {
+			coordinator.markAllAsRead()
+		}		
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
@@ -697,6 +693,10 @@ private extension MasterFeedViewController {
 			
 			var actions = [UIAction]()
 			
+			if let inspectorAction = self.getInfoAction(indexPath: indexPath) {
+				actions.append(inspectorAction)
+			}
+			
 			if let homePageAction = self.homePageAction(indexPath: indexPath) {
 				actions.append(homePageAction)
 			}
@@ -821,7 +821,8 @@ private extension MasterFeedViewController {
 	
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
-		let action = UIAction(title: title, image: AppAssets.trashImage) { [weak self] action in
+		
+		let action = UIAction(title: title, image: AppAssets.trashImage, attributes: .destructive) { [weak self] action in
 			self?.delete(indexPath: indexPath)
 		}
 		return action
@@ -831,6 +832,31 @@ private extension MasterFeedViewController {
 		let title = NSLocalizedString("Rename", comment: "Rename")
 		let action = UIAction(title: title, image: AppAssets.editImage) { [weak self] action in
 			self?.rename(indexPath: indexPath)
+		}
+		return action
+	}
+	
+	func getInfoAction(indexPath: IndexPath) -> UIAction? {
+		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? Feed else {
+			return nil
+		}
+		
+		let title = NSLocalizedString("Get Info", comment: "Get Info")
+		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
+			self?.coordinator.showFeedInspector(for: feed)
+		}
+		return action
+	}
+
+	func getInfoAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? Feed else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Get Info", comment: "Get Info")
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			self?.coordinator.showFeedInspector(for: feed)
+			completionHandler(true)
 		}
 		return action
 	}

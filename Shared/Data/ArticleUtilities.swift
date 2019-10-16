@@ -91,6 +91,21 @@ extension Article {
 	
 }
 
+// MARK: PathIDUserInfoProvider
+
+extension Article: DeepLinkProvider {
+
+	public var deepLinkUserInfo: [AnyHashable : Any] {
+		return [
+			DeepLinkKey.accountID.rawValue: accountID,
+			DeepLinkKey.accountName.rawValue: account?.nameForDisplay ?? "",
+			DeepLinkKey.feedID.rawValue: feedID,
+			DeepLinkKey.articleID.rawValue: articleID
+		]
+	}
+
+}
+
 // MARK: SortableArticle
 
 extension Article: SortableArticle {

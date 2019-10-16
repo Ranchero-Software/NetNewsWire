@@ -33,10 +33,10 @@ a:hover {
 
 :root {
 	color-scheme: light dark;
-	--link-color: #0655BE;
+	--primary-accent-color: #086AEE;
+	--secondary-accent-color: #086AEE;
 	--header-table-border-color: rgba(0, 0, 0, 0.1);
 	--header-color: rgba(0, 0, 0, 0.3);
-	--header-link-color: #086AEE;
 	--body-code-color: #666;
 	--system-message-color: #cbcbcb;
 	--feedlink-color: rgba(0, 0, 0, 0.6);
@@ -44,10 +44,10 @@ a:hover {
 
 @media(prefers-color-scheme: dark) {
 	:root {
-		--link-color: #5E9EF4;
+		--primary-accent-color: #2D80F1;
+		--secondary-accent-color: #5E9EF4;
 		--header-table-border-color: rgba(255, 255, 255, 0.1);
 		--header-color: #d2d2d2;
-		--header-link-color: #2D80F1;
 		--body-code-color: #b2b2b2;
 		--system-message-color: #5f5f5f
 	}
@@ -59,7 +59,7 @@ body {
 }
 
 body a, body a:link, body a:visited {
-	color: var(--link-color);
+	color: var(--secondary-accent-color);
 }
 body .headerTable {
 	border-bottom: 1px solid var(--header-table-border-color);
@@ -68,7 +68,7 @@ body .header {
 	color: var(--header-color);
 }
 body .header a:link, body .header a:visited {
-	color: var(--header-link-color);
+	color: var(--primary-accent-color);
 }
 body .articleDateline, body .articleDateLine.a:link, body .articleDateline a:visited {
 	color: var(--header-color);
@@ -114,12 +114,21 @@ h1 {
 	line-height: 1.15em;
 	font-weight: bold;
 }
+pre {
+	max-width: 100%;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	line-height: 20px;
+	border: 1px solid var(--secondary-accent-color);
+	padding: 5px;
+	word-wrap: normal;
+	word-break: normal;
+	-webkit-hyphens: none;
+}
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
 	font-size: 14px;
-}
-pre  {
-	white-space: pre-wrap;
 }
 img, figure, video, iframe, div {
 	max-width: 100%;
@@ -130,6 +139,18 @@ img, figure, video, iframe, div {
 figcaption {
 	font-size: 14px;
 	line-height: 1.3em;
+}
+
+sup {
+	vertical-align: top;
+	position: relative;
+	bottom: 0.2rem;
+}
+
+sub {
+	vertical-align: bottom;
+	position: relative;
+	top: 0.2rem;
 }
 
 .iframeWrap {

@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSParser
 
-struct FeedbinSubscription: Codable {
+struct FeedbinSubscription: Hashable, Codable {
 
 	let subscriptionID: Int
 	let feedID: Int
@@ -26,6 +26,9 @@ struct FeedbinSubscription: Codable {
 		case homePageURL = "site_url"
 	}
 
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(subscriptionID)
+	}
 }
 
 struct FeedbinCreateSubscription: Codable {

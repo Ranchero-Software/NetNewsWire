@@ -21,6 +21,10 @@ enum ArticleViewState: Equatable {
 }
 
 class ArticleViewController: UIViewController {
+	
+	private struct MessageName {
+		static let imageWasClicked = "imageWasClicked"
+	}
 
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
@@ -39,6 +43,7 @@ class ArticleViewController: UIViewController {
 	}()
 	
 	private var webView: WKWebView!
+	private var transition = ImageTransition()
 
 	weak var coordinator: SceneCoordinator!
 	
@@ -61,6 +66,9 @@ class ArticleViewController: UIViewController {
 			return nil
 		}
 	}
+	
+	var clickedImage: UIImage?
+	var clickedImageFrame: CGRect?
 
 	var articleExtractorButtonState: ArticleExtractorButtonState {
 		get {
@@ -77,9 +85,11 @@ class ArticleViewController: UIViewController {
 	}
 	
 	deinit {
-		webView.removeFromSuperview()
-		ArticleViewControllerWebViewProvider.shared.enqueueWebView(webView)
-		webView = nil
+		if webView != nil  {
+			webView.removeFromSuperview()
+			ArticleViewControllerWebViewProvider.shared.enqueueWebView(webView)
+			webView = nil
+		}
 	}
 	
 	override func viewDidLoad() {
@@ -99,7 +109,11 @@ class ArticleViewController: UIViewController {
 			self.webView = webView
 			self.webViewContainer.addChildAndPin(webView)
 			webView.navigationDelegate = self
-			
+			webView.uiDelegate = self
+
+			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
+			webView.configuration.userContentController.add(self, name: MessageName.imageWasClicked)
+
 			// Even though page.html should be loaded into this webview, we have to do it again
 			// to work around this bug: http://www.openradar.me/22855188
 			webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
@@ -323,6 +337,80 @@ extension ArticleViewController: WKNavigationDelegate {
 	
 }
 
+// MARK: WKUIDelegate
+
+extension ArticleViewController: WKUIDelegate {
+	func webView(_ webView: WKWebView, contextMenuForElement elementInfo: WKContextMenuElementInfo, willCommitWithAnimator animator: UIContextMenuInteractionCommitAnimating) {
+		// We need to have at least an unimplemented WKUIDelegate assigned to the WKWebView.  This makes the
+		// link preview launch Safari when the link preview is tapped.  In theory, you shoud be able to get
+		// the link from the elementInfo above and transition to SFSafariViewController instead of launching
+		// Safari.  As the time of this writing, the link in elementInfo is always nil.  ¯\_(ツ)_/¯
+	}
+}
+
+// MARK: WKScriptMessageHandler
+
+extension ArticleViewController: WKScriptMessageHandler {
+
+	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+		if message.name == MessageName.imageWasClicked,
+			let body = message.body as? String,
+			let data = body.data(using: .utf8),
+			let clickMessage = try? JSONDecoder().decode(ImageClickMessage.self, from: data),
+			let range = clickMessage.imageURL.range(of: ";base64,") {
+			
+			let base64Image = String(clickMessage.imageURL.suffix(from: range.upperBound))
+			if let imageData = Data(base64Encoded: base64Image), let image = UIImage(data: imageData) {
+				
+				let rect = CGRect(x: CGFloat(clickMessage.x), y: CGFloat(clickMessage.y), width: CGFloat(clickMessage.width), height: CGFloat(clickMessage.height))
+				clickedImageFrame = webView.convert(rect, to: nil)
+				clickedImage = image
+				
+				let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
+				imageVC.image = image
+				imageVC.modalPresentationStyle = .fullScreen
+				imageVC.transitioningDelegate = self
+				present(imageVC, animated: true)
+				
+			}
+		}
+	}
+	
+}
+
+// MARK: UIViewControllerTransitioningDelegate
+
+extension ArticleViewController: UIViewControllerTransitioningDelegate {
+
+	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		guard let frame = clickedImageFrame, let image = clickedImage else { return nil }
+		transition.originFrame = frame
+		transition.originImage = image
+		transition.presenting = true
+		return transition
+	}
+	
+	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		transition.presenting = false
+		return transition
+	}
+}
+
+// MARK: JSON
+
+private struct TemplateData: Codable {
+	let style: String
+	let body: String
+}
+
+private struct ImageClickMessage: Codable {
+	let x: Float
+	let y: Float
+	let width: Float
+	let height: Float
+	let imageURL: String
+}
+
 // MARK: Private
 
 private extension ArticleViewController {
@@ -333,9 +421,4 @@ private extension ArticleViewController {
 		}
 	}
 	
-}
-
-private struct TemplateData: Codable {
-	let style: String
-	let body: String
 }

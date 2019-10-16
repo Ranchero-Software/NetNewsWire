@@ -18,6 +18,7 @@ class ActivityManager {
 	private var nextUnreadActivity: NSUserActivity?
 	private var selectingActivity: NSUserActivity?
 	private var readingActivity: NSUserActivity?
+	private var readingArticle: Article?
 
 	var stateRestorationActivity: NSUserActivity? {
 		if readingActivity != nil {
@@ -67,12 +68,7 @@ class ActivityManager {
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, folder.nameForDisplay) as String
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: ActivityManager.identifer(for: folder))
 	 
-		selectingActivity!.userInfo = [
-			ActivityID.accountID.rawValue: folder.account?.accountID ?? "",
-			ActivityID.accountName.rawValue: folder.account?.name ?? "",
-			ActivityID.folderName.rawValue: folder.nameForDisplay
-		]
-
+		selectingActivity!.userInfo = folder.deepLinkUserInfo
 		selectingActivity!.becomeCurrent()
 	}
 	
@@ -83,13 +79,8 @@ class ActivityManager {
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFeed, title: title, identifier: ActivityManager.identifer(for: feed))
 		
-		selectingActivity!.userInfo = [
-			ActivityID.accountID.rawValue: feed.account?.accountID ?? "",
-			ActivityID.accountName.rawValue: feed.account?.name ?? "",
-			ActivityID.feedID.rawValue: feed.feedID
-		]
+		selectingActivity!.userInfo = feed.deepLinkUserInfo
 		updateSelectingActivityFeedSearchAttributes(with: feed)
-		
 		selectingActivity!.becomeCurrent()
 	}
 	
@@ -113,16 +104,24 @@ class ActivityManager {
 	func reading(_ article: Article?) {
 		invalidateReading()
 		invalidateNextUnread()
+		
 		guard let article = article else { return }
 		readingActivity = makeReadArticleActivity(article)
+		
+		#if os(iOS)
+		updateReadArticleSearchAttributes(with: article)
+		#endif
+		
 		readingActivity?.becomeCurrent()
 	}
 	
 	func invalidateReading() {
 		readingActivity?.invalidate()
 		readingActivity = nil
+		readingArticle = nil
 	}
 	
+	#if os(iOS)
 	static func cleanUp(_ account: Account) {
 		var ids = [String]()
 		
@@ -153,11 +152,19 @@ class ActivityManager {
 	static func cleanUp(_ feed: Feed) {
 		NSUserActivity.deleteSavedUserActivities(withPersistentIdentifiers: identifers(for: feed)) {}
 	}
-	
+	#endif
+
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ActivityID.feedID.rawValue] as? String else {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
 			return
 		}
+		
+		#if os(iOS)
+		if let article = readingArticle, activityFeedId == article.feedID {
+			updateReadArticleSearchAttributes(with: article)
+		}
+		#endif
+		
 		if activityFeedId == feed.feedID {
 			updateSelectingActivityFeedSearchAttributes(with: feed)
 		}
@@ -172,48 +179,59 @@ private extension ActivityManager {
 	func makeSelectingActivity(type: ActivityType, title: String, identifier: String) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: type.rawValue)
 		activity.title = title
-		activity.suggestedInvocationPhrase = title
 		activity.keywords = Set(makeKeywords(title))
-		activity.isEligibleForPrediction = true
 		activity.isEligibleForSearch = true
+
+		#if os(iOS)
+		activity.suggestedInvocationPhrase = title
+		activity.isEligibleForPrediction = true
 		activity.persistentIdentifier = identifier
+		#endif
+		
 		return activity
 	}
 	
 	func makeReadArticleActivity(_ article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
-
 		activity.title = article.title
+		activity.userInfo = article.deepLinkUserInfo
+		activity.isEligibleForHandoff = true
 		
-		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
-		let articleTitleKeywords = makeKeywords(article.title)
-		let keywords = feedNameKeywords + articleTitleKeywords
-		activity.keywords = Set(keywords)
-		
-		activity.userInfo = [
-			ActivityID.accountID.rawValue: article.accountID,
-			ActivityID.accountName.rawValue: article.account?.name ?? "",
-			ActivityID.feedID.rawValue: article.feedID,
-			ActivityID.articleID.rawValue: article.articleID
-		]
+		#if os(iOS)
+		activity.keywords = Set(makeKeywords(article))
 		activity.isEligibleForSearch = true
 		activity.isEligibleForPrediction = false
-		activity.isEligibleForHandoff = true
 		activity.persistentIdentifier = ActivityManager.identifer(for: article)
+		updateReadArticleSearchAttributes(with: article)
+		#endif
+
+		readingArticle = article
 		
-		// CoreSpotlight
+		return activity
+	}
+	
+	#if os(iOS)
+	func updateReadArticleSearchAttributes(with article: Article) {
+		
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeCompositeContent as String)
 		attributeSet.title = article.title
 		attributeSet.contentDescription = article.summary
-		attributeSet.keywords = keywords
+		attributeSet.keywords = makeKeywords(article)
 		
 		if let image = article.avatarImage() {
 			attributeSet.thumbnailData = image.pngData()
 		}
 		
-		activity.contentAttributeSet = attributeSet
+		readingActivity?.contentAttributeSet = attributeSet
+		readingActivity?.needsSave = true
 		
-		return activity
+	}
+	#endif
+	
+	func makeKeywords(_ article: Article) -> [String] {
+		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
+		let articleTitleKeywords = makeKeywords(article.title)
+		return feedNameKeywords + articleTitleKeywords
 	}
 	
 	func makeKeywords(_ value: String?) -> [String] {
@@ -226,9 +244,17 @@ private extension ActivityManager {
 		attributeSet.title = feed.nameForDisplay
 		attributeSet.keywords = makeKeywords(feed.nameForDisplay)
 		if let image = appDelegate.feedIconDownloader.icon(for: feed) {
+			#if os(iOS)
 			attributeSet.thumbnailData = image.pngData()
+			#else
+			attributeSet.thumbnailData = image.tiffRepresentation
+			#endif
 		} else if let image = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+			#if os(iOS)
 			attributeSet.thumbnailData = image.pngData()
+			#else
+			attributeSet.thumbnailData = image.tiffRepresentation
+			#endif
 		}
 		
 		selectingActivity!.contentAttributeSet = attributeSet

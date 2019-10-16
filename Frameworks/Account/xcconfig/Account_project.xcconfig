@@ -1,6 +1,7 @@
-CODE_SIGN_IDENTITY = Mac Developer
-CODE_SIGN_STYLE = Automatic
+CODE_SIGN_IDENTITY = Developer ID Application
 DEVELOPMENT_TEAM = M8L2WTLA8W
+CODE_SIGN_STYLE = Manual
+PROVISIONING_PROFILE_SPECIFIER = 
 
 // See the notes in NetNewsWire_target.xcconfig on why the
 // DeveloperSettings.xcconfig is #included here
@@ -10,6 +11,7 @@ DEVELOPMENT_TEAM = M8L2WTLA8W
 SDKROOT = macosx
 MACOSX_DEPLOYMENT_TARGET = 10.14
 IPHONEOS_DEPLOYMENT_TARGET = 13.0
+SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
 
 CLANG_ENABLE_OBJC_WEAK = YES
 SWIFT_VERSION = 5.1

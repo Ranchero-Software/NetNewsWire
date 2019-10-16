@@ -7,6 +7,32 @@
         <language>en</language>
 
 				<item>
+         <title>NetNewsWire 5.0.3b1</title>
+            <description><![CDATA[
+<p>Performance enhancement: fetching articles from the database is faster, and sometimes much faster.</p>
+
+<p>Performance enhancement: syncing could block the main thread more than it should. We moved JSON decoding to a background thread, which fixes this. This is particularly noticeable during an initial sync.</p>
+
+<p>Keyboard shortcuts: the 's' key toggles starred status. The 'r' and 'u' keys now both toggle read status (instead of setting read and unread status, respectively).</p>
+
+<p>Articles view: articles where the feed icon is quite large would be slow to render — now they render as fast as other articles.</p>
+
+<p>Articles view: a bug where keyboard shortcuts wouldn’t work after giving the articles view focus has been fixed.</p>
+
+<p>Articles view: YouTube videos could end up small. Fixed.</p>
+
+<p>Articles view: fixed a bug scaling images to fit in the view.</p>
+
+<p>Feedbin syncing: fixed a bug where renaming a tag on the Feedbin site would result in feeds in NNW ending up at the top level.</p>
+
+<p>Help menu: fixed the expired Slack link.</p>
+ 							]]></description>
+            <pubDate>Mon, 30 Sep 2019 13:56:00 -0700</pubDate>
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.3b1/NetNewsWire5.0.3b1.zip" sparkle:version="2616" sparkle:shortVersionString="5.0.3b1" length="5106894" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+				<item>
          <title>NetNewsWire 5.0.2</title>
             <description><![CDATA[
 <p>The app movement monitor has been updated to handle quarantined apps and translocation.</p>

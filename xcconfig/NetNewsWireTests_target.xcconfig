@@ -1,6 +1,6 @@
-DEVELOPMENT_TEAM = 9C84TZ7Q6Z
-CODE_SIGN_IDENTITY = -
-CODE_SIGN_STYLE = Automatic
+CODE_SIGN_IDENTITY = Developer ID Application
+DEVELOPMENT_TEAM = M8L2WTLA8W
+CODE_SIGN_STYLE = Manual
 
 // See the notes in NetNewsWire_target.xcconfig on why the
 // DeveloperSettings.xcconfig is #included here

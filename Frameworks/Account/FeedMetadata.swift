@@ -24,6 +24,7 @@ final class FeedMetadata: Codable {
 		case editedName
 		case authors
 		case contentHash
+		case isNotifyAboutNewArticles
 		case isArticleExtractorAlwaysOn
 		case conditionalGetInfo
 		case subscriptionID
@@ -78,10 +79,18 @@ final class FeedMetadata: Codable {
 		}
 	}
 	
+	var isNotifyAboutNewArticles: Bool? {
+		didSet {
+			if isNotifyAboutNewArticles != oldValue {
+				valueDidChange(.isNotifyAboutNewArticles)
+			}
+		}
+	}
+
 	var isArticleExtractorAlwaysOn: Bool? {
 		didSet {
 			if isArticleExtractorAlwaysOn != oldValue {
-				valueDidChange(.contentHash)
+				valueDidChange(.isArticleExtractorAlwaysOn)
 			}
 		}
 	}

@@ -47,6 +47,7 @@ protocol SidebarDelegate: class {
 		sidebarCellAppearance = SidebarCellAppearance(fontSize: AppDefaults.sidebarFontSize)
 
 		outlineView.dataSource = dataSource
+		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
 		outlineView.registerForDraggedTypes([FeedPasteboardWriter.feedUTIInternalType, FeedPasteboardWriter.feedUTIType, .URL, .string])
 
@@ -152,6 +153,13 @@ protocol SidebarDelegate: class {
 			return
 		}
 		deleteNodes(selectedNodes)
+	}
+	
+	@IBAction func doubleClickedSidebar(_ sender: Any?) {
+		guard outlineView.clickedRow == outlineView.selectedRow else {
+			return
+		}
+		openInBrowser(sender)
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -319,6 +327,13 @@ protocol SidebarDelegate: class {
 		
 	}
 	
+	func deepLinkRevealAndSelect(for userInfo: [AnyHashable : Any]) {
+		guard let accountNode = findAccountNode(userInfo), let feedNode = findFeedNode(userInfo, beginningAt: accountNode) else {
+			return
+		}
+		revealAndSelectRepresentedObject(feedNode.representedObject)
+	}
+	
 }
 
 // MARK: - NSUserInterfaceValidations
@@ -468,6 +483,36 @@ private extension SidebarViewController {
 		return nil
 	}
 
+	func findAccountNode(_ userInfo: [AnyHashable : Any]?) -> Node? {
+		guard let accountID = userInfo?[DeepLinkKey.accountID.rawValue] as? String else {
+			return nil
+		}
+		
+		if let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.accountID == accountID }) {
+			return node
+		}
+
+		guard let accountName = userInfo?[DeepLinkKey.accountName.rawValue] as? String else {
+			return nil
+		}
+
+		if let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.nameForDisplay == accountName }) {
+			return node
+		}
+
+		return nil
+	}
+	
+	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
+		guard let feedID = userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
+			return nil
+		}
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
+			return node
+		}
+		return nil
+	}
+	
 	func configure(_ cell: SidebarCell, _ node: Node) {
 		cell.cellAppearance = sidebarCellAppearance
 		cell.name = nameFor(node)

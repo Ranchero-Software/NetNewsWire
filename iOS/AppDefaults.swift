@@ -10,7 +10,14 @@ import UIKit
 
 struct AppDefaults {
 
-	static var shared =  UserDefaults.init(suiteName: "group.\(Bundle.main.bundleIdentifier!)")!
+	private static var suiteName: String = {
+		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
+		return "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
+	}()
+	
+	static var shared: UserDefaults {
+		return UserDefaults.init(suiteName: suiteName)!
+	}
 	
 	struct Key {
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
@@ -18,6 +25,7 @@ struct AppDefaults {
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
 		static let timelineSortDirection = "timelineSortDirection"
+		static let displayUndoAvailableTip = "displayUndoAvailableTip"
 		static let refreshInterval = "refreshInterval"
 		static let lastRefresh = "lastRefresh"
 	}
@@ -67,6 +75,15 @@ struct AppDefaults {
 		}
 	}
 
+	static var displayUndoAvailableTip: Bool {
+		get {
+			return bool(for: Key.displayUndoAvailableTip)
+		}
+		set {
+			setBool(for: Key.displayUndoAvailableTip, newValue)
+		}
+	}
+	
 	static var lastRefresh: Date? {
 		get {
 			return date(for: Key.lastRefresh)
@@ -90,7 +107,8 @@ struct AppDefaults {
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.timelineNumberOfLines: 3,
-										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue]
+										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+										Key.displayUndoAvailableTip: true]
 		AppDefaults.shared.register(defaults: defaults)
 	}
 

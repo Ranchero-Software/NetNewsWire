@@ -23,7 +23,7 @@
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Test"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -36,6 +36,36 @@
                BuildableName = "NetNewsWireTests.xctest"
                BlueprintName = "NetNewsWireTests"
                ReferencedContainer = "container:NetNewsWire.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "848934FE1F62484F00CEBD24"
+               BuildableName = "AccountTests.xctest"
+               BlueprintName = "AccountTests"
+               ReferencedContainer = "container:Frameworks/Account/Account.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "844BEE631F0AB3C9004AB7CD"
+               BuildableName = "ArticlesTests.xctest"
+               BlueprintName = "ArticlesTests"
+               ReferencedContainer = "container:Frameworks/Articles/Articles.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "844BEE3F1F0AB3AB004AB7CD"
+               BuildableName = "ArticlesDatabaseTests.xctest"
+               BlueprintName = "ArticlesDatabaseTests"
+               ReferencedContainer = "container:Frameworks/ArticlesDatabase/ArticlesDatabase.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>

@@ -866,32 +866,9 @@ private extension ReaderAPIAccountDelegate {
 	}
 	
 	func processEntries(account: Account, entries: [ReaderAPIEntry]?, completion: @escaping (() -> Void)) {
-		
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
-		let parsedMap = Dictionary(grouping: parsedItems, by: { item in item.feedURL } )
-		
-		let group = DispatchGroup()
-		
-		for (feedID, mapItems) in parsedMap {
-			
-			group.enter()
-			
-			if let feed = account.existingFeed(withFeedID: feedID) {
-				DispatchQueue.main.async {
-					account.update(feed, parsedItems: Set(mapItems), defaultRead: true) {
-						group.leave()
-					}
-				}
-			} else {
-				group.leave()
-			}
-			
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion()
-		}
-
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true, completion: completion)
 	}
 	
 	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {

@@ -20,6 +20,7 @@ final class ArticlesTable: DatabaseTable {
 	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
+	private var databaseArticlesCache = [String: DatabaseArticle]()
 
 	private lazy var searchTable: SearchTable = {
 		return SearchTable(queue: queue, articlesTable: self)
@@ -214,9 +215,9 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	// MARK: - Updating
-	
-	func update(_ feedID: String, _ parsedItems: Set<ParsedItem>, _ read: Bool, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
-		if parsedItems.isEmpty {
+
+	func update(_ feedIDsAndItems: [String: Set<ParsedItem>], _ read: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
+		if feedIDsAndItems.isEmpty {
 			completion(nil, nil)
 			return
 		}
@@ -230,30 +231,34 @@ final class ArticlesTable: DatabaseTable {
 		// 7. Call back with new and updated Articles.
 		// 8. Update search index.
 
-		let articleIDs = Set(parsedItems.map { $0.articleID })
-		
+		var articleIDs = Set<String>()
+		for (_, parsedItems) in feedIDsAndItems {
+			articleIDs.formUnion(parsedItems.articleIDs())
+		}
+
 		self.queue.update { (database) in
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
 			assert(statusesDictionary.count == articleIDs.count)
-			
-			let allIncomingArticles = Article.articlesWithParsedItems(parsedItems, self.accountID, feedID, statusesDictionary) //2
+
+			let allIncomingArticles = Article.articlesWithFeedIDsAndItems(feedIDsAndItems, self.accountID, statusesDictionary) //2
 			if allIncomingArticles.isEmpty {
 				self.callUpdateArticlesCompletionBlock(nil, nil, completion)
 				return
 			}
-			
+
 			let incomingArticles = self.filterIncomingArticles(allIncomingArticles) //3
 			if incomingArticles.isEmpty {
 				self.callUpdateArticlesCompletionBlock(nil, nil, completion)
 				return
 			}
 
-			let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database) //4
+			let incomingArticleIDs = incomingArticles.articleIDs()
+			let fetchedArticles = self.fetchArticles(articleIDs: incomingArticleIDs, database) //4
 			let fetchedArticlesDictionary = fetchedArticles.dictionary()
-			
+
 			let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
 			let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
-			
+
 			self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
 
 			// 8. Update search index.
@@ -264,15 +269,74 @@ final class ArticlesTable: DatabaseTable {
 			if let updatedArticles = updatedArticles {
 				articlesToIndex.formUnion(updatedArticles)
 			}
-			let articleIDs = articlesToIndex.articleIDs()
-			if articleIDs.isEmpty {
+			let articleIDsToIndex = articlesToIndex.articleIDs()
+			if articleIDsToIndex.isEmpty {
 				return
 			}
 			DispatchQueue.main.async {
-				self.searchTable.ensureIndexedArticles(for: articleIDs)
+				self.searchTable.ensureIndexedArticles(for: articleIDsToIndex)
 			}
 		}
 	}
+
+//	func update(_ feedID: String, _ parsedItems: Set<ParsedItem>, _ read: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
+//		if parsedItems.isEmpty {
+//			completion(nil, nil)
+//			return
+//		}
+//
+//		// 1. Ensure statuses for all the incoming articles.
+//		// 2. Create incoming articles with parsedItems.
+//		// 3. Ignore incoming articles that are userDeleted || (!starred and really old)
+//		// 4. Fetch all articles for the feed.
+//		// 5. Create array of Articles not in database and save them.
+//		// 6. Create array of updated Articles and save what’s changed.
+//		// 7. Call back with new and updated Articles.
+//		// 8. Update search index.
+//
+//		let articleIDs = Set(parsedItems.map { $0.articleID })
+//
+//		self.queue.update { (database) in
+//			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
+//			assert(statusesDictionary.count == articleIDs.count)
+//
+//			let allIncomingArticles = Article.articlesWithParsedItems(parsedItems, self.accountID, feedID, statusesDictionary) //2
+//			if allIncomingArticles.isEmpty {
+//				self.callUpdateArticlesCompletionBlock(nil, nil, completion)
+//				return
+//			}
+//
+//			let incomingArticles = self.filterIncomingArticles(allIncomingArticles) //3
+//			if incomingArticles.isEmpty {
+//				self.callUpdateArticlesCompletionBlock(nil, nil, completion)
+//				return
+//			}
+//
+//			let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database) //4
+//			let fetchedArticlesDictionary = fetchedArticles.dictionary()
+//
+//			let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
+//			let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
+//
+//			self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
+//
+//			// 8. Update search index.
+//			var articlesToIndex = Set<Article>()
+//			if let newArticles = newArticles {
+//				articlesToIndex.formUnion(newArticles)
+//			}
+//			if let updatedArticles = updatedArticles {
+//				articlesToIndex.formUnion(updatedArticles)
+//			}
+//			let articleIDs = articlesToIndex.articleIDs()
+//			if articleIDs.isEmpty {
+//				return
+//			}
+//			DispatchQueue.main.async {
+//				self.searchTable.ensureIndexedArticles(for: articleIDs)
+//			}
+//		}
+//	}
 
 	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
 		self.queue.update { (database) in
@@ -417,6 +481,14 @@ final class ArticlesTable: DatabaseTable {
 			}
 		}
 	}
+
+	// MARK: - Caches
+
+	func emptyCaches() {
+		queue.run { _ in
+			self.databaseArticlesCache = [String: DatabaseArticle]()
+		}
+	}
 }
 
 // MARK: - Private
@@ -482,16 +554,21 @@ private extension ArticlesTable {
 	func makeDatabaseArticles(with resultSet: FMResultSet) -> Set<DatabaseArticle> {
 		let articles = resultSet.mapToSet { (row) -> DatabaseArticle? in
 
-			// The resultSet is a result of a JOIN query with the statuses table,
-			// so we can get the statuses at the same time and avoid additional database lookups.
-
-			guard let status = statusesTable.statusWithRow(resultSet) else {
-				assertionFailure("Expected status.")
+			guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+				assertionFailure("Expected articleID.")
 				return nil
 			}
 
-			guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
-				assertionFailure("Expected articleID.")
+			// Articles are removed from the cache when they’re updated.
+			// See saveUpdatedArticles.
+			if let databaseArticle = databaseArticlesCache[articleID] {
+				return databaseArticle
+			}
+
+			// The resultSet is a result of a JOIN query with the statuses table,
+			// so we can get the statuses at the same time and avoid additional database lookups.
+			guard let status = statusesTable.statusWithRow(resultSet, articleID: articleID) else {
+				assertionFailure("Expected status.")
 				return nil
 			}
 			guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
@@ -514,7 +591,9 @@ private extension ArticlesTable {
 			let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 			let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 
-			return DatabaseArticle(articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, status: status)
+			let databaseArticle = DatabaseArticle(articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, status: status)
+			databaseArticlesCache[articleID] = databaseArticle
+			return databaseArticle
 		}
 
 		return articles
@@ -587,7 +666,7 @@ private extension ArticlesTable {
 
 	// MARK: - Saving Parsed Items
 	
-	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
+	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		DispatchQueue.main.async {
 			completion(newArticles, updatedArticles)
 		}
@@ -670,6 +749,7 @@ private extension ArticlesTable {
 	
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
+		removeArticlesFromDatabaseArticlesCache(updatedArticles)
 		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
 		
 		for updatedArticle in updatedArticles {
@@ -690,10 +770,17 @@ private extension ArticlesTable {
 			// Not unexpected. There may be no changes.
 			return
 		}
-		
+
 		updateRowsWithDictionary(changesDictionary, whereKey: DatabaseKey.articleID, matches: updatedArticle.articleID, database: database)
 	}
-	
+
+	func removeArticlesFromDatabaseArticlesCache(_ updatedArticles: Set<Article>) {
+		let articleIDs = updatedArticles.articleIDs()
+		for articleID in articleIDs {
+			databaseArticlesCache[articleID] = nil
+		}
+	}
+
 	func statusIndicatesArticleIsIgnorable(_ status: ArticleStatus) -> Bool {
 		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).
 		if status.userDeleted {
@@ -711,3 +798,8 @@ private extension ArticlesTable {
 	}
 }
 
+private extension Set where Element == ParsedItem {
+	func articleIDs() -> Set<String> {
+		return Set<String>(map { $0.articleID })
+	}
+}

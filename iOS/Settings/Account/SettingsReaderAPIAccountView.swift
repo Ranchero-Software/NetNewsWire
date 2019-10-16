@@ -29,7 +29,9 @@ struct SettingsReaderAPIAccountView : View {
 					Spacer()
 				}
 			)  {
-				TextField("Email", text: $viewModel.email).textContentType(.username)
+				TextField("Email", text: $viewModel.email)
+					.keyboardType(.emailAddress)
+					.textContentType(.emailAddress)
 				SecureField("Password", text: $viewModel.password)
 				TextField("API URL:", text: $viewModel.apiURL).textContentType(.URL)
 			}

@@ -18,7 +18,7 @@ import Articles
 
 public typealias UnreadCountDictionary = [String: Int] // feedID: unreadCount
 public typealias UnreadCountCompletionBlock = (UnreadCountDictionary) -> Void
-public typealias UpdateArticlesWithFeedCompletionBlock = (Set<Article>?, Set<Article>?) -> Void //newArticles, updatedArticles
+public typealias UpdateArticlesCompletionBlock = (Set<Article>?, Set<Article>?) -> Void //newArticles, updatedArticles
 
 public final class ArticlesDatabase {
 
@@ -126,10 +126,11 @@ public final class ArticlesDatabase {
 
 	// MARK: - Saving and Updating Articles
 
-	public func update(feedID: String, parsedItems: Set<ParsedItem>, defaultRead: Bool, completion: @escaping UpdateArticlesWithFeedCompletionBlock) {
-		return articlesTable.update(feedID, parsedItems, defaultRead, completion)
+	/// Update articles and save new ones. The key for feedIDsAndItems is feedID.
+	public func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+		articlesTable.update(feedIDsAndItems, defaultRead, completion)
 	}
-	
+
 	public func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
 		articlesTable.ensureStatuses(articleIDs, defaultRead, statusKey, flag)
 	}
@@ -150,6 +151,14 @@ public final class ArticlesDatabase {
 	
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {
 		return articlesTable.mark(articles, statusKey, flag)
+	}
+
+	// MARK: - Caches
+
+	/// Call to free up some memory. Should be done when the app is backgrounded, for instance.
+	/// This does not empty *all* caches — just the ones that are empty-able.
+	public func emptyCaches() {
+		articlesTable.emptyCaches()
 	}
 }
 

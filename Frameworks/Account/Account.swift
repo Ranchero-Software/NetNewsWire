@@ -372,10 +372,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 	}
 	
-	public func saveIfNecessary() {
-		metadataFile.saveIfNecessary()
-		feedMetadataFile.saveIfNecessary()
-		opmlFile.saveIfNecessary()
+	public func save() {
+		metadataFile.save()
+		feedMetadataFile.save()
+		opmlFile.save()
 	}
 	
 	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
@@ -625,24 +625,34 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping (() -> Void)) {
+		// Used only by an On My Mac account.
 		feed.takeSettings(from: parsedFeed)
-		update(feed, parsedItems: parsedFeed.items, completion)
+		let feedIDsAndItems = [feed.feedID: parsedFeed.items]
+		update(feedIDsAndItems: feedIDsAndItems, defaultRead: false, completion: completion)
 	}
-	
-	func update(_ feed: Feed, parsedItems: Set<ParsedItem>, defaultRead: Bool = false, _ completion: @escaping (() -> Void)) {
-		database.update(feedID: feed.feedID, parsedItems: parsedItems, defaultRead: defaultRead) { (newArticles, updatedArticles) in
+
+	func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping (() -> Void)) {
+		assert(Thread.isMainThread)
+		guard !feedIDsAndItems.isEmpty else {
+			completion()
+			return
+		}
+		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { (newArticles, updatedArticles) in
 			var userInfo = [String: Any]()
+			let feeds = Set(feedIDsAndItems.compactMap { (key, _) -> Feed? in
+				self.existingFeed(withFeedID: key)
+			})
 			if let newArticles = newArticles, !newArticles.isEmpty {
-				self.updateUnreadCounts(for: Set([feed]))
+				self.updateUnreadCounts(for: feeds)
 				userInfo[UserInfoKey.newArticles] = newArticles
 			}
 			if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
 				userInfo[UserInfoKey.updatedArticles] = updatedArticles
 			}
-			userInfo[UserInfoKey.feeds] = Set([feed])
-			
+			userInfo[UserInfoKey.feeds] = feeds
+
 			completion()
-			
+
 			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
 		}
 	}
@@ -667,6 +677,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
+	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
+	func emptyCaches() {
+		database.emptyCaches()
+	}
+
 	// MARK: - Container
 
 	public func flattenedFeeds() -> Set<Feed> {
@@ -679,6 +694,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func removeFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
+		structureDidChange()
+		postChildrenDidChangeNotification()
+	}
+	
+	public func removeFeeds(_ feeds: Set<Feed>) {
+		guard !feeds.isEmpty else {
+			return
+		}
+		topLevelFeeds.subtract(feeds)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15504"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ImportNNW3WindowController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="accountPopUpButton" destination="sEU-ot-DE2" id="9W3-o6-YsH"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="KF3-y6-Xy7"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="433" height="183"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <view key="contentView" wantsLayer="YES" misplaced="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="433" height="183"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="vE6-sv-BA0">
+                        <rect key="frame" x="18" y="100" width="405" height="32"/>
+                        <textFieldCell key="cell" selectable="YES" title="Choose the account to get the imported subscriptions. This requires a NetNewsWire 3 Subscriptions.plist file." id="1Vu-Te-PGl">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kZ4-y9-lYy">
+                        <rect key="frame" x="18" y="64" width="63" height="16"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Account:" id="e9g-7H-VWa">
+                            <font key="font" metaFont="systemBold"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sEU-ot-DE2" userLabel="Account Popup">
+                        <rect key="frame" x="85" y="58" width="339" height="25"/>
+                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="xsd-12-2yb" id="NuO-Hk-nk3">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <menu key="menu" id="8LY-np-ij1">
+                                <items>
+                                    <menuItem title="Item 1" state="on" id="xsd-12-2yb"/>
+                                    <menuItem title="Item 2" id="JGa-5R-SV5"/>
+                                    <menuItem title="Item 3" id="92e-hX-kYj"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ceu-mM-EKm">
+                        <rect key="frame" x="81" y="13" width="173" height="32"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="9ab-cB-hex">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancel:" target="-2" id="TTV-OR-P3d"/>
+                        </connections>
+                    </button>
+                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="et6-I1-6wB">
+                        <rect key="frame" x="254" y="13" width="173" height="32"/>
+                        <buttonCell key="cell" type="push" title="Import from NNW 3 …" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dhV-on-ayM">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="importNNW3:" target="-2" id="C33-8m-XQA"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="vE6-sv-BA0" secondAttribute="trailing" constant="20" symbolic="YES" id="2UM-dU-XgH"/>
+                    <constraint firstItem="kZ4-y9-lYy" firstAttribute="top" secondItem="vE6-sv-BA0" secondAttribute="bottom" constant="20" id="8Wf-Iv-teA"/>
+                    <constraint firstItem="sEU-ot-DE2" firstAttribute="firstBaseline" secondItem="kZ4-y9-lYy" secondAttribute="firstBaseline" id="EPd-vD-8pa"/>
+                    <constraint firstItem="et6-I1-6wB" firstAttribute="width" secondItem="ceu-mM-EKm" secondAttribute="width" id="Ldw-C8-F5X"/>
+                    <constraint firstItem="vE6-sv-BA0" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="M8o-2f-uax"/>
+                    <constraint firstItem="et6-I1-6wB" firstAttribute="top" secondItem="sEU-ot-DE2" secondAttribute="bottom" constant="20" symbolic="YES" id="OXm-Ns-r9Z"/>
+                    <constraint firstItem="kZ4-y9-lYy" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="SZo-1P-yYA"/>
+                    <constraint firstAttribute="bottom" secondItem="et6-I1-6wB" secondAttribute="bottom" constant="20" symbolic="YES" id="T9O-XC-wdY"/>
+                    <constraint firstItem="et6-I1-6wB" firstAttribute="leading" secondItem="ceu-mM-EKm" secondAttribute="trailing" constant="12" symbolic="YES" id="Y8m-P8-JQh"/>
+                    <constraint firstItem="sEU-ot-DE2" firstAttribute="leading" secondItem="kZ4-y9-lYy" secondAttribute="trailing" constant="8" symbolic="YES" id="a0f-Ak-Zdq"/>
+                    <constraint firstAttribute="trailing" secondItem="et6-I1-6wB" secondAttribute="trailing" constant="20" symbolic="YES" id="chg-8b-D51"/>
+                    <constraint firstItem="ceu-mM-EKm" firstAttribute="centerY" secondItem="et6-I1-6wB" secondAttribute="centerY" id="eKt-vM-3wn"/>
+                    <constraint firstItem="ceu-mM-EKm" firstAttribute="leading" secondItem="sEU-ot-DE2" secondAttribute="leading" id="gb5-bZ-0R6"/>
+                    <constraint firstItem="vE6-sv-BA0" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="ggA-m1-5pj"/>
+                    <constraint firstAttribute="trailing" secondItem="sEU-ot-DE2" secondAttribute="trailing" constant="20" symbolic="YES" id="sFO-00-DR0"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="99.5" y="103.5"/>
+        </window>
+    </objects>
+</document>

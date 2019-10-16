@@ -68,6 +68,10 @@ struct AppAssets {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
 	
+	static var infoImage: UIImage = {
+		UIImage(systemName: "info.circle")!
+	}()
+	
 	static var markAllInFeedAsReadImage: UIImage = {
 		return UIImage(systemName: "asterisk.circle")!
 	}()

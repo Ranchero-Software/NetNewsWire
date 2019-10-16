@@ -112,6 +112,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		518B2EA7235130CD00400001 /* ArticlesDatabase_project_test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ArticlesDatabase_project_test.xcconfig; sourceTree = "<group>"; };
 		51C451FE2264CF2100C03939 /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		840405CE1F1A963700DF0296 /* AttachmentsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsTable.swift; sourceTree = "<group>"; };
 		841D4D732106B59F00DD04E6 /* Articles.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Articles.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -287,6 +288,7 @@
 				D511EEE820242E0800712EC3 /* ArticlesDatabase_target.xcconfig */,
 				D511EEE920242E0800712EC3 /* ArticlesDatabase_project.xcconfig */,
 				D511EEEA20242E0800712EC3 /* ArticlesDatabase_project_debug.xcconfig */,
+				518B2EA7235130CD00400001 /* ArticlesDatabase_project_test.xcconfig */,
 				D511EEEB20242E0800712EC3 /* ArticlesDatabase_project_release.xcconfig */,
 			);
 			path = xcconfig;
@@ -313,6 +315,7 @@
 				844BEE331F0AB3AA004AB7CD /* Frameworks */,
 				844BEE341F0AB3AA004AB7CD /* Headers */,
 				844BEE351F0AB3AA004AB7CD /* Resources */,
+				51C8F34A234FB0F50048ED95 /* Run Script: Verify No Build Settings */,
 			);
 			buildRules = (
 			);
@@ -353,13 +356,13 @@
 				TargetAttributes = {
 					844BEE361F0AB3AA004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 					844BEE3F1F0AB3AB004AB7CD = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -491,6 +494,27 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		51C8F34A234FB0F50048ED95 /* Run Script: Verify No Build Settings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Verify No Build Settings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  ../../buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		844BEE321F0AB3AA004AB7CD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -534,13 +558,31 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		51EC89362351201E0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 518B2EA7235130CD00400001 /* ArticlesDatabase_project_test.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC89372351201E0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D511EEE820242E0800712EC3 /* ArticlesDatabase_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51EC89382351201E0061B6F6 /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D511EEE720242E0800712EC3 /* ArticlesDatabaseTests_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
 		844BEE491F0AB3AB004AB7CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEEA20242E0800712EC3 /* ArticlesDatabase_project_debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Debug;
 		};
@@ -548,9 +590,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEEB20242E0800712EC3 /* ArticlesDatabase_project_release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;
 		};
@@ -558,8 +597,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEE820242E0800712EC3 /* ArticlesDatabase_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.ArticlesDatabase;
-				PRODUCT_NAME = ArticlesDatabase;
 			};
 			name = Debug;
 		};
@@ -567,8 +604,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEE820242E0800712EC3 /* ArticlesDatabase_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_BUNDLE_IDENTIFIER = com.ranchero.ArticlesDatabase;
-				PRODUCT_NAME = ArticlesDatabase;
 			};
 			name = Release;
 		};
@@ -576,7 +611,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEE720242E0800712EC3 /* ArticlesDatabaseTests_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = ArticlesDatabaseTests;
 			};
 			name = Debug;
 		};
@@ -584,7 +618,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D511EEE720242E0800712EC3 /* ArticlesDatabaseTests_target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = ArticlesDatabaseTests;
 			};
 			name = Release;
 		};
@@ -595,6 +628,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				844BEE491F0AB3AB004AB7CD /* Debug */,
+				51EC89362351201E0061B6F6 /* Test */,
 				844BEE4A1F0AB3AB004AB7CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -604,6 +638,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				844BEE4C1F0AB3AB004AB7CD /* Debug */,
+				51EC89372351201E0061B6F6 /* Test */,
 				844BEE4D1F0AB3AB004AB7CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -613,6 +648,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				844BEE4F1F0AB3AB004AB7CD /* Debug */,
+				51EC89382351201E0061B6F6 /* Test */,
 				844BEE501F0AB3AB004AB7CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

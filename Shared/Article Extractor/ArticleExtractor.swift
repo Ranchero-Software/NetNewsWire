@@ -79,9 +79,14 @@ class ArticleExtractor {
 				decoder.dateDecodingStrategy = .iso8601
 				self.article = try decoder.decode(ExtractedArticle.self, from: data)
 				
-				self.state = .complete
                 DispatchQueue.main.async {
-					self.delegate?.articleExtractionDidComplete(extractedArticle: self.article!)
+					if self.article?.content == nil {
+						self.state = .failedToParse
+						self.delegate?.articleExtractionDidFail(with: URLError(.cannotDecodeContentData))
+					} else {
+						self.state = .complete
+						self.delegate?.articleExtractionDidComplete(extractedArticle: self.article!)
+					}
                 }
             } catch {
                 self.state = .failedToParse

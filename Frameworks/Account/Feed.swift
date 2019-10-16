@@ -11,7 +11,7 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Hashable {
+public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, DeepLinkProvider, Hashable {
 
 	public weak var account: Account?
 	public let url: String
@@ -123,6 +123,15 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
+	public var isNotifyAboutNewArticles: Bool? {
+		get {
+			return metadata.isNotifyAboutNewArticles
+		}
+		set {
+			metadata.isNotifyAboutNewArticles = newValue
+		}
+	}
+	
 	public var isArticleExtractorAlwaysOn: Bool? {
 		get {
 			return metadata.isArticleExtractorAlwaysOn
@@ -168,6 +177,15 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 	public func rename(to newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let account = account else { return }
 		account.renameFeed(self, to: newName, completion: completion)
+	}
+
+	// MARK: - PathIDUserInfoProvider
+	public var deepLinkUserInfo: [AnyHashable : Any] {
+		return [
+			DeepLinkKey.accountID.rawValue: account?.accountID ?? "",
+			DeepLinkKey.accountName.rawValue: account?.nameForDisplay ?? "",
+			DeepLinkKey.feedID.rawValue: feedID
+		]
 	}
 
 	// MARK: - UnreadCountProvider

@@ -8,21 +8,22 @@
 
 import Foundation
 import os.log
+import SyncDatabase
 
 final class FeedlySyncStrategy {
 	
 	let account: Account
 	let caller: FeedlyAPICaller
 	let operationQueue: OperationQueue
-	let articleStatusCoordinator: FeedlyArticleStatusCoordinator
+	let database: SyncDatabase
 	let log: OSLog
 	
-	init(account: Account, caller: FeedlyAPICaller, articleStatusCoordinator: FeedlyArticleStatusCoordinator, log: OSLog) {
+	init(account: Account, caller: FeedlyAPICaller, database: SyncDatabase, log: OSLog) {
 		self.account = account
 		self.caller = caller
 		self.operationQueue = OperationQueue()
 		self.log = log
-		self.articleStatusCoordinator = articleStatusCoordinator
+		self.database = database
 	}
 	
 	func cancel() {
@@ -32,6 +33,14 @@ final class FeedlySyncStrategy {
 	
 	private var startSyncCompletionHandler: ((Result<Void, Error>) -> ())?
 	
+	private var newerThan: Date? {
+		if let date = account.metadata.lastArticleFetch {
+			return date
+		} else {
+			return Calendar.current.date(byAdding: .day, value: -31, to: Date())
+		}
+	}
+	
 	/// The truth is in the cloud.
 	func startSync(completionHandler: @escaping (Result<Void, Error>) -> ()) {
 		guard operationQueue.operationCount == 0 else {
@@ -40,9 +49,14 @@ final class FeedlySyncStrategy {
 			return
 		}
 		
+		let sendArticleStatuses = FeedlySendArticleStatusesOperation(database: database, caller: caller, log: log)
+		sendArticleStatuses.delegate = self
+		
+		
 		// Since the truth is in the cloud, everything hinges of what Collections the user has.
 		let getCollections = FeedlyGetCollectionsOperation(caller: caller, log: log)
 		getCollections.delegate = self
+		getCollections.addDependency(sendArticleStatuses)
 		
 		// Ensure a folder exists for each Collection, removing Folders without a corresponding Collection.
 		let mirrorCollectionsAsFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account,
@@ -54,7 +68,7 @@ final class FeedlySyncStrategy {
 		
 		// Ensure feeds are created and grouped by their folders.
 		let createFeedsOperation = FeedlyCreateFeedsForCollectionFoldersOperation(account: account,
-																				  collectionsAndFoldersProvider: mirrorCollectionsAsFolders,
+																				  feedsAndFoldersProvider: mirrorCollectionsAsFolders,
 																				  log: log)
 		createFeedsOperation.delegate = self
 		createFeedsOperation.addDependency(mirrorCollectionsAsFolders)
@@ -63,34 +77,49 @@ final class FeedlySyncStrategy {
 		// Get the streams for each Collection. It will call back to enqueue more operations.
 		let getCollectionStreams = FeedlyRequestStreamsOperation(account: account,
 																 collectionsProvider: getCollections,
+																 newerThan: newerThan,
+																 unreadOnly: false,
 																 caller: caller,
 																 log: log)
 		getCollectionStreams.delegate = self
 		getCollectionStreams.queueDelegate = self
 		getCollectionStreams.addDependency(getCollections)
 		
+		let syncStarred = FeedlySyncStarredArticlesOperation(account: account, caller: caller, log: log)
+		syncStarred.addDependency(getCollections)
+		syncStarred.addDependency(mirrorCollectionsAsFolders)
+		syncStarred.addDependency(createFeedsOperation)
+		
 		// Last operation to perform, which should be dependent on any other operation added to the queue.
 		let syncId = UUID().uuidString
+		let lastArticleFetchDate = Date()
 		let completionOperation = BlockOperation { [weak self] in
-			if let self = self {
-				os_log(.debug, log: self.log, "Sync completed: %@", syncId)
-				self.startSyncCompletionHandler = nil
+			DispatchQueue.main.async {
+				if let self = self {
+					self.account.metadata.lastArticleFetch = lastArticleFetchDate
+					os_log(.debug, log: self.log, "Sync completed: %@", syncId)
+					self.startSyncCompletionHandler = nil
+				}
+				completionHandler(.success(()))
 			}
-			completionHandler(.success(()))
 		}
 		
+		completionOperation.addDependency(sendArticleStatuses)
 		completionOperation.addDependency(getCollections)
 		completionOperation.addDependency(mirrorCollectionsAsFolders)
 		completionOperation.addDependency(createFeedsOperation)
 		completionOperation.addDependency(getCollectionStreams)
+		completionOperation.addDependency(syncStarred)
 		
 		finalOperation = completionOperation
 		startSyncCompletionHandler = completionHandler
 		
-		let minimumOperations = [getCollections,
+		let minimumOperations = [sendArticleStatuses,
+								 getCollections,
 								 mirrorCollectionsAsFolders,
 								 createFeedsOperation,
 								 getCollectionStreams,
+								 syncStarred,
 								 completionOperation]
 		
 		operationQueue.addOperations(minimumOperations, waitUntilFinished: false)
@@ -103,26 +132,18 @@ final class FeedlySyncStrategy {
 
 extension FeedlySyncStrategy: FeedlyRequestStreamsOperationDelegate {
 	
-	func feedlyRequestStreamsOperation(_ operation: FeedlyRequestStreamsOperation, enqueue collectionStreamOperation: FeedlyGetCollectionStreamOperation) {
+	func feedlyRequestStreamsOperation(_ operation: FeedlyRequestStreamsOperation, enqueue streamOperation: FeedlyGetStreamOperation) {
 		
-		collectionStreamOperation.delegate = self
+		streamOperation.delegate = self
 				
-		os_log(.debug, log: log, "Requesting stream for collection \"%@\"", collectionStreamOperation.collection.label)
-		
-		// Parse the contents of this collection's stream.
-		let parseItemsOperation = FeedlyGetStreamParsedItemsOperation(account: account,
-																	  collectionStreamProvider: collectionStreamOperation,
-																	  caller: caller,
-																	  log: log)
-		parseItemsOperation.delegate = self
-		parseItemsOperation.addDependency(collectionStreamOperation)
+//		os_log(.debug, log: log, "Requesting stream for collection \"%@\"", streamOperation.collection.label)
 		
 		// Group the stream's content by feed.
 		let groupItemsByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
-																		parsedItemsProvider: parseItemsOperation,
+																		entryProvider: streamOperation,
 																		log: log)
 		groupItemsByFeed.delegate = self
-		groupItemsByFeed.addDependency(parseItemsOperation)
+		groupItemsByFeed.addDependency(streamOperation)
 		
 		// Update the account with the articles for the feeds in the stream.
 		let updateOperation = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
@@ -133,8 +154,7 @@ extension FeedlySyncStrategy: FeedlyRequestStreamsOperationDelegate {
 		
 		// Once the articles are in the account, ensure they have the correct status
 		let ensureUnreadOperation = FeedlyRefreshStreamEntriesStatusOperation(account: account,
-																			  collectionStreamProvider: collectionStreamOperation,
-																			  articleStatusCoordinator: articleStatusCoordinator,
+																			  entryProvider: streamOperation,
 																			  log: log)
 		
 		ensureUnreadOperation.delegate = self
@@ -145,7 +165,7 @@ extension FeedlySyncStrategy: FeedlyRequestStreamsOperationDelegate {
 			operation.addDependency(ensureUnreadOperation)
 		}
 		
-		let operations = [collectionStreamOperation, parseItemsOperation, groupItemsByFeed, updateOperation, ensureUnreadOperation]
+		let operations = [streamOperation, groupItemsByFeed, updateOperation, ensureUnreadOperation]
 		
 		operationQueue.addOperations(operations, waitUntilFinished: false)
 	}

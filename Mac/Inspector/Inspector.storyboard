@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15504"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -34,11 +34,11 @@
             <objects>
                 <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="FeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ecA-UY-KEd">
-                        <rect key="frame" x="0.0" y="0.0" width="256" height="298"/>
+                        <rect key="frame" x="0.0" y="0.0" width="256" height="332"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="H9X-OG-K0p">
-                                <rect key="frame" x="104" y="230" width="48" height="48"/>
+                                <rect key="frame" x="104" y="264" width="48" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="1Cy-0w-dBg"/>
                                     <constraint firstAttribute="height" constant="48" id="edb-lw-Ict"/>
@@ -46,7 +46,7 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSNetwork" id="MZ2-89-Bje"/>
                             </imageView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IWu-80-XC5">
-                                <rect key="frame" x="20" y="166" width="216" height="56"/>
+                                <rect key="frame" x="20" y="200" width="216" height="56"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="56" id="zV3-AX-gyC"/>
                                 </constraints>
@@ -63,7 +63,7 @@ Field</string>
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2WO-Iu-p5e">
-                                <rect key="frame" x="18" y="130" width="220" height="16"/>
+                                <rect key="frame" x="18" y="96" width="220" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Home Page" usesSingleLineMode="YES" id="Fg8-rA-G5J">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -71,7 +71,7 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zm0-15-BFy">
-                                <rect key="frame" x="18" y="110" width="220" height="16"/>
+                                <rect key="frame" x="18" y="76" width="220" height="16"/>
                                 <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="http://example.com/" id="L2p-ur-j7a">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -79,7 +79,7 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ju6-Zo-8X4">
-                                <rect key="frame" x="18" y="74" width="220" height="16"/>
+                                <rect key="frame" x="18" y="40" width="220" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Feed" usesSingleLineMode="YES" id="zzB-rX-1dK">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -87,7 +87,7 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Vvk-KG-JlG">
-                                <rect key="frame" x="18" y="54" width="220" height="16"/>
+                                <rect key="frame" x="18" y="20" width="220" height="16"/>
                                 <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="http://example.com/feed" id="HpC-rK-YGK">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -95,8 +95,8 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nH2-ab-KJ5">
-                                <rect key="frame" x="18" y="18" width="174" height="18"/>
-                                <buttonCell key="cell" type="check" title="Reader View is always on" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="aRe-yV-R0h">
+                                <rect key="frame" x="18" y="130" width="180" height="18"/>
+                                <buttonCell key="cell" type="check" title="Always Show Reader View" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="aRe-yV-R0h">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -104,14 +104,25 @@ Field</string>
                                     <action selector="isReaderViewAlwaysOnChanged:" target="sfH-oR-GXm" id="rsD-0e-ksP"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZBX-E8-k9c">
+                                <rect key="frame" x="18" y="164" width="179" height="18"/>
+                                <buttonCell key="cell" type="check" title="Notify About New Articles" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Bw5-c7-yDX">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="isNotifyAboutNewArticlesChanged:" target="sfH-oR-GXm" id="Vx9-pQ-RnP"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="zm0-15-BFy" firstAttribute="top" secondItem="2WO-Iu-p5e" secondAttribute="bottom" constant="4" id="2fb-QO-XIm"/>
                             <constraint firstItem="IWu-80-XC5" firstAttribute="top" secondItem="H9X-OG-K0p" secondAttribute="bottom" constant="8" symbolic="YES" id="4WB-WJ-3Z4"/>
+                            <constraint firstItem="ZBX-E8-k9c" firstAttribute="top" secondItem="IWu-80-XC5" secondAttribute="bottom" constant="20" id="5L7-aZ-vdg"/>
                             <constraint firstItem="nH2-ab-KJ5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="8pK-lW-xQk"/>
                             <constraint firstItem="H9X-OG-K0p" firstAttribute="centerX" secondItem="ecA-UY-KEd" secondAttribute="centerX" id="9CA-KA-HEg"/>
-                            <constraint firstAttribute="bottom" secondItem="nH2-ab-KJ5" secondAttribute="bottom" constant="20" symbolic="YES" id="BlS-oO-dVy"/>
-                            <constraint firstItem="nH2-ab-KJ5" firstAttribute="top" secondItem="Vvk-KG-JlG" secondAttribute="bottom" constant="20" id="Hh5-qo-dip"/>
+                            <constraint firstItem="nH2-ab-KJ5" firstAttribute="top" secondItem="ZBX-E8-k9c" secondAttribute="bottom" constant="20" id="CpA-X9-EbP"/>
+                            <constraint firstAttribute="bottom" secondItem="Vvk-KG-JlG" secondAttribute="bottom" constant="20" id="IxJ-5N-NhL"/>
                             <constraint firstAttribute="trailing" secondItem="ju6-Zo-8X4" secondAttribute="trailing" constant="20" symbolic="YES" id="Jzi-tP-TIw"/>
                             <constraint firstAttribute="trailing" secondItem="Vvk-KG-JlG" secondAttribute="trailing" constant="20" symbolic="YES" id="KAS-A7-TxB"/>
                             <constraint firstItem="ju6-Zo-8X4" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="NwI-2x-dAr"/>
@@ -120,10 +131,11 @@ Field</string>
                             <constraint firstAttribute="trailing" secondItem="IWu-80-XC5" secondAttribute="trailing" constant="20" symbolic="YES" id="WW6-xR-Zue"/>
                             <constraint firstItem="H9X-OG-K0p" firstAttribute="top" secondItem="ecA-UY-KEd" secondAttribute="top" constant="20" symbolic="YES" id="Z6q-PN-wOC"/>
                             <constraint firstItem="zm0-15-BFy" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="aho-BJ-kmB"/>
+                            <constraint firstItem="ZBX-E8-k9c" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="cjR-0i-YNG"/>
                             <constraint firstAttribute="trailing" secondItem="2WO-Iu-p5e" secondAttribute="trailing" constant="20" symbolic="YES" id="dLU-a6-nfx"/>
                             <constraint firstAttribute="trailing" secondItem="zm0-15-BFy" secondAttribute="trailing" constant="20" symbolic="YES" id="js6-b2-FIR"/>
-                            <constraint firstItem="2WO-Iu-p5e" firstAttribute="top" secondItem="IWu-80-XC5" secondAttribute="bottom" constant="20" id="mlo-9L-OMV"/>
                             <constraint firstItem="IWu-80-XC5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="r6h-Z0-g7b"/>
+                            <constraint firstItem="2WO-Iu-p5e" firstAttribute="top" secondItem="nH2-ab-KJ5" secondAttribute="bottom" constant="20" id="rRv-qO-dPa"/>
                             <constraint firstItem="Vvk-KG-JlG" firstAttribute="top" secondItem="ju6-Zo-8X4" secondAttribute="bottom" constant="4" id="sAt-dN-Taz"/>
                             <constraint firstItem="Vvk-KG-JlG" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="uS2-JS-PPg"/>
                         </constraints>
@@ -131,6 +143,7 @@ Field</string>
                     <connections>
                         <outlet property="homePageURLTextField" destination="zm0-15-BFy" id="0Jh-yy-mnF"/>
                         <outlet property="imageView" destination="H9X-OG-K0p" id="Rm6-X6-csH"/>
+                        <outlet property="isNotifyAboutNewArticlesCheckBox" destination="ZBX-E8-k9c" id="FWc-Ds-LUy"/>
                         <outlet property="isReaderViewAlwaysOnCheckBox" destination="nH2-ab-KJ5" id="xPg-P5-3cr"/>
                         <outlet property="nameTextField" destination="IWu-80-XC5" id="zg4-5h-hoP"/>
                         <outlet property="urlTextField" destination="Vvk-KG-JlG" id="bcl-fq-3nQ"/>
@@ -138,7 +151,7 @@ Field</string>
                 </viewController>
                 <customObject id="1ho-ZO-Gkb" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="67" y="46"/>
+            <point key="canvasLocation" x="67" y="69.5"/>
         </scene>
         <!--Folder-->
         <scene sceneID="8By-fa-WDQ">
@@ -189,7 +202,7 @@ Field</string>
                 </viewController>
                 <customObject id="4SD-ni-Scy" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="67" y="329"/>
+            <point key="canvasLocation" x="67" y="389"/>
         </scene>
         <!--Builtin Smart Feed-->
         <scene sceneID="dFq-3d-JKW">
@@ -231,7 +244,7 @@ Field</string>
                 </viewController>
                 <customObject id="3Xn-vX-2s9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="67" y="553"/>
+            <point key="canvasLocation" x="67" y="613"/>
         </scene>
         <!--Nothing to inspect-->
         <scene sceneID="lUc-e1-dN7">

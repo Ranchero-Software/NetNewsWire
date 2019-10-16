@@ -13,8 +13,12 @@ protocol FeedlyCollectionsAndFoldersProviding: class {
 	var collectionsAndFolders: [(FeedlyCollection, Folder)] { get }
 }
 
+protocol FeedlyFeedsAndFoldersProviding {
+	var feedsAndFolders: [([FeedlyFeed], Folder)] { get }
+}
+
 /// Single responsibility is accurately reflect Collections from Feedly as Folders.
-final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyCollectionsAndFoldersProviding {
+final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyCollectionsAndFoldersProviding, FeedlyFeedsAndFoldersProviding {
 	
 	let caller: FeedlyAPICaller
 	let account: Account
@@ -22,6 +26,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyCo
 	let log: OSLog
 	
 	private(set) var collectionsAndFolders = [(FeedlyCollection, Folder)]()
+	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
 	
 	init(account: Account, collectionsProvider: FeedlyCollectionProviding, caller: FeedlyAPICaller, log: OSLog) {
 		self.collectionsProvider = collectionsProvider
@@ -49,6 +54,10 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyCo
 		
 		collectionsAndFolders = pairs
 		os_log(.debug, log: log, "Ensured %i folders for %i collections.", pairs.count, collections.count)
+		
+		feedsAndFolders = pairs.map { (collection, folder) -> (([FeedlyFeed], Folder)) in
+			return (collection.feeds, folder)
+		}
 		
 		// Remove folders without a corresponding collection
 		let collectionFolders = Set(pairs.map { $0.1 })

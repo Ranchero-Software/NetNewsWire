@@ -10,7 +10,7 @@ import Foundation
 
 // Main thread only.
 
-class FetchRequestQueue {
+final class FetchRequestQueue {
 
 	private var pendingRequests = [FetchRequestOperation]()
 	private var currentRequest: FetchRequestOperation? = nil
@@ -40,9 +40,8 @@ private extension FetchRequestQueue {
 
 		currentRequest = requestToRun
 		pendingRequests.removeFirst()
-		requestToRun.run { (fetchRequestOperation) in
+		currentRequest!.run { (fetchRequestOperation) in
 			precondition(fetchRequestOperation === self.currentRequest)
-			precondition(fetchRequestOperation === requestToRun)
 			self.currentRequest = nil
 			self.runNextRequestIfNeeded()
 		}

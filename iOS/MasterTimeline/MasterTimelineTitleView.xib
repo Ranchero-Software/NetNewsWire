@@ -20,20 +20,26 @@
                         <constraint firstAttribute="width" constant="20" id="jOK-1W-SEO"/>
                     </constraints>
                 </imageView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5F6-2v-qSS">
-                    <rect key="frame" x="28" y="9" width="162" height="20"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5F6-2v-qSS">
+                    <rect key="frame" x="28" y="9" width="43.5" height="20"/>
                     <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <view verifyAmbiguity="off" opaque="NO" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z9o-XA-3t4" customClass="MasterTimelineUnreadCountView" customModule="NetNewsWire" customModuleProvider="target">
+                    <rect key="frame" x="79.5" y="9" width="110.5" height="20"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="5F6-2v-qSS" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="CeZ-D5-NOV"/>
+                <constraint firstItem="z9o-XA-3t4" firstAttribute="leading" secondItem="5F6-2v-qSS" secondAttribute="trailing" constant="8" symbolic="YES" id="CiV-5P-T1S"/>
                 <constraint firstItem="5F6-2v-qSS" firstAttribute="leading" secondItem="Rne-3c-G6E" secondAttribute="trailing" constant="8" id="OUK-1k-4Gc"/>
+                <constraint firstAttribute="trailing" secondItem="z9o-XA-3t4" secondAttribute="trailing" id="OVL-Ac-Rtt"/>
+                <constraint firstItem="z9o-XA-3t4" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="ZkY-jG-eZO"/>
                 <constraint firstItem="Rne-3c-G6E" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="e1Z-hg-3Cc"/>
                 <constraint firstItem="Rne-3c-G6E" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="h3i-G1-ays"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="5F6-2v-qSS" secondAttribute="trailing" id="w9X-65-lnV"/>
             </constraints>
             <nil key="simulatedTopBarMetrics"/>
             <nil key="simulatedBottomBarMetrics"/>
@@ -42,6 +48,7 @@
             <connections>
                 <outlet property="imageView" destination="Rne-3c-G6E" id="sHA-Vh-kck"/>
                 <outlet property="label" destination="5F6-2v-qSS" id="ec7-8Y-PRv"/>
+                <outlet property="unreadCountView" destination="z9o-XA-3t4" id="JBy-aa-feL"/>
             </connections>
             <point key="canvasLocation" x="14.492753623188406" y="-224.33035714285714"/>
         </view>
