@@ -20,9 +20,9 @@ class AccountFeedSyncTest: XCTestCase {
 	func testDownloadSync() {
 		
 		let testTransport = TestTransport()
-		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "tags_add.json"
-		testTransport.testFiles["https://api.feedbin.com/v2/subscriptions.json"] = "subscriptions_initial.json"
-		testTransport.testFiles["https://api.feedbin.com/v2/icons.json"] = "icons.json"
+		testTransport.testFiles["tags.json"] = "tags_add.json"
+		testTransport.testFiles["subscriptions.json"] = "subscriptions_initial.json"
+		testTransport.testFiles["icons.json"] = "icons.json"
 		let account = TestAccountManager.shared.createAccount(type: .feedbin, transport: testTransport)
 		
 		// Test initial folders
@@ -52,9 +52,9 @@ class AccountFeedSyncTest: XCTestCase {
 		XCTAssertEqual(225, account.flattenedFeeds().count)
 		
 		let bPixels = account.idToFeedDictionary["1096623"]
-		XCTAssertEqual("Beautiful Pixels", bPixels!.name)
-		XCTAssertEqual("https://feedpress.me/beautifulpixels", bPixels!.url)
-		XCTAssertEqual("https://beautifulpixels.com/", bPixels!.homePageURL)
+		XCTAssertEqual("Beautiful Pixels", bPixels?.name)
+		XCTAssertEqual("https://feedpress.me/beautifulpixels", bPixels?.url)
+		XCTAssertEqual("https://beautifulpixels.com/", bPixels?.homePageURL)
 		XCTAssertEqual("https://favicons.feedbinusercontent.com/ea0/ea010c658d6e356e49ab239b793dc415af707b05.png", bPixels?.faviconURL)
 
 		TestAccountManager.shared.deleteAccount(account)
