@@ -112,7 +112,7 @@ class ArticleViewController: UIViewController {
 			webView.uiDelegate = self
 
 			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
-			webView.configuration.userContentController.add(self, name: MessageName.imageWasClicked)
+			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 
 			// Even though page.html should be loaded into this webview, we have to do it again
 			// to work around this bug: http://www.openradar.me/22855188
@@ -374,6 +374,21 @@ extension ArticleViewController: WKScriptMessageHandler {
 				
 			}
 		}
+	}
+	
+}
+
+class WrapperScriptMessageHandler: NSObject, WKScriptMessageHandler {
+	
+	// We need to wrap a message handler to prevent a circlular reference
+	private weak var handler: WKScriptMessageHandler?
+	
+	init(_ handler: WKScriptMessageHandler) {
+		self.handler = handler
+	}
+	
+	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+		handler?.userContentController(userContentController, didReceive: message)
 	}
 	
 }
