@@ -54,7 +54,6 @@ class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 				imageView.removeFromSuperview()
 				let toView = transitionContext.view(forKey: .to)!
 				transitionContext.containerView.addSubview(toView)
-				transitionContext.containerView.bringSubviewToFront(toView)
 				transitionContext.completeTransition(true)
 		})
 		

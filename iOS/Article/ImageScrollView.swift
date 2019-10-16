@@ -43,7 +43,7 @@ open class ImageScrollView: UIScrollView {
     var maxScaleFromMinScale: CGFloat = 3.0
     
 	var zoomedFrame: CGRect {
-		return convert(zoomView?.frame ?? CGRect.zero, to: nil)
+		return zoomView?.frame ?? CGRect.zero
 	}
 	
     override open var frame: CGRect {
