@@ -67,9 +67,6 @@ class ArticleViewController: UIViewController {
 		}
 	}
 	
-	var clickedImage: UIImage?
-	var clickedImageFrame: CGRect?
-
 	var articleExtractorButtonState: ArticleExtractorButtonState {
 		get {
 			return articleExtractorButton.buttonState
@@ -363,8 +360,8 @@ extension ArticleViewController: WKScriptMessageHandler {
 			if let imageData = Data(base64Encoded: base64Image), let image = UIImage(data: imageData) {
 				
 				let rect = CGRect(x: CGFloat(clickMessage.x), y: CGFloat(clickMessage.y), width: CGFloat(clickMessage.width), height: CGFloat(clickMessage.height))
-				clickedImageFrame = webView.convert(rect, to: nil)
-				clickedImage = image
+				transition.originFrame = webView.convert(rect, to: nil)
+				transition.originImage = image
 				
 				let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
 				imageVC.image = image
@@ -398,9 +395,6 @@ class WrapperScriptMessageHandler: NSObject, WKScriptMessageHandler {
 extension ArticleViewController: UIViewControllerTransitioningDelegate {
 
 	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		guard let frame = clickedImageFrame, let image = clickedImage else { return nil }
-		transition.originFrame = frame
-		transition.originImage = image
 		transition.presenting = true
 		return transition
 	}
