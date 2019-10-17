@@ -53,7 +53,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 			caller = FeedWranglerAPICaller(transport: session)
 		}
 		
-		database = SyncDatabase(databaseFilePath: dataFolder.appending("/Sync.sqlite3"))
+		database = SyncDatabase(databaseFilePath: dataFolder.appending("/DB.sqlite3"))
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -100,9 +100,25 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func refreshArticles(for account: Account, completion: @escaping (() -> Void)) {
-		os_log(.debug, log: log, "Refreshing articles...")
-		completion()
+	func refreshArticles(for account: Account, page: Int = 0, completion: @escaping (() -> Void)) {
+		os_log(.debug, log: log, "Refreshing articles, page: %d...", page)
+		
+		caller.retrieveFeedItems(page: page) { result in
+			switch result {
+			case .success(let items):
+				self.syncFeedItems(account, items) {
+					if items.count == 0 {
+						completion()
+					} else {
+						self.refreshArticles(for: account, page: (page + 1), completion: completion)
+					}
+				}
+
+			case .failure:
+				// TODO Handle error
+				completion()
+			}
+		}
 	}
 	
 	func refreshMissingArticles(for account: Account, completion: @escaping (() -> Void)) {
@@ -112,12 +128,60 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	
 	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
 		os_log(.debug, log: log, "Sending article status...")
-		completion()
+		
+		let syncStatuses = database.selectForProcessing()
+		let articleStatuses = Dictionary(grouping: syncStatuses, by: { $0.articleID })
+		let group = DispatchGroup()
+		
+		articleStatuses.forEach { articleID, statuses in
+			group.enter()
+			caller.updateArticleStatus(articleID, statuses) {
+				group.leave()
+			}
+			
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			os_log(.debug, log: self.log, "Done sending article statuses.")
+			completion()
+		}
 	}
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
 		os_log(.debug, log: log, "Refreshing article status...")
-		completion()
+		let group = DispatchGroup()
+		
+		group.enter()
+		caller.retrieveAllUnreadFeedItems { result in
+			switch result {
+			case .success(let items):
+				self.syncArticleReadState(account, items)
+				group.leave()
+				
+			case .failure(let error):
+				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
+				group.leave()
+			}
+		}
+		
+		// starred
+		group.enter()
+		caller.retrieveAllStarredFeedItems { result in
+			switch result {
+			case .success(let items):
+				self.syncArticleStarredState(account, items)
+				group.leave()
+				
+			case .failure(let error):
+				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
+				group.leave()
+			}
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			os_log(.debug, log: self.log, "Done refreshing article statuses.")
+			completion()
+		}
 	}
 	
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -208,7 +272,14 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	}
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		fatalError()
+		let syncStatuses = articles.map { SyncStatus(articleID: $0.articleID, key: statusKey, flag: flag)}
+		database.insertStatuses(syncStatuses)
+		
+		if database.selectPendingCount() > 0 {
+			sendArticleStatus(for: account) {} // do it in the background
+		}
+		
+		return account.update(articles, statusKey: statusKey, flag: flag)
 	}
 	
 	func accountDidInitialize(_ account: Account) {
@@ -256,5 +327,68 @@ private extension FeedWranglerAccountDelegate {
 			feed.subscriptionID = nil
 			account.addFeed(feed)
 		}
+	}
+	
+	func syncFeedItems(_ account: Account, _ feedItems: [FeedWranglerFeedItem], completion: @escaping (() -> Void)) {
+		let parsedItems = feedItems.map { (item: FeedWranglerFeedItem) -> ParsedItem in
+			let itemID = String(item.feedItemID)
+			// let authors = ...
+			let parsedItem = ParsedItem(syncServiceID: itemID, uniqueID: itemID, feedURL: String(item.feedID), url: nil, externalURL: item.url, title: item.title, contentHTML: item.body, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: item.publishedDate, dateModified: item.updatedDate, authors: nil, tags: nil, attachments: nil)
+			
+			return parsedItem
+		}
+		
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { $0.feedURL }).mapValues { Set($0) }
+		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true, completion: completion)
+	}
+	
+	func syncArticleReadState(_ account: Account, _ unreadFeedItems: [FeedWranglerFeedItem]) {
+		let unreadServerItemIDs = Set(unreadFeedItems.map { String($0.feedItemID) })
+		let unreadLocalItemIDs = account.fetchUnreadArticleIDs()
+		
+		// unread if unread on server
+		let unreadDiffItemIDs = unreadServerItemIDs.subtracting(unreadLocalItemIDs)
+		let unreadFoundArticles = account.fetchArticles(.articleIDs(unreadDiffItemIDs))
+		account.update(unreadFoundArticles, statusKey: .read, flag: false)
+		
+		let unreadFoundItemIDs = Set(unreadFoundArticles.map { $0.articleID })
+		let missingArticleIDs = unreadDiffItemIDs.subtracting(unreadFoundItemIDs)
+		account.ensureStatuses(missingArticleIDs, true, .read, false)
+
+		let readItemIDs = unreadLocalItemIDs.subtracting(unreadServerItemIDs)
+		let readArtices = account.fetchArticles(.articleIDs(readItemIDs))
+		account.update(readArtices, statusKey: .read, flag: true)
+		
+		let foundReadArticleIDs = Set(readArtices.map { $0.articleID })
+		let readMissingIDs = readItemIDs.subtracting(foundReadArticleIDs)
+		account.ensureStatuses(readMissingIDs, true, .read, true)
+	}
+	
+	func syncArticleStarredState(_ account: Account, _ unreadFeedItems: [FeedWranglerFeedItem]) {
+		let unreadServerItemIDs = Set(unreadFeedItems.map { String($0.feedItemID) })
+		let unreadLocalItemIDs = account.fetchUnreadArticleIDs()
+		
+		// starred if start on server
+		let unreadDiffItemIDs = unreadServerItemIDs.subtracting(unreadLocalItemIDs)
+		let unreadFoundArticles = account.fetchArticles(.articleIDs(unreadDiffItemIDs))
+		account.update(unreadFoundArticles, statusKey: .starred, flag: true)
+		
+		let unreadFoundItemIDs = Set(unreadFoundArticles.map { $0.articleID })
+		let missingArticleIDs = unreadDiffItemIDs.subtracting(unreadFoundItemIDs)
+		account.ensureStatuses(missingArticleIDs, true, .starred, true)
+
+		let readItemIDs = unreadLocalItemIDs.subtracting(unreadServerItemIDs)
+		let readArtices = account.fetchArticles(.articleIDs(readItemIDs))
+		account.update(readArtices, statusKey: .starred, flag: false)
+		
+		let foundReadArticleIDs = Set(readArtices.map { $0.articleID })
+		let readMissingIDs = readItemIDs.subtracting(foundReadArticleIDs)
+		account.ensureStatuses(readMissingIDs, true, .starred, false)
+	}
+	
+	func syncArticleState(_ account: Account, key: ArticleStatus.Key, flag: Bool, serverFeedItems: [FeedWranglerFeedItem]) {
+		let serverFeedItemIDs = serverFeedItems.map { String($0.feedID) }
+		
+		// todo generalize this logic
 	}
 }
