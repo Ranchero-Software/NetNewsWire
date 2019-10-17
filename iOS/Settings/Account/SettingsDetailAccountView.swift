@@ -14,7 +14,7 @@ import RSWeb
 struct SettingsDetailAccountView : View {
 	@Environment(\.presentationMode) var presentation
 	@ObservedObject var viewModel: ViewModel
-	@State private var accountType: AccountType = nil
+	@State private var credentialsAction: Int? = nil
 	@State private var isDeleteAlertPresented = false
 
     var body: some View {
@@ -28,20 +28,21 @@ struct SettingsDetailAccountView : View {
 				}
 			}
 			if viewModel.isCreditialsAvailable {
-				Section {
-					Button(action: {
-						self.accountType = self.viewModel.account.type
-					}) {
+				if viewModel.account.type == .feedbin {
+					NavigationLink(destination: self.settingsFeedbinAccountView, tag: 1, selection: $credentialsAction) {
 						Text("Credentials")
 					}
+					.modifier(VibrantSelectAction(action: {
+						self.credentialsAction = 1
+					}))
 				}
-				.sheet(item: $accountType) { type in
-					if type == .feedbin {
-						self.settingsFeedbinAccountView
+				if viewModel.account.type == .freshRSS {
+					NavigationLink(destination: self.settingsReaderAPIAccountView, tag: 1, selection: $credentialsAction) {
+						Text("Credentials")
 					}
-					if type == .freshRSS {
-						self.settingsReaderAPIAccountView
-					}
+					.modifier(VibrantSelectAction(action: {
+						self.credentialsAction = 1
+					}))
 				}
 			}
 			if viewModel.isDeletable {
