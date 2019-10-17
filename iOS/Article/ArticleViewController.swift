@@ -444,11 +444,7 @@ private extension ArticleViewController {
 			transition.maskFrame = webView.convert(webView.frame, to: nil)
 			transition.originImage = image
 			
-			let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
-			imageVC.image = image
-			imageVC.modalPresentationStyle = .fullScreen
-			imageVC.transitioningDelegate = self
-			present(imageVC, animated: true)
+			coordinator.showFullScreenImage(image: image, transitioningDelegate: self)
 		}
 	}
 	
