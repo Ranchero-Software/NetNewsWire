@@ -20,7 +20,7 @@
 		5107A09D227DE77700C7C3C5 /* TestTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09C227DE77700C7C3C5 /* TestTransport.swift */; };
 		510BD111232C3801002692E4 /* AccountMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD110232C3801002692E4 /* AccountMetadataFile.swift */; };
 		510BD113232C3E9D002692E4 /* FeedMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD112232C3E9D002692E4 /* FeedMetadataFile.swift */; };
-		513323082281070D00C30F19 /* AccountFeedSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513323072281070C00C30F19 /* AccountFeedSyncTest.swift */; };
+		513323082281070D00C30F19 /* AccountFeedbinSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */; };
 		5133230A2281082F00C30F19 /* subscriptions_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 513323092281082F00C30F19 /* subscriptions_initial.json */; };
 		5133230C2281088A00C30F19 /* subscriptions_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 5133230B2281088A00C30F19 /* subscriptions_add.json */; };
 		5133230E2281089500C30F19 /* icons.json in Resources */ = {isa = PBXBuildFile; fileRef = 5133230D2281089500C30F19 /* icons.json */; };
@@ -31,7 +31,7 @@
 		515E4EB52324FF8C0057B0E7 /* CredentialsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515E4EB22324FF8C0057B0E7 /* CredentialsManager.swift */; };
 		515E4EB62324FF8C0057B0E7 /* URLRequest+RSWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515E4EB32324FF8C0057B0E7 /* URLRequest+RSWeb.swift */; };
 		515E4EB72324FF8C0057B0E7 /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515E4EB42324FF8C0057B0E7 /* Credentials.swift */; };
-		5165D7122282080C00D9D53D /* AccountFolderContentsSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5165D7112282080C00D9D53D /* AccountFolderContentsSyncTest.swift */; };
+		5165D7122282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5165D7112282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift */; };
 		5165D71622821C2400D9D53D /* taggings_delete.json in Resources */ = {isa = PBXBuildFile; fileRef = 5165D71322821C2400D9D53D /* taggings_delete.json */; };
 		5165D71722821C2400D9D53D /* taggings_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 5165D71422821C2400D9D53D /* taggings_add.json */; };
 		5165D71822821C2400D9D53D /* taggings_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 5165D71522821C2400D9D53D /* taggings_initial.json */; };
@@ -45,7 +45,7 @@
 		51D5875A227F630B00900287 /* tags_delete.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58757227F630B00900287 /* tags_delete.json */; };
 		51D5875B227F630B00900287 /* tags_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58758227F630B00900287 /* tags_add.json */; };
 		51D5875C227F630B00900287 /* tags_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58759227F630B00900287 /* tags_initial.json */; };
-		51D5875E227F643C00900287 /* AccountFolderSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D5875D227F643C00900287 /* AccountFolderSyncTest.swift */; };
+		51D5875E227F643C00900287 /* AccountFeedbinFolderSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D5875D227F643C00900287 /* AccountFeedbinFolderSyncTest.swift */; };
 		51E148EC234B8FFC0004F7A5 /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */; };
 		51E148ED234B8FFC0004F7A5 /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51E3EB41229AF61B00645299 /* AccountError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB40229AF61B00645299 /* AccountError.swift */; };
@@ -206,7 +206,7 @@
 		5107A09C227DE77700C7C3C5 /* TestTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTransport.swift; sourceTree = "<group>"; };
 		510BD110232C3801002692E4 /* AccountMetadataFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMetadataFile.swift; sourceTree = "<group>"; };
 		510BD112232C3E9D002692E4 /* FeedMetadataFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedMetadataFile.swift; sourceTree = "<group>"; };
-		513323072281070C00C30F19 /* AccountFeedSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedSyncTest.swift; sourceTree = "<group>"; };
+		513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedbinSyncTest.swift; sourceTree = "<group>"; };
 		513323092281082F00C30F19 /* subscriptions_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_initial.json; sourceTree = "<group>"; };
 		5133230B2281088A00C30F19 /* subscriptions_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_add.json; sourceTree = "<group>"; };
 		5133230D2281089500C30F19 /* icons.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = icons.json; sourceTree = "<group>"; };
@@ -217,7 +217,7 @@
 		515E4EB22324FF8C0057B0E7 /* CredentialsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsManager.swift; sourceTree = "<group>"; };
 		515E4EB32324FF8C0057B0E7 /* URLRequest+RSWeb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLRequest+RSWeb.swift"; sourceTree = "<group>"; };
 		515E4EB42324FF8C0057B0E7 /* Credentials.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
-		5165D7112282080C00D9D53D /* AccountFolderContentsSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFolderContentsSyncTest.swift; sourceTree = "<group>"; };
+		5165D7112282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedbinFolderContentsSyncTest.swift; sourceTree = "<group>"; };
 		5165D71322821C2400D9D53D /* taggings_delete.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taggings_delete.json; sourceTree = "<group>"; };
 		5165D71422821C2400D9D53D /* taggings_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taggings_add.json; sourceTree = "<group>"; };
 		5165D71522821C2400D9D53D /* taggings_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taggings_initial.json; sourceTree = "<group>"; };
@@ -232,7 +232,7 @@
 		51D58757227F630B00900287 /* tags_delete.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_delete.json; sourceTree = "<group>"; };
 		51D58758227F630B00900287 /* tags_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_add.json; sourceTree = "<group>"; };
 		51D58759227F630B00900287 /* tags_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_initial.json; sourceTree = "<group>"; };
-		51D5875D227F643C00900287 /* AccountFolderSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFolderSyncTest.swift; sourceTree = "<group>"; };
+		51D5875D227F643C00900287 /* AccountFeedbinFolderSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedbinFolderSyncTest.swift; sourceTree = "<group>"; };
 		51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SyncDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51E3EB40229AF61B00645299 /* AccountError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountError.swift; sourceTree = "<group>"; };
 		51E490352288C37100C791F0 /* FeedbinDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinDate.swift; sourceTree = "<group>"; };
@@ -366,6 +366,16 @@
 				3BF6119323578F55000EF978 /* FeedWranglerFeedItemsRequest.swift */,
 			);
 			path = FeedWrangler;
+			sourceTree = "<group>";
+		};
+		5111D71C2357534700737D45 /* Feedbin */ = {
+			isa = PBXGroup;
+			children = (
+				513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */,
+				5165D7112282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift */,
+				51D5875D227F643C00900287 /* AccountFeedbinFolderSyncTest.swift */,
+			);
+			path = Feedbin;
 			sourceTree = "<group>";
 		};
 		515E4EB12324FF7D0057B0E7 /* Credentials */ = {
@@ -530,11 +540,9 @@
 			isa = PBXGroup;
 			children = (
 				5107A098227DE42E00C7C3C5 /* AccountCredentialsTest.swift */,
-				51D5875D227F643C00900287 /* AccountFolderSyncTest.swift */,
-				513323072281070C00C30F19 /* AccountFeedSyncTest.swift */,
-				5165D7112282080C00D9D53D /* AccountFolderContentsSyncTest.swift */,
 				5107A09C227DE77700C7C3C5 /* TestTransport.swift */,
 				5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */,
+				5111D71C2357534700737D45 /* Feedbin */,
 				9E7F15082341E97100F860D1 /* Feedly */,
 				51D58756227F62E300900287 /* JSON */,
 				848935061F62485000CEBD24 /* Info.plist */,
@@ -989,10 +997,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				9E7F15072341E96700F860D1 /* AccountFeedlySyncTest.swift in Sources */,
-				5165D7122282080C00D9D53D /* AccountFolderContentsSyncTest.swift in Sources */,
-				51D5875E227F643C00900287 /* AccountFolderSyncTest.swift in Sources */,
+				5165D7122282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift in Sources */,
+				51D5875E227F643C00900287 /* AccountFeedbinFolderSyncTest.swift in Sources */,
 				5107A09B227DE49500C7C3C5 /* TestAccountManager.swift in Sources */,
-				513323082281070D00C30F19 /* AccountFeedSyncTest.swift in Sources */,
+				513323082281070D00C30F19 /* AccountFeedbinSyncTest.swift in Sources */,
 				5107A09D227DE77700C7C3C5 /* TestTransport.swift in Sources */,
 				5107A099227DE42E00C7C3C5 /* AccountCredentialsTest.swift in Sources */,
 				9E1773DB234593CF0056A5A8 /* FeedlyResourceIdTests.swift in Sources */,

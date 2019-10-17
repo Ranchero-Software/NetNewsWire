@@ -24,6 +24,7 @@ class ArticleViewController: UIViewController {
 	
 	private struct MessageName {
 		static let imageWasClicked = "imageWasClicked"
+		static let imageWasShown = "imageWasShown"
 	}
 
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
@@ -43,7 +44,8 @@ class ArticleViewController: UIViewController {
 	}()
 	
 	private var webView: WKWebView!
-	private var transition = ImageTransition()
+	private lazy var transition = ImageTransition(controller: self)
+	private var clickedImageCompletion: (() -> Void)?
 
 	weak var coordinator: SceneCoordinator!
 	
@@ -67,9 +69,6 @@ class ArticleViewController: UIViewController {
 		}
 	}
 	
-	var clickedImage: UIImage?
-	var clickedImageFrame: CGRect?
-
 	var articleExtractorButtonState: ArticleExtractorButtonState {
 		get {
 			return articleExtractorButton.buttonState
@@ -112,7 +111,9 @@ class ArticleViewController: UIViewController {
 			webView.uiDelegate = self
 
 			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
-			webView.configuration.userContentController.add(self, name: MessageName.imageWasClicked)
+			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
+			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
+			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 
 			// Even though page.html should be loaded into this webview, we have to do it again
 			// to work around this bug: http://www.openradar.me/22855188
@@ -299,6 +300,15 @@ class ArticleViewController: UIViewController {
 		webView.scrollView.setContentOffset(scrollToPoint, animated: true)
 	}
 	
+	func hideClickedImage() {
+		webView?.evaluateJavaScript("hideClickedImage();")
+	}
+	
+	func showClickedImage(completion: @escaping () -> Void) {
+		clickedImageCompletion = completion
+		webView?.evaluateJavaScript("showClickedImage();")
+	}
+	
 }
 
 // MARK: WKNavigationDelegate
@@ -353,27 +363,29 @@ extension ArticleViewController: WKUIDelegate {
 extension ArticleViewController: WKScriptMessageHandler {
 
 	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-		if message.name == MessageName.imageWasClicked,
-			let body = message.body as? String,
-			let data = body.data(using: .utf8),
-			let clickMessage = try? JSONDecoder().decode(ImageClickMessage.self, from: data),
-			let range = clickMessage.imageURL.range(of: ";base64,") {
-			
-			let base64Image = String(clickMessage.imageURL.suffix(from: range.upperBound))
-			if let imageData = Data(base64Encoded: base64Image), let image = UIImage(data: imageData) {
-				
-				let rect = CGRect(x: CGFloat(clickMessage.x), y: CGFloat(clickMessage.y), width: CGFloat(clickMessage.width), height: CGFloat(clickMessage.height))
-				clickedImageFrame = webView.convert(rect, to: nil)
-				clickedImage = image
-				
-				let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
-				imageVC.image = image
-				imageVC.modalPresentationStyle = .fullScreen
-				imageVC.transitioningDelegate = self
-				present(imageVC, animated: true)
-				
-			}
+		switch message.name {
+		case MessageName.imageWasShown:
+			clickedImageCompletion?()
+		case MessageName.imageWasClicked:
+			imageWasClicked(body: message.body as? String)
+		default:
+			return
 		}
+	}
+	
+}
+
+class WrapperScriptMessageHandler: NSObject, WKScriptMessageHandler {
+	
+	// We need to wrap a message handler to prevent a circlular reference
+	private weak var handler: WKScriptMessageHandler?
+	
+	init(_ handler: WKScriptMessageHandler) {
+		self.handler = handler
+	}
+	
+	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+		handler?.userContentController(userContentController, didReceive: message)
 	}
 	
 }
@@ -383,9 +395,6 @@ extension ArticleViewController: WKScriptMessageHandler {
 extension ArticleViewController: UIViewControllerTransitioningDelegate {
 
 	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		guard let frame = clickedImageFrame, let image = clickedImage else { return nil }
-		transition.originFrame = frame
-		transition.originImage = image
 		transition.presenting = true
 		return transition
 	}
@@ -418,6 +427,24 @@ private extension ArticleViewController {
 	func updateProgressIndicatorIfNeeded() {
 		if !(UIDevice.current.userInterfaceIdiom == .pad) {
 			navigationController?.updateAccountRefreshProgressIndicator()
+		}
+	}
+	
+	func imageWasClicked(body: String?) {
+		guard let body = body,
+			let data = body.data(using: .utf8),
+			let clickMessage = try? JSONDecoder().decode(ImageClickMessage.self, from: data),
+			let range = clickMessage.imageURL.range(of: ";base64,")
+			else { return }
+		
+		let base64Image = String(clickMessage.imageURL.suffix(from: range.upperBound))
+		if let imageData = Data(base64Encoded: base64Image), let image = UIImage(data: imageData) {
+			let rect = CGRect(x: CGFloat(clickMessage.x), y: CGFloat(clickMessage.y), width: CGFloat(clickMessage.width), height: CGFloat(clickMessage.height))
+			transition.originFrame = webView.convert(rect, to: nil)
+			transition.maskFrame = webView.convert(webView.frame, to: nil)
+			transition.originImage = image
+			
+			coordinator.showFullScreenImage(image: image, transitioningDelegate: self)
 		}
 	}
 	

@@ -819,6 +819,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.present(addViewController, animated: true)
 	}
 	
+	func showFullScreenImage(image: UIImage, transitioningDelegate: UIViewControllerTransitioningDelegate) {
+		let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
+		imageVC.image = image
+		imageVC.modalPresentationStyle = .currentContext
+		imageVC.transitioningDelegate = transitioningDelegate
+		rootSplitViewController.present(imageVC, animated: true)
+	}
+	
 	func toggleArticleExtractor() {
 		
 		guard let article = currentArticle else {

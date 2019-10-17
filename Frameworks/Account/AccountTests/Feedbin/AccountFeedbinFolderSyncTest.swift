@@ -1,5 +1,5 @@
 //
-//  AccountFolderSyncTest.swift
+//  AccountFeedbinFolderSyncTest.swift
 //  AccountTests
 //
 //  Created by Maurice Parker on 5/5/19.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import Account
 
-class AccountFolderSyncTest: XCTestCase {
+class AccountFeedbinFolderSyncTest: XCTestCase {
 
     override func setUp() {
     }

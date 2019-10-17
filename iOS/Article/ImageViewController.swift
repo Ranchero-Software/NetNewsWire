@@ -28,6 +28,13 @@ class ImageViewController: UIViewController {
 		imageScrollView.display(image: image)
     }
 
+	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		super.viewWillTransition(to: size, with: coordinator)
+		coordinator.animate(alongsideTransition: { [weak self] context in
+			self?.imageScrollView.resize()
+		})
+	}
+	
 	@IBAction func share(_ sender: Any) {
 		guard let image = image else { return }
 		let activityViewController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
@@ -46,9 +53,6 @@ class ImageViewController: UIViewController {
 
 extension ImageViewController: ImageScrollViewDelegate {
 
-	func imageScrollViewDidChangeOrientation(imageScrollView: ImageScrollView) {
-	}
-	
 	func imageScrollViewDidGestureSwipeUp(imageScrollView: ImageScrollView) {
 		dismiss(animated: true)
 	}

@@ -1,5 +1,7 @@
 // Used to pop a resizable image view
 async function imageWasClicked(img) {
+	img.classList.add("nnwClicked");
+
 	const rect = img.getBoundingClientRect();
 	
 	var message = {
@@ -31,7 +33,21 @@ async function imageWasClicked(img) {
 	
 }
 
-// Add the click listeners for images
+// Used to animate the transition to a fullscreen image
+function hideClickedImage() {
+	var img = document.querySelector('.nnwClicked')
+	img.style.opacity = 0
+}
+
+// Used to animate the transition from a fullscreen image
+function showClickedImage() {
+	var img = document.querySelector('.nnwClicked')
+	img.classList.remove("nnwClicked");
+	img.style.opacity = 1
+	window.webkit.messageHandlers.imageWasShown.postMessage("");
+}
+
+// Add the click listener for images
 function imageClicks() {
 	window.onclick = function(event) {
 		if (event.target.matches('img')) {
