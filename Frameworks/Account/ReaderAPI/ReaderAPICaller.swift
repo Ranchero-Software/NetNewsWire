@@ -166,17 +166,11 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
-		guard var components = URLComponents(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.tagList.rawValue), resolvingAgainstBaseURL: false) else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
+		let url = baseURL
+			.appendingPathComponent(ReaderAPIEndpoints.tagList.rawValue)
+			.appendingQueryItem(URLQueryItem(name: "output", value: "json"))
 		
-		components.queryItems = [
-			URLQueryItem(name: "output", value: "json")
-		]
-
-		guard let callURL = components.url else {
+		guard let callURL = url else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
@@ -278,17 +272,11 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
-		guard var components = URLComponents(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionList.rawValue), resolvingAgainstBaseURL: false) else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
+		let url = baseURL
+			.appendingPathComponent(ReaderAPIEndpoints.subscriptionList.rawValue)
+			.appendingQueryItem(URLQueryItem(name: "output", value: "json"))
 		
-		components.queryItems = [
-			URLQueryItem(name: "output", value: "json")
-		]
-		
-		guard let callURL = components.url else {
+		guard let callURL = url else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
@@ -333,16 +321,11 @@ final class ReaderAPICaller: NSObject {
 				self.requestAuthorizationToken(endpoint: baseURL) { (result) in
 					switch result {
 					case .success(let token):
-						guard var components = URLComponents(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionAdd.rawValue), resolvingAgainstBaseURL: false) else {
-							completion(.failure(TransportError.noURL))
-							return
-						}
+						let url = baseURL
+							.appendingPathComponent(ReaderAPIEndpoints.subscriptionAdd.rawValue)
+							.appendingQueryItem(URLQueryItem(name: "quickadd", value: url.absoluteString))
 		
-						components.queryItems = [
-							URLQueryItem(name: "quickadd", value: url.absoluteString)
-						]
-		
-						guard let callURL = components.url else {
+						guard let callURL = url else {
 							completion(.failure(TransportError.noURL))
 							return
 						}
@@ -616,19 +599,15 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
-		guard var components = URLComponents(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue), resolvingAgainstBaseURL: false) else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
+		let url = baseURL
+			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
+			.appendingQueryItems([
+				URLQueryItem(name: "s", value: feedID),
+				URLQueryItem(name: "ot", value: String(since.timeIntervalSince1970)),
+				URLQueryItem(name: "output", value: "json")
+			])
 		
-		components.queryItems = [
-			URLQueryItem(name: "s", value: feedID),
-			URLQueryItem(name: "ot", value: String(since.timeIntervalSince1970)),
-			URLQueryItem(name: "output", value: "json")
-		]
-		
-		guard let callURL = components.url else {
+		guard let callURL = url else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
@@ -684,22 +663,17 @@ final class ReaderAPICaller: NSObject {
 		}()
 		
 		let sinceString = since.timeIntervalSince1970
+		let url = baseURL
+			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
+			.appendingQueryItems([
+				URLQueryItem(name: "o", value: String(sinceString)),
+				URLQueryItem(name: "n", value: "10000"),
+				URLQueryItem(name: "output", value: "json"),
+				URLQueryItem(name: "xt", value: ReaderState.read.rawValue),
+				URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue)
+			])
 		
-		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
-		guard var components = URLComponents(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue), resolvingAgainstBaseURL: false) else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-		
-		components.queryItems = [
-			URLQueryItem(name: "o", value: String(sinceString)),
-			URLQueryItem(name: "n", value: "10000"),
-			URLQueryItem(name: "output", value: "json"),
-			URLQueryItem(name: "xt", value: ReaderState.read.rawValue),
-			URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue)
-		]
-		
-		guard let callURL = components.url else {
+		guard let callURL = url else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
@@ -768,13 +742,11 @@ final class ReaderAPICaller: NSObject {
 	
 	func retrieveEntries(page: String, completion: @escaping (Result<([ReaderAPIEntry]?, String?), Error>) -> Void) {
 		
-		guard let url = URL(string: page), var callComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+		guard let url = URL(string: page)?.appendingQueryItem(URLQueryItem(name: "mode", value: "extended")) else {
 			completion(.success((nil, nil)))
 			return
 		}
-		
-		callComponents.queryItems?.append(URLQueryItem(name: "mode", value: "extended"))
-		let request = URLRequest(url: callComponents.url!, credentials: credentials)
+		let request = URLRequest(url: url, credentials: credentials)
 
 		transport.send(request: request, resultType: [ReaderAPIEntry].self) { result in
 			
@@ -800,20 +772,16 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		// Add query string for getting JSON (probably should break this out as I will be doing it a lot)
-		guard var components = URLComponents(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue), resolvingAgainstBaseURL: false) else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
+		let url = baseURL
+			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
+			.appendingQueryItems([
+				URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue),
+				URLQueryItem(name: "n", value: "10000"),
+				URLQueryItem(name: "xt", value: ReaderState.read.rawValue),
+				URLQueryItem(name: "output", value: "json")
+			])
 		
-		components.queryItems = [
-			URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue),
-			URLQueryItem(name: "n", value: "10000"),
-			URLQueryItem(name: "xt", value: ReaderState.read.rawValue),
-			URLQueryItem(name: "output", value: "json")
-		]
-		
-		guard let callURL = components.url else {
+		guard let callURL = url else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
