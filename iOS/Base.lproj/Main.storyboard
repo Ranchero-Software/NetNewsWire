@@ -265,7 +265,7 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" name="fullScreenBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="RmY-a3-hUg" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="A0i-Hs-1Ac"/>
                             <constraint firstAttribute="bottom" secondItem="msG-pz-EKk" secondAttribute="bottom" id="AtA-bA-jDr"/>
@@ -299,6 +299,9 @@
         <image name="square.and.arrow.up" catalog="system" width="56" height="64"/>
         <image name="square.and.arrow.up.fill" catalog="system" width="56" height="64"/>
         <image name="star" catalog="system" width="64" height="58"/>
+        <namedColor name="fullScreenBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </namedColor>
         <namedColor name="primaryAccentColor">
             <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

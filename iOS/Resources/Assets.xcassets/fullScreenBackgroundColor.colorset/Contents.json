@@ -1,0 +1,31 @@
+{
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  },
+  "colors" : [
+    {
+      "idiom" : "universal",
+      "color" : {
+        "platform" : "ios",
+        "reference" : "systemBackgroundColor"
+      }
+    },
+    {
+      "idiom" : "universal",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "color" : {
+        "color-space" : "gray-gamma-22",
+        "components" : {
+          "white" : "0.000",
+          "alpha" : "1.000"
+        }
+      }
+    }
+  ]
+}
