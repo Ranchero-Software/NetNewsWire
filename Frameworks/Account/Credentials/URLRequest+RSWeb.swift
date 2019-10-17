@@ -26,24 +26,13 @@ public extension URLRequest {
 			let auth = "Basic \(base64 ?? "")"
 			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
 		case .feedWranglerBasic:
-			
-			guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-				return
-			}
-			components.queryItems = [
+			self.url = url.appendingQueryItems([
 				URLQueryItem(name: "email", value: credentials.username),
 				URLQueryItem(name: "password", value: credentials.secret),
 				URLQueryItem(name: "client_key", value: FeedWranglerConfig.clientKey)
-			]
-			self.url = components.url
+			])
 		case .feedWranglerToken:
-			guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-				return
-			}
-			var queryItems = components.queryItems ?? []
-			queryItems.append(URLQueryItem(name: "access_token", value: credentials.secret))
-			components.queryItems = queryItems
-			self.url = components.url
+			self.url = url.appendingQueryItem(URLQueryItem(name: "access_token", value: credentials.secret))
         case .readerBasic:
             setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             httpMethod = "POST"
