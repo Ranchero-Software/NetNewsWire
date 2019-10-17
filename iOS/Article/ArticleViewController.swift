@@ -441,6 +441,7 @@ private extension ArticleViewController {
 		if let imageData = Data(base64Encoded: base64Image), let image = UIImage(data: imageData) {
 			let rect = CGRect(x: CGFloat(clickMessage.x), y: CGFloat(clickMessage.y), width: CGFloat(clickMessage.width), height: CGFloat(clickMessage.height))
 			transition.originFrame = webView.convert(rect, to: nil)
+			transition.maskFrame = webView.convert(webView.frame, to: nil)
 			transition.originImage = image
 			
 			let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
