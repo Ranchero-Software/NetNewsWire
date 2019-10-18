@@ -68,9 +68,9 @@ final class FeedlyAddFeedRequest {
 			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
 			createFeeds.addDependency(addRequest)
 			
-			let getStream: FeedlyGetStreamOperation? = {
+			let getStream: FeedlyGetStreamContentsOperation? = {
 				if refreshes {
-					let op = FeedlyGetStreamOperation(account: account, resourceProvider: addRequest, caller: caller, newerThan: nil)
+					let op = FeedlyGetStreamContentsOperation(account: account, resourceProvider: addRequest, service: caller, newerThan: nil)
 					op.addDependency(createFeeds)
 					return op
 				}
@@ -79,7 +79,7 @@ final class FeedlyAddFeedRequest {
 			
 			let organiseByFeed: FeedlyOrganiseParsedItemsByFeedOperation? = {
 				if let getStream = getStream {
-					let op = FeedlyOrganiseParsedItemsByFeedOperation(account: account, entryProvider: getStream, log: log)
+					let op = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: getStream, log: log)
 					op.addDependency(getStream)
 					return op
 				}
