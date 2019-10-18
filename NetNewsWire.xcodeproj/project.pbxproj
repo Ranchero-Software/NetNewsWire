@@ -28,6 +28,12 @@
 		512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */; };
 		512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */; };
 		512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteCommand.swift */; };
+		51314606235A582D00387FDC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 51314605235A582D00387FDC /* Intents.intentdefinition */; };
+		5131463E235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		51314668235A7E4600387FDC /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51314666235A7E4600387FDC /* IntentHandler.swift */; };
+		513146B0235A815400387FDC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 51314605235A582D00387FDC /* Intents.intentdefinition */; };
+		513146B2235A81A400387FDC /* AddFeedIntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513146B1235A81A400387FDC /* AddFeedIntentHandler.swift */; };
+		513146B3235A81A400387FDC /* AddFeedIntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513146B1235A81A400387FDC /* AddFeedIntentHandler.swift */; };
 		51322855232EED360033D4ED /* VibrantSelectAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51322854232EED360033D4ED /* VibrantSelectAction.swift */; };
 		51322859232FDDB80033D4ED /* VibrantButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51322858232FDDB80033D4ED /* VibrantButtonStyle.swift */; };
 		5132285B232FF2C40033D4ED /* SettingsRefreshSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */; };
@@ -420,6 +426,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5131463C235A7BBE00387FDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 51314636235A7BBE00387FDC;
+			remoteInfo = "NetNewsWire iOS Intents Extension";
+		};
 		51554C00228B6EB50055115A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */;
@@ -647,6 +660,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				513C5CF0232571C2003D4054 /* NetNewsWire iOS Share Extension.appex in Embed App Extensions */,
+				5131463E235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -749,6 +763,13 @@
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeader.swift; sourceTree = "<group>"; };
 		512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISplitViewController-Extensions.swift"; sourceTree = "<group>"; };
+		51314605235A582D00387FDC /* Intents.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = Intents.intentdefinition; sourceTree = "<group>"; };
+		51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSintentextension_target.xcconfig; sourceTree = "<group>"; };
+		51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Intents Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		51314665235A7E4600387FDC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		51314666235A7E4600387FDC /* IntentHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
+		51314684235A7EB900387FDC /* NetNewsWire_iOS_IntentsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_IntentsExtension.entitlements; sourceTree = "<group>"; };
+		513146B1235A81A400387FDC /* AddFeedIntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedIntentHandler.swift; sourceTree = "<group>"; };
 		51322854232EED360033D4ED /* VibrantSelectAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantSelectAction.swift; sourceTree = "<group>"; };
 		51322858232FDDB80033D4ED /* VibrantButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantButtonStyle.swift; sourceTree = "<group>"; };
 		5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRefreshSelectionView.swift; sourceTree = "<group>"; };
@@ -1072,6 +1093,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		51314634235A7BBE00387FDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		513C5CE3232571C2003D4054 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1181,6 +1209,25 @@
 				849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */,
 			);
 			path = Tree;
+			sourceTree = "<group>";
+		};
+		513145F9235A55A700387FDC /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				51314605235A582D00387FDC /* Intents.intentdefinition */,
+				513146B1235A81A400387FDC /* AddFeedIntentHandler.swift */,
+			);
+			path = Intents;
+			sourceTree = "<group>";
+		};
+		51314643235A7C2300387FDC /* IntentsExtension */ = {
+			isa = PBXGroup;
+			children = (
+				51314666235A7E4600387FDC /* IntentHandler.swift */,
+				51314665235A7E4600387FDC /* Info.plist */,
+				51314684235A7EB900387FDC /* NetNewsWire_iOS_IntentsExtension.entitlements */,
+			);
+			path = IntentsExtension;
 			sourceTree = "<group>";
 		};
 		513228F1233037620033D4ED /* Network */ = {
@@ -1769,6 +1816,7 @@
 				6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */,
 				513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */,
 				518B2ED22351B3DD00400001 /* NetNewsWire-iOSTests.xctest */,
+				51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1989,12 +2037,14 @@
 				51C4527D2265092C00C03939 /* Article */,
 				51C452802265093600C03939 /* Add */,
 				5123DB95233EC69300282CC9 /* Inspector */,
-				5183CCEB227117C70010922C /* Settings */,
+				513145F9235A55A700387FDC /* Intents */,
 				5183CCDB226F1EEB0010922C /* Progress */,
+				5183CCEB227117C70010922C /* Settings */,
 				519D740423243C68008BB345 /* Model Extensions */,
 				5194B5E222B693EC00144881 /* SwiftUI Extensions */,
 				51C45245226506C800C03939 /* UIKit Extensions */,
 				513C5CE7232571C2003D4054 /* ShareExtension */,
+				51314643235A7C2300387FDC /* IntentsExtension */,
 				84C9FC9A2262A1A900D921D6 /* Resources */,
 			);
 			path = iOS;
@@ -2119,6 +2169,7 @@
 				D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */,
 				D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */,
 				51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */,
+				51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */,
 				515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */,
 				518B2EE92351B4C200400001 /* NetNewsWire_iOSTests_target.xcconfig */,
 				6543108B2322D90900658221 /* common */,
@@ -2147,6 +2198,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		51314636235A7BBE00387FDC /* NetNewsWire iOS Intents Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5131463F235A7BBE00387FDC /* Build configuration list for PBXNativeTarget "NetNewsWire iOS Intents Extension" */;
+			buildPhases = (
+				51314633235A7BBE00387FDC /* Sources */,
+				51314634235A7BBE00387FDC /* Frameworks */,
+				51314635235A7BBE00387FDC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "NetNewsWire iOS Intents Extension";
+			productName = "NetNewsWire iOS Intents Extension";
+			productReference = 51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 513C5CFC232571C2003D4054 /* Build configuration list for PBXNativeTarget "NetNewsWire iOS Share Extension" */;
@@ -2216,6 +2284,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5131463D235A7BBE00387FDC /* PBXTargetDependency */,
 			);
 			name = "NetNewsWire-iOS";
 			productName = "NetNewsWire-iOS";
@@ -2284,24 +2353,30 @@
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
+					51314636235A7BBE00387FDC = {
+						CreatedOnToolsVersion = 11.2;
+						DevelopmentTeam = SHJK2V3AJG;
+						LastSwiftMigration = 1120;
+						ProvisioningStyle = Automatic;
+					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -2311,8 +2386,8 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -2321,8 +2396,8 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
 				};
@@ -2384,6 +2459,7 @@
 				840D617B2029031C009BC708 /* NetNewsWire-iOS */,
 				6581C73220CED60000F4AD34 /* Subscribe to Feed */,
 				513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */,
+				51314636235A7BBE00387FDC /* NetNewsWire iOS Intents Extension */,
 				518B2ED12351B3DD00400001 /* NetNewsWire-iOSTests */,
 			);
 		};
@@ -2533,6 +2609,13 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		51314635235A7BBE00387FDC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		513C5CE4232571C2003D4054 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2783,6 +2866,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		51314633235A7BBE00387FDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				513146B3235A81A400387FDC /* AddFeedIntentHandler.swift in Sources */,
+				513146B0235A815400387FDC /* Intents.intentdefinition in Sources */,
+				51314668235A7E4600387FDC /* IntentHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		513C5CE2232571C2003D4054 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2836,6 +2929,7 @@
 				51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */,
 				51AF460E232488C6001742EF /* Account-Extensions.swift in Sources */,
 				51FD413B2342BD0500880194 /* MasterTimelineUnreadCountView.swift in Sources */,
+				513146B2235A81A400387FDC /* AddFeedIntentHandler.swift in Sources */,
 				5183CCDD226F1F5C0010922C /* NavigationProgressView.swift in Sources */,
 				51AF45E123246731001742EF /* SettingsAccountLabelView.swift in Sources */,
 				51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */,
@@ -2846,6 +2940,7 @@
 				514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */,
 				5152E0F923248F6200E5C7AD /* SettingsLocalAccountView.swift in Sources */,
 				51FA73A52332BE110090D516 /* ArticleExtractor.swift in Sources */,
+				51314606235A582D00387FDC /* Intents.intentdefinition in Sources */,
 				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
 				510BD15D232D765D002692E4 /* SettingsReaderAPIAccountView.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
@@ -3117,6 +3212,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5131463D235A7BBE00387FDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 51314636235A7BBE00387FDC /* NetNewsWire iOS Intents Extension */;
+			targetProxy = 5131463C235A7BBE00387FDC /* PBXContainerItemProxy */;
+		};
 		51554C27228B71910055115A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SyncDatabase;
@@ -3266,6 +3366,27 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		51314640235A7BBE00387FDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		51314641235A7BBE00387FDC /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		51314642235A7BBE00387FDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		513C5CF2232571C2003D4054 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */;
@@ -3416,6 +3537,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5131463F235A7BBE00387FDC /* Build configuration list for PBXNativeTarget "NetNewsWire iOS Intents Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				51314640235A7BBE00387FDC /* Debug */,
+				51314641235A7BBE00387FDC /* Test */,
+				51314642235A7BBE00387FDC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		513C5CFC232571C2003D4054 /* Build configuration list for PBXNativeTarget "NetNewsWire iOS Share Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

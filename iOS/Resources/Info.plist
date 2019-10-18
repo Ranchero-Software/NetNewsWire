@@ -51,22 +51,23 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Grant permission to save images from the article.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Grant permission to save images from the article.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
+		<string>AddFeedIntent</string>
 		<string>com.ranchero.NetNewsWire.NextUnread</string>
+		<string>com.ranchero.NetNewsWire.ReadArticle</string>
+		<string>com.ranchero.NetNewsWire.SelectAllUnread</string>
 		<string>com.ranchero.NetNewsWire.SelectFeed</string>
 		<string>com.ranchero.NetNewsWire.SelectFolder</string>
-		<string>com.ranchero.NetNewsWire.SelectAllUnread</string>
 		<string>com.ranchero.NetNewsWire.SelectStarred</string>
 		<string>com.ranchero.NetNewsWire.SelectToday</string>
-		<string>com.ranchero.NetNewsWire.ReadArticle</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
