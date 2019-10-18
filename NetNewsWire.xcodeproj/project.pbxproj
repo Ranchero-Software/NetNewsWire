@@ -96,12 +96,6 @@
 		5183CCE6226F4E110010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		5183CCE8226F68D90010922C /* AccountRefreshTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */; };
 		5183CCE9226F68D90010922C /* AccountRefreshTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */; };
-		518651AC23555EB20078E021 /* ImportNNW3WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518651A523555EB20078E021 /* ImportNNW3WindowController.swift */; };
-		518651AD23555EB20078E021 /* NNW3PlistConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518651A623555EB20078E021 /* NNW3PlistConverter.swift */; };
-		518651AE23555EB20078E021 /* ImportNNW3Sheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 518651A723555EB20078E021 /* ImportNNW3Sheet.xib */; };
-		518651AF23555EB20078E021 /* NNW3Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518651A823555EB20078E021 /* NNW3Entry.swift */; };
-		518651B023555EB20078E021 /* NNW3FeedsImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518651A923555EB20078E021 /* NNW3FeedsImporter.swift */; };
-		518651B123555EB20078E021 /* NNW3Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518651AA23555EB20078E021 /* NNW3Feed.swift */; };
 		518651B223555EB20078E021 /* NNW3Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518651AB23555EB20078E021 /* NNW3Document.swift */; };
 		518651DA235621840078E021 /* ImageTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518651D9235621840078E021 /* ImageTransition.swift */; };
 		518B2EE82351B45600400001 /* NetNewsWire_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61952029031D009BC708 /* NetNewsWire_iOSTests.swift */; };
@@ -319,6 +313,9 @@
 		849A97981ED9EFAA007D329B /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
 		849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A979E1ED9F130007D329B /* SidebarCell.swift */; };
 		849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
+		849ADEE42359817E000E1B81 /* NNW3ImportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849ADEE02359817D000E1B81 /* NNW3ImportController.swift */; };
+		849ADEE623598189000E1B81 /* NNW3OpenPanelAccessoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849ADEE523598189000E1B81 /* NNW3OpenPanelAccessoryView.xib */; };
+		849ADEE8235981A0000E1B81 /* NNW3OpenPanelAccessoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849ADEE7235981A0000E1B81 /* NNW3OpenPanelAccessoryViewController.swift */; };
 		849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		849EE70F203919360082A1EA /* AppAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849EE70E203919360082A1EA /* AppAssets.swift */; };
 		849EE72120391F560082A1EA /* SharingServicePickerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849EE72020391F560082A1EA /* SharingServicePickerDelegate.swift */; };
@@ -792,12 +789,6 @@
 		5183CCDE226F1FCC0010922C /* UINavigationController+Progress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Progress.swift"; sourceTree = "<group>"; };
 		5183CCE4226F4DFA0010922C /* RefreshInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshInterval.swift; sourceTree = "<group>"; };
 		5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRefreshTimer.swift; sourceTree = "<group>"; };
-		518651A523555EB20078E021 /* ImportNNW3WindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImportNNW3WindowController.swift; sourceTree = "<group>"; };
-		518651A623555EB20078E021 /* NNW3PlistConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNW3PlistConverter.swift; sourceTree = "<group>"; };
-		518651A723555EB20078E021 /* ImportNNW3Sheet.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImportNNW3Sheet.xib; sourceTree = "<group>"; };
-		518651A823555EB20078E021 /* NNW3Entry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNW3Entry.swift; sourceTree = "<group>"; };
-		518651A923555EB20078E021 /* NNW3FeedsImporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNW3FeedsImporter.swift; sourceTree = "<group>"; };
-		518651AA23555EB20078E021 /* NNW3Feed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNW3Feed.swift; sourceTree = "<group>"; };
 		518651AB23555EB20078E021 /* NNW3Document.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNW3Document.swift; sourceTree = "<group>"; };
 		518651D9235621840078E021 /* ImageTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransition.swift; sourceTree = "<group>"; };
 		518B2ED22351B3DD00400001 /* NetNewsWire-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NetNewsWire-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -969,6 +960,9 @@
 		849A97971ED9EFAA007D329B /* Node-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Node-Extensions.swift"; sourceTree = "<group>"; };
 		849A979E1ED9F130007D329B /* SidebarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarCell.swift; sourceTree = "<group>"; };
 		849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderTreeControllerDelegate.swift; sourceTree = "<group>"; };
+		849ADEE02359817D000E1B81 /* NNW3ImportController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNW3ImportController.swift; sourceTree = "<group>"; };
+		849ADEE523598189000E1B81 /* NNW3OpenPanelAccessoryView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NNW3OpenPanelAccessoryView.xib; sourceTree = "<group>"; };
+		849ADEE7235981A0000E1B81 /* NNW3OpenPanelAccessoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNW3OpenPanelAccessoryViewController.swift; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64671ED37A5D003D8FC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1278,13 +1272,10 @@
 		518651A423555EB20078E021 /* NNW3 */ = {
 			isa = PBXGroup;
 			children = (
-				518651A523555EB20078E021 /* ImportNNW3WindowController.swift */,
-				518651A623555EB20078E021 /* NNW3PlistConverter.swift */,
-				518651A723555EB20078E021 /* ImportNNW3Sheet.xib */,
-				518651A823555EB20078E021 /* NNW3Entry.swift */,
-				518651A923555EB20078E021 /* NNW3FeedsImporter.swift */,
-				518651AA23555EB20078E021 /* NNW3Feed.swift */,
+				849ADEE02359817D000E1B81 /* NNW3ImportController.swift */,
 				518651AB23555EB20078E021 /* NNW3Document.swift */,
+				849ADEE523598189000E1B81 /* NNW3OpenPanelAccessoryView.xib */,
+				849ADEE7235981A0000E1B81 /* NNW3OpenPanelAccessoryViewController.swift */,
 			);
 			path = NNW3;
 			sourceTree = "<group>";
@@ -2295,22 +2286,22 @@
 				TargetAttributes = {
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = M8L2WTLA8W;
+						ProvisioningStyle = Manual;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = M8L2WTLA8W;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -2320,8 +2311,8 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = M8L2WTLA8W;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -2330,8 +2321,8 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = M8L2WTLA8W;
+						ProvisioningStyle = Manual;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
 				};
@@ -2602,9 +2593,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				849ADEE623598189000E1B81 /* NNW3OpenPanelAccessoryView.xib in Resources */,
 				844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */,
 				5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */,
-				518651AE23555EB20078E021 /* ImportNNW3Sheet.xib in Resources */,
 				845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */,
 				848362FF2262A30E00DA1D35 /* template.html in Resources */,
 				9EA33BBA2318F8C10097B644 /* AccountsFeedlyWeb.xib in Resources */,
@@ -2975,12 +2966,10 @@
 				845A29221FC9251E007B49E3 /* SidebarCellLayout.swift in Sources */,
 				84AD1EBA2031649C00BC20B7 /* SmartFeedPasteboardWriter.swift in Sources */,
 				84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */,
-				518651AF23555EB20078E021 /* NNW3Entry.swift in Sources */,
 				849A97661ED9EB96007D329B /* SidebarViewController.swift in Sources */,
 				9EA33BB92318F8C10097B644 /* AccountsFeedlyWebWindowController.swift in Sources */,
 				849A97641ED9EB96007D329B /* SidebarOutlineView.swift in Sources */,
 				5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */,
-				518651AC23555EB20078E021 /* ImportNNW3WindowController.swift in Sources */,
 				8405DD9922153B6B008CE1BF /* TimelineContainerView.swift in Sources */,
 				D5A2678C20130ECF00A8D3C0 /* Author+Scriptability.swift in Sources */,
 				84F2D5371FC22FCC00998D64 /* PseudoFeed.swift in Sources */,
@@ -3002,13 +2991,13 @@
 				84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */,
 				84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */,
 				849A975B1ED9EB0D007D329B /* ArticleUtilities.swift in Sources */,
+				849ADEE8235981A0000E1B81 /* NNW3OpenPanelAccessoryViewController.swift in Sources */,
 				849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */,
 				84A37CB5201ECD610087C5AF /* RenameWindowController.swift in Sources */,
 				84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */,
 				849A97891ED9ECEF007D329B /* ArticleStyle.swift in Sources */,
 				84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */,
 				84B7178C201E66580091657D /* SidebarViewController+ContextualMenus.swift in Sources */,
-				518651AD23555EB20078E021 /* NNW3PlistConverter.swift in Sources */,
 				5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */,
 				842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */,
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
@@ -3050,7 +3039,6 @@
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
 				8405DDA522168C62008CE1BF /* TimelineContainerViewController.swift in Sources */,
 				844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */,
-				518651B123555EB20078E021 /* NNW3Feed.swift in Sources */,
 				848D578E21543519005FFAD5 /* PasteboardFeed.swift in Sources */,
 				5144EA2F2279FAB600D19003 /* AccountsDetailViewController.swift in Sources */,
 				849A97801ED9EC42007D329B /* DetailViewController.swift in Sources */,
@@ -3085,8 +3073,8 @@
 				844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */,
 				84C9FC7C22629E1200D921D6 /* AccountsPreferencesViewController.swift in Sources */,
 				51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */,
+				849ADEE42359817E000E1B81 /* NNW3ImportController.swift in Sources */,
 				849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */,
-				518651B023555EB20078E021 /* NNW3FeedsImporter.swift in Sources */,
 				51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */,
 				845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */,
 				D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */,
