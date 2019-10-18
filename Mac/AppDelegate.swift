@@ -5,6 +5,7 @@
 //  Created by Brent Simmons on 7/11/15.
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
+
 import AppKit
 import UserNotifications
 import Articles
@@ -62,7 +63,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var importOPMLController: ImportOPMLWindowController?
-	private var importNNW3Controller: ImportNNW3WindowController?
 	private var exportOPMLController: ExportOPMLWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
@@ -114,6 +114,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 	
 	// MARK: - NSApplicationDelegate
+	
 	func applicationWillFinishLaunching(_ notification: Notification) {
 		installAppleEventHandlers()
 		#if TEST
@@ -136,9 +137,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			logDebugMessage("Is first run.")
 		}
 		let localAccount = AccountManager.shared.defaultAccount
-		NNW3FeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
-		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
-		
+
+		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
+			// Import feeds. Either old NNW 3 feeds or the default feeds.
+			if !NNW3ImportController.importSubscriptionsIfFileExists(account: localAccount) {
+				DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
+			}
+		}
+
 		let tempDirectory = NSTemporaryDirectory()
 		let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
 		let cacheFolder = (tempDirectory as NSString).appendingPathComponent(bundleIdentifier)
@@ -452,9 +458,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
-		
-		importNNW3Controller = ImportNNW3WindowController()
-		importNNW3Controller?.runSheetOnWindow(mainWindowController!.window!)
+		NNW3ImportController.askUserToImportNNW3Subscriptions(window: mainWindowController!.window!)
 	}
 	
 	@IBAction func exportOPML(_ sender: Any?) {

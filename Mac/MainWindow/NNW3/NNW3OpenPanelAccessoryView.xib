@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15400" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15400"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="NNW3OpenPanelAccessoryViewController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="accountPopUpButton" destination="M8B-pG-mg8" id="yAF-ef-1Qn"/>
+                <outlet property="view" destination="c22-O7-iKe" id="Ir0-h6-xWk"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView misplaced="YES" id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="500" height="133"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="gSF-Ze-XcY">
+                    <rect key="frame" x="50" y="20" width="400" height="77"/>
+                    <subviews>
+                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="wGx-8H-BqE">
+                            <rect key="frame" x="-2" y="29" width="404" height="48"/>
+                            <textFieldCell key="cell" selectable="YES" id="IFj-4w-B03">
+                                <font key="font" metaFont="system"/>
+                                <string key="title">Choose a NetNewsWire 3 “Subscriptions.plist” file.
+
+Then choose the account to receive your imported subscriptions.</string>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="976-Ry-M6G">
+                            <rect key="frame" x="-2" y="3" width="63" height="16"/>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Account:" id="uoh-QY-7LX">
+                                <font key="font" metaFont="systemBold"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M8B-pG-mg8" userLabel="Account Popup">
+                            <rect key="frame" x="65" y="-3" width="338" height="25"/>
+                            <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="OAk-KA-y5i" id="ddF-fN-stL">
+                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                                <menu key="menu" id="xya-TQ-koA">
+                                    <items>
+                                        <menuItem title="Item 1" state="on" id="OAk-KA-y5i"/>
+                                        <menuItem title="Item 2" id="zkS-Dx-uCM"/>
+                                        <menuItem title="Item 3" id="hAU-Zh-UCo"/>
+                                    </items>
+                                </menu>
+                            </popUpButtonCell>
+                        </popUpButton>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="M8B-pG-mg8" secondAttribute="trailing" id="0tJ-sp-AWf"/>
+                        <constraint firstItem="wGx-8H-BqE" firstAttribute="top" secondItem="gSF-Ze-XcY" secondAttribute="top" id="1du-tK-vXo"/>
+                        <constraint firstItem="M8B-pG-mg8" firstAttribute="leading" secondItem="976-Ry-M6G" secondAttribute="trailing" constant="8" symbolic="YES" id="HfV-5e-Qa6"/>
+                        <constraint firstAttribute="width" constant="400" id="Pgs-f3-wRX"/>
+                        <constraint firstAttribute="bottom" secondItem="M8B-pG-mg8" secondAttribute="bottom" id="T2s-0I-bPf"/>
+                        <constraint firstItem="M8B-pG-mg8" firstAttribute="top" secondItem="wGx-8H-BqE" secondAttribute="bottom" constant="8" symbolic="YES" id="ZmZ-rR-1NZ"/>
+                        <constraint firstAttribute="trailing" secondItem="wGx-8H-BqE" secondAttribute="trailing" id="aw0-OW-sHK"/>
+                        <constraint firstItem="wGx-8H-BqE" firstAttribute="leading" secondItem="gSF-Ze-XcY" secondAttribute="leading" id="c4P-PJ-vd2"/>
+                        <constraint firstItem="976-Ry-M6G" firstAttribute="leading" secondItem="gSF-Ze-XcY" secondAttribute="leading" id="fME-2N-NXI"/>
+                        <constraint firstItem="M8B-pG-mg8" firstAttribute="firstBaseline" secondItem="976-Ry-M6G" secondAttribute="firstBaseline" id="joR-fP-Zu7"/>
+                    </constraints>
+                </customView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="gSF-Ze-XcY" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="c22-O7-iKe" secondAttribute="leading" constant="20" symbolic="YES" id="8ME-U9-NVu"/>
+                <constraint firstAttribute="bottom" secondItem="gSF-Ze-XcY" secondAttribute="bottom" constant="20" symbolic="YES" id="SEy-vf-prc"/>
+                <constraint firstItem="gSF-Ze-XcY" firstAttribute="centerX" secondItem="c22-O7-iKe" secondAttribute="centerX" id="Z6I-GH-YSw"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="gSF-Ze-XcY" secondAttribute="trailing" constant="20" symbolic="YES" id="lqA-br-FGM"/>
+                <constraint firstItem="gSF-Ze-XcY" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="20" symbolic="YES" id="mP1-JX-CqQ"/>
+            </constraints>
+            <point key="canvasLocation" x="140" y="96"/>
+        </customView>
+    </objects>
+</document>
