@@ -68,7 +68,9 @@ class ActivityManager {
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, folder.nameForDisplay) as String
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: ActivityManager.identifer(for: folder))
 	 
-		selectingActivity!.userInfo = folder.deepLinkUserInfo
+		let userInfo = folder.deepLinkUserInfo
+		selectingActivity!.userInfo = userInfo
+		selectingActivity!.requiredUserInfoKeys = Set(userInfo.keys.map { $0 as! String })
 		donate(selectingActivity!)
 	}
 	
@@ -79,7 +81,9 @@ class ActivityManager {
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFeed, title: title, identifier: ActivityManager.identifer(for: feed))
 		
-		selectingActivity!.userInfo = feed.deepLinkUserInfo
+		let userInfo = feed.deepLinkUserInfo
+		selectingActivity!.userInfo = userInfo
+		selectingActivity!.requiredUserInfoKeys = Set(userInfo.keys.map { $0 as! String })
 		updateSelectingActivityFeedSearchAttributes(with: feed)
 		donate(selectingActivity!)
 	}
@@ -195,7 +199,9 @@ private extension ActivityManager {
 	func makeReadArticleActivity(_ article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 		activity.title = article.title
-		activity.userInfo = article.deepLinkUserInfo
+		let userInfo = article.deepLinkUserInfo
+		activity.userInfo = userInfo
+		activity.requiredUserInfoKeys = Set(userInfo.keys.map { $0 as! String })
 		activity.isEligibleForHandoff = true
 		
 		#if os(iOS)
