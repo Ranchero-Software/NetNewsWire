@@ -183,6 +183,30 @@
 						<key>INIntentResponseCodeName</key>
 						<string>failure</string>
 					</dict>
+					<dict>
+						<key>INIntentResponseCodeConciseFormatString</key>
+						<string>You are already subscribed to this feed in this account.</string>
+						<key>INIntentResponseCodeConciseFormatStringID</key>
+						<string>srME8b</string>
+						<key>INIntentResponseCodeFormatString</key>
+						<string>You are already subscribed to this feed in this account.</string>
+						<key>INIntentResponseCodeFormatStringID</key>
+						<string>UGGPkp</string>
+						<key>INIntentResponseCodeName</key>
+						<string>alreadySubscribed</string>
+					</dict>
+					<dict>
+						<key>INIntentResponseCodeConciseFormatString</key>
+						<string>No feed was found at the specified URL.</string>
+						<key>INIntentResponseCodeConciseFormatStringID</key>
+						<string>8Dh9Yy</string>
+						<key>INIntentResponseCodeFormatString</key>
+						<string>No feed was found at the specified URL.</string>
+						<key>INIntentResponseCodeFormatStringID</key>
+						<string>drQfaI</string>
+						<key>INIntentResponseCodeName</key>
+						<string>feedNotFound</string>
+					</dict>
 				</array>
 			</dict>
 			<key>INIntentTitle</key>

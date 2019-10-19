@@ -57,8 +57,15 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 				switch result {
 				case .success:
 					completion(AddFeedIntentResponse(code: .success, userActivity: nil))
-				case .failure:
-					completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
+				case .failure(let error):
+					switch error {
+					case AccountError.createErrorNotFound:
+						completion(AddFeedIntentResponse(code: .feedNotFound, userActivity: nil))
+					case AccountError.createErrorAlreadySubscribed:
+						completion(AddFeedIntentResponse(code: .alreadySubscribed, userActivity: nil))
+					default:
+						completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
+					}
 				}
 			}
 		}
