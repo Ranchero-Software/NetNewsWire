@@ -25,20 +25,22 @@
 			<string>Add a feed</string>
 			<key>INIntentDescriptionID</key>
 			<string>IuAbef</string>
+			<key>INIntentIneligibleForSuggestions</key>
+			<true/>
 			<key>INIntentInput</key>
 			<string>url</string>
 			<key>INIntentKeyParameter</key>
 			<string>url</string>
 			<key>INIntentLastParameterTag</key>
-			<integer>2</integer>
+			<integer>3</integer>
 			<key>INIntentManagedParameterCombinations</key>
 			<dict>
-				<key>url</key>
+				<key>url,accountName</key>
 				<dict>
 					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
 					<true/>
 					<key>INIntentParameterCombinationTitle</key>
-					<string>${url}</string>
+					<string>Add${url}to ${accountName}</string>
 					<key>INIntentParameterCombinationTitleID</key>
 					<string>dkSFD2</string>
 					<key>INIntentParameterCombinationUpdatesLinked</key>
@@ -47,20 +49,6 @@
 			</dict>
 			<key>INIntentName</key>
 			<string>AddFeed</string>
-			<key>INIntentParameterCombinations</key>
-			<dict>
-				<key>url</key>
-				<dict>
-					<key>INIntentParameterCombinationIsLinked</key>
-					<true/>
-					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
-					<true/>
-					<key>INIntentParameterCombinationTitle</key>
-					<string>${url}</string>
-					<key>INIntentParameterCombinationTitleID</key>
-					<string>Nx8zSj</string>
-				</dict>
-			</dict>
 			<key>INIntentParameters</key>
 			<array>
 				<dict>
@@ -102,6 +90,81 @@
 							<string>You must supply a URL.</string>
 							<key>INIntentParameterUnsupportedReasonFormatStringID</key>
 							<string>4xjRes</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>INIntentParameterCustomDisambiguation</key>
+					<true/>
+					<key>INIntentParameterDisplayName</key>
+					<string>Account Name</string>
+					<key>INIntentParameterDisplayNameID</key>
+					<string>CSrgUY</string>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>2</integer>
+					<key>INIntentParameterMetadata</key>
+					<dict>
+						<key>INIntentParameterMetadataCapitalization</key>
+						<string>Sentences</string>
+					</dict>
+					<key>INIntentParameterName</key>
+					<string>accountName</string>
+					<key>INIntentParameterPromptDialogs</key>
+					<array>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Primary</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogFormatString</key>
+							<string>There are ${count} options matching ‘${accountName}’.</string>
+							<key>INIntentParameterPromptDialogFormatStringID</key>
+							<string>IbqUVS</string>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>DisambiguationIntroduction</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogFormatString</key>
+							<string>Which one?</string>
+							<key>INIntentParameterPromptDialogFormatStringID</key>
+							<string>fWs3li</string>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>DisambiguationSelection</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogFormatString</key>
+							<string>Just to confirm, you wanted ‘${accountName}’?</string>
+							<key>INIntentParameterPromptDialogFormatStringID</key>
+							<string>HHiZUh</string>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Confirmation</string>
+						</dict>
+					</array>
+					<key>INIntentParameterSupportsDynamicEnumeration</key>
+					<true/>
+					<key>INIntentParameterSupportsResolution</key>
+					<true/>
+					<key>INIntentParameterTag</key>
+					<integer>3</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+					<key>INIntentParameterUnsupportedReasons</key>
+					<array>
+						<dict>
+							<key>INIntentParameterUnsupportedReasonCode</key>
+							<string>required</string>
+							<key>INIntentParameterUnsupportedReasonCustom</key>
+							<true/>
+							<key>INIntentParameterUnsupportedReasonFormatString</key>
+							<string>An account name is required.</string>
+							<key>INIntentParameterUnsupportedReasonFormatStringID</key>
+							<string>JGkCuS</string>
 						</dict>
 					</array>
 				</dict>

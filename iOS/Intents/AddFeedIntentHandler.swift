@@ -26,14 +26,29 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 		completion(.success(with: url))
 	}
 	
+	public func provideAccountNameOptions(for intent: AddFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
+		DispatchQueue.main.async {
+			let accountNames = AccountManager.shared.activeAccounts.compactMap { $0.nameForDisplay }
+			completion(accountNames, nil)
+		}
+	}
+	
+	public func resolveAccountName(for intent: AddFeedIntent, with completion: @escaping (AddFeedAccountNameResolutionResult) -> Void) {
+		guard let accountName = intent.accountName else {
+			completion(.unsupported(forReason: .required))
+			return
+		}
+		completion(.success(with: accountName))
+	}
+	
 	public func handle(intent: AddFeedIntent, completion: @escaping (AddFeedIntentResponse) -> Void) {
-		guard let url = intent.url else {
+		guard let url = intent.url, let accountName = intent.accountName else {
 			completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
 			return
 		}
 		
 		DispatchQueue.main.async {
-			guard let account = AccountManager.shared.activeAccounts.first else {
+			guard let account = AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == accountName }) else {
 				completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
 				return
 			}
