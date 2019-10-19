@@ -4,34 +4,35 @@ var imageIsLoading = false;
 async function imageWasClicked(img) {
 	img.classList.add("nnwClicked");
 	
-	const rect = img.getBoundingClientRect();
-
-	var message = {
-		x: rect.x,
-		y: rect.y,
-		width: rect.width,
-		height: rect.height
-	};
-
 	try {
 		showNetworkLoading(img);
 		const response = await fetch(img.src);
-		hideNetworkLoading(img);
 		if (!response.ok) {
 			throw new Error('Network response was not ok.');
 		}
 
 		const imgBlob = await response.blob();
-
+		hideNetworkLoading(img);
+		
 		var reader = new FileReader();
 		reader.readAsDataURL(imgBlob);
-
 		reader.onloadend = function() {
+			
+			const rect = img.getBoundingClientRect();
+			var message = {
+				x: rect.x,
+				y: rect.y,
+				width: rect.width,
+				height: rect.height
+			};
 			message.imageURL = reader.result;
+			
 			var jsonMessage = JSON.stringify(message);
 			window.webkit.messageHandlers.imageWasClicked.postMessage(jsonMessage);
+			
 		}
 	} catch (error) {
+		hideNetworkLoading(img);
 		console.log('There has been a problem with your fetch operation: ', error.message);
 	}
 	
@@ -51,11 +52,11 @@ function showNetworkLoading(img) {
 	activityIndicatorImg.src = activityIndicator;
 	wrapper.appendChild(activityIndicatorImg);
 	
-	// Wait a half a second before showing the indicator
+	// Wait a bit before showing the indicator
 	function showActivityIndicator() {
 		activityIndicatorImg.style.opacity = 1;
 	}
-	setTimeout(showActivityIndicator, 500);
+	setTimeout(showActivityIndicator, 300);
 }
 
 function hideNetworkLoading(img) {
