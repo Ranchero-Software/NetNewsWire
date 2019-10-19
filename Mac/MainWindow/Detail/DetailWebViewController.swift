@@ -205,7 +205,10 @@ private extension DetailWebViewController {
 	}
 
 	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {
-		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
+		var javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
+		if #available(macOS 10.15, *) {
+			javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: window.pageYOffset}; x"
+		}
 
 		webView.evaluateJavaScript(javascriptString) { (info, error) in
 			guard let info = info as? [String: Any] else {
