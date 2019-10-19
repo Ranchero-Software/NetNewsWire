@@ -73,8 +73,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			os_log("Is first run.", log: log, type: .info)
 		}
 		
-		let localAccount = AccountManager.shared.defaultAccount
-		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
+		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
+			let localAccount = AccountManager.shared.defaultAccount
+			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
+		}
 		
 		initializeDownloaders()
 		initializeHomeScreenQuickActions()

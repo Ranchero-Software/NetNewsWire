@@ -42,7 +42,7 @@ class ActivityManager {
 		
 		let title = NSLocalizedString("See articles for “Today”", comment: "Today")
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectToday, title: title, identifier: "smartfeed.today")
-		selectingActivity!.becomeCurrent()
+		donate(selectingActivity!)
 	}
 	
 	func selectingAllUnread() {
@@ -50,7 +50,7 @@ class ActivityManager {
 		
 		let title = NSLocalizedString("See articles in “All Unread”", comment: "All Unread")
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectAllUnread, title: title, identifier: "smartfeed.allUnread")
-		selectingActivity!.becomeCurrent()
+		donate(selectingActivity!)
 	}
 	
 	func selectingStarred() {
@@ -58,7 +58,7 @@ class ActivityManager {
 		
 		let title = NSLocalizedString("See articles in “Starred”", comment: "Starred")
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectStarred, title: title, identifier: "smartfeed.starred")
-		selectingActivity!.becomeCurrent()
+		donate(selectingActivity!)
 	}
 	
 	func selectingFolder(_ folder: Folder) {
@@ -69,7 +69,7 @@ class ActivityManager {
 		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: ActivityManager.identifer(for: folder))
 	 
 		selectingActivity!.userInfo = folder.deepLinkUserInfo
-		selectingActivity!.becomeCurrent()
+		donate(selectingActivity!)
 	}
 	
 	func selectingFeed(_ feed: Feed) {
@@ -81,7 +81,7 @@ class ActivityManager {
 		
 		selectingActivity!.userInfo = feed.deepLinkUserInfo
 		updateSelectingActivityFeedSearchAttributes(with: feed)
-		selectingActivity!.becomeCurrent()
+		donate(selectingActivity!)
 	}
 	
 	func invalidateSelecting() {
@@ -93,7 +93,7 @@ class ActivityManager {
 		guard nextUnreadActivity == nil else { return }
 		let title = NSLocalizedString("See first unread article", comment: "First Unread")
 		nextUnreadActivity = makeSelectingActivity(type: ActivityType.nextUnread, title: title, identifier: "action.nextUnread")
-		nextUnreadActivity!.becomeCurrent()
+		donate(nextUnreadActivity!)
 	}
 	
 	func invalidateNextUnread() {
@@ -112,7 +112,7 @@ class ActivityManager {
 		updateReadArticleSearchAttributes(with: article)
 		#endif
 		
-		readingActivity?.becomeCurrent()
+		donate(readingActivity!)
 	}
 	
 	func invalidateReading() {
@@ -135,7 +135,7 @@ class ActivityManager {
 			ids.append(contentsOf: identifers(for: feed))
 		}
 		
-		NSUserActivity.deleteSavedUserActivities(withPersistentIdentifiers: ids) {}
+		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
 	static func cleanUp(_ folder: Folder) {
@@ -146,11 +146,11 @@ class ActivityManager {
 			ids.append(contentsOf: identifers(for: feed))
 		}
 		
-		NSUserActivity.deleteSavedUserActivities(withPersistentIdentifiers: ids) {}
+		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
 	static func cleanUp(_ feed: Feed) {
-		NSUserActivity.deleteSavedUserActivities(withPersistentIdentifiers: identifers(for: feed)) {}
+		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifers(for: feed))
 	}
 	#endif
 
@@ -186,6 +186,7 @@ private extension ActivityManager {
 		activity.suggestedInvocationPhrase = title
 		activity.isEligibleForPrediction = true
 		activity.persistentIdentifier = identifier
+		activity.contentAttributeSet?.relatedUniqueIdentifier = identifier
 		#endif
 		
 		return activity
@@ -217,7 +218,8 @@ private extension ActivityManager {
 		attributeSet.title = article.title
 		attributeSet.contentDescription = article.summary
 		attributeSet.keywords = makeKeywords(article)
-		
+		attributeSet.relatedUniqueIdentifier = ActivityManager.identifer(for: article)
+
 		if let image = article.avatarImage() {
 			attributeSet.thumbnailData = image.pngData()
 		}
@@ -243,6 +245,7 @@ private extension ActivityManager {
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
 		attributeSet.title = feed.nameForDisplay
 		attributeSet.keywords = makeKeywords(feed.nameForDisplay)
+		attributeSet.relatedUniqueIdentifier = ActivityManager.identifer(for: feed)
 		if let image = appDelegate.feedIconDownloader.icon(for: feed) {
 			#if os(iOS)
 			attributeSet.thumbnailData = image.pngData()
@@ -260,6 +263,19 @@ private extension ActivityManager {
 		selectingActivity!.contentAttributeSet = attributeSet
 		selectingActivity!.needsSave = true
 		
+	}
+	
+	func donate(_ activity: NSUserActivity) {
+		// You have to put the search item in the index or the activity won't index
+		// itself because the relatedUniqueIdentifier on the activity attributeset is populated.
+		if let attributeSet = activity.contentAttributeSet {
+			let identifier = attributeSet.relatedUniqueIdentifier
+			let tempAttributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
+			let searchableItem = CSSearchableItem(uniqueIdentifier: identifier, domainIdentifier: nil, attributeSet: tempAttributeSet)
+			CSSearchableIndex.default().indexSearchableItems([searchableItem])
+		}
+		
+		activity.becomeCurrent()
 	}
 	
 	static func identifer(for folder: Folder) -> String {
