@@ -2,5 +2,5 @@
 
 CODE_SIGN_ENTITLEMENTS = iOS/ShareExtension/NetNewsWire_iOS_ShareExtension.entitlements
 INFOPLIST_FILE = iOS/IntentsExtension/Info.plist
-PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS.Intents-Extension
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS.IntentsExtension
 PRODUCT_NAME = $(TARGET_NAME)
