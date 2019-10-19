@@ -25,6 +25,8 @@
 			<string>Add a feed</string>
 			<key>INIntentDescriptionID</key>
 			<string>IuAbef</string>
+			<key>INIntentInput</key>
+			<string>url</string>
 			<key>INIntentKeyParameter</key>
 			<string>url</string>
 			<key>INIntentLastParameterTag</key>
@@ -89,6 +91,19 @@
 					<integer>2</integer>
 					<key>INIntentParameterType</key>
 					<string>URL</string>
+					<key>INIntentParameterUnsupportedReasons</key>
+					<array>
+						<dict>
+							<key>INIntentParameterUnsupportedReasonCode</key>
+							<string>required</string>
+							<key>INIntentParameterUnsupportedReasonCustom</key>
+							<true/>
+							<key>INIntentParameterUnsupportedReasonFormatString</key>
+							<string>You must supply a URL.</string>
+							<key>INIntentParameterUnsupportedReasonFormatStringID</key>
+							<string>4xjRes</string>
+						</dict>
+					</array>
 				</dict>
 			</array>
 			<key>INIntentResponse</key>

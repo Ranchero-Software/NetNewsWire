@@ -34,6 +34,24 @@
 		513146B0235A815400387FDC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 51314605235A582D00387FDC /* Intents.intentdefinition */; };
 		513146B2235A81A400387FDC /* AddFeedIntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513146B1235A81A400387FDC /* AddFeedIntentHandler.swift */; };
 		513146B3235A81A400387FDC /* AddFeedIntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513146B1235A81A400387FDC /* AddFeedIntentHandler.swift */; };
+		513146B4235A8FD000387FDC /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8520DD8CF200CA8CF5 /* RSCore.framework */; };
+		513146B5235A8FD000387FDC /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8520DD8CF200CA8CF5 /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513146B6235A8FD000387FDC /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FC420DD8E0C00CA8CF5 /* RSDatabase.framework */; };
+		513146B7235A8FD000387FDC /* RSDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FC420DD8E0C00CA8CF5 /* RSDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513146B8235A8FD000387FDC /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8C20DD8CF800CA8CF5 /* RSParser.framework */; };
+		513146B9235A8FD000387FDC /* RSParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8C20DD8CF800CA8CF5 /* RSParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513146BA235A8FD000387FDC /* RSTree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F9520DD8CFE00CA8CF5 /* RSTree.framework */; };
+		513146BB235A8FD000387FDC /* RSTree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F9520DD8CFE00CA8CF5 /* RSTree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513146BC235A8FD000387FDC /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FA320DD8D0500CA8CF5 /* RSWeb.framework */; };
+		513146BD235A8FD000387FDC /* RSWeb.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FA320DD8D0500CA8CF5 /* RSWeb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513146BF235A8FDB00387FDC /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; };
+		513146C0235A8FDB00387FDC /* Account.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513146C1235A8FDB00387FDC /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; };
+		513146C2235A8FDB00387FDC /* Articles.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513146C3235A8FDB00387FDC /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
+		513146C4235A8FDB00387FDC /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		513146C5235A8FDB00387FDC /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
+		513146C6235A8FDB00387FDC /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51322855232EED360033D4ED /* VibrantSelectAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51322854232EED360033D4ED /* VibrantSelectAction.swift */; };
 		51322859232FDDB80033D4ED /* VibrantButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51322858232FDDB80033D4ED /* VibrantButtonStyle.swift */; };
 		5132285B232FF2C40033D4ED /* SettingsRefreshSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */; };
@@ -653,6 +671,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		513146BE235A8FD000387FDC /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				513146B7235A8FD000387FDC /* RSDatabase.framework in Embed Frameworks */,
+				513146BD235A8FD000387FDC /* RSWeb.framework in Embed Frameworks */,
+				513146C4235A8FDB00387FDC /* ArticlesDatabase.framework in Embed Frameworks */,
+				513146C0235A8FDB00387FDC /* Account.framework in Embed Frameworks */,
+				513146C2235A8FDB00387FDC /* Articles.framework in Embed Frameworks */,
+				513146BB235A8FD000387FDC /* RSTree.framework in Embed Frameworks */,
+				513146C6235A8FDB00387FDC /* SyncDatabase.framework in Embed Frameworks */,
+				513146B5235A8FD000387FDC /* RSCore.framework in Embed Frameworks */,
+				513146B9235A8FD000387FDC /* RSParser.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		513C5CF1232571C2003D4054 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1097,6 +1134,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				513146B6235A8FD000387FDC /* RSDatabase.framework in Frameworks */,
+				513146BC235A8FD000387FDC /* RSWeb.framework in Frameworks */,
+				513146C3235A8FDB00387FDC /* ArticlesDatabase.framework in Frameworks */,
+				513146BF235A8FDB00387FDC /* Account.framework in Frameworks */,
+				513146C1235A8FDB00387FDC /* Articles.framework in Frameworks */,
+				513146BA235A8FD000387FDC /* RSTree.framework in Frameworks */,
+				513146C5235A8FDB00387FDC /* SyncDatabase.framework in Frameworks */,
+				513146B4235A8FD000387FDC /* RSCore.framework in Frameworks */,
+				513146B8235A8FD000387FDC /* RSParser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2205,6 +2251,7 @@
 				51314633235A7BBE00387FDC /* Sources */,
 				51314634235A7BBE00387FDC /* Frameworks */,
 				51314635235A7BBE00387FDC /* Resources */,
+				513146BE235A8FD000387FDC /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
