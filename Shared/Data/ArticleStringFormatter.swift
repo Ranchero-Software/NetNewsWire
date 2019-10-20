@@ -1,5 +1,5 @@
 //
-//  TimelineStringFormatter.swift
+//  ArticleStringFormatter.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 8/31/15.
@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import RSParser
 
-struct TimelineStringFormatter {
+struct ArticleStringFormatter {
 
 	private static var feedNameCache = [String: String]()
 	private static var titleCache = [String: String]()
