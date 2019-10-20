@@ -1,0 +1,18 @@
+NetNewsWire 5.0 for iOS - TestFlight Test Information
+
+Beta App Description:
+
+NetNewsWire is an RSS reader. It shows you articles from your favorite blogs and news sites, and it keeps track of what you’ve read.
+
+Features:
+
+* Direct feed-downloading
+* Syncing via Feedbin
+* Share sheet
+* Dark Mode
+* Starred articles
+* All Unread and Today smart feeds
+* Folders
+* Importing and exporting OPML feed lists
+* Multiple accounts
+
