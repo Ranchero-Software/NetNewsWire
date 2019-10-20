@@ -39,7 +39,6 @@
 		51D5875C227F630B00900287 /* tags_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58759227F630B00900287 /* tags_initial.json */; };
 		51D5875E227F643C00900287 /* AccountFeedbinFolderSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D5875D227F643C00900287 /* AccountFeedbinFolderSyncTest.swift */; };
 		51E148EC234B8FFC0004F7A5 /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */; };
-		51E148ED234B8FFC0004F7A5 /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51E3EB41229AF61B00645299 /* AccountError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB40229AF61B00645299 /* AccountError.swift */; };
 		51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E490352288C37100C791F0 /* FeedbinDate.swift */; };
 		51E59599228C77BC00FCC42B /* FeedbinUnreadEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E59598228C77BC00FCC42B /* FeedbinUnreadEntry.swift */; };
@@ -169,20 +168,6 @@
 			remoteInfo = Account;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		51E148EE234B8FFC0004F7A5 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				51E148ED234B8FFC0004F7A5 /* SyncDatabase.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5107A098227DE42E00C7C3C5 /* AccountCredentialsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCredentialsTest.swift; sourceTree = "<group>"; };
@@ -652,7 +637,6 @@
 				848934F21F62484F00CEBD24 /* Frameworks */,
 				848934F31F62484F00CEBD24 /* Headers */,
 				848934F41F62484F00CEBD24 /* Resources */,
-				51E148EE234B8FFC0004F7A5 /* Embed Frameworks */,
 				51C8F34C234FB14B0048ED95 /* Run Script: Verify No Build Settings */,
 			);
 			buildRules = (
@@ -695,11 +679,11 @@
 					848934F51F62484F00CEBD24 = {
 						CreatedOnToolsVersion = 9.0;
 						LastSwiftMigration = 0900;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 					848934FE1F62484F00CEBD24 = {
 						CreatedOnToolsVersion = 9.0;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
