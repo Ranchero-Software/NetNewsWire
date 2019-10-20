@@ -43,6 +43,8 @@
 		513146C5235A8FDB00387FDC /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
 		51314704235C41FC00387FDC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 51314707235C41FC00387FDC /* Intents.intentdefinition */; };
 		51314705235C41FC00387FDC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 51314707235C41FC00387FDC /* Intents.intentdefinition */; };
+		51314716235C862200387FDC /* SettingsSubscriptionsImportAccountPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51314715235C862200387FDC /* SettingsSubscriptionsImportAccountPickerView.swift */; };
+		51314718235C89ED00387FDC /* SettingsSubscriptionsExportAccountPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51314717235C89ED00387FDC /* SettingsSubscriptionsExportAccountPickerView.swift */; };
 		51322855232EED360033D4ED /* VibrantSelectAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51322854232EED360033D4ED /* VibrantSelectAction.swift */; };
 		51322859232FDDB80033D4ED /* VibrantButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51322858232FDDB80033D4ED /* VibrantButtonStyle.swift */; };
 		5132285B232FF2C40033D4ED /* SettingsRefreshSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */; };
@@ -752,6 +754,8 @@
 		513146B1235A81A400387FDC /* AddFeedIntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedIntentHandler.swift; sourceTree = "<group>"; };
 		51314706235C41FC00387FDC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/Intents.intentdefinition; sourceTree = "<group>"; };
 		51314714235C420900387FDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Intents.strings; sourceTree = "<group>"; };
+		51314715235C862200387FDC /* SettingsSubscriptionsImportAccountPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSubscriptionsImportAccountPickerView.swift; sourceTree = "<group>"; };
+		51314717235C89ED00387FDC /* SettingsSubscriptionsExportAccountPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSubscriptionsExportAccountPickerView.swift; sourceTree = "<group>"; };
 		51322854232EED360033D4ED /* VibrantSelectAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantSelectAction.swift; sourceTree = "<group>"; };
 		51322858232FDDB80033D4ED /* VibrantButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantButtonStyle.swift; sourceTree = "<group>"; };
 		5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRefreshSelectionView.swift; sourceTree = "<group>"; };
@@ -1300,7 +1304,9 @@
 				5132293A23305D4C0033D4ED /* SettingsAboutView.swift */,
 				513229302330523F0033D4ED /* SettingsAttributedStringView.swift */,
 				5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */,
+				51314717235C89ED00387FDC /* SettingsSubscriptionsExportAccountPickerView.swift */,
 				5194B5F122B69FCC00144881 /* SettingsSubscriptionsExportDocumentPickerView.swift */,
+				51314715235C862200387FDC /* SettingsSubscriptionsImportAccountPickerView.swift */,
 				5194B5ED22B6965300144881 /* SettingsSubscriptionsImportDocumentPickerView.swift */,
 				515E4F06232506240057B0E7 /* Account */,
 			);
@@ -2995,6 +3001,7 @@
 				51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */,
 				51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
+				51314718235C89ED00387FDC /* SettingsSubscriptionsExportAccountPickerView.swift in Sources */,
 				5183CCE9226F68D90010922C /* AccountRefreshTimer.swift in Sources */,
 				51C452882265093600C03939 /* AddFeedViewController.swift in Sources */,
 				51934CCE2310792F006127BE /* ActivityManager.swift in Sources */,
@@ -3024,6 +3031,7 @@
 				513229312330523F0033D4ED /* SettingsAttributedStringView.swift in Sources */,
 				51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */,
 				51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */,
+				51314716235C862200387FDC /* SettingsSubscriptionsImportAccountPickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

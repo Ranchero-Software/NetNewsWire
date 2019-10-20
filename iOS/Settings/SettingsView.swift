@@ -19,6 +19,8 @@ struct SettingsView : View {
 
 	@State private var accountAction: Int? = nil
 	@State private var refreshAction: Int? = nil
+	@State private var importOPMLAction: Int? = nil
+	@State private var exportOPMLAction: Int? = nil
 	@State private var aboutAction: Int? = nil
 
 	@State private var isWebsitePresented: Bool = false
@@ -91,31 +93,20 @@ struct SettingsView : View {
 				self.refreshAction = 1
 			}))
 			
-			Button("Import Subscriptions...") {
-				if AccountManager.shared.activeAccounts.count == 1 {
-					self.opmlAccount = AccountManager.shared.activeAccounts.first
-					self.isOPMLImportDocPickerPresented = true
-				} else {
-					self.isOPMLImportPresented = true
-				}
-			}.actionSheet(isPresented: $isOPMLImportPresented) {
-				buildSubscriptionsImportAccounts()
-			}.sheet(isPresented: $isOPMLImportDocPickerPresented) {
-				SettingsSubscriptionsImportDocumentPickerView(account: self.opmlAccount!)
+			NavigationLink(destination: SettingsSubscriptionsImportAccountPickerView(), tag: 1, selection: $importOPMLAction) {
+				Text("Import Subscriptions")
 			}
+			.modifier(VibrantSelectAction(action: {
+				self.importOPMLAction = 1
+			}))
 			
-			 Button("Export Subscriptions...") {
-				if AccountManager.shared.accounts.count == 1 {
-					self.opmlAccount = AccountManager.shared.accounts.first
-					self.isOPMLImportDocPickerPresented = true
-				} else {
-					self.isOPMLExportPresented = true
-				}
-			 }.actionSheet(isPresented: $isOPMLExportPresented) {
-				buildSubscriptionsExportAccounts()
-			 }.sheet(isPresented: $isOPMLExportDocPickerPresented) {
-				 SettingsSubscriptionsExportDocumentPickerView(account: self.opmlAccount!)
-			 }
+			NavigationLink(destination: SettingsSubscriptionsExportAccountPickerView(), tag: 1, selection: $exportOPMLAction) {
+				Text("Export Subscriptions")
+			}
+			.modifier(VibrantSelectAction(action: {
+				self.exportOPMLAction = 1
+			}))
+			
 		}
 	}
 	
@@ -178,41 +169,6 @@ struct SettingsView : View {
 		}.sheet(isPresented: $isWebsitePresented) {
 			SafariView(url: URL(string: self.website!)!)
 		}
-	}
-	
-	func buildSubscriptionsImportAccounts() -> ActionSheet {
-		var buttons = [ActionSheet.Button]()
-		
-		for account in viewModel.activeAccounts {
-			if account.behaviors.contains(.disallowOPMLImports) {
-				continue
-			}
-			
-			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
-				self.opmlAccount = account
-				self.isOPMLImportDocPickerPresented = true
-			}
-			
-			buttons.append(button)
-		}
-		
-		buttons.append(.cancel())
-		return ActionSheet(title: Text("Import Subscriptions..."), message: Text("Select the account to import your OPML file into."), buttons: buttons)
-	}
-	
-	func buildSubscriptionsExportAccounts() -> ActionSheet {
-		var buttons = [ActionSheet.Button]()
-		
-		for account in viewModel.accounts {
-			let button = ActionSheet.Button.default(Text(verbatim: account.nameForDisplay)) {
-				self.opmlAccount = account
-				self.isOPMLExportDocPickerPresented = true
-			}
-			buttons.append(button)
-		}
-		
-		buttons.append(.cancel())
-		return ActionSheet(title: Text("Export Subscriptions..."), message: Text("Select the account to export out of."), buttons: buttons)
 	}
 	
 	func buildFooter() -> some View {
