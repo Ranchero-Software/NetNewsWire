@@ -13,17 +13,18 @@ struct AttributedStringView: UIViewRepresentable {
 	let string: NSAttributedString
 	let preferredMaxLayoutWidth: CGFloat
 	
-    func makeUIView(context: Context) -> UILabel {
-		return UILabel()
+    func makeUIView(context: Context) -> HackedTextView {
+		return HackedTextView()
     }
 
-    func updateUIView(_ view: UILabel, context: Context) {
+    func updateUIView(_ view: HackedTextView, context: Context) {
 		view.attributedText = string
 		
-		view.numberOfLines = 0
-		view.lineBreakMode = .byWordWrapping
 		view.preferredMaxLayoutWidth = preferredMaxLayoutWidth
-
+		view.isScrollEnabled = false
+		view.textContainer.lineBreakMode = .byWordWrapping
+		
+		view.isUserInteractionEnabled = true
 		view.adjustsFontForContentSizeCategory = true
 		view.font = .preferredFont(forTextStyle: .body)
 		view.textColor = UIColor.label
@@ -34,4 +35,11 @@ struct AttributedStringView: UIViewRepresentable {
         view.setContentCompressionResistancePriority(.required, for: .vertical)
 	}
 	
+}
+
+class HackedTextView: UITextView {
+	var preferredMaxLayoutWidth = CGFloat.zero
+	override var intrinsicContentSize: CGSize {
+		return sizeThatFits(CGSize(width: preferredMaxLayoutWidth, height: .infinity))
+	}
 }

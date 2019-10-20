@@ -17,18 +17,18 @@ struct SettingsAboutView: View {
 		GeometryReader { geometry in
 			List {
 				Text("NetNewsWire").font(.largeTitle)
-				AttributedStringView(string: self.viewModel.about, preferredMaxLayoutWidth: geometry.size.width - 40)
+				AttributedStringView(string: self.viewModel.about, preferredMaxLayoutWidth: geometry.size.width - 20)
 				Section(header: Text("CREDITS")) {
-					AttributedStringView(string: self.viewModel.credits, preferredMaxLayoutWidth: geometry.size.width - 40)
+					AttributedStringView(string: self.viewModel.credits, preferredMaxLayoutWidth: geometry.size.width - 20)
 				}
 				Section(header: Text("ACKNOWLEDGEMENTS")) {
-					AttributedStringView(string: self.viewModel.acknowledgements, preferredMaxLayoutWidth: geometry.size.width - 40)
+					AttributedStringView(string: self.viewModel.acknowledgements, preferredMaxLayoutWidth: geometry.size.width - 20)
 				}
 				Section(header: Text("THANKS")) {
-					AttributedStringView(string: self.viewModel.thanks, preferredMaxLayoutWidth: geometry.size.width - 40)
+					AttributedStringView(string: self.viewModel.thanks, preferredMaxLayoutWidth: geometry.size.width - 20)
 				}
 				Section(header: Text("DEDICATION"), footer: Text("Copyright © 2002-2019 Ranchero Software").font(.footnote)) {
-					AttributedStringView(string: self.viewModel.dedication, preferredMaxLayoutWidth: geometry.size.width - 40)
+					AttributedStringView(string: self.viewModel.dedication, preferredMaxLayoutWidth: geometry.size.width - 20)
 				}
 			}
 		}
