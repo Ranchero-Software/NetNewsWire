@@ -455,6 +455,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return ensureFolder(with: folderName)
 	}
 
+	public func findFolder(withDisplayName displayName: String) -> Folder? {
+		return folders?.first(where: { $0.nameForDisplay == displayName })
+	}
+	
 	func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let metadata = feedMetadata(feedURL: feedURL, feedID: feedURL)

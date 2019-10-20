@@ -32,7 +32,7 @@
 			<key>INIntentKeyParameter</key>
 			<string>url</string>
 			<key>INIntentLastParameterTag</key>
-			<integer>3</integer>
+			<integer>4</integer>
 			<key>INIntentManagedParameterCombinations</key>
 			<dict>
 				<key>url,accountName</key>
@@ -40,7 +40,18 @@
 					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
 					<true/>
 					<key>INIntentParameterCombinationTitle</key>
-					<string>Add${url}to ${accountName}</string>
+					<string>Add ${url} to ${accountName}</string>
+					<key>INIntentParameterCombinationTitleID</key>
+					<string>kaKsEY</string>
+					<key>INIntentParameterCombinationUpdatesLinked</key>
+					<true/>
+				</dict>
+				<key>url,accountName,folderName</key>
+				<dict>
+					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
+					<true/>
+					<key>INIntentParameterCombinationTitle</key>
+					<string>Add ${url} to ${folderName} in ${accountName}</string>
 					<key>INIntentParameterCombinationTitleID</key>
 					<string>dkSFD2</string>
 					<key>INIntentParameterCombinationUpdatesLinked</key>
@@ -66,7 +77,7 @@
 							<key>INIntentParameterPromptDialogCustom</key>
 							<true/>
 							<key>INIntentParameterPromptDialogFormatString</key>
-							<string>What is the ${url}you would like add?</string>
+							<string>What is the ${url} you would like add?</string>
 							<key>INIntentParameterPromptDialogFormatStringID</key>
 							<string>jLLidQ</string>
 							<key>INIntentParameterPromptDialogType</key>
@@ -158,13 +169,95 @@
 					<array>
 						<dict>
 							<key>INIntentParameterUnsupportedReasonCode</key>
-							<string>required</string>
+							<string>invalid</string>
 							<key>INIntentParameterUnsupportedReasonCustom</key>
 							<true/>
 							<key>INIntentParameterUnsupportedReasonFormatString</key>
-							<string>An account name is required.</string>
+							<string>A valid Account Name is required.</string>
 							<key>INIntentParameterUnsupportedReasonFormatStringID</key>
 							<string>JGkCuS</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>INIntentParameterCustomDisambiguation</key>
+					<true/>
+					<key>INIntentParameterDisplayName</key>
+					<string>Folder Name</string>
+					<key>INIntentParameterDisplayNameID</key>
+					<string>zXhMPF</string>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>3</integer>
+					<key>INIntentParameterMetadata</key>
+					<dict>
+						<key>INIntentParameterMetadataCapitalization</key>
+						<string>Sentences</string>
+					</dict>
+					<key>INIntentParameterName</key>
+					<string>folderName</string>
+					<key>INIntentParameterPromptDialogs</key>
+					<array>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Primary</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogFormatString</key>
+							<string>There are ${count} options matching ‘${folderName}’.</string>
+							<key>INIntentParameterPromptDialogFormatStringID</key>
+							<string>5CYbGL</string>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>DisambiguationIntroduction</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogFormatString</key>
+							<string>Which one?</string>
+							<key>INIntentParameterPromptDialogFormatStringID</key>
+							<string>gEzXaM</string>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>DisambiguationSelection</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogFormatString</key>
+							<string>Just to confirm, you wanted ‘${folderName}’?</string>
+							<key>INIntentParameterPromptDialogFormatStringID</key>
+							<string>k5GTo0</string>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Confirmation</string>
+						</dict>
+					</array>
+					<key>INIntentParameterRelationship</key>
+					<dict>
+						<key>INIntentParameterRelationshipParentName</key>
+						<string>accountName</string>
+						<key>INIntentParameterRelationshipPredicateName</key>
+						<string>HasAnyValue</string>
+					</dict>
+					<key>INIntentParameterSupportsDynamicEnumeration</key>
+					<true/>
+					<key>INIntentParameterSupportsResolution</key>
+					<true/>
+					<key>INIntentParameterTag</key>
+					<integer>4</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+					<key>INIntentParameterUnsupportedReasons</key>
+					<array>
+						<dict>
+							<key>INIntentParameterUnsupportedReasonCode</key>
+							<string>invalid</string>
+							<key>INIntentParameterUnsupportedReasonCustom</key>
+							<true/>
+							<key>INIntentParameterUnsupportedReasonFormatString</key>
+							<string>A valid Folder Name is required.</string>
+							<key>INIntentParameterUnsupportedReasonFormatStringID</key>
+							<string>ef5kBt</string>
 						</dict>
 					</array>
 				</dict>

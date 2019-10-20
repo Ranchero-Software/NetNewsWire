@@ -58,6 +58,10 @@ public final class AccountManager: UnreadCountProvider {
 		return sortByName(activeAccounts)
 	}
 
+	public func findActiveAccount(forDisplayName displayName: String) -> Account? {
+		return AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })
+	}
+	
 	public var refreshInProgress: Bool {
 		for account in activeAccounts {
 			if account.refreshInProgress {
