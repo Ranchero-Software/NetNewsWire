@@ -50,7 +50,7 @@
 		5132285B232FF2C40033D4ED /* SettingsRefreshSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */; };
 		513228FB233037630033D4ED /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513228F2233037620033D4ED /* Reachability.swift */; };
 		513228FC233037630033D4ED /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513228F2233037620033D4ED /* Reachability.swift */; };
-		513229312330523F0033D4ED /* SettingsAttributedStringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513229302330523F0033D4ED /* SettingsAttributedStringView.swift */; };
+		513229312330523F0033D4ED /* AttributedStringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513229302330523F0033D4ED /* AttributedStringView.swift */; };
 		5132293B23305D4C0033D4ED /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132293A23305D4C0033D4ED /* SettingsAboutView.swift */; };
 		513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C5CE8232571C2003D4054 /* ShareViewController.swift */; };
 		513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 513C5CEA232571C2003D4054 /* MainInterface.storyboard */; };
@@ -760,7 +760,7 @@
 		51322858232FDDB80033D4ED /* VibrantButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantButtonStyle.swift; sourceTree = "<group>"; };
 		5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRefreshSelectionView.swift; sourceTree = "<group>"; };
 		513228F2233037620033D4ED /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
-		513229302330523F0033D4ED /* SettingsAttributedStringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAttributedStringView.swift; sourceTree = "<group>"; };
+		513229302330523F0033D4ED /* AttributedStringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringView.swift; sourceTree = "<group>"; };
 		5132293A23305D4C0033D4ED /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
 		513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		513C5CE8232571C2003D4054 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
@@ -1302,7 +1302,6 @@
 			children = (
 				51F35D0822AFD4760003CE1B /* SettingsView.swift */,
 				5132293A23305D4C0033D4ED /* SettingsAboutView.swift */,
-				513229302330523F0033D4ED /* SettingsAttributedStringView.swift */,
 				5132285A232FF2C40033D4ED /* SettingsRefreshSelectionView.swift */,
 				51314717235C89ED00387FDC /* SettingsSubscriptionsExportAccountPickerView.swift */,
 				5194B5F122B69FCC00144881 /* SettingsSubscriptionsExportDocumentPickerView.swift */,
@@ -1336,6 +1335,7 @@
 		5194B5E222B693EC00144881 /* SwiftUI Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				513229302330523F0033D4ED /* AttributedStringView.swift */,
 				DF999FF622B5AEFA0064B687 /* SafariView.swift */,
 				51322858232FDDB80033D4ED /* VibrantButtonStyle.swift */,
 				51322854232EED360033D4ED /* VibrantSelectAction.swift */,
@@ -3028,7 +3028,7 @@
 				519D73FB2323FF35008BB345 /* SettingsView.swift in Sources */,
 				511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */,
 				51C45293226509C800C03939 /* StarredFeedDelegate.swift in Sources */,
-				513229312330523F0033D4ED /* SettingsAttributedStringView.swift in Sources */,
+				513229312330523F0033D4ED /* AttributedStringView.swift in Sources */,
 				51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */,
 				51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */,
 				51314716235C862200387FDC /* SettingsSubscriptionsImportAccountPickerView.swift in Sources */,

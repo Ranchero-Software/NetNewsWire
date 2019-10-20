@@ -14,20 +14,22 @@ struct SettingsAboutView: View {
 	@ObservedObject var viewModel: ViewModel
 	
     var body: some View {
-		Form {
-			Text("NetNewsWire").font(.largeTitle)
-			SettingsAttributedStringView(string: viewModel.about).frame(height: 54)
-			Section(header: Text("CREDITS")) {
-				SettingsAttributedStringView(string: viewModel.credits).frame(height: 135)
-			}
-			Section(header: Text("ACKNOWLEDGEMENTS")) {
-				SettingsAttributedStringView(string: viewModel.acknowledgements).frame(height: 81)
-			}
-			Section(header: Text("THANKS")) {
-				SettingsAttributedStringView(string: viewModel.thanks).frame(height: 189)
-			}
-			Section(header: Text("DEDICATION"), footer: Text("Copyright © 2002-2019 Ranchero Software").font(.footnote)) {
-				SettingsAttributedStringView(string: viewModel.dedication).frame(height: 108)
+		GeometryReader { geometry in
+			List {
+				Text("NetNewsWire").font(.largeTitle)
+				AttributedStringView(string: self.viewModel.about, preferredMaxLayoutWidth: geometry.size.width - 40)
+				Section(header: Text("CREDITS")) {
+					AttributedStringView(string: self.viewModel.credits, preferredMaxLayoutWidth: geometry.size.width - 40)
+				}
+				Section(header: Text("ACKNOWLEDGEMENTS")) {
+					AttributedStringView(string: self.viewModel.acknowledgements, preferredMaxLayoutWidth: geometry.size.width - 40)
+				}
+				Section(header: Text("THANKS")) {
+					AttributedStringView(string: self.viewModel.thanks, preferredMaxLayoutWidth: geometry.size.width - 40)
+				}
+				Section(header: Text("DEDICATION"), footer: Text("Copyright © 2002-2019 Ranchero Software").font(.footnote)) {
+					AttributedStringView(string: self.viewModel.dedication, preferredMaxLayoutWidth: geometry.size.width - 40)
+				}
 			}
 		}
     }
