@@ -198,7 +198,7 @@ private extension ActivityManager {
 	
 	func makeReadArticleActivity(_ article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
-		activity.title = article.title
+		activity.title = ArticleStringFormatter.truncatedTitle(article)
 		let userInfo = article.deepLinkUserInfo
 		activity.userInfo = userInfo
 		activity.requiredUserInfoKeys = Set(userInfo.keys.map { $0 as! String })
@@ -221,7 +221,7 @@ private extension ActivityManager {
 	func updateReadArticleSearchAttributes(with article: Article) {
 		
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeCompositeContent as String)
-		attributeSet.title = article.title
+		attributeSet.title = ArticleStringFormatter.truncatedTitle(article)
 		attributeSet.contentDescription = article.summary
 		attributeSet.keywords = makeKeywords(article)
 		attributeSet.relatedUniqueIdentifier = ActivityManager.identifer(for: article)
@@ -238,7 +238,7 @@ private extension ActivityManager {
 	
 	func makeKeywords(_ article: Article) -> [String] {
 		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
-		let articleTitleKeywords = makeKeywords(article.title)
+		let articleTitleKeywords = makeKeywords(ArticleStringFormatter.truncatedTitle(article))
 		return feedNameKeywords + articleTitleKeywords
 	}
 	
