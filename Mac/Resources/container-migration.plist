@@ -4,7 +4,7 @@
 <dict>
 	<key>Move</key>
 	<array>
-		<string>${ApplicationSupport}/MarsEdit</string>
+		<string>${ApplicationSupport}/NetNewsWire</string>
 	</array>
 </dict>
 </plist>
