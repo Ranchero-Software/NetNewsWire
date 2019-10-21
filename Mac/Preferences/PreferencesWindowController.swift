@@ -35,7 +35,14 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		var specs = [PreferencesToolbarItemSpec]()
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General, name: NSLocalizedString("General", comment: "Preferences"), imageName: NSImage.preferencesGeneralName)]
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts, name: NSLocalizedString("Accounts", comment: "Preferences"), imageName: NSImage.userAccountsName)]
-		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced, name: NSLocalizedString("Advanced", comment: "Preferences"), imageName: NSImage.advancedName)]
+
+		// Omit the Advanced Preferences for now because the Software Update related functionality is
+		// forbidden/non-applicable, and we can rely upon Apple to some extent for crash reports. We
+		// can add back the Crash Reporter preferences when we're ready to dynamically shuffle the rest
+		// of the content in this tab.
+		#if !MAC_APP_STORE
+			specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced, name: NSLocalizedString("Advanced", comment: "Preferences"), imageName: NSImage.advancedName)]
+		#endif
 		return specs
 	}()
 
