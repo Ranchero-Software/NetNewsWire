@@ -328,6 +328,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			selectFirstUnreadInAllUnread()
 		case .readArticle:
 			handleReadArticle(activity.userInfo)
+		case .addFeedIntent:
+			showAdd(.feed)
 		}
 	}
 	
