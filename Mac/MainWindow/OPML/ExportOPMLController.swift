@@ -9,7 +9,9 @@
 import AppKit
 import Account
 
-struct ExportOPMLController {
+class ExportOPMLController {
+
+	weak var savePanel: NSSavePanel?
 
 	func runSheetOnWindow(_ hostWindow: NSWindow) {
 
@@ -24,11 +26,11 @@ struct ExportOPMLController {
 		panel.isExtensionHidden = false
 		panel.accessoryView = accessoryViewController.view
 
-		let observer = NotificationCenter.default.addObserver(forName: .ExportOPMLSelectedAccountDidChange, object: nil, queue: OperationQueue.main) { notification in
-			self.updateNameFieldStringValueIfAppropriate(savePanel: panel, from: accessoryViewController)
-		}
+		NotificationCenter.default.addObserver(self, selector: #selector(selectedAccountDidChange(_:)), name: .ExportOPMLSelectedAccountDidChange, object: accessoryViewController)
 
 		updateNameFieldStringValueIfAppropriate(savePanel: panel, from: accessoryViewController, force: true)
+
+		savePanel = panel
 		
 		panel.beginSheetModal(for: hostWindow) { result in
 			if result == NSApplication.ModalResponse.OK, let url = panel.url {
@@ -45,7 +47,7 @@ struct ExportOPMLController {
 				}
 			}
 
-			NotificationCenter.default.removeObserver(observer)
+			NotificationCenter.default.removeObserver(self)
 		}
 		
 	}
@@ -58,5 +60,11 @@ struct ExportOPMLController {
 		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
 		panel.nameFieldStringValue = "Subscriptions-\(accountName).opml"
 
+	}
+
+	@objc private func selectedAccountDidChange(_ notification: Notification) {
+		if let savePanel = savePanel, let accessoryViewController = notification.object as? ExportOPMLAccessoryViewController {
+			self.updateNameFieldStringValueIfAppropriate(savePanel: savePanel, from: accessoryViewController)
+		}
 	}
 }
