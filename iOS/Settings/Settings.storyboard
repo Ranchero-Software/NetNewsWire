@@ -440,7 +440,7 @@
                                                     <rect key="frame" x="20" y="11.5" width="217" height="32"/>
                                                     <subviews>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="tb2-dO-AhR">
-                                                            <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="32" height="32.000000000000028"/>
                                                             <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="32" id="0GF-vU-aEc"/>
@@ -555,7 +555,7 @@
                                 <rect key="frame" x="79" y="128" width="256.5" height="41"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="74E-kl-vU9">
-                                        <rect key="frame" x="0.0" y="4.5" width="32" height="32"/>
+                                        <rect key="frame" x="0.0" y="4.5" width="32" height="32.000000000000028"/>
                                         <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="32" id="E7T-ps-KgX"/>
@@ -874,17 +874,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LiZ-Tv-tqb">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="62"/>
+                                                    <rect key="frame" x="16" y="0.0" width="382" height="62"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <attributedString key="attributedText"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="LiZ-Tv-tqb" firstAttribute="leading" secondItem="IPw-QQ-LYI" secondAttribute="leading" id="W80-12-bLK"/>
+                                                <constraint firstItem="LiZ-Tv-tqb" firstAttribute="leading" secondItem="IPw-QQ-LYI" secondAttribute="leading" constant="16" id="W80-12-bLK"/>
                                                 <constraint firstAttribute="bottom" secondItem="LiZ-Tv-tqb" secondAttribute="bottom" id="Wvc-BI-NSb"/>
                                                 <constraint firstItem="LiZ-Tv-tqb" firstAttribute="top" secondItem="IPw-QQ-LYI" secondAttribute="top" id="ZNh-Nt-Oyx"/>
-                                                <constraint firstAttribute="trailing" secondItem="LiZ-Tv-tqb" secondAttribute="trailing" id="vak-Ou-mLe"/>
+                                                <constraint firstAttribute="trailing" secondItem="LiZ-Tv-tqb" secondAttribute="trailing" constant="16" id="vak-Ou-mLe"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -900,16 +900,16 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YLf-rp-9nE">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="62"/>
+                                                    <rect key="frame" x="16" y="0.0" width="382" height="62"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <attributedString key="attributedText"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="YLf-rp-9nE" secondAttribute="trailing" id="PdJ-fJ-4Kg"/>
+                                                <constraint firstAttribute="trailing" secondItem="YLf-rp-9nE" secondAttribute="trailing" constant="16" id="PdJ-fJ-4Kg"/>
                                                 <constraint firstItem="YLf-rp-9nE" firstAttribute="top" secondItem="tFb-3V-qIg" secondAttribute="top" id="XqY-0L-gjF"/>
-                                                <constraint firstItem="YLf-rp-9nE" firstAttribute="leading" secondItem="tFb-3V-qIg" secondAttribute="leading" id="wBJ-7b-fOB"/>
+                                                <constraint firstItem="YLf-rp-9nE" firstAttribute="leading" secondItem="tFb-3V-qIg" secondAttribute="leading" constant="16" id="wBJ-7b-fOB"/>
                                                 <constraint firstAttribute="bottom" secondItem="YLf-rp-9nE" secondAttribute="bottom" id="yLw-Qs-gyo"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -926,7 +926,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wTL-xl-1rK">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="62"/>
+                                                    <rect key="frame" x="16" y="0.0" width="382" height="62"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <attributedString key="attributedText"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -934,8 +934,8 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="bottom" secondItem="wTL-xl-1rK" secondAttribute="bottom" id="5oR-mb-FFd"/>
-                                                <constraint firstItem="wTL-xl-1rK" firstAttribute="leading" secondItem="cxy-IZ-zFZ" secondAttribute="leading" id="HC7-dW-NNl"/>
-                                                <constraint firstAttribute="trailing" secondItem="wTL-xl-1rK" secondAttribute="trailing" id="NUc-ZH-lhc"/>
+                                                <constraint firstItem="wTL-xl-1rK" firstAttribute="leading" secondItem="cxy-IZ-zFZ" secondAttribute="leading" constant="16" id="HC7-dW-NNl"/>
+                                                <constraint firstAttribute="trailing" secondItem="wTL-xl-1rK" secondAttribute="trailing" constant="16" id="NUc-ZH-lhc"/>
                                                 <constraint firstItem="wTL-xl-1rK" firstAttribute="top" secondItem="cxy-IZ-zFZ" secondAttribute="top" id="bSe-CP-PGs"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -952,7 +952,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DIp-6a-oPH">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="62"/>
+                                                    <rect key="frame" x="16" y="0.0" width="382" height="62"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <attributedString key="attributedText"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -961,8 +961,8 @@
                                             <constraints>
                                                 <constraint firstItem="DIp-6a-oPH" firstAttribute="top" secondItem="6pH-5O-3V8" secondAttribute="top" id="2Y3-QM-2cP"/>
                                                 <constraint firstAttribute="bottom" secondItem="DIp-6a-oPH" secondAttribute="bottom" id="48b-wD-ZEf"/>
-                                                <constraint firstAttribute="trailing" secondItem="DIp-6a-oPH" secondAttribute="trailing" id="DMB-m4-JCA"/>
-                                                <constraint firstItem="DIp-6a-oPH" firstAttribute="leading" secondItem="6pH-5O-3V8" secondAttribute="leading" id="tG6-27-iv0"/>
+                                                <constraint firstAttribute="trailing" secondItem="DIp-6a-oPH" secondAttribute="trailing" constant="16" id="DMB-m4-JCA"/>
+                                                <constraint firstItem="DIp-6a-oPH" firstAttribute="leading" secondItem="6pH-5O-3V8" secondAttribute="leading" constant="16" id="tG6-27-iv0"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
