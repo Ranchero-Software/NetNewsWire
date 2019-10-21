@@ -111,7 +111,6 @@
 		51A1699B235E10D700EB091F /* DetailAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16991235E10D600EB091F /* DetailAccountViewController.swift */; };
 		51A1699C235E10D700EB091F /* AddAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16992235E10D600EB091F /* AddAccountViewController.swift */; };
 		51A1699D235E10D700EB091F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16993235E10D600EB091F /* SettingsViewController.swift */; };
-		51A1699E235E10D700EB091F /* TimelineNumberOfLinesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16994235E10D600EB091F /* TimelineNumberOfLinesViewController.swift */; };
 		51A1699F235E10D700EB091F /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16995235E10D600EB091F /* AboutViewController.swift */; };
 		51A169A0235E10D700EB091F /* FeedbinAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */; };
 		51AF460E232488C6001742EF /* Account-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51AF460D232488C6001742EF /* Account-Extensions.swift */; };
@@ -792,7 +791,6 @@
 		51A16991235E10D600EB091F /* DetailAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailAccountViewController.swift; sourceTree = "<group>"; };
 		51A16992235E10D600EB091F /* AddAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddAccountViewController.swift; sourceTree = "<group>"; };
 		51A16993235E10D600EB091F /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		51A16994235E10D600EB091F /* TimelineNumberOfLinesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineNumberOfLinesViewController.swift; sourceTree = "<group>"; };
 		51A16995235E10D600EB091F /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedbinAccountViewController.swift; sourceTree = "<group>"; };
 		51AF460D232488C6001742EF /* Account-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account-Extensions.swift"; sourceTree = "<group>"; };
@@ -1276,7 +1274,6 @@
 				51A1698D235E10D600EB091F /* RefreshIntervalViewController.swift */,
 				51A1698E235E10D600EB091F /* SettingsTableViewCell.xib */,
 				51A16993235E10D600EB091F /* SettingsViewController.swift */,
-				51A16994235E10D600EB091F /* TimelineNumberOfLinesViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2972,7 +2969,6 @@
 				51C45259226508D300C03939 /* AppDefaults.swift in Sources */,
 				511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */,
 				51A1699D235E10D700EB091F /* SettingsViewController.swift in Sources */,
-				51A1699E235E10D700EB091F /* TimelineNumberOfLinesViewController.swift in Sources */,
 				51C45293226509C800C03939 /* StarredFeedDelegate.swift in Sources */,
 				51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */,
 				51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */,

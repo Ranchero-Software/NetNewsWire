@@ -16,7 +16,8 @@ class SettingsViewController: UITableViewController {
 	@IBOutlet weak var refreshIntervalLabel: UILabel!
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
-	@IBOutlet weak var timelineNumberOfLinesLabel: UILabel!
+	@IBOutlet weak var numberOfTextLinesLabel: UILabel!
+	@IBOutlet weak var numberOfTextLinesSteppper: UIStepper!
 	
 	weak var presentingParentController: UIViewController?
 	
@@ -46,8 +47,9 @@ class SettingsViewController: UITableViewController {
 
 		refreshIntervalLabel.text = AppDefaults.refreshInterval.description()
 		
-		let numberOfLinesText = NSLocalizedString(" lines", comment: "Lines")
-		timelineNumberOfLinesLabel.text = "\(AppDefaults.timelineNumberOfLines)" + numberOfLinesText
+		let numberOfTextLines = AppDefaults.timelineNumberOfLines
+		numberOfTextLinesSteppper.value = Double(numberOfTextLines)
+		updateNumberOfTextLinesLabel(value: numberOfTextLines)
 		
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 20.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -114,11 +116,6 @@ class SettingsViewController: UITableViewController {
 				let controller = UIStoryboard.settings.instantiateController(ofType: DetailAccountViewController.self)
 				controller.account = sortedAccounts[indexPath.row]
 				self.navigationController?.pushViewController(controller, animated: true)
-			}
-		case 1:
-			if indexPath.row == 2 {
-				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineNumberOfLinesViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
 			}
 		case 2:
 			switch indexPath.row {
@@ -207,6 +204,12 @@ class SettingsViewController: UITableViewController {
 		}
 	}
 	
+	@IBAction func stepNumberOfTextLines(_ sender: UIStepper) {
+		let numberOfLines = Int(sender.value)
+		AppDefaults.timelineNumberOfLines = numberOfLines
+		updateNumberOfTextLinesLabel(value: numberOfLines)
+	}
+	
 	@objc func contentSizeCategoryDidChange() {
 		tableView.reloadData()
 	}
@@ -230,6 +233,11 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 // MARK: Private
 
 private extension SettingsViewController {
+	
+	func updateNumberOfTextLinesLabel(value: Int) {
+		let localizedText = NSLocalizedString("Number of Text Lines: %d", comment: "Number of Text Lines")
+		numberOfTextLinesLabel.text = NSString.localizedStringWithFormat(localizedText as NSString, value) as String
+	}
 	
 	func addFeed() {
 		
