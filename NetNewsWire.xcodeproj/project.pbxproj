@@ -394,7 +394,6 @@
 		65ED4049235DEF6C0081F399 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; };
 		65ED404A235DEF6C0081F399 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8120DD8CF200CA8CF5 /* RSCore.framework */; };
 		65ED404B235DEF6C0081F399 /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
-		65ED404C235DEF6C0081F399 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; };
 		65ED404E235DEF6C0081F399 /* NNW3OpenPanelAccessoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849ADEE523598189000E1B81 /* NNW3OpenPanelAccessoryView.xib */; };
 		65ED404F235DEF6C0081F399 /* GlobalKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */; };
 		65ED4050235DEF6C0081F399 /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
@@ -1450,7 +1449,6 @@
 				65ED4049235DEF6C0081F399 /* Articles.framework in Frameworks */,
 				65ED404A235DEF6C0081F399 /* RSCore.framework in Frameworks */,
 				65ED404B235DEF6C0081F399 /* SyncDatabase.framework in Frameworks */,
-				65ED404C235DEF6C0081F399 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4238,7 +4236,7 @@
 		};
 		65ED4081235DEF6C0081F399 /* Test */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
+			baseConfigurationReference = 65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
 				PRODUCT_NAME = NetNewsWire;
@@ -4247,7 +4245,7 @@
 		};
 		65ED4082235DEF6C0081F399 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
+			baseConfigurationReference = 65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
 				PRODUCT_NAME = NetNewsWire;
@@ -4264,7 +4262,7 @@
 		};
 		65ED409B235DEF770081F399 /* Test */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
+			baseConfigurationReference = 65ED4186235E045B0081F399 /* NetNewsWire_safariextension_target_macappstore.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "Subscribe to Feed";
 			};
@@ -4272,7 +4270,7 @@
 		};
 		65ED409C235DEF770081F399 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
+			baseConfigurationReference = 65ED4186235E045B0081F399 /* NetNewsWire_safariextension_target_macappstore.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "Subscribe to Feed";
 			};
