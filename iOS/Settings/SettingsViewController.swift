@@ -8,6 +8,7 @@
 
 import UIKit
 import Account
+import SafariServices
 
 class SettingsViewController: UITableViewController {
 
@@ -135,17 +136,19 @@ class SettingsViewController: UITableViewController {
 				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			case 1:
-				UIApplication.shared.open(URL(string: "https://ranchero.com/netnewswire/")!, options: [:])
+				openURL("https://ranchero.com/netnewswire/")
 			case 2:
-				UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire")!, options: [:])
+				openURL("https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")
 			case 3:
-				UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!, options: [:])
+				openURL("https://github.com/brentsimmons/NetNewsWire")
 			case 4:
-				UIApplication.shared.open(URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!, options: [:])
+				openURL("https://github.com/brentsimmons/NetNewsWire/issues")
 			case 5:
+				openURL("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")
+			case 6:
 				addFeed()
 			default:
-				UIApplication.shared.open(URL(string: "https://ranchero.com/netnewswire/")!, options: [:])
+				break
 			}
 		default:
 			break
@@ -284,6 +287,12 @@ private extension SettingsViewController {
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
 		
+	}
+	
+	func openURL(_ urlString: String) {
+		let vc = SFSafariViewController(url: URL(string: urlString)!)
+		vc.modalPresentationStyle = .pageSheet
+		present(vc, animated: true)
 	}
 	
 }
