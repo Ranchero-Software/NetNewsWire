@@ -9,13 +9,13 @@
 import AppKit
 import Account
 
-class ExportOPMLController {
+class ExportOPMLController: ExportOPMLAccessoryViewControllerDelegate {
 
 	weak var savePanel: NSSavePanel?
 
 	func runSheetOnWindow(_ hostWindow: NSWindow) {
 
-		let accessoryViewController = ExportOPMLAccessoryViewController()
+		let accessoryViewController = ExportOPMLAccessoryViewController(delegate: self)
 		let panel = NSSavePanel()
 		panel.allowedFileTypes = ["opml"]
 		panel.allowsOtherFileTypes = false
@@ -25,8 +25,6 @@ class ExportOPMLController {
 		panel.message = NSLocalizedString("Choose a location for the exported OPML file.", comment: "Export OPML")
 		panel.isExtensionHidden = false
 		panel.accessoryView = accessoryViewController.view
-
-		NotificationCenter.default.addObserver(self, selector: #selector(selectedAccountDidChange(_:)), name: .ExportOPMLSelectedAccountDidChange, object: accessoryViewController)
 
 		updateNameFieldStringValueIfAppropriate(savePanel: panel, from: accessoryViewController, force: true)
 
@@ -46,8 +44,6 @@ class ExportOPMLController {
 					}
 				}
 			}
-
-			NotificationCenter.default.removeObserver(self)
 		}
 		
 	}
@@ -62,8 +58,8 @@ class ExportOPMLController {
 
 	}
 
-	@objc private func selectedAccountDidChange(_ notification: Notification) {
-		if let savePanel = savePanel, let accessoryViewController = notification.object as? ExportOPMLAccessoryViewController {
+	internal func selectedAccountDidChange(_ accessoryViewController: ExportOPMLAccessoryViewController) {
+		if let savePanel = savePanel {
 			self.updateNameFieldStringValueIfAppropriate(savePanel: savePanel, from: accessoryViewController)
 		}
 	}

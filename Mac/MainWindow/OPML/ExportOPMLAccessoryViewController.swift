@@ -12,13 +12,15 @@ import Account
 class ExportOPMLAccessoryViewController: NSViewController {
 
 	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
+	weak var delegate: ExportOPMLAccessoryViewControllerDelegate?
 
 	var selectedAccount: Account? {
 		accountPopUpButton.selectedItem?.representedObject as? Account
 	}
 
-	init() {
+	init(delegate: ExportOPMLAccessoryViewControllerDelegate) {
 		super.init(nibName: "ExportOPMLAccessoryView", bundle: nil)
+		self.delegate = delegate
 	}
 
 	// MARK: - NSViewController
@@ -48,11 +50,10 @@ class ExportOPMLAccessoryViewController: NSViewController {
 	}
 
 	@IBAction func accountSelected(_ popUpButton: NSPopUpButton) {
-		NotificationCenter.default.post(name: .ExportOPMLSelectedAccountDidChange, object: self)
+		delegate!.selectedAccountDidChange(self)
 	}
 }
 
-extension Notification.Name {
-	static let ExportOPMLSelectedAccountDidChange = Notification.Name(rawValue: "SelectedAccountDidChange")
-
+protocol ExportOPMLAccessoryViewControllerDelegate: class {
+	func selectedAccountDidChange(_ accessoryViewController: ExportOPMLAccessoryViewController)
 }
