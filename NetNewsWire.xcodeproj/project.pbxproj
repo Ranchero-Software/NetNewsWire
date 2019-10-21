@@ -4203,7 +4203,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = Mac/Resources/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -4212,7 +4211,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = Mac/Resources/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Test;
@@ -4221,7 +4219,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = Mac/Resources/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -4230,7 +4227,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = Mac/SafariExtension/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -4239,7 +4235,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = Mac/SafariExtension/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Test;
@@ -4248,7 +4243,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = Mac/SafariExtension/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

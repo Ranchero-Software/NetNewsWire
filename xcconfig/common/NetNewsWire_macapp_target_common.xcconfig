@@ -6,3 +6,4 @@ ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
 INFOPLIST_FILE = Mac/Resources/Info.plist
 PRODUCT_NAME = NetNewsWire
 SWIFT_OBJC_BRIDGING_HEADER = Mac/NetNewsWire-Bridging-Header.h
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
