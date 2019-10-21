@@ -49,6 +49,7 @@ private extension AboutViewController {
 		let url = Bundle.main.url(forResource: file, withExtension: "rtf")!
 		let string = try! NSAttributedString(url: url, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)
 		textView.attributedText = string
+		textView.textColor = UIColor.label
 		textView.adjustsFontForContentSizeCategory = true
 		textView.font = .preferredFont(forTextStyle: .body)
 	}
