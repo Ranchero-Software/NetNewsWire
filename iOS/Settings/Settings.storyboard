@@ -270,7 +270,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Settings" id="uf8-rU-NlH">
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="HlH-s0-OwW">
+                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="HlH-s0-OwW">
                             <connections>
                                 <action selector="done:" destination="a0p-rk-skQ" id="Mzh-25-h49"/>
                             </connections>
