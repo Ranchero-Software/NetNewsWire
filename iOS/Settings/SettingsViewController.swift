@@ -12,6 +12,7 @@ import SafariServices
 
 class SettingsViewController: UITableViewController {
 
+	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 	
 	@IBOutlet weak var refreshIntervalLabel: UILabel!
@@ -74,6 +75,12 @@ class SettingsViewController: UITableViewController {
 			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 			if AccountManager.shared.activeAccounts.isEmpty {
 				// Hide the add NetNewsWire feed row if they don't have any active accounts
+				return defaultNumberOfRows - 1
+			}
+			return defaultNumberOfRows
+		case 3:
+			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
+			if AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 				return defaultNumberOfRows - 1
 			}
 			return defaultNumberOfRows
@@ -243,24 +250,17 @@ private extension SettingsViewController {
 	}
 	
 	func addFeed() {
-		
-		let appNewsURLString = "https://nnw.ranchero.com/feed.json"
-		if AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
-			presentError(title: "Subscribe", message: "You are already subscribed to the NetNewsWire news feed.")
-			return
-		}
-		
 		self.dismiss(animated: true)
 		
 		let addNavViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
 		let addViewController = addNavViewController.topViewController as! AddContainerViewController
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
+		addViewController.initialControllerType = .feed
 		addViewController.initialFeed = appNewsURLString
 		addViewController.initialFeedName = "NetNewsWire News"
 		
 		presentingParentController?.present(addNavViewController, animated: true)
-		
 	}
 	
 	func importOPML() {

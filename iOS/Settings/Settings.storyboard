@@ -495,7 +495,7 @@
                                                     <rect key="frame" x="20" y="11.5" width="217" height="32"/>
                                                     <subviews>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="tb2-dO-AhR">
-                                                            <rect key="frame" x="0.0" y="0.0" width="32" height="32.000000000000028"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
                                                             <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="32" id="0GF-vU-aEc"/>
@@ -610,7 +610,7 @@
                                 <rect key="frame" x="79" y="128" width="256.5" height="41"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="74E-kl-vU9">
-                                        <rect key="frame" x="0.0" y="4.5" width="32" height="32.000000000000028"/>
+                                        <rect key="frame" x="0.0" y="4.5" width="32" height="32"/>
                                         <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="32" id="E7T-ps-KgX"/>
