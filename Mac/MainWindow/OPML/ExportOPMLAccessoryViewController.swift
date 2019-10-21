@@ -23,7 +23,9 @@ class ExportOPMLAccessoryViewController: NSViewController {
 		self.delegate = delegate
 	}
 
-	// MARK: - NSViewController
+	init() {
+		preconditionFailure("init() without delegate not implemented by design.")
+	}
 
 	required init?(coder: NSCoder) {
 		preconditionFailure("ExportOPMLAccessoryView.init(coder) not implemented by design.")
