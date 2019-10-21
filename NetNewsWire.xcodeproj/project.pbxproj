@@ -22,9 +22,8 @@
 		5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */; };
 		5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */; };
 		5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA3A227A379E00D19003 /* ImportOPMLSheet.xib */; };
-		5144EA3D227A37AF00D19003 /* ExportOPMLSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA3C227A37AF00D19003 /* ExportOPMLSheet.xib */; };
 		5144EA40227A37EC00D19003 /* ImportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA3E227A37EC00D19003 /* ImportOPMLWindowController.swift */; };
-		5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */; };
+		5144EA43227A380F00D19003 /* ExportOPMLController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA42227A380F00D19003 /* ExportOPMLController.swift */; };
 		5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */; };
 		5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */; };
 		51543685228F6753005E1CDF /* DetailAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51543684228F6753005E1CDF /* DetailAccountViewController.swift */; };
@@ -313,6 +312,8 @@
 		84FB9A2F1EDCD6C4003D53B9 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; };
 		84FB9A301EDCD6C4003D53B9 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */; };
+		B24C4F7B235D39D40000B924 /* ExportOPMLAccessoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24C4F7A235D39D40000B924 /* ExportOPMLAccessoryViewController.swift */; };
+		B24C4F85235D39F30000B924 /* ExportOPMLAccessoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B24C4F84235D39F30000B924 /* ExportOPMLAccessoryView.xib */; };
 		D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D553737C20186C1F006D8857 /* Article+Scriptability.swift */; };
 		D57BE6E0204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57BE6DF204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift */; };
 		D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */; };
@@ -685,9 +686,8 @@
 		5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsAddLocal.xib; sourceTree = "<group>"; };
 		5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddLocalWindowController.swift; sourceTree = "<group>"; };
 		5144EA3A227A379E00D19003 /* ImportOPMLSheet.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImportOPMLSheet.xib; sourceTree = "<group>"; };
-		5144EA3C227A37AF00D19003 /* ExportOPMLSheet.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExportOPMLSheet.xib; sourceTree = "<group>"; };
 		5144EA3E227A37EC00D19003 /* ImportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportOPMLWindowController.swift; sourceTree = "<group>"; };
-		5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOPMLWindowController.swift; sourceTree = "<group>"; };
+		5144EA42227A380F00D19003 /* ExportOPMLController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOPMLController.swift; sourceTree = "<group>"; };
 		5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsFeedbinWindowController.swift; sourceTree = "<group>"; };
 		5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsFeedbin.xib; sourceTree = "<group>"; };
 		51543684228F6753005E1CDF /* DetailAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailAccountViewController.swift; sourceTree = "<group>"; };
@@ -925,6 +925,8 @@
 		84F9EAE4213660A100CF2DE4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84FB9A2D1EDCD6B8003D53B9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Vendor/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
+		B24C4F7A235D39D40000B924 /* ExportOPMLAccessoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOPMLAccessoryViewController.swift; sourceTree = "<group>"; };
+		B24C4F84235D39F30000B924 /* ExportOPMLAccessoryView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExportOPMLAccessoryView.xib; sourceTree = "<group>"; };
 		B24EFD482330FF99006C6242 /* NetNewsWire-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-Bridging-Header.h"; sourceTree = "<group>"; };
 		B24EFD5923310109006C6242 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		D553737C20186C1F006D8857 /* Article+Scriptability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Article+Scriptability.swift"; sourceTree = "<group>"; };
@@ -1035,8 +1037,9 @@
 			children = (
 				5144EA3A227A379E00D19003 /* ImportOPMLSheet.xib */,
 				5144EA3E227A37EC00D19003 /* ImportOPMLWindowController.swift */,
-				5144EA3C227A37AF00D19003 /* ExportOPMLSheet.xib */,
-				5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */,
+				5144EA42227A380F00D19003 /* ExportOPMLController.swift */,
+				B24C4F7A235D39D40000B924 /* ExportOPMLAccessoryViewController.swift */,
+				B24C4F84235D39F30000B924 /* ExportOPMLAccessoryView.xib */,
 			);
 			path = OPML;
 			sourceTree = "<group>";
@@ -1989,12 +1992,12 @@
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = M72QZ9W58G;
+						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = M8L2WTLA8W;
+						DevelopmentTeam = M72QZ9W58G;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -2010,8 +2013,8 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = M8L2WTLA8W;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = M72QZ9W58G;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 1;
@@ -2020,7 +2023,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 9C84TZ7Q6Z;
+						DevelopmentTeam = M72QZ9W58G;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -2286,9 +2289,9 @@
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				84A3EE5F223B667F00557320 /* DefaultFeeds.opml in Resources */,
+				B24C4F85235D39F30000B924 /* ExportOPMLAccessoryView.xib in Resources */,
 				8459D0F92355794C0050076F /* NNW3OpenPanelAccessoryView.xib in Resources */,
 				84C9FC8222629E4800D921D6 /* Preferences.storyboard in Resources */,
-				5144EA3D227A37AF00D19003 /* ExportOPMLSheet.xib in Resources */,
 				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
 				848362FD2262A30800DA1D35 /* styleSheet.css in Resources */,
 				8483630B2262A3F000DA1D35 /* RenameSheet.xib in Resources */,
@@ -2497,6 +2500,7 @@
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
 				840BEE4121D70E64009BBAFA /* CrashReportWindowController.swift in Sources */,
 				8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */,
+				B24C4F7B235D39D40000B924 /* ExportOPMLAccessoryViewController.swift in Sources */,
 				84C9FC7B22629E1200D921D6 /* AccountsControlsBackgroundView.swift in Sources */,
 				84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */,
 				84E95D241FB1087500552D99 /* ArticlePasteboardWriter.swift in Sources */,
@@ -2507,7 +2511,7 @@
 				849A97891ED9ECEF007D329B /* ArticleStyle.swift in Sources */,
 				84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */,
 				84B7178C201E66580091657D /* SidebarViewController+ContextualMenus.swift in Sources */,
-				5144EA43227A380F00D19003 /* ExportOPMLWindowController.swift in Sources */,
+				5144EA43227A380F00D19003 /* ExportOPMLController.swift in Sources */,
 				842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */,
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
