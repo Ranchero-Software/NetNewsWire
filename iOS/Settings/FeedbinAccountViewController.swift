@@ -1,5 +1,5 @@
 //
-//  AddFeedbinAccountViewController.swift
+//  FeedbinAccountViewController.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 5/19/19.
@@ -16,6 +16,7 @@ class FeedbinAccountViewController: UIViewController {
 	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
 	@IBOutlet weak var emailTextField: UITextField!
 	@IBOutlet weak var passwordTextField: UITextField!
+	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
 	
 	@IBOutlet weak var errorMessageLabel: UILabel!
@@ -44,10 +45,20 @@ class FeedbinAccountViewController: UIViewController {
 		delegate?.dismiss()
 	}
 	
+	@IBAction func showHidePassword(_ sender: Any) {
+		if passwordTextField.isSecureTextEntry {
+			passwordTextField.isSecureTextEntry = false
+			showHideButton.setTitle("Hide", for: .normal)
+		} else {
+			passwordTextField.isSecureTextEntry = true
+			showHideButton.setTitle("Show", for: .normal)
+		}
+	}
+	
 	@IBAction func action(_ sender: Any) {
 		self.errorMessageLabel.text = nil
 		
-		guard emailTextField.text != nil && passwordTextField.text != nil else {
+		guard let email = emailTextField.text, let password = passwordTextField.text else {
 			self.errorMessageLabel.text = NSLocalizedString("Username & password required.", comment: "Credentials Error")
 			return
 		}
@@ -56,8 +67,8 @@ class FeedbinAccountViewController: UIViewController {
 		disableNavigation()
 		
 		// When you fill in the email address via auto-complete it adds extra whitespace
-		let emailAddress = emailTextField.text?.trimmingCharacters(in: .whitespaces)
-		let credentials = Credentials(type: .basic, username: emailAddress ?? "", secret: passwordTextField.text ?? "")
+		let trimmedEmail = email.trimmingCharacters(in: .whitespaces)
+		let credentials = Credentials(type: .basic, username: trimmedEmail, secret: password)
 		Account.validateCredentials(type: .feedbin, credentials: credentials) { result in
 			
 			self.stopAnimtatingActivityIndicator()
