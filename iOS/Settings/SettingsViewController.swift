@@ -15,6 +15,7 @@ class SettingsViewController: UITableViewController {
 	
 	@IBOutlet weak var refreshIntervalLabel: UILabel!
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
+	@IBOutlet weak var groupByFeedSwitch: UISwitch!
 	@IBOutlet weak var timelineNumberOfLinesLabel: UILabel!
 	
 	weak var presentingParentController: UIViewController?
@@ -35,6 +36,12 @@ class SettingsViewController: UITableViewController {
 			timelineSortOrderSwitch.isOn = true
 		} else {
 			timelineSortOrderSwitch.isOn = false
+		}
+
+		if AppDefaults.timelineGroupByFeed {
+			groupByFeedSwitch.isOn = true
+		} else {
+			groupByFeedSwitch.isOn = false
 		}
 
 		refreshIntervalLabel.text = AppDefaults.refreshInterval.description()
@@ -109,7 +116,7 @@ class SettingsViewController: UITableViewController {
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
 		case 1:
-			if indexPath.row == 1 {
+			if indexPath.row == 2 {
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineNumberOfLinesViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			}
@@ -123,7 +130,7 @@ class SettingsViewController: UITableViewController {
 			case 2:
 				exportOPML()
 			default:
-				print("export")
+				break
 			}
 		case 3:
 			switch indexPath.row {
@@ -189,6 +196,14 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.timelineSortDirection = .orderedAscending
 		} else {
 			AppDefaults.timelineSortDirection = .orderedDescending
+		}
+	}
+	
+	@IBAction func switchGroupByFeed(_ sender: Any) {
+		if groupByFeedSwitch.isOn {
+			AppDefaults.timelineGroupByFeed = true
+		} else {
+			AppDefaults.timelineGroupByFeed = false
 		}
 	}
 	
