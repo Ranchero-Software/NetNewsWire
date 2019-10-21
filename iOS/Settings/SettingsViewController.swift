@@ -109,6 +109,23 @@ class SettingsViewController: UITableViewController {
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
 		case 1:
+			if indexPath.row == 1 {
+				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineNumberOfLinesViewController.self)
+				self.navigationController?.pushViewController(timeline, animated: true)
+			}
+		case 2:
+			switch indexPath.row {
+			case 0:
+				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
+				self.navigationController?.pushViewController(timeline, animated: true)
+			case 1:
+				importOPML()
+			case 2:
+				exportOPML()
+			default:
+				print("export")
+			}
+		case 3:
 			switch indexPath.row {
 			case 0:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
@@ -125,23 +142,6 @@ class SettingsViewController: UITableViewController {
 				addFeed()
 			default:
 				UIApplication.shared.open(URL(string: "https://ranchero.com/netnewswire/")!, options: [:])
-			}
-		case 2:
-			if indexPath.row == 1 {
-				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineNumberOfLinesViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
-			}
-		case 3:
-			switch indexPath.row {
-			case 0:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
-			case 1:
-				importOPML()
-			case 2:
-				exportOPML()
-			default:
-				print("export")
 			}
 		default:
 			break
