@@ -1,0 +1,2 @@
+// Settings common to all targets in NNW project
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Frameworks/Vendor
