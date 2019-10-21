@@ -1182,6 +1182,7 @@
 		65ED409D235DEF770081F399 /* Subscribe to Feed MAS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed MAS.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		65ED409F235DEFF00081F399 /* container-migration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "container-migration.plist"; sourceTree = "<group>"; };
 		65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_macapp_target_macappstore.xcconfig; sourceTree = "<group>"; };
+		65ED4186235E045B0081F399 /* NetNewsWire_safariextension_target_macappstore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_safariextension_target_macappstore.xcconfig; sourceTree = "<group>"; };
 		8405DD892213E0E3008CE1BF /* DetailContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailContainerView.swift; sourceTree = "<group>"; };
 		8405DD9822153B6B008CE1BF /* TimelineContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineContainerView.swift; sourceTree = "<group>"; };
 		8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView-Extensions.swift"; sourceTree = "<group>"; };
@@ -2490,6 +2491,7 @@
 				65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */,
 				D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */,
 				D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */,
+				65ED4186235E045B0081F399 /* NetNewsWire_safariextension_target_macappstore.xcconfig */,
 				51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */,
 				51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */,
 				515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */,
@@ -4201,7 +4203,7 @@
 		};
 		65ED4080235DEF6C0081F399 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
+			baseConfigurationReference = 65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
