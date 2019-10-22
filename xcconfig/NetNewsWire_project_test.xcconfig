@@ -1,3 +1,4 @@
 #include "./NetNewsWire_project_debug.xcconfig"
 
 OTHER_SWIFT_FLAGS = -DTEST $(inherited)
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(SYMROOT)/Release$(EFFECTIVE_PLATFORM_NAME)
