@@ -13,14 +13,14 @@ import RSTree
 import RSWeb
 import Account
 import RSCore
-#if TEST
+#if !MAC_APP_STORE && !TEST
 import Sparkle
 #endif
 
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider {
+class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
 
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
@@ -70,6 +70,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private let log = Log()
 	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
 	private let appMovementMonitor = RSAppMovementMonitor()
+	#if !MAC_APP_STORE && !TEST
+	private var softwareUpdater: SPUUpdater!
+	#endif
 
 	override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
@@ -117,16 +120,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	func applicationWillFinishLaunching(_ notification: Notification) {
 		installAppleEventHandlers()
-		#if TEST
-			// Don't prompt for updates while running automated tests
-			SUUpdater.shared()?.automaticallyChecksForUpdates = false
-		#endif
 	}
 	
 	func applicationDidFinishLaunching(_ note: Notification) {
 
-		#if MAC_APP_STORE
+		#if MAC_APP_STORE || TEST
 			checkForUpdatesMenuItem.isHidden = true
+		#else
+			// Initialize Sparkle...
+			let hostBundle = Bundle.main
+			let updateDriver = SPUStandardUserDriver(hostBundle: hostBundle, delegate: self)
+			self.softwareUpdater = SPUUpdater(hostBundle: hostBundle, applicationBundle: hostBundle, userDriver: updateDriver, delegate: self)
+
+			do {
+				try self.softwareUpdater.start()
+			}
+			catch {
+				NSLog("Failed to start software updater with error: \(error)")
+			}
 		#endif
 		
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
@@ -571,7 +582,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func groupByFeedToggled(_ sender: NSMenuItem) {		
 		AppDefaults.timelineGroupByFeed.toggle()
 	}
-	
+
+	@IBAction func checkForUpdates(_ sender: Any?) {
+		#if !MAC_APP_STORE && !TEST
+			self.softwareUpdater.checkForUpdates()
+		#endif
+	}
+
 }
 
 // MARK: - Debug Menu
