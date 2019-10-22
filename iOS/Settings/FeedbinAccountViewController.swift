@@ -36,6 +36,9 @@ class FeedbinAccountViewController: UITableViewController {
 		} else {
 			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Update Credentials"), for: .normal)
 		}
+
+		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: emailTextField)
+		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: passwordTextField)
 	}
 	
 	@IBAction func cancel(_ sender: Any) {
@@ -111,6 +114,10 @@ class FeedbinAccountViewController: UITableViewController {
 			}
 			
 		}
+	}
+	
+	@objc func textDidChange(_ note: Notification) {
+		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false) 
 	}
 	
 	private func showError(_ message: String) {

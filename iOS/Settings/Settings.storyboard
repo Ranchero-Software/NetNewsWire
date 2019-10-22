@@ -3,7 +3,6 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15508"/>
-        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -440,15 +439,13 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7ZV-Eg-jhP" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7ZV-Eg-jhP" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
                                                     <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="RBi-fn-0o2"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <state key="normal" title="Credentials">
-                                                        <color key="titleColor" name="primaryAccentColor"/>
-                                                    </state>
+                                                    <state key="normal" title="Credentials"/>
                                                     <connections>
                                                         <action selector="credentials:" destination="SLc-SS-bhp" eventType="touchUpInside" id="aJb-x2-Pno"/>
                                                     </connections>
@@ -473,7 +470,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uBW-xT-sbZ" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uBW-xT-sbZ" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
                                                     <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="DTB-y7-Fwx"/>
@@ -679,15 +676,13 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vhl-Lu-KFz" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vhl-Lu-KFz" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
                                                     <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="7iW-YA-9eK"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <state key="normal" title="Add Account">
-                                                        <color key="titleColor" name="primaryAccentColor"/>
-                                                    </state>
+                                                    <state key="normal" title="Add Account"/>
                                                     <connections>
                                                         <action selector="add:" destination="Tgu-u6-glx" eventType="touchUpInside" id="zO2-qG-v34"/>
                                                     </connections>
@@ -789,22 +784,20 @@
                             </tableViewSection>
                             <tableViewSection id="oez-j7-Bnb">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="TdT-na-AmS" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="TdT-na-AmS">
                                         <rect key="frame" x="0.0" y="141" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="TdT-na-AmS" id="LVF-fO-2pw">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ohs-Iz-tfT" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
+                                                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ohs-Iz-tfT" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
                                                     <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="Nt4-lI-hkF"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <state key="normal" title="Action">
-                                                        <color key="titleColor" name="primaryAccentColor"/>
-                                                    </state>
+                                                    <state key="normal" title="Action"/>
                                                     <connections>
                                                         <action selector="action:" destination="PrL-bD-PFa" eventType="touchUpInside" id="AmE-ou-ltA"/>
                                                     </connections>
@@ -1089,8 +1082,5 @@
     <resources>
         <image name="accountFeedbin" width="120" height="102"/>
         <image name="accountLocal" width="78" height="98"/>
-        <namedColor name="primaryAccentColor">
-            <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
     </resources>
 </document>

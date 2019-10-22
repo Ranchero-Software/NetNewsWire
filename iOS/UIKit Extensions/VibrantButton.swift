@@ -26,6 +26,7 @@ class VibrantButton: UIButton {
 	override var isHighlighted: Bool {
 		didSet {
 			backgroundColor = isHighlighted ? AppAssets.secondaryAccentColor : nil
+			titleLabel?.alpha = 1
 		}
 	}
 
