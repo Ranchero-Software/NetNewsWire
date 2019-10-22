@@ -13,14 +13,21 @@ import RSTree
 import RSWeb
 import Account
 import RSCore
-#if !MAC_APP_STORE && !TEST
+
+// If we're not going to import Sparkle, provide dummy protocols to make it easy
+// for AppDelegate to comply
+#if MAC_APP_STORE || TEST
+protocol SPUStandardUserDriverDelegate {}
+protocol SPUUpdaterDelegate {}
+#else
 import Sparkle
 #endif
 
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate
+{
 
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
