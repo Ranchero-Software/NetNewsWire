@@ -69,18 +69,11 @@ class SettingsViewController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		switch section {
-		case 0:
-			return AccountManager.shared.accounts.count + 1
 		case 1:
+			return AccountManager.shared.accounts.count + 1
+		case 4:
 			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
-			if AccountManager.shared.activeAccounts.isEmpty {
-				// Hide the add NetNewsWire feed row if they don't have any active accounts
-				return defaultNumberOfRows - 1
-			}
-			return defaultNumberOfRows
-		case 3:
-			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
-			if AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
+			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 				return defaultNumberOfRows - 1
 			}
 			return defaultNumberOfRows
@@ -92,7 +85,7 @@ class SettingsViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell: UITableViewCell
 		switch indexPath.section {
-		case 0:
+		case 1:
 			
 			cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
 			cell.textLabel?.adjustsFontForContentSizeCategory = true
@@ -116,6 +109,8 @@ class SettingsViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch indexPath.section {
 		case 0:
+			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
+		case 1:
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
 				let controller = UIStoryboard.settings.instantiateController(ofType: AddAccountViewController.self)
@@ -125,7 +120,7 @@ class SettingsViewController: UITableViewController {
 				controller.account = sortedAccounts[indexPath.row]
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
-		case 2:
+		case 3:
 			switch indexPath.row {
 			case 0:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
@@ -137,7 +132,7 @@ class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case 3:
+		case 4:
 			switch indexPath.row {
 			case 0:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
@@ -177,16 +172,16 @@ class SettingsViewController: UITableViewController {
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		if indexPath.section == 0 {
-			return super.tableView(tableView, heightForRowAt: IndexPath(row: 0, section: 0))
+		if indexPath.section == 1 {
+			return super.tableView(tableView, heightForRowAt: IndexPath(row: 0, section: 1))
 		} else {
 			return super.tableView(tableView, heightForRowAt: indexPath)
 		}
 	}
 	
 	override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
-		if indexPath.section == 0 {
-			return super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: 0))
+		if indexPath.section == 1 {
+			return super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: 1))
 		} else {
 			return super.tableView(tableView, indentationLevelForRowAt: indexPath)
 		}
