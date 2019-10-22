@@ -2803,7 +2803,6 @@
 				65ED4070235DEF6C0081F399 /* Embed Frameworks */,
 				65ED407B235DEF6C0081F399 /* Embed App Extensions */,
 				65ED407D235DEF6C0081F399 /* Run Script: Verify No Build Settings */,
-				65ED407E235DEF6C0081F399 /* Run Script: codesign release builds */,
 			);
 			buildRules = (
 			);
@@ -3630,24 +3629,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
-		};
-		65ED407E235DEF6C0081F399 /* Run Script: codesign release builds */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: codesign release builds";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# See https://github.com/Watson1978/kotori/commit/ffe320f2e058828f0af294b65ed88dfd7baaabff\n\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n    codesign --verbose --force --deep -o runtime --sign \"Developer ID Application: Brent Simmons\" \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\nfi\n";
 		};
 		8423E3E3220158E700C3795B /* Run Script: Code Sign Sparkle */ = {
 			isa = PBXShellScriptBuildPhase;
