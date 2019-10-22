@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-class MasterTimelineTableViewCell: NNWTableViewCell {
+class MasterTimelineTableViewCell: VibrantTableViewCell {
 	
 	private let titleView = MasterTimelineTableViewCell.multiLineUILabel()
 	private let summaryView = MasterTimelineTableViewCell.multiLineUILabel()

@@ -15,7 +15,7 @@ protocol MasterFeedTableViewCellDelegate: class {
 	func disclosureSelected(_ sender: MasterFeedTableViewCell, expanding: Bool)
 }
 
-class MasterFeedTableViewCell : NNWTableViewCell {
+class MasterFeedTableViewCell : VibrantTableViewCell {
 
 	weak var delegate: MasterFeedTableViewCellDelegate?
 

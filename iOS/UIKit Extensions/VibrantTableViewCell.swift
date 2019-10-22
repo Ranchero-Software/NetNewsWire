@@ -1,5 +1,5 @@
 //
-//  NNWTableViewCell.swift
+//  VibrantTableViewCell.swift
 //  NetNewsWire-iOS
 //
 //  Created by Jim Correia on 9/2/19.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NNWTableViewCell: UITableViewCell {
+class VibrantTableViewCell: UITableViewCell {
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		commonInit()

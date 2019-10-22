@@ -231,7 +231,7 @@
 		51FE100A234673A00056195D /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
 		55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */; };
 		55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */; };
-		5F323809231DF9F000706F6B /* NNWTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F323808231DF9F000706F6B /* NNWTableViewCell.swift */; };
+		5F323809231DF9F000706F6B /* VibrantTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
@@ -1323,7 +1323,7 @@
 		51FE10022345529D0056195D /* UserNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationManager.swift; sourceTree = "<group>"; };
 		55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsReaderAPI.xib; sourceTree = "<group>"; };
 		55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsReaderAPIWindowController.swift; sourceTree = "<group>"; };
-		5F323808231DF9F000706F6B /* NNWTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NNWTableViewCell.swift; sourceTree = "<group>"; };
+		5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantTableViewCell.swift; sourceTree = "<group>"; };
 		6543108B2322D90900658221 /* common */ = {isa = PBXFileReference; lastKnownFileType = folder; path = common; sourceTree = "<group>"; };
 		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6581C73420CED60100F4AD34 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -1811,7 +1811,6 @@
 			children = (
 				51F85BFA2275D85000C787DC /* Array-Extensions.swift */,
 				51F85BF42273625800C787DC /* Bundle-Extensions.swift */,
-				5F323808231DF9F000706F6B /* NNWTableViewCell.swift */,
 				51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */,
 				5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */,
 				5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */,
@@ -1822,6 +1821,7 @@
 				51FD40BD2341555600880194 /* UIImage-Extensions.swift */,
 				512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */,
 				51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */,
+				5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */,
 			);
 			path = "UIKit Extensions";
 			sourceTree = "<group>";
@@ -2904,6 +2904,10 @@
 						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
+					65ED3FA2235DEF6C0081F399 = {
+						DevelopmentTeam = SHJK2V3AJG;
+						ProvisioningStyle = Automatic;
+					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
 						DevelopmentTeam = SHJK2V3AJG;
@@ -3878,7 +3882,7 @@
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
 				5183CCDF226F1FCC0010922C /* UINavigationController+Progress.swift in Sources */,
 				51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */,
-				5F323809231DF9F000706F6B /* NNWTableViewCell.swift in Sources */,
+				5F323809231DF9F000706F6B /* VibrantTableViewCell.swift in Sources */,
 				512E09352268B25900BDCFDD /* UISplitViewController-Extensions.swift in Sources */,
 				51FE10042345529D0056195D /* UserNotificationManager.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
