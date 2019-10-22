@@ -32,6 +32,40 @@ class DetailAccountViewController: UITableViewController {
 		account?.isActive = activeSwitch.isOn
 	}
 	
+	@IBAction func credentials(_ sender: Any) {
+		guard let account = account else { return }
+		switch account.type {
+		case .feedbin:
+			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
+			let addViewController = navController.topViewController as! FeedbinAccountViewController
+			addViewController.account = account
+			navController.modalPresentationStyle = .currentContext
+			present(navController, animated: true)
+		default:
+			break
+		}
+	}
+	
+	@IBAction func deleteAccount(_ sender: Any) {
+		let title = NSLocalizedString("Delete Account", comment: "Delete Account")
+		let message = NSLocalizedString("Are you sure you want to delete this account?  This can not be undone.", comment: "Delete Account")
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
+		alertController.addAction(cancelAction)
+		
+		let markTitle = NSLocalizedString("Delete", comment: "Delete")
+		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
+			guard let account = self?.account else { return }
+			AccountManager.shared.deleteAccount(account)
+			self?.navigationController?.popViewController(animated: true)
+		}
+		alertController.addAction(markAction)
+		
+		present(alertController, animated: true)
+	}
+	
 }
 
 extension DetailAccountViewController {
@@ -68,60 +102,7 @@ extension DetailAccountViewController {
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		if let account = account, account.type == .onMyMac {
-			if indexPath.section == 1 {
-				deleteAccount()
-			}
-		} else {
-			switch indexPath.section {
-			case 1:
-				credentials()
-			case 2:
-				deleteAccount()
-			default:
-				break
-			}
-		}
-		
 		tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-	}
-	
-}
-
-private extension DetailAccountViewController {
-	
-	func credentials() {
-		guard let account = account else { return }
-		switch account.type {
-		case .feedbin:
-			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
-			let addViewController = navController.topViewController as! FeedbinAccountViewController
-			addViewController.account = account
-			navController.modalPresentationStyle = .currentContext
-			present(navController, animated: true)
-		default:
-			break
-		}
-	}
-	
-	func deleteAccount() {
-		let title = NSLocalizedString("Delete Account", comment: "Delete Account")
-		let message = NSLocalizedString("Are you sure you want to delete this account?  This can not be undone.", comment: "Delete Account")
-		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-		
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
-		alertController.addAction(cancelAction)
-		
-		let markTitle = NSLocalizedString("Delete", comment: "Delete")
-		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-			guard let account = self?.account else { return }
-			AccountManager.shared.deleteAccount(account)
-			self?.navigationController?.popViewController(animated: true)
-		}
-		alertController.addAction(markAction)
-		
-		present(alertController, animated: true)
 	}
 	
 }

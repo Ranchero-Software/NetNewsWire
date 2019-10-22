@@ -68,7 +68,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="f7r-AZ-aDn">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="f7r-AZ-aDn" customClass="NNWTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="199.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="f7r-AZ-aDn" id="KHC-cc-tOC">
@@ -98,7 +98,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="5wo-fM-0l6">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="5wo-fM-0l6" customClass="NNWTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="243.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5wo-fM-0l6" id="XAn-lK-LoN">
@@ -173,7 +173,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="25J-iX-3at" style="IBUITableViewCellStyleDefault" id="qke-Ha-PXl">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="25J-iX-3at" style="IBUITableViewCellStyleDefault" id="qke-Ha-PXl" customClass="NNWTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="431.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="qke-Ha-PXl" id="pZi-ck-RV5">
@@ -228,7 +228,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="Pm8-6D-fdE" style="IBUITableViewCellStyleDefault" id="3cU-BG-6kK">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="Pm8-6D-fdE" style="IBUITableViewCellStyleDefault" id="3cU-BG-6kK" customClass="NNWTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="619.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="3cU-BG-6kK" id="Qm0-SY-0vx">
@@ -296,7 +296,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="dXN-Mw-yf2" style="IBUITableViewCellStyleDefault" id="F0L-Ut-reX">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="dXN-Mw-yf2" style="IBUITableViewCellStyleDefault" id="F0L-Ut-reX" customClass="NNWTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="795.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="F0L-Ut-reX" id="5SX-M2-2jR">
@@ -418,15 +418,23 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Credentials" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OKd-Ps-a1K">
-                                                    <rect key="frame" x="163.5" y="11.5" width="87" height="21"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7ZV-Eg-jhP">
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="44" id="RBi-fn-0o2"/>
+                                                    </constraints>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                    <state key="normal" title="Credentials"/>
+                                                    <connections>
+                                                        <action selector="credentials:" destination="SLc-SS-bhp" eventType="touchUpInside" id="aJb-x2-Pno"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="OKd-Ps-a1K" firstAttribute="centerY" secondItem="mV2-iL-ltS" secondAttribute="centerY" id="ix2-SF-I7U"/>
-                                                <constraint firstItem="OKd-Ps-a1K" firstAttribute="centerX" secondItem="mV2-iL-ltS" secondAttribute="centerX" id="nZf-Eh-VXu"/>
+                                                <constraint firstAttribute="bottom" secondItem="7ZV-Eg-jhP" secondAttribute="bottom" id="Cep-fz-U0B"/>
+                                                <constraint firstItem="7ZV-Eg-jhP" firstAttribute="leading" secondItem="mV2-iL-ltS" secondAttribute="leading" id="JZS-8B-WOx"/>
+                                                <constraint firstItem="7ZV-Eg-jhP" firstAttribute="top" secondItem="mV2-iL-ltS" secondAttribute="top" id="YUX-H9-lqP"/>
+                                                <constraint firstAttribute="trailing" secondItem="7ZV-Eg-jhP" secondAttribute="trailing" id="jZI-xb-8zR"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -441,16 +449,25 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Delete Account" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a8v-SL-W9q">
-                                                    <rect key="frame" x="148" y="11.5" width="118" height="21"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uBW-xT-sbZ">
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="44" id="DTB-y7-Fwx"/>
+                                                    </constraints>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                    <state key="normal" title="Delete Account">
+                                                        <color key="titleColor" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="deleteAccount:" destination="SLc-SS-bhp" eventType="touchUpInside" id="Wz1-v5-Zc8"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="a8v-SL-W9q" firstAttribute="centerX" secondItem="Z5N-KD-L3U" secondAttribute="centerX" id="F0E-Pt-dt3"/>
-                                                <constraint firstItem="a8v-SL-W9q" firstAttribute="centerY" secondItem="Z5N-KD-L3U" secondAttribute="centerY" id="TIC-BM-f0j"/>
+                                                <constraint firstItem="uBW-xT-sbZ" firstAttribute="leading" secondItem="Z5N-KD-L3U" secondAttribute="leading" id="Jg8-uH-3PJ"/>
+                                                <constraint firstItem="uBW-xT-sbZ" firstAttribute="top" secondItem="Z5N-KD-L3U" secondAttribute="top" id="O6v-sR-9hH"/>
+                                                <constraint firstAttribute="bottom" secondItem="uBW-xT-sbZ" secondAttribute="bottom" id="oxp-ym-C2k"/>
+                                                <constraint firstAttribute="trailing" secondItem="uBW-xT-sbZ" secondAttribute="trailing" id="vXX-gv-1yG"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -631,7 +648,7 @@
                             </tableViewSection>
                             <tableViewSection id="gBC-Kb-bFs">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="B5Z-y9-YV6">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="B5Z-y9-YV6" customClass="NNWTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="97.5" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="B5Z-y9-YV6" id="UQF-7L-Vm4">
@@ -639,7 +656,10 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vhl-Lu-KFz">
-                                                    <rect key="frame" x="157.5" y="5.5" width="99" height="33"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="44" id="7iW-YA-9eK"/>
+                                                    </constraints>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <state key="normal" title="Add Account"/>
                                                     <connections>
@@ -648,8 +668,10 @@
                                                 </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="vhl-Lu-KFz" firstAttribute="centerY" secondItem="UQF-7L-Vm4" secondAttribute="centerY" id="3M2-Os-MDM"/>
-                                                <constraint firstItem="vhl-Lu-KFz" firstAttribute="centerX" secondItem="UQF-7L-Vm4" secondAttribute="centerX" id="8wm-qm-KgD"/>
+                                                <constraint firstItem="vhl-Lu-KFz" firstAttribute="leading" secondItem="UQF-7L-Vm4" secondAttribute="leading" id="Vji-EN-Xof"/>
+                                                <constraint firstAttribute="bottom" secondItem="vhl-Lu-KFz" secondAttribute="bottom" id="YiX-bM-eyT"/>
+                                                <constraint firstAttribute="trailing" secondItem="vhl-Lu-KFz" secondAttribute="trailing" id="sth-Su-pHf"/>
+                                                <constraint firstItem="vhl-Lu-KFz" firstAttribute="top" secondItem="UQF-7L-Vm4" secondAttribute="top" id="z09-nE-NJ5"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -741,7 +763,7 @@
                             </tableViewSection>
                             <tableViewSection id="oez-j7-Bnb">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="TdT-na-AmS">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="TdT-na-AmS" customClass="NNWTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="141" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="TdT-na-AmS" id="LVF-fO-2pw">
@@ -749,7 +771,10 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ohs-Iz-tfT">
-                                                    <rect key="frame" x="182.5" y="5.5" width="49" height="33"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="44" id="Nt4-lI-hkF"/>
+                                                    </constraints>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <state key="normal" title="Action"/>
                                                     <connections>
@@ -758,8 +783,10 @@
                                                 </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="Ohs-Iz-tfT" firstAttribute="centerX" secondItem="LVF-fO-2pw" secondAttribute="centerX" id="VJV-B8-xqa"/>
-                                                <constraint firstItem="Ohs-Iz-tfT" firstAttribute="centerY" secondItem="LVF-fO-2pw" secondAttribute="centerY" id="gex-aC-xc8"/>
+                                                <constraint firstAttribute="bottom" secondItem="Ohs-Iz-tfT" secondAttribute="bottom" id="4S1-PD-61F"/>
+                                                <constraint firstItem="Ohs-Iz-tfT" firstAttribute="top" secondItem="LVF-fO-2pw" secondAttribute="top" id="NT2-T6-BKS"/>
+                                                <constraint firstAttribute="trailing" secondItem="Ohs-Iz-tfT" secondAttribute="trailing" id="eK7-g8-ror"/>
+                                                <constraint firstItem="Ohs-Iz-tfT" firstAttribute="leading" secondItem="LVF-fO-2pw" secondAttribute="leading" id="fhe-9j-OZi"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
