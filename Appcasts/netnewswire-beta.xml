@@ -6,7 +6,17 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
-				<item>
+	<item>
+         <title>NetNewsWire 5.0.3</title>
+            <description><![CDATA[
+<p>Same as 5.0.3b2 — just bumped the version number to 5.0.3.</p>
+ 		]]></description>
+            <pubDate>Tue, 22 Oct 2019 13:00:00 -0700</pubDate>
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.3/NetNewsWire5.0.3.zip" sparkle:version="2618" sparkle:shortVersionString="5.0.3" length="5152201" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
          <title>NetNewsWire 5.0.3b2</title>
             <description><![CDATA[
 <p>Significantly enhanced performance during syncs and refreshes.</p>

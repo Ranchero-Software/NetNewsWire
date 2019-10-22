@@ -6,6 +6,39 @@
         <description>Most recent NetNewsWire releases (not test builds). Well, we’re including test builds up until 5.0 ships, but after that it won’t be test builds.</description>
         <language>en</language>
 
+	<item>
+         <title>NetNewsWire 5.0.3</title>
+            <description><![CDATA[
+<p>Significantly enhanced performance during syncs and refreshes. Fetching articles from the database is also faster.</p>
+
+<p>When running for the first time, and the user previously used NetNewsWire 3, it will automatically import NetNewsWire 3 subscriptions instead of the defaults for new users.</p>
+
+<p>You can also import NetNewsWire 3 subscriptions via the new File > Import NNW3 Subscriptions… command.</p>
+
+<p>Keyboard shortcuts: the 's' key toggles starred status. The 'r' and 'u' keys now both toggle read status (instead of setting read and unread status, respectively).</p>
+
+<p>Articles view: articles where the feed icon is quite large would be slow to render — now they render as fast as other articles.</p>
+
+<p>Articles view: a bug where keyboard shortcuts wouldn’t work after giving the articles view focus has been fixed.</p>
+
+<p>Articles view: YouTube videos could end up small. Fixed.</p>
+
+<p>Articles view: fixed a bug scaling images to fit in the view.</p>
+
+<p>Fixed the space bar when running on Catalina. It wouldn’t advance to the next unread — now it will. (This was due to a change in JavaScript in Catalina.)</p>
+
+<p>Fixed a crashing bug having to do with async database fetches for the timeline.</p>
+
+<p>Feedbin syncing: fixed a bug where renaming a tag on the Feedbin site would result in feeds in NNW ending up at the top level.</p>
+
+<p>Help menu: fixed the expired Slack link.</p>
+
+ 		]]></description>
+            <pubDate>Tue, 22 Oct 2019 13:00:00 -0700</pubDate>
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.3/NetNewsWire5.0.3.zip" sparkle:version="2618" sparkle:shortVersionString="5.0.3" length="5152201" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
 				<item>
          <title>NetNewsWire 5.0.2</title>
             <description><![CDATA[
