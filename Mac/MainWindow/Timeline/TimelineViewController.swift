@@ -779,19 +779,19 @@ extension TimelineViewController: NSTableViewDelegate {
 
 		switch edge {
 			case .leading:
-				let title = article.status.read ? NSLocalizedString("Mark Unread", comment: "mark unread") : NSLocalizedString("Mark Read", comment: "mark read")
-				let action = NSTableViewRowAction(style: .regular, title: title) { (action, row) in
+				let action = NSTableViewRowAction(style: .regular, title: "") { (action, row) in
 					self.toggleArticleRead(article);
 					tableView.rowActionsVisible = false
 				}
+				action.image = article.status.read ? AppAssets.swipeMarkUnreadImage : AppAssets.swipeMarkReadImage
 				return [action]
 
 			case .trailing:
-				let title = article.status.starred ? NSLocalizedString("Mark Unstarred", comment: "mark unstarred") : NSLocalizedString("Mark Starred", comment: "mark starred")
-				let action = NSTableViewRowAction(style: .regular, title: title) { (action, row) in
+				let action = NSTableViewRowAction(style: .regular, title: "") { (action, row) in
 					self.toggleArticleStarred(article);
 					tableView.rowActionsVisible = false
 				}
+				action.image = article.status.starred ? AppAssets.swipeMarkUnstarredImage : AppAssets.swipeMarkStarredImage
 				return [action]
 
 			@unknown default:
