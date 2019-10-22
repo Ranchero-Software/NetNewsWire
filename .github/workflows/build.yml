@@ -4,7 +4,10 @@ on:
   push:
     branches:
       - master
+      - mac-candidate
       - mac-release
+      - ios-candidate
+      - ios-release
 
 jobs:
   build:
