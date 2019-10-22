@@ -128,13 +128,13 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	
 	override func applyThemeProperties() {
 		super.applyThemeProperties()
-		titleView.highlightedTextColor = AppAssets.tableViewCellHighlightedTextColor
+		titleView.highlightedTextColor = AppAssets.vibrantTextColor
 	}
 
 	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
 		super.setHighlighted(highlighted, animated: animated)
 
-		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.secondaryAccentColor
+		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
 		disclosureButton?.tintColor  = tintColor
 		faviconImageView.tintColor = tintColor
 	}
@@ -142,7 +142,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	override func setSelected(_ selected: Bool, animated: Bool) {
 		super.setSelected(selected, animated: animated)
 
-		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.secondaryAccentColor
+		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
 		disclosureButton?.tintColor  = tintColor
 		faviconImageView.tintColor = tintColor
 	}

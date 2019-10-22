@@ -37,7 +37,7 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 	override func applyThemeProperties() {
 		super.applyThemeProperties()
 
-		let highlightedTextColor = AppAssets.tableViewCellHighlightedTextColor
+		let highlightedTextColor = AppAssets.vibrantTextColor
 		
 		titleView.highlightedTextColor = highlightedTextColor
 		summaryView.highlightedTextColor = highlightedTextColor

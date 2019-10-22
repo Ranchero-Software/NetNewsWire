@@ -140,10 +140,6 @@ struct AppAssets {
 		return UIImage(systemName: "star.fill")!
 	}()
 
-	static var tableViewCellHighlightedTextColor: UIColor = {
-		return UIColor(named: "tableViewCellHighlightedTextColor")!
-	}()
-
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
@@ -161,4 +157,8 @@ struct AppAssets {
 		return UIImage(systemName: "largecircle.fill.circle")!
 	}()
 	
+	static var vibrantTextColor: UIColor = {
+		return UIColor(named: "vibrantTextColor")!
+	}()
+
 }

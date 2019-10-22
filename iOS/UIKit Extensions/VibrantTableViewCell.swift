@@ -9,6 +9,7 @@
 import UIKit
 
 class VibrantTableViewCell: UITableViewCell {
+
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		commonInit()
@@ -26,7 +27,9 @@ class VibrantTableViewCell: UITableViewCell {
 	/// Subclass overrides should call super
 	func applyThemeProperties() {
 		let selectedBackgroundView = UIView(frame: .zero)
-		selectedBackgroundView.backgroundColor = AppAssets.primaryAccentColor
+		selectedBackgroundView.backgroundColor = AppAssets.secondaryAccentColor
 		self.selectedBackgroundView = selectedBackgroundView
+		
+		textLabel?.highlightedTextColor = AppAssets.vibrantTextColor
 	}
 }
