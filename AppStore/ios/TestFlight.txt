@@ -16,3 +16,16 @@ Features:
 * Importing and exporting OPML feed lists
 * Multiple accounts
 
+Feedback Email:
+
+brent@ranchero.com
+
+Marketing URL:
+
+https://ranchero.com/netnewswire/
+
+Privacy Policy URL:
+
+https://ranchero.com/netnewswire/privacypolicy
+
+License: MIT

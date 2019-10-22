@@ -13,3 +13,7 @@
 [submodule "submodules/RSDatabase"]
 	path = submodules/RSDatabase
 	url = https://github.com/brentsimmons/RSDatabase
+[submodule "submodules/Sparkle"]
+	path = submodules/Sparkle
+	url = https://github.com/brentsimmons/Sparkle
+	branch = ui-separation-and-xpc
