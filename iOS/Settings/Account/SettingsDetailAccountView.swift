@@ -53,7 +53,7 @@ struct SettingsDetailAccountView : View {
 						Text("Delete Account").foregroundColor(.red)
 					}
 					.alert(isPresented: $isDeleteAlertPresented) {
-						Alert(title: Text("Are you sure you want to delete \"\(viewModel.nameForDisplay)\"?"),
+						Alert(title: Text("Are you sure you want to delete “\(viewModel.nameForDisplay)”?"),
 							primaryButton: Alert.Button.default(Text("Delete"), action: {
 								self.viewModel.delete()
 								self.presentation.wrappedValue.dismiss()
