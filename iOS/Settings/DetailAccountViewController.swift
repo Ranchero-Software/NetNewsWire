@@ -97,6 +97,7 @@ private extension DetailAccountViewController {
 			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
 			let addViewController = navController.topViewController as! FeedbinAccountViewController
 			addViewController.account = account
+			navController.modalPresentationStyle = .currentContext
 			present(navController, animated: true)
 		default:
 			break

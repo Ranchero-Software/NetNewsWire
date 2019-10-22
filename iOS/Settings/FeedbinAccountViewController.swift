@@ -10,7 +10,7 @@ import UIKit
 import Account
 import RSWeb
 
-class FeedbinAccountViewController: UIViewController {
+class FeedbinAccountViewController: UITableViewController {
 
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
@@ -18,8 +18,6 @@ class FeedbinAccountViewController: UIViewController {
 	@IBOutlet weak var passwordTextField: UITextField!
 	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
-	
-	@IBOutlet weak var errorMessageLabel: UILabel!
 	
 	weak var account: Account?
 	weak var delegate: AddAccountDismissDelegate?
@@ -56,10 +54,9 @@ class FeedbinAccountViewController: UIViewController {
 	}
 	
 	@IBAction func action(_ sender: Any) {
-		self.errorMessageLabel.text = nil
 		
 		guard let email = emailTextField.text, let password = passwordTextField.text else {
-			self.errorMessageLabel.text = NSLocalizedString("Username & password required.", comment: "Credentials Error")
+			showError(NSLocalizedString("Username & password required.", comment: "Credentials Error"))
 			return
 		}
 	
@@ -104,16 +101,20 @@ class FeedbinAccountViewController: UIViewController {
 						self.dismiss(animated: true, completion: nil)
 						self.delegate?.dismiss()
 					} catch {
-						self.errorMessageLabel.text = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
 					}
 				} else {
-					self.errorMessageLabel.text = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+					self.showError(NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error"))
 				}
 			case .failure:
-				self.errorMessageLabel.text = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
+				self.showError(NSLocalizedString("Network error. Try again later.", comment: "Credentials Error"))
 			}
 			
 		}
+	}
+	
+	private func showError(_ message: String) {
+		presentError(title: "Error", message: message)
 	}
 	
 	private func enableNavigation() {
