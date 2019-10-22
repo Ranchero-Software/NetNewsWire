@@ -13,6 +13,8 @@ import SafariServices
 class SettingsViewController: UITableViewController {
 
 	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
+	private weak var opmlAccount: Account?
+	
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 	
 	@IBOutlet weak var refreshIntervalLabel: UILabel!
@@ -126,9 +128,15 @@ class SettingsViewController: UITableViewController {
 				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			case 1:
-				importOPML()
+				if let sourceView = tableView.cellForRow(at: indexPath) {
+					let sourceRect = tableView.rectForRow(at: indexPath)
+					importOPML(sourceView: sourceView, sourceRect: sourceRect)
+				}
 			case 2:
-				exportOPML()
+				if let sourceView = tableView.cellForRow(at: indexPath) {
+					let sourceRect = tableView.rectForRow(at: indexPath)
+					exportOPML(sourceView: sourceView, sourceRect: sourceRect)
+				}
 			default:
 				break
 			}
@@ -226,11 +234,9 @@ class SettingsViewController: UITableViewController {
 extension SettingsViewController: UIDocumentPickerDelegate {
 	
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-		
 		for url in urls {
-			AccountManager.shared.defaultAccount.importOPML(url) { result in}
+			opmlAccount?.importOPML(url) { result in}
 		}
-		
 	}
 	
 }
@@ -258,20 +264,86 @@ private extension SettingsViewController {
 		presentingParentController?.present(addNavViewController, animated: true)
 	}
 	
-	func importOPML() {
+	func importOPML(sourceView: UIView, sourceRect: CGRect) {
+		switch AccountManager.shared.activeAccounts.count {
+		case 0:
+			presentError(title: "Error", message: NSLocalizedString("You must have at least one active account.", comment: "Missing active account"))
+		case 1:
+			opmlAccount = AccountManager.shared.activeAccounts.first
+			importOPMLDocumentPicker()
+		default:
+			importOPMLAccountPicker(sourceView: sourceView, sourceRect: sourceRect)
+		}
+	}
+	
+	func importOPMLAccountPicker(sourceView: UIView, sourceRect: CGRect) {
+		let title = NSLocalizedString("Select an Import Account", comment: "Select an Import Account")
+		let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 		
+		if let popoverController = alert.popoverPresentationController {
+			popoverController.sourceView = view
+			popoverController.sourceRect = sourceRect
+		}
+
+		for account in AccountManager.shared.activeAccounts {
+			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] action in
+				self?.opmlAccount = account
+				self?.importOPMLDocumentPicker()
+			}
+			alert.addAction(action)
+		}
+
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
+
+		self.present(alert, animated: true)
+	}
+	
+	func importOPMLDocumentPicker() {
 		let docPicker = UIDocumentPickerViewController(documentTypes: ["public.xml", "org.opml.opml"], in: .import)
 		docPicker.delegate = self
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
-		
 	}
 	
-	func exportOPML() {
+	func exportOPML(sourceView: UIView, sourceRect: CGRect) {
+		if AccountManager.shared.accounts.count == 1 {
+			exportOPMLDocumentPicker()
+		} else {
+			exportOPMLAccountPicker(sourceView: sourceView, sourceRect: sourceRect)
+		}
+	}
+	
+	func exportOPMLAccountPicker(sourceView: UIView, sourceRect: CGRect) {
+		let title = NSLocalizedString("Select an Export Account", comment: "Select an Export Account")
+		let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 		
-		let filename = "MySubscriptions.opml"
+		if let popoverController = alert.popoverPresentationController {
+			popoverController.sourceView = view
+			popoverController.sourceRect = sourceRect
+		}
+
+		for account in AccountManager.shared.accounts {
+			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] action in
+				self?.opmlAccount = account
+				self?.exportOPMLDocumentPicker()
+			}
+			alert.addAction(action)
+		}
+
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
+
+		self.present(alert, animated: true)
+	}
+	
+	func exportOPMLDocumentPicker() {
+		guard let account = opmlAccount else { return }
+		
+		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
+		let filename = "Subscriptions-\(accountName).opml"
 		let tempFile = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
-		let opmlString = OPMLExporter.OPMLString(with: AccountManager.shared.defaultAccount, title: filename)
+		let opmlString = OPMLExporter.OPMLString(with: account, title: filename)
 		do {
 			try opmlString.write(to: tempFile, atomically: true, encoding: String.Encoding.utf8)
 		} catch {
@@ -281,7 +353,6 @@ private extension SettingsViewController {
 		let docPicker = UIDocumentPickerViewController(url: tempFile, in: .exportToService)
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
-		
 	}
 	
 	func openURL(_ urlString: String) {
