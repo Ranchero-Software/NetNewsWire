@@ -29,7 +29,7 @@ See the [Contributing](CONTRIBUTING.md) page for our process. It’s pretty stra
 ```bash
 git clone https://github.com/brentsimmons/NetNewsWire.git
 cd NetNewsWire
-git submodule update --init --recursive
+git submodule update --init --recursive --remote
 ```
 
 You can locally override the Xcode settings for code signing
