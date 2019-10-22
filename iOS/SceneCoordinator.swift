@@ -8,7 +8,6 @@
 
 import UIKit
 import UserNotifications
-import SwiftUI
 import Account
 import Articles
 import RSCore
@@ -1698,21 +1697,4 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
-}
-
-// MARK: SwiftUI
-
-struct SceneCoordinatorHolder {
-	weak var value: SceneCoordinator?
-}
-
-struct SceneCoordinatorKey: EnvironmentKey {
-	static var defaultValue: SceneCoordinatorHolder { return SceneCoordinatorHolder(value: nil ) }
-}
-
-extension EnvironmentValues {
-	var sceneCoordinator: SceneCoordinator? {
-		get { return self[SceneCoordinatorKey.self].value }
-		set { self[SceneCoordinatorKey.self].value = newValue }
-	}
 }
