@@ -13,9 +13,6 @@ import RSTree
 import RSWeb
 import Account
 import RSCore
-#if TEST
-import Sparkle
-#endif
 
 var appDelegate: AppDelegate!
 
@@ -117,10 +114,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	func applicationWillFinishLaunching(_ notification: Notification) {
 		installAppleEventHandlers()
-		#if TEST
-			// Don't prompt for updates while running automated tests
-			SUUpdater.shared()?.automaticallyChecksForUpdates = false
-		#endif
 	}
 	
 	func applicationDidFinishLaunching(_ note: Notification) {
