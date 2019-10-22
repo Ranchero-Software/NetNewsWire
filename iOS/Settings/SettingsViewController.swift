@@ -285,7 +285,7 @@ private extension SettingsViewController {
 			popoverController.sourceRect = sourceRect
 		}
 
-		for account in AccountManager.shared.activeAccounts {
+		for account in AccountManager.shared.sortedActiveAccounts {
 			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] action in
 				self?.opmlAccount = account
 				self?.importOPMLDocumentPicker()
@@ -323,7 +323,7 @@ private extension SettingsViewController {
 			popoverController.sourceRect = sourceRect
 		}
 
-		for account in AccountManager.shared.accounts {
+		for account in AccountManager.shared.sortedAccounts {
 			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] action in
 				self?.opmlAccount = account
 				self?.exportOPMLDocumentPicker()
