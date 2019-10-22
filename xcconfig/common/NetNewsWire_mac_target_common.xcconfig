@@ -1,5 +1,3 @@
-#include "./NetNewsWire_target_common.xcconfig"
-
 // High Level Settings common to both the Mac application and any extensions we bundle with it
 MARKETING_VERSION = 5.1d1
 CURRENT_PROJECT_VERSION = 2612
