@@ -950,6 +950,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		if viewController === masterTimelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed && !isArticleViewControllerPending {
 			stopArticleExtractor()
 			currentArticle = nil
+			masterTimelineViewController?.updateArticleSelection(animated: animated)
 			activityManager.invalidateReading()
 			return
 		}

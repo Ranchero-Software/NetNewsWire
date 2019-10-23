@@ -29,7 +29,10 @@ class SettingsViewController: UITableViewController {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
 		NotificationCenter.default.removeObserver(tableView!, name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
-		
+
+		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
+
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
 		
 	}
@@ -63,8 +66,11 @@ class SettingsViewController: UITableViewController {
 		buildLabel.translatesAutoresizingMaskIntoConstraints = false
 		tableView.tableFooterView = buildLabel
 
-		tableView.reloadData()
-		
+	}
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 	}
 	
 	// MARK: UITableView
@@ -112,6 +118,7 @@ class SettingsViewController: UITableViewController {
 		switch indexPath.section {
 		case 0:
 			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
+			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 		case 1:
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
@@ -128,11 +135,13 @@ class SettingsViewController: UITableViewController {
 				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			case 1:
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 				if let sourceView = tableView.cellForRow(at: indexPath) {
 					let sourceRect = tableView.rectForRow(at: indexPath)
 					importOPML(sourceView: sourceView, sourceRect: sourceRect)
 				}
 			case 2:
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 				if let sourceView = tableView.cellForRow(at: indexPath) {
 					let sourceRect = tableView.rectForRow(at: indexPath)
 					exportOPML(sourceView: sourceView, sourceRect: sourceRect)
@@ -147,24 +156,28 @@ class SettingsViewController: UITableViewController {
 				self.navigationController?.pushViewController(timeline, animated: true)
 			case 1:
 				openURL("https://ranchero.com/netnewswire/")
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 2:
 				openURL("https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 3:
 				openURL("https://github.com/brentsimmons/NetNewsWire")
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 4:
 				openURL("https://github.com/brentsimmons/NetNewsWire/issues")
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 5:
 				openURL("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 6:
 				addFeed()
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			default:
 				break
 			}
 		default:
-			break
+			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 		}
-		
-		tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 	}
 	
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -223,10 +236,16 @@ class SettingsViewController: UITableViewController {
 		updateNumberOfTextLinesLabel(value: numberOfLines)
 	}
 	
+	// MARK: Notifications
+	
 	@objc func contentSizeCategoryDidChange() {
 		tableView.reloadData()
 	}
 	
+	@objc func accountsDidChange() {
+		tableView.reloadData()
+	}
+
 }
 
 // MARK: OPML Document Picker
