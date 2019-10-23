@@ -11,7 +11,6 @@ import Account
 import Articles
 import RSCore
 import RSTree
-import SwiftUI
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 

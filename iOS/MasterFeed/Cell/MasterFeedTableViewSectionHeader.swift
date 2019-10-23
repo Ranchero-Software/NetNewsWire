@@ -29,7 +29,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		set {
 			if unreadCountView.unreadCount != newValue {
 				unreadCountView.unreadCount = newValue
-				unreadCountView.isHidden = (newValue < 1)
+				updateUnreadCountView()
 				setNeedsLayout()
 			}
 		}
@@ -51,6 +51,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	var disclosureExpanded = false {
 		didSet {
 			updateDisclosureImage()
+			updateUnreadCountView()
 		}
 	}
 	
@@ -139,6 +140,14 @@ private extension MasterFeedTableViewSectionHeader {
 			} else {
 				self.disclosureView.transform = CGAffineTransform(rotationAngle: 0)
 			}
+		}
+	}
+	
+	func updateUnreadCountView() {
+		if !disclosureExpanded && unreadCount > 0 {
+			unreadCountView.isHidden = false
+		} else {
+			self.unreadCountView.isHidden = true
 		}
 	}
 
