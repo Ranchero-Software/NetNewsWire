@@ -595,6 +595,7 @@
                         </connections>
                     </tableView>
                     <connections>
+                        <outlet property="localAccountImageView" destination="tb2-dO-AhR" id="PCa-g7-grR"/>
                         <outlet property="localAccountNameLabel" destination="116-rt-msI" id="h6M-5V-392"/>
                     </connections>
                 </tableViewController>

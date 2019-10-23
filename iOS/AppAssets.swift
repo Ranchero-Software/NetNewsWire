@@ -11,8 +11,12 @@ import Account
 
 struct AppAssets {
 
-	static var accountLocalImage: UIImage = {
-		return UIImage(named: "accountLocal")!
+	static var accountLocalPadImage: UIImage = {
+		return UIImage(named: "accountLocalPad")!
+	}()
+
+	static var accountLocalPhoneImage: UIImage = {
+		return UIImage(named: "accountLocalPhone")!
 	}()
 
 	static var accountFeedbinImage: UIImage = {
@@ -177,7 +181,11 @@ struct AppAssets {
 	static func image(for accountType: AccountType) -> UIImage? {
 		switch accountType {
 		case .onMyMac:
-			return AppAssets.accountLocalImage
+			if UIDevice.current.userInterfaceIdiom == .pad {
+				return AppAssets.accountLocalPadImage
+			} else {
+				return AppAssets.accountLocalPhoneImage
+			}
 		case .feedbin:
 			return AppAssets.accountFeedbinImage
 		case .freshRSS:

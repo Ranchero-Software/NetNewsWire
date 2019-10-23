@@ -15,11 +15,12 @@ protocol AddAccountDismissDelegate: UIViewController {
 
 class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
+	@IBOutlet private weak var localAccountImageView: UIImageView!
 	@IBOutlet private weak var localAccountNameLabel: UILabel!
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
+		localAccountImageView.image = AppAssets.image(for: .onMyMac)
 		localAccountNameLabel.text = Account.defaultLocalAccountName
 	}
 	
