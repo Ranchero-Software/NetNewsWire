@@ -33,8 +33,9 @@ class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 
+		tableView.register(UINib(nibName: "SettingsAccountTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsAccountTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
-		
+
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -94,15 +95,18 @@ class SettingsViewController: UITableViewController {
 		let cell: UITableViewCell
 		switch indexPath.section {
 		case 1:
-			
-			cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
-			cell.textLabel?.adjustsFontForContentSizeCategory = true
-			
+						
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
+				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
+				cell.textLabel?.adjustsFontForContentSizeCategory = true
 				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Accounts")
 			} else {
-				cell.textLabel?.text = sortedAccounts[indexPath.row].nameForDisplay
+				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsAccountTableViewCell", for: indexPath) as! SettingsAccountTableViewCell
+				let account = sortedAccounts[indexPath.row]
+				acctCell.accountImage?.image = AppAssets.image(for: account.type)
+				acctCell.accountNameLabel?.text = account.nameForDisplay
+				cell = acctCell
 			}
 			
 		default:

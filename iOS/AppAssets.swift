@@ -7,8 +7,21 @@
 //
 import UIKit
 import RSCore
+import Account
 
 struct AppAssets {
+
+	static var accountLocalImage: UIImage = {
+		return UIImage(named: "accountLocal")!
+	}()
+
+	static var accountFeedbinImage: UIImage = {
+		return UIImage(named: "accountFeedbin")!
+	}()
+
+	static var accountFreshRSSImage: UIImage = {
+		return UIImage(named: "accountFreshRSS")!
+	}()
 
 	static var articleExtractorError: UIImage = {
 		return UIImage(named: "articleExtractorError")!
@@ -161,4 +174,17 @@ struct AppAssets {
 		return UIColor(named: "vibrantTextColor")!
 	}()
 
+	static func image(for accountType: AccountType) -> UIImage? {
+		switch accountType {
+		case .onMyMac:
+			return AppAssets.accountLocalImage
+		case .feedbin:
+			return AppAssets.accountFeedbinImage
+		case .freshRSS:
+			return AppAssets.accountFreshRSSImage
+		default:
+			return nil
+		}
+	}
+	
 }
