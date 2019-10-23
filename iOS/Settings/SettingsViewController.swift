@@ -103,6 +103,7 @@ class SettingsViewController: UITableViewController {
 				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Accounts")
 			} else {
 				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsAccountTableViewCell", for: indexPath) as! SettingsAccountTableViewCell
+				acctCell.applyThemeProperties()
 				let account = sortedAccounts[indexPath.row]
 				acctCell.accountImage?.image = AppAssets.image(for: account.type)
 				acctCell.accountNameLabel?.text = account.nameForDisplay
