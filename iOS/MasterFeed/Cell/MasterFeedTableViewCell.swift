@@ -198,7 +198,7 @@ private extension MasterFeedTableViewCell {
 
 	func updateVibrancy(animated: Bool) {
 		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
-		let duration = animated ? 0.5 : 0.0
+		let duration = animated ? 0.6 : 0.0
 		UIView.animate(withDuration: duration) {
 			self.disclosureButton?.tintColor  = tintColor
 			self.faviconImageView.tintColor = tintColor
