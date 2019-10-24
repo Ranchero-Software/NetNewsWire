@@ -29,6 +29,8 @@ class AccountInspectorViewController: UITableViewController {
 		nameTextField.delegate = self
 		activeSwitch.isOn = account.isActive
 		
+		navigationItem.title = account.nameForDisplay
+		
 		if isModal {
 			let doneBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
 			navigationItem.leftBarButtonItem = doneBarButtonItem
