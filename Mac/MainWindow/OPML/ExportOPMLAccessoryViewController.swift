@@ -9,6 +9,10 @@
 import AppKit
 import Account
 
+protocol ExportOPMLAccessoryViewControllerDelegate: class {
+	func selectedAccountDidChange(_ accessoryViewController: ExportOPMLAccessoryViewController)
+}
+
 class ExportOPMLAccessoryViewController: NSViewController {
 
 	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
@@ -56,6 +60,3 @@ class ExportOPMLAccessoryViewController: NSViewController {
 	}
 }
 
-protocol ExportOPMLAccessoryViewControllerDelegate: class {
-	func selectedAccountDidChange(_ accessoryViewController: ExportOPMLAccessoryViewController)
-}

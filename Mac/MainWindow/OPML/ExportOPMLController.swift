@@ -9,7 +9,7 @@
 import AppKit
 import Account
 
-class ExportOPMLController: ExportOPMLAccessoryViewControllerDelegate {
+class ExportOPMLController {
 
 	weak var savePanel: NSSavePanel?
 
@@ -33,7 +33,9 @@ class ExportOPMLController: ExportOPMLAccessoryViewControllerDelegate {
 		panel.beginSheetModal(for: hostWindow) { result in
 			if result == NSApplication.ModalResponse.OK, let url = panel.url {
 				DispatchQueue.main.async {
-					guard let account = accessoryViewController.selectedAccount else { return }
+					guard let account = accessoryViewController.selectedAccount else {
+						return
+					}
 					let filename = url.lastPathComponent
 					let opmlString = OPMLExporter.OPMLString(with: account, title: filename)
 					do {
@@ -45,22 +47,31 @@ class ExportOPMLController: ExportOPMLAccessoryViewControllerDelegate {
 				}
 			}
 		}
-		
 	}
+}
 
-	private func updateNameFieldStringValueIfAppropriate(savePanel panel: NSSavePanel, from accessoryViewController: ExportOPMLAccessoryViewController, force: Bool = false) {
+extension ExportOPMLController: ExportOPMLAccessoryViewControllerDelegate {
 
-		if !force && !panel.nameFieldStringValue.hasPrefix("Subscriptions-") { return }
-
-		guard let account = accessoryViewController.selectedAccount else { return }
-		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
-		panel.nameFieldStringValue = "Subscriptions-\(accountName).opml"
-
-	}
-
-	internal func selectedAccountDidChange(_ accessoryViewController: ExportOPMLAccessoryViewController) {
+	func selectedAccountDidChange(_ accessoryViewController: ExportOPMLAccessoryViewController) {
 		if let savePanel = savePanel {
 			self.updateNameFieldStringValueIfAppropriate(savePanel: savePanel, from: accessoryViewController)
 		}
+	}
+}
+
+private extension ExportOPMLController {
+
+	func updateNameFieldStringValueIfAppropriate(savePanel panel: NSSavePanel, from accessoryViewController: ExportOPMLAccessoryViewController, force: Bool = false) {
+
+		if !force && !panel.nameFieldStringValue.hasPrefix("Subscriptions-") {
+			return
+		}
+
+		guard let account = accessoryViewController.selectedAccount else {
+			return
+		}
+		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
+		panel.nameFieldStringValue = "Subscriptions-\(accountName).opml"
+
 	}
 }
