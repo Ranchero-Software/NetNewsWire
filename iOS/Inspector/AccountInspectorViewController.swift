@@ -1,5 +1,5 @@
 //
-//  DetailAccountViewController.swift
+//  AccountInspectorViewController.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 5/17/19.
@@ -9,11 +9,14 @@
 import UIKit
 import Account
 
-class DetailAccountViewController: UITableViewController {
+class AccountInspectorViewController: UITableViewController {
+
+	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 
 	@IBOutlet weak var nameTextField: UITextField!
 	@IBOutlet weak var activeSwitch: UISwitch!
 	
+	var isModal = false
 	weak var account: Account?
 	
     override func viewDidLoad() {
@@ -25,18 +28,30 @@ class DetailAccountViewController: UITableViewController {
 		nameTextField.text = account.name
 		nameTextField.delegate = self
 		activeSwitch.isOn = account.isActive
-    }
-
+		
+		navigationItem.title = account.nameForDisplay
+		
+		if isModal {
+			let doneBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
+			navigationItem.leftBarButtonItem = doneBarButtonItem
+		}
+		
+	}
+	
 	override func viewWillDisappear(_ animated: Bool) {
 		account?.name = nameTextField.text
 		account?.isActive = activeSwitch.isOn
+	}
+
+	@objc func done() {
+		dismiss(animated: true)
 	}
 	
 	@IBAction func credentials(_ sender: Any) {
 		guard let account = account else { return }
 		switch account.type {
 		case .feedbin:
-			let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
 			let addViewController = navController.topViewController as! FeedbinAccountViewController
 			addViewController.account = account
 			navController.modalPresentationStyle = .currentContext
@@ -68,7 +83,7 @@ class DetailAccountViewController: UITableViewController {
 	
 }
 
-extension DetailAccountViewController {
+extension AccountInspectorViewController {
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		guard let account = account else { return 0 }
@@ -107,7 +122,7 @@ extension DetailAccountViewController {
 	
 }
 
-extension DetailAccountViewController: UITextFieldDelegate {
+extension AccountInspectorViewController: UITextFieldDelegate {
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()

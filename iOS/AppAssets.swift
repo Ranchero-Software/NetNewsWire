@@ -77,6 +77,10 @@ struct AppAssets {
 		return UIImage(systemName: "doc.on.doc")!
 	}()
 	
+	static var deactivateImage: UIImage = {
+		UIImage(systemName: "minus.circle")!
+	}()
+	
 	static var editImage: UIImage = {
 		UIImage(systemName: "square.and.pencil")!
 	}()

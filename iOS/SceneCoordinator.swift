@@ -793,6 +793,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rootSplitViewController.present(settingsNavController, animated: true)
 	}
 	
+	func showAccountInspector(for account: Account) {
+		let accountInspectorNavController =
+			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
+		let accountInspectorController = accountInspectorNavController.topViewController as! AccountInspectorViewController
+		accountInspectorNavController.modalPresentationStyle = .formSheet
+		accountInspectorNavController.preferredContentSize = AccountInspectorViewController.preferredContentSizeForFormSheetDisplay
+		accountInspectorController.isModal = true
+		accountInspectorController.account = account
+		rootSplitViewController.present(accountInspectorNavController, animated: true)
+	}
+	
 	func showFeedInspector() {
 		guard let feed = timelineFetcher as? Feed else {
 			return
