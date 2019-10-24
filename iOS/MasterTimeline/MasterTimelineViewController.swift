@@ -48,20 +48,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 
-
-		// Setup the Search Controller
-		searchController.delegate = self
-		searchController.searchResultsUpdater = self
-		searchController.obscuresBackgroundDuringPresentation = false
-		searchController.searchBar.delegate = self
-		searchController.searchBar.placeholder = NSLocalizedString("Search Articles", comment: "Search Articles")
-		searchController.searchBar.scopeButtonTitles = [
-			NSLocalizedString("Here", comment: "Here"),
-			NSLocalizedString("All Articles", comment: "All Articles")
-		]
-		navigationItem.searchController = searchController
-		definesPresentationContext = true
-
 		// Setup the Refresh Control
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -83,6 +69,21 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		updateProgressIndicatorIfNeeded()
+	}
+	
+	override func viewWillLayoutSubviews() {
+		// If you setup the Search Controller in viewWillLayoutSubviews it won't show by default on creation
+		searchController.delegate = self
+		searchController.searchResultsUpdater = self
+		searchController.obscuresBackgroundDuringPresentation = false
+		searchController.searchBar.delegate = self
+		searchController.searchBar.placeholder = NSLocalizedString("Search Articles", comment: "Search Articles")
+		searchController.searchBar.scopeButtonTitles = [
+			NSLocalizedString("Here", comment: "Here"),
+			NSLocalizedString("All Articles", comment: "All Articles")
+		]
+		navigationItem.searchController = searchController
+		definesPresentationContext = true
 	}
 	
 	// MARK: Actions
