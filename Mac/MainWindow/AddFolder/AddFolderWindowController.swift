@@ -10,7 +10,7 @@ import AppKit
 import Articles
 import Account
 
-class AddFolderWindowController : NSWindowController, NSTextFieldDelegate {
+class AddFolderWindowController : NSWindowController {
     
     @IBOutlet var folderNameTextField: NSTextField!
     @IBOutlet var accountPopupButton: NSPopUpButton!
@@ -79,20 +79,23 @@ class AddFolderWindowController : NSWindowController, NSTextFieldDelegate {
 	// MARK: Actions
 	
     @IBAction func cancel(_ sender: Any?) {
-        
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
     }
     
     @IBAction func addFolder(_ sender: Any?) {
-        
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
     }
+}
 
-	// MARK: Text Field Delegate
+// MARK: Text Field Delegate
+
+extension AddFolderWindowController: NSTextFieldDelegate {
 
 	func controlTextDidChange(_ obj: Notification) {
-		if let value = (obj.object as? NSTextField)?.stringValue {
-			addFolderButton.isEnabled = !value.isEmpty
+		guard let folderName = (obj.object as? NSTextField)?.stringValue else {
+			addFolderButton.isEnabled = false
+			return
 		}
+		addFolderButton.isEnabled = !folderName.isEmpty
 	}
 }
