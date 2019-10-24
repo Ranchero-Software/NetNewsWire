@@ -542,15 +542,15 @@ extension MasterFeedViewController: UIContextMenuInteractionDelegate {
 
 		guard let sectionIndex = interaction.view?.tag,
 			let sectionNode = coordinator.rootNode.childAtIndex(sectionIndex),
-			let account = sectionNode.representedObject as? Account,
-			let headerView = interaction.view as? MasterFeedTableViewSectionHeader
+			let account = sectionNode.representedObject as? Account
 				else {
 					return nil
 		}
 		
 		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { suggestedActions in
 			let accountInfoAction = self.getAccountInfoAction(account: account)
-            return UIMenu(title: "", children: [accountInfoAction])
+			let deactivateAction = self.deactivateAccountAction(account: account)
+            return UIMenu(title: "", children: [accountInfoAction, deactivateAction])
         }
     }
 }
@@ -874,6 +874,14 @@ private extension MasterFeedViewController {
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
 		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
 			self?.coordinator.showAccountInspector(for: account)
+		}
+		return action
+	}
+
+	func deactivateAccountAction(account: Account) -> UIAction {
+		let title = NSLocalizedString("Deactivate", comment: "Deactivate")
+		let action = UIAction(title: title, image: AppAssets.deactivateImage) { action in
+			account.isActive = false
 		}
 		return action
 	}
