@@ -66,8 +66,12 @@ struct FeedInspectorView : View {
 					Text(verbatim: self.viewModel.feedLinkURL)
 				}
 			}
+			.onDisappear { self.viewModel.save() }
 			.navigationBarTitle(Text(verbatim: self.viewModel.nameForDisplay), displayMode: .inline)
-			.navigationBarItems(leading: Button(action: { self.viewController?.dismiss(animated: true) }) { Text("Done") } )
+			.navigationBarItems(leading: Button(action: {
+				self.viewModel.save()
+				self.viewController?.dismiss(animated: true)
+			}) { Text("Done") } )
 		}
     }
 	
@@ -77,9 +81,11 @@ struct FeedInspectorView : View {
 		
 		let objectWillChange = ObservableObjectPublisher()
 		let feed: Feed
+		@Published var name: String
 		
 		init(feed: Feed) {
 			self.feed = feed
+			self.name = feed.nameForDisplay
 			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 		}
 		
@@ -95,20 +101,6 @@ struct FeedInspectorView : View {
 		
 		var nameForDisplay: String {
 			return feed.nameForDisplay
-		}
-		
-		var name: String {
-			get {
-				return feed.editedName ?? ""
-			}
-			set {
-				objectWillChange.send()
-				if newValue.isEmpty {
-					feed.editedName = nil
-				} else {
-					feed.editedName = newValue
-				}
-			}
 		}
 		
 		var isNotifyAboutNewArticles: Bool {
@@ -143,6 +135,12 @@ struct FeedInspectorView : View {
 			objectWillChange.send()
 		}
 
+		func save() {
+			if name != nameForDisplay {
+				feed.editedName = name.isEmpty ? nil : name
+			}
+		}
+		
 	}
 
 }
