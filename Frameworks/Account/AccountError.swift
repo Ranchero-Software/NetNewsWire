@@ -28,7 +28,7 @@ public enum AccountError: LocalizedError {
 			switch error {
 			case TransportError.httpError(let status):
 				if status == 401 {
-					let localizedText = NSLocalizedString("Your \"%@\" credentials are invalid or expired.", comment: "Invalid or expired")
+					let localizedText = NSLocalizedString("Your “%@” credentials are invalid or expired.", comment: "Invalid or expired")
 					return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay) as String
 				} else {
 					return unknownError(error, account)
@@ -62,7 +62,7 @@ public enum AccountError: LocalizedError {
 	}
 	
 	private func unknownError(_ error: Error, _ account: Account) -> String {
-		let localizedText = NSLocalizedString("An error occurred while processing the \"%@\" account: %@", comment: "Unknown error")
+		let localizedText = NSLocalizedString("An error occurred while processing the “%@” account: %@", comment: "Unknown error")
 		return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay, error.localizedDescription) as String
 	}
 }

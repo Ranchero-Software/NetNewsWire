@@ -7,8 +7,25 @@
 //
 import UIKit
 import RSCore
+import Account
 
 struct AppAssets {
+
+	static var accountLocalPadImage: UIImage = {
+		return UIImage(named: "accountLocalPad")!
+	}()
+
+	static var accountLocalPhoneImage: UIImage = {
+		return UIImage(named: "accountLocalPhone")!
+	}()
+
+	static var accountFeedbinImage: UIImage = {
+		return UIImage(named: "accountFeedbin")!
+	}()
+
+	static var accountFreshRSSImage: UIImage = {
+		return UIImage(named: "accountFreshRSS")!
+	}()
 
 	static var articleExtractorError: UIImage = {
 		return UIImage(named: "articleExtractorError")!
@@ -140,10 +157,6 @@ struct AppAssets {
 		return UIImage(systemName: "star.fill")!
 	}()
 
-	static var tableViewCellHighlightedTextColor: UIColor = {
-		return UIColor(named: "tableViewCellHighlightedTextColor")!
-	}()
-
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
@@ -160,5 +173,26 @@ struct AppAssets {
 	static var unreadFeedImage: UIImage = {
 		return UIImage(systemName: "largecircle.fill.circle")!
 	}()
+	
+	static var vibrantTextColor: UIColor = {
+		return UIColor(named: "vibrantTextColor")!
+	}()
+
+	static func image(for accountType: AccountType) -> UIImage? {
+		switch accountType {
+		case .onMyMac:
+			if UIDevice.current.userInterfaceIdiom == .pad {
+				return AppAssets.accountLocalPadImage
+			} else {
+				return AppAssets.accountLocalPhoneImage
+			}
+		case .feedbin:
+			return AppAssets.accountFeedbinImage
+		case .freshRSS:
+			return AppAssets.accountFreshRSSImage
+		default:
+			return nil
+		}
+	}
 	
 }

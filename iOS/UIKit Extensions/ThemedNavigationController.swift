@@ -34,10 +34,10 @@ class ThemedNavigationController: UINavigationController {
 		
 		if traitCollection.userInterfaceStyle == .dark {
 			navigationBar.standardAppearance = UINavigationBarAppearance()
-			navigationBar.tintColor = view.tintColor
+			navigationBar.tintColor = AppAssets.primaryAccentColor
 			toolbar.standardAppearance = UIToolbarAppearance()
 			toolbar.compactAppearance = UIToolbarAppearance()
-			toolbar.tintColor = view.tintColor
+			toolbar.tintColor = AppAssets.primaryAccentColor
 		} else {
 			let navigationAppearance = UINavigationBarAppearance()
 			navigationAppearance.backgroundColor = AppAssets.barBackgroundColor

@@ -117,7 +117,10 @@ class ArticleViewController: UIViewController {
 
 			// Even though page.html should be loaded into this webview, we have to do it again
 			// to work around this bug: http://www.openradar.me/22855188
-			webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
+			let url = Bundle.main.url(forResource: "page", withExtension: "html")!
+			webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+//			let request = URLRequest(url: url)
+//			webView.load(request)
 
 		}
 		

@@ -12,21 +12,10 @@ import RSCore
 
 struct DefaultFeedsImporter {
 	
-	static func importIfNeeded(_ isFirstRun: Bool, account: Account) {
-		guard shouldImportDefaultFeeds(isFirstRun) else {
-			return
-		}
-
+	static func importDefaultFeeds(account: Account) {
 		appDelegate.logDebugMessage("Importing default feeds.")
 		let defaultFeedsURL = Bundle.main.url(forResource: "DefaultFeeds", withExtension: "opml")!
 		AccountManager.shared.defaultAccount.importOPML(defaultFeedsURL) { result in }
-	}
-
-	private static func shouldImportDefaultFeeds(_ isFirstRun: Bool) -> Bool {
-		if !isFirstRun || AccountManager.shared.anyAccountHasAtLeastOneFeed() {
-			return false
-		}
-		return true
 	}
 }
 

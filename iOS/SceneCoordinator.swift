@@ -8,7 +8,6 @@
 
 import UIKit
 import UserNotifications
-import SwiftUI
 import Account
 import Articles
 import RSCore
@@ -328,6 +327,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			selectFirstUnreadInAllUnread()
 		case .readArticle:
 			handleReadArticle(activity.userInfo)
+		case .addFeedIntent:
+			showAdd(.feed)
 		}
 	}
 	
@@ -784,9 +785,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showSettings() {
-		rootSplitViewController.present(style: .formSheet) {
-			SettingsView(viewModel: SettingsView.ViewModel()).environment(\.sceneCoordinator, self)
-		}
+		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
+		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
+		settingsNavController.modalPresentationStyle = .formSheet
+		settingsNavController.preferredContentSize = SettingsViewController.preferredContentSizeForFormSheetDisplay
+		settingsViewController.presentingParentController = rootSplitViewController
+		rootSplitViewController.present(settingsNavController, animated: true)
 	}
 	
 	func showFeedInspector() {
@@ -946,6 +950,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		if viewController === masterTimelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed && !isArticleViewControllerPending {
 			stopArticleExtractor()
 			currentArticle = nil
+			masterTimelineViewController?.updateArticleSelection(animated: animated)
 			activityManager.invalidateReading()
 			return
 		}
@@ -1693,21 +1698,4 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
-}
-
-// MARK: SwiftUI
-
-struct SceneCoordinatorHolder {
-	weak var value: SceneCoordinator?
-}
-
-struct SceneCoordinatorKey: EnvironmentKey {
-	static var defaultValue: SceneCoordinatorHolder { return SceneCoordinatorHolder(value: nil ) }
-}
-
-extension EnvironmentValues {
-	var sceneCoordinator: SceneCoordinator? {
-		get { return self[SceneCoordinatorKey.self].value }
-		set { self[SceneCoordinatorKey.self].value = newValue }
-	}
 }

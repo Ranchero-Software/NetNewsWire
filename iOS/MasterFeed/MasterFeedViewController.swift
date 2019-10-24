@@ -11,7 +11,6 @@ import Account
 import Articles
 import RSCore
 import RSTree
-import SwiftUI
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
@@ -68,7 +67,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	override func viewWillAppear(_ animated: Bool) {
 		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
-		clearsSelectionOnViewWillAppear = coordinator.isRootSplitCollapsed
 		applyChanges(animate: false)
 		super.viewWillAppear(animated)
 	}
@@ -451,7 +449,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline() {
 			if adjustScroll {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
 			} else {
 				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 			}
@@ -462,7 +460,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		if dataSource.snapshot().numberOfItems > 0 {
 			if let indexPath = coordinator.currentFeedIndexPath {
 				if tableView.indexPathForSelectedRow != indexPath {
-					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true, deselect: coordinator.isRootSplitCollapsed)
+					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
 				}
 			} else {
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)

@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-class MasterTimelineTableViewCell: NNWTableViewCell {
+class MasterTimelineTableViewCell: VibrantTableViewCell {
 	
 	private let titleView = MasterTimelineTableViewCell.multiLineUILabel()
 	private let summaryView = MasterTimelineTableViewCell.multiLineUILabel()
@@ -37,7 +37,7 @@ class MasterTimelineTableViewCell: NNWTableViewCell {
 	override func applyThemeProperties() {
 		super.applyThemeProperties()
 
-		let highlightedTextColor = AppAssets.tableViewCellHighlightedTextColor
+		let highlightedTextColor = AppAssets.vibrantTextColor
 		
 		titleView.highlightedTextColor = highlightedTextColor
 		summaryView.highlightedTextColor = highlightedTextColor
@@ -187,30 +187,12 @@ private extension MasterTimelineTableViewCell {
 	}
 	
 	func updateUnreadIndicator() {
-		let hide = cellData.read || cellData.starred
-		self.unreadIndicatorView.isHidden = hide
-		self.unreadIndicatorView.frame.size = !hide ? CGSize.zero : MasterTimelineDefaultCellLayout.unreadCircleSize
-		UIView.animate(
-			withDuration: 0.5,
-			delay: 0.0,
-			usingSpringWithDamping: 0.5,
-			initialSpringVelocity: 0.2,
-			animations: {
-				self.unreadIndicatorView.frame.size = !hide ? MasterTimelineDefaultCellLayout.unreadCircleSize : CGSize.zero
-			})
+		showOrHideView(unreadIndicatorView, cellData.read || cellData.starred)
+		unreadIndicatorView.setNeedsDisplay()
 	}
 	
 	func updateStarView() {
-		self.starView.isHidden = !self.cellData.starred
-		self.starView.frame.size = self.cellData.starred ? CGSize.zero : MasterTimelineDefaultCellLayout.starSize
-		UIView.animate(
-			withDuration: 0.5,
-			delay: 0.0,
-			usingSpringWithDamping: 0.5,
-			initialSpringVelocity: 0.2,
-			animations: {
-				self.starView.frame.size = self.cellData.starred ? MasterTimelineDefaultCellLayout.starSize : CGSize.zero
-			})
+		showOrHideView(starView, !cellData.starred)
 	}
 	
 	func updateAvatar() {
@@ -249,6 +231,10 @@ private extension MasterTimelineTableViewCell {
 		if view.isHidden {
 			view.isHidden = false
 		}
+	}
+	
+	func showOrHideView(_ view: UIView, _ shouldHide: Bool) {
+		shouldHide ? hideView(view) : showView(view)
 	}
 	
 	func updateSubviews() {

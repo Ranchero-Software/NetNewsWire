@@ -1,0 +1,9 @@
+#include "./NetNewsWire_mac_target_common.xcconfig"
+
+// Settings common to both the Mac Direct and Mac App Store targets
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
+INFOPLIST_FILE = Mac/Resources/Info.plist
+PRODUCT_NAME = NetNewsWire
+SWIFT_OBJC_BRIDGING_HEADER = Mac/NetNewsWire-Bridging-Header.h
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks

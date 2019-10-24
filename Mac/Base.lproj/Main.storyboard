@@ -30,7 +30,7 @@
                                         <menuItem title="Check for Updates…" id="1nF-7O-aKU">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="checkForUpdates:" target="5Wg-Cw-OOw" id="vV0-oc-v5a"/>
+                                                <action selector="checkForUpdates:" target="Ady-hI-5gd" id="htt-e3-mEy"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>
@@ -92,7 +92,7 @@
                                                 <action selector="importOPMLFromFile:" target="Ady-hI-5gd" id="eGY-fm-uvK"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Import NNW 3 Subscriptions ..." id="ely-yi-STg">
+                                        <menuItem title="Import NNW 3 Subscriptions…" id="ely-yi-STg">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="mu3-gN-7uA"/>
@@ -623,7 +623,6 @@
                         </menuItem>
                     </items>
                 </menu>
-                <customObject id="5Wg-Cw-OOw" customClass="SUUpdater"/>
             </objects>
             <point key="canvasLocation" x="-54" y="-144"/>
         </scene>

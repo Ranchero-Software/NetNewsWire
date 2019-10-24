@@ -17,6 +17,7 @@ struct MasterFeedTableViewCellLayout {
 	private static let unreadCountMarginLeft = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginRight = CGFloat(integerLiteral: 16)
 	private static let disclosureButtonSize = CGSize(width: 44, height: 44)
+	private static let verticalPadding = CGFloat(integerLiteral: 11)
 
 	private static let minRowHeight = CGFloat(integerLiteral: 44)
 	
@@ -53,7 +54,7 @@ struct MasterFeedTableViewCellLayout {
 		var rFavicon = CGRect.zero
 		if !shouldShowDisclosure {
 			let x = bounds.origin.x + ((MasterFeedTableViewCellLayout.disclosureButtonSize.width - MasterFeedTableViewCellLayout.imageSize.width) / 2)
-			let y = UIFontMetrics.default.scaledValue(for: CGFloat(integerLiteral: 4))
+			let y = UIFontMetrics.default.scaledValue(for: MasterFeedTableViewCellLayout.verticalPadding)
 			rFavicon = CGRect(x: x, y: y, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
 		}
 
@@ -82,30 +83,25 @@ struct MasterFeedTableViewCellLayout {
 		let labelSizeInfo = MultilineUILabelSizer.size(for: label.text ?? "", font: label.font, numberOfLines: 0, width: Int(floor(labelWidth)))
 		
 		let rLabelx = bounds.minX + MasterFeedTableViewCellLayout.disclosureButtonSize.width
-		var rLabel = CGRect(x: rLabelx, y: 0.0, width: labelSizeInfo.size.width, height: labelSizeInfo.size.height)
+		let rLabely = UIFontMetrics.default.scaledValue(for: MasterFeedTableViewCellLayout.verticalPadding)
+		let rLabel = CGRect(x: rLabelx, y: rLabely, width: labelSizeInfo.size.width, height: labelSizeInfo.size.height)
 		
 		// Determine cell height
-		var cellHeight = [rFavicon, rLabel, rUnread, rDisclosure].maxY()
+		let paddedLabelHeight = rLabel.maxY + UIFontMetrics.default.scaledValue(for: MasterFeedTableViewCellLayout.verticalPadding)
+		let maxGraphicsHeight = [rFavicon, rUnread, rDisclosure].maxY()
+		var cellHeight = max(paddedLabelHeight, maxGraphicsHeight)
 		if cellHeight < MasterFeedTableViewCellLayout.minRowHeight {
 			cellHeight = MasterFeedTableViewCellLayout.minRowHeight
 		}
 		
 		// Center in Cell
 		let newBounds = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.width, height: cellHeight)
-
-		if !shouldShowDisclosure && labelSizeInfo.numberOfLinesUsed == 1 {
-			rFavicon = MasterFeedTableViewCellLayout.centerVertically(rFavicon, newBounds)
-		}
-		
 		if !unreadCountIsHidden {
 			rUnread = MasterFeedTableViewCellLayout.centerVertically(rUnread, newBounds)
 		}
-
 		if shouldShowDisclosure {
 			rDisclosure = MasterFeedTableViewCellLayout.centerVertically(rDisclosure, newBounds)
 		}
-
-		rLabel = MasterFeedTableViewCellLayout.centerVertically(rLabel, newBounds)
 
 		//  Assign the properties
 		self.height = cellHeight

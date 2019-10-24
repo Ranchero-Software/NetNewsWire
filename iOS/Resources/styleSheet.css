@@ -159,6 +159,20 @@ sub {
 	padding-top: 56.25%;
 }
 
+.activityIndicatorWrap {
+	position: relative;
+}
+
+.activityIndicator {
+	z-index: 1;
+	width: 64px;
+	height: 64px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
 .iframeWrap iframe {
 	position: absolute;
 	top: 0;

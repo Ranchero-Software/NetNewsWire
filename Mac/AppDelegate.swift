@@ -5,6 +5,7 @@
 //  Created by Brent Simmons on 7/11/15.
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
+
 import AppKit
 import UserNotifications
 import Articles
@@ -12,14 +13,21 @@ import RSTree
 import RSWeb
 import Account
 import RSCore
-#if TEST
+
+// If we're not going to import Sparkle, provide dummy protocols to make it easy
+// for AppDelegate to comply
+#if MAC_APP_STORE || TEST
+protocol SPUStandardUserDriverDelegate {}
+protocol SPUUpdaterDelegate {}
+#else
 import Sparkle
 #endif
 
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider {
+class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate
+{
 
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
@@ -62,7 +70,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var importOPMLController: ImportOPMLWindowController?
-	private var importNNW3Controller: ImportNNW3WindowController?
 	private var exportOPMLController: ExportOPMLWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
@@ -70,6 +77,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private let log = Log()
 	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
 	private let appMovementMonitor = RSAppMovementMonitor()
+	#if !MAC_APP_STORE && !TEST
+	private var softwareUpdater: SPUUpdater!
+	#endif
 
 	override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
@@ -114,18 +124,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 	
 	// MARK: - NSApplicationDelegate
+	
 	func applicationWillFinishLaunching(_ notification: Notification) {
 		installAppleEventHandlers()
-		#if TEST
-			// Don't prompt for updates while running automated tests
-			SUUpdater.shared()?.automaticallyChecksForUpdates = false
-		#endif
 	}
 	
 	func applicationDidFinishLaunching(_ note: Notification) {
 
-		#if MAC_APP_STORE
+		#if MAC_APP_STORE || TEST
 			checkForUpdatesMenuItem.isHidden = true
+		#else
+			// Initialize Sparkle...
+			let hostBundle = Bundle.main
+			let updateDriver = SPUStandardUserDriver(hostBundle: hostBundle, delegate: self)
+			self.softwareUpdater = SPUUpdater(hostBundle: hostBundle, applicationBundle: hostBundle, userDriver: updateDriver, delegate: self)
+
+			do {
+				try self.softwareUpdater.start()
+			}
+			catch {
+				NSLog("Failed to start software updater with error: \(error)")
+			}
 		#endif
 		
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
@@ -136,9 +155,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			logDebugMessage("Is first run.")
 		}
 		let localAccount = AccountManager.shared.defaultAccount
-		NNW3FeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
-		DefaultFeedsImporter.importIfNeeded(isFirstRun, account: localAccount)
-		
+
+		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
+			// Import feeds. Either old NNW 3 feeds or the default feeds.
+			if !NNW3ImportController.importSubscriptionsIfFileExists(account: localAccount) {
+				DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
+			}
+		}
+
 		let tempDirectory = NSTemporaryDirectory()
 		let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
 		let cacheFolder = (tempDirectory as NSString).appendingPathComponent(bundleIdentifier)
@@ -249,7 +273,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	func applicationDidResignActive(_ notification: Notification) {
 
-		TimelineStringFormatter.emptyCaches()
+		ArticleStringFormatter.emptyCaches()
 
 		saveState()
 	}
@@ -452,9 +476,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
-		
-		importNNW3Controller = ImportNNW3WindowController()
-		importNNW3Controller?.runSheetOnWindow(mainWindowController!.window!)
+		NNW3ImportController.askUserToImportNNW3Subscriptions(window: mainWindowController!.window!)
 	}
 	
 	@IBAction func exportOPML(_ sender: Any?) {
@@ -567,7 +589,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func groupByFeedToggled(_ sender: NSMenuItem) {		
 		AppDefaults.timelineGroupByFeed.toggle()
 	}
-	
+
+	@IBAction func checkForUpdates(_ sender: Any?) {
+		#if !MAC_APP_STORE && !TEST
+			self.softwareUpdater.checkForUpdates()
+		#endif
+	}
+
 }
 
 // MARK: - Debug Menu

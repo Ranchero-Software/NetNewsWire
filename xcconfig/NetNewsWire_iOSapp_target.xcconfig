@@ -32,19 +32,10 @@ PROVISIONING_PROFILE_SPECIFIER =
 
 #include? "../../SharedXcodeSettings/ProjectSettings.xcconfig"
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
-
-ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
-ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
-CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-
-COMBINE_HIDPI_IMAGES = YES
-FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Frameworks/Vendor
-GCC_C_LANGUAGE_STANDARD = gnu11;
+#include "./common/NetNewsWire_ios_target_common.xcconfig"
 
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks
 INFOPLIST_FILE = iOS/Resources/Info.plist
 CODE_SIGN_ENTITLEMENTS = iOS/Resources/NetNewsWire.entitlements
 PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS
 PRODUCT_NAME = NetNewsWire
-SDKROOT = iphoneos;
-TARGETED_DEVICE_FAMILY = 1,2

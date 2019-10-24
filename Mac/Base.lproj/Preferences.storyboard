@@ -234,17 +234,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="1hh-8U-B8b" name="value" keyPath="automaticallyChecksForUpdates" id="cge-fo-09y">
-                                                <dictionary key="options">
-                                                    <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
-                                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
-                                                    <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                                    <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                                    <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                                    <integer key="NSNullPlaceholder" value="0"/>
-                                                    <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
-                                                </dictionary>
-                                            </binding>
+                                            <binding destination="mV3-0T-XFc" name="value" keyPath="values.SUEnableAutomaticChecks" id="PwC-5l-EQR"/>
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q6M-Iz-Ypx">
@@ -293,7 +283,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="checkForUpdates:" target="1hh-8U-B8b" id="RX4-6c-Osn"/>
+                                            <action selector="checkForUpdates:" target="VX1-M3-K0J" id="WVQ-XY-Czt"/>
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="SUN-k3-ZEb">
@@ -382,8 +372,8 @@
                     </connections>
                 </viewController>
                 <customObject id="VX1-M3-K0J" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <customObject id="1hh-8U-B8b" customClass="SUUpdater"/>
                 <userDefaultsController id="Y8q-yi-F5Z"/>
+                <userDefaultsController id="mV3-0T-XFc"/>
             </objects>
             <point key="canvasLocation" x="-29" y="455.5"/>
         </scene>

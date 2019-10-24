@@ -31,13 +31,8 @@ PROVISIONING_PROFILE_SPECIFIER = NetNewsWire
 //
 
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
-#include "./common/NetNewsWire_mac_target_common.xcconfig"
+#include "./common/NetNewsWire_macapp_target_common.xcconfig"
 
-ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO
-ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
 CODE_SIGN_ENTITLEMENTS = Mac/Resources/NetNewsWire.entitlements
-INFOPLIST_FILE = Mac/Resources/Info.plist
-LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
 PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen
-PRODUCT_NAME = NetNewsWire
-SWIFT_OBJC_BRIDGING_HEADER = Mac/NetNewsWire-Bridging-Header.h
+
