@@ -1,5 +1,5 @@
 //
-//  AddLocalAccountViewController.swift
+//  LocalAccountViewController.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 5/19/19.
@@ -9,7 +9,7 @@
 import UIKit
 import Account
 
-class AddLocalAccountViewController: UITableViewController {
+class LocalAccountViewController: UITableViewController {
 
 	@IBOutlet weak var nameTextField: UITextField!
 	
@@ -35,7 +35,7 @@ class AddLocalAccountViewController: UITableViewController {
 	
 }
 
-extension AddLocalAccountViewController: UITextFieldDelegate {
+extension LocalAccountViewController: UITextFieldDelegate {
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()

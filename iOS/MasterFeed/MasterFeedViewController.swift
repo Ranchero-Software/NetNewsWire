@@ -182,6 +182,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
 
+		if section != 0 {
+			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
+		}
+		
 		return headerView
 		
 	}
@@ -531,6 +535,26 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 }
 
+// MARK: UIContextMenuInteractionDelegate
+
+extension MasterFeedViewController: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+
+		guard let sectionIndex = interaction.view?.tag,
+			let sectionNode = coordinator.rootNode.childAtIndex(sectionIndex),
+			let account = sectionNode.representedObject as? Account,
+			let headerView = interaction.view as? MasterFeedTableViewSectionHeader
+				else {
+					return nil
+		}
+		
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { suggestedActions in
+			let accountInfoAction = self.getAccountInfoAction(account: account)
+            return UIMenu(title: "", children: [accountInfoAction])
+        }
+    }
+}
+
 // MARK: MasterTableViewCellDelegate
 
 extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
@@ -842,6 +866,14 @@ private extension MasterFeedViewController {
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
 		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
 			self?.coordinator.showFeedInspector(for: feed)
+		}
+		return action
+	}
+
+	func getAccountInfoAction(account: Account) -> UIAction {
+		let title = NSLocalizedString("Get Info", comment: "Get Info")
+		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
+			self?.coordinator.showAccountInspector(for: account)
 		}
 		return action
 	}

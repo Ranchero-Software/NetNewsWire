@@ -32,6 +32,7 @@ class SettingsViewController: UITableViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsAccountTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsAccountTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -130,7 +131,7 @@ class SettingsViewController: UITableViewController {
 				let controller = UIStoryboard.settings.instantiateController(ofType: AddAccountViewController.self)
 				self.navigationController?.pushViewController(controller, animated: true)
 			} else {
-				let controller = UIStoryboard.settings.instantiateController(ofType: DetailAccountViewController.self)
+				let controller = UIStoryboard.inspector.instantiateController(ofType: AccountInspectorViewController.self)
 				controller.account = sortedAccounts[indexPath.row]
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
@@ -248,6 +249,10 @@ class SettingsViewController: UITableViewController {
 	}
 	
 	@objc func accountsDidChange() {
+		tableView.reloadData()
+	}
+
+	@objc func displayNameDidChange() {
 		tableView.reloadData()
 	}
 

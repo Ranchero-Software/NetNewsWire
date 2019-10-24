@@ -84,6 +84,8 @@
 		516A093723609A3600EAE89B /* SettingsAccountTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 516A091D23609A3600EAE89B /* SettingsAccountTableViewCell.xib */; };
 		516A09392360A2AE00EAE89B /* SettingsAccountTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516A09382360A2AE00EAE89B /* SettingsAccountTableViewCell.swift */; };
 		516A093B2360A4A000EAE89B /* SettingsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */; };
+		516A09402361240900EAE89B /* Account.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 516A093F2361240900EAE89B /* Account.storyboard */; };
+		516A09422361248000EAE89B /* Inspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 516A09412361248000EAE89B /* Inspector.storyboard */; };
 		51707439232AA97100A461A3 /* ShareFolderPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51707438232AA97100A461A3 /* ShareFolderPickerController.swift */; };
 		5170743A232AABFC00A461A3 /* FlattenedAccountFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452812265093600C03939 /* FlattenedAccountFolderPickerData.swift */; };
 		517630042336215100E15FFF /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
@@ -109,9 +111,9 @@
 		519D740623243CC0008BB345 /* RefreshInterval-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519D740523243CC0008BB345 /* RefreshInterval-Extensions.swift */; };
 		519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E743422C663F900A78E47 /* SceneDelegate.swift */; };
 		51A16997235E10D700EB091F /* RefreshIntervalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A1698D235E10D600EB091F /* RefreshIntervalViewController.swift */; };
-		51A16999235E10D700EB091F /* AddLocalAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A1698F235E10D600EB091F /* AddLocalAccountViewController.swift */; };
+		51A16999235E10D700EB091F /* LocalAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A1698F235E10D600EB091F /* LocalAccountViewController.swift */; };
 		51A1699A235E10D700EB091F /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51A16990235E10D600EB091F /* Settings.storyboard */; };
-		51A1699B235E10D700EB091F /* DetailAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16991235E10D600EB091F /* DetailAccountViewController.swift */; };
+		51A1699B235E10D700EB091F /* AccountInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16991235E10D600EB091F /* AccountInspectorViewController.swift */; };
 		51A1699C235E10D700EB091F /* AddAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16992235E10D600EB091F /* AddAccountViewController.swift */; };
 		51A1699D235E10D700EB091F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16993235E10D600EB091F /* SettingsViewController.swift */; };
 		51A1699F235E10D700EB091F /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16995235E10D600EB091F /* AboutViewController.swift */; };
@@ -1242,6 +1244,8 @@
 		516A091D23609A3600EAE89B /* SettingsAccountTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsAccountTableViewCell.xib; sourceTree = "<group>"; };
 		516A09382360A2AE00EAE89B /* SettingsAccountTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountTableViewCell.swift; sourceTree = "<group>"; };
 		516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsTableViewCell.xib; sourceTree = "<group>"; };
+		516A093F2361240900EAE89B /* Account.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Account.storyboard; sourceTree = "<group>"; };
+		516A09412361248000EAE89B /* Inspector.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Inspector.storyboard; sourceTree = "<group>"; };
 		51707438232AA97100A461A3 /* ShareFolderPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerController.swift; sourceTree = "<group>"; };
 		517630032336215100E15FFF /* main.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		517630222336657E00E15FFF /* ArticleViewControllerWebViewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewControllerWebViewProvider.swift; sourceTree = "<group>"; };
@@ -1263,9 +1267,9 @@
 		519D740523243CC0008BB345 /* RefreshInterval-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RefreshInterval-Extensions.swift"; sourceTree = "<group>"; };
 		519E743422C663F900A78E47 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		51A1698D235E10D600EB091F /* RefreshIntervalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshIntervalViewController.swift; sourceTree = "<group>"; };
-		51A1698F235E10D600EB091F /* AddLocalAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddLocalAccountViewController.swift; sourceTree = "<group>"; };
+		51A1698F235E10D600EB091F /* LocalAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalAccountViewController.swift; sourceTree = "<group>"; };
 		51A16990235E10D600EB091F /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
-		51A16991235E10D600EB091F /* DetailAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailAccountViewController.swift; sourceTree = "<group>"; };
+		51A16991235E10D600EB091F /* AccountInspectorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountInspectorViewController.swift; sourceTree = "<group>"; };
 		51A16992235E10D600EB091F /* AddAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddAccountViewController.swift; sourceTree = "<group>"; };
 		51A16993235E10D600EB091F /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		51A16995235E10D600EB091F /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
@@ -1668,6 +1672,8 @@
 		5123DB95233EC69300282CC9 /* Inspector */ = {
 			isa = PBXGroup;
 			children = (
+				516A09412361248000EAE89B /* Inspector.storyboard */,
+				51A16991235E10D600EB091F /* AccountInspectorViewController.swift */,
 				5123DB9E233EC6FD00282CC9 /* FeedInspectorView.swift */,
 			);
 			path = Inspector;
@@ -1750,6 +1756,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		516A093E236123A800EAE89B /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				516A093F2361240900EAE89B /* Account.storyboard */,
+				51A1698F235E10D600EB091F /* LocalAccountViewController.swift */,
+				51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
 		5183CCDB226F1EEB0010922C /* Progress */ = {
 			isa = PBXGroup;
 			children = (
@@ -1775,9 +1791,6 @@
 				51A16990235E10D600EB091F /* Settings.storyboard */,
 				51A16995235E10D600EB091F /* AboutViewController.swift */,
 				51A16992235E10D600EB091F /* AddAccountViewController.swift */,
-				51A1698F235E10D600EB091F /* AddLocalAccountViewController.swift */,
-				51A16991235E10D600EB091F /* DetailAccountViewController.swift */,
-				51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */,
 				51A1698D235E10D600EB091F /* RefreshIntervalViewController.swift */,
 				516A09382360A2AE00EAE89B /* SettingsAccountTableViewCell.swift */,
 				516A091D23609A3600EAE89B /* SettingsAccountTableViewCell.xib */,
@@ -2521,6 +2534,7 @@
 				51C4525D226508F600C03939 /* MasterFeed */,
 				51C4526D2265091600C03939 /* MasterTimeline */,
 				51C4527D2265092C00C03939 /* Article */,
+				516A093E236123A800EAE89B /* Account */,
 				51C452802265093600C03939 /* Add */,
 				5123DB95233EC69300282CC9 /* Inspector */,
 				513145F9235A55A700387FDC /* Intents */,
@@ -3375,11 +3389,13 @@
 				51BB7C312335ACDE008E8144 /* page.html in Resources */,
 				516A093723609A3600EAE89B /* SettingsAccountTableViewCell.xib in Resources */,
 				51F85BF32272531500C787DC /* Dedication.rtf in Resources */,
+				516A09422361248000EAE89B /* Inspector.storyboard in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreenPhone.storyboard in Resources */,
 				51F85BEB22724CB600C787DC /* About.rtf in Resources */,
 				51F85BED227251DF00C787DC /* Acknowledgments.rtf in Resources */,
 				516A093B2360A4A000EAE89B /* SettingsTableViewCell.xib in Resources */,
 				511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */,
+				516A09402361240900EAE89B /* Account.storyboard in Resources */,
 				51C452AB22650DC600C03939 /* template.html in Resources */,
 				51F85BF12272524100C787DC /* Credits.rtf in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
@@ -3880,7 +3896,7 @@
 				516A09392360A2AE00EAE89B /* SettingsAccountTableViewCell.swift in Sources */,
 				51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */,
 				51A1699C235E10D700EB091F /* AddAccountViewController.swift in Sources */,
-				51A16999235E10D700EB091F /* AddLocalAccountViewController.swift in Sources */,
+				51A16999235E10D700EB091F /* LocalAccountViewController.swift in Sources */,
 				514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */,
 				51FA73A52332BE110090D516 /* ArticleExtractor.swift in Sources */,
 				51314704235C41FC00387FDC /* Intents.intentdefinition in Sources */,
@@ -3940,7 +3956,7 @@
 				51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */,
 				51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */,
 				51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */,
-				51A1699B235E10D700EB091F /* DetailAccountViewController.swift in Sources */,
+				51A1699B235E10D700EB091F /* AccountInspectorViewController.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
 				5183CCE9226F68D90010922C /* AccountRefreshTimer.swift in Sources */,
 				51C452882265093600C03939 /* AddFeedViewController.swift in Sources */,
