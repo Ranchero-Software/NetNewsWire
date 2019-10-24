@@ -12,6 +12,10 @@ import Foundation
 import SyncDatabase
 import RSWeb
 
+enum FeedWranglerError : Error {
+	case general(message: String)
+}
+
 final class FeedWranglerAPICaller: NSObject {
 	
 	private var transport: Transport!
@@ -66,6 +70,32 @@ final class FeedWranglerAPICaller: NSObject {
 			case .success(let (_, results)):
 				completion(.success(results?.feeds ?? []))
 
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
+	func addSubscription(url: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let callURL = FeedWranglerConfig
+			.clientURL
+			.appendingPathComponent("subscriptions/add_feed")
+			.appendingQueryItem(URLQueryItem(name: "feed_url", value: url)) else {
+				completion(.failure(TransportError.noURL))
+				return
+			}
+		
+		let request = URLRequest(url: callURL, credentials: credentials)
+		
+		transport.send(request: request, resultType: FeedWranglerGenericResult.self) { result in
+			switch result {
+			case .success(let (_, results)):
+				if let error = results?.error {
+					completion(.failure(FeedWranglerError.general(message: error)))
+				} else {
+					completion(.success(()))
+				}
+				
 			case .failure(let error):
 				completion(.failure(error))
 			}

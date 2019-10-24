@@ -201,7 +201,26 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	}
 	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
-		fatalError()
+		refreshProgress.addToNumberOfTasksAndRemaining(3)
+		
+		self.refreshCredentials(for: account) {
+			self.refreshProgress.completeTask()
+			self.caller.addSubscription(url: url) { result in
+				self.refreshProgress.completeTask()
+				self.caller.addSubscription(url:  url) { result in
+					self.refreshProgress.completeTask()
+				
+					switch result {
+					case .success:
+						let feed = account.createFeed(with: name, url: url, feedID: url, homePageURL: url)
+						completion(.success(feed))
+							
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
+			}
+		}
 	}
 	
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
