@@ -15,17 +15,15 @@ class AddFolderWindowController : NSWindowController {
     @IBOutlet var folderNameTextField: NSTextField!
     @IBOutlet var accountPopupButton: NSPopUpButton!
 	@IBOutlet var addFolderButton: NSButton!
-    var hostWindow: NSWindow?
+	private var hostWindow: NSWindow?
 
 	convenience init() {
-
 		self.init(windowNibName: NSNib.Name("AddFolderSheet"))
 	}
 
-    // MARK: API
+    // MARK: - API
     
     func runSheetOnWindow(_ w: NSWindow) {
-
 		hostWindow = w
 		hostWindow!.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
 			
@@ -35,7 +33,7 @@ class AddFolderWindowController : NSWindowController {
 		}
     }
 
-	// MARK: NSViewController
+	// MARK: - NSViewController
 	
 	override func windowDidLoad() {
 		let preferredAccountID = AppDefaults.addFolderAccountID
@@ -54,40 +52,21 @@ class AddFolderWindowController : NSWindowController {
 			if oneAccount.accountID == preferredAccountID {
 				accountPopupButton.select(oneMenuItem)
 			}
-			
 		}
 	}
 	
-	// MARK: Private
-	
-	private func addFolderIfNeeded() {
-		guard let menuItem = accountPopupButton.selectedItem else {
-			return
-		}
-		
-		let account = menuItem.representedObject as! Account
-		AppDefaults.addFolderAccountID = account.accountID
-		
-		let folderName = self.folderNameTextField.stringValue
-		if folderName.isEmpty {
-			return
-		}
-		
-		account.ensureFolder(with: folderName)
-	}
-	
-	// MARK: Actions
+	// MARK: - Actions
 	
     @IBAction func cancel(_ sender: Any?) {
-		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
+		hostWindow!.endSheet(window!, returnCode: .cancel)
     }
     
     @IBAction func addFolder(_ sender: Any?) {
-		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
+		hostWindow!.endSheet(window!, returnCode: .OK)
     }
 }
 
-// MARK: Text Field Delegate
+// MARK: - Text Field Delegate
 
 extension AddFolderWindowController: NSTextFieldDelegate {
 
@@ -97,5 +76,26 @@ extension AddFolderWindowController: NSTextFieldDelegate {
 			return
 		}
 		addFolderButton.isEnabled = !folderName.isEmpty
+	}
+}
+
+// MARK: - Private
+
+private extension AddFolderWindowController {
+
+	private func addFolderIfNeeded() {
+		guard let menuItem = accountPopupButton.selectedItem else {
+			return
+		}
+
+		let account = menuItem.representedObject as! Account
+		AppDefaults.addFolderAccountID = account.accountID
+
+		let folderName = self.folderNameTextField.stringValue
+		if folderName.isEmpty {
+			return
+		}
+
+		account.ensureFolder(with: folderName)
 	}
 }
