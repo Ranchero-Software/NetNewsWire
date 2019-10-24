@@ -7,6 +7,26 @@
         <language>en</language>
 
 				<item>
+         <title>NetNewsWire 5.0.3</title>
+            <description><![CDATA[
+<p>Significantly enhanced performance during syncs and refreshes.</p>
+
+<p>When running for the first time, and the user previously used NetNewsWire 3, it will automatically import NetNewsWire 3 subscriptions instead of the defaults for new users.</p>
+
+<p>You can also import NetNewsWire 3 subscriptions via the new File > Import NNW3 Subscriptions… command.</p>
+
+<p>Fixed the space bar when running on Catalina. It wouldn’t advance to the next unread — now it will. (This was due to a change in JavaScript in Catalina.)</p>
+
+<p>Fixed a crashing bug having to do with async database fetches for the timeline.</p>
+
+<p>Periodically empties the articles cache that was added in 5.0.3b1, so its memory use doesn’t just keep expanding.</p>
+ 							]]></description>
+            <pubDate>Tue, 22 Oct 2019 09:20:00 -0700</pubDate>
+            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.3b2/NetNewsWire5.0.3b2.zip" sparkle:version="2617" sparkle:shortVersionString="5.0.3b2" length="5152214" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+				<item>
          <title>NetNewsWire 5.0.3b2</title>
             <description><![CDATA[
 <p>Significantly enhanced performance during syncs and refreshes.</p>
