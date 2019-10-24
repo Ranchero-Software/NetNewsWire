@@ -32,7 +32,7 @@ class MasterUnreadIndicatorView: UIView {
 	}()
 	
     override func draw(_ dirtyRect: CGRect) {
-		let color = isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.secondaryAccentColor
+		let color = isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
 		color.setFill()
 		MasterUnreadIndicatorView.bezierPath.fill()
     }

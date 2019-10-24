@@ -1,5 +1,5 @@
 //
-//  NNWTableViewCell.swift
+//  VibrantTableViewCell.swift
 //  NetNewsWire-iOS
 //
 //  Created by Jim Correia on 9/2/19.
@@ -8,7 +8,8 @@
 
 import UIKit
 
-class NNWTableViewCell: UITableViewCell {
+class VibrantTableViewCell: UITableViewCell {
+
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		commonInit()
@@ -26,7 +27,9 @@ class NNWTableViewCell: UITableViewCell {
 	/// Subclass overrides should call super
 	func applyThemeProperties() {
 		let selectedBackgroundView = UIView(frame: .zero)
-		selectedBackgroundView.backgroundColor = AppAssets.primaryAccentColor
+		selectedBackgroundView.backgroundColor = AppAssets.secondaryAccentColor
 		self.selectedBackgroundView = selectedBackgroundView
+		
+		textLabel?.highlightedTextColor = AppAssets.vibrantTextColor
 	}
 }

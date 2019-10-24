@@ -76,7 +76,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
-		clearsSelectionOnViewWillAppear = coordinator.isRootSplitCollapsed
 		applyChanges(animate: false)
 		super.viewWillAppear(animated)
 	}
@@ -132,7 +131,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if adjustScroll {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
 			} else {
 				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 			}
@@ -150,7 +149,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	func updateArticleSelection(animated: Bool) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true, deselect: coordinator.isRootSplitCollapsed)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
 			}
 		} else {
 			tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)

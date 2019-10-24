@@ -106,7 +106,7 @@ struct AppDefaults {
 		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(),
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 										Key.timelineGroupByFeed: false,
-										Key.timelineNumberOfLines: 3,
+										Key.timelineNumberOfLines: 2,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.displayUndoAvailableTip: true]
 		AppDefaults.shared.register(defaults: defaults)

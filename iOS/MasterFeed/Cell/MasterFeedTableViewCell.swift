@@ -15,7 +15,7 @@ protocol MasterFeedTableViewCellDelegate: class {
 	func disclosureSelected(_ sender: MasterFeedTableViewCell, expanding: Bool)
 }
 
-class MasterFeedTableViewCell : NNWTableViewCell {
+class MasterFeedTableViewCell : VibrantTableViewCell {
 
 	weak var delegate: MasterFeedTableViewCellDelegate?
 
@@ -128,23 +128,17 @@ class MasterFeedTableViewCell : NNWTableViewCell {
 	
 	override func applyThemeProperties() {
 		super.applyThemeProperties()
-		titleView.highlightedTextColor = AppAssets.tableViewCellHighlightedTextColor
+		titleView.highlightedTextColor = AppAssets.vibrantTextColor
 	}
 
 	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
 		super.setHighlighted(highlighted, animated: animated)
-
-		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.secondaryAccentColor
-		disclosureButton?.tintColor  = tintColor
-		faviconImageView.tintColor = tintColor
+		updateVibrancy(animated: animated)
 	}
 
 	override func setSelected(_ selected: Bool, animated: Bool) {
 		super.setSelected(selected, animated: animated)
-
-		let tintColor = isHighlighted || isSelected ? AppAssets.tableViewCellHighlightedTextColor : AppAssets.secondaryAccentColor
-		disclosureButton?.tintColor  = tintColor
-		faviconImageView.tintColor = tintColor
+		updateVibrancy(animated: animated)
 	}
 	
 	override func willTransition(to state: UITableViewCell.StateMask) {
@@ -200,6 +194,15 @@ private extension MasterFeedTableViewCell {
 		disclosureButton?.setFrameIfNotEqual(layout.disclosureButtonRect)
 		disclosureButton?.isHidden = !isDisclosureAvailable
 		separatorInset = layout.separatorInsets
+	}
+
+	func updateVibrancy(animated: Bool) {
+		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
+		let duration = animated ? 0.6 : 0.0
+		UIView.animate(withDuration: duration) {
+			self.disclosureButton?.tintColor  = tintColor
+			self.faviconImageView.tintColor = tintColor
+		}
 	}
 	
 }

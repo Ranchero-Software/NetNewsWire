@@ -11,7 +11,6 @@ import Account
 import Articles
 import RSCore
 import RSTree
-import SwiftUI
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
@@ -68,7 +67,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	override func viewWillAppear(_ animated: Bool) {
 		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
-		clearsSelectionOnViewWillAppear = coordinator.isRootSplitCollapsed
 		applyChanges(animate: false)
 		super.viewWillAppear(animated)
 	}
@@ -184,6 +182,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
 
+		if section != 0 {
+			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
+		}
+		
 		return headerView
 		
 	}
@@ -451,7 +453,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline() {
 			if adjustScroll {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false, deselect: coordinator.isRootSplitCollapsed)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
 			} else {
 				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 			}
@@ -462,7 +464,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		if dataSource.snapshot().numberOfItems > 0 {
 			if let indexPath = coordinator.currentFeedIndexPath {
 				if tableView.indexPathForSelectedRow != indexPath {
-					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true, deselect: coordinator.isRootSplitCollapsed)
+					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
 				}
 			} else {
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
@@ -531,6 +533,26 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		becomeFirstResponder()
 	}
 	
+}
+
+// MARK: UIContextMenuInteractionDelegate
+
+extension MasterFeedViewController: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+
+		guard let sectionIndex = interaction.view?.tag,
+			let sectionNode = coordinator.rootNode.childAtIndex(sectionIndex),
+			let account = sectionNode.representedObject as? Account
+				else {
+					return nil
+		}
+		
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { suggestedActions in
+			let accountInfoAction = self.getAccountInfoAction(account: account)
+			let deactivateAction = self.deactivateAccountAction(account: account)
+            return UIMenu(title: "", children: [accountInfoAction, deactivateAction])
+        }
+    }
 }
 
 // MARK: MasterTableViewCellDelegate
@@ -844,6 +866,22 @@ private extension MasterFeedViewController {
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
 		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
 			self?.coordinator.showFeedInspector(for: feed)
+		}
+		return action
+	}
+
+	func getAccountInfoAction(account: Account) -> UIAction {
+		let title = NSLocalizedString("Get Info", comment: "Get Info")
+		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
+			self?.coordinator.showAccountInspector(for: account)
+		}
+		return action
+	}
+
+	func deactivateAccountAction(account: Account) -> UIAction {
+		let title = NSLocalizedString("Deactivate", comment: "Deactivate")
+		let action = UIAction(title: title, image: AppAssets.deactivateImage) { action in
+			account.isActive = false
 		}
 		return action
 	}

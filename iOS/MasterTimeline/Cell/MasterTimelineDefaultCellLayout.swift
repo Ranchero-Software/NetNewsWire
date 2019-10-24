@@ -21,7 +21,7 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 	static let starDimension = CGFloat(integerLiteral: 16)
 	static let starSize = CGSize(width: MasterTimelineDefaultCellLayout.starDimension, height: MasterTimelineDefaultCellLayout.starDimension)
 
-	static let avatarSize = CGSize(width: 48.0, height: 48.0)
+	static let avatarSize = CGSize(width: 32.0, height: 32.0)
 	static let avatarMarginRight = CGFloat(integerLiteral: 8)
 	static let avatarCornerRadius = CGFloat(integerLiteral: 4)
 
