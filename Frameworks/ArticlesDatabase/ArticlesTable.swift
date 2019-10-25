@@ -272,65 +272,6 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-//	func update(_ feedID: String, _ parsedItems: Set<ParsedItem>, _ read: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
-//		if parsedItems.isEmpty {
-//			completion(nil, nil)
-//			return
-//		}
-//
-//		// 1. Ensure statuses for all the incoming articles.
-//		// 2. Create incoming articles with parsedItems.
-//		// 3. Ignore incoming articles that are userDeleted || (!starred and really old)
-//		// 4. Fetch all articles for the feed.
-//		// 5. Create array of Articles not in database and save them.
-//		// 6. Create array of updated Articles and save what’s changed.
-//		// 7. Call back with new and updated Articles.
-//		// 8. Update search index.
-//
-//		let articleIDs = Set(parsedItems.map { $0.articleID })
-//
-//		self.queue.update { (database) in
-//			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
-//			assert(statusesDictionary.count == articleIDs.count)
-//
-//			let allIncomingArticles = Article.articlesWithParsedItems(parsedItems, self.accountID, feedID, statusesDictionary) //2
-//			if allIncomingArticles.isEmpty {
-//				self.callUpdateArticlesCompletionBlock(nil, nil, completion)
-//				return
-//			}
-//
-//			let incomingArticles = self.filterIncomingArticles(allIncomingArticles) //3
-//			if incomingArticles.isEmpty {
-//				self.callUpdateArticlesCompletionBlock(nil, nil, completion)
-//				return
-//			}
-//
-//			let fetchedArticles = self.fetchArticlesForFeedID(feedID, withLimits: false, database) //4
-//			let fetchedArticlesDictionary = fetchedArticles.dictionary()
-//
-//			let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
-//			let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
-//
-//			self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
-//
-//			// 8. Update search index.
-//			var articlesToIndex = Set<Article>()
-//			if let newArticles = newArticles {
-//				articlesToIndex.formUnion(newArticles)
-//			}
-//			if let updatedArticles = updatedArticles {
-//				articlesToIndex.formUnion(updatedArticles)
-//			}
-//			let articleIDs = articlesToIndex.articleIDs()
-//			if articleIDs.isEmpty {
-//				return
-//			}
-//			DispatchQueue.main.async {
-//				self.searchTable.ensureIndexedArticles(for: articleIDs)
-//			}
-//		}
-//	}
-
 	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
 		self.queue.update { (database) in
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, defaultRead, database)
