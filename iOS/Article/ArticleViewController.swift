@@ -96,7 +96,6 @@ class ArticleViewController: UIViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
@@ -126,11 +125,6 @@ class ArticleViewController: UIViewController {
 		
 	}
 
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		updateProgressIndicatorIfNeeded()
-	}
-	
 	func updateUI() {
 		
 		guard let article = currentArticle else {
@@ -209,10 +203,6 @@ class ArticleViewController: UIViewController {
 		}
 	}
 
-	@objc func progressDidChange(_ note: Notification) {
-		updateProgressIndicatorIfNeeded()
-	}
-	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		reloadHTML()
 	}
@@ -426,12 +416,6 @@ private struct ImageClickMessage: Codable {
 // MARK: Private
 
 private extension ArticleViewController {
-	
-	func updateProgressIndicatorIfNeeded() {
-		if !(UIDevice.current.userInterfaceIdiom == .pad) {
-			navigationController?.updateAccountRefreshProgressIndicator()
-		}
-	}
 	
 	func imageWasClicked(body: String?) {
 		guard let body = body,

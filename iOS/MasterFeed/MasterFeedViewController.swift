@@ -14,8 +14,8 @@ import RSTree
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
-	@IBOutlet private weak var markAllAsReadButton: UIBarButtonItem!
-	@IBOutlet private weak var addNewItemButton: UIBarButtonItem!
+	private var refreshProgressView: RefreshProgressView!
+	private var addNewItemButton: UIBarButtonItem!
 	
 	private lazy var dataSource = makeDataSource()
 	var undoableCommands = [UndoableCommand]()
@@ -54,11 +54,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedMetadataDidChange(_:)), name: .FeedMetadataDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
+		configureToolbar()
 		
 		updateUI()
 		becomeFirstResponder()
@@ -73,7 +74,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		navigationController?.updateAccountRefreshProgressIndicator()
 	}
 
 	// MARK: Notifications
@@ -131,10 +131,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		discloseFeed(feed)
-	}
-	
-	@objc func progressDidChange(_ note: Notification) {
-		navigationController?.updateAccountRefreshProgressIndicator()
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -343,19 +339,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
-	}
-
-	@IBAction func markAllAsRead(_ sender: Any) {
-		if coordinator.displayUndoAvailableTip {
-			let alertController = UndoAvailableAlertController.alert { [weak self] _ in
-				self?.coordinator.displayUndoAvailableTip = false
-				self?.coordinator.markAllAsRead()
-			}
-			
-			present(alertController, animated: true)
-		} else {
-			coordinator.markAllAsRead()
-		}		
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
@@ -573,8 +556,21 @@ extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 
 private extension MasterFeedViewController {
 	
+	func configureToolbar() {
+		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
+			return
+		}
+
+		self.refreshProgressView = refreshProgressView
+
+		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
+		let spaceItemButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+		addNewItemButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add(_:)))
+		setToolbarItems([refreshProgressItemButton, spaceItemButton, addNewItemButton], animated: false)
+	}
+	
 	func updateUI() {
-		markAllAsReadButton.isEnabled = coordinator.isAnyUnreadAvailable
+		refreshProgressView.updateRefreshLabel()
 		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}
 	

@@ -190,22 +190,7 @@
                             <outlet property="delegate" destination="7bK-jq-Zjz" id="RA6-mI-bju"/>
                         </connections>
                     </tableView>
-                    <toolbarItems>
-                        <barButtonItem title="Mark All as Read" id="ddj-Ya-Wol">
-                            <connections>
-                                <action selector="markAllAsRead:" destination="7bK-jq-Zjz" id="jmv-SM-7XE"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="ePD-cM-h2y"/>
-                        <barButtonItem systemItem="add" id="yo6-w4-SfI">
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Add Feed or Folder"/>
-                            </userDefinedRuntimeAttributes>
-                            <connections>
-                                <action selector="add:" destination="7bK-jq-Zjz" id="k61-ub-SdZ"/>
-                            </connections>
-                        </barButtonItem>
-                    </toolbarItems>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8">
                         <barButtonItem key="leftBarButtonItem" title="Settings" image="gear" catalog="system" id="TlU-Pg-ATe">
                             <userDefinedRuntimeAttributes>
@@ -218,10 +203,6 @@
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
-                    <connections>
-                        <outlet property="addNewItemButton" destination="yo6-w4-SfI" id="NbL-RH-N4J"/>
-                        <outlet property="markAllAsReadButton" destination="ddj-Ya-Wol" id="jjr-OK-4zl"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rux-fX-hf1" sceneMemberID="firstResponder"/>
             </objects>

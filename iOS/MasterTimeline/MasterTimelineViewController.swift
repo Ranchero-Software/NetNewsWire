@@ -44,14 +44,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 
-		// Setup the Refresh Control
-		refreshControl = UIRefreshControl()
-		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		
 		// Configure the table
 		tableView.dataSource = dataSource
 		numberOfTextLines = AppDefaults.timelineNumberOfLines
@@ -64,11 +59,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	override func viewWillAppear(_ animated: Bool) {
 		applyChanges(animate: false)
 		super.viewWillAppear(animated)
-	}
-	
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		updateProgressIndicatorIfNeeded()
 	}
 	
 	override func viewWillLayoutSubviews() {
@@ -368,10 +358,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		reloadAllVisibleCells()
 	}
 	
-	@objc func progressDidChange(_ note: Notification) {
-		updateProgressIndicatorIfNeeded()
-	}
-	
 	@objc func displayNameDidChange(_ note: Notification) {
 		titleView?.label.text = coordinator.timelineName
 	}
@@ -455,15 +441,6 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 private extension MasterTimelineViewController {
 
-	@objc private func refreshAccounts(_ sender: Any) {
-		refreshControl?.endRefreshing()
-		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
-		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
-		}
-	}
-
 	func resetUI() {
 		title = coordinator.timelineName
 		
@@ -521,12 +498,6 @@ private extension MasterTimelineViewController {
 		}
 	}
 	
-	func updateProgressIndicatorIfNeeded() {
-		if !coordinator.isThreePanelMode {
-			navigationController?.updateAccountRefreshProgressIndicator()
-		}
-	}
-
 	func applyChanges(animate: Bool, completion: (() -> Void)? = nil) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])

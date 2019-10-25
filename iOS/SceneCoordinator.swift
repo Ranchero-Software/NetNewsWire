@@ -718,15 +718,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		markArticlesWithUndo(articles, statusKey: .read, flag: true)
 	}
 	
-	func markAllAsRead() {
-		let accounts = AccountManager.shared.activeAccounts
-		var articles = Set<Article>()
-		accounts.forEach { account in
-			articles.formUnion(account.fetchArticles(.unread))
-		}
-		markAllAsRead(Array(articles))
-	}
-
 	func markAllAsReadInTimeline() {
 		markAllAsRead(articles)
 		masterNavigationController.popViewController(animated: true)
