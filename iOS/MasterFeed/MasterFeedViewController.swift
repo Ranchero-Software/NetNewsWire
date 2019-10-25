@@ -60,22 +60,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
 		configureToolbar()
-		
-		updateUI()
 		becomeFirstResponder()
-		
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
 		applyChanges(animate: false)
+		updateUI()
 		super.viewWillAppear(animated)
 	}
 	
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-	}
-
 	// MARK: Notifications
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
