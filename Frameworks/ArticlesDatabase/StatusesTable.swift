@@ -134,6 +134,12 @@ final class StatusesTable: DatabaseTable {
 
 		return d
 	}
+
+	// MARK: - Cleanup
+
+	func removeStatuses(_ articleIDs: Set<String>, _ database: FMDatabase) {
+		deleteRowsWhere(key: DatabaseKey.articleID, equalsAnyValue: Array(articleIDs), in: database)
+	}
 }
 
 // MARK: - Private

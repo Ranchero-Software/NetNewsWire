@@ -254,6 +254,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		pullObjectsFromDisk()
 		
 		DispatchQueue.main.async {
+			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
 			self.fetchAllUnreadCounts()
 		}
 

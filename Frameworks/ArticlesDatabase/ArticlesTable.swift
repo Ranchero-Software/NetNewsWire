@@ -423,6 +423,31 @@ final class ArticlesTable: DatabaseTable {
 			self.databaseArticlesCache = [String: DatabaseArticle]()
 		}
 	}
+
+	// MARK: - Cleanup
+
+	/// Delete articles from feeds that are no longer in the current set of subscribed-to feeds.
+	/// This deletes from the articles and articleStatuses tables,
+	/// and, via a trigger, it also deletes from the search index.
+	func deleteArticlesNotInSubscribedToFeedIDs(_ feedIDs: Set<String>) {
+		if feedIDs.isEmpty {
+			return
+		}
+		queue.run { (database) in
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let sql = "select articleID from articles where feedID not in \(placeholders);"
+			let parameters = Array(feedIDs) as [Any]
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
+				return
+			}
+			let articleIDs = resultSet.mapToSet{ $0.string(forColumn: DatabaseKey.articleID) }
+			if articleIDs.isEmpty {
+				return
+			}
+			self.removeArticles(articleIDs, database)
+			self.statusesTable.removeStatuses(articleIDs, database)
+		}
+	}
 }
 
 // MARK: - Private
@@ -729,6 +754,10 @@ private extension ArticlesTable {
 	func filterIncomingArticles(_ articles: Set<Article>) -> Set<Article> {
 		// Drop Articles that we can ignore.
 		return Set(articles.filter{ !statusIndicatesArticleIsIgnorable($0.status) })
+	}
+
+	func removeArticles(_ articleIDs: Set<String>, _ database: FMDatabase) {
+		deleteRowsWhere(key: DatabaseKey.articleID, equalsAnyValue: Array(articleIDs), in: database)
 	}
 }
 

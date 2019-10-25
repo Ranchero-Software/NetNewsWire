@@ -152,6 +152,15 @@ public final class ArticlesDatabase {
 	public func emptyCaches() {
 		articlesTable.emptyCaches()
 	}
+
+	// MARK: - Cleanup
+
+	// These are to be used only at startup. These are to prevent the database from growing forever.
+
+	/// Calls the various clean-up functions.
+	public func cleanupDatabaseAtStartup(subscribedToFeedIDs: Set<String>) {
+		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToFeedIDs)
+	}
 }
 
 // MARK: - Private
