@@ -68,7 +68,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	private var disclosureView: UIImageView = {
 		let iView = NonIntrinsicImageView()
 		iView.tintColor = UIColor.tertiaryLabel
-		iView.image = AppAssets.chevronSmallImage
+		iView.image = AppAssets.disclosureImage
 		iView.contentMode = .center
 		return iView
 	}()
