@@ -93,6 +93,8 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		if traitCollection.userInterfaceStyle == .light {
 			let separatorAccentRect = CGRect(x: safeAreaInsets.left, y: frame.height - 2, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 1)
 			separatorAccent.setFrameIfNotEqual(separatorAccentRect)
+		} else {
+			separatorAccent.setFrameIfNotEqual(.zero)
 		}
 	}
 	
