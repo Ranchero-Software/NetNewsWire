@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ExportOPMLWindowController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="accountPopUpButton" destination="bbC-2g-e3k" id="sK9-0j-WyF"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="Z1E-pd-3QE"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="355" height="180"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <view key="contentView" wantsLayer="YES" misplaced="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="391" height="171"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mvx-54-DH0">
+                        <rect key="frame" x="18" y="100" width="355" height="51"/>
+                        <textFieldCell key="cell" selectable="YES" id="7Ap-KG-Lc7">
+                            <font key="font" metaFont="system"/>
+                            <string key="title">Choose the account with the subscriptions you’d like to export. Subscriptions are exported in the standard OPML format, which most RSS readers can import.</string>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xJz-HU-L4i">
+                        <rect key="frame" x="18" y="63" width="63" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Account:" id="Dao-jI-G6i">
+                            <font key="font" metaFont="systemBold"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bbC-2g-e3k" userLabel="Account Popup">
+                        <rect key="frame" x="85" y="58" width="289" height="25"/>
+                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="MJb-Bf-UJG" id="xZd-AP-nuM">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="TP8-jd-M1D">
+                                <items>
+                                    <menuItem title="Item 1" state="on" id="MJb-Bf-UJG"/>
+                                    <menuItem title="Item 2" id="7U3-Y5-qeM"/>
+                                    <menuItem title="Item 3" id="Uii-dd-siy"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eZ4-Ej-Hks">
+                        <rect key="frame" x="229" y="13" width="148" height="32"/>
+                        <buttonCell key="cell" type="push" title="Export as OPML…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bRz-cx-bmm">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="exportOPML:" target="-2" id="Lcs-Xm-HfK"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PPB-R8-A9a">
+                        <rect key="frame" x="81" y="13" width="148" height="32"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6lK-bV-Vwd">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancel:" target="-2" id="oun-pb-pQs"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="mvx-54-DH0" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="6SB-1X-jS4"/>
+                    <constraint firstItem="xJz-HU-L4i" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="8TB-fT-THB"/>
+                    <constraint firstItem="PPB-R8-A9a" firstAttribute="leading" secondItem="bbC-2g-e3k" secondAttribute="leading" id="9zJ-1D-4cz"/>
+                    <constraint firstAttribute="bottom" secondItem="eZ4-Ej-Hks" secondAttribute="bottom" constant="20" symbolic="YES" id="ES8-CX-Cvn"/>
+                    <constraint firstItem="bbC-2g-e3k" firstAttribute="leading" secondItem="xJz-HU-L4i" secondAttribute="trailing" constant="8" symbolic="YES" id="IAs-Eg-vxH"/>
+                    <constraint firstItem="eZ4-Ej-Hks" firstAttribute="top" secondItem="bbC-2g-e3k" secondAttribute="bottom" constant="20" symbolic="YES" id="KLL-J1-sDN"/>
+                    <constraint firstItem="eZ4-Ej-Hks" firstAttribute="leading" secondItem="PPB-R8-A9a" secondAttribute="trailing" constant="12" symbolic="YES" id="Lfs-g3-crb"/>
+                    <constraint firstItem="PPB-R8-A9a" firstAttribute="centerY" secondItem="eZ4-Ej-Hks" secondAttribute="centerY" id="OVP-4p-nXp"/>
+                    <constraint firstAttribute="trailing" secondItem="eZ4-Ej-Hks" secondAttribute="trailing" constant="20" symbolic="YES" id="RDU-0d-O0Q"/>
+                    <constraint firstItem="xJz-HU-L4i" firstAttribute="top" secondItem="mvx-54-DH0" secondAttribute="bottom" constant="20" id="Rxj-lF-b8R"/>
+                    <constraint firstItem="bbC-2g-e3k" firstAttribute="firstBaseline" secondItem="xJz-HU-L4i" secondAttribute="firstBaseline" id="TjR-gN-xrt"/>
+                    <constraint firstAttribute="trailing" secondItem="mvx-54-DH0" secondAttribute="trailing" constant="20" symbolic="YES" id="VBk-HZ-2xv"/>
+                    <constraint firstItem="eZ4-Ej-Hks" firstAttribute="width" secondItem="PPB-R8-A9a" secondAttribute="width" id="WOT-NI-xD8"/>
+                    <constraint firstItem="mvx-54-DH0" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="l2i-jP-HX1"/>
+                    <constraint firstAttribute="trailing" secondItem="bbC-2g-e3k" secondAttribute="trailing" constant="20" symbolic="YES" id="uZb-X0-fUh"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="81.5" y="102"/>
+        </window>
+    </objects>
+</document>
