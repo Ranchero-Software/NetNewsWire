@@ -1,0 +1,33 @@
+{
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  },
+  "colors" : [
+    {
+      "idiom" : "universal",
+      "color" : {
+        "color-space" : "srgb",
+        "components" : {
+          "red" : "247",
+          "alpha" : "1.000",
+          "blue" : "247",
+          "green" : "247"
+        }
+      }
+    },
+    {
+      "idiom" : "universal",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "color" : {
+        "platform" : "ios",
+        "reference" : "systemBackgroundColor"
+      }
+    }
+  ]
+}

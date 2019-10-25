@@ -68,7 +68,7 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 		currentPoint.x += MasterTimelineDefaultCellLayout.unreadCircleDimension + MasterTimelineDefaultCellLayout.unreadCircleMarginRight
 		
 		// Separator Insets
-		self.separatorInsets = UIEdgeInsets(top: 0, left: currentPoint.x, bottom: 0, right: 0)
+		self.separatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
 		// Avatar
 		if cellData.showAvatar {

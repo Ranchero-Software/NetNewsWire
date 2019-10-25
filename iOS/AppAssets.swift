@@ -157,6 +157,10 @@ struct AppAssets {
 		return UIImage(systemName: "star.fill")!
 	}()
 
+	static var timelineBackgroundColor: UIColor = {
+		return UIColor(named: "timelineBackgroundColor")!
+	}()
+
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
