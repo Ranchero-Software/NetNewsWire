@@ -23,12 +23,6 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		return NonIntrinsicImageView(image: AppAssets.timelineStarImage)
 	}()
 	
-	private let separatorAccent: UIView = {
-		let view = UIView()
-		view.backgroundColor = UIColor.white
-		return view
-	}()
-	
 	var cellData: MasterTimelineCellData! {
 		didSet {
 			updateSubviews()
@@ -89,13 +83,6 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		dateView.setFrameIfNotEqual(layout.dateRect)
 
 		separatorInset = layout.separatorInsets
-		
-		if traitCollection.userInterfaceStyle == .light {
-			let separatorAccentRect = CGRect(x: safeAreaInsets.left, y: frame.height - 2, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 1)
-			separatorAccent.setFrameIfNotEqual(separatorAccentRect)
-		} else {
-			separatorAccent.setFrameIfNotEqual(.zero)
-		}
 	}
 	
 	func setAvatarImage(_ image: UIImage) {
@@ -151,8 +138,6 @@ private extension MasterTimelineTableViewCell {
 		addSubviewAtInit(feedNameView, hidden: true)
 		addSubviewAtInit(avatarView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
-		addSubviewAtInit(separatorAccent, hidden: false)
-
 	}
 	
 	func updatedLayout(width: CGFloat) -> MasterTimelineCellLayout {
