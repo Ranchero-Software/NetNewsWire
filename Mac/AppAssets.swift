@@ -94,4 +94,20 @@ struct AppAssets {
 		return RSImage(named: NSImage.smartBadgeTemplateName)!
 	}()
 
+	static var swipeMarkReadImage: RSImage = {
+		return RSImage(named: "swipeMarkRead")!
+	}()
+
+	static var swipeMarkUnreadImage: RSImage = {
+		return RSImage(named: "swipeMarkUnread")!
+	}()
+
+	static var swipeMarkStarredImage: RSImage = {
+		return RSImage(named: "swipeMarkStarred")!
+	}()
+
+	static var swipeMarkUnstarredImage: RSImage = {
+		return RSImage(named: "swipeMarkUnstarred")!
+	}()
+	
 }
