@@ -14,17 +14,16 @@ class AddFolderWindowController : NSWindowController {
     
     @IBOutlet var folderNameTextField: NSTextField!
     @IBOutlet var accountPopupButton: NSPopUpButton!
-    var hostWindow: NSWindow?
+	@IBOutlet var addFolderButton: NSButton!
+	private var hostWindow: NSWindow?
 
 	convenience init() {
-
 		self.init(windowNibName: NSNib.Name("AddFolderSheet"))
 	}
 
-    // MARK: API
+    // MARK: - API
     
     func runSheetOnWindow(_ w: NSWindow) {
-
 		hostWindow = w
 		hostWindow!.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
 			
@@ -34,7 +33,7 @@ class AddFolderWindowController : NSWindowController {
 		}
     }
 
-	// MARK: NSViewController
+	// MARK: - NSViewController
 	
 	override func windowDidLoad() {
 		let preferredAccountID = AppDefaults.addFolderAccountID
@@ -53,25 +52,50 @@ class AddFolderWindowController : NSWindowController {
 			if oneAccount.accountID == preferredAccountID {
 				accountPopupButton.select(oneMenuItem)
 			}
-			
 		}
 	}
 	
-	// MARK: Private
+	// MARK: - Actions
 	
+    @IBAction func cancel(_ sender: Any?) {
+		hostWindow!.endSheet(window!, returnCode: .cancel)
+    }
+    
+    @IBAction func addFolder(_ sender: Any?) {
+		hostWindow!.endSheet(window!, returnCode: .OK)
+    }
+}
+
+// MARK: - Text Field Delegate
+
+extension AddFolderWindowController: NSTextFieldDelegate {
+
+	func controlTextDidChange(_ obj: Notification) {
+		guard let folderName = (obj.object as? NSTextField)?.stringValue else {
+			addFolderButton.isEnabled = false
+			return
+		}
+		addFolderButton.isEnabled = !folderName.isEmpty
+	}
+}
+
+// MARK: - Private
+
+private extension AddFolderWindowController {
+
 	private func addFolderIfNeeded() {
 		guard let menuItem = accountPopupButton.selectedItem else {
 			return
 		}
-		
+
 		let account = menuItem.representedObject as! Account
 		AppDefaults.addFolderAccountID = account.accountID
-		
+
 		let folderName = self.folderNameTextField.stringValue
 		if folderName.isEmpty {
 			return
 		}
-		
+
 		account.addFolder(folderName) { result in
 			switch result {
 			case .success:
@@ -80,19 +104,5 @@ class AddFolderWindowController : NSWindowController {
 				NSApplication.shared.presentError(error)
 			}
 		}
-			
 	}
-	
-	// MARK: Actions
-	
-    @IBAction func cancel(_ sender: Any?) {
-        
-		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
-    }
-    
-    @IBAction func addFolder(_ sender: Any?) {
-        
-		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
-    }
-    
 }

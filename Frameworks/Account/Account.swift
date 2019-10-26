@@ -263,6 +263,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		opmlFile.load()
 
 		DispatchQueue.main.async {
+			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
 			self.fetchAllUnreadCounts()
 		}
 
