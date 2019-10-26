@@ -61,9 +61,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		let preferences = WKPreferences()
 		preferences.minimumFontSize = 12.0
 		preferences.javaScriptCanOpenWindowsAutomatically = false
-		preferences.javaEnabled = false
 		preferences.javaScriptEnabled = true
-		preferences.plugInsEnabled = false
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
