@@ -163,9 +163,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		}
 
-		let tempDirectory = NSTemporaryDirectory()
-		let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
-		let cacheFolder = (tempDirectory as NSString).appendingPathComponent(bundleIdentifier)
+		// Try to establish a cache in the Caches folder, but if it fails for some reason fall back to a temporary dir
+		let cacheFolder: String
+		if let userCacheFolder = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).path {
+			cacheFolder = userCacheFolder
+		}
+		else {
+			let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
+			cacheFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
+		}
 
 		// If the image disk cache hasn't been flushed for 3 days and the network is available, delete it
 		if let flushDate = AppDefaults.lastImageCacheFlushDate, flushDate.addingTimeInterval(3600*24*3) < Date() {
