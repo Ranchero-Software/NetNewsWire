@@ -182,6 +182,10 @@ struct AppAssets {
 		return UIColor(named: "vibrantTextColor")!
 	}()
 
+	static var unreadCountBackgroundColor: UIColor = {
+		return UIColor(named: "unreadCountBackgroundColor")!
+	}()
+
 	static func image(for accountType: AccountType) -> UIImage? {
 		switch accountType {
 		case .onMyMac:
