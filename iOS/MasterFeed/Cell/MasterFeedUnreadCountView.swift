@@ -11,7 +11,7 @@ import UIKit
 class MasterFeedUnreadCountView : UIView {
 	
 	var padding: UIEdgeInsets {
-		return UIEdgeInsets(top: 1.0, left: 7.0, bottom: 1.0, right: 7.0)
+		return UIEdgeInsets(top: 1.0, left: 9.0, bottom: 1.0, right: 9.0)
 	}
 	
 	let cornerRadius = 8.0
