@@ -59,6 +59,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
+		resetEstimatedRowHeight()
 		configureToolbar()
 		becomeFirstResponder()
 	}
@@ -128,6 +129,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
+		resetEstimatedRowHeight()
 		applyChanges(animate: false)
 	}
 	
@@ -599,6 +601,17 @@ private extension MasterFeedViewController {
 			return cell
 		})
     }
+
+	func resetEstimatedRowHeight() {
+		let titleLabel = NonIntrinsicLabel()
+		titleLabel.text = "But I must explain"
+		
+		let unreadCountView = MasterFeedUnreadCountView()
+		unreadCountView.unreadCount = 10
+		
+		let layout = MasterFeedTableViewCellLayout(cellWidth: tableView.bounds.size.width, insets: tableView.safeAreaInsets, label: titleLabel, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: false)
+		tableView.estimatedRowHeight = layout.height
+	}
 	
 	func configure(_ cell: MasterFeedTableViewCell, _ node: Node) {
 		
