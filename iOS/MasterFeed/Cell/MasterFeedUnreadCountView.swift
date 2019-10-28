@@ -21,7 +21,7 @@ class MasterFeedUnreadCountView : UIView {
 	}
 	
 	var textAttributes: [NSAttributedString.Key: AnyObject] {
-		let textFont = UIFont.preferredFont(forTextStyle: .caption1)
+		let textFont = UIFont.preferredFont(forTextStyle: .caption1).bold()
 		return [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
 	}
 	var textSizeCache = [Int: CGSize]()
