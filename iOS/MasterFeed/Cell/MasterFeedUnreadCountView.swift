@@ -15,7 +15,7 @@ class MasterFeedUnreadCountView : UIView {
 	}
 	
 	let cornerRadius = 8.0
-	let bgColor = AppAssets.unreadCountBackgroundColor
+	let bgColor = AppAssets.controlBackgroundColor
 	var textColor: UIColor {
 		return UIColor.white
 	}

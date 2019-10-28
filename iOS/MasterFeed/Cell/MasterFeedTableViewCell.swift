@@ -199,11 +199,14 @@ private extension MasterFeedTableViewCell {
 	}
 
 	func updateVibrancy(animated: Bool) {
-		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
+		let faviconTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
+		let disclosureTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.controlBackgroundColor
+
 		let duration = animated ? 0.6 : 0.0
+
 		UIView.animate(withDuration: duration) {
-			self.disclosureButton?.tintColor  = tintColor
-			self.faviconImageView.tintColor = tintColor
+			self.disclosureButton?.tintColor  = disclosureTintColor
+			self.faviconImageView.tintColor = faviconTintColor
 		}
 	}
 	
