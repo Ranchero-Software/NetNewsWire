@@ -23,12 +23,13 @@ class VibrantButton: UIButton {
 	
 	private func commonInit() {
 		setTitleColor(AppAssets.vibrantTextColor, for: .highlighted)
+		let disabledColor = AppAssets.secondaryAccentColor.withAlphaComponent(0.5)
+		setTitleColor(disabledColor, for: .disabled)
 	}
 
 	override var isHighlighted: Bool {
 		didSet {
 			backgroundColor = isHighlighted ? backgroundHighlightColor : nil
-			titleLabel?.alpha = 1
 		}
 	}
 
