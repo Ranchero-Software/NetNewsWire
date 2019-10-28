@@ -54,7 +54,9 @@ struct MasterFeedTableViewCellLayout {
 		var rFavicon = CGRect.zero
 		if !shouldShowDisclosure {
 			let x = bounds.origin.x + ((MasterFeedTableViewCellLayout.disclosureButtonSize.width - MasterFeedTableViewCellLayout.imageSize.width) / 2)
-			let y = UIFontMetrics.default.scaledValue(for: MasterFeedTableViewCellLayout.verticalPadding)
+			let y = UIFontMetrics.default.scaledValue(for: MasterFeedTableViewCellLayout.verticalPadding) +
+				label.font.lineHeight / 2.0 -
+				MasterFeedTableViewCellLayout.imageSize.height / 2.0
 			rFavicon = CGRect(x: x, y: y, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
 		}
 
