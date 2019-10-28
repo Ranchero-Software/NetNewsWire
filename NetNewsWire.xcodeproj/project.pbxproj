@@ -293,7 +293,7 @@
 		65ED3FE8235DEF6C0081F399 /* ArticleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97871ED9ECEF007D329B /* ArticleStyle.swift */; };
 		65ED3FE9235DEF6C0081F399 /* FaviconURLFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */; };
 		65ED3FEA235DEF6C0081F399 /* SidebarViewController+ContextualMenus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B7178B201E66580091657D /* SidebarViewController+ContextualMenus.swift */; };
-		65ED3FEB235DEF6C0081F399 /* ExportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA42227A380F00D19003 /* ExportOPMLWindowController.swift */; };
+		65ED3FEB235DEF6C0081F399 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		65ED3FEC235DEF6C0081F399 /* RSHTMLMetadata+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611A11FCB769D0086A189 /* RSHTMLMetadata+Extension.swift */; };
 		65ED3FED235DEF6C0081F399 /* SendToMarsEditCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */; };
 		65ED3FEE235DEF6C0081F399 /* UserNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FE10022345529D0056195D /* UserNotificationManager.swift */; };
@@ -406,7 +406,7 @@
 		65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
 		65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */ = {isa = PBXBuildFile; fileRef = 84A3EE52223B667F00557320 /* DefaultFeeds.opml */; };
 		65ED405F235DEF6C0081F399 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8022629E4800D921D6 /* Preferences.storyboard */; };
-		65ED4060235DEF6C0081F399 /* ExportOPMLSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA3C227A37AF00D19003 /* ExportOPMLSheet.xib */; };
+		65ED4060235DEF6C0081F399 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		65ED4061235DEF6C0081F399 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		65ED4062235DEF6C0081F399 /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 848362FC2262A30800DA1D35 /* styleSheet.css */; };
 		65ED4063235DEF6C0081F399 /* RenameSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848363092262A3F000DA1D35 /* RenameSheet.xib */; };
@@ -593,7 +593,6 @@
 		84F9EAEB213660A100CF2DE4 /* testIterativeCreateAndDeleteFeed.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAD8213660A100CF2DE4 /* testIterativeCreateAndDeleteFeed.applescript */; };
 		84F9EAEC213660A100CF2DE4 /* selectAFeed.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAD9213660A100CF2DE4 /* selectAFeed.applescript */; };
 		84F9EAED213660A100CF2DE4 /* uiScriptingTestSetup.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EADA213660A100CF2DE4 /* uiScriptingTestSetup.applescript */; };
-		84F9EAEE213660A100CF2DE4 /* testURLsOfCurrentArticle.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EADB213660A100CF2DE4 /* testURLsOfCurrentArticle.applescript */; };
 		84F9EAEF213660A100CF2DE4 /* testNameOfEveryFolder.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EADC213660A100CF2DE4 /* testNameOfEveryFolder.applescript */; };
 		84F9EAF0213660A100CF2DE4 /* testFeedOPML.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EADD213660A100CF2DE4 /* testFeedOPML.applescript */; };
 		84F9EAF1213660A100CF2DE4 /* selectAnArticle.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EADE213660A100CF2DE4 /* selectAnArticle.applescript */; };
@@ -601,7 +600,6 @@
 		84F9EAF3213660A100CF2DE4 /* testCurrentArticleIsNil.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE0213660A100CF2DE4 /* testCurrentArticleIsNil.applescript */; };
 		84F9EAF4213660A100CF2DE4 /* testGenericScript.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE1213660A100CF2DE4 /* testGenericScript.applescript */; };
 		84F9EAF5213660A100CF2DE4 /* establishMainWindowStartingState.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */; };
-		84F9EAF7213660A100CF2DE4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 84F9EAE4213660A100CF2DE4 /* Info.plist */; };
 		84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */; };
 		9EA33BB92318F8C10097B644 /* AccountsFeedlyWebWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA33BB72318F8C10097B644 /* AccountsFeedlyWebWindowController.swift */; };
 		9EA33BBA2318F8C10097B644 /* AccountsFeedlyWeb.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9EA33BB82318F8C10097B644 /* AccountsFeedlyWeb.xib */; };
@@ -3339,7 +3337,7 @@
 				65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */,
 				65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */,
 				65ED405F235DEF6C0081F399 /* Preferences.storyboard in Resources */,
-				65ED4060235DEF6C0081F399 /* ExportOPMLSheet.xib in Resources */,
+				65ED4060235DEF6C0081F399 /* (null) in Resources */,
 				65ED4061235DEF6C0081F399 /* Assets.xcassets in Resources */,
 				65ED4062235DEF6C0081F399 /* styleSheet.css in Resources */,
 				65ED4063235DEF6C0081F399 /* RenameSheet.xib in Resources */,
@@ -3424,7 +3422,6 @@
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				84A3EE5F223B667F00557320 /* DefaultFeeds.opml in Resources */,
-				8459D0F92355794C0050076F /* NNW3OpenPanelAccessoryView.xib in Resources */,
 				849C78902362AAFC009A71E4 /* ExportOPMLSheet.xib in Resources */,
 				84C9FC8222629E4800D921D6 /* Preferences.storyboard in Resources */,
 				849C64681ED37A5D003D8FC0 /* Assets.xcassets in Resources */,
@@ -3760,7 +3757,7 @@
 				65ED3FE8235DEF6C0081F399 /* ArticleStyle.swift in Sources */,
 				65ED3FE9235DEF6C0081F399 /* FaviconURLFinder.swift in Sources */,
 				65ED3FEA235DEF6C0081F399 /* SidebarViewController+ContextualMenus.swift in Sources */,
-				65ED3FEB235DEF6C0081F399 /* ExportOPMLWindowController.swift in Sources */,
+				65ED3FEB235DEF6C0081F399 /* (null) in Sources */,
 				65ED3FEC235DEF6C0081F399 /* RSHTMLMetadata+Extension.swift in Sources */,
 				65ED3FED235DEF6C0081F399 /* SendToMarsEditCommand.swift in Sources */,
 				65ED3FEE235DEF6C0081F399 /* UserNotificationManager.swift in Sources */,
@@ -4143,7 +4140,6 @@
 				84F9EAF1213660A100CF2DE4 /* selectAnArticle.applescript in Sources */,
 				84F9EAE9213660A100CF2DE4 /* testNameAndUrlOfEveryFeed.applescript in Sources */,
 				84F9EAF3213660A100CF2DE4 /* testCurrentArticleIsNil.applescript in Sources */,
-				84F9EAEE213660A100CF2DE4 /* testURLsOfCurrentArticle.applescript in Sources */,
 				84F9EAE7213660A100CF2DE4 /* testNameOfAuthors.applescript in Sources */,
 				84F9EAEF213660A100CF2DE4 /* testNameOfEveryFolder.applescript in Sources */,
 				84F9EAF5213660A100CF2DE4 /* establishMainWindowStartingState.applescript in Sources */,
