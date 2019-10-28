@@ -179,6 +179,8 @@ private extension MasterFeedTableViewCell {
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
 		disclosureButton?.setImage(AppAssets.disclosureImage, for: .normal)
+		disclosureButton?.imageView?.contentMode = .center
+		disclosureButton?.imageView?.clipsToBounds = false
 		addSubviewAtInit(disclosureButton!)
 	}
 	
