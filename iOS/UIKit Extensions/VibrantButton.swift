@@ -9,6 +9,8 @@
 import UIKit
 
 class VibrantButton: UIButton {
+	
+	@IBInspectable var backgroundHighlightColor: UIColor = AppAssets.secondaryAccentColor
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -25,7 +27,7 @@ class VibrantButton: UIButton {
 
 	override var isHighlighted: Bool {
 		didSet {
-			backgroundColor = isHighlighted ? AppAssets.secondaryAccentColor : nil
+			backgroundColor = isHighlighted ? backgroundHighlightColor : nil
 			titleLabel?.alpha = 1
 		}
 	}
