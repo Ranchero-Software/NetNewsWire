@@ -68,7 +68,7 @@ Protocols and delegates (which are also protocol-conforming) are preferred.
 
 Protocol conformance should be implemented in Swift extensions.
 
-If a delegate protocol defined in the same file as the delegator class or struct, the protocol interface should be specified before the delegator.
+If a delegate protocol is defined in the same file as the delegator class or struct, the protocol interface should be specified before the delegator.
 
 Default implementations in protocols are allowed but ever-so-slightly discouraged. You’ll find several instances in the code, but this is done carefully — we don’t want this to be just another form of inheritance, where you find that you have to bounce back-and-forth between files to figure out what’s going on.
 
