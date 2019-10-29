@@ -53,6 +53,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedMetadataDidChange(_:)), name: .FeedMetadataDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
@@ -106,7 +107,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		applyToAvailableCells(configureFavicon)
+		applyToAvailableCells(configureAvatar)
+	}
+
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		applyToAvailableCells(configureAvatar)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
@@ -627,7 +632,7 @@ private extension MasterFeedViewController {
 		
 		cell.name = nameFor(node)
 		cell.unreadCount = coordinator.unreadCountFor(node)
-		configureFavicon(cell, node)
+		configureAvatar(cell, node)
 		
 		guard let indexPath = dataSource.indexPath(for: node) else { return }
 		let rowsInSection = tableView.numberOfRows(inSection: indexPath.section)
@@ -639,14 +644,28 @@ private extension MasterFeedViewController {
 		
 	}
 	
-	func configureFavicon(_ cell: MasterFeedTableViewCell, _ node: Node) {
-		cell.faviconImage = imageFor(node)
+	func configureAvatar(_ cell: MasterFeedTableViewCell, _ node: Node) {
+		cell.avatarImage = imageFor(node)
 	}
 
 	func imageFor(_ node: Node) -> UIImage? {
+		if let feed = node.representedObject as? Feed {
+			
+			let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)
+			if feedIconImage != nil {
+				return feedIconImage
+			}
+			
+			if let faviconImage = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+				return faviconImage
+			}
+			
+		}
+		
 		if let smallIconProvider = node.representedObject as? SmallIconProvider {
 			return smallIconProvider.smallIcon
 		}
+		
 		return nil
 	}
 	

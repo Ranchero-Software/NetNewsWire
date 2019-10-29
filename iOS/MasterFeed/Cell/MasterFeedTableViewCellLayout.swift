@@ -12,7 +12,7 @@ import RSCore
 struct MasterFeedTableViewCellLayout {
 
 	private static let editingControlIndent = CGFloat(integerLiteral: 40)
-	private static let imageSize = CGSize(width: 20, height: 20)
+	private static let imageSize = CGSize(width: 32, height: 32)
 	private static let imageMarginRight = CGFloat(integerLiteral: 11)
 	private static let unreadCountMarginLeft = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginRight = CGFloat(integerLiteral: 16)

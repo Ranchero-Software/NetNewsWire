@@ -14,11 +14,30 @@ final class MasterTimelineAvatarView: UIView {
 		didSet {
 			if image !== oldValue {
 				imageView.image = image
-				setNeedsLayout()
+
+				if self.traitCollection.userInterfaceStyle == .dark {
+					DispatchQueue.global(qos: .background).async {
+						if self.image?.isDark() ?? false {
+							DispatchQueue.main.async {
+								self.isDisconcernable = false
+								self.setNeedsLayout()
+							}
+						} else {
+							DispatchQueue.main.async {
+								self.isDisconcernable = true
+								self.setNeedsLayout()
+							}
+						}
+					}
+				} else {
+					self.setNeedsLayout()
+				}
 			}
 		}
 	}
 
+	private var isDisconcernable = true
+	
 	private let imageView: UIImageView = {
 		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
 		imageView.contentMode = .scaleAspectFit
@@ -27,10 +46,14 @@ final class MasterTimelineAvatarView: UIView {
 		return imageView
 	}()
 
-	private var hasExposedVerticalBackground: Bool {
+	private var isVerticalBackgroundExposed: Bool {
 		return imageView.frame.size.height < bounds.size.height
 	}
 
+	private var isSymbolImage: Bool {
+		return imageView.image?.isSymbolImage ?? false
+	}
+	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		commonInit()
@@ -51,7 +74,7 @@ final class MasterTimelineAvatarView: UIView {
 
 	override func layoutSubviews() {
 		imageView.setFrameIfNotEqual(rectForImageView())
-		if hasExposedVerticalBackground {
+		if (isVerticalBackgroundExposed && !isSymbolImage) || !isDisconcernable {
 			backgroundColor = AppAssets.avatarBackgroundColor
 		} else {
 			backgroundColor = nil

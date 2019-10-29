@@ -31,24 +31,9 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		}
 	}
 
-	var faviconImage: UIImage? {
+	var avatarImage: UIImage? {
 		didSet {
-			faviconImageView.image = faviconImage
-			
-			if self.traitCollection.userInterfaceStyle == .dark {
-				DispatchQueue.global(qos: .background).async {
-					if self.faviconImage?.isDark() ?? false {
-						DispatchQueue.main.async {
-							self.faviconImageView.backgroundColor = AppAssets.avatarBackgroundColor
-						}
-					} else {
-						DispatchQueue.main.async {
-							self.faviconImageView.backgroundColor = nil
-						}
-					}
-				}
-			}
-			
+			avatarImageView.image = avatarImage
 		}
 	}
 
@@ -106,12 +91,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		return label
 	}()
 
-	private let faviconImageView: UIImageView = {
-		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
-		imageView.layer.cornerRadius = MasterFeedTableViewCellLayout.faviconCornerRadius
-		imageView.clipsToBounds = true
-		return imageView
-	}()
+	private let avatarImageView = MasterTimelineAvatarView()
 
 	private let bottomSeparatorView: UIView = {
 		let view = UIView()
@@ -188,7 +168,7 @@ private extension MasterFeedTableViewCell {
 
 	func commonInit() {
 		addSubviewAtInit(unreadCountView)
-		addSubviewAtInit(faviconImageView)
+		addSubviewAtInit(avatarImageView)
 		addSubviewAtInit(titleView)
 		addDisclosureView()
 		addSubviewAtInit(bottomSeparatorView)
@@ -209,7 +189,7 @@ private extension MasterFeedTableViewCell {
 	}
 
 	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
-		faviconImageView.setFrameIfNotEqual(layout.faviconRect)
+		avatarImageView.setFrameIfNotEqual(layout.faviconRect)
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton?.setFrameIfNotEqual(layout.disclosureButtonRect)
@@ -225,7 +205,7 @@ private extension MasterFeedTableViewCell {
 
 		UIView.animate(withDuration: duration) {
 			self.disclosureButton?.tintColor  = disclosureTintColor
-			self.faviconImageView.tintColor = faviconTintColor
+			self.avatarImageView.tintColor = faviconTintColor
 		}
 	}
 	
