@@ -110,7 +110,20 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private(set) var currentFeedIndexPath: IndexPath?
 	
-	var timelineFavicon: RSImage? {
+	var timelineAvatar: RSImage? {
+		if let feed = timelineFetcher as? Feed {
+			
+			let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)
+			if feedIconImage != nil {
+				return feedIconImage
+			}
+			
+			if let faviconImage = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+				return faviconImage
+			}
+			
+		}
+		
 		return (timelineFetcher as? SmallIconProvider)?.smallIcon
 	}
 	

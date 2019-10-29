@@ -308,6 +308,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		titleView?.avatarView.image = coordinator.timelineAvatar
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
@@ -338,7 +339,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		titleView?.imageView.image = coordinator.timelineFavicon
+		titleView?.avatarView.image = coordinator.timelineAvatar
 		if coordinator.showAvatars {
 			queueReloadAvailableCells()
 		}
@@ -445,11 +446,7 @@ private extension MasterTimelineViewController {
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
 			self.titleView = titleView
 			
-			titleView.imageView.image = coordinator.timelineFavicon
-			if traitCollection.userInterfaceStyle == .dark && titleView.imageView.image?.isDark() ?? false {
-				titleView.imageView.backgroundColor = AppAssets.avatarBackgroundColor
-			}
-			
+			titleView.avatarView.image = coordinator.timelineAvatar
 			titleView.label.text = coordinator.timelineName
 			updateTitleUnreadCount()
 
