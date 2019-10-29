@@ -47,6 +47,19 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 
+		// Setup the Search Controller
+		searchController.delegate = self
+		searchController.searchResultsUpdater = self
+		searchController.obscuresBackgroundDuringPresentation = false
+		searchController.searchBar.delegate = self
+		searchController.searchBar.placeholder = NSLocalizedString("Search Articles", comment: "Search Articles")
+		searchController.searchBar.scopeButtonTitles = [
+			NSLocalizedString("Here", comment: "Here"),
+			NSLocalizedString("All Articles", comment: "All Articles")
+		]
+		navigationItem.searchController = searchController
+		definesPresentationContext = true
+
 		// Configure the table
 		tableView.dataSource = dataSource
 		numberOfTextLines = AppDefaults.timelineNumberOfLines
@@ -59,21 +72,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	override func viewWillAppear(_ animated: Bool) {
 		applyChanges(animate: false)
 		super.viewWillAppear(animated)
-	}
-	
-	override func viewWillLayoutSubviews() {
-		// If you setup the Search Controller in viewWillLayoutSubviews it won't show by default on creation
-		searchController.delegate = self
-		searchController.searchResultsUpdater = self
-		searchController.obscuresBackgroundDuringPresentation = false
-		searchController.searchBar.delegate = self
-		searchController.searchBar.placeholder = NSLocalizedString("Search Articles", comment: "Search Articles")
-		searchController.searchBar.scopeButtonTitles = [
-			NSLocalizedString("Here", comment: "Here"),
-			NSLocalizedString("All Articles", comment: "All Articles")
-		]
-		navigationItem.searchController = searchController
-		definesPresentationContext = true
 	}
 	
 	// MARK: Actions
