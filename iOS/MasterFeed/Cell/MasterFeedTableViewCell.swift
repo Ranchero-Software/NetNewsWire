@@ -60,6 +60,18 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		}
 	}
 	
+	var isSeparatorShown = true {
+		didSet {
+			if isSeparatorShown != oldValue {
+				if isSeparatorShown {
+					showView(bottomSeparatorView)
+				} else {
+					hideView(bottomSeparatorView)
+				}
+			}
+		}
+	}
+	
 	var unreadCount: Int {
 		get {
 			return unreadCountView.unreadCount
@@ -101,6 +113,12 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		return imageView
 	}()
 
+	private let bottomSeparatorView: UIView = {
+		let view = UIView()
+		view.backgroundColor = UIColor.separator
+		return view
+	}()
+	
 	private var isDisclosureExpanded = false
 	private var disclosureButton: UIButton?
 	private var unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
@@ -173,6 +191,7 @@ private extension MasterFeedTableViewCell {
 		addSubviewAtInit(faviconImageView)
 		addSubviewAtInit(titleView)
 		addDisclosureView()
+		addSubviewAtInit(bottomSeparatorView)
 	}
 
 	func addDisclosureView() {
@@ -195,7 +214,7 @@ private extension MasterFeedTableViewCell {
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton?.setFrameIfNotEqual(layout.disclosureButtonRect)
 		disclosureButton?.isHidden = !isDisclosureAvailable
-		separatorInset = layout.separatorInsets
+		bottomSeparatorView.setFrameIfNotEqual(layout.separatorRect)
 	}
 
 	func updateVibrancy(animated: Bool) {
@@ -207,6 +226,18 @@ private extension MasterFeedTableViewCell {
 		UIView.animate(withDuration: duration) {
 			self.disclosureButton?.tintColor  = disclosureTintColor
 			self.faviconImageView.tintColor = faviconTintColor
+		}
+	}
+	
+	func hideView(_ view: UIView) {
+		if !view.isHidden {
+			view.isHidden = true
+		}
+	}
+	
+	func showView(_ view: UIView) {
+		if view.isHidden {
+			view.isHidden = false
 		}
 	}
 	

@@ -48,7 +48,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		tableView.register(MasterFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		tableView.dataSource = dataSource
-		
+		resetEstimatedRowHeight()
+		tableView.separatorStyle = .none
+
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
@@ -59,7 +61,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
-		resetEstimatedRowHeight()
 		configureToolbar()
 		becomeFirstResponder()
 	}
@@ -628,6 +629,14 @@ private extension MasterFeedViewController {
 		cell.unreadCount = coordinator.unreadCountFor(node)
 		configureFavicon(cell, node)
 		
+		guard let indexPath = dataSource.indexPath(for: node) else { return }
+		let rowsInSection = tableView.numberOfRows(inSection: indexPath.section)
+		if indexPath.row == rowsInSection - 1 {
+			cell.isSeparatorShown = false
+		} else {
+			cell.isSeparatorShown = true
+		}
+		
 	}
 	
 	func configureFavicon(_ cell: MasterFeedTableViewCell, _ node: Node) {
@@ -700,7 +709,9 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.expand(node)
-		self.applyChanges(animate: true)
+		applyChanges(animate: true) { [weak self] in
+			self?.reloadNode(node)
+		}
 	}
 
 	func collapse(_ cell: MasterFeedTableViewCell) {
@@ -708,7 +719,9 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.collapse(node)
-		self.applyChanges(animate: true)
+		applyChanges(animate: true) { [weak self] in
+			self?.reloadNode(node)
+		}
 	}
 
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
