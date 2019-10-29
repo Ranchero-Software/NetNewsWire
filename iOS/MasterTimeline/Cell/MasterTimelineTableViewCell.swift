@@ -203,8 +203,6 @@ private extension MasterTimelineTableViewCell {
 		}
 
 		showView(avatarView)
-		avatarView.layer.cornerRadius = MasterTimelineDefaultCellLayout.avatarCornerRadius
-		avatarView.clipsToBounds = true
 		
 		if avatarView.image !== cellData.avatar {
 			avatarView.image = image

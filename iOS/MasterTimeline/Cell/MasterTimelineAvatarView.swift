@@ -63,6 +63,8 @@ final class MasterTimelineAvatarView: UIView {
 private extension MasterTimelineAvatarView {
 
 	func commonInit() {
+		layer.cornerRadius = MasterTimelineDefaultCellLayout.avatarCornerRadius
+		clipsToBounds = true
 		addSubview(imageView)
 	}
 
