@@ -14,7 +14,7 @@ struct MasterFeedTableViewCellLayout {
 	private static let editingControlIndent = CGFloat(integerLiteral: 40)
 	private static let imageSize = CGSize(width: 24, height: 24)
 	private static let imageMarginRight = CGFloat(integerLiteral: 11)
-	private static let unreadCountMarginLeft = CGFloat(integerLiteral: 8)
+	private static let labelMarginRight = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginRight = CGFloat(integerLiteral: 16)
 	private static let disclosureButtonSize = CGSize(width: 44, height: 44)
 	private static let verticalPadding = CGFloat(integerLiteral: 11)
@@ -35,7 +35,7 @@ struct MasterFeedTableViewCellLayout {
 
 		var initialIndent = insets.left
 		if indent {
-			initialIndent += MasterFeedTableViewCellLayout.imageSize.width + MasterFeedTableViewCellLayout.imageMarginRight
+			initialIndent += MasterFeedTableViewCellLayout.disclosureButtonSize.width
 		}
 		if showingEditingControl {
 			initialIndent += MasterFeedTableViewCellLayout.editingControlIndent
@@ -53,7 +53,7 @@ struct MasterFeedTableViewCellLayout {
 		// Favicon
 		var rFavicon = CGRect.zero
 		if !shouldShowDisclosure {
-			let x = bounds.origin.x + ((MasterFeedTableViewCellLayout.disclosureButtonSize.width - MasterFeedTableViewCellLayout.imageSize.width) / 2)
+			let x = bounds.origin.x
 			let y = UIFontMetrics.default.scaledValue(for: MasterFeedTableViewCellLayout.verticalPadding) +
 				label.font.lineHeight / 2.0 -
 				MasterFeedTableViewCellLayout.imageSize.height / 2.0
@@ -74,11 +74,23 @@ struct MasterFeedTableViewCellLayout {
 		}
 		
 		// Title
-		let labelWidth = bounds.width - (rFavicon.width + MasterFeedTableViewCellLayout.imageMarginRight + MasterFeedTableViewCellLayout.unreadCountMarginLeft + rUnread.width + MasterFeedTableViewCellLayout.disclosureButtonSize.width + MasterFeedTableViewCellLayout.unreadCountMarginRight)
-		let labelSizeInfo = MultilineUILabelSizer.size(for: label.text ?? "", font: label.font, numberOfLines: 0, width: Int(floor(labelWidth)))
 		
-		let rLabelx = bounds.minX + MasterFeedTableViewCellLayout.disclosureButtonSize.width
+		var rLabelx = CGFloat.zero
+		if shouldShowDisclosure {
+			rLabelx = bounds.minX + MasterFeedTableViewCellLayout.disclosureButtonSize.width
+		} else {
+			rLabelx = rFavicon.maxX + MasterFeedTableViewCellLayout.imageMarginRight
+		}
 		let rLabely = UIFontMetrics.default.scaledValue(for: MasterFeedTableViewCellLayout.verticalPadding)
+		
+		var labelWidth = CGFloat.zero
+		if !unreadCountIsHidden {
+			labelWidth = cellWidth - (rLabelx + MasterFeedTableViewCellLayout.labelMarginRight + (cellWidth - rUnread.minX))
+		} else {
+			labelWidth = cellWidth - (rLabelx + MasterFeedTableViewCellLayout.labelMarginRight)
+		}
+		
+		let labelSizeInfo = MultilineUILabelSizer.size(for: label.text ?? "", font: label.font, numberOfLines: 0, width: Int(floor(labelWidth)))
 		let rLabel = CGRect(x: rLabelx, y: rLabely, width: labelSizeInfo.size.width, height: labelSizeInfo.size.height)
 		
 		// Determine cell height
@@ -99,12 +111,7 @@ struct MasterFeedTableViewCellLayout {
 		}
 
 		//  Separator Insets
-		var separatorInset = CGFloat.zero
-		if shouldShowDisclosure {
-			separatorInset = MasterFeedTableViewCellLayout.disclosureButtonSize.width
-		} else {
-			separatorInset = rFavicon.maxX + MasterFeedTableViewCellLayout.imageMarginRight
-		}
+		let separatorInset = MasterFeedTableViewCellLayout.disclosureButtonSize.width
 		separatorRect = CGRect(x: separatorInset, y: cellHeight - 0.5, width: cellWidth - separatorInset, height: 0.5)
 		
 		//  Assign the properties

@@ -622,10 +622,10 @@ private extension MasterFeedViewController {
 	func configure(_ cell: MasterFeedTableViewCell, _ node: Node) {
 		
 		cell.delegate = self
-		if node.parent?.representedObject is Folder {
-			cell.indentationLevel = 1
-		} else {
+		if node.representedObject is Folder {
 			cell.indentationLevel = 0
+		} else {
+			cell.indentationLevel = 1
 		}
 		cell.setDisclosure(isExpanded: node.isExpanded, animated: false)
 		cell.isDisclosureAvailable = node.canHaveChildNodes
