@@ -15,9 +15,7 @@ class RootSplitViewController: UISplitViewController {
 	
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
 		super.viewWillTransition(to: size, with: coordinator)
-		coordinator.animate(alongsideTransition: { [weak self] context in
-			self?.coordinator.configureThreePanelMode(for: size)
-		})
+		self.coordinator.configureThreePanelMode(for: size)
 	}
 	
 	// MARK: Keyboard Shortcuts
