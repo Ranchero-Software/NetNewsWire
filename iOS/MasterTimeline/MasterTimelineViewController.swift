@@ -57,7 +57,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			NSLocalizedString("Here", comment: "Here"),
 			NSLocalizedString("All Articles", comment: "All Articles")
 		]
-		navigationItem.searchController = searchController
 		definesPresentationContext = true
 
 		// Configure the table
@@ -74,6 +73,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		super.viewWillAppear(animated)
 	}
 	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		// You have to assign the search controller here to avoid showing it by default
+		// https://stackoverflow.com/questions/57581557/how-to-initally-hide-searchbar-in-navigation-controller-on-ios-13
+		navigationItem.searchController = searchController
+	}
+
 	// MARK: Actions
 
 	@IBAction func markAllAsRead(_ sender: Any) {
