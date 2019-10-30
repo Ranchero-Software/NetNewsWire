@@ -85,6 +85,9 @@ class ArticleViewController: UIViewController {
 	
 	deinit {
 		if webView != nil  {
+			webView?.evaluateJavaScript("cancelImageLoad();")
+			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
+			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
 			webView.removeFromSuperview()
 			ArticleViewControllerWebViewProvider.shared.enqueueWebView(webView)
 			webView = nil
@@ -109,8 +112,6 @@ class ArticleViewController: UIViewController {
 			webView.navigationDelegate = self
 			webView.uiDelegate = self
 
-			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
-			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 
