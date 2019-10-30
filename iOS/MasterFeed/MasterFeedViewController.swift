@@ -14,7 +14,7 @@ import RSTree
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
-	private var refreshProgressView: RefreshProgressView!
+	private var refreshProgressView: RefreshProgressView?
 	private var addNewItemButton: UIBarButtonItem!
 	
 	private lazy var dataSource = makeDataSource()
@@ -572,8 +572,8 @@ private extension MasterFeedViewController {
 	}
 	
 	func updateUI() {
-		refreshProgressView.updateRefreshLabel()
-		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+		refreshProgressView?.updateRefreshLabel()
+		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}
 	
 	func reloadNode(_ node: Node) {
