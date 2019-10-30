@@ -31,7 +31,6 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 		accounts = AccountManager.shared.sortedActiveAccounts
 		
 		nameTextField.delegate = self
-		nameTextField.becomeFirstResponder()
 		
 		accountLabel.text = (accounts[0] as DisplayNameProvider).nameForDisplay
 		
