@@ -81,7 +81,7 @@ class SettingsViewController: UITableViewController {
 		switch section {
 		case 1:
 			return AccountManager.shared.accounts.count + 1
-		case 4:
+		case 2:
 			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 				return defaultNumberOfRows - 1
@@ -135,7 +135,7 @@ class SettingsViewController: UITableViewController {
 				controller.account = sortedAccounts[indexPath.row]
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
-		case 3:
+		case 2:
 			switch indexPath.row {
 			case 0:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
@@ -152,6 +152,9 @@ class SettingsViewController: UITableViewController {
 					let sourceRect = tableView.rectForRow(at: indexPath)
 					exportOPML(sourceView: sourceView, sourceRect: sourceRect)
 				}
+			case 3:
+				addFeed()
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			default:
 				break
 			}
@@ -174,9 +177,6 @@ class SettingsViewController: UITableViewController {
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 5:
 				openURL("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 6:
-				addFeed()
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			default:
 				break
