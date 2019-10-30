@@ -87,6 +87,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		label.numberOfLines = 0
 		label.allowsDefaultTighteningForTruncation = false
 		label.adjustsFontForContentSizeCategory = true
+		label.lineBreakMode = .byTruncatingTail
 		label.font = .preferredFont(forTextStyle: .body)
 		return label
 	}()
