@@ -7,8 +7,13 @@
     {
       "idiom" : "universal",
       "color" : {
-        "platform" : "ios",
-        "reference" : "systemGray2Color"
+        "color-space" : "srgb",
+        "components" : {
+          "red" : "0",
+          "alpha" : "0.250",
+          "blue" : "0",
+          "green" : "0"
+        }
       }
     },
     {
@@ -20,8 +25,13 @@
         }
       ],
       "color" : {
-        "platform" : "ios",
-        "reference" : "systemGray2Color"
+        "color-space" : "srgb",
+        "components" : {
+          "red" : "255",
+          "alpha" : "0.250",
+          "blue" : "255",
+          "green" : "255"
+        }
       }
     }
   ]
