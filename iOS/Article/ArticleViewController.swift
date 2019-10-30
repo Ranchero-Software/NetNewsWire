@@ -118,8 +118,6 @@ class ArticleViewController: UIViewController {
 			// to work around this bug: http://www.openradar.me/22855188
 			let url = Bundle.main.url(forResource: "page", withExtension: "html")!
 			webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
-//			let request = URLRequest(url: url)
-//			webView.load(request)
 
 		}
 		
@@ -184,6 +182,7 @@ class ArticleViewController: UIViewController {
 			render = "render(\(json));"
 		}
 
+		webView?.scrollView.setZoomScale(1.0, animated: false)
 		webView?.evaluateJavaScript(render)
 		
 	}
