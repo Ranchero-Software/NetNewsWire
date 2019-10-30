@@ -13,7 +13,7 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <progressView hidden="YES" opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="gKH-fc-zh7">
+                <progressView hidden="YES" opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="gKH-fc-zh7" customClass="RoundedProgressView" customModule="NetNewsWire" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="27.5" width="375" height="5"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="5" id="OCl-qi-owb"/>
