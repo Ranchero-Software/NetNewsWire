@@ -178,6 +178,7 @@ private extension MasterFeedTableViewCell {
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
 		disclosureButton?.setImage(AppAssets.disclosureImage, for: .normal)
+		disclosureButton?.tintColor = AppAssets.controlBackgroundColor
 		disclosureButton?.imageView?.contentMode = .center
 		disclosureButton?.imageView?.clipsToBounds = false
 		addSubviewAtInit(disclosureButton!)
@@ -198,14 +199,10 @@ private extension MasterFeedTableViewCell {
 	}
 
 	func updateVibrancy(animated: Bool) {
-		let faviconTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
-		let disclosureTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.controlBackgroundColor
-
+		let avatarTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
 		let duration = animated ? 0.6 : 0.0
-
 		UIView.animate(withDuration: duration) {
-			self.disclosureButton?.tintColor  = disclosureTintColor
-			self.avatarView.tintColor = faviconTintColor
+			self.avatarView.tintColor = avatarTintColor
 		}
 	}
 	
