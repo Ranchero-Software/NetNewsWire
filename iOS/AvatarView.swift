@@ -74,7 +74,7 @@ final class AvatarView: UIView {
 
 	override func layoutSubviews() {
 		imageView.setFrameIfNotEqual(rectForImageView())
-		if (isVerticalBackgroundExposed && !isSymbolImage) || !isDisconcernable {
+		if (image != nil && isVerticalBackgroundExposed && !isSymbolImage) || !isDisconcernable {
 			backgroundColor = AppAssets.avatarBackgroundColor
 		} else {
 			backgroundColor = nil
