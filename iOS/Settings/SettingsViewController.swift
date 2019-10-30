@@ -264,7 +264,15 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 	
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 		for url in urls {
-			opmlAccount?.importOPML(url) { result in}
+			opmlAccount?.importOPML(url) { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					let title = NSLocalizedString("Import Failed", comment: "Import Failed")
+					self.presentError(title: title, message: error.localizedDescription)
+				}
+			}
 		}
 	}
 	
