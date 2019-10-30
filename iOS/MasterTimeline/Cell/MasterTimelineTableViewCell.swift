@@ -17,7 +17,7 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 	private let dateView = MasterTimelineTableViewCell.singleLineUILabel()
 	private let feedNameView = MasterTimelineTableViewCell.singleLineUILabel()
 	
-	private lazy var avatarView = MasterTimelineAvatarView()
+	private lazy var avatarView = AvatarView()
 	
 	private lazy var starView = {
 		return NonIntrinsicImageView(image: AppAssets.timelineStarImage)

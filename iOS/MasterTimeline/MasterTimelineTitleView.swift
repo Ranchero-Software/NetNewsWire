@@ -10,7 +10,7 @@ import UIKit
 
 class MasterTimelineTitleView: UIView {
 
-	@IBOutlet weak var avatarView: MasterTimelineAvatarView!
+	@IBOutlet weak var avatarView: AvatarView!
 	@IBOutlet weak var label: UILabel!
 	@IBOutlet weak var unreadCountView: MasterTimelineUnreadCountView!
 	

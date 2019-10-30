@@ -23,7 +23,7 @@
                     <rect key="frame" x="79.5" y="9" width="110.5" height="20"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5gI-Wl-lnK" customClass="MasterTimelineAvatarView" customModule="NetNewsWire" customModuleProvider="target">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5gI-Wl-lnK" customClass="AvatarView" customModule="NetNewsWire" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="9" width="20" height="20"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>

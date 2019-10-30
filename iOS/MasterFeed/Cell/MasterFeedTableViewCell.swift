@@ -33,7 +33,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 
 	var avatarImage: UIImage? {
 		didSet {
-			avatarImageView.image = avatarImage
+			avatarView.image = avatarImage
 		}
 	}
 
@@ -91,7 +91,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		return label
 	}()
 
-	private let avatarImageView = MasterTimelineAvatarView()
+	private let avatarView = AvatarView()
 
 	private let bottomSeparatorView: UIView = {
 		let view = UIView()
@@ -168,7 +168,7 @@ private extension MasterFeedTableViewCell {
 
 	func commonInit() {
 		addSubviewAtInit(unreadCountView)
-		addSubviewAtInit(avatarImageView)
+		addSubviewAtInit(avatarView)
 		addSubviewAtInit(titleView)
 		addDisclosureView()
 		addSubviewAtInit(bottomSeparatorView)
@@ -189,7 +189,7 @@ private extension MasterFeedTableViewCell {
 	}
 
 	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
-		avatarImageView.setFrameIfNotEqual(layout.faviconRect)
+		avatarView.setFrameIfNotEqual(layout.faviconRect)
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton?.setFrameIfNotEqual(layout.disclosureButtonRect)
@@ -205,7 +205,7 @@ private extension MasterFeedTableViewCell {
 
 		UIView.animate(withDuration: duration) {
 			self.disclosureButton?.tintColor  = disclosureTintColor
-			self.avatarImageView.tintColor = faviconTintColor
+			self.avatarView.tintColor = faviconTintColor
 		}
 	}
 	

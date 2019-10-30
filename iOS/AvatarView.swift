@@ -1,5 +1,5 @@
 //
-//  MasterTimelineAvatarView.swift
+//  AvatarView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 9/17/19.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class MasterTimelineAvatarView: UIView {
+final class AvatarView: UIView {
 
 	var image: UIImage? = nil {
 		didSet {
@@ -83,7 +83,7 @@ final class MasterTimelineAvatarView: UIView {
 
 }
 
-private extension MasterTimelineAvatarView {
+private extension AvatarView {
 
 	func commonInit() {
 		layer.cornerRadius = MasterTimelineDefaultCellLayout.avatarCornerRadius
