@@ -109,6 +109,7 @@ private extension AddContainerViewController {
 			return
 		}
 		
+		navigationItem.title = NSLocalizedString("Add Feed", comment: "Add Feed")
 		resetUI()
 		hideCurrentController()
 		
@@ -126,6 +127,7 @@ private extension AddContainerViewController {
 			return
 		}
 		
+		navigationItem.title = NSLocalizedString("Add Folder", comment: "Add Folder")
 		resetUI()
 		hideCurrentController()
 		displayContentController(UIStoryboard.add.instantiateController(ofType: AddFolderViewController.self))
