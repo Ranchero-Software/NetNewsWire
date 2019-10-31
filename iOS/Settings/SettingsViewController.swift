@@ -66,7 +66,11 @@ class SettingsViewController: UITableViewController {
 		buildLabel.text = "\(Bundle.main.appName) v \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
 		buildLabel.sizeToFit()
 		buildLabel.translatesAutoresizingMaskIntoConstraints = false
-		tableView.tableFooterView = buildLabel
+		
+		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: buildLabel.frame.width, height: buildLabel.frame.height + 10.0))
+		wrapperView.translatesAutoresizingMaskIntoConstraints = false
+		wrapperView.addSubview(buildLabel)
+		tableView.tableFooterView = wrapperView
 
 	}
 	
