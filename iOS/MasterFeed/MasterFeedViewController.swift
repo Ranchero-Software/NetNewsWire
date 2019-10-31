@@ -654,7 +654,7 @@ private extension MasterFeedViewController {
 				return feedIconImage
 			}
 			
-			if let faviconImage = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+			if let faviconImage = appDelegate.faviconDownloader.favicon(for: feed) {
 				return faviconImage
 			}
 			
