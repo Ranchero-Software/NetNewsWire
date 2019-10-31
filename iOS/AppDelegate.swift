@@ -201,12 +201,14 @@ private extension AppDelegate {
 		let imagesFolderURL = tempDir.appendingPathComponent("Images")
 		let homePageToIconURL = tempDir.appendingPathComponent("HomePageToIconURLCache.plist")
 		let homePagesWithNoIconURL = tempDir.appendingPathComponent("HomePagesWithNoIconURLCache.plist")
-		
+		let homePageToFaviconURL = tempDir.appendingPathComponent("HomePageToFaviconURLCache.plist")
+		let homePageURLsWithNoFaviconURL = tempDir.appendingPathComponent("HomePageURLsWithNoFaviconURLCache.plist")
+
 		// If the image disk cache hasn't been flushed for 3 days and the network is available, delete it
 		if let flushDate = AppDefaults.lastImageCacheFlushDate, flushDate.addingTimeInterval(3600*24*3) < Date() {
 			if let reachability = try? Reachability(hostname: "apple.com") {
 				if reachability.connection != .unavailable {
-					for tempItem in [faviconsFolderURL, imagesFolderURL, homePageToIconURL, homePagesWithNoIconURL] {
+					for tempItem in [faviconsFolderURL, imagesFolderURL, homePageToIconURL, homePagesWithNoIconURL, homePageToFaviconURL, homePageURLsWithNoFaviconURL] {
 						do {
 							os_log(.info, log: self.log, "Removing cache file: %@", tempItem.absoluteString)
 							try FileManager.default.removeItem(at: tempItem)

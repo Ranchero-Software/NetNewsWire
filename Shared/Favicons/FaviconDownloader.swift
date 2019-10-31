@@ -18,11 +18,28 @@ extension Notification.Name {
 
 final class FaviconDownloader {
 
+	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
+
 	private let folder: String
 	private let diskCache: BinaryDiskCache
 	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
+	
 	private var homePageToFaviconURLCache = [String: String]() //homePageURL: faviconURL
-	private var homePageURLsWithNoFaviconURL = Set<String>()
+	private var homePageToFaviconURLCachePath: String
+	private var homePageToFaviconURLCacheDirty = false {
+		didSet {
+			queueSaveHomePageToFaviconURLCacheIfNeeded()
+		}
+	}
+
+	private var homePageURLsWithNoFaviconURLCache = Set<String>()
+	private var homePageURLsWithNoFaviconURLCachePath: String
+	private var homePageURLsWithNoFaviconURLCacheDirty = false {
+		didSet {
+			queueSaveHomePageURLsWithNoFaviconURLCacheIfNeeded()
+		}
+	}
+
 	private let queue: DispatchQueue
 	private var cache = [Feed: RSImage]() // faviconURL: RSImage
 
@@ -35,6 +52,11 @@ final class FaviconDownloader {
 		self.folder = folder
 		self.diskCache = BinaryDiskCache(folder: folder)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
+
+		self.homePageToFaviconURLCachePath = (folder as NSString).appendingPathComponent("HomePageToFaviconURLCache.plist")
+		self.homePageURLsWithNoFaviconURLCachePath = (folder as NSString).appendingPathComponent("HomePageURLsWithNoFaviconURLCache.plist")
+		loadHomePageToFaviconURLCache()
+		loadHomePageURLsWithNoFaviconURLCache()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 	}
@@ -92,7 +114,7 @@ final class FaviconDownloader {
 	func favicon(withHomePageURL homePageURL: String) -> RSImage? {
 
 		let url = homePageURL.rs_normalizedURL()
-		if homePageURLsWithNoFaviconURL.contains(url) {
+		if homePageURLsWithNoFaviconURLCache.contains(url) {
 			return nil
 		}
 		
@@ -103,10 +125,12 @@ final class FaviconDownloader {
 		findFaviconURL(with: url) { (faviconURL) in
 			if let faviconURL = faviconURL {
 				self.homePageToFaviconURLCache[url] = faviconURL
+				self.homePageToFaviconURLCacheDirty = true
 				let _ = self.favicon(with: faviconURL)
 			}
 			else {
-				self.homePageURLsWithNoFaviconURL.insert(url)
+				self.homePageURLsWithNoFaviconURLCache.insert(url)
+				self.homePageURLsWithNoFaviconURLCacheDirty = true
 			}
 		}
 
@@ -125,6 +149,18 @@ final class FaviconDownloader {
 		}
 
 		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
+	}
+	
+	@objc func saveHomePageToFaviconURLCacheIfNeeded() {
+		if homePageToFaviconURLCacheDirty {
+			saveHomePageToFaviconURLCache()
+		}
+	}
+	
+	@objc func saveHomePageURLsWithNoFaviconURLCacheIfNeeded() {
+		if homePageURLsWithNoFaviconURLCacheDirty {
+			saveHomePageURLsWithNoFaviconURLCache()
+		}
 	}
 }
 
@@ -175,4 +211,60 @@ private extension FaviconDownloader {
 			NotificationCenter.default.post(name: .FaviconDidBecomeAvailable, object: self, userInfo: userInfo)
 		}
 	}
+
+	func loadHomePageToFaviconURLCache() {
+		let url = URL(fileURLWithPath: homePageToFaviconURLCachePath)
+		guard let data = try? Data(contentsOf: url) else {
+			return
+		}
+		let decoder = PropertyListDecoder()
+		homePageToFaviconURLCache = (try? decoder.decode([String: String].self, from: data)) ?? [String: String]()
+	}
+
+	func loadHomePageURLsWithNoFaviconURLCache() {
+		let url = URL(fileURLWithPath: homePageURLsWithNoFaviconURLCachePath)
+		guard let data = try? Data(contentsOf: url) else {
+			return
+		}
+		let decoder = PropertyListDecoder()
+		let decoded = (try? decoder.decode([String].self, from: data)) ?? [String]()
+		homePageURLsWithNoFaviconURLCache = Set(decoded)
+	}
+
+	func queueSaveHomePageToFaviconURLCacheIfNeeded() {
+		FaviconDownloader.saveQueue.add(self, #selector(saveHomePageToFaviconURLCacheIfNeeded))
+	}
+
+	func queueSaveHomePageURLsWithNoFaviconURLCacheIfNeeded() {
+		FaviconDownloader.saveQueue.add(self, #selector(saveHomePageURLsWithNoFaviconURLCacheIfNeeded))
+	}
+
+	func saveHomePageToFaviconURLCache() {
+		homePageToFaviconURLCacheDirty = false
+
+		let encoder = PropertyListEncoder()
+		encoder.outputFormat = .binary
+		let url = URL(fileURLWithPath: homePageToFaviconURLCachePath)
+		do {
+			let data = try encoder.encode(homePageToFaviconURLCache)
+			try data.write(to: url)
+		} catch {
+			assertionFailure(error.localizedDescription)
+		}
+	}
+	
+	func saveHomePageURLsWithNoFaviconURLCache() {
+		homePageURLsWithNoFaviconURLCacheDirty = false
+
+		let encoder = PropertyListEncoder()
+		encoder.outputFormat = .binary
+		let url = URL(fileURLWithPath: homePageURLsWithNoFaviconURLCachePath)
+		do {
+			let data = try encoder.encode(Array(homePageURLsWithNoFaviconURLCache))
+			try data.write(to: url)
+		} catch {
+			assertionFailure(error.localizedDescription)
+		}
+	}
+
 }
