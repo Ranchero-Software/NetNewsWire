@@ -16,7 +16,7 @@ final class AvatarView: UIView {
 				imageView.image = image
 
 				if self.traitCollection.userInterfaceStyle == .dark {
-					DispatchQueue.global(qos: .default).async {
+					DispatchQueue.global(qos: .background).async {
 						if self.image?.isDark() ?? false {
 							DispatchQueue.main.async {
 								self.isDisconcernable = false
