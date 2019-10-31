@@ -99,10 +99,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
 
-		if let node = node, let indexPath = dataSource.indexPath(for: node), let unreadCountProvider = node.representedObject as? UnreadCountProvider {
-			if let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
-				cell.unreadCount = unreadCountProvider.unreadCount
-			}
+		if let node = node, dataSource.indexPath(for: node) != nil {
+			reloadNode(node)
 		}
 	}
 
