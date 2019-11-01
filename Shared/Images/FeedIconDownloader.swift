@@ -32,7 +32,14 @@ public final class FeedIconDownloader {
 		}
 	}
 	
-	private var homePagesWithNoIconURL = Set<String>()
+	private var homePagesWithNoIconURLCache = Set<String>()
+	private var homePagesWithNoIconURLCachePath: String
+	private var homePagesWithNoIconURLCacheDirty = false {
+		didSet {
+			queueHomePagesWithNoIconURLCacheIfNeeded()
+		}
+	}
+
 	private var urlsInProgress = Set<String>()
 	private var cache = [Feed: RSImage]()
 	private var waitingForFeedURLs = [String: Feed]()
@@ -40,7 +47,9 @@ public final class FeedIconDownloader {
 	init(imageDownloader: ImageDownloader, folder: String) {
 		self.imageDownloader = imageDownloader
 		self.homePageToIconURLCachePath = (folder as NSString).appendingPathComponent("HomePageToIconURLCache.plist")
+		self.homePagesWithNoIconURLCachePath = (folder as NSString).appendingPathComponent("HomePagesWithNoIconURLCache.plist")
 		loadHomePageToIconURLCache()
+		loadHomePagesWithNoIconURLCache()
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
 	}
 
@@ -99,13 +108,19 @@ public final class FeedIconDownloader {
 		}
 	}
 	
+	@objc func saveHomePagesWithNoIconURLCacheIfNeeded() {
+		if homePagesWithNoIconURLCacheDirty {
+			saveHomePagesWithNoIconURLCache()
+		}
+	}
+	
 }
 
 private extension FeedIconDownloader {
 
 	func icon(forHomePageURL homePageURL: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
 
-		if homePagesWithNoIconURL.contains(homePageURL) {
+		if homePagesWithNoIconURLCache.contains(homePageURL) {
 			imageResultBlock(nil)
 			return
 		}
@@ -141,7 +156,8 @@ private extension FeedIconDownloader {
 	}
 
 	func cacheIconURL(for homePageURL: String, _ iconURL: String) {
-		homePagesWithNoIconURL.remove(homePageURL)
+		homePagesWithNoIconURLCache.remove(homePageURL)
+		homePagesWithNoIconURLCacheDirty = true
 		homePageToIconURLCache[homePageURL] = iconURL
 		homePageToIconURLCacheDirty = true
 	}
@@ -172,7 +188,8 @@ private extension FeedIconDownloader {
 			return
 		}
 
-		homePagesWithNoIconURL.insert(homePageURL)
+		homePagesWithNoIconURLCache.insert(homePageURL)
+		homePagesWithNoIconURLCacheDirty = true
 	}
 	
 	func loadHomePageToIconURLCache() {
@@ -184,8 +201,22 @@ private extension FeedIconDownloader {
 		homePageToIconURLCache = (try? decoder.decode([String: String].self, from: data)) ?? [String: String]()
 	}
 
+	func loadHomePagesWithNoIconURLCache() {
+		let url = URL(fileURLWithPath: homePagesWithNoIconURLCachePath)
+		guard let data = try? Data(contentsOf: url) else {
+			return
+		}
+		let decoder = PropertyListDecoder()
+		let decoded = (try? decoder.decode([String].self, from: data)) ?? [String]()
+		homePagesWithNoIconURLCache = Set(decoded)
+	}
+
 	func queueSaveHomePageToIconURLCacheIfNeeded() {
 		FeedIconDownloader.saveQueue.add(self, #selector(saveHomePageToIconURLCacheIfNeeded))
+	}
+
+	func queueHomePagesWithNoIconURLCacheIfNeeded() {
+		FeedIconDownloader.saveQueue.add(self, #selector(saveHomePagesWithNoIconURLCacheIfNeeded))
 	}
 
 	func saveHomePageToIconURLCache() {
@@ -196,6 +227,20 @@ private extension FeedIconDownloader {
 		let url = URL(fileURLWithPath: homePageToIconURLCachePath)
 		do {
 			let data = try encoder.encode(homePageToIconURLCache)
+			try data.write(to: url)
+		} catch {
+			assertionFailure(error.localizedDescription)
+		}
+	}
+	
+	func saveHomePagesWithNoIconURLCache() {
+		homePagesWithNoIconURLCacheDirty = false
+
+		let encoder = PropertyListEncoder()
+		encoder.outputFormat = .binary
+		let url = URL(fileURLWithPath: homePagesWithNoIconURLCachePath)
+		do {
+			let data = try encoder.encode(Array(homePagesWithNoIconURLCache))
 			try data.write(to: url)
 		} catch {
 			assertionFailure(error.localizedDescription)

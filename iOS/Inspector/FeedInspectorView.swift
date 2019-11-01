@@ -69,7 +69,6 @@ struct FeedInspectorView : View {
 			.onDisappear { self.viewModel.save() }
 			.navigationBarTitle(Text(verbatim: self.viewModel.nameForDisplay), displayMode: .inline)
 			.navigationBarItems(leading: Button(action: {
-				self.viewModel.save()
 				self.viewController?.dismiss(animated: true)
 			}) { Text("Done") } )
 		}
@@ -137,7 +136,8 @@ struct FeedInspectorView : View {
 
 		func save() {
 			if name != nameForDisplay {
-				feed.editedName = name.isEmpty ? nil : name
+				let newName = name.isEmpty ? (feed.name ?? NSLocalizedString("Untitled", comment: "Feed name")) : name
+				feed.rename(to: newName) { _ in }
 			}
 		}
 		

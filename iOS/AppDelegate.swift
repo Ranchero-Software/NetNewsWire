@@ -18,6 +18,7 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 	
+	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	
 	var syncTimer: ArticleStatusSyncTimer?
@@ -130,28 +131,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func prepareAccountsForBackground() {
 		syncTimer?.invalidate()
-		
-		// Schedule background app refresh
 		scheduleBackgroundFeedRefresh()
-		
-		// Sync article status
-		let completeProcessing = { [unowned self] in
-			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
-			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-		}
-		
-		DispatchQueue.global(qos: .background).async {
-			self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
-				completeProcessing()
-				os_log("Accounts sync processing terminated for running too long.", log: self.log, type: .info)
-			}
-			
-			DispatchQueue.main.async {
-				AccountManager.shared.syncArticleStatusAll() {
-					completeProcessing()
-				}
-			}
-		}
+		waitForProgressToFinish()
+		syncArticleStatus()
 	}
 	
 	func prepareAccountsForForeground() {
@@ -200,12 +182,15 @@ private extension AppDelegate {
 		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
 		let imagesFolderURL = tempDir.appendingPathComponent("Images")
 		let homePageToIconURL = tempDir.appendingPathComponent("HomePageToIconURLCache.plist")
+		let homePagesWithNoIconURL = tempDir.appendingPathComponent("HomePagesWithNoIconURLCache.plist")
+		let homePageToFaviconURL = tempDir.appendingPathComponent("HomePageToFaviconURLCache.plist")
+		let homePageURLsWithNoFaviconURL = tempDir.appendingPathComponent("HomePageURLsWithNoFaviconURLCache.plist")
 
 		// If the image disk cache hasn't been flushed for 3 days and the network is available, delete it
 		if let flushDate = AppDefaults.lastImageCacheFlushDate, flushDate.addingTimeInterval(3600*24*3) < Date() {
 			if let reachability = try? Reachability(hostname: "apple.com") {
 				if reachability.connection != .unavailable {
-					for tempItem in [faviconsFolderURL, imagesFolderURL, homePageToIconURL] {
+					for tempItem in [faviconsFolderURL, imagesFolderURL, homePageToIconURL, homePagesWithNoIconURL, homePageToFaviconURL, homePageURLsWithNoFaviconURL] {
 						do {
 							os_log(.info, log: self.log, "Removing cache file: %@", tempItem.absoluteString)
 							try FileManager.default.removeItem(at: tempItem)
@@ -249,6 +234,68 @@ private extension AppDelegate {
 		let addItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.ShowAdd", localizedTitle: addTitle, localizedSubtitle: nil, icon: addIcon, userInfo: nil)
 
 		UIApplication.shared.shortcutItems = [addItem, searchItem, unreadItem]
+	}
+	
+}
+
+// MARK: Go To Background
+private extension AppDelegate {
+	
+	func waitForProgressToFinish() {
+		let completeProcessing = { [unowned self] in
+			AccountManager.shared.saveAll()
+			UIApplication.shared.endBackgroundTask(self.waitBackgroundUpdateTask)
+			self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+		}
+		
+		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
+			completeProcessing()
+			os_log("Accounts wait for progress terminated for running too long.", log: self.log, type: .info)
+		}
+		
+		DispatchQueue.main.async { [weak self] in
+			self?.waitToComplete() {
+				completeProcessing()
+			}
+		}
+	}
+	
+	func waitToComplete(completion: @escaping () -> Void) {
+		guard UIApplication.shared.applicationState != .active else {
+			os_log("App came back to forground, no longer waiting.", log: self.log, type: .info)
+			completion()
+			return
+		}
+		
+		if AccountManager.shared.refreshInProgress {
+			os_log("Waiting for refresh progress to finish...", log: self.log, type: .info)
+			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+				self?.waitToComplete() {
+					completion()
+				}
+			}
+		} else {
+			os_log("Refresh progress complete.", log: self.log, type: .info)
+			completion()
+		}
+	}
+	
+	func syncArticleStatus() {
+		let completeProcessing = { [unowned self] in
+			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
+			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+		}
+		
+		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
+			completeProcessing()
+			os_log("Accounts sync processing terminated for running too long.", log: self.log, type: .info)
+		}
+		
+		DispatchQueue.main.async {
+			AccountManager.shared.syncArticleStatusAll() {
+				completeProcessing()
+			}
+		}
 	}
 	
 }

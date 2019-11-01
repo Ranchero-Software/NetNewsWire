@@ -85,6 +85,9 @@ class ArticleViewController: UIViewController {
 	
 	deinit {
 		if webView != nil  {
+			webView?.evaluateJavaScript("cancelImageLoad();")
+			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
+			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
 			webView.removeFromSuperview()
 			ArticleViewControllerWebViewProvider.shared.enqueueWebView(webView)
 			webView = nil
@@ -109,8 +112,6 @@ class ArticleViewController: UIViewController {
 			webView.navigationDelegate = self
 			webView.uiDelegate = self
 
-			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
-			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 
@@ -118,8 +119,6 @@ class ArticleViewController: UIViewController {
 			// to work around this bug: http://www.openradar.me/22855188
 			let url = Bundle.main.url(forResource: "page", withExtension: "html")!
 			webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
-//			let request = URLRequest(url: url)
-//			webView.load(request)
 
 		}
 		
@@ -184,6 +183,7 @@ class ArticleViewController: UIViewController {
 			render = "render(\(json));"
 		}
 
+		webView?.scrollView.setZoomScale(1.0, animated: false)
 		webView?.evaluateJavaScript(render)
 		
 	}

@@ -14,7 +14,7 @@ extension RSImage {
 	static let avatarSize = 48
 	
 	static func scaledForAvatar(_ data: Data, imageResultBlock: @escaping (RSImage?) -> Void) {
-		DispatchQueue.global().async {
+		DispatchQueue.global(qos: .default).async {
 			let image = RSImage.scaledForAvatar(data)
 			DispatchQueue.main.async {
 				imageResultBlock(image)

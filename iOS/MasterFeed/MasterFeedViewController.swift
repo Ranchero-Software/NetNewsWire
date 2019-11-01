@@ -14,7 +14,7 @@ import RSTree
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
-	private var refreshProgressView: RefreshProgressView!
+	private var refreshProgressView: RefreshProgressView?
 	private var addNewItemButton: UIBarButtonItem!
 	
 	private lazy var dataSource = makeDataSource()
@@ -99,10 +99,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
 
-		if let node = node, let indexPath = dataSource.indexPath(for: node), let unreadCountProvider = node.representedObject as? UnreadCountProvider {
-			if let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
-				cell.unreadCount = unreadCountProvider.unreadCount
-			}
+		if let node = node, dataSource.indexPath(for: node) != nil {
+			reloadNode(node)
 		}
 	}
 
@@ -131,7 +129,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		discloseFeed(feed)
+		discloseFeed(feed, animated: true)
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -483,7 +481,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
-	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
+	func discloseFeed(_ feed: Feed, animated: Bool, completion: (() -> Void)? = nil) {
 		
 		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
 			completion?()
@@ -492,7 +490,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		if let indexPath = dataSource.indexPath(for: node) {
 			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
-			coordinator.selectFeed(indexPath)
+			coordinator.selectFeed(indexPath, animated: animated)
 			completion?()
 			return
 		}
@@ -507,7 +505,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		self.applyChanges(animate: true, adjustScroll: true) { [weak self] in
 			if let indexPath = self?.dataSource.indexPath(for: node) {
-				self?.coordinator.selectFeed(indexPath)
+				self?.coordinator.selectFeed(indexPath, animated: animated)
 				completion?()
 			}
 		}
@@ -572,8 +570,8 @@ private extension MasterFeedViewController {
 	}
 	
 	func updateUI() {
-		refreshProgressView.updateRefreshLabel()
-		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+		refreshProgressView?.updateRefreshLabel()
+		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}
 	
 	func reloadNode(_ node: Node) {
@@ -656,7 +654,7 @@ private extension MasterFeedViewController {
 				return feedIconImage
 			}
 			
-			if let faviconImage = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+			if let faviconImage = appDelegate.faviconDownloader.favicon(for: feed) {
 				return faviconImage
 			}
 			

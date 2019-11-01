@@ -66,7 +66,11 @@ class SettingsViewController: UITableViewController {
 		buildLabel.text = "\(Bundle.main.appName) v \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
 		buildLabel.sizeToFit()
 		buildLabel.translatesAutoresizingMaskIntoConstraints = false
-		tableView.tableFooterView = buildLabel
+		
+		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: buildLabel.frame.width, height: buildLabel.frame.height + 10.0))
+		wrapperView.translatesAutoresizingMaskIntoConstraints = false
+		wrapperView.addSubview(buildLabel)
+		tableView.tableFooterView = wrapperView
 
 	}
 	
@@ -81,7 +85,7 @@ class SettingsViewController: UITableViewController {
 		switch section {
 		case 1:
 			return AccountManager.shared.accounts.count + 1
-		case 4:
+		case 2:
 			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 				return defaultNumberOfRows - 1
@@ -135,7 +139,7 @@ class SettingsViewController: UITableViewController {
 				controller.account = sortedAccounts[indexPath.row]
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
-		case 3:
+		case 2:
 			switch indexPath.row {
 			case 0:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
@@ -152,6 +156,9 @@ class SettingsViewController: UITableViewController {
 					let sourceRect = tableView.rectForRow(at: indexPath)
 					exportOPML(sourceView: sourceView, sourceRect: sourceRect)
 				}
+			case 3:
+				addFeed()
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			default:
 				break
 			}
@@ -174,9 +181,6 @@ class SettingsViewController: UITableViewController {
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 5:
 				openURL("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 6:
-				addFeed()
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			default:
 				break
@@ -264,7 +268,15 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 	
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 		for url in urls {
-			opmlAccount?.importOPML(url) { result in}
+			opmlAccount?.importOPML(url) { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					let title = NSLocalizedString("Import Failed", comment: "Import Failed")
+					self.presentError(title: title, message: error.localizedDescription)
+				}
+			}
 		}
 	}
 	
