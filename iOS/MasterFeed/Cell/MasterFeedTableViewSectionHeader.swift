@@ -50,10 +50,12 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	var disclosureExpanded = false {
 		didSet {
-			updateDisclosureImage()
+			updateExpandedState()
 			updateUnreadCountView()
 		}
 	}
+	
+	var isLastSection = false
 	
 	private let titleView: UILabel = {
 		let label = NonIntrinsicLabel()
@@ -126,21 +128,30 @@ private extension MasterFeedTableViewSectionHeader {
 	func commonInit() {
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(titleView)
-		updateDisclosureImage()
+		updateExpandedState()
 		addSubviewAtInit(disclosureView)
 		addBackgroundView()
 		addSubviewAtInit(topSeparatorView)
 		addSubviewAtInit(bottomSeparatorView)
 	}
 	
-	func updateDisclosureImage() {
-		UIView.animate(withDuration: 0.3) {
-			if self.disclosureExpanded {
-				self.disclosureView.transform = CGAffineTransform(rotationAngle: 1.570796)
-			} else {
-				self.disclosureView.transform = CGAffineTransform(rotationAngle: 0)
-			}
+	func updateExpandedState() {
+		if !isLastSection && self.disclosureExpanded {
+			self.bottomSeparatorView.isHidden = false
 		}
+		UIView.animate(
+			withDuration: 0.3,
+			animations: {
+				if self.disclosureExpanded {
+					self.disclosureView.transform = CGAffineTransform(rotationAngle: 1.570796)
+				} else {
+					self.disclosureView.transform = CGAffineTransform(rotationAngle: 0)
+				}
+			}, completion: { _ in
+				if !self.isLastSection && !self.disclosureExpanded {
+					self.bottomSeparatorView.isHidden = true
+				}
+			})
 	}
 	
 	func updateUnreadCountView() {
@@ -161,9 +172,9 @@ private extension MasterFeedTableViewSectionHeader {
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureView.setFrameIfNotEqual(layout.disclosureButtonRect)
 		
-		let top = CGRect(x: safeAreaInsets.left, y: 0, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.5)
+		let top = CGRect(x: safeAreaInsets.left, y: 0, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.25)
 		topSeparatorView.setFrameIfNotEqual(top)
-		let bottom = CGRect(x: safeAreaInsets.left, y: frame.height - 0.5, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.5)
+		let bottom = CGRect(x: safeAreaInsets.left, y: frame.height - 0.25, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.25)
 		bottomSeparatorView.setFrameIfNotEqual(bottom)
 	}
 	

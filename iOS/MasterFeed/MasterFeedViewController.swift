@@ -174,6 +174,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		headerView.tag = section
 		headerView.disclosureExpanded = sectionNode.isExpanded
+		
+		if section == tableView.numberOfSections - 1 {
+			headerView.isLastSection = true
+		} else {
+			headerView.isLastSection = false
+		}
 
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
