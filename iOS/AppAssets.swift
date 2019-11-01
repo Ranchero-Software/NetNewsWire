@@ -133,6 +133,10 @@ struct AppAssets {
 		return UIColor(named: "secondaryAccentColor")!
 	}()
 	
+	static var sectionHeaderColor: UIColor = {
+		return UIColor(named: "sectionHeaderColor")!
+	}()
+	
 	static var shareImage: UIImage = {
 		return UIImage(systemName: "square.and.arrow.up")!
 	}()
