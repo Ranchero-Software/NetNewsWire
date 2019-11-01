@@ -129,7 +129,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		discloseFeed(feed)
+		discloseFeed(feed, animated: true)
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -481,7 +481,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
-	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
+	func discloseFeed(_ feed: Feed, animated: Bool, completion: (() -> Void)? = nil) {
 		
 		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
 			completion?()
@@ -490,7 +490,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		if let indexPath = dataSource.indexPath(for: node) {
 			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
-			coordinator.selectFeed(indexPath)
+			coordinator.selectFeed(indexPath, animated: animated)
 			completion?()
 			return
 		}
@@ -505,7 +505,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		self.applyChanges(animate: true, adjustScroll: true) { [weak self] in
 			if let indexPath = self?.dataSource.indexPath(for: node) {
-				self?.coordinator.selectFeed(indexPath)
+				self?.coordinator.selectFeed(indexPath, animated: animated)
 				completion?()
 			}
 		}

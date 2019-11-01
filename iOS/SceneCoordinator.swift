@@ -65,6 +65,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var lastSearchScope: SearchScope? = nil
 	private var isSearching: Bool = false
 	private var searchArticleIds: Set<String>? = nil
+	private var isTimelineViewControllerPending = false
 	private var isArticleViewControllerPending = false
 	
 	private(set) var sortDirection = AppDefaults.timelineSortDirection {
@@ -782,8 +783,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		markArticlesWithUndo([article], statusKey: .starred, flag: !article.status.starred)
 	}
 
-	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
-		masterFeedViewController.discloseFeed(feed) {
+	func discloseFeed(_ feed: Feed, animated: Bool, completion: (() -> Void)? = nil) {
+		masterFeedViewController.discloseFeed(feed, animated: animated) {
 			completion?()
 		}
 	}
@@ -952,10 +953,14 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		}
 		
 		// If we are showing the Feeds and only the feeds start clearing stuff
-		if viewController === masterFeedViewController && !isThreePanelMode {
+		if viewController === masterFeedViewController && !isThreePanelMode && !isTimelineViewControllerPending {
 			activityManager.invalidateCurrentActivities()
 			selectFeed(nil)
 			return
+		}
+
+		if viewController is MasterTimelineViewController {
+			isTimelineViewControllerPending = false
 		}
 		
 		// If we are using a phone and navigate away from the detail, clear up the article resources (including activity).
@@ -1473,6 +1478,9 @@ private extension SceneCoordinator {
 	// MARK: Double Split
 	
 	func installTimelineControllerIfNecessary(animated: Bool) {
+
+		isTimelineViewControllerPending = true
+
 		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
 			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
 			masterTimelineViewController!.coordinator = self
@@ -1654,7 +1662,7 @@ private extension SceneCoordinator {
 			return
 		}
 		if let feed = feedNode.representedObject as? Feed {
-			discloseFeed(feed)
+			discloseFeed(feed, animated: false)
 		}
 	}
 	
@@ -1663,7 +1671,7 @@ private extension SceneCoordinator {
 			return
 		}
 		
-		discloseFeed(feedNode.representedObject as! Feed) {
+		discloseFeed(feedNode.representedObject as! Feed, animated: false) {
 		
 			guard let articleID = userInfo?[DeepLinkKey.articleID.rawValue] as? String else { return }
 			if let article = self.articles.first(where: { $0.articleID == articleID }) {
