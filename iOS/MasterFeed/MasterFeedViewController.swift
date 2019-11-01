@@ -72,6 +72,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		updateUI()
 		super.viewWillAppear(animated)
 	}
+
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		tableView.layer.speed = 2.0
+	}
 	
 	// MARK: Notifications
 	
