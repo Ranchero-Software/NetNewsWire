@@ -32,27 +32,28 @@ class ThemedNavigationController: UINavigationController {
 	private func configure() {
 		isToolbarHidden = false
 		
-		if traitCollection.userInterfaceStyle == .dark {
-			navigationBar.standardAppearance = UINavigationBarAppearance()
-			navigationBar.tintColor = AppAssets.primaryAccentColor
-			toolbar.standardAppearance = UIToolbarAppearance()
-			toolbar.compactAppearance = UIToolbarAppearance()
-			toolbar.tintColor = AppAssets.primaryAccentColor
-		} else {
-			let navigationAppearance = UINavigationBarAppearance()
-			navigationAppearance.backgroundColor = AppAssets.barBackgroundColor
-			navigationAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
-			navigationAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
-			navigationBar.standardAppearance = navigationAppearance
-			navigationBar.tintColor = AppAssets.primaryAccentColor
-			
-			let toolbarAppearance = UIToolbarAppearance()
-			toolbarAppearance.backgroundColor = UIColor.white
-			toolbar.standardAppearance = toolbarAppearance
-			toolbar.compactAppearance = toolbarAppearance
-			toolbar.tintColor = AppAssets.primaryAccentColor
-		}
+		let navigationAppearance = UINavigationBarAppearance()
+		let backgroundImage = AppAssets.barBackgroundColor.image()
+		navigationAppearance.backgroundImage = backgroundImage
+		navigationAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+		navigationAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
+		navigationBar.standardAppearance = navigationAppearance
+		navigationBar.tintColor = AppAssets.primaryAccentColor
 		
+		let toolbarAppearance = UIToolbarAppearance()
+		toolbarAppearance.backgroundImage = backgroundImage
+		toolbar.standardAppearance = toolbarAppearance
+		toolbar.compactAppearance = toolbarAppearance
+		toolbar.tintColor = AppAssets.primaryAccentColor
 	}
 	
+}
+
+extension UIColor {
+    func image(_ size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
+        return UIGraphicsImageRenderer(size: size).image { rendererContext in
+            self.setFill()
+            rendererContext.fill(CGRect(origin: .zero, size: size))
+        }
+    }
 }

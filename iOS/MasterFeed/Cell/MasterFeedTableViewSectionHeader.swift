@@ -169,7 +169,7 @@ private extension MasterFeedTableViewSectionHeader {
 	
 	func addBackgroundView() {
 		self.backgroundView = UIView(frame: self.bounds)
-		self.backgroundView?.backgroundColor = UIColor.systemGroupedBackground
+		self.backgroundView?.backgroundColor = UIColor.secondarySystemBackground
 	}
 	
 }
