@@ -156,9 +156,13 @@ private extension MasterFeedTableViewSectionHeader {
 	
 	func updateUnreadCountView() {
 		if !disclosureExpanded && unreadCount > 0 {
-			unreadCountView.isHidden = false
+			UIView.animate(withDuration: 0.3) {
+				self.unreadCountView.alpha = 1
+			}
 		} else {
-			self.unreadCountView.isHidden = true
+			UIView.animate(withDuration: 0.3) {
+				self.unreadCountView.alpha = 0
+			}
 		}
 	}
 
