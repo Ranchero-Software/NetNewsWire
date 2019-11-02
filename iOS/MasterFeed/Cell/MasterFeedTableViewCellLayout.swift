@@ -11,6 +11,7 @@ import RSCore
 
 struct MasterFeedTableViewCellLayout {
 
+	private static let indentWidth = CGFloat(integerLiteral: 42)
 	private static let editingControlIndent = CGFloat(integerLiteral: 40)
 	private static let imageSize = CGSize(width: 24, height: 24)
 	private static let imageMarginRight = CGFloat(integerLiteral: 11)
@@ -35,7 +36,7 @@ struct MasterFeedTableViewCellLayout {
 
 		var initialIndent = insets.left
 		if indent {
-			initialIndent += MasterFeedTableViewCellLayout.disclosureButtonSize.width
+			initialIndent += MasterFeedTableViewCellLayout.indentWidth
 		}
 		let bounds = CGRect(x: initialIndent, y: 0.0, width: floor(cellWidth - initialIndent - insets.right), height: 0.0)
 		
