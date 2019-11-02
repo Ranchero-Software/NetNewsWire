@@ -974,7 +974,7 @@ private extension FeedbinAccountDelegate {
 				
 				self.processEntries(account: account, entries: entries) {
 					self.refreshArticleStatus(for: account) {
-						self.refreshArticles(account, page: page) {
+						self.refreshArticles(account, page: page, updateFetchDate: nil) {
 							self.refreshProgress.completeTask()
 							self.refreshMissingArticles(account) {
 								self.refreshProgress.completeTask()
@@ -1001,7 +1001,7 @@ private extension FeedbinAccountDelegate {
 		caller.retrieveEntries() { result in
 			
 			switch result {
-			case .success(let (entries, page, lastPageNumber)):
+			case .success(let (entries, page, updateFetchDate, lastPageNumber)):
 				
 				if let last = lastPageNumber {
 					self.refreshProgress.addToNumberOfTasksAndRemaining(last - 1)
@@ -1010,7 +1010,7 @@ private extension FeedbinAccountDelegate {
 				self.processEntries(account: account, entries: entries) {
 					
 					self.refreshProgress.completeTask()
-					self.refreshArticles(account, page: page) {
+					self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate) {
 						os_log(.debug, log: self.log, "Done refreshing articles.")
 						completion()
 					}
@@ -1059,8 +1059,11 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func refreshArticles(_ account: Account, page: String?, completion: @escaping (() -> Void)) {
+	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?, completion: @escaping (() -> Void)) {
 		guard let page = page else {
+			if let lastArticleFetch = updateFetchDate {
+				self.accountMetadata?.lastArticleFetch = lastArticleFetch
+			}
 			completion()
 			return
 		}
@@ -1072,7 +1075,7 @@ private extension FeedbinAccountDelegate {
 				
 				self.processEntries(account: account, entries: entries) {
 					self.refreshProgress.completeTask()
-					self.refreshArticles(account, page: nextPage, completion: completion)
+					self.refreshArticles(account, page: nextPage, updateFetchDate: updateFetchDate, completion: completion)
 				}
 				
 			case .failure(let error):
