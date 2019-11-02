@@ -12,7 +12,7 @@ import os.log
 
 struct ErrorHandler {
 
-	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Account")
+	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
 	public static func present(_ viewController: UIViewController) -> (Error) -> () {
 		return { [weak viewController] error in
