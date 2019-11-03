@@ -47,7 +47,11 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		updateLabelVibrancy(feedNameView, animated: animated)
 		
 		UIView.animate(withDuration: duration(animated: animated)) {
-			self.unreadIndicatorView.isSelected = self.isHighlighted || self.isSelected
+			if self.isHighlighted || self.isSelected {
+				self.unreadIndicatorView.backgroundColor = AppAssets.vibrantTextColor
+			} else {
+				self.unreadIndicatorView.backgroundColor = AppAssets.secondaryAccentColor
+			}
 		}
 	}
 	

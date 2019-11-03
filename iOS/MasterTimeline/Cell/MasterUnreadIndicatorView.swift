@@ -10,31 +10,10 @@ import UIKit
 
 class MasterUnreadIndicatorView: UIView {
 
-	var isSelected = false {
-		didSet {
-			setNeedsDisplay()
-		}
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		layer.cornerRadius = frame.size.width / 2.0
+		clipsToBounds = true
 	}
-	
-	override init(frame: CGRect) {
-		super.init(frame: frame)
-		self.isOpaque = false
-	}
-	
-	required init?(coder aDecoder: NSCoder) {
-		super.init(coder: aDecoder)
-		self.isOpaque = false
-	}
-	
-	static let bezierPath: UIBezierPath = {
-		let r = CGRect(x: 0.0, y: 0.0, width: MasterTimelineDefaultCellLayout.unreadCircleDimension, height: MasterTimelineDefaultCellLayout.unreadCircleDimension)
-		return UIBezierPath(ovalIn: r)
-	}()
-	
-    override func draw(_ dirtyRect: CGRect) {
-		let color = isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
-		color.setFill()
-		MasterUnreadIndicatorView.bezierPath.fill()
-    }
     
 }
