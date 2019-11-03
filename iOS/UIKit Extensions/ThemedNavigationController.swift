@@ -31,6 +31,7 @@ class ThemedNavigationController: UINavigationController {
 		
 	private func configure() {
 		isToolbarHidden = false
+		view.backgroundColor = AppAssets.barBackgroundColor
 		
 		let navigationAppearance = UINavigationBarAppearance()
 		navigationAppearance.backgroundColor = AppAssets.barBackgroundColor
