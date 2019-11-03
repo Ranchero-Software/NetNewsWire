@@ -71,7 +71,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	override func viewWillAppear(_ animated: Bool) {
 		applyChanges(animate: false)
-		super.viewWillAppear(animated)
+		if dataSource.snapshot().numberOfItems < 1 {
+			navigationItem.searchController?.isActive = false
+		}
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
