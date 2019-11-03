@@ -33,27 +33,17 @@ class ThemedNavigationController: UINavigationController {
 		isToolbarHidden = false
 		
 		let navigationAppearance = UINavigationBarAppearance()
-		let backgroundImage = AppAssets.barBackgroundColor.image()
-		navigationAppearance.backgroundImage = backgroundImage
+		navigationAppearance.backgroundColor = AppAssets.barBackgroundColor
 		navigationAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
 		navigationAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
 		navigationBar.standardAppearance = navigationAppearance
 		navigationBar.tintColor = AppAssets.primaryAccentColor
 		
 		let toolbarAppearance = UIToolbarAppearance()
-		toolbarAppearance.backgroundImage = backgroundImage
+		toolbarAppearance.backgroundColor = AppAssets.barBackgroundColor
 		toolbar.standardAppearance = toolbarAppearance
 		toolbar.compactAppearance = toolbarAppearance
 		toolbar.tintColor = AppAssets.primaryAccentColor
 	}
 	
-}
-
-extension UIColor {
-    func image(_ size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
-        return UIGraphicsImageRenderer(size: size).image { rendererContext in
-            self.setFill()
-            rendererContext.fill(CGRect(origin: .zero, size: size))
-        }
-    }
 }
