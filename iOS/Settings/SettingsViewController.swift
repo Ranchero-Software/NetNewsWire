@@ -15,8 +15,6 @@ class SettingsViewController: UITableViewController {
 	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
 	private weak var opmlAccount: Account?
 	
-	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
-	
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
 	@IBOutlet weak var numberOfTextLinesLabel: UILabel!
