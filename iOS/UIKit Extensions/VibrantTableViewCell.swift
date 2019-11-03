@@ -10,6 +10,10 @@ import UIKit
 
 class VibrantTableViewCell: UITableViewCell {
 
+	var labelColor: UIColor {
+		return isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
+	}
+	
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		commonInit()
@@ -23,13 +27,39 @@ class VibrantTableViewCell: UITableViewCell {
 	private func commonInit() {
 		applyThemeProperties()
 	}
+
+	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+		super.setHighlighted(highlighted, animated: animated)
+		updateVibrancy(animated: animated)
+	}
+
+	override func setSelected(_ selected: Bool, animated: Bool) {
+		super.setSelected(selected, animated: animated)
+		updateVibrancy(animated: animated)
+	}
 	
 	/// Subclass overrides should call super
 	func applyThemeProperties() {
 		let selectedBackgroundView = UIView(frame: .zero)
 		selectedBackgroundView.backgroundColor = AppAssets.secondaryAccentColor
 		self.selectedBackgroundView = selectedBackgroundView
-		
-		textLabel?.highlightedTextColor = AppAssets.vibrantTextColor
 	}
+
+	/// Subclass overrides should call super
+	func updateVibrancy(animated: Bool) {
+		updateLabelVibrancy(textLabel, animated: animated)
+		updateLabelVibrancy(detailTextLabel, animated: animated)
+	}
+
+	func duration(animated: Bool) -> TimeInterval {
+		return animated ? 0.6 : 0.0
+	}
+	
+	func updateLabelVibrancy(_ label: UILabel?, animated: Bool) {
+		guard let label = label else { return }
+		UIView.transition(with: label, duration: duration(animated: animated), options: .transitionCrossDissolve, animations: {
+			label.textColor = self.labelColor
+		}, completion: nil)
+	}
+	
 }

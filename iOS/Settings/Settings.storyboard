@@ -353,7 +353,6 @@
                         <outlet property="groupByFeedSwitch" destination="JNi-Wz-RbU" id="TwH-Kd-o6N"/>
                         <outlet property="numberOfTextLinesLabel" destination="b2T-Uw-ugm" id="IUA-fR-A3U"/>
                         <outlet property="numberOfTextLinesSteppper" destination="sqD-br-anp" id="naH-11-E0I"/>
-                        <outlet property="refreshIntervalLabel" destination="qIl-N6-6wQ" id="2gQ-Yn-FP8"/>
                         <outlet property="timelineSortOrderSwitch" destination="Keq-Np-l9O" id="Zm7-HG-r5h"/>
                     </connections>
                 </tableViewController>
