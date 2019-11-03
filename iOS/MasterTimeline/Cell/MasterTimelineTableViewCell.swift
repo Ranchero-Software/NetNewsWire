@@ -142,19 +142,19 @@ private extension MasterTimelineTableViewCell {
 	
 	func updateTitleView() {
 		titleView.font = MasterTimelineDefaultCellLayout.titleFont
-		titleView.textColor = .label
+		titleView.textColor = labelColor
 		updateTextFieldText(titleView, cellData?.title)
 	}
 	
 	func updateSummaryView() {
 		summaryView.font = MasterTimelineDefaultCellLayout.summaryFont
-		summaryView.textColor = .label
+		summaryView.textColor = labelColor
 		updateTextFieldText(summaryView, cellData?.summary)
 	}
 	
 	func updateDateView() {
 		dateView.font = MasterTimelineDefaultCellLayout.dateFont
-		dateView.textColor = .secondaryLabel
+		dateView.textColor = secondaryLabelColor
 		updateTextFieldText(dateView, cellData.dateString)
 	}
 	
@@ -171,7 +171,7 @@ private extension MasterTimelineTableViewCell {
 		if cellData.showFeedName {
 			showView(feedNameView)
 			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
-			feedNameView.textColor = .secondaryLabel
+			feedNameView.textColor = secondaryLabelColor
 			updateTextFieldText(feedNameView, cellData.feedName)
 		} else {
 			hideView(feedNameView)

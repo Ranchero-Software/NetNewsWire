@@ -14,6 +14,10 @@ class VibrantTableViewCell: UITableViewCell {
 		return isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
 	}
 	
+	var secondaryLabelColor: UIColor {
+		return isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.secondaryLabel
+	}
+	
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		commonInit()
