@@ -36,6 +36,8 @@ class AccountInspectorViewController: UITableViewController {
 			navigationItem.leftBarButtonItem = doneBarButtonItem
 		}
 		
+		tableView.register(InspectorHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
@@ -83,6 +85,8 @@ class AccountInspectorViewController: UITableViewController {
 	
 }
 
+// MARK: Table View
+
 extension AccountInspectorViewController {
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -94,6 +98,22 @@ extension AccountInspectorViewController {
 			return 2
 		} else {
 			return super.numberOfSections(in: tableView)
+		}
+	}
+	
+	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		return section == 0 ? 56.0 : super.tableView(tableView, heightForHeaderInSection: section)
+	}
+	
+	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		guard let account = account else { return nil }
+
+		if section == 0 {
+			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! InspectorHeaderView
+			headerView.imageView.image = AppAssets.image(for: account.type)
+			return headerView
+		} else {
+			return super.tableView(tableView, viewForHeaderInSection: section)
 		}
 	}
 	
@@ -121,6 +141,8 @@ extension AccountInspectorViewController {
 	}
 	
 }
+
+// MARK: UITextFieldDelegate
 
 extension AccountInspectorViewController: UITextFieldDelegate {
 	
