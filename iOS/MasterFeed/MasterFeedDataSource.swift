@@ -20,6 +20,7 @@ class MasterFeedDataSource: UITableViewDiffableDataSource<Node, Node> {
 		super.init(tableView: tableView, cellProvider: cellProvider)
 		self.coordinator = coordinator
 		self.errorHandler = errorHandler
+		self.defaultRowAnimation = .middle
 	}
 	
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
