@@ -60,10 +60,10 @@ struct FeedInspectorView : View {
 					}
 				}
 				Section(header: Text("HOME PAGE")) {
-					Text(verbatim: self.viewModel.homePageURL)
+					FeedInspectorLabelView(text: self.viewModel.homePageURL)
 				}
 				Section(header: Text("FEED URL")) {
-					Text(verbatim: self.viewModel.feedLinkURL)
+					FeedInspectorLabelView(text: self.viewModel.feedLinkURL)
 				}
 			}
 			.onDisappear { self.viewModel.save() }
