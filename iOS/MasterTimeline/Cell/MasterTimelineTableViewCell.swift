@@ -34,35 +34,27 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		commonInit()
 	}
 	
-	override func applyThemeProperties() {
-		super.applyThemeProperties()
-
-		let highlightedTextColor = AppAssets.vibrantTextColor
-		
-		titleView.highlightedTextColor = highlightedTextColor
-		summaryView.highlightedTextColor = highlightedTextColor
-		dateView.highlightedTextColor = highlightedTextColor
-		feedNameView.highlightedTextColor = highlightedTextColor
-		
-		backgroundColor = AppAssets.timelineBackgroundColor
-	}
-	
 	override var frame: CGRect {
 		didSet {
 			setNeedsLayout()
 		}
 	}
 	
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-		super.setHighlighted(highlighted, animated: animated)
-		unreadIndicatorView.isSelected = isHighlighted || isSelected
+	override func updateVibrancy(animated: Bool) {
+		updateLabelVibrancy(titleView, animated: animated)
+		updateLabelVibrancy(summaryView, animated: animated)
+		updateLabelVibrancy(dateView, animated: animated)
+		updateLabelVibrancy(feedNameView, animated: animated)
+		
+		UIView.animate(withDuration: duration(animated: animated)) {
+			if self.isHighlighted || self.isSelected {
+				self.unreadIndicatorView.backgroundColor = AppAssets.vibrantTextColor
+			} else {
+				self.unreadIndicatorView.backgroundColor = AppAssets.secondaryAccentColor
+			}
+		}
 	}
-
-	override func setSelected(_ selected: Bool, animated: Bool) {
-		super.setSelected(selected, animated: animated)
-		unreadIndicatorView.isSelected = isHighlighted || isSelected
-	}
-
+	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
 		let layout = updatedLayout(width: size.width)
 		return CGSize(width: size.width, height: layout.height)

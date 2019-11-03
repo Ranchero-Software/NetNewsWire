@@ -17,7 +17,6 @@ class SettingsViewController: UITableViewController {
 	
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 	
-	@IBOutlet weak var refreshIntervalLabel: UILabel!
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
 	@IBOutlet weak var numberOfTextLinesLabel: UILabel!
@@ -33,6 +32,7 @@ class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsAccountTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsAccountTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -54,8 +54,6 @@ class SettingsViewController: UITableViewController {
 			groupByFeedSwitch.isOn = false
 		}
 
-		refreshIntervalLabel.text = AppDefaults.refreshInterval.description()
-		
 		let numberOfTextLines = AppDefaults.timelineNumberOfLines
 		numberOfTextLinesSteppper.value = Double(numberOfTextLines)
 		updateNumberOfTextLinesLabel(value: numberOfTextLines)
@@ -76,6 +74,7 @@ class SettingsViewController: UITableViewController {
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
+		tableView.layer.speed = AppAssets.layerSpeed
 		self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 	}
 	
@@ -104,7 +103,6 @@ class SettingsViewController: UITableViewController {
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
 				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
-				cell.textLabel?.adjustsFontForContentSizeCategory = true
 				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Accounts")
 			} else {
 				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsAccountTableViewCell", for: indexPath) as! SettingsAccountTableViewCell
@@ -113,6 +111,16 @@ class SettingsViewController: UITableViewController {
 				acctCell.accountImage?.image = AppAssets.image(for: account.type)
 				acctCell.accountNameLabel?.text = account.nameForDisplay
 				cell = acctCell
+			}
+		
+		case 2:
+			
+			if indexPath.row == 0 {
+				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
+				cell.textLabel?.text = NSLocalizedString("Refresh Interval", comment: "Refresh Interval")
+				cell.detailTextLabel?.text = AppDefaults.refreshInterval.description()
+			} else {
+				cell = super.tableView(tableView, cellForRowAt: indexPath)
 			}
 			
 		default:
@@ -260,6 +268,10 @@ class SettingsViewController: UITableViewController {
 		tableView.reloadData()
 	}
 
+	@objc func userDefaultsDidChange() {
+		tableView.reloadData()
+	}
+	
 }
 
 // MARK: OPML Document Picker

@@ -127,19 +127,8 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	
 	override func applyThemeProperties() {
 		super.applyThemeProperties()
-		titleView.highlightedTextColor = AppAssets.vibrantTextColor
 	}
 
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-		super.setHighlighted(highlighted, animated: animated)
-		updateVibrancy(animated: animated)
-	}
-
-	override func setSelected(_ selected: Bool, animated: Bool) {
-		super.setSelected(selected, animated: animated)
-		updateVibrancy(animated: animated)
-	}
-	
 	override func willTransition(to state: UITableViewCell.StateMask) {
 		super.willTransition(to: state)
 		isShowingEditControl = state.contains(.showingEditControl)
@@ -161,6 +150,15 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 			setDisclosure(isExpanded: !isDisclosureExpanded, animated: true)
 			delegate?.disclosureSelected(self, expanding: isDisclosureExpanded)
 		}
+	}
+	
+	override func updateVibrancy(animated: Bool) {
+		super.updateVibrancy(animated: animated)
+		let avatarTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
+		UIView.animate(withDuration: duration(animated: animated)) {
+			self.avatarView.tintColor = avatarTintColor
+		}
+		updateLabelVibrancy(titleView, animated: animated)
 	}
 	
 }
@@ -199,14 +197,6 @@ private extension MasterFeedTableViewCell {
 		bottomSeparatorView.setFrameIfNotEqual(layout.separatorRect)
 	}
 
-	func updateVibrancy(animated: Bool) {
-		let avatarTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
-		let duration = animated ? 0.6 : 0.0
-		UIView.animate(withDuration: duration) {
-			self.avatarView.tintColor = avatarTintColor
-		}
-	}
-	
 	func hideView(_ view: UIView) {
 		if !view.isHidden {
 			view.isHidden = true

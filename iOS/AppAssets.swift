@@ -10,6 +10,8 @@ import RSCore
 import Account
 
 struct AppAssets {
+	
+	static let layerSpeed: Float = 1.5
 
 	static var accountLocalPadImage: UIImage = {
 		return UIImage(named: "accountLocalPad")!
@@ -159,10 +161,6 @@ struct AppAssets {
 	
 	static var starredFeedImage: UIImage = {
 		return UIImage(systemName: "star.fill")!
-	}()
-
-	static var timelineBackgroundColor: UIColor = {
-		return UIColor(named: "timelineBackgroundColor")!
 	}()
 
 	static var timelineStarImage: UIImage = {
