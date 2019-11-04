@@ -500,7 +500,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		if let indexPath = dataSource.indexPath(for: node) {
-			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
 			coordinator.selectFeed(indexPath, animated: animated)
 			completion?()
 			return
