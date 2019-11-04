@@ -939,6 +939,16 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 		return currentArticle == nil
 	}
 	
+	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
+		if masterNavigationController.viewControllers.count == 3 {
+			return nil
+		} else {
+			let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+			articleViewController.coordinator = self
+			return articleViewController
+		}
+	}
+	
 }
 
 // MARK: UINavigationControllerDelegate
