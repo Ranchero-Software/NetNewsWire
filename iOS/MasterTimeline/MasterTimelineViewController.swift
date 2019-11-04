@@ -76,11 +76,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 	}
 	
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		tableView.layer.speed = AppAssets.layerSpeed
-	}
-
 	// MARK: Actions
 
 	@IBAction func markAllAsRead(_ sender: Any) {

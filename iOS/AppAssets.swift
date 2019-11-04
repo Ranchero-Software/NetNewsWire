@@ -11,8 +11,6 @@ import Account
 
 struct AppAssets {
 	
-	static let layerSpeed: Float = 1.0
-
 	static var accountLocalPadImage: UIImage = {
 		return UIImage(named: "accountLocalPad")!
 	}()

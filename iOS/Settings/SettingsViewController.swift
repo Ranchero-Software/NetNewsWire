@@ -72,7 +72,6 @@ class SettingsViewController: UITableViewController {
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		tableView.layer.speed = AppAssets.layerSpeed
 		self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 	}
 	
