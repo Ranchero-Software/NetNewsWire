@@ -41,10 +41,10 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 	}
 	
 	override func updateVibrancy(animated: Bool) {
-		updateLabelVibrancy(titleView, animated: animated)
-		updateLabelVibrancy(summaryView, animated: animated)
-		updateLabelVibrancy(dateView, animated: animated)
-		updateLabelVibrancy(feedNameView, animated: animated)
+		updateLabelVibrancy(titleView, color: labelColor, animated: animated)
+		updateLabelVibrancy(summaryView, color: labelColor, animated: animated)
+		updateLabelVibrancy(dateView, color: secondaryLabelColor, animated: animated)
+		updateLabelVibrancy(feedNameView, color: secondaryLabelColor, animated: animated)
 		
 		UIView.animate(withDuration: duration(animated: animated)) {
 			if self.isHighlighted || self.isSelected {

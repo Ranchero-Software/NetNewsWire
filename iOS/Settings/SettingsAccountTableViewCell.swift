@@ -15,7 +15,7 @@ class SettingsAccountTableViewCell: VibrantTableViewCell {
 
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)
-		updateLabelVibrancy(accountNameLabel, animated: animated)
+		updateLabelVibrancy(accountNameLabel, color: labelColor, animated: animated)
 		
 		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
 		UIView.animate(withDuration: duration(animated: animated)) {

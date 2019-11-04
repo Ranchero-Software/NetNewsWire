@@ -51,18 +51,18 @@ class VibrantTableViewCell: UITableViewCell {
 
 	/// Subclass overrides should call super
 	func updateVibrancy(animated: Bool) {
-		updateLabelVibrancy(textLabel, animated: animated)
-		updateLabelVibrancy(detailTextLabel, animated: animated)
+		updateLabelVibrancy(textLabel, color: labelColor, animated: animated)
+		updateLabelVibrancy(detailTextLabel, color: labelColor, animated: animated)
 	}
 
 	func duration(animated: Bool) -> TimeInterval {
 		return animated ? 0.6 : 0.0
 	}
 	
-	func updateLabelVibrancy(_ label: UILabel?, animated: Bool) {
+	func updateLabelVibrancy(_ label: UILabel?, color: UIColor, animated: Bool) {
 		guard let label = label else { return }
 		UIView.transition(with: label, duration: duration(animated: animated), options: .transitionCrossDissolve, animations: {
-			label.textColor = self.labelColor
+			label.textColor = color
 		}, completion: nil)
 	}
 	

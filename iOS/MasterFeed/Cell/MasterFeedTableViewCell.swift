@@ -158,7 +158,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		UIView.animate(withDuration: duration(animated: animated)) {
 			self.avatarView.tintColor = avatarTintColor
 		}
-		updateLabelVibrancy(titleView, animated: animated)
+		updateLabelVibrancy(titleView, color: labelColor, animated: animated)
 	}
 	
 }
