@@ -23,8 +23,8 @@ public final class SyncDatabase {
 
 	}
 	
-	public func insertStatuses(_ statuses: [SyncStatus]) {
-		syncStatusTable.insertStatuses(statuses)
+	public func insertStatuses(_ statuses: [SyncStatus], completionHandler: (() -> ())? = nil) {
+		syncStatusTable.insertStatuses(statuses, completionHandler: completionHandler)
 	}
 	
 	public func selectForProcessing() -> [SyncStatus] {
@@ -35,12 +35,12 @@ public final class SyncDatabase {
 		return syncStatusTable.selectPendingCount()
 	}
 	
-	public func resetSelectedForProcessing(_ articleIDs: [String]) {
-		syncStatusTable.resetSelectedForProcessing(articleIDs)
+	public func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: (() -> ())? = nil) {
+		syncStatusTable.resetSelectedForProcessing(articleIDs, completionHandler: completionHandler)
 	}
 	
-	public func deleteSelectedForProcessing(_ articleIDs: [String]) {
-		syncStatusTable.deleteSelectedForProcessing(articleIDs)
+    public func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: (() -> ())? = nil) {
+		syncStatusTable.deleteSelectedForProcessing(articleIDs, completionHandler: completionHandler)
 	}
 	
 }

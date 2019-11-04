@@ -16,7 +16,7 @@ class TestAccountManager {
 	static let shared = TestAccountManager()
 	
 	var accountsFolder: URL {
-		return FileManager.default.temporaryDirectory
+		return try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 
 	}
 	
@@ -44,7 +44,7 @@ class TestAccountManager {
 			try FileManager.default.removeItem(atPath: account.dataFolder)
 		}
 		catch let error as CocoaError where error.code == .fileNoSuchFile {
-			print("Unable to delete folder at: \(account.dataFolder) because \(error)")
+			
 		}
 		catch {
 			assertionFailure("Could not delete folder at: \(account.dataFolder) because \(error)")

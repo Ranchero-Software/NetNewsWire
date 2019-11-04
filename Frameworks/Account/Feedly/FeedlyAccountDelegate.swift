@@ -46,6 +46,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
 	private let database: SyncDatabase
 	
+	private weak var currentSyncAllOperation: FeedlySyncAllOperation?
+	
 	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API = .default) {
 		
 		if let transport = transport {
@@ -76,23 +78,44 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	// MARK: Account API
 	
-	private var syncStrategy: FeedlySyncStrategy?
-	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		let date = Date()
+		assert(Thread.isMainThread)
+		
+		guard currentSyncAllOperation == nil else {
+			os_log(.debug, log: log, "Ignoring refreshAll: Feedly sync already in progress.")
+			completion(.success(()))
+			return
+		}
+		
+		guard let credentials = credentials else {
+			os_log(.debug, log: log, "Ignoring refreshAll: Feedly account has no credentials.")
+			completion(.failure(FeedlyAccountDelegateError.notLoggedIn))
+			return
+		}
+		
 		let log = self.log
 		let progress = refreshProgress
 		progress.addToNumberOfTasksAndRemaining(1)
-		syncStrategy?.startSync { result in
-			os_log(.debug, log: log, "Sync took %.3f seconds", -date.timeIntervalSinceNow)
+		
+		let operation = FeedlySyncAllOperation(account: account, credentials: credentials, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetch, log: log)
+		
+		let date = Date()
+		operation.syncCompletionHandler = { [weak self] result in
+			self?.accountMetadata?.lastArticleFetch = date
+			
+			os_log(.debug, log: log, "Sync took %{public}.3f seconds", -date.timeIntervalSinceNow)
 			progress.completeTask()
 			completion(result)
 		}
+		
+		currentSyncAllOperation = operation
+		
+		OperationQueue.main.addOperation(operation)
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
-		let send = FeedlySendArticleStatusesOperation(database: database, caller: caller, log: log)
+		let send = FeedlySendArticleStatusesOperation(database: database, service: caller, log: log)
 		send.completionBlock = {
 			DispatchQueue.main.async {
 				completion()
@@ -112,9 +135,32 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	/// - Parameter account: The account whose articles have a remote status.
 	/// - Parameter completion: Call on the main queue.
 	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
-		refreshAll(for: account) { _ in
+		guard let credentials = credentials else {
+			return completion()
+		}
+		
+		let group = DispatchGroup()
+		
+		let getUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
+		
+		group.enter()
+		getUnread.completionBlock = {
+			group.leave()
+			
+		}
+		
+		let getStarred = FeedlySyncStarredArticlesOperation(account: account, credentials: credentials, service: caller, log: log)
+		
+		group.enter()
+		getStarred.completionBlock = {
+			group.leave()
+		}
+		
+		group.notify(queue: .main) {
 			completion()
 		}
+		
+		OperationQueue.main.addOperations([getUnread, getStarred], waitUntilFinished: false)
 	}
 	
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -410,11 +456,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
-		
-		syncStrategy = FeedlySyncStrategy(account: account,
-										  caller: caller,
-										  database: database,
-										  log: log)
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
