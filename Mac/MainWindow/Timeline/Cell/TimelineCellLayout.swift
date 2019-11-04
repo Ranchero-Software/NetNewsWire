@@ -54,22 +54,27 @@ struct TimelineCellLayout {
 
 		let showAvatar = cellData.showAvatar
 		var textBoxRect = TimelineCellLayout.rectForTextBox(appearance, cellData, showAvatar, width)
+		
+		let dateSize = SingleLineTextFieldSizer.size(for: cellData.dateString, font: appearance.dateFont)
+		
+		var textBoxRect2 = textBoxRect
+		textBoxRect2.size.width -= dateSize.width + appearance.dateMarginLeft
 
-		let (titleRect, numberOfLinesForTitle) = TimelineCellLayout.rectForTitle(textBoxRect, appearance, cellData)
-		let summaryRect = numberOfLinesForTitle > 0 ? TimelineCellLayout.rectForSummary(textBoxRect, titleRect, numberOfLinesForTitle, appearance, cellData) : NSRect.zero
-		let textRect = numberOfLinesForTitle > 0 ? NSRect.zero : TimelineCellLayout.rectForText(textBoxRect, appearance, cellData)
+		let (titleRect, numberOfLinesForTitle) = TimelineCellLayout.rectForTitle(textBoxRect2, appearance, cellData)
+		let summaryRect = numberOfLinesForTitle > 0 ? TimelineCellLayout.rectForSummary(textBoxRect2, titleRect, numberOfLinesForTitle, appearance, cellData) : NSRect.zero
+		let textRect = numberOfLinesForTitle > 0 ? NSRect.zero : TimelineCellLayout.rectForText(textBoxRect2, appearance, cellData)
 
 		var lastTextRect = titleRect
 		if numberOfLinesForTitle == 0 {
 			lastTextRect = textRect
 		}
-		else if numberOfLinesForTitle == 1 {
+		let dateRect = TimelineCellLayout.rectForDate(textBoxRect, lastTextRect, appearance, cellData)
+		if numberOfLinesForTitle == 1 {
 			if summaryRect.height > 0.1 {
 				lastTextRect = summaryRect
 			}
 		}
-		let dateRect = TimelineCellLayout.rectForDate(textBoxRect, lastTextRect, appearance, cellData)
-		let feedNameRect = TimelineCellLayout.rectForFeedName(textBoxRect, dateRect, appearance, cellData)
+		let feedNameRect = TimelineCellLayout.rectForFeedName(textBoxRect, lastTextRect, appearance, cellData)
 
 		textBoxRect.size.height = ceil([titleRect, summaryRect, textRect, dateRect, feedNameRect].maxY() - textBoxRect.origin.y)
 		let avatarImageRect = TimelineCellLayout.rectForAvatar(cellData, appearance, showAvatar, textBoxRect, width, height)
@@ -151,7 +156,7 @@ private extension TimelineCellLayout {
 
 	static func rectForDate(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
 
-		return rectOfLineBelow(textBoxRect, rectAbove, appearance.titleBottomMargin, cellData.dateString, appearance.dateFont)
+		return CGRect(x: rectAbove.maxX + appearance.dateMarginLeft, y: rectAbove.minY, width: textBoxRect.maxX - rectAbove.maxX - appearance.dateMarginLeft, height: rectAbove.height)
 	}
 
 	static func rectForFeedName(_ textBoxRect: NSRect, _ dateRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {

@@ -50,7 +50,7 @@ struct TimelineCellAppearance: Equatable {
 		let largeItemFontSize = actualFontSize //floor(actualFontSize * 1.1)
 
 		self.feedNameFont = NSFont.systemFont(ofSize: smallItemFontSize)
-		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize, weight: NSFont.Weight.bold)
+		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize, weight: NSFont.Weight.regular)
 		self.titleFont = NSFont.systemFont(ofSize: largeItemFontSize, weight: NSFont.Weight.semibold)
 		self.textFont = NSFont.systemFont(ofSize: largeItemFontSize)
 		self.textOnlyFont = NSFont.systemFont(ofSize: largeItemFontSize)
