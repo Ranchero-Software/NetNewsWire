@@ -18,7 +18,7 @@ public final class SyncDatabase {
 		let queue = RSDatabaseQueue(filepath: databaseFilePath, excludeFromBackup: false)
 		self.syncStatusTable = SyncStatusTable(queue: queue)
 		
-		queue.createTables(usingStatements: SyncDatabase.tableCreationStatements)
+		queue.createTables(usingStatementsSync: SyncDatabase.tableCreationStatements)
 		queue.vacuumIfNeeded()
 
 	}
