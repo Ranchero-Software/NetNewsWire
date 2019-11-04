@@ -176,9 +176,9 @@ private extension MasterFeedTableViewSectionHeader {
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureView.setFrameIfNotEqual(layout.disclosureButtonRect)
 		
-		let top = CGRect(x: safeAreaInsets.left, y: 0, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.25)
+		let top = CGRect(x: safeAreaInsets.left, y: 0, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.33)
 		topSeparatorView.setFrameIfNotEqual(top)
-		let bottom = CGRect(x: safeAreaInsets.left, y: frame.height - 0.25, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.25)
+		let bottom = CGRect(x: safeAreaInsets.left, y: frame.height - 0.33, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.33)
 		bottomSeparatorView.setFrameIfNotEqual(bottom)
 	}
 	
