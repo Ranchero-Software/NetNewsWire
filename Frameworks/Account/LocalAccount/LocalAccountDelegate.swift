@@ -32,7 +32,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func cancelAll(for account: Account) {
-		// TODO: implement me
+		refresher.cancelAll()
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {

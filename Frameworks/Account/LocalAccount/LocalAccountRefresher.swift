@@ -28,6 +28,11 @@ final class LocalAccountRefresher {
 		self.completion = completion
 		downloadSession.downloadObjects(feeds as NSSet)
 	}
+	
+	public func cancelAll() {
+		downloadSession.cancelAll()
+	}
+	
 }
 
 // MARK: - DownloadSessionDelegate
