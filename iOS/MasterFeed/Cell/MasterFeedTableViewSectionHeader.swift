@@ -98,26 +98,14 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		
-		let unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
-
-		// Since we can't reload Section Headers to reset the height after we get the
-		// unread count did change, we always assume a large unread count
-		//
-		// This means that sometimes on the second to largest font size will have extra
-		// space under the account name.  This is better than having it overflow into the
-		// cell below.
-		unreadCountView.unreadCount = 888
-		
-		let layout = MasterFeedTableViewCellLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: true)
-		
+		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView)
 		return CGSize(width: bounds.width, height: layout.height)
 		
 	}
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: true)
+		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView)
 		layoutWith(layout)
 	}
 
@@ -171,7 +159,7 @@ private extension MasterFeedTableViewSectionHeader {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
-	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
+	func layoutWith(_ layout: MasterFeedTableViewSectionHeaderLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureView.setFrameIfNotEqual(layout.disclosureButtonRect)
