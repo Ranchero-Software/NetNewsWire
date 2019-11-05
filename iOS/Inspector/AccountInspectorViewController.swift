@@ -74,9 +74,13 @@ class AccountInspectorViewController: UITableViewController {
 		
 		let markTitle = NSLocalizedString("Delete", comment: "Delete")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-			guard let account = self?.account else { return }
+			guard let self = self, let account = self.account else { return }
 			AccountManager.shared.deleteAccount(account)
-			self?.navigationController?.popViewController(animated: true)
+			if self.isModal {
+				self.dismiss(animated: true)
+			} else {
+				self.navigationController?.popViewController(animated: true)
+			}
 		}
 		alertController.addAction(markAction)
 		
