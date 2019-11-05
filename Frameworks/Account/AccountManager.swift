@@ -160,6 +160,10 @@ public final class AccountManager: UnreadCountProvider {
 		return accountsDictionary[accountID]
 	}
 	
+	public func suspendAll() {
+		accounts.forEach { $0.suspend() }
+	}
+	
 	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() ->Void)? = nil) {
 		let group = DispatchGroup()
 		
@@ -187,7 +191,7 @@ public final class AccountManager: UnreadCountProvider {
 		
 		activeAccounts.forEach {
 			group.enter()
-			$0.syncArticleStatus() {
+			$0.syncArticleStatus() { _ in
 				group.leave()
 			}
 		}

@@ -31,18 +31,22 @@ final class LocalAccountDelegate: AccountDelegate {
 		return refresher.progress
 	}
 	
+	func cancelAll(for account: Account) {
+		// TODO: implement me
+	}
+	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		refresher.refreshFeeds(account.flattenedFeeds()) {
 			completion(.success(()))
 		}
 	}
 
-	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
-		completion()
+	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		completion(.success(()))
 	}
 	
-	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
-		completion()
+	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		completion(.success(()))
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {

@@ -341,10 +341,20 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.delegate.refreshAll(for: self, completion: completion)
 	}
 
-	public func syncArticleStatus(completion: (() -> Void)? = nil) {
-		delegate.sendArticleStatus(for: self) { [unowned self] in
-			self.delegate.refreshArticleStatus(for: self) {
-				completion?()
+	public func syncArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
+		delegate.sendArticleStatus(for: self) { [unowned self] result in
+			switch result {
+			case .success:
+				self.delegate.refreshArticleStatus(for: self) { result in
+					switch result {
+					case .success:
+						completion?(.success(()))
+					case .failure(let error):
+						completion?(.failure(error))
+					}
+				}
+			case .failure(let error):
+				completion?(.failure(error))
 			}
 		}
 	}
@@ -367,6 +377,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 		
+	}
+	
+	public func suspend() {
+		delegate.cancelAll(for: self)
+		save()
 	}
 	
 	public func save() {

@@ -78,6 +78,10 @@ final class ReaderAPICaller: NSObject {
 		self.transport = transport
 	}
 	
+	func cancelAll() {
+		transport.cancelAll()
+	}
+	
 	func validateCredentials(endpoint: URL, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		guard let credentials = credentials else {
 			completion(.failure(CredentialsError.incompleteCredentials))

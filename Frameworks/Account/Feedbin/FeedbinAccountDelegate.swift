@@ -15,6 +15,7 @@ import os.log
 
 public enum FeedbinAccountDelegateError: String, Error {
 	case invalidParameter = "There was an invalid parameter passed."
+	case unknown = "An unknown error occurred."
 }
 
 final class FeedbinAccountDelegate: AccountDelegate {
@@ -72,6 +73,10 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
+	func cancelAll(for account: Account) {
+		caller.cancelAll()
+	}
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		retrieveCredentialsIfNecessary(account)
 		
@@ -80,16 +85,16 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		refreshAccount(account) { result in
 			switch result {
 			case .success():
-				
-				self.sendArticleStatus(for: account) {
-					self.refreshArticleStatus(for: account) {
-						self.refreshArticles(account) {
-							self.refreshMissingArticles(account) {
-								self.refreshProgress.clear()
-								DispatchQueue.main.async {
-									completion(.success(()))
-								}
-							}
+
+				self.refreshArticlesAndStatuses(account) { result in
+					switch result {
+					case .success():
+						completion(.success(()))
+					case .failure(let error):
+						DispatchQueue.main.async {
+							self.refreshProgress.clear()
+							let wrappedError = AccountError.wrappedError(error: error, account: account)
+							completion(.failure(wrappedError))
 						}
 					}
 				}
@@ -106,7 +111,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
-	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		retrieveCredentialsIfNecessary(account)
 
 		os_log(.debug, log: log, "Sending article statuses...")
@@ -118,41 +123,59 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		let deleteStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == false }
 
 		let group = DispatchGroup()
-		
+		var errorOccurred = false
+
 		group.enter()
-		sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries) {
+		sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries) { result in
 			group.leave()
+			if case .failure = result {
+				errorOccurred = true
+			}
 		}
 		
 		group.enter()
-		sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries) {
+		sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries) { result in
 			group.leave()
+			if case .failure = result {
+				errorOccurred = true
+			}
 		}
 		
 		group.enter()
-		sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries) {
+		sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries) { result in
 			group.leave()
+			if case .failure = result {
+				errorOccurred = true
+			}
 		}
 		
 		group.enter()
-		sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries) {
+		sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries) { result in
 			group.leave()
+			if case .failure = result {
+				errorOccurred = true
+			}
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done sending article statuses.")
-			completion()
+			if errorOccurred {
+				completion(.failure(FeedbinAccountDelegateError.unknown))
+			} else {
+				completion(.success(()))
+			}
 		}
 		
 	}
 	
-	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		retrieveCredentialsIfNecessary(account)
 
 		os_log(.debug, log: log, "Refreshing article statuses...")
 		
 		let group = DispatchGroup()
-		
+		var errorOccurred = false
+
 		group.enter()
 		caller.retrieveUnreadEntries() { result in
 			switch result {
@@ -160,6 +183,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				self.syncArticleReadState(account: account, articleIDs: articleIDs)
 				group.leave()
 			case .failure(let error):
+				errorOccurred = true
 				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
 				group.leave()
 			}
@@ -173,6 +197,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				self.syncArticleStarredState(account: account, articleIDs: articleIDs)
 				group.leave()
 			case .failure(let error):
+				errorOccurred = true
 				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
 				group.leave()
 			}
@@ -181,7 +206,11 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
-			completion()
+			if errorOccurred {
+				completion(.failure(FeedbinAccountDelegateError.unknown))
+			} else {
+				completion(.success(()))
+			}
 		}
 		
 	}
@@ -515,7 +544,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		database.insertStatuses(syncStatuses)
 		
 		if database.selectPendingCount() > 100 {
-			sendArticleStatus(for: account) {}
+			sendArticleStatus(for: account) { _ in }
 		}
 		
 		return account.update(articles, statusKey: statusKey, flag: flag)
@@ -637,6 +666,49 @@ private extension FeedbinAccountDelegate {
 				
 		}
 		
+	}
+
+	func refreshArticlesAndStatuses(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		self.sendArticleStatus(for: account) { result in
+			switch result {
+			case .success:
+
+				self.refreshArticleStatus(for: account) { result in
+					switch result {
+					case .success:
+						
+						self.refreshArticles(account) { result in
+							switch result {
+							case .success:
+
+								self.refreshMissingArticles(account) { result in
+									switch result {
+									case .success:
+										
+										DispatchQueue.main.async {
+											self.refreshProgress.clear()
+											completion(.success(()))
+										}
+										
+									case .failure(let error):
+										completion(.failure(error))
+									}
+								}
+								
+							case .failure(let error):
+								completion(.failure(error))
+							}
+						}
+						
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 
 	// This function can be deleted if Feedbin updates their taggings.json service to
@@ -843,14 +915,15 @@ private extension FeedbinAccountDelegate {
 	
 	func sendArticleStatuses(_ statuses: [SyncStatus],
 							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
-							 completion: @escaping (() -> Void)) {
+							 completion: @escaping ((Result<Void, Error>) -> Void)) {
 		
 		guard !statuses.isEmpty else {
-			completion()
+			completion(.success(()))
 			return
 		}
 		
 		let group = DispatchGroup()
+		var errorOccurred = false
 		
 		let articleIDs = statuses.compactMap { Int($0.articleID) }
 		let articleIDGroups = articleIDs.chunked(into: 1000)
@@ -863,6 +936,7 @@ private extension FeedbinAccountDelegate {
 					self.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
 					group.leave()
 				case .failure(let error):
+					errorOccurred = true
 					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
 					self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
 					group.leave()
@@ -872,7 +946,11 @@ private extension FeedbinAccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			completion()
+			if errorOccurred {
+				completion(.failure(FeedbinAccountDelegateError.unknown))
+			} else {
+				completion(.success(()))
+			}
 		}
 		
 	}
@@ -973,15 +1051,38 @@ private extension FeedbinAccountDelegate {
 			case .success(let (entries, page)):
 				
 				self.processEntries(account: account, entries: entries) {
-					self.refreshArticleStatus(for: account) {
-						self.refreshArticles(account, page: page, updateFetchDate: nil) {
-							self.refreshProgress.completeTask()
-							self.refreshMissingArticles(account) {
-								self.refreshProgress.completeTask()
-								DispatchQueue.main.async {
-									completion(.success(feed))
+					self.refreshArticleStatus(for: account) { result in
+						switch result {
+						case .success:
+							
+							self.refreshArticles(account, page: page, updateFetchDate: nil) { result in
+								switch result {
+								case .success:
+									
+									self.refreshProgress.completeTask()
+									self.refreshMissingArticles(account) { result in
+										switch result {
+										case .success:
+											
+											self.refreshProgress.completeTask()
+											DispatchQueue.main.async {
+												completion(.success(feed))
+											}
+											
+										case .failure(let error):
+											completion(.failure(error))
+										}
+										
+									}
+									
+								case .failure(let error):
+									completion(.failure(error))
 								}
+								
 							}
+							
+						case .failure(let error):
+							completion(.failure(error))
 						}
 					}
 				}
@@ -994,7 +1095,7 @@ private extension FeedbinAccountDelegate {
  
 	}
 	
-	func refreshArticles(_ account: Account, completion: @escaping (() -> Void)) {
+	func refreshArticles(_ account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
 		os_log(.debug, log: log, "Refreshing articles...")
 		
@@ -1010,25 +1111,30 @@ private extension FeedbinAccountDelegate {
 				self.processEntries(account: account, entries: entries) {
 					
 					self.refreshProgress.completeTask()
-					self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate) {
+					self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate) { result in
 						os_log(.debug, log: self.log, "Done refreshing articles.")
-						completion()
+						switch result {
+						case .success:
+							completion(.success(()))
+						case .failure(let error):
+							completion(.failure(error))
+						}
 					}
 					
 				}
 
 			case .failure(let error):
-				os_log(.error, log: self.log, "Refresh articles failed: %@.", error.localizedDescription)
-				completion()
+				completion(.failure(error))
 			}
 			
 		}
 		
 	}
 	
-	func refreshMissingArticles(_ account: Account, completion: @escaping (() -> Void)) {
+	func refreshMissingArticles(_ account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		os_log(.debug, log: log, "Refreshing missing articles...")
 		let group = DispatchGroup()
+		var errorOccurred = false
 
 		let fetchedArticleIDs = account.fetchArticleIDsForStatusesWithoutArticles()
 		let articleIDs = Array(fetchedArticleIDs)
@@ -1046,6 +1152,7 @@ private extension FeedbinAccountDelegate {
 					}
 
 				case .failure(let error):
+					errorOccurred = true
 					os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
 					group.leave()
 				}
@@ -1055,16 +1162,20 @@ private extension FeedbinAccountDelegate {
 		group.notify(queue: DispatchQueue.main) {
 			self.refreshProgress.completeTask()
 			os_log(.debug, log: self.log, "Done refreshing missing articles.")
-			completion()
+			if errorOccurred {
+				completion(.failure(FeedbinAccountDelegateError.unknown))
+			} else {
+				completion(.success(()))
+			}
 		}
 	}
 
-	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?, completion: @escaping (() -> Void)) {
+	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard let page = page else {
 			if let lastArticleFetch = updateFetchDate {
 				self.accountMetadata?.lastArticleFetch = lastArticleFetch
 			}
-			completion()
+			completion(.success(()))
 			return
 		}
 		
@@ -1079,8 +1190,7 @@ private extension FeedbinAccountDelegate {
 				}
 				
 			case .failure(let error):
-				os_log(.error, log: self.log, "Refresh articles for additional pages failed: %@.", error.localizedDescription)
-				completion()
+				completion(.failure(error))
 			}
 		}
 	}

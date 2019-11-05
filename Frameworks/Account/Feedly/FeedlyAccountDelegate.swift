@@ -78,6 +78,10 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	// MARK: Account API
 	
+	func cancelAll(for account: Account) {
+		// TODO: Implement me please
+	}
+	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		assert(Thread.isMainThread)
 		
@@ -113,12 +117,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		OperationQueue.main.addOperation(operation)
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
 		let send = FeedlySendArticleStatusesOperation(database: database, service: caller, log: log)
 		send.completionBlock = {
 			DispatchQueue.main.async {
-				completion()
+				completion(.success(()))
 			}
 		}
 		OperationQueue.main.addOperation(send)
@@ -134,9 +138,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	///
 	/// - Parameter account: The account whose articles have a remote status.
 	/// - Parameter completion: Call on the main queue.
-	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard let credentials = credentials else {
-			return completion()
+			return completion(.success(()))
 		}
 		
 		let group = DispatchGroup()
@@ -157,7 +161,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 		
 		group.notify(queue: .main) {
-			completion()
+			completion(.success(()))
 		}
 		
 		OperationQueue.main.addOperations([getUnread, getStarred], waitUntilFinished: false)
@@ -448,7 +452,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		os_log(.debug, log: log, "Marking %@ as %@.", articles.map { $0.title }, syncStatuses)
 		
 		if database.selectPendingCount() > 100 {
-			sendArticleStatus(for: account) { }
+			sendArticleStatus(for: account) { _ in }
 		}
 		
 		return account.update(articles, statusKey: statusKey, flag: flag)

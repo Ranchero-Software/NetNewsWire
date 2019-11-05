@@ -16,7 +16,11 @@ struct ErrorHandler {
 
 	public static func present(_ viewController: UIViewController) -> (Error) -> () {
 		return { [weak viewController] error in
-			viewController?.presentError(error)
+			if UIApplication.shared.applicationState == .active {
+				viewController?.presentError(error)
+			} else {
+				ErrorHandler.log(error)
+			}
 		}
 	}
 		

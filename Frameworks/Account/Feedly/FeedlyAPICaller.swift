@@ -53,6 +53,10 @@ final class FeedlyAPICaller {
 		return baseUrlComponents.host
 	}
 	
+	func cancelAll() {
+		transport.cancelAll()
+	}
+	
 	func importOpml(_ opmlData: Data, completionHandler: @escaping (Result<Void, Error>) -> ()) {
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {

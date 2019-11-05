@@ -109,6 +109,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true
+		AccountManager.shared.suspendAll()
 	}
 	
 	// MARK: Notifications
@@ -243,7 +244,7 @@ private extension AppDelegate {
 	
 	func waitForProgressToFinish() {
 		let completeProcessing = { [unowned self] in
-			AccountManager.shared.saveAll()
+			AccountManager.shared.suspendAll()
 			UIApplication.shared.endBackgroundTask(self.waitBackgroundUpdateTask)
 			self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 		}

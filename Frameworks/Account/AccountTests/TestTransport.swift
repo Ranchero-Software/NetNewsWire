@@ -32,6 +32,8 @@ final class TestTransport: Transport {
 		return HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: "HTTP/1.1", headerFields: nil)!
 	}
 	
+	func cancelAll() { }
+	
 	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		
 		guard let url = request.url, let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {

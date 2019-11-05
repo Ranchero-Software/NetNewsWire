@@ -19,7 +19,7 @@ public enum ReaderAPIAccountDelegateError: String, Error {
 }
 
 final class ReaderAPIAccountDelegate: AccountDelegate {
-
+	
 	private let database: SyncDatabase
 	
 	private let caller: ReaderAPICaller
@@ -79,6 +79,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
+	func cancelAll(for account: Account) {
+		caller.cancelAll()
+	}
+	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
@@ -87,8 +91,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			switch result {
 			case .success():
 				
-				self.sendArticleStatus(for: account) {
-					self.refreshArticleStatus(for: account) {
+				self.sendArticleStatus(for: account) { _ in
+					self.refreshArticleStatus(for: account) { _ in
 						self.refreshArticles(account) {
 							self.refreshMissingArticles(account) {
 								self.refreshProgress.clear()
@@ -112,7 +116,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 	}
 
-	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
 		os_log(.debug, log: log, "Sending article statuses...")
 		
@@ -146,12 +150,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done sending article statuses.")
-			completion()
+			completion(.success(()))
 		}
 		
 	}
 	
-	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		
 		os_log(.debug, log: log, "Refreshing article statuses...")
 		
@@ -185,7 +189,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
-			completion()
+			completion(.success(()))
 		}
 		
 	}
@@ -403,7 +407,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		database.insertStatuses(syncStatuses)
 		
 		if database.selectPendingCount() > 100 {
-			sendArticleStatus(for: account) {}
+			sendArticleStatus(for: account) { _ in }
 		}
 		
 		return account.update(articles, statusKey: statusKey, flag: flag)
@@ -755,7 +759,7 @@ private extension ReaderAPIAccountDelegate {
 			case .success(let (entries, page)):
 				
 				self.processEntries(account: account, entries: entries) {
-					self.refreshArticleStatus(for: account) {
+					self.refreshArticleStatus(for: account) { _ in
 						self.refreshArticles(account, page: page) {
 							self.refreshMissingArticles(account) {
 								DispatchQueue.main.async {
