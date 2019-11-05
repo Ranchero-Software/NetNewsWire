@@ -294,9 +294,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return coordinator.cappedIndexPath(proposedDestinationIndexPath)
 		}()
 		
-		guard let draggedNode = dataSource.itemIdentifier(for: sourceIndexPath), let destNode = dataSource.itemIdentifier(for: destIndexPath), let parentNode = destNode.parent else {
+		guard let draggedNode = dataSource.itemIdentifier(for: sourceIndexPath) else {
 			assertionFailure("This should never happen")
 			return sourceIndexPath
+		}
+		
+		// If there is no destination node, we are dragging onto an empty Account
+		guard let destNode = dataSource.itemIdentifier(for: destIndexPath), let parentNode = destNode.parent else {
+			return proposedDestinationIndexPath
 		}
 		
 		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
