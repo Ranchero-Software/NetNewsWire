@@ -102,6 +102,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 	
 	override func main() {
 		guard !isCancelled else {
+			// override of cancel calls didFinish().
 			return
 		}
 		

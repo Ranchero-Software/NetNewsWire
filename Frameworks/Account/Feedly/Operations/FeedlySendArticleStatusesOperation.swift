@@ -24,9 +24,8 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 	}
 	
 	override func main() {
-		defer { didFinish() }
-		
 		guard !isCancelled else {
+			didFinish()
 			return
 		}
 		
