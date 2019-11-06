@@ -182,7 +182,7 @@ private extension AppDelegate {
 		let homePageURLsWithNoFaviconURL = tempDir.appendingPathComponent("HomePageURLsWithNoFaviconURLCache.plist")
 
 		// If the image disk cache hasn't been flushed for 3 days and the network is available, delete it
-//		if let flushDate = AppDefaults.lastImageCacheFlushDate, flushDate.addingTimeInterval(3600*24*3) < Date() {
+		if let flushDate = AppDefaults.lastImageCacheFlushDate, flushDate.addingTimeInterval(3600*24*3) < Date() {
 			if let reachability = try? Reachability(hostname: "apple.com") {
 				if reachability.connection != .unavailable {
 					for tempItem in [faviconsFolderURL, imagesFolderURL, homePageToIconURL, homePagesWithNoIconURL, homePageToFaviconURL, homePageURLsWithNoFaviconURL] {
@@ -196,7 +196,7 @@ private extension AppDelegate {
 					AppDefaults.lastImageCacheFlushDate = Date()
 				}
 			}
-//		}
+		}
 		
 		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
 		let faviconsFolder = faviconsFolderURL.absoluteString

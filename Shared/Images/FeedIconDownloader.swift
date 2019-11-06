@@ -40,6 +40,10 @@ public final class FeedIconDownloader {
 		}
 	}
 
+	private var homePagesWithUglyIcons: Set<String> = {
+		return Set(["https://www.macsparky.com/"])
+	}()
+	
 	private var urlsInProgress = Set<String>()
 	private var cache = [Feed: IconImage]()
 	private var waitingForFeedURLs = [String: Feed]()
@@ -120,7 +124,7 @@ private extension FeedIconDownloader {
 
 	func icon(forHomePageURL homePageURL: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
 
-		if homePagesWithNoIconURLCache.contains(homePageURL) {
+		if homePagesWithNoIconURLCache.contains(homePageURL) || homePagesWithUglyIcons.contains(homePageURL) {
 			imageResultBlock(nil)
 			return
 		}
