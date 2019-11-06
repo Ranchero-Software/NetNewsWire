@@ -33,7 +33,6 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var readBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
-	@IBOutlet private weak var browserBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var webViewContainer: UIView!
 
 	private var articleExtractorButton: ArticleExtractorButton = {
@@ -103,7 +102,7 @@ class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
-		navigationItem.titleView = articleExtractorButton
+		toolbarItems?.append(UIBarButtonItem(customView: articleExtractorButton))
 
 		ArticleViewControllerWebViewProvider.shared.dequeueWebView() { webView in
 			
@@ -133,7 +132,6 @@ class ArticleViewController: UIViewController {
 			nextArticleBarButtonItem.isEnabled = false
 			readBarButtonItem.isEnabled = false
 			starBarButtonItem.isEnabled = false
-			browserBarButtonItem.isEnabled = false
 			actionBarButtonItem.isEnabled = false
 			return
 		}
@@ -145,7 +143,6 @@ class ArticleViewController: UIViewController {
 		articleExtractorButton.isEnabled = true
 		readBarButtonItem.isEnabled = true
 		starBarButtonItem.isEnabled = true
-		browserBarButtonItem.isEnabled = true
 		actionBarButtonItem.isEnabled = true
 
 		let readImage = article.status.read ? AppAssets.circleOpenImage : AppAssets.circleClosedImage

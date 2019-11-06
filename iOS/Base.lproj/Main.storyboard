@@ -69,15 +69,6 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="KUq-GZ-WY9"/>
-                        <barButtonItem title="Safari" image="safari" catalog="system" id="DMh-3X-ebd">
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Safari"/>
-                            </userDefinedRuntimeAttributes>
-                            <connections>
-                                <action selector="openBrowser:" destination="JEX-9P-axG" id="R0r-fI-NI7"/>
-                            </connections>
-                        </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="mOI-FS-AaM">
                         <rightBarButtonItems>
@@ -105,7 +96,6 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="actionBarButtonItem" destination="9Ut-5B-JKP" id="9bO-kz-cTz"/>
-                        <outlet property="browserBarButtonItem" destination="DMh-3X-ebd" id="PkT-Tn-8kG"/>
                         <outlet property="nextArticleBarButtonItem" destination="2qz-M5-Yhk" id="IQd-jx-qEr"/>
                         <outlet property="nextUnreadBarButtonItem" destination="2w5-e9-C2V" id="xJr-5y-p1N"/>
                         <outlet property="prevArticleBarButtonItem" destination="v4j-fq-23N" id="Gny-Oh-cQa"/>
@@ -278,7 +268,6 @@
         <image name="circle" catalog="system" width="64" height="60"/>
         <image name="gear" catalog="system" width="64" height="58"/>
         <image name="multiply.circle.fill" catalog="system" width="64" height="60"/>
-        <image name="safari" catalog="system" width="64" height="60"/>
         <image name="square.and.arrow.up" catalog="system" width="56" height="64"/>
         <image name="square.and.arrow.up.fill" catalog="system" width="56" height="64"/>
         <image name="star" catalog="system" width="64" height="58"/>
