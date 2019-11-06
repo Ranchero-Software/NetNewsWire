@@ -102,7 +102,7 @@ class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
-		toolbarItems?.append(UIBarButtonItem(customView: articleExtractorButton))
+		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
 
 		ArticleViewControllerWebViewProvider.shared.dequeueWebView() { webView in
 			

@@ -59,6 +59,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="vAq-iW-Yyo"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="KUq-GZ-WY9"/>
                         <barButtonItem image="square.and.arrow.up" catalog="system" id="9Ut-5B-JKP">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
@@ -68,7 +69,6 @@
                                 <action selector="showActivityDialog:" destination="JEX-9P-axG" id="t7U-uT-fs5"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="KUq-GZ-WY9"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="mOI-FS-AaM">
                         <rightBarButtonItems>
