@@ -131,8 +131,8 @@ public final class ArticlesDatabase {
 		articlesTable.update(feedIDsAndItems, defaultRead, completion)
 	}
 
-	public func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
-		articlesTable.ensureStatuses(articleIDs, defaultRead, statusKey, flag)
+	public func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: (() -> ())? = nil) {
+		articlesTable.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completionHandler: completionHandler)
 	}
 	
 	// MARK: - Status

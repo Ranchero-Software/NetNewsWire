@@ -279,11 +279,14 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
+	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: (() -> ())? = nil) {
 		self.queue.update { (database) in
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, defaultRead, database)
 			let statuses = Set(statusesDictionary.values)
 			self.statusesTable.mark(statuses, statusKey, flag, database)
+			if let handler = completionHandler {
+				DispatchQueue.main.async(execute: handler)
+			}
 		}
 	}
 	

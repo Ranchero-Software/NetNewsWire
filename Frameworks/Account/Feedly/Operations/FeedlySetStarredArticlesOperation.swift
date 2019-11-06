@@ -32,6 +32,8 @@ final class FeedlySetStarredArticlesOperation: FeedlyOperation {
 			return
 		}
 		
+		let group = DispatchGroup()
+		
 		let remoteStarredArticleIds = allStarredEntryIdsProvider.entryIds
 		let localStarredArticleIDs = account.fetchStarredArticleIDs()
 		
@@ -43,7 +45,10 @@ final class FeedlySetStarredArticlesOperation: FeedlyOperation {
 		// Save any starred statuses for articles we haven't yet received
 		let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
 		let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
-		account.ensureStatuses(missingStarredArticleIDs, true, .starred, true)
+		group.enter()
+		account.ensureStatuses(missingStarredArticleIDs, true, .starred, true) {
+			group.leave()
+		}
 
 		// Mark articles as unstarred
 		let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIds)
@@ -53,6 +58,13 @@ final class FeedlySetStarredArticlesOperation: FeedlyOperation {
 		// Save any unstarred statuses for articles we haven't yet received
 		let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
 		let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
-		account.ensureStatuses(missingUnstarredArticleIDs, true, .starred, false)
+		group.enter()
+		account.ensureStatuses(missingUnstarredArticleIDs, true, .starred, false) {
+			group.leave()
+		}
+		
+		group.notify(queue: .main) {
+			self.didFinish()
+		}
 	}
 }
