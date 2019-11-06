@@ -52,7 +52,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
 	override init() {
-		
 		super.init()
 		appDelegate = self
 
@@ -60,17 +59,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		let _ = ArticleViewControllerWebViewProvider.shared
 		AccountManager.shared = AccountManager()
 		
-		registerBackgroundTasks()
-		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-		
 	}
 	
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-		
 		AppDefaults.registerDefaults()
+
 		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			os_log("Is first run.", log: log, type: .info)
@@ -81,6 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 		}
 		
+		registerBackgroundTasks()
 		initializeDownloaders()
 		initializeHomeScreenQuickActions()
 		
@@ -120,10 +116,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
 		}
-	}
-	
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		scheduleBackgroundFeedRefresh()
 	}
 	
 	@objc func accountRefreshDidFinish(_ note: Notification) {
