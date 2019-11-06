@@ -687,10 +687,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return updatedArticles
 	}
 
-	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
-		if !articleIDs.isEmpty {
-			database.ensureStatuses(articleIDs, defaultRead, statusKey, flag)
+	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: (() -> ())? = nil) {
+		guard !articleIDs.isEmpty else {
+			completionHandler?()
+			return
 		}
+		database.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completionHandler: completionHandler)
 	}
 
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
