@@ -317,10 +317,15 @@ private extension AppDelegate {
 	func scheduleBackgroundFeedRefresh() {
 		let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
 		request.earliestBeginDate = Date(timeIntervalSinceNow: AppDefaults.refreshInterval.inSeconds())
-		do {
-			try BGTaskScheduler.shared.submit(request)
-		} catch {
-			os_log(.error, log: self.log, "Could not schedule app refresh: %@", error.localizedDescription)
+
+		// We send this to a background queue because as of 11/05/19 on iOS 13.2 the call to the
+		// task scheduler can hang indefinitely.
+		DispatchQueue.global(qos: .background).async {
+			do {
+				try BGTaskScheduler.shared.submit(request)
+			} catch {
+				os_log(.error, log: self.log, "Could not schedule app refresh: %@", error.localizedDescription)
+			}
 		}
 	}
 	
