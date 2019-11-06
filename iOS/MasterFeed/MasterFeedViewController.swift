@@ -109,7 +109,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		applyToAvailableCells(configureIcon)
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+			return
+		}
+		applyToCellsForRepresentedObject(feed, configureIcon(_:_:))
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
