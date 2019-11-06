@@ -14,7 +14,7 @@ struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 	let height: CGFloat
 	let unreadIndicatorRect: CGRect
 	let starRect: CGRect
-	let avatarImageRect: CGRect
+	let iconImageRect: CGRect
 	let titleRect: CGRect
 	let summaryRect: CGRect
 	let feedNameRect: CGRect
@@ -37,12 +37,12 @@ struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 		// Separator Insets
 		self.separatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 		
-		// Avatar
-		if cellData.showAvatar {
-			self.avatarImageRect = MasterTimelineAccessibilityCellLayout.rectForAvatar(currentPoint)
-			currentPoint.y = self.avatarImageRect.maxY
+		// Icon Image
+		if cellData.showIcon {
+			self.iconImageRect = MasterTimelineAccessibilityCellLayout.rectForIconView(currentPoint)
+			currentPoint.y = self.iconImageRect.maxY
 		} else {
-			self.avatarImageRect = CGRect.zero
+			self.iconImageRect = CGRect.zero
 		}
 		
 		let textAreaWidth = width - (currentPoint.x + MasterTimelineDefaultCellLayout.cellPadding.right + insets.right)

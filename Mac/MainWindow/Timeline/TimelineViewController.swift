@@ -79,7 +79,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				reloadVisibleCells()
 				return
 			}
-			updateShowAvatars()
+			updateShowIcons()
 			articleRowMap = [String: Int]()
 			tableView.reloadData()
 		}
@@ -98,18 +98,18 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	private var cellAppearance: TimelineCellAppearance!
-	private var cellAppearanceWithAvatar: TimelineCellAppearance!
+	private var cellAppearanceWithIcon: TimelineCellAppearance!
 	private var showFeedNames = false {
 		didSet {
 			if showFeedNames != oldValue {
-				updateShowAvatars()
+				updateShowIcons()
 				updateTableViewRowHeight()
 				reloadVisibleCells()
 			}
 		}
 	}
 
-	private var showAvatars = false
+	private var showIcons = false
 	private var rowHeightWithFeedName: CGFloat = 0.0
 	private var rowHeightWithoutFeedName: CGFloat = 0.0
 
@@ -156,8 +156,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	
 	override func viewDidLoad() {
-		cellAppearance = TimelineCellAppearance(showAvatar: false, fontSize: fontSize)
-		cellAppearanceWithAvatar = TimelineCellAppearance(showAvatar: true, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize)
+		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize)
 
 		updateRowHeights()
 		tableView.rowHeight = currentRowHeight
@@ -438,7 +438,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard showAvatars, let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+		guard showIcons, let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
@@ -453,7 +453,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		guard showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
 
@@ -474,7 +474,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if showAvatars {
+		if showIcons {
 			queueReloadAvailableCells()
 		}
 	}
@@ -570,7 +570,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 		
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: showingFeedNames, feedName: "Prototype Feed Name", avatar: nil, showAvatar: false, featuredImage: nil)
+		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: showingFeedNames, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil)
 		let height = TimelineCellLayout.height(for: 100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
@@ -674,7 +674,7 @@ extension TimelineViewController: NSTableViewDelegate {
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 
 		func configure(_ cell: TimelineTableCellView) {
-			cell.cellAppearance = showAvatars ? cellAppearanceWithAvatar : cellAppearance
+			cell.cellAppearance = showIcons ? cellAppearanceWithIcon : cellAppearance
 			if let article = articles.articleAtRow(row) {
 				configureTimelineCell(cell, article: article)
 			}
@@ -716,12 +716,12 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
-		let avatar = article.avatarImage()
-		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatars, featuredImage: nil)
+		let iconImage = article.iconImage()
+		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
 	}
 
-	private func avatarFor(_ article: Article) -> NSImage? {
-		if !showAvatars {
+	private func iconFor(_ article: Article) -> IconImage? {
+		if !showIcons {
 			return nil
 		}
 		
@@ -741,14 +741,14 @@ extension TimelineViewController: NSTableViewDelegate {
 			return feedIcon
 		}
 
-		if let favicon = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+		if let favicon = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
 			return favicon
 		}
 		
 		return FaviconGenerator.favicon(feed)
 	}
 
-	private func avatarForAuthor(_ author: Author) -> NSImage? {
+	private func avatarForAuthor(_ author: Author) -> IconImage? {
 		return appDelegate.authorAvatarDownloader.image(for: author)
 	}
 
@@ -842,9 +842,9 @@ private extension TimelineViewController {
 		tableView.rowHeight = currentRowHeight
 	}
 
-	func updateShowAvatars() {
+	func updateShowIcons() {
 		if showFeedNames {
-			self.showAvatars = true
+			self.showIcons = true
 			return
 		}
 
@@ -852,14 +852,14 @@ private extension TimelineViewController {
 			if let authors = article.authors {
 			for author in authors {
 				if author.avatarURL != nil {
-					self.showAvatars = true
+					self.showIcons = true
 					return
 				}
 			}
 			}
 		}
 
-		self.showAvatars = false
+		self.showIcons = false
 	}
 
 	func emptyTheTimeline() {
@@ -935,8 +935,8 @@ private extension TimelineViewController {
 	// MARK: - Appearance Change
 
 	private func fontSizeDidChange() {
-		cellAppearance = TimelineCellAppearance(showAvatar: false, fontSize: fontSize)
-		cellAppearanceWithAvatar = TimelineCellAppearance(showAvatar: true, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize)
+		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize)
 		updateRowHeights()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()

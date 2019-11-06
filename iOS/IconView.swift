@@ -1,5 +1,5 @@
 //
-//  AvatarView.swift
+//  IconView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 9/17/19.
@@ -8,16 +8,16 @@
 
 import UIKit
 
-final class AvatarView: UIView {
+final class IconView: UIView {
 
-	var image: UIImage? = nil {
+	var iconImage: IconImage? = nil {
 		didSet {
-			if image !== oldValue {
-				imageView.image = image
+			if iconImage !== oldValue {
+				imageView.image = iconImage?.image
 
 				if self.traitCollection.userInterfaceStyle == .dark {
 					DispatchQueue.global(qos: .default).async {
-						if self.image?.isDark() ?? false {
+						if self.iconImage?.isDark ?? false {
 							DispatchQueue.main.async {
 								self.isDisconcernable = false
 								self.setNeedsLayout()
@@ -74,8 +74,8 @@ final class AvatarView: UIView {
 
 	override func layoutSubviews() {
 		imageView.setFrameIfNotEqual(rectForImageView())
-		if (image != nil && isVerticalBackgroundExposed && !isSymbolImage) || !isDisconcernable {
-			backgroundColor = AppAssets.avatarBackgroundColor
+		if (iconImage != nil && isVerticalBackgroundExposed && !isSymbolImage) || !isDisconcernable {
+			backgroundColor = AppAssets.iconBackgroundColor
 		} else {
 			backgroundColor = nil
 		}
@@ -83,16 +83,16 @@ final class AvatarView: UIView {
 
 }
 
-private extension AvatarView {
+private extension IconView {
 
 	func commonInit() {
-		layer.cornerRadius = MasterTimelineDefaultCellLayout.avatarCornerRadius
+		layer.cornerRadius = MasterTimelineDefaultCellLayout.iconCornerRadius
 		clipsToBounds = true
 		addSubview(imageView)
 	}
 
 	func rectForImageView() -> CGRect {
-		guard let image = image else {
+		guard let image = iconImage?.image else {
 			return CGRect.zero
 		}
 

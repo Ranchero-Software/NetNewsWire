@@ -105,11 +105,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		applyToAvailableCells(configureAvatar)
+		applyToAvailableCells(configureIcon)
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		applyToAvailableCells(configureAvatar)
+		applyToAvailableCells(configureIcon)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
@@ -640,7 +640,7 @@ private extension MasterFeedViewController {
 		
 		cell.name = nameFor(node)
 		cell.unreadCount = coordinator.unreadCountFor(node)
-		configureAvatar(cell, node)
+		configureIcon(cell, node)
 		
 		guard let indexPath = dataSource.indexPath(for: node) else { return }
 		let rowsInSection = tableView.numberOfRows(inSection: indexPath.section)
@@ -652,11 +652,11 @@ private extension MasterFeedViewController {
 		
 	}
 	
-	func configureAvatar(_ cell: MasterFeedTableViewCell, _ node: Node) {
-		cell.avatarImage = imageFor(node)
+	func configureIcon(_ cell: MasterFeedTableViewCell, _ node: Node) {
+		cell.iconImage = imageFor(node)
 	}
 
-	func imageFor(_ node: Node) -> UIImage? {
+	func imageFor(_ node: Node) -> IconImage? {
 		if let feed = node.representedObject as? Feed {
 			
 			let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)

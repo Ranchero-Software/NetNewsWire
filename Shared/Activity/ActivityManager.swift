@@ -226,8 +226,8 @@ private extension ActivityManager {
 		attributeSet.keywords = makeKeywords(article)
 		attributeSet.relatedUniqueIdentifier = ActivityManager.identifer(for: article)
 
-		if let image = article.avatarImage() {
-			attributeSet.thumbnailData = image.pngData()
+		if let iconImage = article.iconImage() {
+			attributeSet.thumbnailData = iconImage.image.pngData()
 		}
 		
 		readingActivity?.contentAttributeSet = attributeSet
@@ -252,18 +252,10 @@ private extension ActivityManager {
 		attributeSet.title = feed.nameForDisplay
 		attributeSet.keywords = makeKeywords(feed.nameForDisplay)
 		attributeSet.relatedUniqueIdentifier = ActivityManager.identifer(for: feed)
-		if let image = appDelegate.feedIconDownloader.icon(for: feed) {
-			#if os(iOS)
-			attributeSet.thumbnailData = image.pngData()
-			#else
-			attributeSet.thumbnailData = image.tiffRepresentation
-			#endif
-		} else if let image = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
-			#if os(iOS)
-			attributeSet.thumbnailData = image.pngData()
-			#else
-			attributeSet.thumbnailData = image.tiffRepresentation
-			#endif
+		if let iconImage = appDelegate.feedIconDownloader.icon(for: feed) {
+			attributeSet.thumbnailData = iconImage.image.dataRepresentation()
+		} else if let iconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
+			attributeSet.thumbnailData = iconImage.image.dataRepresentation()
 		}
 		
 		selectingActivity!.contentAttributeSet = attributeSet

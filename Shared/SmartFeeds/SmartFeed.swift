@@ -25,7 +25,7 @@ final class SmartFeed: PseudoFeed {
 		}
 	}
 
-	var smallIcon: RSImage? {
+	var smallIcon: IconImage? {
 		return delegate.smallIcon
 	}
 	

@@ -15,7 +15,7 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 
 	let nameForDisplay = NSLocalizedString("Today", comment: "Today pseudo-feed title")
 	let fetchType = FetchType.today
-	var smallIcon: RSImage? = AppAssets.todayFeedImage
+	var smallIcon: IconImage? = AppAssets.todayFeedImage
 	
 	func fetchUnreadCount(for account: Account, callback: @escaping (Int) -> Void) {
 		account.fetchUnreadCountForToday(callback)

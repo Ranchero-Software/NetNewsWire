@@ -310,7 +310,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		titleView?.avatarView.image = coordinator.timelineAvatar
+		titleView?.iconView.iconImage = coordinator.timelineIconImage
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
@@ -318,14 +318,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
-			if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
-				cell.setAvatarImage(image)
+			if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
+				cell.setIconImage(image)
 			}
 		}
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		guard coordinator.showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+		guard coordinator.showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
 		tableView.indexPathsForVisibleRows?.forEach { indexPath in
@@ -333,16 +333,16 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 				return
 			}
 			for author in authors {
-				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = avatarFor(article) {
-					cell.setAvatarImage(image)
+				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
+					cell.setIconImage(image)
 				}
 			}
 		}
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		titleView?.avatarView.image = coordinator.timelineAvatar
-		if coordinator.showAvatars {
+		titleView?.iconView.iconImage = coordinator.timelineIconImage
+		if coordinator.showIcons {
 			queueReloadAvailableCells()
 		}
 	}
@@ -392,7 +392,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 		
-		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", avatar: nil, showAvatar: false, featuredImage: nil, numberOfLines: numberOfTextLines)
+		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines)
 		
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			let layout = MasterTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
@@ -448,7 +448,7 @@ private extension MasterTimelineViewController {
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
 			self.titleView = titleView
 			
-			titleView.avatarView.image = coordinator.timelineAvatar
+			titleView.iconView.iconImage = coordinator.timelineIconImage
 			titleView.label.text = coordinator.timelineName
 			updateTitleUnreadCount()
 
@@ -508,20 +508,20 @@ private extension MasterTimelineViewController {
 	
 	func configure(_ cell: MasterTimelineTableViewCell, article: Article) {
 		
-		let avatar = avatarFor(article)
+		let iconImage = iconImageFor(article)
 		let featuredImage = featuredImageFor(article)
 		
 		let showFeedNames = coordinator.showFeedNames
-		let showAvatar = coordinator.showAvatars && avatar != nil
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatar, featuredImage: featuredImage, numberOfLines: numberOfTextLines)
+		let showIcon = coordinator.showIcons && iconImage != nil
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines)
 		
 	}
 	
-	func avatarFor(_ article: Article) -> RSImage? {
-		if !coordinator.showAvatars {
+	func iconImageFor(_ article: Article) -> IconImage? {
+		if !coordinator.showIcons {
 			return nil
 		}
-		return article.avatarImage()
+		return article.iconImage()
 	}
 	
 	func featuredImageFor(_ article: Article) -> UIImage? {

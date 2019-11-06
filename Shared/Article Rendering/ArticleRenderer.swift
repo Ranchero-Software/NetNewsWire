@@ -202,9 +202,9 @@ private extension ArticleRenderer {
 			return cachedImgTag
 		}
 
-		if let favicon = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
-			if let s = base64String(forImage: favicon) {
-				var dimension = min(favicon.size.height, CGFloat(ArticleRenderer.avatarDimension)) // Assuming square images.
+		if let iconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
+			if let s = base64String(forImage: iconImage.image) {
+				var dimension = min(iconImage.image.size.height, CGFloat(ArticleRenderer.avatarDimension)) // Assuming square images.
 				dimension = max(dimension, 16) // Some favicons say they’re < 16. Force them larger.
 				if dimension >= CGFloat(ArticleRenderer.avatarDimension) * 0.8 { //Close enough to scale up.
 					dimension = CGFloat(ArticleRenderer.avatarDimension)
@@ -231,8 +231,8 @@ private extension ArticleRenderer {
 			return cachedImgTag
 		}
 
-		if let icon = appDelegate.feedIconDownloader.icon(for: feed) {
-			if let s = base64String(forImage: icon) {
+		if let iconImage = appDelegate.feedIconDownloader.icon(for: feed) {
+			if let s = base64String(forImage: iconImage.image) {
 				#if os(macOS)
 				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=48 width=48 />"
 				#else

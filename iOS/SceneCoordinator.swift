@@ -111,7 +111,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private(set) var currentFeedIndexPath: IndexPath?
 	
-	var timelineAvatar: RSImage? {
+	var timelineIconImage: IconImage? {
 		if let feed = timelineFetcher as? Feed {
 			
 			let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)
@@ -119,8 +119,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 				return feedIconImage
 			}
 			
-			if let faviconImage = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
-				return faviconImage
+			if let faviconIconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
+				return faviconIconImage
 			}
 			
 		}
@@ -154,7 +154,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	private(set) var showFeedNames = false
-	private(set) var showAvatars = false
+	private(set) var showIcons = false
 
 	var isPrevFeedAvailable: Bool {
 		guard let indexPath = currentFeedIndexPath else {
@@ -1087,10 +1087,10 @@ private extension SceneCoordinator {
 		return indexPathFor(node)
 	}
 	
-	func updateShowAvatars() {
+	func updateShowIcons() {
 		
 		if showFeedNames {
-			self.showAvatars = true
+			self.showIcons = true
 			return
 		}
 		
@@ -1098,14 +1098,14 @@ private extension SceneCoordinator {
 			if let authors = article.authors {
 				for author in authors {
 					if author.avatarURL != nil {
-						self.showAvatars = true
+						self.showIcons = true
 						return
 					}
 				}
 			}
 		}
 		
-		self.showAvatars = false
+		self.showIcons = false
 	}
 	
 	// MARK: Select Prev Unread
@@ -1350,7 +1350,7 @@ private extension SceneCoordinator {
 		if articles != sortedArticles {
 			
 			articles = sortedArticles
-			updateShowAvatars()
+			updateShowIcons()
 			updateUnreadCount()
 			
 			masterTimelineViewController?.reloadArticles(animate: animate)

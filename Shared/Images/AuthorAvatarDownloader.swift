@@ -18,7 +18,7 @@ extension Notification.Name {
 final class AuthorAvatarDownloader {
 
 	private let imageDownloader: ImageDownloader
-	private var cache = [String: RSImage]() // avatarURL: RSImage
+	private var cache = [String: IconImage]() // avatarURL: RSImage
 	private var waitingForAvatarURLs = Set<String>()
 
 	init(imageDownloader: ImageDownloader) {
@@ -28,10 +28,10 @@ final class AuthorAvatarDownloader {
 	}
 
 	func resetCache() {
-		cache = [String: RSImage]()
+		cache = [String: IconImage]()
 	}
 	
-	func image(for author: Author) -> RSImage? {
+	func image(for author: Author) -> IconImage? {
 
 		guard let avatarURL = author.avatarURL else {
 			return nil
@@ -68,7 +68,7 @@ final class AuthorAvatarDownloader {
 private extension AuthorAvatarDownloader {
 
 	func scaleAndCacheImageData(_ imageData: Data, _ avatarURL: String) {
-		RSImage.scaledForAvatar(imageData) { (image) in
+		RSImage.scaledForIcon(imageData) { (image) in
 			if let image = image {
 				self.handleImageDidBecomeAvailable(avatarURL, image)
 			}
@@ -77,7 +77,7 @@ private extension AuthorAvatarDownloader {
 
 	func handleImageDidBecomeAvailable(_ avatarURL: String, _ image: RSImage) {
 		if cache[avatarURL] == nil {
-			cache[avatarURL] = image
+			cache[avatarURL] = IconImage(image)
 		}
 		if waitingForAvatarURLs.contains(avatarURL) {
 			waitingForAvatarURLs.remove(avatarURL)

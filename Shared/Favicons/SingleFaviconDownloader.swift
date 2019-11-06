@@ -25,7 +25,7 @@ final class SingleFaviconDownloader {
 	}
 
 	let faviconURL: String
-	var image: RSImage?
+	var iconImage: IconImage?
 
 	private var lastDownloadAttemptDate: Date
 	private var diskStatus = DiskStatus.unknown
@@ -50,7 +50,7 @@ final class SingleFaviconDownloader {
 
 		// If we don’t have an image, and lastDownloadAttemptDate is a while ago, try again.
 
-		if let _ = image {
+		if let _ = iconImage {
 			return
 		}
 
@@ -72,7 +72,7 @@ private extension SingleFaviconDownloader {
 
 			if let image = image {
 				self.diskStatus = .onDisk
-				self.image = image
+				self.iconImage = IconImage(image)
 				self.postDidLoadFaviconNotification()
 				return
 			}
@@ -82,7 +82,7 @@ private extension SingleFaviconDownloader {
 			self.downloadFavicon { (image) in
 
 				if let image = image {
-					self.image = image
+					self.iconImage = IconImage(image)
 					self.postDidLoadFaviconNotification()
 				}
 			}

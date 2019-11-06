@@ -31,9 +31,9 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		}
 	}
 
-	var avatarImage: UIImage? {
+	var iconImage: IconImage? {
 		didSet {
-			avatarView.image = avatarImage
+			iconView.iconImage = iconImage
 		}
 	}
 
@@ -92,7 +92,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		return label
 	}()
 
-	private let avatarView = AvatarView()
+	private let iconView = IconView()
 
 	private let bottomSeparatorView: UIView = {
 		let view = UIView()
@@ -154,9 +154,9 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)
-		let avatarTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
+		let iconTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
 		UIView.animate(withDuration: duration(animated: animated)) {
-			self.avatarView.tintColor = avatarTintColor
+			self.iconView.tintColor = iconTintColor
 		}
 		updateLabelVibrancy(titleView, color: labelColor, animated: animated)
 	}
@@ -167,7 +167,7 @@ private extension MasterFeedTableViewCell {
 
 	func commonInit() {
 		addSubviewAtInit(unreadCountView)
-		addSubviewAtInit(avatarView)
+		addSubviewAtInit(iconView)
 		addSubviewAtInit(titleView)
 		addDisclosureView()
 		addSubviewAtInit(bottomSeparatorView)
@@ -189,7 +189,7 @@ private extension MasterFeedTableViewCell {
 	}
 
 	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
-		avatarView.setFrameIfNotEqual(layout.faviconRect)
+		iconView.setFrameIfNotEqual(layout.faviconRect)
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton?.setFrameIfNotEqual(layout.disclosureButtonRect)

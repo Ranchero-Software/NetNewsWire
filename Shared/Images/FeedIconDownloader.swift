@@ -41,7 +41,7 @@ public final class FeedIconDownloader {
 	}
 
 	private var urlsInProgress = Set<String>()
-	private var cache = [Feed: RSImage]()
+	private var cache = [Feed: IconImage]()
 	private var waitingForFeedURLs = [String: Feed]()
 
 	init(imageDownloader: ImageDownloader, folder: String) {
@@ -54,10 +54,10 @@ public final class FeedIconDownloader {
 	}
 
 	func resetCache() {
-		cache = [Feed: RSImage]()
+		cache = [Feed: IconImage]()
 	}
 
-	func icon(for feed: Feed) -> RSImage? {
+	func icon(for feed: Feed) -> IconImage? {
 
 		if let cachedImage = cache[feed] {
 			return cachedImage
@@ -70,7 +70,7 @@ public final class FeedIconDownloader {
 			icon(forHomePageURL: homePageURL, feed: feed) { (image) in
 				if let image = image {
 					self.postFeedIconDidBecomeAvailableNotification(feed)
-					self.cache[feed] = image
+					self.cache[feed] = IconImage(image)
 				}
 			}
 		}
@@ -79,7 +79,7 @@ public final class FeedIconDownloader {
 			icon(forURL: iconURL, feed: feed) { (image) in
 				if let image = image {
 					self.postFeedIconDidBecomeAvailableNotification(feed)
-					self.cache[feed] = image
+					self.cache[feed] = IconImage(image)
 				}
 				else {
 					checkHomePageURL()
@@ -139,7 +139,7 @@ private extension FeedIconDownloader {
 			imageResultBlock(nil)
 			return
 		}
-		RSImage.scaledForAvatar(imageData, imageResultBlock: imageResultBlock)
+		RSImage.scaledForIcon(imageData, imageResultBlock: imageResultBlock)
 	}
 
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {

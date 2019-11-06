@@ -17,7 +17,7 @@ struct StarredFeedDelegate: SmartFeedDelegate {
 
 	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")
 	let fetchType: FetchType = .starred
-	var smallIcon: RSImage? = AppAssets.starredFeedImage
+	var smallIcon: IconImage? = AppAssets.starredFeedImage
 
 	func fetchUnreadCount(for account: Account, callback: @escaping (Int) -> Void) {
 		account.fetchUnreadCountForStarredArticles(callback)

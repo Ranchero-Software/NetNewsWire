@@ -12,9 +12,9 @@ import Account
 
 final class FaviconGenerator {
 
-	private static var faviconGeneratorCache = [String: RSImage]() // feedURL: RSImage
+	private static var faviconGeneratorCache = [String: IconImage]() // feedURL: RSImage
 
-	static func favicon(_ feed: Feed) -> RSImage {
+	static func favicon(_ feed: Feed) -> IconImage {
 		
 		if let favicon = FaviconGenerator.faviconGeneratorCache[feed.url] {
 			return favicon
@@ -22,10 +22,11 @@ final class FaviconGenerator {
 		
 		let colorHash = ColorHash(feed.url)
 		if let favicon = AppAssets.faviconTemplateImage.maskWithColor(color: colorHash.color.cgColor) {
-			FaviconGenerator.faviconGeneratorCache[feed.url] = favicon
-			return favicon
+			let iconImage = IconImage(favicon)
+			FaviconGenerator.faviconGeneratorCache[feed.url] = iconImage
+			return iconImage
 		} else {
-			return AppAssets.faviconTemplateImage
+			return IconImage(AppAssets.faviconTemplateImage)
 		}
 		
 	}

@@ -1,12 +1,41 @@
 //
-//  UIImage-Extensions.swift
+//  IconImage.swift
 //  NetNewsWire
 //
-//  Created by Maurice Parker on 9/29/19.
+//  Created by Maurice Parker on 11/5/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import UIKit
+import Foundation
+import RSCore
+
+final class IconImage {
+	
+	lazy var isDark: Bool = {
+		return image.isDark()
+	}()
+	
+	let image: RSImage
+	
+	init(_ image: RSImage) {
+		self.image = image
+	}
+	
+}
+
+#if os(macOS)
+	extension NSImage {
+		func isDark() -> Bool {
+			return self.cgImage(forProposedRect: nil, context: nil, hints: nil)?.isDark() ?? false
+		}
+	}
+#else
+	extension UIImage {
+		func isDark() -> Bool {
+			return self.cgImage?.isDark() ?? false
+		}
+	}
+#endif
 
 extension CGImage {
 
@@ -34,10 +63,4 @@ extension CGImage {
 		return avgLuminance < 37.5
 	}
 	
-}
-
-extension UIImage {
-	func isDark() -> Bool {
-		return self.cgImage?.isDark() ?? false
-	}
 }

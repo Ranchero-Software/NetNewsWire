@@ -64,7 +64,7 @@ extension Article {
 		return datePublished ?? dateModified ?? status.dateArrived
 	}
 
-	func avatarImage() -> RSImage? {
+	func iconImage() -> IconImage? {
 		if let authors = authors {
 			for author in authors {
 				if let image = appDelegate.authorAvatarDownloader.image(for: author) {
@@ -82,7 +82,7 @@ extension Article {
 			return feedIconImage
 		}
 		
-		if let faviconImage = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+		if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
 			return faviconImage
 		}
 		

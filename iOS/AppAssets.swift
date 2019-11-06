@@ -49,8 +49,8 @@ struct AppAssets {
 		return image.maskWithColor(color: AppAssets.primaryAccentColor.cgColor)!
 	}()
 
-	static var avatarBackgroundColor: UIColor = {
-		return UIColor(named: "avatarBackgroundColor")!
+	static var iconBackgroundColor: UIColor = {
+		return UIColor(named: "iconBackgroundColor")!
 	}()
 
 	static var barBackgroundColor: UIColor = {
@@ -105,8 +105,8 @@ struct AppAssets {
 		return UIImage(systemName: "arrowtriangle.up.circle")!
 	}()
 	
-	static var masterFolderImage: UIImage = {
-		return UIImage(systemName: "folder.fill")!
+	static var masterFolderImage: IconImage = {
+		return IconImage(UIImage(systemName: "folder.fill")!)
 	}()
 	
 	static var moreImage: UIImage = {
@@ -125,8 +125,8 @@ struct AppAssets {
 		return UIImage(systemName: "safari")!
 	}()
 	
-	static var searchFeedImage: UIImage = {
-		return UIImage(systemName: "magnifyingglass")!
+	static var searchFeedImage: IconImage = {
+		return IconImage(UIImage(systemName: "magnifyingglass")!)
 	}()
 	
 	static var secondaryAccentColor: UIColor = {
@@ -157,8 +157,8 @@ struct AppAssets {
 		return UIImage(systemName: "star")!
 	}()
 	
-	static var starredFeedImage: UIImage = {
-		return UIImage(systemName: "star.fill")!
+	static var starredFeedImage: IconImage = {
+		return IconImage(UIImage(systemName: "star.fill")!)
 	}()
 
 	static var timelineStarImage: UIImage = {
@@ -166,16 +166,16 @@ struct AppAssets {
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
 	}()
 	
-	static var todayFeedImage: UIImage = {
-		return UIImage(systemName: "sun.max.fill")!
+	static var todayFeedImage: IconImage = {
+		return IconImage(UIImage(systemName: "sun.max.fill")!)
 	}()
 
 	static var trashImage: UIImage = {
 		return UIImage(systemName: "trash")!
 	}()
 	
-	static var unreadFeedImage: UIImage = {
-		return UIImage(systemName: "largecircle.fill.circle")!
+	static var unreadFeedImage: IconImage = {
+		return IconImage(UIImage(systemName: "largecircle.fill.circle")!)
 	}()
 	
 	static var vibrantTextColor: UIColor = {

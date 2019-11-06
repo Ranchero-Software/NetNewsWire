@@ -22,28 +22,28 @@ struct FeedInspectorView : View {
 				Section(header:
 					HStack {
 						Spacer()
-						if self.viewModel.image.size.width < 32 || self.viewModel.image.size.height < 32 {
-							if colorScheme == .dark && self.viewModel.image.isDark() {
-								Image(uiImage: self.viewModel.image)
+						if self.viewModel.iconImage.image.size.width < 32 || self.viewModel.iconImage.image.size.height < 32 {
+							if colorScheme == .dark && self.viewModel.iconImage.isDark {
+								Image(uiImage: self.viewModel.iconImage.image)
 								.resizable()
-								.background(Color(AppAssets.avatarBackgroundColor))
+								.background(Color(AppAssets.iconBackgroundColor))
 								.frame(width: 24.0, height: 24.0)
 								.cornerRadius(2.0)
 							} else {
-								Image(uiImage: self.viewModel.image)
+								Image(uiImage: self.viewModel.iconImage.image)
 									.resizable()
 									.frame(width: 24.0, height: 24.0)
 									.cornerRadius(2.0)
 							}
 						} else {
-							if colorScheme == .dark && self.viewModel.image.isDark() {
-								Image(uiImage: self.viewModel.image)
+							if colorScheme == .dark && self.viewModel.iconImage.isDark {
+								Image(uiImage: self.viewModel.iconImage.image)
 									.resizable()
-									.background(Color(AppAssets.avatarBackgroundColor))
+									.background(Color(AppAssets.iconBackgroundColor))
 									.frame(width: 48.0, height: 48.0)
 									.cornerRadius(5.0)
 							} else {
-								Image(uiImage: self.viewModel.image)
+								Image(uiImage: self.viewModel.iconImage.image)
 									.resizable()
 									.frame(width: 48.0, height: 48.0)
 									.cornerRadius(5.0)
@@ -88,7 +88,7 @@ struct FeedInspectorView : View {
 			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 		}
 		
-		var image: UIImage {
+		var iconImage: IconImage {
 			if let feedIcon = appDelegate.feedIconDownloader.icon(for: feed) {
 				return feedIcon
 			}

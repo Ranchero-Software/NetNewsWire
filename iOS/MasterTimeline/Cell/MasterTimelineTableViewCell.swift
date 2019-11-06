@@ -17,7 +17,7 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 	private let dateView = MasterTimelineTableViewCell.singleLineUILabel()
 	private let feedNameView = MasterTimelineTableViewCell.singleLineUILabel()
 	
-	private lazy var avatarView = AvatarView()
+	private lazy var iconView = IconView()
 	
 	private lazy var starView = {
 		return NonIntrinsicImageView(image: AppAssets.timelineStarImage)
@@ -68,7 +68,7 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 
 		unreadIndicatorView.setFrameIfNotEqual(layout.unreadIndicatorRect)
 		starView.setFrameIfNotEqual(layout.starRect)
-		avatarView.setFrameIfNotEqual(layout.avatarImageRect)
+		iconView.setFrameIfNotEqual(layout.iconImageRect)
 		setFrame(for: titleView, rect: layout.titleRect)
 		setFrame(for: summaryView, rect: layout.summaryRect)
 		feedNameView.setFrameIfNotEqual(layout.feedNameRect)
@@ -77,8 +77,8 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		separatorInset = layout.separatorInsets
 	}
 	
-	func setAvatarImage(_ image: UIImage) {
-		avatarView.image = image
+	func setIconImage(_ image: IconImage) {
+		iconView.iconImage = image
 	}
 	
 }
@@ -128,7 +128,7 @@ private extension MasterTimelineTableViewCell {
 		addSubviewAtInit(unreadIndicatorView, hidden: true)
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
-		addSubviewAtInit(avatarView, hidden: true)
+		addSubviewAtInit(iconView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
 	}
 	
@@ -167,7 +167,6 @@ private extension MasterTimelineTableViewCell {
 	}
 	
 	func updateFeedNameView() {
-		
 		if cellData.showFeedName {
 			showView(feedNameView)
 			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
@@ -187,28 +186,26 @@ private extension MasterTimelineTableViewCell {
 		showOrHideView(starView, !cellData.starred)
 	}
 	
-	func updateAvatar() {
-		
-		guard let image = cellData.avatar, cellData.showAvatar else {
-			makeAvatarEmpty()
+	func updateIconImage() {
+		guard let image = cellData.iconImage, cellData.showIcon else {
+			makeIconEmpty()
 			return
 		}
 
-		showView(avatarView)
+		showView(iconView)
 		
-		if avatarView.image !== cellData.avatar {
-			avatarView.image = image
+		if iconView.iconImage !== cellData.iconImage {
+			iconView.iconImage = image
 			setNeedsLayout()
 		}
 	}
 	
-	func makeAvatarEmpty() {
-		
-		if avatarView.image != nil {
-			avatarView.image = nil
+	func makeIconEmpty() {
+		if iconView.iconImage != nil {
+			iconView.iconImage = nil
 			setNeedsLayout()
 		}
-		hideView(avatarView)
+		hideView(iconView)
 	}
 	
 	func hideView(_ view: UIView) {
@@ -234,7 +231,7 @@ private extension MasterTimelineTableViewCell {
 		updateFeedNameView()
 		updateUnreadIndicator()
 		updateStarView()
-		updateAvatar()
+		updateIconImage()
 	}
 	
 }

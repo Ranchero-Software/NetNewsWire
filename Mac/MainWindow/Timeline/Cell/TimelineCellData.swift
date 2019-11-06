@@ -16,13 +16,13 @@ struct TimelineCellData {
 	let dateString: String
 	let feedName: String
 	let showFeedName: Bool
-	let avatar: NSImage? // feed icon, user avatar, or favicon
-	let showAvatar: Bool // Make space even when avatar is nil
+	let iconImage: IconImage? // feed icon, user avatar, or favicon
+	let showIcon: Bool // Make space even when icon is nil
 	let featuredImage: NSImage? // image from within the article
 	let read: Bool
 	let starred: Bool
 
-	init(article: Article, showFeedName: Bool, feedName: String?, avatar: NSImage?, showAvatar: Bool, featuredImage: NSImage?) {
+	init(article: Article, showFeedName: Bool, feedName: String?, iconImage: IconImage?, showIcon: Bool, featuredImage: NSImage?) {
 
 		self.title = ArticleStringFormatter.truncatedTitle(article)
 		self.text = ArticleStringFormatter.truncatedSummary(article)
@@ -38,8 +38,8 @@ struct TimelineCellData {
 
 		self.showFeedName = showFeedName
 
-		self.showAvatar = showAvatar
-		self.avatar = avatar
+		self.showIcon = showIcon
+		self.iconImage = iconImage
 		self.featuredImage = featuredImage
 		
 		self.read = article.status.read
@@ -52,8 +52,8 @@ struct TimelineCellData {
 		self.dateString = ""
 		self.feedName = ""
 		self.showFeedName = false
-		self.showAvatar = false
-		self.avatar = nil
+		self.showIcon = false
+		self.iconImage = nil
 		self.featuredImage = nil
 		self.read = true
 		self.starred = false

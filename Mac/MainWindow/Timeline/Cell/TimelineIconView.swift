@@ -1,5 +1,5 @@
 //
-//  TimelineAvatarView.swift
+//  TimelineIconView.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 9/15/19.
@@ -8,12 +8,12 @@
 
 import AppKit
 
-final class TimelineAvatarView: NSView {
+final class TimelineIconView: NSView {
 
-	var image: NSImage? = nil {
+	var iconImage: IconImage? = nil {
 		didSet {
-			if image !== oldValue {
-				imageView.image = image
+			if iconImage !== oldValue {
+				imageView.image = iconImage?.image
 				needsDisplay = true
 				needsLayout = true
 			}
@@ -36,8 +36,8 @@ final class TimelineAvatarView: NSView {
 		return imageView.frame.size.height < bounds.size.height
 	}
 
-	private static var lightBackgroundColor = AppAssets.avatarLightBackgroundColor
-	private static var darkBackgroundColor = AppAssets.avatarDarkBackgroundColor
+	private static var lightBackgroundColor = AppAssets.iconLightBackgroundColor
+	private static var darkBackgroundColor = AppAssets.iconDarkBackgroundColor
 
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
@@ -71,13 +71,13 @@ final class TimelineAvatarView: NSView {
 			return
 		}
 
-		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? TimelineAvatarView.darkBackgroundColor : TimelineAvatarView.lightBackgroundColor
+		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? TimelineIconView.darkBackgroundColor : TimelineIconView.lightBackgroundColor
 		color.set()
 		dirtyRect.fill()
 	}
 }
 
-private extension TimelineAvatarView {
+private extension TimelineIconView {
 
 	func commonInit() {
 		addSubview(imageView)
@@ -85,7 +85,7 @@ private extension TimelineAvatarView {
 	}
 
 	func rectForImageView() -> NSRect {
-		guard let image = image else {
+		guard let image = iconImage?.image else {
 			return NSRect.zero
 		}
 

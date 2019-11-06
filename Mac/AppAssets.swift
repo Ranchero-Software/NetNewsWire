@@ -16,10 +16,10 @@ extension NSImage.Name {
 
 struct AppAssets {
 
-	static var genericFeedImage: RSImage? = {
+	static var genericFeedImage: IconImage? = {
 		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/BookmarkIcon.icns"
 		let image = RSImage(contentsOfFile: path)
-		return image
+		return image != nil ? IconImage(image!) : nil
 	}()
 
 	static var timelineStar: RSImage! = {
@@ -70,28 +70,32 @@ struct AppAssets {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
 
-	static var avatarLightBackgroundColor: NSColor = {
-		return NSColor(named: NSColor.Name("avatarLightBackgroundColor"))!
+	static var iconLightBackgroundColor: NSColor = {
+		return NSColor(named: NSColor.Name("iconLightBackgroundColor"))!
 	}()
 
-	static var avatarDarkBackgroundColor: NSColor = {
-		return NSColor(named: NSColor.Name("avatarDarkBackgroundColor"))!
+	static var iconDarkBackgroundColor: NSColor = {
+		return NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
 	}()
 
-	static var searchFeedImage: RSImage = {
-		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	static var masterFolderImage: IconImage = {
+		return IconImage(RSImage(named: NSImage.folderName)!)
 	}()
 
-	static var starredFeedImage: RSImage = {
-		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	static var searchFeedImage: IconImage = {
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
 	}()
 
-	static var todayFeedImage: RSImage = {
-		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	static var starredFeedImage: IconImage = {
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
 	}()
 
-	static var unreadFeedImage: RSImage = {
-		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	static var todayFeedImage: IconImage = {
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
+	}()
+
+	static var unreadFeedImage: IconImage = {
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
 	}()
 
 	static var swipeMarkReadImage: RSImage = {

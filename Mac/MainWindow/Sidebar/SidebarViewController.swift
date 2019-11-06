@@ -526,14 +526,14 @@ private extension SidebarViewController {
 	}
 
 	func configureFavicon(_ cell: SidebarCell, _ node: Node) {
-		cell.image = imageFor(node)
+		cell.image = imageFor(node)?.image
 	}
 
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
 		cell.textField?.stringValue = nameFor(node)
 	}
 
-	func imageFor(_ node: Node) -> NSImage? {
+	func imageFor(_ node: Node) -> IconImage? {
 		if let smallIconProvider = node.representedObject as? SmallIconProvider {
 			return smallIconProvider.smallIcon
 		}

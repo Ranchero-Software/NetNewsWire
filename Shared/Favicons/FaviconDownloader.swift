@@ -41,7 +41,7 @@ final class FaviconDownloader {
 	}
 
 	private let queue: DispatchQueue
-	private var cache = [Feed: RSImage]() // faviconURL: RSImage
+	private var cache = [Feed: IconImage]() // faviconURL: RSImage
 
 	struct UserInfoKey {
 		static let faviconURL = "faviconURL"
@@ -64,10 +64,10 @@ final class FaviconDownloader {
 	// MARK: - API
 
 	func resetCache() {
-		cache = [Feed: RSImage]()
+		cache = [Feed: IconImage]()
 	}
 	
-	func favicon(for feed: Feed) -> RSImage? {
+	func favicon(for feed: Feed) -> IconImage? {
 
 		assert(Thread.isMainThread)
 
@@ -89,29 +89,30 @@ final class FaviconDownloader {
 		return nil
 	}
 	
-	func faviconAsAvatar(for feed: Feed) -> RSImage? {
+	func faviconAsIcon(for feed: Feed) -> IconImage? {
 		
 		if let image = cache[feed] {
 			return image
 		}
 		
-		if let image = favicon(for: feed), let imageData = image.dataRepresentation() {
-			if let scaledImage = RSImage.scaledForAvatar(imageData) {
-				cache[feed] = scaledImage
-				return scaledImage
+		if let iconImage = favicon(for: feed), let imageData = iconImage.image.dataRepresentation() {
+			if let scaledImage = RSImage.scaledForIcon(imageData) {
+				let scaledIconImage = IconImage(scaledImage)
+				cache[feed] = scaledIconImage
+				return scaledIconImage
 			}
 		}
 		
 		return nil
 	}
 
-	func favicon(with faviconURL: String) -> RSImage? {
+	func favicon(with faviconURL: String) -> IconImage? {
 
 		let downloader = faviconDownloader(withURL: faviconURL)
-		return downloader.image
+		return downloader.iconImage
 	}
 
-	func favicon(withHomePageURL homePageURL: String) -> RSImage? {
+	func favicon(withHomePageURL homePageURL: String) -> IconImage? {
 
 		let url = homePageURL.rs_normalizedURL()
 		if homePageURLsWithNoFaviconURLCache.contains(url) {
@@ -144,7 +145,7 @@ final class FaviconDownloader {
 		guard let singleFaviconDownloader = note.object as? SingleFaviconDownloader else {
 			return
 		}
-		guard let _ = singleFaviconDownloader.image else {
+		guard let _ = singleFaviconDownloader.iconImage else {
 			return
 		}
 

@@ -30,7 +30,7 @@ final class UnreadFeed: PseudoFeed {
 		}
 	}
 
-	var smallIcon: RSImage? = AppAssets.unreadFeedImage
+	var smallIcon: IconImage? = AppAssets.unreadFeedImage
 	
 	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {

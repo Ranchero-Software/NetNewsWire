@@ -21,9 +21,9 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 	static let starDimension = CGFloat(integerLiteral: 16)
 	static let starSize = CGSize(width: MasterTimelineDefaultCellLayout.starDimension, height: MasterTimelineDefaultCellLayout.starDimension)
 
-	static let avatarSize = CGSize(width: 32.0, height: 32.0)
-	static let avatarMarginRight = CGFloat(integerLiteral: 8)
-	static let avatarCornerRadius = CGFloat(integerLiteral: 4)
+	static let iconImageSize = CGSize(width: 32.0, height: 32.0)
+	static let iconMarginRight = CGFloat(integerLiteral: 8)
+	static let iconCornerRadius = CGFloat(integerLiteral: 4)
 
 	static var titleFont: UIFont {
 		return UIFont.preferredFont(forTextStyle: .headline)
@@ -47,7 +47,7 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 	let height: CGFloat
 	let unreadIndicatorRect: CGRect
 	let starRect: CGRect
-	let avatarImageRect: CGRect
+	let iconImageRect: CGRect
 	let titleRect: CGRect
 	let summaryRect: CGRect
 	let feedNameRect: CGRect
@@ -70,12 +70,12 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 		// Separator Insets
 		self.separatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
-		// Avatar
-		if cellData.showAvatar {
-			self.avatarImageRect = MasterTimelineDefaultCellLayout.rectForAvatar(currentPoint)
-			currentPoint.x = self.avatarImageRect.maxX + MasterTimelineDefaultCellLayout.avatarMarginRight
+		// Icon Image
+		if cellData.showIcon {
+			self.iconImageRect = MasterTimelineDefaultCellLayout.rectForIconView(currentPoint)
+			currentPoint.x = self.iconImageRect.maxX + MasterTimelineDefaultCellLayout.iconMarginRight
 		} else {
-			self.avatarImageRect = CGRect.zero
+			self.iconImageRect = CGRect.zero
 		}
 		
 		let textAreaWidth = width - (currentPoint.x + MasterTimelineDefaultCellLayout.cellPadding.right + insets.right)
@@ -98,7 +98,7 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 		let feedNameWidth = textAreaWidth - (MasterTimelineDefaultCellLayout.feedRightMargin + self.dateRect.size.width)
 		self.feedNameRect = MasterTimelineDefaultCellLayout.rectForFeedName(cellData, currentPoint, feedNameWidth)
 		
-		self.height = [self.avatarImageRect, self.feedNameRect].maxY() + MasterTimelineDefaultCellLayout.cellPadding.bottom
+		self.height = [self.iconImageRect, self.feedNameRect].maxY() + MasterTimelineDefaultCellLayout.cellPadding.bottom
 
 	}
 	

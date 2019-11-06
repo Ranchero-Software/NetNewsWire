@@ -10,7 +10,7 @@ import AppKit
 
 struct TimelineCellAppearance: Equatable {
 
-	let showAvatar: Bool
+	let showIcon: Bool
 
 	let cellPadding = NSEdgeInsets(top: 8.0, left: 18.0, bottom: 10.0, right: 18.0)
 	
@@ -35,15 +35,15 @@ struct TimelineCellAppearance: Equatable {
 
 	let drawsGrid = false
 
-	let avatarSize = NSSize(width: 48, height: 48)
-	let avatarMarginLeft: CGFloat = 8.0
-	let avatarMarginRight: CGFloat = 8.0
-	let avatarAdjustmentTop: CGFloat = 4.0
-	let avatarCornerRadius: CGFloat = 4.0
+	let iconSize = NSSize(width: 48, height: 48)
+	let iconMarginLeft: CGFloat = 8.0
+	let iconMarginRight: CGFloat = 8.0
+	let iconAdjustmentTop: CGFloat = 4.0
+	let iconCornerRadius: CGFloat = 4.0
 
 	let boxLeftMargin: CGFloat
 
-	init(showAvatar: Bool, fontSize: FontSize) {
+	init(showIcon: Bool, fontSize: FontSize) {
 
 		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
 		let smallItemFontSize = actualFontSize //floor(actualFontSize * 0.95)
@@ -55,7 +55,7 @@ struct TimelineCellAppearance: Equatable {
 		self.textFont = NSFont.systemFont(ofSize: largeItemFontSize)
 		self.textOnlyFont = NSFont.systemFont(ofSize: largeItemFontSize)
 
-		self.showAvatar = showAvatar
+		self.showIcon = showIcon
 
 		let margin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight
 		self.boxLeftMargin = margin
