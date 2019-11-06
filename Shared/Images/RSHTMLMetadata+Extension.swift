@@ -20,6 +20,9 @@ extension RSHTMLMetadata {
 		var bestImage: RSHTMLOpenGraphImage? = nil
 
 		for image in openGraphImages {
+			if image.width / image.height > 2 {
+				continue
+			}
 			if bestImage == nil {
 				bestImage = image
 				continue
@@ -51,6 +54,9 @@ extension RSHTMLMetadata {
 		var bestImage: RSHTMLMetadataAppleTouchIcon? = nil
 
 		for image in icons {
+			if image.size.width / image.size.height > 2 {
+				continue
+			}
 			if bestImage == nil {
 				bestImage = image
 				continue
