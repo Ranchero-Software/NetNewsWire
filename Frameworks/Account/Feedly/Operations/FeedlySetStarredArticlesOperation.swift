@@ -27,9 +27,8 @@ final class FeedlySetStarredArticlesOperation: FeedlyOperation {
 	}
 	
 	override func main() {
-		defer { didFinish() }
-		
 		guard !isCancelled else {
+			didFinish()
 			return
 		}
 		

@@ -20,12 +20,14 @@ class FeedlyOperation: Operation {
 	
 	func didFinish() {
 		assert(Thread.isMainThread)
+		assert(!isFinished, "Finished operation is attempting to finish again.")
 		self.isExecutingOperation = false
 		self.isFinishedOperation = true
 	}
 	
 	func didFinish(_ error: Error) {
 		assert(Thread.isMainThread)
+		assert(!isFinished, "Finished operation is attempting to finish again.")
 		delegate?.feedlyOperation(self, didFailWith: error)
 		didFinish()
 	}
