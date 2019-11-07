@@ -812,15 +812,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		guard let feed = timelineFetcher as? Feed else {
 			return
 		}
-		rootSplitViewController.present(style: .formSheet) {
-			FeedInspectorView(viewModel: FeedInspectorView.ViewModel(feed: feed))
-		}
+		showFeedInspector(for: feed)
 	}
 	
 	func showFeedInspector(for feed: Feed) {
-		rootSplitViewController.present(style: .formSheet) {
-			FeedInspectorView(viewModel: FeedInspectorView.ViewModel(feed: feed))
-		}
+		let feedInspectorNavController =
+			UIStoryboard.inspector.instantiateViewController(identifier: "FeedInspectorNavigationViewController") as! UINavigationController
+		let feedInspectorController = feedInspectorNavController.topViewController as! FeedInspectorViewController
+		feedInspectorController.modalPresentationStyle = .formSheet
+		feedInspectorController.preferredContentSize = FeedInspectorViewController.preferredContentSizeForFormSheetDisplay
+		feedInspectorController.feed = feed
+		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
 	
 	func showAdd(_ type: AddControllerType, initialFeed: String? = nil, initialFeedName: String? = nil) {
