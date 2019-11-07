@@ -16,18 +16,12 @@ final class IconView: UIView {
 				imageView.image = iconImage?.image
 
 				if self.traitCollection.userInterfaceStyle == .dark {
-					DispatchQueue.global(qos: .default).async {
-						if self.iconImage?.isDark ?? false {
-							DispatchQueue.main.async {
-								self.isDisconcernable = false
-								self.setNeedsLayout()
-							}
-						} else {
-							DispatchQueue.main.async {
-								self.isDisconcernable = true
-								self.setNeedsLayout()
-							}
-						}
+					if self.iconImage?.isDark ?? false {
+						self.isDisconcernable = false
+						self.setNeedsLayout()
+					} else {
+						self.isDisconcernable = true
+						self.setNeedsLayout()
 					}
 				} else {
 					self.setNeedsLayout()

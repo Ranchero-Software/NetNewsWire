@@ -16,6 +16,8 @@ struct ArticleRenderer {
 	typealias Rendering = (style: String, html: String)
 	typealias Page = (html: String, baseURL: URL)
 
+	static var imageIconScheme = "nnwImageIcon"
+	
 	static var page: Page = {
 		let pageURL = Bundle.main.url(forResource: "page", withExtension: "html")!
 		let html = try! String(contentsOf: pageURL)
@@ -29,8 +31,9 @@ struct ArticleRenderer {
 	private let title: String
 	private let body: String
 	private let baseURL: String?
+	private let useImageIcon: Bool
 
-	private init(article: Article?, extractedArticle: ExtractedArticle?, style: ArticleStyle) {
+	private init(article: Article?, extractedArticle: ExtractedArticle?, style: ArticleStyle, useImageIcon: Bool = false) {
 		self.article = article
 		self.extractedArticle = extractedArticle
 		self.articleStyle = style
@@ -42,12 +45,13 @@ struct ArticleRenderer {
 			self.body = article?.body ?? ""
 			self.baseURL = article?.baseURL?.absoluteString
 		}
+		self.useImageIcon = useImageIcon
 	}
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, style: style)
+	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle, useImageIcon: Bool = false) -> Rendering {
+		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, style: style, useImageIcon: useImageIcon)
 		return (renderer.styleString(), renderer.articleHTML)
 	}
 
@@ -231,6 +235,10 @@ private extension ArticleRenderer {
 			return cachedImgTag
 		}
 
+		if useImageIcon {
+			return "<img src=\"\(ArticleRenderer.imageIconScheme)://article.png\" height=48 width=48 />"
+		}
+		
 		if let iconImage = appDelegate.feedIconDownloader.icon(for: feed) {
 			if let s = base64String(forImage: iconImage.image) {
 				#if os(macOS)
@@ -281,7 +289,8 @@ private extension ArticleRenderer {
 	}
 
 	func avatarImgTag() -> String? {
-		if let author = singleArticleSpecifiedAuthor(), let imageURL = author.avatarURL {
+		if let author = singleArticleSpecifiedAuthor(), let authorImageURL = author.avatarURL {
+			let imageURL = useImageIcon ? ArticleRenderer.imageIconScheme : authorImageURL
 			return Avatar(imageURL: imageURL, url: author.url).html(dimension: ArticleRenderer.avatarDimension)
 		}
 		if let feed = article?.feed, let imgTag = feedIconImgTag(forFeed: feed) {

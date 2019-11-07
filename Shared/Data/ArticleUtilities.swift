@@ -65,14 +65,18 @@ extension Article {
 	}
 
 	func iconImage() -> IconImage? {
-		if let authors = authors {
-			for author in authors {
-				if let image = appDelegate.authorAvatarDownloader.image(for: author) {
-					return image
-				}
+		if let authors = authors, authors.count == 1, let author = authors.first {
+			if let image = appDelegate.authorAvatarDownloader.image(for: author) {
+				return image
 			}
 		}
 		
+		if let authors = feed?.authors, authors.count == 1, let author = authors.first {
+			if let image = appDelegate.authorAvatarDownloader.image(for: author) {
+				return image
+			}
+		}
+
 		guard let feed = feed else {
 			return nil
 		}
@@ -88,7 +92,6 @@ extension Article {
 		
 		return FaviconGenerator.favicon(feed)
 	}
-	
 }
 
 // MARK: PathIDUserInfoProvider

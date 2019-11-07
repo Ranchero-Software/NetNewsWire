@@ -166,9 +166,9 @@ class ArticleViewController: UIViewController {
 		case .loading:
 			rendering = ArticleRenderer.loadingHTML(style: style)
 		case .article(let article):
-			rendering = ArticleRenderer.articleHTML(article: article, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, style: style, useImageIcon: true)
 		case .extracted(let article, let extractedArticle):
-			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style, useImageIcon: true)
 		}
 		
 		let templateData = TemplateData(style: rendering.style, body: rendering.html)
@@ -180,6 +180,7 @@ class ArticleViewController: UIViewController {
 			render = "render(\(json));"
 		}
 
+		ArticleViewControllerWebViewProvider.shared.articleIconSchemeHandler.currentArticle = currentArticle
 		webView?.scrollView.setZoomScale(1.0, animated: false)
 		webView?.evaluateJavaScript(render)
 		
