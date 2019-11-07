@@ -615,8 +615,14 @@
 		84F9EAF4213660A100CF2DE4 /* testGenericScript.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE1213660A100CF2DE4 /* testGenericScript.applescript */; };
 		84F9EAF5213660A100CF2DE4 /* establishMainWindowStartingState.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */; };
 		84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */; };
+		9E7EFDA7237502C000E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7EFDA6237502C000E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift */; };
+		9E7EFDA8237502C000E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7EFDA6237502C000E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift */; };
+		9E7EFDC22375072300E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7EFDA6237502C000E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift */; };
 		9EA33BB92318F8C10097B644 /* AccountsFeedlyWebWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA33BB72318F8C10097B644 /* AccountsFeedlyWebWindowController.swift */; };
 		9EA33BBA2318F8C10097B644 /* AccountsFeedlyWeb.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9EA33BB82318F8C10097B644 /* AccountsFeedlyWeb.xib */; };
+		9EBD5B062374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBD5B052374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift */; };
+		9EBD5B072374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBD5B052374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift */; };
+		9EBD5B082374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBD5B052374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift */; };
 		B528F81E23333C7E00E735DD /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = B528F81D23333C7E00E735DD /* page.html */; };
 		D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D553737C20186C1F006D8857 /* Article+Scriptability.swift */; };
 		D57BE6E0204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57BE6DF204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift */; };
@@ -1538,8 +1544,10 @@
 		84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = establishMainWindowStartingState.applescript; sourceTree = "<group>"; };
 		84F9EAE4213660A100CF2DE4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
+		9E7EFDA6237502C000E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OAuthAuthorizationClient+NetNewsWire.swift"; sourceTree = "<group>"; };
 		9EA33BB72318F8C10097B644 /* AccountsFeedlyWebWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsFeedlyWebWindowController.swift; sourceTree = "<group>"; };
 		9EA33BB82318F8C10097B644 /* AccountsFeedlyWeb.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsFeedlyWeb.xib; sourceTree = "<group>"; };
+		9EBD5B052374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthAccountAuthorizationOperation.swift; sourceTree = "<group>"; };
 		B24EFD482330FF99006C6242 /* NetNewsWire-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-Bridging-Header.h"; sourceTree = "<group>"; };
 		B24EFD5923310109006C6242 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		B528F81D23333C7E00E735DD /* page.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
@@ -2441,6 +2449,8 @@
 		84C9FC6822629C9A00D921D6 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				9E7EFDA6237502C000E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift */,
+				9EBD5B052374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift */,
 				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
 				841D4D542106B3D500DD04E6 /* Articles.xcodeproj */,
 				841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */,
@@ -2798,8 +2808,9 @@
 			buildConfigurationList = 65ED407F235DEF6C0081F399 /* Build configuration list for PBXNativeTarget "NetNewsWire MAS" */;
 			buildPhases = (
 				65ED3FB5235DEF6C0081F399 /* Run Script: Update ArticleExtractorConfig.swift */,
+				9E7EFDC3237509DC00E94DF8 /* Run Script: Update OAuthAuthorizationClient+NetNewsWire.swift */,
 				65ED3FB6235DEF6C0081F399 /* Sources */,
-				65ED4041235DEF6C0081F399 /* Run Script: Reset ArticleExtractorConfig.swift */,
+				65ED4041235DEF6C0081F399 /* Run Script: Reset ArticleExtractorConfig.swift and OAuthAuthorizationClient+NetNewsWire.swift */,
 				65ED4042235DEF6C0081F399 /* Frameworks */,
 				65ED404D235DEF6C0081F399 /* Resources */,
 				65ED406F235DEF6C0081F399 /* Run Script: Automated build numbers */,
@@ -2848,8 +2859,9 @@
 			buildConfigurationList = 840D61A32029031E009BC708 /* Build configuration list for PBXNativeTarget "NetNewsWire-iOS" */;
 			buildPhases = (
 				517D2D80233A46ED00FF3E35 /* Run Script: Update ArticleExtractorConfig.swift */,
+				9E7EFDC4237509F300E94DF8 /* Run Script: Update OAuthAuthorizationClient+NetNewsWire.swift */,
 				840D61782029031C009BC708 /* Sources */,
-				517D2D81233A47AD00FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift */,
+				517D2D81233A47AD00FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift and OAuthAuthorizationClient+NetNewsWire.swift */,
 				840D61792029031C009BC708 /* Frameworks */,
 				840D617A2029031C009BC708 /* Resources */,
 				51C451DF2264C7F200C03939 /* Embed Frameworks */,
@@ -2871,8 +2883,9 @@
 			buildConfigurationList = 849C647A1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "NetNewsWire" */;
 			buildPhases = (
 				51D6803823330CFF0097A009 /* Run Script: Update ArticleExtractorConfig.swift */,
+				9EBD5B092374CE3E008F3B58 /* Run Script: Update OAuthAuthorizationClient+NetNewsWire.swift */,
 				849C645C1ED37A5D003D8FC0 /* Sources */,
-				517D2D82233A53D600FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift */,
+				517D2D82233A53D600FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift and OAuthAuthorizationClient+NetNewsWire.swift */,
 				849C645D1ED37A5D003D8FC0 /* Frameworks */,
 				849C645E1ED37A5D003D8FC0 /* Resources */,
 				84C987A52000AC9E0066B150 /* Run Script: Automated build numbers */,
@@ -3523,7 +3536,7 @@
 			shellPath = /bin/sh;
 			shellScript = "FAILED=false\n\nif [ -z \"${MERCURY_CLIENT_ID}\" ]; then\nFAILED=true\nfi\n\nif [ -z \"${MERCURY_CLIENT_SECRET}\" ]; then\nFAILED=true\nfi\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feedbin Mercury credetials.  ArticleExtractorConfig.swift not changed.\"\nexit 0\nfi\n\nsed -i .tmp \"s|{MERCURYID}|${MERCURY_CLIENT_ID}|g; s|{MERCURYSECRET}|${MERCURY_CLIENT_SECRET}|g\" \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n\nrm -f \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift.tmp\"\n\necho \"All env values found!\"\n";
 		};
-		517D2D81233A47AD00FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift */ = {
+		517D2D81233A47AD00FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift and OAuthAuthorizationClient+NetNewsWire.swift */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3532,16 +3545,16 @@
 			);
 			inputPaths = (
 			);
-			name = "Run Script: Reset ArticleExtractorConfig.swift";
+			name = "Run Script: Reset ArticleExtractorConfig.swift and OAuthAuthorizationClient+NetNewsWire.swift";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "git checkout \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n";
+			shellScript = "git checkout \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\ngit checkout \"${SRCROOT}/Shared/OAuthAuthorizationClient+NetNewsWire.swift\"\n";
 		};
-		517D2D82233A53D600FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift */ = {
+		517D2D82233A53D600FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift and OAuthAuthorizationClient+NetNewsWire.swift */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3550,14 +3563,14 @@
 			);
 			inputPaths = (
 			);
-			name = "Run Script: Reset ArticleExtractorConfig.swift";
+			name = "Run Script: Reset ArticleExtractorConfig.swift and OAuthAuthorizationClient+NetNewsWire.swift";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "git checkout \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n";
+			shellScript = "git checkout \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\ngit checkout \"${SRCROOT}/Shared/OAuthAuthorizationClient+NetNewsWire.swift\"\n";
 		};
 		51D6803823330CFF0097A009 /* Run Script: Update ArticleExtractorConfig.swift */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3595,7 +3608,7 @@
 			shellPath = /bin/sh;
 			shellScript = "FAILED=false\n\nif [ -z \"${MERCURY_CLIENT_ID}\" ]; then\nFAILED=true\nfi\n\nif [ -z \"${MERCURY_CLIENT_SECRET}\" ]; then\nFAILED=true\nfi\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feedbin Mercury credetials.  ArticleExtractorConfig.swift not changed.\"\nexit 0\nfi\n\nsed -i .tmp \"s|{MERCURYID}|${MERCURY_CLIENT_ID}|g; s|{MERCURYSECRET}|${MERCURY_CLIENT_SECRET}|g\" \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n\nrm -f \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift.tmp\"\n\necho \"All env values found!\"\n\n";
 		};
-		65ED4041235DEF6C0081F399 /* Run Script: Reset ArticleExtractorConfig.swift */ = {
+		65ED4041235DEF6C0081F399 /* Run Script: Reset ArticleExtractorConfig.swift and OAuthAuthorizationClient+NetNewsWire.swift */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3604,14 +3617,14 @@
 			);
 			inputPaths = (
 			);
-			name = "Run Script: Reset ArticleExtractorConfig.swift";
+			name = "Run Script: Reset ArticleExtractorConfig.swift and OAuthAuthorizationClient+NetNewsWire.swift";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "git checkout \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n";
+			shellScript = "git checkout \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\ngit checkout \"${SRCROOT}/Shared/OAuthAuthorizationClient+NetNewsWire.swift\"\n";
 		};
 		65ED406F235DEF6C0081F399 /* Run Script: Automated build numbers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3676,6 +3689,60 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# See https://blog.curtisherbert.com/automated-build-numbers/\n\n# WARNING: If automated build numbers are restored then take \n# care to ensure any app extensions are versioned the same as the app.\n# ask Daniel (jalkut@red-sweater.com) if in doubt about this. \n#git=`sh /etc/profile; which git`\n#branch_name=`$git symbolic-ref HEAD | sed -e 's,.*/\\\\(.*\\\\),\\\\1,'`\n#git_count=`$git rev-list $branch_name |wc -l | sed 's/^ *//;s/ *$//'`\n#simple_branch_name=`$git rev-parse --abbrev-ref HEAD`\n\n#build_number=\"$git_count\"\n#if [ $CONFIGURATION != \"Release\" ]; then\n#build_number+=\"-$simple_branch_name\"\n#fi\n\n#plist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n#dsym_plist=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\n#if [ -f \"$DSYM_INFO_PLIST\" ] ; then\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$dsym_plist\"\n#fi\n";
+		};
+		9E7EFDC3237509DC00E94DF8 /* Run Script: Update OAuthAuthorizationClient+NetNewsWire.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Update OAuthAuthorizationClient+NetNewsWire.swift";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FAILED=false\n\nif [ -z \"${FEEDLY_CLIENT_ID}\" ]; then\necho \"Missing Feedly Client ID\"\nFAILED=true\nfi\n\nif [ -z \"${FEEDLY_CLIENT_SECRET}\" ]; then\necho \"Missing Feedly Client Secret\"\nFAILED=true\nfi\n\nFEEDLY_CLIENT_SOURCE=\"${SRCROOT}/Shared/OAuthAuthorizationClient+NetNewsWire.swift\"\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feedly client ID or secret. ${FEEDLY_CLIENT_SOURCE} not changed.\"\nexit 0\nfi\n\n# echo \"Substituting variables in: ${FEEDLY_CLIENT_SOURCE}\"\n\nif [ -e \"${FEEDLY_CLIENT_SOURCE}\" ]\nthen\n    sed -i .tmp \"s|{FEEDLY_CLIENT_ID}|${FEEDLY_CLIENT_ID}|g; s|{FEEDLY_CLIENT_SECRET}|${FEEDLY_CLIENT_SECRET}|g\" $FEEDLY_CLIENT_SOURCE\n    # echo \"`git diff ${FEEDLY_CLIENT_SOURCE}`\"\n    rm -f \"${FEEDLY_CLIENT_SOURCE}.tmp\"\nelse\n    echo \"File does not exist at ${FEEDLY_CLIENT_SOURCE}. Has it been moved or renamed?\"\n    exit -1\nfi\n\necho \"All env values found!\"\n";
+		};
+		9E7EFDC4237509F300E94DF8 /* Run Script: Update OAuthAuthorizationClient+NetNewsWire.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Update OAuthAuthorizationClient+NetNewsWire.swift";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FAILED=false\n\nif [ -z \"${FEEDLY_CLIENT_ID}\" ]; then\necho \"Missing Feedly Client ID\"\nFAILED=true\nfi\n\nif [ -z \"${FEEDLY_CLIENT_SECRET}\" ]; then\necho \"Missing Feedly Client Secret\"\nFAILED=true\nfi\n\nFEEDLY_CLIENT_SOURCE=\"${SRCROOT}/Shared/OAuthAuthorizationClient+NetNewsWire.swift\"\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feedly client ID or secret. ${FEEDLY_CLIENT_SOURCE} not changed.\"\nexit 0\nfi\n\n# echo \"Substituting variables in: ${FEEDLY_CLIENT_SOURCE}\"\n\nif [ -e \"${FEEDLY_CLIENT_SOURCE}\" ]\nthen\n    sed -i .tmp \"s|{FEEDLY_CLIENT_ID}|${FEEDLY_CLIENT_ID}|g; s|{FEEDLY_CLIENT_SECRET}|${FEEDLY_CLIENT_SECRET}|g\" $FEEDLY_CLIENT_SOURCE\n    # echo \"`git diff ${FEEDLY_CLIENT_SOURCE}`\"\n    rm -f \"${FEEDLY_CLIENT_SOURCE}.tmp\"\nelse\n    echo \"File does not exist at ${FEEDLY_CLIENT_SOURCE}. Has it been moved or renamed?\"\n    exit -1\nfi\n\necho \"All env values found!\"\n";
+		};
+		9EBD5B092374CE3E008F3B58 /* Run Script: Update OAuthAuthorizationClient+NetNewsWire.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Update OAuthAuthorizationClient+NetNewsWire.swift";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FAILED=false\n\nif [ -z \"${FEEDLY_CLIENT_ID}\" ]; then\necho \"Missing Feedly Client ID\"\nFAILED=true\nfi\n\nif [ -z \"${FEEDLY_CLIENT_SECRET}\" ]; then\necho \"Missing Feedly Client Secret\"\nFAILED=true\nfi\n\nFEEDLY_CLIENT_SOURCE=\"${SRCROOT}/Shared/OAuthAuthorizationClient+NetNewsWire.swift\"\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feedly client ID or secret. ${FEEDLY_CLIENT_SOURCE} not changed.\"\nexit 0\nfi\n\n# echo \"Substituting variables in: ${FEEDLY_CLIENT_SOURCE}\"\n\nif [ -e \"${FEEDLY_CLIENT_SOURCE}\" ]\nthen\n    sed -i .tmp \"s|{FEEDLY_CLIENT_ID}|${FEEDLY_CLIENT_ID}|g; s|{FEEDLY_CLIENT_SECRET}|${FEEDLY_CLIENT_SECRET}|g\" $FEEDLY_CLIENT_SOURCE\n    # echo \"`git diff ${FEEDLY_CLIENT_SOURCE}`\"\n    rm -f \"${FEEDLY_CLIENT_SOURCE}.tmp\"\nelse\n    echo \"File does not exist at ${FEEDLY_CLIENT_SOURCE}. Has it been moved or renamed?\"\n    exit -1\nfi\n\necho \"All env values found!\"\n";
 		};
 		D519E77022EE5B4100923F27 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3829,6 +3896,7 @@
 				65ED400C235DEF6C0081F399 /* FolderInspectorViewController.swift in Sources */,
 				65ED400D235DEF6C0081F399 /* SmartFeedDelegate.swift in Sources */,
 				65ED400E235DEF6C0081F399 /* ImageDownloader.swift in Sources */,
+				9E7EFDA8237502C000E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift in Sources */,
 				65ED400F235DEF6C0081F399 /* ArticleExtractorButton.swift in Sources */,
 				65ED4010235DEF6C0081F399 /* AccountsAddTableCellView.swift in Sources */,
 				65ED4011235DEF6C0081F399 /* AddFolderWindowController.swift in Sources */,
@@ -3859,6 +3927,7 @@
 				65ED402A235DEF6C0081F399 /* AddFeedWindowController.swift in Sources */,
 				65ED402B235DEF6C0081F399 /* ImportOPMLWindowController.swift in Sources */,
 				65ED402C235DEF6C0081F399 /* TimelineTableView.swift in Sources */,
+				9EBD5B072374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift in Sources */,
 				65ED402D235DEF6C0081F399 /* DetailStatusBarView.swift in Sources */,
 				65ED402E235DEF6C0081F399 /* MainWindowController+Scriptability.swift in Sources */,
 				65ED402F235DEF6C0081F399 /* PreferencesWindowController.swift in Sources */,
@@ -3928,6 +3997,7 @@
 				51314704235C41FC00387FDC /* Intents.intentdefinition in Sources */,
 				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
+				9E7EFDC22375072300E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
 				51FA73AB2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */,
 				51C452852265093600C03939 /* FlattenedAccountFolderPickerData.swift in Sources */,
@@ -3962,6 +4032,7 @@
 				51C4527F2265092C00C03939 /* ArticleViewController.swift in Sources */,
 				51C4526A226508F600C03939 /* MasterFeedTableViewCellLayout.swift in Sources */,
 				51C452AE2265104D00C03939 /* ArticleStringFormatter.swift in Sources */,
+				9EBD5B082374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift in Sources */,
 				512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */,
 				51C4529922650A0000C03939 /* ArticleStylesManager.swift in Sources */,
 				51EF0F802277A8330050506E /* MasterTimelineCellLayout.swift in Sources */,
@@ -4064,11 +4135,13 @@
 				D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */,
+				9E7EFDA7237502C000E94DF8 /* OAuthAuthorizationClient+NetNewsWire.swift in Sources */,
 				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
 				8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
 				849A97651ED9EB96007D329B /* FeedTreeControllerDelegate.swift in Sources */,
+				9EBD5B062374BD68008F3B58 /* OAuthAccountAuthorizationOperation.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
 				51FE10092346739D0056195D /* ActivityType.swift in Sources */,
 				840BEE4121D70E64009BBAFA /* CrashReportWindowController.swift in Sources */,

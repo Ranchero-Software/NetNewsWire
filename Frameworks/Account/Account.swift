@@ -308,18 +308,23 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 	
-	public static func oauthAuthorizationClient(for type: AccountType) -> OAuthAuthorizationClient {
-		let grantingType: OAuthAuthorizationGranting.Type
-		switch type {
-		case .feedly:
-			grantingType = FeedlyAccountDelegate.self
-		default:
-			fatalError("\(type) does not support OAuth authorization code granting.")
+	public var oauthAuthorizationClient: OAuthAuthorizationClient? {
+		get {
+			guard let oauthGrantingAccount = delegate as? OAuthAuthorizationGranting else {
+				assertionFailure()
+				return nil
+			}
+			return oauthGrantingAccount.oauthAuthorizationClient
 		}
-		
-		return grantingType.oauthAuthorizationClient
+		set {
+			guard var oauthGrantingAccount = delegate as? OAuthAuthorizationGranting else {
+				assertionFailure()
+				return
+			}
+			oauthGrantingAccount.oauthAuthorizationClient = newValue
+		}
 	}
-	
+		
 	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType, client: OAuthAuthorizationClient) -> URLRequest {
 		let grantingType: OAuthAuthorizationGranting.Type
 		switch type {

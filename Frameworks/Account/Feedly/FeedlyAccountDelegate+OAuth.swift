@@ -27,10 +27,6 @@ extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 	
 	private static let oauthAuthorizationGrantScope = "https://cloud.feedly.com/subscriptions"
 	
-	static var oauthAuthorizationClient: OAuthAuthorizationClient {
-		return environment.oauthAuthorizationClient
-	}
-	
 	static func oauthAuthorizationCodeGrantRequest(for client: OAuthAuthorizationClient) -> URLRequest {
 		let authorizationRequest = OAuthAuthorizationRequest(clientId: client.id,
 															 redirectUri: client.redirectUri,

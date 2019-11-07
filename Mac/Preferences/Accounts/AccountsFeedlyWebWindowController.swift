@@ -29,7 +29,7 @@ class AccountsFeedlyWebWindowController: NSWindowController, WKNavigationDelegat
 	}
 	
 	// MARK: Requesting an Access Token
-	let client = Account.oauthAuthorizationClient(for: .feedly)
+	let client = OAuthAuthorizationClient.feedlySandboxClient
 		
 	private func beginAuthorization() {
 		let request = Account.oauthAuthorizationCodeGrantRequest(for: .feedly, client: client)
@@ -91,6 +91,8 @@ class AccountsFeedlyWebWindowController: NSWindowController, WKNavigationDelegat
 			
 			// Now store the access token because we want the account delegate to use it.
 			try account.storeCredentials(grant.accessToken)
+			
+			account.oauthAuthorizationClient = client
 			
 			self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 		} catch {
