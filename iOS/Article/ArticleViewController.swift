@@ -99,7 +99,6 @@ class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
@@ -203,20 +202,6 @@ class ArticleViewController: UIViewController {
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		reloadHTML()
-	}
-	
-	// Don't delete this even though it looks like it isn't doing anything.  This is to work
-	// around a bug (don't know if it is an Apple one or ours) that happens when the root
-	// split view controller is not collapsed.  When the app goes to the background and then
-	// comes back to the foreground the article extractor button will disappear.  The
-	// navigationItem will still have a reference to the articleExtractorButton, but if you
-	// check in the view debugger, the button isn't in the view hierarchy anymore.
-	// Setting the titleView to nil and then back to the articleExtractorButton hides that
-	// this happened.  If we move the articleExtractorButton to someplace other than the
-	// titleView, then this code can be safely deleted.
-	@objc func willEnterForeground(_ note: Notification) {
-		navigationItem.titleView = nil
-		navigationItem.titleView = articleExtractorButton
 	}
 	
 	// MARK: Actions
