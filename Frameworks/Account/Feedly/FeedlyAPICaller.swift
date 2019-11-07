@@ -15,15 +15,6 @@ final class FeedlyAPICaller {
 		case sandbox
 		case cloud
 		
-		static var `default`: API {
-			// https://developer.feedly.com/v3/developer/
-			if let token = ProcessInfo.processInfo.environment["FEEDLY_DEV_ACCESS_TOKEN"], !token.isEmpty {
-				return .cloud
-			}
-			
-			return .sandbox
-		}
-		
 		var baseUrlComponents: URLComponents {
 			var components = URLComponents()
 			components.scheme = "https"
@@ -36,6 +27,25 @@ final class FeedlyAPICaller {
 				components.host = "cloud.feedly.com"
 			}
 			return components
+		}
+		
+		var oauthAuthorizationClient: OAuthAuthorizationClient {
+			switch self {
+			case .cloud:
+				/// Models private NetNewsWire client secrets.
+				/// https://developer.feedly.com/v3/auth/#authenticating-a-user-and-obtaining-an-auth-code
+				return OAuthAuthorizationClient(id: "{FEEDLY-ID}",
+												redirectUri: "{FEEDLY-REDIRECT-URI}",
+												state: nil,
+												secret: "{FEEDLY-SECRET}")
+			case .sandbox:
+				/// Models public sandbox API values found at:
+				/// https://groups.google.com/forum/#!topic/feedly-cloud/WwQWMgDmOuw
+				return OAuthAuthorizationClient(id: "sandbox",
+												redirectUri: "http://localhost",
+												state: nil,
+												secret: "ReVGXA6WekanCxbf")
+			}
 		}
 	}
 	
@@ -321,13 +331,14 @@ final class FeedlyAPICaller {
 
 extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 	
-	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest) -> URLRequest {
-		let api = API.default
-		var components = api.baseUrlComponents
+	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest {
+		var components = baseUrlComponents
 		components.path = "/v3/auth/auth"
 		components.queryItems = request.queryItems
 		
 		guard let url = components.url else {
+			assert(components.scheme != nil)
+			assert(components.host != nil)
 			fatalError("\(components) does not produce a valid URL.")
 		}
 		
@@ -356,6 +367,47 @@ extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 			let encoder = JSONEncoder()
 			encoder.keyEncodingStrategy = .convertToSnakeCase
 			request.httpBody = try encoder.encode(authorizationRequest)
+		} catch {
+			DispatchQueue.main.async {
+				completionHandler(.failure(error))
+			}
+			return
+		}
+		
+		transport.send(request: request, resultType: AccessTokenResponse.self, keyDecoding: .convertFromSnakeCase) { result in
+			switch result {
+			case .success(let (_, tokenResponse)):
+				if let response = tokenResponse {
+					completionHandler(.success(response))
+				} else {
+					completionHandler(.failure(URLError(.cannotDecodeContentData)))
+				}
+			case .failure(let error):
+				completionHandler(.failure(error))
+			}
+		}
+	}
+}
+
+extension FeedlyAPICaller: OAuthAcessTokenRefreshRequesting {
+		
+	func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest, completionHandler: @escaping (Result<FeedlyOAuthAccessTokenResponse, Error>) -> ()) {
+		var components = baseUrlComponents
+		components.path = "/v3/auth/token"
+		
+		guard let url = components.url else {
+			fatalError("\(components) does not produce a valid URL.")
+		}
+		
+		var request = URLRequest(url: url)
+		request.httpMethod = "POST"
+		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
+		
+		do {
+			let encoder = JSONEncoder()
+			encoder.keyEncodingStrategy = .convertToSnakeCase
+			request.httpBody = try encoder.encode(refreshRequest)
 		} catch {
 			DispatchQueue.main.async {
 				completionHandler(.failure(error))

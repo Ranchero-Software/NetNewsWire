@@ -50,7 +50,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		
 		let container = support.makeTestDatabaseContainer()
 		let syncAll = FeedlySyncAllOperation(account: account,
-											 credentials: support.credentials,
+											 credentials: support.accessToken,
 											 lastSuccessfulFetchStartDate: nil,
 											 markArticlesService: markArticlesService,
 											 getUnreadService: getStreamIdsService,
@@ -89,7 +89,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 	private var transport = TestTransport()
 	lazy var caller: FeedlyAPICaller = {
 		let caller = FeedlyAPICaller(transport: transport, api: .sandbox)
-		caller.credentials = support.credentials
+		caller.credentials = support.accessToken
 		return caller
 	}()
 	
@@ -116,7 +116,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		// lastSuccessfulFetchStartDate does not matter for the test, content will always be the same.
 		// It is tested in `FeedlyGetStreamContentsOperationTests`.
 		let syncAll = FeedlySyncAllOperation(account: account,
-											 credentials: support.credentials,
+											 credentials: support.accessToken,
 											 caller: caller,
 											 database: databaseContainer.database,
 											 lastSuccessfulFetchStartDate: nil,

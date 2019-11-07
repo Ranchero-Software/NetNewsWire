@@ -21,7 +21,7 @@ public enum CredentialsType: String {
 	case oauthRefreshToken = "oauthRefreshToken"
 }
 
-public struct Credentials {
+public struct Credentials: Equatable {
 	public let type: CredentialsType
 	public let username: String
 	public let secret: String

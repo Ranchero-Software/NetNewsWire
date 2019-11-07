@@ -14,6 +14,19 @@ import SyncDatabase
 import os.log
 
 final class FeedlyAccountDelegate: AccountDelegate {
+	
+	static var environment: FeedlyAPICaller.API {
+		#if DEBUG
+		// https://developer.feedly.com/v3/developer/
+		if let token = ProcessInfo.processInfo.environment["FEEDLY_DEV_ACCESS_TOKEN"], !token.isEmpty {
+			return .cloud
+		}
+		return .sandbox
+		
+		#else
+		return .cloud
+		#endif
+	}
 
 	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
 	// See https://developer.feedly.com/v3/opml/
@@ -42,13 +55,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	private let caller: FeedlyAPICaller
+	internal let caller: FeedlyAPICaller
+	
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
 	private let database: SyncDatabase
 	
 	private weak var currentSyncAllOperation: FeedlySyncAllOperation?
 	
-	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API = .default) {
+	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API) {
 		
 		if let transport = transport {
 			caller = FeedlyAPICaller(transport: transport, api: api)
@@ -71,7 +85,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			let session = URLSession(configuration: sessionConfiguration)
 			caller = FeedlyAPICaller(transport: session, api: api)
 		}
-		
+				
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
 	}
@@ -460,6 +474,10 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
+		
+		let client = FeedlyAccountDelegate.oauthAuthorizationClient
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: client, log: log)
+		OperationQueue.main.addOperation(refreshAccessToken)
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
