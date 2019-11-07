@@ -8,7 +8,7 @@
 
 import UIKit
 
-class InspectorHeaderView: UITableViewHeaderFooterView {
+class InspectorImageHeaderView: UITableViewHeaderFooterView {
 
 	var imageView = UIImageView()
 	

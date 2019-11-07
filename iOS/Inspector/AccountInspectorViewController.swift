@@ -36,7 +36,7 @@ class AccountInspectorViewController: UITableViewController {
 			navigationItem.leftBarButtonItem = doneBarButtonItem
 		}
 		
-		tableView.register(InspectorHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+		tableView.register(InspectorImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 
 	}
 	
@@ -113,7 +113,7 @@ extension AccountInspectorViewController {
 		guard let account = account else { return nil }
 
 		if section == 0 {
-			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! InspectorHeaderView
+			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! InspectorImageHeaderView
 			headerView.imageView.image = AppAssets.image(for: account.type)
 			return headerView
 		} else {
