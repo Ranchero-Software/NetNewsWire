@@ -29,9 +29,8 @@ class AccountsFeedlyWebWindowController: NSWindowController, WKNavigationDelegat
 	}
 	
 	// MARK: Requesting an Access Token
-	
-	private let client = OAuthAuthorizationClient.feedlySandboxClient
-	
+	let client = Account.oauthAuthorizationClient(for: .feedly)
+		
 	private func beginAuthorization() {
 		let request = Account.oauthAuthorizationCodeGrantRequest(for: .feedly, client: client)
 		webView.load(request)
@@ -97,23 +96,5 @@ class AccountsFeedlyWebWindowController: NSWindowController, WKNavigationDelegat
 		} catch {
 			NSApplication.shared.presentError(error)
 		}
-	}
-}
-
-private extension OAuthAuthorizationClient {
-	
-	/// Models public sandbox API values found at:
-	/// https://groups.google.com/forum/#!topic/feedly-cloud/WwQWMgDmOuw
-	static var feedlySandboxClient: OAuthAuthorizationClient {
-		return OAuthAuthorizationClient(id: "sandbox",
-										redirectUri: "http://localhost",
-										state: nil,
-										secret: "ReVGXA6WekanCxbf")
-	}
-	
-	/// Models private NetNewsWire client secrets.
-	/// https://developer.feedly.com/v3/auth/#authenticating-a-user-and-obtaining-an-auth-code
-	static var netNewsWireClient: OAuthAuthorizationClient {
-		fatalError("This app is not registered as a client with Feedly. Follow the URL in the code comments for this property.")
 	}
 }
