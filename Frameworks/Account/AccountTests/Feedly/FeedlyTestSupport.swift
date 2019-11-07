@@ -12,14 +12,15 @@ import RSParser
 import os.log
 import SyncDatabase
 
-struct FeedlyTestSupport {
+class FeedlyTestSupport {
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "FeedlyTests")
-	var credentials = Credentials(type: .oauthAccessToken, username: "Test", secret: "t3st")
+	var accessToken = Credentials(type: .oauthAccessToken, username: "Test", secret: "t3st-access-tok3n")
+	var refreshToken = Credentials(type: .oauthRefreshToken, username: "Test", secret: "t3st-refresh-tok3n")
 	var transport = TestTransport()
 	
 	func makeMockNetworkStack() -> (TestTransport, FeedlyAPICaller) {
 		let caller = FeedlyAPICaller(transport: transport, api: .sandbox)
-		caller.credentials = credentials
+		caller.credentials = accessToken
 		return (transport, caller)
 	}
 	
@@ -27,11 +28,25 @@ struct FeedlyTestSupport {
 		let manager = TestAccountManager()
 		let account = manager.createAccount(type: .feedly, transport: transport)
 		do {
-			try account.storeCredentials(credentials)
+			try account.storeCredentials(refreshToken)
+			// This must be done last or the account uses the refresh token for request Authorization!
+			try account.storeCredentials(accessToken)
 		} catch {
 			XCTFail("Unable to register mock credentials because \(error)")
 		}
 		return account
+	}
+	
+	func makeMockOAuthClient() -> OAuthAuthorizationClient {
+		return OAuthAuthorizationClient(id: "test", redirectUri: "test://test/auth", state: nil, secret: "password")
+	}
+	
+	func removeCredentials(matching type: CredentialsType, from account: Account) {
+		do {
+			try account.removeCredentials(type: type)
+		} catch {
+			XCTFail("Unable to remove \(type)")
+		}
 	}
 	
 	func makeTestDatabaseContainer() -> TestDatabaseContainer {
@@ -63,6 +78,7 @@ struct FeedlyTestSupport {
 	func destroy(_ testAccount: Account) {
 		do {
 			try testAccount.removeCredentials(type: .oauthAccessToken)
+			try testAccount.removeCredentials(type: .oauthRefreshToken)
 		} catch {
 			XCTFail("Unable to clean up mock credentials because \(error)")
 		}

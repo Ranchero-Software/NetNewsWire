@@ -14,6 +14,21 @@ import SyncDatabase
 import os.log
 
 final class FeedlyAccountDelegate: AccountDelegate {
+	
+	/// Feedly has a sandbox API and a production API.
+	/// This property is referred to when clients need to know which environment it should be pointing to.
+	static var environment: FeedlyAPICaller.API {
+		#if DEBUG
+		// https://developer.feedly.com/v3/developer/
+		if let token = ProcessInfo.processInfo.environment["FEEDLY_DEV_ACCESS_TOKEN"], !token.isEmpty {
+			return .cloud
+		}
+		return .sandbox
+		
+		#else
+		return .cloud
+		#endif
+	}
 
 	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
 	// See https://developer.feedly.com/v3/opml/
@@ -42,16 +57,24 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	private let caller: FeedlyAPICaller
+	internal let caller: FeedlyAPICaller
+	
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
 	private let database: SyncDatabase
 	
 	private weak var currentSyncAllOperation: FeedlySyncAllOperation?
+	private let operationQueue: OperationQueue
 	
-	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API = .default) {
+	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API) {
+		self.operationQueue = OperationQueue()
+		// Many operations have their own operation queues, such as the sync all operation.
+		// Making this a serial queue at this higher level of abstraction means we can ensure,
+		// for example, a `FeedlyRefreshAccessTokenOperation` occurs before a `FeedlySyncAllOperation`,
+		// improving our ability to debug, reason about and predict the behaviour of the code.
+		self.operationQueue.maxConcurrentOperationCount = 1
 		
 		if let transport = transport {
-			caller = FeedlyAPICaller(transport: transport, api: api)
+			self.caller = FeedlyAPICaller(transport: transport, api: api)
 			
 		} else {
 			
@@ -69,9 +92,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 			
 			let session = URLSession(configuration: sessionConfiguration)
-			caller = FeedlyAPICaller(transport: session, api: api)
+			self.caller = FeedlyAPICaller(transport: session, api: api)
 		}
-		
+				
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
 	}
@@ -79,7 +102,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	// MARK: Account API
 	
 	func cancelAll(for account: Account) {
-		// TODO: Implement me please
+		operationQueue.cancelAllOperations()
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -114,7 +137,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		currentSyncAllOperation = operation
 		
-		OperationQueue.main.addOperation(operation)
+		operationQueue.addOperation(operation)
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -125,7 +148,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				completion(.success(()))
 			}
 		}
-		OperationQueue.main.addOperation(send)
+		operationQueue.addOperation(send)
 	}
 	
 	/// Attempts to ensure local articles have the same status as they do remotely.
@@ -145,18 +168,18 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let group = DispatchGroup()
 		
-		let getUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
+		let syncUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
 		
 		group.enter()
-		getUnread.completionBlock = {
+		syncUnread.completionBlock = {
 			group.leave()
 			
 		}
 		
-		let getStarred = FeedlySyncStarredArticlesOperation(account: account, credentials: credentials, service: caller, log: log)
+		let syncStarred = FeedlySyncStarredArticlesOperation(account: account, credentials: credentials, service: caller, log: log)
 		
 		group.enter()
-		getStarred.completionBlock = {
+		syncStarred.completionBlock = {
 			group.leave()
 		}
 		
@@ -164,7 +187,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			completion(.success(()))
 		}
 		
-		OperationQueue.main.addOperations([getUnread, getStarred], waitUntilFinished: false)
+		operationQueue.addOperations([syncUnread, syncStarred], waitUntilFinished: false)
 	}
 	
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -460,9 +483,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
+		
+		let client = FeedlyAccountDelegate.oauthAuthorizationClient
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: client, log: log)
+		operationQueue.addOperation(refreshAccessToken)
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		fatalError()
+		assertionFailure("An `account` instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
+		completion(.success(credentials))
 	}
 }

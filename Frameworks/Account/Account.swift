@@ -225,7 +225,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		case .freshRSS:
 			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .feedly:
-			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport)
+			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment)
 		default:
 			return nil
 		}
@@ -306,6 +306,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		default:
 			break
 		}
+	}
+	
+	public static func oauthAuthorizationClient(for type: AccountType) -> OAuthAuthorizationClient {
+		let grantingType: OAuthAuthorizationGranting.Type
+		switch type {
+		case .feedly:
+			grantingType = FeedlyAccountDelegate.self
+		default:
+			fatalError("\(type) does not support OAuth authorization code granting.")
+		}
+		
+		return grantingType.oauthAuthorizationClient
 	}
 	
 	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType, client: OAuthAuthorizationClient) -> URLRequest {
