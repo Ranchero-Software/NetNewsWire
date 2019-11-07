@@ -30,10 +30,12 @@ class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 				return
 			}
 			
-			let response = URLResponse(url: responseURL, mimeType: "image/png", expectedContentLength: data.count, textEncodingName: nil);
-			urlSchemeTask.didReceive(response)
-			urlSchemeTask.didReceive(data)
-			urlSchemeTask.didFinish()
+			let headerFields = ["Cache-Control": "no-cache"]
+			if let response = HTTPURLResponse(url: responseURL, statusCode: 200, httpVersion: nil, headerFields: headerFields) {
+				urlSchemeTask.didReceive(response)
+				urlSchemeTask.didReceive(data)
+				urlSchemeTask.didFinish()
+			}
 		}
 	}
 	
