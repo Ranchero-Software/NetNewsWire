@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15508"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -11,18 +11,17 @@
         <scene sceneID="nCF-Ns-xpY">
             <objects>
                 <tableViewController storyboardIdentifier="AccountInspectorViewController" id="1m3-fZ-n7g" customClass="AccountInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="xcc-i3-tPS">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="xcc-i3-tPS">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
                             <tableViewSection id="vec-ab-Ylg">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="4Ue-UW-e0l" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="18" width="414" height="44"/>
+                                        <rect key="frame" x="20" y="18" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4Ue-UW-e0l" id="9E1-ww-kYn">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="19" translatesAutoresizingMaskIntoConstraints="NO" id="mQa-0W-eVS">
@@ -44,10 +43,10 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="zQY-gY-BOY" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="62" width="414" height="44"/>
+                                        <rect key="frame" x="20" y="62" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zQY-gY-BOY" id="dBp-J5-ZsY">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Active" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zf0-Gm-p4F">
@@ -57,14 +56,15 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6YV-K0-yPS">
-                                                    <rect key="frame" x="345" y="6.5" width="51" height="31"/>
+                                                    <rect key="frame" x="305" y="6.5" width="51" height="31"/>
+                                                    <color key="onTintColor" name="secondaryAccentColor"/>
                                                 </switch>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="zf0-Gm-p4F" firstAttribute="leading" secondItem="dBp-J5-ZsY" secondAttribute="leading" constant="20" symbolic="YES" id="lAQ-Ps-JwD"/>
                                                 <constraint firstItem="zf0-Gm-p4F" firstAttribute="centerY" secondItem="dBp-J5-ZsY" secondAttribute="centerY" id="ofD-kM-lP4"/>
                                                 <constraint firstItem="6YV-K0-yPS" firstAttribute="centerY" secondItem="dBp-J5-ZsY" secondAttribute="centerY" id="yOM-Bc-HU8"/>
-                                                <constraint firstAttribute="trailing" secondItem="6YV-K0-yPS" secondAttribute="trailing" constant="20" id="yk4-Dh-YVh"/>
+                                                <constraint firstAttribute="trailing" secondItem="6YV-K0-yPS" secondAttribute="trailing" constant="20" symbolic="YES" id="yk4-Dh-YVh"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -73,14 +73,14 @@
                             <tableViewSection id="9UW-s0-NPI">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="FsT-vH-rTo" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="142" width="414" height="44"/>
+                                        <rect key="frame" x="20" y="142" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FsT-vH-rTo" id="rJW-6J-9DM">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TYD-py-8IF" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TYD-py-8IF" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="0.0" y="0.0" width="354" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="WmU-wG-RLQ"/>
                                                     </constraints>
@@ -106,14 +106,14 @@
                             <tableViewSection id="mgY-wW-xiO">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="lgY-im-vCo" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="222" width="414" height="44"/>
+                                        <rect key="frame" x="20" y="222" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="lgY-im-vCo" id="fIH-xP-nza">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="obv-a5-Pl6" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="obv-a5-Pl6" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="0.0" y="0.0" width="367" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="WtN-fp-Ldt"/>
                                                     </constraints>
@@ -158,7 +158,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zcI-Zg-28D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="864" y="-591"/>
+            <point key="canvasLocation" x="863.768115942029" y="-591.29464285714278"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Oea-QH-lLX">
