@@ -180,7 +180,7 @@
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Name" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZdA-rl-9eP">
                                                     <rect key="frame" x="20" y="11.5" width="334" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <textInputTraits key="textInputTraits"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -198,7 +198,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notify About New Articles" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YV2-gG-lMP">
-                                                    <rect key="frame" x="20" y="11.5" width="198" height="21"/>
+                                                    <rect key="frame" x="24" y="11.5" width="198" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -215,7 +215,7 @@
                                                 <constraint firstItem="g39-wK-xUs" firstAttribute="centerY" secondItem="FfV-P4-TNg" secondAttribute="centerY" id="2bF-Jp-tob"/>
                                                 <constraint firstItem="YV2-gG-lMP" firstAttribute="centerY" secondItem="FfV-P4-TNg" secondAttribute="centerY" id="IaF-U5-CVN"/>
                                                 <constraint firstItem="g39-wK-xUs" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="YV2-gG-lMP" secondAttribute="trailing" constant="8" id="PfE-bK-rrS"/>
-                                                <constraint firstItem="YV2-gG-lMP" firstAttribute="leading" secondItem="FfV-P4-TNg" secondAttribute="leadingMargin" id="dT8-rP-umA"/>
+                                                <constraint firstItem="YV2-gG-lMP" firstAttribute="leading" secondItem="FfV-P4-TNg" secondAttribute="leadingMargin" constant="4" id="dT8-rP-umA"/>
                                                 <constraint firstAttribute="trailing" secondItem="g39-wK-xUs" secondAttribute="trailing" constant="20" symbolic="YES" id="hMe-jH-tbS"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -228,7 +228,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Always Show Reader View" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bf4-3X-Rfr">
-                                                    <rect key="frame" x="20" y="11.5" width="200" height="21"/>
+                                                    <rect key="frame" x="24" y="11.5" width="200" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -244,7 +244,7 @@
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="fUd-JB-UMK" secondAttribute="trailing" constant="20" symbolic="YES" id="4vJ-pa-iCa"/>
                                                 <constraint firstItem="fUd-JB-UMK" firstAttribute="centerY" secondItem="FQk-5f-EtL" secondAttribute="centerY" id="BT1-8x-hrj"/>
-                                                <constraint firstItem="Bf4-3X-Rfr" firstAttribute="leading" secondItem="FQk-5f-EtL" secondAttribute="leadingMargin" id="vqc-MM-8vz"/>
+                                                <constraint firstItem="Bf4-3X-Rfr" firstAttribute="leading" secondItem="FQk-5f-EtL" secondAttribute="leadingMargin" constant="4" id="vqc-MM-8vz"/>
                                                 <constraint firstItem="Bf4-3X-Rfr" firstAttribute="centerY" secondItem="FQk-5f-EtL" secondAttribute="centerY" id="wyr-Kk-g5H"/>
                                                 <constraint firstItem="fUd-JB-UMK" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Bf4-3X-Rfr" secondAttribute="trailing" constant="8" id="ywd-qz-cAd"/>
                                             </constraints>
