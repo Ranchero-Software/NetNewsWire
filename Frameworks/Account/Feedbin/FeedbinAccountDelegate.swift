@@ -81,7 +81,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(6)
+		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
 		refreshAccount(account) { result in
 			switch result {
@@ -592,26 +592,14 @@ private extension FeedbinAccountDelegate {
 							switch result {
 							case .success(let taggings):
 								
-								self.refreshProgress.completeTask()
-								self.caller.retrieveIcons { result in
-									switch result {
-									case .success(let icons):
-
-										BatchUpdate.shared.perform {
-											self.syncFolders(account, tags)
-											self.syncFeeds(account, subscriptions)
-											self.syncFeedFolderRelationship(account, taggings)
-											self.syncFavicons(account, icons)
-										}
-
-										self.refreshProgress.completeTask()
-										completion(.success(()))
-										
-									case .failure(let error):
-										completion(.failure(error))
-									}
-									
+								BatchUpdate.shared.perform {
+									self.syncFolders(account, tags)
+									self.syncFeeds(account, subscriptions)
+									self.syncFeedFolderRelationship(account, taggings)
 								}
+
+								self.refreshProgress.completeTask()
+								completion(.success(()))
 								
 							case .failure(let error):
 								completion(.failure(error))
@@ -733,6 +721,8 @@ private extension FeedbinAccountDelegate {
 				feed.editedName = nil
 				feed.homePageURL = subscription.homePageURL
 				feed.subscriptionID = String(subscription.subscriptionID)
+				feed.faviconURL = subscription.jsonFeed?.favicon
+				feed.iconURL = subscription.jsonFeed?.icon
 			}
 			else {
 				subscriptionsToAdd.insert(subscription)
@@ -815,25 +805,6 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 	}
-	
-	func syncFavicons(_ account: Account, _ icons: [FeedbinIcon]?) {
-		
-		guard let icons = icons else { return }
-		
-		os_log(.debug, log: log, "Syncing favicons with %ld icons.", icons.count)
-		
-		let iconDict = Dictionary(uniqueKeysWithValues: icons.map { ($0.host, $0.url) } )
-		
-		for feed in account.flattenedFeeds() {
-			for (key, value) in iconDict {
-				if feed.homePageURL?.contains(key) ?? false {
-					feed.faviconURL = value
-					break
-				}
-			}
-		}
-	}
-	
 	
 	func sendArticleStatuses(_ statuses: [SyncStatus],
 							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
@@ -924,11 +895,12 @@ private extension FeedbinAccountDelegate {
 	
 	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
-
 		DispatchQueue.main.async {
 			
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.subscriptionID = String(sub.subscriptionID)
+			feed.iconURL = sub.jsonFeed?.icon
+			feed.faviconURL = sub.jsonFeed?.favicon
 		
 			account.addFeed(feed, to: container) { result in
 				switch result {

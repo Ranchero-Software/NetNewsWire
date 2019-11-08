@@ -17,6 +17,7 @@ struct FeedbinSubscription: Hashable, Codable {
 	let name: String?
 	let url: String
 	let homePageURL: String?
+	let jsonFeed: FeedbinSubscriptionJSONFeed?
 
 	enum CodingKeys: String, CodingKey {
 		case subscriptionID = "id"
@@ -24,10 +25,25 @@ struct FeedbinSubscription: Hashable, Codable {
 		case name = "title"
 		case url = "feed_url"
 		case homePageURL = "site_url"
+		case jsonFeed = "json_feed"
 	}
 
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(subscriptionID)
+	}
+	
+	static func == (lhs: FeedbinSubscription, rhs: FeedbinSubscription) -> Bool {
+		return lhs.subscriptionID == rhs.subscriptionID
+	}
+	
+}
+
+struct FeedbinSubscriptionJSONFeed: Codable {
+	let favicon: String?
+	let icon: String?
+	enum CodingKeys: String, CodingKey {
+		case favicon = "favicon"
+		case icon = "icon"
 	}
 }
 
