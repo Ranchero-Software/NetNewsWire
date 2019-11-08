@@ -1,13 +1,12 @@
 //
 //  OAuthAuthorizationClient+NetNewsWire.swift
-//  NetNewsWire
+//  Account
 //
 //  Created by Kiel Gillard on 8/11/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
 import Foundation
-import Account
 
 extension OAuthAuthorizationClient {
 	

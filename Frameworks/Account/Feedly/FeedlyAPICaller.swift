@@ -28,6 +28,15 @@ final class FeedlyAPICaller {
 			}
 			return components
 		}
+		
+		var oauthAuthorizationClient: OAuthAuthorizationClient {
+			switch self {
+			case .sandbox:
+				return .feedlySandboxClient
+			case .cloud:
+				return .feedlyCloudClient
+			}
+		}
 	}
 	
 	private let transport: Transport

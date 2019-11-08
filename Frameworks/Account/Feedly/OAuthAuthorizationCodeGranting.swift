@@ -165,10 +165,8 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 }
 
 protocol OAuthAuthorizationGranting: AccountDelegate {
+		
+	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
 	
-	var oauthAuthorizationClient: OAuthAuthorizationClient? { get set }
-	
-	static func oauthAuthorizationCodeGrantRequest(for client: OAuthAuthorizationClient) -> URLRequest
-	
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, client: OAuthAuthorizationClient, transport: Transport, completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
 }

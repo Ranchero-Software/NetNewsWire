@@ -24,8 +24,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		if let token = ProcessInfo.processInfo.environment["FEEDLY_DEV_ACCESS_TOKEN"], !token.isEmpty {
 			return .cloud
 		}
-		// To debug on a different Feedly environment, do a workspace search for `FEEDLY_ENVIRONMENT`
-		// and ensure the environment matches the client.
 		return .sandbox
 		#else
 		return .cloud
@@ -55,7 +53,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	var oauthAuthorizationClient: OAuthAuthorizationClient?
+	let oauthAuthorizationClient: OAuthAuthorizationClient
 	
 	var accountMetadata: AccountMetadata?
 	
@@ -101,6 +99,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
+		self.oauthAuthorizationClient = api.oauthAuthorizationClient
 	}
 	
 	// MARK: Account API
@@ -488,12 +487,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		
-		if let client = oauthAuthorizationClient {
-			let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: client, log: log)
-			operationQueue.addOperation(refreshAccessToken)
-		} else {
-			os_log(.debug, log: log, "*** WARNING! Not refreshing token because the oauthAuthorizationClient has not been injected. ***")
-		}
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
+		operationQueue.addOperation(refreshAccessToken)
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {

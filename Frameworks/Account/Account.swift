@@ -308,24 +308,16 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 	
-	public var oauthAuthorizationClient: OAuthAuthorizationClient? {
-		get {
-			guard let oauthGrantingAccount = delegate as? OAuthAuthorizationGranting else {
-				assertionFailure()
-				return nil
-			}
-			return oauthGrantingAccount.oauthAuthorizationClient
-		}
-		set {
-			guard var oauthGrantingAccount = delegate as? OAuthAuthorizationGranting else {
-				assertionFailure()
-				return
-			}
-			oauthGrantingAccount.oauthAuthorizationClient = newValue
+	internal static func oauthAuthorizationClient(for type: AccountType) -> OAuthAuthorizationClient {
+		switch type {
+		case .feedly:
+			return FeedlyAccountDelegate.environment.oauthAuthorizationClient
+		default:
+			fatalError("\(type) is not a client for OAuth authorization code granting.")
 		}
 	}
 		
-	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType, client: OAuthAuthorizationClient) -> URLRequest {
+	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType) -> URLRequest {
 		let grantingType: OAuthAuthorizationGranting.Type
 		switch type {
 		case .feedly:
@@ -334,7 +326,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			fatalError("\(type) does not support OAuth authorization code granting.")
 		}
 		
-		return grantingType.oauthAuthorizationCodeGrantRequest(for: client)
+		return grantingType.oauthAuthorizationCodeGrantRequest()
 	}
 	
 	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
@@ -351,7 +343,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			fatalError("\(accountType) does not support OAuth authorization code granting.")
 		}
 		
-		grantingType.requestOAuthAccessToken(with: response, client: client, transport: transport, completionHandler: completionHandler)
+		grantingType.requestOAuthAccessToken(with: response, transport: transport, completionHandler: completionHandler)
 	}
 
 	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {

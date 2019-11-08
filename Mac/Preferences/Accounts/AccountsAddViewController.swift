@@ -101,13 +101,7 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsReaderAPIWindowController
 		case .feedly:
-			// To debug on a different Feedly environment, do a workspace search for `FEEDLY_ENVIRONMENT`
-			// and ensure the environment matches the client.
-			#if DEBUG
-			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly, oauthClient: .feedlySandboxClient)
-			#else
-			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly, oauthClient: .feedlyCloudClient)
-			#endif
+			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			OperationQueue.main.addOperation(addAccount)

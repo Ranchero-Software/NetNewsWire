@@ -7,28 +7,27 @@
 //
 
 import Foundation
-import Account
 import AuthenticationServices
 
-protocol OAuthAccountAuthorizationOperationDelegate: class {
+public protocol OAuthAccountAuthorizationOperationDelegate: class {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error)
 }
 
-final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthenticationPresentationContextProviding {
+public final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthenticationPresentationContextProviding {
 	
-	weak var presentationAnchor: ASPresentationAnchor?
-	weak var delegate: OAuthAccountAuthorizationOperationDelegate?
+	public weak var presentationAnchor: ASPresentationAnchor?
+	public weak var delegate: OAuthAccountAuthorizationOperationDelegate?
 	
 	private let accountType: AccountType
 	private let oauthClient: OAuthAuthorizationClient
 	private var session: ASWebAuthenticationSession?
 	
-	init(accountType: AccountType, oauthClient: OAuthAuthorizationClient) {
+	public init(accountType: AccountType) {
 		self.accountType = accountType
-		self.oauthClient = oauthClient
+		self.oauthClient = Account.oauthAuthorizationClient(for: accountType)
 	}
 	
-	override func main() {
+	override public func main() {
 		assert(Thread.isMainThread)
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 		
@@ -37,7 +36,7 @@ final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthenticationPr
 			return
 		}
 		
-		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType, client: oauthClient)
+		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType)
 		
 		guard let url = request.url else {
 			return DispatchQueue.main.async {
@@ -63,7 +62,7 @@ final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthenticationPr
 		session.start()
 	}
 	
-	override func cancel() {
+	override public func cancel() {
 		session?.cancel()
 		super.cancel()
 	}
@@ -94,7 +93,7 @@ final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthenticationPr
 		}
 	}
 	
-	func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+	public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
 		guard let anchor = presentationAnchor else {
 			fatalError("\(self) has outlived presentation anchor.")
 		}
@@ -127,9 +126,7 @@ final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthenticationPr
 			
 			// Now store the access token because we want the account delegate to use it.
 			try account.storeCredentials(grant.accessToken)
-			
-			account.oauthAuthorizationClient = oauthClient
-			
+						
 			didFinish()
 		} catch {
 			didFinish(error)
@@ -152,14 +149,14 @@ final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthenticationPr
 		didFinish()
 	}
 	
-	override func start() {
+	override public func start() {
 		isExecutingOperation = true
 		DispatchQueue.main.async {
 			self.main()
 		}
 	}
 	
-	override var isExecuting: Bool {
+	override public var isExecuting: Bool {
 		return isExecutingOperation
 	}
 	
@@ -172,7 +169,7 @@ final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthenticationPr
 		}
 	}
 	
-	override var isFinished: Bool {
+	override public var isFinished: Bool {
 		return isFinishedOperation
 	}
 	
