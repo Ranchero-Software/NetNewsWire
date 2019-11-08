@@ -163,6 +163,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		}
 
+		CacheCleaner.purgeIfNecessary()
+
 		// Try to establish a cache in the Caches folder, but if it fails for some reason fall back to a temporary dir
 		let cacheFolder: String
 		if let userCacheFolder = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).path {
@@ -173,16 +175,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			cacheFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
 		}
 
-		// If the image disk cache hasn't been flushed for 3 days and the network is available, delete it
-		if let flushDate = AppDefaults.lastImageCacheFlushDate, flushDate.addingTimeInterval(3600*24*3) < Date() {
-			if let reachability = try? Reachability(hostname: "apple.com") {
-				if reachability.connection != .unavailable {
-					try? FileManager.default.removeItem(atPath: cacheFolder)
-					AppDefaults.lastImageCacheFlushDate = Date()
-				}
-			}
-		}
-		
 		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
 		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
 		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
