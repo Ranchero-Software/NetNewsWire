@@ -15,7 +15,6 @@
 		513323082281070D00C30F19 /* AccountFeedbinSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */; };
 		5133230A2281082F00C30F19 /* subscriptions_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 513323092281082F00C30F19 /* subscriptions_initial.json */; };
 		5133230C2281088A00C30F19 /* subscriptions_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 5133230B2281088A00C30F19 /* subscriptions_add.json */; };
-		5133230E2281089500C30F19 /* icons.json in Resources */ = {isa = PBXBuildFile; fileRef = 5133230D2281089500C30F19 /* icons.json */; };
 		5144EA49227B497600D19003 /* FeedbinAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA48227B497600D19003 /* FeedbinAPICaller.swift */; };
 		5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA4D227B829A00D19003 /* FeedbinAccountDelegate.swift */; };
 		5154367B228EEB28005E1CDF /* FeedbinImportResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5154367A228EEB28005E1CDF /* FeedbinImportResult.swift */; };
@@ -212,7 +211,6 @@
 		513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedbinSyncTest.swift; sourceTree = "<group>"; };
 		513323092281082F00C30F19 /* subscriptions_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_initial.json; sourceTree = "<group>"; };
 		5133230B2281088A00C30F19 /* subscriptions_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_add.json; sourceTree = "<group>"; };
-		5133230D2281089500C30F19 /* icons.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = icons.json; sourceTree = "<group>"; };
 		5144EA48227B497600D19003 /* FeedbinAPICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAPICaller.swift; sourceTree = "<group>"; };
 		5144EA4D227B829A00D19003 /* FeedbinAccountDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAccountDelegate.swift; sourceTree = "<group>"; };
 		5154367A228EEB28005E1CDF /* FeedbinImportResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinImportResult.swift; sourceTree = "<group>"; };
@@ -427,7 +425,6 @@
 				9EC804F1236C21320057CFCB /* feedly_unreads_initial.json */,
 				9EC804EE236C20DD0057CFCB /* feedly_macintosh_initial.json */,
 				9EC804EC236C206A0057CFCB /* feedly_collections_initial.json */,
-				5133230D2281089500C30F19 /* icons.json */,
 				5133230B2281088A00C30F19 /* subscriptions_add.json */,
 				513323092281082F00C30F19 /* subscriptions_initial.json */,
 				5165D71422821C2400D9D53D /* taggings_add.json */,
@@ -854,7 +851,6 @@
 				9EC804ED236C206A0057CFCB /* feedly_collections_initial.json in Resources */,
 				9E5ABE9A236BE6BD00B5DE9F /* feedly-1-initial in Resources */,
 				5165D71822821C2400D9D53D /* taggings_initial.json in Resources */,
-				5133230E2281089500C30F19 /* icons.json in Resources */,
 				9EC804F3236C21320057CFCB /* feedly_unreads_initial.json in Resources */,
 				51D5875B227F630B00900287 /* tags_add.json in Resources */,
 				9EC804E9236C1CBF0057CFCB /* feedly-4-addfeedsandfolders in Resources */,

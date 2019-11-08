@@ -23,7 +23,6 @@ class AccountFeedbinFolderContentsSyncTest: XCTestCase {
 		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "tags_add.json"
 		testTransport.testFiles["https://api.feedbin.com/v2/subscriptions.json"] = "subscriptions_initial.json"
 		testTransport.testFiles["https://api.feedbin.com/v2/taggings.json"] = "taggings_initial.json"
-		testTransport.testFiles["https://api.feedbin.com/v2/icons.json"] = "icons.json"
 		let account = TestAccountManager.shared.createAccount(type: .feedbin, transport: testTransport)
 		
 		// Test initial folders
