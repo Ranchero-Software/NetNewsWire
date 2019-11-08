@@ -17,8 +17,6 @@ class SettingsViewController: UITableViewController {
 	
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
-	@IBOutlet weak var numberOfTextLinesLabel: UILabel!
-	@IBOutlet weak var numberOfTextLinesSteppper: UIStepper!
 	
 	weak var presentingParentController: UIViewController?
 	
@@ -52,10 +50,6 @@ class SettingsViewController: UITableViewController {
 			groupByFeedSwitch.isOn = false
 		}
 
-		let numberOfTextLines = AppDefaults.timelineNumberOfLines
-		numberOfTextLinesSteppper.value = Double(numberOfTextLines)
-		updateNumberOfTextLinesLabel(value: numberOfTextLines)
-		
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 20.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
 		buildLabel.textColor = UIColor.gray
@@ -167,6 +161,14 @@ class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
+		case 3:
+			switch indexPath.row {
+			case 2:
+				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerViewController.self)
+				self.navigationController?.pushViewController(timeline, animated: true)
+			default:
+				break
+			}
 		case 4:
 			switch indexPath.row {
 			case 0:
@@ -245,12 +247,6 @@ class SettingsViewController: UITableViewController {
 		}
 	}
 	
-	@IBAction func stepNumberOfTextLines(_ sender: UIStepper) {
-		let numberOfLines = Int(sender.value)
-		AppDefaults.timelineNumberOfLines = numberOfLines
-		updateNumberOfTextLinesLabel(value: numberOfLines)
-	}
-	
 	// MARK: Notifications
 	
 	@objc func contentSizeCategoryDidChange() {
@@ -294,11 +290,6 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 // MARK: Private
 
 private extension SettingsViewController {
-	
-	func updateNumberOfTextLinesLabel(value: Int) {
-		let localizedText = NSLocalizedString("Number of Text Lines: %d", comment: "Number of Text Lines")
-		numberOfTextLinesLabel.text = NSString.localizedStringWithFormat(localizedText as NSString, value) as String
-	}
 	
 	func addFeed() {
 		self.dismiss(animated: true)

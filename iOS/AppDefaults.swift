@@ -21,6 +21,7 @@ struct AppDefaults {
 		static let firstRunDate = "firstRunDate"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
+		static let timelineIconSize = "timelineIconSize"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let displayUndoAvailableTip = "displayUndoAvailableTip"
 		static let refreshInterval = "refreshInterval"
@@ -99,11 +100,22 @@ struct AppDefaults {
 		}
 	}
 	
+	static var timelineIconSize: MasterTimelineIconSize {
+		get {
+			let rawValue = AppDefaults.shared.integer(forKey: Key.timelineIconSize)
+			return MasterTimelineIconSize(rawValue: rawValue) ?? MasterTimelineIconSize.medium
+		}
+		set {
+			AppDefaults.shared.set(newValue.rawValue, forKey: Key.timelineIconSize)
+		}
+	}
+	
 	static func registerDefaults() {
 		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(),
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.timelineNumberOfLines: 2,
+										Key.timelineIconSize: MasterTimelineIconSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.displayUndoAvailableTip: true]
 		AppDefaults.shared.register(defaults: defaults)

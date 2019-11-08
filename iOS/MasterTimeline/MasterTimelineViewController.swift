@@ -15,6 +15,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	private var titleView: MasterTimelineTitleView?
 	private var numberOfTextLines = 0
+	private var iconSize = MasterTimelineIconSize.medium
 	
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
@@ -63,6 +64,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		// Configure the table
 		tableView.dataSource = dataSource
 		numberOfTextLines = AppDefaults.timelineNumberOfLines
+		iconSize = AppDefaults.timelineIconSize
 		resetEstimatedRowHeight()
 		
 		resetUI()
@@ -348,8 +350,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		if numberOfTextLines != AppDefaults.timelineNumberOfLines {
+		if numberOfTextLines != AppDefaults.timelineNumberOfLines || iconSize != AppDefaults.timelineIconSize {
 			numberOfTextLines = AppDefaults.timelineNumberOfLines
+			iconSize = AppDefaults.timelineIconSize
 			resetEstimatedRowHeight()
 			reloadAllVisibleCells()
 		}
@@ -392,7 +395,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 		
-		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines)
+		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			let layout = MasterTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
@@ -513,7 +516,7 @@ private extension MasterTimelineViewController {
 		
 		let showFeedNames = coordinator.showFeedNames
 		let showIcon = coordinator.showIcons && iconImage != nil
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines)
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 	}
 	

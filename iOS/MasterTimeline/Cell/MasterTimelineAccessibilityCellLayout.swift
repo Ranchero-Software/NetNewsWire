@@ -39,7 +39,7 @@ struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 		
 		// Icon Image
 		if cellData.showIcon {
-			self.iconImageRect = MasterTimelineAccessibilityCellLayout.rectForIconView(currentPoint)
+			self.iconImageRect = MasterTimelineAccessibilityCellLayout.rectForIconView(currentPoint, iconSize: cellData.iconSize)
 			currentPoint.y = self.iconImageRect.maxY
 		} else {
 			self.iconImageRect = CGRect.zero

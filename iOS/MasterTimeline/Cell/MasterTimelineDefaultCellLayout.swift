@@ -21,7 +21,6 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 	static let starDimension = CGFloat(integerLiteral: 16)
 	static let starSize = CGSize(width: MasterTimelineDefaultCellLayout.starDimension, height: MasterTimelineDefaultCellLayout.starDimension)
 
-	static let iconImageSize = CGSize(width: 32.0, height: 32.0)
 	static let iconMarginRight = CGFloat(integerLiteral: 8)
 	static let iconCornerRadius = CGFloat(integerLiteral: 4)
 
@@ -72,7 +71,7 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 
 		// Icon Image
 		if cellData.showIcon {
-			self.iconImageRect = MasterTimelineDefaultCellLayout.rectForIconView(currentPoint)
+			self.iconImageRect = MasterTimelineDefaultCellLayout.rectForIconView(currentPoint, iconSize: cellData.iconSize)
 			currentPoint.x = self.iconImageRect.maxX + MasterTimelineDefaultCellLayout.iconMarginRight
 		} else {
 			self.iconImageRect = CGRect.zero
