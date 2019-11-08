@@ -26,7 +26,6 @@ final class FeedbinAPICaller: NSObject {
 		static let subscriptions = "subscriptions"
 		static let tags = "tags"
 		static let taggings = "taggings"
-		static let icons = "icons"
 		static let unreadEntries = "unreadEntries"
 		static let starredEntries = "starredEntries"
 	}
@@ -149,9 +148,11 @@ final class FeedbinAPICaller: NSObject {
 	
 	func retrieveSubscriptions(completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
 		
-		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
+		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
+		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
+
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		let request = URLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [FeedbinSubscription].self) { result in
 			
@@ -169,8 +170,10 @@ final class FeedbinAPICaller: NSObject {
 	
 	func createSubscription(url: String, completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
 		
-		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
+		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
+
+		var request = URLRequest(url: callComponents.url!, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		
 		let payload: Data
@@ -311,26 +314,6 @@ final class FeedbinAPICaller: NSObject {
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		transport.send(request: request, method: HTTPMethod.delete, completion: completion)
-	}
-	
-	func retrieveIcons(completion: @escaping (Result<[FeedbinIcon]?, Error>) -> Void) {
-		
-		let callURL = feedbinBaseURL.appendingPathComponent("icons.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.icons]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		
-		transport.send(request: request, resultType: [FeedbinIcon].self) { result in
-			
-			switch result {
-			case .success(let (response, icons)):
-				self.storeConditionalGet(key: ConditionalGetKeys.icons, headers: response.allHeaderFields)
-				completion(.success(icons))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
-		
 	}
 	
 	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([FeedbinEntry]?), Error>) -> Void) {
