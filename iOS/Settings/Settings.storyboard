@@ -660,8 +660,10 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Q4t-3M-goU">
                                 <rect key="frame" x="20" y="56" width="374" height="44"/>
                                 <subviews>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="3" translatesAutoresizingMaskIntoConstraints="NO" id="AW6-CH-AXP">
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="3" translatesAutoresizingMaskIntoConstraints="NO" id="AW6-CH-AXP" customClass="TickMarkSlider" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="18" y="7" width="338" height="31"/>
+                                        <color key="tintColor" name="secondaryAccentColor"/>
+                                        <color key="thumbTintColor" name="primaryAccentColor"/>
                                         <connections>
                                             <action selector="iconSizeChanged:" destination="amD-xZ-U3A" eventType="valueChanged" id="4F9-gj-CJE"/>
                                         </connections>
@@ -690,8 +692,10 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oQi-VX-CMV">
                                 <rect key="frame" x="20" y="156" width="374" height="44"/>
                                 <subviews>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="6" translatesAutoresizingMaskIntoConstraints="NO" id="AIu-s5-Hvq">
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="6" translatesAutoresizingMaskIntoConstraints="NO" id="AIu-s5-Hvq" customClass="TickMarkSlider" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="18" y="7" width="338" height="31"/>
+                                        <color key="tintColor" name="secondaryAccentColor"/>
+                                        <color key="thumbTintColor" name="primaryAccentColor"/>
                                         <connections>
                                             <action selector="numberOfLinesChanged:" destination="amD-xZ-U3A" eventType="valueChanged" id="h25-Da-ZsS"/>
                                         </connections>
@@ -794,6 +798,7 @@
                             <constraint firstAttribute="bottom" secondItem="7do-cs-DNM" secondAttribute="bottom" id="eh9-tn-F3u"/>
                             <constraint firstItem="7do-cs-DNM" firstAttribute="leading" secondItem="xMG-o1-VfV" secondAttribute="leading" id="kW5-pQ-FCx"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="XPF-1A-UKw"/>
                     </view>
                     <connections>
                         <outlet property="tableView" destination="7do-cs-DNM" id="A8q-7w-LCQ"/>
@@ -808,6 +813,9 @@
         <image name="accountFeedbin" width="120" height="102"/>
         <image name="accountLocal" width="99" height="77"/>
         <namedColor name="primaryAccentColor">
+            <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="secondaryAccentColor">
             <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>

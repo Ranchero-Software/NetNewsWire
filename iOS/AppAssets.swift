@@ -161,6 +161,10 @@ struct AppAssets {
 		return IconImage(UIImage(systemName: "star.fill")!)
 	}()
 
+	static var tickMarkColor: UIColor = {
+		return UIColor(named: "tickMarkColor")!
+	}()
+	
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)

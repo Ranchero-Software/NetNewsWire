@@ -11,9 +11,9 @@ import UIKit
 class TimelineCustomizerViewController: UIViewController {
 
 	@IBOutlet weak var iconSizeSliderContainerView: UIView!
-	@IBOutlet weak var iconSizeSlider: UISlider!
+	@IBOutlet weak var iconSizeSlider: TickMarkSlider!
 	@IBOutlet weak var numberOfLinesSliderContainerView: UIView!
-	@IBOutlet weak var numberOfLinesSlider: UISlider!
+	@IBOutlet weak var numberOfLinesSlider: TickMarkSlider!
 	
 	@IBOutlet weak var previewWidthConstraint: NSLayoutConstraint!
 	@IBOutlet weak var previewHeightConstraint: NSLayoutConstraint!
@@ -27,10 +27,12 @@ class TimelineCustomizerViewController: UIViewController {
         super.viewDidLoad()
 
 		iconSizeSliderContainerView.layer.cornerRadius = 12
-		numberOfLinesSliderContainerView.layer.cornerRadius = 12
-		
-		numberOfLinesSlider.value = Float(AppDefaults.timelineNumberOfLines)
 		iconSizeSlider.value = Float(AppDefaults.timelineIconSize.rawValue)
+		iconSizeSlider.addTickMarks()
+
+		numberOfLinesSliderContainerView.layer.cornerRadius = 12
+		numberOfLinesSlider.value = Float(AppDefaults.timelineNumberOfLines)
+		numberOfLinesSlider.addTickMarks()
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -45,13 +47,13 @@ class TimelineCustomizerViewController: UIViewController {
 	}
 
 	@IBAction func iconSizeChanged(_ sender: Any) {
-		guard let iconSize = MasterTimelineIconSize(rawValue: Int(iconSizeSlider.value)) else { return }
+		guard let iconSize = MasterTimelineIconSize(rawValue: Int(iconSizeSlider.value.rounded())) else { return }
 		AppDefaults.timelineIconSize = iconSize
 		updatePreview()
 	}
 	
 	@IBAction func numberOfLinesChanged(_ sender: Any) {
-		AppDefaults.timelineNumberOfLines = Int(numberOfLinesSlider.value)
+		AppDefaults.timelineNumberOfLines = Int(numberOfLinesSlider.value.rounded())
 		updatePreview()
 	}
 	
