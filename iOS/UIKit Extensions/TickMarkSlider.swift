@@ -10,8 +10,21 @@ import UIKit
 
 class TickMarkSlider: UISlider {
 
+	private var enableFeedback = false
+	private let feedbackGenerator = UISelectionFeedbackGenerator()
+	
+	override var value: Float {
+		didSet {
+			if enableFeedback && value.truncatingRemainder(dividingBy: 1) == 0 {
+				feedbackGenerator.selectionChanged()
+			}
+		}
+	}
+	
 	func addTickMarks() {
 
+		enableFeedback = true
+		
 		let numberOfGaps = Int(maximumValue) - Int(minimumValue)
 		
 		var gapLayoutGuides = [UILayoutGuide]()
