@@ -119,6 +119,17 @@ extension AccountsAddViewController: NSTableViewDelegate {
 
 extension AccountsAddViewController: OAuthAccountAuthorizationOperationDelegate {
 	
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+		account.refreshAll { [weak self] result in
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				self?.presentError(error)
+			}
+		}
+	}
+	
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
 		view.window?.presentError(error)
 	}

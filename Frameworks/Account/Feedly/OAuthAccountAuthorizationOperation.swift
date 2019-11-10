@@ -10,6 +10,7 @@ import Foundation
 import AuthenticationServices
 
 public protocol OAuthAccountAuthorizationOperationDelegate: class {
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account)
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error)
 }
 
@@ -126,6 +127,8 @@ public final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthentic
 			
 			// Now store the access token because we want the account delegate to use it.
 			try account.storeCredentials(grant.accessToken)
+			
+			delegate?.oauthAccountAuthorizationOperation(self, didCreate: account)
 						
 			didFinish()
 		} catch {
