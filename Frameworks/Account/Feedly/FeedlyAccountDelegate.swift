@@ -17,6 +17,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	/// Feedly has a sandbox API and a production API.
 	/// This property is referred to when clients need to know which environment it should be pointing to.
+	/// The value of this proptery must match any `OAuthAuthorizationClient` used.
 	static var environment: FeedlyAPICaller.API {
 		#if DEBUG
 		// https://developer.feedly.com/v3/developer/
@@ -24,7 +25,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			return .cloud
 		}
 		return .sandbox
-		
 		#else
 		return .cloud
 		#endif
@@ -52,6 +52,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 		}
 	}
+	
+	let oauthAuthorizationClient: OAuthAuthorizationClient
 	
 	var accountMetadata: AccountMetadata?
 	
@@ -97,6 +99,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
+		self.oauthAuthorizationClient = api.oauthAuthorizationClient
 	}
 	
 	// MARK: Account API
@@ -484,8 +487,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		
-		let client = FeedlyAccountDelegate.oauthAuthorizationClient
-		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: client, log: log)
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
 		operationQueue.addOperation(refreshAccessToken)
 	}
 	

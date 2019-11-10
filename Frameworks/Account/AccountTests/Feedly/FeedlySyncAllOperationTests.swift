@@ -130,7 +130,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 				
 		OperationQueue.main.addOperation(syncAll)
 		
-		waitForExpectations(timeout: 2)
+		waitForExpectations(timeout: 5)
 	}
 	
 	func performInitialSync() {

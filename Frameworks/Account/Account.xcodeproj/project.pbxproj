@@ -120,6 +120,8 @@
 		9E85C8E82366FF4200D0F1F7 /* TestGetPagedStreamContentsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E85C8E72366FF4200D0F1F7 /* TestGetPagedStreamContentsService.swift */; };
 		9E85C8EB236700E600D0F1F7 /* FeedlyGetEntriesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E85C8E9236700AD00D0F1F7 /* FeedlyGetEntriesOperation.swift */; };
 		9E85C8ED2367020700D0F1F7 /* FeedlyGetEntriesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E85C8EC2367020700D0F1F7 /* FeedlyGetEntriesService.swift */; };
+		9E964EB823754AC400A7AF2E /* OAuthAuthorizationClient+Feedly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E964E9E23754AC400A7AF2E /* OAuthAuthorizationClient+Feedly.swift */; };
+		9E964EBA23754B4000A7AF2E /* OAuthAccountAuthorizationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E964EB923754B4000A7AF2E /* OAuthAccountAuthorizationOperation.swift */; };
 		9EA3133B231E368100268BA0 /* FeedlyAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA3133A231E368100268BA0 /* FeedlyAccountDelegate.swift */; };
 		9EAEC60C2332FE830085D7C9 /* FeedlyCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEC60B2332FE830085D7C9 /* FeedlyCollection.swift */; };
 		9EAEC60E2332FEC20085D7C9 /* FeedlyFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEC60D2332FEC20085D7C9 /* FeedlyFeed.swift */; };
@@ -320,6 +322,8 @@
 		9E85C8E72366FF4200D0F1F7 /* TestGetPagedStreamContentsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestGetPagedStreamContentsService.swift; sourceTree = "<group>"; };
 		9E85C8E9236700AD00D0F1F7 /* FeedlyGetEntriesOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyGetEntriesOperation.swift; sourceTree = "<group>"; };
 		9E85C8EC2367020700D0F1F7 /* FeedlyGetEntriesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyGetEntriesService.swift; sourceTree = "<group>"; };
+		9E964E9E23754AC400A7AF2E /* OAuthAuthorizationClient+Feedly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OAuthAuthorizationClient+Feedly.swift"; sourceTree = "<group>"; };
+		9E964EB923754B4000A7AF2E /* OAuthAccountAuthorizationOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthAccountAuthorizationOperation.swift; sourceTree = "<group>"; };
 		9EA3133A231E368100268BA0 /* FeedlyAccountDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedlyAccountDelegate.swift; sourceTree = "<group>"; };
 		9EAEC60B2332FE830085D7C9 /* FeedlyCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyCollection.swift; sourceTree = "<group>"; };
 		9EAEC60D2332FEC20085D7C9 /* FeedlyFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyFeed.swift; sourceTree = "<group>"; };
@@ -616,7 +620,9 @@
 				9EE4CCF9234F106600FBAE4B /* FeedlyFeedContainerValidator.swift */,
 				9ECC9A84234DC16E009B5144 /* FeedlyAccountDelegateError.swift */,
 				9EC688EB232C583300A8D0A2 /* FeedlyAccountDelegate+OAuth.swift */,
+				9E964E9E23754AC400A7AF2E /* OAuthAuthorizationClient+Feedly.swift */,
 				9EC688ED232C58E800A8D0A2 /* OAuthAuthorizationCodeGranting.swift */,
+				9E964EB923754B4000A7AF2E /* OAuthAccountAuthorizationOperation.swift */,
 				9E672395236F7E68000BE141 /* OAuthAcessTokenRefreshing.swift */,
 				9EC688E9232B973C00A8D0A2 /* FeedlyAPICaller.swift */,
 				9E510D6D234F16A8002E6F1A /* FeedlyAddFeedRequest.swift */,
@@ -716,7 +722,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8489350A1F62485000CEBD24 /* Build configuration list for PBXNativeTarget "Account" */;
 			buildPhases = (
+				9E964EBB2375512300A7AF2E /* Run Script: Update OAuthAuthorizationClient+Feedly.swift */,
 				848934F11F62484F00CEBD24 /* Sources */,
+				9E964EBC2375517100A7AF2E /* Run Script: Reset OAuthAuthorizationClient+Feedly.swift */,
 				848934F21F62484F00CEBD24 /* Frameworks */,
 				848934F31F62484F00CEBD24 /* Headers */,
 				848934F41F62484F00CEBD24 /* Resources */,
@@ -889,6 +897,42 @@
 			shellPath = /bin/sh;
 			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  ../../buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
 		};
+		9E964EBB2375512300A7AF2E /* Run Script: Update OAuthAuthorizationClient+Feedly.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Update OAuthAuthorizationClient+Feedly.swift";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FAILED=false\n\nif [ -z \"${FEEDLY_CLIENT_ID}\" ]; then\necho \"Missing Feedly Client ID\"\nFAILED=true\nfi\n\nif [ -z \"${FEEDLY_CLIENT_SECRET}\" ]; then\necho \"Missing Feedly Client Secret\"\nFAILED=true\nfi\n\nFEEDLY_CLIENT_SOURCE=\"${SRCROOT}/Feedly/OAuthAuthorizationClient+Feedly.swift\"\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feedly client ID or secret. ${FEEDLY_CLIENT_SOURCE} not changed.\"\nexit 0\nfi\n\n# echo \"Substituting variables in: ${FEEDLY_CLIENT_SOURCE}\"\n\nif [ -e \"${FEEDLY_CLIENT_SOURCE}\" ]\nthen\n    sed -i .tmp \"s|{FEEDLY_CLIENT_ID}|${FEEDLY_CLIENT_ID}|g; s|{FEEDLY_CLIENT_SECRET}|${FEEDLY_CLIENT_SECRET}|g\" $FEEDLY_CLIENT_SOURCE\n    # echo \"`git diff ${FEEDLY_CLIENT_SOURCE}`\"\n    rm -f \"${FEEDLY_CLIENT_SOURCE}.tmp\"\nelse\n    echo \"File does not exist at ${FEEDLY_CLIENT_SOURCE}. Has it been moved or renamed?\"\n    exit -1\nfi\n\necho \"All env values found!\"\n";
+		};
+		9E964EBC2375517100A7AF2E /* Run Script: Reset OAuthAuthorizationClient+Feedly.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Reset OAuthAuthorizationClient+Feedly.swift";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "git checkout \"${SRCROOT}/Feedly/OAuthAuthorizationClient+Feedly.swift\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -932,6 +976,7 @@
 				9E85C8EB236700E600D0F1F7 /* FeedlyGetEntriesOperation.swift in Sources */,
 				9E1D154D233370D800F4944C /* FeedlySyncAllOperation.swift in Sources */,
 				844B297D2106C7EC004020B3 /* Feed.swift in Sources */,
+				9E964EBA23754B4000A7AF2E /* OAuthAccountAuthorizationOperation.swift in Sources */,
 				9E1D15572334355900F4944C /* FeedlyRequestStreamsOperation.swift in Sources */,
 				9E1D15512334282100F4944C /* FeedlyMirrorCollectionsAsFoldersOperation.swift in Sources */,
 				9E1773D7234575AB0056A5A8 /* FeedlyTag.swift in Sources */,
@@ -972,6 +1017,7 @@
 				9EC688EA232B973C00A8D0A2 /* FeedlyAPICaller.swift in Sources */,
 				9E1773D32345700F0056A5A8 /* FeedlyLink.swift in Sources */,
 				9EAEC62823331C350085D7C9 /* FeedlyCategory.swift in Sources */,
+				9E964EB823754AC400A7AF2E /* OAuthAuthorizationClient+Feedly.swift in Sources */,
 				9EF1B10923590E93000A486A /* FeedlyStreamIds.swift in Sources */,
 				84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */,
 				84CAD7161FDF2E22000F0755 /* FeedbinEntry.swift in Sources */,

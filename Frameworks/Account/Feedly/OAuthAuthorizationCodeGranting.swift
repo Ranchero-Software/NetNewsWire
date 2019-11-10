@@ -61,7 +61,7 @@ public struct OAuthAuthorizationResponse {
 public extension OAuthAuthorizationResponse {
 	
 	init(url: URL, client: OAuthAuthorizationClient) throws {
-		guard let host = url.host, client.redirectUri.contains(host) else {
+		guard let scheme = url.scheme, client.redirectUri.hasPrefix(scheme) else {
 			throw URLError(.unsupportedURL)
 		}
 		guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
@@ -165,10 +165,8 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 }
 
 protocol OAuthAuthorizationGranting: AccountDelegate {
+		
+	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
 	
-	static var oauthAuthorizationClient: OAuthAuthorizationClient { get }
-	
-	static func oauthAuthorizationCodeGrantRequest(for client: OAuthAuthorizationClient) -> URLRequest
-	
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, client: OAuthAuthorizationClient, transport: Transport, completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
 }
