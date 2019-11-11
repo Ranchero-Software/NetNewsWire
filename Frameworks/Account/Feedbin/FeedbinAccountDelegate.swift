@@ -541,6 +541,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		credentials = try? account.retrieveCredentials(type: .basic)
 	}
 	
+	func accountWillBeDeleted(_ account: Account) {
+	}
+	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		
 		let caller = FeedbinAPICaller(transport: transport)

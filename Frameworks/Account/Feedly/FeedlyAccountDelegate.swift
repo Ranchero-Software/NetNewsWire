@@ -486,6 +486,10 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		operationQueue.addOperation(refreshAccessToken)
 	}
 	
+	func accountWillBeDeleted(_ account: Account) {
+		
+	}
+	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		assertionFailure("An `account` instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
 		completion(.success(credentials))
