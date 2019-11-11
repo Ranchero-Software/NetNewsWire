@@ -7,6 +7,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 // DeveloperSettings.xcconfig is #included here
 
 #include? "../../../SharedXcodeSettings/DeveloperSettings.xcconfig"
+#include? "../../../SharedXcodeSettings/ProjectSettings.xcconfig"
 
 SDKROOT = macosx
 MACOSX_DEPLOYMENT_TARGET = 10.15
