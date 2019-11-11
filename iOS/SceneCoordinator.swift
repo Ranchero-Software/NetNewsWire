@@ -135,6 +135,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	var timelineFetcher: ArticleFetcher? {
 		didSet {
 
+			timelineMiddleIndexPath = nil
+			
 			if timelineFetcher is Feed {
 				showFeedNames = false
 			} else {
@@ -152,6 +154,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 		}
 	}
+	
+	var timelineMiddleIndexPath: IndexPath?
 	
 	private(set) var showFeedNames = false
 	private(set) var showIcons = false
@@ -529,7 +533,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func selectFeed(_ indexPath: IndexPath?, animated: Bool = false) {
-		guard indexPath != currentFeedIndexPath else { return 	}
+		guard indexPath != currentFeedIndexPath else { return }
 		
 		selectArticle(nil)
 		currentFeedIndexPath = indexPath
@@ -1589,7 +1593,7 @@ private extension SceneCoordinator {
 		subSplitViewController!.showDetailViewController(navController, sender: self)
 		
 		masterFeedViewController.restoreSelectionIfNecessary(adjustScroll: true)
-		masterTimelineViewController!.restoreSelectionIfNecessary(adjustScroll: true)
+		masterTimelineViewController!.restoreSelectionIfNecessary(adjustScroll: false)
 		
 		// We made sure this was there above when we called configureDoubleSplit
 		return subSplitViewController!

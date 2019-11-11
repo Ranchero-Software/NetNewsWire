@@ -25,6 +25,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
+	let scrollPositionQueue = CoalescingQueue(name: "Scroll Position", interval: 0.3, maxInterval: 1.0)
 
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
@@ -73,6 +74,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	override func viewWillAppear(_ animated: Bool) {
 		applyChanges(animate: false)
+		
+		// Restore the scroll position if we have one stored
+		if let restoreIndexPath = coordinator.timelineMiddleIndexPath {
+			tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
+		}
+		
+		// Hide the search controller if we don't have any rows
 		if dataSource.snapshot().numberOfItems < 1 {
 			navigationItem.searchController?.isActive = false
 		}
@@ -288,6 +296,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		coordinator.selectArticle(article, animated: true)
 	}
 	
+	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+	}
+	
 	// MARK: Notifications
 
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
@@ -364,6 +376,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	@objc func displayNameDidChange(_ note: Notification) {
 		titleView?.label.text = coordinator.timelineName
+	}
+	
+	@objc func scrollPositionDidChange() {
+		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
 	}
 	
 	// MARK: Reloading
