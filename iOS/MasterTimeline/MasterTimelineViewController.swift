@@ -69,10 +69,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		resetEstimatedRowHeight()
 		
 		resetUI()
-		
-	}
-	
-	override func viewWillAppear(_ animated: Bool) {
+
 		applyChanges(animate: false)
 		
 		// Restore the scroll position if we have one stored
@@ -80,6 +77,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
 		}
 		
+	}
+	
+	override func viewWillAppear(_ animated: Bool) {
 		// Hide the search controller if we don't have any rows
 		if dataSource.snapshot().numberOfItems < 1 {
 			navigationItem.searchController?.isActive = false
