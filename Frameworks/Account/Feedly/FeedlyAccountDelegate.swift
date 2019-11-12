@@ -18,16 +18,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	/// Feedly has a sandbox API and a production API.
 	/// This property is referred to when clients need to know which environment it should be pointing to.
 	/// The value of this proptery must match any `OAuthAuthorizationClient` used.
+	/// Currently this is always returning the cloud API, but we are leaving it stubbed out for now.
 	static var environment: FeedlyAPICaller.API {
-		#if DEBUG
-		// https://developer.feedly.com/v3/developer/
-		if let token = ProcessInfo.processInfo.environment["FEEDLY_DEV_ACCESS_TOKEN"], !token.isEmpty {
-			return .cloud
-		}
-		return .sandbox
-		#else
 		return .cloud
-		#endif
 	}
 
 	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
