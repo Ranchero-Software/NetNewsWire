@@ -41,7 +41,7 @@ import RSCore
 				return nil
 			}
 
-			let image = sendToCommand.image ?? AppAssets.genericFeedImage?.image ?? NSImage()
+			let image = sendToCommand.image ?? NSImage()
 			return NSSharingService(title: sendToCommand.title, image: image, alternateImage: nil) {
 				sendToCommand.sendObject(object, selectedText: nil)
 			}

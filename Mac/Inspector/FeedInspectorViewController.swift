@@ -119,7 +119,7 @@ private extension FeedInspectorViewController {
 			return
 		}
 
-		imageView?.image = AppAssets.genericFeedImage?.image
+		imageView?.image = feed.smallIcon?.image
 	}
 
 	func updateName() {

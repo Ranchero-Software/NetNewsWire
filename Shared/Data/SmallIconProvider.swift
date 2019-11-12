@@ -22,11 +22,7 @@ extension Feed: SmallIconProvider {
 		if let iconImage = appDelegate.faviconDownloader.favicon(for: self) {
 			return iconImage
 		}
-		#if os(macOS)
-		return AppAssets.genericFeedImage
-		#else
 		return FaviconGenerator.favicon(self)
-		#endif
 	}
 }
 
