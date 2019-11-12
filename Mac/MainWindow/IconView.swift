@@ -82,6 +82,7 @@ private extension IconView {
 	func commonInit() {
 		addSubview(imageView)
 		wantsLayer = true
+		layer?.cornerRadius = 4.0
 	}
 
 	func rectForImageView() -> NSRect {
