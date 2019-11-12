@@ -8,7 +8,7 @@
 
 import AppKit
 
-final class TimelineIconView: NSView {
+final class IconView: NSView {
 
 	var iconImage: IconImage? = nil {
 		didSet {
@@ -71,13 +71,13 @@ final class TimelineIconView: NSView {
 			return
 		}
 
-		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? TimelineIconView.darkBackgroundColor : TimelineIconView.lightBackgroundColor
+		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? IconView.darkBackgroundColor : IconView.lightBackgroundColor
 		color.set()
 		dirtyRect.fill()
 	}
 }
 
-private extension TimelineIconView {
+private extension IconView {
 
 	func commonInit() {
 		addSubview(imageView)
