@@ -50,6 +50,14 @@ struct AppAssets {
 		return RSImage(named: "articleExtractorError")
 	}()
 	
+	static var articleExtractorInactiveDark: RSImage! = {
+		return RSImage(named: "articleExtractorInactiveDark")
+	}()
+	
+	static var articleExtractorInactiveLight: RSImage! = {
+		return RSImage(named: "articleExtractorInactiveLight")
+	}()
+	
 	static var articleExtractorProgress1: RSImage! = {
 		return RSImage(named: "articleExtractorProgress1")
 	}()

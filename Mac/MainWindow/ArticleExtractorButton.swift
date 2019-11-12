@@ -59,7 +59,15 @@ class ArticleExtractorButton: NSButton {
 		case isInProgress:
 			addAnimatedSublayer(to: hostedLayer)
 		default:
-			addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractor, opacity: opacity)
+			if NSApplication.shared.isActive {
+				addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractor, opacity: opacity)
+			} else {
+				if NSApplication.shared.effectiveAppearance.isDarkMode {
+					addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractorInactiveDark, opacity: opacity)
+				} else {
+					addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractorInactiveLight, opacity: opacity)
+				}
+			}
 		}
 	}
 	
