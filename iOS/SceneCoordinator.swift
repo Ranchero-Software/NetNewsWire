@@ -318,7 +318,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
 		articleViewController.coordinator = self
-		let detailNavigationController = addNavControllerIfNecessary(articleViewController, showButton: false)
+		let detailNavigationController = addNavControllerIfNecessary(articleViewController, showButton: true)
 		rootSplitViewController.showDetailViewController(detailNavigationController, sender: self)
 
 		configureThreePanelMode(for: size)
