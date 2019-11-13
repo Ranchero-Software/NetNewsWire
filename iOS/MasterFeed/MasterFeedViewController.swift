@@ -65,11 +65,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		configureToolbar()
 		becomeFirstResponder()
+
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
-		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
-		applyChanges(animate: false)
 		updateUI()
 		super.viewWillAppear(animated)
 	}
@@ -101,7 +100,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 
 		if let node = node, dataSource.indexPath(for: node) != nil {
-			reloadNode(node)
+			// This can stop the scrolling of the disclose function if we don't delay it enough to complete
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+				self.reloadNode(node)
+			}
 		}
 	}
 
@@ -462,14 +464,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 
-	func updateFeedSelection() {
+	func updateFeedSelection(animated: Bool) {
 		if dataSource.snapshot().numberOfItems > 0 {
 			if let indexPath = coordinator.currentFeedIndexPath {
 				if tableView.indexPathForSelectedRow != indexPath {
-					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
+					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: animated)
 				}
 			} else {
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+				tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
 			}
 		}
 	}
@@ -1022,7 +1024,7 @@ private extension MasterFeedViewController {
 		deleteCommand.perform()
 		
 		if indexPath == coordinator.currentFeedIndexPath {
-			coordinator.selectFeed(nil)
+			coordinator.selectFeed(nil, animated: false)
 		}
 		
 	}

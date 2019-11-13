@@ -592,10 +592,9 @@ private extension MasterTimelineViewController {
 	func discloseFeedAction(_ article: Article) -> UIAction? {
 		guard let feed = article.feed else { return nil }
 		
-		let title = NSLocalizedString("Select Feed", comment: "Select Feed")
+		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
-			self?.coordinator.selectFeed(nil, animated: true)
-			self?.coordinator.discloseFeed(feed, animated: true)
+			self?.coordinator.discloseFeed(feed, animated: false)
 		}
 		return action
 	}
@@ -603,10 +602,9 @@ private extension MasterTimelineViewController {
 	func discloseFeedAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let feed = article.feed else { return nil }
 
-		let title = NSLocalizedString("Select Feed", comment: "Select Feed")
+		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.selectFeed(nil, animated: true)
-			self?.coordinator.discloseFeed(feed, animated: true)
+			self?.coordinator.discloseFeed(feed, animated: false)
 			completionHandler(true)
 		}
 		return action
