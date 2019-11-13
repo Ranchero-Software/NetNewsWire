@@ -594,7 +594,7 @@ private extension MasterTimelineViewController {
 		
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
-			self?.coordinator.discloseFeed(feed, animated: false)
+			self?.coordinator.discloseFeed(feed, animated: true)
 		}
 		return action
 	}
@@ -604,7 +604,7 @@ private extension MasterTimelineViewController {
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.discloseFeed(feed, animated: false)
+			self?.coordinator.discloseFeed(feed, animated: true)
 			completionHandler(true)
 		}
 		return action
