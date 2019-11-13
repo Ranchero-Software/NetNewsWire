@@ -50,3 +50,13 @@ jobs:
           DESTINATION: ${{ matrix.run-config['destination'] }}
 
       run: buildscripts/ci-build.sh
+
+    - name: Notify Slack
+      uses: 8398a7/action-slack@v2.4.2
+      with:
+        status: ${{ job.status }}
+        author_name: GitHub Actions CI
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: always()
