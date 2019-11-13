@@ -824,8 +824,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		let feedInspectorNavController =
 			UIStoryboard.inspector.instantiateViewController(identifier: "FeedInspectorNavigationViewController") as! UINavigationController
 		let feedInspectorController = feedInspectorNavController.topViewController as! FeedInspectorViewController
-		feedInspectorController.modalPresentationStyle = .formSheet
-		feedInspectorController.preferredContentSize = FeedInspectorViewController.preferredContentSizeForFormSheetDisplay
+		feedInspectorNavController.modalPresentationStyle = .formSheet
+		feedInspectorNavController.preferredContentSize = FeedInspectorViewController.preferredContentSizeForFormSheetDisplay
 		feedInspectorController.feed = feed
 		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
