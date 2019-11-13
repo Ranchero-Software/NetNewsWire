@@ -99,11 +99,17 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
 
-		if let node = node, dataSource.indexPath(for: node) != nil {
-			// This can stop the scrolling of the disclose function if we don't delay it enough to complete
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+		// Only do the reload of the node when absolutely necessary.  It can stop programatic scrolling from
+		// completing if called to soon after a selectRow where scrolling is necessary.  See discloseFeed.
+		if let node = node,
+			let indexPath = dataSource.indexPath(for: node),
+			let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell,
+			let unreadCountProvider = node.representedObject as? UnreadCountProvider {
+			
+			if cell.unreadCount != unreadCountProvider.unreadCount {
 				self.reloadNode(node)
 			}
+			
 		}
 	}
 
