@@ -104,16 +104,6 @@ class SettingsViewController: UITableViewController {
 				cell = acctCell
 			}
 		
-		case 2:
-			
-			if indexPath.row == 0 {
-				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
-				cell.textLabel?.text = NSLocalizedString("Refresh Interval", comment: "Refresh Interval")
-				cell.detailTextLabel?.text = AppDefaults.refreshInterval.description()
-			} else {
-				cell = super.tableView(tableView, cellForRowAt: indexPath)
-			}
-			
 		default:
 			
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
@@ -141,21 +131,18 @@ class SettingsViewController: UITableViewController {
 		case 2:
 			switch indexPath.row {
 			case 0:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
-			case 1:
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 				if let sourceView = tableView.cellForRow(at: indexPath) {
 					let sourceRect = tableView.rectForRow(at: indexPath)
 					importOPML(sourceView: sourceView, sourceRect: sourceRect)
 				}
-			case 2:
+			case 1:
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 				if let sourceView = tableView.cellForRow(at: indexPath) {
 					let sourceRect = tableView.rectForRow(at: indexPath)
 					exportOPML(sourceView: sourceView, sourceRect: sourceRect)
 				}
-			case 3:
+			case 2:
 				addFeed()
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			default:
