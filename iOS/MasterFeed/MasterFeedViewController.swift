@@ -58,6 +58,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedMetadataDidChange(_:)), name: .FeedMetadataDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -138,6 +139,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		resetEstimatedRowHeight()
 		applyChanges(animate: false)
+	}
+	
+	@objc func willEnterForeground(_ note: Notification) {
+		updateUI()
 	}
 	
 	// MARK: Table View
