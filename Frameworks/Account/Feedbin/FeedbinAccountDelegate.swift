@@ -78,7 +78,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
@@ -112,7 +111,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		retrieveCredentialsIfNecessary(account)
 
 		os_log(.debug, log: log, "Sending article statuses...")
 		
@@ -169,7 +167,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		retrieveCredentialsIfNecessary(account)
 
 		os_log(.debug, log: log, "Refreshing article statuses...")
 		
@@ -216,7 +213,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 
 		var fileData: Data?
 		
@@ -263,7 +259,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 		if let folder = account.ensureFolder(with: name) {
 			completion(.success(folder))
 		} else {
@@ -272,7 +267,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 
 		guard folder.hasAtLeastOneFeed() else {
 			folder.name = name
@@ -300,7 +294,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {
@@ -364,7 +357,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.createSubscription(url: url) { result in
@@ -397,7 +389,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 
 		// This error should never happen
 		guard let subscriptionID = feed.subscriptionID else {
@@ -433,7 +424,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 		if from is Account {
 			addFeed(for: account, with: feed, to: to, completion: completion)
 		} else {
@@ -449,7 +439,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -482,7 +471,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
@@ -507,7 +495,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		retrieveCredentialsIfNecessary(account)
 
 		let group = DispatchGroup()
 		
@@ -536,7 +523,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		retrieveCredentialsIfNecessary(account)
 
 		let syncStatuses = articles.map { article in
 			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
@@ -1307,12 +1293,6 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 		
-	}
-
-	func retrieveCredentialsIfNecessary(_ account: Account) {
-		if credentials == nil {
-			credentials = try? account.retrieveCredentials(type: .basic)
-		}
 	}
 	
 }
