@@ -15,6 +15,10 @@ import Account
 
 struct StarredFeedDelegate: SmartFeedDelegate {
 
+	var articleFetcherType: ArticleFetcherType? {
+		return ArticleFetcherType.smartFeed(String(describing: StarredFeedDelegate.self))
+	}
+
 	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")
 	let fetchType: FetchType = .starred
 	var smallIcon: IconImage? = AppAssets.starredFeedImage

@@ -9,6 +9,7 @@
 import Foundation
 import CoreSpotlight
 import CoreServices
+import RSCore
 import Account
 import Articles
 import Intents
@@ -37,54 +38,15 @@ class ActivityManager {
 		invalidateNextUnread()
 	}
 	
-	func selectingToday() {
+	func selecting(fetcher: ArticleFetcher) {
 		invalidateCurrentActivities()
 		
-		let title = NSLocalizedString("See articles for “Today”", comment: "Today")
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectToday, title: title, identifier: "smartfeed.today")
-		donate(selectingActivity!)
-	}
-	
-	func selectingAllUnread() {
-		invalidateCurrentActivities()
+		selectingActivity = makeSelectFeedActivity(fetcher: fetcher)
 		
-		let title = NSLocalizedString("See articles in “All Unread”", comment: "All Unread")
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectAllUnread, title: title, identifier: "smartfeed.allUnread")
-		donate(selectingActivity!)
-	}
-	
-	func selectingStarred() {
-		invalidateCurrentActivities()
+		if let feed = fetcher as? Feed {
+			updateSelectingActivityFeedSearchAttributes(with: feed)
+		}
 		
-		let title = NSLocalizedString("See articles in “Starred”", comment: "Starred")
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectStarred, title: title, identifier: "smartfeed.starred")
-		donate(selectingActivity!)
-	}
-	
-	func selectingFolder(_ folder: Folder) {
-		invalidateCurrentActivities()
-		
-		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
-		let title = NSString.localizedStringWithFormat(localizedText as NSString, folder.nameForDisplay) as String
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: ActivityManager.identifer(for: folder))
-	 
-		let userInfo = folder.deepLinkUserInfo
-		selectingActivity!.userInfo = userInfo
-		selectingActivity!.requiredUserInfoKeys = Set(userInfo.keys.map { $0 as! String })
-		donate(selectingActivity!)
-	}
-	
-	func selectingFeed(_ feed: Feed) {
-		invalidateCurrentActivities()
-		
-		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Feed")
-		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectFeed, title: title, identifier: ActivityManager.identifer(for: feed))
-		
-		let userInfo = feed.deepLinkUserInfo
-		selectingActivity!.userInfo = userInfo
-		selectingActivity!.requiredUserInfoKeys = Set(userInfo.keys.map { $0 as! String })
-		updateSelectingActivityFeedSearchAttributes(with: feed)
 		donate(selectingActivity!)
 	}
 	
@@ -95,8 +57,17 @@ class ActivityManager {
 	
 	func selectingNextUnread() {
 		guard nextUnreadActivity == nil else { return }
-		let title = NSLocalizedString("See first unread article", comment: "First Unread")
-		nextUnreadActivity = makeSelectingActivity(type: ActivityType.nextUnread, title: title, identifier: "action.nextUnread")
+
+		nextUnreadActivity = NSUserActivity(activityType: ActivityType.nextUnread.rawValue)
+		nextUnreadActivity!.title = NSLocalizedString("See first unread article", comment: "First Unread")
+		
+		#if os(iOS)
+		nextUnreadActivity!.suggestedInvocationPhrase = nextUnreadActivity!.title
+		nextUnreadActivity!.isEligibleForPrediction = true
+		nextUnreadActivity!.persistentIdentifier = "nextUnread:"
+		nextUnreadActivity!.contentAttributeSet?.relatedUniqueIdentifier = "nextUnread:"
+		#endif
+
 		donate(nextUnreadActivity!)
 	}
 	
@@ -105,12 +76,12 @@ class ActivityManager {
 		nextUnreadActivity = nil
 	}
 	
-	func reading(_ article: Article?) {
+	func reading(fetcher: ArticleFetcher?, article: Article?) {
 		invalidateReading()
 		invalidateNextUnread()
 		
-		guard let article = article else { return }
-		readingActivity = makeReadArticleActivity(article)
+		guard let fetcher = fetcher, let article = article else { return }
+		readingActivity = makeReadArticleActivity(fetcher: fetcher, article: article)
 		
 		#if os(iOS)
 		updateReadArticleSearchAttributes(with: article)
@@ -159,7 +130,7 @@ class ActivityManager {
 	#endif
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
 			return
 		}
 		
@@ -180,28 +151,40 @@ class ActivityManager {
 
 private extension ActivityManager {
 	
-	func makeSelectingActivity(type: ActivityType, title: String, identifier: String) -> NSUserActivity {
-		let activity = NSUserActivity(activityType: type.rawValue)
+	func makeSelectFeedActivity(fetcher: ArticleFetcher) -> NSUserActivity {
+		let activity = NSUserActivity(activityType: ActivityType.selectFeed.rawValue)
+		
+		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
+		let displayName = (fetcher as? DisplayNameProvider)?.nameForDisplay ?? ""
+		let title = NSString.localizedStringWithFormat(localizedText as NSString, displayName) as String
 		activity.title = title
+		
 		activity.keywords = Set(makeKeywords(title))
 		activity.isEligibleForSearch = true
+		
+		let articleFetcherIdentifierUserInfo = fetcher.articleFetcherType?.userInfo ?? [AnyHashable: Any]()
+		activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo]
+		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
 
 		#if os(iOS)
 		activity.suggestedInvocationPhrase = title
 		activity.isEligibleForPrediction = true
-		activity.persistentIdentifier = identifier
-		activity.contentAttributeSet?.relatedUniqueIdentifier = identifier
+		activity.persistentIdentifier = fetcher.articleFetcherType?.description ?? ""
+		activity.contentAttributeSet?.relatedUniqueIdentifier = fetcher.articleFetcherType?.description ?? ""
 		#endif
 		
 		return activity
 	}
 	
-	func makeReadArticleActivity(_ article: Article) -> NSUserActivity {
+	func makeReadArticleActivity(fetcher: ArticleFetcher, article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 		activity.title = ArticleStringFormatter.truncatedTitle(article)
-		let userInfo = article.deepLinkUserInfo
-		activity.userInfo = userInfo
-		activity.requiredUserInfoKeys = Set(userInfo.keys.map { $0 as! String })
+		
+		let articleFetcherIdentifierUserInfo = fetcher.articleFetcherType?.userInfo ?? [AnyHashable: Any]()
+		let articlePathUserInfo = article.pathUserInfo
+		activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo, UserInfoKey.articlePath: articlePathUserInfo]
+		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
+		
 		activity.isEligibleForHandoff = true
 		
 		#if os(iOS)

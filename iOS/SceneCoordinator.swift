@@ -332,14 +332,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
 		switch activityType {
-		case .selectToday:
-			handleSelectToday()
-		case .selectAllUnread:
-			handleSelectAllUnread()
-		case .selectStarred:
-			handleSelectStarred()
-		case .selectFolder:
-			handleSelectFolder(activity.userInfo)
 		case .selectFeed:
 			handleSelectFeed(activity.userInfo)
 		case .nextUnread:
@@ -543,7 +535,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 		if let ip = indexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 			timelineFetcher = fetcher
-			updateSelectingActivity(with: node)
+			activityManager.selecting(fetcher: fetcher)
 			installTimelineControllerIfNecessary(animated: animated)
 		} else {
 			timelineFetcher = nil
@@ -590,7 +582,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		stopArticleExtractor()
 		currentArticle = article
-		activityManager.reading(currentArticle)
+		activityManager.reading(fetcher: timelineFetcher, article: article)
 		
 		if article == nil {
 			if rootSplitViewController.isCollapsed {
@@ -1630,108 +1622,84 @@ private extension SceneCoordinator {
 	
 	// MARK: NSUserActivity
 	
-	func updateSelectingActivity(with node: Node) {
-		switch true {
-		case node.representedObject === SmartFeedsController.shared.todayFeed:
-			activityManager.selectingToday()
-		case node.representedObject === SmartFeedsController.shared.unreadFeed:
-			activityManager.selectingAllUnread()
-		case node.representedObject === SmartFeedsController.shared.starredFeed:
-			activityManager.selectingStarred()
-		case node.representedObject is Folder:
-			activityManager.selectingFolder(node.representedObject as! Folder)
-		case node.representedObject is Feed:
-			activityManager.selectingFeed(node.representedObject as! Feed)
-		default:
-			break
-		}
-	}
-	
-	func handleSelectToday() {
-		if let indexPath = indexPathFor(SmartFeedsController.shared.todayFeed) {
-			selectFeed(indexPath, animated: false)
-		}
-	}
-	
-	func handleSelectAllUnread() {
-		if let indexPath = indexPathFor(SmartFeedsController.shared.unreadFeed) {
-			selectFeed(indexPath, animated: false)
-		}
-	}
-	
-	func handleSelectStarred() {
-		if let indexPath = indexPathFor(SmartFeedsController.shared.starredFeed) {
-			selectFeed(indexPath, animated: false)
-		}
-	}
-	
-	func handleSelectFolder(_ userInfo: [AnyHashable : Any]?) {
-		guard let accountNode = findAccountNode(userInfo), let folderNode = findFolderNode(userInfo, beginningAt: accountNode) else {
-			return
-		}
-		if let indexPath = indexPathFor(folderNode) {
-			selectFeed(indexPath, animated: false)
-		}
-	}
-	
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
-		guard let accountNode = findAccountNode(userInfo), let feedNode = findFeedNode(userInfo, beginningAt: accountNode) else {
-			return
+		guard let userInfo = userInfo,
+			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : Any],
+			let articleFetcherType = ArticleFetcherType(userInfo: feedIdentifierUserInfo) else {
+				return
 		}
-		if let feed = feedNode.representedObject as? Feed {
-			discloseFeed(feed, animated: false)
-		}
-	}
-	
-	func handleReadArticle(_ userInfo: [AnyHashable : Any]?) {
-		guard let accountNode = findAccountNode(userInfo), let feedNode = findFeedNode(userInfo, beginningAt: accountNode) else {
-			return
-		}
+
+		switch articleFetcherType {
 		
-		discloseFeed(feedNode.representedObject as! Feed, animated: false) {
+		case .smartFeed(let identifier):
+			guard let smartFeed = SmartFeedsController.shared.find(by: identifier) else { return }
+			if let indexPath = indexPathFor(smartFeed) {
+				selectFeed(indexPath, animated: false)
+			}
 		
-			guard let articleID = userInfo?[DeepLinkKey.articleID.rawValue] as? String else { return }
-			if let article = self.articles.first(where: { $0.articleID == articleID }) {
-				self.selectArticle(article)
+		case .script:
+			break
+		
+		case .folder(let accountID, let folderName):
+			guard let accountNode = findAccountNode(accountID: accountID), let folderNode = findFolderNode(folderName: folderName, beginningAt: accountNode) else {
+				return
+			}
+			if let indexPath = indexPathFor(folderNode) {
+				selectFeed(indexPath, animated: false)
+			}
+		
+		case .feed(let accountID, let feedID):
+			guard let accountNode = findAccountNode(accountID: accountID), let feedNode = findFeedNode(feedID: feedID, beginningAt: accountNode) else {
+				return
+			}
+			if let feed = feedNode.representedObject as? Feed {
+				discloseFeed(feed, animated: false)
 			}
 			
 		}
 	}
 	
-	func findAccountNode(_ userInfo: [AnyHashable : Any]?) -> Node? {
-		guard let accountID = userInfo?[DeepLinkKey.accountID.rawValue] as? String else {
-			return nil
+	func handleReadArticle(_ userInfo: [AnyHashable : Any]?) {
+		guard let userInfo = userInfo,
+			let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+			let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
+			let feedID = articlePathUserInfo[ArticlePathKey.feedID] as? String,
+			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
+				return
+		}
+
+		guard let accountNode = findAccountNode(accountID: accountID, accountName: accountName), let feedNode = findFeedNode(feedID: feedID, beginningAt: accountNode) else {
+			return
 		}
 		
+		discloseFeed(feedNode.representedObject as! Feed, animated: false) {
+			if let article = self.articles.first(where: { $0.articleID == articleID }) {
+				self.selectArticle(article)
+			}
+		}
+	}
+	
+	func findAccountNode(accountID: String, accountName: String? = nil) -> Node? {
 		if let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.accountID == accountID }) {
 			return node
 		}
 
-		guard let accountName = userInfo?[DeepLinkKey.accountName.rawValue] as? String else {
-			return nil
-		}
-
-		if let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.nameForDisplay == accountName }) {
+		if let accountName = accountName, let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.nameForDisplay == accountName }) {
 			return node
 		}
 
 		return nil
 	}
 	
-	func findFolderNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
-		guard let folderName = userInfo?[DeepLinkKey.folderName.rawValue] as? String else {
-			return nil
-		}
+	func findFolderNode(folderName: String, beginningAt startingNode: Node) -> Node? {
 		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Folder)?.nameForDisplay == folderName }) {
 			return node
 		}
 		return nil
 	}
 
-	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
-		guard let feedID = userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
-			return nil
-		}
+	func findFeedNode(feedID: String, beginningAt startingNode: Node) -> Node? {
 		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
 			return node
 		}

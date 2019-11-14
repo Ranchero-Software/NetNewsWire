@@ -53,7 +53,7 @@ private extension UserNotificationManager {
 		}
 
 		content.sound = UNNotificationSound.default
-		content.userInfo = article.deepLinkUserInfo
+		content.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
 
 		let request = UNNotificationRequest.init(identifier: "articleID:\(article.articleID)", content: content, trigger: nil)
 		UNUserNotificationCenter.current().add(request)

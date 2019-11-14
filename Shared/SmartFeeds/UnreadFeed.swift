@@ -52,6 +52,10 @@ final class UnreadFeed: PseudoFeed {
 }
 
 extension UnreadFeed: ArticleFetcher {
+	
+	var articleFetcherType: ArticleFetcherType? {
+		return ArticleFetcherType.smartFeed(String(describing: UnreadFeed.self))
+	}
 
 	func fetchArticles() -> Set<Article> {
 		return fetchUnreadArticles()

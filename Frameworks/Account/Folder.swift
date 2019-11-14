@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import RSCore
 
-public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCountProvider, DeepLinkProvider, Hashable {
+public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCountProvider, Hashable {
 
 	public weak var account: Account?
 	public var topLevelFeeds: Set<Feed> = Set<Feed>()
@@ -33,16 +33,6 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 		return name ?? Folder.untitledName
 	}
 	
-	// MARK: - DeepLinkProvider
-	
-	public var deepLinkUserInfo: [AnyHashable : Any] {
-		return [
-			DeepLinkKey.accountID.rawValue: account?.accountID ?? "",
-			DeepLinkKey.accountName.rawValue: account?.nameForDisplay ?? "",
-			DeepLinkKey.folderName.rawValue: nameForDisplay
-		]
-	}
-
 	// MARK: - UnreadCountProvider
 
 	public var unreadCount = 0 {

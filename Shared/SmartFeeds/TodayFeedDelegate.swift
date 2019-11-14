@@ -13,6 +13,10 @@ import Account
 
 struct TodayFeedDelegate: SmartFeedDelegate {
 
+	var articleFetcherType: ArticleFetcherType? {
+		return ArticleFetcherType.smartFeed(String(describing: TodayFeedDelegate.self))
+	}
+	
 	let nameForDisplay = NSLocalizedString("Today", comment: "Today pseudo-feed title")
 	let fetchType = FetchType.today
 	var smallIcon: IconImage? = AppAssets.todayFeedImage

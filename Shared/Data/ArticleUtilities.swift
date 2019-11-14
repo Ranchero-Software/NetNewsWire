@@ -94,16 +94,23 @@ extension Article {
 	}
 }
 
-// MARK: DeepLinkProvider
+// MARK: Path
 
-extension Article: DeepLinkProvider {
+struct ArticlePathKey {
+	static let accountID = "accountID"
+	static let accountName = "accountName"
+	static let feedID = "feedID"
+	static let articleID = "articleID"
+}
 
-	public var deepLinkUserInfo: [AnyHashable : Any] {
+extension Article {
+
+	public var pathUserInfo: [AnyHashable : Any] {
 		return [
-			DeepLinkKey.accountID.rawValue: accountID,
-			DeepLinkKey.accountName.rawValue: account?.nameForDisplay ?? "",
-			DeepLinkKey.feedID.rawValue: feedID,
-			DeepLinkKey.articleID.rawValue: articleID
+			ArticlePathKey.accountID: accountID,
+			ArticlePathKey.accountName: account?.nameForDisplay ?? "",
+			ArticlePathKey.feedID: feedID,
+			ArticlePathKey.articleID: articleID
 		]
 	}
 

@@ -71,6 +71,10 @@ final class SmartFeed: PseudoFeed {
 }
 
 extension SmartFeed: ArticleFetcher {
+	
+	var articleFetcherType: ArticleFetcherType? {
+		delegate.articleFetcherType
+	}
 
 	func fetchArticles() -> Set<Article> {
 		return delegate.fetchArticles()

@@ -19,6 +19,8 @@
 		5110C37D2373A8D100A9C04F /* InspectorIconHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */; };
 		51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
 		5115CAF42266301400B21BCE /* AddContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */; };
+		511B9806237DCAC90028BCAA /* UserInfoKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511B9805237DCAC90028BCAA /* UserInfoKey.swift */; };
+		511B9807237DCAC90028BCAA /* UserInfoKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511B9805237DCAC90028BCAA /* UserInfoKey.swift */; };
 		511D43CF231FA62200FB1562 /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
 		511D43D0231FA62500FB1562 /* TimelineKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */; };
 		511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
@@ -1210,6 +1212,7 @@
 		51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSapp_target.xcconfig; sourceTree = "<group>"; };
 		51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContainerViewController.swift; sourceTree = "<group>"; };
 		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
+		511B9805237DCAC90028BCAA /* UserInfoKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoKey.swift; sourceTree = "<group>"; };
 		511D43EE231FBDE800FB1562 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreenPad.storyboard; sourceTree = "<group>"; };
 		511D4410231FC02D00FB1562 /* KeyboardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardManager.swift; sourceTree = "<group>"; };
 		512363372369155100951F16 /* RoundedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedProgressView.swift; sourceTree = "<group>"; };
@@ -2193,8 +2196,8 @@
 			children = (
 				849A97731ED9EC04007D329B /* ArticleStringFormatter.swift */,
 				849A97581ED9EB0D007D329B /* ArticleUtilities.swift */,
-				84411E701FE5FBFA004B527F /* SmallIconProvider.swift */,
 				5108F6B52375E612001ABC45 /* CacheCleaner.swift */,
+				84411E701FE5FBFA004B527F /* SmallIconProvider.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -2424,6 +2427,7 @@
 				841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */,
 				51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */,
 				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
+				511B9805237DCAC90028BCAA /* UserInfoKey.swift */,
 				51C452AD2265102800C03939 /* Timeline */,
 				84702AB31FA27AE8006B8943 /* Commands */,
 				51934CCC231078DC006127BE /* Activity */,
@@ -3881,6 +3885,7 @@
 				51C45296226509D300C03939 /* OPMLExporter.swift in Sources */,
 				51C45291226509C800C03939 /* SmartFeed.swift in Sources */,
 				51C452A722650A3D00C03939 /* RSImage-Extensions.swift in Sources */,
+				511B9807237DCAC90028BCAA /* UserInfoKey.swift in Sources */,
 				51C45269226508F600C03939 /* MasterFeedTableViewCell.swift in Sources */,
 				51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */,
 				517630232336657E00E15FFF /* ArticleViewControllerWebViewProvider.swift in Sources */,
@@ -4074,6 +4079,7 @@
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
 				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,
+				511B9806237DCAC90028BCAA /* UserInfoKey.swift in Sources */,
 				84C9FC7722629E1200D921D6 /* AdvancedPreferencesViewController.swift in Sources */,
 				849EE72120391F560082A1EA /* SharingServicePickerDelegate.swift in Sources */,
 				5108F6B62375E612001ABC45 /* CacheCleaner.swift in Sources */,

@@ -20,7 +20,20 @@ final class SmartFeedsController: DisplayNameProvider {
 	let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
 
 	private init() {
-
 		self.smartFeeds = [todayFeed, unreadFeed, starredFeed]
 	}
+	
+	func find(by identifier: String) -> PseudoFeed? {
+		switch identifier {
+		case String(describing: TodayFeedDelegate.self):
+			return todayFeed
+		case String(describing: UnreadFeed.self):
+			return unreadFeed
+		case String(describing: StarredFeedDelegate.self):
+			return starredFeed
+		default:
+			return nil
+		}
+	}
+	
 }

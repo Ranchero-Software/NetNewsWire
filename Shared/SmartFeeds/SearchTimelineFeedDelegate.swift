@@ -13,6 +13,10 @@ import Articles
 
 struct SearchTimelineFeedDelegate: SmartFeedDelegate {
 
+	var articleFetcherType: ArticleFetcherType? {
+		return ArticleFetcherType.smartFeed(String(describing: SearchTimelineFeedDelegate.self))
+	}
+
 	var nameForDisplay: String {
 		return nameForDisplayPrefix + searchString
 	}

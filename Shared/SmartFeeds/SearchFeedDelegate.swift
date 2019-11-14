@@ -13,6 +13,10 @@ import Articles
 
 struct SearchFeedDelegate: SmartFeedDelegate {
 
+	var articleFetcherType: ArticleFetcherType? {
+		return ArticleFetcherType.smartFeed(String(describing: SearchFeedDelegate.self))
+	}
+
 	var nameForDisplay: String {
 		return nameForDisplayPrefix + searchString
 	}
