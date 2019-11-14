@@ -94,10 +94,9 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		os_log(.debug, log: log, "Cancelling sync %{public}@", syncUUID.uuidString)
 		self.operationQueue.cancelAllOperations()
 		
-		syncCompletionHandler?(.failure(URLError(.cancelled)))
-		syncCompletionHandler = nil
+		super.cancel()
 		
-		self.didFinish()
+		didFinish()
 	}
 	
 	override func main() {
