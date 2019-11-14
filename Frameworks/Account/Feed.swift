@@ -179,7 +179,8 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, De
 		account.renameFeed(self, to: newName, completion: completion)
 	}
 
-	// MARK: - PathIDUserInfoProvider
+	// MARK: - DeepLinkProvider
+	
 	public var deepLinkUserInfo: [AnyHashable : Any] {
 		return [
 			DeepLinkKey.accountID.rawValue: account?.accountID ?? "",

@@ -290,9 +290,9 @@ private extension AppDelegate {
 	/// Schedules a background app refresh based on `AppDefaults.refreshInterval`.
 	func scheduleBackgroundFeedRefresh() {
 		let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
-		request.earliestBeginDate = Date(timeIntervalSinceNow: AppDefaults.refreshInterval.inSeconds())
+		request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
 
-		// We send this to a dedicated seria queue because as of 11/05/19 on iOS 13.2 the call to the
+		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
 		bgTaskDispatchQueue.async {
 			do {

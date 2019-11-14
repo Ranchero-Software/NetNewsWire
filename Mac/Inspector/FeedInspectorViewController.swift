@@ -12,7 +12,7 @@ import Account
 
 final class FeedInspectorViewController: NSViewController, Inspector {
 
-	@IBOutlet weak var imageView: NSImageView?
+	@IBOutlet weak var iconView: IconView!
 	@IBOutlet weak var nameTextField: NSTextField?
 	@IBOutlet weak var homePageURLTextField: NSTextField?
 	@IBOutlet weak var urlTextField: NSTextField?
@@ -43,11 +43,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	// MARK: NSViewController
 
 	override func viewDidLoad() {
-		imageView!.wantsLayer = true
-		imageView!.layer?.cornerRadius = 4.0
-
 		updateUI()
-
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 	}
 
@@ -101,25 +97,21 @@ private extension FeedInspectorViewController {
 	}
 
 	func updateImage() {
-		guard let feed = feed else {
-			imageView?.image = nil
+		guard let feed = feed, let iconView = iconView else {
 			return
 		}
 
 		if let feedIcon = appDelegate.feedIconDownloader.icon(for: feed) {
-			imageView?.image = feedIcon.image
+			iconView.iconImage = feedIcon
 			return
 		}
 
-		if let favicon = appDelegate.faviconDownloader.favicon(for: feed)?.image {
-			if favicon.size.height < 16.0 && favicon.size.width < 16.0 {
-				favicon.size = NSSize(width: 16, height: 16)
-			}
-			imageView?.image = favicon
+		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
+			iconView.iconImage = favicon
 			return
 		}
 
-		imageView?.image = AppAssets.genericFeedImage?.image
+		iconView.iconImage = feed.smallIcon
 	}
 
 	func updateName() {

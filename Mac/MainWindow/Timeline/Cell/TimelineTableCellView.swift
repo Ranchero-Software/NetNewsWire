@@ -18,7 +18,7 @@ class TimelineTableCellView: NSTableCellView {
 	private let dateView = TimelineTableCellView.singleLineTextField()
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
-	private lazy var iconView = TimelineIconView()
+	private lazy var iconView = IconView()
 
 	private let starView = TimelineTableCellView.imageView(with: AppAssets.timelineStar, scaling: .scaleNone)
 	private let separatorView = TimelineTableCellView.separatorView()

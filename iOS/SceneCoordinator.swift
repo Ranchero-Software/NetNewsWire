@@ -89,9 +89,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	private let treeControllerDelegate = FeedTreeControllerDelegate()
-	private lazy var treeController: TreeController = {
-		return TreeController(delegate: treeControllerDelegate)
-	}()
+	private let treeController: TreeController
 	
 	var stateRestorationActivity: NSUserActivity? {
 		return activityManager.stateRestorationActivity
@@ -135,6 +133,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	var timelineFetcher: ArticleFetcher? {
 		didSet {
 
+			timelineMiddleIndexPath = nil
+			
 			if timelineFetcher is Feed {
 				showFeedNames = false
 			} else {
@@ -152,6 +152,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 		}
 	}
+	
+	var timelineMiddleIndexPath: IndexPath?
 	
 	private(set) var showFeedNames = false
 	private(set) var showIcons = false
@@ -276,6 +278,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	override init() {
+		treeController = TreeController(delegate: treeControllerDelegate)
+
 		super.init()
 		
 		for section in treeController.rootNode.childNodes {
@@ -311,10 +315,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController = UIStoryboard.main.instantiateController(ofType: MasterFeedViewController.self)
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
+		masterFeedViewController.reloadFeeds()
 		
 		let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
 		articleViewController.coordinator = self
-		let detailNavigationController = addNavControllerIfNecessary(articleViewController, showButton: false)
+		let detailNavigationController = addNavControllerIfNecessary(articleViewController, showButton: true)
 		rootSplitViewController.showDetailViewController(detailNavigationController, sender: self)
 
 		configureThreePanelMode(for: size)
@@ -323,7 +328,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func handle(_ activity: NSUserActivity) {
-		selectFeed(nil)
+		selectFeed(nil, animated: false)
 		
 		guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
 		switch activityType {
@@ -367,12 +372,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func selectFirstUnreadInAllUnread() {
-		selectFeed(IndexPath(row: 1, section: 0))
+		selectFeed(IndexPath(row: 1, section: 0), animated: false)
 		selectFirstUnreadArticleInTimeline()
 	}
 
 	func showSearch() {
-		selectFeed(nil)
+		selectFeed(nil, animated: false)
 		installTimelineControllerIfNecessary(animated: false)
 		DispatchQueue.main.asyncAfter(deadline: .now()) {
 			self.masterTimelineViewController!.showSearchAll()
@@ -528,13 +533,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return indexPathFor(node)
 	}
 	
-	func selectFeed(_ indexPath: IndexPath?, animated: Bool = false) {
-		guard indexPath != currentFeedIndexPath else { return 	}
+	func selectFeed(_ indexPath: IndexPath?, animated: Bool) {
+		guard indexPath != currentFeedIndexPath else { return }
 		
 		selectArticle(nil)
 		currentFeedIndexPath = indexPath
 
-		masterFeedViewController.updateFeedSelection()
+		masterFeedViewController.updateFeedSelection(animated: animated)
 
 		if let ip = indexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
 			timelineFetcher = fetcher
@@ -552,31 +557,31 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func selectPrevFeed() {
 		if let indexPath = prevFeedIndexPath {
-			selectFeed(indexPath)
+			selectFeed(indexPath, animated: true)
 		}
 	}
 	
 	func selectNextFeed() {
 		if let indexPath = nextFeedIndexPath {
-			selectFeed(indexPath)
+			selectFeed(indexPath, animated: true)
 		}
 	}
 	
 	func selectTodayFeed() {
 		masterFeedViewController?.ensureSectionIsExpanded(0) {
-			self.selectFeed(IndexPath(row: 0, section: 0))
+			self.selectFeed(IndexPath(row: 0, section: 0), animated: true)
 		}
 	}
 
 	func selectAllUnreadFeed() {
 		masterFeedViewController?.ensureSectionIsExpanded(0) {
-			self.selectFeed(IndexPath(row: 1, section: 0))
+			self.selectFeed(IndexPath(row: 1, section: 0), animated: true)
 		}
 	}
 
 	func selectStarredFeed() {
 		masterFeedViewController?.ensureSectionIsExpanded(0) {
-			self.selectFeed(IndexPath(row: 2, section: 0))
+			self.selectFeed(IndexPath(row: 2, section: 0), animated: true)
 		}
 	}
 
@@ -819,14 +824,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		let feedInspectorNavController =
 			UIStoryboard.inspector.instantiateViewController(identifier: "FeedInspectorNavigationViewController") as! UINavigationController
 		let feedInspectorController = feedInspectorNavController.topViewController as! FeedInspectorViewController
-		feedInspectorController.modalPresentationStyle = .formSheet
-		feedInspectorController.preferredContentSize = FeedInspectorViewController.preferredContentSizeForFormSheetDisplay
+		feedInspectorNavController.modalPresentationStyle = .formSheet
+		feedInspectorNavController.preferredContentSize = FeedInspectorViewController.preferredContentSizeForFormSheetDisplay
 		feedInspectorController.feed = feed
 		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
 	
 	func showAdd(_ type: AddControllerType, initialFeed: String? = nil, initialFeedName: String? = nil) {
-		selectFeed(nil)
+		selectFeed(nil, animated: false)
 
 		let addViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
 		
@@ -965,7 +970,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// If we are showing the Feeds and only the feeds start clearing stuff
 		if viewController === masterFeedViewController && !isThreePanelMode && !isTimelineViewControllerPending {
 			activityManager.invalidateCurrentActivities()
-			selectFeed(nil)
+			selectFeed(nil, animated: true)
 			return
 		}
 
@@ -1200,7 +1205,7 @@ private extension SceneCoordinator {
 				}
 				
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(prevIndexPath)
+					selectFeed(prevIndexPath, animated: true)
 					return true
 				}
 				
@@ -1306,7 +1311,7 @@ private extension SceneCoordinator {
 				}
 				
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(nextIndexPath)
+					selectFeed(nextIndexPath, animated: true)
 					return true
 				}
 				
@@ -1488,13 +1493,15 @@ private extension SceneCoordinator {
 	// MARK: Double Split
 	
 	func installTimelineControllerIfNecessary(animated: Bool) {
-
-		isTimelineViewControllerPending = true
-
 		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
+			
+			isTimelineViewControllerPending = true
+			
 			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
 			masterTimelineViewController!.coordinator = self
 			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: animated)
+			
+			masterTimelineViewController?.reloadArticles(animate: false)
 		}
 	}
 	
@@ -1589,7 +1596,7 @@ private extension SceneCoordinator {
 		subSplitViewController!.showDetailViewController(navController, sender: self)
 		
 		masterFeedViewController.restoreSelectionIfNecessary(adjustScroll: true)
-		masterTimelineViewController!.restoreSelectionIfNecessary(adjustScroll: true)
+		masterTimelineViewController!.restoreSelectionIfNecessary(adjustScroll: false)
 		
 		// We made sure this was there above when we called configureDoubleSplit
 		return subSplitViewController!
@@ -1642,19 +1649,19 @@ private extension SceneCoordinator {
 	
 	func handleSelectToday() {
 		if let indexPath = indexPathFor(SmartFeedsController.shared.todayFeed) {
-			selectFeed(indexPath)
+			selectFeed(indexPath, animated: false)
 		}
 	}
 	
 	func handleSelectAllUnread() {
 		if let indexPath = indexPathFor(SmartFeedsController.shared.unreadFeed) {
-			selectFeed(indexPath)
+			selectFeed(indexPath, animated: false)
 		}
 	}
 	
 	func handleSelectStarred() {
 		if let indexPath = indexPathFor(SmartFeedsController.shared.starredFeed) {
-			selectFeed(indexPath)
+			selectFeed(indexPath, animated: false)
 		}
 	}
 	
@@ -1663,7 +1670,7 @@ private extension SceneCoordinator {
 			return
 		}
 		if let indexPath = indexPathFor(folderNode) {
-			selectFeed(indexPath)
+			selectFeed(indexPath, animated: false)
 		}
 	}
 	

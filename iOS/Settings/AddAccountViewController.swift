@@ -38,6 +38,11 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			let addViewController = navController.topViewController as! FeedbinAccountViewController
 			addViewController.delegate = self
 			present(navController, animated: true)
+		case 2:
+			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
+			addAccount.delegate = self
+			addAccount.presentationAnchor = self.view.window!
+			OperationQueue.main.addOperation(addAccount)
 		default:
 			break
 		}
@@ -47,4 +52,29 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		navigationController?.popViewController(animated: false)
 	}
 	
+}
+
+extension AddAccountViewController: OAuthAccountAuthorizationOperationDelegate {
+	
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+		let rootViewController = view.window?.rootViewController
+		
+		account.refreshAll { result in
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				guard let viewController = rootViewController else {
+					return
+				}
+				viewController.presentError(error)
+			}
+		}
+		
+		dismiss()
+	}
+	
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
+		presentError(error)
+	}
 }

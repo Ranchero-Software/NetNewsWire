@@ -20,11 +20,12 @@ public struct CredentialsManager {
 	}()
 
 	public static func storeCredentials(_ credentials: Credentials, server: String) throws {
-		
+
 		var query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
-										  kSecAttrAccount as String: credentials.username,
-										  kSecAttrServer as String: server]
-		
+									kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
+									kSecAttrAccount as String: credentials.username,
+									kSecAttrServer as String: server]
+
 		if credentials.type != .basic {
 			query[kSecAttrSecurityDomain as String] = credentials.type.rawValue
 		}
@@ -32,26 +33,25 @@ public struct CredentialsManager {
 		if let securityGroup = keychainGroup {
 			query[kSecAttrAccessGroup as String] = securityGroup
 		}
-		
+
 		let secretData = credentials.secret.data(using: String.Encoding.utf8)!
-		let attributes: [String: Any] = [kSecValueData as String: secretData]
-		let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
-		
+		query[kSecValueData as String] = secretData
+
+		let status = SecItemAdd(query as CFDictionary, nil)
+
 		switch status {
 		case errSecSuccess:
 			return
-		case errSecItemNotFound:
+		case errSecDuplicateItem:
 			break
 		default:
 			throw CredentialsError.unhandledError(status: status)
 		}
 		
-		guard status == errSecItemNotFound else {
-			return
-		}
+		var deleteQuery = query
+		deleteQuery.removeValue(forKey: kSecAttrAccessible as String)
+		SecItemDelete(deleteQuery as CFDictionary)
 		
-		query[kSecValueData as String] = secretData
-
 		let addStatus = SecItemAdd(query as CFDictionary, nil)
 		if addStatus != errSecSuccess {
 			throw CredentialsError.unhandledError(status: status)

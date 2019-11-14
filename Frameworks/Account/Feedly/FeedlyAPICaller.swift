@@ -31,20 +31,10 @@ final class FeedlyAPICaller {
 		
 		var oauthAuthorizationClient: OAuthAuthorizationClient {
 			switch self {
-			case .cloud:
-				/// Models private NetNewsWire client secrets.
-				/// https://developer.feedly.com/v3/auth/#authenticating-a-user-and-obtaining-an-auth-code
-				return OAuthAuthorizationClient(id: "{FEEDLY-ID}",
-												redirectUri: "{FEEDLY-REDIRECT-URI}",
-												state: nil,
-												secret: "{FEEDLY-SECRET}")
 			case .sandbox:
-				/// Models public sandbox API values found at:
-				/// https://groups.google.com/forum/#!topic/feedly-cloud/WwQWMgDmOuw
-				return OAuthAuthorizationClient(id: "sandbox",
-												redirectUri: "http://localhost",
-												state: nil,
-												secret: "ReVGXA6WekanCxbf")
+				return .feedlySandboxClient
+			case .cloud:
+				return .feedlyCloudClient
 			}
 		}
 	}

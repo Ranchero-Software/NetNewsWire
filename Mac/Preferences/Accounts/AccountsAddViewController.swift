@@ -101,9 +101,10 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsReaderAPIWindowController
 		case .feedly:
-			let accountsFeedlyWindowController = AccountsFeedlyWebWindowController()
-			accountsFeedlyWindowController.runSheetOnWindow(self.view.window!)
-			accountsAddWindowController = accountsFeedlyWindowController
+			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
+			addAccount.delegate = self
+			addAccount.presentationAnchor = self.view.window!
+			OperationQueue.main.addOperation(addAccount)
 		default:
 			break
 		}
@@ -112,4 +113,24 @@ extension AccountsAddViewController: NSTableViewDelegate {
 		
 	}
 	
+}
+
+// MARK: OAuthAccountAuthorizationOperationDelegate
+
+extension AccountsAddViewController: OAuthAccountAuthorizationOperationDelegate {
+	
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+		account.refreshAll { [weak self] result in
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				self?.presentError(error)
+			}
+		}
+	}
+	
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
+		view.window?.presentError(error)
+	}
 }

@@ -25,6 +25,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
+	let scrollPositionQueue = CoalescingQueue(name: "Scroll Position", interval: 0.3, maxInterval: 1.0)
 
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
@@ -68,14 +69,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		resetEstimatedRowHeight()
 		
 		resetUI()
-		
-	}
-	
-	override func viewWillAppear(_ animated: Bool) {
+
 		applyChanges(animate: false)
-		if dataSource.snapshot().numberOfItems < 1 {
-			navigationItem.searchController?.isActive = false
+		
+		// Restore the scroll position if we have one stored
+		if let restoreIndexPath = coordinator.timelineMiddleIndexPath {
+			tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
 		}
+		
 	}
 	
 	// MARK: Actions
@@ -288,6 +289,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		coordinator.selectArticle(article, animated: true)
 	}
 	
+	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+	}
+	
 	// MARK: Notifications
 
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
@@ -364,6 +369,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	@objc func displayNameDidChange(_ note: Notification) {
 		titleView?.label.text = coordinator.timelineName
+	}
+	
+	@objc func scrollPositionDidChange() {
+		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
 	}
 	
 	// MARK: Reloading
@@ -583,9 +592,8 @@ private extension MasterTimelineViewController {
 	func discloseFeedAction(_ article: Article) -> UIAction? {
 		guard let feed = article.feed else { return nil }
 		
-		let title = NSLocalizedString("Select Feed", comment: "Select Feed")
+		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
-			self?.coordinator.selectFeed(nil, animated: true)
 			self?.coordinator.discloseFeed(feed, animated: true)
 		}
 		return action
@@ -594,9 +602,8 @@ private extension MasterTimelineViewController {
 	func discloseFeedAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let feed = article.feed else { return nil }
 
-		let title = NSLocalizedString("Select Feed", comment: "Select Feed")
+		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.selectFeed(nil, animated: true)
 			self?.coordinator.discloseFeed(feed, animated: true)
 			completionHandler(true)
 		}

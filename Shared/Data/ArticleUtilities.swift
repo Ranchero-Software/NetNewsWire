@@ -94,7 +94,7 @@ extension Article {
 	}
 }
 
-// MARK: PathIDUserInfoProvider
+// MARK: DeepLinkProvider
 
 extension Article: DeepLinkProvider {
 

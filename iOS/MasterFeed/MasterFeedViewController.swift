@@ -58,17 +58,17 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedMetadataDidChange(_:)), name: .FeedMetadataDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
 		configureToolbar()
 		becomeFirstResponder()
+
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
-		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
-		applyChanges(animate: false)
 		updateUI()
 		super.viewWillAppear(animated)
 	}
@@ -99,8 +99,17 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
 
-		if let node = node, dataSource.indexPath(for: node) != nil {
-			reloadNode(node)
+		// Only do the reload of the node when absolutely necessary.  It can stop programatic scrolling from
+		// completing if called to soon after a selectRow where scrolling is necessary.  See discloseFeed.
+		if let node = node,
+			let indexPath = dataSource.indexPath(for: node),
+			let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell,
+			let unreadCountProvider = node.representedObject as? UnreadCountProvider {
+			
+			if cell.unreadCount != unreadCountProvider.unreadCount {
+				self.reloadNode(node)
+			}
+			
 		}
 	}
 
@@ -138,6 +147,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		resetEstimatedRowHeight()
 		applyChanges(animate: false)
+	}
+	
+	@objc func willEnterForeground(_ note: Notification) {
+		updateUI()
 	}
 	
 	// MARK: Table View
@@ -457,14 +470,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 
-	func updateFeedSelection() {
+	func updateFeedSelection(animated: Bool) {
 		if dataSource.snapshot().numberOfItems > 0 {
 			if let indexPath = coordinator.currentFeedIndexPath {
 				if tableView.indexPathForSelectedRow != indexPath {
-					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
+					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: animated)
 				}
 			} else {
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+				tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
 			}
 		}
 	}
@@ -1017,7 +1030,7 @@ private extension MasterFeedViewController {
 		deleteCommand.perform()
 		
 		if indexPath == coordinator.currentFeedIndexPath {
-			coordinator.selectFeed(nil)
+			coordinator.selectFeed(nil, animated: false)
 		}
 		
 	}

@@ -16,12 +16,6 @@ extension NSImage.Name {
 
 struct AppAssets {
 
-	static var genericFeedImage: IconImage? = {
-		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/BookmarkIcon.icns"
-		let image = RSImage(contentsOfFile: path)
-		return image != nil ? IconImage(image!) : nil
-	}()
-
 	static var timelineStar: RSImage! = {
 		return RSImage(named: .timelineStar)
 	}()
@@ -48,6 +42,14 @@ struct AppAssets {
 	
 	static var articleExtractorError: RSImage! = {
 		return RSImage(named: "articleExtractorError")
+	}()
+	
+	static var articleExtractorInactiveDark: RSImage! = {
+		return RSImage(named: "articleExtractorInactiveDark")
+	}()
+	
+	static var articleExtractorInactiveLight: RSImage! = {
+		return RSImage(named: "articleExtractorInactiveLight")
 	}()
 	
 	static var articleExtractorProgress1: RSImage! = {

@@ -23,6 +23,10 @@ struct AppAssets {
 		return UIImage(named: "accountFeedbin")!
 	}()
 
+	static var accountFeedlyImage: UIImage = {
+		return UIImage(named: "accountFeedly")!
+	}()
+
 	static var accountFreshRSSImage: UIImage = {
 		return UIImage(named: "accountFreshRSS")!
 	}()
@@ -200,6 +204,8 @@ struct AppAssets {
 			}
 		case .feedbin:
 			return AppAssets.accountFeedbinImage
+		case .feedly:
+			return AppAssets.accountFeedlyImage
 		case .freshRSS:
 			return AppAssets.accountFreshRSSImage
 		default:

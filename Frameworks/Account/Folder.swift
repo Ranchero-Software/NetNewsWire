@@ -33,7 +33,8 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 		return name ?? Folder.untitledName
 	}
 	
-	// MARK: - PathIDUserInfoProvider
+	// MARK: - DeepLinkProvider
+	
 	public var deepLinkUserInfo: [AnyHashable : Any] {
 		return [
 			DeepLinkKey.accountID.rawValue: account?.accountID ?? "",

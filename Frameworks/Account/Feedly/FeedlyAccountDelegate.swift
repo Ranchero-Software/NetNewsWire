@@ -17,17 +17,10 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	/// Feedly has a sandbox API and a production API.
 	/// This property is referred to when clients need to know which environment it should be pointing to.
+	/// The value of this proptery must match any `OAuthAuthorizationClient` used.
+	/// Currently this is always returning the cloud API, but we are leaving it stubbed out for now.
 	static var environment: FeedlyAPICaller.API {
-		#if DEBUG
-		// https://developer.feedly.com/v3/developer/
-		if let token = ProcessInfo.processInfo.environment["FEEDLY_DEV_ACCESS_TOKEN"], !token.isEmpty {
-			return .cloud
-		}
-		return .sandbox
-		
-		#else
 		return .cloud
-		#endif
 	}
 
 	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
@@ -52,6 +45,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 		}
 	}
+	
+	let oauthAuthorizationClient: OAuthAuthorizationClient
 	
 	var accountMetadata: AccountMetadata?
 	
@@ -97,6 +92,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
+		self.oauthAuthorizationClient = api.oauthAuthorizationClient
 	}
 	
 	// MARK: Account API
@@ -128,7 +124,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let date = Date()
 		operation.syncCompletionHandler = { [weak self] result in
-			self?.accountMetadata?.lastArticleFetch = date
+			if case .success = result {
+				self?.accountMetadata?.lastArticleFetch = date
+			}
 			
 			os_log(.debug, log: log, "Sync took %{public}.3f seconds", -date.timeIntervalSinceNow)
 			progress.completeTask()
@@ -484,8 +482,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		
-		let client = FeedlyAccountDelegate.oauthAuthorizationClient
-		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: client, log: log)
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
 		operationQueue.addOperation(refreshAccessToken)
 	}
 	

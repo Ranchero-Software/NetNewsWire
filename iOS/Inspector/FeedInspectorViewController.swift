@@ -11,7 +11,7 @@ import Account
 
 class FeedInspectorViewController: UITableViewController {
 	
-	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
+	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 500.0)
 	
 	var feed: Feed!
 	@IBOutlet weak var nameTextField: UITextField!
