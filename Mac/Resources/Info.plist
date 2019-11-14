@@ -45,7 +45,7 @@
 	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>com.ranchero.NetNewsWire.ReadArticle</string>
+		<string>ReadArticle</string>
 	</array>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>NetNewsWire communicates with other apps on your Mac when you choose to share an article.</string>

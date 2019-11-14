@@ -80,7 +80,7 @@ class ActivityManager {
 		invalidateReading()
 		invalidateNextUnread()
 		
-		guard let fetcher = fetcher, let article = article else { return }
+		guard let article = article else { return }
 		readingActivity = makeReadArticleActivity(fetcher: fetcher, article: article)
 		
 		#if os(iOS)
@@ -176,13 +176,17 @@ private extension ActivityManager {
 		return activity
 	}
 	
-	func makeReadArticleActivity(fetcher: ArticleFetcher, article: Article) -> NSUserActivity {
+	func makeReadArticleActivity(fetcher: ArticleFetcher?, article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 		activity.title = ArticleStringFormatter.truncatedTitle(article)
 		
-		let articleFetcherIdentifierUserInfo = fetcher.articleFetcherType?.userInfo ?? [AnyHashable: Any]()
-		let articlePathUserInfo = article.pathUserInfo
-		activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo, UserInfoKey.articlePath: articlePathUserInfo]
+		if let fetcher = fetcher {
+			let articleFetcherIdentifierUserInfo = fetcher.articleFetcherType?.userInfo ?? [AnyHashable: Any]()
+			let articlePathUserInfo = article.pathUserInfo
+			activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo, UserInfoKey.articlePath: articlePathUserInfo]
+		} else {
+			activity.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
+		}
 		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
 		
 		activity.isEligibleForHandoff = true

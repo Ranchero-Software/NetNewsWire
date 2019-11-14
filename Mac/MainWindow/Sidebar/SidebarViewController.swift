@@ -484,7 +484,7 @@ private extension SidebarViewController {
 	}
 
 	func findAccountNode(_ userInfo: [AnyHashable : Any]?) -> Node? {
-		guard let accountID = userInfo?[DeepLinkKey.accountID.rawValue] as? String else {
+		guard let accountID = userInfo?[ArticlePathKey.accountID] as? String else {
 			return nil
 		}
 		
@@ -492,7 +492,7 @@ private extension SidebarViewController {
 			return node
 		}
 
-		guard let accountName = userInfo?[DeepLinkKey.accountName.rawValue] as? String else {
+		guard let accountName = userInfo?[ArticlePathKey.accountName] as? String else {
 			return nil
 		}
 
@@ -504,7 +504,7 @@ private extension SidebarViewController {
 	}
 	
 	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
-		guard let feedID = userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
+		guard let feedID = userInfo?[ArticlePathKey.feedID] as? String else {
 			return nil
 		}
 		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
