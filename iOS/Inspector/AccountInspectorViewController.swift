@@ -64,10 +64,20 @@ class AccountInspectorViewController: UITableViewController {
 	}
 	
 	@IBAction func deleteAccount(_ sender: Any) {
-		let title = NSLocalizedString("Delete Account", comment: "Delete Account")
-		let message = NSLocalizedString("Are you sure you want to delete this account?  This can not be undone.", comment: "Delete Account")
-		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		guard let account = account else {
+			return
+		}
 		
+		let title = NSLocalizedString("Delete Account", comment: "Delete Account")
+		let message: String = {
+			switch account.type {
+			case .feedly:
+				return NSLocalizedString("Are you sure you want to delete this account?  NetNewsWire will no longer be able to access articles and feeds unless the account is added again.", comment: "Log Out and Delete Account")
+			default:
+				return NSLocalizedString("Are you sure you want to delete this account?  This can not be undone.", comment: "Delete Account")
+			}
+		}()
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
 		alertController.addAction(cancelAction)
@@ -86,19 +96,31 @@ class AccountInspectorViewController: UITableViewController {
 		
 		present(alertController, animated: true)
 	}
-	
 }
 
 // MARK: Table View
 
 extension AccountInspectorViewController {
+	
+	var hidesCredentialsSection: Bool {
+		guard let account = account else {
+			return true
+		}
+		switch account.type {
+		case .onMyMac,
+			 .feedly:
+			return true
+		default:
+			return false
+		}
+	}
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		guard let account = account else { return 0 }
 		
 		if account == AccountManager.shared.defaultAccount {
 			return 1
-		} else if account.type == .onMyMac {
+		} else if hidesCredentialsSection {
 			return 2
 		} else {
 			return super.numberOfSections(in: tableView)
@@ -124,7 +146,7 @@ extension AccountInspectorViewController {
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell: UITableViewCell
 		
-		if indexPath.section == 1, let account = account, account.type == .onMyMac {
+		if indexPath.section == 1, hidesCredentialsSection {
 			cell = super.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 2))
 		} else {
 			cell = super.tableView(tableView, cellForRowAt: indexPath)

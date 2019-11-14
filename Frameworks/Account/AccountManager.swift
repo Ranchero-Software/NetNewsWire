@@ -138,6 +138,8 @@ public final class AccountManager: UnreadCountProvider {
 			return
 		}
 		
+		account.prepareForDeletion()
+		
 		accountsDictionary.removeValue(forKey: account.accountID)
 		account.isDeleted = true
 		
