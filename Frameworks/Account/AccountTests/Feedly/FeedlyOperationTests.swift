@@ -102,6 +102,7 @@ class FeedlyOperationTests: XCTestCase {
 	func testOperationCancellationFlags() {
         let testOperation = TestOperation()
 		testOperation.didCallMainExpectation = expectation(description: "Did Call Main")
+		testOperation.didCallMainExpectation?.isInverted = true
 		
 		let completionExpectation = expectation(description: "Operation Completed")
 		testOperation.completionBlock = {
