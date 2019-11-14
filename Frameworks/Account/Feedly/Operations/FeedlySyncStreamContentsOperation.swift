@@ -42,13 +42,15 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 	
 	override func cancel() {
+		os_log(.debug, log: log, "Canceling sync stream contents")
 		operationQueue.cancelAllOperations()
 		super.cancel()
+		didFinish()
 	}
 	
 	override func main() {
 		guard !isCancelled else {
-			didFinish()
+			// override of cancel calls didFinish().
 			return
 		}
 		
@@ -92,6 +94,11 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 	
 	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream) {
+		guard !isCancelled else {
+			os_log(.debug, log: log, "Cancelled requesting page for %@", resource.id)
+			return
+		}
+		
 		os_log(.debug, log: log, "Ingesting %i items from %@", stream.items.count, stream.id)
 		
 		guard let continuation = stream.continuation else {

@@ -96,13 +96,15 @@ final class FeedlySyncStarredArticlesOperation: FeedlyOperation, FeedlyOperation
 	}
 	
 	override func cancel() {
+		os_log(.debug, log: log, "Canceling sync starred articles")
 		operationQueue.cancelAllOperations()
 		super.cancel()
+		didFinish()
 	}
 	
 	override func main() {
 		guard !isCancelled else {
-			didFinish()
+			// override of cancel calls didFinish().
 			return
 		}
 		
@@ -110,6 +112,11 @@ final class FeedlySyncStarredArticlesOperation: FeedlyOperation, FeedlyOperation
 	}
 	
 	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream) {
+		guard !isCancelled else {
+			os_log(.debug, log: log, "Cancelled starred stream contents for %@", stream.id)
+			return
+		}
+		
 		entryProvider.addEntries(from: operation)
 		os_log(.debug, log: log, "Collecting %i items from %@", stream.items.count, stream.id)
 		
