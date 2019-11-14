@@ -67,11 +67,13 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		}
 		
 		let syncCompletionExpectation = expectation(description: "Did Finish Sync")
+		syncCompletionExpectation.isInverted = true
 		syncAll.syncCompletionHandler = { result in
 			switch result {
 			case .success:
-				XCTFail("Expected failure.")
+				XCTFail("Sync operation was cancelled, not successful.")
 			case .failure:
+				XCTFail("Sync operation should cancel silently.")
 				break
 			}
 			syncCompletionExpectation.fulfill()

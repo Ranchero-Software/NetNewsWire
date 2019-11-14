@@ -97,6 +97,9 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		super.cancel()
 		
 		didFinish()
+		
+		// Operation should silently cancel.
+		syncCompletionHandler = nil
 	}
 	
 	override func main() {
