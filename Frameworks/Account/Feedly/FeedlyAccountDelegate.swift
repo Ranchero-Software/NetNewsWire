@@ -487,7 +487,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
-		
+		let logout = FeedlyLogoutOperation(account: account, service: caller, log: log)
+		// Dispatch on the main queue because the lifetime of the account delegate is uncertain.
+		OperationQueue.main.addOperation(logout)
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
