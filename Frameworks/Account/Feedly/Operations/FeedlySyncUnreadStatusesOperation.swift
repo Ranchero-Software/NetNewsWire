@@ -77,13 +77,15 @@ final class FeedlySyncUnreadStatusesOperation: FeedlyOperation, FeedlyOperationD
 	}
 	
 	override func cancel() {
+		os_log(.debug, log: log, "Canceling sync unread statuses")
 		operationQueue.cancelAllOperations()
 		super.cancel()
+		didFinish()
 	}
 	
 	override func main() {
 		guard !isCancelled else {
-			didFinish()
+			// override of cancel calls didFinish().
 			return
 		}
 		
@@ -91,6 +93,11 @@ final class FeedlySyncUnreadStatusesOperation: FeedlyOperation, FeedlyOperationD
 	}
 	
 	func feedlyGetStreamIdsOperation(_ operation: FeedlyGetStreamIdsOperation, didGet streamIds: FeedlyStreamIds) {
+		guard !isCancelled else {
+			os_log(.debug, log: log, "Cancelled unread stream ids.")
+			return
+		}
+		
 		os_log(.debug, log: log, "Collecting %i unread article ids from %@", streamIds.ids.count, resource.id)
 		unreadEntryIdsProvider.addEntryIds(from: operation)
 		

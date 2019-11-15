@@ -195,6 +195,9 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	func accountDidInitialize(_ account: Account) {
 	}
+	
+	func accountWillBeDeleted(_ account: Account) {
+	}
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: (Result<Credentials?, Error>) -> Void) {
 		return completion(.success(nil))

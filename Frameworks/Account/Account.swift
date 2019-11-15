@@ -399,6 +399,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		opmlFile.save()
 	}
 	
+	public func prepareForDeletion() {
+		delegate.accountWillBeDeleted(self)
+	}
+	
 	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
 		var feedsToAdd = Set<WebFeed>()
 

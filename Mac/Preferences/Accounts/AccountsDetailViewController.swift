@@ -28,6 +28,19 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		super.init(coder: coder)
 	}
 	
+	private var hidesCredentialsButton: Bool {
+		guard let account = account else {
+			return true
+		}
+		switch account.type {
+		case .onMyMac,
+			 .feedly:
+			return true
+		default:
+			return false
+		}
+	}
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
@@ -35,7 +48,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		typeLabel.stringValue = account?.defaultName ?? ""
 		nameTextField.stringValue = account?.name ?? ""
 		activeButton.state = account?.isActive ?? false ? .on : .off
-		credentialsButton.isHidden = account?.type ?? .onMyMac == .onMyMac
+		credentialsButton.isHidden = hidesCredentialsButton
 	}
 	
 	func controlTextDidEndEditing(_ obj: Notification) {
@@ -66,8 +79,6 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			accountsFreshRSSWindowController.account = account
 			accountsFreshRSSWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsFreshRSSWindowController
-		case .feedly:
-			assertionFailure("Implement feedly logout window controller")
 			break
 		default:
 			break

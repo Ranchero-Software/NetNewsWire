@@ -21,8 +21,8 @@ class FeedlyOperation: Operation {
 	func didFinish() {
 		assert(Thread.isMainThread)
 		assert(!isFinished, "Finished operation is attempting to finish again.")
-		self.isExecutingOperation = false
-		self.isFinishedOperation = true
+		isExecutingOperation = false
+		isFinishedOperation = true
 	}
 	
 	func didFinish(_ error: Error) {
@@ -33,14 +33,16 @@ class FeedlyOperation: Operation {
 	}
 	
 	override func start() {
+		guard !isCancelled else {
+			isExecutingOperation = false
+			isFinishedOperation = true
+			return
+		}
+		
 		isExecutingOperation = true
 		DispatchQueue.main.async {
 			self.main()
 		}
-	}
-	
-	override func cancel() {
-		super.cancel()
 	}
 	
 	override var isExecuting: Bool {

@@ -418,6 +418,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
 	}
 	
+	func accountWillBeDeleted(_ account: Account) {
+	}
+	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		guard let endpoint = endpoint else {
 			completion(.failure(TransportError.noURL))
