@@ -11,7 +11,15 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class WebFeed: DisplayNameProvider, Renamable, UnreadCountProvider, Hashable {
+public final class WebFeed: Feed, Renamable, Hashable {
+
+	public var feedID: FeedIdentifier? {
+		guard let accountID = account?.accountID else {
+			assertionFailure("Expected feed.account, but got nil.")
+			return nil
+		}
+		return FeedIdentifier.webFeed(accountID, webFeedID)
+	}
 
 	public weak var account: Account?
 	public let url: String

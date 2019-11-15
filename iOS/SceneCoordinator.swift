@@ -110,7 +110,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private(set) var currentFeedIndexPath: IndexPath?
 	
 	var timelineIconImage: IconImage? {
-		if let feed = timelineFetcher as? WebFeed {
+		if let feed = timelineFeed as? WebFeed {
 			
 			let feedIconImage = appDelegate.webFeedIconDownloader.icon(for: feed)
 			if feedIconImage != nil {
@@ -123,19 +123,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			
 		}
 		
-		return (timelineFetcher as? SmallIconProvider)?.smallIcon
+		return (timelineFeed as? SmallIconProvider)?.smallIcon
 	}
 	
-	var timelineName: String? {
-		return (timelineFetcher as? DisplayNameProvider)?.nameForDisplay
-	}
-	
-	var timelineFetcher: ArticleFetcher? {
+	var timelineFeed: Feed? {
 		didSet {
 
 			timelineMiddleIndexPath = nil
 			
-			if timelineFetcher is WebFeed {
+			if timelineFeed is WebFeed {
 				showFeedNames = false
 			} else {
 				showFeedNames = true
@@ -259,7 +255,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	var isTimelineUnreadAvailable: Bool {
-		if let unreadProvider = timelineFetcher as? UnreadCountProvider {
+		if let unreadProvider = timelineFeed as? UnreadCountProvider {
 			return unreadProvider.unreadCount > 0
 		}
 		return false
@@ -519,7 +515,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func masterFeedIndexPathForCurrentTimeline() -> IndexPath? {
-		guard let node = treeController.rootNode.descendantNodeRepresentingObject(timelineFetcher as AnyObject) else {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(timelineFeed as AnyObject) else {
 			return nil
 		}
 		return indexPathFor(node)
@@ -533,12 +529,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 		masterFeedViewController.updateFeedSelection(animated: animated)
 
-		if let ip = indexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
-			timelineFetcher = fetcher
-			activityManager.selecting(fetcher: fetcher)
+		if let ip = indexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
+			timelineFeed = feed
+			activityManager.selecting(feed: feed)
 			installTimelineControllerIfNecessary(animated: animated)
 		} else {
-			timelineFetcher = nil
+			timelineFeed = nil
 			activityManager.invalidateSelecting()
 			if rootSplitViewController.isCollapsed && navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
 				navControllerForTimeline().popViewController(animated: animated)
@@ -582,7 +578,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		stopArticleExtractor()
 		currentArticle = article
-		activityManager.reading(fetcher: timelineFetcher, article: article)
+		activityManager.reading(feed: timelineFeed, article: article)
 		
 		if article == nil {
 			if rootSplitViewController.isCollapsed {
@@ -621,7 +617,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func beginSearching() {
 		isSearching = true
 		searchArticleIds = Set(articles.map { $0.articleID })
-		timelineFetcher = nil
+		timelineFeed = nil
 	}
 
 	func endSearching() {
@@ -630,10 +626,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		lastSearchScope = nil
 		searchArticleIds = nil
 		
-		if let ip = currentFeedIndexPath, let node = nodeFor(ip), let fetcher = node.representedObject as? ArticleFetcher {
-			timelineFetcher = fetcher
+		if let ip = currentFeedIndexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
+			timelineFeed = feed
 		} else {
-			timelineFetcher = nil
+			timelineFeed = nil
 		}
 		
 		selectArticle(nil)
@@ -644,7 +640,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		guard isSearching else { return }
 		
 		if searchString.count < 3 {
-			timelineFetcher = nil
+			timelineFeed = nil
 			return
 		}
 		
@@ -652,9 +648,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			
 			switch searchScope {
 			case .global:
-				timelineFetcher = SmartFeed(delegate: SearchFeedDelegate(searchString: searchString))
+				timelineFeed = SmartFeed(delegate: SearchFeedDelegate(searchString: searchString))
 			case .timeline:
-				timelineFetcher = SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: searchArticleIds!))
+				timelineFeed = SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: searchArticleIds!))
 			}
 			
 			lastSearchString = searchString
@@ -806,7 +802,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showFeedInspector() {
-		guard let feed = timelineFetcher as? WebFeed else {
+		guard let feed = timelineFeed as? WebFeed else {
 			return
 		}
 		showFeedInspector(for: feed)
@@ -1362,11 +1358,11 @@ private extension SceneCoordinator {
 	
 	@objc func fetchAndMergeArticles() {
 		
-		guard let timelineFetcher = timelineFetcher else {
+		guard let timelineFeed = timelineFeed else {
 			return
 		}
 		
-		fetchUnsortedArticlesAsync(for: [timelineFetcher]) { [weak self] (unsortedArticles) in
+		fetchUnsortedArticlesAsync(for: [timelineFeed]) { [weak self] (unsortedArticles) in
 			// Merge articles by articleID. For any unique articleID in current articles, add to unsortedArticles.
 			guard let strongSelf = self else {
 				return
@@ -1395,7 +1391,7 @@ private extension SceneCoordinator {
 		// so that the entire display refreshes at once.
 		// It’s a better user experience this way.
 		cancelPendingAsyncFetches()
-		guard let timelineFetcher = timelineFetcher else {
+		guard let timelineFetcher = timelineFeed else {
 			emptyTheTimeline()
 			return
 		}
@@ -1407,7 +1403,7 @@ private extension SceneCoordinator {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
 		cancelPendingAsyncFetches()
-		guard let timelineFetcher = timelineFetcher else {
+		guard let timelineFetcher = timelineFeed else {
 			emptyTheTimeline()
 			return
 		}
@@ -1447,14 +1443,14 @@ private extension SceneCoordinator {
 	}
 
 	func timelineFetcherContainsAnyPseudoFeed() -> Bool {
-		if timelineFetcher is PseudoFeed {
+		if timelineFeed is PseudoFeed {
 			return true
 		}
 		return false
 	}
 	
 	func timelineFetcherContainsAnyFolder() -> Bool {
-		if timelineFetcher is Folder {
+		if timelineFeed is Folder {
 			return true
 		}
 		return false
@@ -1464,13 +1460,13 @@ private extension SceneCoordinator {
 		
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
 		
-		if let feed = timelineFetcher as? WebFeed {
+		if let feed = timelineFeed as? WebFeed {
 			for oneFeed in feeds {
 				if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
 					return true
 				}
 			}
-		} else if let folder = timelineFetcher as? Folder {
+		} else if let folder = timelineFeed as? Folder {
 			for oneFeed in feeds {
 				if folder.hasWebFeed(with: oneFeed.webFeedID) || folder.hasWebFeed(withURL: oneFeed.url) {
 					return true
@@ -1625,7 +1621,7 @@ private extension SceneCoordinator {
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
 			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : Any],
-			let articleFetcherType = ArticleFetcherType(userInfo: feedIdentifierUserInfo) else {
+			let articleFetcherType = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
 				return
 		}
 

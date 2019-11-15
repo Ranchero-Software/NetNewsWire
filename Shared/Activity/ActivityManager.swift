@@ -38,13 +38,13 @@ class ActivityManager {
 		invalidateNextUnread()
 	}
 	
-	func selecting(fetcher: ArticleFetcher) {
+	func selecting(feed: Feed) {
 		invalidateCurrentActivities()
 		
-		selectingActivity = makeSelectFeedActivity(fetcher: fetcher)
+		selectingActivity = makeSelectFeedActivity(feed: feed)
 		
-		if let feed = fetcher as? WebFeed {
-			updateSelectingActivityFeedSearchAttributes(with: feed)
+		if let webFeed = feed as? WebFeed {
+			updateSelectingActivityFeedSearchAttributes(with: webFeed)
 		}
 		
 		donate(selectingActivity!)
@@ -76,12 +76,12 @@ class ActivityManager {
 		nextUnreadActivity = nil
 	}
 	
-	func reading(fetcher: ArticleFetcher?, article: Article?) {
+	func reading(feed: Feed?, article: Article?) {
 		invalidateReading()
 		invalidateNextUnread()
 		
 		guard let article = article else { return }
-		readingActivity = makeReadArticleActivity(fetcher: fetcher, article: article)
+		readingActivity = makeReadArticleActivity(feed: feed, article: article)
 		
 		#if os(iOS)
 		updateReadArticleSearchAttributes(with: article)
@@ -151,37 +151,36 @@ class ActivityManager {
 
 private extension ActivityManager {
 	
-	func makeSelectFeedActivity(fetcher: ArticleFetcher) -> NSUserActivity {
+	func makeSelectFeedActivity(feed: Feed) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.selectFeed.rawValue)
 		
 		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
-		let displayName = (fetcher as? DisplayNameProvider)?.nameForDisplay ?? ""
-		let title = NSString.localizedStringWithFormat(localizedText as NSString, displayName) as String
+		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
 		activity.title = title
 		
 		activity.keywords = Set(makeKeywords(title))
 		activity.isEligibleForSearch = true
 		
-		let articleFetcherIdentifierUserInfo = fetcher.articleFetcherType?.userInfo ?? [AnyHashable: Any]()
+		let articleFetcherIdentifierUserInfo = feed.feedID?.userInfo ?? [AnyHashable: Any]()
 		activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo]
 		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
 
 		#if os(iOS)
 		activity.suggestedInvocationPhrase = title
 		activity.isEligibleForPrediction = true
-		activity.persistentIdentifier = fetcher.articleFetcherType?.description ?? ""
-		activity.contentAttributeSet?.relatedUniqueIdentifier = fetcher.articleFetcherType?.description ?? ""
+		activity.persistentIdentifier = feed.feedID?.description ?? ""
+		activity.contentAttributeSet?.relatedUniqueIdentifier = feed.feedID?.description ?? ""
 		#endif
 		
 		return activity
 	}
 	
-	func makeReadArticleActivity(fetcher: ArticleFetcher?, article: Article) -> NSUserActivity {
+	func makeReadArticleActivity(feed: Feed?, article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 		activity.title = ArticleStringFormatter.truncatedTitle(article)
 		
-		if let fetcher = fetcher {
-			let articleFetcherIdentifierUserInfo = fetcher.articleFetcherType?.userInfo ?? [AnyHashable: Any]()
+		if let feed = feed {
+			let articleFetcherIdentifierUserInfo = feed.feedID?.userInfo ?? [AnyHashable: Any]()
 			let articlePathUserInfo = article.pathUserInfo
 			activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo, UserInfoKey.articlePath: articlePathUserInfo]
 		} else {

@@ -15,8 +15,8 @@ import Account
 
 struct StarredFeedDelegate: SmartFeedDelegate {
 
-	var articleFetcherType: ArticleFetcherType? {
-		return ArticleFetcherType.smartFeed(String(describing: StarredFeedDelegate.self))
+	var feedID: FeedIdentifier? {
+		return FeedIdentifier.smartFeed(String(describing: StarredFeedDelegate.self))
 	}
 
 	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")

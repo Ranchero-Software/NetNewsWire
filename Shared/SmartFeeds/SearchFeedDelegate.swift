@@ -13,8 +13,8 @@ import Articles
 
 struct SearchFeedDelegate: SmartFeedDelegate {
 
-	var articleFetcherType: ArticleFetcherType? {
-		return ArticleFetcherType.smartFeed(String(describing: SearchFeedDelegate.self))
+	var feedID: FeedIdentifier? {
+		return FeedIdentifier.smartFeed(String(describing: SearchFeedDelegate.self))
 	}
 
 	var nameForDisplay: String {

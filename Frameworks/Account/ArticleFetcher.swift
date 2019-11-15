@@ -11,8 +11,6 @@ import Articles
 
 public protocol ArticleFetcher {
 
-	var articleFetcherType: ArticleFetcherType? { get }
-	
 	func fetchArticles() -> Set<Article>
 	func fetchArticlesAsync(_ callback: @escaping ArticleSetBlock)
 	func fetchUnreadArticles() -> Set<Article>
@@ -20,14 +18,6 @@ public protocol ArticleFetcher {
 }
 
 extension WebFeed: ArticleFetcher {
-	
-	public var articleFetcherType: ArticleFetcherType? {
-		guard let accountID = account?.accountID else {
-			assertionFailure("Expected feed.account, but got nil.")
-			return nil
-		}
-		return ArticleFetcherType.webFeed(accountID, webFeedID)
-	}
 	
 	public func fetchArticles() -> Set<Article> {
 		return account?.fetchArticles(.webFeed(self)) ?? Set<Article>()
@@ -57,14 +47,6 @@ extension WebFeed: ArticleFetcher {
 }
 
 extension Folder: ArticleFetcher {
-
-	public var articleFetcherType: ArticleFetcherType? {
-		guard let accountID = account?.accountID else {
-			assertionFailure("Expected feed.account, but got nil.")
-			return nil
-		}
-		return ArticleFetcherType.folder(accountID, nameForDisplay)
-	}
 	
 	public func fetchArticles() -> Set<Article> {
 		return fetchUnreadArticles()

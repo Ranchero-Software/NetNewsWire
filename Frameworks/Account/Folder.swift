@@ -10,7 +10,15 @@ import Foundation
 import Articles
 import RSCore
 
-public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCountProvider, Hashable {
+public final class Folder: Feed, Renamable, Container, Hashable {
+
+	public var feedID: FeedIdentifier? {
+		guard let accountID = account?.accountID else {
+			assertionFailure("Expected feed.account, but got nil.")
+			return nil
+		}
+		return FeedIdentifier.folder(accountID, nameForDisplay)
+	}
 
 	public weak var account: Account?
 	public var topLevelWebFeeds: Set<WebFeed> = Set<WebFeed>()

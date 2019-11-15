@@ -19,6 +19,10 @@ import Articles
 
 final class UnreadFeed: PseudoFeed {
 
+	var feedID: FeedIdentifier? {
+		return FeedIdentifier.smartFeed(String(describing: UnreadFeed.self))
+	}
+
 	let nameForDisplay = NSLocalizedString("All Unread", comment: "All Unread pseudo-feed title")
 	let fetchType = FetchType.unread
 	
@@ -53,10 +57,6 @@ final class UnreadFeed: PseudoFeed {
 
 extension UnreadFeed: ArticleFetcher {
 	
-	var articleFetcherType: ArticleFetcherType? {
-		return ArticleFetcherType.smartFeed(String(describing: UnreadFeed.self))
-	}
-
 	func fetchArticles() -> Set<Article> {
 		return fetchUnreadArticles()
 	}

@@ -8,7 +8,11 @@
 
 import Foundation
 
-public enum ArticleFetcherType: CustomStringConvertible {
+public protocol FeedIdentifiable {
+	var feedID: FeedIdentifier? { get }
+}
+
+public enum FeedIdentifier: CustomStringConvertible {
 	
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
@@ -61,16 +65,16 @@ public enum ArticleFetcherType: CustomStringConvertible {
 		switch type {
 		case "smartFeed":
 			guard let id = userInfo["id"] as? String else { return nil }
-			self = ArticleFetcherType.smartFeed(id)
+			self = FeedIdentifier.smartFeed(id)
 		case "script":
 			guard let id = userInfo["id"] as? String else { return nil }
-			self = ArticleFetcherType.script(id)
+			self = FeedIdentifier.script(id)
 		case "feed":
 			guard let accountID = userInfo["accountID"] as? String, let webFeedID = userInfo["webFeedID"] as? String else { return nil }
-			self = ArticleFetcherType.webFeed(accountID, webFeedID)
+			self = FeedIdentifier.webFeed(accountID, webFeedID)
 		case "folder":
 			guard let accountID = userInfo["accountID"] as? String, let folderName = userInfo["folderName"] as? String else { return nil }
-			self = ArticleFetcherType.folder(accountID, folderName)
+			self = FeedIdentifier.folder(accountID, folderName)
 		default:
 			return nil
 		}

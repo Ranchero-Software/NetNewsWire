@@ -481,7 +481,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		let detailState: DetailState
 		if let articles = articles {
 			if articles.count == 1 {
-				activityManager.reading(fetcher: nil, article: articles.first)
+				activityManager.reading(feed: nil, article: articles.first)
 				if articles.first?.webFeed?.isArticleExtractorAlwaysOn ?? false {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()

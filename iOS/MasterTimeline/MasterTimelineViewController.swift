@@ -368,7 +368,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		titleView?.label.text = coordinator.timelineName
+		titleView?.label.text = coordinator.timelineFeed?.nameForDisplay
 	}
 	
 	@objc func scrollPositionDidChange() {
@@ -455,16 +455,16 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 private extension MasterTimelineViewController {
 
 	func resetUI() {
-		title = coordinator.timelineName
+		title = coordinator.timelineFeed?.nameForDisplay
 		
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
 			self.titleView = titleView
 			
 			titleView.iconView.iconImage = coordinator.timelineIconImage
-			titleView.label.text = coordinator.timelineName
+			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 			updateTitleUnreadCount()
 
-			if coordinator.timelineFetcher is WebFeed {
+			if coordinator.timelineFeed is WebFeed {
 				titleView.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
 				let tap = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 				titleView.addGestureRecognizer(tap)
@@ -494,7 +494,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateTitleUnreadCount() {
-		if let unreadCountProvider = coordinator.timelineFetcher as? UnreadCountProvider {
+		if let unreadCountProvider = coordinator.timelineFeed as? UnreadCountProvider {
 			self.titleView?.unreadCountView.unreadCount = unreadCountProvider.unreadCount
 		}
 	}

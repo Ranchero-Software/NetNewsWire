@@ -13,6 +13,10 @@ import Account
 
 final class SmartFeed: PseudoFeed {
 
+	var feedID: FeedIdentifier? {
+		delegate.feedID
+	}
+
 	var nameForDisplay: String {
 		return delegate.nameForDisplay
 	}
@@ -71,10 +75,6 @@ final class SmartFeed: PseudoFeed {
 }
 
 extension SmartFeed: ArticleFetcher {
-	
-	var articleFetcherType: ArticleFetcherType? {
-		delegate.articleFetcherType
-	}
 
 	func fetchArticles() -> Set<Article> {
 		return delegate.fetchArticles()
