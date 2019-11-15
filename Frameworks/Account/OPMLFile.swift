@@ -43,7 +43,7 @@ private extension OPMLFile {
 	func loadCallback() {
 		guard let opmlItems = parsedOPMLItems() else { return }
 		BatchUpdate.shared.perform {
-			account.topLevelFeeds.removeAll()
+			account.topLevelWebFeeds.removeAll()
 			account.loadOPMLItems(opmlItems, parentFolder: nil)
 		}
 	}

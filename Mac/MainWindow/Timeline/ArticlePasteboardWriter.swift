@@ -91,7 +91,7 @@ private extension ArticlePasteboardWriter {
 
 		s += "Date: \(article.logicalDatePublished)\n\n"
 
-		if let feed = article.feed {
+		if let feed = article.webFeed {
 			s += "Feed: \(feed.nameForDisplay)\n"
 			if let homePageURL = feed.homePageURL {
 				s += "Home page: \(homePageURL)\n"
@@ -106,7 +106,7 @@ private extension ArticlePasteboardWriter {
 		static let articleID = "articleID" // database ID, unique per account
 		static let uniqueID = "uniqueID" // unique ID, unique per feed (guid, or possibly calculated)
 		static let feedURL = "feedURL"
-		static let feedID = "feedID" // may differ from feedURL if coming from a syncing system
+		static let webFeedID = "webFeedID" // may differ from feedURL if coming from a syncing system
 		static let title = "title"
 		static let contentHTML = "contentHTML"
 		static let contentText = "contentText"
@@ -147,11 +147,11 @@ private extension ArticlePasteboardWriter {
 		d[Key.articleID] = article.articleID
 		d[Key.uniqueID] = article.uniqueID
 
-		if let feed = article.feed {
+		if let feed = article.webFeed {
 			d[Key.feedURL] = feed.url
 		}
 
-		d[Key.feedID] = article.feedID
+		d[Key.webFeedID] = article.webFeedID
 		d[Key.title] = article.title ?? nil
 		d[Key.contentHTML] = article.contentHTML ?? nil
 		d[Key.contentText] = article.contentText ?? nil

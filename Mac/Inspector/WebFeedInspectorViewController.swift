@@ -10,7 +10,7 @@ import AppKit
 import Articles
 import Account
 
-final class FeedInspectorViewController: NSViewController, Inspector {
+final class WebFeedInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet weak var iconView: IconView!
 	@IBOutlet weak var nameTextField: NSTextField?
@@ -19,7 +19,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	@IBOutlet weak var isNotifyAboutNewArticlesCheckBox: NSButton!
 	@IBOutlet weak var isReaderViewAlwaysOnCheckBox: NSButton?
 	
-	private var feed: Feed? {
+	private var feed: WebFeed? {
 		didSet {
 			if feed != oldValue {
 				updateUI()
@@ -37,7 +37,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	}
 
 	func canInspect(_ objects: [Any]) -> Bool {
-		return objects.count == 1 && objects.first is Feed
+		return objects.count == 1 && objects.first is WebFeed
 	}
 
 	// MARK: NSViewController
@@ -64,7 +64,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	
 }
 
-extension FeedInspectorViewController: NSTextFieldDelegate {
+extension WebFeedInspectorViewController: NSTextFieldDelegate {
 
 	func controlTextDidChange(_ note: Notification) {
 		guard let feed = feed, let nameTextField = nameTextField else {
@@ -75,10 +75,10 @@ extension FeedInspectorViewController: NSTextFieldDelegate {
 	
 }
 
-private extension FeedInspectorViewController {
+private extension WebFeedInspectorViewController {
 
 	func updateFeed() {
-		guard let objects = objects, objects.count == 1, let singleFeed = objects.first as? Feed else {
+		guard let objects = objects, objects.count == 1, let singleFeed = objects.first as? WebFeed else {
 			feed = nil
 			return
 		}
@@ -101,7 +101,7 @@ private extension FeedInspectorViewController {
 			return
 		}
 
-		if let feedIcon = appDelegate.feedIconDownloader.icon(for: feed) {
+		if let feedIcon = appDelegate.webFeedIconDownloader.icon(for: feed) {
 			iconView.iconImage = feedIcon
 			return
 		}

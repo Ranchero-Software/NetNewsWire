@@ -12,7 +12,7 @@ import RSCore
 import RSTree
 import RSParser
 
-class AddFeedViewController: UITableViewController, AddContainerViewControllerChild {
+class AddWebFeedViewController: UITableViewController, AddContainerViewControllerChild {
 	
 	@IBOutlet private weak var urlTextField: UITextField!
 	@IBOutlet private weak var nameTextField: UITextField!
@@ -91,7 +91,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 			account = containerAccount
 		}
 		
-		if account!.hasFeed(withURL: url.absoluteString) {
+		if account!.hasWebFeed(withURL: url.absoluteString) {
 			presentError(AccountError.createErrorAlreadySubscribed)
  			return
 		}
@@ -102,14 +102,14 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 		
 		BatchUpdate.shared.start()
 		
-		account!.createFeed(url: url.absoluteString, name: feedName, container: container) { result in
+		account!.createWebFeed(url: url.absoluteString, name: feedName, container: container) { result in
 
 			BatchUpdate.shared.end()
 			
 			switch result {
 			case .success(let feed):
 				self.delegate?.processingDidEnd()
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
 			case .failure(let error):
 				self.presentError(error)
 				self.delegate?.processingDidCancel()
@@ -135,7 +135,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 	
 }
 
-extension AddFeedViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+extension AddWebFeedViewController: UIPickerViewDataSource, UIPickerViewDelegate {
 	
 	func numberOfComponents(in pickerView: UIPickerView) ->Int {
 		return 1
@@ -155,7 +155,7 @@ extension AddFeedViewController: UIPickerViewDataSource, UIPickerViewDelegate {
 	
 }
 
-extension AddFeedViewController: UITextFieldDelegate {
+extension AddWebFeedViewController: UITextFieldDelegate {
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()

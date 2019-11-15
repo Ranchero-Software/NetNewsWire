@@ -10,7 +10,7 @@
         <!--Add Feed-->
         <scene sceneID="2Tc-JN-edX">
             <objects>
-                <tableViewController storyboardIdentifier="AddFeedViewController" id="7aE-6a-iP7" customClass="AddFeedViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="AddWebFeedViewController" id="7aE-6a-iP7" customClass="AddWebFeedViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="static" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="1" sectionFooterHeight="5" id="D0S-TM-mtm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -78,7 +78,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vaV-kY-CaE">
-                                                    <rect key="frame" x="313" y="11.999999999999998" width="42" height="20.333333333333329"/>
+                                                    <rect key="frame" x="313" y="12" width="42" height="20"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -166,12 +166,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="1Ce-E7-rG2">
-                                <rect key="frame" x="112.66666666666669" y="108" width="150" height="32"/>
+                                <rect key="frame" x="97.666666666666686" y="108" width="180" height="32"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="150" id="IEO-pf-4PB"/>
+                                    <constraint firstAttribute="width" constant="180" id="IEO-pf-4PB"/>
                                 </constraints>
                                 <segments>
-                                    <segment title="Feed"/>
+                                    <segment title="Web Feed"/>
                                     <segment title="Folder"/>
                                 </segments>
                                 <connections>
@@ -282,7 +282,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mxj-Bw-Jfx">
-                                                    <rect key="frame" x="313" y="11.999999999999998" width="42" height="20.333333333333329"/>
+                                                    <rect key="frame" x="313" y="12" width="42" height="20"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>

@@ -227,9 +227,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		let group = DispatchGroup()
 		
-		for feed in folder.topLevelFeeds {
+		for feed in folder.topLevelWebFeeds {
 			group.enter()
-			removeFeed(for: account, with: feed, from: folder) { result in
+			removeWebFeed(for: account, with: feed, from: folder) { result in
 				group.leave()
 				switch result {
 				case .success:
@@ -256,7 +256,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createWebFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		
 		caller.createSubscription(url: url) { result in
 			switch result {
@@ -284,7 +284,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		// This error should never happen
 		guard let subscriptionID = feed.subscriptionID else {
@@ -309,23 +309,23 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if feed.folderRelationship?.count ?? 0 > 1 {
 			deleteTagging(for: account, with: feed, from: container, completion: completion)
 		} else {
-			account.clearFeedMetadata(feed)
+			account.clearWebFeedMetadata(feed)
 			deleteSubscription(for: account, with: feed, from: container, completion: completion)
 		}
 	}
 	
-	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if from is Account {
-			addFeed(for: account, with: feed, to: to, completion: completion)
+			addWebFeed(for: account, with: feed, to: to, completion: completion)
 		} else {
 			deleteTagging(for: account, with: feed, from: from) { result in
 				switch result {
 				case .success:
-					self.addFeed(for: account, with: feed, to: to, completion: completion)
+					self.addWebFeed(for: account, with: feed, to: to, completion: completion)
 				case .failure(let error):
 					completion(.failure(error))
 				}
@@ -333,7 +333,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedName = feed.subscriptionID {
 			caller.createTagging(subscriptionID: feedName, tagName: folder.name ?? "") { result in
@@ -341,8 +341,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				case .success:
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: feed.subscriptionID!)
-						account.removeFeed(feed)
-						folder.addFeed(feed)
+						account.removeWebFeed(feed)
+						folder.addWebFeed(feed)
 						completion(.success(()))
 					}
 				case .failure(let error):
@@ -363,9 +363,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+		createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
 			switch result {
 			case .success:
 				completion(.success(()))
@@ -381,12 +381,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		account.addFolder(folder)
 		let group = DispatchGroup()
 		
-		for feed in folder.topLevelFeeds {
+		for feed in folder.topLevelWebFeeds {
 			
 			group.enter()
-			addFeed(for: account, with: feed, to: folder) { result in
-				if account.topLevelFeeds.contains(feed) {
-					account.removeFeed(feed)
+			addWebFeed(for: account, with: feed, to: folder) { result in
+				if account.topLevelWebFeeds.contains(feed) {
+					account.removeWebFeed(feed)
 				}
 				group.leave()
 			}
@@ -469,8 +469,8 @@ private extension ReaderAPIAccountDelegate {
 		if let folders = account.folders {
 			folders.forEach { folder in
 				if !tagNames.contains(folder.name ?? "") {
-					for feed in folder.topLevelFeeds {
-						account.addFeed(feed)
+					for feed in folder.topLevelWebFeeds {
+						account.addWebFeed(feed)
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					}
 					account.removeFolder(folder)
@@ -532,17 +532,17 @@ private extension ReaderAPIAccountDelegate {
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
-				for feed in folder.topLevelFeeds {
-					if !subFeedIds.contains(feed.feedID) {
-						folder.removeFeed(feed)
+				for feed in folder.topLevelWebFeeds {
+					if !subFeedIds.contains(feed.webFeedID) {
+						folder.removeWebFeed(feed)
 					}
 				}
 			}
 		}
 		
-		for feed in account.topLevelFeeds {
-			if !subFeedIds.contains(feed.feedID) {
-				account.removeFeed(feed)
+		for feed in account.topLevelWebFeeds {
+			if !subFeedIds.contains(feed.webFeedID) {
+				account.removeWebFeed(feed)
 			}
 		}
 		
@@ -550,14 +550,14 @@ private extension ReaderAPIAccountDelegate {
 		subscriptions.forEach { subscription in
 			
 			let subFeedId = String(subscription.feedID)
-			if let feed = account.existingFeed(withFeedID: subFeedId) {
+			if let feed = account.existingWebFeed(withWebFeedID: subFeedId) {
 				feed.name = subscription.name
 				feed.homePageURL = subscription.homePageURL
 			} else {
-				let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subFeedId, homePageURL: subscription.homePageURL)
+				let feed = account.createWebFeed(with: subscription.name, url: subscription.url, webFeedID: subFeedId, homePageURL: subscription.homePageURL)
 				feed.iconURL = subscription.iconURL
 				feed.subscriptionID = String(subscription.feedID)
-				account.addFeed(feed)
+				account.addWebFeed(feed)
 			}
 			
 		}
@@ -606,25 +606,25 @@ private extension ReaderAPIAccountDelegate {
 			let taggingFeedIDs = groupedTaggings.map { String($0.feedID) }
 			
 			// Move any feeds not in the folder to the account
-			for feed in folder.topLevelFeeds {
-				if !taggingFeedIDs.contains(feed.feedID) {
-					folder.removeFeed(feed)
+			for feed in folder.topLevelWebFeeds {
+				if !taggingFeedIDs.contains(feed.webFeedID) {
+					folder.removeWebFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-					account.addFeed(feed)
+					account.addWebFeed(feed)
 				}
 			}
 			
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
+			let folderFeedIds = folder.topLevelWebFeeds.map { $0.webFeedID }
 			
 			for subscription in groupedTaggings {
 				let taggingFeedID = String(subscription.feedID)
 				if !folderFeedIds.contains(taggingFeedID) {
-					guard let feed = account.existingFeed(withFeedID: taggingFeedID) else {
+					guard let feed = account.existingWebFeed(withWebFeedID: taggingFeedID) else {
 						continue
 					}
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(subscription.feedID))
-					folder.addFeed(feed)
+					folder.addWebFeed(feed)
 				}
 			}
 			
@@ -633,9 +633,9 @@ private extension ReaderAPIAccountDelegate {
 		let taggedFeedIDs = Set(subscriptions.map { String($0.feedID) })
 		
 		// Remove all feeds from the account container that have a tag
-		for feed in account.topLevelFeeds {
-			if taggedFeedIDs.contains(feed.feedID) {
-				account.removeFeed(feed)
+		for feed in account.topLevelWebFeeds {
+			if taggedFeedIDs.contains(feed.webFeedID) {
+				account.removeWebFeed(feed)
 			}
 		}
 
@@ -679,14 +679,14 @@ private extension ReaderAPIAccountDelegate {
 	
 	
 	
-	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
+	func clearFolderRelationship(for feed: WebFeed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = nil
 			feed.folderRelationship = folderRelationship
 		}
 	}
 	
-	func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
+	func saveFolderRelationship(for feed: WebFeed, withFolderName folderName: String, id: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = id
 			feed.folderRelationship = folderRelationship
@@ -695,7 +695,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 	}
 
-	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [ReaderAPISubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
+	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [ReaderAPISubscriptionChoice], completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
 			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
@@ -705,7 +705,7 @@ private extension ReaderAPIAccountDelegate {
 
 		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
 			if let bestSubscription = choices.filter({ bestSpecifier.urlString == $0.url }).first {
-				createFeed(for: account, url: bestSubscription.url, name: name, container: container, completion: completion)
+				createWebFeed(for: account, url: bestSubscription.url, name: name, container: container, completion: completion)
 			} else {
 				DispatchQueue.main.async {
 					completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
@@ -719,18 +719,18 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 	
-	func createFeed( account: Account, subscription sub: ReaderAPISubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed( account: Account, subscription sub: ReaderAPISubscription, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		
 		DispatchQueue.main.async {
 			
-			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
+			let feed = account.createWebFeed(with: sub.name, url: sub.url, webFeedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.subscriptionID = String(sub.feedID)
 			
-			account.addFeed(feed, to: container) { result in
+			account.addWebFeed(feed, to: container) { result in
 				switch result {
 				case .success:
 					if let name = name {
-						account.renameFeed(feed, to: name) { result in
+						account.renameWebFeed(feed, to: name) { result in
 							switch result {
 							case .success:
 								self.initialFeedDownload(account: account, feed: feed, completion: completion)
@@ -750,10 +750,10 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 
-	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func initialFeedDownload( account: Account, feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		
 		// Download the initial articles
-		self.caller.retrieveEntries(feedID: feed.feedID) { result in
+		self.caller.retrieveEntries(webFeedID: feed.webFeedID) { result in
 			
 			switch result {
 			case .success(let (entries, page)):
@@ -871,8 +871,8 @@ private extension ReaderAPIAccountDelegate {
 	
 	func processEntries(account: Account, entries: [ReaderAPIEntry]?, completion: @escaping (() -> Void)) {
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
-		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true, completion: completion)
+		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true, completion: completion)
 	}
 	
 	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {
@@ -953,7 +953,7 @@ private extension ReaderAPIAccountDelegate {
 
 
 
-	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteTagging(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedName = feed.subscriptionID {
 			caller.deleteTagging(subscriptionID: feedName, tagName: folder.name ?? "") { result in
@@ -961,7 +961,7 @@ private extension ReaderAPIAccountDelegate {
 				case .success:
 					DispatchQueue.main.async {
 						self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-						folder.removeFeed(feed)
+						folder.removeWebFeed(feed)
 						account.addFeedIfNotInAnyFolder(feed)
 						completion(.success(()))
 					}
@@ -974,14 +974,14 @@ private extension ReaderAPIAccountDelegate {
 			}
 		} else {
 			if let account = container as? Account {
-				account.removeFeed(feed)
+				account.removeWebFeed(feed)
 			}
 			completion(.success(()))
 		}
 		
 	}
 
-	func deleteSubscription(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteSubscription(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		// This error should never happen
 		guard let subscriptionID = feed.subscriptionID else {
@@ -993,10 +993,10 @@ private extension ReaderAPIAccountDelegate {
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
-					account.removeFeed(feed)
+					account.removeWebFeed(feed)
 					if let folders = account.folders {
 						for folder in folders {
-							folder.removeFeed(feed)
+							folder.removeWebFeed(feed)
 						}
 					}
 					completion(.success(()))

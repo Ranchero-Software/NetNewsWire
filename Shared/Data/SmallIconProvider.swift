@@ -16,7 +16,7 @@ protocol SmallIconProvider {
 	var smallIcon: IconImage? { get }
 }
 
-extension Feed: SmallIconProvider {
+extension WebFeed: SmallIconProvider {
 
 	var smallIcon: IconImage? {
 		if let iconImage = appDelegate.faviconDownloader.favicon(for: self) {

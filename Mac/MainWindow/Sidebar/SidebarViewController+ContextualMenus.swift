@@ -26,8 +26,8 @@ extension SidebarViewController {
 		let object = objects.first!
 
 		switch object {
-		case is Feed:
-			return menuForFeed(object as! Feed)
+		case is WebFeed:
+			return menuForWebFeed(object as! WebFeed)
 		case is Folder:
 			return menuForFolder(object as! Folder)
 		case is PseudoFeed:
@@ -83,7 +83,7 @@ extension SidebarViewController {
 
 	@objc func renameFromContextualMenu(_ sender: Any?) {
 
-		guard let window = view.window, let menuItem = sender as? NSMenuItem, let object = menuItem.representedObject as? DisplayNameProvider, object is Feed || object is Folder else {
+		guard let window = view.window, let menuItem = sender as? NSMenuItem, let object = menuItem.representedObject as? DisplayNameProvider, object is WebFeed || object is Folder else {
 			return
 		}
 
@@ -99,7 +99,7 @@ extension SidebarViewController: RenameWindowControllerDelegate {
 
 	func renameWindowController(_ windowController: RenameWindowController, didRenameObject object: Any, withNewName name: String) {
 
-		if let feed = object as? Feed {
+		if let feed = object as? WebFeed {
 			feed.rename(to: name) { result in
 				switch result {
 				case .success:
@@ -135,32 +135,32 @@ private extension SidebarViewController {
 		return menu
 	}
 
-	func menuForFeed(_ feed: Feed) -> NSMenu? {
+	func menuForWebFeed(_ webFeed: WebFeed) -> NSMenu? {
 
 		let menu = NSMenu(title: "")
 
-		if feed.unreadCount > 0 {
-			menu.addItem(markAllReadMenuItem([feed]))
+		if webFeed.unreadCount > 0 {
+			menu.addItem(markAllReadMenuItem([webFeed]))
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		if let homePageURL = feed.homePageURL, let _ = URL(string: homePageURL) {
+		if let homePageURL = webFeed.homePageURL, let _ = URL(string: homePageURL) {
 			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL)
 			menu.addItem(item)
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), feed.url)
+		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), webFeed.url)
 		menu.addItem(copyFeedURLItem)
 
-		if let homePageURL = feed.homePageURL {
+		if let homePageURL = webFeed.homePageURL {
 			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL)
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
 
-		menu.addItem(renameMenuItem(feed))
-		menu.addItem(deleteMenuItem([feed]))
+		menu.addItem(renameMenuItem(webFeed))
+		menu.addItem(deleteMenuItem([webFeed]))
 
 		return menu
 	}
@@ -245,7 +245,7 @@ private extension SidebarViewController {
 
 	func objectIsFeedOrFolder(_ object: Any) -> Bool {
 
-		return object is Feed || object is Folder
+		return object is WebFeed || object is Folder
 	}
 
 	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any) -> NSMenuItem {

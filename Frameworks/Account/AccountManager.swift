@@ -207,7 +207,7 @@ public final class AccountManager: UnreadCountProvider {
 	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
 		for account in activeAccounts {
-			if account.hasAtLeastOneFeed() {
+			if account.hasAtLeastOneWebFeed() {
 				return true
 			}
 		}
@@ -217,7 +217,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		for account in activeAccounts {
-			if let _ = account.existingFeed(withURL: urlString) {
+			if let _ = account.existingWebFeed(withURL: urlString) {
 				return true
 			}
 		}

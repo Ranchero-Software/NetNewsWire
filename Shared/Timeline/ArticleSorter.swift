@@ -13,7 +13,7 @@ protocol SortableArticle {
 	var sortableName: String { get }
 	var sortableDate: Date { get }
 	var sortableArticleID: String { get }
-	var sortableFeedID: String { get }
+	var sortableWebFeedID: String { get }
 }
 
 struct ArticleSorter {
@@ -34,7 +34,7 @@ struct ArticleSorter {
 															 sortByDateDirection: ComparisonResult) -> [T] {
 		// Group articles by "feed-feedID" - feed ID is used to differentiate between
 		// two feeds that have the same name
-		let groupedArticles = Dictionary(grouping: articles) { "\($0.sortableName.lowercased())-\($0.sortableFeedID)" }
+		let groupedArticles = Dictionary(grouping: articles) { "\($0.sortableName.lowercased())-\($0.sortableWebFeedID)" }
 		return groupedArticles
 			.sorted { $0.key < $1.key }
 			.flatMap { (tuple) -> [T] in

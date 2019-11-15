@@ -41,7 +41,7 @@ final class FaviconDownloader {
 	}
 
 	private let queue: DispatchQueue
-	private var cache = [Feed: IconImage]() // faviconURL: RSImage
+	private var cache = [WebFeed: IconImage]() // faviconURL: RSImage
 
 	struct UserInfoKey {
 		static let faviconURL = "faviconURL"
@@ -64,21 +64,21 @@ final class FaviconDownloader {
 	// MARK: - API
 
 	func resetCache() {
-		cache = [Feed: IconImage]()
+		cache = [WebFeed: IconImage]()
 	}
 	
-	func favicon(for feed: Feed) -> IconImage? {
+	func favicon(for webFeed: WebFeed) -> IconImage? {
 
 		assert(Thread.isMainThread)
 
-		if let faviconURL = feed.faviconURL {
+		if let faviconURL = webFeed.faviconURL {
 			return favicon(with: faviconURL)
 		}
 
-		var homePageURL = feed.homePageURL
+		var homePageURL = webFeed.homePageURL
 		if homePageURL == nil {
 			// Base homePageURL off feedURL if needed. Won’t always be accurate, but is good enough.
-			if let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host {
+			if let feedURL = URL(string: webFeed.url), let scheme = feedURL.scheme, let host = feedURL.host {
 				homePageURL = scheme + "://" + host + "/"
 			}
 		}
@@ -89,16 +89,16 @@ final class FaviconDownloader {
 		return nil
 	}
 	
-	func faviconAsIcon(for feed: Feed) -> IconImage? {
+	func faviconAsIcon(for webFeed: WebFeed) -> IconImage? {
 		
-		if let image = cache[feed] {
+		if let image = cache[webFeed] {
 			return image
 		}
 		
-		if let iconImage = favicon(for: feed), let imageData = iconImage.image.dataRepresentation() {
+		if let iconImage = favicon(for: webFeed), let imageData = iconImage.image.dataRepresentation() {
 			if let scaledImage = RSImage.scaledForIcon(imageData) {
 				let scaledIconImage = IconImage(scaledImage)
-				cache[feed] = scaledIconImage
+				cache[webFeed] = scaledIconImage
 				return scaledIconImage
 			}
 		}

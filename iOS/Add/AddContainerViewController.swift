@@ -105,15 +105,15 @@ private extension AddContainerViewController {
 	
 	func switchToFeed() {
 		
-		guard !(currentViewController is AddFeedViewController) else {
+		guard !(currentViewController is AddWebFeedViewController) else {
 			return
 		}
 		
-		navigationItem.title = NSLocalizedString("Add Feed", comment: "Add Feed")
+		navigationItem.title = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
 		resetUI()
 		hideCurrentController()
 		
-		let addFeedController = UIStoryboard.add.instantiateController(ofType: AddFeedViewController.self)
+		let addFeedController = UIStoryboard.add.instantiateController(ofType: AddWebFeedViewController.self)
 		addFeedController.initialFeed = initialFeed
 		addFeedController.initialFeedName = initialFeedName
 

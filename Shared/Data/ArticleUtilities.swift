@@ -42,8 +42,8 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 
 extension Article {
 	
-	var feed: Feed? {
-		return account?.existingFeed(withFeedID: feedID)
+	var webFeed: WebFeed? {
+		return account?.existingWebFeed(withWebFeedID: webFeedID)
 	}
 	
 	var preferredLink: String? {
@@ -71,26 +71,26 @@ extension Article {
 			}
 		}
 		
-		if let authors = feed?.authors, authors.count == 1, let author = authors.first {
+		if let authors = webFeed?.authors, authors.count == 1, let author = authors.first {
 			if let image = appDelegate.authorAvatarDownloader.image(for: author) {
 				return image
 			}
 		}
 
-		guard let feed = feed else {
+		guard let webFeed = webFeed else {
 			return nil
 		}
 		
-		let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)
+		let feedIconImage = appDelegate.webFeedIconDownloader.icon(for: webFeed)
 		if feedIconImage != nil {
 			return feedIconImage
 		}
 		
-		if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
+		if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: webFeed) {
 			return faviconImage
 		}
 		
-		return FaviconGenerator.favicon(feed)
+		return FaviconGenerator.favicon(webFeed)
 	}
 }
 
@@ -99,7 +99,7 @@ extension Article {
 struct ArticlePathKey {
 	static let accountID = "accountID"
 	static let accountName = "accountName"
-	static let feedID = "feedID"
+	static let webFeedID = "webFeedID"
 	static let articleID = "articleID"
 }
 
@@ -109,7 +109,7 @@ extension Article {
 		return [
 			ArticlePathKey.accountID: accountID,
 			ArticlePathKey.accountName: account?.nameForDisplay ?? "",
-			ArticlePathKey.feedID: feedID,
+			ArticlePathKey.webFeedID: webFeedID,
 			ArticlePathKey.articleID: articleID
 		]
 	}
@@ -121,7 +121,7 @@ extension Article {
 extension Article: SortableArticle {
 	
 	var sortableName: String {
-		return feed?.name ?? ""
+		return webFeed?.name ?? ""
 	}
 	
 	var sortableDate: Date {
@@ -132,8 +132,8 @@ extension Article: SortableArticle {
 		return articleID
 	}
 	
-	var sortableFeedID: String {
-		return feedID
+	var sortableWebFeedID: String {
+		return webFeedID
 	}
 	
 }

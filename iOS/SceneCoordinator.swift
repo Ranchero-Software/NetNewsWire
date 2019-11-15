@@ -88,7 +88,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		set { AppDefaults.displayUndoAvailableTip = newValue }
 	}
 
-	private let treeControllerDelegate = FeedTreeControllerDelegate()
+	private let treeControllerDelegate = WebFeedTreeControllerDelegate()
 	private let treeController: TreeController
 	
 	var stateRestorationActivity: NSUserActivity? {
@@ -110,9 +110,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private(set) var currentFeedIndexPath: IndexPath?
 	
 	var timelineIconImage: IconImage? {
-		if let feed = timelineFetcher as? Feed {
+		if let feed = timelineFetcher as? WebFeed {
 			
-			let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)
+			let feedIconImage = appDelegate.webFeedIconDownloader.icon(for: feed)
 			if feedIconImage != nil {
 				return feedIconImage
 			}
@@ -135,7 +135,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 			timelineMiddleIndexPath = nil
 			
-			if timelineFetcher is Feed {
+			if timelineFetcher is WebFeed {
 				showFeedNames = false
 			} else {
 				showFeedNames = true
@@ -442,7 +442,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
-		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
+		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<WebFeed> else {
 			return
 		}
 		
@@ -607,7 +607,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		masterTimelineViewController?.updateArticleSelection(animated: animated)
 		
-		if article!.feed?.isArticleExtractorAlwaysOn ?? false {
+		if article!.webFeed?.isArticleExtractorAlwaysOn ?? false {
 			startArticleExtractorForCurrentLink()
 			currentArticleViewController.state = .loading
 		} else {
@@ -780,7 +780,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		markArticlesWithUndo([article], statusKey: .starred, flag: !article.status.starred)
 	}
 
-	func discloseFeed(_ feed: Feed, animated: Bool, completion: (() -> Void)? = nil) {
+	func discloseFeed(_ feed: WebFeed, animated: Bool, completion: (() -> Void)? = nil) {
 		masterFeedViewController.discloseFeed(feed, animated: animated) {
 			completion?()
 		}
@@ -806,19 +806,19 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showFeedInspector() {
-		guard let feed = timelineFetcher as? Feed else {
+		guard let feed = timelineFetcher as? WebFeed else {
 			return
 		}
 		showFeedInspector(for: feed)
 	}
 	
-	func showFeedInspector(for feed: Feed) {
+	func showFeedInspector(for feed: WebFeed) {
 		let feedInspectorNavController =
 			UIStoryboard.inspector.instantiateViewController(identifier: "FeedInspectorNavigationViewController") as! UINavigationController
-		let feedInspectorController = feedInspectorNavController.topViewController as! FeedInspectorViewController
+		let feedInspectorController = feedInspectorNavController.topViewController as! WebFeedInspectorViewController
 		feedInspectorNavController.modalPresentationStyle = .formSheet
-		feedInspectorNavController.preferredContentSize = FeedInspectorViewController.preferredContentSizeForFormSheetDisplay
-		feedInspectorController.feed = feed
+		feedInspectorNavController.preferredContentSize = WebFeedInspectorViewController.preferredContentSizeForFormSheetDisplay
+		feedInspectorController.webFeed = feed
 		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
 	
@@ -878,7 +878,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func homePageURLForFeed(_ indexPath: IndexPath) -> URL? {
 		guard let node = nodeFor(indexPath),
-			let feed = node.representedObject as? Feed,
+			let feed = node.representedObject as? WebFeed,
 			let homePageURL = feed.homePageURL,
 			let url = URL(string: homePageURL) else {
 				return nil
@@ -1460,19 +1460,19 @@ private extension SceneCoordinator {
 		return false
 	}
 	
-	func timelineFetcherContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
+	func timelineFetcherContainsAnyFeed(_ feeds: Set<WebFeed>) -> Bool {
 		
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
 		
-		if let feed = timelineFetcher as? Feed {
+		if let feed = timelineFetcher as? WebFeed {
 			for oneFeed in feeds {
-				if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
+				if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
 					return true
 				}
 			}
 		} else if let folder = timelineFetcher as? Folder {
 			for oneFeed in feeds {
-				if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
+				if folder.hasWebFeed(with: oneFeed.webFeedID) || folder.hasWebFeed(withURL: oneFeed.url) {
 					return true
 				}
 			}
@@ -1648,11 +1648,11 @@ private extension SceneCoordinator {
 				selectFeed(indexPath, animated: false)
 			}
 		
-		case .feed(let accountID, let feedID):
-			guard let accountNode = findAccountNode(accountID: accountID), let feedNode = findFeedNode(feedID: feedID, beginningAt: accountNode) else {
+		case .webFeed(let accountID, let webFeedID):
+			guard let accountNode = findAccountNode(accountID: accountID), let feedNode = findWebFeedNode(webFeedID: webFeedID, beginningAt: accountNode) else {
 				return
 			}
-			if let feed = feedNode.representedObject as? Feed {
+			if let feed = feedNode.representedObject as? WebFeed {
 				discloseFeed(feed, animated: false)
 			}
 			
@@ -1664,16 +1664,16 @@ private extension SceneCoordinator {
 			let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
-			let feedID = articlePathUserInfo[ArticlePathKey.feedID] as? String,
+			let webFeedID = articlePathUserInfo[ArticlePathKey.webFeedID] as? String,
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return
 		}
 
-		guard let accountNode = findAccountNode(accountID: accountID, accountName: accountName), let feedNode = findFeedNode(feedID: feedID, beginningAt: accountNode) else {
+		guard let accountNode = findAccountNode(accountID: accountID, accountName: accountName), let feedNode = findWebFeedNode(webFeedID: webFeedID, beginningAt: accountNode) else {
 			return
 		}
 		
-		discloseFeed(feedNode.representedObject as! Feed, animated: false) {
+		discloseFeed(feedNode.representedObject as! WebFeed, animated: false) {
 			if let article = self.articles.first(where: { $0.articleID == articleID }) {
 				self.selectArticle(article)
 			}
@@ -1699,8 +1699,8 @@ private extension SceneCoordinator {
 		return nil
 	}
 
-	func findFeedNode(feedID: String, beginningAt startingNode: Node) -> Node? {
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
+	func findWebFeedNode(webFeedID: String, beginningAt startingNode: Node) -> Node? {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? WebFeed)?.webFeedID == webFeedID }) {
 			return node
 		}
 		return nil

@@ -13,7 +13,7 @@ import RSCore
 public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCountProvider, Hashable {
 
 	public weak var account: Account?
-	public var topLevelFeeds: Set<Feed> = Set<Feed>()
+	public var topLevelWebFeeds: Set<WebFeed> = Set<WebFeed>()
 	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
 	
 	public var name: String? {
@@ -80,42 +80,42 @@ public final class Folder: DisplayNameProvider, Renamable, Container, UnreadCoun
 
 	// MARK: Container
 
-	public func flattenedFeeds() -> Set<Feed> {
+	public func flattenedWebFeeds() -> Set<WebFeed> {
 		// Since sub-folders are not supported, it’s always the top-level feeds.
-		return topLevelFeeds
+		return topLevelWebFeeds
 	}
 
 	public func objectIsChild(_ object: AnyObject) -> Bool {
 		// Folders contain Feed objects only, at least for now.
-		guard let feed = object as? Feed else {
+		guard let feed = object as? WebFeed else {
 			return false
 		}
-		return topLevelFeeds.contains(feed)
+		return topLevelWebFeeds.contains(feed)
 	}
 
-	public func addFeed(_ feed: Feed) {
-		topLevelFeeds.insert(feed)
+	public func addWebFeed(_ feed: WebFeed) {
+		topLevelWebFeeds.insert(feed)
 		postChildrenDidChangeNotification()
 	}
 	
-	public func addFeeds(_ feeds: Set<Feed>) {
+	public func addFeeds(_ feeds: Set<WebFeed>) {
 		guard !feeds.isEmpty else {
 			return
 		}
-		topLevelFeeds.formUnion(feeds)
+		topLevelWebFeeds.formUnion(feeds)
 		postChildrenDidChangeNotification()
 	}
 	
-	public func removeFeed(_ feed: Feed) {
-		topLevelFeeds.remove(feed)
+	public func removeWebFeed(_ feed: WebFeed) {
+		topLevelWebFeeds.remove(feed)
 		postChildrenDidChangeNotification()
 	}
 	
-	public func removeFeeds(_ feeds: Set<Feed>) {
+	public func removeFeeds(_ feeds: Set<WebFeed>) {
 		guard !feeds.isEmpty else {
 			return
 		}
-		topLevelFeeds.subtract(feeds)
+		topLevelWebFeeds.subtract(feeds)
 		postChildrenDidChangeNotification()
 	}
 
@@ -138,14 +138,14 @@ private extension Folder {
 
 	func updateUnreadCount() {
 		var updatedUnreadCount = 0
-		for feed in topLevelFeeds {
+		for feed in topLevelWebFeeds {
 			updatedUnreadCount += feed.unreadCount
 		}
 		unreadCount = updatedUnreadCount
 	}
 
-	func childrenContain(_ feed: Feed) -> Bool {
-		return topLevelFeeds.contains(feed)
+	func childrenContain(_ feed: WebFeed) -> Bool {
+		return topLevelWebFeeds.contains(feed)
 	}
 }
 
@@ -169,7 +169,7 @@ extension Folder: OPMLRepresentable {
 
 		var hasAtLeastOneChild = false
 
-		for feed in topLevelFeeds  {
+		for feed in topLevelWebFeeds  {
 			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
 			hasAtLeastOneChild = true
 		}

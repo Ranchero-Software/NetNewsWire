@@ -11,7 +11,7 @@ import RSTree
 import Articles
 import Account
 
-final class FeedTreeControllerDelegate: TreeControllerDelegate {
+final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 		
@@ -29,7 +29,7 @@ final class FeedTreeControllerDelegate: TreeControllerDelegate {
 	}	
 }
 
-private extension FeedTreeControllerDelegate {
+private extension WebFeedTreeControllerDelegate {
 	
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 
@@ -52,7 +52,7 @@ private extension FeedTreeControllerDelegate {
 		let container = containerNode.representedObject as! Container
 
 		var children = [AnyObject]()
-		children.append(contentsOf: Array(container.topLevelFeeds))
+		children.append(contentsOf: Array(container.topLevelWebFeeds))
 		if let folders = container.folders {
 			children.append(contentsOf: Array(folders))
 		}
@@ -78,8 +78,8 @@ private extension FeedTreeControllerDelegate {
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {
 		
-		if let feed = representedObject as? Feed {
-			return createNode(feed: feed, parent: parent)
+		if let webFeed = representedObject as? WebFeed {
+			return createNode(webFeed: webFeed, parent: parent)
 		}
 		if let folder = representedObject as? Folder {
 			return createNode(folder: folder, parent: parent)
@@ -91,9 +91,9 @@ private extension FeedTreeControllerDelegate {
 		return nil
 	}
 	
-	func createNode(feed: Feed, parent: Node) -> Node {
+	func createNode(webFeed: WebFeed, parent: Node) -> Node {
 
-		return parent.createChildNode(feed)
+		return parent.createChildNode(webFeed)
 	}
 	
 	func createNode(folder: Folder, parent: Node) -> Node {

@@ -1,5 +1,5 @@
 //
-//  FeedMetadata.swift
+//  WebFeedMetadata.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 3/12/19.
@@ -10,14 +10,14 @@ import Foundation
 import RSWeb
 import Articles
 
-protocol FeedMetadataDelegate: class {
-	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys)
+protocol WebFeedMetadataDelegate: class {
+	func valueDidChange(_ feedMetadata: WebFeedMetadata, key: WebFeedMetadata.CodingKeys)
 }
 
-final class FeedMetadata: Codable {
+final class WebFeedMetadata: Codable {
 
 	enum CodingKeys: String, CodingKey {
-		case feedID
+		case webFeedID = "feedID"
 		case homePageURL
 		case iconURL
 		case faviconURL
@@ -31,10 +31,10 @@ final class FeedMetadata: Codable {
 		case folderRelationship
 	}
 
-	var feedID: String {
+	var webFeedID: String {
 		didSet {
-			if feedID != oldValue {
-				valueDidChange(.feedID)
+			if webFeedID != oldValue {
+				valueDidChange(.webFeedID)
 			}
 		}
 	}
@@ -128,10 +128,10 @@ final class FeedMetadata: Codable {
 		}
 	}
 
-	weak var delegate: FeedMetadataDelegate?
+	weak var delegate: WebFeedMetadataDelegate?
 
-	init(feedID: String) {
-		self.feedID = feedID
+	init(webFeedID: String) {
+		self.webFeedID = webFeedID
 	}
 
 	func valueDidChange(_ key: CodingKeys) {

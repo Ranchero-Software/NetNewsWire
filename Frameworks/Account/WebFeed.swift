@@ -1,5 +1,5 @@
 //
-//  Feed.swift
+//  WebFeed.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 7/1/17.
@@ -11,17 +11,17 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Hashable {
+public final class WebFeed: DisplayNameProvider, Renamable, UnreadCountProvider, Hashable {
 
 	public weak var account: Account?
 	public let url: String
 
-	public var feedID: String {
+	public var webFeedID: String {
 		get {
-			return metadata.feedID
+			return metadata.webFeedID
 		}
 		set {
-			metadata.feedID = newValue
+			metadata.webFeedID = newValue
 		}
 	}
 
@@ -176,7 +176,7 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	public func rename(to newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let account = account else { return }
-		account.renameFeed(self, to: newName, completion: completion)
+		account.renameWebFeed(self, to: newName, completion: completion)
 	}
 
 	// MARK: - UnreadCountProvider
@@ -194,7 +194,7 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 		}
 	}
 
-	var metadata: FeedMetadata
+	var metadata: WebFeedMetadata
 
 	// MARK: - Private
 
@@ -202,7 +202,7 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 
 	// MARK: - Init
 
-	init(account: Account, url: String, metadata: FeedMetadata) {
+	init(account: Account, url: String, metadata: WebFeedMetadata) {
 		self.account = account
 		self.accountID = account.accountID
 		self.url = url
@@ -219,20 +219,20 @@ public final class Feed: DisplayNameProvider, Renamable, UnreadCountProvider, Ha
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {
-		hasher.combine(feedID)
+		hasher.combine(webFeedID)
 		hasher.combine(accountID)
 	}
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
-		return lhs.feedID == rhs.feedID && lhs.accountID == rhs.accountID
+	public class func ==(lhs: WebFeed, rhs: WebFeed) -> Bool {
+		return lhs.webFeedID == rhs.webFeedID && lhs.accountID == rhs.accountID
 	}
 }
 
 // MARK: - OPMLRepresentable
 
-extension Feed: OPMLRepresentable {
+extension WebFeed: OPMLRepresentable {
 
 	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
 		// https://github.com/brentsimmons/NetNewsWire/issues/527
@@ -260,9 +260,9 @@ extension Feed: OPMLRepresentable {
 	}
 }
 
-extension Set where Element == Feed {
+extension Set where Element == WebFeed {
 
-	func feedIDs() -> Set<String> {
-		return Set<String>(map { $0.feedID })
+	func webFeedIDs() -> Set<String> {
+		return Set<String>(map { $0.webFeedID })
 	}
 }

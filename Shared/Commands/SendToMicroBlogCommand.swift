@@ -68,10 +68,10 @@ private extension Article {
 		// Feed name, or feed name + author name (if author is specified per-article).
 		// Includes trailing space.
 
-		if let feedName = feed?.nameForDisplay, let authorName = authors?.first?.name {
+		if let feedName = webFeed?.nameForDisplay, let authorName = authors?.first?.name {
 			return feedName + ", " + authorName + ": "
 		}
-		if let feedName = feed?.nameForDisplay {
+		if let feedName = webFeed?.nameForDisplay {
 			return feedName + ": "
 		}
 		return ""

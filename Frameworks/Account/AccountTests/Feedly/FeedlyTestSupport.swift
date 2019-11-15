@@ -129,12 +129,12 @@ class FeedlyTestSupport {
 			return
 		}
 		let collectionFeeds = collection["feeds"] as! [[String: Any]]
-		let folderFeeds = folder.topLevelFeeds
+		let folderFeeds = folder.topLevelWebFeeds
 		
 		XCTAssertEqual(collectionFeeds.count, folderFeeds.count)
 		
 		let collectionFeedIds = Set(collectionFeeds.map { $0["id"] as! String })
-		let folderFeedIds = Set(folderFeeds.map { $0.feedID })
+		let folderFeedIds = Set(folderFeeds.map { $0.webFeedID })
 		let missingFeedIds = collectionFeedIds.subtracting(folderFeedIds)
 		
 		XCTAssertTrue(missingFeedIds.isEmpty, "Feeds with these ids were not found in the \"\(label)\" folder.")
@@ -205,7 +205,7 @@ class FeedlyTestSupport {
 			for item in articleItems where item.id == article.articleID {
 				XCTAssertEqual(article.uniqueID, item.id)
 				XCTAssertEqual(article.contentHTML, item.content)
-				XCTAssertEqual(article.feedID, item.feedId)
+				XCTAssertEqual(article.webFeedID, item.feedId)
 				XCTAssertEqual(article.externalURL, item.externalUrl)
 			}
 		}

@@ -29,10 +29,10 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 			return
 		}
 		
-		let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
+		let webFeedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
 		
-		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) {
-			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", feedIDsAndItems.count, self.organisedItemsProvider.providerName)
+		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) {
+			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", webFeedIDsAndItems.count, self.organisedItemsProvider.providerName)
 			self.didFinish()
 		}
 	}

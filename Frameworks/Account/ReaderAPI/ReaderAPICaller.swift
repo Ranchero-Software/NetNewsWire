@@ -594,7 +594,7 @@ final class ReaderAPICaller: NSObject {
 
 	}
 
-	func retrieveEntries(feedID: String, completion: @escaping (Result<([ReaderAPIEntry]?, String?), Error>) -> Void) {
+	func retrieveEntries(webFeedID: String, completion: @escaping (Result<([ReaderAPIEntry]?, String?), Error>) -> Void) {
 		
 		let since = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
 		
@@ -606,7 +606,7 @@ final class ReaderAPICaller: NSObject {
 		let url = baseURL
 			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
 			.appendingQueryItems([
-				URLQueryItem(name: "s", value: feedID),
+				URLQueryItem(name: "s", value: webFeedID),
 				URLQueryItem(name: "ot", value: String(since.timeIntervalSince1970)),
 				URLQueryItem(name: "output", value: "json")
 			])

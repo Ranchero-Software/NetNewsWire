@@ -17,7 +17,7 @@ struct UserInfoKey {
 	static let articles = "articles"
 	static let navigationKeyPressed = "navigationKeyPressed"
 	static let objects = "objects"
-	static let feed = "feed"
+	static let webFeed = "webFeed"
 	static let url = "url"
 	static let author = "author"
 	static let articlePath = "articlePath"

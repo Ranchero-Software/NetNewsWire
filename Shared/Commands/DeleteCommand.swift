@@ -63,7 +63,7 @@ final class DeleteCommand: UndoableCommand {
 		}
 
 		for node in nodes {
-			if let _ = node.representedObject as? Feed {
+			if let _ = node.representedObject as? WebFeed {
 				continue
 			}
 			if let _ = node.representedObject as? Folder {
@@ -84,7 +84,7 @@ private struct SidebarItemSpecifier {
 	private weak var account: Account?
 	private let parentFolder: Folder?
 	private let folder: Folder?
-	private let feed: Feed?
+	private let webFeed: WebFeed?
 	private let path: ContainerPath
 	private let errorHandler: (Error) -> ()
 
@@ -104,13 +104,13 @@ private struct SidebarItemSpecifier {
 
 		self.parentFolder = node.parentFolder()
 
-		if let feed = node.representedObject as? Feed {
-			self.feed = feed
+		if let webFeed = node.representedObject as? WebFeed {
+			self.webFeed = webFeed
 			self.folder = nil
-			account = feed.account
+			account = webFeed.account
 		}
 		else if let folder = node.representedObject as? Folder {
-			self.feed = nil
+			self.webFeed = nil
 			self.folder = folder
 			account = folder.account
 		}
@@ -130,7 +130,7 @@ private struct SidebarItemSpecifier {
 
 	func delete(completion: @escaping () -> Void) {
 
-		if let feed = feed {
+		if let webFeed = webFeed {
 			
 			guard let container = path.resolveContainer() else {
 				completion()
@@ -138,7 +138,7 @@ private struct SidebarItemSpecifier {
 			}
 			
 			BatchUpdate.shared.start()
-			account?.removeFeed(feed, from: container) { result in
+			account?.removeWebFeed(webFeed, from: container) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
@@ -158,22 +158,22 @@ private struct SidebarItemSpecifier {
 
 	func restore() {
 
-		if let _ = feed {
-			restoreFeed()
+		if let _ = webFeed {
+			restoreWebFeed()
 		}
 		else if let _ = folder {
 			restoreFolder()
 		}
 	}
 
-	private func restoreFeed() {
+	private func restoreWebFeed() {
 
-		guard let account = account, let feed = feed, let container = path.resolveContainer() else {
+		guard let account = account, let feed = webFeed, let container = path.resolveContainer() else {
 			return
 		}
 		
 		BatchUpdate.shared.start()
-		account.restoreFeed(feed, container: container) { result in
+		account.restoreWebFeed(feed, container: container) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
@@ -257,7 +257,7 @@ private struct DeleteActionName {
 		var numberOfFolders = 0
 
 		for node in nodes {
-			if let _ = node.representedObject as? Feed {
+			if let _ = node.representedObject as? WebFeed {
 				numberOfFeeds += 1
 			}
 			else if let _ = node.representedObject as? Folder {

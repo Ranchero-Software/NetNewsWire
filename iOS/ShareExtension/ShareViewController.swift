@@ -108,14 +108,14 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			account = containerAccount
 		}
 		
-		if let urlString = url?.absoluteString, account!.hasFeed(withURL: urlString) {
+		if let urlString = url?.absoluteString, account!.hasWebFeed(withURL: urlString) {
 			presentError(AccountError.createErrorAlreadySubscribed)
  			return
 		}
 		
 		let feedName = contentText.isEmpty ? nil : contentText
 		
-		account!.createFeed(url: url!.absoluteString, name: feedName, container: container!) { result in
+		account!.createWebFeed(url: url!.absoluteString, name: feedName, container: container!) { result in
 
 			switch result {
 			case .success:

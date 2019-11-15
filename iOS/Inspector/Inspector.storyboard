@@ -160,10 +160,10 @@
             </objects>
             <point key="canvasLocation" x="863.768115942029" y="-591.29464285714278"/>
         </scene>
-        <!--Feed Inspector View Controller-->
+        <!--Web Feed Inspector View Controller-->
         <scene sceneID="jnI-2I-AcU">
             <objects>
-                <tableViewController storyboardIdentifier="FeedInspectorViewControllelr" id="lEH-bG-pQW" customClass="FeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="FeedInspectorViewControllelr" id="lEH-bG-pQW" customClass="WebFeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="26V-ZC-Q2R">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

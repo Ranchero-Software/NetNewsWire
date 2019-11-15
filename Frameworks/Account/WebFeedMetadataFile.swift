@@ -1,5 +1,5 @@
 //
-//  FeedMetadataFile.swift
+//  WebFeedMetadataFile.swift
 //  Account
 //
 //  Created by Maurice Parker on 9/13/19.
@@ -10,9 +10,9 @@ import Foundation
 import os.log
 import RSCore
 
-final class FeedMetadataFile {
+final class WebFeedMetadataFile {
 	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "feedMetadataFile")
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "webFeedMetadataFile")
 
 	private let fileURL: URL
 	private let account: Account
@@ -37,7 +37,7 @@ final class FeedMetadataFile {
 	
 }
 
-private extension FeedMetadataFile {
+private extension WebFeedMetadataFile {
 
 	func loadCallback() {
 
@@ -47,11 +47,11 @@ private extension FeedMetadataFile {
 		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
 			if let fileData = try? Data(contentsOf: readURL) {
 				let decoder = PropertyListDecoder()
-				account.feedMetadata = (try? decoder.decode(Account.FeedMetadataDictionary.self, from: fileData)) ?? Account.FeedMetadataDictionary()
+				account.webFeedMetadata = (try? decoder.decode(Account.WebFeedMetadataDictionary.self, from: fileData)) ?? Account.WebFeedMetadataDictionary()
 			}
-			account.feedMetadata.values.forEach { $0.delegate = account }
+			account.webFeedMetadata.values.forEach { $0.delegate = account }
 			if !account.startingUp {
-				account.resetFeedMetadataAndUnreadCounts()
+				account.resetWebFeedMetadataAndUnreadCounts()
 			}
 		})
 		
@@ -87,10 +87,10 @@ private extension FeedMetadataFile {
 		}
 	}
 	
-	private func metadataForOnlySubscribedToFeeds() -> Account.FeedMetadataDictionary {
-		let feedIDs = account.idToFeedDictionary.keys
-		return account.feedMetadata.filter { (feedID: String, metadata: FeedMetadata) -> Bool in
-			return feedIDs.contains(metadata.feedID)
+	private func metadataForOnlySubscribedToFeeds() -> Account.WebFeedMetadataDictionary {
+		let webFeedIDs = account.idToWebFeedDictionary.keys
+		return account.webFeedMetadata.filter { (feedID: String, metadata: WebFeedMetadata) -> Bool in
+			return webFeedIDs.contains(metadata.webFeedID)
 		}
 	}
 

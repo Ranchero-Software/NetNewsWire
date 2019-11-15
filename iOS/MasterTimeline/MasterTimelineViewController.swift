@@ -42,7 +42,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
@@ -316,16 +316,16 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 	}
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
 		titleView?.iconView.iconImage = coordinator.timelineIconImage
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
 		tableView.indexPathsForVisibleRows?.forEach { indexPath in
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
-			if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
+			if article.webFeed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
 				cell.setIconImage(image)
 			}
 		}
@@ -402,7 +402,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
+		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 		
 		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
@@ -464,7 +464,7 @@ private extension MasterTimelineViewController {
 			titleView.label.text = coordinator.timelineName
 			updateTitleUnreadCount()
 
-			if coordinator.timelineFetcher is Feed {
+			if coordinator.timelineFetcher is WebFeed {
 				titleView.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
 				let tap = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 				titleView.addGestureRecognizer(tap)
@@ -525,7 +525,7 @@ private extension MasterTimelineViewController {
 		
 		let showFeedNames = coordinator.showFeedNames
 		let showIcon = coordinator.showIcons && iconImage != nil
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 	}
 	
@@ -590,36 +590,36 @@ private extension MasterTimelineViewController {
 	}
 	
 	func discloseFeedAction(_ article: Article) -> UIAction? {
-		guard let feed = article.feed else { return nil }
+		guard let webFeed = article.webFeed else { return nil }
 		
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
-			self?.coordinator.discloseFeed(feed, animated: true)
+			self?.coordinator.discloseFeed(webFeed, animated: true)
 		}
 		return action
 	}
 	
 	func discloseFeedAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = article.feed else { return nil }
+		guard let webFeed = article.webFeed else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.discloseFeed(feed, animated: true)
+			self?.coordinator.discloseFeed(webFeed, animated: true)
 			completionHandler(true)
 		}
 		return action
 	}
 	
 	func markAllInFeedAsReadAction(_ article: Article) -> UIAction? {
-		guard let feed = article.feed else { return nil }
+		guard let webFeed = article.webFeed else { return nil }
 
-		let articles = Array(feed.fetchArticles())
+		let articles = Array(webFeed.fetchArticles())
 		guard articles.canMarkAllAsRead() else {
 			return nil
 		}
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
 		
 		let action = UIAction(title: title, image: AppAssets.markAllInFeedAsReadImage) { [weak self] action in
 			self?.coordinator.markAllAsRead(articles)
@@ -628,15 +628,15 @@ private extension MasterTimelineViewController {
 	}
 
 	func markAllInFeedAsReadAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = article.feed else { return nil }
+		guard let webFeed = article.webFeed else { return nil }
 
-		let articles = Array(feed.fetchArticles())
+		let articles = Array(webFeed.fetchArticles())
 		guard articles.canMarkAllAsRead() else {
 			return nil
 		}
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Mark All as Read in Feed")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
 		
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.markAllAsRead(articles)

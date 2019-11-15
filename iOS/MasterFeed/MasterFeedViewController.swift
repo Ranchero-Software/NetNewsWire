@@ -53,9 +53,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedMetadataDidChange(_:)), name: .FeedMetadataDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedMetadataDidChange(_:)), name: .WebFeedMetadataDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -117,31 +117,31 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		applyToAvailableCells(configureIcon)
 	}
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
-		applyToCellsForRepresentedObject(feed, configureIcon(_:_:))
+		applyToCellsForRepresentedObject(webFeed, configureIcon(_:_:))
 	}
 
-	@objc func feedSettingDidChange(_ note: Notification) {
-		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
+	@objc func webFeedSettingDidChange(_ note: Notification) {
+		guard let webFeed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
-			configureCellsForRepresentedObject(feed)
+		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
+			configureCellsForRepresentedObject(webFeed)
 		}
 	}
 	
-	@objc func feedMetadataDidChange(_ note: Notification) {
+	@objc func webFeedMetadataDidChange(_ note: Notification) {
 		reloadAllVisibleCells()
 	}
 	
 	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
+		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
-		discloseFeed(feed, animated: true)
+		discloseFeed(webFeed, animated: true)
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -237,13 +237,13 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		renameAction.backgroundColor = UIColor.systemOrange
 		actions.append(renameAction)
 		
-		if let feed = dataSource.itemIdentifier(for: indexPath)?.representedObject as? Feed {
+		if let webFeed = dataSource.itemIdentifier(for: indexPath)?.representedObject as? WebFeed {
 			let moreTitle = NSLocalizedString("More", comment: "More")
 			let moreAction = UIContextualAction(style: .normal, title: moreTitle) { [weak self] (action, view, completionHandler) in
 				
 				if let self = self {
 				
-					let alert = UIAlertController(title: feed.nameForDisplay, message: nil, preferredStyle: .actionSheet)
+					let alert = UIAlertController(title: webFeed.nameForDisplay, message: nil, preferredStyle: .actionSheet)
 					if let popoverController = alert.popoverPresentationController {
 						popoverController.sourceView = view
 						popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
@@ -288,7 +288,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		guard let node = dataSource.itemIdentifier(for: indexPath), !(node.representedObject is PseudoFeed) else {
 			return nil
 		}
-		if node.representedObject is Feed {
+		if node.representedObject is WebFeed {
 			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
 		} else {
 			return makeFolderContextMenu(indexPath: indexPath)
@@ -508,7 +508,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
-	func discloseFeed(_ feed: Feed, animated: Bool, completion: (() -> Void)? = nil) {
+	func discloseFeed(_ feed: WebFeed, animated: Bool, completion: (() -> Void)? = nil) {
 		
 		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
 			completion?()
@@ -674,14 +674,14 @@ private extension MasterFeedViewController {
 	}
 
 	func imageFor(_ node: Node) -> IconImage? {
-		if let feed = node.representedObject as? Feed {
+		if let webFeed = node.representedObject as? WebFeed {
 			
-			let feedIconImage = appDelegate.feedIconDownloader.icon(for: feed)
+			let feedIconImage = appDelegate.webFeedIconDownloader.icon(for: webFeed)
 			if feedIconImage != nil {
 				return feedIconImage
 			}
 			
-			if let faviconImage = appDelegate.faviconDownloader.favicon(for: feed) {
+			if let faviconImage = appDelegate.faviconDownloader.favicon(for: webFeed) {
 				return faviconImage
 			}
 			
@@ -742,7 +742,7 @@ private extension MasterFeedViewController {
 		if let folder = node.representedObject as? Folder {
 			return folder.account
 		}
-		if let feed = node.representedObject as? Feed {
+		if let feed = node.representedObject as? WebFeed {
 			return feed.account
 		}
 		return nil
@@ -843,7 +843,7 @@ private extension MasterFeedViewController {
 	
 	func copyFeedPageAction(indexPath: IndexPath) -> UIAction? {
 		guard let node = dataSource.itemIdentifier(for: indexPath),
-			let feed = node.representedObject as? Feed,
+			let feed = node.representedObject as? WebFeed,
 			let url = URL(string: feed.url) else {
 				return nil
 		}
@@ -857,7 +857,7 @@ private extension MasterFeedViewController {
 	
 	func copyFeedPageAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let node = dataSource.itemIdentifier(for: indexPath),
-			let feed = node.representedObject as? Feed,
+			let feed = node.representedObject as? WebFeed,
 			let url = URL(string: feed.url) else {
 				return nil
 		}
@@ -872,7 +872,7 @@ private extension MasterFeedViewController {
 	
 	func copyHomePageAction(indexPath: IndexPath) -> UIAction? {
 		guard let node = dataSource.itemIdentifier(for: indexPath),
-			let feed = node.representedObject as? Feed,
+			let feed = node.representedObject as? WebFeed,
 			let homePageURL = feed.homePageURL,
 			let url = URL(string: homePageURL) else {
 				return nil
@@ -887,7 +887,7 @@ private extension MasterFeedViewController {
 	
 	func copyHomePageAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let node = dataSource.itemIdentifier(for: indexPath),
-			let feed = node.representedObject as? Feed,
+			let feed = node.representedObject as? WebFeed,
 			let homePageURL = feed.homePageURL,
 			let url = URL(string: homePageURL) else {
 				return nil
@@ -919,7 +919,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func getInfoAction(indexPath: IndexPath) -> UIAction? {
-		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? Feed else {
+		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? WebFeed else {
 			return nil
 		}
 		
@@ -947,7 +947,7 @@ private extension MasterFeedViewController {
 	}
 
 	func getInfoAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? Feed else {
+		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? WebFeed else {
 			return nil
 		}
 
@@ -979,7 +979,7 @@ private extension MasterFeedViewController {
 					return
 			}
 			
-			if let feed = node.representedObject as? Feed {
+			if let feed = node.representedObject as? WebFeed {
 				feed.rename(to: name) { result in
 					switch result {
 					case .success:
@@ -1023,7 +1023,7 @@ private extension MasterFeedViewController {
 
 		if let folder = deleteNode.representedObject as? Folder {
 			ActivityManager.cleanUp(folder)
-		} else if let feed = deleteNode.representedObject as? Feed {
+		} else if let feed = deleteNode.representedObject as? WebFeed {
 			ActivityManager.cleanUp(feed)
 		}
 		

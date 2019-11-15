@@ -14,11 +14,11 @@ import Articles
 @objc(ScriptableFeed)
 class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
-    let feed:Feed
+    let webFeed:WebFeed
     let container:ScriptingObjectContainer
     
-    init (_ feed:Feed, container:ScriptingObjectContainer) {
-        self.feed = feed
+    init (_ feed:WebFeed, container:ScriptingObjectContainer) {
+        self.webFeed = feed
         self.container = container
     }
 
@@ -45,7 +45,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
     var scriptingUniqueId:Any {
-        return feed.feedID
+        return webFeed.webFeedID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
@@ -71,7 +71,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         return url
     }
     
-    class func scriptableFeed(_ feed:Feed, account:Account, folder:Folder?) -> ScriptableFeed  {
+    class func scriptableFeed(_ feed:WebFeed, account:Account, folder:Folder?) -> ScriptableFeed  {
         let scriptableAccount = ScriptableAccount(account)
         if let folder = folder {
             let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
@@ -88,7 +88,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         let (account, folder) = command.accountAndFolderForNewChild()
         guard let url = self.urlForNewFeed(arguments:arguments) else {return nil}
         
-        if let existingFeed = account.existingFeed(withURL:url) {
+        if let existingFeed = account.existingWebFeed(withURL:url) {
             return scriptableFeed(existingFeed, account:account, folder:folder).objectSpecifier
         }
 		
@@ -102,10 +102,10 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         // suspendExecution(). When we get the callback, we supply the event result and call resumeExecution().
         command.suspendExecution()
         
-		account.createFeed(url: url, name: titleFromArgs, container: container) { result in
+		account.createWebFeed(url: url, name: titleFromArgs, container: container) { result in
 			switch result {
 			case .success(let feed):
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
 				let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
 				command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
 			case .failure:
@@ -121,51 +121,51 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
 
     @objc(url)
     var url:String  {
-        return self.feed.url
+        return self.webFeed.url
     }
     
     @objc(name)
     var name:String  {
-        return self.feed.name ?? ""
+        return self.webFeed.name ?? ""
     }
 
     @objc(homePageURL)
     var homePageURL:String  {
-        return self.feed.homePageURL ?? ""
+        return self.webFeed.homePageURL ?? ""
     }
 
     @objc(iconURL)
     var iconURL:String  {
-        return self.feed.iconURL ?? ""
+        return self.webFeed.iconURL ?? ""
     }
 
     @objc(faviconURL)
     var faviconURL:String  {
-        return self.feed.faviconURL ?? ""
+        return self.webFeed.faviconURL ?? ""
     }
 
     @objc(opmlRepresentation)
     var opmlRepresentation:String  {
-        return self.feed.OPMLString(indentLevel:0, strictConformance: true)
+        return self.webFeed.OPMLString(indentLevel:0, strictConformance: true)
     }
     
     // MARK: --- scriptable elements ---
 
     @objc(authors)
     var authors:NSArray {
-        let feedAuthors = feed.authors ?? []
+        let feedAuthors = webFeed.authors ?? []
         return feedAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
     }
      
     @objc(valueInAuthorsWithUniqueID:)
     func valueInAuthors(withUniqueID id:String) -> ScriptableAuthor? {
-        guard let author = feed.authors?.first(where:{$0.authorID == id}) else { return nil }
+        guard let author = webFeed.authors?.first(where:{$0.authorID == id}) else { return nil }
         return ScriptableAuthor(author, container:self)
     }
     
     @objc(articles)
     var articles:NSArray {
-        let feedArticles = feed.fetchArticles()
+        let feedArticles = webFeed.fetchArticles()
         // the articles are a set, use the sorting algorithm from the viewer
         let sortedArticles = feedArticles.sorted(by:{
             return $0.logicalDatePublished > $1.logicalDatePublished
@@ -175,7 +175,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
     
     @objc(valueInArticlesWithUniqueID:)
     func valueInArticles(withUniqueID id:String) -> ScriptableArticle? {
-        let articles = feed.fetchArticles()
+        let articles = webFeed.fetchArticles()
         guard let article = articles.first(where:{$0.uniqueID == id}) else { return nil }
         return ScriptableArticle(article, container:self)
     }

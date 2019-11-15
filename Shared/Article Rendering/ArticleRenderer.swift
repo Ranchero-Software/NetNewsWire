@@ -144,9 +144,9 @@ private extension ArticleRenderer {
 		d["avatars"] = "<td class=\"header rightAlign avatar\"><img src=\"\(ArticleRenderer.imageIconScheme)://\" height=48 width=48 /></td>";
 
 		var feedLink = ""
-		if let feedTitle = article.feed?.nameForDisplay {
+		if let feedTitle = article.webFeed?.nameForDisplay {
 			feedLink = feedTitle
-			if let feedURL = article.feed?.homePageURL {
+			if let feedURL = article.webFeed?.homePageURL {
 				feedLink = feedLink.htmlByAddingLink(feedURL, className: "feedLink")
 			}
 		}
@@ -184,7 +184,7 @@ private extension ArticleRenderer {
 	}
 
 	func byline() -> String {
-		guard let authors = article?.authors ?? article?.feed?.authors, !authors.isEmpty else {
+		guard let authors = article?.authors ?? article?.webFeed?.authors, !authors.isEmpty else {
 			return ""
 		}
 
@@ -192,7 +192,7 @@ private extension ArticleRenderer {
 		// This code assumes that multiple authors would never match the feed name so that
 		// if there feed owner has an article co-author all authors are given the byline.
 		if authors.count == 1, let author = authors.first {
-			if author.name == article?.feed?.nameForDisplay {
+			if author.name == article?.webFeed?.nameForDisplay {
 				return ""
 			}
 		}
@@ -256,10 +256,10 @@ private extension Article {
 	var baseURL: URL? {
 		var s = url
 		if s == nil {
-			s = feed?.homePageURL
+			s = webFeed?.homePageURL
 		}
 		if s == nil {
-			s = feed?.url
+			s = webFeed?.url
 		}
 
 		guard let urlString = s else {

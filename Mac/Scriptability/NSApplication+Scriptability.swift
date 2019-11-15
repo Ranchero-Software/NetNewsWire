@@ -30,7 +30,7 @@ extension NSApplication : ScriptingObjectContainer {
     func currentArticle() -> ScriptableArticle? {
         var scriptableArticle: ScriptableArticle?
         if let currentArticle = appDelegate.scriptingCurrentArticle {
-            if let feed = currentArticle.feed {
+            if let feed = currentArticle.webFeed {
                 let scriptableFeed = ScriptableFeed(feed, container:self)
                 scriptableArticle = ScriptableArticle(currentArticle, container:scriptableFeed)
             }
@@ -42,7 +42,7 @@ extension NSApplication : ScriptingObjectContainer {
     func selectedArticles() -> NSArray {
         let articles = appDelegate.scriptingSelectedArticles
         let scriptableArticles:[ScriptableArticle] = articles.compactMap { article in
-            if let feed = article.feed  {
+            if let feed = article.webFeed  {
                 let scriptableFeed = ScriptableFeed(feed, container:self)
                 return ScriptableArticle(article, container:scriptableFeed)
             } else {
@@ -73,11 +73,11 @@ extension NSApplication : ScriptingObjectContainer {
         for  'articles of feed "The Shape of Everything" of account "On My Mac"'
     */  
       
-    func allFeeds() -> [Feed] {
+    func allFeeds() -> [WebFeed] {
         let accounts = AccountManager.shared.activeAccounts
-        let emptyFeeds:[Feed] = []
-        return accounts.reduce(emptyFeeds) { (result, nthAccount) -> [Feed] in
-              let accountFeeds = Array(nthAccount.topLevelFeeds)
+        let emptyFeeds:[WebFeed] = []
+        return accounts.reduce(emptyFeeds) { (result, nthAccount) -> [WebFeed] in
+              let accountFeeds = Array(nthAccount.topLevelWebFeeds)
               return result + accountFeeds
         }
     }
@@ -91,7 +91,7 @@ extension NSApplication : ScriptingObjectContainer {
     @objc(valueInFeedsWithUniqueID:)
     func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
         let feeds = self.allFeeds()
-        guard let feed = feeds.first(where:{$0.feedID == id}) else { return nil }
+        guard let feed = feeds.first(where:{$0.webFeedID == id}) else { return nil }
         return ScriptableFeed(feed, container:self)
     }
 }

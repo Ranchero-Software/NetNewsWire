@@ -33,7 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
-	var feedIconDownloader: FeedIconDownloader!
+	var webFeedIconDownloader: WebFeedIconDownloader!
 	var appName: String!
 	
 	var refreshTimer: AccountRefreshTimer?
@@ -186,7 +186,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		imageDownloader = ImageDownloader(folder: imagesFolder)
 
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
-		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
+		webFeedIconDownloader = WebFeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
 
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
@@ -195,7 +195,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			mainWindowController?.window?.center()
 		}
 
-		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
 		DispatchQueue.main.async {
@@ -299,12 +299,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 
-	@objc func feedSettingDidChange(_ note: Notification) {
+	@objc func webFeedSettingDidChange(_ note: Notification) {
 
-		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
+		guard let feed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
+		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
 			let _ = faviconDownloader.favicon(for: feed)
 		}
 	}

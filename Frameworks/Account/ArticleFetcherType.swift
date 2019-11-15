@@ -12,7 +12,7 @@ public enum ArticleFetcherType: CustomStringConvertible {
 	
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
-	case feed(String, String) // accountID, feedID
+	case webFeed(String, String) // accountID, webFeedID
 	case folder(String, String) // accountID, folderName
 	
 	public var description: String {
@@ -21,8 +21,8 @@ public enum ArticleFetcherType: CustomStringConvertible {
 			return "smartFeed: \(id)"
 		case .script(let id):
 			return "script: \(id)"
-		case .feed(let accountID, let feedID):
-			return "feed: \(accountID)_\(feedID)"
+		case .webFeed(let accountID, let webFeedID):
+			return "feed: \(accountID)_\(webFeedID)"
 		case .folder(let accountID, let folderName):
 			return "folder: \(accountID)_\(folderName)"
 		}
@@ -40,11 +40,11 @@ public enum ArticleFetcherType: CustomStringConvertible {
 				"type": "script",
 				"id": id
 			]
-		case .feed(let accountID, let feedID):
+		case .webFeed(let accountID, let webFeedID):
 			return [
 				"type": "feed",
 				"accountID": accountID,
-				"feedID": feedID
+				"webFeedID": webFeedID
 			]
 		case .folder(let accountID, let folderName):
 			return [
@@ -66,8 +66,8 @@ public enum ArticleFetcherType: CustomStringConvertible {
 			guard let id = userInfo["id"] as? String else { return nil }
 			self = ArticleFetcherType.script(id)
 		case "feed":
-			guard let accountID = userInfo["accountID"] as? String, let feedID = userInfo["feedID"] as? String else { return nil }
-			self = ArticleFetcherType.feed(accountID, feedID)
+			guard let accountID = userInfo["accountID"] as? String, let webFeedID = userInfo["webFeedID"] as? String else { return nil }
+			self = ArticleFetcherType.webFeed(accountID, webFeedID)
 		case "folder":
 			guard let accountID = userInfo["accountID"] as? String, let folderName = userInfo["folderName"] as? String else { return nil }
 			self = ArticleFetcherType.folder(accountID, folderName)

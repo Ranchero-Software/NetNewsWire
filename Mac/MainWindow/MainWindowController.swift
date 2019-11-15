@@ -172,7 +172,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			}
 		}
 		
-		if let feed = currentFeedOrFolder as? Feed, let noteObject = noteObject as? Feed {
+		if let feed = currentFeedOrFolder as? WebFeed, let noteObject = noteObject as? WebFeed {
 			if feed == noteObject {
 				updateWindowTitle()
 				return
@@ -482,7 +482,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		if let articles = articles {
 			if articles.count == 1 {
 				activityManager.reading(fetcher: nil, article: articles.first)
-				if articles.first?.feed?.isArticleExtractorAlwaysOn ?? false {
+				if articles.first?.webFeed?.isArticleExtractorAlwaysOn ?? false {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()
 				} else {

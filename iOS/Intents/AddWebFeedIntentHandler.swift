@@ -1,5 +1,5 @@
 //
-//  AddFeedIntentHandler.swift
+//  AddWebFeedIntentHandler.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 10/18/19.
@@ -9,7 +9,7 @@
 import Intents
 import Account
 
-public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
+public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 
 	override init() {
 		super.init()
@@ -18,7 +18,7 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 		}
 	}
 	
-	public func resolveUrl(for intent: AddFeedIntent, with completion: @escaping (AddFeedUrlResolutionResult) -> Void) {
+	public func resolveUrl(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedUrlResolutionResult) -> Void) {
 		guard let url = intent.url else {
 			completion(.unsupported(forReason: .required))
 			return
@@ -26,16 +26,16 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 		completion(.success(with: url))
 	}
 	
-	public func provideAccountNameOptions(for intent: AddFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
+	public func provideAccountNameOptions(for intent: AddWebFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
 		DispatchQueue.main.async {
 			let accountNames = AccountManager.shared.activeAccounts.compactMap { $0.nameForDisplay }
 			completion(accountNames, nil)
 		}
 	}
 	
-	public func resolveAccountName(for intent: AddFeedIntent, with completion: @escaping (AddFeedAccountNameResolutionResult) -> Void) {
+	public func resolveAccountName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedAccountNameResolutionResult) -> Void) {
 		guard let accountName = intent.accountName else {
-			completion(AddFeedAccountNameResolutionResult.notRequired())
+			completion(AddWebFeedAccountNameResolutionResult.notRequired())
 			return
 		}
 		DispatchQueue.main.async {
@@ -47,7 +47,7 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 		}
 	}
 	
-	public func provideFolderNameOptions(for intent: AddFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
+	public func provideFolderNameOptions(for intent: AddWebFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
 		DispatchQueue.main.async {
 			guard let accountName = intent.accountName, let account = AccountManager.shared.findActiveAccount(forDisplayName: accountName) else {
 				completion([String](), nil)
@@ -59,9 +59,9 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 		}
 	}
 	
-	public func resolveFolderName(for intent: AddFeedIntent, with completion: @escaping (AddFeedFolderNameResolutionResult) -> Void) {
+	public func resolveFolderName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedFolderNameResolutionResult) -> Void) {
 		guard let accountName = intent.accountName, let folderName = intent.folderName else {
-			completion(AddFeedFolderNameResolutionResult.notRequired())
+			completion(AddWebFeedFolderNameResolutionResult.notRequired())
 			return
 		}
 		
@@ -79,9 +79,9 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 		}
 	}
 	
-	public func handle(intent: AddFeedIntent, completion: @escaping (AddFeedIntentResponse) -> Void) {
+	public func handle(intent: AddWebFeedIntent, completion: @escaping (AddWebFeedIntentResponse) -> Void) {
 		guard let url = intent.url else {
-			completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
+			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
 			return
 		}
 		
@@ -96,7 +96,7 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 			}()
 			
 			guard let validAccount = account else {
-				completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
+				completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
 				return
 			}
 			
@@ -109,22 +109,22 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 			}()
 			
 			guard let validContainer = container else {
-				completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
+				completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
 				return
 			}
 
-			validAccount.createFeed(url: url.absoluteString, name: nil, container: validContainer) { result in
+			validAccount.createWebFeed(url: url.absoluteString, name: nil, container: validContainer) { result in
 				switch result {
 				case .success:
-					completion(AddFeedIntentResponse(code: .success, userActivity: nil))
+					completion(AddWebFeedIntentResponse(code: .success, userActivity: nil))
 				case .failure(let error):
 					switch error {
 					case AccountError.createErrorNotFound:
-						completion(AddFeedIntentResponse(code: .feedNotFound, userActivity: nil))
+						completion(AddWebFeedIntentResponse(code: .feedNotFound, userActivity: nil))
 					case AccountError.createErrorAlreadySubscribed:
-						completion(AddFeedIntentResponse(code: .alreadySubscribed, userActivity: nil))
+						completion(AddWebFeedIntentResponse(code: .alreadySubscribed, userActivity: nil))
 					default:
-						completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
+						completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
 					}
 				}
 			}

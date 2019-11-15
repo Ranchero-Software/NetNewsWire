@@ -19,25 +19,25 @@ extension Notification.Name {
 public protocol Container: class {
 
 	var account: Account? { get }
-	var topLevelFeeds: Set<Feed> { get set }
+	var topLevelWebFeeds: Set<WebFeed> { get set }
 	var folders: Set<Folder>? { get set }
 
-	func hasAtLeastOneFeed() -> Bool
+	func hasAtLeastOneWebFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
 
 	func hasChildFolder(with: String) -> Bool
 	func childFolder(with: String) -> Folder?
 
-    func removeFeed(_ feed: Feed)
-	func addFeed(_ feed: Feed)
+    func removeWebFeed(_ webFeed: WebFeed)
+	func addWebFeed(_ webFeed: WebFeed)
 
 	//Recursive — checks subfolders
-	func flattenedFeeds() -> Set<Feed>
-	func has(_ feed: Feed) -> Bool
-	func hasFeed(with feedID: String) -> Bool
-	func hasFeed(withURL url: String) -> Bool
-	func existingFeed(withFeedID: String) -> Feed?
-	func existingFeed(withURL url: String) -> Feed?
+	func flattenedWebFeeds() -> Set<WebFeed>
+	func has(_ webFeed: WebFeed) -> Bool
+	func hasWebFeed(with webFeedID: String) -> Bool
+	func hasWebFeed(withURL url: String) -> Bool
+	func existingWebFeed(withWebFeedID: String) -> WebFeed?
+	func existingWebFeed(withURL url: String) -> WebFeed?
 	func existingFolder(with name: String) -> Folder?
 	func existingFolder(withID: Int) -> Folder?
 
@@ -46,8 +46,8 @@ public protocol Container: class {
 
 public extension Container {
 
-	func hasAtLeastOneFeed() -> Bool {
-		return topLevelFeeds.count > 0
+	func hasAtLeastOneWebFeed() -> Bool {
+		return topLevelWebFeeds.count > 0
 	}
 
 	func hasChildFolder(with name: String) -> Bool {
@@ -67,8 +67,8 @@ public extension Container {
 	}
 
 	func objectIsChild(_ object: AnyObject) -> Bool {
-		if let feed = object as? Feed {
-			return topLevelFeeds.contains(feed)
+		if let feed = object as? WebFeed {
+			return topLevelWebFeeds.contains(feed)
 		}
 		if let folder = object as? Folder {
 			return folders?.contains(folder) ?? false
@@ -76,40 +76,40 @@ public extension Container {
 		return false
 	}
 
-	func flattenedFeeds() -> Set<Feed> {
-		var feeds = Set<Feed>()
-		feeds.formUnion(topLevelFeeds)
+	func flattenedWebFeeds() -> Set<WebFeed> {
+		var feeds = Set<WebFeed>()
+		feeds.formUnion(topLevelWebFeeds)
 		if let folders = folders {
 			for folder in folders {
-				feeds.formUnion(folder.flattenedFeeds())
+				feeds.formUnion(folder.flattenedWebFeeds())
 			}
 		}
 		return feeds
 	}
 
-	func hasFeed(with feedID: String) -> Bool {
-		return existingFeed(withFeedID: feedID) != nil
+	func hasWebFeed(with webFeedID: String) -> Bool {
+		return existingWebFeed(withWebFeedID: webFeedID) != nil
 	}
 
-	func hasFeed(withURL url: String) -> Bool {
-		return existingFeed(withURL: url) != nil
+	func hasWebFeed(withURL url: String) -> Bool {
+		return existingWebFeed(withURL: url) != nil
 	}
 
-	func has(_ feed: Feed) -> Bool {
-		return flattenedFeeds().contains(feed)
+	func has(_ webFeed: WebFeed) -> Bool {
+		return flattenedWebFeeds().contains(webFeed)
 	}
 	
-	func existingFeed(withFeedID feedID: String) -> Feed? {
-		for feed in flattenedFeeds() {
-			if feed.feedID == feedID {
+	func existingWebFeed(withWebFeedID webFeedID: String) -> WebFeed? {
+		for feed in flattenedWebFeeds() {
+			if feed.webFeedID == webFeedID {
 				return feed
 			}
 		}
 		return nil
 	}
 
-	func existingFeed(withURL url: String) -> Feed? {
-		for feed in flattenedFeeds() {
+	func existingWebFeed(withURL url: String) -> WebFeed? {
+		for feed in flattenedWebFeeds() {
 			if feed.url == url {
 				return feed
 			}

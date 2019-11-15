@@ -1,5 +1,5 @@
 //
-//  FeedInspectorViewController.swift
+//  WebFeedInspectorViewController.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/6/19.
@@ -9,11 +9,11 @@
 import UIKit
 import Account
 
-class FeedInspectorViewController: UITableViewController {
+class WebFeedInspectorViewController: UITableViewController {
 	
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 500.0)
 	
-	var feed: Feed!
+	var webFeed: WebFeed!
 	@IBOutlet weak var nameTextField: UITextField!
 	@IBOutlet weak var notifyAboutNewArticlesSwitch: UISwitch!
 	@IBOutlet weak var alwaysShowReaderViewSwitch: UISwitch!
@@ -22,49 +22,49 @@ class FeedInspectorViewController: UITableViewController {
 	
 	private var headerView: InspectorIconHeaderView?
 	private var iconImage: IconImage {
-		if let feedIcon = appDelegate.feedIconDownloader.icon(for: feed) {
+		if let feedIcon = appDelegate.webFeedIconDownloader.icon(for: webFeed) {
 			return feedIcon
 		}
-		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
+		if let favicon = appDelegate.faviconDownloader.favicon(for: webFeed) {
 			return favicon
 		}
-		return FaviconGenerator.favicon(feed)
+		return FaviconGenerator.favicon(webFeed)
 	}
 	
 	override func viewDidLoad() {
 		tableView.register(InspectorIconHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		
-		navigationItem.title = feed.nameForDisplay
-		nameTextField.text = feed.nameForDisplay
+		navigationItem.title = webFeed.nameForDisplay
+		nameTextField.text = webFeed.nameForDisplay
 		
-		notifyAboutNewArticlesSwitch.setOn(feed.isNotifyAboutNewArticles ?? false, animated: false)
-		alwaysShowReaderViewSwitch.setOn(feed.isArticleExtractorAlwaysOn ?? false, animated: false)
+		notifyAboutNewArticlesSwitch.setOn(webFeed.isNotifyAboutNewArticles ?? false, animated: false)
+		alwaysShowReaderViewSwitch.setOn(webFeed.isArticleExtractorAlwaysOn ?? false, animated: false)
 
-		homePageLabel.text = feed.homePageURL
-		feedURLLabel.text = feed.url
+		homePageLabel.text = webFeed.homePageURL
+		feedURLLabel.text = webFeed.url
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 	}
 	
 	override func viewDidDisappear(_ animated: Bool) {
-		if nameTextField.text != feed.nameForDisplay {
+		if nameTextField.text != webFeed.nameForDisplay {
 			let nameText = nameTextField.text ?? ""
-			let newName = nameText.isEmpty ? (feed.name ?? NSLocalizedString("Untitled", comment: "Feed name")) : nameText
-			feed.rename(to: newName) { _ in }
+			let newName = nameText.isEmpty ? (webFeed.name ?? NSLocalizedString("Untitled", comment: "Feed name")) : nameText
+			webFeed.rename(to: newName) { _ in }
 		}
 	}
 	
 	// MARK: Notifications
-	@objc func feedIconDidBecomeAvailable(_ notification: Notification) {
+	@objc func webFeedIconDidBecomeAvailable(_ notification: Notification) {
 		headerView?.iconView.iconImage = iconImage
 	}
 	
 	@IBAction func notifyAboutNewArticlesChanged(_ sender: Any) {
-		feed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
+		webFeed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
 	}
 	
 	@IBAction func alwaysShowReaderViewChanged(_ sender: Any) {
-		feed.isArticleExtractorAlwaysOn = alwaysShowReaderViewSwitch.isOn
+		webFeed.isArticleExtractorAlwaysOn = alwaysShowReaderViewSwitch.isOn
 	}
 	
 	@IBAction func done(_ sender: Any) {
@@ -75,7 +75,7 @@ class FeedInspectorViewController: UITableViewController {
 
 // MARK: Table View
 
-extension FeedInspectorViewController {
+extension WebFeedInspectorViewController {
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		return section == 0 ? 64.0 : super.tableView(tableView, heightForHeaderInSection: section)
@@ -95,7 +95,7 @@ extension FeedInspectorViewController {
 
 // MARK: UITextFieldDelegate
 
-extension FeedInspectorViewController: UITextFieldDelegate {
+extension WebFeedInspectorViewController: UITextFieldDelegate {
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()

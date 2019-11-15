@@ -81,7 +81,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 				} else {
 					container = account
 				}
-				account.removeFeed(scriptableFeed.feed, from: container!) { result in
+				account.removeWebFeed(scriptableFeed.webFeed, from: container!) { result in
 				}
 			}
 		}
@@ -96,19 +96,19 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     
     @objc(feeds)
     var feeds:NSArray  {
-        return account.topLevelFeeds.map { ScriptableFeed($0, container:self) } as NSArray
+        return account.topLevelWebFeeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
     
     @objc(valueInFeedsWithUniqueID:)
     func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
-        let feeds = Array(account.topLevelFeeds)
-        guard let feed = feeds.first(where:{$0.feedID == id}) else { return nil }
+        let feeds = Array(account.topLevelWebFeeds)
+        guard let feed = feeds.first(where:{$0.webFeedID == id}) else { return nil }
         return ScriptableFeed(feed, container:self)
     }
     
     @objc(valueInFeedsWithName:)
     func valueInFeeds(withName name:String) -> ScriptableFeed? {
-		let feeds = Array(account.topLevelFeeds)
+		let feeds = Array(account.topLevelWebFeeds)
         guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
         return ScriptableFeed(feed, container:self)
     }
@@ -134,13 +134,13 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     @objc(allFeeds)
     var allFeeds: NSArray  {
 		var feeds = [ScriptableFeed]()
-		for feed in account.topLevelFeeds {
+		for feed in account.topLevelWebFeeds {
 			feeds.append(ScriptableFeed(feed, container: self))
 		}
 		if let folders = account.folders {
 			for folder in folders {
 				let scriptableFolder = ScriptableFolder(folder, container: self)
-				for feed in folder.topLevelFeeds {
+				for feed in folder.topLevelWebFeeds {
 					feeds.append(ScriptableFeed(feed, container: scriptableFolder))
 				}
 			}

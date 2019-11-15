@@ -31,7 +31,7 @@
         <!--Feed-->
         <scene sceneID="vUh-Rc-fPi">
             <objects>
-                <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="FeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="WebFeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ecA-UY-KEd">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="332"/>
                         <autoresizingMask key="autoresizingMask"/>

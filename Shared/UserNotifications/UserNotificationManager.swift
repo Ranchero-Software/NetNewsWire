@@ -25,8 +25,8 @@ final class UserNotificationManager: NSObject {
 		}
 		
 		for article in articles {
-			if !article.status.read, let feed = article.feed, feed.isNotifyAboutNewArticles ?? false {
-				sendNotification(feed: feed, article: article)
+			if !article.status.read, let webFeed = article.webFeed, webFeed.isNotifyAboutNewArticles ?? false {
+				sendNotification(webFeed: webFeed, article: article)
 			}
 		}
 	}
@@ -43,10 +43,10 @@ final class UserNotificationManager: NSObject {
 
 private extension UserNotificationManager {
 	
-	private func sendNotification(feed: Feed, article: Article) {
+	private func sendNotification(webFeed: WebFeed, article: Article) {
 		let content = UNMutableNotificationContent()
 						
-		content.title = feed.nameForDisplay
+		content.title = webFeed.nameForDisplay
 		content.body = ArticleStringFormatter.truncatedTitle(article)
 		if content.body.isEmpty {
 			content.body = ArticleStringFormatter.truncatedSummary(article)
