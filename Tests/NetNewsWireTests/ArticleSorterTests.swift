@@ -19,10 +19,10 @@ class ArticleSorterTests: XCTestCase {
 	func testSortByDateAscending() {
 		let now = Date()
 		
-		let article1 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-60.0), sortableArticleID: "1", sortableFeedID: "4")
-		let article2 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(60.0), sortableArticleID: "2", sortableFeedID: "6")
-		let article3 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(120.0), sortableArticleID: "3", sortableFeedID: "6")
-		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-120.0), sortableArticleID: "4", sortableFeedID: "5")
+		let article1 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-60.0), sortableArticleID: "1", sortableWebFeedID: "4")
+		let article2 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(60.0), sortableArticleID: "2", sortableWebFeedID: "6")
+		let article3 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(120.0), sortableArticleID: "3", sortableWebFeedID: "6")
+		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-120.0), sortableArticleID: "4", sortableWebFeedID: "5")
 		
 		let articles = [article1, article2, article3, article4]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles,
@@ -40,11 +40,11 @@ class ArticleSorterTests: XCTestCase {
 		let now = Date()
 		
 		// Articles with the same date should end up being sorted by their article ID
-		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "1")
-		let article2 = TestArticle(sortableName: "Matt's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "2")
-		let article3 = TestArticle(sortableName: "Sally's Feed", sortableDate: now, sortableArticleID: "3", sortableFeedID: "3")
-		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: Date(timeInterval: -60.0, since: now), sortableArticleID: "4", sortableFeedID: "4")
-		let article5 = TestArticle(sortableName: "Paul's Feed", sortableDate: Date(timeInterval: -120.0, since: now), sortableArticleID: "5", sortableFeedID: "5")
+		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "1", sortableWebFeedID: "1")
+		let article2 = TestArticle(sortableName: "Matt's Feed", sortableDate: now, sortableArticleID: "2", sortableWebFeedID: "2")
+		let article3 = TestArticle(sortableName: "Sally's Feed", sortableDate: now, sortableArticleID: "3", sortableWebFeedID: "3")
+		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: Date(timeInterval: -60.0, since: now), sortableArticleID: "4", sortableWebFeedID: "4")
+		let article5 = TestArticle(sortableName: "Paul's Feed", sortableDate: Date(timeInterval: -120.0, since: now), sortableArticleID: "5", sortableWebFeedID: "5")
 		
 		let articles = [article1, article2, article3, article4, article5]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles,
@@ -62,15 +62,15 @@ class ArticleSorterTests: XCTestCase {
 	func testSortByDateAscendingWithGroupByFeed() {
 		let now = Date()
 
-		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: Date(timeInterval: -100.0, since: now), sortableArticleID: "1", sortableFeedID: "1")
-		let article2 = TestArticle(sortableName: "Jenny's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "2")
-		let article3 = TestArticle(sortableName: "Jenny's Feed", sortableDate: Date(timeInterval: -10.0, since: now), sortableArticleID: "2", sortableFeedID: "2")
-		let article4 = TestArticle(sortableName: "Gordy's Blog", sortableDate: Date(timeInterval: -1000.0, since: now), sortableArticleID: "1", sortableFeedID: "3")
-		let article5 = TestArticle(sortableName: "Gordy's Blog", sortableDate: Date(timeInterval: -10.0, since: now), sortableArticleID: "2", sortableFeedID: "3")
-		let article6 = TestArticle(sortableName: "Jenny's Feed", sortableDate: Date(timeInterval: 10.0, since: now), sortableArticleID: "3", sortableFeedID: "2")
-		let article7 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "1")
-		let article8 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "0")
-		let article9 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "0")
+		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: Date(timeInterval: -100.0, since: now), sortableArticleID: "1", sortableWebFeedID: "1")
+		let article2 = TestArticle(sortableName: "Jenny's Feed", sortableDate: now, sortableArticleID: "1", sortableWebFeedID: "2")
+		let article3 = TestArticle(sortableName: "Jenny's Feed", sortableDate: Date(timeInterval: -10.0, since: now), sortableArticleID: "2", sortableWebFeedID: "2")
+		let article4 = TestArticle(sortableName: "Gordy's Blog", sortableDate: Date(timeInterval: -1000.0, since: now), sortableArticleID: "1", sortableWebFeedID: "3")
+		let article5 = TestArticle(sortableName: "Gordy's Blog", sortableDate: Date(timeInterval: -10.0, since: now), sortableArticleID: "2", sortableWebFeedID: "3")
+		let article6 = TestArticle(sortableName: "Jenny's Feed", sortableDate: Date(timeInterval: 10.0, since: now), sortableArticleID: "3", sortableWebFeedID: "2")
+		let article7 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "2", sortableWebFeedID: "1")
+		let article8 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "1", sortableWebFeedID: "0")
+		let article9 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "2", sortableWebFeedID: "0")
 		
 		let articles = [article1, article2, article3, article4, article5, article6, article7, article8, article9]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles, sortDirection: .orderedAscending, groupByFeed: true)
@@ -97,10 +97,10 @@ class ArticleSorterTests: XCTestCase {
 	func testSortByDateDescending() {
 		let now = Date()
 		
-		let article1 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-60.0), sortableArticleID: "1", sortableFeedID: "4")
-		let article2 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(60.0), sortableArticleID: "2", sortableFeedID: "6")
-		let article3 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(120.0), sortableArticleID: "3", sortableFeedID: "6")
-		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-120.0), sortableArticleID: "4", sortableFeedID: "5")
+		let article1 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-60.0), sortableArticleID: "1", sortableWebFeedID: "4")
+		let article2 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(60.0), sortableArticleID: "2", sortableWebFeedID: "6")
+		let article3 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(120.0), sortableArticleID: "3", sortableWebFeedID: "6")
+		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-120.0), sortableArticleID: "4", sortableWebFeedID: "5")
 		
 		let articles = [article1, article2, article3, article4]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles,
@@ -118,11 +118,11 @@ class ArticleSorterTests: XCTestCase {
 		let now = Date()
 		
 		// Articles with the same date should end up being sorted by their article ID
-		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "1")
-		let article2 = TestArticle(sortableName: "Matt's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "2")
-		let article3 = TestArticle(sortableName: "Sally's Feed", sortableDate: now, sortableArticleID: "3", sortableFeedID: "3")
-		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: Date(timeInterval: -60.0, since: now), sortableArticleID: "4", sortableFeedID: "4")
-		let article5 = TestArticle(sortableName: "Paul's Feed", sortableDate: Date(timeInterval: -120.0, since: now), sortableArticleID: "5", sortableFeedID: "5")
+		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "1", sortableWebFeedID: "1")
+		let article2 = TestArticle(sortableName: "Matt's Feed", sortableDate: now, sortableArticleID: "2", sortableWebFeedID: "2")
+		let article3 = TestArticle(sortableName: "Sally's Feed", sortableDate: now, sortableArticleID: "3", sortableWebFeedID: "3")
+		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: Date(timeInterval: -60.0, since: now), sortableArticleID: "4", sortableWebFeedID: "4")
+		let article5 = TestArticle(sortableName: "Paul's Feed", sortableDate: Date(timeInterval: -120.0, since: now), sortableArticleID: "5", sortableWebFeedID: "5")
 		
 		let articles = [article1, article2, article3, article4, article5]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles,
@@ -140,15 +140,15 @@ class ArticleSorterTests: XCTestCase {
 	func testSortByDateDescendingWithGroupByFeed() {
 		let now = Date()
 
-		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: Date(timeInterval: -100.0, since: now), sortableArticleID: "1", sortableFeedID: "1")
-		let article2 = TestArticle(sortableName: "Jenny's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "2")
-		let article3 = TestArticle(sortableName: "Jenny's Feed", sortableDate: Date(timeInterval: -10.0, since: now), sortableArticleID: "2", sortableFeedID: "2")
-		let article4 = TestArticle(sortableName: "Gordy's Blog", sortableDate: Date(timeInterval: -1000.0, since: now), sortableArticleID: "1", sortableFeedID: "3")
-		let article5 = TestArticle(sortableName: "Gordy's Blog", sortableDate: Date(timeInterval: -10.0, since: now), sortableArticleID: "2", sortableFeedID: "3")
-		let article6 = TestArticle(sortableName: "Jenny's Feed", sortableDate: Date(timeInterval: 10.0, since: now), sortableArticleID: "3", sortableFeedID: "2")
-		let article7 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "1")
-		let article8 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "0")
-		let article9 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "0")
+		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: Date(timeInterval: -100.0, since: now), sortableArticleID: "1", sortableWebFeedID: "1")
+		let article2 = TestArticle(sortableName: "Jenny's Feed", sortableDate: now, sortableArticleID: "1", sortableWebFeedID: "2")
+		let article3 = TestArticle(sortableName: "Jenny's Feed", sortableDate: Date(timeInterval: -10.0, since: now), sortableArticleID: "2", sortableWebFeedID: "2")
+		let article4 = TestArticle(sortableName: "Gordy's Blog", sortableDate: Date(timeInterval: -1000.0, since: now), sortableArticleID: "1", sortableWebFeedID: "3")
+		let article5 = TestArticle(sortableName: "Gordy's Blog", sortableDate: Date(timeInterval: -10.0, since: now), sortableArticleID: "2", sortableWebFeedID: "3")
+		let article6 = TestArticle(sortableName: "Jenny's Feed", sortableDate: Date(timeInterval: 10.0, since: now), sortableArticleID: "3", sortableWebFeedID: "2")
+		let article7 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "2", sortableWebFeedID: "1")
+		let article8 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "1", sortableWebFeedID: "0")
+		let article9 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "2", sortableWebFeedID: "0")
 		
 		let articles = [article1, article2, article3, article4, article5, article6, article7, article8, article9]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles, sortDirection: .orderedDescending, groupByFeed: true)
@@ -175,11 +175,11 @@ class ArticleSorterTests: XCTestCase {
 	func testGroupByFeedWithCaseInsensitiveFeedNames() {
 		let now = Date()
 		
-		let article1 = TestArticle(sortableName: "phil's feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "1")
-		let article2 = TestArticle(sortableName: "PhIl's FEed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "1")
-		let article3 = TestArticle(sortableName: "APPLE's feed", sortableDate: now, sortableArticleID: "3", sortableFeedID: "2")
-		let article4 = TestArticle(sortableName: "PHIL'S FEED", sortableDate: now, sortableArticleID: "4", sortableFeedID: "1")
-		let article5 = TestArticle(sortableName: "apple's feed", sortableDate: now, sortableArticleID: "5", sortableFeedID: "2")
+		let article1 = TestArticle(sortableName: "phil's feed", sortableDate: now, sortableArticleID: "1", sortableWebFeedID: "1")
+		let article2 = TestArticle(sortableName: "PhIl's FEed", sortableDate: now, sortableArticleID: "2", sortableWebFeedID: "1")
+		let article3 = TestArticle(sortableName: "APPLE's feed", sortableDate: now, sortableArticleID: "3", sortableWebFeedID: "2")
+		let article4 = TestArticle(sortableName: "PHIL'S FEED", sortableDate: now, sortableArticleID: "4", sortableWebFeedID: "1")
+		let article5 = TestArticle(sortableName: "apple's feed", sortableDate: now, sortableArticleID: "5", sortableWebFeedID: "2")
 
 		let articles = [article1, article2, article3, article4, article5]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles,
@@ -201,11 +201,11 @@ class ArticleSorterTests: XCTestCase {
 		let now = Date()
 
 		// Articles with the same feed name should be sorted by feed ID
-		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "2")
-		let article2 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "2")
-		let article3 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "3", sortableFeedID: "1")
-		let article4 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "4", sortableFeedID: "2")
-		let article5 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "5", sortableFeedID: "1")
+		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "1", sortableWebFeedID: "2")
+		let article2 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "2", sortableWebFeedID: "2")
+		let article3 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "3", sortableWebFeedID: "1")
+		let article4 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "4", sortableWebFeedID: "2")
+		let article5 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "5", sortableWebFeedID: "1")
 
 		let articles = [article1, article2, article3, article4, article5]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles,
@@ -226,7 +226,7 @@ private struct TestArticle: SortableArticle, Equatable {
 	let sortableName: String
 	let sortableDate: Date
 	let sortableArticleID: String
-	let sortableFeedID: String
+	let sortableWebFeedID: String
 }
 
 private extension Array where Element == TestArticle {

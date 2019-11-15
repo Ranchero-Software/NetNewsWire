@@ -384,7 +384,7 @@
 		65ED4037235DEF6C0081F399 /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
 		65ED4038235DEF6C0081F399 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
 		65ED4039235DEF6C0081F399 /* SingleFaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */; };
-		65ED403A235DEF6C0081F399 /* Feed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */; };
+		65ED403A235DEF6C0081F399 /* WebFeed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */; };
 		65ED403B235DEF6C0081F399 /* AuthorAvatarDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E850851FCB60CE0072EA88 /* AuthorAvatarDownloader.swift */; };
 		65ED403C235DEF6C0081F399 /* SingleLineTextFieldSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */; };
 		65ED403D235DEF6C0081F399 /* TimelineTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97741ED9EC04007D329B /* TimelineTableCellView.swift */; };
@@ -622,7 +622,7 @@
 		D5E4CC54202C1361009B4FFC /* AppDelegate+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */; };
 		D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */; };
 		D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */; };
-		D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */; };
+		D5F4EDB720074D6500B9E363 /* WebFeed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */; };
 		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
 		DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD82AB09231003F6002269DF /* SharingTests.swift */; };
 		FF3ABF13232599810074C542 /* ArticleSorterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF09232599450074C542 /* ArticleSorterTests.swift */; };
@@ -1549,7 +1549,7 @@
 		D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Scriptability.swift"; sourceTree = "<group>"; };
 		D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainWindowController+Scriptability.swift"; sourceTree = "<group>"; };
 		D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingObject.swift; sourceTree = "<group>"; };
-		D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feed+Scriptability.swift"; sourceTree = "<group>"; };
+		D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebFeed+Scriptability.swift"; sourceTree = "<group>"; };
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
 		FF3ABF09232599450074C542 /* ArticleSorterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorterTests.swift; sourceTree = "<group>"; };
@@ -2689,7 +2689,7 @@
 				D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */,
 				D553737C20186C1F006D8857 /* Article+Scriptability.swift */,
 				D5A2678B20130ECF00A8D3C0 /* Author+Scriptability.swift */,
-				D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */,
+				D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */,
 				D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */,
 				D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */,
 				D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */,
@@ -3848,7 +3848,7 @@
 				65ED4037235DEF6C0081F399 /* FolderTreeControllerDelegate.swift in Sources */,
 				65ED4038235DEF6C0081F399 /* RSImage-Extensions.swift in Sources */,
 				65ED4039235DEF6C0081F399 /* SingleFaviconDownloader.swift in Sources */,
-				65ED403A235DEF6C0081F399 /* Feed+Scriptability.swift in Sources */,
+				65ED403A235DEF6C0081F399 /* WebFeed+Scriptability.swift in Sources */,
 				65ED403B235DEF6C0081F399 /* AuthorAvatarDownloader.swift in Sources */,
 				65ED403C235DEF6C0081F399 /* SingleLineTextFieldSizer.swift in Sources */,
 				65ED403D235DEF6C0081F399 /* TimelineTableCellView.swift in Sources */,
@@ -4137,7 +4137,7 @@
 				849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */,
 				51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */,
 				845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */,
-				D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */,
+				D5F4EDB720074D6500B9E363 /* WebFeed+Scriptability.swift in Sources */,
 				84E850861FCB60CE0072EA88 /* AuthorAvatarDownloader.swift in Sources */,
 				84E185B3203B74E500F69BFA /* SingleLineTextFieldSizer.swift in Sources */,
 				849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */,

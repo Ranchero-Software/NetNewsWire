@@ -11,14 +11,14 @@ import RSParser
 import Account
 import Articles
 
-@objc(ScriptableFeed)
-class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@objc(ScriptableWebFeed)
+class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let webFeed:WebFeed
     let container:ScriptingObjectContainer
     
-    init (_ feed:WebFeed, container:ScriptingObjectContainer) {
-        self.webFeed = feed
+    init (_ webFeed:WebFeed, container:ScriptingObjectContainer) {
+        self.webFeed = webFeed
         self.container = container
     }
 
@@ -36,7 +36,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
     // MARK: --- ScriptingObject protocol ---
 
     var scriptingKey: String {
-        return "feeds"
+        return "webFeeds"
     }
 
     // MARK: --- UniqueIdScriptingObject protocol ---
@@ -71,13 +71,13 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         return url
     }
     
-    class func scriptableFeed(_ feed:WebFeed, account:Account, folder:Folder?) -> ScriptableFeed  {
+    class func scriptableFeed(_ feed:WebFeed, account:Account, folder:Folder?) -> ScriptableWebFeed  {
         let scriptableAccount = ScriptableAccount(account)
         if let folder = folder {
             let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
-            return ScriptableFeed(feed, container:scriptableFolder)
+            return ScriptableWebFeed(feed, container:scriptableFolder)
         } else  {
-            return ScriptableFeed(feed, container:scriptableAccount)
+            return ScriptableWebFeed(feed, container:scriptableAccount)
         }
     }
     
