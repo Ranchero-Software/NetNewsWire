@@ -77,6 +77,7 @@ class FeedlyTestSupport {
 	
 	func destroy(_ testAccount: Account) {
 		do {
+			// These should not throw when the keychain items are not found.
 			try testAccount.removeCredentials(type: .oauthAccessToken)
 			try testAccount.removeCredentials(type: .oauthRefreshToken)
 		} catch {

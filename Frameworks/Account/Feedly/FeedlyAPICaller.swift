@@ -680,3 +680,39 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 		}
 	}
 }
+
+extension FeedlyAPICaller: FeedlyLogoutService {
+	
+	func logout(completionHandler: @escaping (Result<Void, Error>) -> ()) {
+		guard let accessToken = credentials?.secret else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(CredentialsError.incompleteCredentials))
+			}
+		}
+		var components = baseUrlComponents
+		components.path = "/v3/auth/logout"
+		
+		guard let url = components.url else {
+			fatalError("\(components) does not produce a valid URL.")
+		}
+		
+		var request = URLRequest(url: url)
+		request.httpMethod = "POST"
+		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
+		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
+		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
+		
+		transport.send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+			switch result {
+			case .success(let (httpResponse, _)):
+				if httpResponse.statusCode == 200 {
+					completionHandler(.success(()))
+				} else {
+					completionHandler(.failure(URLError(.cannotDecodeContentData)))
+				}
+			case .failure(let error):
+				completionHandler(.failure(error))
+			}
+		}
+	}
+}
