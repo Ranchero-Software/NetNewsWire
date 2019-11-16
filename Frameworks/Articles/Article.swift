@@ -78,6 +78,11 @@ public extension Set where Element == Article {
 		let articles = self.filter { !$0.status.read }
 		return Set(articles)
 	}
+
+	func contains(accountID: String, articleID: String) -> Bool {
+		return contains(where: { $0.accountID == accountID && $0.articleID == articleID})
+	}
+	
 }
 
 public extension Array where Element == Article {
@@ -85,4 +90,5 @@ public extension Array where Element == Article {
 	func articleIDs() -> [String] {
 		return map { $0.articleID }
 	}
+	
 }

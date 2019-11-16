@@ -1656,8 +1656,9 @@ private extension SceneCoordinator {
 	}
 	
 	func handleReadArticle(_ userInfo: [AnyHashable : Any]?) {
-		guard let userInfo = userInfo,
-			let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+		guard let userInfo = userInfo else { return }
+		
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
 			let webFeedID = articlePathUserInfo[ArticlePathKey.webFeedID] as? String,
@@ -1665,15 +1666,60 @@ private extension SceneCoordinator {
 				return
 		}
 
+		if restoreFeed(userInfo, accountID: accountID, articleID: articleID) {
+			return
+		}
+		
 		guard let accountNode = findAccountNode(accountID: accountID, accountName: accountName), let feedNode = findWebFeedNode(webFeedID: webFeedID, beginningAt: accountNode) else {
 			return
 		}
 		
 		discloseFeed(feedNode.representedObject as! WebFeed, animated: false) {
-			if let article = self.articles.first(where: { $0.articleID == articleID }) {
-				self.selectArticle(article)
-			}
+			self.selectArticleInCurrentFeed(articleID)
 		}
+	}
+	
+	func restoreFeed(_ userInfo: [AnyHashable : Any], accountID: String, articleID: String) -> Bool {
+		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : Any],
+			let articleFetcherType = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
+				return false
+		}
+
+		switch articleFetcherType {
+		
+		case .smartFeed(let identifier):
+			guard let smartFeed = SmartFeedsController.shared.find(by: identifier) else { return false }
+			if smartFeed.fetchArticles().contains(accountID: accountID, articleID: articleID) {
+				if let indexPath = indexPathFor(smartFeed) {
+					selectFeed(indexPath, animated: false)
+					selectArticleInCurrentFeed(articleID)
+					return true
+				}
+			}
+		
+		case .script:
+			return false
+		
+		case .folder(let accountID, let folderName):
+			guard let accountNode = findAccountNode(accountID: accountID),
+				let folderNode = findFolderNode(folderName: folderName, beginningAt: accountNode),
+				let folderFeed = folderNode.representedObject as? Feed else {
+					return false
+			}
+			if folderFeed.fetchArticles().contains(accountID: accountID, articleID: articleID) {
+				if let indexPath = indexPathFor(folderNode) {
+					selectFeed(indexPath, animated: false)
+					selectArticleInCurrentFeed(articleID)
+					return true
+				}
+			}
+		
+		case .webFeed:
+			return false
+			
+		}
+		
+		return false
 	}
 	
 	func findAccountNode(accountID: String, accountName: String? = nil) -> Node? {
@@ -1700,6 +1746,12 @@ private extension SceneCoordinator {
 			return node
 		}
 		return nil
+	}
+	
+	func selectArticleInCurrentFeed(_ articleID: String) {
+		if let article = self.articles.first(where: { $0.articleID == articleID }) {
+			self.selectArticle(article)
+		}
 	}
 	
 }
