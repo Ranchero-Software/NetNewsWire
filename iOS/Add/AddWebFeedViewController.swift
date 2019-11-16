@@ -16,13 +16,7 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 	
 	@IBOutlet private weak var urlTextField: UITextField!
 	@IBOutlet private weak var nameTextField: UITextField!
-	@IBOutlet private weak var folderPickerView: UIPickerView!
 	@IBOutlet private weak var folderLabel: UILabel!
-	
-	private lazy var pickerData: FlattenedAccountFolderPickerData = FlattenedAccountFolderPickerData()
-	private var shouldDisplayPicker: Bool {
-		return pickerData.containerNames.count > 1
-	}
 	
 	private var userCancelled = false
 
@@ -30,6 +24,8 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 	var initialFeed: String?
 	var initialFeedName: String?
 
+	var container: Container?
+	
 	override func viewDidLoad() {
 		
         super.viewDidLoad()
@@ -51,14 +47,16 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 		
 		nameTextField.text = initialFeedName
 		nameTextField.delegate = self
-		folderLabel.text = pickerData.containerNames.first
 		
-		if shouldDisplayPicker {
-			folderPickerView.dataSource = self
-			folderPickerView.delegate = self
+		if let accountID = AppDefaults.addWebFeedAccountID, let account = AccountManager.shared.activeAccounts.first(where: { $0.accountID == accountID }) {
+			container = account
+		} else if let account = AccountManager.shared.sortedActiveAccounts.first {
+			container = account
 		} else {
-			folderPickerView.isHidden = true
+			delegate?.readyToAdd(state: false)
 		}
+		
+		updateFolderLabel()
 		
 		// I couldn't figure out the gap at the top of the UITableView, so I took a hammer to it.
 		tableView.contentInset = UIEdgeInsets(top: -28, left: 0, bottom: 0, right: 0)
@@ -82,7 +80,7 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 			return
 		}
 		
-		let container = pickerData.containers[folderPickerView.selectedRow(inComponent: 0)]
+		guard let container = container else { return }
 		
 		var account: Account?
 		if let containerAccount = container as? Account {
@@ -123,37 +121,28 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 		delegate?.readyToAdd(state: urlTextField.text?.rs_stringMayBeURL() ?? false)
 	}
 	
-	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
-		if section == 1 && !shouldDisplayPicker {
-			return defaultNumberOfRows - 1
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		if indexPath.row == 2 {
+			let folderViewController = UIStoryboard.add.instantiateController(ofType: AddWebFeedFolderViewController.self)
+			folderViewController.delegate = self
+			folderViewController.initialContainer = container
+			navigationController?.pushViewController(folderViewController, animated: true)
 		}
-		
-		return defaultNumberOfRows
 	}
-	
 	
 }
 
-extension AddWebFeedViewController: UIPickerViewDataSource, UIPickerViewDelegate {
-	
-	func numberOfComponents(in pickerView: UIPickerView) ->Int {
-		return 1
+// MARK: AddWebFeedFolderViewControllerDelegate
+
+extension AddWebFeedViewController: AddWebFeedFolderViewControllerDelegate {
+	func didSelect(container: Container) {
+		self.container = container
+		updateFolderLabel()
+		AppDefaults.addWebFeedAccountID = container.account?.accountID
 	}
-	
-	func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-		return pickerData.containerNames.count
-	}
-	
-	func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-		return pickerData.containerNames[row]
-	}
-	
-	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-		folderLabel.text = pickerData.containerNames[row]
-	}
-	
 }
+
+// MARK: UITextFieldDelegate
 
 extension AddWebFeedViewController: UITextFieldDelegate {
 	
@@ -162,4 +151,18 @@ extension AddWebFeedViewController: UITextFieldDelegate {
 		return true
 	}
 	
+}
+
+// MARK: Private
+
+private extension AddWebFeedViewController {
+	func updateFolderLabel() {
+		if let containerName = (container as? DisplayNameProvider)?.nameForDisplay {
+			if container is Folder {
+				folderLabel.text = "\(container?.account?.nameForDisplay ?? "") / \(containerName)"
+			} else {
+				folderLabel.text = containerName
+			}
+		}
+	}
 }

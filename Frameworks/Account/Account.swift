@@ -128,6 +128,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public var topLevelWebFeeds = Set<WebFeed>()
 	public var folders: Set<Folder>? = Set<Folder>()
+	
+	public var sortedFolders: [Folder]? {
+		if let folders = folders {
+			return Array(folders).sorted(by: { $0.nameForDisplay > $1.nameForDisplay })
+		}
+		return nil
+	}
+	
 	private var webFeedDictionaryNeedsUpdate = true
 	private var _idToWebFeedDictionary = [String: WebFeed]()
 	var idToWebFeedDictionary: [String: WebFeed] {

@@ -16,6 +16,15 @@ protocol SmallIconProvider {
 	var smallIcon: IconImage? { get }
 }
 
+extension Account: SmallIconProvider {
+	var smallIcon: IconImage? {
+		if let image = AppAssets.image(for: type) {
+			return IconImage(image)
+		}
+		return nil
+	}
+}
+
 extension WebFeed: SmallIconProvider {
 
 	var smallIcon: IconImage? {

@@ -101,7 +101,6 @@
 		516AE9DF2372269A007DEEAA /* IconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9DE2372269A007DEEAA /* IconImage.swift */; };
 		516AE9E02372269A007DEEAA /* IconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9DE2372269A007DEEAA /* IconImage.swift */; };
 		51707439232AA97100A461A3 /* ShareFolderPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51707438232AA97100A461A3 /* ShareFolderPickerController.swift */; };
-		5170743A232AABFC00A461A3 /* FlattenedAccountFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452812265093600C03939 /* FlattenedAccountFolderPickerData.swift */; };
 		517630042336215100E15FFF /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
 		517630052336215100E15FFF /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
 		517630232336657E00E15FFF /* ArticleViewControllerWebViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517630222336657E00E15FFF /* ArticleViewControllerWebViewProvider.swift */; };
@@ -169,7 +168,6 @@
 		51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */; };
 		51C4527C2265091600C03939 /* MasterTimelineDefaultCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452752265091600C03939 /* MasterTimelineDefaultCellLayout.swift */; };
 		51C4527F2265092C00C03939 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4527E2265092C00C03939 /* ArticleViewController.swift */; };
-		51C452852265093600C03939 /* FlattenedAccountFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452812265093600C03939 /* FlattenedAccountFolderPickerData.swift */; };
 		51C452862265093600C03939 /* Add.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C452822265093600C03939 /* Add.storyboard */; };
 		51C452882265093600C03939 /* AddWebFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452842265093600C03939 /* AddWebFeedViewController.swift */; };
 		51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4528B2265095F00C03939 /* AddFolderViewController.swift */; };
@@ -212,6 +210,10 @@
 		51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D87EE02311D34700E63F03 /* ActivityType.swift */; };
 		51E3EB33229AB02C00645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB32229AB02C00645299 /* ErrorHandler.swift */; };
 		51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB3C229AB08300645299 /* ErrorHandler.swift */; };
+		51E43962238037C400015C31 /* AddWebFeedFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */; };
+		51E4397D23805A6D00015C31 /* FlattenedAccountFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4397C23805A6C00015C31 /* FlattenedAccountFolderPickerData.swift */; };
+		51E4397E23805A6D00015C31 /* FlattenedAccountFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4397C23805A6C00015C31 /* FlattenedAccountFolderPickerData.swift */; };
+		51E4398023805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4397F23805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift */; };
 		51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
 		51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
 		51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */; };
@@ -1306,7 +1308,6 @@
 		51C452742265091600C03939 /* MasterUnreadIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterUnreadIndicatorView.swift; sourceTree = "<group>"; };
 		51C452752265091600C03939 /* MasterTimelineDefaultCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineDefaultCellLayout.swift; sourceTree = "<group>"; };
 		51C4527E2265092C00C03939 /* ArticleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
-		51C452812265093600C03939 /* FlattenedAccountFolderPickerData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlattenedAccountFolderPickerData.swift; sourceTree = "<group>"; };
 		51C452822265093600C03939 /* Add.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Add.storyboard; sourceTree = "<group>"; };
 		51C452842265093600C03939 /* AddWebFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddWebFeedViewController.swift; sourceTree = "<group>"; };
 		51C4528B2265095F00C03939 /* AddFolderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
@@ -1319,6 +1320,9 @@
 		51D87EE02311D34700E63F03 /* ActivityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityType.swift; sourceTree = "<group>"; };
 		51E3EB32229AB02C00645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		51E3EB3C229AB08300645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
+		51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedFolderViewController.swift; sourceTree = "<group>"; };
+		51E4397C23805A6C00015C31 /* FlattenedAccountFolderPickerData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlattenedAccountFolderPickerData.swift; sourceTree = "<group>"; };
+		51E4397F23805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedFolderTableViewCell.swift; sourceTree = "<group>"; };
 		51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleStatusSyncTimer.swift; sourceTree = "<group>"; };
 		51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicButton.swift; sourceTree = "<group>"; };
 		51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderTreeMenu.swift; path = AddFeed/FolderTreeMenu.swift; sourceTree = "<group>"; };
@@ -1706,7 +1710,7 @@
 		512E08DD22687FA000BDCFDD /* Tree */ = {
 			isa = PBXGroup;
 			children = (
-				51C452812265093600C03939 /* FlattenedAccountFolderPickerData.swift */,
+				51E4397C23805A6C00015C31 /* FlattenedAccountFolderPickerData.swift */,
 				849A97611ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift */,
 				849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */,
 			);
@@ -1925,8 +1929,10 @@
 				51C452822265093600C03939 /* Add.storyboard */,
 				51121B5A22661FEF00BC0EC1 /* AddContainerViewController.swift */,
 				514B7D1E23219F3C00BAC947 /* AddControllerType.swift */,
-				51C452842265093600C03939 /* AddWebFeedViewController.swift */,
 				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
+				51C452842265093600C03939 /* AddWebFeedViewController.swift */,
+				51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */,
+				51E4397F23805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift */,
 			);
 			path = Add;
 			sourceTree = "<group>";
@@ -3692,8 +3698,8 @@
 				515D4FC123257A3200EE1167 /* FolderTreeControllerDelegate.swift in Sources */,
 				515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */,
 				513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */,
-				5170743A232AABFC00A461A3 /* FlattenedAccountFolderPickerData.swift in Sources */,
 				51707439232AA97100A461A3 /* ShareFolderPickerController.swift in Sources */,
+				51E4397E23805A6D00015C31 /* FlattenedAccountFolderPickerData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3876,6 +3882,7 @@
 				512E08E72268801200BDCFDD /* WebFeedTreeControllerDelegate.swift in Sources */,
 				51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */,
 				51EF0F79227716380050506E /* ColorHash.swift in Sources */,
+				51E4397D23805A6D00015C31 /* FlattenedAccountFolderPickerData.swift in Sources */,
 				5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */,
 				51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,
@@ -3889,6 +3896,7 @@
 				51C45269226508F600C03939 /* MasterFeedTableViewCell.swift in Sources */,
 				51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */,
 				517630232336657E00E15FFF /* ArticleViewControllerWebViewProvider.swift in Sources */,
+				51E43962238037C400015C31 /* AddWebFeedFolderViewController.swift in Sources */,
 				51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */,
 				51FD413B2342BD0500880194 /* MasterTimelineUnreadCountView.swift in Sources */,
 				513146B2235A81A400387FDC /* AddWebFeedIntentHandler.swift in Sources */,
@@ -3906,7 +3914,6 @@
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
 				51FA73AB2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */,
-				51C452852265093600C03939 /* FlattenedAccountFolderPickerData.swift in Sources */,
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
@@ -3934,6 +3941,7 @@
 				51C45258226508CF00C03939 /* AppAssets.swift in Sources */,
 				51FA73A82332BE880090D516 /* ExtractedArticle.swift in Sources */,
 				51C4527C2265091600C03939 /* MasterTimelineDefaultCellLayout.swift in Sources */,
+				51E4398023805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift in Sources */,
 				51C4529A22650A0400C03939 /* ArticleStyle.swift in Sources */,
 				51C4527F2265092C00C03939 /* ArticleViewController.swift in Sources */,
 				51C4526A226508F600C03939 /* MasterFeedTableViewCellLayout.swift in Sources */,

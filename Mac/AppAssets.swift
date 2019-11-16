@@ -8,6 +8,7 @@
 
 import AppKit
 import RSCore
+import Account
 
 extension NSImage.Name {
 	static let star = NSImage.Name("star")
@@ -115,5 +116,20 @@ struct AppAssets {
 	static var swipeMarkUnstarredImage: RSImage = {
 		return RSImage(named: "swipeMarkUnstarred")!
 	}()
+	
+	static func image(for accountType: AccountType) -> NSImage? {
+		switch accountType {
+		case .onMyMac:
+			return AppAssets.accountLocal
+		case .feedbin:
+			return AppAssets.accountFeedbin
+		case .feedly:
+			return AppAssets.accountFeedly
+		case .freshRSS:
+			return AppAssets.accountFreshRSS
+		default:
+			return nil
+		}
+	}
 	
 }

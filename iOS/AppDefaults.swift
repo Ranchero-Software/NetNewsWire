@@ -25,6 +25,8 @@ struct AppDefaults {
 		static let timelineSortDirection = "timelineSortDirection"
 		static let displayUndoAvailableTip = "displayUndoAvailableTip"
 		static let lastRefresh = "lastRefresh"
+		static let addWebFeedAccountID = "addWebFeedAccountID"
+		static let addFolderAccountID = "addFolderAccountID"
 	}
 
 	static let isFirstRun: Bool = {
@@ -34,6 +36,24 @@ struct AppDefaults {
 		firstRunDate = Date()
 		return true
 	}()
+
+	static var addWebFeedAccountID: String? {
+		get {
+			return string(for: Key.addWebFeedAccountID)
+		}
+		set {
+			setString(for: Key.addWebFeedAccountID, newValue)
+		}
+	}
+	
+	static var addFolderAccountID: String? {
+		get {
+			return string(for: Key.addFolderAccountID)
+		}
+		set {
+			setString(for: Key.addFolderAccountID, newValue)
+		}
+	}
 	
 	static var lastImageCacheFlushDate: Date? {
 		get {
@@ -120,6 +140,14 @@ private extension AppDefaults {
 		set {
 			setDate(for: Key.firstRunDate, newValue)
 		}
+	}
+
+	static func string(for key: String) -> String? {
+		return UserDefaults.standard.string(forKey: key)
+	}
+	
+	static func setString(for key: String, _ value: String?) {
+		UserDefaults.standard.set(value, forKey: key)
 	}
 
 	static func bool(for key: String) -> Bool {

@@ -26,11 +26,11 @@ class TimelineCustomizerViewController: UIViewController {
 	override func viewDidLoad() {
         super.viewDidLoad()
 
-		iconSizeSliderContainerView.layer.cornerRadius = 12
+		iconSizeSliderContainerView.layer.cornerRadius = 10
 		iconSizeSlider.value = Float(AppDefaults.timelineIconSize.rawValue)
 		iconSizeSlider.addTickMarks()
 
-		numberOfLinesSliderContainerView.layer.cornerRadius = 12
+		numberOfLinesSliderContainerView.layer.cornerRadius = 10
 		numberOfLinesSlider.value = Float(AppDefaults.timelineNumberOfLines)
 		numberOfLinesSlider.addTickMarks()
     }

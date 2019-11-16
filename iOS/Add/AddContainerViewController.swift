@@ -28,6 +28,7 @@ class AddContainerViewController: UIViewController {
 	@IBOutlet weak var cancelButton: UIBarButtonItem!
 	@IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
 	@IBOutlet weak var addButton: UIBarButtonItem!
+	@IBOutlet weak var typeSelectorContainer: UIView!
 	@IBOutlet weak var typeSelectorSegmentedControl: UISegmentedControl!
 	@IBOutlet weak var containerView: UIView!
 	
@@ -43,6 +44,7 @@ class AddContainerViewController: UIViewController {
 		activityIndicatorView.color = UIColor.label
 		activityIndicatorView.isHidden = true
 
+		typeSelectorContainer.layer.cornerRadius = 10
 		typeSelectorSegmentedControl.selectedSegmentIndex = initialControllerType?.rawValue ?? 0
 		switch initialControllerType {
 		case .feed:
