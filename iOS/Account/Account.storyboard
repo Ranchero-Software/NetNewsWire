@@ -95,10 +95,9 @@
                                                 </button>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="mQv-3O-Y2d" firstAttribute="centerY" secondItem="ahe-yz-PGg" secondAttribute="centerY" id="6bl-bA-qYE"/>
                                                 <constraint firstItem="mQv-3O-Y2d" firstAttribute="leading" secondItem="ahe-yz-PGg" secondAttribute="leading" id="7gZ-8n-bWs"/>
                                                 <constraint firstAttribute="trailing" secondItem="mQv-3O-Y2d" secondAttribute="trailing" id="FQu-yU-a4k"/>
-                                                <constraint firstAttribute="bottom" secondItem="mQv-3O-Y2d" secondAttribute="bottom" id="Jnx-yV-sX3"/>
-                                                <constraint firstItem="mQv-3O-Y2d" firstAttribute="top" secondItem="ahe-yz-PGg" secondAttribute="top" id="wZS-15-Bb5"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -143,7 +142,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vJa-NN-yjR">
-                                                    <rect key="frame" x="20" y="11.5" width="374" height="21"/>
+                                                    <rect key="frame" x="20" y="11.5" width="334" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="emailAddress" textContentType="username"/>
                                                 </textField>
@@ -212,9 +211,8 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="gv7-yG-aE3" firstAttribute="leading" secondItem="S8S-1a-vVf" secondAttribute="leading" id="cbE-1E-Mem"/>
-                                                <constraint firstAttribute="bottom" secondItem="gv7-yG-aE3" secondAttribute="bottom" id="luY-eY-UbU"/>
-                                                <constraint firstItem="gv7-yG-aE3" firstAttribute="top" secondItem="S8S-1a-vVf" secondAttribute="top" id="m3N-0e-JV0"/>
                                                 <constraint firstAttribute="trailing" secondItem="gv7-yG-aE3" secondAttribute="trailing" id="tQC-jk-evr"/>
+                                                <constraint firstItem="gv7-yG-aE3" firstAttribute="centerY" secondItem="S8S-1a-vVf" secondAttribute="centerY" id="xSU-R7-XQ8"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -257,7 +255,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L24-0i-kyr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3186.9565217391305" y="138.61607142857142"/>
+            <point key="canvasLocation" x="3177" y="145"/>
         </scene>
     </scenes>
     <resources>
