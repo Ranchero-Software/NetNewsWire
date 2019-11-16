@@ -1,5 +1,5 @@
 //
-//  InspectorHeaderView.swift
+//  ImageHeaderView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/3/19.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class InspectorImageHeaderView: UITableViewHeaderFooterView {
+class ImageHeaderView: UITableViewHeaderFooterView {
 
 	var imageView = UIImageView()
 	

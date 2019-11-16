@@ -31,7 +31,7 @@
 		5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
-		512AF9C2236ED52C0066F8BE /* InspectorImageHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512AF9C1236ED52C0066F8BE /* InspectorImageHeaderView.swift */; };
+		512AF9C2236ED52C0066F8BE /* ImageHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */; };
 		512AF9DD236F05230066F8BE /* InteractiveLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512AF9DC236F05230066F8BE /* InteractiveLabel.swift */; };
 		512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
 		512E08E72268801200BDCFDD /* WebFeedTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift */; };
@@ -1222,7 +1222,7 @@
 		5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneCoordinator.swift; sourceTree = "<group>"; };
 		5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailKeyboardDelegate.swift; sourceTree = "<group>"; };
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
-		512AF9C1236ED52C0066F8BE /* InspectorImageHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorImageHeaderView.swift; sourceTree = "<group>"; };
+		512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageHeaderView.swift; sourceTree = "<group>"; };
 		512AF9DC236F05230066F8BE /* InteractiveLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveLabel.swift; sourceTree = "<group>"; };
 		512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeader.swift; sourceTree = "<group>"; };
 		512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISplitViewController-Extensions.swift"; sourceTree = "<group>"; };
@@ -1696,7 +1696,6 @@
 				51A16991235E10D600EB091F /* AccountInspectorViewController.swift */,
 				5141E7382373C18B0013FF27 /* WebFeedInspectorViewController.swift */,
 				5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */,
-				512AF9C1236ED52C0066F8BE /* InspectorImageHeaderView.swift */,
 			);
 			path = Inspector;
 			sourceTree = "<group>";
@@ -1839,6 +1838,7 @@
 			children = (
 				51F85BFA2275D85000C787DC /* Array-Extensions.swift */,
 				51F85BF42273625800C787DC /* Bundle-Extensions.swift */,
+				512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */,
 				512AF9DC236F05230066F8BE /* InteractiveLabel.swift */,
 				51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */,
 				5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */,
@@ -1846,6 +1846,7 @@
 				512363372369155100951F16 /* RoundedProgressView.swift */,
 				51C45250226506F400C03939 /* String-Extensions.swift */,
 				51934CC1230F5963006127BE /* ThemedNavigationController.swift */,
+				5108F6D723763094001ABC45 /* TickMarkSlider.swift */,
 				51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */,
 				51F85BF622749FA100C787DC /* UIFont-Extensions.swift */,
 				512E092B2268B25500BDCFDD /* UISplitViewController-Extensions.swift */,
@@ -1853,7 +1854,6 @@
 				51FFF0C3235EE8E5002762AA /* VibrantButton.swift */,
 				5186A634235EF3A800C97195 /* VibrantLabel.swift */,
 				5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */,
-				5108F6D723763094001ABC45 /* TickMarkSlider.swift */,
 			);
 			path = "UIKit Extensions";
 			sourceTree = "<group>";
@@ -3962,7 +3962,7 @@
 				84CAFCA522BC8C08007694F0 /* FetchRequestQueue.swift in Sources */,
 				51C4529C22650A1000C03939 /* SingleFaviconDownloader.swift in Sources */,
 				51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
-				512AF9C2236ED52C0066F8BE /* InspectorImageHeaderView.swift in Sources */,
+				512AF9C2236ED52C0066F8BE /* ImageHeaderView.swift in Sources */,
 				51A1699F235E10D700EB091F /* AboutViewController.swift in Sources */,
 				51C45290226509C100C03939 /* PseudoFeed.swift in Sources */,
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,

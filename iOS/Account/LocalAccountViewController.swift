@@ -19,6 +19,8 @@ class LocalAccountViewController: UITableViewController {
 		super.viewDidLoad()
 		navigationItem.title = Account.defaultLocalAccountName
 		nameTextField.delegate = self
+
+		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 	}
 
 	@IBAction func cancel(_ sender: Any) {
@@ -31,6 +33,20 @@ class LocalAccountViewController: UITableViewController {
 		account.name = nameTextField.text
 		dismiss(animated: true, completion: nil)
 		delegate?.dismiss()
+	}
+	
+	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		return section == 0 ? 64.0 : super.tableView(tableView, heightForHeaderInSection: section)
+	}
+	
+	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		if section == 0 {
+			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
+			headerView.imageView.image = AppAssets.image(for: .onMyMac)
+			return headerView
+		} else {
+			return super.tableView(tableView, viewForHeaderInSection: section)
+		}
 	}
 	
 }
