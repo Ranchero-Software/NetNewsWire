@@ -37,6 +37,11 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 		if shouldDisplayPicker {
 			accountPickerView.dataSource = self
 			accountPickerView.delegate = self
+			
+			if let index = accounts.firstIndex(where: { $0.accountID == AppDefaults.addFolderAccountID }) {
+				accountPickerView.selectRow(index, inComponent: 0, animated: false)
+			}
+			
 		} else {
 			accountPickerView.isHidden = true
 		}
@@ -96,6 +101,7 @@ extension AddFolderViewController: UIPickerViewDataSource, UIPickerViewDelegate 
 	
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
 		accountLabel.text = (accounts[row] as DisplayNameProvider).nameForDisplay
+		AppDefaults.addFolderAccountID = accounts[row].accountID
 	}
 	
 }
