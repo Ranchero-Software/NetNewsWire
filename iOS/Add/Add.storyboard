@@ -17,7 +17,7 @@
                         <sections>
                             <tableViewSection id="3tl-Mb-Eno">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="44" id="lyJ-rf-8GA">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="44" id="lyJ-rf-8GA">
                                         <rect key="frame" x="16" y="18" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="lyJ-rf-8GA" id="eNS-Rp-w0A">
@@ -38,7 +38,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="44" id="Pxz-fv-QhQ">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="44" id="Pxz-fv-QhQ">
                                         <rect key="frame" x="16" y="62" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Pxz-fv-QhQ" id="8aP-2A-8jc">
@@ -59,21 +59,21 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="Cell" rowHeight="44" id="rlc-34-flT" customClass="AddWebFeedTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" rowHeight="44" id="rlc-34-flT" customClass="AddWebFeedTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="16" y="106" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rlc-34-flT" id="ZbC-Z6-dtq">
-                                            <rect key="frame" x="0.0" y="0.0" width="317" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Folder" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RtT-rR-5LA">
-                                                    <rect key="frame" x="18.999999999999996" y="11.666666666666664" width="48.666666666666657" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Folder:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RtT-rR-5LA">
+                                                    <rect key="frame" x="19.000000000000004" y="11.666666666666664" width="53.333333333333343" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="htg-Nn-3xi">
-                                                    <rect key="frame" x="267" y="11.666666666666664" width="42" height="21"/>
+                                                    <rect key="frame" x="80.333333333333329" y="11.666666666666664" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -81,8 +81,8 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="htg-Nn-3xi" firstAttribute="centerY" secondItem="ZbC-Z6-dtq" secondAttribute="centerY" id="Z4n-Wi-s5H"/>
-                                                <constraint firstItem="htg-Nn-3xi" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="RtT-rR-5LA" secondAttribute="trailing" constant="8" id="grG-sv-OgE"/>
-                                                <constraint firstItem="htg-Nn-3xi" firstAttribute="trailing" secondItem="ZbC-Z6-dtq" secondAttribute="trailingMargin" id="izx-09-DWe"/>
+                                                <constraint firstItem="htg-Nn-3xi" firstAttribute="leading" secondItem="RtT-rR-5LA" secondAttribute="trailing" constant="8" symbolic="YES" id="grG-sv-OgE"/>
+                                                <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="htg-Nn-3xi" secondAttribute="trailing" id="n9c-zc-0mQ"/>
                                                 <constraint firstItem="RtT-rR-5LA" firstAttribute="leading" secondItem="ZbC-Z6-dtq" secondAttribute="leadingMargin" constant="4" id="q2d-LR-YGh"/>
                                                 <constraint firstItem="RtT-rR-5LA" firstAttribute="centerY" secondItem="ZbC-Z6-dtq" secondAttribute="centerY" id="wHc-B0-lLE"/>
                                             </constraints>
@@ -115,6 +115,22 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TO9-rb-MQ7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1711.2" y="89.408866995073893"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="hbe-Yu-anW">
+            <objects>
+                <navigationController storyboardIdentifier="AddWebFeedFolderNavViewController" id="WDg-F7-gfk" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="akM-T1-shZ">
+                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="acA-n7-ohN" kind="relationship" relationship="rootViewController" id="L5I-0H-Oci"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ndl-Bj-xD7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2452" y="757"/>
         </scene>
         <!--Web Feed Folder-->
         <scene sceneID="wnD-aY-W32">
@@ -198,11 +214,17 @@
                             <outlet property="delegate" destination="acA-n7-ohN" id="x4s-jR-1Aw"/>
                         </connections>
                     </tableView>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <navigationItem key="navigationItem" id="e4Y-zR-cTn">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="aTX-Fj-7pf">
+                            <connections>
+                                <action selector="cancel:" destination="acA-n7-ohN" id="euP-3Q-f0K"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gE2-fq-mL5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1058.4000000000001" y="88.669950738916256"/>
+            <point key="canvasLocation" x="-1686" y="757"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="9m0-Wv-Ipq">
@@ -410,7 +432,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yp4-mF-DZV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-399" y="89"/>
+            <point key="canvasLocation" x="-961" y="89"/>
         </scene>
     </scenes>
 </document>

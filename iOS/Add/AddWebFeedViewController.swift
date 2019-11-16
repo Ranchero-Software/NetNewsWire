@@ -121,10 +121,12 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if indexPath.row == 2 {
-			let folderViewController = UIStoryboard.add.instantiateController(ofType: AddWebFeedFolderViewController.self)
+			let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedFolderNavViewController") as! UINavigationController
+			navController.modalPresentationStyle = .currentContext
+			let folderViewController = navController.topViewController as! AddWebFeedFolderViewController
 			folderViewController.delegate = self
 			folderViewController.initialContainer = container
-			navigationController?.pushViewController(folderViewController, animated: true)
+			present(navController, animated: true)
 		}
 	}
 	

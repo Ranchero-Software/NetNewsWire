@@ -113,7 +113,6 @@ private extension AddContainerViewController {
 		
 		navigationItem.title = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
 		resetUI()
-		hideCurrentController()
 		
 		let addFeedController = UIStoryboard.add.instantiateController(ofType: AddWebFeedViewController.self)
 		addFeedController.initialFeed = initialFeed
@@ -131,7 +130,6 @@ private extension AddContainerViewController {
 		
 		navigationItem.title = NSLocalizedString("Add Folder", comment: "Add Folder")
 		resetUI()
-		hideCurrentController()
 		displayContentController(UIStoryboard.add.instantiateController(ofType: AddFolderViewController.self))
 		
 	}
@@ -141,30 +139,32 @@ private extension AddContainerViewController {
 	}
 	
 	func displayContentController(_ controller: AddContainerViewControllerChild) {
+		if let currentViewController = currentViewController {
+			
+			let transition = CATransition()
+			transition.type = .push
+			transition.subtype = currentViewController is AddWebFeedViewController ? .fromRight : .fromLeft
+			containerView.layer.add(transition, forKey: "transition")
+
+			containerView.addSubview(controller.view)
+			addChild(controller)
+			controller.didMove(toParent: self)
+
+			currentViewController.willMove(toParent: nil)
+			currentViewController.view.removeFromSuperview()
+			currentViewController.removeFromParent()
+
+		} else {
+			
+			containerView.addSubview(controller.view)
+			addChild(controller)
+			controller.didMove(toParent: self)
+
+		}
 		
 		currentViewController = controller
-		controller.delegate = self
-		
-		addChild(controller)
-		
-		containerView.addSubview(controller.view)
-		controller.view.translatesAutoresizingMaskIntoConstraints = false
-		controller.view.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-		controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
-		controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-		controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
-		
-		controller.didMove(toParent: self)
+		currentViewController?.delegate = self
 		
 	}
-	
-	func hideCurrentController() {
-		guard let currentViewController = currentViewController else {
-			return
-		}
-		currentViewController.willMove(toParent: nil)
-		currentViewController.view.removeFromSuperview()
-		currentViewController.removeFromParent()
-	}
-	
+		
 }

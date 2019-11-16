@@ -76,8 +76,22 @@ class AddWebFeedFolderViewController: UITableViewController {
 			let cell = tableView.cellForRow(at: indexPath)
 			cell?.accessoryType = .checkmark
 			delegate?.didSelect(container: container)
-			navigationController?.popViewController(animated: true)
+			dismiss()
 		}
+	}
+	
+	// MARK: Actions
+	
+	@IBAction func cancel(_ sender: Any) {
+		dismiss()
+	}
+	
+}
+
+private extension AddWebFeedFolderViewController {
+	
+	func dismiss() {
+		dismiss(animated: true)
 	}
 	
 }
