@@ -131,7 +131,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	public var sortedFolders: [Folder]? {
 		if let folders = folders {
-			return Array(folders).sorted(by: { $0.nameForDisplay > $1.nameForDisplay })
+			return Array(folders).sorted(by: { $0.nameForDisplay < $1.nameForDisplay })
 		}
 		return nil
 	}

@@ -26,6 +26,7 @@ struct AppDefaults {
 		static let displayUndoAvailableTip = "displayUndoAvailableTip"
 		static let lastRefresh = "lastRefresh"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
+		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
 	}
 
@@ -43,6 +44,15 @@ struct AppDefaults {
 		}
 		set {
 			setString(for: Key.addWebFeedAccountID, newValue)
+		}
+	}
+	
+	static var addWebFeedFolderName: String? {
+		get {
+			return string(for: Key.addWebFeedFolderName)
+		}
+		set {
+			setString(for: Key.addWebFeedFolderName, newValue)
 		}
 	}
 	

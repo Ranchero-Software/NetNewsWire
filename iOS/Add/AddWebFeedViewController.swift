@@ -48,10 +48,8 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 		nameTextField.text = initialFeedName
 		nameTextField.delegate = self
 		
-		if let accountID = AppDefaults.addWebFeedAccountID, let account = AccountManager.shared.activeAccounts.first(where: { $0.accountID == accountID }) {
-			container = account
-		} else if let account = AccountManager.shared.sortedActiveAccounts.first {
-			container = account
+		if let defaultContainer = AddWebFeedDefaultContainer.defaultContainer {
+			container = defaultContainer
 		} else {
 			delegate?.readyToAdd(state: false)
 		}
@@ -138,7 +136,7 @@ extension AddWebFeedViewController: AddWebFeedFolderViewControllerDelegate {
 	func didSelect(container: Container) {
 		self.container = container
 		updateFolderLabel()
-		AppDefaults.addWebFeedAccountID = container.account?.accountID
+		AddWebFeedDefaultContainer.storeDefaultContainer(container)
 	}
 }
 

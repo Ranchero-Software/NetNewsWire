@@ -68,11 +68,16 @@ class AddWebFeedFolderViewController: UITableViewController {
     }
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		let cell = tableView.cellForRow(at: indexPath)
-		cell?.accessoryType = .checkmark
+		let container = containers[indexPath.row]
 		
-		delegate?.didSelect(container: containers[indexPath.row])
-		navigationController?.popViewController(animated: true)
+		if let account = container as? Account, account.behaviors.contains(.disallowFeedInRootFolder) {
+			tableView.selectRow(at: nil, animated: false, scrollPosition: .none)
+		} else {
+			let cell = tableView.cellForRow(at: indexPath)
+			cell?.accessoryType = .checkmark
+			delegate?.didSelect(container: container)
+			navigationController?.popViewController(animated: true)
+		}
 	}
 	
 }
