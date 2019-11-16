@@ -146,7 +146,7 @@ private extension AddContainerViewController {
 			transition.subtype = currentViewController is AddWebFeedViewController ? .fromRight : .fromLeft
 			containerView.layer.add(transition, forKey: "transition")
 
-			containerView.addSubview(controller.view)
+			containerView.addChildAndPin(controller.view)
 			addChild(controller)
 			controller.didMove(toParent: self)
 
@@ -156,7 +156,7 @@ private extension AddContainerViewController {
 
 		} else {
 			
-			containerView.addSubview(controller.view)
+			containerView.addChildAndPin(controller.view)
 			addChild(controller)
 			controller.didMove(toParent: self)
 
