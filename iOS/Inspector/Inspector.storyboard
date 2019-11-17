@@ -94,9 +94,8 @@
                                                 </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="TYD-py-8IF" firstAttribute="top" secondItem="rJW-6J-9DM" secondAttribute="top" id="g3l-m2-eby"/>
+                                                <constraint firstItem="TYD-py-8IF" firstAttribute="centerY" secondItem="rJW-6J-9DM" secondAttribute="centerY" id="We5-ck-yMq"/>
                                                 <constraint firstItem="TYD-py-8IF" firstAttribute="leading" secondItem="rJW-6J-9DM" secondAttribute="leading" id="gIs-Z2-bBf"/>
-                                                <constraint firstAttribute="bottom" secondItem="TYD-py-8IF" secondAttribute="bottom" id="hGo-PI-2l6"/>
                                                 <constraint firstAttribute="trailing" secondItem="TYD-py-8IF" secondAttribute="trailing" id="uFe-xv-QBo"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -135,10 +134,9 @@
                                                 </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="obv-a5-Pl6" firstAttribute="top" secondItem="fIH-xP-nza" secondAttribute="top" id="0be-8X-t2s"/>
                                                 <constraint firstAttribute="trailing" secondItem="obv-a5-Pl6" secondAttribute="trailing" id="1Po-cv-lMZ"/>
                                                 <constraint firstItem="obv-a5-Pl6" firstAttribute="leading" secondItem="fIH-xP-nza" secondAttribute="leading" id="4Xk-ff-eUv"/>
-                                                <constraint firstAttribute="bottom" secondItem="obv-a5-Pl6" secondAttribute="bottom" id="SS5-Ph-SHG"/>
+                                                <constraint firstItem="obv-a5-Pl6" firstAttribute="centerY" secondItem="fIH-xP-nza" secondAttribute="centerY" id="Vs4-U1-hKv"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>

@@ -110,7 +110,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="On My Device" id="AOA-LS-PIB">
-                        <barButtonItem key="leftBarButtonItem" style="plain" systemItem="cancel" id="b2H-re-cgN">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="b2H-re-cgN">
                             <connections>
                                 <action selector="cancel:" destination="vi3-jb-8XS" id="gRE-sR-r4Z"/>
                             </connections>
@@ -225,12 +225,12 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Feedbin" id="tYg-9f-kyd">
-                        <barButtonItem key="leftBarButtonItem" style="plain" systemItem="cancel" id="pfF-Of-5NT">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="pfF-Of-5NT">
                             <connections>
                                 <action selector="cancel:" destination="ECy-jg-Kyc" id="ZKI-gV-ylg"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="Xwp-LO-qff">
+                        <barButtonItem key="rightBarButtonItem" id="Xwp-LO-qff">
                             <view key="customView" contentMode="scaleToFill" id="cn4-b1-uZa">
                                 <rect key="frame" x="374" y="12" width="20" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

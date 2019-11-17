@@ -255,10 +255,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	var isTimelineUnreadAvailable: Bool {
-		if let unreadProvider = timelineFeed as? UnreadCountProvider {
-			return unreadProvider.unreadCount > 0
-		}
-		return false
+		return timelineFeed?.unreadCount ?? 0 > 0
 	}
 	
 	var isAnyUnreadAvailable: Bool {
