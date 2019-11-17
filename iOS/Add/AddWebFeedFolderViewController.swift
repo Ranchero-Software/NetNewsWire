@@ -62,8 +62,10 @@ class AddWebFeedFolderViewController: UITableViewController {
 		
 		if let compContainer = initialContainer, container === compContainer {
 			cell.accessoryType = .checkmark
+		} else {
+			cell.accessoryType = .none
 		}
-		
+
         return cell
     }
 

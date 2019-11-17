@@ -64,3 +64,26 @@ extension CGImage {
 	}
 	
 }
+
+
+enum IconSize: Int, CaseIterable {
+	case small = 1
+	case medium = 2
+	case large = 3
+	
+	private static let smallDimension = CGFloat(integerLiteral: 24)
+	private static let mediumDimension = CGFloat(integerLiteral: 36)
+	private static let largeDimension = CGFloat(integerLiteral: 48)
+
+	var size: CGSize {
+		switch self {
+		case .small:
+			return CGSize(width: IconSize.smallDimension, height: IconSize.smallDimension)
+		case .medium:
+			return CGSize(width: IconSize.mediumDimension, height: IconSize.mediumDimension)
+		case .large:
+			return CGSize(width: IconSize.largeDimension, height: IconSize.largeDimension)
+		}
+	}
+
+}

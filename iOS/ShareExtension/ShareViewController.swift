@@ -16,8 +16,6 @@ import RSTree
 
 class ShareViewController: SLComposeServiceViewController, ShareFolderPickerControllerDelegate {
 	
-	private var pickerData: FlattenedAccountFolderPickerData?
-
 	private var url: URL?
 	private var container: Container?
 	private var folderItem: SLComposeSheetConfigurationItem!
@@ -26,11 +24,7 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 		
 		AccountManager.shared = AccountManager()
 
-		pickerData = FlattenedAccountFolderPickerData()
-		
-		if pickerData?.containers.count ?? 0 > 0 {
-			container = pickerData?.containers[0]
-		}
+		container = AddWebFeedDefaultContainer.defaultContainer
 
 		title = "NetNewsWire"
 		placeholder = "Feed Name (Optional)"
@@ -130,9 +124,10 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 		}
 	}
 	
-	func shareFolderPickerDidSelect(_ container: Container, _ selectionName: String) {
+	func shareFolderPickerDidSelect(_ container: Container) {
+		AddWebFeedDefaultContainer.saveDefaultContainer(container)
 		self.container = container
-		self.folderItem.value = selectionName
+		updateFolderItemValue()
 		self.popConfigurationViewController()
 	}
 
@@ -145,10 +140,7 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 		
 		folderItem = SLComposeSheetConfigurationItem()
 		folderItem.title = "Folder"
-		
-		if let nameProvider = container as? DisplayNameProvider {
-			folderItem.value = nameProvider.nameForDisplay
-		}
+		updateFolderItemValue()
 		
 		folderItem.tapHandler = {
 			
@@ -156,7 +148,6 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			
 			folderPickerController.navigationController?.title = NSLocalizedString("Folder", comment: "Folder")
 			folderPickerController.delegate = self
-			folderPickerController.pickerData = self.pickerData
 			folderPickerController.selectedContainer = self.container
 			
 			self.pushConfigurationViewController(folderPickerController)
@@ -165,6 +156,20 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 		
 		return [folderItem!, urlItem]
 		
+	}
+	
+}
+
+private extension ShareViewController {
+	
+	func updateFolderItemValue() {
+		if let containerName = (container as? DisplayNameProvider)?.nameForDisplay {
+			if container is Folder {
+				self.folderItem.value = "\(container?.account?.nameForDisplay ?? "") / \(containerName)"
+			} else {
+				self.folderItem.value = containerName
+			}
+		}
 	}
 	
 }

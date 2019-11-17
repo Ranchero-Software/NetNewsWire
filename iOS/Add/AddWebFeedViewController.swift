@@ -138,7 +138,7 @@ extension AddWebFeedViewController: AddWebFeedFolderViewControllerDelegate {
 	func didSelect(container: Container) {
 		self.container = container
 		updateFolderLabel()
-		AddWebFeedDefaultContainer.storeDefaultContainer(container)
+		AddWebFeedDefaultContainer.saveDefaultContainer(container)
 	}
 }
 

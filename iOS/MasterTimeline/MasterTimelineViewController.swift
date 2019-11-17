@@ -15,7 +15,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	private var titleView: MasterTimelineTitleView?
 	private var numberOfTextLines = 0
-	private var iconSize = MasterTimelineIconSize.medium
+	private var iconSize = IconSize.medium
 	
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!

@@ -47,7 +47,7 @@ class TimelineCustomizerViewController: UIViewController {
 	}
 
 	@IBAction func iconSizeChanged(_ sender: Any) {
-		guard let iconSize = MasterTimelineIconSize(rawValue: Int(iconSizeSlider.value.rounded())) else { return }
+		guard let iconSize = IconSize(rawValue: Int(iconSizeSlider.value.rounded())) else { return }
 		AppDefaults.timelineIconSize = iconSize
 		updatePreview()
 	}

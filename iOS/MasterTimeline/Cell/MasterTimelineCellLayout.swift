@@ -42,7 +42,7 @@ extension MasterTimelineCellLayout {
 		return r
 	}
 	
-	static func rectForIconView(_ point: CGPoint, iconSize: MasterTimelineIconSize) -> CGRect {
+	static func rectForIconView(_ point: CGPoint, iconSize: IconSize) -> CGRect {
 		var r = CGRect.zero
 		r.size = iconSize.size
 		r.origin.x = point.x

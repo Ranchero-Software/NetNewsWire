@@ -13,7 +13,6 @@
 		5108F6B72375E612001ABC45 /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
 		5108F6D22375EED2001ABC45 /* TimelineCustomizerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */; };
 		5108F6D42375EEEF001ABC45 /* TimelinePreviewTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6D32375EEEF001ABC45 /* TimelinePreviewTableViewController.swift */; };
-		5108F6D623762309001ABC45 /* MasterTimelineIconSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6D523762309001ABC45 /* MasterTimelineIconSize.swift */; };
 		5108F6D823763094001ABC45 /* TickMarkSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6D723763094001ABC45 /* TickMarkSlider.swift */; };
 		51102165233A7D6C0007A5F7 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */; };
 		5110C37D2373A8D100A9C04F /* InspectorIconHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */; };
@@ -129,6 +128,14 @@
 		51A1699F235E10D700EB091F /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16995235E10D600EB091F /* AboutViewController.swift */; };
 		51A169A0235E10D700EB091F /* FeedbinAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */; };
 		51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
+		51A9A5E02380C3F10033AADF /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
+		51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45255226507D200C03939 /* AppDefaults.swift */; };
+		51A9A5E42380C8880033AADF /* ShareFolderPickerAccountCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */; };
+		51A9A5E62380C8B20033AADF /* ShareFolderPickerFolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */; };
+		51A9A5E82380CA130033AADF /* ShareFolderPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */; };
+		51A9A5ED2380D6000033AADF /* AppAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45254226507D200C03939 /* AppAssets.swift */; };
+		51A9A5EE2380D6080033AADF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9B2262A1A900D921D6 /* Assets.xcassets */; };
+		51A9A5EF2380D63B0033AADF /* IconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9DE2372269A007DEEAA /* IconImage.swift */; };
 		51B62E68233186730085F949 /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B62E67233186730085F949 /* IconView.swift */; };
 		51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */; };
 		51BB7C312335ACDE008E8144 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 51BB7C302335ACDE008E8144 /* page.html */; };
@@ -212,8 +219,6 @@
 		51E3EB33229AB02C00645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB32229AB02C00645299 /* ErrorHandler.swift */; };
 		51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB3C229AB08300645299 /* ErrorHandler.swift */; };
 		51E43962238037C400015C31 /* AddWebFeedFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */; };
-		51E4397D23805A6D00015C31 /* FlattenedAccountFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4397C23805A6C00015C31 /* FlattenedAccountFolderPickerData.swift */; };
-		51E4397E23805A6D00015C31 /* FlattenedAccountFolderPickerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4397C23805A6C00015C31 /* FlattenedAccountFolderPickerData.swift */; };
 		51E4398023805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4397F23805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift */; };
 		51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
 		51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
@@ -1208,7 +1213,6 @@
 		5108F6B52375E612001ABC45 /* CacheCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheCleaner.swift; sourceTree = "<group>"; };
 		5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCustomizerViewController.swift; sourceTree = "<group>"; };
 		5108F6D32375EEEF001ABC45 /* TimelinePreviewTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelinePreviewTableViewController.swift; sourceTree = "<group>"; };
-		5108F6D523762309001ABC45 /* MasterTimelineIconSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineIconSize.swift; sourceTree = "<group>"; };
 		5108F6D723763094001ABC45 /* TickMarkSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TickMarkSlider.swift; sourceTree = "<group>"; };
 		51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
 		5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorIconHeaderView.swift; sourceTree = "<group>"; };
@@ -1292,6 +1296,9 @@
 		51A16995235E10D600EB091F /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedbinAccountViewController.swift; sourceTree = "<group>"; };
 		51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedDefaultContainer.swift; sourceTree = "<group>"; };
+		51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerAccountCell.xib; sourceTree = "<group>"; };
+		51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerFolderCell.xib; sourceTree = "<group>"; };
+		51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerCell.swift; sourceTree = "<group>"; };
 		51B62E67233186730085F949 /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
@@ -1323,7 +1330,6 @@
 		51E3EB32229AB02C00645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		51E3EB3C229AB08300645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedFolderViewController.swift; sourceTree = "<group>"; };
-		51E4397C23805A6C00015C31 /* FlattenedAccountFolderPickerData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlattenedAccountFolderPickerData.swift; sourceTree = "<group>"; };
 		51E4397F23805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedFolderTableViewCell.swift; sourceTree = "<group>"; };
 		51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleStatusSyncTimer.swift; sourceTree = "<group>"; };
 		51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicButton.swift; sourceTree = "<group>"; };
@@ -1711,7 +1717,6 @@
 		512E08DD22687FA000BDCFDD /* Tree */ = {
 			isa = PBXGroup;
 			children = (
-				51E4397C23805A6C00015C31 /* FlattenedAccountFolderPickerData.swift */,
 				849A97611ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift */,
 				849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */,
 			);
@@ -1750,6 +1755,9 @@
 			children = (
 				513C5CE8232571C2003D4054 /* ShareViewController.swift */,
 				51707438232AA97100A461A3 /* ShareFolderPickerController.swift */,
+				51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */,
+				51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */,
+				51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */,
 				513C5CEA232571C2003D4054 /* MainInterface.storyboard */,
 				513C5CED232571C2003D4054 /* Info.plist */,
 				515D4FCB2325815A00EE1167 /* SafariExt.js */,
@@ -1892,7 +1900,6 @@
 				51FD413A2342BD0500880194 /* MasterTimelineUnreadCountView.swift */,
 				FFD43E372340F320009E5CA3 /* UndoAvailableAlertController.swift */,
 				51C4526F2265091600C03939 /* Cell */,
-				5108F6D523762309001ABC45 /* MasterTimelineIconSize.swift */,
 			);
 			path = MasterTimeline;
 			sourceTree = "<group>";
@@ -1935,7 +1942,6 @@
 				51C452842265093600C03939 /* AddWebFeedViewController.swift */,
 				51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */,
 				51E4397F23805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift */,
-				51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */,
 			);
 			path = Add;
 			sourceTree = "<group>";
@@ -2203,6 +2209,7 @@
 		849A97561ED9EB0D007D329B /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */,
 				849A97731ED9EC04007D329B /* ArticleStringFormatter.swift */,
 				849A97581ED9EB0D007D329B /* ArticleUtilities.swift */,
 				5108F6B52375E612001ABC45 /* CacheCleaner.swift */,
@@ -3317,7 +3324,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */,
+				51A9A5E62380C8B20033AADF /* ShareFolderPickerFolderCell.xib in Resources */,
+				51A9A5E42380C8880033AADF /* ShareFolderPickerAccountCell.xib in Resources */,
 				513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */,
+				51A9A5EE2380D6080033AADF /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3702,7 +3712,11 @@
 				515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */,
 				513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */,
 				51707439232AA97100A461A3 /* ShareFolderPickerController.swift in Sources */,
-				51E4397E23805A6D00015C31 /* FlattenedAccountFolderPickerData.swift in Sources */,
+				51A9A5E02380C3F10033AADF /* AddWebFeedDefaultContainer.swift in Sources */,
+				51A9A5E82380CA130033AADF /* ShareFolderPickerCell.swift in Sources */,
+				51A9A5EF2380D63B0033AADF /* IconImage.swift in Sources */,
+				51A9A5ED2380D6000033AADF /* AppAssets.swift in Sources */,
+				51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3885,7 +3899,6 @@
 				512E08E72268801200BDCFDD /* WebFeedTreeControllerDelegate.swift in Sources */,
 				51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */,
 				51EF0F79227716380050506E /* ColorHash.swift in Sources */,
-				51E4397D23805A6D00015C31 /* FlattenedAccountFolderPickerData.swift in Sources */,
 				5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */,
 				51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,
@@ -4004,7 +4017,6 @@
 				51CE1C0B23622007005548FC /* RefreshProgressView.swift in Sources */,
 				511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */,
 				51A1699D235E10D700EB091F /* SettingsViewController.swift in Sources */,
-				5108F6D623762309001ABC45 /* MasterTimelineIconSize.swift in Sources */,
 				51C45293226509C800C03939 /* StarredFeedDelegate.swift in Sources */,
 				51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */,
 				51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */,

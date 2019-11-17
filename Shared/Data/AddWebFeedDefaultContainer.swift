@@ -27,7 +27,7 @@ struct AddWebFeedDefaultContainer {
 		
 	}
 	
-	static func storeDefaultContainer(_ container: Container) {
+	static func saveDefaultContainer(_ container: Container) {
 		AppDefaults.addWebFeedAccountID = container.account?.accountID
 		if let folder = container as? Folder {
 			AppDefaults.addWebFeedFolderName = folder.nameForDisplay

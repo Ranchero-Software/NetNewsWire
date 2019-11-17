@@ -119,10 +119,10 @@ struct AppDefaults {
 		}
 	}
 	
-	static var timelineIconSize: MasterTimelineIconSize {
+	static var timelineIconSize: IconSize {
 		get {
 			let rawValue = AppDefaults.shared.integer(forKey: Key.timelineIconSize)
-			return MasterTimelineIconSize(rawValue: rawValue) ?? MasterTimelineIconSize.medium
+			return IconSize(rawValue: rawValue) ?? IconSize.medium
 		}
 		set {
 			AppDefaults.shared.set(newValue.rawValue, forKey: Key.timelineIconSize)
@@ -133,7 +133,7 @@ struct AppDefaults {
 		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(),
 										Key.timelineGroupByFeed: false,
 										Key.timelineNumberOfLines: 2,
-										Key.timelineIconSize: MasterTimelineIconSize.medium.rawValue,
+										Key.timelineIconSize: IconSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.displayUndoAvailableTip: true]
 		AppDefaults.shared.register(defaults: defaults)
@@ -202,5 +202,3 @@ private extension AppDefaults {
 	}
 	
 }
-
-

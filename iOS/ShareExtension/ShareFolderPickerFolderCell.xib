@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="JCb-QB-CrO" customClass="ShareFolderPickerCell" customModule="NetNewsWire_iOS_Share_Extension" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JCb-QB-CrO" id="FzD-t2-JGy">
+                <rect key="frame" x="0.0" y="0.0" width="383" height="44"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yiw-9t-gil" userLabel="Folder Icon">
+                        <rect key="frame" x="50" y="11" width="22" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="22" id="43E-Em-Z6O"/>
+                            <constraint firstAttribute="height" constant="22" id="mTY-cQ-1R1"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TRx-RV-za8" userLabel="Folder Label">
+                        <rect key="frame" x="80" y="14" width="42" height="16"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="TRx-RV-za8" firstAttribute="leading" secondItem="yiw-9t-gil" secondAttribute="trailing" constant="8" symbolic="YES" id="RUN-Ol-xSl"/>
+                    <constraint firstItem="TRx-RV-za8" firstAttribute="top" secondItem="FzD-t2-JGy" secondAttribute="top" constant="14" id="cze-hi-8Uh"/>
+                    <constraint firstItem="yiw-9t-gil" firstAttribute="leading" secondItem="FzD-t2-JGy" secondAttribute="leading" constant="50" id="oU9-E3-lEt"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="TRx-RV-za8" secondAttribute="trailing" constant="8" id="sJ6-wr-JIw"/>
+                    <constraint firstItem="yiw-9t-gil" firstAttribute="centerY" secondItem="FzD-t2-JGy" secondAttribute="centerY" id="tUD-tI-dgr"/>
+                    <constraint firstAttribute="bottom" secondItem="TRx-RV-za8" secondAttribute="bottom" constant="14" id="zls-MW-Ffp"/>
+                </constraints>
+            </tableViewCellContentView>
+            <inset key="separatorInset" minX="80" minY="0.0" maxX="0.0" maxY="0.0"/>
+            <connections>
+                <outlet property="icon" destination="yiw-9t-gil" id="adY-cS-RuD"/>
+                <outlet property="label" destination="TRx-RV-za8" id="lIo-uF-Cle"/>
+            </connections>
+            <point key="canvasLocation" x="7" y="-9"/>
+        </tableViewCell>
+    </objects>
+</document>

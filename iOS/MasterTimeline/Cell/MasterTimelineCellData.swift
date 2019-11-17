@@ -22,9 +22,9 @@ struct MasterTimelineCellData {
 	let read: Bool
 	let starred: Bool
 	let numberOfLines: Int
-	let iconSize: MasterTimelineIconSize
+	let iconSize: IconSize
 
-	init(article: Article, showFeedName: Bool, feedName: String?, iconImage: IconImage?, showIcon: Bool, featuredImage: UIImage?, numberOfLines: Int, iconSize: MasterTimelineIconSize) {
+	init(article: Article, showFeedName: Bool, feedName: String?, iconImage: IconImage?, showIcon: Bool, featuredImage: UIImage?, numberOfLines: Int, iconSize: IconSize) {
 
 		self.title = ArticleStringFormatter.truncatedTitle(article)
 		self.summary = ArticleStringFormatter.truncatedSummary(article)
