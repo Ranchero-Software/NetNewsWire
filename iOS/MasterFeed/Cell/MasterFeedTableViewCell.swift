@@ -97,6 +97,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	private let bottomSeparatorView: UIView = {
 		let view = UIView()
 		view.backgroundColor = UIColor.separator
+		view.alpha = 0.5
 		return view
 	}()
 	
