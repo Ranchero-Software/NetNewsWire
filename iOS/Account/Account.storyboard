@@ -7,10 +7,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Navigation Controller-->
+        <!--Modal Navigation Controller-->
         <scene sceneID="98f-PW-S1C">
             <objects>
-                <navigationController storyboardIdentifier="AddLocalAccountNavigationViewController" id="TMY-HB-vAu" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="AddLocalAccountNavigationViewController" id="TMY-HB-vAu" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="p8g-7e-3f4">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -23,10 +23,10 @@
             </objects>
             <point key="canvasLocation" x="2506" y="-528"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Modal Navigation Controller-->
         <scene sceneID="6i4-ho-e4F">
             <objects>
-                <navigationController storyboardIdentifier="FeedbinAccountNavigationViewController" id="sFg-MZ-PqJ" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="FeedbinAccountNavigationViewController" id="sFg-MZ-PqJ" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="wq6-np-tNn">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>

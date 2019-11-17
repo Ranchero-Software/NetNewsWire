@@ -117,10 +117,10 @@
             </objects>
             <point key="canvasLocation" x="-1711.2" y="89.408866995073893"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Modal Navigation Controller-->
         <scene sceneID="hbe-Yu-anW">
             <objects>
-                <navigationController storyboardIdentifier="AddWebFeedFolderNavViewController" id="WDg-F7-gfk" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="AddWebFeedFolderNavViewController" id="WDg-F7-gfk" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="akM-T1-shZ">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
