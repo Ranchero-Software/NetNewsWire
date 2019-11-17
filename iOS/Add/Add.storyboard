@@ -217,7 +217,7 @@
                             <outlet property="delegate" destination="acA-n7-ohN" id="x4s-jR-1Aw"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="e4Y-zR-cTn">
+                    <navigationItem key="navigationItem" title="Select Folder" id="e4Y-zR-cTn">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="aTX-Fj-7pf">
                             <connections>
                                 <action selector="cancel:" destination="acA-n7-ohN" id="euP-3Q-f0K"/>
