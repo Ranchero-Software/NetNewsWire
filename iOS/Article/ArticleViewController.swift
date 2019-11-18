@@ -34,7 +34,8 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var webViewContainer: UIView!
-
+	@IBOutlet private weak var showToolbarView: UIView!
+	
 	private var articleExtractorButton: ArticleExtractorButton = {
 		let button = ArticleExtractorButton(type: .system)
 		button.frame = CGRect(x: 0, y: 0, width: 44.0, height: 44.0)
@@ -103,12 +104,15 @@ class ArticleViewController: UIViewController {
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
 
+		showToolbarView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showToolBar(_:))))
+		
 		ArticleViewControllerWebViewProvider.shared.dequeueWebView() { webView in
 			
 			self.webView = webView
 			self.webViewContainer.addChildAndPin(webView)
 			webView.navigationDelegate = self
 			webView.uiDelegate = self
+			webView.scrollView.delegate = self
 
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
@@ -205,7 +209,11 @@ class ArticleViewController: UIViewController {
 	}
 	
 	// MARK: Actions
-	
+
+	@objc func showToolBar(_ sender: Any) {
+		showToolbar()
+	}
+
 	@IBAction func toggleArticleExtractor(_ sender: Any) {
 		coordinator.toggleArticleExtractor()
 	}
@@ -285,6 +293,23 @@ class ArticleViewController: UIViewController {
 		webView?.evaluateJavaScript("showClickedImage();")
 	}
 	
+}
+
+extension ArticleViewController: UIScrollViewDelegate {
+	
+	func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+		if velocity.y > 0.5 {
+			hideToolbar()
+		} else if velocity.y < -1.0 {
+			showToolbar()
+		}
+	}
+	
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		if scrollView.contentOffset.y < 20 {
+			showToolbar()
+		}
+	}
 }
 
 // MARK: WKNavigationDelegate
@@ -415,6 +440,18 @@ private extension ArticleViewController {
 			transition.originImage = image
 			
 			coordinator.showFullScreenImage(image: image, transitioningDelegate: self)
+		}
+	}
+	
+	func showToolbar() {
+		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+			navigationController?.setToolbarHidden(false, animated: true)
+		}
+	}
+	
+	func hideToolbar() {
+		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+			navigationController?.setToolbarHidden(true, animated: true)
 		}
 	}
 	
