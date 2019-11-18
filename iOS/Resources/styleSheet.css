@@ -40,6 +40,7 @@ a:hover {
 	--body-code-color: #666;
 	--system-message-color: #cbcbcb;
 	--feedlink-color: rgba(0, 0, 0, 0.6);
+	--article-title-color: #333;
 }
 
 @media(prefers-color-scheme: dark) {
@@ -49,7 +50,8 @@ a:hover {
 		--header-table-border-color: rgba(255, 255, 255, 0.1);
 		--header-color: #d2d2d2;
 		--body-code-color: #b2b2b2;
-		--system-message-color: #5f5f5f
+		--system-message-color: #5f5f5f;
+		--article-title-color: #e0e0e0;
 	}
 }
 
@@ -98,7 +100,8 @@ body > .systemMessage {
 	text-align: left;
 }
 
-.articleTitle {
+.articleTitle a:link, .articleTitle a:visited {
+	color: var(--article-title-color);
 	margin-top: 26px;
 }
 
