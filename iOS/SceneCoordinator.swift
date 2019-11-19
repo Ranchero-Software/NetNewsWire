@@ -329,7 +329,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && !rootSplitViewController.isCollapsed else {
 			return
 		}
-		if size.width > size.height {
+		if (size.width / size.height) > 1.2 {
 			if !isThreePanelMode {
 				transitionToThreePanelMode()
 			}
