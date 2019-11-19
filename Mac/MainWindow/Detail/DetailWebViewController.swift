@@ -100,14 +100,31 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 		#if !MAC_APP_STORE
 			webInspectorEnabled = AppDefaults.webInspectorEnabled
-
 			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 		#endif
+
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 
 		webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
 		
 	}
 
+	// MARK: Notifications
+	
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
+	}
+
+	@objc func avatarDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
+	}
+
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
+	}
+	
 	// MARK: Scrolling
 
 	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
@@ -174,6 +191,10 @@ struct TemplateData: Codable {
 }
 
 private extension DetailWebViewController {
+
+	func reloadArticleImage() {
+		webView.evaluateJavaScript("reloadArticleImage()")
+	}
 
 	func reloadHTML() {
 		let style = ArticleStylesManager.shared.currentStyle
