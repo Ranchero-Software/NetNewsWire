@@ -21,6 +21,11 @@ function convertImgSrc() {
 	});
 }
 
+function reloadArticleImage() {
+	var image = document.getElementById("nnwImageIcon");
+	image.src = "nnwImageIcon://";
+}
+
 function error() {
 	document.body.innerHTML = "error";
 }

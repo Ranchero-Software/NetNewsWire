@@ -100,6 +100,9 @@ class ArticleViewController: UIViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
@@ -209,6 +212,18 @@ class ArticleViewController: UIViewController {
 		if articles.count == 1 && articles.first?.articleID == currentArticle?.articleID {
 			updateUI()
 		}
+	}
+
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
+	}
+
+	@objc func avatarDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
+	}
+
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -426,6 +441,10 @@ private struct ImageClickMessage: Codable {
 // MARK: Private
 
 private extension ArticleViewController {
+	
+	func reloadArticleImage() {
+		webView?.evaluateJavaScript("reloadArticleImage()")
+	}
 	
 	func imageWasClicked(body: String?) {
 		guard let body = body,
