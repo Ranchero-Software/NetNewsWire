@@ -69,8 +69,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		resetEstimatedRowHeight()
 		
 		resetUI()
-
-		applyChanges(animate: false)
+		applyChanges(animated: false)
 		
 		// Restore the scroll position if we have one stored
 		if let restoreIndexPath = coordinator.timelineMiddleIndexPath {
@@ -127,6 +126,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	// MARK: API
 	
+	func restoreTimelinePosition() {
+		
+	}
+	
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if adjustScroll {
@@ -141,8 +144,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		resetUI()
 	}
 	
-	func reloadArticles(animate: Bool) {
-		applyChanges(animate: animate)
+	func reloadArticles(animated: Bool) {
+		applyChanges(animated: animated)
 	}
 	
 	func updateArticleSelection(animated: Bool) {
@@ -499,28 +502,29 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateTitleUnreadCount() {
-		if let unreadCountProvider = coordinator.timelineFeed as? UnreadCountProvider {
-			self.titleView?.unreadCountView.unreadCount = unreadCountProvider.unreadCount
-		}
+		self.titleView?.unreadCountView.unreadCount = coordinator.unreadCount
 	}
 	
-	func applyChanges(animate: Bool, completion: (() -> Void)? = nil) {
+	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(coordinator.articles, toSection: 0)
         
-		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
+		dataSource.apply(snapshot, animatingDifferences: animated) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 			completion?()
 		}
 	}
 	
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
-		return MasterTimelineDataSource(coordinator: coordinator, tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
-			let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
-			self?.configure(cell, article: article)
-			return cell
-		})
+		let dataSource: UITableViewDiffableDataSource<Int, Article> =
+			MasterTimelineDataSource(coordinator: coordinator, tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
+				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
+				self?.configure(cell, article: article)
+				return cell
+			})
+		dataSource.defaultRowAnimation = .left
+		return dataSource
     }
 	
 	func configure(_ cell: MasterTimelineTableViewCell, article: Article) {

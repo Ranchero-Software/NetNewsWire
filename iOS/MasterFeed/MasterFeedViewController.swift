@@ -146,7 +146,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		resetEstimatedRowHeight()
-		applyChanges(animate: false)
+		applyChanges(animated: false)
 	}
 	
 	@objc func willEnterForeground(_ note: Notification) {
@@ -384,11 +384,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		if sectionNode.isExpanded {
 			headerView.disclosureExpanded = false
 			coordinator.collapse(sectionNode)
-			self.applyChanges(animate: true)
+			self.applyChanges(animated: true)
 		} else {
 			headerView.disclosureExpanded = true
 			coordinator.expand(sectionNode)
-			self.applyChanges(animate: true)
+			self.applyChanges(animated: true)
 		}
 		
 	}
@@ -429,7 +429,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func expandSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath, let node = dataSource.itemIdentifier(for: indexPath) {
 			coordinator.expand(node)
-			self.applyChanges(animate: true) {
+			self.applyChanges(animated: true) {
 				self.reloadAllVisibleCells()
 			}
 		}
@@ -438,7 +438,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func collapseSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath, let node = dataSource.itemIdentifier(for: indexPath) {
 			coordinator.collapse(node)
-			self.applyChanges(animate: true) {
+			self.applyChanges(animated: true) {
 				self.reloadAllVisibleCells()
 			}
 		}
@@ -446,14 +446,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func expandAll(_ sender: Any?) {
 		coordinator.expandAllSectionsAndFolders()
-		self.applyChanges(animate: true) {
+		self.applyChanges(animated: true) {
 			self.reloadAllVisibleCells()
 		}
 	}
 	
 	@objc func collapseAllExceptForGroupItems(_ sender: Any?) {
 		coordinator.collapseAllFolders()
-		self.applyChanges(animate: true) {
+		self.applyChanges(animated: true) {
 			self.reloadAllVisibleCells()
 		}
 	}
@@ -488,7 +488,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		// We have to reload all the visible cells because if we got here by doing a table cell move,
 		// then the table itself is in a weird state.  This is because we do unusual things like allowing
 		// drops on a "folder" that should cause the dropped cell to disappear.
-		applyChanges(animate: true) { [weak self] in
+		applyChanges(animated: true) { [weak self] in
 			self?.reloadAllVisibleCells()
 		}
 	}
@@ -500,7 +500,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		if !sectionNode.isExpanded {
 			coordinator.expand(sectionNode)
-			self.applyChanges(animate: true) {
+			self.applyChanges(animated: true) {
 				completion?()
 			}
 		} else {
@@ -530,10 +530,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		coordinator.expand(parent)
 		reloadNode(parent)
 
-		self.applyChanges(animate: true, adjustScroll: true) { [weak self] in
+		self.applyChanges(animated: true, adjustScroll: true) { [weak self] in
 			if let indexPath = self?.dataSource.indexPath(for: node) {
-				self?.coordinator.selectFeed(indexPath, animated: animated)
-				completion?()
+				self?.coordinator.selectFeed(indexPath, animated: animated) {
+					completion?()
+				}
 			}
 		}
 
@@ -609,7 +610,7 @@ private extension MasterFeedViewController {
 		}
 	}
 	
-	func applyChanges(animate: Bool, adjustScroll: Bool = false, completion: (() -> Void)? = nil) {
+	func applyChanges(animated: Bool, adjustScroll: Bool = false, completion: (() -> Void)? = nil) {
         var snapshot = NSDiffableDataSourceSnapshot<Node, Node>()
 		let sectionNodes = coordinator.rootNode.childNodes
 		snapshot.appendSections(sectionNodes)
@@ -619,7 +620,7 @@ private extension MasterFeedViewController {
 			snapshot.appendItems(shadowTableNodes, toSection: sectionNode)
 		}
         
-		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
+		dataSource.apply(snapshot, animatingDifferences: animated) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: adjustScroll)
 			completion?()
 		}
@@ -753,7 +754,7 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.expand(node)
-		applyChanges(animate: true) { [weak self] in
+		applyChanges(animated: true) { [weak self] in
 			self?.reloadNode(node)
 		}
 	}
@@ -763,7 +764,7 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.collapse(node)
-		applyChanges(animate: true) { [weak self] in
+		applyChanges(animated: true) { [weak self] in
 			self?.reloadNode(node)
 		}
 	}
