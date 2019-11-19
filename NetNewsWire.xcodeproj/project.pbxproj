@@ -114,7 +114,7 @@
 		518B2EE82351B45600400001 /* NetNewsWire_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61952029031D009BC708 /* NetNewsWire_iOSTests.swift */; };
 		518C3193237B00D9004D740F /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5141E7552374A2890013FF27 /* ArticleIconSchemeHandler.swift */; };
 		518C3194237B00DA004D740F /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5141E7552374A2890013FF27 /* ArticleIconSchemeHandler.swift */; };
-		51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CC1230F5963006127BE /* ThemedNavigationController.swift */; };
+		51934CCB230F599B006127BE /* InteractiveNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CC1230F5963006127BE /* InteractiveNavigationController.swift */; };
 		51934CCE2310792F006127BE /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
 		51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
 		51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
@@ -139,6 +139,7 @@
 		51A9A5F22380DE520033AADF /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
 		51A9A5F32380DE530033AADF /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
 		51A9A5F52380F6A60033AADF /* ModalNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A5F42380F6A60033AADF /* ModalNavigationController.swift */; };
+		51A9A60A2382FD240033AADF /* PoppableGestureRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */; };
 		51B62E68233186730085F949 /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B62E67233186730085F949 /* IconView.swift */; };
 		51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */; };
 		51BB7C312335ACDE008E8144 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 51BB7C302335ACDE008E8144 /* page.html */; };
@@ -1286,7 +1287,7 @@
 		5186A634235EF3A800C97195 /* VibrantLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantLabel.swift; sourceTree = "<group>"; };
 		518B2ED22351B3DD00400001 /* NetNewsWire-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NetNewsWire-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		518B2EE92351B4C200400001 /* NetNewsWire_iOSTests_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSTests_target.xcconfig; sourceTree = "<group>"; };
-		51934CC1230F5963006127BE /* ThemedNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemedNavigationController.swift; sourceTree = "<group>"; };
+		51934CC1230F5963006127BE /* InteractiveNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveNavigationController.swift; sourceTree = "<group>"; };
 		51934CCD2310792F006127BE /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
 		51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTimelineFeedDelegate.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
@@ -1303,6 +1304,7 @@
 		51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerFolderCell.xib; sourceTree = "<group>"; };
 		51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerCell.swift; sourceTree = "<group>"; };
 		51A9A5F42380F6A60033AADF /* ModalNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalNavigationController.swift; sourceTree = "<group>"; };
+		51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoppableGestureRecognizerDelegate.swift; sourceTree = "<group>"; };
 		51B62E67233186730085F949 /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
@@ -1857,7 +1859,7 @@
 				5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */,
 				512363372369155100951F16 /* RoundedProgressView.swift */,
 				51C45250226506F400C03939 /* String-Extensions.swift */,
-				51934CC1230F5963006127BE /* ThemedNavigationController.swift */,
+				51934CC1230F5963006127BE /* InteractiveNavigationController.swift */,
 				5108F6D723763094001ABC45 /* TickMarkSlider.swift */,
 				51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */,
 				51F85BF622749FA100C787DC /* UIFont-Extensions.swift */,
@@ -1867,6 +1869,7 @@
 				5186A634235EF3A800C97195 /* VibrantLabel.swift */,
 				5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */,
 				51A9A5F42380F6A60033AADF /* ModalNavigationController.swift */,
+				51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */,
 			);
 			path = "UIKit Extensions";
 			sourceTree = "<group>";
@@ -3971,6 +3974,7 @@
 				51C4526A226508F600C03939 /* MasterFeedTableViewCellLayout.swift in Sources */,
 				51C452AE2265104D00C03939 /* ArticleStringFormatter.swift in Sources */,
 				512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */,
+				51A9A60A2382FD240033AADF /* PoppableGestureRecognizerDelegate.swift in Sources */,
 				51C4529922650A0000C03939 /* ArticleStylesManager.swift in Sources */,
 				51EF0F802277A8330050506E /* MasterTimelineCellLayout.swift in Sources */,
 				51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */,
@@ -4026,7 +4030,7 @@
 				51A1699D235E10D700EB091F /* SettingsViewController.swift in Sources */,
 				51C45293226509C800C03939 /* StarredFeedDelegate.swift in Sources */,
 				51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */,
-				51934CCB230F599B006127BE /* ThemedNavigationController.swift in Sources */,
+				51934CCB230F599B006127BE /* InteractiveNavigationController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

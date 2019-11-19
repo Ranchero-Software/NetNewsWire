@@ -27,16 +27,26 @@
                                     <constraint firstAttribute="height" constant="100" id="xX2-AK-xJX"/>
                                 </constraints>
                             </view>
+                            <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A7j-8T-DqE">
+                                <rect key="frame" x="0.0" y="32" width="414" height="100"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="3HX-Dm-bA6"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="bottom" secondItem="iEi-hX-TYy" secondAttribute="top" constant="44" id="4fZ-pn-fmB"/>
                             <constraint firstItem="DNb-lt-KzC" firstAttribute="top" secondItem="VUw-jc-0yf" secondAttribute="top" id="Bfh-RL-m4d"/>
+                            <constraint firstItem="A7j-8T-DqE" firstAttribute="trailing" secondItem="VUw-jc-0yf" secondAttribute="trailing" id="Feu-hj-K01"/>
                             <constraint firstItem="DNb-lt-KzC" firstAttribute="bottom" secondItem="VUw-jc-0yf" secondAttribute="bottom" id="FfW-6G-Bcp"/>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="iEi-hX-TYy" secondAttribute="trailing" id="Ij6-ri-sBN"/>
                             <constraint firstItem="iEi-hX-TYy" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="Muc-gr-S7o"/>
                             <constraint firstItem="DNb-lt-KzC" firstAttribute="trailing" secondItem="VUw-jc-0yf" secondAttribute="trailing" id="QJ5-Ne-ndd"/>
+                            <constraint firstItem="A7j-8T-DqE" firstAttribute="bottom" secondItem="VUw-jc-0yf" secondAttribute="top" constant="44" id="b2h-zZ-xwi"/>
                             <constraint firstItem="DNb-lt-KzC" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="ezE-0p-35X"/>
+                            <constraint firstItem="A7j-8T-DqE" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="wny-M6-akA"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
                     </view>
@@ -110,6 +120,7 @@
                         <outlet property="nextUnreadBarButtonItem" destination="2w5-e9-C2V" id="xJr-5y-p1N"/>
                         <outlet property="prevArticleBarButtonItem" destination="v4j-fq-23N" id="Gny-Oh-cQa"/>
                         <outlet property="readBarButtonItem" destination="hy0-LS-MzE" id="BzM-x9-tuj"/>
+                        <outlet property="showNavigationView" destination="A7j-8T-DqE" id="D59-3C-HmS"/>
                         <outlet property="showToolbarView" destination="iEi-hX-TYy" id="zoa-h3-H8b"/>
                         <outlet property="starBarButtonItem" destination="wU4-eH-wC9" id="Z8Q-Lt-dKk"/>
                         <outlet property="webViewContainer" destination="DNb-lt-KzC" id="Fc1-Ae-pWK"/>

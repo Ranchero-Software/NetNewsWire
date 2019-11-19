@@ -34,6 +34,7 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var webViewContainer: UIView!
+	@IBOutlet private weak var showNavigationView: UIView!
 	@IBOutlet private weak var showToolbarView: UIView!
 	
 	private var articleExtractorButton: ArticleExtractorButton = {
@@ -100,11 +101,13 @@ class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
 
-		showToolbarView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showToolBar(_:))))
+		showNavigationView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showBars(_:))))
+		showToolbarView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showBars(_:))))
 		
 		ArticleViewControllerWebViewProvider.shared.dequeueWebView() { webView in
 			
@@ -112,7 +115,6 @@ class ArticleViewController: UIViewController {
 			self.webViewContainer.addChildAndPin(webView)
 			webView.navigationDelegate = self
 			webView.uiDelegate = self
-			webView.scrollView.delegate = self
 
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
@@ -126,6 +128,11 @@ class ArticleViewController: UIViewController {
 		
 	}
 
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(true)
+		coordinator.isArticleViewControllerPending = false
+	}
+	
 	func updateUI() {
 		
 		guard let article = currentArticle else {
@@ -208,10 +215,14 @@ class ArticleViewController: UIViewController {
 		reloadHTML()
 	}
 	
+	@objc func willEnterForeground(_ note: Notification) {
+		showBars()
+	}
+	
 	// MARK: Actions
 
-	@objc func showToolBar(_ sender: Any) {
-		showToolbar()
+	@objc func showBars(_ sender: Any) {
+		showBars()
 	}
 
 	@IBAction func toggleArticleExtractor(_ sender: Any) {
@@ -295,23 +306,6 @@ class ArticleViewController: UIViewController {
 	
 }
 
-extension ArticleViewController: UIScrollViewDelegate {
-	
-	func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-		if velocity.y > 0.5 {
-			hideToolbar()
-		} else if velocity.y < -1.0 {
-			showToolbar()
-		}
-	}
-	
-	func scrollViewDidScroll(_ scrollView: UIScrollView) {
-		if scrollView.contentOffset.y < 20 {
-			showToolbar()
-		}
-	}
-}
-
 // MARK: WKNavigationDelegate
 
 extension ArticleViewController: WKNavigationDelegate {
@@ -346,6 +340,14 @@ extension ArticleViewController: WKNavigationDelegate {
 		self.reloadHTML()
 	}
 	
+}
+
+// MARK: InteractiveNavigationControllerTappable
+
+extension ArticleViewController: InteractiveNavigationControllerTappable {
+	func didTapNavigationBar() {
+		hideBars()
+	}
 }
 
 // MARK: WKUIDelegate
@@ -443,14 +445,18 @@ private extension ArticleViewController {
 		}
 	}
 	
-	func showToolbar() {
+	func showBars() {
 		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+			coordinator.showStatusBar()
+			navigationController?.setNavigationBarHidden(false, animated: true)
 			navigationController?.setToolbarHidden(false, animated: true)
 		}
 	}
 	
-	func hideToolbar() {
+	func hideBars() {
 		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+			coordinator.hideStatusBar()
+			navigationController?.setNavigationBarHidden(true, animated: true)
 			navigationController?.setToolbarHidden(true, animated: true)
 		}
 	}

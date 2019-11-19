@@ -79,6 +79,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 	}
 	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(true)
+		coordinator.isTimelineViewControllerPending = false
+	}
+	
 	// MARK: Actions
 
 	@IBAction func markAllAsRead(_ sender: Any) {

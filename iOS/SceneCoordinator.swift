@@ -65,8 +65,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var lastSearchScope: SearchScope? = nil
 	private var isSearching: Bool = false
 	private var searchArticleIds: Set<String>? = nil
-	private var isTimelineViewControllerPending = false
-	private var isArticleViewControllerPending = false
+	var isTimelineViewControllerPending = false
+	var isArticleViewControllerPending = false
 	
 	private(set) var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
@@ -82,6 +82,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			}
 		}
 	}
+	
+	var prefersStatusBarHidden = false
 	
 	var displayUndoAvailableTip: Bool {
 		get { AppDefaults.displayUndoAvailableTip }
@@ -299,7 +301,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rootSplitViewController = RootSplitViewController()
 		rootSplitViewController.coordinator = self
 		rootSplitViewController.preferredDisplayMode = .allVisible
-		rootSplitViewController.viewControllers = [ThemedNavigationController.template()]
+		rootSplitViewController.viewControllers = [InteractiveNavigationController.template()]
 		rootSplitViewController.delegate = self
 		
 		masterNavigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
@@ -779,6 +781,20 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
+	func showStatusBar() {
+		prefersStatusBarHidden = false
+		UIView.animate(withDuration: 0.15) {
+			self.rootSplitViewController.setNeedsStatusBarAppearanceUpdate()
+		}
+	}
+	
+	func hideStatusBar() {
+		prefersStatusBarHidden = true
+		UIView.animate(withDuration: 0.15) {
+			self.rootSplitViewController.setNeedsStatusBarAppearanceUpdate()
+		}
+	}
+	
 	func showSettings() {
 		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
 		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
@@ -945,13 +961,18 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 // MARK: UINavigationControllerDelegate
 
 extension SceneCoordinator: UINavigationControllerDelegate {
-
+	
 	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
 		
 		if UIApplication.shared.applicationState == .background {
 			return
 		}
 		
+		// Restore any bars hidden by the previous controller
+		showStatusBar()
+		navigationController.setNavigationBarHidden(false, animated: true)
+		navigationController.setToolbarHidden(false, animated: true)
+
 		// If we are showing the Feeds and only the feeds start clearing stuff
 		if viewController === masterFeedViewController && !isThreePanelMode && !isTimelineViewControllerPending {
 			activityManager.invalidateCurrentActivities()
@@ -959,10 +980,6 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 			return
 		}
 
-		if viewController is MasterTimelineViewController {
-			isTimelineViewControllerPending = false
-		}
-		
 		// If we are using a phone and navigate away from the detail, clear up the article resources (including activity).
 		// Don't clear it if we have pushed an ArticleViewController, but don't yet see it on the navigation stack.
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
@@ -973,10 +990,6 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 			masterTimelineViewController?.updateArticleSelection(animated: animated)
 			activityManager.invalidateReading()
 			return
-		}
-		
-		if viewController is ArticleViewController {
-			isArticleViewControllerPending = false
 		}
 		
 	}
@@ -1509,13 +1522,13 @@ private extension SceneCoordinator {
 	
 	func addNavControllerIfNecessary(_ controller: UIViewController, showButton: Bool) -> UIViewController {
 		
-		if rootSplitViewController.isCollapsed {
+		if rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
 			
 			return controller
 			
 		} else {
 			
-			let navController = ThemedNavigationController.template(rootViewController: controller)
+			let navController = InteractiveNavigationController.template(rootViewController: controller)
 			navController.isToolbarHidden = false
 			
 			if showButton {
