@@ -1377,7 +1377,7 @@ private extension SceneCoordinator {
 	
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
-			replaceArticles(with: Set<Article>(), animate: true)
+			replaceArticles(with: Set<Article>(), animate: false)
 		}
 	}
 	
