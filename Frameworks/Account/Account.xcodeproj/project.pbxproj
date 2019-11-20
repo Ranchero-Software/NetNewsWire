@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B826D6923859D9D00FC1ADB /* FeedWranglerAuthorizationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826D6823859D9D00FC1ADB /* FeedWranglerAuthorizationResult.swift */; };
 		3BF610C723571CD4000EF978 /* FeedWranglerAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF610C423571CD4000EF978 /* FeedWranglerAPICaller.swift */; };
 		3BF610C823571CD4000EF978 /* FeedWranglerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF610C523571CD4000EF978 /* FeedWranglerConfig.swift */; };
 		3BF610C923571CD4000EF978 /* FeedWranglerAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF610C623571CD4000EF978 /* FeedWranglerAccountDelegate.swift */; };
@@ -178,6 +179,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3B826D6823859D9D00FC1ADB /* FeedWranglerAuthorizationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedWranglerAuthorizationResult.swift; sourceTree = "<group>"; };
 		3BF610C423571CD4000EF978 /* FeedWranglerAPICaller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAPICaller.swift; sourceTree = "<group>"; };
 		3BF610C523571CD4000EF978 /* FeedWranglerConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerConfig.swift; sourceTree = "<group>"; };
 		3BF610C623571CD4000EF978 /* FeedWranglerAccountDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountDelegate.swift; sourceTree = "<group>"; };
@@ -349,6 +351,7 @@
 				3BF6118F23577173000EF978 /* FeedWranglerGenericResult.swift */,
 				3BF611912357877E000EF978 /* FeedWranglerFeedItem.swift */,
 				3BF6119323578F55000EF978 /* FeedWranglerFeedItemsRequest.swift */,
+				3B826D6823859D9D00FC1ADB /* FeedWranglerAuthorizationResult.swift */,
 			);
 			path = FeedWrangler;
 			sourceTree = "<group>";
@@ -948,6 +951,7 @@
 				9E1D155B2334423300F4944C /* FeedlyOrganiseParsedItemsByFeedOperation.swift in Sources */,
 				552032FE229D5D5A009559E0 /* ReaderAPIAccountDelegate.swift in Sources */,
 				3BF610C723571CD4000EF978 /* FeedWranglerAPICaller.swift in Sources */,
+				3B826D6923859D9D00FC1ADB /* FeedWranglerAuthorizationResult.swift in Sources */,
 				5170743C232AEDB500A461A3 /* OPMLFile.swift in Sources */,
 				51BB7B84233531BC008E8144 /* AccountBehaviors.swift in Sources */,
 				9E1773D923458D590056A5A8 /* FeedlyResourceId.swift in Sources */,

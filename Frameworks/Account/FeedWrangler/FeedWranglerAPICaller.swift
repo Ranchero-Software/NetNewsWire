@@ -33,31 +33,18 @@ final class FeedWranglerAPICaller: NSObject {
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let username = self.credentials?.username ?? ""
 		
-		transport.send(request: request) { result in
+		transport.send(request: request, resultType: FeedWranglerAuthorizationResult.self) { result in
 			switch result {
-			case .success(let (_, data)):
-				guard let data = data else {
+			case .success(let (_, results)):
+				if let accessToken = results?.accessToken {
+					let authCredentials = Credentials(type: .feedWranglerToken, username: username, secret: accessToken)
+					completion(.success(authCredentials))
+				} else {
 					completion(.success(nil))
-					return
-				}
-				
-				do {
-					if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] {
-						if let accessToken = json["access_token"] as? String {
-							let authCredentials = Credentials(type: .feedWranglerToken, username: username, secret: accessToken)
-							completion(.success(authCredentials))
-							return
-						}
-					}
-					
-					completion(.success(nil))
-				} catch let error {
-					completion(.failure(error))
 				}
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
 		}
 	}
 	
